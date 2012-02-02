@@ -13,51 +13,36 @@ namespace OnlineVideos.Sites.georgius
     {
         #region Private fields
 
-        private static String baseUrl = @"http://video.markiza.sk/archiv-tv-markiza";
-        private static String dynamicCategoryStart = @"<div id=""VagonContent"">";
-        private static String dynamicCategoryEnd = @"<div class=""boxVagon_foot"">";
-        private static String showStart = @"<div class=""item"">";
-        private static String showUrlRegex = @"<a href=""(?<showUrl>[^>]+)"">";
-        private static String showThumbRegex = @"<img src=""(?<showThumbUrl>[^""]+)""";
-        private static String showTitleRegex = @"<a href=""[^""]+"">(?<showTitle>[^<]+)</a>";
+        private static String baseUrl = @"http://voyo.markiza.sk";
 
-        // --- old Markiza archive ---
+        private static String categoriesStart = @"<div class=""logo"">";
+        private static String categoriesEnd = @"</ul>";
+        private static String categoryStart = @"<li";
+        private static String categoryEnd = @"</li>";
+        private static String categoryUrlAndTitleRegex = @"<a href=""(?<categoryUrl>[^""]+)"" title=""(?<categoryTitle>[^<]+)""";
 
-        private static String showEpisodesStart = @"<div id=""VagonContent"">";
-        private static String showEpisodeStart = @"<div class=""item"">";
-        private static String showEpisodeUrlRegex = @"<a href=""/archiv-tv-markiza/(?<showEpisodeUrl>[^>]+)"">";
-        private static String showEpisodeThumbRegex = @"src=""(?<showEpisodeThumbUrl>[^""]+)""";
-        private static String showEpisodeTitleRegex = @"<a href=""[^""]+"">(?<showEpisodeTitle>[^<]+)</a></div>";
-        private static String showEpisodeDateRegex = @"<span>(?<showEpisodeDate>[^<]*)<br/>";
+        private static String showsStart = @"<div class=""productsList"">";
+        private static String showsEnd = @"<div class=""body"">";
+        private static String showStart = @"<div class='section_item'>";
+        private static String showEnd = @"<div class='clearer'>";
+        private static String showNextPageRegex = @"<a href='(?<nextPageUrl>[^']*)' onclick='[^']*'>&gt;</a>";
 
-        private static String showEpisodeNextPageRegex = @"<div class=""right""><a href=""(?<nextPageUrl>[^""]+)"">[^<]+</a></div>";
+        private static String showThumbUrlRegex = @"<img src='(?<showThumbUrl>[^']*)";
+        private static String showUrlAndTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>";
+        private static String showDescriptionStart = @"<div class=""padding"" >";
+        private static String showDescriptionEnd = @"</div>";
 
-        private static String showEpisodePlaylistUrlFormat = @"http://www.markiza.sk/js/flowplayer/config.js?&media={0}";
+        private static String showEpisodesStart = @"<div class=""productsList"">";
 
-        private static String showEpisodePlaylistStart = @"""playlist"":[";
-        private static String showEpisodePlaylistEnd = @"]";
+        private static String showEpisodeBlockStart = @"<div class='section_item'>";
+        private static String showEpisodeBlockEnd = @"<div class='clearer'>";
 
-        private static String showVideoUrlsRegex = @"""url"":""(?<showVideosUrl>[^""]+)""";
+        private static String showEpisodeThumbUrlRegex = @"<img src='(?<showThumbUrl>[^']*)";
+        private static String showEpisodeUrlAndTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>";
+        private static String showEpisodeDescriptionStart = @"<div class=""padding"" >";
+        private static String showEpisodeDescriptionEnd = @"</div>";
 
-        // --- VOYO ---
-
-        private static String showVoyoStart = @"<div class='poster'>";
-        private static String showVoyoEnd = @"</div>";
-
-        private static String showVoyoUrlTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>";
-        private static String showVoyoThumbRegex = @"<img src='(?<showThumbUrl>[^']*)";
-
-        private static String showVoyoEpisodesStart = @"<div class=""productsList"">";
-
-        private static String showVoyoEpisodeBlockStart = @"<div class='section_item'>";
-        private static String showVoyoEpisodeBlockEnd = @"<div class='clearer'>";
-
-        private static String showVoyoEpisodeThumbUrlRegex = @"<img src='(?<showThumbUrl>[^']*)";
-        private static String showVoyoEpisodeUrlAndTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>";
-        private static String showVoyoEpisodeDescriptionStart = @"<div class=""padding"" >";
-        private static String showVoyoEpisodeDescriptionEnd = @"</div>";
-
-        private static String showVoyoEpisodeNextPageRegex = @"<a href='(?<nextPageUrl>[^']*)' onclick='[^']*'>&gt;</a>";
+        private static String showEpisodeNextPageRegex = @"<a href='(?<nextPageUrl>[^']*)' onclick='[^']*'>&gt;</a>";
 
         private static String showVoyoVideoUrlFormat = @"http://voyo.markiza.sk/bin/eshop/ws/plusPlayer.php?x=playerFlash&prod={0}&unit={1}&media={2}&site={3}&section={4}&subsite={5}&embed=0&mute=0&size=&realSite={6}&width={7}&height={8}&hdEnabled=1&hash=&finish=finishedPlayer&dev=null&r={9}";
         private static String showVoyoParamsStart = @"voyoPlayer.params = {";
@@ -75,9 +60,6 @@ namespace OnlineVideos.Sites.georgius
 
         private static String showVoyoHostRegex = @"""host"":""(?<host>[^""]*)";
         private static String showVoyoFileNameRegex = @"""filename"":""(?<fileName>[^""]*)";
-	
-        // the number of show episodes per page
-        private static int pageSize = 28;
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -110,60 +92,54 @@ namespace OnlineVideos.Sites.georgius
 
         public override int DiscoverDynamicCategories()
         {
-            int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(MarkizaUtil.baseUrl);
+            int categoriesCount = 0;
+            String baseWebData = SiteUtilBase.GetWebData(MarkizaUtil.baseUrl, null, null, null, true);
 
-            int startIndex = baseWebData.IndexOf(MarkizaUtil.dynamicCategoryStart);
-            if (startIndex > 0)
+            int startIndex = baseWebData.IndexOf(MarkizaUtil.categoriesStart);
+            if (startIndex >= 0)
             {
-                int endIndex = baseWebData.IndexOf(MarkizaUtil.dynamicCategoryEnd, startIndex);
+                int endIndex = baseWebData.IndexOf(MarkizaUtil.categoriesEnd, startIndex);
                 if (endIndex >= 0)
                 {
                     baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
                     while (true)
                     {
-                        int index = baseWebData.IndexOf(MarkizaUtil.showStart);
-
-                        if (index > 0)
+                        startIndex = baseWebData.IndexOf(MarkizaUtil.categoryStart);
+                        if (startIndex >= 0)
                         {
-                            baseWebData = baseWebData.Substring(index);
-
-                            String showUrl = String.Empty;
-                            String showTitle = String.Empty;
-                            String showThumb = String.Empty;
-
-                            Match match = Regex.Match(baseWebData, MarkizaUtil.showUrlRegex);
-                            if (match.Success)
+                            endIndex = baseWebData.IndexOf(MarkizaUtil.categoryEnd, startIndex);
+                            if (endIndex >= 0)
                             {
-                                showUrl = match.Groups["showUrl"].Value;
-                                baseWebData = baseWebData.Substring(match.Index + match.Length);
-                            }
+                                String categoryData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                            match = Regex.Match(baseWebData, MarkizaUtil.showThumbRegex);
-                            if (match.Success)
-                            {
-                                showThumb = match.Groups["showThumbUrl"].Value;
-                                baseWebData = baseWebData.Substring(match.Index + match.Length);
-                            }
+                                String categoryUrl = String.Empty;
+                                String categoryTitle = String.Empty;
 
-                            match = Regex.Match(baseWebData, MarkizaUtil.showTitleRegex);
-                            if (match.Success)
-                            {
-                                showTitle = match.Groups["showTitle"].Value;
-                                baseWebData = baseWebData.Substring(match.Index + match.Length);
-                            }
-
-                            if (!((String.IsNullOrEmpty(showUrl)) || (String.IsNullOrEmpty(showThumb)) || (String.IsNullOrEmpty(showTitle))))
-                            {
-                                this.Settings.Categories.Add(
-                                new RssLink()
+                                Match match = Regex.Match(baseWebData, MarkizaUtil.categoryUrlAndTitleRegex);
+                                if (match.Success)
                                 {
-                                    Name = showTitle,
-                                    Url = Utils.FormatAbsoluteUrl(showUrl, MarkizaUtil.baseUrl),
-                                    Thumb = showThumb
-                                });
-                                dynamicCategoriesCount++;
+                                    categoryUrl = Utils.FormatAbsoluteUrl(match.Groups["categoryUrl"].Value, MarkizaUtil.baseUrl);
+                                    categoryTitle = match.Groups["categoryTitle"].Value;
+                                }
+
+                                if (!((String.IsNullOrEmpty(categoryUrl)) || (String.IsNullOrEmpty(categoryTitle))))
+                                {
+                                    this.Settings.Categories.Add(
+                                    new RssLink()
+                                    {
+                                        Name = categoryTitle,
+                                        Url = categoryUrl,
+                                        HasSubCategories = true
+                                    });
+                                    categoriesCount++;
+                                }
+
+                                baseWebData = baseWebData.Substring(endIndex + MarkizaUtil.categoryEnd.Length);
+                            }
+                            else
+                            {
+                                break;
                             }
                         }
                         else
@@ -176,7 +152,132 @@ namespace OnlineVideos.Sites.georgius
                 }
             }
 
-            return dynamicCategoriesCount;
+            return categoriesCount;
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            int showsCount = 0;
+            String url = (parentCategory as RssLink).Url;
+            if (parentCategory.ParentCategory != null)
+            {
+                parentCategory = parentCategory.ParentCategory;
+                // last category is next category, remove it
+                parentCategory.SubCategories.RemoveAt(parentCategory.SubCategories.Count - 1);
+            }
+            if (parentCategory.SubCategories == null)
+            {
+                parentCategory.SubCategories = new List<Category>();
+            }
+
+            String baseWebData = SiteUtilBase.GetWebData(url, null, null, null, true);
+
+            int startIndex = baseWebData.IndexOf(MarkizaUtil.showsStart);
+            if (startIndex >= 0)
+            {
+                int endIndex = baseWebData.IndexOf(MarkizaUtil.showsEnd, startIndex);
+                if (endIndex >= 0)
+                {
+                    baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
+                    String baseUrl = url;
+
+                    Match match = Regex.Match(baseWebData, MarkizaUtil.showNextPageRegex);
+                    if (match.Success)
+                    {
+                        url = Utils.FormatAbsoluteUrl(match.Groups["nextPageUrl"].Value, url);
+                    }
+                    else
+                    {
+                        url = String.Empty;
+                    }
+
+                    while (true)
+                    {
+                        startIndex = baseWebData.IndexOf(MarkizaUtil.showStart);
+                        if (startIndex >= 0)
+                        {
+                            endIndex = baseWebData.IndexOf(MarkizaUtil.showEnd, startIndex);
+                            if (endIndex >= 0)
+                            {
+                                String showData = baseWebData.Substring(startIndex, endIndex - startIndex);
+
+                                String showTitle = String.Empty;
+                                String showThumbUrl = String.Empty;
+                                String showUrl = String.Empty;
+                                String showDescription = String.Empty;
+
+                                match = Regex.Match(showData, MarkizaUtil.showThumbUrlRegex);
+                                if (match.Success)
+                                {
+                                    showThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showThumbUrl"].Value, baseUrl);
+                                }
+
+                                match = Regex.Match(showData, MarkizaUtil.showUrlAndTitleRegex);
+                                if (match.Success)
+                                {
+                                    showUrl = Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, baseUrl);
+                                    showTitle = HttpUtility.HtmlDecode(match.Groups["showTitle"].Value);
+                                }
+
+                                int descriptionStart = showData.IndexOf(MarkizaUtil.showDescriptionStart);
+                                if (descriptionStart >= 0)
+                                {
+                                    int descriptionEnd = showData.IndexOf(MarkizaUtil.showDescriptionEnd, descriptionStart);
+                                    if (descriptionEnd >= 0)
+                                    {
+                                        showDescription = OnlineVideos.Utils.PlainTextFromHtml(HttpUtility.HtmlDecode(showData.Substring(descriptionStart + MarkizaUtil.showDescriptionStart.Length, descriptionEnd - descriptionStart - MarkizaUtil.showDescriptionStart.Length)));
+                                    }
+                                }
+
+                                if (!((String.IsNullOrEmpty(showUrl)) || (String.IsNullOrEmpty(showTitle))))
+                                {
+                                    parentCategory.SubCategories.Add(
+                                    new RssLink()
+                                    {
+                                        Name = showTitle,
+                                        Url = showUrl,
+                                        Description = showDescription,
+                                        Thumb = showThumbUrl
+                                    });
+                                    showsCount++;
+                                }
+
+                                baseWebData = baseWebData.Substring(endIndex + MarkizaUtil.showEnd.Length);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    parentCategory.SubCategoriesDiscovered = true;
+                }
+                else
+                {
+                    url = String.Empty;
+                }
+            }
+            else
+            {
+                url = String.Empty;
+            }
+
+            if (!String.IsNullOrEmpty(url))
+            {
+                parentCategory.SubCategories.Add(new NextPageCategory() { Url = url, ParentCategory = parentCategory });
+            }
+
+            return showsCount;
+        }
+
+        public override int DiscoverNextPageCategories(NextPageCategory category)
+        {
+            return this.DiscoverSubCategories(category);
         }
 
         private List<VideoInfo> GetPageVideos(String pageUrl)
@@ -185,171 +286,86 @@ namespace OnlineVideos.Sites.georgius
 
             if (!String.IsNullOrEmpty(pageUrl))
             {
-                if (!pageUrl.Contains("voyo"))
+                this.nextPageUrl = String.Empty;
+                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+
+                int index = baseWebData.IndexOf(MarkizaUtil.showEpisodesStart);
+                if (index > 0)
                 {
-                    #region Old Markiza archive
+                    baseWebData = baseWebData.Substring(index);
 
-                    String baseWebData = SiteUtilBase.GetWebData(pageUrl);
-
-                    int index = baseWebData.IndexOf(MarkizaUtil.showEpisodesStart);
-                    if (index > 0)
+                    Match match = Regex.Match(baseWebData, MarkizaUtil.showEpisodeNextPageRegex);
+                    if (match.Success)
                     {
-                        baseWebData = baseWebData.Substring(index);
-
-                        while (true)
-                        {
-                            index = baseWebData.IndexOf(MarkizaUtil.showEpisodeStart);
-
-                            if (index > 0)
-                            {
-                                baseWebData = baseWebData.Substring(index);
-
-                                String showEpisodeUrl = String.Empty;
-                                String showEpisodeTitle = String.Empty;
-                                String showEpisodeThumb = String.Empty;
-                                String showEpisodeDate = String.Empty;
-
-                                Match match = Regex.Match(baseWebData, MarkizaUtil.showEpisodeUrlRegex);
-                                if (match.Success)
-                                {
-                                    showEpisodeUrl = match.Groups["showEpisodeUrl"].Value;
-                                    baseWebData = baseWebData.Substring(match.Index + match.Length);
-                                }
-
-                                match = Regex.Match(baseWebData, MarkizaUtil.showEpisodeThumbRegex);
-                                if (match.Success)
-                                {
-                                    showEpisodeThumb = match.Groups["showEpisodeThumbUrl"].Value;
-                                    baseWebData = baseWebData.Substring(match.Index + match.Length);
-                                }
-
-                                match = Regex.Match(baseWebData, MarkizaUtil.showEpisodeTitleRegex);
-                                if (match.Success)
-                                {
-                                    showEpisodeTitle = match.Groups["showEpisodeTitle"].Value;
-                                    baseWebData = baseWebData.Substring(match.Index + match.Length);
-                                }
-
-                                match = Regex.Match(baseWebData, MarkizaUtil.showEpisodeDateRegex);
-                                if (match.Success)
-                                {
-                                    showEpisodeDate = match.Groups["showEpisodeDate"].Value;
-                                    baseWebData = baseWebData.Substring(match.Index + match.Length);
-                                }
-
-                                if ((String.IsNullOrEmpty(showEpisodeUrl)) && (String.IsNullOrEmpty(showEpisodeThumb)) && (String.IsNullOrEmpty(showEpisodeTitle)) && (String.IsNullOrEmpty(showEpisodeDate)))
-                                {
-                                    break;
-                                }
-
-                                VideoInfo videoInfo = new VideoInfo()
-                                {
-                                    Description = showEpisodeDate,
-                                    ImageUrl = showEpisodeThumb,
-                                    Title = showEpisodeTitle,
-                                    VideoUrl = String.Format("{0}/{1}", MarkizaUtil.baseUrl, showEpisodeUrl)
-                                };
-
-                                pageVideos.Add(videoInfo);
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-
-                        Match nextPageMatch = Regex.Match(baseWebData, MarkizaUtil.showEpisodeNextPageRegex);
-                        this.nextPageUrl = nextPageMatch.Groups["nextPageUrl"].Value;
+                        this.nextPageUrl = Utils.FormatAbsoluteUrl(match.Groups["nextPageUrl"].Value, pageUrl);
                     }
 
-                    #endregion
-                }
-                else
-                {
-                    #region VOYO archive
-
-                    String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
-
-                    int index = baseWebData.IndexOf(MarkizaUtil.showVoyoEpisodesStart);
-                    if (index > 0)
+                    while (true)
                     {
-                        baseWebData = baseWebData.Substring(index);
-
-                        Match match = Regex.Match(baseWebData, MarkizaUtil.showVoyoEpisodeNextPageRegex);
-                        if (match.Success)
+                        int showEpisodeBlockStart = baseWebData.IndexOf(MarkizaUtil.showEpisodeBlockStart);
+                        if (showEpisodeBlockStart >= 0)
                         {
-                            this.nextPageUrl = Utils.FormatAbsoluteUrl(match.Groups["nextPageUrl"].Value,pageUrl);
-                        }
-
-                        while (true)
-                        {
-                            int showEpisodeBlockStart = baseWebData.IndexOf(MarkizaUtil.showVoyoEpisodeBlockStart);
-                            if (showEpisodeBlockStart >= 0)
+                            int showEpisodeBlockEnd = baseWebData.IndexOf(MarkizaUtil.showEpisodeBlockEnd, showEpisodeBlockStart);
+                            if (showEpisodeBlockEnd >= 0)
                             {
-                                int showEpisodeBlockEnd = baseWebData.IndexOf(MarkizaUtil.showVoyoEpisodeBlockEnd, showEpisodeBlockStart);
-                                if (showEpisodeBlockEnd >= 0)
+                                String showData = baseWebData.Substring(showEpisodeBlockStart, showEpisodeBlockEnd - showEpisodeBlockStart);
+
+                                String showTitle = String.Empty;
+                                String showThumbUrl = String.Empty;
+                                String showUrl = String.Empty;
+                                String showDescription = String.Empty;
+
+                                match = Regex.Match(showData, MarkizaUtil.showEpisodeThumbUrlRegex);
+                                if (match.Success)
                                 {
-                                    String showData = baseWebData.Substring(showEpisodeBlockStart, showEpisodeBlockEnd - showEpisodeBlockStart);
+                                    showThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showThumbUrl"].Value, pageUrl);
+                                }
 
-                                    String showTitle = String.Empty;
-                                    String showThumbUrl = String.Empty;
-                                    String showUrl = String.Empty;
-                                    String showDescription = String.Empty;
+                                match = Regex.Match(showData, MarkizaUtil.showEpisodeUrlAndTitleRegex);
+                                if (match.Success)
+                                {
+                                    showUrl = Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, pageUrl);
+                                    showTitle = HttpUtility.HtmlDecode(match.Groups["showTitle"].Value);
+                                }
 
-                                    match = Regex.Match(showData, MarkizaUtil.showVoyoEpisodeThumbUrlRegex);
-                                    if (match.Success)
+                                int descriptionStart = showData.IndexOf(MarkizaUtil.showEpisodeDescriptionStart);
+                                if (descriptionStart >= 0)
+                                {
+                                    int descriptionEnd = showData.IndexOf(MarkizaUtil.showEpisodeDescriptionEnd, descriptionStart);
+                                    if (descriptionEnd >= 0)
                                     {
-                                        showThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showThumbUrl"].Value, pageUrl);
-                                    }
-
-                                    match = Regex.Match(showData, MarkizaUtil.showVoyoEpisodeUrlAndTitleRegex);
-                                    if (match.Success)
-                                    {
-                                        showUrl = Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, pageUrl);
-                                        showTitle = HttpUtility.HtmlDecode(match.Groups["showTitle"].Value);
-                                    }
-
-                                    int descriptionStart = showData.IndexOf(MarkizaUtil.showVoyoEpisodeDescriptionStart);
-                                    if (descriptionStart >= 0)
-                                    {
-                                        int descriptionEnd = showData.IndexOf(MarkizaUtil.showVoyoEpisodeDescriptionEnd, descriptionStart);
-                                        if (descriptionEnd >= 0)
-                                        {
-                                            showDescription = showData.Substring(descriptionStart + MarkizaUtil.showVoyoEpisodeDescriptionStart.Length, descriptionEnd - descriptionStart - MarkizaUtil.showVoyoEpisodeDescriptionStart.Length);
-                                        }
-                                    }
-
-                                    if (!(String.IsNullOrEmpty(showUrl) || String.IsNullOrEmpty(showTitle)))
-                                    {
-                                        VideoInfo videoInfo = new VideoInfo()
-                                        {
-                                            Description = showDescription,
-                                            ImageUrl = showThumbUrl,
-                                            Title = showTitle,
-                                            VideoUrl = showUrl
-                                        };
-
-                                        pageVideos.Add(videoInfo);
+                                        showDescription = HttpUtility.HtmlDecode(showData.Substring(descriptionStart + MarkizaUtil.showEpisodeDescriptionStart.Length, descriptionEnd - descriptionStart - MarkizaUtil.showEpisodeDescriptionStart.Length));
                                     }
                                 }
 
-                                baseWebData = baseWebData.Substring(showEpisodeBlockStart + MarkizaUtil.showVoyoEpisodeBlockStart.Length);
+                                if (!(String.IsNullOrEmpty(showUrl) || String.IsNullOrEmpty(showTitle)))
+                                {
+                                    VideoInfo videoInfo = new VideoInfo()
+                                    {
+                                        Description = showDescription,
+                                        ImageUrl = showThumbUrl,
+                                        Title = showTitle,
+                                        VideoUrl = showUrl
+                                    };
+
+                                    pageVideos.Add(videoInfo);
+                                }
                             }
-                            else
-                            {
-                                break;
-                            }
+
+                            baseWebData = baseWebData.Substring(showEpisodeBlockStart + MarkizaUtil.showEpisodeBlockStart.Length);
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
-
-                    #endregion
                 }
             }
 
             return pageVideos;
         }
 
-        private List<VideoInfo> GetVideoList(Category category, int videoCount)
+        private List<VideoInfo> GetVideoList(Category category)
         {
             hasNextPage = false;
             String baseWebData = String.Empty;
@@ -364,41 +380,17 @@ namespace OnlineVideos.Sites.georgius
             }
 
             this.currentCategory = parentCategory;
-            int addedVideos = 0;
 
-            while (true)
+            this.loadedEpisodes.AddRange(this.GetPageVideos(this.nextPageUrl));
+            while (this.currentStartIndex < this.loadedEpisodes.Count)
             {
-                while (((this.currentStartIndex + addedVideos) < this.loadedEpisodes.Count()) && (addedVideos < videoCount))
-                {
-                    videoList.Add(this.loadedEpisodes[this.currentStartIndex + addedVideos]);
-                    addedVideos++;
-                }
-
-                if (addedVideos < videoCount)
-                {
-                    List<VideoInfo> loadedVideos = this.GetPageVideos(this.nextPageUrl);
-
-                    if (loadedVideos.Count == 0)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        this.loadedEpisodes.AddRange(loadedVideos);
-                    }
-                }
-                else
-                {
-                    break;
-                }
+                videoList.Add(this.loadedEpisodes[this.currentStartIndex++]);
             }
 
-            if (((this.currentStartIndex + addedVideos) < this.loadedEpisodes.Count()) || (!String.IsNullOrEmpty(this.nextPageUrl)))
+            if (!String.IsNullOrEmpty(this.nextPageUrl))
             {
                 hasNextPage = true;
             }
-
-            this.currentStartIndex += addedVideos;
 
             return videoList;
         }
@@ -406,12 +398,12 @@ namespace OnlineVideos.Sites.georgius
         public override List<VideoInfo> getVideoList(Category category)
         {
             this.currentStartIndex = 0;
-            return this.GetVideoList(category, MarkizaUtil.pageSize - 2);
+            return this.GetVideoList(category);
         }
 
         public override List<VideoInfo> getNextPageVideos()
         {
-            return this.GetVideoList(this.currentCategory, MarkizaUtil.pageSize);
+            return this.GetVideoList(this.currentCategory);
         }
 
         public override bool HasNextPage
@@ -430,143 +422,108 @@ namespace OnlineVideos.Sites.georgius
         {
             List<String> videoUrls = new List<string>();
 
-            if (!video.VideoUrl.Contains("voyo"))
+            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+            int startIndex = baseWebData.IndexOf(MarkizaUtil.showVoyoParamsStart);
+            if (startIndex >= 0)
             {
-                #region Old Markiza archive
-
-                String showEpisodesId = video.VideoUrl.Substring(video.VideoUrl.LastIndexOf("/") + 1);
-                String configUrl = String.Format(MarkizaUtil.showEpisodePlaylistUrlFormat, showEpisodesId);
-                String baseWebData = SiteUtilBase.GetWebData(configUrl);
-
-                int start = baseWebData.IndexOf(MarkizaUtil.showEpisodePlaylistStart);
-                if (start > 0)
+                int endIndex = baseWebData.IndexOf(MarkizaUtil.showVoyoParamsEnd, startIndex + MarkizaUtil.showVoyoParamsStart.Length);
+                if (endIndex >= 0)
                 {
-                    int end = baseWebData.IndexOf(MarkizaUtil.showEpisodePlaylistEnd, start);
-                    if (end > 0)
-                    {
-                        String showEpisodePlaylist = baseWebData.Substring(start, end - start);
+                    baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                        MatchCollection matches = Regex.Matches(showEpisodePlaylist, MarkizaUtil.showVideoUrlsRegex);
-                        foreach (Match tempMatch in matches)
+                    String prod = String.Empty;
+                    String unit = String.Empty;
+                    String media = String.Empty;
+                    String site = String.Empty;
+                    String section = String.Empty;
+                    String subsite = String.Empty;
+                    String width = String.Empty;
+                    String height = String.Empty;
+
+                    Match match = Regex.Match(baseWebData, MarkizaUtil.showVoyoSiteParamRegex);
+                    if (match.Success)
+                    {
+                        site = match.Groups["site"].Value;
+                    }
+                    match = Regex.Match(baseWebData, MarkizaUtil.showVoyoSectionParamRegex);
+                    if (match.Success)
+                    {
+                        section = match.Groups["section"].Value;
+                    }
+                    match = Regex.Match(baseWebData, MarkizaUtil.showVoyoSubsiteParamRegex);
+                    if (match.Success)
+                    {
+                        subsite = match.Groups["subsite"].Value;
+                    }
+                    match = Regex.Match(baseWebData, MarkizaUtil.showVoyoWidthParamRegex);
+                    if (match.Success)
+                    {
+                        width = match.Groups["width"].Value;
+                    }
+                    match = Regex.Match(baseWebData, MarkizaUtil.showVoyoHeightParamRegex);
+                    if (match.Success)
+                    {
+                        height = match.Groups["height"].Value;
+                    }
+                    match = Regex.Match(baseWebData, MarkizaUtil.showVoyoProdUnitMediaRegex);
+                    if (match.Success)
+                    {
+                        prod = match.Groups["prod"].Value;
+                        unit = match.Groups["unit"].Value;
+                        media = match.Groups["media"].Value;
+                    }
+
+                    String showParamsUrl = String.Format(MarkizaUtil.showVoyoVideoUrlFormat, prod, unit, media, site, section, subsite, site, width, height, new Random().NextDouble());
+                    String showParamsData = SiteUtilBase.GetWebData(showParamsUrl, null, null, null, true);
+
+                    Newtonsoft.Json.Linq.JObject jObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(showParamsData);
+                    String decodedPage = (String)((Newtonsoft.Json.Linq.JValue)((Newtonsoft.Json.Linq.JProperty)jObject.First).Value);
+
+                    String base64EncodedParameters = String.Empty;
+                    String showVoyoUrlParamStart = String.Format(MarkizaUtil.showVoyoUrlParamStartFormat, media);
+                    startIndex = decodedPage.IndexOf(showVoyoUrlParamStart);
+                    if (startIndex >= 0)
+                    {
+                        endIndex = decodedPage.IndexOf(MarkizaUtil.showVoyoUrlParamEnd, startIndex + showVoyoUrlParamStart.Length);
+                        if (endIndex >= 0)
                         {
-                            videoUrls.Add(tempMatch.Groups["showVideosUrl"].Value);
+                            base64EncodedParameters = decodedPage.Substring(startIndex + showVoyoUrlParamStart.Length, endIndex - startIndex - showVoyoUrlParamStart.Length);
+                        }
+                    }
+
+                    if (!String.IsNullOrEmpty(base64EncodedParameters))
+                    {
+                        String decodedParams = HttpUtility.HtmlDecode(Flowplayer.Commercial.V3_1_5_17_002.Aes.Decrypt(base64EncodedParameters, Flowplayer.Commercial.V3_1_5_17_002.Aes.Key, Flowplayer.Commercial.V3_1_5_17_002.Aes.KeyType.Key128));
+
+                        String host = String.Empty;
+                        String fileName = String.Empty;
+
+                        match = Regex.Match(decodedParams, MarkizaUtil.showVoyoHostRegex);
+                        if (match.Success)
+                        {
+                            jObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject("{ \"host\": \"" + match.Groups["host"].Value + "\" }");
+                            host = (String)((Newtonsoft.Json.Linq.JValue)((Newtonsoft.Json.Linq.JProperty)jObject.First).Value);
+                        }
+                        match = Regex.Match(decodedParams, MarkizaUtil.showVoyoFileNameRegex);
+                        if (match.Success)
+                        {
+                            jObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject("{ \"filename\": \"" + match.Groups["fileName"].Value + "\" }");
+                            fileName = (String)((Newtonsoft.Json.Linq.JValue)((Newtonsoft.Json.Linq.JProperty)jObject.First).Value);
+                        }
+
+                        if (!(String.IsNullOrEmpty(host) || String.IsNullOrEmpty(fileName)))
+                        {
+                            String playPath = String.Format("mp4:{0}-1.mp4", fileName);
+
+                            String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(host) { TcUrl = host, PlayPath = playPath }.ToString();
+
+                            videoUrls.Add(resultUrl);
                         }
                     }
                 }
-
-                return videoUrls;
-
-                #endregion
             }
-            else
-            {
-                #region VOYO
 
-                String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
-                int startIndex = baseWebData.IndexOf(MarkizaUtil.showVoyoParamsStart);
-                if (startIndex >= 0)
-                {
-                    int endIndex = baseWebData.IndexOf(MarkizaUtil.showVoyoParamsEnd, startIndex + MarkizaUtil.showVoyoParamsStart.Length);
-                    if (endIndex >= 0)
-                    {
-                        baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
-
-                        String prod = String.Empty;
-                        String unit = String.Empty;
-                        String media = String.Empty;
-                        String site = String.Empty;
-                        String section = String.Empty;
-                        String subsite = String.Empty;
-                        String width = String.Empty;
-                        String height = String.Empty;
-
-                        Match match = Regex.Match(baseWebData, MarkizaUtil.showVoyoSiteParamRegex);
-                        if (match.Success)
-                        {
-                            site = match.Groups["site"].Value;
-                        }
-                        match = Regex.Match(baseWebData, MarkizaUtil.showVoyoSectionParamRegex);
-                        if (match.Success)
-                        {
-                            section = match.Groups["section"].Value;
-                        }
-                        match = Regex.Match(baseWebData, MarkizaUtil.showVoyoSubsiteParamRegex);
-                        if (match.Success)
-                        {
-                            subsite = match.Groups["subsite"].Value;
-                        }
-                        match = Regex.Match(baseWebData, MarkizaUtil.showVoyoWidthParamRegex);
-                        if (match.Success)
-                        {
-                            width = match.Groups["width"].Value;
-                        }
-                        match = Regex.Match(baseWebData, MarkizaUtil.showVoyoHeightParamRegex);
-                        if (match.Success)
-                        {
-                            height = match.Groups["height"].Value;
-                        }
-                        match = Regex.Match(baseWebData, MarkizaUtil.showVoyoProdUnitMediaRegex);
-                        if (match.Success)
-                        {
-                            prod = match.Groups["prod"].Value;
-                            unit = match.Groups["unit"].Value;
-                            media = match.Groups["media"].Value;
-                        }
-
-                        String showParamsUrl = String.Format(MarkizaUtil.showVoyoVideoUrlFormat, prod, unit, media, site, section, subsite, site, width, height, new Random().NextDouble());
-                        String showParamsData = SiteUtilBase.GetWebData(showParamsUrl, null, null, null, true);
-
-                        Newtonsoft.Json.Linq.JObject jObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(showParamsData);
-                        String decodedPage = (String)((Newtonsoft.Json.Linq.JValue)((Newtonsoft.Json.Linq.JProperty)jObject.First).Value);
-
-                        String base64EncodedParameters = String.Empty;
-                        String showVoyoUrlParamStart = String.Format(MarkizaUtil.showVoyoUrlParamStartFormat, media);
-                        startIndex = decodedPage.IndexOf(showVoyoUrlParamStart);
-                        if (startIndex >= 0)
-                        {
-                            endIndex = decodedPage.IndexOf(MarkizaUtil.showVoyoUrlParamEnd, startIndex + showVoyoUrlParamStart.Length);
-                            if (endIndex >= 0)
-                            {
-                                base64EncodedParameters = decodedPage.Substring(startIndex + showVoyoUrlParamStart.Length, endIndex - startIndex - showVoyoUrlParamStart.Length);
-                            }
-                        }
-
-                        if (!String.IsNullOrEmpty(base64EncodedParameters))
-                        {
-                            String decodedParams = HttpUtility.HtmlDecode(Flowplayer.Commercial.V3_1_5_17_002.Aes.Decrypt(base64EncodedParameters, Flowplayer.Commercial.V3_1_5_17_002.Aes.Key, Flowplayer.Commercial.V3_1_5_17_002.Aes.KeyType.Key128));
-
-                            String host = String.Empty;
-                            String fileName = String.Empty;
-
-                            match = Regex.Match(decodedParams, MarkizaUtil.showVoyoHostRegex);
-                            if (match.Success)
-                            {
-                                jObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject("{ \"host\": \"" + match.Groups["host"].Value + "\" }");
-                                host = (String)((Newtonsoft.Json.Linq.JValue)((Newtonsoft.Json.Linq.JProperty)jObject.First).Value);
-                            }
-                            match = Regex.Match(decodedParams, MarkizaUtil.showVoyoFileNameRegex);
-                            if (match.Success)
-                            {
-                                jObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject("{ \"filename\": \"" + match.Groups["fileName"].Value + "\" }");
-                                fileName = (String)((Newtonsoft.Json.Linq.JValue)((Newtonsoft.Json.Linq.JProperty)jObject.First).Value);
-                            }
-
-                            if (!(String.IsNullOrEmpty(host) || String.IsNullOrEmpty(fileName)))
-                            {
-                                String playPath = String.Format("mp4:{0}-1.mp4", fileName);
-
-                                String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(host) { TcUrl = host, PlayPath = playPath }.ToString();
-
-                                videoUrls.Add(resultUrl);
-                            }
-                        }
-                    }
-                }
-
-                return videoUrls;
-
-                #endregion
-            }
+            return videoUrls;
         }
 
         #endregion

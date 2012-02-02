@@ -39,9 +39,6 @@ namespace OnlineVideos.Sites.georgius
         private static String showEpisodeVideoIdRegex = @"SWFObject\('[^\?]*\?itemid=(?<videoId>[^']+)'";
         private static String showEpisodeVideoDataFormat = "http://www.barrandov.tv/special/voddata/{1}"; // videoId
 
-        // the number of show episodes per page
-        private static int pageSize = 28;
-
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
 
@@ -147,6 +144,7 @@ namespace OnlineVideos.Sites.georgius
 
             if (!String.IsNullOrEmpty(pageUrl))
             {
+                this.nextPageUrl = String.Empty;
                 String baseWebData = SiteUtilBase.GetWebData(pageUrl);
 
                 int startIndex = baseWebData.IndexOf(BarrandovTvUtil.showEpisodesStart);
@@ -234,7 +232,7 @@ namespace OnlineVideos.Sites.georgius
             return pageVideos;
         }
 
-        private List<VideoInfo> GetVideoList(Category category, int videoCount)
+        private List<VideoInfo> GetVideoList(Category category)
         {
             hasNextPage = false;
             String baseWebData = String.Empty;
@@ -249,41 +247,16 @@ namespace OnlineVideos.Sites.georgius
             }
 
             this.currentCategory = parentCategory;
-            int addedVideos = 0;
-
-            while (true)
+            this.loadedEpisodes.AddRange(this.GetPageVideos(this.nextPageUrl));
+            while (this.currentStartIndex < this.loadedEpisodes.Count)
             {
-                while (((this.currentStartIndex + addedVideos) < this.loadedEpisodes.Count()) && (addedVideos < videoCount))
-                {
-                    videoList.Add(this.loadedEpisodes[this.currentStartIndex + addedVideos]);
-                    addedVideos++;
-                }
-
-                if (addedVideos < videoCount)
-                {
-                    List<VideoInfo> loadedVideos = this.GetPageVideos(this.nextPageUrl);
-
-                    if (loadedVideos.Count == 0)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        this.loadedEpisodes.AddRange(loadedVideos);
-                    }
-                }
-                else
-                {
-                    break;
-                }
+                videoList.Add(this.loadedEpisodes[this.currentStartIndex++]);
             }
 
-            if (((this.currentStartIndex + addedVideos) < this.loadedEpisodes.Count()) || (!String.IsNullOrEmpty(this.nextPageUrl)))
+            if (!String.IsNullOrEmpty(this.nextPageUrl))
             {
                 hasNextPage = true;
             }
-
-            this.currentStartIndex += addedVideos;
 
             return videoList;
         }
@@ -291,12 +264,12 @@ namespace OnlineVideos.Sites.georgius
         public override List<VideoInfo> getVideoList(Category category)
         {
             this.currentStartIndex = 0;
-            return this.GetVideoList(category, BarrandovTvUtil.pageSize - 2);
+            return this.GetVideoList(category);
         }
 
         public override List<VideoInfo> getNextPageVideos()
         {
-            return this.GetVideoList(this.currentCategory, BarrandovTvUtil.pageSize);
+            return this.GetVideoList(this.currentCategory);
         }
 
         public override bool HasNextPage
