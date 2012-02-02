@@ -124,6 +124,26 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
                 base.OnMediaEvent(code, lparam1, lparam2);
         }
 
+        int AddSourceFilter(Uri uri, IFilterGraph2 filterGraph, out IBaseFilter sourceFilter)
+        {
+            sourceFilter = null;
+            string protocol = uri.Scheme.Substring(0, Math.Min(uri.Scheme.Length, 4));
+            switch (protocol)
+            {
+                case "http":
+                case "rtmp":
+                    sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{87DD67C7-5D13-4CD5-819B-586FFCE8650F}"))) as IBaseFilter;
+                    return filterGraph.AddFilter(sourceFilter, OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName);
+                case "sop":
+                    sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{A895A82C-7335-4D6B-A811-82E9E3C4403E}"))) as IBaseFilter;
+                    return filterGraph.AddFilter(sourceFilter, "SopCast ASF Splitter");
+                case "mms":
+                    sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{187463A0-5BB7-11D3-ACBE-0080C75E246E}"))) as IBaseFilter;
+                    return filterGraph.AddFilter(sourceFilter, "WM ASF Reader");
+            }
+            return -1;
+        }
+
         /// <summary>
         /// Opens the media by initializing the DirectShow graph
         /// </summary>
@@ -161,28 +181,15 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
                 IBaseFilter sourceFilter;
 
                 /* Have DirectShow find the correct source filter for the Uri */
-                int hr = filterGraph.AddSourceFilter(fileSource, fileSource, out sourceFilter);
+                //int hr = filterGraph.AddSourceFilter(fileSource, fileSource, out sourceFilter);
 
                 // forced manual source filter loading if DShow couldn't find a source filter by checking registry from filename (which is likely)
-                if (hr != 0)
-                {
-                    if (m_sourceUri.Scheme == "http" )
-                    {
-                        sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{E436EBB6-524F-11CE-9F53-0020AF0BA770}"))) as IBaseFilter;
-                        hr = filterGraph.AddFilter(sourceFilter, "File Source (URL)");
-                    }
-                    else if (m_sourceUri.Scheme == "mms" || fileSource.ToLower().Contains(".asf"))
-                    {
-                        sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{187463A0-5BB7-11D3-ACBE-0080C75E246E}"))) as IBaseFilter;
-                        hr = filterGraph.AddFilter(sourceFilter, "WM ASF Reader");
-                    }
+                int hr = AddSourceFilter(m_sourceUri, filterGraph, out sourceFilter);
 
-                    if (hr == 0 && sourceFilter != null)
-                    {
-                        hr = ((IFileSourceFilter)sourceFilter).Load(fileSource, null);
-                    }
-                }
-                
+                if (hr == -1 || sourceFilter == null) throw new Exception("Could not find a source filter!");
+                DsError.ThrowExceptionForHR(hr);
+
+                hr = ((IFileSourceFilter)sourceFilter).Load(fileSource, null);
                 DsError.ThrowExceptionForHR(hr);
 
                 /* We will want to enum all the pins on the source filter */

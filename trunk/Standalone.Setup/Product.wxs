@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="OnlineVideos" Language="1033" Version="1.0.0.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
+	<Product Id="*" Name="OnlineVideos" Language="1033" Version="1.1.0.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
 		<Package InstallerVersion="200" Compressed="yes" />
 
     <Property Id="ARPPRODUCTICON">$(var.Standalone.TargetFileName)</Property>
@@ -29,6 +29,14 @@
             <File Id="EVRPresenter32" Source="$(var.Standalone.TargetDir)EVRPresenter32.dll" DiskId="1" Vital="yes"/>
             <File Id="NLog" Source="$(var.Standalone.TargetDir)NLog.dll" DiskId="1" Vital="yes"/>
           </Component>
+          <Directory Id="MPUrlSource" Name="MPUrlSource">
+            <Component Id="MPUrlSource" Guid="04047A84-E2C0-4EC8-A490-8467EDC2D302">
+              <File Id="MPUrlSource_ax" Source="$(var.SolutionDir)MPUrlSource\bin\Release\MPUrlSource.ax" DiskId="1" Vital="yes"/>
+              <File Id="libcurl_dll" Source="$(var.SolutionDir)MPUrlSource\bin\Release\libcurl.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Http_dll" Source="$(var.SolutionDir)MPUrlSource\bin\Release\MPUrlSource_Http.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Rtmp_dll" Source="$(var.SolutionDir)MPUrlSource\bin\Release\MPUrlSource_Rtmp.dll" DiskId="1" Vital="yes"/>
+            </Component>
+          </Directory>
           <Directory Id="Images" Name="Images">
             <Component Id="OnlineVideosStandaloneImages" Guid="5212c6f7-6f1c-4b97-ab7c-4929c69fc7b0">
               <File Id="NextPage" Source="$(var.Standalone.TargetDir)\Images\NextPage.png" DiskId="1" Vital="yes"/>
@@ -77,8 +85,9 @@
 			<ComponentRef Id="OnlineVideosStandalone" />
       <ComponentRef Id="OnlineVideosStandaloneImages" />
       <ComponentRef Id="OnlineVideosLanguageFlags" />
-			
-			<!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
+      <ComponentRef Id="MPUrlSource" />
+
+      <!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
 			<ComponentGroupRef Id="Product.Generated" />
 		</Feature>
 
@@ -88,7 +97,15 @@
       <UIRef Id="WixUI_InstallDir" />
     </UI>
 
+    <InstallExecuteSequence>
+      <Custom Action="RegisterAx" After="InstallFinalize">NOT Installed</Custom>
+      <Custom Action="UnregisterAx" Before="InstallInitialize">Installed</Custom>
+    </InstallExecuteSequence>
+
     <CustomAction Id="StartAppOnExit" FileKey="MainExecutable" ExeCommand="" Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
+    <CustomAction Id="RegisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s "MPUrlSource.ax"' Return="check"/>
+    <CustomAction Id="UnregisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s /u "MPUrlSource.ax"'/>
+    
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Start OnlineVideos Standalone" />
     <UI>
       <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="StartAppOnExit">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>

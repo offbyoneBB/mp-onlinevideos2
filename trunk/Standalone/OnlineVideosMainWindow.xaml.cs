@@ -60,9 +60,6 @@ namespace Standalone
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mp4")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mp4", false);
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".wmv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".wmv", false);
 
-			// add a special reversed proxy handler for rtmp
-			ReverseProxy.Instance.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance);
-
             InitializeComponent();
         }
 
@@ -424,19 +421,12 @@ namespace Standalone
 
 		void Play_Step3(PlayListItem playItem, string urlToPlay, bool goFullScreen)
 		{
-			// check for valid url and cut off additional parameter
-			if (String.IsNullOrEmpty(urlToPlay) ||
-				!Utils.IsValidUri((urlToPlay.IndexOf("&&&&") > 0) ? urlToPlay.Substring(0, urlToPlay.IndexOf("&&&&")) : urlToPlay))
+            // check for valid url and cut off additional parameter
+            if (String.IsNullOrEmpty(urlToPlay) ||
+				!Utils.IsValidUri((urlToPlay.IndexOf(OnlineVideos.MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? urlToPlay.Substring(0, urlToPlay.IndexOf(OnlineVideos.MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : urlToPlay))
 			{
 				MessageBox.Show(this, Translation.Instance.Error, Translation.Instance.UnableToPlayVideo, MessageBoxButton.OK);
 				return;
-			}
-
-			// translate rtmp urls to the local proxy
-			if (new Uri(urlToPlay).Scheme.ToLower().StartsWith("rtmp"))
-			{
-				urlToPlay = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-								string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(urlToPlay)));
 			}
 
 			// Play
@@ -730,7 +720,7 @@ namespace Standalone
 
         private void mediaPlayer_MediaFailed(object sender, WPFMediaKit.DirectShow.MediaPlayers.MediaFailedEventArgs e)
         {
-            MessageBox.Show(this, Translation.Instance.UnableToPlayVideo + ": " +e.Message, Translation.Instance.Error, MessageBoxButton.OK);
+            MessageBox.Show(Translation.Instance.UnableToPlayVideo + ": " +e.Message, Translation.Instance.Error, MessageBoxButton.OK);
             Dispatcher.Invoke((Action)(() => { Stop_Executed(sender, null); }));
         }
 
