@@ -585,14 +585,21 @@ STDMETHODIMP CLAVInputPin::Load()
     result = E_FAIL;
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     FREE_MEM(this->url);
     this->url = Duplicate(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
     result = (this->url == NULL) ? E_OUTOFMEMORY : S_OK;
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
+  {
+    FREE_MEM(this->storeFilePath);
+    this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
+    this->downloadingFile = (this->storeFilePath != NULL);
+  }
+
+  if (SUCCEEDED(result))
   {
     if(!this->LoadProtocolImplementation(this->url, this->configuration))
     {
@@ -600,7 +607,7 @@ STDMETHODIMP CLAVInputPin::Load()
     }
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     // now we have active protocol with loaded url, but still not working
     // create thread for receiving data
@@ -608,7 +615,7 @@ STDMETHODIMP CLAVInputPin::Load()
     result = this->CreateReceiveDataWorker();
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     DWORD ticks = GetTickCount();
     DWORD timeout = 0;
@@ -627,7 +634,7 @@ STDMETHODIMP CLAVInputPin::Load()
       result = E_FAIL;
     }
 
-    if (result == S_OK)
+    if (SUCCEEDED(result))
     {
       // wait for receiving data, timeout or exit
       while ((this->status != STATUS_RECEIVING_DATA) && (this->status != STATUS_NO_DATA_ERROR) && ((GetTickCount() - ticks) <= timeout) && (!this->receiveDataWorkerShouldExit))
@@ -651,7 +658,7 @@ STDMETHODIMP CLAVInputPin::Load()
         break;
       }
 
-      if (result != S_OK)
+      if (FAILED(result))
       {
         this->DestroyReceiveDataWorker();
       }

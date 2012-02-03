@@ -572,7 +572,7 @@ int64_t CMPUrlSourceSplitter_Http::SeekToPosition(int64_t start, int64_t end)
     result = start;
   }
 
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, result);
   return result;
 }
 
@@ -862,6 +862,6 @@ int64_t CMPUrlSourceSplitter_Http::SeekToTime(int64_t time)
 
   int64_t result = -1;
 
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
   return result;
 }
