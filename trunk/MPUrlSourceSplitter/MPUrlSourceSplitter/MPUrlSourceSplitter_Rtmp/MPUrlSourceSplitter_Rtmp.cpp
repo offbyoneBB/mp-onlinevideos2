@@ -379,6 +379,23 @@ void CMPUrlSourceSplitter_Rtmp::ReceiveData(bool *shouldExit)
         {
           // whole stream downloaded
           this->wholeStreamDownloaded = true;
+
+          if (this->streamTime == 0)
+          {
+            // if stream time is zero than we receive data from beginning
+            // in that case we can set total length and call EndOfStreamReached() method (required for ending download)
+            if (!this->setLenght)
+            {
+              this->streamLength = this->bytePosition;
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+              this->filter->SetTotalLength(this->streamLength, false);
+              this->setLenght = true;
+            }
+
+            // notify filter the we reached end of stream
+            // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+            this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
+          }
         }
 
         // connection is no longer needed
@@ -421,7 +438,7 @@ int64_t CMPUrlSourceSplitter_Rtmp::SeekToPosition(int64_t start, int64_t end)
 
   int64_t result = -1;
 
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, result);
   return result;
 }
 
@@ -630,6 +647,6 @@ int64_t CMPUrlSourceSplitter_Rtmp::SeekToTime(int64_t time)
     result = ((max(0, time - 1000) / 1000) * 1000);
   }
 
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
   return result;
 }

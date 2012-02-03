@@ -58,6 +58,8 @@
 #define METHOD_START_FORMAT                                             L"%s: %s: Start"
 #define METHOD_END_FORMAT                                               L"%s: %s: End"
 #define METHOD_END_HRESULT_FORMAT                                       L"%s: %s: End, result: 0x%08X"
+#define METHOD_END_INT_FORMAT                                           L"%s: %s: End, result: %d"
+#define METHOD_END_INT64_FORMAT                                         L"%s: %s: End, result: %lld"
 #define METHOD_END_FAIL_FORMAT                                          L"%s: %s: End, Fail"
 #define METHOD_END_FAIL_HRESULT_FORMAT                                  L"%s: %s: End, Fail, result: 0x%08X"
 #define METHOD_MESSAGE_FORMAT                                           L"%s: %s: %s"
