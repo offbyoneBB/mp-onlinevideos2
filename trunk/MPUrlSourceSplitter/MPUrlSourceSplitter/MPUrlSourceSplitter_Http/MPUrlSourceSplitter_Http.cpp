@@ -538,7 +538,7 @@ unsigned int CMPUrlSourceSplitter_Http::GetOpenConnectionMaximumAttempts(void)
 int64_t CMPUrlSourceSplitter_Http::SeekToPosition(int64_t start, int64_t end)
 {
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME);
-  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, start, end);
+  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from position: %llu, to position: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, start, end);
 
   int64_t result = -1;
 
