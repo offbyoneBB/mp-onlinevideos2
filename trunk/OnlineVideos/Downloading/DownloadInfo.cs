@@ -115,8 +115,7 @@ namespace OnlineVideos
         public List<DownloadInfo> GetAll()
         {
             List<DownloadInfo> result = CurrentDownloadsParallel.Select(c => c.CurrentItem).ToList();
-            result.AddRange(CurrentDownloadsQueuedPerSite.Values.ToList().Select(l => l.First().CurrentItem));
-            var r = CurrentDownloadsQueuedPerSite.Select(c => c.Value).Select(dl => dl.AsQueryable()).ToList();
+            result.AddRange(CurrentDownloadsQueuedPerSite.Select(c => c.Value).SelectMany(l => l).Select(l => l.CurrentItem));
             return result;
         }
 
@@ -212,7 +211,7 @@ namespace OnlineVideos
             get
             {
                 return (PercentComplete != 0 || KbTotal != 0 || KbDownloaded != 0) ?
-                    string.Format("{0}{1} KB - {2} KB/sec", PercentComplete > 0 ? PercentComplete + "% / " : "", KbTotal > 0 ? KbTotal.ToString("n0") : KbDownloaded.ToString("n0"), (int)(KbDownloaded / (DateTime.Now - Start).TotalSeconds)) : "";
+                    string.Format("{0}{1} KB - {2} KB/sec", PercentComplete > 0 ? PercentComplete + "% / " : "", KbTotal > 0 ? KbTotal.ToString("n0") : KbDownloaded.ToString("n0"), (int)(KbDownloaded / (DateTime.Now - Start).TotalSeconds)) : Translation.Instance.Queued;
             }
         }
     }
