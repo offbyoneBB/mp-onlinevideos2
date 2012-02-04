@@ -1235,6 +1235,15 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
                 int64_t guessPosition1 = (avPacket.dts > 0) ? (seek_pts * avPacket.pos / avPacket.dts) : 0;
                 int64_t guessPosition2 = seek_pts * totalLength / duration;
 
+                if (guessPosition1 > totalLength)
+                {
+                  logger->Log(LOGGER_WARNING, L"%s: %s: guess position 1 out of range, seek_pts: %lld, pos: %lld, dts: %lld ", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, seek_pts, avPacket.pos, avPacket.dts);
+                }
+                if (guessPosition2 > totalLength)
+                {
+                  logger->Log(LOGGER_WARNING, L"%s: %s: guess position 2 out of range, seek_pts: %lld, total length: %lld, duration: %lld ", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, seek_pts, totalLength, duration);
+                }
+
                 int64_t guessPosition = (guessPosition1 + guessPosition2) / 2;
 
                 if (avio_seek(this->m_avFormat->pb, guessPosition, SEEK_SET) >= 0)
