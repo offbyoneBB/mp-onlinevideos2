@@ -61,10 +61,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MpeCore">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\MpeCore.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="log4net">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\log4net.dll</HintPath>
