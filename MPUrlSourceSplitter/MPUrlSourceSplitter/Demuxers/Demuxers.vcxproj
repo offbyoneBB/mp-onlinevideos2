@@ -82,6 +82,7 @@
     <ClInclude Include="LAVFVideoHelper.h" />
     <ClInclude Include="LAVFStreamInfo.h" />
     <ClInclude Include="LAVFUtils.h" />
+    <ClInclude Include="Memory.h" />
     <ClInclude Include="mkv\MatroskaParser.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StreamInfo.h" />
