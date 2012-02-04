@@ -377,10 +377,10 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
     }
   }
 
-  //this->url = ConvertToUnicodeW(pszFileName);
+  this->url = ConvertToUnicodeW(pszFileName);
   //this->url = ConvertToUnicodeW(L"http://o-o.preferred.orangesk-bts1.v11.lscache3.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Calgorithm%2Cburst%2Cfactor%2Ccp&fexp=913100%2C913603&algorithm=throttle-factor&itag=35&ip=109.0.0.0&burst=40&sver=3&signature=5107DECD1DA24BE91D418EDA2AF5B77DB7CEDABF.6CCA2F5D73B8D80253E764DDF0B0408D67BCDCF4&source=youtube&expire=1327798912&key=yt1&ipbits=8&factor=1.25&cp=U0hRTFdUVl9GTENOMV9PTlpKOnJndFVIc1J3eEdx&id=290eb3afa9023e3f&ext=.flv");
   //this->url = ConvertToUnicodeW(L"http://o-o.preferred.orangesk-bts1.v19.lscache6.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Cratebypass%2Ccp&fexp=913101%2C914102&itag=22&ip=109.0.0.0&signature=4BFB2A666D60B3FB7EF21015A8ADDFAF7A453D14.4C8D82ACE304C95383AE07D40ABE57629EB9563B&sver=3&ratebypass=yes&source=youtube&expire=1328151712&key=yt1&ipbits=8&cp=U0hRTVFQT19GTENOMV9JSlNIOnJwNlBBUUhBVDhh&id=290eb3afa9023e3f&ext=.mp4");
-  this->url = ConvertToUnicodeW(L"http://o-o.preferred.orangesk-bts1.v11.lscache3.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Calgorithm%2Cburst%2Cfactor%2Ccp&fexp=904542%2C909708%2C913603&algorithm=throttle-factor&itag=35&ip=109.0.0.0&burst=40&sver=3&signature=6359ABC292A5EAA62203D194F09919431494BC06.76B952A688EAA663CCDEA92571327B803695BE56&source=youtube&expire=1328385712&key=yt1&ipbits=8&factor=1.25&cp=U0hRTVNTU19GTENOMV9LTVdIOm1qNEE4bFdMZFow&id=290eb3afa9023e3f&ext=.flv");
+  //this->url = ConvertToUnicodeW(L"http://o-o.preferred.orangesk-bts1.v11.lscache3.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Calgorithm%2Cburst%2Cfactor%2Ccp&fexp=904542%2C909708%2C913603&algorithm=throttle-factor&itag=35&ip=109.0.0.0&burst=40&sver=3&signature=6359ABC292A5EAA62203D194F09919431494BC06.76B952A688EAA663CCDEA92571327B803695BE56&source=youtube&expire=1328385712&key=yt1&ipbits=8&factor=1.25&cp=U0hRTVNTU19GTENOMV9LTVdIOm1qNEE4bFdMZFow&id=290eb3afa9023e3f&ext=.flv");
 
   if (this->url == NULL)
   {
