@@ -324,7 +324,8 @@ case CODEC_ID_SUNRAST:
     { extern AVCodec ff_sunrast_decoder;
       return ff_sunrast_decoder.name; }
 case CODEC_ID_INDEO4:
-    return "indeo4";
+    { extern AVCodec ff_indeo4_decoder;
+      return ff_indeo4_decoder.name; }
 case CODEC_ID_INDEO5:
     { extern AVCodec ff_indeo5_decoder;
       return ff_indeo5_decoder.name; }
@@ -461,14 +462,26 @@ case CODEC_ID_DXTORY:
 case CODEC_ID_V410:
     { extern AVCodec ff_v410_decoder;
       return ff_v410_decoder.name; }
+case CODEC_ID_Y41P:
+    { extern AVCodec ff_y41p_decoder;
+      return ff_y41p_decoder.name; }
 case CODEC_ID_UTVIDEO:
     { extern AVCodec ff_utvideo_decoder;
       return ff_utvideo_decoder.name; }
 case CODEC_ID_ESCAPE130:
     { extern AVCodec ff_escape130_decoder;
       return ff_escape130_decoder.name; }
+case CODEC_ID_AVRP:
+    { extern AVCodec ff_avrp_decoder;
+      return ff_avrp_decoder.name; }
 case CODEC_ID_G2M:
     return "g2m";
+case CODEC_ID_V308:
+    { extern AVCodec ff_v308_decoder;
+      return ff_v308_decoder.name; }
+case CODEC_ID_YUV4:
+    { extern AVCodec ff_yuv4_decoder;
+      return ff_yuv4_decoder.name; }
 case CODEC_ID_PCM_S16LE:
     { extern AVCodec ff_pcm_s16le_decoder;
       return ff_pcm_s16le_decoder.name; }

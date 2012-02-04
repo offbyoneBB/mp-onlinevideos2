@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -56,9 +56,18 @@ CLAVFStreamInfo::~CLAVFStreamInfo()
 
 STDMETHODIMP CLAVFStreamInfo::CreateAudioMediaType(AVFormatContext *avctx, AVStream *avstream)
 {
+  // Make sure DTS Express has valid settings
+  if (avstream->codec->codec_id == CODEC_ID_DTS && avstream->codec->codec_tag == 0xA2) {
+    avstream->codec->channels = avstream->codec->channels ? avstream->codec->channels : 2;
+    avstream->codec->sample_rate = avstream->codec->sample_rate ? avstream->codec->sample_rate : 48000;
+  }
+
   if (avstream->codec->codec_tag == 0) {
     avstream->codec->codec_tag = av_codec_get_tag(mp_wav_taglists, avstream->codec->codec_id);
   }
+
+  if (avstream->codec->channels == 0 || avstream->codec->sample_rate == 0)
+    return E_FAIL;
 
   CMediaType mtype = g_AudioHelper.initAudioType(avstream->codec->codec_id, avstream->codec->codec_tag, m_containerFormat);
 
@@ -85,6 +94,9 @@ STDMETHODIMP CLAVFStreamInfo::CreateAudioMediaType(AVFormatContext *avctx, AVStr
       mtype.pbFormat = (BYTE *)wvfmt;
 
       if (avstream->codec->codec_id == CODEC_ID_FLAC) {
+        // These are required to block accidental connection to ReClock
+        wvfmt->nAvgBytesPerSec = (wvfmt->nSamplesPerSec * wvfmt->nChannels * wvfmt->wBitsPerSample) >> 3;
+        wvfmt->nBlockAlign = 1;
         mtype.subtype = MEDIASUBTYPE_FLAC_FRAMED;
         mtypes.push_back(mtype);
         mtype.subtype = MEDIASUBTYPE_FLAC;
@@ -141,6 +153,10 @@ STDMETHODIMP CLAVFStreamInfo::CreateVideoMediaType(AVFormatContext *avctx, AVStr
   if (avstream->codec->codec_tag == 0) {
     avstream->codec->codec_tag = av_codec_get_tag(mp_bmp_taglists, avstream->codec->codec_id);
   }
+
+  if (avstream->codec->width == 0 || avstream->codec->height == 0)
+    return E_FAIL;
+
   CMediaType mtype = g_VideoHelper.initVideoType(avstream->codec->codec_id, avstream->codec->codec_tag, m_containerFormat);
 
   mtype.SetTemporalCompression(TRUE);
@@ -163,13 +179,22 @@ STDMETHODIMP CLAVFStreamInfo::CreateVideoMediaType(AVFormatContext *avctx, AVStr
     mtype.pbFormat = (BYTE *)g_VideoHelper.CreateVIH(avstream, &mtype.cbFormat);
   } else if (mtype.formattype == FORMAT_VideoInfo2) {
     mtype.pbFormat = (BYTE *)g_VideoHelper.CreateVIH2(avstream, &mtype.cbFormat, m_containerFormat);
-    if (avstream->codec->codec_id == CODEC_ID_VC1) {
+    if (mtype.subtype == MEDIASUBTYPE_WVC1) {
       // If we send the cyberlink subtype first, it'll work with it, and with ffdshow, dmo and mpc-hc internal
-      mtype.subtype = MEDIASUBTYPE_WVC1_CYBERLINK;
-      mtypes.push_back(mtype);
-      mtype.subtype = MEDIASUBTYPE_WVC1_ARCSOFT;
-      mtypes.push_back(mtype);
+      VIDEOINFOHEADER2 *vih2 = (VIDEOINFOHEADER2 *)mtype.pbFormat;
+      if (*((BYTE*)vih2 + sizeof(VIDEOINFOHEADER2)) == 0) {
+        mtype.subtype = MEDIASUBTYPE_WVC1_CYBERLINK;
+        mtypes.push_back(mtype);
+        mtype.subtype = MEDIASUBTYPE_WVC1_ARCSOFT;
+        mtypes.push_back(mtype);
+      }
       mtype.subtype = MEDIASUBTYPE_WVC1;
+    } else if (mtype.subtype == MEDIASUBTYPE_WMVA) {
+      mtypes.push_back(mtype);
+
+      mtype.subtype = MEDIASUBTYPE_WVC1;
+      VIDEOINFOHEADER2 *vih2 = (VIDEOINFOHEADER2 *)mtype.pbFormat;
+      vih2->bmiHeader.biCompression = mtype.subtype.Data1;
     }
   } else if (mtype.formattype == FORMAT_MPEGVideo) {
     mtype.pbFormat = (BYTE *)g_VideoHelper.CreateMPEG1VI(avstream, &mtype.cbFormat);

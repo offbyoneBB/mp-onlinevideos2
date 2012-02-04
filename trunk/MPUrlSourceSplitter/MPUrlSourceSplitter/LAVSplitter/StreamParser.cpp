@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,8 @@ HRESULT CStreamParser::Parse(const GUID &gSubtype, Packet *pPacket)
   
   if (!pPacket || (pPacket->dwFlags & LAV_PACKET_PARSED)) {
     Queue(pPacket);
-  } else if ((m_strContainer == "mpegts" || m_strContainer == "mpeg" || m_strContainer == "avi" || m_strContainer == "wtv" || m_strContainer == "rawvideo" || (m_strContainer == "matroska" && (pPacket->dwFlags & LAV_PACKET_H264_ANNEXB))) && m_gSubtype == MEDIASUBTYPE_AVC1) {
+  } else if ((m_strContainer == "mpegts" || m_strContainer == "mpeg" || m_strContainer == "avi" || m_strContainer == "wtv" || m_strContainer == "rawvideo"
+           || m_strContainer == "rtsp" || m_strContainer == "rtp" || m_strContainer == "asf" || (m_strContainer == "matroska" && (pPacket->dwFlags & LAV_PACKET_H264_ANNEXB))) && m_gSubtype == MEDIASUBTYPE_AVC1) {
     ParseH264AnnexB(pPacket);
   } else if (m_gSubtype == MEDIASUBTYPE_HDMVSUB) {
     ParsePGS(pPacket);

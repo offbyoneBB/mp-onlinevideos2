@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 #pragma once
 
 #define LAV_VERSION_MAJOR 0
-#define LAV_VERSION_MINOR 43
+#define LAV_VERSION_MINOR 45
 
 #define LAV_AUDIO "LAV Audio Decoder"
 #define LAV_VIDEO "LAV Video Decoder"

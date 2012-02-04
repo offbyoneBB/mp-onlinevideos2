@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -24,13 +24,16 @@
 #define MIN_PACKETS_IN_QUEUE 100           // Below this is considered "drying pin"
 #define MAX_PACKETS_IN_QUEUE 1000
 
+// 512MB maximum for a single queue
+#define MAX_QUEUE_SIZE       (512 * 1024 * 1024)
+
 class Packet;
 
 // FIFO Packet Queue
 class CPacketQueue : public CCritSec
 {
 public:
-  CPacketQueue() {};
+  CPacketQueue() : m_dataSize(0) {};
 
   // Queue a new packet at the end of the list
   void Queue(Packet *pPacket, BOOL tryAppend = TRUE);
@@ -40,6 +43,9 @@ public:
 
   // Get the size of the queue
   size_t Size();
+
+  // Get the size of the queue in bytes
+  size_t DataSize();
 
   // Clear the List (all elements are free'ed)
   void Clear();
@@ -51,6 +57,7 @@ public:
 private:
   // The actual storage class
   std::deque<Packet *> m_queue;
+  size_t m_dataSize;
 
 #ifdef DEBUG
   bool m_bWarnedFull;

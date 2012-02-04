@@ -27,7 +27,7 @@
 #include "libavutil/intreadwrite.h"
 
 typedef struct {
-    const uint8_t *buffer, *buffer_end;
+    const uint8_t *buffer, *buffer_end, *buffer_start;
 } GetByteContext;
 
 #define DEF_T(type, name, bytes, read, write)                             \
@@ -39,11 +39,15 @@ static av_always_inline void bytestream_put_ ##name(uint8_t **b, const type valu
     write(*b, value);\
     (*b) += bytes;\
 }\
+static av_always_inline type bytestream2_get_ ## name ## u(GetByteContext *g)\
+{\
+    return bytestream_get_ ## name(&g->buffer);\
+}\
 static av_always_inline type bytestream2_get_ ## name(GetByteContext *g)\
 {\
     if (g->buffer_end - g->buffer < bytes)\
         return 0;\
-    return bytestream_get_ ## name(&g->buffer);\
+    return bytestream2_get_ ## name ## u(g);\
 }\
 static av_always_inline type bytestream2_peek_ ## name(GetByteContext *g)\
 {\
@@ -71,10 +75,47 @@ DEF  (byte, 1, AV_RB8 , AV_WB8 )
 #undef DEF64
 #undef DEF_T
 
+#if HAVE_BIGENDIAN
+#   define bytestream2_get_ne16  bytestream2_get_be16
+#   define bytestream2_get_ne24  bytestream2_get_be24
+#   define bytestream2_get_ne32  bytestream2_get_be32
+#   define bytestream2_get_ne64  bytestream2_get_be64
+#   define bytestream2_get_ne16u bytestream2_get_be16u
+#   define bytestream2_get_ne24u bytestream2_get_be24u
+#   define bytestream2_get_ne32u bytestream2_get_be32u
+#   define bytestream2_get_ne64u bytestream2_get_be64u
+#   define bytestream2_put_ne16  bytestream2_put_be16
+#   define bytestream2_put_ne24  bytestream2_put_be24
+#   define bytestream2_put_ne32  bytestream2_put_be32
+#   define bytestream2_put_ne64  bytestream2_put_be64
+#   define bytestream2_peek_ne16 bytestream2_peek_be16
+#   define bytestream2_peek_ne24 bytestream2_peek_be24
+#   define bytestream2_peek_ne32 bytestream2_peek_be32
+#   define bytestream2_peek_ne64 bytestream2_peek_be64
+#else
+#   define bytestream2_get_ne16  bytestream2_get_le16
+#   define bytestream2_get_ne24  bytestream2_get_le24
+#   define bytestream2_get_ne32  bytestream2_get_le32
+#   define bytestream2_get_ne64  bytestream2_get_le64
+#   define bytestream2_get_ne16u bytestream2_get_le16u
+#   define bytestream2_get_ne24u bytestream2_get_le24u
+#   define bytestream2_get_ne32u bytestream2_get_le32u
+#   define bytestream2_get_ne64u bytestream2_get_le64u
+#   define bytestream2_put_ne16  bytestream2_put_le16
+#   define bytestream2_put_ne24  bytestream2_put_le24
+#   define bytestream2_put_ne32  bytestream2_put_le32
+#   define bytestream2_put_ne64  bytestream2_put_le64
+#   define bytestream2_peek_ne16 bytestream2_peek_le16
+#   define bytestream2_peek_ne24 bytestream2_peek_le24
+#   define bytestream2_peek_ne32 bytestream2_peek_le32
+#   define bytestream2_peek_ne64 bytestream2_peek_le64
+#endif
+
 static av_always_inline void bytestream2_init(GetByteContext *g,
                                               const uint8_t *buf, int buf_size)
 {
     g->buffer =  buf;
+    g->buffer_start = buf;
     g->buffer_end = buf + buf_size;
 }
 
@@ -87,6 +128,34 @@ static av_always_inline void bytestream2_skip(GetByteContext *g,
                                               unsigned int size)
 {
     g->buffer += FFMIN(g->buffer_end - g->buffer, size);
+}
+
+static av_always_inline int bytestream2_tell(GetByteContext *g)
+{
+    return (int)(g->buffer - g->buffer_start);
+}
+
+static av_always_inline int bytestream2_seek(GetByteContext *g, int offset,
+                                             int whence)
+{
+    switch (whence) {
+    case SEEK_CUR:
+        offset = av_clip(offset, -(g->buffer - g->buffer_start),
+                         g->buffer_end - g->buffer);
+        g->buffer += offset;
+        break;
+    case SEEK_END:
+        offset = av_clip(offset, -(g->buffer_end - g->buffer_start), 0);
+        g->buffer = g->buffer_end + offset;
+        break;
+    case SEEK_SET:
+        offset = av_clip(offset, 0, g->buffer_end - g->buffer_start);
+        g->buffer = g->buffer_start + offset;
+        break;
+    default:
+        return AVERROR(EINVAL);
+    }
+    return bytestream2_tell(g);
 }
 
 static av_always_inline unsigned int bytestream2_get_buffer(GetByteContext *g,

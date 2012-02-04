@@ -3027,7 +3027,7 @@ found:
 
           for (n=0;n<mf->nTracks;++n)
             if (!(mf->trackMask & (1ui64<<n)) && m_kftime[n]==MAXU64 &&
-                m_seendf[n] && j>0)
+                m_seendf[n] && j>0 && (mf->Tracks[n]->Type == TT_VIDEO || mf->Tracks[n]->Type == TT_AUDIO))
             {
               // we need to restart the search from prev cue
               --j;
@@ -3067,6 +3067,8 @@ again:;
           if (m_kftime[n]==MAXU64 || (mf->Queues[n].head && mf->Queues[n].head->Start>=m_kftime[n])) {
             ++z;
             mask |= 1ui64<<n;
+          } else if (!(mf->Tracks[n]->Type == TT_VIDEO || mf->Tracks[n]->Type == TT_AUDIO)) {
+            ++z;
           }
 
         if (z==mf->nTracks)

@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -99,6 +99,16 @@ void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, LPCWSTR chkb
     DeleteRegKey(_T("Media Type\\Extensions"), ext);
   }
   va_end(extensions);
+}
+
+void RegisterProtocolSourceFilter(const CLSID& clsid, LPCWSTR protocol)
+{
+  SetRegKeyValue(protocol, _T(""), _T("Source Filter"), CStringFromGUID(clsid));
+}
+
+void UnRegisterProtocolSourceFilter(LPCWSTR protocol)
+{
+  DeleteRegKey(protocol, _T(""));
 }
 
 void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, std::list<LPCWSTR> chkbytes, ...)

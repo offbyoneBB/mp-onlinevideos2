@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -117,6 +117,8 @@ public:
 
   // Open the file
   virtual STDMETHODIMP Open(LPCOLESTR pszFileName) = 0;
+  // Abort opening the file
+  virtual STDMETHODIMP AbortOpening() { return E_NOTIMPL; }
   // Get Duration
   virtual REFERENCE_TIME GetDuration() const = 0;
   // Get the next packet from the file
@@ -143,6 +145,9 @@ public:
 
   // Called when the settings of the splitter change
   virtual void SettingsChanged(ILAVFSettingsInternal *pSettings) {};
+
+  virtual STDMETHODIMP_(DWORD) GetStreamFlags(DWORD dwStream) { return 0; }
+  virtual STDMETHODIMP_(int) GetPixelFormat(DWORD dwStream) { return PIX_FMT_NONE; }
 
 public:
   class CStreamList : public std::deque<stream>

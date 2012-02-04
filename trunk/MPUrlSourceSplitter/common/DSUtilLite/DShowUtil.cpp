@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -284,6 +284,49 @@ HRESULT FindIntefaceInGraph(IPin *pPin, REFIID refiid, void **pUnknown)
       SafeRelease(&pPinEnum);
     }
     SafeRelease(&pFilter);
+
+    if (SUCCEEDED(hrFilter)) {
+      return S_OK;
+    }
+  }
+  return E_NOINTERFACE;
+}
+
+// pPin - pin of our filter to start searching
+// refiid - guid of the interface to find
+// pUnknown - variable that'll receive the interface
+HRESULT FindPinIntefaceInGraph(IPin *pPin, REFIID refiid, void **pUnknown)
+{
+  PIN_DIRECTION dir;
+  pPin->QueryDirection(&dir);
+
+  IPin *pOtherPin = NULL;
+  if (SUCCEEDED(pPin->ConnectedTo(&pOtherPin)) && pOtherPin) {
+    IBaseFilter *pFilter = NULL;
+    HRESULT hrFilter = pOtherPin->QueryInterface(refiid, pUnknown);
+
+    if (FAILED(hrFilter)) {
+      pFilter = GetFilterFromPin(pOtherPin);
+
+      IEnumPins *pPinEnum = NULL;
+      pFilter->EnumPins(&pPinEnum);
+
+      HRESULT hrPin = E_FAIL;
+      for (IPin *pOtherPin2 = NULL; pPinEnum->Next(1, &pOtherPin2, 0) == S_OK; pOtherPin2 = NULL) {
+        PIN_DIRECTION pinDir;
+        pOtherPin2->QueryDirection(&pinDir);
+        if (dir == pinDir) {
+          hrPin = FindPinIntefaceInGraph(pOtherPin2, refiid, pUnknown);
+        }
+        SafeRelease(&pOtherPin2);
+        if (SUCCEEDED(hrPin))
+          break;
+      }
+      hrFilter = hrPin;
+      SafeRelease(&pPinEnum);
+    }
+    SafeRelease(&pFilter);
+    SafeRelease(&pOtherPin);
 
     if (SUCCEEDED(hrFilter)) {
       return S_OK;
