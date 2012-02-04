@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -30,9 +30,11 @@
 #include "moreuuids.h"
 
 #include "LAVSplitter.h"
+#include "ILAVPinInfo.h"
 
 class CLAVOutputPin
   : public CBaseOutputPin
+  , public ILAVPinInfo
   , IMediaSeeking
   , protected CAMThread
 {
@@ -75,6 +77,10 @@ public:
   STDMETHODIMP GetRate(double* pdRate);
   STDMETHODIMP GetPreroll(LONGLONG* pllPreroll);
 
+  // ILAVPinInfo
+  STDMETHODIMP_(DWORD) GetStreamFlags();
+  STDMETHODIMP_(int) GetPixelFormat();
+
   size_t QueueCount();
   HRESULT QueuePacket(Packet *pPacket);
   HRESULT QueueEndOfStream();
@@ -94,12 +100,16 @@ public:
 
   HRESULT QueueFromParser(Packet *pPacket) { m_queue.Queue(pPacket); return S_OK; }
 
+  HRESULT GetQueueSize(int& samples, int& size);
+
 public:
   // Packet handling functions
   virtual HRESULT DeliverBeginFlush();
   virtual HRESULT DeliverEndFlush();
 
   virtual HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
+
+  REFERENCE_TIME m_rtPrev;
 
 protected:
   virtual HRESULT DeliverPacket(Packet *pPacket);

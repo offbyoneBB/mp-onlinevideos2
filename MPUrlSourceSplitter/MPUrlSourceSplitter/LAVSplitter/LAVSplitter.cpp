@@ -77,6 +77,7 @@ CLAVSplitter::CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr)
   , m_pSite(NULL)
   , m_bFakeASFReader(FALSE)
   //, m_bStopValid(FALSE)
+  , m_rtOffset(0)
 {
   this->logger = new CLogger(NULL);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
@@ -98,45 +99,6 @@ CLAVSplitter::CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr)
     ffmpeg_log_callback_set = true;
   }
 
-  // now register protocols
-  //StreamProtocol *streamProtocol = (StreamProtocol *)av_mallocz(sizeof(StreamProtocol));
-  //if (streamProtocol != NULL)
-  //{
-  //  CAutoLock cAutoLock(this);
-
-  //  // this is little flaw in design of ffmpeg library
-  //  // ffmpeg library needs that all protocols are registered
-  //  // but protocol cannot be unregistered (which leads to memory leak)
-  //  // size of StreamProtocol structure is 60 bytes
-
-  //  // we assume that stream_ methods will not be called after closing demuxer and splitter
-  //  // in another case it will possibly lead to crash
-
-  //  this->streamProtocolName = FormatString(L"stream%08X", CLAVSplitter::instanceCounter++);
-  //  streamProtocol->name = ConvertToMultiByteW(this->streamProtocolName);
-  //  if (streamProtocol->name != NULL)
-  //  {
-  //    streamProtocol->url_open = stream_open;
-  //    streamProtocol->url_read = stream_read;
-  //    streamProtocol->url_write = NULL;
-  //    streamProtocol->url_seek = stream_seek;
-  //    //streamProtocol->url_seek = NULL;
-  //    //streamProtocol->url_read_pause = stream_read_pause;
-  //    //streamProtocol->url_read_seek = stream_read_seek;
-  //    streamProtocol->url_close = stream_close;
-  //    streamProtocol->url_get_file_handle = stream_get_file_handle;
-  //    streamProtocol->splitter = this;
-
-  //    av_register_protocol2(streamProtocol, sizeof(StreamProtocol));
-  //    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: registered stream protocol: %s", MODULE_NAME, METHOD_CONSTRUCTOR_NAME, this->streamProtocolName);
-  //  }
-  //  else
-  //  {
-  //    // cleanup stream protocol name
-  //    FREE_MEM(this->streamProtocolName);
-  //  }
-  //}
-
   m_InputFormats.clear();
 
   std::set<FormatInfo> lavf_formats = CLAVFDemuxer::GetFormatList();
@@ -155,113 +117,6 @@ CLAVSplitter::CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr)
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 }
-
-//int CLAVSplitter::stream_open(URLContext *h, const char *uri, int flags)
-//{
-//  int result = AVERROR(ENOSYS);
-//
-//  /*if (h->prot != NULL)
-//  {
-//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
-//    CLAVSplitter *splitter = protocol->splitter;
-//
-//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s, connected: %d, streamed: %d, flags: 0x%08X", MODULE_NAME, METHOD_STREAM_OPEN_NAME, splitter->streamProtocolName, h->is_connected, h->is_streamed, h->flags);
-//    result = (splitter->m_pInput->status == STATUS_RECEIVING_DATA) ? 0 : AVERROR(ENOTCONN);
-//  }*/
-//
-//  return result;
-//}
-//
-//int CLAVSplitter::stream_read(URLContext *h, uint8_t *buf, int size)
-//{
-//  int result = AVERROR(ENOSYS);
-//
-//  /*if (h->prot != NULL)
-//  {
-//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
-//    CLAVSplitter *splitter = protocol->splitter;
-//
-//    result = CLAVInputPin::Read(splitter->m_pInput, buf, size);
-//  }*/
-//
-//  return result;
-//}
-//
-//int64_t CLAVSplitter::stream_seek(URLContext *h, int64_t off, int whence)
-//{
-//  int64_t result = AVERROR(ENOSYS);
-//
-//  /*if (h->prot != NULL)
-//  {
-//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
-//    CLAVSplitter *splitter = protocol->splitter;
-//
-//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s, offset: %llu, whence: %d", MODULE_NAME, METHOD_STREAM_SEEK_NAME, splitter->streamProtocolName, off, whence);
-//    result = CLAVInputPin::Seek(splitter->m_pInput, off, whence);
-//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: End, result: %lld", MODULE_NAME, METHOD_STREAM_SEEK_NAME, result);
-//  }*/
-//
-//  return result;
-//}
-//
-//int CLAVSplitter::stream_read_pause(URLContext *h, int pause)
-//{
-//  // this method seems to be called NEVER
-//  /*if (h->prot != NULL)
-//  {
-//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
-//    CLAVSplitter *splitter = protocol->splitter;
-//
-//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s", MODULE_NAME, METHOD_STREAM_READ_PAUSE_NAME, splitter->streamProtocolName);
-//  }*/
-//
-//  return 0;
-//}
-//
-//int64_t CLAVSplitter::stream_read_seek(URLContext *h, int stream_index, int64_t timestamp, int flags)
-//{
-//  int64_t result = AVERROR(ENOSYS);
-//  // this method is called when
-//  /*if (h->prot != NULL)
-//  {
-//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
-//    CLAVSplitter *splitter = protocol->splitter;
-//
-//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s, stream index: %d, timestamp: %I64d, flags : 0x%08X", MODULE_NAME, METHOD_STREAM_READ_SEEK_NAME, splitter->streamProtocolName, stream_index, timestamp, flags);
-//    result = splitter->m_pInput->ReadSeek(splitter->m_pInput, stream_index, timestamp, flags);
-//
-//    splitter->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, MODULE_NAME, METHOD_STREAM_READ_SEEK_NAME, result);
-//  }*/
-//
-//  return result;
-//}
-//
-//int CLAVSplitter::stream_close(URLContext *h)
-//{
-//  /*if (h->prot != NULL)
-//  {
-//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
-//    CLAVSplitter *splitter = protocol->splitter;
-//
-//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s", MODULE_NAME, METHOD_STREAM_CLOSE_NAME, splitter->streamProtocolName);
-//  }*/
-//
-//  return 0;
-//}
-//
-//int CLAVSplitter::stream_get_file_handle(URLContext *h)
-//{
-//  // this method seems to be called NEVER
-//  /*if (h->prot != NULL)
-//  {
-//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
-//    CLAVSplitter *splitter = protocol->splitter;
-//
-//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s", MODULE_NAME, METHOD_STREAM_GET_FILE_HANDLE_NAME, splitter->streamProtocolName);
-//  }*/
-//
-//  return 0;
-//}
 
 CLAVSplitter::~CLAVSplitter()
 {
@@ -282,8 +137,6 @@ CLAVSplitter::~CLAVSplitter()
 #if defined(DEBUG) && ENABLE_DEBUG_LOGFILE
   DbgCloseLogFile();
 #endif
-
-  //FREE_MEM(this->streamProtocolName);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
 
@@ -456,7 +309,8 @@ STDMETHODIMP CLAVSplitter::NonDelegatingQueryInterface(REFIID riid, void** ppv)
     //QI2(ISpecifyPropertyPages)
     //QI2(ILAVFSettings)
     //QI2(ILAVFSettingsInternal)
-    //QI(IObjectWithSite)
+    QI(IObjectWithSite)
+    QI(IBufferInfo)
     __super::NonDelegatingQueryInterface(riid, ppv);
 }
 
@@ -505,6 +359,30 @@ STDMETHODIMP CLAVSplitter::GetSite(REFIID riid, void **ppvSite)
     return S_OK;
   }
   return E_NOINTERFACE;
+}
+
+// IBufferInfo
+STDMETHODIMP_(int) CLAVSplitter::GetCount()
+{
+  CAutoLock pinLock(&m_csPins);
+  return m_pPins.size();
+}
+
+STDMETHODIMP CLAVSplitter::GetStatus(int i, int& samples, int& size)
+{
+  CAutoLock pinLock(&m_csPins);
+  if (i >= m_pPins.size())
+    return E_FAIL;
+
+  CLAVOutputPin *pPin = m_pPins.at(i);
+  if (!pPin)
+    return E_FAIL;
+  return pPin->GetQueueSize(samples, size);
+}
+
+STDMETHODIMP_(DWORD) CLAVSplitter::GetPriority()
+{
+  return 0;
 }
 
 // CBaseSplitter
@@ -608,7 +486,6 @@ STDMETHODIMP CLAVSplitter::CreateDemuxer(wchar_t *pszFileName)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_NAME);
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
-  //CHECK_POINTER(result, this->streamProtocolName, S_OK, E_OUTOFMEMORY);
 
   if (SUCCEEDED(result))
   {
@@ -627,30 +504,20 @@ STDMETHODIMP CLAVSplitter::CreateDemuxer(wchar_t *pszFileName)
 
     if (SUCCEEDED(result))
     {
-      //result = pDemux->OpenInputStream(pContext, pszFileName);
-      //result = pDemux->OpenInputStream(NULL, pszFileName);
-      //wchar_t *fileName = FormatString(L"%s://sample.filename", this->streamProtocolName);
-      //result = (fileName != NULL) ? S_OK : E_OUTOFMEMORY;
+      result = pDemux->OpenInputStream(pContext, pszFileName);
 
       if (SUCCEEDED(result))
       {
-        //result = pDemux->OpenInputStream(NULL, fileName);
-        result = pDemux->OpenInputStream(pContext, pszFileName);
+        m_pDemuxer = pDemux;
+        m_pDemuxer->AddRef();
 
-        if (SUCCEEDED(result))
-        {
-          m_pDemuxer = pDemux;
-          m_pDemuxer->AddRef();
-
-          result = InitDemuxer();
-        }
-        else
-        {
-          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_NAME, L"OpenInputStream() returned error");
-          SAFE_DELETE(pDemux);
-        }
+        result = InitDemuxer();
       }
-      //FREE_MEM(fileName);
+      else
+      {
+        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_NAME, L"OpenInputStream() returned error");
+        SAFE_DELETE(pDemux);
+      }
     }
   }
 
@@ -671,62 +538,6 @@ STDMETHODIMP CLAVSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   {
     result = m_pInput->Load(pszFileName, pmt);
   }
-
-  //if (SUCCEEDED(result))
-  //{
-  //  //SAFE_DELETE(m_pDemuxer);
-  //  //LPWSTR extension = PathFindExtensionW(pszFileName);
-
-  //  //DbgLog((LOG_TRACE, 10, L"::Load(): Opening file '%s' (extension: %s)", pszFileName, extension));
-
-  //  //// BDMV uses the BD demuxer, everything else LAVF
-  //  ///*if (_wcsicmp(extension, L".bdmv") == 0 || _wcsicmp(extension, L".mpls") == 0) {
-  //  //m_pDemuxer = new CBDDemuxer(this, this);
-  //  //} else {
-  //  //m_pDemuxer = new CLAVFDemuxer(this, this);
-  //  //}*/
-  //  //m_pDemuxer = new CLAVFDemuxer(this, this);
-  //  //if(FAILED(hr = m_pDemuxer->Open(pszFileName))) {
-  //  //  SAFE_DELETE(m_pDemuxer);
-  //  //  return hr;
-  //  //}
-  //  //m_pDemuxer->AddRef();
-
-  //  //return InitDemuxer();
-
-  //  do
-  //  {
-  //    result = S_OK;
-
-  //    SAFE_DELETE(m_pDemuxer);
-  //    CLAVFDemuxer *pDemux = new CLAVFDemuxer(this, this);
-
-  //    AVIOContext *pContext = NULL;
-  //    result = m_pInput->GetAVIOContext(&pContext);
-  //    if (FAILED(result))
-  //    {
-  //      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, L"GetAVIOContext() returned error");
-  //    }
-
-  //    if (SUCCEEDED(result))
-  //    {
-  //      result = pDemux->OpenInputStream(pContext, pszFileName);
-
-  //      if (SUCCEEDED(result))
-  //      {
-  //        m_pDemuxer = pDemux;
-  //        m_pDemuxer->AddRef();
-
-  //        result = InitDemuxer();
-  //      }
-  //      else
-  //      {
-  //        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, L"OpenInputStream() returned error");
-  //        SAFE_DELETE(pDemux);
-  //      }
-  //    }
-  //  } while (FAILED(result));
-  //}
 
   this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, result);
   return result;
@@ -763,6 +574,8 @@ STDMETHODIMP CLAVSplitter::InitDemuxer()
   //m_rtStop = m_rtNewStop = m_pDemuxer->GetDuration();
   this->m_pInput->SetNewStop(m_pDemuxer->GetDuration());
   this->m_pInput->SetStop(this->m_pInput->GetNewStop());
+
+  m_bMPEGTS = strcmp(m_pDemuxer->GetContainerFormat(), "mpegts") == 0;
 
   const CBaseDemuxer::stream *videoStream = m_pDemuxer->SelectVideoStream();
   if (videoStream) {
@@ -889,6 +702,7 @@ DWORD CLAVSplitter::ThreadProc()
         m_pActivePins.push_back(*pinIter);
       }
     }
+    m_rtOffset = 0;
 
     m_bDiscontinuitySent.clear();
 
@@ -967,6 +781,22 @@ HRESULT CLAVSplitter::DeliverPacket(Packet *pPacket)
     pPacket->rtStop -= this->m_pInput->GetStart();
 
     ASSERT(pPacket->rtStart <= pPacket->rtStop);
+
+    // Filter PTS values
+    // This will try to compensate for timestamp discontinuities in the stream
+    if (m_bMPEGTS) {
+      if (pPin->m_rtPrev != Packet::INVALID_TIME && !pPin->IsSubtitlePin()) {
+        REFERENCE_TIME rt = pPacket->rtStart + m_rtOffset;
+        if(_abs64(rt - pPin->m_rtPrev) > MAX_PTS_SHIFT) {
+          m_rtOffset += pPin->m_rtPrev - rt;
+          DbgLog((LOG_TRACE, 10, L"::DeliverPacket(): MPEG-TS discontinuity detected, adjusting offset to %I64d", m_rtOffset));
+        }
+      }
+      pPacket->rtStart += m_rtOffset;
+      pPacket->rtStop += m_rtOffset;
+
+      pPin->m_rtPrev = pPacket->rtStart;
+    }
   }
 
   if(m_bDiscontinuitySent.find(pPacket->StreamId) == m_bDiscontinuitySent.end()) {
@@ -1176,8 +1006,6 @@ STDMETHODIMP CLAVSplitter::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTar
 STDMETHODIMP CLAVSplitter::SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
 {
   return SetPositionsInternal(this, pCurrent, dwCurrentFlags, pStop, dwStopFlags);
-  //return this->m_pInput->SetPositions(pCurrent, dwCurrentFlags, pStop, dwStopFlags);
-  //return this->SetPositionsInternal(this, pCurrent, dwCurrentFlags, pStop, dwStopFlags);
 }
 
 STDMETHODIMP CLAVSplitter::SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)

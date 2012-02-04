@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ template <class T> void SafeRelease(T **ppT)
 }
 
 #ifdef _DEBUG
-#define DBG_TIMING(x,l,y) DWORD start = timeGetTime(); y; DWORD end = timeGetTime(); if(end-start>l) DbgLog((LOG_TRACE, 10, L"TIMING: %S took %u ms", x, end-start));
+#define DBG_TIMING(x,l,y) { DWORD start = timeGetTime(); y; DWORD end = timeGetTime(); if(end-start>l) DbgLog((LOG_CUSTOM5, 10, L"TIMING: %S took %u ms", x, end-start)); }
 extern void DbgSetLogFile(LPCTSTR szLogFile);
 extern void DbgSetLogFileDesktop(LPCTSTR szLogFile);
 extern void DbgCloseLogFile();
@@ -86,6 +86,9 @@ extern void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, LPCWS
 extern void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, std::list<LPCWSTR> chkbytes, ...);
 extern void UnRegisterSourceFilter(const GUID& subtype);
 
+extern void RegisterProtocolSourceFilter(const CLSID& clsid, LPCWSTR protocol);
+extern void UnRegisterProtocolSourceFilter(LPCWSTR protocol);
+
 // Locale
 extern std::string ISO6391ToLanguage(LPCSTR code);
 extern std::string ISO6392ToLanguage(LPCSTR code);
@@ -106,6 +109,7 @@ extern IBaseFilter* GetFilterFromPin(IPin* pPin);
 extern HRESULT NukeDownstream(IFilterGraph *pGraph, IPin *pPin);
 extern HRESULT NukeDownstream(IFilterGraph *pGraph, IBaseFilter *pFilter);
 extern HRESULT FindIntefaceInGraph(IPin *pPin, REFIID refiid, void **pUnknown);
+extern HRESULT FindPinIntefaceInGraph(IPin *pPin, REFIID refiid, void **pUnknown);
 extern HRESULT FindFilterSafe(IPin *pPin, const GUID &guid, IBaseFilter **ppFilter);
 extern BOOL FilterInGraphSafe(IPin *pPin, const GUID &guid);
 

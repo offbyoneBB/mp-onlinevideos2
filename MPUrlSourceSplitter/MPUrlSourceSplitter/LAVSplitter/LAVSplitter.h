@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@
 
 #include "LAVSplitterSettingsInternal.h"
 #include "SettingsProp.h"
+#include "IBufferInfo.h"
 
 #include "Download.h"
 #include "IFilter.h"
@@ -40,6 +41,8 @@
 //#define LAVF_REGISTRY_KEY L"Software\\LAV\\Splitter"
 //#define LAVF_REGISTRY_KEY_FORMATS LAVF_REGISTRY_KEY L"\\Formats"
 //#define LAVF_LOG_FILE     L"LAVSplitter.txt"
+
+#define MAX_PTS_SHIFT 50000000i64
 
 class CLAVOutputPin;
 class CLAVInputPin;
@@ -58,6 +61,7 @@ class CLAVSplitter
   , public IAMStreamSelect
   , public ILAVFSettingsInternal
   , public IObjectWithSite
+  , public IBufferInfo
   , public IDownload
   , public IFilter
 {
@@ -106,9 +110,18 @@ public:
   STDMETHODIMP Enable(long lIndex, DWORD dwFlags);
   STDMETHODIMP Info(long lIndex, AM_MEDIA_TYPE **ppmt, DWORD *pdwFlags, LCID *plcid, DWORD *pdwGroup, WCHAR **ppszName, IUnknown **ppObject, IUnknown **ppUnk);
 
+  // IAMOpenProgress interface
+  STDMETHODIMP QueryProgress(LONGLONG *pllTotal, LONGLONG *pllCurrent);
+  STDMETHODIMP AbortOperation(void);
+
   // IObjectWithSite
   STDMETHODIMP SetSite(IUnknown *pUnkSite);
   STDMETHODIMP GetSite(REFIID riid, void **ppvSite);
+
+  // IBufferInfo
+  STDMETHODIMP_(int) GetCount();
+  STDMETHODIMP GetStatus(int i, int& samples, int& size);
+  STDMETHODIMP_(DWORD) GetPriority();
 
   // ILAVFSettings
   STDMETHODIMP SetRuntimeConfig(BOOL bRuntimeConfig);
@@ -144,9 +157,8 @@ public:
   STDMETHODIMP_(std::set<FormatInfo>&) GetInputFormats();
   STDMETHODIMP_(BOOL) IsVC1CorrectionRequired();
 
-  // IAMOpenProgress interface
-  STDMETHODIMP QueryProgress(LONGLONG *pllTotal, LONGLONG *pllCurrent);
-  STDMETHODIMP AbortOperation(void);
+  STDMETHODIMP_(DWORD) GetStreamFlags(DWORD dwStream) { if (m_pDemuxer) return m_pDemuxer->GetStreamFlags(dwStream); return 0; }
+  STDMETHODIMP_(int) GetPixelFormat(DWORD dwStream) { if (m_pDemuxer) return m_pDemuxer->GetPixelFormat(dwStream); return PIX_FMT_NONE; }
 
   // IDownload interface
   STDMETHODIMP Download(LPCOLESTR uri, LPCOLESTR fileName);
@@ -238,6 +250,10 @@ private:
 
   BOOL m_bPlaybackStarted;
   BOOL m_bFakeASFReader;
+
+  REFERENCE_TIME m_rtOffset;
+
+  BOOL m_bMPEGTS;
 
   // flushing
   bool m_fFlushing;

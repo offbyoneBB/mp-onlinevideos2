@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,7 @@ static FormatMapping audio_map[] = {
   { CODEC_ID_WMAV2,      &MEDIASUBTYPE_WMAUDIO2,          WAVE_FORMAT_WMAUDIO2,   NULL },
   { CODEC_ID_WMAPRO,     &MEDIASUBTYPE_WMAUDIO3,          WAVE_FORMAT_WMAUDIO3,   NULL },
   { CODEC_ID_ADPCM_IMA_AMV, &MEDIASUBTYPE_IMA_AMV,        NULL,                   NULL },
+  { CODEC_ID_FLAC,       &MEDIASUBTYPE_FLAC_FRAMED,       WAVE_FORMAT_FLAC,       NULL },
 };
 
 CMediaType CLAVFAudioHelper::initAudioType(CodecID codecId, unsigned int &codecTag, std::string container)
@@ -116,6 +117,8 @@ WAVEFORMATEX *CLAVFAudioHelper::CreateWVFMTEX(const AVStream *avstream, ULONG *s
       wvfmt->nBlockAlign = (WORD)((wvfmt->nChannels * av_get_bits_per_sample_format(avstream->codec->sample_fmt)) / 8);
     }
   }
+  if (!wvfmt->nAvgBytesPerSec)
+    wvfmt->nAvgBytesPerSec = (wvfmt->nSamplesPerSec * wvfmt->nChannels * wvfmt->wBitsPerSample) >> 3;
 
   if (avstream->codec->extradata_size > 0) {
     wvfmt->cbSize = avstream->codec->extradata_size;

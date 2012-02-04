@@ -21,6 +21,7 @@
 #include "LAVFDemuxer.h"
 #include "LAVFUtils.h"
 #include "LAVFStreamInfo.h"
+#include "ILAVPinInfo.h"
 
 #include "LAVSplitterSettingsInternal.h"
 
@@ -47,6 +48,7 @@ extern "C" void ff_read_frame_flush(AVFormatContext *s);
 extern "C" void ff_update_cur_dts(AVFormatContext *s, AVStream *ref_st, int64_t timestamp);
 
 #define AVFORMAT_GENPTS 0
+#define AVFORMAT_OPEN_TIMEOUT 20
 
 extern void lavf_get_iformat_infos(AVInputFormat *pFormat, const char **pszName, const char **pszDescription);
 extern AVInputFormat lav_mkv_demuxer;
@@ -104,6 +106,7 @@ CLAVFDemuxer::CLAVFDemuxer(CCritSec *pLock, ILAVFSettingsInternal *settings, IFi
   , m_pFontInstaller(NULL)
   , m_pszInputFormat(NULL)
   , m_bEnableTrackInfo(TRUE)
+  , m_Abort(0), m_timeOpening(0)
 {
   m_bSubStreams = settings->GetSubstreamsEnabled();
 
@@ -165,6 +168,24 @@ STDMETHODIMP CLAVFDemuxer::Open(LPCOLESTR pszFileName)
   return OpenInputStream(NULL, pszFileName);
 }
 
+STDMETHODIMP CLAVFDemuxer::AbortOpening()
+{
+  m_Abort = 1;
+  return S_OK;
+}
+
+int CLAVFDemuxer::avio_interrupt_cb(void *opaque)
+{
+  CLAVFDemuxer *demux = (CLAVFDemuxer *)opaque;
+
+  // Check for file opening timeout
+  time_t now = time(NULL);
+  if (demux->m_timeOpening && now > (demux->m_timeOpening + AVFORMAT_OPEN_TIMEOUT))
+    return 1;
+
+  return demux->m_Abort;
+}
+
 STDMETHODIMP CLAVFDemuxer::OpenInputStream(AVIOContext *byteContext, LPCOLESTR pszFileName)
 {
   CAutoLock lock(m_pLock);
@@ -173,23 +194,31 @@ STDMETHODIMP CLAVFDemuxer::OpenInputStream(AVIOContext *byteContext, LPCOLESTR p
   int ret; // return code from avformat functions
 
   // Convert the filename from wchar to char for avformat
-  char fileName[4096] = {0};
+  char fileName[4100] = {0};
   if (pszFileName) {
     ret = WideCharToMultiByte(CP_UTF8, 0, pszFileName, -1, fileName, 4096, NULL, NULL);
   }
 
-  if (byteContext) {
-    // Create the avformat_context
-    m_avFormat = avformat_alloc_context();
-    m_avFormat->pb = byteContext;
+    if (_strnicmp("mms:", fileName, 4) == 0) {
+    memmove(fileName+1, fileName, strlen(fileName));
+    memcpy(fileName, "mmsh", 4);
   }
 
+  AVIOInterruptCB cb = {avio_interrupt_cb, this};
+
+  // Create the avformat_context
+  m_avFormat = avformat_alloc_context();
+  m_avFormat->pb = byteContext;
+  m_avFormat->interrupt_callback = cb;
+
+  m_timeOpening = time(NULL);
   ret = avformat_open_input(&m_avFormat, fileName, NULL, NULL);
   if (ret < 0) {
     DbgLog((LOG_ERROR, 0, TEXT("::OpenInputStream(): avformat_open_input failed (%d)"), ret));
     goto done;
   }
-  DbgLog((LOG_TRACE, 10, TEXT("::OpenInputStream(): avformat_open_input opened file of type '%S'"), m_avFormat->iformat->name));
+  DbgLog((LOG_TRACE, 10, TEXT("::OpenInputStream(): avformat_open_input opened file of type '%S' (took %d seconds)"), m_avFormat->iformat->name, time(NULL) - m_timeOpening));
+  m_timeOpening = 0;
 
   CHECK_HR(hr = InitAVFormat(pszFileName));
 
@@ -313,11 +342,14 @@ STDMETHODIMP CLAVFDemuxer::InitAVFormat(LPCOLESTR pszFileName)
   //m_avFormat->probesize            = 5 * 5000000;
   //m_avFormat->max_analyze_duration = 5 * (5*AV_TIME_BASE);
 
+  m_timeOpening = time(NULL);
   int ret = avformat_find_stream_info(m_avFormat, NULL);
   if (ret < 0) {
     DbgLog((LOG_ERROR, 0, TEXT("::InitAVFormat(): av_find_stream_info failed (%d)"), ret));
     goto done;
   }
+  DbgLog((LOG_TRACE, 10, TEXT("::InitAVFormat(): avformat_find_stream_info finished, took %d seconds"), m_avFormat->iformat->name, time(NULL) - m_timeOpening));
+  m_timeOpening = 0;
 
   // Check if this is a m2ts in a BD structure, and if it is, read some extra stream properties out of the CLPI files
   /*if (m_bBluRay && m_pBluRay) {
@@ -2220,4 +2252,29 @@ const CBaseDemuxer::stream *CLAVFDemuxer::SelectSubtitleStream(std::list<CSubtit
     best = streams->FindStream(NO_SUBTITLE_PID);
 
   return best;
+}
+
+STDMETHODIMP_(DWORD) CLAVFDemuxer::GetStreamFlags(DWORD dwStream)
+{
+  if (!m_avFormat || dwStream >= m_avFormat->nb_streams)
+    return 0;
+
+  DWORD dwFlags = 0;
+  AVStream *st = m_avFormat->streams[dwStream];
+
+  if (st->codec->codec_id == CODEC_ID_H264 && (m_bAVI || (m_bMatroska && (!st->codec->extradata_size || st->codec->extradata[0] != 1))))
+    dwFlags |= LAV_STREAM_FLAG_H264_DTS;
+
+  if (m_bMatroska && (st->codec->codec_id == CODEC_ID_RV30 || st->codec->codec_id == CODEC_ID_RV40))
+    dwFlags |= LAV_STREAM_FLAG_RV34_MKV;
+
+  return dwFlags;
+}
+
+STDMETHODIMP_(int) CLAVFDemuxer::GetPixelFormat(DWORD dwStream)
+{
+  if (!m_avFormat || dwStream >= m_avFormat->nb_streams)
+    return PIX_FMT_NONE;
+
+  return m_avFormat->streams[dwStream]->codec->pix_fmt;
 }

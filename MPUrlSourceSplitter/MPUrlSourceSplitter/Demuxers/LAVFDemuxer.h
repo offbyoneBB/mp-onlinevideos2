@@ -55,6 +55,7 @@ public:
 
   // CBaseDemuxer
   STDMETHODIMP Open(LPCOLESTR pszFileName);
+  STDMETHODIMP AbortOpening();
   REFERENCE_TIME GetDuration() const;
   STDMETHODIMP GetNextPacket(Packet **ppPacket);
   STDMETHODIMP Seek(REFERENCE_TIME rTime);
@@ -70,6 +71,9 @@ public:
   const stream* SelectSubtitleStream(std::list<CSubtitleSelector> subtitleSelectors, std::string audioLanguage);
 
   HRESULT SetActiveStream(StreamType type, int pid);
+
+  STDMETHODIMP_(DWORD) GetStreamFlags(DWORD dwStream);
+  STDMETHODIMP_(int) GetPixelFormat(DWORD dwStream);
 
   // IAMExtendedSeeking
   STDMETHODIMP get_ExSeekCapabilities(long* pExCapabilities);
@@ -125,6 +129,8 @@ private:
 
   HRESULT UpdateForcedSubtitleStream(unsigned audio_pid);
 
+  static int avio_interrupt_cb(void *opaque);
+
   IFilter *m_pFilter;
   STDMETHODIMP SeekByPosition(REFERENCE_TIME time, int flags);
   STDMETHODIMP SeekByTime(REFERENCE_TIME time, int flags);
@@ -160,4 +166,7 @@ private:
 
   BOOL m_bBluRay;
   //CBDDemuxer *m_pBluRay;
+
+  int m_Abort;
+  time_t m_timeOpening;
 };

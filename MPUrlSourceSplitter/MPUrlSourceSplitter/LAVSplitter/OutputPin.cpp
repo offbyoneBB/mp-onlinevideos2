@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011 Hendrik Leppkes
+ *      Copyright (C) 2010-2012 Hendrik Leppkes
  *      http://www.1f0.de
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,7 @@ CLAVOutputPin::CLAVOutputPin(std::vector<CMediaType>& mts, LPCWSTR pName, CBaseF
   , m_newMT(NULL)
   , m_pinType(pinType)
   , m_Parser(this, container)
+  , m_rtPrev(Packet::INVALID_TIME)
 {
   m_mts = mts;
   m_nBuffers = max(nBuffers, 1);
@@ -55,11 +56,21 @@ void CLAVOutputPin::SetQueueSizes()
 
   if (m_mts.begin()->subtype == MEDIASUBTYPE_DOLBY_TRUEHD) {
     DbgLog((LOG_TRACE, 10, L"Increasing Audio Queue size for TrueHD"));
-    factor = 10;
+    factor = 25;
+  } else if (m_mts.begin()->subtype == MEDIASUBTYPE_WAVE_DTS) {
+    factor = 2;
   }
 
   m_dwQueueLow  = MIN_PACKETS_IN_QUEUE * factor;
   m_dwQueueHigh = MAX_PACKETS_IN_QUEUE * factor;
+}
+
+HRESULT CLAVOutputPin::GetQueueSize(int& samples, int& size)
+{
+  CAutoLock lock(&m_queue);
+  samples = m_queue.Size();
+  size = m_queue.DataSize();
+  return S_OK;
 }
 
 STDMETHODIMP CLAVOutputPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
@@ -68,6 +79,7 @@ STDMETHODIMP CLAVOutputPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 
   return 
     QI(IMediaSeeking)
+    QI(ILAVPinInfo)
     __super::NonDelegatingQueryInterface(riid, ppv);
 }
 
@@ -206,6 +218,7 @@ HRESULT CLAVOutputPin::DeliverEndFlush()
 HRESULT CLAVOutputPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
 {
   DbgLog((LOG_TRACE, 20, L"::DeliverNewSegment on %s Pin (rtStart: %I64d; rtStop: %I64d)", CBaseDemuxer::CStreamList::ToStringW(m_pinType), tStart, tStop));
+  m_rtPrev = Packet::INVALID_TIME;
   if(m_fFlushing) return S_FALSE;
   m_rtStart = tStart;
   if(!ThreadExists()) return S_FALSE;
@@ -233,8 +246,8 @@ HRESULT CLAVOutputPin::QueuePacket(Packet *pPacket)
   // The queu has a "soft" limit of MAX_PACKETS_IN_QUEUE, and a hard limit of MAX_PACKETS_IN_QUEUE * 2
   // That means, even if one pin is drying, we'll never exceed MAX_PACKETS_IN_QUEUE * 2
   while(S_OK == m_hrDeliver 
-    && (m_queue.Size() > 2*m_dwQueueHigh
-    || (m_queue.Size() > MAX_PACKETS_IN_QUEUE && !pSplitter->IsAnyPinDrying())))
+    && ((m_queue.Size() > 2*m_dwQueueHigh || m_queue.DataSize() > (MAX_QUEUE_SIZE*3/2))
+    || ((m_queue.Size() > m_dwQueueHigh || m_queue.DataSize() > MAX_QUEUE_SIZE) && !pSplitter->IsAnyPinDrying())))
     Sleep(10);
 
   if(S_OK != m_hrDeliver) {
@@ -467,4 +480,14 @@ STDMETHODIMP CLAVOutputPin::GetRate(double* pdRate)
 STDMETHODIMP CLAVOutputPin::GetPreroll(LONGLONG* pllPreroll)
 {
   return (static_cast<CLAVSplitter*>(m_pFilter))->GetPreroll(pllPreroll);
+}
+
+STDMETHODIMP_(DWORD) CLAVOutputPin::GetStreamFlags()
+{
+  return (static_cast<CLAVSplitter*>(m_pFilter))->GetStreamFlags(m_streamId);
+}
+
+STDMETHODIMP_(int) CLAVOutputPin::GetPixelFormat()
+{
+  return (static_cast<CLAVSplitter*>(m_pFilter))->GetPixelFormat(m_streamId);
 }
