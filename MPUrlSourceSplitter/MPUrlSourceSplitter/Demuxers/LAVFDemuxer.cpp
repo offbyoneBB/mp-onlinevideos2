@@ -715,7 +715,8 @@ STDMETHODIMP CLAVFDemuxer::Seek(REFERENCE_TIME rTime)
 
   if (seekingCapabilities & SEEKING_METHOD_POSITION)
   {
-    int flags = AVSEEK_FLAG_BACKWARD;
+    //int flags = AVSEEK_FLAG_BACKWARD;
+    int flags = 0;
     HRESULT result = this->SeekByPosition(rTime, flags);
 
     if (FAILED(result))
@@ -737,7 +738,8 @@ STDMETHODIMP CLAVFDemuxer::Seek(REFERENCE_TIME rTime)
 
   if ((!seeked) && (seekingCapabilities & SEEKING_METHOD_TIME))
   {
-    int flags = AVSEEK_FLAG_BACKWARD;
+    //int flags = AVSEEK_FLAG_BACKWARD;
+    int flags = 0;
     HRESULT result = this->SeekByTime(rTime, flags);
 
     if (FAILED(result))
@@ -919,9 +921,9 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
           logger->Log(LOGGER_VERBOSE, L"%s: %s: index entries: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, st->nb_index_entries);
           AVPacket avPacket;
 
-          if (st->nb_index_entries)
+          if ((st->nb_index_entries) && (index >= 0))
           {
-            ie = &st->index_entries[st->nb_index_entries - 1];
+            ie = &st->index_entries[index];
 
             logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking to position: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, ie->pos);
             if (avio_seek(this->m_avFormat->pb, ie->pos, SEEK_SET) < 0)
@@ -1044,6 +1046,11 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
   AVIndexEntry *ie = NULL;
   int64_t seek_pts = time;
   int videoStreamId = this->m_dActiveStreams[video];
+
+  /*if (this->m_avFormat->iformat->value == CODEC_ID_FLV1)
+  {
+    flags &= ~AVSEEK_FLAG_BACKWARD;
+  }*/
   
   logger->Log(LOGGER_VERBOSE, L"%s: %s: stream count: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->m_avFormat->nb_streams);
 
@@ -1122,7 +1129,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
       result = -2;
     }
 
-    if (SUCCEEDED(result))
+    if (SUCCEEDED(result) && (index >= 0))
     {
       ie = &st->index_entries[index];
       logger->Log(LOGGER_VERBOSE, L"%s: %s: timestamp: %lld, seek_pts: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, ie->timestamp, seek_pts);
@@ -1149,7 +1156,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
         logger->Log(LOGGER_VERBOSE, L"%s: %s: index entries: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, st->nb_index_entries);
         AVPacket avPacket;
 
-        if (st->nb_index_entries)
+        if ((st->nb_index_entries) && (index >= 0))
         {
           ie = &st->index_entries[index];
 
@@ -1225,7 +1232,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
               if (this->m_pFilter->GetTotalLength(&totalLength) == S_OK)
               {
                 // make guess of position by current packet position, time and seek time
-                int64_t guessPosition1 = seek_pts * avPacket.pos / avPacket.dts;
+                int64_t guessPosition1 = (avPacket.dts > 0) ? (seek_pts * avPacket.pos / avPacket.dts) : 0;
                 int64_t guessPosition2 = seek_pts * totalLength / duration;
 
                 int64_t guessPosition = (guessPosition1 + guessPosition2) / 2;
