@@ -1986,3 +1986,8 @@ int64_t CLAVSplitter::SeekToPosition(int64_t start, int64_t end)
 {
   return m_pInput->SeekToPosition(start, end);
 }
+
+HRESULT CLAVSplitter::GetTotalLength(int64_t *totalLength)
+{
+  return this->m_pInput->GetTotalLength(totalLength);
+}

@@ -42,6 +42,11 @@ struct IFilter : public ISeeking
   // gets logger instance
   // @return : logger instance or NULL if error
   virtual CLogger *GetLogger(void) = 0;
+
+  // gets total length of stream in bytes
+  // @param totalLength : reference to total length variable
+  // @return : S_OK if success, VFW_S_ESTIMATED if total length is not surely known, error code if error
+  virtual HRESULT GetTotalLength(int64_t *totalLength) = 0;
 };
 
 #endif

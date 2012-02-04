@@ -377,10 +377,10 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
     }
   }
 
-  this->url = ConvertToUnicodeW(pszFileName);
+  //this->url = ConvertToUnicodeW(pszFileName);
   //this->url = ConvertToUnicodeW(L"http://o-o.preferred.orangesk-bts1.v11.lscache3.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Calgorithm%2Cburst%2Cfactor%2Ccp&fexp=913100%2C913603&algorithm=throttle-factor&itag=35&ip=109.0.0.0&burst=40&sver=3&signature=5107DECD1DA24BE91D418EDA2AF5B77DB7CEDABF.6CCA2F5D73B8D80253E764DDF0B0408D67BCDCF4&source=youtube&expire=1327798912&key=yt1&ipbits=8&factor=1.25&cp=U0hRTFdUVl9GTENOMV9PTlpKOnJndFVIc1J3eEdx&id=290eb3afa9023e3f&ext=.flv");
   //this->url = ConvertToUnicodeW(L"http://o-o.preferred.orangesk-bts1.v19.lscache6.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Cratebypass%2Ccp&fexp=913101%2C914102&itag=22&ip=109.0.0.0&signature=4BFB2A666D60B3FB7EF21015A8ADDFAF7A453D14.4C8D82ACE304C95383AE07D40ABE57629EB9563B&sver=3&ratebypass=yes&source=youtube&expire=1328151712&key=yt1&ipbits=8&cp=U0hRTVFQT19GTENOMV9JSlNIOnJwNlBBUUhBVDhh&id=290eb3afa9023e3f&ext=.mp4");
-  //this->url = ConvertToUnicodeW(L"rtmp://wcdn101.nacevi.cz/ct-vod?id=MTQxMzYxODU3NXw2MzQ2MzcyNjA3MzE3MDM3NTA=&type=wpl/mp4:iVysilani/2011/06/05/3Plus1SMiroslaveCT1-050611-MP4_576p.mp4####Url=rtmp%3a%2f%2fwcdn101.nacevi.cz%2fct-vod%3fid%3dMTQxMzYxODU3NXw2MzQ2MzcyNjA3MzE3MDM3NTA%3d%26type%3dwpl%2fmp4%3aiVysilani%2f2011%2f06%2f05%2f3Plus1SMiroslaveCT1-050611-MP4_576p.mp4&RtmpApp=ct-vod%3fid%3dMTQxMzYxODU3NXw2MzQ2MzcyNjA3MzE3MDM3NTA%3d%26type%3dwpl&RtmpPageUrl=http%3a%2f%2fwww.ceskatelevize.cz%2fivysilani%2f1148961737-3-plus-1-s-miroslavem-donutilem%2f211512120790001-3-plus-1-s-miroslavem-donutilem-smolari%2f&RtmpPlayPath=mp4%3aiVysilani%2f2011%2f06%2f05%2f3Plus1SMiroslaveCT1-050611-MP4_576p.mp4&RtmpSwfUrl=http%3a%2f%2fimg9.ceskatelevize.cz%2flibraries%2fplayer%2fflashPlayer.swf%3fversion%3d1.44.6&RtmpTcUrl=rtmp%3a%2f%2fwcdn101.nacevi.cz%2fct-vod%3fid%3dMTQxMzYxODU3NXw2MzQ2MzcyNjA3MzE3MDM3NTA%3d%26type%3dwpl");
+  this->url = ConvertToUnicodeW(L"http://o-o.preferred.orangesk-bts1.v11.lscache3.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Calgorithm%2Cburst%2Cfactor%2Ccp&fexp=904542%2C909708%2C913603&algorithm=throttle-factor&itag=35&ip=109.0.0.0&burst=40&sver=3&signature=6359ABC292A5EAA62203D194F09919431494BC06.76B952A688EAA663CCDEA92571327B803695BE56&source=youtube&expire=1328385712&key=yt1&ipbits=8&factor=1.25&cp=U0hRTVNTU19GTENOMV9LTVdIOm1qNEE4bFdMZFow&id=290eb3afa9023e3f&ext=.flv");
 
   if (this->url == NULL)
   {
@@ -2733,6 +2733,20 @@ int64_t CLAVInputPin::SeekToTime(int64_t time)
       }
       this->m_llBufferPosition = 0;
     }
+  }
+
+  return result;
+}
+
+HRESULT CLAVInputPin::GetTotalLength(int64_t *totalLength)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, totalLength);
+
+  if (SUCCEEDED(result))
+  {
+    int64_t available = 0;
+    result = this->Length(totalLength, &available);
   }
 
   return result;

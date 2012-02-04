@@ -211,6 +211,11 @@ public:
   // @return : position where seek finished or lower than zero if error
   int64_t SeekToPosition(int64_t start, int64_t end);
 
+  // gets total length of stream in bytes
+  // @param totalLength : reference to total length variable
+  // @return : S_OK if success, VFW_S_ESTIMATED if total length is not surely known, error code if error
+  HRESULT GetTotalLength(int64_t *totalLength);
+
 protected:
   STDMETHODIMP LoadDefaults();
   STDMETHODIMP LoadSettings();
