@@ -34,6 +34,18 @@ class FormatInfo;
 //class CBDDemuxer;
 
 #define FFMPEG_FILE_BUFFER_SIZE   32768 // default reading size for ffmpeg
+
+struct FlvTimestamp
+{
+  int64_t lastStart;
+  int64_t lastStop;
+  int64_t replaceValue;
+  int64_t lastPacketStart;
+  bool set;
+};
+
+#define FLV_TIMESTAMP_MAX                           1024
+
 class CLAVFDemuxer : public CBaseDemuxer, public IAMExtendedSeeking, public IKeyFrameInfo, public ITrackInfo
 {
 public:
@@ -169,4 +181,6 @@ private:
 
   int m_Abort;
   time_t m_timeOpening;
+
+  FlvTimestamp *flvTimestamps;
 };
