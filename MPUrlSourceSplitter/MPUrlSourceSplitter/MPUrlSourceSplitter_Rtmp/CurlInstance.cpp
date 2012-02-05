@@ -36,6 +36,7 @@ CCurlInstance::CCurlInstance(CLogger *logger, wchar_t *url, wchar_t *protocolNam
   this->writeCallback = NULL;
   this->writeData = NULL;
   this->state = CURL_STATE_CREATED;
+  this->closeWithoutWaiting = false;
 
   this->rtmpApp = RTMP_APP_DEFAULT;
   this->rtmpArbitraryData = RTMP_ARBITRARY_DATA_DEFAULT;
@@ -308,7 +309,7 @@ HRESULT CCurlInstance::DestroyCurlWorker(void)
   // wait for the receive data worker thread to exit      
   if (this->hCurlWorkerThread != NULL)
   {
-    if (WaitForSingleObject(this->hCurlWorkerThread, 1000) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(this->hCurlWorkerThread, this->closeWithoutWaiting ? 1 : 1000) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_DESTROY_CURL_WORKER_NAME, L"thread didn't exit, terminating thread");
@@ -603,4 +604,14 @@ bool CCurlInstance::AddToRtmpConnectionString(wchar_t **connectionString, const 
   *connectionString = temp;
 
   return (*connectionString != NULL);
+}
+
+bool CCurlInstance::GetCloseWithoutWaiting(void)
+{
+  return this->closeWithoutWaiting;
+}
+
+void CCurlInstance::SetCloseWithoutWaiting(bool closeWithoutWaiting)
+{
+  this->closeWithoutWaiting = closeWithoutWaiting;
 }

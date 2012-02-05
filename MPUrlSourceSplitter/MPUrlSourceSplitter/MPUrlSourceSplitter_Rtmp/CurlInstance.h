@@ -156,6 +156,14 @@ public:
   // @return : one of CURL_STATE values
   unsigned int GetCurlState(void);
 
+  // gets if connection be closed without waiting
+  // @return : true if connection be closed without waiting, false otherwise
+  bool GetCloseWithoutWaiting(void);
+
+  // sets if connection be closed without waiting
+  // @param closeWithoutWaiting : true if connection be closed without waiting, false otherwise
+  void SetCloseWithoutWaiting(bool closeWithoutWaiting);
+
   // RTMP protocol specific variables setters
   void SetRtmpApp(const wchar_t *rtmpApp);
   void SetRtmpTcUrl(const wchar_t *rtmpTcUrl);
@@ -295,6 +303,9 @@ private:
 
   // holds internal state
   unsigned int state;
+
+  // specifies if current connection have to be closed without waiting
+  bool closeWithoutWaiting;
 
   // encodes string to be used by librtmp
   // @return : encoded string (null terminated) or NULL if error
