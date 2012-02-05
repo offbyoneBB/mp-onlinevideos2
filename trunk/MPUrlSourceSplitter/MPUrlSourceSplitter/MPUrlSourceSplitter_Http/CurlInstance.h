@@ -121,6 +121,10 @@ public:
   // @return : CURLE_OK if successful, other means error
   CURLcode GetResponseCode(long *responseCode);
 
+  // gets if connection be closed without waiting
+  // @return : true if connection be closed without waiting, false otherwise
+  bool GetCloseWithoutWaiting(void);
+
   // gets CURL state
   // @return : one of CURL_STATE values
   unsigned int GetCurlState(void);
@@ -144,6 +148,10 @@ public:
   // sets ignore content length
   // @param ignoreContentLength : the ignore content length to set
   void SetIgnoreContentLength(bool ignoreContentLength);
+
+  // sets if connection be closed without waiting
+  // @param closeWithoutWaiting : true if connection be closed without waiting, false otherwise
+  void SetCloseWithoutWaiting(bool closeWithoutWaiting);
 
 private:
   CURL *curl;
@@ -199,6 +207,9 @@ private:
 
   // holds internal state
   unsigned int state;
+
+  // specifies if current connection have to be closed without waiting
+  bool closeWithoutWaiting;
 
   // debug callback of libcurl
   // @param handle : the handle / transfer this concerns

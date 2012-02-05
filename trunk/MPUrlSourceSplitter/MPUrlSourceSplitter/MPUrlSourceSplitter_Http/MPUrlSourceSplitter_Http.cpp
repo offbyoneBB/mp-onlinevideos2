@@ -464,6 +464,12 @@ void CMPUrlSourceSplitter_Http::ReceiveData(bool *shouldExit)
   if (this->internalExitRequest)
   {
     // there is internal exit request pending == changed timestamp
+
+    if (this->mainCurlInstance != NULL)
+    {
+      this->mainCurlInstance->SetCloseWithoutWaiting(true);
+    }
+    
     // close connection
     this->CloseConnection();
 
