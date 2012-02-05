@@ -41,6 +41,15 @@ extern "C" {
 #define METHOD_SEEK_BY_POSITION_NAME                                        L"SeekByPosition()"
 #define METHOD_GET_NEXT_PACKET_NAME                                         L"GetNextPacket()"
 
+#define FLV_SEEKING_BUFFER_SIZE                                             32 * 1024   // size of buffer to read from stream
+#define FLV_PACKET_MINIMUM_CHECKED                                          5           // minimum FLV packets to check in buffer
+#define FLV_DO_NOT_SEEK_DIFFERENCE                                          10000       // time in ms when FLV packet dts is closer to seek time
+#define FLV_SEEKING_POSITIONS                                               1024        // maximum FLV seeking positions
+
+#define FLV_PACKET_AUDIO                                                    0x08
+#define FLV_PACKET_VIDEO                                                    0x09
+#define FLV_PACKET_META                                                     0x12
+
 //#include "BDDemuxer.h"
 
 //#include "libavformat\internal.h"
@@ -715,8 +724,7 @@ STDMETHODIMP CLAVFDemuxer::Seek(REFERENCE_TIME rTime)
 
   if (seekingCapabilities & SEEKING_METHOD_POSITION)
   {
-    //int flags = AVSEEK_FLAG_BACKWARD;
-    int flags = 0;
+    int flags = AVSEEK_FLAG_BACKWARD;
     HRESULT result = this->SeekByPosition(rTime, flags);
 
     if (FAILED(result))
@@ -738,8 +746,7 @@ STDMETHODIMP CLAVFDemuxer::Seek(REFERENCE_TIME rTime)
 
   if ((!seeked) && (seekingCapabilities & SEEKING_METHOD_TIME))
   {
-    //int flags = AVSEEK_FLAG_BACKWARD;
-    int flags = 0;
+    int flags = AVSEEK_FLAG_BACKWARD;
     HRESULT result = this->SeekByTime(rTime, flags);
 
     if (FAILED(result))
@@ -1047,11 +1054,6 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
   int64_t seek_pts = time;
   int videoStreamId = this->m_dActiveStreams[video];
 
-  /*if (this->m_avFormat->iformat->value == CODEC_ID_FLV1)
-  {
-    flags &= ~AVSEEK_FLAG_BACKWARD;
-  }*/
-  
   logger->Log(LOGGER_VERBOSE, L"%s: %s: stream count: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, this->m_avFormat->nb_streams);
 
   // If we have a video stream, seek on that one. If we don't, well, then don't!
@@ -1187,6 +1189,16 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
             logger->Log(LOGGER_VERBOSE, L"%s: %s: index timestamp: %lld, index position: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, ie->timestamp, ie->pos);
           }
           int nonkey = 0;
+          int64_t totalLength = 0;
+          if (this->m_pFilter->GetTotalLength(&totalLength) != S_OK)
+          {
+            totalLength = 0;
+          }
+
+          // allocate memory for seeking positions
+          ALLOC_MEM_DEFINE_SET(flvSeekingPositions, int64_t, FLV_SEEKING_POSITIONS, -1);
+          int activeFlvSeekingPosition = -1;    // any position is active
+          bool backwardSeeking = false;         // specify if we seek back in flvSeekingPositions
 
           // read stream until we find requested time
           while ((!found) && SUCCEEDED(result))
@@ -1196,12 +1208,25 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
             {
               read_status = av_read_frame(this->m_avFormat, &avPacket);
             } while (read_status == AVERROR(EAGAIN));
+
                         
             if (read_status < 0)
             {
               // error occured
+              // exit only when it's not FLV video or FLV video has no active seeking position
               logger->Log(LOGGER_VERBOSE, L"%s: %s: av_read_frame() returned error: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, read_status);
-              break;
+              if (((this->m_avFormat->iformat->value == CODEC_ID_FLV1) && (activeFlvSeekingPosition == (-1))) ||
+                  (this->m_avFormat->iformat->value != CODEC_ID_FLV1))
+              {
+                break;
+              }
+              
+              if (this->m_avFormat->iformat->value == CODEC_ID_FLV1)
+              {
+                // while seeking forward we didn't find keyframe
+                // we must seek backward
+                backwardSeeking = true;
+              }
             }
 
             av_free_packet(&avPacket);
@@ -1222,43 +1247,55 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
               }
             }
 
-            if ((videoStreamId == avPacket.stream_index) && ((avPacket.dts + 10000) < seek_pts) && (this->m_avFormat->iformat->value == CODEC_ID_FLV1))
+            if ((videoStreamId == avPacket.stream_index) && 
+                (this->m_avFormat->iformat->value == CODEC_ID_FLV1) && 
+                (flvSeekingPositions != NULL) &&
+                (backwardSeeking) &&
+                (activeFlvSeekingPosition >= 0) &&
+                (read_status < 0))
+            {
+              // if we are seeking backward it means that on flvSeekingPositions[activeFlvSeekingPosition]
+              // was wrong seeking value (it means that we didn't find key frame after seeking)
+              logger->Log(LOGGER_VERBOSE, L"%s: %s: trying to seek backward: %lld, active seeking position: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, flvSeekingPositions[activeFlvSeekingPosition], activeFlvSeekingPosition);
+
+              avio_seek(this->m_avFormat->pb, flvSeekingPositions[activeFlvSeekingPosition--], SEEK_SET);
+            }
+
+            if ((videoStreamId == avPacket.stream_index) && 
+                ((avPacket.dts + FLV_DO_NOT_SEEK_DIFFERENCE) < seek_pts) &&
+                (this->m_avFormat->iformat->value == CODEC_ID_FLV1) && 
+                (totalLength > 0) && 
+                (flvSeekingPositions != NULL) &&
+                (!backwardSeeking))
             {
               // in case of FLV video try to guess right position value
-              // do not try to guess when we are closer than 10 seconds (avPacket.dts + 10000)
+              // do not try to guess when we are closer than FLV_DO_NOT_SEEK_DIFFERENCE ms (avPacket.dts + FLV_DO_NOT_SEEK_DIFFERENCE)
+
+              logger->Log(LOGGER_VERBOSE, L"%s: %s: dts: %lld, seek: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, avPacket.dts, seek_pts);
 
               int64_t duration = this->GetDuration() / 10000;
-              int64_t totalLength = 0;
-              if (this->m_pFilter->GetTotalLength(&totalLength) == S_OK)
+              // make guess of position by current packet position, time and seek time
+              // because guessPosition1 is calculated as linear extrapolation it must be checked against total length
+              int64_t guessPosition1 = min(totalLength, (avPacket.dts > 0) ? (seek_pts * avPacket.pos / avPacket.dts) : 0);
+              int64_t guessPosition2 = seek_pts * totalLength / duration;
+
+              int64_t guessPosition = (guessPosition1 + guessPosition2) / 2;
+
+              // guess position have to be lower than total length
+              if (guessPosition < totalLength)
               {
-                // make guess of position by current packet position, time and seek time
-                int64_t guessPosition1 = (avPacket.dts > 0) ? (seek_pts * avPacket.pos / avPacket.dts) : 0;
-                int64_t guessPosition2 = seek_pts * totalLength / duration;
-
-                if (guessPosition1 > totalLength)
-                {
-                  logger->Log(LOGGER_WARNING, L"%s: %s: guess position 1 out of range, seek_pts: %lld, pos: %lld, dts: %lld ", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, seek_pts, avPacket.pos, avPacket.dts);
-                }
-                if (guessPosition2 > totalLength)
-                {
-                  logger->Log(LOGGER_WARNING, L"%s: %s: guess position 2 out of range, seek_pts: %lld, total length: %lld, duration: %lld ", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, seek_pts, totalLength, duration);
-                }
-
-                int64_t guessPosition = (guessPosition1 + guessPosition2) / 2;
-
                 if (avio_seek(this->m_avFormat->pb, guessPosition, SEEK_SET) >= 0)
                 {
                   int firstFlvPacketPosition = -1;    // position of first FLV packet
                   int packetsChecked  = 0;            // checked FLV packets count
                   int processedBytes = 0;             // processed bytes for correct seek position value
-                  int bufferSize = 32 * 1024;         // buffer size
 
-                  ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferSize, 0);
+                  ALLOC_MEM_DEFINE_SET(buffer, unsigned char, FLV_SEEKING_BUFFER_SIZE, 0);
 
-                  while ((firstFlvPacketPosition < 0) || (packetsChecked == 0))
+                  while ((firstFlvPacketPosition < 0) || (packetsChecked <= FLV_PACKET_MINIMUM_CHECKED))
                   {
-                    // repeat until first FLV packet is found and verified by at least one another FLV packet
-                    int readBytes = avio_read(this->m_avFormat->pb, buffer, bufferSize);
+                    // repeat until first FLV packet is found and verified by at least (FLV_PACKET_MINIMUM_CHECKED + 1) another FLV packet
+                    int readBytes = avio_read(this->m_avFormat->pb, buffer, FLV_SEEKING_BUFFER_SIZE);
                     if (readBytes > 0)
                     {
                       // try to find flv packets in buffer
@@ -1269,7 +1306,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
                       {
                         // we have to check bytes in whole buffer
 
-                        if (((buffer[i] == 0x08) || (buffer[i] == 0x09) || (buffer[i] == 0x12)) && (firstFlvPacketPosition == (-1)))
+                        if (((buffer[i] == FLV_PACKET_AUDIO) || (buffer[i] == FLV_PACKET_VIDEO) || (buffer[i] == FLV_PACKET_META)) && (firstFlvPacketPosition == (-1)))
                         {
                           length = 0;
                           // possible audio, video or meta tag
@@ -1301,7 +1338,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
                             continue;
                           }
                         }
-                        else if (((buffer[i] == 0x08) || (buffer[i] == 0x09) || (buffer[i] == 0x12)) && (firstFlvPacketPosition != (-1)))
+                        else if (((buffer[i] == FLV_PACKET_AUDIO) || (buffer[i] == FLV_PACKET_VIDEO) || (buffer[i] == FLV_PACKET_META)) && (firstFlvPacketPosition != (-1)))
                         {
                           // possible next packet, verify
                           int previousLength = -1;
@@ -1361,23 +1398,42 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
                       break;
                     }
 
-                    // set first FLV packet position or return to last packet positon
-                    if (firstFlvPacketPosition < 0)
+                    if ((firstFlvPacketPosition < 0) || (packetsChecked <= FLV_PACKET_MINIMUM_CHECKED))
                     {
                       processedBytes += readBytes;
                       logger->Log(LOGGER_WARNING, L"%s: %s: not found relevant FLV packet, processed bytes: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, processedBytes);
                     }
                   }
 
+                  logger->Log(LOGGER_VERBOSE, L"%s: %s: first FLV position: 0x%08X, packets checked: %d, processed bytes: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, firstFlvPacketPosition, packetsChecked, processedBytes);
+
                   FREE_MEM(buffer);
 
-                  if ((firstFlvPacketPosition >= 0) && (packetsChecked > 0))
+                  if ((firstFlvPacketPosition >= 0) && (packetsChecked > FLV_PACKET_MINIMUM_CHECKED))
                   {
                     // first FLV packet position is set
-                    // at least one another packet checked
+                    // at least (FLV_PACKET_MINIMUM_CHECKED + 1) another packet checked
                     // seek to position
+                    int64_t valueToSeek = guessPosition + processedBytes + firstFlvPacketPosition;
 
-                    avio_seek(this->m_avFormat->pb, guessPosition + processedBytes + firstFlvPacketPosition, SEEK_SET);
+                    bool canSeek = true;
+                    for (int i = 0; i <= activeFlvSeekingPosition; i++)
+                    {
+                      if (valueToSeek == flvSeekingPositions[i])
+                      {
+                        logger->Log(LOGGER_VERBOSE, L"%s: %s: trying to seek to same position: %lld, disabled", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, valueToSeek);
+                        canSeek = false;
+                        break;
+                      }
+                    }
+
+                    if (canSeek)
+                    {
+                      flvSeekingPositions[++activeFlvSeekingPosition] = valueToSeek;
+
+                      logger->Log(LOGGER_VERBOSE, L"%s: %s: trying to seek: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, valueToSeek);
+                      avio_seek(this->m_avFormat->pb, valueToSeek, SEEK_SET);
+                    }
                   }
                   else
                   {
@@ -1420,6 +1476,8 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
               }
             }
           }
+
+          FREE_MEM(flvSeekingPositions);
         }
       }
       else
@@ -1437,6 +1495,35 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
       {
         logger->Log(LOGGER_ERROR, L"%s: %s: index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, index);
         result = -6;
+      }
+
+      if (this->m_avFormat->iformat->value == CODEC_ID_FLV1)
+      {
+        // in case of FLV video we can be after seek time, but searching index can find index too back
+        ff_read_frame_flush(this->m_avFormat);
+        int index2 = av_index_search_timestamp(st, seek_pts, flags & (~AVSEEK_FLAG_BACKWARD));
+
+        if (index2 < 0)
+        {
+          logger->Log(LOGGER_WARNING, L"%s: %s: second index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, index2);
+        }
+        else
+        {
+          // we choose index which is closer to seek time
+          logger->Log(LOGGER_VERBOSE, L"%s: %s: first index: %d, second index: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, index, index2);
+
+          AVIndexEntry *ie1 = &st->index_entries[index];
+          AVIndexEntry *ie2 = &st->index_entries[index2];
+
+          int64_t diff1 = abs(seek_pts - ie1->timestamp);
+          int64_t diff2 = abs(seek_pts - ie2->timestamp);
+
+          if (diff2 < diff1)
+          {
+            // choose second index, it's closer to requested seek time
+            index = index2;
+          }
+        }
       }
 
       if (SUCCEEDED(result))

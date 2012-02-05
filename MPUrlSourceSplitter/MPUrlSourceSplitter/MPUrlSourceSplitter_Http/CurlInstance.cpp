@@ -41,6 +41,7 @@ CCurlInstance::CCurlInstance(CLogger *logger, wchar_t *url, wchar_t *protocolNam
   this->userAgent = NULL;
   this->version = HTTP_VERSION_DEFAULT;
   this->ignoreContentLength = HTTP_IGNORE_CONTENT_LENGTH_DEFAULT;
+  this->closeWithoutWaiting = false;
 }
 
 
@@ -325,7 +326,7 @@ HRESULT CCurlInstance::DestroyCurlWorker(void)
   // wait for the receive data worker thread to exit      
   if (this->hCurlWorkerThread != NULL)
   {
-    if (WaitForSingleObject(this->hCurlWorkerThread, 1000) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(this->hCurlWorkerThread, this->closeWithoutWaiting ? 1 : 1000) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_DESTROY_CURL_WORKER_NAME, L"thread didn't exit, terminating thread");
@@ -481,4 +482,14 @@ int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *dat
   }
 
   return 0;
+}
+
+bool CCurlInstance::GetCloseWithoutWaiting(void)
+{
+  return this->closeWithoutWaiting;
+}
+
+void CCurlInstance::SetCloseWithoutWaiting(bool closeWithoutWaiting)
+{
+  this->closeWithoutWaiting = closeWithoutWaiting;
 }
