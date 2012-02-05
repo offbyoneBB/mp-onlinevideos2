@@ -375,62 +375,59 @@ namespace OnlineVideos.Sites.georgius
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
             Match mediaIdMatch = Regex.Match(baseWebData, NovaUtil.mediaIdRegex);
 
-            if ((video.PlaybackOptions == null) && (mediaIdMatch.Success))
+            if (mediaIdMatch.Success)
             {
                 video.PlaybackOptions = new Dictionary<string, string>();
 
-                if (mediaIdMatch.Success)
+                String mediaId = mediaIdMatch.Groups["mediaId"].Value;
+
+                String time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                String signature = String.Format("nova-vod|{0}|{1}|tajne.heslo", mediaId, time);
+                String encodedHash = String.Empty;
+                using (MD5 md5 = MD5.Create())
                 {
-                    String mediaId = mediaIdMatch.Groups["mediaId"].Value;
+                    Byte[] md5hash = md5.ComputeHash(Encoding.Default.GetBytes(signature));
+                    encodedHash = Convert.ToBase64String(md5hash);
+                }
 
-                    String time = DateTime.Now.ToString("yyyyMMddHHmmss");
-                    String signature = String.Format("nova-vod|{0}|{1}|tajne.heslo", mediaId, time);
-                    String encodedHash = String.Empty;
-                    using (MD5 md5 = MD5.Create())
+                String videoPlaylistUrl = String.Format("http://master-ng.nacevi.cz/cdn.server/PlayerLink.ashx?t={1}&c=nova-vod|{0}&h=0&d=1&s={2}&tm=nova", mediaId, time, encodedHash);
+                String videoPlaylistWebData = SiteUtilBase.GetWebData(videoPlaylistUrl);
+
+                XmlDocument videoPlaylist = new XmlDocument();
+                videoPlaylist.LoadXml(videoPlaylistWebData);
+
+                if (videoPlaylist.SelectSingleNode("//baseUrl") != null)
+                {
+                    String videoBaseUrl = videoPlaylist.SelectSingleNode("//baseUrl").InnerText;
+
+                    foreach (XmlNode node in videoPlaylist.SelectNodes("//media"))
                     {
-                        Byte[] md5hash = md5.ComputeHash(Encoding.Default.GetBytes(signature));
-                        encodedHash = Convert.ToBase64String(md5hash);
-                    }
+                        String quality = node.SelectSingleNode("quality").InnerText;
+                        String url = node.SelectSingleNode("url").InnerText;
 
-                    String videoPlaylistUrl = String.Format("http://master-ng.nacevi.cz/cdn.server/PlayerLink.ashx?t={1}&c=nova-vod|{0}&h=0&d=1&s={2}&tm=nova", mediaId, time, encodedHash);
-                    String videoPlaylistWebData = SiteUtilBase.GetWebData(videoPlaylistUrl);
+                        String movieUrl = String.Format("{0}/{1}", videoBaseUrl, url);
 
-                    XmlDocument videoPlaylist = new XmlDocument();
-                    videoPlaylist.LoadXml(videoPlaylistWebData);
+                        String host = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf(":", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
+                        String app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
+                        String tcUrl = videoBaseUrl;
+                        String playPath = url;
 
-                    if (videoPlaylist.SelectSingleNode("//baseUrl") != null)
-                    {
-                        String videoBaseUrl = videoPlaylist.SelectSingleNode("//baseUrl").InnerText;
+                        string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(movieUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
 
-                        foreach (XmlNode node in videoPlaylist.SelectNodes("//media"))
+                        switch (quality.ToUpperInvariant())
                         {
-                            String quality = node.SelectSingleNode("quality").InnerText;
-                            String url = node.SelectSingleNode("url").InnerText;
-
-                            String movieUrl = String.Format("{0}/{1}", videoBaseUrl, url);
-
-                            String host = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf(":", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
-                            String app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
-                            String tcUrl = videoBaseUrl;
-                            String playPath = url;
-
-                            string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(movieUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
-
-                            switch (quality.ToUpperInvariant())
-                            {
-                                case "FLV":
-                                case "LQ":
-                                    video.PlaybackOptions.Add("Low quality", resultUrl);
-                                    break;
-                                case "HQ":
-                                    video.PlaybackOptions.Add("High quality", resultUrl);
-                                    break;
-                                default:
-                                    video.PlaybackOptions.Add(quality.ToUpperInvariant(), resultUrl);
-                                    break;
-                            }
-                            
+                            case "FLV":
+                            case "LQ":
+                                video.PlaybackOptions.Add("Low quality", resultUrl);
+                                break;
+                            case "HQ":
+                                video.PlaybackOptions.Add("High quality", resultUrl);
+                                break;
+                            default:
+                                video.PlaybackOptions.Add(quality.ToUpperInvariant(), resultUrl);
+                                break;
                         }
+
                     }
                 }
             }

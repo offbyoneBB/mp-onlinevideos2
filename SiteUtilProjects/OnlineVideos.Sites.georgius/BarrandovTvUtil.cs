@@ -289,7 +289,7 @@ namespace OnlineVideos.Sites.georgius
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl);
             Match showEpisodeVideoIdMatch = Regex.Match(baseWebData, BarrandovTvUtil.showEpisodeVideoIdRegex);
 
-            if ((video.PlaybackOptions == null) && (showEpisodeVideoIdMatch.Success))
+            if (showEpisodeVideoIdMatch.Success)
             {
                 video.PlaybackOptions = new Dictionary<string, string>();
                 String showEpisodeVideoDataUrl = String.Format(BarrandovTvUtil.showEpisodeVideoDataFormat, BarrandovTvUtil.baseUrl, showEpisodeVideoIdMatch.Groups["videoId"].Value);
