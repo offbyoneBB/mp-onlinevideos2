@@ -151,8 +151,9 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="AsyncRequest.h" />
     <ClInclude Include="AsyncRequestCollection.h" />
     <ClInclude Include="Collection.h" />
-    <ClInclude Include="Download.h" />
+    <ClInclude Include="IDownload.h" />
     <ClInclude Include="IFilter.h" />
+    <ClInclude Include="IFilterState.h" />
     <ClInclude Include="InputPin.h" />
     <ClInclude Include="ISeeking.h" />
     <ClInclude Include="LinearBuffer.h" />

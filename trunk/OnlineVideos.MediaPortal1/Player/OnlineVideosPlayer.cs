@@ -200,6 +200,8 @@ namespace OnlineVideos.MediaPortal1.Player
                     return false;
                 }
 
+                OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
+
 				if (sourceFilter is IAMOpenProgress && !CurrentFile.Contains("live=true") && !CurrentFile.Contains("RtmpLive=1"))
                 {
                     // buffer before starting playback
@@ -213,30 +215,34 @@ namespace OnlineVideos.MediaPortal1.Player
                         // after configured percentage has been buffered, connect the graph
                         if (!filterConnected && (percentageBuffered >= PluginConfiguration.Instance.playbuffer || skipBuffering))
                         {
-                            if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
-                            filterConnected = true;
-                            renderPinsThread = new Thread(delegate()
+                            if (((filterState != null) && (filterState.IsFilterReadyToConnectPins())) ||
+                                (filterState == null))
                             {
-								try
-								{
-									Log.Instance.Debug("BufferFile : Rendering unconnected output pins of source filter ...");
-									// connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
-									DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-									Log.Instance.Debug("BufferFile : Playback Ready.");
-									PlaybackReady = true;
-								}
-								catch (ThreadAbortException)
-								{
-									Thread.ResetAbort();
-									Log.Instance.Info("RenderUnconnectedOutputPins foribly aborted.");
-								}
-								catch (Exception ex)
-								{
-									Log.Instance.Warn(ex.Message);
-									StopBuffering();
-								}
-                            }) { IsBackground = true, Name = "OVGraph" };
-							renderPinsThread.Start();
+                                if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
+                                filterConnected = true;
+                                renderPinsThread = new Thread(delegate()
+                                {
+                                    try
+                                    {
+                                        Log.Instance.Debug("BufferFile : Rendering unconnected output pins of source filter ...");
+                                        // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
+                                        DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
+                                        Log.Instance.Debug("BufferFile : Playback Ready.");
+                                        PlaybackReady = true;
+                                    }
+                                    catch (ThreadAbortException)
+                                    {
+                                        Thread.ResetAbort();
+                                        Log.Instance.Info("RenderUnconnectedOutputPins foribly aborted.");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Log.Instance.Warn(ex.Message);
+                                        StopBuffering();
+                                    }
+                                }) { IsBackground = true, Name = "OVGraph" };
+                                renderPinsThread.Start();
+                            }
                         }
                         // log every percent
                         if (current > last && current - last >= (double)total * 0.01)
@@ -257,10 +263,14 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
-                    DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                    percentageBuffered = 100.0f; // no progress reporting possible
-                    GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
-                    PlaybackReady = true;
+                    if (((filterState != null) && (filterState.IsFilterReadyToConnectPins())) ||
+                        (filterState == null))
+                    {
+                        DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
+                        percentageBuffered = 100.0f; // no progress reporting possible
+                        GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
+                        PlaybackReady = true;
+                    }
                 }
             }
             catch (ThreadAbortException)

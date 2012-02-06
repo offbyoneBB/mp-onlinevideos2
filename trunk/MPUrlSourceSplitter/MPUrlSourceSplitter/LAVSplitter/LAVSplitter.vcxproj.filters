@@ -167,9 +167,6 @@
     <ClInclude Include="MediaPacket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Download.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LockMutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -192,6 +189,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IProtocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IDownload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFilterState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
