@@ -453,6 +453,8 @@ STDMETHODIMP CLAVInputPin::QueryProgress(LONGLONG *pllTotal, LONGLONG *pllCurren
 // IAMOpenProgress
 STDMETHODIMP CLAVInputPin::AbortOperation(void)
 {
+  this->DestroyDemuxerWorker();
+  this->DestroyReceiveDataWorker();
   return this->AbortStreamReceive();
 }
 
