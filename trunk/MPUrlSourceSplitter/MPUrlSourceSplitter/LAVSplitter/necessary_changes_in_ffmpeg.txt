@@ -1,0 +1,34 @@
+
+The purpose of this document is to remark all changes made in ffmpeg by any developer. These same changes
+(or at least their meaning) must be made in next releases of ffmpeg.
+
+Changes in ffmpeg (lavfilters HEAD 765ba7c94528706a1e69e8cb461e19da9f52afb9):
+
+File: build_ff_win32.sh
+Comment: change build suffix
+Code:
+
+--build-suffix=-mpurlsourcesplitter"
+
+--------------------------------------------
+Comment: in CURLoption enum define RTMP callback function and RTMP user data for curl_easy_setopt() method
+Code: change build command
+
+make -j8 &&
+cp lib*/*-mpurlsourcesplitter-*.dll ../bin_Win32 &&
+cp lib*/*.lib ../bin_Win32/lib &&
+cp lib*/*-mpurlsourcesplitter-*.dll ../bin_Win32d &&
+cp lib*/*.lib ../bin_Win32d/lib &&
+
+
+--------------------------------------------
+
+File: \libavformat\libavformat.v
+Comment: add export of needed functions, in global: add
+Code:
+
+ff_read_frame_flush;
+ff_update_cur_dts;
+
+--------------------------------------------
+
