@@ -137,12 +137,6 @@
     <ClInclude Include="..\..\common\includes\IGraphRebuildDelegate.h">
       <Filter>Header Files\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\includes\ILAVPinInfo.h">
-      <Filter>Header Files\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\common\includes\IBufferInfo.h">
-      <Filter>Header Files\common</Filter>
-    </ClInclude>
     <ClInclude Include="Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -205,5 +199,6 @@
     <None Include="MPUrlSourceSplitter.def">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="necessary_changes_in_ffmpeg.txt" />
   </ItemGroup>
 </Project>

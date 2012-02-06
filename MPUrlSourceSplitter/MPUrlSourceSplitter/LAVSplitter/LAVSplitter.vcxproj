@@ -178,6 +178,7 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
   </ItemGroup>
   <ItemGroup>
     <None Include="MPUrlSourceSplitter.def" />
+    <None Include="necessary_changes_in_ffmpeg.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
