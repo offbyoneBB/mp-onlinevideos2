@@ -311,6 +311,7 @@ STDMETHODIMP CLAVSplitter::NonDelegatingQueryInterface(REFIID riid, void** ppv)
     //QI2(ILAVFSettingsInternal)
     QI(IObjectWithSite)
     QI(IBufferInfo)
+    QI(IFilterState)
     __super::NonDelegatingQueryInterface(riid, ppv);
 }
 
@@ -1818,4 +1819,13 @@ int64_t CLAVSplitter::SeekToPosition(int64_t start, int64_t end)
 HRESULT CLAVSplitter::GetTotalLength(int64_t *totalLength)
 {
   return this->m_pInput->GetTotalLength(totalLength);
+}
+
+HRESULT CLAVSplitter::IsFilterReadyToConnectPins(bool *ready)
+{
+  CheckPointer(ready, E_POINTER);
+
+  *ready = (this->GetPinCount() != 0);
+
+  return S_OK;
 }

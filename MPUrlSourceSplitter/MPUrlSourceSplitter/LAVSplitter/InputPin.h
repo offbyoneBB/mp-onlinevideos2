@@ -21,7 +21,7 @@
 
 #include "IProtocol.h"
 #include "Logger.h"
-#include "Download.h"
+#include "IDownload.h"
 
 #include "AsyncRequest.h"
 #include "AsyncRequestCollection.h"

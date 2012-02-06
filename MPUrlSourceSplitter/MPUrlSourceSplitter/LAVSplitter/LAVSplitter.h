@@ -35,8 +35,9 @@
 #include "SettingsProp.h"
 #include "IBufferInfo.h"
 
-#include "Download.h"
+#include "IDownload.h"
 #include "IFilter.h"
+#include "IFilterState.h"
 
 //#define LAVF_REGISTRY_KEY L"Software\\LAV\\Splitter"
 //#define LAVF_REGISTRY_KEY_FORMATS LAVF_REGISTRY_KEY L"\\Formats"
@@ -64,6 +65,7 @@ class CLAVSplitter
   , public IBufferInfo
   , public IDownload
   , public IFilter
+  , public IFilterState
 {
 public:
   CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr);
@@ -227,6 +229,13 @@ public:
   // @param totalLength : reference to total length variable
   // @return : S_OK if success, VFW_S_ESTIMATED if total length is not surely known, error code if error
   HRESULT GetTotalLength(int64_t *totalLength);
+
+  // IFilterState interface
+
+  // tests if filter is ready to connect output pins
+  // @param ready : reference to variable that holds ready state
+  // @return : S_OK if successful
+  STDMETHODIMP IsFilterReadyToConnectPins(bool *ready);
 
 protected:
   STDMETHODIMP LoadDefaults();
