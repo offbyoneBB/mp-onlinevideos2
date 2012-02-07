@@ -46,7 +46,7 @@ namespace OnlineVideos.Hoster
                     string fname = Regex.Match(page, @"<input\stype=""hidden""\sname=""fname""\svalue=""(?<value>[^""]+)"">").Groups["value"].Value;
                     string referer = Regex.Match(page, @"<input\stype=""hidden""\sname=""referer""\svalue=""(?<value>[^""]+)"">").Groups["value"].Value;
 
-                    string timeToWait = Regex.Match(page, @"<script>\s*var\stminus\s*=\s*(?<time>[^;]*);").Groups["time"].Value;
+                    string timeToWait = Regex.Match(page, @">Wait\s<span\sid=""[^""]*"">(?<time>[^<]*)</span>\sseconds</span>").Groups["time"].Value;
                     if (Convert.ToInt32(timeToWait) < 10)
                     {
                         string postdata = "op=" + op +
