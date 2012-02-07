@@ -1795,6 +1795,20 @@
               <ZipFileName>Installer{CopyFile}\{e1278496-a778-4c6e-aa8e-d3e83fe362c1}-MuzuTV.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MuzuTV.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Khan Academy.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f22fb9b0-423f-4aa1-9f04-44f36e737fe6}-Khan Academy.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Khan Academy.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Khan Academy.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{37fd18b4-8f32-4d65-bf1c-ab4f9e5403df}-Khan Academy.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Khan Academy.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1816,14 +1830,14 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c795f3a7-881d-4376-b2a2-e8ac9eec9eaa}-OnlineVideos.MediaPortal1.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.dll</DestinationFilename>
             </FileItem>
@@ -1837,77 +1851,77 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{01ff36dd-4b5a-47d0-88c4-ed79b4ae9e47}-OnlineVideos.Sites.brownard.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4c8dc52e-55c1-48cc-9a34-589f7be39c5c}-OnlineVideos.Sites.corporategadfly.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{b9177163-1ed3-4b3c-a9be-81e77ce05b63}-OnlineVideos.Sites.diebagger.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{f31bc3ab-b076-4064-9c0c-53f90a0b283d}-OnlineVideos.Sites.pilehave.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{88fba3b4-4209-4db5-9142-8329f8b13d25}-OnlineVideos.Sites.SilentException.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{b42016e5-6331-4f95-985a-d79ae30e9b60}-OnlineVideos.Sites.SK_CZ.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
             </FileItem>
@@ -2391,40 +2405,75 @@
           </Items>
         </Files>
       </GroupItem>
-      <GroupItem Name="MPUrlSource">
+      <GroupItem Name="MPUrlSourceSplitter">
         <ParentGroup>Plugin</ParentGroup>
         <DisplayName>Source Filter</DisplayName>
         <DefaulChecked>true</DefaulChecked>
-        <Description>The MediaPortal Url Source directshow filter enables seeking on HTTP servers with ranges support and playback of rtmp streams.</Description>
+        <Description>The MediaPortal Url Source Splitter directshow filter enables seeking on HTTP servers with ranges support and playback with seeking of RTMP streams.</Description>
         <Files>
           <Items>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSource\bin\Release\libcurl.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{7e8138de-3a5b-4763-b6fd-b4039776f430}-libcurl.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSource\libcurl.dll</DestinationFilename>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-53.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c9691724-d7e0-4d6b-8947-33c3300a0571}-avcodec-mpurlsourcesplitter-53.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-53.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource.ax</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{f53f9044-5923-43c9-bca4-c72942a67437}-MPUrlSource.ax</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSource\MPUrlSource.ax</DestinationFilename>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avfilter-mpurlsourcesplitter-2.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6b6ba619-fca8-4cc2-902d-44733478932d}-avfilter-mpurlsourcesplitter-2.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avfilter-mpurlsourcesplitter-2.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_Http.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{29dd6ae1-9b31-4e6b-a7bb-6b6a8b4c79be}-MPUrlSource_Http.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_Http.dll</DestinationFilename>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-53.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{835816eb-aa36-409b-affa-da93bcece661}-avformat-mpurlsourcesplitter-53.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-53.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_Rtmp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c20bed92-1b25-4d0e-bb47-cf2e0a434799}-MPUrlSource_Rtmp.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_Rtmp.dll</DestinationFilename>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{20cfd7be-88ee-4d83-9557-ea08ea774a74}-avutil-mpurlsourcesplitter-51.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-51.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\libcurl.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3a6dc240-e1fb-48fc-9382-72d8b3d4d816}-libcurl.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\libcurl.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter.ax</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b5b380f1-727f-41d0-8366-ce57f054b40e}-MPUrlSourceSplitter.ax</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Http.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{be8afb39-2ed6-4f3c-818d-f336c2880ab7}-MPUrlSourceSplitter_Http.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Http.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Rtmp.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5bdc1267-e247-46da-be09-97dd07f26531}-MPUrlSourceSplitter_Rtmp.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Rtmp.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\swscale-mpurlsourcesplitter-2.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9a924158-72fe-44ac-863d-e43acc60973e}-swscale-mpurlsourcesplitter-2.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\swscale-mpurlsourcesplitter-2.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2506,7 +2555,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
         </Actions>
         <IncludedGroups>
           <string>Plugin</string>
-          <string>MPUrlSource</string>
+          <string>MPUrlSourceSplitter</string>
           <string>Thumbs</string>
           <string>Language</string>
           <string>Skins</string>
@@ -2691,7 +2740,7 @@ public class Script
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
-            <ActionItem Name="Un/Register MPUrlSource Filter" ActionType="RunApplication" ConditionGroup="MPUrlSource">
+            <ActionItem Name="Un/Register MPUrlSourceSplitter Filter" ActionType="RunApplication" ConditionGroup="MPUrlSourceSplitter">
               <Params>
                 <Items>
                   <SectionParam Name="Path to application">
@@ -2701,7 +2750,7 @@ public class Script
  %Base%\MediaPortal.exe</Description>
                   </SectionParam>
                   <SectionParam Name="Parameters for application">
-                    <Value>/s "%Base%\MPUrlSource\MPUrlSource.ax"</Value>
+                    <Value>/s "%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"</Value>
                     <ValueType>String</ValueType>
                     <Description>Command line parameters</Description>
                   </SectionParam>
@@ -2721,7 +2770,7 @@ public class Script
                     <Description>Path to the application which should be executed when uninstall</Description>
                   </SectionParam>
                   <SectionParam Name="Parameters for uninstall application">
-                    <Value>/s /u "%Base%\MPUrlSource\MPUrlSource.ax"</Value>
+                    <Value>/s /u "%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"</Value>
                     <ValueType>String</ValueType>
                     <Description>Command line parameters for uninstall app</Description>
                   </SectionParam>
@@ -2856,7 +2905,7 @@ public class Script
     <VersionDescription />
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.1.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2012-01-06T11:00:00</ReleaseDate>
+    <ReleaseDate>2012-02-07T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -4678,17 +4727,31 @@ public class Script
         <ZipFileName>Installer{CopyFile}\{e1278496-a778-4c6e-aa8e-d3e83fe362c1}-MuzuTV.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MuzuTV.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Khan Academy.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f22fb9b0-423f-4aa1-9f04-44f36e737fe6}-Khan Academy.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Khan Academy.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Khan Academy.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{37fd18b4-8f32-4d65-bf1c-ab4f9e5403df}-Khan Academy.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Khan Academy.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c795f3a7-881d-4376-b2a2-e8ac9eec9eaa}-OnlineVideos.MediaPortal1.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.dll</DestinationFilename>
       </FileItem>
@@ -4702,77 +4765,77 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{01ff36dd-4b5a-47d0-88c4-ed79b4ae9e47}-OnlineVideos.Sites.brownard.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{4c8dc52e-55c1-48cc-9a34-589f7be39c5c}-OnlineVideos.Sites.corporategadfly.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b9177163-1ed3-4b3c-a9be-81e77ce05b63}-OnlineVideos.Sites.diebagger.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{f31bc3ab-b076-4064-9c0c-53f90a0b283d}-OnlineVideos.Sites.pilehave.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{88fba3b4-4209-4db5-9142-8329f8b13d25}-OnlineVideos.Sites.SilentException.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b42016e5-6331-4f95-985a-d79ae30e9b60}-OnlineVideos.Sites.SK_CZ.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
       </FileItem>
@@ -5206,30 +5269,65 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSource\bin\Release\libcurl.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{7e8138de-3a5b-4763-b6fd-b4039776f430}-libcurl.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSource\libcurl.dll</DestinationFilename>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-53.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c9691724-d7e0-4d6b-8947-33c3300a0571}-avcodec-mpurlsourcesplitter-53.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-53.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource.ax</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f53f9044-5923-43c9-bca4-c72942a67437}-MPUrlSource.ax</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSource\MPUrlSource.ax</DestinationFilename>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avfilter-mpurlsourcesplitter-2.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6b6ba619-fca8-4cc2-902d-44733478932d}-avfilter-mpurlsourcesplitter-2.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\avfilter-mpurlsourcesplitter-2.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_Http.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{29dd6ae1-9b31-4e6b-a7bb-6b6a8b4c79be}-MPUrlSource_Http.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_Http.dll</DestinationFilename>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-53.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{835816eb-aa36-409b-affa-da93bcece661}-avformat-mpurlsourcesplitter-53.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-53.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_Rtmp.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c20bed92-1b25-4d0e-bb47-cf2e0a434799}-MPUrlSource_Rtmp.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_Rtmp.dll</DestinationFilename>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{20cfd7be-88ee-4d83-9557-ea08ea774a74}-avutil-mpurlsourcesplitter-51.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-51.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\libcurl.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3a6dc240-e1fb-48fc-9382-72d8b3d4d816}-libcurl.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\libcurl.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter.ax</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b5b380f1-727f-41d0-8366-ce57f054b40e}-MPUrlSourceSplitter.ax</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Http.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{be8afb39-2ed6-4f3c-818d-f336c2880ab7}-MPUrlSourceSplitter_Http.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Http.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Rtmp.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5bdc1267-e247-46da-be09-97dd07f26531}-MPUrlSourceSplitter_Rtmp.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Rtmp.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\swscale-mpurlsourcesplitter-2.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9a924158-72fe-44ac-863d-e43acc60973e}-swscale-mpurlsourcesplitter-2.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\swscale-mpurlsourcesplitter-2.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
@@ -5293,10 +5391,10 @@ public class Script
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName />
-        <ZipFileName>Installer{CopyFile}\{0b2c77c7-c575-41d9-9b6a-eb57962d9542}-</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSource</DestinationFilename>
-        <Folder>..\MPUrlSource\bin\Release</Folder>
-        <Group>MPUrlSource</Group>
+        <ZipFileName>Installer{CopyFile}\{1d005caa-d5cc-4c26-a926-f0e1755da5a3}-</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter</DestinationFilename>
+        <Folder>..\MPUrlSourceSplitter\bin_Win32</Folder>
+        <Group>MPUrlSourceSplitter</Group>
         <Recursive>false</Recursive>
       </FolderGroup>
     </FolderGroups>
