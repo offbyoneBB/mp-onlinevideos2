@@ -93,10 +93,15 @@ namespace OnlineVideos.Sites
         Category currentCategory = null;
         public override List<VideoInfo> getNextPageVideos()
         {
-            if (currentCategory is FavoriteCategory)
-                return (currentCategory as FavoriteCategory).Site.getNextPageVideos();
-            else
-                return base.getNextPageVideos();
+            var fc = currentCategory as FavoriteCategory;
+            if (fc != null)
+            {
+                var result = fc.Site.getNextPageVideos();
+                result.ForEach(r => r.SiteName = fc.Site.Settings.Name);
+                HasNextPage = fc.Site.HasNextPage;
+                return result;
+            }
+            return base.getNextPageVideos();
         }
 
         // keep a reference of all Categories ever created and reuse them, to get them selected when returning to the category view
