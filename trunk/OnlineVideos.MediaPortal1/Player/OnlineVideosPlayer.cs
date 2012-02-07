@@ -263,14 +263,19 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
-                    if (((filterState != null) && (filterState.IsFilterReadyToConnectPins())) ||
-                        (filterState == null))
+                    if (filterState != null)
                     {
-                        DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                        percentageBuffered = 100.0f; // no progress reporting possible
-                        GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
-                        PlaybackReady = true;
+                        while (!filterState.IsFilterReadyToConnectPins())
+                        {
+                            Thread.Sleep(50);
+                        }
                     }
+
+                    DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
+                    percentageBuffered = 100.0f; // no progress reporting possible
+                    GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
+                    PlaybackReady = true;
+                    
                 }
             }
             catch (ThreadAbortException)
