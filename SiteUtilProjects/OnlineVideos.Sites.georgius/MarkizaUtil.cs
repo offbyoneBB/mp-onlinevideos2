@@ -60,6 +60,7 @@ namespace OnlineVideos.Sites.georgius
 
         private static String showVoyoHostRegex = @"""host"":""(?<host>[^""]*)";
         private static String showVoyoFileNameRegex = @"""filename"":""(?<fileName>[^""]*)";
+        private static String showVoyoConnectionArgsRegex = @"""connectionArgs"":\[(?<connectionArgs>[^\]]*)";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -497,6 +498,7 @@ namespace OnlineVideos.Sites.georgius
 
                         String host = String.Empty;
                         String fileName = String.Empty;
+                        String connectionArgs = String.Empty;
 
                         match = Regex.Match(decodedParams, MarkizaUtil.showVoyoHostRegex);
                         if (match.Success)
@@ -515,9 +517,67 @@ namespace OnlineVideos.Sites.georgius
                         {
                             String playPath = String.Format("mp4:{0}-1.mp4", fileName);
 
-                            String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(host) { TcUrl = host, PlayPath = playPath }.ToString();
+                            OnlineVideos.MPUrlSourceFilter.RtmpUrl rtmpUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(host) { TcUrl = host, PlayPath = playPath, App = "voyosk" };
 
-                            videoUrls.Add(resultUrl);
+                            match = Regex.Match(decodedParams, MarkizaUtil.showVoyoConnectionArgsRegex);
+                            if (match.Success)
+                            {
+                                jObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject("{ \"connectionArgs\":[" + match.Groups["connectionArgs"].Value + "] }");
+
+                                Newtonsoft.Json.Linq.JArray jConnectionArray = jObject["connectionArgs"] as Newtonsoft.Json.Linq.JArray;
+                                if ((jConnectionArray != null) && (jConnectionArray.Count > 0))
+                                {
+                                    MPUrlSourceFilter.RtmpObjectArbitraryData rtmpConnectionParams = new MPUrlSourceFilter.RtmpObjectArbitraryData();
+
+                                    for (int i = 0; i < jConnectionArray.Count; i++)
+                                    {
+                                        var connectionItem = jConnectionArray[i];
+
+                                        switch (connectionItem.Type)
+                                        {
+                                            case Newtonsoft.Json.Linq.JTokenType.None:
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Object:
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Array:
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Constructor:
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Property:
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Comment:
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Integer:
+                                                rtmpConnectionParams.Objects.Add(new MPUrlSourceFilter.RtmpNumberArbitraryData(i.ToString(), (long)((Newtonsoft.Json.Linq.JValue)connectionItem).Value));
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Float:
+                                                rtmpConnectionParams.Objects.Add(new MPUrlSourceFilter.RtmpNumberArbitraryData(i.ToString(), (float)((Newtonsoft.Json.Linq.JValue)connectionItem).Value));
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.String:
+                                                rtmpConnectionParams.Objects.Add(new MPUrlSourceFilter.RtmpStringArbitraryData(i.ToString(), (String)((Newtonsoft.Json.Linq.JValue)connectionItem).Value));
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Boolean:
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Null:
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Undefined:
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Date:
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Raw:
+                                                break;
+                                            case Newtonsoft.Json.Linq.JTokenType.Bytes:
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                    
+                                    rtmpUrl.ArbitraryData.Add(rtmpConnectionParams);
+                                }
+                            }
+
+                            videoUrls.Add(rtmpUrl.ToString());
                         }
                     }
                 }
