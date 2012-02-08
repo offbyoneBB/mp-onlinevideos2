@@ -11,8 +11,8 @@ Code:
 --build-suffix=-mpurlsourcesplitter"
 
 --------------------------------------------
-Comment: in CURLoption enum define RTMP callback function and RTMP user data for curl_easy_setopt() method
-Code: change build command
+Comment: change build command
+Code: 
 
 make -j8 &&
 cp lib*/*-mpurlsourcesplitter-*.dll ../bin_Win32 &&
@@ -29,6 +29,15 @@ Code:
 
 ff_read_frame_flush;
 ff_update_cur_dts;
+
+--------------------------------------------
+
+File: \libavformat\flvdec.c
+Comment: change in method flv_read_packet(), disable seeking to end of file
+Code:
+
+whole condition starting with: if(s->pb->seekable && (!s->duration || s->duration==AV_NOPTS_VALUE))
+must be disabled (comment it)
 
 --------------------------------------------
 

@@ -378,8 +378,6 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   }
 
   this->url = ConvertToUnicodeW(pszFileName);
-  //this->url = ConvertToUnicodeW(L"http://o-o.preferred.orangesk-bts1.v19.lscache6.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Cratebypass%2Ccp&fexp=907050%2C919101%2C914102&itag=22&ip=109.0.0.0&signature=BE0D323AF57307CB48DBC256948E8802419681AC.9B7F07437766C719A18014ED97104DAD06A14181&sver=3&ratebypass=yes&source=youtube&expire=1328580112&key=yt1&ipbits=8&cp=U0hRTVVTTl9GTENOMV9NTVJCOmNLZlp3YURicElH&id=290eb3afa9023e3f&ext=.mp4");
-  //this->url = ConvertToUnicodeW(L"rtmp://wcdn101.nacevi.cz/ct-vod?id=MTQxODI1NzMxMXw2MzQ2NDA4MzMzMzIzMjg3NTA=&type=wpl/mp4:iVysilani/2011/06/05/3Plus1SMiroslaveCT1-050611-MP4_576p.mp4####Url=rtmp%3a%2f%2fwcdn101.nacevi.cz%2fct-vod%3fid%3dMTQxODI1NzMxMXw2MzQ2NDA4MzMzMzIzMjg3NTA%3d%26type%3dwpl%2fmp4%3aiVysilani%2f2011%2f06%2f05%2f3Plus1SMiroslaveCT1-050611-MP4_576p.mp4&RtmpApp=ct-vod%3fid%3dMTQxODI1NzMxMXw2MzQ2NDA4MzMzMzIzMjg3NTA%3d%26type%3dwpl&RtmpPageUrl=http%3a%2f%2fwww.ceskatelevize.cz%2fivysilani%2f1148961737-3-plus-1-s-miroslavem-donutilem%2f211512120790001-3-plus-1-s-miroslavem-donutilem-smolari%2f&RtmpPlayPath=mp4%3aiVysilani%2f2011%2f06%2f05%2f3Plus1SMiroslaveCT1-050611-MP4_576p.mp4&RtmpSwfUrl=http%3a%2f%2fimg2.ceskatelevize.cz%2flibraries%2fplayer%2fflashPlayer.swf%3fversion%3d1.44.6&RtmpTcUrl=rtmp%3a%2f%2fwcdn101.nacevi.cz%2fct-vod%3fid%3dMTQxODI1NzMxMXw2MzQ2NDA4MzMzMzIzMjg3NTA%3d%26type%3dwpl");
 
   if (this->url == NULL)
   {

@@ -27,12 +27,12 @@
 
 #include "moreuuids.h"
 
-#ifdef DEBUG
-#include "lavf_log.h"
-extern "C" {
-#include "libavutil/log.h"
-}
-#endif
+//#ifdef DEBUG
+//#include "lavf_log.h"
+//extern "C" {
+//#include "libavutil/log.h"
+//}
+//#endif
 
 #define MODULE_NAME                                                         L"LAVFDemuxer()"
 
@@ -68,10 +68,10 @@ static const AVRational AV_RATIONAL_TIMEBASE = {1, AV_TIME_BASE};
 
 void CLAVFDemuxer::ffmpeg_init()
 {
-#ifdef DEBUG
-  DbgSetModuleLevel (LOG_CUSTOM1, DWORD_MAX); // FFMPEG messages use custom1
-  av_log_set_callback(lavf_log_callback);
-#endif
+//#ifdef DEBUG
+//  DbgSetModuleLevel (LOG_CUSTOM1, DWORD_MAX); // FFMPEG messages use custom1
+//  av_log_set_callback(lavf_log_callback);
+//#endif
 
   if (!ffmpeg_initialized)
   {
