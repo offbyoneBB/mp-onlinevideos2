@@ -147,6 +147,7 @@ private:
   IFilter *m_pFilter;
   STDMETHODIMP SeekByPosition(REFERENCE_TIME time, int flags);
   STDMETHODIMP SeekByTime(REFERENCE_TIME time, int flags);
+  STDMETHODIMP SeekBySequenceReading(REFERENCE_TIME time, int flags);
 
 private:
   AVFormatContext *m_avFormat;
