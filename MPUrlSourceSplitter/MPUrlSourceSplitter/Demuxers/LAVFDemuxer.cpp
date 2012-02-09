@@ -150,6 +150,7 @@ CLAVFDemuxer::CLAVFDemuxer(CCritSec *pLock, ILAVFSettingsInternal *settings, IFi
 
   m_pFilter = filter;
   this->flvTimestamps = ALLOC_MEM_SET(this->flvTimestamps, FlvTimestamp, FLV_TIMESTAMP_MAX, 0);
+  this->dontChangeTimestamps = false;
 }
 
 CLAVFDemuxer::~CLAVFDemuxer()
@@ -711,48 +712,47 @@ STDMETHODIMP CLAVFDemuxer::GetNextPacket(Packet **ppPacket)
   if ((this->m_avFormat->iformat->value == CODEC_ID_FLV1) && (this->flvTimestamps != NULL) && (pPacket->StreamId < FLV_TIMESTAMP_MAX))
   {
     // in case of FLV video check timestamps, can be wrong in case of live streams
-    //this->m_pFilter->GetLogger()->Log(LOGGER_VERBOSE, L"%s: %s: id: %d, start: %lld, stop: %lld", MODULE_NAME, METHOD_GET_NEXT_PACKET_NAME, pPacket->StreamId, pPacket->rtStart, pPacket->rtStop);
-
     FlvTimestamp *timestamp = &this->flvTimestamps[pPacket->StreamId];
-    if (!timestamp->set)
-    {
-      // first timestamp not set
-      timestamp->lastStart = pPacket->rtStart;
-      timestamp->lastStop = pPacket->rtStop;
-      timestamp->replaceValue = pPacket->rtStart;
-      timestamp->set = true;
-
-      this->m_pFilter->GetLogger()->Log(LOGGER_VERBOSE, L"%s: %s: id: %d, last start: %lld, last stop: %lld, replace value: %lld, set: %d", MODULE_NAME, METHOD_GET_NEXT_PACKET_NAME, pPacket->StreamId, timestamp->lastStart, timestamp->lastStop, timestamp->replaceValue, timestamp->set ? 1 : 0);
-    }
 
     int64_t lastStart = pPacket->rtStart;
     int64_t lastStop = pPacket->rtStop;
 
-    if ((pPacket->rtStart - timestamp->lastPacketStart) > DSHOW_TIME_BASE)
+    if ((!this->dontChangeTimestamps) && ((pPacket->rtStart - timestamp->decreaseTimestamp - timestamp->lastPacketStart) > DSHOW_TIME_BASE))
     {
       // if difference between two packets is greater than one second
       // it should happen only on start of stream
 
-      pPacket->rtStop = timestamp->lastStop + 1 + pPacket->rtStop - pPacket->rtStart;
-      pPacket->rtStart = timestamp->lastStop + 1;
-      // new start for next packets
-      timestamp->replaceValue = timestamp->lastStop + 1;
+      this->m_pFilter->GetLogger()->Log(LOGGER_VERBOSE, L"%s: %s: id: %d, packet start: %lld, packet stop: %lld, last start: %lld, last stop: %lld, descrease: %lld", MODULE_NAME, METHOD_GET_NEXT_PACKET_NAME, pPacket->StreamId, pPacket->rtStart, pPacket->rtStop, timestamp->lastPacketStart, timestamp->lastPacketStop, timestamp->decreaseTimestamp);
 
-      timestamp->lastStart = lastStart;
-      timestamp->lastStop = lastStop;
+      pPacket->rtStop = (timestamp->lastPacketStop / 10000 + 1) * 10000 + pPacket->rtStop - pPacket->rtStart;
+      pPacket->rtStart = (timestamp->lastPacketStop / 10000 + 1) * 10000;
 
-      this->m_pFilter->GetLogger()->Log(LOGGER_VERBOSE, L"%s: %s: id: %d, last start: %lld, last stop: %lld, replace value: %lld", MODULE_NAME, METHOD_GET_NEXT_PACKET_NAME, pPacket->StreamId, timestamp->lastStart, timestamp->lastStop, timestamp->replaceValue);
+      timestamp->decreaseTimestamp = lastStart - pPacket->rtStart;
+      for (int i = 0; i < FLV_TIMESTAMP_MAX; i++)
+      {
+        FlvTimestamp *tms = &this->flvTimestamps[i];
+        tms->decreaseTimestamp = timestamp->decreaseTimestamp;
+        tms->needRecalculate = true;
+      }
+      timestamp->needRecalculate = false;
+      this->dontChangeTimestamps = true;
+
+      this->m_pFilter->GetLogger()->Log(LOGGER_VERBOSE, L"%s: %s: id: %d, packet start: %lld, packet stop: %lld, last start: %lld, last stop: %lld, descrease: %lld", MODULE_NAME, METHOD_GET_NEXT_PACKET_NAME, pPacket->StreamId, pPacket->rtStart, pPacket->rtStop, timestamp->lastPacketStart, timestamp->lastPacketStop, timestamp->decreaseTimestamp);
     }
     else
     {
-      int64_t newStartValue = timestamp->replaceValue + pPacket->rtStart - timestamp->lastStart;
-      pPacket->rtStop = newStartValue + pPacket->rtStop - pPacket->rtStart;
-      pPacket->rtStart = newStartValue;
+      if (timestamp->needRecalculate)
+      {
+        timestamp->decreaseTimestamp -= timestamp->lastPacketStart;
+        timestamp->needRecalculate = false;
+      }
+
+      pPacket->rtStop -= timestamp->decreaseTimestamp;
+      pPacket->rtStart -= timestamp->decreaseTimestamp;
     }
 
     timestamp->lastPacketStart = lastStart;
-
-    //this->m_pFilter->GetLogger()->Log(LOGGER_VERBOSE, L"%s: %s: id: %d, start: %lld, stop: %lld", MODULE_NAME, METHOD_GET_NEXT_PACKET_NAME, pPacket->StreamId, pPacket->rtStart, pPacket->rtStop);
+    timestamp->lastPacketStop = lastStop;
   }
 
   *ppPacket = pPacket;
@@ -844,18 +844,6 @@ STDMETHODIMP CLAVFDemuxer::Seek(REFERENCE_TIME rTime)
   {
     // we didn't seek by position or time
     logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SEEK_NAME, L"didn't seek by position or time");
-  }
-  else
-  {
-    if ((this->m_avFormat->iformat->value == CODEC_ID_FLV1) && (this->flvTimestamps != NULL))
-    {
-      // in case of FLV video clear all set flags
-      for(int i = 0; i < FLV_TIMESTAMP_MAX; i++)
-      {
-        FlvTimestamp *timestamp = &this->flvTimestamps[i];
-        timestamp->set = false;
-      }
-    }
   }
 
   for (unsigned i = 0; i < m_avFormat->nb_streams; i++) {
