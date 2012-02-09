@@ -37,11 +37,12 @@ class FormatInfo;
 
 struct FlvTimestamp
 {
-  int64_t lastStart;
-  int64_t lastStop;
-  int64_t replaceValue;
   int64_t lastPacketStart;
-  bool set;
+  int64_t lastPacketStop;
+  // value for decreasing timestamp in FLV video (we assume that all incoming streams are in sync)
+  int64_t decreaseTimestamp;
+  // decrease timestamp value must be recalculated, because it was changed by another stream
+  bool needRecalculate;
 };
 
 #define FLV_TIMESTAMP_MAX                           1024
@@ -183,4 +184,5 @@ private:
   time_t m_timeOpening;
 
   FlvTimestamp *flvTimestamps;
+  bool dontChangeTimestamps;
 };
