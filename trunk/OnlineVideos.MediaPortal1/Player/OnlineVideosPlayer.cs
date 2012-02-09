@@ -35,49 +35,49 @@ namespace OnlineVideos.MediaPortal1.Player
                 return FinishPreparedGraph();
             else
                 return base.GetInterfaces();
-        }      
+        }
 
-		public override void Process()
-		{
-			if ((DateTime.Now - lastProgressCheck).TotalMilliseconds > 100) // check progress at maximum 10 times per second
-			{
-				lastProgressCheck = DateTime.Now;
-				if (percentageBuffered >= 100.0f) // already buffered 100%, simply set the Property
-				{
-					GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
-				}
-				else
-				{
-					if (graphBuilder != null && GetSourceFilterName(CurrentFile) == MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName) // only when progress reporting is possible
-					{
-						IBaseFilter sourceFilter = null;
-						try
-						{
-							int result = graphBuilder.FindFilterByName(MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName, out sourceFilter);
-							if (result == 0)
-							{
-								long total = 0, current = 0;
-								((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
-								percentageBuffered = (float)current / (float)total * 100.0f;
-								GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
-							}
-						}
-						catch (Exception ex)
-						{
-							Log.Instance.Warn("Error Quering Progress: {0}", ex.Message);
-						}
-						finally
-						{
-							if (sourceFilter != null) DirectShowUtil.ReleaseComObject(sourceFilter, 2000);
-						}
-					}					
-				}
-			}
-			base.Process();
-		}
+        public override void Process()
+        {
+            if ((DateTime.Now - lastProgressCheck).TotalMilliseconds > 100) // check progress at maximum 10 times per second
+            {
+                lastProgressCheck = DateTime.Now;
+                if (percentageBuffered >= 100.0f) // already buffered 100%, simply set the Property
+                {
+                    GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
+                }
+                else
+                {
+                    if (graphBuilder != null && GetSourceFilterName(CurrentFile) == MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName) // only when progress reporting is possible
+                    {
+                        IBaseFilter sourceFilter = null;
+                        try
+                        {
+                            int result = graphBuilder.FindFilterByName(MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName, out sourceFilter);
+                            if (result == 0)
+                            {
+                                long total = 0, current = 0;
+                                ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
+                                percentageBuffered = (float)current / (float)total * 100.0f;
+                                GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Instance.Warn("Error Quering Progress: {0}", ex.Message);
+                        }
+                        finally
+                        {
+                            if (sourceFilter != null) DirectShowUtil.ReleaseComObject(sourceFilter, 2000);
+                        }
+                    }
+                }
+            }
+            base.Process();
+        }
 
-		float percentageBuffered;
-		DateTime lastProgressCheck = DateTime.MinValue;
+        float percentageBuffered;
+        DateTime lastProgressCheck = DateTime.MinValue;
 
         public bool BufferingStopped { get; protected set; }
         public void StopBuffering() { BufferingStopped = true; }
@@ -87,22 +87,22 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public static string GetSourceFilterName(string videoUrl)
         {
-			string sourceFilterName = string.Empty;
-			Uri uri = new Uri(videoUrl);
-			string protocol = uri.Scheme.Substring(0, Math.Min(uri.Scheme.Length, 4));
-			switch (protocol)
-			{
-				case "http":
-				case "rtmp":
-					sourceFilterName = MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName;
-					break;
-				case "sop":
-					sourceFilterName = "SopCast ASF Splitter";
-					break;
-				case "mms":
-					sourceFilterName = "WM ASF Reader";
-					break;
-			}
+            string sourceFilterName = string.Empty;
+            Uri uri = new Uri(videoUrl);
+            string protocol = uri.Scheme.Substring(0, Math.Min(uri.Scheme.Length, 4));
+            switch (protocol)
+            {
+                case "http":
+                case "rtmp":
+                    sourceFilterName = MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName;
+                    break;
+                case "sop":
+                    sourceFilterName = "SopCast ASF Splitter";
+                    break;
+                case "mms":
+                    sourceFilterName = "WM ASF Reader";
+                    break;
+            }
             return sourceFilterName;
         }
 
@@ -114,7 +114,7 @@ namespace OnlineVideos.MediaPortal1.Player
         /// <returns>true, if the url can be buffered (a graph was started), false if it can't be and null if an error occured building the graph</returns>
         public bool? PrepareGraph()
         {
-			string sourceFilterName = GetSourceFilterName(CurrentFile);
+            string sourceFilterName = GetSourceFilterName(CurrentFile);
 
             if (!string.IsNullOrEmpty(sourceFilterName))
             {
@@ -163,7 +163,7 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 return false;
             }
-        }      
+        }
 
         /// <summary>
         /// This function can be called by a background thread. It finishes building the graph and
@@ -173,36 +173,36 @@ namespace OnlineVideos.MediaPortal1.Player
         /// <returns>true, when playback can be started</returns>
         public bool BufferFile()
         {
-			Thread renderPinsThread = null;
+            Thread renderPinsThread = null;
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent; // prevents the BlackRectangle on first time playback
             bool PlaybackReady = false;
             IBaseFilter sourceFilter = null;
             try
             {
-				string sourceFilterName = GetSourceFilterName(CurrentFile);
+                string sourceFilterName = GetSourceFilterName(CurrentFile);
 
                 int result = graphBuilder.FindFilterByName(sourceFilterName, out sourceFilter);
                 if (result != 0)
                 {
-					string errorText = DirectShowLib.DsError.GetErrorText(result);
-					if (errorText != null) errorText = errorText.Trim();
-					Log.Instance.Warn("BufferFile : FindFilterByName returned '{0}'{1}", "0x" + result.ToString("X"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
+                    string errorText = DirectShowLib.DsError.GetErrorText(result);
+                    if (errorText != null) errorText = errorText.Trim();
+                    Log.Instance.Warn("BufferFile : FindFilterByName returned '{0}'{1}", "0x" + result.ToString("X"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
                     return false;
                 }
-                
-				result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
+
+                result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
 
                 if (result != 0)
                 {
-					string errorText = DirectShowLib.DsError.GetErrorText(result);
-					if (errorText != null) errorText = errorText.Trim();
-					Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned '{0}'{1}", "0x" + result.ToString("X"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
+                    string errorText = DirectShowLib.DsError.GetErrorText(result);
+                    if (errorText != null) errorText = errorText.Trim();
+                    Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned '{0}'{1}", "0x" + result.ToString("X"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
                     return false;
                 }
 
                 OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
 
-				if (sourceFilter is IAMOpenProgress && !CurrentFile.Contains("live=true") && !CurrentFile.Contains("RtmpLive=1"))
+                if (sourceFilter is IAMOpenProgress && !CurrentFile.Contains("live=true") && !CurrentFile.Contains("RtmpLive=1"))
                 {
                     // buffer before starting playback
                     bool filterConnected = false;
@@ -225,8 +225,12 @@ namespace OnlineVideos.MediaPortal1.Player
                                     try
                                     {
                                         Log.Instance.Debug("BufferFile : Rendering unconnected output pins of source filter ...");
+                                        // add audio and video filter from MP Movie Codec setting section
+                                        AddPreferredFilters(graphBuilder, sourceFilter);
                                         // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
                                         DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
+                                        // remove filter that are not used from the graph
+                                        DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
                                         Log.Instance.Debug("BufferFile : Playback Ready.");
                                         PlaybackReady = true;
                                     }
@@ -270,12 +274,16 @@ namespace OnlineVideos.MediaPortal1.Player
                             Thread.Sleep(50);
                         }
                     }
-
+                    // add audio and video filter from MP Movie Codec setting section
+                    AddPreferredFilters(graphBuilder, sourceFilter);
+                    // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
                     DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
+                    // remove filter that are not used from the graph
+                    DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
                     percentageBuffered = 100.0f; // no progress reporting possible
                     GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
                     PlaybackReady = true;
-                    
+
                 }
             }
             catch (ThreadAbortException)
@@ -290,24 +298,24 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 if (sourceFilter != null)
                 {
-					// the render pin thread was already started and is still runnning
-					if (renderPinsThread != null && (renderPinsThread.ThreadState & ThreadState.Stopped) == 0)
-					{
-						// buffering was stopped by the user -> abort the thread
-						if (BufferingStopped) renderPinsThread.Abort();
-					}
-
-					// playback is not ready but the source filter is already downloading -> abort the operation
-                    if (!PlaybackReady)
+                    // the render pin thread was already started and is still runnning
+                    if (renderPinsThread != null && (renderPinsThread.ThreadState & ThreadState.Stopped) == 0)
                     {
-						Log.Instance.Info("Buffering was aborted.");
-                        if (sourceFilter is IAMOpenProgress) ((IAMOpenProgress)sourceFilter).AbortOperation();
-						Thread.Sleep(100); // give it some time
-						int result = graphBuilder.RemoveFilter(sourceFilter); // remove the filter from the graph to prevent lockup later in Dispose
+                        // buffering was stopped by the user -> abort the thread
+                        if (BufferingStopped) renderPinsThread.Abort();
                     }
 
-					// release the COM pointer that we created
-					DirectShowUtil.ReleaseComObject(sourceFilter);
+                    // playback is not ready but the source filter is already downloading -> abort the operation
+                    if (!PlaybackReady)
+                    {
+                        Log.Instance.Info("Buffering was aborted.");
+                        if (sourceFilter is IAMOpenProgress) ((IAMOpenProgress)sourceFilter).AbortOperation();
+                        Thread.Sleep(100); // give it some time
+                        int result = graphBuilder.RemoveFilter(sourceFilter); // remove the filter from the graph to prevent lockup later in Dispose
+                    }
+
+                    // release the COM pointer that we created
+                    DirectShowUtil.ReleaseComObject(sourceFilter);
                 }
             }
 
@@ -335,7 +343,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 if (Log.Instance.LogLevel < log4net.Core.Level.Debug)
                 {
-					string sourceFilterName = GetSourceFilterName(CurrentFile);
+                    string sourceFilterName = GetSourceFilterName(CurrentFile);
                     if (!string.IsNullOrEmpty(sourceFilterName))
                     {
                         IBaseFilter sourceFilter;
@@ -351,11 +359,11 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 // now set VMR9 to Active
                 GUIGraphicsContext.Vmr9Active = true;
-                
+
                 // set fields for playback                
                 m_iVideoWidth = Vmr9.VideoWidth;
                 m_iVideoHeight = Vmr9.VideoHeight;
-                
+
                 Vmr9.SetDeinterlaceMode();
                 return true;
             }
@@ -403,7 +411,7 @@ namespace OnlineVideos.MediaPortal1.Player
             IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
             if (!postengine.LoadPostProcessing(graphBuilder))
             {
-              PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+                PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
             }
 #else
             if (!string.IsNullOrEmpty(SubtitleFile))
@@ -415,12 +423,12 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
             }
 #endif
-			AnalyseStreams();
+            AnalyseStreams();
 #if !MP11
-			SelectSubtitles();
-			SelectAudioLanguage();
+            SelectSubtitles();
+            SelectAudioLanguage();
 #endif
-			OnInitialized();
+            OnInitialized();
 
             int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
             if (hr < 0)
@@ -458,7 +466,7 @@ namespace OnlineVideos.MediaPortal1.Player
             }
             catch (Exception error)
             {
-				Log.Instance.Error("OnlineVideosPlayer: Unable to play with reason: {0}", error.Message);
+                Log.Instance.Error("OnlineVideosPlayer: Unable to play with reason: {0}", error.Message);
             }
             if (hr < 0)
             {
@@ -507,46 +515,124 @@ namespace OnlineVideos.MediaPortal1.Player
 
         #endregion
 
-		public static void LogOutputPinsConnectionRecursive(IBaseFilter filter, string previous = "")
-		{
-			bool log = true;
-			IEnumPins pinEnum = null;
-			if (filter.EnumPins(out pinEnum) == 0)
-			{
-				FilterInfo sourceFilterInfo;
-				filter.QueryFilterInfo(out sourceFilterInfo);
-				int fetched = 0;
-				IPin[] pins = new IPin[1];
-				while (pinEnum.Next(1, pins, out fetched) == 0 && fetched > 0)
-				{
-					IPin pin = pins[0];
-					PinDirection pinDirection;
-					if (pin.QueryDirection(out pinDirection) == 0 && pinDirection == PinDirection.Output)
-					{
-						log = false;
-						IPin connectedPin;
-						if (pin.ConnectedTo(out connectedPin) == 0 && connectedPin != null)
-						{
-							PinInfo connectedPinInfo;
-							connectedPin.QueryPinInfo(out connectedPinInfo);
-							FilterInfo connectedFilterInfo;
-							connectedPinInfo.filter.QueryFilterInfo(out connectedFilterInfo);
-							if (previous == "") previous = sourceFilterInfo.achName;
-							DirectShowUtil.ReleaseComObject(connectedPin, 2000);
-							IBaseFilter connectedFilter;
-							if (connectedFilterInfo.pGraph.FindFilterByName(connectedFilterInfo.achName, out connectedFilter) == 0 && connectedFilter != null)
-							{
-								LogOutputPinsConnectionRecursive(connectedFilter, previous + string.Format(" --> {0}", connectedFilterInfo.achName));
-								DirectShowUtil.ReleaseComObject(connectedFilter);
-							}
-						}
-						DirectShowUtil.ReleaseComObject(pin, 2000);
-					}
-				}
-			}
-			DirectShowUtil.ReleaseComObject(pinEnum, 2000);
+        public static void AddPreferredFilters(IGraphBuilder graphBuilder, IBaseFilter sourceFilter)
+        {
+            using (Settings xmlreader = new MPSettings())
+            {
+                bool autodecodersettings = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
 
-			if (log) Log.Instance.Debug(previous);
-		}
+                if (!autodecodersettings) // the user has not chosen automatic graph building by merits
+                {
+                    // bool vc1ICodec,vc1Codec,xvidCodec = false; - will come later
+                    bool aacCodec = false;
+                    bool h264Codec = false;
+
+                    // check the output pins of the splitter for known media types
+                    IEnumPins pinEnum = null;
+                    if (sourceFilter.EnumPins(out pinEnum) == 0)
+                    {
+                        int fetched = 0;
+                        IPin[] pins = new IPin[1];
+                        while (pinEnum.Next(1, pins, out fetched) == 0 && fetched > 0)
+                        {
+                            IPin pin = pins[0];
+                            PinDirection pinDirection;
+                            if (pin.QueryDirection(out pinDirection) == 0 && pinDirection == PinDirection.Output)
+                            {
+                                IEnumMediaTypes enumMediaTypesVideo = null;
+                                if (pin.EnumMediaTypes(out enumMediaTypesVideo) == 0)
+                                {
+                                    AMMediaType[] mediaTypes = new AMMediaType[1];
+                                    int typesFetched;
+                                    while (enumMediaTypesVideo.Next(1, mediaTypes, out typesFetched) == 0 && typesFetched > 0)
+                                    {
+                                        if (mediaTypes[0].majorType == MediaType.Video &&
+                                            (mediaTypes[0].subType == MediaSubType.H264 || mediaTypes[0].subType == MEDIASUBTYPE_AVC1))
+                                        {
+                                            Log.Instance.Info("found H264 video on output pin");
+                                            h264Codec = true;
+                                        }
+                                        else if (mediaTypes[0].majorType == MediaType.Audio && mediaTypes[0].subType == MediaSubType.LATMAAC)
+                                        {
+                                            Log.Instance.Info("found AAC audio on output pin");
+                                            aacCodec = true;
+                                        }
+                                    }
+                                    DirectShowUtil.ReleaseComObject(enumMediaTypesVideo);
+                                }
+                            }
+                            DirectShowUtil.ReleaseComObject(pin);
+                        }
+                        DirectShowUtil.ReleaseComObject(pinEnum);
+                    }
+
+                    // add filters for found media types to the graph as configured in MP
+                    if (h264Codec)
+                    {
+                        DirectShowUtil.ReleaseComObject(
+                            DirectShowUtil.AddFilterToGraph(graphBuilder, xmlreader.GetValueAsString("movieplayer", "h264videocodec", "")));
+                    }
+                    else
+                    {
+                        DirectShowUtil.ReleaseComObject(
+                            DirectShowUtil.AddFilterToGraph(graphBuilder, xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "")));
+                    }
+                    if (aacCodec)
+                    {
+                        DirectShowUtil.ReleaseComObject(
+                            DirectShowUtil.AddFilterToGraph(graphBuilder, xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "")));
+                    }
+                    else
+                    {
+                        DirectShowUtil.ReleaseComObject(
+                            DirectShowUtil.AddFilterToGraph(graphBuilder, xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "")));
+                    }
+                }
+            }
+        }
+
+        public static readonly Guid MEDIASUBTYPE_AVC1 = new Guid("31435641-0000-0010-8000-00aa00389b71");
+
+        public static void LogOutputPinsConnectionRecursive(IBaseFilter filter, string previous = "")
+        {
+            bool log = true;
+            IEnumPins pinEnum = null;
+            if (filter.EnumPins(out pinEnum) == 0)
+            {
+                FilterInfo sourceFilterInfo;
+                filter.QueryFilterInfo(out sourceFilterInfo);
+                int fetched = 0;
+                IPin[] pins = new IPin[1];
+                while (pinEnum.Next(1, pins, out fetched) == 0 && fetched > 0)
+                {
+                    IPin pin = pins[0];
+                    PinDirection pinDirection;
+                    if (pin.QueryDirection(out pinDirection) == 0 && pinDirection == PinDirection.Output)
+                    {
+                        log = false;
+                        IPin connectedPin;
+                        if (pin.ConnectedTo(out connectedPin) == 0 && connectedPin != null)
+                        {
+                            PinInfo connectedPinInfo;
+                            connectedPin.QueryPinInfo(out connectedPinInfo);
+                            FilterInfo connectedFilterInfo;
+                            connectedPinInfo.filter.QueryFilterInfo(out connectedFilterInfo);
+                            if (previous == "") previous = sourceFilterInfo.achName;
+                            DirectShowUtil.ReleaseComObject(connectedPin, 2000);
+                            IBaseFilter connectedFilter;
+                            if (connectedFilterInfo.pGraph.FindFilterByName(connectedFilterInfo.achName, out connectedFilter) == 0 && connectedFilter != null)
+                            {
+                                LogOutputPinsConnectionRecursive(connectedFilter, previous + string.Format(" --> {0}", connectedFilterInfo.achName));
+                                DirectShowUtil.ReleaseComObject(connectedFilter);
+                            }
+                        }
+                        DirectShowUtil.ReleaseComObject(pin, 2000);
+                    }
+                }
+            }
+            DirectShowUtil.ReleaseComObject(pinEnum, 2000);
+
+            if (log) Log.Instance.Debug(previous);
+        }
     }
 }
