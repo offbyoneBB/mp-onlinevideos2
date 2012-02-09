@@ -6,7 +6,7 @@ using System.Text;
 namespace OnlineVideos.MPUrlSourceFilter
 {
     /// <summary>
-    /// Represent base class for all urls for MediaPortal Url Source Filter.
+    /// Represent base class for all urls for MediaPortal Url Source Splitter.
     /// </summary>
     public abstract class SimpleUrl
     {
@@ -17,8 +17,6 @@ namespace OnlineVideos.MPUrlSourceFilter
         private String networkInterface = String.Empty;
         private int maximumLogSize = SimpleUrl.DefaultMaximumLogSize;
         private int maximumPlugins = SimpleUrl.DefaultMaximumPlugins;
-        private int bufferingPercentage = SimpleUrl.DefaultBufferingPercentage;
-        private int maximumBufferingSize = SimpleUrl.DefaultMaximumBufferingSize;
 
         #endregion
 
@@ -74,7 +72,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         }
 
         /// <summary>
-        /// Gets or sets the verbosity level of MediaPortal Url Source Filter.
+        /// Gets or sets the verbosity level of MediaPortal Url Source Splitter.
         /// </summary>
         public LogVerbosity Verbosity
         {
@@ -86,7 +84,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         }
 
         /// <summary>
-        /// Gets or sets the network interface which MediaPortal Url Source Filter have to use.
+        /// Gets or sets the network interface which MediaPortal Url Source Splitter have to use.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// <para>The <see cref="NetworkInterface"/> is <see langword="null"/>.</para>
@@ -148,53 +146,6 @@ namespace OnlineVideos.MPUrlSourceFilter
             }
         }
 
-        /// <summary>
-        /// Gets or sets maximum plugins.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <para>The <see cref="BufferingPercentage"/> is less than zero.</para>
-        /// <para>- or -</para>
-        /// <para>The <see cref="BufferingPercentage"/> is higher than hundred.</para>
-        /// </exception>
-        public int BufferingPercentage
-        {
-            get { return this.bufferingPercentage; }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("BufferingPercentage", value, "Value cannot be less than zero.");
-                }
-
-                if (value > 100)
-                {
-                    throw new ArgumentOutOfRangeException("BufferingPercentage", value, "Value cannot be higher than hundred.");
-                }
-
-                this.bufferingPercentage = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets maximum plugins.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <para>The <see cref="MaximumBufferingSize"/> is less than zero.</para>
-        /// </exception>
-        public int MaximumBufferingSize
-        {
-            get { return this.maximumBufferingSize; }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("MaximumBufferingSize", value, "Value cannot be less than zero.");
-                }
-
-                this.maximumBufferingSize = value;
-            }
-        }
-
         #endregion
 
         #region Methods
@@ -214,10 +165,6 @@ namespace OnlineVideos.MPUrlSourceFilter
 			{
 				parameters.Add(new Parameter(SimpleUrl.ParameterLogVerbosity, ((int)this.Verbosity).ToString()));
 			}
-			if (this.MaximumBufferingSize != DefaultMaximumBufferingSize)
-			{
-				parameters.Add(new Parameter(SimpleUrl.ParameterMaximumBufferingSize, this.MaximumBufferingSize.ToString()));
-			}
 			if (this.MaximumLogSize != DefaultMaximumLogSize)
 			{
 				parameters.Add(new Parameter(SimpleUrl.ParameterMaximumLogSize, this.MaximumLogSize.ToString()));
@@ -226,17 +173,13 @@ namespace OnlineVideos.MPUrlSourceFilter
 			{
 				parameters.Add(new Parameter(SimpleUrl.ParameterMaximumPlugins, this.MaximumPlugins.ToString()));
 			}
-			if (this.BufferingPercentage != DefaultBufferingPercentage)
-			{
-				parameters.Add(new Parameter(SimpleUrl.ParameterBufferingPercentage, this.BufferingPercentage.ToString()));
-			}
             if (!String.IsNullOrEmpty(this.NetworkInterface))
             {
                 parameters.Add(new Parameter(SimpleUrl.ParameterNetworkInterface, this.NetworkInterface));
             }
 
             // return current URI and formatted connection string
-            // MediaPortal Url Source Filter will ignore first part
+            // MediaPortal Url Source Splitter will ignore first part
             // first part is there, because OnlineVideos cannot work with not valid URIs
             return this.Uri.ToString() + SimpleUrl.ParameterSeparator + parameters.FilterParameters;
         }
@@ -246,11 +189,11 @@ namespace OnlineVideos.MPUrlSourceFilter
         #region Constants
 
         /// <summary>
-        /// Special separator used to identify where starts parameters for MediaPortal Url Source Filter.
+        /// Special separator used to identify where starts parameters for MediaPortal Url Source Splitter.
         /// </summary>
         public static String ParameterSeparator = "####";
 
-        // common parameters for MediaPortal Url Source Filter
+        // common parameters for MediaPortal Url Source Splitter
 
         /// <summary>
         /// Specifies network interface parameter name.
@@ -277,20 +220,10 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// </summary>
         protected static String ParameterMaximumPlugins = "MaxPlugins";
 
-        /// <summary>
-        /// Specifies buffering percentage parameter name.
-        /// </summary>
-        protected static String ParameterBufferingPercentage = "BufferingPercentage";
-
-        /// <summary>
-        /// Specifies maximum buffering size parameter name.
-        /// </summary>
-        protected static String ParameterMaximumBufferingSize = "MaxBufferingSize";
-
         // default values for some parameters
 
         /// <summary>
-        /// Default verbosity of MediaPortal Url Sorce Filter.
+        /// Default verbosity of MediaPortal Url Sorce Splitter.
         /// </summary>
         /// <remarks>
         /// The default value is <see cref="OnlineVideos.SourceFilter.LogVerbosity.Verbose"/>.
@@ -298,7 +231,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         public const LogVerbosity DefaultVerbosity = LogVerbosity.Verbose;
 
         /// <summary>
-        /// Default maximum log size of MediaPortal Url Source Filter.
+        /// Default maximum log size of MediaPortal Url Source Splitter.
         /// </summary>
         /// <remarks>
         /// The default values is 10 MB.
@@ -306,28 +239,12 @@ namespace OnlineVideos.MPUrlSourceFilter
         public const int DefaultMaximumLogSize = 10 * 1024 * 1024;
 
         /// <summary>
-        /// Default maximum plugins for MediaPortal Url Source Filter.
+        /// Default maximum plugins for MediaPortal Url Source Splitter.
         /// </summary>
         /// <remarks>
         /// The default value is 256.
         /// </remarks>
         public const int DefaultMaximumPlugins = 256;
-
-        /// <summary>
-        /// Default buffering percentage for MediaPortal Url Source Filter.
-        /// </summary>
-        /// <remarks>
-        /// The default value is 2%.
-        /// </remarks>
-        public const int DefaultBufferingPercentage = 2;
-
-        /// <summary>
-        /// Default maximum buffering size for MediaPortal Url Source Filter.
-        /// </summary>
-        /// <remarks>
-        /// The default value is 5 MB.
-        /// </remarks>
-        public const int DefaultMaximumBufferingSize = 5 * 1024 * 1024;
 
         #endregion
     }

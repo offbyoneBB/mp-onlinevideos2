@@ -7,7 +7,7 @@ using System.Net;
 namespace OnlineVideos.MPUrlSourceFilter
 {
     /// <summary>
-    /// Represent base class for HTTP urls for MediaPortal Url Source Filter.
+    /// Represent base class for HTTP urls for MediaPortal Url Source Splitter.
 	/// All parameter values will be UrlEncoded, so make sure you set them UrlDecoded!
     /// </summary>
     public class HttpUrl : SimpleUrl
@@ -248,7 +248,7 @@ namespace OnlineVideos.MPUrlSourceFilter
 
         #region Constants
 
-        // common parameters of HTTP protocol for MediaPortal Url Source Filter
+        // common parameters of HTTP protocol for MediaPortal Url Source Splitter
 
         /// <summary>
         /// Specifies receive data timeout for HTTP protocol.
@@ -256,7 +256,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         protected static String ParameterReceiveDataTimeout = "HttpReceiveDataTimeout";
 
         /// <summary>
-        /// Specifies how many times should MediaPortal Url Source Filter try to receive data from remote server.
+        /// Specifies how many times should MediaPortal Url Source Splitter try to receive data from remote server.
         /// </summary>
         protected static String ParameterOpenConnectionMaximumAttempts = "HttpOpenConnectionMaximumAttempts";
 
@@ -303,7 +303,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         // default values for some parameters
 
         /// <summary>
-        /// Default receive data timeout of MediaPortal Url Sorce Filter.
+        /// Default receive data timeout of MediaPortal Url Sorce Splitter.
         /// </summary>
         /// <remarks>
         /// The value is in milliseconds. The default value is 20000.
@@ -311,7 +311,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         public const int DefaultReceiveDataTimeout = 20000;
 
         /// <summary>
-        /// Default maximum of open connection attempts of MediaPortal Url Source Filter.
+        /// Default maximum of open connection attempts of MediaPortal Url Source Splitter.
         /// </summary>
         /// <remarks>
         /// The default value is 3.
@@ -319,7 +319,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         public const int DefaultOpenConnectionMaximumAttempts = 3;
 
         /// <summary>
-        /// Default referer for MediaPortal Url Source Filter.
+        /// Default referer for MediaPortal Url Source Splitter.
         /// </summary>
         /// <remarks>
         /// This values is <see cref="System.String.Empty"/>.
@@ -327,7 +327,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         public static String DefaultReferer = String.Empty;
 
         /// <summary>
-        /// Default user agent for MediaPortal Url Source Filter.
+        /// Default user agent for MediaPortal Url Source Splitter.
         /// </summary>
         /// <remarks>
         /// This values is <see cref="System.String.Empty"/>.
@@ -335,7 +335,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         public static String DefaultUserAgent = String.Empty;
 
         /// <summary>
-        /// Default HTTP version for MediaPortal Url Source Filter.
+        /// Default HTTP version for MediaPortal Url Source Splitter.
         /// </summary>
         /// <remarks>
         /// This value is <see langword="null"/>.
@@ -343,7 +343,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         public static HttpVersion DefaultVersion = null;
 
         /// <summary>
-        /// Default ignore content length flag for MediaPortal Url Source Filter.
+        /// Default ignore content length flag for MediaPortal Url Source Splitter.
         /// </summary>
         /// <remarks>
         /// This values if <see langword="false"/>.
