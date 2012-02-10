@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Web;
+using System.Net;
 
 namespace OnlineVideos.Sites.georgius
 {
@@ -14,9 +15,18 @@ namespace OnlineVideos.Sites.georgius
 
         private static String baseUrl = @"http://www.pohadkar.cz";
 
-        private static String dynamicCategoryStart = @"<div class=""vypis_data"">";
-        private static String dynamicCategoryEnd = @"</div>";
-        private static String showUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]+)"">(?<showTitle>[^<]+)</a>";
+        private static String categoriesStart = @"<div class=""vypis_body extra2"">";
+        private static String categoriesEnd = @"<div class=""vypis_data"">";
+        private static String categoryStart = @"<a class";
+        private static String categoryEnd = @"</a>";
+        private static String categoryUrlAndTitleRegex = @"<a class=""[^""]*""[\s]*onclick=""loadVypis\('(?<categoryUrl>[^']+)'[^""]*"">(?<categoryTitle>[^<]+)";
+
+        private static String showListUrlFormat = @"http://www.pohadkar.cz/system/load-vypis/?znak={0}&typ=1&zar=hp";
+
+        private static String showStart = @"<span>";
+        private static String showEnd = @"</span>";
+
+        private static String showUrlAndTitleRegex = @"<a href=""(?<showUrl>[^']*)"">(?<showTitle>[^<]*)";
 
         private static String showEpisodesStart = @"<div class=""tale_char_div"">";
         private static String showEpisodesEnd = @"<script type=""text/javascript"">";
@@ -32,7 +42,8 @@ namespace OnlineVideos.Sites.georgius
 
         private static String optionTitleRegex = @"(?<width>[0-9]+)x(?<height>[0-9]+) \| (?<format>[a-z0-9]+) \([\s]*[0-9]+\)";
 
-        private static String searchQueryUrl = @"http://www.pohadkar.cz/?s={0}";
+        private static String searchQueryUrl = @"http://www.pohadkar.cz/videa/";
+        private static String searchRequest = @"animated=on&creatures=&country=&acted=on&sstring={0}&radeni=abc&akce=yes";
 
         private static String videoUrlFormat = @"http://cdn-dispatcher.stream.cz/?id={0}"; // add 'cdnId'
 
@@ -49,6 +60,7 @@ namespace OnlineVideos.Sites.georgius
         private String nextPageUrl = String.Empty;
 
         private RssLink currentCategory = new RssLink();
+        private CookieContainer cookieContainer = new CookieContainer();
 
         #endregion
 
@@ -73,51 +85,133 @@ namespace OnlineVideos.Sites.georgius
 
         public override int DiscoverDynamicCategories()
         {
-            int dynamicCategoriesCount = 0;
+            int categoriesCount = 0;
             String baseWebData = SiteUtilBase.GetWebData(PohadkarUtil.baseUrl, null, null, null, true);
 
-            int index = baseWebData.IndexOf(PohadkarUtil.dynamicCategoryStart);
-            if (index > 0)
+            int startIndex = baseWebData.IndexOf(PohadkarUtil.categoriesStart);
+            if (startIndex >= 0)
             {
-                baseWebData = baseWebData.Substring(index);
-
-                index = baseWebData.IndexOf(PohadkarUtil.dynamicCategoryEnd);
-                if (index > 0)
+                int endIndex = baseWebData.IndexOf(PohadkarUtil.categoriesEnd, startIndex);
+                if (endIndex >= 0)
                 {
-                    baseWebData = baseWebData.Substring(0, index);
-                }
+                    baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                while (true)
-                {
-                    String showUrl = String.Empty;
-                    String showTitle = String.Empty;
-
-                    Match match = Regex.Match(baseWebData, PohadkarUtil.showUrlAndTitleRegex);
-                    if (match.Success)
+                    while (true)
                     {
-                        showUrl = match.Groups["showUrl"].Value;
-                        showTitle = HttpUtility.HtmlDecode(match.Groups["showTitle"].Value);
-                        baseWebData = baseWebData.Substring(match.Index + match.Length);
-                    }
-
-                    if ((String.IsNullOrEmpty(showUrl)) && (String.IsNullOrEmpty(showTitle)))
-                    {
-                        break;
-                    }
-
-                    this.Settings.Categories.Add(
-                        new RssLink()
+                        startIndex = baseWebData.IndexOf(PohadkarUtil.categoryStart);
+                        if (startIndex >= 0)
                         {
-                            Name = showTitle,
-                            Url = Utils.FormatAbsoluteUrl(String.Format("{0}video/", showUrl), PohadkarUtil.baseUrl)
-                        });
-                    dynamicCategoriesCount++;
+                            endIndex = baseWebData.IndexOf(PohadkarUtil.categoryEnd, startIndex);
+                            if (endIndex >= 0)
+                            {
+                                String categoryData = baseWebData.Substring(startIndex, endIndex - startIndex);
+
+                                String categoryUrl = String.Empty;
+                                String categoryTitle = String.Empty;
+
+                                Match match = Regex.Match(categoryData, PohadkarUtil.categoryUrlAndTitleRegex);
+                                if (match.Success)
+                                {
+                                    categoryUrl = match.Groups["categoryUrl"].Value;
+                                    categoryTitle = match.Groups["categoryTitle"].Value;
+                                }
+
+                                if (!((String.IsNullOrEmpty(categoryUrl)) || (String.IsNullOrEmpty(categoryTitle))))
+                                {
+                                    this.Settings.Categories.Add(
+                                    new RssLink()
+                                    {
+                                        Name = categoryTitle,
+                                        Url = String.Format(PohadkarUtil.showListUrlFormat, HttpUtility.UrlEncode(categoryUrl)),
+                                        HasSubCategories = true
+                                    });
+                                    categoriesCount++;
+                                }
+
+                                baseWebData = baseWebData.Substring(endIndex + PohadkarUtil.categoryEnd.Length);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    this.Settings.DynamicCategoriesDiscovered = true;
                 }
             }
 
+            return categoriesCount;
+        }
 
-            this.Settings.DynamicCategoriesDiscovered = true;
-            return dynamicCategoriesCount;
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            int showsCount = 0;
+            String url = (parentCategory as RssLink).Url;
+            if (parentCategory.ParentCategory != null)
+            {
+                parentCategory = parentCategory.ParentCategory;
+                // last category is next category, remove it
+                parentCategory.SubCategories.RemoveAt(parentCategory.SubCategories.Count - 1);
+            }
+            if (parentCategory.SubCategories == null)
+            {
+                parentCategory.SubCategories = new List<Category>();
+            }
+
+            String baseWebData = SiteUtilBase.GetWebData(url, null, null, null, true);
+
+            while (true)
+            {
+                int startIndex = baseWebData.IndexOf(PohadkarUtil.showStart);
+                if (startIndex >= 0)
+                {
+                    int endIndex = baseWebData.IndexOf(PohadkarUtil.showEnd, startIndex);
+                    if (endIndex >= 0)
+                    {
+                        String showData = baseWebData.Substring(startIndex, endIndex - startIndex);
+
+                        String showTitle = String.Empty;
+                        String showUrl = String.Empty;
+
+                        Match match = Regex.Match(showData, PohadkarUtil.showUrlAndTitleRegex);
+                        if (match.Success)
+                        {
+                            showUrl = Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, baseUrl);
+                            showTitle = HttpUtility.HtmlDecode(match.Groups["showTitle"].Value);
+                        }
+
+                        if (!((String.IsNullOrEmpty(showUrl)) || (String.IsNullOrEmpty(showTitle))))
+                        {
+                            parentCategory.SubCategories.Add(
+                            new RssLink()
+                            {
+                                Name = showTitle,
+                                Url = showUrl.EndsWith("/") ? (showUrl + "video") : (showUrl + "/video")
+                            });
+                            showsCount++;
+                        }
+
+                        baseWebData = baseWebData.Substring(endIndex + PohadkarUtil.showEnd.Length);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            parentCategory.SubCategoriesDiscovered = true;
+
+            return showsCount;
         }
 
         private List<VideoInfo> GetPageVideos(String pageUrl)
@@ -127,7 +221,17 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = String.Empty;
+                
+                if ((this.currentCategory.Name == "Search") && (this.currentCategory.Url == pageUrl))
+                {
+                    this.cookieContainer = new CookieContainer();
+                    baseWebData = Utils.GetWebDataFromPost(pageUrl, String.Format(PohadkarUtil.searchRequest, HttpUtility.UrlEncode((String)this.currentCategory.Other)), this.cookieContainer, null, null, true);
+                }
+                else
+                {
+                    baseWebData = SiteUtilBase.GetWebData(pageUrl, (this.currentCategory.Name == "Search") ? this.cookieContainer : null, null, null, true);
+                }
 
                 int index = baseWebData.IndexOf(PohadkarUtil.showEpisodesStart);
                 if (index > 0)
