@@ -16,9 +16,13 @@ namespace OnlineVideos.MediaPortal1
         {
             InitializeComponent();
 
-            Text = "Submit a report for site: " + SiteName;
             cbType.Items.AddRange(Enum.GetNames(typeof(OnlineVideosWebservice.ReportType)));
             cbType.SelectedItem = OnlineVideosWebservice.ReportType.Broken.ToString();
+        }
+
+        private void SubmitSiteReport_Load(object sender, EventArgs e)
+        {
+            Text = "Submit a report for site: " + SiteName;
         }
 
         private void btnOK_Click(object sender, EventArgs e)

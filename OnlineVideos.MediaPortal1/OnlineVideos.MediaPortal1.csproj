@@ -68,6 +68,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
@@ -87,15 +88,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\BindableCheckedListBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Configuration\BrowserForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Configuration\BrowserForm.Designer.cs">
-      <DependentUpon>BrowserForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Configuration\CodecConfiguration.cs" />
     <Compile Include="Configuration\Configuration.cs">
       <SubType>Form</SubType>
@@ -103,13 +95,13 @@
     <Compile Include="Configuration\Configuration.Designer.cs">
       <DependentUpon>Configuration.cs</DependentUpon>
     </Compile>
-    <Compile Include="Configuration\ConfigurationAdvanced.cs">
+    <Compile Include="Configuration\ConfigurationPlayer.cs" />
+    <Compile Include="Configuration\CreateEditSite.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Configuration\ConfigurationAdvanced.Designer.cs">
-      <DependentUpon>ConfigurationAdvanced.cs</DependentUpon>
+    <Compile Include="Configuration\CreateEditSite.Designer.cs">
+      <DependentUpon>CreateEditSite.cs</DependentUpon>
     </Compile>
-    <Compile Include="Configuration\ConfigurationPlayer.cs" />
     <Compile Include="Configuration\ImExportXml.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -121,6 +113,93 @@
     </Compile>
     <Compile Include="Configuration\ImportGlobalSite.Designer.cs">
       <DependentUpon>ImportGlobalSite.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\CellEditing\CellEditKeyEngine.cs" />
+    <Compile Include="Configuration\ObjectListView\CellEditing\CellEditors.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\CellEditing\EditorRegistry.cs" />
+    <Compile Include="Configuration\ObjectListView\DataListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\DragDrop\DragSource.cs" />
+    <Compile Include="Configuration\ObjectListView\DragDrop\DropSink.cs" />
+    <Compile Include="Configuration\ObjectListView\DragDrop\OLVDataObject.cs" />
+    <Compile Include="Configuration\ObjectListView\FastDataListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\FastObjectListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\Filtering\Cluster.cs" />
+    <Compile Include="Configuration\ObjectListView\Filtering\ClusteringStrategy.cs" />
+    <Compile Include="Configuration\ObjectListView\Filtering\ClustersFromGroupsStrategy.cs" />
+    <Compile Include="Configuration\ObjectListView\Filtering\DateTimeClusteringStrategy.cs" />
+    <Compile Include="Configuration\ObjectListView\Filtering\FilterMenuBuilder.cs" />
+    <Compile Include="Configuration\ObjectListView\Filtering\Filters.cs" />
+    <Compile Include="Configuration\ObjectListView\Filtering\ICluster.cs" />
+    <Compile Include="Configuration\ObjectListView\Filtering\IClusteringStrategy.cs" />
+    <Compile Include="Configuration\ObjectListView\Filtering\TextMatchFilter.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\Attributes.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\Comparers.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\DataSourceAdapter.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\Delegates.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\Enums.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\Implementation\Events.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\Implementation\GroupingParameters.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\Groups.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\Munger.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\NativeMethods.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\NullableDictionary.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\OLVListItem.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\OLVListSubItem.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\OlvListViewHitTestInfo.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\VirtualGroups.cs" />
+    <Compile Include="Configuration\ObjectListView\Implementation\VirtualListDataSource.cs" />
+    <Compile Include="Configuration\ObjectListView\ObjectListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\ObjectListView.DesignTime.cs" />
+    <Compile Include="Configuration\ObjectListView\OLVColumn.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\Rendering\Adornments.cs" />
+    <Compile Include="Configuration\ObjectListView\Rendering\Decorations.cs" />
+    <Compile Include="Configuration\ObjectListView\Rendering\Overlays.cs" />
+    <Compile Include="Configuration\ObjectListView\Rendering\Renderers.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\Rendering\Styles.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\Rendering\TreeRenderer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\SubControls\GlassPanelForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\SubControls\HeaderControl.cs" />
+    <Compile Include="Configuration\ObjectListView\SubControls\ToolStripCheckedListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\SubControls\ToolTipControl.cs" />
+    <Compile Include="Configuration\ObjectListView\TreeListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\Utilities\ColumnSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\Utilities\ColumnSelectionForm.Designer.cs">
+      <DependentUpon>ColumnSelectionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ObjectListView\Utilities\Generator.cs" />
+    <Compile Include="Configuration\ObjectListView\Utilities\TypedObjectListView.cs" />
+    <Compile Include="Configuration\ObjectListView\VirtualObjectListView.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Configuration\PluginConfiguration.cs" />
     <Compile Include="Configuration\RegisterEmail.cs">
@@ -251,6 +330,12 @@
     <Compile Include="Translator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Configuration\CreateEditSite.resx">
+      <DependentUpon>CreateEditSite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\ObjectListView\Utilities\ColumnSelectionForm.resx">
+      <DependentUpon>ColumnSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -275,15 +360,9 @@
     <None Include="Resources\Up.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Configuration\BrowserForm.resx">
-      <DependentUpon>BrowserForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Configuration\Configuration.resx">
       <DependentUpon>Configuration.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Configuration\ConfigurationAdvanced.resx">
-      <DependentUpon>ConfigurationAdvanced.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration\ImExportXml.resx">
       <DependentUpon>ImExportXml.cs</DependentUpon>
@@ -328,6 +407,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Latest.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clear-filter.png" />
+    <None Include="Resources\filter-icons3.png" />
+    <None Include="Resources\filter.png" />
+    <None Include="Resources\sort-ascending.png" />
+    <None Include="Resources\sort-descending.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\edit.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
