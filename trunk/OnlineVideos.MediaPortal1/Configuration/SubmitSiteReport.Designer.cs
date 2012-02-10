@@ -56,9 +56,9 @@
             // tbxMessage
             // 
             this.tbxMessage.AcceptsReturn = true;
-            this.tbxMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxMessage.Location = new System.Drawing.Point(12, 33);
             this.tbxMessage.Multiline = true;
             this.tbxMessage.Name = "tbxMessage";
@@ -105,6 +105,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Submit a report";
+            this.Load += new System.EventHandler(this.SubmitSiteReport_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

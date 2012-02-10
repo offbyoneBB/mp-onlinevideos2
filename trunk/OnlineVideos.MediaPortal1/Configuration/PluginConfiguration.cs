@@ -366,24 +366,7 @@ namespace OnlineVideos.MediaPortal1
                 CachedAutomaticSitesGroups = new BindingList<SitesGroup>();
                 foreach (string aLang in sitenames.Keys.ToList().OrderBy(l => l))
                 {
-                    string name = aLang;
-                    try
-                    {
-                        name = aLang != "--" ? System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag(aLang).DisplayName : "Global";
-                    }
-                    catch
-                    {
-                        var temp = System.Globalization.CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
-                            ci => ci.IetfLanguageTag == aLang || ci.ThreeLetterISOLanguageName == aLang || ci.TwoLetterISOLanguageName == aLang || ci.ThreeLetterWindowsLanguageName == aLang);
-                        if (temp != null)
-                        {
-                            name = temp.DisplayName;
-                        }
-                        else
-                        {
-                            Log.Instance.Warn("Unable to find CultureInfo for language identifier: '{0}'", name);
-                        }
-                    }
+                    string name = GetLanguageInUserLocale(aLang);
                     CachedAutomaticSitesGroups.Add(new SitesGroup()
                     {
                         Name = name,
@@ -392,6 +375,29 @@ namespace OnlineVideos.MediaPortal1
                     });
                 }
             }
+        }
+
+        internal static string GetLanguageInUserLocale(string aLang)
+        {
+            string name = aLang;
+            try
+            {
+                name = aLang != "--" ? System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag(aLang).DisplayName : "Global";
+            }
+            catch
+            {
+                var temp = System.Globalization.CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
+                    ci => ci.IetfLanguageTag == aLang || ci.ThreeLetterISOLanguageName == aLang || ci.TwoLetterISOLanguageName == aLang || ci.ThreeLetterWindowsLanguageName == aLang);
+                if (temp != null)
+                {
+                    name = temp.DisplayName;
+                }
+                else
+                {
+                    Log.Instance.Warn("Unable to find CultureInfo for language identifier: '{0}'", name);
+                }
+            }
+            return name;
         }
 
         void SaveSitesGroups()

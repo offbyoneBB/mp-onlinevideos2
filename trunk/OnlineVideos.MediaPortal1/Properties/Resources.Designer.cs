@@ -74,6 +74,20 @@ namespace OnlineVideos.MediaPortal1.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap ClearFiltering {
+            get {
+                object obj = ResourceManager.GetObject("ClearFiltering", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ColumnFilterIndicator {
+            get {
+                object obj = ResourceManager.GetObject("ColumnFilterIndicator", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap CreateSite {
             get {
                 object obj = ResourceManager.GetObject("CreateSite", resourceCulture);
@@ -91,6 +105,20 @@ namespace OnlineVideos.MediaPortal1.Properties {
         internal static System.Drawing.Bitmap Down {
             get {
                 object obj = ResourceManager.GetObject("Down", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap edit {
+            get {
+                object obj = ResourceManager.GetObject("edit", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Filtering {
+            get {
+                object obj = ResourceManager.GetObject("Filtering", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -168,6 +196,20 @@ namespace OnlineVideos.MediaPortal1.Properties {
         internal static System.Drawing.Bitmap search {
             get {
                 object obj = ResourceManager.GetObject("search", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap SortAscending {
+            get {
+                object obj = ResourceManager.GetObject("SortAscending", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap SortDescending {
+            get {
+                object obj = ResourceManager.GetObject("SortDescending", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
