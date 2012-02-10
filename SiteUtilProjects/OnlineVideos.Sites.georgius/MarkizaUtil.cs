@@ -117,7 +117,7 @@ namespace OnlineVideos.Sites.georgius
                                 String categoryUrl = String.Empty;
                                 String categoryTitle = String.Empty;
 
-                                Match match = Regex.Match(baseWebData, MarkizaUtil.categoryUrlAndTitleRegex);
+                                Match match = Regex.Match(categoryData, MarkizaUtil.categoryUrlAndTitleRegex);
                                 if (match.Success)
                                 {
                                     categoryUrl = Utils.FormatAbsoluteUrl(match.Groups["categoryUrl"].Value, MarkizaUtil.baseUrl);

@@ -42,11 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApetitTv.cs" />
-    <Compile Include="AutosalonUtil.cs" />
+    <None Include="AutosalonUtil.cs" />
     <Compile Include="BarrandovTvUtil.cs" />
     <Compile Include="CeskaTelevizeJsonTextWriter.cs" />
     <Compile Include="CeskaTelevizeUtil.cs" />
-    <Compile Include="DomaUtil.cs" />
+    <None Include="DomaUtil.cs" />
     <Compile Include="Flowplayer\Commercial\V3_1_5_17_002\Aes.cs" />
     <Compile Include="Flowplayer\Commercial\V3_1_5_17_002\Base64.cs" />
     <Compile Include="Flowplayer\Commercial\V3_1_5_17_002\Utf8.cs" />
