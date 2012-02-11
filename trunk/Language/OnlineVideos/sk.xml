@@ -103,10 +103,13 @@
   <string Field="NewSearch">Nové hľadanie</string>
 
   <!-- O -->
+  <string Field="OnlyLocal">Len lokálne</string>
+  <string Field="OnlyServer">Len na serveri</string>
   <string Field="Others">Iné</string>
 
   <!-- P -->
   <string Field="PlayAll">Prehrať všetko</string>
+  <string Field="PlayAllRandom">Prehrať všetko (náhodne)</string>
   <string Field="PlayWith">Prehrať s ...</string>
   <string Field="Playlists">Zoznamy na prehratie</string>
   <string Field="PlaybackWillBeStopped">Prehrávanie bude zastavené.</string>
@@ -129,6 +132,7 @@
   <string Field="Reports">Reporty</string>
   <string Field="Runtime">Dĺžka</string>
   <string Field="RemoveFromMySites">Odstrániť z mojich stránok</string>
+  <string Field="RemoveAllFromMySites">Odstrániť všetko z mojich stránok</string>
   <string Field="RestartMediaPortal">Reštaruj MediaPortal!</string>
   <string Field="RetrievingRemoteDlls">Získavam vzdialené DLL ...</string>
   <string Field="RetrievingRemoteSites">Získavam vzdialené stránky ...</string>
@@ -175,5 +179,28 @@
   <string Field="Writers">Scenáristi</string>    
 
   <!-- Y -->
+
+  <string Field="Settings_Yes">Áno</string>
+  <string Field="Settings_No">Nie</string>
+  <string Field="Settings_SearchHistoryType_Off">Vypnutá</string>
+  <string Field="Settings_SearchHistoryType_Simple">Jednoduchá</string>
+  <string Field="Settings_SearchHistoryType_Extended">Rozšírená</string>
+  <string Field="Settings_BasicHomeName">Názov v hlavnom menu</string>
+  <string Field="Settings_PluginEnabled">Doplnok zapnutý</string>
+  <string Field="Settings_ListedInHome">Zobrazený v hlavnom menu</string>
+  <string Field="Settings_ListedInPlugins">Zobrazený v doplnkoch</string>
+  <string Field="Settings_AutoGroupByLang">Automaticky združovať všetky stránky podľa ich jazyka</string>
+  <string Field="Settings_UseQuickSelect">Použiť alfanumerické klávesy na rýchly výber položiek pomocou prvého písmena</string>
+  <string Field="Settings_SearchHistoryType">História hľadania</string>
+  <string Field="Settings_ThumbAge">Maximálny čas (dni) pre uloženie náhľadov</string>
+  <string Field="Settings_CacheTimeout">Čas (minúty) pre dočasné uloženie dát z internetu</string>
+  <string Field="Settings_CategoryDiscoveryTimeout">Čas (minúty), po ktorom sú kategórie znova načítané z internetu</string>
+  <string Field="Settings_UtilTimeout">Časový limit (sekundy) pre webové požiadavky</string>
+  <string Field="Settings_WmpBuffer">Veľkosť vyrovnávacej pamäte (milisekundy) pre Windows Media Player</string>
+  <string Field="Settings_PlayBuffer">Percento stiahnutých dát pred začatím prehrávania</string>
+  <string Field="Settings_FavoritesFirst">Dať Obľúbené a Stiahnuté videá na prvé miesta</string>
+  <string Field="Settings_LatestVideosRandomize">Náhodne zoradiť najnovšie videá pred zobrazením</string>
+  <string Field="Settings_LatestVideosOnlineDataRefresh">Obnov najnovšie videá z internetu každých x minút</string>
+  <string Field="Settings_LatestVideosGuiDataRefresh">Obnov posledne zobrazené videá každých x sekúnd</string>
 
 </strings>
