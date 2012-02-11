@@ -511,6 +511,15 @@ namespace SiteParser
 
         private void loadSitesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // set the startup directory to the default MediaPortal data directory
+            string commonAppData =
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
+                    + @"\Team MediaPortal\MediaPortal\";
+            if (Directory.Exists(commonAppData))
+            {
+                openFileDialog1.InitialDirectory = commonAppData;
+            }
+
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 using (FileStream fs = new FileStream(openFileDialog1.FileName, FileMode.Open, FileAccess.Read))
