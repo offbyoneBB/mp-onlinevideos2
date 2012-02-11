@@ -33,6 +33,10 @@
             BrightIdeasSoftware.OLVColumn siteColumnName;
             BrightIdeasSoftware.OLVColumn siteColumnDescription;
             BrightIdeasSoftware.OLVColumn siteColumnAdult;
+            BrightIdeasSoftware.OLVColumn siteColumnUpdated;
+            BrightIdeasSoftware.OLVColumn siteColumnPlayer;
+            BrightIdeasSoftware.OLVColumn sitevColumnUtil;
+            BrightIdeasSoftware.OLVColumn siteColumnEnabled;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Configuration));
             this.iconSite = new System.Windows.Forms.PictureBox();
             this.lblSelectedSite = new System.Windows.Forms.Label();
@@ -189,6 +193,10 @@
             siteColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             siteColumnDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             siteColumnAdult = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            siteColumnUpdated = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            siteColumnPlayer = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            sitevColumnUtil = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            siteColumnEnabled = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             siteNameIconPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconSite)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.siteList)).BeginInit();
@@ -264,11 +272,14 @@
             // siteColumnName
             // 
             siteColumnName.AspectName = "Name";
-            siteColumnName.Groupable = false;
+            siteColumnName.GroupWithItemCountFormat = "";
+            siteColumnName.GroupWithItemCountSingularFormat = "";
+            siteColumnName.Hideable = false;
             siteColumnName.ImageAspectName = "Name";
             siteColumnName.IsEditable = false;
             siteColumnName.MinimumWidth = 120;
             siteColumnName.Text = "Name";
+            siteColumnName.UseInitialLetterForGroup = true;
             siteColumnName.Width = 120;
             siteColumnName.WordWrap = true;
             // 
@@ -280,6 +291,60 @@
             siteColumnDescription.IsEditable = false;
             siteColumnDescription.Sortable = false;
             siteColumnDescription.Text = "Description";
+            siteColumnDescription.UseFiltering = false;
+            siteColumnDescription.Width = 100;
+            // 
+            // siteColumnAdult
+            // 
+            siteColumnAdult.AspectName = "ConfirmAge";
+            siteColumnAdult.CheckBoxes = true;
+            siteColumnAdult.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            siteColumnAdult.IsEditable = false;
+            siteColumnAdult.Text = "Adult";
+            siteColumnAdult.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            siteColumnAdult.Width = 40;
+            // 
+            // siteColumnUpdated
+            // 
+            siteColumnUpdated.AspectName = "LastUpdated";
+            siteColumnUpdated.AspectToStringFormat = "{0:g}";
+            siteColumnUpdated.DisplayIndex = 4;
+            siteColumnUpdated.IsEditable = false;
+            siteColumnUpdated.IsVisible = false;
+            siteColumnUpdated.Text = "Updated";
+            siteColumnUpdated.Width = 70;
+            siteColumnUpdated.WordWrap = true;
+            // 
+            // siteColumnPlayer
+            // 
+            siteColumnPlayer.AspectName = "Player";
+            siteColumnPlayer.DisplayIndex = 6;
+            siteColumnPlayer.IsEditable = false;
+            siteColumnPlayer.IsVisible = false;
+            siteColumnPlayer.Text = "Player";
+            siteColumnPlayer.Width = 50;
+            // 
+            // sitevColumnUtil
+            // 
+            sitevColumnUtil.AspectName = "UtilName";
+            sitevColumnUtil.DisplayIndex = 5;
+            sitevColumnUtil.IsEditable = false;
+            sitevColumnUtil.IsVisible = false;
+            sitevColumnUtil.Text = "C# Util";
+            sitevColumnUtil.Width = 70;
+            sitevColumnUtil.WordWrap = true;
+            // 
+            // siteColumnEnabled
+            // 
+            siteColumnEnabled.AspectName = "IsEnabled";
+            siteColumnEnabled.CheckBoxes = true;
+            siteColumnEnabled.DisplayIndex = 7;
+            siteColumnEnabled.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            siteColumnEnabled.IsEditable = false;
+            siteColumnEnabled.IsVisible = false;
+            siteColumnEnabled.Text = "Active";
+            siteColumnEnabled.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            siteColumnEnabled.Width = 50;
             // 
             // siteList
             // 
@@ -287,6 +352,11 @@
             this.siteList.AllColumns.Add(this.siteColumnLanguage);
             this.siteList.AllColumns.Add(siteColumnAdult);
             this.siteList.AllColumns.Add(siteColumnDescription);
+            this.siteList.AllColumns.Add(siteColumnUpdated);
+            this.siteList.AllColumns.Add(sitevColumnUtil);
+            this.siteList.AllColumns.Add(siteColumnPlayer);
+            this.siteList.AllColumns.Add(siteColumnEnabled);
+            this.siteList.AllowColumnReorder = true;
             this.siteList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             siteColumnName,
             this.siteColumnLanguage,
@@ -303,6 +373,7 @@
             this.siteList.OwnerDrawnHeader = true;
             this.siteList.RenderNonEditableCheckboxesAsDisabled = true;
             this.siteList.ShowCommandMenuOnRightClick = true;
+            this.siteList.ShowGroups = false;
             this.siteList.ShowItemCountOnGroups = true;
             this.siteList.Size = new System.Drawing.Size(698, 372);
             this.siteList.SmallImageList = this.imageListSiteIcons;
@@ -1604,7 +1675,7 @@
             // 
             this.btnImportXml.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.ImportXml;
             this.btnImportXml.Name = "btnImportXml";
-            this.btnImportXml.Size = new System.Drawing.Size(108, 22);
+            this.btnImportXml.Size = new System.Drawing.Size(152, 22);
             this.btnImportXml.Text = "XML";
             this.btnImportXml.ToolTipText = "Import from Xml";
             this.btnImportXml.Click += new System.EventHandler(this.btnImportSite_Click);
@@ -1613,7 +1684,7 @@
             // 
             this.btnImportGlobal.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.ImportGlobal;
             this.btnImportGlobal.Name = "btnImportGlobal";
-            this.btnImportGlobal.Size = new System.Drawing.Size(108, 22);
+            this.btnImportGlobal.Size = new System.Drawing.Size(152, 22);
             this.btnImportGlobal.Text = "Global";
             this.btnImportGlobal.ToolTipText = "Import from global List";
             this.btnImportGlobal.Click += new System.EventHandler(this.btnImportGlobal_Click);
@@ -1626,6 +1697,7 @@
             this.btnAddSite.Name = "btnAddSite";
             this.btnAddSite.Size = new System.Drawing.Size(23, 22);
             this.btnAddSite.Text = "Add";
+            this.btnAddSite.ToolTipText = "Add a new Site";
             this.btnAddSite.Click += new System.EventHandler(this.btnAddSite_Click);
             // 
             // btnSiteUp
@@ -1636,7 +1708,8 @@
             this.btnSiteUp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSiteUp.Name = "btnSiteUp";
             this.btnSiteUp.Size = new System.Drawing.Size(23, 22);
-            this.btnSiteUp.Text = "Up";
+            this.btnSiteUp.Text = "Move Site Up";
+            this.btnSiteUp.ToolTipText = "Move Site Up (Removes sorting and grouping)";
             this.btnSiteUp.Click += new System.EventHandler(this.btnSiteUp_Click);
             // 
             // btnSiteDown
@@ -1647,7 +1720,8 @@
             this.btnSiteDown.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSiteDown.Name = "btnSiteDown";
             this.btnSiteDown.Size = new System.Drawing.Size(23, 22);
-            this.btnSiteDown.Text = "Down";
+            this.btnSiteDown.Text = "Move Site Down";
+            this.btnSiteDown.ToolTipText = "Move Site Down (Removes sorting and grouping)";
             this.btnSiteDown.Click += new System.EventHandler(this.btnSiteDown_Click);
             // 
             // btnDeleteSite
@@ -1670,6 +1744,7 @@
             this.btnReportSite.Name = "btnReportSite";
             this.btnReportSite.Size = new System.Drawing.Size(23, 22);
             this.btnReportSite.Text = "Write report";
+            this.btnReportSite.ToolTipText = "Submit a message to the creator";
             this.btnReportSite.Click += new System.EventHandler(this.btnReportSite_Click);
             // 
             // btnEditSite
@@ -2041,14 +2116,6 @@
             this.onlineVideosService1.Credentials = null;
             this.onlineVideosService1.Url = "http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx";
             this.onlineVideosService1.UseDefaultCredentials = false;
-            // 
-            // siteColumnAdult
-            // 
-            siteColumnAdult.AspectName = "ConfirmAge";
-            siteColumnAdult.CheckBoxes = true;
-            siteColumnAdult.IsEditable = false;
-            siteColumnAdult.Text = "Adult";
-            siteColumnAdult.Width = 40;
             // 
             // Configuration
             // 
