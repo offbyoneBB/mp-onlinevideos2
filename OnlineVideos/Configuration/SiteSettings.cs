@@ -303,11 +303,13 @@ namespace OnlineVideos
 
     [DataContract]
     [Serializable]
-    public class Channel : MarshalByRefObject
+    public class Channel : MarshalByRefObject, INotifyPropertyChanged
     {
+        protected string _StreamName;
+
         [DataMember(Name="name", Order=0)]
         [XmlAttribute("name")]
-        public string StreamName { get; set; }
+        public string StreamName { get { return _StreamName; } set { if (_StreamName != value) { _StreamName = value; NotifyPropertyChanged("StreamName"); } } }
 
         [DataMember(Name = "thumb", Order=1, EmitDefaultValue = false)]
         [XmlAttribute("thumb")]
@@ -316,6 +318,15 @@ namespace OnlineVideos
         [DataMember(Order=2)]
         [XmlText]
         public string Url { get; set; }
+
+        #region INotifyPropertyChanged Member
+        [field: NonSerialized]
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null) PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
     }
 
     #region HelperClass to Serialize a Dictionary of strings
