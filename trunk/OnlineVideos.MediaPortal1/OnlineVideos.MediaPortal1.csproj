@@ -102,6 +102,7 @@
     <Compile Include="Configuration\CreateEditSite.Designer.cs">
       <DependentUpon>CreateEditSite.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\DataboundTreeNode.cs" />
     <Compile Include="Configuration\ImExportXml.cs">
       <SubType>Form</SubType>
     </Compile>
