@@ -104,7 +104,7 @@ namespace OnlineVideos.MediaPortal1
 
             if (DialogResult == DialogResult.Cancel)
             {
-                dr = MessageBox.Show("If you want to save your changes press Yes.", "Save Changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                dr = MessageBox.Show("Remember to press the same button to exit MediaPortal Configuration.", "Save Changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             }
 
             confPlayer.Stop();
@@ -191,13 +191,14 @@ namespace OnlineVideos.MediaPortal1
             frm.SiteSettingsBindingSource.DataSource = site;
             if (frm.ShowDialog() == DialogResult.OK)
             {
-                bindingSourceSiteSettings.Add(site);
+                bindingSourceSiteSettings.Position = bindingSourceSiteSettings.Add(site);
             }
         }
 
         private void btnDeleteSite_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show(string.Format("Delete {0} sites?", siteList.SelectedObjects.Count), "Confirm Delete", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.OK)
+            string question = siteList.SelectedObjects.Count > 1 ? string.Format("Delete {0} sites?", siteList.SelectedObjects.Count) : string.Format("Delete {0}?",(siteList.SelectedObject as SiteSettings).Name);
+            if (MessageBox.Show(question, "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 foreach (SiteSettings site in siteList.SelectedObjects)
                 {
@@ -208,6 +209,8 @@ namespace OnlineVideos.MediaPortal1
 
         private void btnSiteUp_Click(object sender, EventArgs e)
         {
+            siteList.Unsort();
+
             SiteSettings site = siteList.SelectedObject as SiteSettings;
             siteList.SelectedIndex = -1;
             bindingSourceSiteSettings.SuspendBinding();
@@ -224,6 +227,8 @@ namespace OnlineVideos.MediaPortal1
 
         private void btnSiteDown_Click(object sender, EventArgs e)
         {
+            siteList.Unsort();
+
             SiteSettings site = siteList.SelectedObject as SiteSettings;
             siteList.SelectedIndex = -1;
             bindingSourceSiteSettings.SuspendBinding();
