@@ -464,6 +464,7 @@ namespace OnlineVideos.MediaPortal1
             string file = Path.Combine(Application.StartupPath, "OnlineVideos.SiteCreator.exe");
             if (System.IO.File.Exists(file))
             {
+                MessageBox.Show("Make sure you close Configuration completely before starting to edit sites with the Site Creator.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 System.Diagnostics.Process.Start(file);
             }
             else
