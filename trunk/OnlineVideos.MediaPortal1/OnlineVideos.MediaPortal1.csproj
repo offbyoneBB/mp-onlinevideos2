@@ -214,6 +214,9 @@
     <Compile Include="Configuration\SubmitSiteReport.Designer.cs">
       <DependentUpon>SubmitSiteReport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\TablessTabControl .cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Configuration\UserStore.cs" />
     <Compile Include="FavoritesDatabase.cs" />
     <Compile Include="Gui2UtilConnector.cs" />
@@ -343,6 +346,8 @@
     <None Include="OnlineVideos.ico" />
     <EmbeddedResource Include="OnlineVideos.png" />
     <EmbeddedResource Include="OnlineVideosDisabled.png" />
+    <None Include="Properties\DataSources\OnlineVideos.Channel.datasource" />
+    <None Include="Properties\DataSources\OnlineVideos.Group.datasource" />
     <None Include="Properties\DataSources\RssLink.datasource" />
     <None Include="Properties\DataSources\SiteSettings.datasource" />
     <None Include="Properties\DataSources\SitesGroup.datasource" />
@@ -417,6 +422,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rss.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tv.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
