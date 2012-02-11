@@ -39,7 +39,7 @@ namespace OnlineVideos.MediaPortal1
             cbLanguages.ValueMember = "Key";
         }
 
-        public Sites.SiteUtilBase SiteUtil { get; private set; }
+        public Sites.SiteUtilBase SiteUtil { get { return propertyGridSiteSettings.SelectedObject as Sites.SiteUtilBase; } }
 
         private void CreateEditSite_Load(object sender, EventArgs e)
         {

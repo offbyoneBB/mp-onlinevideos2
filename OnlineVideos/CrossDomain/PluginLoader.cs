@@ -94,16 +94,17 @@ namespace OnlineVideos
 			Type result = null;
 			if (utils.TryGetValue(name, out result))
 			{
+                SiteUtilBase util = null;
 				try
 				{
-					SiteUtilBase util = (SiteUtilBase)Activator.CreateInstance(result);
+					util = (SiteUtilBase)Activator.CreateInstance(result);
 					util.Initialize(settings);
 					return util;
 				}
 				catch (Exception ex)
 				{
 					Log.Warn("SiteUtil '{0}' is faulty or not compatible with this build of OnlineVideos: {1}", name, ex.Message);
-					return null;
+                    return util;
 				}
 			}
 			else
