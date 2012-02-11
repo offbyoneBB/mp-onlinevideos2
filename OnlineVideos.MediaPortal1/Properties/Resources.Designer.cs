@@ -186,6 +186,13 @@ namespace OnlineVideos.MediaPortal1.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap rss {
+            get {
+                object obj = ResourceManager.GetObject("rss", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Save {
             get {
                 object obj = ResourceManager.GetObject("Save", resourceCulture);
@@ -224,6 +231,13 @@ namespace OnlineVideos.MediaPortal1.Properties {
         internal static System.Drawing.Bitmap timeout {
             get {
                 object obj = ResourceManager.GetObject("timeout", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap tv {
+            get {
+                object obj = ResourceManager.GetObject("tv", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
