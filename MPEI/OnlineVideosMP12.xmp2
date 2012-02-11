@@ -2901,11 +2901,26 @@ public class Script
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
-    <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription />
+    <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
+    <VersionDescription>fixed: progress dialogs not closing (updating sites)
+fixed: frozen MP GUI on some occassions when starting playback or showing playback choices
+fixed: installer not registering the source filter on some systems
+fixed: removing a Category from Favorites while inside Favorites doesn't work
+fixed: downloading of mms streams
+fixed: PlayAll does not respect the current filter
+fixed: trying to play videos from GenericSite more than once with url resolving would fail
+fixed: video of NextPage in Favorited Categories would not play
+changed: when downloading in a queue, only ask for quality on the first item, after that use the default choice
+changed: all downloaded thumbs will be saved to a subdirectory named "Cache" under the configured Thumbnail directory
+changed: rework of the "Sites" tab in Configuration
+added: all settings string (Extensions Plugin) now use localization
+added: possibility to play all shown videos in random order
+added: filter Options: OnlyLocal, OnlyRemote and context menu entry: Remove all in SiteManager
+added: queued downloads now visible in the "Current Downloads" category
+added: OnlineVideos internal player now also uses preferred codecs as configured in MediaPortal</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.1.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2012-02-07T11:00:00</ReleaseDate>
+    <ReleaseDate>2012-02-11T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
