@@ -156,13 +156,27 @@ namespace OnlineVideos.MediaPortal1
         private void btnEditSite_Click(object sender, EventArgs e)
         {
             SiteSettings siteSettings = (SiteSettings)bindingSourceSiteSettings.Current;
+            
+            // use a copy of the original settings so anything that is changed can be canceled
+            SerializableSettings s = new SerializableSettings() { Sites = new BindingList<SiteSettings>() };
+            s.Sites.Add(siteSettings);
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            Utils.SiteSettingsToXml(s, ms);
+            ms.Position = 0;
+            SiteSettings copiedSiteSettings = Utils.SiteSettingsFromXml(new StreamReader(ms))[0];
 
             CreateEditSite frm = new CreateEditSite();
             frm.Text = "Edit " + siteSettings.Name;
-            frm.SiteSettingsBindingSource.DataSource = siteSettings;
+            frm.SiteSettingsBindingSource.DataSource = copiedSiteSettings;
             if (frm.ShowDialog() == DialogResult.OK)
             {
-                Utils.AddConfigurationValues(frm.SiteUtil, siteSettings);
+                // make sure the configuration is clean and for the cosen util
+                Utils.AddConfigurationValues(frm.SiteUtil, copiedSiteSettings);
+                // replace original settings object with the new one
+                int index = bindingSourceSiteSettings.IndexOf(siteSettings);
+                bindingSourceSiteSettings.RemoveCurrent();
+                bindingSourceSiteSettings.Insert(index, copiedSiteSettings);
+                bindingSourceSiteSettings.Position = index;
             }
         }
 
