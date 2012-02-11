@@ -848,6 +848,13 @@ STDMETHODIMP CLAVFDemuxer::Seek(REFERENCE_TIME rTime)
     logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SEEK_NAME, L"didn't seek by position or time");
   }
 
+  if (seeked)
+  {
+    // set that we don't change timestamps
+    // in another case if we recalculate timestamps the video freeze
+    this->dontChangeTimestamps = true;
+  }
+
   for (unsigned i = 0; i < m_avFormat->nb_streams; i++) {
     init_parser(m_avFormat, m_avFormat->streams[i]);
     UpdateParserFlags(m_avFormat->streams[i]);
