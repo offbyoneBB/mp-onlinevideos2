@@ -1397,15 +1397,15 @@
         <item key="aZSubCategoriesRegEx"><![CDATA[<li\stitle="[^m]*movies"><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
         <item key="seriesSubCategoriesRegEx"><![CDATA[<div\sclass="list_item[^"]*">\s*<div\sclass="left">\s*<a\starget="_blank"\stitle="[^"]*"\shref="(?<url>[^"]*)"><img\sborder="0"\salt="[^"]*"\ssrc="(?<thumb>[^"]*)"></a>\s*</div>\s*<div\sclass="right">\s*<div\sclass="frelease">(?<airdate>[^<]*)</div>\s*<a\sclass="plot"\starget="_blank"\sid="[^>]*>\s*<b>(?<title>[^<]*)</b>\s*(?:<b\sclass="sbtitle"></b>)?\s*(?:(?<description>[^<]*)<[^>]*>\s*)?</a>\s*<div>]]></item>
         <item key="seasonCategoriesRegEx"><![CDATA[<a\sid="(?<url>[^"]*)"\sclass="season"\shref='javascript:show_season\((?<airdates>[^\)]*)\)'>(?<title>[^<]*)</a><span\sclass="parts"\sid="[^"]*">(?<urls>.*?)</span>]]></item>
-        <item key="baseUrl"><![CDATA[http://tubeplus.me/browse/tv-shows/Last/ALL/]]></item>
+        <item key="baseUrl"><![CDATA[http://www.tubeplus.me/browse/tv-shows/Last/ALL/]]></item>
         <item key="showVideoListRegEx"><![CDATA[name="[^"]*"\sid="(?<id>[^"]*)"\sclass="seasons"\shref="*(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>]]></item>
         <item key="moviesVideoListRegEx"><![CDATA[<div\sclass="list_item[^"]*">\s*<div\sclass="left">\s*<a\starget="_blank"\stitle="[^"]*"\shref="(?<VideoUrl>[^"]*)"><img\sborder="0"\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"></a>\s*</div>\s*<div\sclass="right">\s*<div\sclass="frelease[^"]*">(?<airdate>[^\n]*)<[^\n]*/div>\s*<a\sclass="plot"\starget="_blank"\sid="[^>]*>\s*<b>(?<Title>[^<]*)</b>\s*(?:<b\sclass="sbtitle"></b>)?\s*(?:(?<Description>[^<]*)<[^>]*>\s*)?</a>\s*<div>]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)">&gt;</a></li>]]></item>
         <item key="fileUrlRegEx"><![CDATA[<li\sid="[^"]*"\sclass="online">\s*?(?:<[^>]*>)*\s*<div\sclass="link">\s*<a\shref="javascript:show\(\s*'[^']*',\s*'[^']*',\s*'(?<n0>[^']*)'\s*\)[^>]*">[^<]*</a>\s*<a\sclass="none"\shref="(?<m0>[^"]+)"]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="TV Shows" thumb="" desc="">http://tubeplus.me/browse/tv-shows/Last/ALL/</Category>
-        <Category xsi:type="RssLink" name="Movies" thumb="" desc="">http://tubeplus.me/browse/movies/Last/ALL/</Category>
+        <Category xsi:type="RssLink" name="TV Shows" thumb="" desc="">http://www.tubeplus.me/browse/tv-shows/Last/ALL/</Category>
+        <Category xsi:type="RssLink" name="Movies" thumb="" desc="">http://www.tubeplus.me/browse/movies/Last/ALL/</Category>
       </Categories>
     </Site>
     <Site name="TVLinks.cc" util="TVLinkscc" agecheck="false" enabled="true" lang="en" player="Internal">
