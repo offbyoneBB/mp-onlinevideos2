@@ -57,14 +57,14 @@ namespace OnlineVideos.Sites
 			while (m.Success)
 			{
 				VideoInfo videoInfo = new VideoInfo();
-				videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+                videoInfo.Title = Utils.PlainTextFromHtml(m.Groups["Title"].Value).Replace("\r", " ").Replace('\n', ' ').Trim();
 				// get, format and if needed absolutify the video url
 				videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
 				if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
 				// get, format and if needed absolutify the thumb url
 				videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
 				if (!string.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
-				videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
+                videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("\r", " ").Replace('\n', ' ').Trim();
 				videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
 				videoList.Add(videoInfo);
 				m = m.NextMatch();

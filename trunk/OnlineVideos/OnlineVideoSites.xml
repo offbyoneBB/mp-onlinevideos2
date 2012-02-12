@@ -114,7 +114,7 @@
         <item key="rtmpBase"><![CDATA[rtmp://pssimsat1fs.fplive.net:1935/pssimsat1ls/]]></item>
         <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass="show">\s*<figure>\s*<a\s+href="(?<url>[^"]+)"[^>]+>\s*<img\s+src="(?<thumb>[^"]+)"[^>]*>\s*<span[^>]*>\s*<span[^>]*>(?<description>.*?)</span>]]></item>
         <item key="videoListRegEx"><![CDATA[<div\s+class="video_teaser[^"]*">\s*
-<figure\s+class="image">\s*<a\s+href="(?<VideoUrl>[^"]+)">\s*
+<figure\s+class="image">\s*<a\s+href="(?<VideoUrl>[^"]+)"\s*>\s*
 <img\s+src="(?<ImageUrl>[^"]+)"[^>]*>.*?</figure>.*?<span\s+class="length[^>]*>(?<Duration>.*?)</span>\s*
 <span\s+class="title">(?<Title>.*?)</span>]]></item>
       </Configuration>
