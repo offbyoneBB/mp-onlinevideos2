@@ -229,8 +229,6 @@ namespace OnlineVideos.MediaPortal1.Player
                                         AddPreferredFilters(graphBuilder, sourceFilter);
                                         // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
                                         DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                                        // remove filter that are not used from the graph
-                                        DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
                                         Log.Instance.Debug("BufferFile : Playback Ready.");
                                         PlaybackReady = true;
                                     }
@@ -278,8 +276,6 @@ namespace OnlineVideos.MediaPortal1.Player
                     AddPreferredFilters(graphBuilder, sourceFilter);
                     // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
                     DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                    // remove filter that are not used from the graph
-                    DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
                     percentageBuffered = 100.0f; // no progress reporting possible
                     GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
                     PlaybackReady = true;
@@ -339,6 +335,16 @@ namespace OnlineVideos.MediaPortal1.Player
                     mediaCtrl = null;
                     Cleanup();
                     return false;
+                }
+
+                try
+                {
+                    // remove filter that are not used from the graph
+                    DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
+                }
+                catch (Exception ex)
+                {
+                    Log.Instance.Warn("Error during RemoveUnusedFiltersFromGraph: {0}", ex.ToString());
                 }
 
                 if (Log.Instance.LogLevel < log4net.Core.Level.Debug)
