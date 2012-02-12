@@ -2787,7 +2787,7 @@ public class Script
               <Params>
                 <Items>
                   <SectionParam Name="Extension package">
-                    <Value>LAV\LAVFilters0.45.0.0.mpe1</Value>
+                    <Value>LAV\LAVFilters0.46.0.0.mpe1</Value>
                     <ValueType>File</ValueType>
                     <Description>Location of the extension package</Description>
                   </SectionParam>
@@ -5355,8 +5355,8 @@ added: OnlineVideos internal player now also uses preferred codecs as configured
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>LAV\LAVFilters0.45.0.0.mpe1</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{bf87ba97-6256-4de1-a678-87cf2759385a}-LAVFilters0.45.0.0.mpe1</ZipFileName>
+        <LocalFileName>LAV\LAVFilters0.46.0.0.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bf87ba97-6256-4de1-a678-87cf2759385a}-LAVFilters0.46.0.0.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
