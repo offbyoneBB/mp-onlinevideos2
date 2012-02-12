@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvSites = new System.Windows.Forms.DataGridView();
             this.siteBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
@@ -71,8 +71,10 @@
             this.dgvSites.RowHeadersVisible = false;
             this.dgvSites.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dgvSites.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvSites.Size = new System.Drawing.Size(712, 497);
+            this.dgvSites.Size = new System.Drawing.Size(712, 521);
             this.dgvSites.TabIndex = 0;
+            this.dgvSites.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvSites_ColumnHeaderMouseClick);
+            this.dgvSites.SelectionChanged += new System.EventHandler(this.dgvSites_SelectionChanged);
             // 
             // siteBindingSource
             // 
@@ -83,7 +85,7 @@
             this.panel1.Controls.Add(this.btnOK);
             this.panel1.Controls.Add(this.btnCancel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 497);
+            this.panel1.Location = new System.Drawing.Point(0, 521);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(712, 47);
             this.panel1.TabIndex = 1;
@@ -92,6 +94,7 @@
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOK.Enabled = false;
             this.btnOK.Location = new System.Drawing.Point(493, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(126, 23);
@@ -141,8 +144,8 @@
             // 
             this.languageDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.languageDataGridViewTextBoxColumn.DataPropertyName = "Language";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.languageDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.languageDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle4;
             this.languageDataGridViewTextBoxColumn.HeaderText = "Lang";
             this.languageDataGridViewTextBoxColumn.Name = "languageDataGridViewTextBoxColumn";
             this.languageDataGridViewTextBoxColumn.ReadOnly = true;
@@ -155,7 +158,8 @@
             this.isAdultDataGridViewCheckBoxColumn.HeaderText = "Adult";
             this.isAdultDataGridViewCheckBoxColumn.Name = "isAdultDataGridViewCheckBoxColumn";
             this.isAdultDataGridViewCheckBoxColumn.ReadOnly = true;
-            this.isAdultDataGridViewCheckBoxColumn.Width = 37;
+            this.isAdultDataGridViewCheckBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.isAdultDataGridViewCheckBoxColumn.Width = 56;
             // 
             // ownerDataGridViewTextBoxColumn
             // 
@@ -180,7 +184,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(712, 544);
+            this.ClientSize = new System.Drawing.Size(712, 568);
             this.Controls.Add(this.dgvSites);
             this.Controls.Add(this.panel1);
             this.MinimizeBox = false;

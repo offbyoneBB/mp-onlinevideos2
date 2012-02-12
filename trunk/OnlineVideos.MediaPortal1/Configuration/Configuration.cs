@@ -313,11 +313,11 @@ namespace OnlineVideos.MediaPortal1
                 writer.Flush();
                 string siteXmlString = sb.ToString();
                 byte[] icon = null;
-                if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + site.Name + ".png"))
-                    icon = System.IO.File.ReadAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + site.Name + ".png");
+                string image = Path.Combine(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, "Icons"), site.Name + ".png");
+                if (File.Exists(image)) icon = File.ReadAllBytes(image);
                 byte[] banner = null;
-                if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + site.Name + ".png"))
-                    banner = System.IO.File.ReadAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + site.Name + ".png");
+                image = Path.Combine(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, "Banners"), site.Name + ".png");
+                if (File.Exists(image)) banner = File.ReadAllBytes(image);
                 bool success = false;
                 try
                 {
@@ -439,12 +439,12 @@ namespace OnlineVideos.MediaPortal1
                         byte[] icon = ws.GetSiteIcon(onlineSite.Name);
                         if (icon != null && icon.Length > 0)
                         {
-                            System.IO.File.WriteAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + onlineSite.Name + ".png", icon);
+                            File.WriteAllBytes(Path.Combine(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, "Icons"), onlineSite.Name + ".png"), icon);
                         }
                         icon = ws.GetSiteBanner(onlineSite.Name);
                         if (icon != null && icon.Length > 0)
                         {
-                            System.IO.File.WriteAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + onlineSite.Name + ".png", icon);
+                            File.WriteAllBytes(Path.Combine(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, "Banners"), onlineSite.Name + ".png"), icon);
                         }
                     }
                 }
