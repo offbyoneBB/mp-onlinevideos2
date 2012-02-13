@@ -66,6 +66,13 @@ namespace OnlineVideos.MediaPortal1
                 return false;
             }
 
+            // wait for our filter to buffer before rendering the pins
+            OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
+            while (filterState != null && !filterState.IsFilterReadyToConnectPins()) 
+                System.Threading.Thread.Sleep(25);
+
+            OnlineVideos.MediaPortal1.Player.OnlineVideosPlayer.AddPreferredFilters(_graphBuilder, sourceFilter);
+
             // try to connect the filters
             int numConnected = 0;
             IEnumPins pinEnum;

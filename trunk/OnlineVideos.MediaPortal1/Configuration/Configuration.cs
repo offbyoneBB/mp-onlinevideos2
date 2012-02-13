@@ -104,7 +104,7 @@ namespace OnlineVideos.MediaPortal1
 
             if (DialogResult == DialogResult.Cancel)
             {
-                dr = MessageBox.Show("Remember to press the same button to exit MediaPortal Configuration.", "Save Changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                dr = MessageBox.Show("Remember to press the same button to exit MediaPortal Configuration.", "Save Changes?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             }
 
             confPlayer.Stop();
