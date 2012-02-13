@@ -226,7 +226,7 @@ namespace OnlineVideos.Sites.georgius
                 if ((this.currentCategory.Name == "Search") && (this.currentCategory.Url == pageUrl))
                 {
                     this.cookieContainer = new CookieContainer();
-                    baseWebData = Utils.GetWebDataFromPost(pageUrl, String.Format(PohadkarUtil.searchRequest, HttpUtility.UrlEncode((String)this.currentCategory.Other)), this.cookieContainer, null, null, true);
+                    baseWebData = SiteUtilBase.GetWebDataFromPost(pageUrl, String.Format(PohadkarUtil.searchRequest, HttpUtility.UrlEncode((String)this.currentCategory.Other)), this.cookieContainer, null, null, true);
                 }
                 else
                 {
