@@ -53,6 +53,12 @@ static FormatMapping audio_map[] = {
   { CODEC_ID_WMAPRO,     &MEDIASUBTYPE_WMAUDIO3,          WAVE_FORMAT_WMAUDIO3,   NULL },
   { CODEC_ID_ADPCM_IMA_AMV, &MEDIASUBTYPE_IMA_AMV,        NULL,                   NULL },
   { CODEC_ID_FLAC,       &MEDIASUBTYPE_FLAC_FRAMED,       WAVE_FORMAT_FLAC,       NULL },
+  { CODEC_ID_COOK,       &MEDIASUBTYPE_COOK,              WAVE_FORMAT_COOK,       NULL },
+  { CODEC_ID_ATRAC1,     &MEDIASUBTYPE_ATRC,              WAVE_FORMAT_ATRC,       NULL },
+  { CODEC_ID_ATRAC3,     &MEDIASUBTYPE_ATRC,              WAVE_FORMAT_ATRC,       NULL },
+  { CODEC_ID_SIPR,       &MEDIASUBTYPE_SIPR,              WAVE_FORMAT_SIPR,       NULL },
+  { CODEC_ID_RA_288,     &MEDIASUBTYPE_28_8,              WAVE_FORMAT_28_8,       NULL },
+  { CODEC_ID_RA_144,     &MEDIASUBTYPE_14_4,              WAVE_FORMAT_14_4,       NULL },
 };
 
 CMediaType CLAVFAudioHelper::initAudioType(CodecID codecId, unsigned int &codecTag, std::string container)
@@ -114,7 +120,7 @@ WAVEFORMATEX *CLAVFAudioHelper::CreateWVFMTEX(const AVStream *avstream, ULONG *s
       if ( wvfmt->wBitsPerSample == 0 ) {
         DbgOutString(L"BitsPerSample is 0, no good!");
       }
-      wvfmt->nBlockAlign = (WORD)((wvfmt->nChannels * av_get_bits_per_sample_format(avstream->codec->sample_fmt)) / 8);
+      wvfmt->nBlockAlign = (WORD)((wvfmt->nChannels * av_get_bits_per_sample_fmt(avstream->codec->sample_fmt)) / 8);
     }
   }
   if (!wvfmt->nAvgBytesPerSec)
@@ -207,7 +213,7 @@ WAVEFORMATEXTENSIBLE *CLAVFAudioHelper::CreateWFMTEX_RAW_PCM(const AVStream *avs
   if (avstream->codec->sample_fmt == AV_SAMPLE_FMT_S32 && avstream->codec->bits_per_raw_sample > 0) {
     wfe->wBitsPerSample = avstream->codec->bits_per_raw_sample > 24 ? 32 : (avstream->codec->bits_per_raw_sample > 16 ? 24 : 16);
   } else {
-    wfe->wBitsPerSample = av_get_bits_per_sample_format(avstream->codec->sample_fmt);
+    wfe->wBitsPerSample = av_get_bits_per_sample_fmt(avstream->codec->sample_fmt);
   }
   wfe->nBlockAlign = wfe->nChannels * wfe->wBitsPerSample / 8;
   wfe->nAvgBytesPerSec = wfe->nSamplesPerSec * wfe->nBlockAlign;

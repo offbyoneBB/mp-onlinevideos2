@@ -59,6 +59,8 @@ void CLAVOutputPin::SetQueueSizes()
     factor = 25;
   } else if (m_mts.begin()->subtype == MEDIASUBTYPE_WAVE_DTS) {
     factor = 2;
+  } else if (m_mts.begin()->subtype == MEDIASUBTYPE_HDMV_LPCM_AUDIO || m_mts.begin()->subtype == MEDIASUBTYPE_BD_LPCM_AUDIO) {
+    factor = 5;
   }
 
   m_dwQueueLow  = MIN_PACKETS_IN_QUEUE * factor;
@@ -217,13 +219,33 @@ HRESULT CLAVOutputPin::DeliverEndFlush()
 
 HRESULT CLAVOutputPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
 {
+  HRESULT hr = S_OK;
   DbgLog((LOG_TRACE, 20, L"::DeliverNewSegment on %s Pin (rtStart: %I64d; rtStop: %I64d)", CBaseDemuxer::CStreamList::ToStringW(m_pinType), tStart, tStop));
   m_rtPrev = Packet::INVALID_TIME;
   if(m_fFlushing) return S_FALSE;
   m_rtStart = tStart;
   if(!ThreadExists()) return S_FALSE;
 
-  return __super::DeliverNewSegment(tStart, tStop, dRate);
+  hr = __super::DeliverNewSegment(tStart, tStop, dRate);
+  if (hr != S_OK)
+    return hr;
+
+  MakeISCRHappy();
+
+  return hr;
+}
+
+void CLAVOutputPin::MakeISCRHappy()
+{
+  if (IsSubtitlePin() && FilterInGraphSafe(this, CLSID_ISCR)) {
+    Packet *p = new Packet();
+    p->StreamId = m_streamId;
+    p->rtStart = -1;
+    p->rtStop = 0;
+    p->bSyncPoint = FALSE;
+    p->SetData(" ", 2);
+    QueueFromParser(p);
+  }
 }
 
 size_t CLAVOutputPin::QueueCount()

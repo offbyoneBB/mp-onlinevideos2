@@ -148,6 +148,7 @@ STDMETHODIMP CLAVSplitter::Close()
 {
   CAutoLock cAutoLock(this);
 
+  AbortOperation();
   CAMThread::CallWorker(CMD_EXIT);
   CAMThread::Close();
 
