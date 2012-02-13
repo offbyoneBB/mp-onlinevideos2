@@ -101,7 +101,9 @@ CLAVFDemuxer::CLAVFDemuxer(CCritSec *pLock, ILAVFSettingsInternal *settings, IFi
   , m_avFormat(NULL)
   , m_program(0)
   , m_rtCurrent(0)
+  , m_bFlv(FALSE)
   , m_bMatroska(FALSE)
+  , m_bOgg(FALSE)
   , m_bAVI(FALSE)
   , m_bMPEGTS(FALSE)
   , m_bEVO(FALSE)
@@ -181,9 +183,9 @@ STDMETHODIMP CLAVFDemuxer::Open(LPCOLESTR pszFileName)
   return OpenInputStream(NULL, pszFileName);
 }
 
-STDMETHODIMP CLAVFDemuxer::AbortOpening()
+STDMETHODIMP CLAVFDemuxer::AbortOpening(int mode)
 {
-  m_Abort = 1;
+  m_Abort = mode;
   return S_OK;
 }
 
@@ -281,7 +283,7 @@ done:
 //      AVStream *avstream = GetAVStreamByPID(s->pid);
 //      if (avstream) {
 //        if (s->lang[0] != 0)
-//          av_metadata_set2(&avstream->metadata, "language", (const char *)s->lang, 0);
+//          av_dict_set(&avstream->metadata, "language", (const char *)s->lang, 0);
 //      }
 //    }
 //  }
@@ -339,7 +341,9 @@ STDMETHODIMP CLAVFDemuxer::InitAVFormat(LPCOLESTR pszFileName)
 
   LPWSTR extension = pszFileName ? PathFindExtensionW(pszFileName) : NULL;
 
+  m_bFlv = (_strnicmp(m_pszInputFormat, "flv", 3) == 0);
   m_bMatroska = (_strnicmp(m_pszInputFormat, "matroska", 8) == 0);
+  m_bOgg = (_strnicmp(m_pszInputFormat, "ogg", 3) == 0);
   m_bAVI = (_strnicmp(m_pszInputFormat, "avi", 3) == 0);
   m_bMPEGTS = (_strnicmp(m_pszInputFormat, "mpegts", 6) == 0);
   m_bEVO = ((extension ? _wcsicmp(extension, L".evo") == 0 : TRUE) && _stricmp(m_pszInputFormat, "mpeg") == 0);
@@ -361,7 +365,7 @@ STDMETHODIMP CLAVFDemuxer::InitAVFormat(LPCOLESTR pszFileName)
     DbgLog((LOG_ERROR, 0, TEXT("::InitAVFormat(): av_find_stream_info failed (%d)"), ret));
     goto done;
   }
-  DbgLog((LOG_TRACE, 10, TEXT("::InitAVFormat(): avformat_find_stream_info finished, took %d seconds"), m_avFormat->iformat->name, time(NULL) - m_timeOpening));
+  DbgLog((LOG_TRACE, 10, TEXT("::InitAVFormat(): avformat_find_stream_info finished, took %I64d seconds"), time(NULL) - m_timeOpening));
   m_timeOpening = 0;
 
   // Check if this is a m2ts in a BD structure, and if it is, read some extra stream properties out of the CLPI files
@@ -382,6 +386,10 @@ STDMETHODIMP CLAVFDemuxer::InitAVFormat(LPCOLESTR pszFileName)
       if (st->codec->codec_id == CODEC_ID_DVB_SUBTITLE) {
         st->need_parsing = AVSTREAM_PARSE_NONE;
       }
+    }
+
+    if (m_bOgg && st->codec->codec_id == CODEC_ID_H264) {
+      st->need_parsing = AVSTREAM_PARSE_FULL;
     }
 
     // Create the parsers with the appropriate flags
@@ -489,7 +497,7 @@ void CLAVFDemuxer::UpdateSubStreams()
       }
       if (sub_st) {
         sub_st->disposition = st->disposition | LAVF_DISPOSITION_SUB_STREAM;
-        av_metadata_copy(&sub_st->metadata, st->metadata, 0);
+        av_dict_copy(&sub_st->metadata, st->metadata, 0);
       }
     }
   }
@@ -600,8 +608,8 @@ STDMETHODIMP CLAVFDemuxer::GetNextPacket(Packet **ppPacket)
     pPacket = new Packet();
     pPacket->bPosition = pkt.pos;
 
-    if (m_bMatroska && stream->codec->codec_id == CODEC_ID_H264) {
-      if (!stream->codec->extradata_size || stream->codec->extradata[0] != 1) {
+    if ((m_bMatroska || m_bOgg) && stream->codec->codec_id == CODEC_ID_H264) {
+      if (!stream->codec->extradata_size || stream->codec->extradata[0] != 1 || AV_RB32(pkt.data) == 0x00000001) {
         pPacket->dwFlags |= LAV_PACKET_H264_ANNEXB;
       } else { // No DTS for H264 in native format
         pkt.dts = AV_NOPTS_VALUE;
@@ -711,7 +719,7 @@ STDMETHODIMP CLAVFDemuxer::GetNextPacket(Packet **ppPacket)
     return E_FAIL;
   }
 
-  if ((this->m_avFormat->iformat->value == CODEC_ID_FLV1) && (this->flvTimestamps != NULL) && (pPacket->StreamId < FLV_TIMESTAMP_MAX))
+  if ((this->m_bFlv) && (this->flvTimestamps != NULL) && (pPacket->StreamId < FLV_TIMESTAMP_MAX))
   {
     // in case of FLV video check timestamps, can be wrong in case of live streams
     FlvTimestamp *timestamp = &this->flvTimestamps[pPacket->StreamId];
@@ -1149,7 +1157,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
 
   bool found = false;
   // if it isn't FLV video, try to seek by internal ffmpeg time seeking method
-  if (SUCCEEDED(result) && (this->m_avFormat->iformat->value != CODEC_ID_FLV1))
+  if (SUCCEEDED(result) && (!this->m_bFlv))
   {
     logger->Log(LOGGER_VERBOSE, L"%s: %s: time: %lld, seek_pts: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, time, seek_pts);
 
@@ -1196,7 +1204,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
       if (ie->timestamp >= seek_pts)
       {
         // we found index entry with higher timestamp than requested
-        if (this->m_avFormat->iformat->value != CODEC_ID_FLV1)
+        if (!this->m_bFlv)
         {
           // only when not FLV video
           found = true;
@@ -1211,7 +1219,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
       // if index is on the end of index entries than probably we have to seek to unbuffered part
       // (and we don't know right position)
       // in another case we seek in bufferred part or at least we have right position where to seek
-      if ((index < 0) || (index == st->nb_index_entries - 1) || (this->m_avFormat->iformat->value == CODEC_ID_FLV1))
+      if ((index < 0) || (index == st->nb_index_entries - 1) || (this->m_bFlv))
       {
         logger->Log(LOGGER_VERBOSE, L"%s: %s: index entries: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, st->nb_index_entries);
         AVPacket avPacket;
@@ -1273,13 +1281,13 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
               // error occured
               // exit only when it's not FLV video or FLV video has no active seeking position
               logger->Log(LOGGER_VERBOSE, L"%s: %s: av_read_frame() returned error: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, read_status);
-              if (((this->m_avFormat->iformat->value == CODEC_ID_FLV1) && (activeFlvSeekingPosition == (-1))) ||
-                  (this->m_avFormat->iformat->value != CODEC_ID_FLV1))
+              if (((this->m_bFlv) && (activeFlvSeekingPosition == (-1))) ||
+                  (!this->m_bFlv))
               {
                 break;
               }
               
-              if (this->m_avFormat->iformat->value == CODEC_ID_FLV1)
+              if (this->m_bFlv)
               {
                 // while seeking forward we didn't find keyframe
                 // we must seek backward
@@ -1306,7 +1314,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
             }
 
             if ((videoStreamId == avPacket.stream_index) && 
-                (this->m_avFormat->iformat->value == CODEC_ID_FLV1) && 
+                (this->m_bFlv) && 
                 (flvSeekingPositions != NULL) &&
                 (backwardSeeking) &&
                 (activeFlvSeekingPosition >= 0) &&
@@ -1321,7 +1329,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
 
             if ((videoStreamId == avPacket.stream_index) && 
                 ((avPacket.dts + FLV_DO_NOT_SEEK_DIFFERENCE) < seek_pts) &&
-                (this->m_avFormat->iformat->value == CODEC_ID_FLV1) && 
+                (this->m_bFlv) && 
                 (totalLength > 0) && 
                 (flvSeekingPositions != NULL) &&
                 (!backwardSeeking))
@@ -1555,7 +1563,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
         result = -6;
       }
 
-      if (this->m_avFormat->iformat->value == CODEC_ID_FLV1)
+      if (this->m_bFlv)
       {
         // in case of FLV video we can be after seek time, but searching index can find index too back
         ff_read_frame_flush(this->m_avFormat);
@@ -1660,7 +1668,7 @@ STDMETHODIMP CLAVFDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
 
   bool found = false;
   // if it isn't FLV video, try to seek by internal ffmpeg time seeking method
-  if (SUCCEEDED(result) && (this->m_avFormat->iformat->value != CODEC_ID_FLV1))
+  if (SUCCEEDED(result) && (!this->m_bFlv))
   {
     logger->Log(LOGGER_VERBOSE, L"%s: %s: time: %lld, seek_pts: %lld", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, time, seek_pts);
 
@@ -1707,7 +1715,7 @@ STDMETHODIMP CLAVFDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
       if (ie->timestamp >= seek_pts)
       {
         // we found index entry with higher timestamp than requested
-        if (this->m_avFormat->iformat->value != CODEC_ID_FLV1)
+        if (!this->m_bFlv)
         {
           // only when not FLV video
           found = true;
@@ -1722,7 +1730,7 @@ STDMETHODIMP CLAVFDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
       // if index is on the end of index entries than probably we have to seek to unbuffered part
       // (and we don't know right position)
       // in another case we seek in bufferred part or at least we have right position where to seek
-      if ((index < 0) || (index == st->nb_index_entries - 1) || (this->m_avFormat->iformat->value == CODEC_ID_FLV1))
+      if ((index < 0) || (index == st->nb_index_entries - 1) || (this->m_bFlv))
       {
         logger->Log(LOGGER_VERBOSE, L"%s: %s: index entries: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, st->nb_index_entries);
         AVPacket avPacket;
@@ -1812,7 +1820,7 @@ STDMETHODIMP CLAVFDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
         result = -6;
       }
 
-      if (this->m_avFormat->iformat->value == CODEC_ID_FLV1)
+      if (this->m_bFlv)
       {
         // in case of FLV video we can be after seek time, but searching index can find index too back
         ff_read_frame_flush(this->m_avFormat);
@@ -1964,8 +1972,8 @@ STDMETHODIMP CLAVFDemuxer::GetMarkerName(long MarkerNum, BSTR* pbstrMarkerName)
   if(index >= m_avFormat->nb_chapters) { return E_FAIL; }
   // Get the title, or generate one
   OLECHAR wTitle[128];
-  if (av_metadata_get(m_avFormat->chapters[index]->metadata, "title", NULL, 0)) {
-    char *title = av_metadata_get(m_avFormat->chapters[index]->metadata, "title", NULL, 0)->value;
+  if (av_dict_get(m_avFormat->chapters[index]->metadata, "title", NULL, 0)) {
+    char *title = av_dict_get(m_avFormat->chapters[index]->metadata, "title", NULL, 0)->value;
     MultiByteToWideChar(CP_UTF8, 0, title, -1, wTitle, 128);
   } else {
     swprintf_s(wTitle, L"Chapter %d", MarkerNum);
@@ -2149,8 +2157,8 @@ STDMETHODIMP_(BSTR) CLAVFDemuxer::GetTrackName(UINT aTrackIdx)
   BSTR trackName = NULL;
 
   const char *title = NULL;
-  if (av_metadata_get(st->metadata, "title", NULL, 0)) {
-    title = av_metadata_get(st->metadata, "title", NULL, 0)->value;
+  if (av_dict_get(st->metadata, "title", NULL, 0)) {
+    title = av_dict_get(st->metadata, "title", NULL, 0)->value;
   }
   if (title && title[0] != '\0') {
     trackName = ConvertCharToBSTR(title);
@@ -2198,8 +2206,8 @@ STDMETHODIMP CLAVFDemuxer::AddStream(int streamId)
 
   // Extract language
   const char *lang = NULL;
-  if (av_metadata_get(pStream->metadata, "language", NULL, 0)) {
-    lang = av_metadata_get(pStream->metadata, "language", NULL, 0)->value;
+  if (av_dict_get(pStream->metadata, "language", NULL, 0)) {
+    lang = av_dict_get(pStream->metadata, "language", NULL, 0)->value;
   }
   s.language = lang ? ProbeForISO6392(lang) : "und";
   s.streamInfo = new CLAVFStreamInfo(m_avFormat, pStream, m_pszInputFormat, hr);
@@ -2321,17 +2329,19 @@ STDMETHODIMP CLAVFDemuxer::CreateStreams()
           duration = st_duration;
       }
 
-      st_start_time = av_rescale_q(st->start_time, st->time_base, AV_RATIONAL_TIMEBASE);
-      if (start_time != INT64_MAX && m_bMPEGTS && st->pts_wrap_bits < 60) {
-        int64_t start = av_rescale_q(start_time, AV_RATIONAL_TIMEBASE, st->time_base);
-        if (start < (3LL << (st->pts_wrap_bits - 3)) && st->start_time > (3LL << (st->pts_wrap_bits - 2))) {
-          start_time = av_rescale_q(start + (1LL << st->pts_wrap_bits), st->time_base, AV_RATIONAL_TIMEBASE);
-        } else if (st->start_time < (3LL << (st->pts_wrap_bits - 3)) && start > (3LL << (st->pts_wrap_bits - 2))) {
-          st_start_time = av_rescale_q(st->start_time + (1LL << st->pts_wrap_bits), st->time_base, AV_RATIONAL_TIMEBASE);
+      if (st->start_time != AV_NOPTS_VALUE) {
+        st_start_time = av_rescale_q(st->start_time, st->time_base, AV_RATIONAL_TIMEBASE);
+        if (start_time != INT64_MAX && m_bMPEGTS && st->pts_wrap_bits < 60) {
+          int64_t start = av_rescale_q(start_time, AV_RATIONAL_TIMEBASE, st->time_base);
+          if (start < (3LL << (st->pts_wrap_bits - 3)) && st->start_time > (3LL << (st->pts_wrap_bits - 2))) {
+            start_time = av_rescale_q(start + (1LL << st->pts_wrap_bits), st->time_base, AV_RATIONAL_TIMEBASE);
+          } else if (st->start_time < (3LL << (st->pts_wrap_bits - 3)) && start > (3LL << (st->pts_wrap_bits - 2))) {
+            st_start_time = av_rescale_q(st->start_time + (1LL << st->pts_wrap_bits), st->time_base, AV_RATIONAL_TIMEBASE);
+          }
         }
+        if (st_start_time < start_time)
+          start_time = st_start_time;
       }
-      if (st_start_time < start_time)
-        start_time = st_start_time;
     }
     if (st->codec->codec_id == CODEC_ID_HDMV_PGS_SUBTITLE)
       bHasPGS = true;

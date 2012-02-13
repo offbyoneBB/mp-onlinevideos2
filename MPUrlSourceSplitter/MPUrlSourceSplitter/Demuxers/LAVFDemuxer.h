@@ -68,7 +68,8 @@ public:
 
   // CBaseDemuxer
   STDMETHODIMP Open(LPCOLESTR pszFileName);
-  STDMETHODIMP AbortOpening();
+  STDMETHODIMP Start() { if (m_avFormat) av_read_play(m_avFormat); return S_OK; }
+  STDMETHODIMP AbortOpening(int mode = 1);
   REFERENCE_TIME GetDuration() const;
   STDMETHODIMP GetNextPacket(Packet **ppPacket);
   STDMETHODIMP Seek(REFERENCE_TIME rTime);
@@ -153,7 +154,9 @@ private:
   AVFormatContext *m_avFormat;
   const char *m_pszInputFormat;
 
+  BOOL m_bFlv;
   BOOL m_bMatroska;
+  BOOL m_bOgg;
   BOOL m_bAVI;
   BOOL m_bMPEGTS;
   BOOL m_bEVO;
