@@ -277,10 +277,10 @@
             siteColumnName.Hideable = false;
             siteColumnName.ImageAspectName = "Name";
             siteColumnName.IsEditable = false;
-            siteColumnName.MinimumWidth = 120;
+            siteColumnName.MinimumWidth = 130;
             siteColumnName.Text = "Name";
             siteColumnName.UseInitialLetterForGroup = true;
-            siteColumnName.Width = 120;
+            siteColumnName.Width = 130;
             siteColumnName.WordWrap = true;
             // 
             // siteColumnDescription
@@ -1675,7 +1675,7 @@
             // 
             this.btnImportXml.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.ImportXml;
             this.btnImportXml.Name = "btnImportXml";
-            this.btnImportXml.Size = new System.Drawing.Size(152, 22);
+            this.btnImportXml.Size = new System.Drawing.Size(108, 22);
             this.btnImportXml.Text = "XML";
             this.btnImportXml.ToolTipText = "Import from Xml";
             this.btnImportXml.Click += new System.EventHandler(this.btnImportSite_Click);
@@ -1684,7 +1684,7 @@
             // 
             this.btnImportGlobal.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.ImportGlobal;
             this.btnImportGlobal.Name = "btnImportGlobal";
-            this.btnImportGlobal.Size = new System.Drawing.Size(152, 22);
+            this.btnImportGlobal.Size = new System.Drawing.Size(108, 22);
             this.btnImportGlobal.Text = "Global";
             this.btnImportGlobal.ToolTipText = "Import from global List";
             this.btnImportGlobal.Click += new System.EventHandler(this.btnImportGlobal_Click);
