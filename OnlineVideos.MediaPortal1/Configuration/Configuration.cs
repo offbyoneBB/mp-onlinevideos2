@@ -204,6 +204,11 @@ namespace OnlineVideos.MediaPortal1
                 {
                     bindingSourceSiteSettings.Remove(site);
                 }
+                if (siteList.SelectedObjects.Count > 0)
+                {
+                    siteList.EnsureModelVisible(siteList.SelectedObjects[0]);
+                    siteList.Focus();
+                }
             }
         }
 
@@ -265,6 +270,11 @@ namespace OnlineVideos.MediaPortal1
                             }
                         }
                         siteList.SelectedObjects = sitesFromDlg as List<SiteSettings>;
+                        if (siteList.SelectedObjects.Count > 0)
+                        {
+                            siteList.EnsureModelVisible(siteList.SelectedObjects[0]);
+                            siteList.Focus();
+                        }
                     }
                 }
             }
@@ -422,6 +432,7 @@ namespace OnlineVideos.MediaPortal1
             frm.dgvSites.DataSource = onlyOnlineSites;
             if (frm.ShowDialog() == DialogResult.OK)
             {
+                List<SiteSettings> importedSites = new List<SiteSettings>();
                 Cursor oldCursor = Cursor;
                 try
                 {
@@ -434,12 +445,18 @@ namespace OnlineVideos.MediaPortal1
                         IList<SiteSettings> sitesFromServer = Utils.SiteSettingsFromXml(siteXml);
                         if (sitesFromServer != null)
                         {
-                            foreach (SiteSettings site in sitesFromServer) OnlineVideoSettings.Instance.SiteSettingsList.Add(site);
+                            foreach (SiteSettings site in sitesFromServer)
+                            {
+                                OnlineVideoSettings.Instance.SiteSettingsList.Add(site);
+                                importedSites.Add(site);
+                            }
                         }
                         byte[] icon = ws.GetSiteIcon(onlineSite.Name);
                         if (icon != null && icon.Length > 0)
                         {
                             File.WriteAllBytes(Path.Combine(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, "Icons"), onlineSite.Name + ".png"), icon);
+                            if (!imageListSiteIcons.Images.ContainsKey(onlineSite.Name))
+                                imageListSiteIcons.Images.Add(onlineSite.Name, Image.FromStream(new MemoryStream(icon)));
                         }
                         icon = ws.GetSiteBanner(onlineSite.Name);
                         if (icon != null && icon.Length > 0)
@@ -455,6 +472,12 @@ namespace OnlineVideos.MediaPortal1
                 finally
                 {
                     Cursor = oldCursor;
+                }
+                if (importedSites.Count > 0)
+                {
+                    siteList.SelectedObjects = importedSites; 
+                    siteList.EnsureModelVisible(importedSites[0]);
+                    siteList.Focus();
                 }
             }
         }

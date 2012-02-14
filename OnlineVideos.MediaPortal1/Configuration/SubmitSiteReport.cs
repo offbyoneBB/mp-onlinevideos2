@@ -29,7 +29,7 @@ namespace OnlineVideos.MediaPortal1
         {
             if (tbxMessage.Text.Trim().Length < 10)
             {
-                MessageBox.Show("You must enter a short text!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("You must enter a short text! No Report submitted.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             try
@@ -44,6 +44,17 @@ namespace OnlineVideos.MediaPortal1
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void LinkForumClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://forum.team-mediaportal.com/forums/onlinevideos.244/");
+        }
+
+        private void LinkReportsClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(
+                string.Format("http://87.106.7.69/OnlineVideosWebService/Reports.aspx?site={0}", System.Web.HttpUtility.UrlEncode(SiteName)));
         }
     }
 }

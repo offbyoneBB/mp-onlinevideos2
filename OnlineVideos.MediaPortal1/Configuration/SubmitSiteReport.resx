@@ -117,4 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Before reporting a Site as broken, make sure you have also visited the website to see if it has changed / requires a login / is down. Verify that you have the latest version of OnlineVideos and the Site is updated. Try to play videos from other sites (e.g. YouTube inside MediaPortal and in the Configuration on the Codecs Tab) to see if you have no genereal codec problems. Check the forum and Reports of other users. Leave a forum nick or email and write a message that will help the author!</value>
+  </data>
 </root>
