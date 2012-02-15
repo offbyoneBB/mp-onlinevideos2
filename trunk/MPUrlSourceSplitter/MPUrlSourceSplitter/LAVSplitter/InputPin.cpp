@@ -2716,6 +2716,9 @@ int64_t CLAVInputPin::SeekToTime(int64_t time)
 
   if (this->activeProtocol != NULL)
   {
+    // notify protocol that we can't receive any data
+    // protocol have to supress sending data and will wait until we are ready
+    this->activeProtocol->SetSupressData(true);
     result = this->activeProtocol->SeekToTime(time);
     if (result >= 0)
     {
@@ -2730,6 +2733,9 @@ int64_t CLAVInputPin::SeekToTime(int64_t time)
       }
       this->m_llBufferPosition = 0;
     }
+    // now we are ready to receive data
+    // notify protocol that we can receive data
+    this->activeProtocol->SetSupressData(false);
   }
 
   return result;
