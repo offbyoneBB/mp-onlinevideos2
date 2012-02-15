@@ -67,6 +67,7 @@ CMPUrlSourceSplitter_File::CMPUrlSourceSplitter_File(CParameterCollection *confi
   this->streamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->wholeStreamDownloaded = false;
+  this->supressData = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -369,56 +370,65 @@ void CMPUrlSourceSplitter_File::ReceiveData(bool *shouldExit)
 
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  if (this->IsConnected())
+  /*
+
+  this should never happen, because supression of data can occure only when seeking by time
+
+  */
+
+  if (!this->supressData)
   {
-    if (!this->wholeStreamDownloaded)
+    if (this->IsConnected())
     {
-      if (!this->setLenght)
+      if (!this->wholeStreamDownloaded)
       {
-        this->filter->SetTotalLength(this->fileLength, false);
-        this->setLenght = true;
-      }
-
-      if (!feof(this->fileStream))
-      {
-        unsigned int bytesToRead = DEFAULT_BUFFER_SIZE; // 32 kB
-
-        ALLOC_MEM_DEFINE_SET(receiveBuffer, char, bytesToRead, 0);    
-        unsigned int bytesRead = fread_s(receiveBuffer, bytesToRead, sizeof(char), bytesToRead, this->fileStream);
-        if (bytesRead != 0)
+        if (!this->setLenght)
         {
-          // create media packet
-          // set values of media packet
-          CMediaPacket *mediaPacket = new CMediaPacket();
-          mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
-          mediaPacket->GetBuffer()->AddToBuffer(receiveBuffer, bytesRead);
-
-          mediaPacket->SetStart(this->streamTime);
-          mediaPacket->SetEnd(this->streamTime + bytesRead - 1);
-          this->filter->PushMediaPacket(mediaPacket);
-          this->streamTime += bytesRead;
+          this->filter->SetTotalLength(this->fileLength, false);
+          this->setLenght = true;
         }
-        FREE_MEM(receiveBuffer);
-      }
-      else
-      {
-        this->wholeStreamDownloaded = true;
 
-        // notify filter the we reached end of stream
-        // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-        int64_t streamTime = this->streamTime;
-        this->streamTime = this->fileLength;
-        this->filter->EndOfStreamReached(max(0, streamTime - 1));
+        if (!feof(this->fileStream))
+        {
+          unsigned int bytesToRead = DEFAULT_BUFFER_SIZE; // 32 kB
+
+          ALLOC_MEM_DEFINE_SET(receiveBuffer, char, bytesToRead, 0);    
+          unsigned int bytesRead = fread_s(receiveBuffer, bytesToRead, sizeof(char), bytesToRead, this->fileStream);
+          if (bytesRead != 0)
+          {
+            // create media packet
+            // set values of media packet
+            CMediaPacket *mediaPacket = new CMediaPacket();
+            mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
+            mediaPacket->GetBuffer()->AddToBuffer(receiveBuffer, bytesRead);
+
+            mediaPacket->SetStart(this->streamTime);
+            mediaPacket->SetEnd(this->streamTime + bytesRead - 1);
+            this->filter->PushMediaPacket(mediaPacket);
+            this->streamTime += bytesRead;
+          }
+          FREE_MEM(receiveBuffer);
+        }
+        else
+        {
+          this->wholeStreamDownloaded = true;
+
+          // notify filter the we reached end of stream
+          // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+          int64_t streamTime = this->streamTime;
+          this->streamTime = this->fileLength;
+          this->filter->EndOfStreamReached(max(0, streamTime - 1));
+        }
       }
     }
-  }
-  else
-  {
-    this->logger->Log(LOGGER_WARNING,  METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"file not opened, opening file");
-    // re-open connection if previous is lost
-    if (this->OpenConnection() != S_OK)
+    else
     {
-      this->CloseConnection();
+      this->logger->Log(LOGGER_WARNING,  METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"file not opened, opening file");
+      // re-open connection if previous is lost
+      if (this->OpenConnection() != S_OK)
+      {
+        this->CloseConnection();
+      }
     }
   }
 
@@ -525,4 +535,9 @@ int64_t CMPUrlSourceSplitter_File::SeekToTime(int64_t time)
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
   return result;
+}
+
+void CMPUrlSourceSplitter_File::SetSupressData(bool supressData)
+{
+  this->supressData = supressData;
 }

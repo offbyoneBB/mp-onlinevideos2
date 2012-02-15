@@ -123,6 +123,10 @@ public:
   // receive data and stores them into internal buffer
   // @param shouldExit : the reference to variable specifying if method have to be finished immediately
   virtual void ReceiveData(bool *shouldExit) = 0;
+
+  // sets if protocol have to supress sending data to filter
+  // @param supressData : true if protocol have to supress sending data to filter, false otherwise
+  virtual void SetSupressData(bool supressData) = 0;
 };
 
 typedef IProtocol* PIProtocol;

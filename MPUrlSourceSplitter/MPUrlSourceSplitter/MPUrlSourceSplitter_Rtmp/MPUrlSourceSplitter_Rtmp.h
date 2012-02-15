@@ -170,6 +170,7 @@ public:
   unsigned int GetSeekingCapabilities(void);
   int64_t SeekToTime(int64_t time);
   int64_t SeekToPosition(int64_t start, int64_t end);
+  void SetSupressData(bool supressData);
 
 protected:
   CLogger *logger;
@@ -223,6 +224,8 @@ protected:
   bool wholeStreamDownloaded;
   // specifies if seeking (cleared when first data arrive)
   bool seekingActive;
+  // specifies if filter requested supressing data
+  bool supressData;
 };
 
 #endif

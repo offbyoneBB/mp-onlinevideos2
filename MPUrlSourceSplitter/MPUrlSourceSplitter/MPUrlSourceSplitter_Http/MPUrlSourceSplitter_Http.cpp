@@ -79,6 +79,7 @@ CMPUrlSourceSplitter_Http::CMPUrlSourceSplitter_Http(CParameterCollection *confi
   this->rangesDetectionCurlInstance = NULL;
   this->filledReceivedDataFromStart = false;
   this->filledReceivedDataFromRange = false;
+  this->supressData = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -633,6 +634,18 @@ size_t CMPUrlSourceSplitter_Http::CurlReceiveData(char *buffer, size_t size, siz
   CLockMutex lock(caller->lockMutex, INFINITE);
   unsigned int bytesRead = size * nmemb;
 
+  /*
+
+  this should never happen, because supression of data can occure only when seeking by time
+
+  */
+  while ((caller->supressData) && (!caller->shouldExit) && (!caller->internalExitRequest))
+  {
+    // while we have to supress data and we don't have to exit
+    // just wait
+    Sleep(10);
+  }
+
   if (!((caller->shouldExit) || (caller->internalExitRequest)))
   {
     long responseCode = 0;
@@ -870,4 +883,9 @@ int64_t CMPUrlSourceSplitter_Http::SeekToTime(int64_t time)
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
   return result;
+}
+
+void CMPUrlSourceSplitter_Http::SetSupressData(bool supressData)
+{
+  this->supressData = supressData;
 }

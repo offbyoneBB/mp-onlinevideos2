@@ -73,6 +73,7 @@ CMPUrlSourceSplitter_Rtmp::CMPUrlSourceSplitter_Rtmp(CParameterCollection *confi
   this->streamDuration = 0;
   this->bytePosition = 0;
   this->seekingActive = false;
+  this->supressData = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -340,6 +341,7 @@ void CMPUrlSourceSplitter_Rtmp::CloseConnection(void)
 
   if (this->mainCurlInstance != NULL)
   {
+    this->mainCurlInstance->SetCloseWithoutWaiting(this->seekingActive);
     delete this->mainCurlInstance;
     this->mainCurlInstance = NULL;
   }
@@ -511,6 +513,30 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
   CLockMutex lock(caller->lockMutex, INFINITE);
   unsigned int bytesRead = size * nmemb;
 
+  /*
+
+  supression of data can occure only when seeking by time
+  supression of data is set before seeking and cleared after seeking when filter is ready to receive data
+  these situations can occure:
+  1. filter sets supression of data and this callback will be called after - in this case data are not needed, because all data
+     will be cleared after seeking, we just wait and we will be requested to exit
+  2. this callback will be called before filter sets supression of data - in this case data are also not needed, but will
+     be added to internal filter data and after seeking data will be cleared
+
+  3. after seeking is filter still not ready to receive data and this callback is called - we just wait for filter until is
+     ready (it clears all internal data)
+  4. after seeking is filter ready (supression is not set) and this callback is called - it is ideal combination and we will
+     proceeded without waiting
+
+  */
+
+  while ((caller->supressData) && (!caller->shouldExit) && (!caller->internalExitRequest))
+  {
+    // while we have to supress data and we don't have to exit
+    // just wait
+    Sleep(10);
+  }
+
   if (!((caller->shouldExit) || (caller->internalExitRequest)))
   {
     if (!caller->setLenght)
@@ -655,4 +681,9 @@ int64_t CMPUrlSourceSplitter_Rtmp::SeekToTime(int64_t time)
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
   return result;
+}
+
+void CMPUrlSourceSplitter_Rtmp::SetSupressData(bool supressData)
+{
+  this->supressData = supressData;
 }
