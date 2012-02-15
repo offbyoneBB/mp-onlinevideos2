@@ -33,6 +33,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.propertyGridSiteSettings = new System.Windows.Forms.PropertyGrid();
             this.descriptionTextBox = new System.Windows.Forms.TextBox();
+            this.SiteSettingsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.cbLanguages = new System.Windows.Forms.ComboBox();
             this.label22 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
@@ -44,10 +45,15 @@
             this.label4 = new System.Windows.Forms.Label();
             this.imageListTabs = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.tablessTabControl1 = new OnlineVideos.MediaPortal1.TablessTabControl();
             this.tabPageEmpty = new System.Windows.Forms.TabPage();
             this.tabPageGroup = new System.Windows.Forms.TabPage();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.groupBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.label1 = new System.Windows.Forms.Label();
             this.tbxChannelThumb = new System.Windows.Forms.TextBox();
             this.tbxChannelName = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -55,11 +61,15 @@
             this.tabPageChannel = new System.Windows.Forms.TabPage();
             this.label9 = new System.Windows.Forms.Label();
             this.tbxStreamName = new System.Windows.Forms.TextBox();
+            this.channelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.label17 = new System.Windows.Forms.Label();
             this.tbxStreamUrl = new System.Windows.Forms.TextBox();
             this.tbxStreamThumb = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.tabPageRssLink = new System.Windows.Forms.TabPage();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.bindingSourceRssLink = new System.Windows.Forms.BindingSource(this.components);
+            this.label2 = new System.Windows.Forms.Label();
             this.txtRssThumb = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
             this.txtRssUrl = new System.Windows.Forms.TextBox();
@@ -68,33 +78,30 @@
             this.label25 = new System.Windows.Forms.Label();
             this.toolStripContainer2 = new System.Windows.Forms.ToolStripContainer();
             this.tvGroups = new System.Windows.Forms.TreeView();
+            this.contextMenuTreeView = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addSubcategoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripChannels = new System.Windows.Forms.ToolStrip();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.groupBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.channelBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.bindingSourceRssLink = new System.Windows.Forms.BindingSource(this.components);
             this.btnAdd = new System.Windows.Forms.ToolStripDropDownButton();
             this.btnAddRss = new System.Windows.Forms.ToolStripMenuItem();
             this.btnAddGroup = new System.Windows.Forms.ToolStripMenuItem();
             this.btnAddStream = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDelete = new System.Windows.Forms.ToolStripButton();
-            this.SiteSettingsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SiteSettingsBindingSource)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.tablessTabControl1.SuspendLayout();
             this.tabPageGroup.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.groupBindingSource)).BeginInit();
             this.tabPageChannel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.channelBindingSource)).BeginInit();
             this.tabPageRssLink.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             this.toolStripContainer2.ContentPanel.SuspendLayout();
             this.toolStripContainer2.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer2.SuspendLayout();
+            this.contextMenuTreeView.SuspendLayout();
             this.toolStripChannels.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.groupBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.channelBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.SiteSettingsBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -152,6 +159,10 @@
             this.descriptionTextBox.Name = "descriptionTextBox";
             this.descriptionTextBox.Size = new System.Drawing.Size(623, 54);
             this.descriptionTextBox.TabIndex = 30;
+            // 
+            // SiteSettingsBindingSource
+            // 
+            this.SiteSettingsBindingSource.DataSource = typeof(OnlineVideos.SiteSettings);
             // 
             // cbLanguages
             // 
@@ -270,6 +281,34 @@
             this.panel1.Size = new System.Drawing.Size(712, 32);
             this.panel1.TabIndex = 29;
             // 
+            // btnCancel
+            // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.CausesValidation = false;
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.No;
+            this.btnCancel.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.delete;
+            this.btnCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnCancel.Location = new System.Drawing.Point(618, 4);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(90, 25);
+            this.btnCancel.TabIndex = 29;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // btnSave
+            // 
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnSave.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Save;
+            this.btnSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnSave.Location = new System.Drawing.Point(522, 4);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.btnSave.Size = new System.Drawing.Size(90, 25);
+            this.btnSave.TabIndex = 28;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            // 
             // panel2
             // 
             this.panel2.Controls.Add(this.tablessTabControl1);
@@ -304,6 +343,8 @@
             // 
             // tabPageGroup
             // 
+            this.tabPageGroup.Controls.Add(this.textBox1);
+            this.tabPageGroup.Controls.Add(this.label1);
             this.tabPageGroup.Controls.Add(this.tbxChannelThumb);
             this.tabPageGroup.Controls.Add(this.tbxChannelName);
             this.tabPageGroup.Controls.Add(this.label8);
@@ -315,6 +356,30 @@
             this.tabPageGroup.TabIndex = 0;
             this.tabPageGroup.Text = "Group";
             this.tabPageGroup.UseVisualStyleBackColor = true;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.groupBindingSource, "Description", true));
+            this.textBox1.Location = new System.Drawing.Point(94, 76);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(393, 60);
+            this.textBox1.TabIndex = 31;
+            // 
+            // groupBindingSource
+            // 
+            this.groupBindingSource.DataSource = typeof(OnlineVideos.Group);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(11, 78);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(60, 13);
+            this.label1.TabIndex = 30;
+            this.label1.Text = "Description";
             // 
             // tbxChannelThumb
             // 
@@ -386,8 +451,12 @@
             this.tbxStreamName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.channelBindingSource, "StreamName", true));
             this.tbxStreamName.Location = new System.Drawing.Point(94, 28);
             this.tbxStreamName.Name = "tbxStreamName";
-            this.tbxStreamName.Size = new System.Drawing.Size(381, 20);
+            this.tbxStreamName.Size = new System.Drawing.Size(393, 20);
             this.tbxStreamName.TabIndex = 19;
+            // 
+            // channelBindingSource
+            // 
+            this.channelBindingSource.DataSource = typeof(OnlineVideos.Channel);
             // 
             // label17
             // 
@@ -405,7 +474,7 @@
             this.tbxStreamUrl.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.channelBindingSource, "Url", true));
             this.tbxStreamUrl.Location = new System.Drawing.Point(94, 53);
             this.tbxStreamUrl.Name = "tbxStreamUrl";
-            this.tbxStreamUrl.Size = new System.Drawing.Size(381, 20);
+            this.tbxStreamUrl.Size = new System.Drawing.Size(393, 20);
             this.tbxStreamUrl.TabIndex = 21;
             // 
             // tbxStreamThumb
@@ -415,7 +484,7 @@
             this.tbxStreamThumb.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.channelBindingSource, "Thumb", true));
             this.tbxStreamThumb.Location = new System.Drawing.Point(94, 77);
             this.tbxStreamThumb.Name = "tbxStreamThumb";
-            this.tbxStreamThumb.Size = new System.Drawing.Size(381, 20);
+            this.tbxStreamThumb.Size = new System.Drawing.Size(393, 20);
             this.tbxStreamThumb.TabIndex = 27;
             // 
             // label10
@@ -429,6 +498,8 @@
             // 
             // tabPageRssLink
             // 
+            this.tabPageRssLink.Controls.Add(this.textBox2);
+            this.tabPageRssLink.Controls.Add(this.label2);
             this.tabPageRssLink.Controls.Add(this.txtRssThumb);
             this.tabPageRssLink.Controls.Add(this.label19);
             this.tabPageRssLink.Controls.Add(this.txtRssUrl);
@@ -443,6 +514,30 @@
             this.tabPageRssLink.Text = "RssLink";
             this.tabPageRssLink.UseVisualStyleBackColor = true;
             // 
+            // textBox2
+            // 
+            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceRssLink, "Description", true));
+            this.textBox2.Location = new System.Drawing.Point(94, 103);
+            this.textBox2.Multiline = true;
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(393, 60);
+            this.textBox2.TabIndex = 32;
+            // 
+            // bindingSourceRssLink
+            // 
+            this.bindingSourceRssLink.DataSource = typeof(OnlineVideos.RssLink);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(11, 100);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(60, 13);
+            this.label2.TabIndex = 31;
+            this.label2.Text = "Description";
+            // 
             // txtRssThumb
             // 
             this.txtRssThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -450,7 +545,7 @@
             this.txtRssThumb.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceRssLink, "Thumb", true));
             this.txtRssThumb.Location = new System.Drawing.Point(94, 77);
             this.txtRssThumb.Name = "txtRssThumb";
-            this.txtRssThumb.Size = new System.Drawing.Size(381, 20);
+            this.txtRssThumb.Size = new System.Drawing.Size(393, 20);
             this.txtRssThumb.TabIndex = 25;
             // 
             // label19
@@ -469,7 +564,7 @@
             this.txtRssUrl.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceRssLink, "Url", true));
             this.txtRssUrl.Location = new System.Drawing.Point(94, 53);
             this.txtRssUrl.Name = "txtRssUrl";
-            this.txtRssUrl.Size = new System.Drawing.Size(381, 20);
+            this.txtRssUrl.Size = new System.Drawing.Size(393, 20);
             this.txtRssUrl.TabIndex = 23;
             // 
             // label26
@@ -488,7 +583,7 @@
             this.txtRssName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceRssLink, "Name", true));
             this.txtRssName.Location = new System.Drawing.Point(94, 28);
             this.txtRssName.Name = "txtRssName";
-            this.txtRssName.Size = new System.Drawing.Size(381, 20);
+            this.txtRssName.Size = new System.Drawing.Size(393, 20);
             this.txtRssName.TabIndex = 22;
             // 
             // label25
@@ -522,6 +617,7 @@
             // 
             // tvGroups
             // 
+            this.tvGroups.ContextMenuStrip = this.contextMenuTreeView;
             this.tvGroups.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tvGroups.FullRowSelect = true;
             this.tvGroups.HideSelection = false;
@@ -535,6 +631,21 @@
             this.tvGroups.TabIndex = 0;
             this.tvGroups.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvGroups_AfterSelect);
             // 
+            // contextMenuTreeView
+            // 
+            this.contextMenuTreeView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addSubcategoryToolStripMenuItem});
+            this.contextMenuTreeView.Name = "contextMenuTreeView";
+            this.contextMenuTreeView.Size = new System.Drawing.Size(166, 48);
+            // 
+            // addSubcategoryToolStripMenuItem
+            // 
+            this.addSubcategoryToolStripMenuItem.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.rss;
+            this.addSubcategoryToolStripMenuItem.Name = "addSubcategoryToolStripMenuItem";
+            this.addSubcategoryToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.addSubcategoryToolStripMenuItem.Text = "Add Subcategory";
+            this.addSubcategoryToolStripMenuItem.Click += new System.EventHandler(this.addSubcategoryToolStripMenuItem_Click);
+            // 
             // toolStripChannels
             // 
             this.toolStripChannels.Dock = System.Windows.Forms.DockStyle.None;
@@ -544,48 +655,8 @@
             this.btnDelete});
             this.toolStripChannels.Location = new System.Drawing.Point(3, 0);
             this.toolStripChannels.Name = "toolStripChannels";
-            this.toolStripChannels.Size = new System.Drawing.Size(86, 25);
+            this.toolStripChannels.Size = new System.Drawing.Size(55, 25);
             this.toolStripChannels.TabIndex = 0;
-            // 
-            // btnSave
-            // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnSave.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Save;
-            this.btnSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnSave.Location = new System.Drawing.Point(522, 4);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.btnSave.Size = new System.Drawing.Size(90, 25);
-            this.btnSave.TabIndex = 28;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.CausesValidation = false;
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.No;
-            this.btnCancel.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.delete;
-            this.btnCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCancel.Location = new System.Drawing.Point(618, 4);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(90, 25);
-            this.btnCancel.TabIndex = 29;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            // 
-            // groupBindingSource
-            // 
-            this.groupBindingSource.DataSource = typeof(OnlineVideos.Group);
-            // 
-            // channelBindingSource
-            // 
-            this.channelBindingSource.DataSource = typeof(OnlineVideos.Channel);
-            // 
-            // bindingSourceRssLink
-            // 
-            this.bindingSourceRssLink.DataSource = typeof(OnlineVideos.RssLink);
             // 
             // btnAdd
             // 
@@ -604,7 +675,7 @@
             // 
             this.btnAddRss.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.rss;
             this.btnAddRss.Name = "btnAddRss";
-            this.btnAddRss.Size = new System.Drawing.Size(152, 22);
+            this.btnAddRss.Size = new System.Drawing.Size(111, 22);
             this.btnAddRss.Text = "Rss";
             this.btnAddRss.Click += new System.EventHandler(this.btnAddRss_Click);
             // 
@@ -612,7 +683,7 @@
             // 
             this.btnAddGroup.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.NewFolderHS;
             this.btnAddGroup.Name = "btnAddGroup";
-            this.btnAddGroup.Size = new System.Drawing.Size(152, 22);
+            this.btnAddGroup.Size = new System.Drawing.Size(111, 22);
             this.btnAddGroup.Text = "Group";
             this.btnAddGroup.Click += new System.EventHandler(this.btnAddGroup_Click);
             // 
@@ -621,7 +692,7 @@
             this.btnAddStream.Enabled = false;
             this.btnAddStream.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.tv;
             this.btnAddStream.Name = "btnAddStream";
-            this.btnAddStream.Size = new System.Drawing.Size(152, 22);
+            this.btnAddStream.Size = new System.Drawing.Size(111, 22);
             this.btnAddStream.Text = "Stream";
             this.btnAddStream.Click += new System.EventHandler(this.btnAddStream_Click);
             // 
@@ -635,10 +706,6 @@
             this.btnDelete.Size = new System.Drawing.Size(23, 22);
             this.btnDelete.Text = "Delete";
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-            // 
-            // SiteSettingsBindingSource
-            // 
-            this.SiteSettingsBindingSource.DataSource = typeof(OnlineVideos.SiteSettings);
             // 
             // CreateEditSite
             // 
@@ -658,26 +725,27 @@
             this.Load += new System.EventHandler(this.CreateEditSite_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SiteSettingsBindingSource)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.tablessTabControl1.ResumeLayout(false);
             this.tabPageGroup.ResumeLayout(false);
             this.tabPageGroup.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.groupBindingSource)).EndInit();
             this.tabPageChannel.ResumeLayout(false);
             this.tabPageChannel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.channelBindingSource)).EndInit();
             this.tabPageRssLink.ResumeLayout(false);
             this.tabPageRssLink.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).EndInit();
             this.toolStripContainer2.ContentPanel.ResumeLayout(false);
             this.toolStripContainer2.TopToolStripPanel.ResumeLayout(false);
             this.toolStripContainer2.TopToolStripPanel.PerformLayout();
             this.toolStripContainer2.ResumeLayout(false);
             this.toolStripContainer2.PerformLayout();
+            this.contextMenuTreeView.ResumeLayout(false);
             this.toolStripChannels.ResumeLayout(false);
             this.toolStripChannels.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.groupBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.channelBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.SiteSettingsBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -734,5 +802,11 @@
         private System.Windows.Forms.ToolStripMenuItem btnAddRss;
         private System.Windows.Forms.ToolStripMenuItem btnAddGroup;
         private System.Windows.Forms.ToolStripMenuItem btnAddStream;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.ContextMenuStrip contextMenuTreeView;
+        private System.Windows.Forms.ToolStripMenuItem addSubcategoryToolStripMenuItem;
     }
 }

@@ -219,6 +219,14 @@ namespace OnlineVideos
                 HasSubCategories = true;
             }
         }
+
+        public void AddSubCategoryForSerialization(Category cat)
+        {
+            cat.IsDeserialized = true;
+            if (SubCategories == null) SubCategories = new List<Category>();
+            SubCategories.Add(cat);
+        }
+
         protected internal bool IsDeserialized { get; set; }
 
         [XmlIgnore]
