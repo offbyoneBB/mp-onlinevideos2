@@ -47,52 +47,50 @@ namespace OnlineVideos.MediaPortal1
             RebuildTreeView();
         }
 
-        private void RebuildTreeView(object select = null)
+        void RebuildTreeView(object select = null)
         {
             tvGroups.Nodes.Clear();
             SiteSettings site = SiteSettingsBindingSource.Current as SiteSettings;
-            if (site.Categories != null)
+            BuildTreeRecursive(site.Categories, null, select);
+            if (tvGroups.SelectedNode != null) tvGroups.SelectedNode.EnsureVisible();
+            else tvGroups_AfterSelect(null, new TreeViewEventArgs(null));
+        }
+
+        void BuildTreeRecursive(IList<Category> categories, DataboundTreeNode parentNode, object select)
+        {
+            if (categories == null) return;
+            foreach (Category category in categories)
             {
-                foreach (Category aCat in site.Categories)
+                DataboundTreeNode categoryNode = new DataboundTreeNode(category.Name);
+                categoryNode.TagPropertyBoundToText = "Name";
+                categoryNode.Tag = category;
+                if (parentNode == null) tvGroups.Nodes.Add(categoryNode);
+                else parentNode.Nodes.Add(categoryNode);
+                if (category == select) tvGroups.SelectedNode = categoryNode;
+                if (category is Group)
                 {
-                    if (aCat is RssLink)
+                    categoryNode.ImageIndex = 2;
+                    categoryNode.SelectedImageIndex = 2;
+                    if ((category as Group).Channels != null)
                     {
-                        DataboundTreeNode aRssNode = new DataboundTreeNode(aCat.Name);
-                        aRssNode.TagPropertyBoundToText = "Name";
-                        aRssNode.ImageIndex = 0;
-                        aRssNode.SelectedImageIndex = 0;
-                        aRssNode.Tag = aCat;
-                        tvGroups.Nodes.Add(aRssNode);
-                        if (aCat == select) tvGroups.SelectedNode = aRssNode;
-                    }
-                    else if (aCat is Group)
-                    {
-                        DataboundTreeNode aGroupNode = new DataboundTreeNode(aCat.Name);
-                        aGroupNode.TagPropertyBoundToText = "Name";
-                        aGroupNode.ImageIndex = 2;
-                        aGroupNode.SelectedImageIndex = 2;
-                        aGroupNode.Tag = aCat;
-                        tvGroups.Nodes.Add(aGroupNode);
-                        if (aCat == select) tvGroups.SelectedNode = aGroupNode;
-                        if ((aCat as Group).Channels != null)
+                        foreach (Channel aChannel in (category as Group).Channels)
                         {
-                            foreach (Channel aChannel in (aCat as Group).Channels)
-                            {
-                                DataboundTreeNode aChannelNode = new DataboundTreeNode(aChannel.StreamName);
-                                aChannelNode.TagPropertyBoundToText = "StreamName";
-                                aChannelNode.ImageIndex = 1;
-                                aChannelNode.SelectedImageIndex = 1;
-                                aChannelNode.Tag = aChannel;
-                                aGroupNode.Nodes.Add(aChannelNode);
-                                if (!aGroupNode.IsExpanded) aGroupNode.Expand();
-                                if (aChannel == select) tvGroups.SelectedNode = aChannelNode;
-                            }
+                            DataboundTreeNode aChannelNode = new DataboundTreeNode(aChannel.StreamName);
+                            aChannelNode.TagPropertyBoundToText = "StreamName";
+                            aChannelNode.ImageIndex = 1;
+                            aChannelNode.SelectedImageIndex = 1;
+                            aChannelNode.Tag = aChannel;
+                            categoryNode.Nodes.Add(aChannelNode);
+                            if (!categoryNode.IsExpanded) categoryNode.Expand();
+                            if (aChannel == select) tvGroups.SelectedNode = aChannelNode;
                         }
                     }
                 }
+                else
+                {
+                    BuildTreeRecursive(category.SubCategories, categoryNode, select);
+                }
             }
-            if (tvGroups.SelectedNode != null) tvGroups.SelectedNode.EnsureVisible();
-            else tvGroups_AfterSelect(null, new TreeViewEventArgs(null));
         }
 
         private void tvGroups_AfterSelect(object sender, TreeViewEventArgs e)
@@ -101,12 +99,14 @@ namespace OnlineVideos.MediaPortal1
 
             if (tag == null)
             {
+                tvGroups.ContextMenuStrip = null;
                 btnAddStream.Enabled = false;
                 btnDelete.Enabled = false;
                 tablessTabControl1.SelectedTab = tabPageEmpty;
             }
             else if (tag is Group)
             {
+                tvGroups.ContextMenuStrip = null;
                 btnAddStream.Enabled = true;
                 btnDelete.Enabled = true;
                 groupBindingSource.DataSource = tag;
@@ -114,6 +114,7 @@ namespace OnlineVideos.MediaPortal1
             }
             else if (tag is Channel)
             {
+                tvGroups.ContextMenuStrip = null;
                 btnAddStream.Enabled = false;
                 btnDelete.Enabled = true;
                 channelBindingSource.DataSource = tag;
@@ -121,6 +122,7 @@ namespace OnlineVideos.MediaPortal1
             }
             else if (tag is RssLink)
             {
+                tvGroups.ContextMenuStrip = contextMenuTreeView;
                 btnAddStream.Enabled = false;
                 btnDelete.Enabled = true;
                 bindingSourceRssLink.DataSource = tag;
@@ -150,19 +152,18 @@ namespace OnlineVideos.MediaPortal1
             object tag = tvGroups.SelectedNode as DataboundTreeNode != null ? (tvGroups.SelectedNode as DataboundTreeNode).Tag : null;
 
             if (tag == null) return;
-            else if (tag is Group)
+            else if (tag is Category)
             {
-                (SiteSettingsBindingSource.Current as SiteSettings).Categories.Remove(tag as Group);
+                var parentNode = tvGroups.SelectedNode.Parent as DataboundTreeNode;
+                if (parentNode != null)
+                    (parentNode.Tag as Category).SubCategories.Remove(tag as Category);
+                else
+                    (SiteSettingsBindingSource.Current as SiteSettings).Categories.Remove(tag as Category);
                 RebuildTreeView();
             }
             else if (tag is Channel)
             {
                 ((tvGroups.SelectedNode.Parent as DataboundTreeNode).Tag as Group).Channels.Remove(tag as Channel);
-                RebuildTreeView();
-            }
-            else if (tag is RssLink)
-            {
-                (SiteSettingsBindingSource.Current as SiteSettings).Categories.Remove(tag as RssLink);
                 RebuildTreeView();
             }
         }
@@ -187,6 +188,14 @@ namespace OnlineVideos.MediaPortal1
         {
             RssLink link = new RssLink() { Name = "new", Url = "http://" };
             (SiteSettingsBindingSource.Current as SiteSettings).AddCategoryForSerialization(link);
+            RebuildTreeView(link);
+        }
+
+        private void addSubcategoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var parentCategory = (tvGroups.SelectedNode as DataboundTreeNode).Tag as RssLink;
+            RssLink link = new RssLink() { Name = "new", Url = "http://" };
+            parentCategory.AddSubCategoryForSerialization(link);
             RebuildTreeView(link);
         }
     }
