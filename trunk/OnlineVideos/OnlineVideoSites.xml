@@ -1270,6 +1270,16 @@
     </Site>
     <Site name="Nos" util="NOS" agecheck="false" enabled="true" lang="nl">
       <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://nos.nl]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[href="(?<url>[^"]+)"[^>]*>(?<title>[^<]+)<]]></item>
+        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[{0}video-en-audio/]]></item>
+        <item key="videoListRegEx"><![CDATA[(?#regular)(<li>\s*<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>\s<span\sclass="img-video"><img\ssrc="(?<ImageUrl>[^"]*)"\salt=""\s/><em>&raquo;</em></span>\s<span\sclass="cat">Video</span>(?<Description>[^<]*)<em>(?<Airdate>[^,]*),[^<]*</em>\s</li>)|(?#searchres)(<li\sclass="search-video-[^"]*">\s<strong>(?<Title>[^<]*)</strong>\s<p><span\sclass="img-video"><img\ssrc="(?<ImageUrl>[^"]*)"\swidth="115"\sheight="65"\salt=""\s/><em>&raquo;</em></span>\s<span\sclass="date">(?<Airdate>[^<]*)</span>\s<span\sclass="cat">Video</span>(?<Description>[^<]*)</p>\s<a\shref="(?<VideoUrl>[^"]*)">[^<]*</a>\s</li>)|(?#laatstejournaal)(<li>\s*<span\sclass="img-video"><img\ssrc="(?<ImageUrl>[^"]*)"\salt=""\swidth="115"\sheight="65"\s/><em>&raquo;</em></span>\s<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>(?<Airdate>[^<]*)<br\s/>\s<em>(?<Duration>[^<]*)</em>\s*</li>)]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[file:\s'(?<url>[^']*)']]></item>
+        <item key="fileUrlRegEx"><![CDATA[(<location><!\[CDATA\[(?<m0>[^]]*)]]]]><![CDATA[></location>)|(<location>(?<m0>[^>]*)</location>)]]></item>
+        <item key="searchUrl"><![CDATA[http://nos.nl/zoeken/?s={0}&sort=2&type%5B%5D=video&datumvan=&datumtot=]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li\sclass="last"><a\shref="(?<url>[^"]*)">Volgende\s&raquo;</a></li>]]></item>
+      </Configuration>
     </Site>
     <Site name="Red Bull TV" util="BrightCove" agecheck="false" enabled="true" lang="en">
       <Description>Red Bull TV - Watch sports, music and entertainment TV online. Free.</Description>
