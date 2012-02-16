@@ -274,26 +274,29 @@ namespace OnlineVideos.Sites.georgius
 
                 if ((highQuality != null) && (lowQuality != null))
                 {
-                    highQualityUrl = "rtmp://n05.joj.sk/" + highQuality.Attributes["path"].Value;
-                    lowQualityUrl = "rtmp://n05.joj.sk/" + lowQuality.Attributes["path"].Value;
+                    highQualityUrl = "rtmp://n15.joj.sk/" + highQuality.Attributes["path"].Value;
+                    lowQualityUrl = "http://n15.joj.sk/" + lowQuality.Attributes["path"].Value;
                 }
                 else if (highQuality != null)
                 {
-                    highQualityUrl = "rtmp://n05.joj.sk/" + highQuality.Attributes["path"].Value;
+                    highQualityUrl = "rtmp://n15.joj.sk/" + highQuality.Attributes["path"].Value;
                 }
                 else if (lowQuality != null)
                 {
-                    lowQualityUrl = "rtmp://n05.joj.sk/" + lowQuality.Attributes["path"].Value;
+                    lowQualityUrl = "http://n15.joj.sk/" + lowQuality.Attributes["path"].Value;
                 }
 
                 if (!String.IsNullOrEmpty(lowQualityUrl))
                 {
-                    string host = lowQualityUrl.Substring(lowQualityUrl.IndexOf(":") + 3, lowQualityUrl.IndexOf("/", lowQualityUrl.IndexOf(":") + 3) - (lowQualityUrl.IndexOf(":") + 3));
-                    string app = "";
-                    string tcUrl = "rtmp://" + host;
-                    string playPath = lowQualityUrl.Substring(lowQualityUrl.IndexOf(tcUrl) + tcUrl.Length + 1);
+                    //string host = lowQualityUrl.Substring(lowQualityUrl.IndexOf(":") + 3, lowQualityUrl.IndexOf("/", lowQualityUrl.IndexOf(":") + 3) - (lowQualityUrl.IndexOf(":") + 3));
+                    //string app = "";
+                    //string tcUrl = "rtmp://" + host;
+                    //string playPath = lowQualityUrl.Substring(lowQualityUrl.IndexOf(tcUrl) + tcUrl.Length + 1);
 
-                    string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(lowQualityUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
+                    //string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(lowQualityUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
+
+                    //video.PlaybackOptions.Add("Low quality", resultUrl);
+                    string resultUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(lowQualityUrl).ToString();
 
                     video.PlaybackOptions.Add("Low quality", resultUrl);
                 }
