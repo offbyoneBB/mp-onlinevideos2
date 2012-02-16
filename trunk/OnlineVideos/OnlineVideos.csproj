@@ -541,6 +541,8 @@
     <Compile Include="RTMP_LIB\RTMPPacket.cs" />
     <Compile Include="RTMP_LIB\RTMPRequestHandler.cs" />
     <Compile Include="RTMP_LIB\Tea.cs" />
+    <Compile Include="Sites\AMF.cs" />
+    <Compile Include="Sites\BrightCoveUtil.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\ByteArray.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\DynamicList.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\IDynamic.cs" />
