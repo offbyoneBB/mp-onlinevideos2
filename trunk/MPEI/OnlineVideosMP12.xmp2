@@ -1809,6 +1809,48 @@
               <ZipFileName>Installer{CopyFile}\{37fd18b4-8f32-4d65-bf1c-ab4f9e5403df}-Khan Academy.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Khan Academy.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\4oD.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3892c495-df6c-4504-870f-99be68a3addc}-4oD.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\4oD.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Demand 5.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ce5cf197-bf17-4cf6-b3ad-0688f7d72f3e}-Demand 5.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Demand 5.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\ITV Player.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6840e3ae-8601-469e-97b9-33ea2ea2d803}-ITV Player.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ITV Player.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\4oD.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{030cd2a2-6fc5-4fb0-97db-f88123cf1257}-4oD.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\4oD.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Demand 5.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{fef7d788-f9dd-4b1f-9eca-185a52bd8d7e}-Demand 5.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Demand 5.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\ITV Player.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e32cf3a9-0faf-4a5c-9c21-98753f75244f}-ITV Player.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ITV Player.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2415,23 +2457,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-53.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c9691724-d7e0-4d6b-8947-33c3300a0571}-avcodec-mpurlsourcesplitter-53.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-53.dll</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avfilter-mpurlsourcesplitter-2.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{6b6ba619-fca8-4cc2-902d-44733478932d}-avfilter-mpurlsourcesplitter-2.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\avfilter-mpurlsourcesplitter-2.dll</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-53.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{835816eb-aa36-409b-affa-da93bcece661}-avformat-mpurlsourcesplitter-53.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-53.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -2474,6 +2502,20 @@
               <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\swscale-mpurlsourcesplitter-2.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{9a924158-72fe-44ac-863d-e43acc60973e}-swscale-mpurlsourcesplitter-2.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\swscale-mpurlsourcesplitter-2.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{79dd2e31-33a7-47b7-9c65-d3df2f38d69c}-avcodec-mpurlsourcesplitter-54.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-54.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-54.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5d5e57bd-d8dd-4347-bd5e-265700e9ad8f}-avformat-mpurlsourcesplitter-54.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-54.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -4757,6 +4799,48 @@ added: OnlineVideos internal player now also uses preferred codecs as configured
         <ZipFileName>Installer{CopyFile}\{37fd18b4-8f32-4d65-bf1c-ab4f9e5403df}-Khan Academy.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Khan Academy.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\4oD.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3892c495-df6c-4504-870f-99be68a3addc}-4oD.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\4oD.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Demand 5.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ce5cf197-bf17-4cf6-b3ad-0688f7d72f3e}-Demand 5.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Demand 5.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\ITV Player.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6840e3ae-8601-469e-97b9-33ea2ea2d803}-ITV Player.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ITV Player.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\4oD.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{030cd2a2-6fc5-4fb0-97db-f88123cf1257}-4oD.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\4oD.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Demand 5.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{fef7d788-f9dd-4b1f-9eca-185a52bd8d7e}-Demand 5.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Demand 5.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\ITV Player.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e32cf3a9-0faf-4a5c-9c21-98753f75244f}-ITV Player.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ITV Player.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -5285,23 +5369,9 @@ added: OnlineVideos internal player now also uses preferred codecs as configured
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-53.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c9691724-d7e0-4d6b-8947-33c3300a0571}-avcodec-mpurlsourcesplitter-53.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-53.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avfilter-mpurlsourcesplitter-2.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{6b6ba619-fca8-4cc2-902d-44733478932d}-avfilter-mpurlsourcesplitter-2.dll</ZipFileName>
         <DestinationFilename>%Base%\MPUrlSourceSplitter\avfilter-mpurlsourcesplitter-2.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-53.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{835816eb-aa36-409b-affa-da93bcece661}-avformat-mpurlsourcesplitter-53.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-53.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5344,6 +5414,20 @@ added: OnlineVideos internal player now also uses preferred codecs as configured
         <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\swscale-mpurlsourcesplitter-2.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{9a924158-72fe-44ac-863d-e43acc60973e}-swscale-mpurlsourcesplitter-2.dll</ZipFileName>
         <DestinationFilename>%Base%\MPUrlSourceSplitter\swscale-mpurlsourcesplitter-2.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{79dd2e31-33a7-47b7-9c65-d3df2f38d69c}-avcodec-mpurlsourcesplitter-54.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-54.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-54.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5d5e57bd-d8dd-4347-bd5e-265700e9ad8f}-avformat-mpurlsourcesplitter-54.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-54.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
@@ -5415,7 +5499,7 @@ added: OnlineVideos internal player now also uses preferred codecs as configured
       </FolderGroup>
     </FolderGroups>
     <ProjectFilename>OnlineVideosMP12.xmp2</ProjectFilename>
-    <UpdatePath1>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\update.xml</UpdatePath1>
+    <UpdatePath1>.\update.xml</UpdatePath1>
     <UpdatePath2 />
     <UpdatePath3 />
   </ProjectSettings>
