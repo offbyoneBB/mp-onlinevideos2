@@ -546,11 +546,21 @@ namespace OnlineVideos.Sites
                 return video.Title;
             else // called for downloading
             {
-                string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] { '/' }));
-                if (extension == string.Empty) extension = System.IO.Path.GetExtension(url);
-                if (extension == ".f4v" || extension == ".fid" || extension == String.Empty) extension = ".flv";
-                string safeName = Utils.GetSaveFilename(video.Title);
-                return safeName + extension;
+                string name = base.GetFileNameForDownload(video, category, url);
+                if (Path.GetExtension(name) == String.Empty) name += ".flv";
+                if (category.ParentCategory != null)
+                {
+                    string season = category.Name.Split('(')[0];
+                    name = category.ParentCategory.Name + ' ' + season + ' ' + name;
+                    int l;
+                    do
+                    {
+                        l = name.Length;
+                        name = name.Replace("  ", " ");
+                    } while (l != name.Length);
+
+                }
+                return name;
             }
         }
 
