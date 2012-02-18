@@ -1352,7 +1352,7 @@
         <item key="baseUrl"><![CDATA[http://ondemand.tv3.co.nz/tabid/56/default.aspx]]></item>
       </Configuration>
     </Site>
-    <Site name="Uitzending Gemist" util="UitzendingGemist" agecheck="false" enabled="true" lang="nl" player="WMP">
+    <Site name="Uitzending Gemist" util="UitzendingGemist" agecheck="false" enabled="true" lang="nl">
       <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://beta.uitzendinggemist.nl/]]></item>
