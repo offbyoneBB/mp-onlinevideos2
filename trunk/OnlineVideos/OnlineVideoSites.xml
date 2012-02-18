@@ -1525,9 +1525,6 @@
     <Site name="DIY Network Canada" util="DIY" agecheck="false" enabled="true" lang="en">
       <Description>DIY Network Canada is the go-to destination for rip-up, knock-out home improvement television.</Description>
     </Site>
-    <Site name="City TV" util="CityTV" agecheck="false" enabled="true" lang="en">
-      <Description>Citytv™ television stations in Toronto, Vancouver, Calgary, Edmonton and Winnipeg  offer viewers intensely-local, urban-oriented, culturally-diverse television programming. A distinct alternative to other conventional television stations, Citytv engages its viewers with dynamic on-air personalities and delivers an entertaining mix of news, local-interactive formats such as: Breakfast Television and CityLine; as well as local Canadian and US acquired prime time entertainment programming.</Description>
-    </Site>
     <Site name="4oD" util="Fourod" agecheck="false" enabled="true" lang="en">
       <Description>Catchup on all your favourite Channel 4 shows (only available in the UK).</Description>
       <Categories>
