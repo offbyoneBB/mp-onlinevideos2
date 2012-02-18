@@ -270,6 +270,8 @@ namespace OnlineVideos.Hoster
                 string quality = node.Attributes["compressie_kwaliteit"].Value;
                 string format = node.Attributes["compressie_formaat"].Value;
                 string streamUrl = node.SelectSingleNode("streamurl").InnerText.Trim();
+                if (format == "mov") streamUrl += ".mp4"; //so file will be played by internal player
+
                 if (!String.IsNullOrEmpty(streamUrl) && Uri.IsWellFormedUriString(streamUrl, System.UriKind.Absolute))
                 {
                     KeyValuePair<string, string> q = new KeyValuePair<string, string>(quality, format);
