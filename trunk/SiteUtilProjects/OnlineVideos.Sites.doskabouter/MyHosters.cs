@@ -22,15 +22,22 @@ namespace OnlineVideos.Hoster
         {
             string s = HttpUtility.UrlDecode(SiteUtilBase.GetRedirectedUrl(url));
             int p = s.IndexOf("file=");
-            int q = s.IndexOf('&', p);
-            if (q < 0) q = s.Length;
-            s = s.Substring(p + 5, q - p - 5);
-            string rss = SiteUtilBase.GetWebData(s);
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(rss);
-            var urlAttribute = xmlDoc.SelectSingleNode("//enclosure/@url");
-            if (urlAttribute != null) return urlAttribute.Value;
-            else return "";
+            if (p > -1)
+            {
+                int q = s.IndexOf('&', p);
+                if (q < 0) q = s.Length;
+                s = s.Substring(p + 5, q - p - 5);
+                string rss = SiteUtilBase.GetWebData(s);
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(rss);
+                var urlAttribute = xmlDoc.SelectSingleNode("//enclosure/@url");
+                if (urlAttribute != null) return urlAttribute.Value;
+                else return "";
+            }
+            else
+            {
+                return s;
+            }
         }
     }
 
