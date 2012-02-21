@@ -229,6 +229,7 @@
     <Compile Include="LatestVideosManager.cs" />
     <Compile Include="LoadParameterInfo.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="NavigationContextSwitch.cs" />
     <Compile Include="OnlineVideosGuiListItem.cs" />
     <Compile Include="Player\ExternalOSDLibrary\BaseWindow.cs" />
     <Compile Include="Player\ExternalOSDLibrary\DialogWindow.cs" />

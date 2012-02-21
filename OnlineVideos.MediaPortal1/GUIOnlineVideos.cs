@@ -167,6 +167,8 @@ namespace OnlineVideos.MediaPortal1
         }
         #endregion
 
+        NavigationContextSwitch currentNavigationContextSwitch;
+
         public delegate void TrackVideoPlaybackHandler(ITrackingInfo info, double percentPlayed);
         public event TrackVideoPlaybackHandler TrackVideoPlayback;
 
@@ -321,7 +323,7 @@ namespace OnlineVideos.MediaPortal1
                     dlgCat.Reset();
 					dlgCat.SetHeading(Translation.Instance.Actions);
 					List<KeyValuePair<string, bool>> dialogOptions = new List<KeyValuePair<string, bool>>();
-                    if (!(SelectedSite is Sites.FavoriteUtil) && !aCategory.HasSubCategories)
+                    if (!(SelectedSite is Sites.FavoriteUtil)/* && !aCategory.HasSubCategories*/)
                     {
 						if (selectedItem.IsPlayed)
 						{
@@ -768,14 +770,59 @@ namespace OnlineVideos.MediaPortal1
 								{
 									DisplayCategories_NextPage(categoryToDisplay as NextPageCategory);
 								}
-								else if (categoryToDisplay.HasSubCategories)
-								{
-									DisplayCategories(categoryToDisplay, true);
-								}
-								else
-								{
-									DisplayVideos_Category(categoryToDisplay, false);
-								}
+                                else if (categoryToDisplay is Sites.FavoriteUtil.FavoriteCategory)
+                                {
+                                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                                    {
+                                        var favCat = categoryToDisplay as Sites.FavoriteUtil.FavoriteCategory;
+                                        if (favCat.SiteCategory == null) favCat.DiscoverSiteCategory();
+                                        return favCat;
+                                    },
+                                    delegate(bool success, object result)
+                                    {
+                                        if (success)
+                                        {
+                                            var favCat = result as Sites.FavoriteUtil.FavoriteCategory;
+                                            if (favCat != null && favCat.SiteCategory != null)
+                                            {
+                                                currentNavigationContextSwitch = new NavigationContextSwitch()
+                                                {
+                                                    ReturnToUtil = SelectedSite,
+                                                    ReturnToCategory = categoryToDisplay.ParentCategory,
+                                                    GoToUtil = favCat.Site,
+                                                    GoToCategory = favCat.SiteCategory,
+                                                    BridgeCategory = favCat
+                                                };
+                                                SelectedSite = currentNavigationContextSwitch.GoToUtil;
+                                                if (currentNavigationContextSwitch.GoToCategory.HasSubCategories)
+                                                    DisplayCategories(currentNavigationContextSwitch.GoToCategory, true);
+                                                else
+                                                    DisplayVideos_Category(currentNavigationContextSwitch.GoToCategory, false);
+                                            }
+                                            else
+                                            {
+                                                GUIDialogNotify dlg_error = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                                                if (dlg_error != null)
+                                                {
+                                                    dlg_error.Reset();
+                                                    dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+                                                    dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+                                                    dlg_error.SetText(string.Format("{0}: {1}", Translation.Instance.Error, Translation.Instance.CategoryNotFound));
+                                                    dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                                                }
+                                            }
+                                        }
+                                    },
+                                    Translation.Instance.GettingDynamicCategories, true);
+                                }
+                                else if (categoryToDisplay.HasSubCategories)
+                                {
+                                    DisplayCategories(categoryToDisplay, true);
+                                }
+                                else
+                                {
+                                    DisplayVideos_Category(categoryToDisplay, false);
+                                }
 							}
 							break;
 						case State.videos:
@@ -1325,10 +1372,9 @@ namespace OnlineVideos.MediaPortal1
 #else
                 if ((GUI_facadeView.Count > 1 && imageHash.Count == 0) || (GUI_facadeView.Count > 2 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.Layout.List;
 #endif
+                // only set selected index when not doing an automatic dive up (MediaPortal would set the old selected index asynchroneously)
+                if (!(categories.Count == 1 && diveDownOrUpIfSingle == false)) GUI_facadeView.SelectedListItemIndex = categoryIndexToSelect;
             }
-
-            // only set selected index when not doing an automatic dive up (MediaPortal would set the old selected index asynchroneously)
-            if (!(categories.Count == 1 && diveDownOrUpIfSingle == false)) GUI_facadeView.SelectedListItemIndex = categoryIndexToSelect;
 
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             CurrentState = State.categories;
@@ -1418,6 +1464,15 @@ namespace OnlineVideos.MediaPortal1
                 if (!success || !SetVideosToFacade(result as List<VideoInfo>, VideosMode.Category))
                 {
                     selectedCategory = categoryToRestoreOnError;
+
+                    // reset a navigation context switch if it was set for this operation
+                    if (currentNavigationContextSwitch != null && currentNavigationContextSwitch.GoToCategory == category)
+                    {
+                        SelectedSite = currentNavigationContextSwitch.ReturnToUtil;
+                        selectedCategory = currentNavigationContextSwitch.ReturnToCategory;
+                        currentNavigationContextSwitch = null;
+                    }
+                    
                     if (displayCategoriesOnError)// an error occured or no videos were found -> return to the category selection if param was set
                     {
                         DisplayCategories(category.ParentCategory, false);
@@ -1773,7 +1828,20 @@ namespace OnlineVideos.MediaPortal1
                     if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Site == selectedSite.Settings.Name && loadParamInfo.Category == selectedCategory.Name)
                         OnPreviousWindow();
                     else
-                        DisplayCategories(selectedCategory.ParentCategory, false);
+                    {
+                        if (currentNavigationContextSwitch != null && currentNavigationContextSwitch.GoToCategory == selectedCategory)
+                        {
+                            SelectedSite = currentNavigationContextSwitch.ReturnToUtil;
+                            selectedCategory = currentNavigationContextSwitch.BridgeCategory;
+                            var categoryToReturnTo = currentNavigationContextSwitch.ReturnToCategory;
+                            currentNavigationContextSwitch = null;
+                            DisplayCategories(categoryToReturnTo, false);
+                        }
+                        else
+                        {
+                            DisplayCategories(selectedCategory.ParentCategory, false);
+                        }
+                    }
                 }
             }
             else if (CurrentState == State.videos)
@@ -1787,8 +1855,19 @@ namespace OnlineVideos.MediaPortal1
                     OnPreviousWindow();
                 else
                 {
-                    if (selectedCategory == null || selectedCategory.ParentCategory == null) DisplayCategories(null, false);
-                    else DisplayCategories(selectedCategory.ParentCategory, false);
+                    if (currentNavigationContextSwitch != null && currentNavigationContextSwitch.GoToCategory == selectedCategory)
+                    {
+                        SelectedSite = currentNavigationContextSwitch.ReturnToUtil;
+                        selectedCategory = currentNavigationContextSwitch.BridgeCategory;
+                        var categoryToReturnTo = currentNavigationContextSwitch.ReturnToCategory;
+                        currentNavigationContextSwitch = null;
+                        DisplayCategories(categoryToReturnTo, false);
+                    }
+                    else
+                    {
+                        if (selectedCategory == null || selectedCategory.ParentCategory == null) DisplayCategories(null, false);
+                        else DisplayCategories(selectedCategory.ParentCategory, false);
+                    }
                 }
             }
             else if (CurrentState == State.details)
@@ -3051,6 +3130,7 @@ namespace OnlineVideos.MediaPortal1
 			selectedVideo = null;
 			currentVideoList = new List<VideoInfo>();
 			currentTrailerList = new List<VideoInfo>();
+            currentNavigationContextSwitch = null;
 			currentPlaylist = null;
 			currentPlayingItem = null;
 			CurrentState = State.groups;

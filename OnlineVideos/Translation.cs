@@ -83,6 +83,7 @@ namespace OnlineVideos
         // C
         public string Cancel = "Cancel";
         public string Category = "Category";
+        public string CategoryNotFound = "Category not found";
         public string Categories = "Categories";
         public string Concurrent = "concurrent";
         public string Creator = "Creator";
