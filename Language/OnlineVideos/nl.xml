@@ -17,6 +17,7 @@
   <string Field="Buffered">Gebufferd</string>
   <string Field="Cancel">Annuleren</string>
   <string Field="Category">Categorie</string>
+  <string Field="CategoryNotFound">Categorie niet gevonden</string>
   <string Field="Categories">Categoriën</string>
   <string Field="Creator">Maker</string>
   <string Field="CheckingForPluginUpdate">Testen op geupdate plugin versie</string>
