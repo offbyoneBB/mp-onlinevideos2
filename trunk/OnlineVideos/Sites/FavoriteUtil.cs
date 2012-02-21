@@ -13,6 +13,7 @@ namespace OnlineVideos.Sites
         {
             public SiteUtilBase FavSite { get; protected set; }
             public SiteUtilBase Site { get; protected set; }
+            public Category SiteCategory { get; protected set; }
 
             public FavoriteCategory(RssLink favCat, SiteUtilBase util, SiteUtilBase favUtil)
             {
@@ -23,6 +24,39 @@ namespace OnlineVideos.Sites
                 Description = favCat.Description;
                 Thumb = favCat.Thumb;
             }
+
+            public void DiscoverSiteCategory()
+            {
+                string[] hierarchy = ((string)(Other as RssLink).Other).Split('|');
+                for (int i = 0; i < hierarchy.Length; i++)
+                {
+                    if (SiteCategory != null)
+                    {
+                        if (!SiteCategory.SubCategoriesDiscovered) Site.DiscoverSubCategories(SiteCategory);
+                        Category foundCat = SiteCategory.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                        // nextpage until found or no more
+                        while (foundCat == null && SiteCategory.SubCategories.Last() is NextPageCategory)
+                        {
+                            Site.DiscoverNextPageCategories(SiteCategory.SubCategories.Last() as NextPageCategory);
+                            foundCat = SiteCategory.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                        }
+                        SiteCategory = foundCat;
+                    }
+                    else
+                    {
+                        if (!Site.Settings.DynamicCategoriesDiscovered) Site.DiscoverDynamicCategories();
+                        Category foundCat = Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                        // nextpage until found or no more
+                        while (foundCat == null && Site.Settings.Categories.Last() is NextPageCategory)
+                        {
+                            Site.DiscoverNextPageCategories(Site.Settings.Categories.Last() as NextPageCategory);
+                            foundCat = Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                        }
+                        SiteCategory = foundCat;
+                    }
+                    if (SiteCategory == null) break;
+                }
+            }
         }
 
         public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
@@ -31,77 +65,13 @@ namespace OnlineVideos.Sites
             return util.getMultipleVideoUrls(video, inPlaylist);
         }
 
-        string currentVideosTitle = null;
-        public override string getCurrentVideosTitle()
-        {
-            return currentVideosTitle;
-        }
-
         public override List<VideoInfo> getVideoList(Category category)
         {
-            currentVideosTitle = null;
-            currentCategory = category;
-            HasNextPage = false;
             if (category is RssLink)
+            {
                 return OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(((RssLink)category).Url, null);
-            else if (category is FavoriteCategory)
-            {
-                FavoriteCategory fc = category as FavoriteCategory;
-                string[] hierarchy = ((string)(fc.Other as RssLink).Other).Split('|');
-                Category cat = null;
-                for (int i = 0; i < hierarchy.Length; i++)
-                {
-                    if (cat != null)
-                    {
-                        if (!cat.SubCategoriesDiscovered) fc.Site.DiscoverSubCategories(cat);
-                        Category foundCat = cat.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
-                        // nextpage until found or no more
-                        while (foundCat == null && cat.SubCategories.Last() is NextPageCategory)
-                        {
-                            fc.Site.DiscoverNextPageCategories(cat.SubCategories.Last() as NextPageCategory);
-                            foundCat = cat.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
-                        }
-                        cat = foundCat;
-                    }
-                    else
-                    {
-                        if (!fc.Site.Settings.DynamicCategoriesDiscovered) fc.Site.DiscoverDynamicCategories();
-                        Category foundCat = fc.Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
-                        // nextpage until found or no more
-                        while (foundCat == null && fc.Site.Settings.Categories.Last() is NextPageCategory)
-                        {
-                            fc.Site.DiscoverNextPageCategories(fc.Site.Settings.Categories.Last() as NextPageCategory);
-                            foundCat = fc.Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
-                        }
-                        cat = foundCat;
-                    }
-                    if (cat == null) break;
-                }
-                if (cat != null)
-                {
-                    var result = fc.Site.getVideoList(cat);
-                    result.ForEach(r => r.SiteName = fc.Site.Settings.Name);
-                    HasNextPage = fc.Site.HasNextPage;
-                    return result;
-                }
-                return null;
             }
-            else
-                return null;
-        }
-
-        Category currentCategory = null;
-        public override List<VideoInfo> getNextPageVideos()
-        {
-            var fc = currentCategory as FavoriteCategory;
-            if (fc != null)
-            {
-                var result = fc.Site.getNextPageVideos();
-                result.ForEach(r => r.SiteName = fc.Site.Settings.Name);
-                HasNextPage = fc.Site.HasNextPage;
-                return result;
-            }
-            return base.getNextPageVideos();
+            return null;
         }
 
         // keep a reference of all Categories ever created and reuse them, to get them selected when returning to the category view
@@ -197,13 +167,14 @@ namespace OnlineVideos.Sites
 
         #endregion
 
+        #region Context Menu
+
         public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
             List<string> result = new List<string>();
             if (selectedCategory is FavoriteCategory)
             {
                 if (selectedItem == null) result.Add(Translation.Instance.RemoveFromFavorites);
-                else result.AddRange((selectedCategory as FavoriteCategory).Site.GetContextMenuEntries(null, selectedItem));
             }
             else if (selectedItem != null)
             {
@@ -238,19 +209,9 @@ namespace OnlineVideos.Sites
                 // we have to manually refresh the categories
                 if (result && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
             }
-            else
-            {
-                if (selectedCategory is FavoriteCategory)
-                {
-                    result = (selectedCategory as FavoriteCategory).Site.ExecuteContextMenuEntry(null, selectedItem, choice, out newVideos);
-                    if (newVideos != null && newVideos.Count > 0)
-                    {
-                        HasNextPage = (selectedCategory as FavoriteCategory).Site.HasNextPage;
-                        currentVideosTitle = (selectedCategory as FavoriteCategory).Site.getCurrentVideosTitle();
-                    }
-                }
-            }
             return result;
         }
+
+        #endregion
     }
 }

@@ -23,6 +23,7 @@
   <!-- C -->
   <string Field="Cancel">Cancel</string>
   <string Field="Category">Category</string>
+  <string Field="CategoryNotFound">Category not found</string>
   <string Field="Categories">Categories</string>
   <string Field="Creator">Creator</string>
   <string Field="CheckingForPluginUpdate">checking for updated plugin version</string>

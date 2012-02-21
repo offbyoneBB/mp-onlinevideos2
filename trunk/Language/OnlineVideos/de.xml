@@ -17,6 +17,7 @@
   <string Field="Buffered">gepuffert</string>
   <string Field="Cancel">Abbrechen</string>
   <string Field="Category">Rubrik</string>
+  <string Field="CategoryNotFound">Rubrik nicht gefunden</string>
   <string Field="Categories">Rubriken</string>
   <string Field="Creator">Ersteller</string>
   <string Field="CheckingForPluginUpdate">beim Überprüfen auf aktuelle Version des Plugins</string>

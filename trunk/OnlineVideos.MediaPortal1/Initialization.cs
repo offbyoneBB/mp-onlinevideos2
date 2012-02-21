@@ -64,7 +64,7 @@ namespace OnlineVideos.MediaPortal1
 			}
 			catch (Exception ex)
 			{
-				Log.Instance.Error("Error during initialization: {0}", ex.Message);
+				Log.Instance.Error("Error during initialization: {0}", ex.ToString());
 			}
 		}
 
@@ -210,7 +210,8 @@ namespace OnlineVideos.MediaPortal1
 					Log.Instance.Info("Called with LoadParameter: '{0}'", loadParam);
 					loadParamInfo = new LoadParameterInfo(loadParam);
 
-					// set all state variables to reflect the state we were called with
+                    // set all state variables to reflect the state we were called with
+                    currentNavigationContextSwitch = null;
 					if (!string.IsNullOrEmpty(loadParamInfo.Group))
 					{
 						SitesGroup group = PluginConfiguration.Instance.SitesGroups.FirstOrDefault(sg => sg.Name == loadParamInfo.Group);
