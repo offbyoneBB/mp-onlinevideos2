@@ -138,7 +138,7 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> GetVideoListFromLive(Category category)
         {
             string getData = GetWebData(((RssLink)category).Url, newcc);
-            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""&\#xA;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
+            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
 
             string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
 <s:Body xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
@@ -211,7 +211,7 @@ namespace OnlineVideos.Sites
         private string GetUrlFromVideo(VideoInfo video)
         {
             string getData = GetWebData(video.VideoUrl, newcc);
-            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""&\#xA;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
+            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
 
             string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
 <s:Body xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
