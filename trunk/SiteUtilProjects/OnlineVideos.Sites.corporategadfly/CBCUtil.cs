@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Text.RegularExpressions;
-using System.Text;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System.Xml;
-using System.Web;
 using System.IO;
+using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Xml;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -134,22 +136,44 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData(video.VideoUrl));
+        	// cannot use GetWebData to figure out VideoUrl as the URL responds with
+        	// HTTP/1.1 302 Found
+        	// with a Location header containing the rtmp:// URL
+        	Log.Debug(@"getUrl() entered: {0}", video.VideoUrl);
+        	HttpWebRequest request = WebRequest.Create(video.VideoUrl) as HttpWebRequest;
+        	if (request == null) return "";
+        	request.AllowAutoRedirect = false;
+        	HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+        	
+        	if (response.StatusCode == HttpStatusCode.Redirect)
+        	{
+        		// retrieve the RTMP URL from the Location header
+        		string rtmpUrlFromHeader = response.GetResponseHeader("Location");
+        		Log.Debug(@"RTMP URL: {0}", rtmpUrlFromHeader);
+        		
+        		// split on <break>
+        		string[] pathParts = rtmpUrlFromHeader.Split(new string[] { "<break>" }, StringSplitOptions.None);
+        		string host = pathParts[0];
+        		string playPath = pathParts[1];
 
-            string rtmpUrl = doc.SelectSingleNode("//playlist/choice/url").InnerText;
-            Uri uri = new Uri(rtmpUrl);
-            NameValueCollection nn = HttpUtility.ParseQueryString(uri.Query);
-            string auth = nn["auth"];
-            string[] pathParts = rtmpUrl.Split(new string[] { "<break>" }, StringSplitOptions.None);
-
-            string url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&auth={2}",
-                HttpUtility.UrlEncode(pathParts[0]),
-                HttpUtility.UrlEncode(pathParts[1].Replace(".flv", String.Empty)),
-                //HttpUtility.UrlEncode(@"http://www.cbc.ca/video/swf/UberPlayer.swf"),
-                auth));
-            return url;
+        		if (playPath.EndsWith(@".mp4") && !playPath.StartsWith(@"mp4:"))
+                {
+                    // prepend with mp4:
+                    playPath = @"mp4:" + playPath;
+                }
+                else if (playPath.EndsWith(@".flv"))
+                {
+                    // strip extension
+                    playPath = playPath.Substring(0, playPath.Length - 4);
+                }
+                Log.Debug(@"Host: {0}, PlayPath: {1}", host, playPath);
+                MPUrlSourceFilter.RtmpUrl rtmpUrl = new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = playPath };
+                return rtmpUrl.ToString();
+        	}
+        	else
+        	{
+        		return video.VideoUrl;
+        	}
         }
     }
 }
