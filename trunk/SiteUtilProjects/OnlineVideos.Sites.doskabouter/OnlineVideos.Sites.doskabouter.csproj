@@ -62,7 +62,6 @@
   <ItemGroup>
     <Compile Include="ABCiViewUtil.cs" />
     <Compile Include="BrassBandTubeUtil.cs" />
-    <Compile Include="CBCUtil.cs" />
     <Compile Include="EuroSportUtil.cs" />
     <Compile Include="Hoster\Archiv.cs" />
     <Compile Include="Hoster\OvFile.cs" />
