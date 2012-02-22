@@ -560,7 +560,7 @@ namespace OnlineVideos.Sites
                     } while (l != name.Length);
 
                 }
-                return name;
+                return Utils.GetSaveFilename(name);
             }
         }
 
