@@ -42,6 +42,7 @@
     <Compile Include="BravoFactUtil.cs" />
     <Compile Include="BravoUtil.cs" />
     <Compile Include="CanWestUtilBase.cs" />
+    <Compile Include="CBCUtil.cs" />
     <Compile Include="ComedyNetworkUtil.cs" />
     <Compile Include="CTVLocalNewsUtil.cs" />
     <Compile Include="CTVNewsUtil.cs" />
