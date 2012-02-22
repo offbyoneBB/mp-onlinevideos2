@@ -76,7 +76,7 @@ namespace OnlineVideos.Sites
                         long air = item.Value<long>("airdate");
                         string Airdate = new DateTime((air * 10000) + 621355968000000000, DateTimeKind.Utc).ToString();
                         if (!String.IsNullOrEmpty(Airdate))
-							video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + Airdate;
+                            video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + Airdate;
 
                         JArray assets = item["assets"] as JArray;
                         if (assets != null && assets.First != null)
@@ -136,27 +136,27 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-        	// cannot use GetWebData to figure out VideoUrl as the URL responds with
-        	// HTTP/1.1 302 Found
-        	// with a Location header containing the rtmp:// URL
-        	Log.Debug(@"getUrl() entered: {0}", video.VideoUrl);
-        	HttpWebRequest request = WebRequest.Create(video.VideoUrl) as HttpWebRequest;
-        	if (request == null) return "";
-        	request.AllowAutoRedirect = false;
-        	HttpWebResponse response = (HttpWebResponse) request.GetResponse();
-        	
-        	if (response.StatusCode == HttpStatusCode.Redirect)
-        	{
-        		// retrieve the RTMP URL from the Location header
-        		string rtmpUrlFromHeader = response.GetResponseHeader("Location");
-        		Log.Debug(@"RTMP URL: {0}", rtmpUrlFromHeader);
-        		
-        		// split on <break>
-        		string[] pathParts = rtmpUrlFromHeader.Split(new string[] { "<break>" }, StringSplitOptions.None);
-        		string host = pathParts[0];
-        		string playPath = pathParts[1];
+            // cannot use GetWebData to figure out VideoUrl as the URL responds with
+            // HTTP/1.1 302 Found
+            // with a Location header containing the rtmp:// URL
+            Log.Debug(@"getUrl() entered: {0}", video.VideoUrl);
+            HttpWebRequest request = WebRequest.Create(video.VideoUrl) as HttpWebRequest;
+            if (request == null) return "";
+            request.AllowAutoRedirect = false;
+            HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+            
+            if (response.StatusCode == HttpStatusCode.Redirect)
+            {
+                // retrieve the RTMP URL from the Location header
+                string rtmpUrlFromHeader = response.GetResponseHeader("Location");
+                Log.Debug(@"RTMP URL: {0}", rtmpUrlFromHeader);
+                
+                // split on <break>
+                string[] pathParts = rtmpUrlFromHeader.Split(new string[] { "<break>" }, StringSplitOptions.None);
+                string host = pathParts[0];
+                string playPath = pathParts[1];
 
-        		if (playPath.EndsWith(@".mp4") && !playPath.StartsWith(@"mp4:"))
+                if (playPath.EndsWith(@".mp4") && !playPath.StartsWith(@"mp4:"))
                 {
                     // prepend with mp4:
                     playPath = @"mp4:" + playPath;
@@ -169,11 +169,11 @@ namespace OnlineVideos.Sites
                 Log.Debug(@"Host: {0}, PlayPath: {1}", host, playPath);
                 MPUrlSourceFilter.RtmpUrl rtmpUrl = new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = playPath };
                 return rtmpUrl.ToString();
-        	}
-        	else
-        	{
-        		return video.VideoUrl;
-        	}
+            }
+            else
+            {
+                return video.VideoUrl;
+            }
         }
     }
 }
