@@ -165,6 +165,21 @@
         <item key="app"><![CDATA[rtlnow]]></item>
       </Configuration>
     </Site>
+    <Site name="RTL2 Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen auf RTL2Now.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<div\s+style=""\s+class="seriennavi_link">\s*
+<a\s+class="[^"]*"\s+href="(?<url>[^"]+)"[^>]*>(?<title>[^<]+)</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
+<div[^>]*>[^<]*</div>\s*
+(<div[^>]*>[^<]*</div>\s*)?
+<div\s+onclick=[^>]*>\s*(?<Airdate>[^<]*)</div>\s*
+(?:(?!<div\sclass="buy">).)+
+<div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
+        <item key="baseUrl"><![CDATA[http://rtl2now.rtl2.de]]></item>
+        <item key="app"><![CDATA[rtl2now]]></item>
+      </Configuration>
+    </Site>    
     <Site name="Vox Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Vox.</Description>
       <Configuration>
