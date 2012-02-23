@@ -32,14 +32,12 @@ namespace OnlineVideos.Sites
 
         private enum Depth { MainMenu = 0, Alfabet = 1, Series = 2, Seasons = 3, BareList = 4 };
         public CookieContainer cc = null;
-        private bool isWatchMovies = false;
         private string nextVideoListPageUrl = null;
         private Category currCategory = null;
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            isWatchMovies = baseUrl.StartsWith(@"http://watch-movies");
             //ReverseProxy.Instance.AddHandler(this);
 
         }
@@ -71,13 +69,7 @@ namespace OnlineVideos.Sites
                     Settings.Categories.Remove(cat);
                 else
                 {
-                    bool isMain;
-                    if (isWatchMovies)
-                        isMain = cat.Url.Contains(@"/year/") || cat.Url.Contains(@"/genres/") ||
-                            cat.Url.Contains(@"/letter/");
-                    else
-                        isMain = cat.Url.EndsWith("/A");
-                    if (isMain)
+                    if (cat.Url.EndsWith("/A"))
                         cat.Other = Depth.MainMenu;
                     else
                     {
@@ -114,13 +106,8 @@ namespace OnlineVideos.Sites
             switch ((Depth)parentCategory.Other)
             {
                 case Depth.MainMenu:
-                    if (!isWatchMovies)
-                    {
-                        webData = GetSubString(webData, @"class=""pagination""", @"class=""listbig""");
-                        m = regEx_dynamicCategories.Match(webData);
-                    }
-                    else
-                        m = regEx_dynamicSubCategories.Match(webData);
+                    webData = GetSubString(webData, @"class=""pagination""", @"class=""listbig""");
+                    m = regEx_dynamicCategories.Match(webData);
                     break;
                 case Depth.Alfabet:
                     webData = GetSubString(webData, @"class=""listbig""", @"class=""clear""");
@@ -154,7 +141,7 @@ namespace OnlineVideos.Sites
                 cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
                 cat.Url = m.Groups["url"].Value;
                 cat.Description = HttpUtility.HtmlDecode(m.Groups["description"].Value);
-                cat.HasSubCategories = !isWatchMovies && !parentCategory.Other.Equals(Depth.Series);
+                cat.HasSubCategories = !parentCategory.Other.Equals(Depth.Series);
                 cat.Other = ((Depth)parentCategory.Other) + 1;
 
                 if (cat.Name == "NEW")
@@ -185,36 +172,23 @@ namespace OnlineVideos.Sites
             if (category.Other.Equals(Depth.BareList))
             {
                 webData = GetWebData(url, cc);
-                if (!isWatchMovies)
+                webData = GetSubString(webData, @"class=""listbig""", @"class=""clear""");
+                string[] parts = url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length >= 2)
                 {
-                    webData = GetSubString(webData, @"class=""listbig""", @"class=""clear""");
-                    string[] parts = url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 2)
+                    if (parts[parts.Length - 1] == "latest")
+                        nextVideoListPageUrl = url + "/1";
+                    else
                     {
-                        if (parts[parts.Length - 1] == "latest")
-                            nextVideoListPageUrl = url + "/1";
-                        else
-                        {
-                            int pageNr;
-                            if (parts[parts.Length - 2] == "latest" && int.TryParse(parts[parts.Length - 1], out pageNr))
-                                if (pageNr + 1 <= 9)
-                                    nextVideoListPageUrl = url.Substring(0, url.Length - 1) + (pageNr + 1).ToString();
-                        }
+                        int pageNr;
+                        if (parts[parts.Length - 2] == "latest" && int.TryParse(parts[parts.Length - 1], out pageNr))
+                            if (pageNr + 1 <= 9)
+                                nextVideoListPageUrl = url.Substring(0, url.Length - 1) + (pageNr + 1).ToString();
                     }
                 }
             }
             else
-                if (isWatchMovies)
-                    webData = GetWebData(url, cc);
-                else
-                    webData = url;
-
-            if (isWatchMovies && regEx_NextPage != null)
-            {
-                Match mNext = regEx_NextPage.Match(webData);
-                if (mNext.Success)
-                    nextVideoListPageUrl = mNext.Groups["url"].Value;
-            }
+                webData = url;
 
             List<VideoInfo> videos = new List<VideoInfo>();
             if (!string.IsNullOrEmpty(webData))
@@ -241,47 +215,29 @@ namespace OnlineVideos.Sites
                         int episode = -1;
                         int year = -1;
 
-                        if (isWatchMovies)
-                        {
-                            // movies - watch-movies
-                            //Fright Night (2011)
-                            Match trackingInfoMatch = Regex.Match(video.Title, @"^(?<name>.+)\s+\((?<year>\d{4})\)\s*$", RegexOptions.IgnoreCase);
-                            FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
-                        }
-                        else
-                        {
-                            // 1st way - Seas. X Ep. Y
-                            //Modern Family Seas. 1 Ep. 12
-                            Match trackingInfoMatch = Regex.Match(video.Title, @"(?<name>.+)\s+Seas\.\s*?(?<season>\d+)\s+Ep\.\s*?(?<episode>\d+)", RegexOptions.IgnoreCase);
-                            FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
+                        // 1st way - Seas. X Ep. Y
+                        //Modern Family Seas. 1 Ep. 12
+                        Match trackingInfoMatch = Regex.Match(video.Title, @"(?<name>.+)\s+Seas\.\s*?(?<season>\d+)\s+Ep\.\s*?(?<episode>\d+)", RegexOptions.IgnoreCase);
+                        FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
 
-                            if (!GotTrackingInfoData(name, season, episode, year) &&
-                                category != null && category.ParentCategory != null &&
-                                !string.IsNullOrEmpty(category.Name) && !string.IsNullOrEmpty(category.ParentCategory.Name))
-                            {
-                                // 2nd way - using parent category name, category name and video title 
-                                //Aaron Stone Season 1 (19 episodes) 1. Episode 21 1 Hero Rising (1)
-                                string parseString = string.Format("{0} {1} {2}", category.ParentCategory.Name, category.Name, video.Title);
-                                trackingInfoMatch = Regex.Match(parseString, @"(?<name>.+)\s+Season\s*?(?<season>\d+).*?Episode\s*?(?<episode>\d+)", RegexOptions.IgnoreCase);
-                                FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
-                            }
+                        if (!GotTrackingInfoData(name, season, episode, year) &&
+                            category != null && category.ParentCategory != null &&
+                            !string.IsNullOrEmpty(category.Name) && !string.IsNullOrEmpty(category.ParentCategory.Name))
+                        {
+                            // 2nd way - using parent category name, category name and video title 
+                            //Aaron Stone Season 1 (19 episodes) 1. Episode 21 1 Hero Rising (1)
+                            string parseString = string.Format("{0} {1} {2}", category.ParentCategory.Name, category.Name, video.Title);
+                            trackingInfoMatch = Regex.Match(parseString, @"(?<name>.+)\s+Season\s*?(?<season>\d+).*?Episode\s*?(?<episode>\d+)", RegexOptions.IgnoreCase);
+                            FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
                         }
 
                         if (GotTrackingInfoData(name, season, episode, year))
                         {
                             TrackingInfo tInfo = new TrackingInfo();
                             tInfo.Title = name;
-                            if (isWatchMovies)
-                            {
-                                tInfo.Year = (uint)year;
-                                tInfo.VideoKind = VideoKind.Movie;
-                            }
-                            else
-                            {
-                                tInfo.Season = (uint)season;
-                                tInfo.Episode = (uint)episode;
-                                tInfo.VideoKind = VideoKind.TvSeries;
-                            }
+                            tInfo.Season = (uint)season;
+                            tInfo.Episode = (uint)episode;
+                            tInfo.VideoKind = VideoKind.TvSeries;
                             video.Other = tInfo;
                         }
                     }
@@ -325,10 +281,6 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            if (isWatchMovies)
-                // few extra steps for watch-movies (to get all playback options)
-                WatchMoviesExtraGetURL(video);
-
             string tmp = base.getUrl(video);
             return SortPlaybackOptions(video, baseUrl, tmp, limitUrlsPerHoster, showUnknownHosters);
         }
@@ -408,72 +360,6 @@ namespace OnlineVideos.Sites
             return tmp;
         }
 
-        private void WatchMoviesExtraGetURL(VideoInfo video)
-        {
-            if (!video.VideoUrl.Contains("getlinks.php"))
-            {
-
-                // try to get all video links for this movie
-                string webData = GetWebDataFromPost(video.VideoUrl, fileUrlPostString, cc, forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
-                Match m = Regex.Match(webData, @"onclick\s*?=\s*?""show_links(?:\w)?\(\s*?(?<idfilm>\d+)(?:\s*?,\s*?'all'\s*?)\)", RegexOptions.IgnoreCase);
-
-                if (m != null && m.Success)
-                {
-                    string movieID = m.Groups["idfilm"].Value.Trim();
-                    if (!string.IsNullOrEmpty(movieID))
-                    {
-                        video.VideoUrl = string.Format("{0}/getlinks.php?idfilm={1}&domain=all", baseUrl, movieID);
-                    }
-                }
-                else
-                {
-                    m = Regex.Match(webData, @"<input(?<input>.*?id=(?:""|')idfilm(?:""|'))>", RegexOptions.IgnoreCase);
-                    if (m != null && m.Success)
-                    {
-                        m = Regex.Match(m.Groups["input"].Value, @"value=(?:""|')(?<idfilm>\d+)(?:""|')", RegexOptions.IgnoreCase);
-                        if (m != null && m.Success)
-                        {
-                            string movieID = m.Groups["idfilm"].Value.Trim();
-                            if (!string.IsNullOrEmpty(movieID))
-                            {
-                                video.VideoUrl = string.Format("{0}/getlinks.php?idfilm={1}&domain=all", baseUrl, movieID);
-                            }
-                        }
-                    }
-                }
-
-                // at this point, it should also be possible to get IMDb ID for TrackingInfo from video.VideoURL using regex:
-                //<a.*?href=(?:"|')\w+[^>'"]*?imdb.com/title/tt(?<imdb>\d+)[^>'"]*(?:"|').*?>\s*?imdb\s*?</a>
-                m = Regex.Match(webData, @"<a.*?href=(?:""|')\w+[^>'""]*?imdb.com/title/tt(?<imdb>\d+)[^>'""]*(?:""|').*?>\s*?imdb\s*?</a>", RegexOptions.IgnoreCase);
-                if (m != null && m.Success)
-                {
-                    string imdbID = m.Groups["imdb"].Value.Trim();
-                    if (!string.IsNullOrEmpty(imdbID))
-                    {
-                        if (video.Other is TrackingInfo)
-                        {
-                            imdbID = imdbID.PadLeft(7, '0').Substring(0, 7);
-                            if (!imdbID.Equals("0000000"))
-                            {
-                                if (video.Other is TrackingInfo)
-                                {
-                                    (video.Other as TrackingInfo).ID_IMDB = String.Format("tt{0:0000000}", imdbID);
-                                }
-                                else
-                                {
-                                    TrackingInfo tInfo = new TrackingInfo();
-                                    tInfo.Title = video.Title;
-                                    tInfo.ID_IMDB = String.Format("tt{0:0000000}", imdbID);
-                                    tInfo.VideoKind = VideoKind.Movie;
-                                    video.Other = tInfo;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         public override bool HasNextPage
         {
             get
@@ -497,14 +383,6 @@ namespace OnlineVideos.Sites
 
         public override List<ISearchResultItem> DoSearch(string query)
         {
-            if (isWatchMovies)
-            {
-                Category cat = new Category();
-                cat.Other = Depth.BareList;
-                List<VideoInfo> vids = getOnePageVideoList(cat, baseUrl + "/search/" + query);
-                return vids.ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
-            }
-            //else: watch-series:
             List<ISearchResultItem> cats = new List<ISearchResultItem>();
 
             Regex r = new Regex(@"<tr><td\svalign=""top"">\s*<a\shref=""(?<url>[^""]*)""[^>]*>\s<img\ssrc=""(?<thumb>[^""]*)""[^>]*></a>\s*</td>\s*<td\svalign=""top"">\s*<a[^>]*><b>(?<title>[^<]*)</b></a>\s*<br\s/>\s*<b>Description:</b>\s*(?<description>[^<]*)<br\s/>",
@@ -548,7 +426,7 @@ namespace OnlineVideos.Sites
             {
                 string name = base.GetFileNameForDownload(video, category, url);
                 if (Path.GetExtension(name) == String.Empty) name += ".flv";
-                if (category.ParentCategory != null)
+                if (category.ParentCategory != null && !category.Other.Equals(Depth.BareList))
                 {
                     string season = category.Name.Split('(')[0];
                     name = category.ParentCategory.Name + ' ' + season + ' ' + name;
