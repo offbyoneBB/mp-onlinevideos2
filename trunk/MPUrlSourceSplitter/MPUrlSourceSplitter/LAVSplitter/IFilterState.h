@@ -37,6 +37,8 @@ public:
   // @param ready : reference to variable that holds ready state
   // @return : S_OK if successful
   virtual STDMETHODIMP IsFilterReadyToConnectPins(bool *ready) = 0;
+  
+  virtual STDMETHODIMP GetCacheFileName(wchar_t **path) = 0;
 };
 
 #endif
