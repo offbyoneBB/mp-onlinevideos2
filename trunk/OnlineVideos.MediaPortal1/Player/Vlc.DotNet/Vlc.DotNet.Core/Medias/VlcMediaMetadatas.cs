@@ -196,9 +196,9 @@ namespace Vlc.DotNet.Core.Medias
                 VlcContext.InteropManager.MediaInterops.Parse.Invoke(VlcContext.HandleManager.MediasHandles[myHostMediaBase]);
             try
             {
-                return VlcContext.InteropManager.MediaInterops.GetMetadata.Invoke(
+                return IntPtrExtensions.ToStringAnsi(VlcContext.InteropManager.MediaInterops.GetMetadata.Invoke(
                     VlcContext.HandleManager.MediasHandles[myHostMediaBase],
-                    metadata);
+                    metadata));
             }
             catch
             {

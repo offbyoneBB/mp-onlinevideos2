@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Threading;
 using Vlc.DotNet.Core.Interops;
 using Vlc.DotNet.Core.Medias;
 
@@ -15,7 +16,7 @@ namespace Vlc.DotNet.Core
             StartupOptions = new VlcStartupOptions();
             HandleManager = new VlcHandleManager();
             IsInitialized = false;
-
+#if !SILVERLIGHT
             var processorArchitecture = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
             var processorArchiteW6432 = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432");
 
@@ -27,12 +28,15 @@ namespace Vlc.DotNet.Core
             }
             else
             {
+#endif
                 LibVlcPluginsPath = CommonStrings.PLUGINS_PATH_DEFAULT_VALUE_X86;
                 LibVlcDllsPath = CommonStrings.LIBVLC_DLLS_PATH_DEFAULT_VALUE_X86;
-            }
+ #if !SILVERLIGHT
+           }
+#endif
         }
 
-        internal static LibVlcInteropsManager InteropManager { get; private set; }
+        public static LibVlcInteropsManager InteropManager { get; private set; }
         internal static VlcHandleManager HandleManager { get; private set; }
 
         /// <summary>
@@ -59,6 +63,45 @@ namespace Vlc.DotNet.Core
         /// Check if VlcContext is initialized.
         /// </summary>
         public static bool IsInitialized { get; private set; }
+
+        /// <summary>
+        /// Get the vlc version
+        /// </summary>
+        public static Version Version
+        {
+            get
+            {
+                if (!IsInitialized)
+                    throw new ApplicationException("Vlc must be initailized before getting his version.");
+                return InteropManager != null ? InteropManager.VlcVersion : null;
+            }
+        }
+
+        /// <summary>
+        /// Get the vlc compiler
+        /// </summary>
+        public static string Compiler
+        {
+            get
+            {
+                if (!IsInitialized)
+                    throw new ApplicationException("Vlc must be initailized before getting his compiler.");
+                return InteropManager != null ? IntPtrExtensions.ToStringAnsi(InteropManager.GetCompiler.Invoke()) : null;
+            }
+        }
+
+        /// <summary>
+        /// Get the vlc change set
+        /// </summary>
+        public static string ChangeSet
+        {
+            get
+            {
+                if (!IsInitialized)
+                    throw new ApplicationException("Vlc must be initailized before getting his change set.");
+                return InteropManager != null ? IntPtrExtensions.ToStringAnsi(InteropManager.GetChangeSet.Invoke()) : null;
+            }
+        }
 
         internal static StringCollection GetBaseVlcInstanceArguments()
         {
@@ -96,7 +139,7 @@ namespace Vlc.DotNet.Core
         /// <summary>
         /// Initialize library
         /// </summary>
-        public static void Initialize()
+        public static IntPtr Initialize()
         {
             InteropManager = new LibVlcInteropsManager(LibVlcDllsPath);
             if (IsInitialized)
@@ -109,7 +152,9 @@ namespace Vlc.DotNet.Core
             {
                 IsInitialized = true;
                 ErrorHandling = new VlcErrorHandling();
+                EventsHelper.CanRaiseEvent = true;
             }
+            return HandleManager.LibVlcHandle;
         }
 
         /// <summary>
@@ -146,6 +191,7 @@ namespace Vlc.DotNet.Core
                 return;
             InteropManager.Dispose();
             InteropManager = null;
+            IsInitialized = false;
         }
     }
 }

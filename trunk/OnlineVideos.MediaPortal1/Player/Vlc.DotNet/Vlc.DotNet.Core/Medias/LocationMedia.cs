@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Vlc.DotNet.Core.Medias
 {
@@ -15,6 +16,10 @@ namespace Vlc.DotNet.Core.Medias
         {
             Location = location;
             Initialize();
+        }
+        internal LocationMedia(IntPtr handle)
+            : base(handle)
+        {
         }
 
         /// <summary>
@@ -35,5 +40,30 @@ namespace Vlc.DotNet.Core.Medias
             }
             return IntPtr.Zero;
         }
+
+        /// <summary>
+        /// Retrive list of sub media items.
+        /// </summary>
+        public IList<LocationMedia> SubItems
+        {
+            get
+            {
+                var result = new List<LocationMedia>();
+                if (VlcContext.HandleManager.MediasHandles.ContainsKey(this) &&
+                    VlcContext.InteropManager.MediaInterops.GetSubItems.IsAvailable)
+                {
+                    var data = VlcContext.InteropManager.MediaInterops.GetSubItems.Invoke(VlcContext.HandleManager.MediasHandles[this]);
+                    if (data == IntPtr.Zero)
+                        return result;
+                    var count = VlcContext.InteropManager.MediaListInterops.Count.Invoke(data);
+                    for (var cpt = 0; cpt < count; cpt++)
+                    {
+                        result.Add(new LocationMedia(VlcContext.InteropManager.MediaListInterops.GetItemAt.Invoke(data, cpt)));
+                    }
+                }
+                return result;
+            }
+        }
+
     }
 }

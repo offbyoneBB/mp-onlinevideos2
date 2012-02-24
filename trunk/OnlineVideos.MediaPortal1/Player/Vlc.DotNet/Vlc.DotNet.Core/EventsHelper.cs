@@ -1,34 +1,28 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace Vlc.DotNet.Core
 {
     internal static class EventsHelper
     {
+        public delegate void ExecuteRaiseEvent(Delegate singleInvoke, object sender, object arg);
+
+        public static ExecuteRaiseEvent ExecuteRaiseEventDelegate { get; set; }
+        public static bool CanRaiseEvent { get; set; }
+
+        static EventsHelper()
+        {
+            CanRaiseEvent = false;
+        }
+
         public static void RaiseEvent<TSender, THandler>(VlcEventHandler<TSender, THandler> handler, TSender sender, VlcEventArgs<THandler> arg)
         {
-            if (handler == null)
+            if (handler == null || ExecuteRaiseEventDelegate == null)
                 return;
             foreach (VlcEventHandler<TSender, THandler> singleInvoke in handler.GetInvocationList())
             {
-                var syncInvoke = singleInvoke.Target as ISynchronizeInvoke;
-                if (syncInvoke == null)
-                {
-                    singleInvoke.DynamicInvoke(new object[] {sender, arg});
-                    continue;
-                }
-                try
-                {
-                    if (syncInvoke.InvokeRequired)
-                        syncInvoke.Invoke(singleInvoke, new object[] {sender, arg});
-                    else
-                        singleInvoke(sender, arg);
-                }
-                catch (ObjectDisposedException)
-                {
-                    //Because IsDisposed was true and IsDisposed could be false now...
-                    continue;
-                }
+                if (!CanRaiseEvent)
+                    return;
+                ExecuteRaiseEventDelegate(singleInvoke, sender, arg);
             }
         }
     }

@@ -34,7 +34,12 @@ namespace Vlc.DotNet.Core
 
                 if (outputDeviceListInstance != IntPtr.Zero)
                 {
+#if SILVERLIGHT
+                    var audioOutput = new AudioOutput();
+                    Marshal.PtrToStructure(outputDeviceListInstance, audioOutput);
+#else
                     var audioOutput = (AudioOutput)Marshal.PtrToStructure(outputDeviceListInstance, typeof(AudioOutput));
+#endif
                     var lst = new VlcAudioOutputDevice(audioOutput);
 
                     yield return lst;
@@ -62,7 +67,12 @@ namespace Vlc.DotNet.Core
 
                 if (outputDeviceListInstance != IntPtr.Zero)
                 {
+#if SILVERLIGHT
+                    var audioOutput = new AudioOutput();
+                    Marshal.PtrToStructure(outputDeviceListInstance, audioOutput);
+#else
                     var audioOutput = (AudioOutput)Marshal.PtrToStructure(outputDeviceListInstance, typeof(AudioOutput));
+#endif
                     var lst = new VlcAudioOutputDevice(audioOutput);
 
                     yield return lst;

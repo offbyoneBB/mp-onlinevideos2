@@ -42,7 +42,7 @@ namespace Vlc.DotNet.Core.Interops
         public LibVlcFunction<Signatures.LibVlc.MediaPlayer.IsPausable> IsPausable { get; private set; }
         public LibVlcFunction<Signatures.LibVlc.MediaPlayer.NextFrame> NextFrame { get; private set; }
         public LibVlcFunction<Signatures.LibVlc.MediaPlayer.Navigate> Navigate { get; private set; }
-        public LibVlcFunction<Signatures.LibVlc.MediaPlayer.ReleaseTrackDescription> ReleaseTrackDescription { get; private set; }
+        public LibVlcFunction<Signatures.LibVlc.MediaPlayer.ReleaseTrackDescriptionList> ReleaseTrackDescriptionList { get; private set; }
 
         public LibVlcMediaPlayerAudio AudioInterops { get; private set; }
         public LibVlcMediaPlayerVideo VideoInterops { get; private set; }
@@ -87,7 +87,7 @@ namespace Vlc.DotNet.Core.Interops
             IsPausable = new LibVlcFunction<Signatures.LibVlc.MediaPlayer.IsPausable>(libVlcDllHandle, vlcVersion);
             NextFrame = new LibVlcFunction<Signatures.LibVlc.MediaPlayer.NextFrame>(libVlcDllHandle, vlcVersion);
             Navigate = new LibVlcFunction<Signatures.LibVlc.MediaPlayer.Navigate>(libVlcDllHandle, vlcVersion);
-            ReleaseTrackDescription = new LibVlcFunction<Signatures.LibVlc.MediaPlayer.ReleaseTrackDescription>(libVlcDllHandle, vlcVersion);
+            ReleaseTrackDescriptionList = new LibVlcFunction<Signatures.LibVlc.MediaPlayer.ReleaseTrackDescriptionList>(libVlcDllHandle, vlcVersion);
 
             VideoInterops = new LibVlcMediaPlayerVideo(libVlcDllHandle, vlcVersion);
             AudioInterops = new LibVlcMediaPlayerAudio(libVlcDllHandle, vlcVersion);
@@ -133,7 +133,7 @@ namespace Vlc.DotNet.Core.Interops
             IsPausable = null;
             NextFrame = null;
             Navigate = null;
-            ReleaseTrackDescription = null;
+            ReleaseTrackDescriptionList = null;
 
             if (VideoInterops != null)
                 VideoInterops.Dispose();

@@ -262,6 +262,7 @@ namespace OnlineVideos
 		public string Settings_UtilTimeout = "Timeout (seconds) for webrequests";
 		public string Settings_WmpBuffer = "Buffer (milliseconds) for Windows Media Player";
 		public string Settings_PlayBuffer = "Percentage to buffer before starting playback";
+        public string Settings_AllowRefreshrateChange = "Enable dynamic refresh rate adaption";
 		public string Settings_FavoritesFirst = "Put Favorites and Downloads sites first in the list instead of last";
 		public string Settings_LatestVideosRandomize = "Randomize all latest videos before displaying";
 		public string Settings_LatestVideosOnlineDataRefresh = "Refresh latest videos data from web every x minutes";

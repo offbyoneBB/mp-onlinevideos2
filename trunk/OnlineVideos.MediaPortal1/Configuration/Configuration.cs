@@ -56,6 +56,7 @@ namespace OnlineVideos.MediaPortal1
             tbxUtilTimeout.Text = OnlineVideoSettings.Instance.UtilTimeout.ToString();
 			tbxCategoriesTimeout.Text = OnlineVideoSettings.Instance.DynamicCategoryTimeout.ToString();
             tbxWMPBuffer.Text = PluginConfiguration.Instance.wmpbuffer.ToString();
+            chkAdaptRefreshRate.Checked = PluginConfiguration.Instance.AllowRefreshRateChange;
             udPlayBuffer.SelectedItem = PluginConfiguration.Instance.playbuffer.ToString();
             chkUseQuickSelect.Checked = PluginConfiguration.Instance.useQuickSelect;
             nUPSearchHistoryItemCount.Value = PluginConfiguration.Instance.searchHistoryNum;
@@ -131,6 +132,7 @@ namespace OnlineVideos.MediaPortal1
                     PluginConfiguration.Instance.searchHistoryType = PluginConfiguration.SearchHistoryType.Off;
                 int.TryParse(tbxWMPBuffer.Text, out PluginConfiguration.Instance.wmpbuffer);
                 int.TryParse(udPlayBuffer.SelectedItem.ToString(), out PluginConfiguration.Instance.playbuffer);
+                PluginConfiguration.Instance.AllowRefreshRateChange = chkAdaptRefreshRate.Checked;
                 try { OnlineVideoSettings.Instance.CacheTimeout = int.Parse(tbxWebCacheTimeout.Text); }
                 catch { }
                 try { OnlineVideoSettings.Instance.UtilTimeout = int.Parse(tbxUtilTimeout.Text); }

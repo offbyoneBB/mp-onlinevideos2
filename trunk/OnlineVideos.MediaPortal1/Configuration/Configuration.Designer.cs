@@ -103,6 +103,8 @@
             this.label15 = new System.Windows.Forms.Label();
             this.tbxUtilTimeout = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkAdaptRefreshRate = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
             this.udPlayBuffer = new System.Windows.Forms.DomainUpDown();
@@ -1096,6 +1098,8 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.chkAdaptRefreshRate);
+            this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.label30);
             this.groupBox2.Controls.Add(this.label29);
             this.groupBox2.Controls.Add(this.udPlayBuffer);
@@ -1108,13 +1112,34 @@
             this.groupBox2.Size = new System.Drawing.Size(699, 56);
             this.groupBox2.TabIndex = 49;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "      Playback Buffer";
+            this.groupBox2.Text = "      Playback";
+            // 
+            // chkAdaptRefreshRate
+            // 
+            this.chkAdaptRefreshRate.AutoSize = true;
+            this.chkAdaptRefreshRate.Location = new System.Drawing.Point(146, 25);
+            this.chkAdaptRefreshRate.Name = "chkAdaptRefreshRate";
+            this.chkAdaptRefreshRate.Size = new System.Drawing.Size(15, 14);
+            this.chkAdaptRefreshRate.TabIndex = 51;
+            this.toolTip1.SetToolTip(this.chkAdaptRefreshRate, "Enable dynamic adaption of the display refresh rate to the clips fPS at start of " +
+        "playback (uses MediaPortal settings)");
+            this.chkAdaptRefreshRate.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(6, 26);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(98, 13);
+            this.label4.TabIndex = 50;
+            this.label4.Text = "Adapt RefreshRate";
             // 
             // label30
             // 
             this.label30.AutoSize = true;
             this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label30.Location = new System.Drawing.Point(291, 26);
+            this.label30.Location = new System.Drawing.Point(358, 26);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(15, 13);
             this.label30.TabIndex = 49;
@@ -1154,7 +1179,7 @@
             this.udPlayBuffer.Items.Add("3");
             this.udPlayBuffer.Items.Add("2");
             this.udPlayBuffer.Items.Add("1");
-            this.udPlayBuffer.Location = new System.Drawing.Point(225, 24);
+            this.udPlayBuffer.Location = new System.Drawing.Point(285, 23);
             this.udPlayBuffer.Name = "udPlayBuffer";
             this.udPlayBuffer.ReadOnly = true;
             this.udPlayBuffer.Size = new System.Drawing.Size(53, 20);
@@ -1166,21 +1191,22 @@
             // label16
             // 
             this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(393, 17);
+            this.label16.Location = new System.Drawing.Point(406, 18);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(127, 28);
+            this.label16.Size = new System.Drawing.Size(129, 28);
             this.label16.TabIndex = 43;
             this.label16.Text = "Windows Media Player VLC Media Player";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label24
             // 
-            this.label24.AutoSize = true;
             this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label24.Location = new System.Drawing.Point(6, 26);
+            this.label24.Location = new System.Drawing.Point(198, 18);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(101, 13);
+            this.label24.Size = new System.Drawing.Size(81, 26);
             this.label24.TabIndex = 48;
-            this.label24.Text = "Internal Player (http)";
+            this.label24.Text = "Internal Player Buffer";
+            this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbxWMPBuffer
             // 
@@ -2349,5 +2375,7 @@
         private System.Windows.Forms.ToolStripButton btnSiteDown;
         private System.Windows.Forms.ToolStripButton btnEditSite;
         private BrightIdeasSoftware.OLVColumn siteColumnLanguage;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox chkAdaptRefreshRate;
 	}
 }

@@ -30,11 +30,11 @@ namespace OnlineVideos.MediaPortal1.Player
             url = strFile;
 
             VlcContext.StartupOptions.IgnoreConfig = true;
-            VlcContext.StartupOptions.LogOptions.LogInFile = true;
-            VlcContext.StartupOptions.LogOptions.Verbosity = VlcLogVerbosities.Debug;
             VlcContext.StartupOptions.AddOption("--no-video-title-show");
             VlcContext.StartupOptions.AddOption("--http-caching=" + OnlineVideos.MediaPortal1.PluginConfiguration.Instance.wmpbuffer);
-            VlcContext.StartupOptions.LogOptions.LogInFilePath = Path.Combine(Config.GetFolder(MediaPortal.Configuration.Config.Dir.Log), "vlc-onlinevideos.log");
+            //VlcContext.StartupOptions.LogOptions.LogInFile = true;
+            //VlcContext.StartupOptions.LogOptions.Verbosity = VlcLogVerbosities.Standard;
+            //VlcContext.StartupOptions.LogOptions.LogInFilePath = Path.Combine(Config.GetFolder(MediaPortal.Configuration.Config.Dir.Log), "vlc-onlinevideos.log");
             if (IsInstalled)
             {
                 VlcContext.LibVlcDllsPath = vlcPath;

@@ -24,7 +24,7 @@
                 VlcContext.InteropManager.ErrorHandlingInterops != null &&
                 VlcContext.InteropManager.ErrorHandlingInterops.ClearError.IsAvailable)
             {
-                return VlcContext.InteropManager.ErrorHandlingInterops.GetErrorMessage.Invoke();
+                return IntPtrExtensions.ToStringAnsi(VlcContext.InteropManager.ErrorHandlingInterops.GetErrorMessage.Invoke());
             }
             return null;
         }

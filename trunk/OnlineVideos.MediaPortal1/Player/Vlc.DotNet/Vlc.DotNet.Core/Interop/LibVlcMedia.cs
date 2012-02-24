@@ -19,6 +19,7 @@ namespace Vlc.DotNet.Core.Interops
         public LibVlcFunction<Signatures.LibVlc.Media.SaveMetadatas> SaveMetadatas { get; private set; }
         public LibVlcFunction<Signatures.LibVlc.Media.GetState> GetState { get; private set; }
         public LibVlcFunction<Signatures.LibVlc.Media.GetStats> GetStats { get; private set; }
+        public LibVlcFunction<Signatures.LibVlc.Media.GetSubItems> GetSubItems { get; private set; }
         public LibVlcFunction<Signatures.LibVlc.Media.EventManager> EventManager { get; private set; }
         public LibVlcFunction<Signatures.LibVlc.Media.GetDuration> GetDuration { get; private set; }
         public LibVlcFunction<Signatures.LibVlc.Media.Parse> Parse { get; private set; }
@@ -45,6 +46,7 @@ namespace Vlc.DotNet.Core.Interops
             SaveMetadatas = new LibVlcFunction<Signatures.LibVlc.Media.SaveMetadatas>(libVlcDllHandle, vlcVersion);
             GetState = new LibVlcFunction<Signatures.LibVlc.Media.GetState>(libVlcDllHandle, vlcVersion);
             GetStats = new LibVlcFunction<Signatures.LibVlc.Media.GetStats>(libVlcDllHandle, vlcVersion);
+            GetSubItems = new LibVlcFunction<Signatures.LibVlc.Media.GetSubItems>(libVlcDllHandle, vlcVersion);
             EventManager = new LibVlcFunction<Signatures.LibVlc.Media.EventManager>(libVlcDllHandle, vlcVersion);
             GetDuration = new LibVlcFunction<Signatures.LibVlc.Media.GetDuration>(libVlcDllHandle, vlcVersion);
             Parse = new LibVlcFunction<Signatures.LibVlc.Media.Parse>(libVlcDllHandle, vlcVersion);
@@ -74,6 +76,7 @@ namespace Vlc.DotNet.Core.Interops
             SaveMetadatas = null;
             GetState = null;
             GetStats = null;
+            GetSubItems = null;
             EventManager = null;
             GetDuration = null;
             Parse = null;

@@ -200,6 +200,7 @@
   <string Field="Settings_UtilTimeout">Timeout (seconds) for webrequests</string>
   <string Field="Settings_WmpBuffer">Buffer (milliseconds) for Windows Media Player</string>
   <string Field="Settings_PlayBuffer">Percentage to buffer before starting playback</string>
+  <string Field="Settings_AllowRefreshrateChange">Enable dynamic refresh rate adaption</string>
   <string Field="Settings_FavoritesFirst">Put Favorites and Downloads sites first in the list instead of last</string>
   <string Field="Settings_LatestVideosRandomize">Randomize all latest videos before displaying</string>
   <string Field="Settings_LatestVideosOnlineDataRefresh">Refresh latest videos data from web every x minutes</string>

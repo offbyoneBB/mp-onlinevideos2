@@ -5,6 +5,8 @@ using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 #if !MP11
 using MediaPortal.Player.Subtitles;
@@ -15,6 +17,119 @@ namespace OnlineVideos.MediaPortal1.Player
 {
     public class OnlineVideosPlayer : VideoPlayerVMR9, OVSPLayer
     {
+        #region Refeshrate Adaption
+
+        [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        static extern double EVRGetVideoFPS(int fpsSource);
+
+        [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        static extern void EVRUpdateDisplayFPS();
+
+        string cacheFile = null;
+        bool refreshRateAdapted = false;
+        
+        void AdaptRefreshRateFromCacheFile()
+        {
+            if (!PluginConfiguration.Instance.AllowRefreshRateChange)
+            {
+                refreshRateAdapted = true;
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(cacheFile))
+            {
+                try
+                {
+                    MediaInfo mi = new MediaInfo();
+                    int hr = mi.Open(cacheFile);
+                    double framerate;
+                    double.TryParse(mi.Get(StreamKind.Video, 0, "FrameRate"), System.Globalization.NumberStyles.AllowDecimalPoint, new System.Globalization.NumberFormatInfo() { NumberDecimalSeparator = "." }, out framerate);
+                    if (framerate > 1)
+                    {
+                        Log.Instance.Info("OnlineVideosPlayer got {0} FPS from MediaInfo", framerate);
+                        double matchedFps = RefreshRateHelper.MatchConfiguredFPS(framerate);
+                        if (matchedFps != default(double))
+                        {
+                            refreshRateAdapted = true;
+                            RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, cacheFile);
+                            try
+                            {
+                                EVRUpdateDisplayFPS();
+                            }
+                            catch (EntryPointNotFoundException)
+                            {
+                                Log.Instance.Warn("OnlineVideosPlayer: Your version of dshowhelper.dll does not support FPS updating.");
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Instance.Warn("OnlineVideosPlayer: Exception trying update refresh rate fo EVR: {0}", ex.ToString());
+                            }                            
+                        }
+                        else
+                        {
+                            Log.Instance.Info("No matching configured FPS found - skipping RefreshRate Adaption from Cache File");
+                        }
+                    }
+                    else
+                    {
+                        Log.Instance.Info("OnlineVideosPlayer got no FPS from MediaInfo");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Instance.Warn("OnlineVideosPlayer: Exception trying refresh rate change from cache file: {0}", ex.ToString());
+                }
+            }
+            else
+            {
+                Log.Instance.Info("OnlineVideosPlayer: No cache file, skipping FPS detection via MediaInfo");
+            }
+        }
+
+        void AdaptRefreshRateFromVideoRenderer()
+        {
+            if (!refreshRateAdapted && m_state == PlayState.Playing)
+            {
+                try
+                {
+                    if (!PluginConfiguration.Instance.AllowRefreshRateChange)
+                    {
+                        refreshRateAdapted = true;
+                        return;
+                    }
+
+                    double fps = EVRGetVideoFPS(0);
+                    if (fps > 1)
+                    {
+                        refreshRateAdapted = true;
+                        Log.Instance.Info("OnlineVideosPlayer got {0} FPS from dshowhelper.dll after {1} sec", fps, CurrentPosition);
+                        double matchedFps = RefreshRateHelper.MatchConfiguredFPS(fps);
+                        if (matchedFps != default(double))
+                        {
+                            RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, m_strCurrentFile);
+                            EVRUpdateDisplayFPS();
+                        }
+                        else
+                        {
+                            Log.Instance.Info("No matching configured FPS found - skipping RefreshRate Adaption");
+                        }
+                    }
+                }
+                catch (EntryPointNotFoundException)
+                {
+                    Log.Instance.Warn("OnlineVideosPlayer: Your version of dshowhelper.dll does not support FPS reporting.");
+                    refreshRateAdapted = true;
+                }
+                catch (Exception ex)
+                {
+                    Log.Instance.Warn("OnlineVideosPlayer: Exception trying refresh rate change while playing : {0}", ex.ToString());
+                    refreshRateAdapted = true;
+                }
+            }
+        }
+
+        #endregion
+
         public OnlineVideosPlayer()
             : base(g_Player.MediaType.Video)
         { }
@@ -72,6 +187,7 @@ namespace OnlineVideos.MediaPortal1.Player
                         }
                     }
                 }
+                AdaptRefreshRateFromVideoRenderer();
             }
             base.Process();
         }
@@ -218,6 +334,7 @@ namespace OnlineVideos.MediaPortal1.Player
                             if (((filterState != null) && (filterState.IsFilterReadyToConnectPins())) ||
                                 (filterState == null))
                             {
+                                cacheFile = filterState.GetCacheFileName();
                                 if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
                                 filterConnected = true;
                                 renderPinsThread = new Thread(delegate()
@@ -271,6 +388,7 @@ namespace OnlineVideos.MediaPortal1.Player
                         {
                             Thread.Sleep(50);
                         }
+                        cacheFile = filterState.GetCacheFileName();
                     }
                     // add audio and video filter from MP Movie Codec setting section
                     AddPreferredFilters(graphBuilder, sourceFilter);
@@ -279,7 +397,6 @@ namespace OnlineVideos.MediaPortal1.Player
                     percentageBuffered = 100.0f; // no progress reporting possible
                     GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
                     PlaybackReady = true;
-
                 }
             }
             catch (ThreadAbortException)
@@ -402,6 +519,8 @@ namespace OnlineVideos.MediaPortal1.Player
                 CloseInterfaces();
                 return false;
             }
+
+            AdaptRefreshRateFromCacheFile();
 
 #if !MP11
             ISubEngine engine = SubEngine.GetInstance(true);

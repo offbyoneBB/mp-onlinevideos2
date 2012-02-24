@@ -19,7 +19,12 @@ namespace Vlc.DotNet.Core
             Id = trackDescription.id;
             if (trackDescription.next != IntPtr.Zero)
             {
+#if SILVERLIGHT
+                var next = new TrackDescription();
+                Marshal.PtrToStructure(trackDescription.next, next);
+#else
                 var next = (TrackDescription)Marshal.PtrToStructure(trackDescription.next, typeof(TrackDescription));
+#endif
                 Next = new VlcTrackDescription(next);
             }
 

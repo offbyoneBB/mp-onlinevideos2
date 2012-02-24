@@ -258,11 +258,13 @@
     <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Player\PlayerFactory.cs" />
     <Compile Include="Player\PlayListItem.cs" />
+    <Compile Include="Player\RefreshRateHelper.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\CommonStrings.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\EventsHelper.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\HandleManager.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\IntPtrExtensions.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcAsynchronousEvents.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcAudio.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcErrorHandling.cs" />
@@ -274,6 +276,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcMediaList.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcMediaListPlayer.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcMediaPlayer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -285,10 +288,10 @@
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\Signatures\LibVlcInterop.Events.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\Signatures\LibVlcInterop.Media.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\Signatures\LibVlcInterop.MediaList.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\Signatures\LibVlcInterop.MediaListPlayer.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\Signatures\LibVlcInterop.MediaPlayer.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\Signatures\LibVlcInterop.Structures.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\Win32Interop.cs" />
-    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\IntPtrExtensions.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\IVlcControl.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Medias\EmptyMedia.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Medias\LocationMedia.cs" />
@@ -307,6 +310,8 @@
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcLogOptions.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcLogProperties.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcLogVerbosities.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcMediaList.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcMediaListPlayer.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcStartupOptions.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcTrackDescription.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Forms\VlcAudioProperties.Common.cs" />

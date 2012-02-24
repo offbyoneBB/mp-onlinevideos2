@@ -154,6 +154,7 @@
   <string Field="Settings_UtilTimeout">Dauer (Sekunden) nach welcher Internetaufrufe abgebrochen werden</string>
   <string Field="Settings_WmpBuffer">Puffer (Millisekunden) für abzuspielenden Dateien mit WindowsMediaPlayer</string>
   <string Field="Settings_PlayBuffer">Puffer (Prozent) für abzuspielende Dateien</string>
+  <string Field="Settings_AllowRefreshrateChange">Nutze dynamische Anpassung der Bildwiederholfrequenz</string>
   <string Field="Settings_FavoritesFirst">Favorites und Downloads am Start der Liste</string>
   <string Field="Settings_LatestVideosRandomize">Zufällige Anordnung der neuesten Videos</string>
   <string Field="Settings_LatestVideosOnlineDataRefresh">Aktualisierung (Minuten) der neuesten Videos aus dem Internet</string>

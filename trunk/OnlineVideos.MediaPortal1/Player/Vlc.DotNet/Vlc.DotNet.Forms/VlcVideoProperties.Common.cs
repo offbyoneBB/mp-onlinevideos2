@@ -2,13 +2,15 @@
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using Vlc.DotNet.Core;
 using Vlc.DotNet.Core.Interops.Signatures.LibVlc.MediaPlayer;
 
 #if WPF
 using System.Windows;
 namespace Vlc.DotNet.Wpf
+#elif SILVERLIGHT
+using System.Windows;
+namespace Vlc.DotNet.Silverlight
 #else
 using System.Drawing;
 namespace Vlc.DotNet.Forms
@@ -215,7 +217,12 @@ namespace Vlc.DotNet.Forms
                     var ptr = VlcContext.InteropManager.MediaPlayerInterops.VideoInterops.GetSpuDescription.Invoke(VlcContext.HandleManager.MediaPlayerHandles[myHostVlcControl]);
                     if (ptr != IntPtr.Zero)
                     {
+#if SILVERLIGHT
+                        var td = new TrackDescription();
+                        Marshal.PtrToStructure(ptr, td);
+#else
                         var td = (TrackDescription)Marshal.PtrToStructure(ptr, typeof(TrackDescription));
+#endif
                         return new VlcTrackDescription(td);
                     }
                 }
@@ -240,8 +247,8 @@ namespace Vlc.DotNet.Forms
                     VlcContext.HandleManager.MediaPlayerHandles != null &&
                     VlcContext.HandleManager.EventManagerHandles.ContainsKey(myHostVlcControl))
                 {
-                    aspect = VlcContext.InteropManager.MediaPlayerInterops.VideoInterops.GetAspectRatio.Invoke(
-                        VlcContext.HandleManager.MediaPlayerHandles[myHostVlcControl]);
+                    aspect = IntPtrExtensions.ToStringAnsi(VlcContext.InteropManager.MediaPlayerInterops.VideoInterops.GetAspectRatio.Invoke(
+                        VlcContext.HandleManager.MediaPlayerHandles[myHostVlcControl]));
                 }
 
                 return string.IsNullOrEmpty(aspect) ? string.Empty : aspect;
