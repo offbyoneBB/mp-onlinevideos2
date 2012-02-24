@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Vlc.DotNet.Core.Interops.Signatures.LibVlc.AsynchronousEvents;
@@ -22,6 +23,15 @@ namespace Vlc.DotNet.Core.Medias
         {
             Metadatas = new VlcMediaMetadatas(this);
             TrackInfos = new VlcMediaTrackInfos(this);
+        }
+
+        internal MediaBase(IntPtr handle)
+        {
+            if (handle == IntPtr.Zero)
+                throw new ArgumentNullException("handle");
+            Metadatas = new VlcMediaMetadatas(this);
+            TrackInfos = new VlcMediaTrackInfos(this);
+            Initialize(handle);
         }
 
         /// <summary>
@@ -51,7 +61,7 @@ namespace Vlc.DotNet.Core.Medias
             {
                 if (!VlcContext.HandleManager.MediasHandles.ContainsKey(this))
                     return null;
-                return VlcContext.InteropManager.MediaInterops.GetMrl.Invoke(VlcContext.HandleManager.MediasHandles[this]);
+                return IntPtrExtensions.ToStringAnsi(VlcContext.InteropManager.MediaInterops.GetMrl.Invoke(VlcContext.HandleManager.MediasHandles[this]));
             }
         }
 
@@ -119,6 +129,10 @@ namespace Vlc.DotNet.Core.Medias
         protected void Initialize()
         {
             IntPtr handle = GetNewMediaInstance();
+            Initialize(handle);
+        }
+        protected void Initialize(IntPtr handle)
+        {
             if (handle == IntPtr.Zero)
                 return;
             VlcContext.HandleManager.MediasHandles[this] = handle;
@@ -166,21 +180,24 @@ namespace Vlc.DotNet.Core.Medias
             VlcContext.InteropManager.EventInterops.Attach.Invoke(myEventManagerHandle, EventTypes.MediaMetaChanged, myEventCallback, IntPtr.Zero);
             VlcContext.InteropManager.EventInterops.Attach.Invoke(myEventManagerHandle, EventTypes.MediaParsedChanged, myEventCallback, IntPtr.Zero);
             VlcContext.InteropManager.EventInterops.Attach.Invoke(myEventManagerHandle, EventTypes.MediaStateChanged, myEventCallback, IntPtr.Zero);
-            //VlcContext.InteropManager.EventInterops.Attach.Invoke(myEventManagerHandle, EventTypes.MediaSubItemAdded, myEventCallback, IntPtr.Zero);
+            VlcContext.InteropManager.EventInterops.Attach.Invoke(myEventManagerHandle, EventTypes.MediaSubItemAdded, myEventCallback, IntPtr.Zero);
         }
 
         private void FreeEvents()
         {
+            if (myEventManagerHandle == IntPtr.Zero || myEventCallback == null)
+                return;
             VlcContext.InteropManager.EventInterops.Detach.Invoke(myEventManagerHandle, EventTypes.MediaDurationChanged, myEventCallback, IntPtr.Zero);
             VlcContext.InteropManager.EventInterops.Detach.Invoke(myEventManagerHandle, EventTypes.MediaFreed, myEventCallback, IntPtr.Zero);
             VlcContext.InteropManager.EventInterops.Detach.Invoke(myEventManagerHandle, EventTypes.MediaMetaChanged, myEventCallback, IntPtr.Zero);
             VlcContext.InteropManager.EventInterops.Detach.Invoke(myEventManagerHandle, EventTypes.MediaParsedChanged, myEventCallback, IntPtr.Zero);
             VlcContext.InteropManager.EventInterops.Detach.Invoke(myEventManagerHandle, EventTypes.MediaStateChanged, myEventCallback, IntPtr.Zero);
-            //VlcContext.InteropManager.EventInterops.Detach.Invoke(myEventManagerHandle, EventTypes.MediaSubItemAdded, myEventCallback, IntPtr.Zero);
+            VlcContext.InteropManager.EventInterops.Detach.Invoke(myEventManagerHandle, EventTypes.MediaSubItemAdded, myEventCallback, IntPtr.Zero);
 
             myEventCallbackHandle.Free();
         }
 
+        [AllowReversePInvokeCalls]
         private void OnVlcEvent(ref LibVlcEventArgs eventData, IntPtr userData)
         {
             switch (eventData.Type)
@@ -201,10 +218,14 @@ namespace Vlc.DotNet.Core.Medias
                     EventsHelper.RaiseEvent(StateChanged, this, new VlcEventArgs<States>(eventData.MediaStateChanged.NewState));
                     break;
                 //TODO
-                //case EventTypes.MediaSubItemAdded:
-                //    //eventData.MediaSubitemAdded.NewChild
-                //    EventsHelper.RaiseEvent(MediaSubItemAdded, this, new VlcEventArgs<EventArgs>(EventArgs.Empty));
-                //    break;
+                case EventTypes.MediaSubItemAdded:
+                    MediaBase media;
+                    if (this is LocationMedia)
+                        media = new LocationMedia(eventData.MediaSubitemAdded.NewChild);
+                    else
+                        media = new PathMedia(eventData.MediaSubitemAdded.NewChild);
+                    EventsHelper.RaiseEvent(MediaSubItemAdded, this, new VlcEventArgs<MediaBase>(media));
+                    break;
             }
         }
 
@@ -223,8 +244,8 @@ namespace Vlc.DotNet.Core.Medias
         [Category(CommonStrings.VLC_DOTNET_PROPERTIES_CATEGORY)]
         public event VlcEventHandler<MediaBase, States> StateChanged;
 
-        //[Category(CommonStrings.VLC_DOTNET_PROPERTIES_CATEGORY)]
-        //public event VlcEventHandler<MediaBase, EventArgs> MediaSubItemAdded;
+        [Category(CommonStrings.VLC_DOTNET_PROPERTIES_CATEGORY)]
+        public event VlcEventHandler<MediaBase, MediaBase> MediaSubItemAdded;
 
         #endregion
     }

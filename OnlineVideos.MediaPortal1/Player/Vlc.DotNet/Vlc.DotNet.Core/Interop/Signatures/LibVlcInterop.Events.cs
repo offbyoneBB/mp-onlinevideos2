@@ -34,6 +34,7 @@ namespace Vlc.DotNet.Core.Interops.Signatures
                 MediaPlayerTitleChanged,
                 MediaPlayerSnapshotTaken,
                 MediaPlayerLengthChanged,
+                MediaPlayerVideoOutChanged,
 
                 MediaListItemAdded = 0x200,
                 MediaListWillAddItem,
@@ -115,6 +116,9 @@ namespace Vlc.DotNet.Core.Interops.Signatures
 
                 [FieldOffset(8)]
                 public MediaPlayerPausableChangedArgs MediaPlayerPausableChanged;
+
+                [FieldOffset(8)]
+                public MediaPlayerVideoOutChangedArgs MediaPlayerVideoOutChanged;
 
                 #endregion
 
@@ -246,6 +250,12 @@ namespace Vlc.DotNet.Core.Interops.Signatures
             public struct MediaPlayerPausableChangedArgs
             {
                 public int NewPausable;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct MediaPlayerVideoOutChangedArgs
+            {
+                public int NewCount;
             }
 
             #endregion

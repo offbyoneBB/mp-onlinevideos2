@@ -18,5 +18,8 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <returns>non zero if filter is ready, zero otherwise</returns>
         [return : MarshalAs(UnmanagedType.Bool)]
         bool IsFilterReadyToConnectPins();
+
+        [return: MarshalAs(UnmanagedType.LPWStr)]
+        string GetCacheFileName();
     }
 }

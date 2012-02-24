@@ -18,6 +18,11 @@ namespace Vlc.DotNet.Core.Medias
             Initialize();
         }
 
+        internal PathMedia(IntPtr handle)
+            : base(handle)
+        {
+        }
+
         /// <summary>
         /// Retreive the specified path of the media
         /// </summary>

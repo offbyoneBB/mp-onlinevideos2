@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Vlc.DotNet.Core.Interops.Signatures
@@ -13,7 +14,7 @@ namespace Vlc.DotNet.Core.Interops.Signatures
             /// <returns>This will be NULL if there was no error.</returns>
             [LibVlcFunction("libvlc_errmsg")]
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            public delegate string GetErrorMessage();
+            public delegate IntPtr GetErrorMessage();
 
             /// <summary>
             /// Clears the LibVLC error status for the current thread. This is optional. By default, the error status is automatically overridden when a new error occurs, and destroyed when the thread exits.
@@ -96,7 +97,7 @@ namespace Vlc.DotNet.Core.Interops.Signatures
         /// <returns>String containing the libvlc version.</returns>
         [LibVlcFunction("libvlc_get_version")]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate string GetVersion();
+        public delegate IntPtr GetVersion();
 
         /// <summary>
         /// Retrieve libvlc compiler version.
@@ -104,16 +105,15 @@ namespace Vlc.DotNet.Core.Interops.Signatures
         /// <returns>String containing the libvlc compiler version.</returns>
         [LibVlcFunction("libvlc_get_compiler")]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate string GetCompiler();
+        public delegate IntPtr GetCompiler();
 
         /// <summary>
         /// Retrieve libvlc changeset.
         /// </summary>
         /// <returns>String containing the libvlc changeset.</returns>
-        
         [LibVlcFunction("libvlc_get_changeset")]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate string GetChangeSet();
+        public delegate IntPtr GetChangeSet();
 
         /// <summary>
         /// Frees an heap allocation returned by a LibVLC function.
@@ -155,7 +155,7 @@ namespace Vlc.DotNet.Core.Interops.Signatures
             /// <param name="eventType">The desired event.</param>
             /// <returns></returns>
             [LibVlcFunction("libvlc_event_type_name")]
-            public delegate string GetTypeName(EventTypes eventType);
+            public delegate IntPtr GetTypeName(EventTypes eventType);
         }
 
         namespace Logging
@@ -165,7 +165,8 @@ namespace Vlc.DotNet.Core.Interops.Signatures
             /// </summary>
             /// <param name="instance">The LibVLC instance</param>
             /// <returns>Verbosity level for messages</returns>
-            [LibVlcFunction("libvlc_get_log_verbosity")]
+            [LibVlcFunction("libvlc_get_log_verbosity", null, "1.2")]
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate uint GetVerbosity(IntPtr instance);
 
             /// <summary>
@@ -173,7 +174,8 @@ namespace Vlc.DotNet.Core.Interops.Signatures
             /// </summary>
             /// <param name="instance">The LibVLC instance</param>
             /// <param name="verbosity">Verbosity level for messages</param>
-            [LibVlcFunction("libvlc_set_log_verbosity")]
+            [LibVlcFunction("libvlc_set_log_verbosity", null, "1.2")]
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate void SetVerbosity(IntPtr instance, uint verbosity);
 
             /// <summary>
@@ -181,14 +183,16 @@ namespace Vlc.DotNet.Core.Interops.Signatures
             /// </summary>
             /// <param name="instance">The LibVLC instance</param>
             /// <returns>Log instance or NULL on error.</returns>
-            [LibVlcFunction("libvlc_log_open")]
+            [LibVlcFunction("libvlc_log_open", null, "1.2")]
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate IntPtr Open(IntPtr instance);
 
             /// <summary>
             /// Close a VLC message log instance.
             /// </summary>
             /// <param name="logInstance">Log instance or NULL</param>
-            [LibVlcFunction("libvlc_log_close")]
+            [LibVlcFunction("libvlc_log_close", null, "1.2")]
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate void Close(IntPtr logInstance);
 
             /// <summary>
@@ -196,14 +200,16 @@ namespace Vlc.DotNet.Core.Interops.Signatures
             /// </summary>
             /// <param name="logInstance">Log instance or NULL.</param>
             /// <returns>Number of log messages, 0 if logInstance is NULL.</returns>
-            [LibVlcFunction("libvlc_log_count")]
+            [LibVlcFunction("libvlc_log_count", null, "1.2")]
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate uint Count(IntPtr logInstance);
 
             /// <summary>
             /// Clear a log instance.
             /// </summary>
             /// <param name="logInstance">Log instance or NULL.</param>
-            [LibVlcFunction("libvlc_log_clear")]
+            [LibVlcFunction("libvlc_log_clear", null, "1.2")]
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate void Clear(IntPtr logInstance);
 
             /// <summary>
@@ -211,7 +217,7 @@ namespace Vlc.DotNet.Core.Interops.Signatures
             /// </summary>
             /// <param name="logInstance">Log instance or NULL.</param>
             /// <returns>Log iterator object or NULL on error</returns>
-            [LibVlcFunction("libvlc_log_get_iterator")]
+            [LibVlcFunction("libvlc_log_get_iterator", null, "1.2")]
             public delegate IntPtr GetIterator(IntPtr logInstance);
 
             /// <summary>
@@ -219,14 +225,15 @@ namespace Vlc.DotNet.Core.Interops.Signatures
             /// </summary>
             /// <param name="logIteratorInstance">Log iterator instance or NULL</param>
             /// <returns>True if iterator has more message objects, else false</returns>
-            [LibVlcFunction("libvlc_log_iterator_has_next")]
+            [LibVlcFunction("libvlc_log_iterator_has_next", null, "1.2")]
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate bool HasNext(IntPtr logIteratorInstance);
 
             /// <summary>
             /// Release a previoulsy allocated iterator.
             /// </summary>
             /// <param name="logIteratorInstance">Log iterator instance.</param>
-            [LibVlcFunction("libvlc_log_iterator_free")]
+            [LibVlcFunction("libvlc_log_iterator_free", null, "1.2")]
             public delegate void FreeInstance(IntPtr logIteratorInstance);
 
             /// <summary>
@@ -235,7 +242,8 @@ namespace Vlc.DotNet.Core.Interops.Signatures
             /// <param name="logIteratorInstance">Log iterator instance or NULL.</param>
             /// <param name="buffer">Log buffer.</param>
             /// <returns>Log message object or NULL if none left.</returns>
-            [LibVlcFunction("libvlc_log_iterator_next")]
+            [LibVlcFunction("libvlc_log_iterator_next", null, "1.2")]
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate void Next(IntPtr logIteratorInstance, ref LogMessage buffer);
         }
         //TODO

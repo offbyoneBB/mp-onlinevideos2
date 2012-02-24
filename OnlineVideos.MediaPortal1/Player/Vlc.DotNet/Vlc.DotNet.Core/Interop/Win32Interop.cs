@@ -63,7 +63,7 @@ namespace Vlc.DotNet.Core.Interops
         /// </summary>
         /// <param name="lpBaseAddress">A pointer to the base address of the mapped view of a file that is to be unmapped. This value must be identical to the value returned by a previous call to the MapViewOfFile or MapViewOfFileEx function.</param>
         /// <returns>If the function succeeds, the return value is nonzero.</returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32", SetLastError = true)]
         public static extern bool UnmapViewOfFile(IntPtr lpBaseAddress);
 
         /// <summary>
@@ -97,5 +97,12 @@ namespace Vlc.DotNet.Core.Interops
             Copy = 0x00000001,
             Execute = 0x00000020
         }
+#if SILVERLIGHT
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr LocalFree(IntPtr handle);
+
+        [DllImport("kernel32.dll", EntryPoint = "LocalAlloc")]
+        public static extern IntPtr LocalAlloc(int uFlags, IntPtr sizetdwBytes);
+#endif
     }
 }

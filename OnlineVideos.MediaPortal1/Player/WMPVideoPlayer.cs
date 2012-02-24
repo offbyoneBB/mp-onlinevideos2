@@ -87,6 +87,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     }
                     else if (bufferCompleted)
                     {
+                        AdaptRefreshRate();
                         GUIWaitCursor.Hide(); // hide the wait cursor
                         wmpCtrl.Visible = true;
                         playState = PlayState.Playing;
@@ -99,6 +100,34 @@ namespace OnlineVideos.MediaPortal1.Player
                     }
                 }
                 else if (Playing && osd != null) osd.UpdateGUI();
+            }
+        }
+
+        void AdaptRefreshRate()
+        {
+            if (PluginConfiguration.Instance.AllowRefreshRateChange)
+            {
+                try
+                {
+                    double fps = wmpCtrl.network.encodedFrameRate != 0 ? wmpCtrl.network.encodedFrameRate : (double)wmpCtrl.network.frameRate / 100.0f; //frames per hundred seconds
+                    if (fps > 1)
+                    {
+                        Log.Instance.Info("WMPVideoPlayer got {0} FPS from WMP", fps);
+                        double matchedFps = RefreshRateHelper.MatchConfiguredFPS(fps);
+                        if (matchedFps != default(double))
+                        {
+                            RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, currentFile);
+                        }
+                        else
+                        {
+                            Log.Instance.Info("No matching configured FPS found - skipping RefreshRate Adaption");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Instance.Warn("WMPVideoPlayer: Exception trying refresh rate change: {0}", ex.ToString());
+                }
             }
         }
 
@@ -129,16 +158,19 @@ namespace OnlineVideos.MediaPortal1.Player
 
         private void PlaybackEnded()
         {
-            Log.Instance.Info("WMPVideoPlayer:ended {0}", currentFile);
-            playState = PlayState.Ended;
-            if (wmpCtrl != null)
+            if (playState != PlayState.Ended)
             {
-                wmpCtrl.Location = new Point(0,0);
-                wmpCtrl.ClientSize = new Size(0, 0);
-                wmpCtrl.Visible = false;
-                wmpCtrl.Buffering -= WMP_OnBuffering;
-                wmpCtrl.PlayStateChange -= WMP_OnPlayStateChange;
-                wmpCtrl.ErrorEvent -= WMP_OnError;
+                Log.Instance.Info("WMPVideoPlayer:ended {0}", currentFile);
+                playState = PlayState.Ended;
+                if (wmpCtrl != null)
+                {
+                    wmpCtrl.Location = new Point(0, 0);
+                    wmpCtrl.ClientSize = new Size(0, 0);
+                    wmpCtrl.Visible = false;
+                    wmpCtrl.Buffering -= WMP_OnBuffering;
+                    wmpCtrl.PlayStateChange -= WMP_OnPlayStateChange;
+                    wmpCtrl.ErrorEvent -= WMP_OnError;
+                }
             }
         }
 

@@ -1,9 +1,14 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Vlc.DotNet.Core.Interops.Signatures.LibVlc;
+
+#if SILVERLIGHT
+
+#else
+using System.ComponentModel;
+#endif
 
 namespace Vlc.DotNet.Core.Interops
 {
@@ -16,7 +21,7 @@ namespace Vlc.DotNet.Core.Interops
         private IntPtr myLibVlcDllHandle;
 
         /// <summary>
-        /// LibVlcInteropsManager contructor
+        /// Initializes a new instance of the LibVlcInteropsManager class.
         /// </summary>
         /// <param name="libVlcDllsDirectory">The path to libvlc.dll and libvlccore.dll</param>
         public LibVlcInteropsManager(string libVlcDllsDirectory)
@@ -49,7 +54,13 @@ namespace Vlc.DotNet.Core.Interops
         public LibVlcMediaList MediaListInterops { get; set; }
         public LibVlcAudio AudioInterops { get; private set; }
         public LibVlcVideo VideoInterops { get; private set; }
-        public LibVlcErrorHandling ErrorHandlingInterops { get; private set; } 
+        public LibVlcErrorHandling ErrorHandlingInterops { get; private set; }
+        public LibVlcMediaListPlayer MediaListPlayerInterops { get; private set; } 
+
+        public Version VlcVersion
+        {
+            get; private set;
+        }
 
         #region IDisposable Members
 
@@ -100,6 +111,9 @@ namespace Vlc.DotNet.Core.Interops
             if (LoggingInterops != null)
                 LoggingInterops.Dispose();
             LoggingInterops = null;
+            if (MediaListPlayerInterops != null)
+                MediaListPlayerInterops.Dispose();
+            MediaListPlayerInterops = null;
         }
 
         #endregion
@@ -122,34 +136,35 @@ namespace Vlc.DotNet.Core.Interops
             myLibVlcDllHandle = Win32Interop.LoadLibrary(libVlcFilePath);
             if (myLibVlcDllHandle == IntPtr.Zero)
                 throw new Win32Exception(Marshal.GetLastWin32Error());
-
+            
             GetVersion = new LibVlcFunction<GetVersion>(myLibVlcDllHandle);
 
             var reg = new Regex("^[0-9.]*");
-            var match = reg.Match(GetVersion.Invoke());
-            var vlcVersion = new Version(match.Groups[0].Value);
+            var match = reg.Match(IntPtrExtensions.ToStringAnsi(GetVersion.Invoke()));
+            VlcVersion = new Version(match.Groups[0].Value);
 
-            NewInstance = new LibVlcFunction<NewInstance>(myLibVlcDllHandle, vlcVersion);
-            ReleaseInstance = new LibVlcFunction<ReleaseInstance>(myLibVlcDllHandle, vlcVersion);
-            RetainInstance = new LibVlcFunction<RetainInstance>(myLibVlcDllHandle, vlcVersion);
-            AddInterface = new LibVlcFunction<AddInterface>(myLibVlcDllHandle, vlcVersion);
-            SetExitCallback = new LibVlcFunction<SetExitCallback>(myLibVlcDllHandle, vlcVersion);
-            Wait = new LibVlcFunction<Wait>(myLibVlcDllHandle, vlcVersion);
-            SetUserAgent = new LibVlcFunction<SetUserAgent>(myLibVlcDllHandle, vlcVersion);
-            GetCompiler = new LibVlcFunction<GetCompiler>(myLibVlcDllHandle, vlcVersion);
-            GetChangeSet = new LibVlcFunction<GetChangeSet>(myLibVlcDllHandle, vlcVersion);
-            FreeMemory = new LibVlcFunction<FreeMemory>(myLibVlcDllHandle, vlcVersion);
-            //GetModuleDescriptionList = new LibVlcFunction<GetModuleDescriptionList>(myLibVlcDllHandle, vlcVersion);
-            //ReleaseModule = new LibVlcFunction<ReleaseModuleDescription>(myLibVlcDllHandle, vlcVersion);
+            NewInstance = new LibVlcFunction<NewInstance>(myLibVlcDllHandle, VlcVersion);
+            ReleaseInstance = new LibVlcFunction<ReleaseInstance>(myLibVlcDllHandle, VlcVersion);
+            RetainInstance = new LibVlcFunction<RetainInstance>(myLibVlcDllHandle, VlcVersion);
+            AddInterface = new LibVlcFunction<AddInterface>(myLibVlcDllHandle, VlcVersion);
+            SetExitCallback = new LibVlcFunction<SetExitCallback>(myLibVlcDllHandle, VlcVersion);
+            Wait = new LibVlcFunction<Wait>(myLibVlcDllHandle, VlcVersion);
+            SetUserAgent = new LibVlcFunction<SetUserAgent>(myLibVlcDllHandle, VlcVersion);
+            GetCompiler = new LibVlcFunction<GetCompiler>(myLibVlcDllHandle, VlcVersion);
+            GetChangeSet = new LibVlcFunction<GetChangeSet>(myLibVlcDllHandle, VlcVersion);
+            FreeMemory = new LibVlcFunction<FreeMemory>(myLibVlcDllHandle, VlcVersion);
+            //GetModuleDescriptionList = new LibVlcFunction<GetModuleDescriptionList>(myLibVlcDllHandle, VlcVersion);
+            //ReleaseModule = new LibVlcFunction<ReleaseModuleDescription>(myLibVlcDllHandle, VlcVersion);
 
-            EventInterops = new LibVlcAsynchronousEvents(myLibVlcDllHandle, vlcVersion);
-            MediaPlayerInterops = new LibVlcMediaPlayer(myLibVlcDllHandle, vlcVersion);
-            MediaInterops = new LibVlcMedia(myLibVlcDllHandle, vlcVersion);
-            MediaListInterops = new LibVlcMediaList(myLibVlcDllHandle, vlcVersion);
-            AudioInterops = new LibVlcAudio(myLibVlcDllHandle, vlcVersion);
-            VideoInterops = new LibVlcVideo(myLibVlcDllHandle, vlcVersion);
-            LoggingInterops = new LibVlcLogging(myLibVlcDllHandle, vlcVersion);
-            ErrorHandlingInterops = new LibVlcErrorHandling(myLibVlcDllHandle, vlcVersion);
+            EventInterops = new LibVlcAsynchronousEvents(myLibVlcDllHandle, VlcVersion);
+            MediaPlayerInterops = new LibVlcMediaPlayer(myLibVlcDllHandle, VlcVersion);
+            MediaInterops = new LibVlcMedia(myLibVlcDllHandle, VlcVersion);
+            MediaListInterops = new LibVlcMediaList(myLibVlcDllHandle, VlcVersion);
+            AudioInterops = new LibVlcAudio(myLibVlcDllHandle, VlcVersion);
+            VideoInterops = new LibVlcVideo(myLibVlcDllHandle, VlcVersion);
+            LoggingInterops = new LibVlcLogging(myLibVlcDllHandle, VlcVersion);
+            ErrorHandlingInterops = new LibVlcErrorHandling(myLibVlcDllHandle, VlcVersion);
+            MediaListPlayerInterops = new LibVlcMediaListPlayer(myLibVlcDllHandle, VlcVersion);
         }
     }
 }
