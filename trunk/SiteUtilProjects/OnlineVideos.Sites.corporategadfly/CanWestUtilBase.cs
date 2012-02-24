@@ -53,8 +53,8 @@ namespace OnlineVideos.Sites
                             JToken itemToFetchChildrenFor = null;
                             foreach (JToken item in allItems)
                             {
-                                // find first element with root depth - 1
-                                if (item.Value<int>("depth") == rootDepth - 1)
+                                // find first element with root depth - 1 (which also has children)
+                                if (item.Value<int>("depth") == rootDepth - 1 && item.Value<bool>("hasChildren"))
                                 {
                                     itemToFetchChildrenFor = item;
                                     break;
