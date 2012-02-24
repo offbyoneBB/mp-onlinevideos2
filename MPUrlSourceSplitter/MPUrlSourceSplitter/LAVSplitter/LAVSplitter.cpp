@@ -1826,7 +1826,17 @@ HRESULT CLAVSplitter::IsFilterReadyToConnectPins(bool *ready)
 {
   CheckPointer(ready, E_POINTER);
 
-  *ready = (this->GetPinCount() != 0);
+  *ready = (this->GetPinCount() != 0 && this->m_pInput->storeFilePath != NULL);
 
   return S_OK;
+}
+
+HRESULT CLAVSplitter::GetCacheFileName(wchar_t **path)
+{
+	if (this->m_pInput->storeFilePath != NULL)
+	{
+		*path = (LPWSTR)CoTaskMemAlloc(sizeof(wchar_t)*(wcslen(this->m_pInput->storeFilePath)+1));
+		wcscpy(*path, this->m_pInput->storeFilePath);
+	}
+	return S_OK;
 }

@@ -237,6 +237,8 @@ public:
   // @return : S_OK if successful
   STDMETHODIMP IsFilterReadyToConnectPins(bool *ready);
 
+  STDMETHODIMP GetCacheFileName(wchar_t **path);
+
 protected:
   STDMETHODIMP LoadDefaults();
   STDMETHODIMP LoadSettings();
