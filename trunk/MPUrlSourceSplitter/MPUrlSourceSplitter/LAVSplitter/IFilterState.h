@@ -38,6 +38,9 @@ public:
   // @return : S_OK if successful
   virtual STDMETHODIMP IsFilterReadyToConnectPins(bool *ready) = 0;
   
+  // get cache file name
+  // @param path : reference to string which will hold path to cache file name
+  // @return : S_OK if successful (*path can be NULL), E_POINTER if path is NULL
   virtual STDMETHODIMP GetCacheFileName(wchar_t **path) = 0;
 };
 
