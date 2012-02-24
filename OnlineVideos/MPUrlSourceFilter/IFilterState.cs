@@ -19,6 +19,10 @@ namespace OnlineVideos.MPUrlSourceFilter
         [return : MarshalAs(UnmanagedType.Bool)]
         bool IsFilterReadyToConnectPins();
 
+        /// <summary>
+        /// This method returns filter cache file path.
+        /// </summary>
+        /// <returns>path to cache file or null if error or cache file not set</returns>
         [return: MarshalAs(UnmanagedType.LPWStr)]
         string GetCacheFileName();
     }
