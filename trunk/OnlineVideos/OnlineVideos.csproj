@@ -657,10 +657,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Configuration\ExportSiteSettings.xslt" />
-    <EmbeddedResource Include="Configuration\ImportSiteSettings.xslt" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
