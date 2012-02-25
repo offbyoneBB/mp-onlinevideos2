@@ -57,8 +57,8 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            string channelRegex = @"<tr class=""broadcast"">\s*<td class=""logo"".*?><img src=""(?<thumb>[^""]*)"".*?></td>\s*<td class=""stationname"">(?<name>[^<]*)</td>\s*(<td.*?>.*?</td>\s*){3}</tr>\s*(?<vidhtml>(<tr class=""(odd|even)"".*?</tr>\s*)*)";
-            string videoRegex = @"<tr class=""(odd|even)"">\s*<td>.*?</td>\s*<td>\s*<a class=""broadcast"" href=""(?<url>sop://[^""]*)"".*?</td>\s*<td>(?<bitrate>[^<]*)</td>\s*<td><div class=""rating"" rel=""(?<rating>[^""]*)""";
+            string channelRegex = @"<tr class=""broadcast"">\s*<td class=""logo"".*?><img src=""(?<thumb>[^""]*)"".*?></td>\s*<td class=""stationname"">(?<name>[^<]*)</td>\s*(<td.*?>.*?</td>\s*){3}</tr>\s*(?<vidhtml><tr class=""streamrow.*?</tr>)";
+            string videoRegex = @"<tr class=""streamrow (odd|even)"">\s*<td>.*?</td>\s*<td>\s*<a class=""broadcast go"" href=""(?<url>sop://[^""]*)"".*?</td>\s*<td>(?<bitrate>[^<]*)</td>\s*<td><div class=""rating"" rel=""(?<rating>[^""]*)""";
 
             List<VideoInfo> vids = new List<VideoInfo>();
             //links page
