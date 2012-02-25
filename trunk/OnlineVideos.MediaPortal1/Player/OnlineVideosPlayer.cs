@@ -588,18 +588,30 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 hr = mediaCtrl.Run();
                 DsError.ThrowExceptionForHR(hr);
+                if (hr == 1) // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
+                {
+                    // wait 5 seconds for the graph to transition to the running state
+                    FilterState filterState;
+                    hr = mediaCtrl.GetState(5000, out filterState);
+                    if (hr != 0) // S_OK
+                    {
+                        DsError.ThrowExceptionForHR(hr);
+                        throw new Exception(string.Format("State after 5 seconds waiting for graph to run: {0} - {1}", hr, DsError.GetErrorText(hr)));
+                    }
+                }
             }
             catch (Exception error)
             {
-                Log.Instance.Error("OnlineVideosPlayer: Unable to play with reason: {0}", error.Message);
+                Log.Instance.Warn("OnlineVideosPlayer: Unable to play with reason: {0}", error.Message);
             }
-            if (hr < 0)
+            if (hr != 0) // S_OK
             {
                 Error.SetError("Unable to play movie", "Unable to start movie");
                 m_strCurrentFile = "";
                 CloseInterfaces();
                 return false;
             }
+
             if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
             msg.Label = strFile;
