@@ -32,6 +32,7 @@ namespace Newtonsoft.Json
   /// <summary>
   /// The exception thrown when an error occurs during Json serialization or deserialization.
   /// </summary>
+  [Serializable]
   public class JsonSerializationException : Exception
   {
     /// <summary>

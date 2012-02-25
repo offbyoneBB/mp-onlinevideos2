@@ -1851,6 +1851,20 @@
               <ZipFileName>Installer{CopyFile}\{e32cf3a9-0faf-4a5c-9c21-98753f75244f}-ITV Player.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ITV Player.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\RTL2 Now.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b34c84e1-3b86-400b-a944-e6f765bb38a6}-RTL2 Now.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTL2 Now.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\RTL2 Now.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d2e80a96-704d-47ff-b3cd-4926d324a9a0}-RTL2 Now.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL2 Now.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2939,28 +2953,13 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>1</Major>
-      <Minor>1</Minor>
+      <Minor>2</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>fixed: progress dialogs not closing (updating sites)
-fixed: frozen MP GUI on some occassions when starting playback or showing playback choices
-fixed: installer not registering the source filter on some systems
-fixed: removing a Category from Favorites while inside Favorites doesn't work
-fixed: downloading of mms streams
-fixed: PlayAll does not respect the current filter
-fixed: trying to play videos from GenericSite more than once with url resolving would fail
-fixed: video of NextPage in Favorited Categories would not play
-changed: new source filter that includes LAV Splitter functionality, with changes to fix seeking in online streams
-changed: when downloading in a queue, only ask for quality on the first item, after that use the default choice
-changed: all downloaded thumbs will be saved to a subdirectory named "Cache" under the configured Thumbnail directory
-changed: rework of the "Sites" tab in Configuration
-added: all settings string (Extensions Plugin) now use localization
-added: possibility to play all shown videos in random order
-added: filter Options: OnlyLocal, OnlyRemote and context menu entry: Remove all in SiteManager
-added: queued downloads now visible in the "Current Downloads" category
-added: OnlineVideos internal player now also uses preferred codecs as configured in MediaPortal</VersionDescription>
+    <VersionDescription>improved: you can now add any category at any hierarchy level to favorites
+added: allow refresh rate adaption according to FPS and settings in MediaPortal</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.1.0.0.mpe1</OnlineLocation>
     <ReleaseDate>2012-02-18T11:00:00</ReleaseDate>
@@ -4840,6 +4839,20 @@ added: OnlineVideos internal player now also uses preferred codecs as configured
         <LocalFileName>..\SiteImages\Banners\ITV Player.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e32cf3a9-0faf-4a5c-9c21-98753f75244f}-ITV Player.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ITV Player.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\RTL2 Now.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b34c84e1-3b86-400b-a944-e6f765bb38a6}-RTL2 Now.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTL2 Now.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\RTL2 Now.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d2e80a96-704d-47ff-b3cd-4926d324a9a0}-RTL2 Now.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL2 Now.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />

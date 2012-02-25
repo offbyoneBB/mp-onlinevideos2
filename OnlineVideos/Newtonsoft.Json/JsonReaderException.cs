@@ -30,6 +30,7 @@ namespace Newtonsoft.Json
   /// <summary>
   /// The exception thrown when an error occurs while reading Json text.
   /// </summary>
+  [Serializable]
   public class JsonReaderException : Exception
   {
     /// <summary>
