@@ -109,12 +109,7 @@ namespace OnlineVideos.Sites
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(pageVideo);
             string url = doc.SelectSingleNode("/VIDEOS/VIDEO/MEDIA/VIDEOS/HAUT_DEBIT").InnerText;
-
-            string resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}",
-                                    System.Web.HttpUtility.UrlEncode(url)
-                                ));
-            return resultUrl;
+            return url;
         }
 
 

@@ -57,19 +57,9 @@ namespace OnlineVideos.Sites
             List<string> listUrls = new List<string>();
             string smil = GetWebData(@"http://replay.gulli.fr/var/storage/imports/replay/smil/" + url + @".smil");
             string videoFile = Regex.Match(smil, @"<video region=""video"" src=""(?<m0>[^""]*)""").Groups["m0"].Value;
-
-            string resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}",
-                                        System.Web.HttpUtility.UrlEncode("rtmp://stream2.lgdf.yacast.net/gulli_replay/mp4:" + videoFile)
-                                    ));
-
+            string resultUrl = "rtmp://stream2.lgdf.yacast.net/gulli_replay/mp4:" + videoFile;
             listUrls.Add(resultUrl);
-            
             return listUrls;
         }
-
-       
-
-      
     }
 }

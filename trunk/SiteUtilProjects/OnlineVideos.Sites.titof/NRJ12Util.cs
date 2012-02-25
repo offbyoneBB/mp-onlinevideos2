@@ -27,14 +27,7 @@ namespace OnlineVideos.Sites
             if (Regex.Match(playerInfo, @"<item\sid=""video""\stype=""String""\svalue=""(?<m0>[^""]*)""/>").Success)
             {                
                 string url = Regex.Match(playerInfo, @"<item\sid=""video""\stype=""String""\svalue=""(?<m0>[^""]*)""/>").Groups["m0"].Value;
-                resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                    string.Format("http://127.0.0.1/stream.flv?hostname={0}&app={1}&playpath={2}&port={3}&tcUrl={4}",
-                                        "stream2.nrj.yacast.net",
-                                        "nrj",
-                                        "flv:" + url.Replace(".flv", ""),
-                                        "443",
-                                        "rtmp://stream2.nrj.yacast.net:1935/nrj"
-                                    ));
+                resultUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://stream2.nrj.yacast.net:1935/nrj", "stream2.nrj.yacast.net", 443) { App = "nrj", PlayPath = "flv:" + url.Replace(".flv", "") }.ToString();
             }
             if (Regex.Match(playerInfo, @"name=""movie"" value=""(?<m0>[^""]*)""").Success)
             {

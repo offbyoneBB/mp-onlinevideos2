@@ -14,16 +14,10 @@ using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
-    public partial class TF1Util : SiteUtilBase, ISimpleRequestHandler
+    public partial class TF1Util : SiteUtilBase
     {
         protected int indexPage = 1;
         protected List<string> listPages = new List<string>();
-
-        public override void Initialize(SiteSettings siteSettings)
-        {
-            base.Initialize(siteSettings);
-            ReverseProxy.Instance.AddHandler(this);
-        }
 
         public override int DiscoverDynamicCategories()
         {           
@@ -249,10 +243,10 @@ namespace OnlineVideos.Sites
 
         public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {            
-            return _getVideosUrl(video, this);
+            return _getVideosUrl(video);
         }
 
-        public static List<string> _getVideosUrl(VideoInfo video, IProxyHandler handler = null, string regexId = @"baseURL\s:\s""http://www\.wat\.tv"",url\s:\s""(?<url>[^""]*)""")
+        public static List<string> _getVideosUrl(VideoInfo video, string regexId = @"baseURL\s:\s""http://www\.wat\.tv"",url\s:\s""(?<url>[^""]*)""")
         {
             List<string> listUrls = new List<string>();
 
@@ -293,19 +287,13 @@ namespace OnlineVideos.Sites
                             string finalURL = getFinalUrl(md5, "http://www.wat.tv/get/" + web + "/" + id, timeToken, id);
                            
                             if (finalURL.StartsWith("http"))
-                            {                                
-                                string uri = ReverseProxy.Instance.GetProxyUri(handler, finalURL);
-                                listUrls.Add(uri);
+                            {
+                                listUrls.Add(new MPUrlSourceFilter.HttpUrl(finalURL) { UserAgent = OnlineVideoSettings.Instance.UserAgent}.ToString());
                             }
                             else
                             {
-                                listUrls.Add(ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}&swfhash={2}&swfsize={3}",
-                                        finalURL,
-                                        "http://www.wat.tv/images/v30/PlayerWat.swf", "655ac1d31d02b3d3c2b76168a33b641f643eeac1738030a10a634e5b25341c77", "349281"
-                                    )));
+                                listUrls.Add(new MPUrlSourceFilter.RtmpUrl(finalURL) { SwfUrl = "http://www.wat.tv/images/v30/PlayerWat.swf", SwfVerify = true }.ToString());
                             }
-
                         }
                         break;
                     }
@@ -390,11 +378,5 @@ namespace OnlineVideos.Sites
 
             return result.ToString();
         }
-
-        public void UpdateRequest(HttpWebRequest request)
-        {
-            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-        }
-
     }
 }

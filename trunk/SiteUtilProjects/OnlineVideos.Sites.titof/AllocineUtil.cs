@@ -14,14 +14,8 @@ using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
-    public class AllocineUtil : GenericSiteUtil, ISimpleRequestHandler
+    public class AllocineUtil : GenericSiteUtil
     {
-        public override void Initialize(SiteSettings siteSettings)
-        {
-            base.Initialize(siteSettings);
-            ReverseProxy.Instance.AddHandler(this);
-        }
-
         public override int DiscoverDynamicCategories()
         {
             RssLink cat = new RssLink();
@@ -161,16 +155,9 @@ namespace OnlineVideos.Sites
             }
             if (url != null && url.Length > 0)
             {
-                listUrls.Add(ReverseProxy.Instance.GetProxyUri(this, @"http://a69.g.akamai.net/n/69/32563/v1/mediaplayer.allocine.fr" + url + ".flv"));
-                
+                listUrls.Add(new MPUrlSourceFilter.HttpUrl(@"http://a69.g.akamai.net/n/69/32563/v1/mediaplayer.allocine.fr" + url + ".flv") { UserAgent = OnlineVideoSettings.Instance.UserAgent }.ToString());
             }
             return listUrls;
         }
-
-        public void UpdateRequest(HttpWebRequest request)
-        {
-            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-        }
-
     }
 }
