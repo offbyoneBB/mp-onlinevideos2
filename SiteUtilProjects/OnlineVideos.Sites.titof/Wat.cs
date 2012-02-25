@@ -8,11 +8,6 @@ namespace OnlineVideos.Sites
 {
     public class Wat : TF1Util
     {
-        public override void Initialize(SiteSettings siteSettings)
-        {
-            base.Initialize(siteSettings);
-            ReverseProxy.Instance.AddHandler(this);
-        }
         public override int DiscoverDynamicCategories()
         {
             string webData = GetWebData(@"http://www.wat.tv/chaines");
@@ -99,10 +94,9 @@ namespace OnlineVideos.Sites
 
         public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {            
-            return _getVideosUrl(video, this, @"url\s:\s""(?<url>[^""]*)""");
+            return _getVideosUrl(video, @"url\s:\s""(?<url>[^""]*)""");
         }
 
-         
         public override List<VideoInfo> getVideoList(Category category)
         {
             string baseVideos = "http://www.wat.tv";
@@ -144,7 +138,6 @@ namespace OnlineVideos.Sites
             }
             return listVideos;
         }
-
         
     }
 }

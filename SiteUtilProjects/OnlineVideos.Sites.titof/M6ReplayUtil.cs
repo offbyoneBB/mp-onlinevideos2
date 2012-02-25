@@ -33,8 +33,6 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("PlayerSHA")]
         protected string playerSHA = "2166742885D94CD229060D98EE976F78F16953EAB0ECC431736DFFD153C7EAA4";
 
-
-
         private XmlDocument doc = new XmlDocument();
             
         public override int DiscoverDynamicCategories()
@@ -101,29 +99,14 @@ namespace OnlineVideos.Sites
 
                 foreach (XmlNode media in n.SelectNodes("fichemedia"))
                 {
-                    string resultUrl1 = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}&swfsize={2}&swfhash={3}",
-                                        System.Web.HttpUtility.UrlEncode(serverURL1 + media.Attributes["video_url"].Value)
-                                        , playerURL, 
-                                        playerSize, playerSHA
-                                    ));
-                    video.PlaybackOptions.Add(media.Attributes["langue"].Value + " : Serveur 1", resultUrl1);
+                    video.PlaybackOptions.Add(media.Attributes["langue"].Value + " : Serveur 1", 
+                        new MPUrlSourceFilter.RtmpUrl(serverURL1 + media.Attributes["video_url"].Value) { SwfUrl = playerURL, SwfVerify = true }.ToString());
 
-                    string resultUrl2 = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}&swfsize={2}&swfhash={3}",
-                                        System.Web.HttpUtility.UrlEncode(serverURL2 + media.Attributes["video_url"].Value)
-                                        , playerURL,
-                                        playerSize, playerSHA
-                                    ));
-                    video.PlaybackOptions.Add(media.Attributes["langue"].Value + " : Serveur 2", resultUrl2);
+                    video.PlaybackOptions.Add(media.Attributes["langue"].Value + " : Serveur 2",
+                        new MPUrlSourceFilter.RtmpUrl(serverURL2 + media.Attributes["video_url"].Value) { SwfUrl = playerURL, SwfVerify = true }.ToString());
 
-                    string resultUrl3 = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}&swfsize={2}&swfhash={3}",
-                                        System.Web.HttpUtility.UrlEncode(serverURL3 + media.Attributes["video_url"].Value)
-                                        , playerURL,
-                                        playerSize, playerSHA
-                                    ));
-                    video.PlaybackOptions.Add(media.Attributes["langue"].Value + " : Serveur 3", resultUrl3);
+                    video.PlaybackOptions.Add(media.Attributes["langue"].Value + " : Serveur 3",
+                        new MPUrlSourceFilter.RtmpUrl(serverURL3 + media.Attributes["video_url"].Value) { SwfUrl = playerURL, SwfVerify = true }.ToString());
                 }
 
                 video.VideoUrl = "";
