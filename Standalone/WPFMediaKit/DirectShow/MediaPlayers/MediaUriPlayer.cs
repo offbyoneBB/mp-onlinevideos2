@@ -132,7 +132,7 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
             {
                 case "http":
                 case "rtmp":
-                    sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{87DD67C7-5D13-4CD5-819B-586FFCE8650F}"))) as IBaseFilter;
+                    sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid(OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterCLSID))) as IBaseFilter;
                     return filterGraph.AddFilter(sourceFilter, OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName);
                 case "sop":
                     sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{A895A82C-7335-4D6B-A811-82E9E3C4403E}"))) as IBaseFilter;
@@ -191,6 +191,13 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
 
                 hr = ((IFileSourceFilter)sourceFilter).Load(fileSource, null);
                 DsError.ThrowExceptionForHR(hr);
+
+                OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
+                if (filterState != null)
+                {
+                    while (!filterState.IsFilterReadyToConnectPins())
+                        System.Threading.Thread.Sleep(100);
+                }
 
                 /* We will want to enum all the pins on the source filter */
                 IEnumPins pinEnum;

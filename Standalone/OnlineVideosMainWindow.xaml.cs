@@ -89,23 +89,32 @@ namespace Standalone
 
             OnlineVideoSettings.Instance.LoadSites();
 
-            Title = "OnlineVideos - Checking for Updates ...";
-            waitCursor.Visibility = System.Windows.Visibility.Visible;
-            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
-                delegate()
-                {
-					OnlineVideos.Sites.Updater.UpdateSites();
-                    return null;
-                },
-                delegate(Gui2UtilConnector.ResultInfo resultInfo)
-                {
-                    Title = "OnlineVideos";
-                    waitCursor.Visibility = System.Windows.Visibility.Hidden;
-                    ReactToResult(resultInfo, Translation.Instance.AutomaticUpdate);
-                    OnlineVideoSettings.Instance.BuildSiteUtilsList();
-                    listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
-                    SelectAndFocusItem();
-                }, false);
+            if (MessageBox.Show(Translation.Instance.PerformAutomaticUpdate, Translation.Instance.AutomaticUpdate, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes)
+            {
+                Title = "OnlineVideos - Checking for Updates ...";
+                waitCursor.Visibility = System.Windows.Visibility.Visible;
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
+                    delegate()
+                    {
+                        OnlineVideos.Sites.Updater.UpdateSites();
+                        return null;
+                    },
+                    delegate(Gui2UtilConnector.ResultInfo resultInfo)
+                    {
+                        Title = "OnlineVideos";
+                        waitCursor.Visibility = System.Windows.Visibility.Hidden;
+                        ReactToResult(resultInfo, Translation.Instance.AutomaticUpdate);
+                        OnlineVideoSettings.Instance.BuildSiteUtilsList();
+                        listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
+                        SelectAndFocusItem();
+                    }, false);
+            }
+            else
+            {
+                OnlineVideoSettings.Instance.BuildSiteUtilsList();
+                listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
+                SelectAndFocusItem();
+            }
         }
 
         protected void HandleItemMouseEnter(object sender, MouseEventArgs e)
@@ -167,6 +176,10 @@ namespace Standalone
 					if (ReactToResult(resultInfo, Translation.Instance.GettingDynamicCategories))
 					{
 						SelectedSite = site;
+                        if (SelectedSite.Settings.Categories != null && SelectedSite.Settings.Categories.Count > 0 && SelectedSite.Settings.Categories[SelectedSite.Settings.Categories.Count - 1] is NextPageCategory)
+                        {
+                            SelectedSite.Settings.Categories[SelectedSite.Settings.Categories.Count - 1].ThumbnailImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png");
+                        }
 						listViewMain.ItemsSource = SelectedSite.Settings.Categories;
 						SelectAndFocusItem();
 						ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
@@ -193,6 +206,10 @@ namespace Standalone
 						if (ReactToResult(resultInfo, Translation.Instance.GettingDynamicCategories))
 						{
 							SelectedCategory = category;
+                            if (category.SubCategories != null && category.SubCategories.Count > 0 && category.SubCategories[category.SubCategories.Count - 1] is NextPageCategory)
+                            {
+                                category.SubCategories[category.SubCategories.Count - 1].ThumbnailImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png");
+                            }
 							listViewMain.ItemsSource = category.SubCategories;
 							SelectAndFocusItem();
 							ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
