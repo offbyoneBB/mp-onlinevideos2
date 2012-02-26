@@ -30,12 +30,12 @@ namespace OnlineVideos.Sites
                 if (YouTubeEntry.Rating != null)
                 {
                     properties.Add("Rating", YouTubeEntry.Rating.Average.ToString("F1", OnlineVideoSettings.Instance.Locale));
-                    properties.Add("NumRaters", YouTubeEntry.Rating.NumRaters.ToString());
+                    properties.Add("NumRaters", YouTubeEntry.Rating.NumRaters.ToString("N0", OnlineVideoSettings.Instance.Locale));
                 }
                 if (YouTubeEntry.Statistics != null)
                 {
-                    if (!string.IsNullOrEmpty(YouTubeEntry.Statistics.FavoriteCount)) properties.Add("FavoriteCount", YouTubeEntry.Statistics.FavoriteCount);
-                    if (!string.IsNullOrEmpty(YouTubeEntry.Statistics.ViewCount)) properties.Add("ViewCount", YouTubeEntry.Statistics.ViewCount);
+                    if (!string.IsNullOrEmpty(YouTubeEntry.Statistics.FavoriteCount)) properties.Add("FavoriteCount", int.Parse(YouTubeEntry.Statistics.FavoriteCount).ToString("N0", OnlineVideoSettings.Instance.Locale));
+                    if (!string.IsNullOrEmpty(YouTubeEntry.Statistics.ViewCount)) properties.Add("ViewCount", int.Parse(YouTubeEntry.Statistics.ViewCount).ToString("N0", OnlineVideoSettings.Instance.Locale));
                 }
                 return properties;
             }
