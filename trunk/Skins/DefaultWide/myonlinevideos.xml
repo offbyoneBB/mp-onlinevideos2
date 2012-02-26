@@ -259,6 +259,7 @@
       <textcolor>ffa9d0f7</textcolor>
       <visible>string.equals(#OnlineVideos.state, videos)</visible>
     </control>
+    
     <control>
       <description>Description</description>
       <type>textboxscrollup</type>
@@ -271,8 +272,10 @@
       <font>font10</font>
       <label>#OnlineVideos.desc</label>
       <textcolor>White</textcolor>
-      <visible>!Control.IsVisible(51)</visible>
+      <visible>!Control.IsVisible(51) + [string.equals(#OnlineVideos.ExtendedVideoInfo, False) | !string.equals(#OnlineVideos.selectedSiteUtil, YouTube)]</visible>
     </control>
+    
+    <import>myonlinevideos.extended.youtube.xml</import>
     
     <control>
       <description>Buffering Label</description>

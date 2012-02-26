@@ -270,8 +270,10 @@
       <colordiffuse>ffffffff</colordiffuse>      
       <label>#OnlineVideos.desc</label>
       <textcolor>White</textcolor>
-      <visible>!Control.IsVisible(51)</visible>
+      <visible>!Control.IsVisible(51) + [string.equals(#OnlineVideos.ExtendedVideoInfo, False) | !string.equals(#OnlineVideos.selectedSiteUtil, YouTube)]</visible>
     </control>
+    
+    <import>myonlinevideos.extended.youtube.xml</import>
     
     <control>
       <description>Buffering Label</description>

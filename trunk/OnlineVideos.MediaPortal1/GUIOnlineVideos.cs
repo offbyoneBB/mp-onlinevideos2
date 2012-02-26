@@ -132,7 +132,7 @@ namespace OnlineVideos.MediaPortal1
         public State CurrentState
         {
             get { return currentState; }
-            set { currentState = value; GUIPropertyManager.SetProperty("#OnlineVideos.state", value.ToString()); }
+            set { currentState = value; GUIPropertyManager.SetProperty("#OnlineVideos.state", value.ToString()); if (value != State.videos) ExtendedVideoInfo = false; }
         }
         #endregion
         #region SelectedSite
@@ -164,6 +164,14 @@ namespace OnlineVideos.MediaPortal1
                 GUIPropertyManager.SetProperty("#OnlineVideos.buffered", "0");
                 GUIPropertyManager.SetProperty("#OnlineVideos.IsBuffering", (value != null).ToString());
             }
+        }
+        #endregion
+        #region ExtendedVideoInfo
+        bool extendedVideoInfo = false;
+        public bool ExtendedVideoInfo
+        {
+            get { return extendedVideoInfo; }
+            set { extendedVideoInfo = value; GUIPropertyManager.SetProperty("#OnlineVideos.ExtendedVideoInfo", value.ToString()); }
         }
         #endregion
 
@@ -252,6 +260,7 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.currentDownloads", "0");
             CurrentState = State.sites;
+            ExtendedVideoInfo = false;
             // get last active module settings  
             using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
             {
@@ -889,6 +898,11 @@ namespace OnlineVideos.MediaPortal1
 						}, true, true);
 					}
 				}
+                else if (CurrentState == State.videos && actionType == Action.ActionType.ACTION_SHOW_INFO)
+                {
+                    // toggles showing detailed info about a selectected video - is automatically reset when leaving videos view
+                    ExtendedVideoInfo = !ExtendedVideoInfo;
+                }
             }
 			else if (control == GUI_infoList && CurrentState == State.details && 
 				(actionType == Action.ActionType.ACTION_SELECT_ITEM || actionType == Action.ActionType.ACTION_MUSIC_PLAY || actionType == Action.ActionType.ACTION_PLAY))
