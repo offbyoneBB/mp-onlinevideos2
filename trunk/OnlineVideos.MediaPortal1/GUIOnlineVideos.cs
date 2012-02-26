@@ -182,6 +182,8 @@ namespace OnlineVideos.MediaPortal1
 
         VideosMode currentVideosDisplayMode = VideosMode.Category;
 
+        List<OnlineVideosGuiListItem> currentFacadeItems = new List<OnlineVideosGuiListItem>();
+
         List<VideoInfo> currentVideoList = new List<VideoInfo>();
         List<VideoInfo> currentTrailerList = new List<VideoInfo>();
         Player.PlayList currentPlaylist = null;
@@ -637,12 +639,7 @@ namespace OnlineVideos.MediaPortal1
                         if (char.IsDigit(pressedChar) || (pressedChar == '\b' && !currentFilter.IsEmpty()))
                         {
                             currentFilter.Add(pressedChar);
-                            switch (CurrentState)
-                            {
-                                case State.sites: DisplaySites(); break;
-                                case State.categories: DisplayCategories(selectedCategory); break;
-                                case State.videos: SetVideosToFacade(currentVideoList, currentVideosDisplayMode); break;
-                            }
+                            FilterCurrentFacadeItems();
                             return;
                         }
                         else
@@ -1127,6 +1124,7 @@ namespace OnlineVideos.MediaPortal1
             selectedCategory = null;
             ResetSelectedSite();
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
+            currentFacadeItems.Clear();
 
             // set order by options
             GUI_btnOrderBy.Clear();
@@ -1184,6 +1182,7 @@ namespace OnlineVideos.MediaPortal1
                 loListItem.OnItemSelected += OnItemSelected;
                 MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                 GUI_facadeView.Add(loListItem);
+                currentFacadeItems.Add(loListItem);
             }
 
             int selectedSiteIndex = 0;  // used to remember the position of the last selected site
@@ -1202,6 +1201,7 @@ namespace OnlineVideos.MediaPortal1
                     if (loListItem.Item == SelectedSite) selectedSiteIndex = GUI_facadeView.Count;
                     loListItem.ItemId = GUI_facadeView.Count;
                     GUI_facadeView.Add(loListItem);
+                    currentFacadeItems.Add(loListItem);
                 }
             }
             SelectedMaxResultIndex = -1;
@@ -1324,6 +1324,7 @@ namespace OnlineVideos.MediaPortal1
 			}
 
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
+            currentFacadeItems.Clear();
 
             // add the first item that will go to the previous menu
             OnlineVideosGuiListItem loListItem;
@@ -1333,6 +1334,7 @@ namespace OnlineVideos.MediaPortal1
             loListItem.OnItemSelected += OnItemSelected;
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
             GUI_facadeView.Add(loListItem);
+            currentFacadeItems.Add(loListItem);
 
             Dictionary<string, bool> imageHash = new Dictionary<string, bool>();
             suggestedView = null;
@@ -1363,6 +1365,7 @@ namespace OnlineVideos.MediaPortal1
                         loListItem.OnItemSelected += OnItemSelected;
                         if (loCat == selectedCategory) categoryIndexToSelect = GUI_facadeView.Count; // select the category that was previously selected
                         GUI_facadeView.Add(loListItem);
+                        currentFacadeItems.Add(loListItem);
                     }
                 }
 
@@ -1734,6 +1737,8 @@ namespace OnlineVideos.MediaPortal1
             }
 
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
+            currentFacadeItems.Clear();
+
             // add the first item that will go to the previous menu
             OnlineVideosGuiListItem backItem = new OnlineVideosGuiListItem("..");
             backItem.ItemId = 0;
@@ -1741,6 +1746,7 @@ namespace OnlineVideos.MediaPortal1
             backItem.OnItemSelected += OnItemSelected;
             MediaPortal.Util.Utils.SetDefaultIcons(backItem);
             GUI_facadeView.Add(backItem);
+            currentFacadeItems.Add(backItem);
 
             // add the items
             Dictionary<string, bool> imageHash = new Dictionary<string, bool>();
@@ -1756,6 +1762,7 @@ namespace OnlineVideos.MediaPortal1
                 listItem.ItemId = GUI_facadeView.Count;
                 listItem.OnItemSelected += OnItemSelected;
                 GUI_facadeView.Add(listItem);
+                currentFacadeItems.Add(listItem);
 
                 if (listItem.Item == selectedVideo) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
                 if (!string.IsNullOrEmpty(videoInfo.ImageUrl)) imageHash[videoInfo.ImageUrl] = true;
@@ -1778,6 +1785,7 @@ namespace OnlineVideos.MediaPortal1
                 nextPageItem.ThumbnailImage = "OnlineVideos\\NextPage.png";
                 nextPageItem.OnItemSelected += OnItemSelected;
                 GUI_facadeView.Add(nextPageItem);
+                currentFacadeItems.Add(nextPageItem);
             }
 
             if (indextoSelect > -1 && indextoSelect < GUI_facadeView.Count) GUI_facadeView.SelectedListItemIndex = indextoSelect;
@@ -2638,21 +2646,31 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#OnlineVideos.currentDownloads", DownloadManager.Instance.Count.ToString());
         }
 
-        private bool FilterOut(String fsStr)
+        void FilterCurrentFacadeItems()
         {
-            if (fsStr == String.Empty)
+            currentFilter.StartMatching();
+            GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
+            foreach(var item in currentFacadeItems)
             {
-                return false;
+                if (currentFilter.Matches(item.Label))
+                {
+                    GUI_facadeView.Add(item);
+                }
             }
-            if (PluginConfiguration.Instance.FilterArray != null)
+            GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
+            GUIPropertyManager.SetProperty("#itemcount", GUI_facadeView.Count.ToString());
+        }
+
+        private bool FilterOut(string fsStr)
+        {
+            if (!string.IsNullOrEmpty(fsStr) && PluginConfiguration.Instance.FilterArray != null)
             {
-                foreach (String lsFilter in PluginConfiguration.Instance.FilterArray)
+                foreach (string lsFilter in PluginConfiguration.Instance.FilterArray)
                 {
                     if (fsStr.IndexOf(lsFilter, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        Log.Instance.Info("Filtering out:{0}\n based on filter:{1}", fsStr, lsFilter);
+                        Log.Instance.Debug("Filtering out '{0}' based on filter '{1}'", fsStr, lsFilter);
                         return true;
-                        //return false;
                     }
                 }
             }
