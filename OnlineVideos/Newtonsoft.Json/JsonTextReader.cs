@@ -132,6 +132,19 @@ namespace Newtonsoft.Json
                   char hexChar = Convert.ToChar(int.Parse(new string(hexValues), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo));
                   _buffer.Append(hexChar);
                   break;
+                case 'x':
+                  hexValues = new char[2];
+                  for (int i = 0; i < hexValues.Length; i++)
+                  {
+                      if ((currentChar = MoveNext()) != '\0' || !_end)
+                          hexValues[i] = currentChar;
+                      else
+                          throw CreateJsonReaderException("Unexpected end while parsing hexadecimal escape sequence. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+                  }
+
+                  hexChar = Convert.ToChar(int.Parse(new string(hexValues), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo));
+                  _buffer.Append(hexChar);
+                  break;
                 default:
                   throw CreateJsonReaderException("Bad JSON escape sequence: {0}. Line {1}, position {2}.", @"\" + currentChar, _currentLineNumber, _currentLinePosition);
               }
