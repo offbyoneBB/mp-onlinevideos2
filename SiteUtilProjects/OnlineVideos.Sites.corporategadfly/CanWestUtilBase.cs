@@ -243,9 +243,7 @@ namespace OnlineVideos.Sites
             // keep track of bitrates and URLs
             Dictionary<int, string> urlsDictionary = new Dictionary<int, string>();
 
-            string webData = GetWebData(video.VideoUrl);
-            XmlDocument xml = new XmlDocument();
-            xml.LoadXml(webData);
+            XmlDocument xml = GetWebData<XmlDocument>(video.VideoUrl);
 
             Log.Debug(@"SMIL loaded");
 
