@@ -1540,6 +1540,9 @@
     <Site name="DIY Network Canada" util="DIY" agecheck="false" enabled="true" lang="en">
       <Description>DIY Network Canada is the go-to destination for rip-up, knock-out home improvement television.</Description>
     </Site>
+    <Site name="TVO" util="TVO" agecheck="false" enabled="true" lang="en">
+      <Description>TVO is Ontario's public educational media organization and a trusted source of interactive educational content that informs, inspires, and stimulates curiosity and thought.</Description>
+    </Site>
     <Site name="4oD" util="Fourod" agecheck="false" enabled="true" lang="en">
       <Description>Catchup on all your favourite Channel 4 shows (only available in the UK).</Description>
       <Categories>
