@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.IO;
 using System.Net;
@@ -77,6 +78,13 @@ namespace OnlineVideos.AMF
             Properties.Add(key, value);
         }
 
+        public override string ToString()
+        {
+            return string.Format("[AMFObject Name={0}, Properties={1}]",
+                                 Name,
+                                 Properties.Aggregate(new StringBuilder(), (sb, kvp) => sb.AppendFormat("{0}='{1}' ", kvp.Key, kvp.Value)).ToString());
+        }
+                
         public AMFObject GetObject(string key)
         {
             if (Properties.ContainsKey(key))
@@ -220,6 +228,13 @@ namespace OnlineVideos.AMF
             {
                 return objs.Count;
             }
+        }
+        
+        public override string ToString()
+        {
+            return string.Format("[AMFArray Objs={0}, Strs={1}]",
+                                 objs != null ? objs.Aggregate(new StringBuilder(), (sb, item) => sb.AppendFormat("{0}, ", item)).ToString() : "",
+                                 strs != null ? strs.Aggregate(new StringBuilder(), (sb, kvp) => sb.AppendFormat("{0}='{1}' ", kvp.Key, kvp.Value)).ToString() : "");
         }
     }
 
