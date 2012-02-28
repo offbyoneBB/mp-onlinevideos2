@@ -14,6 +14,7 @@ namespace OnlineVideos.Sites
         private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
         private Regex savedRegEx_dynamicSubCategories;
         private Regex regExChannel;
+        private Regex regExSearchChannel;
         private Regex regExHtmlVideoList;
         private Regex regexPlayList;
         private string apiKey = "WCqz1q0T1d";
@@ -22,11 +23,12 @@ namespace OnlineVideos.Sites
         private Dictionary<String, String> timeFrameList = new Dictionary<string, string>();
         private int pageNr = 0;
         private bool fromHtml = false;
-        private enum MuzuType { None, Genres, AtoZ, Channels, Channel, PlayList };
+        private enum MuzuType { None, Genres, AtoZ, Channels, Channel, PlayList, SearchChannel, SearchVideo };
         public override int DiscoverDynamicCategories()
         {
             savedRegEx_dynamicSubCategories = regEx_dynamicSubCategories;
-            regExChannel = new Regex(@"<li>\s*<a\shref=""/[^/]*/(?<url>[^/]*)/[^""]*""\stitle=""[^""]*"">\s*<div\sclass=""v-thumb"">\s*<img\salt=""[^""]*""\ssrc=""(?<thumb>[^""]*)""[^>]*>\s*</div><!--/\.v-thumb-->\s*<div\sclass=""v-details"">\s*<h2>(?<title>[^<]*)</h2>\s*<h3>(?<description>[^<]*)</h3>\s*</div><!--/\.v-details\s-->\s*</a>\s*</li>", defaultRegexOptions);
+            regExChannel = new Regex(@"<li\sclass=""browseThumbs"">\s*<a\shref=""/[^/]*/(?<url>[^/]*)/[^""]*""\stitle=""[^""]*"">\s*<img\salt=""[^""]*""\ssrc=""(?<thumb>[^""]*)""\swidth=""112""\sheight=""63""\s/><br/>\s*<h2>(?<title>[^<]*)</h2>\s*<h3>(?<description>[^<]*)</h3>\s*</a>\s*</li>", defaultRegexOptions);
+            regExSearchChannel = new Regex(@"<li>\s*<a\sclass=""ch-item""\shref=""/(?<url>[^""]*)""\stitle=""[^>]*>\s*<div\sclass=""v-thumb"">\s*<img\ssrc=""(?<thumb>[^""]*)""[^>]*>\s*</div><!--/\.v-thumb-->\s*<div\sclass=""v-details"">\s*<h2>(?<title>[^<]*)</h2>\s*<span\sclass=""tag\sch-tag"">channel</span>\s*<p>(?<description>[^<]*)</p>\s*</div>\s*</a>\s*</li>", defaultRegexOptions);
             regExHtmlVideoList = new Regex(@"<li>\s*<a\stitle=""[^""]*""\shref=""/[^/]*/[^/]*/[^/]*/(?<VideoUrl>[^/]*)/"">\s*<img\salt=""[^""]*""\stitle=""[^""]*""\ssrc=""(?<ImageUrl>[^""]*)""\s/>\s*<span>(?<Title>[^<]*)</span>\s*</a>\s*</li>", defaultRegexOptions);
             regexPlayList = new Regex(@"<li\sclass=""note""\sdata-id=""(?<url>[^""]*)""\sdata-network-id=""(?<networkid>[^""]*)""\stitle=""[^""]*"">\s*<img\sheight=""42""\ssrc=""(?<thumb>[^""]*)""\swidth=""79""\s/>\s*<!--<h3>(?<description>[^<]*)</h3>\s*<h4>(?<title>[^<]*)</h4>\s*<h5><span\sclass=""count"">[^<]*</span>\svideos</h5>-->\s*</li>", defaultRegexOptions);
             orderByList = new Dictionary<String, String>() {{"Views", "views"},
@@ -110,9 +112,23 @@ namespace OnlineVideos.Sites
             switch ((MuzuType)parentCategory.Other)
             {
                 case MuzuType.Channels:
+                case MuzuType.SearchChannel:
                     {
-                        regEx_dynamicSubCategories = regExChannel;
-                        dynamicSubCategoryUrlFormatString = baseUrl + @"{0}/music-videos/";
+                        string url;
+                        if ((MuzuType)parentCategory.Other == MuzuType.Channels)
+                        {
+                            regEx_dynamicSubCategories = regExChannel;
+                            url = GetRedirectedUrl(((RssLink)parentCategory).Url);
+                            dynamicSubCategoryUrlFormatString = baseUrl + @"{0}/music-videos/";
+                        }
+                        else
+                        {
+                            regEx_dynamicSubCategories = regExSearchChannel;
+                            url = ((RssLink)parentCategory).Url;
+                            dynamicSubCategoryUrlFormatString = baseUrl + @"{0}music-videos/";
+                        }
+
+                        data = GetWebData(url);
                         res = base.ParseSubCategories(parentCategory, data);
                         if (parentCategory.SubCategories.Count > 0)
                         {
@@ -156,8 +172,27 @@ namespace OnlineVideos.Sites
         public override List<ISearchResultItem> DoSearch(string query)
         {
             pageNr = 0;
-            string url = baseUrl + String.Format("api/search?mySearch={0}&", HttpUtility.UrlEncode(query));
-            return lowGetVideoList(url, "views", "7", false).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            string url = baseUrl + String.Format("search?mySearch={0}&", HttpUtility.UrlEncode(query));
+            url = GetRedirectedUrl(url);
+
+            List<ISearchResultItem> result = new List<ISearchResultItem>();
+            RssLink cat = new RssLink()
+            {
+                Name = "Channels",
+                Url = url,
+                HasSubCategories = true,
+                Other = MuzuType.SearchChannel
+            };
+            result.Add(cat);
+
+            cat = new RssLink()
+            {
+                Name = "Videos",
+                Other = MuzuType.SearchVideo,
+                Url = url
+            };
+            result.Add(cat);
+            return result;
         }
 
         public override VideoInfo CreateVideoInfo()
@@ -175,9 +210,10 @@ namespace OnlineVideos.Sites
                 res = base.Parse(url, GetWebData(url));
                 foreach (VideoInfo video in res)
                 {
-                    video.PlaybackOptions = new Dictionary<string, string>();
-                    video.PlaybackOptions.Add("lq", video.VideoUrl + "&videoType=1");
-                    video.PlaybackOptions.Add("hq", video.VideoUrl + "&videoType=2");
+                    Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
+                    playbackOptions.Add("lq", video.VideoUrl + "&videoType=1");
+                    playbackOptions.Add("hq", video.VideoUrl + "&videoType=2");
+                    video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(playbackOptions);
                 }
                 if (nextPageUrl.EndsWith("?vo=0") || nextPageUrl.Equals(oldnextUrl))
                 {
@@ -195,22 +231,22 @@ namespace OnlineVideos.Sites
                 res = new List<VideoInfo>();
                 foreach (XmlNode node in doc.SelectNodes("videos/video"))
                 {
+                    Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
                     VideoInfo video = new MuzuTVVideoInfo();
                     video.Title = node.SelectSingleNode("artistname").InnerText + ":" + node.SelectSingleNode("title").InnerText;
                     video.Description = node.SelectSingleNode("description").InnerText;
                     video.Length = node.Attributes["duration"].Value;
                     video.Airdate = node.Attributes["releasedate"].Value;
                     if (video.Length == "0") video.Length = null;
-                    video.PlaybackOptions = new Dictionary<string, string>();
                     string turl = baseUrl + "player/playAsset?assetId=" + node.Attributes["id"].Value + "&videoType=";
-                    video.PlaybackOptions.Add("lq", turl + "1");
-                    video.PlaybackOptions.Add("hq", turl + "2");
+                    playbackOptions.Add("lq", turl + "1");
+                    playbackOptions.Add("hq", turl + "2");
                     video.VideoUrl = turl + "2";
 
                     XmlNode thumb = node.SelectSingleNode("thumbnails/image[@type='6']");
                     if (thumb != null)
                         video.ImageUrl = thumb.SelectSingleNode("url").InnerText;
-
+                    video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(playbackOptions);
                     res.Add(video);
                 }
                 if (res.Count == pageSize)
@@ -230,7 +266,7 @@ namespace OnlineVideos.Sites
         {
             pageNr = 0;
             return lowGetVideoList(((RssLink)category).Url, "views", "7",
-                MuzuType.Channel.Equals(category.Other) || MuzuType.PlayList.Equals(category.Other));
+                MuzuType.Channel.Equals(category.Other) || MuzuType.PlayList.Equals(category.Other) || MuzuType.SearchVideo.Equals(category.Other));
         }
 
         public override List<VideoInfo> getNextPageVideos()

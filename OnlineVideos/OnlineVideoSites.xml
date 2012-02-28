@@ -1256,7 +1256,8 @@
         <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<li\sid="next">\s*<a\shref='(?<url>[^']*)'>Next</a>\s*</li>]]></item>
         <item key="videoListRegEx"><![CDATA[(<li>\s*<a\stitle="[^"]*"\shref="/[^/]*/[^/]*/[^/]*/(?<VideoUrl>[^/]*)/">\s*<img\salt="[^"]*"\stitle="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*<span>(?<Title>[^<]*)</span>\s*</a>\s*</li>)(?#videos of one channel)
         |
-        (<li\sdata-id="(?<VideoUrl>[^"]*)">\s*<h4>(?<Title>[^<]*)</h4>\s*</li>)(?#videos of one playlist)]]></item>
+        (<li\sdata-id="(?<VideoUrl>[^"]*)">\s*<h4>(?<Title>[^<]*)</h4>\s*</li>)(?#videos of one playlist)
+        |(<li>\s*<a\shref="[^>]*>\s*<div\sclass="v-thumb\scanAddToPlaylist"\sdata-id="(?<VideoUrl>[^"]*)">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div><!--/\.v-thumb-->\s*<div\sclass="v-details">\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Description>[^<]*)</p>\s*<ul>\s*<li><span>(?<Duration>[^<]*)</span></li>\s*<li>[^<]*</li>\s*<li>(?<Airdate>[^<]*)</li>\s*</ul>\s*</div><!--\sv-details\s-->\s*</a>\s*</li>)(?#videos of search)]]></item>
         <item key="videoListRegExFormatString"><![CDATA[player/playAsset?assetId={0}]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\sid="next">\s*<a\shref="(?<url>[^"]*)">Next</a>\s*</li>]]></item>
       </Configuration>
