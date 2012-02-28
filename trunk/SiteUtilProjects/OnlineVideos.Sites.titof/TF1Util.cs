@@ -75,24 +75,84 @@ namespace OnlineVideos.Sites
             cat.Name = "Jeunesse";
             cat.HasSubCategories = true;
             Settings.Categories.Add(cat);
-        
+
+            cat = new RssLink();
+            cat.Url = "http://www.tf1.fr/programmes-tv-jeunesse/index-UyBUSVRSRQ==.html";
+            cat.Name = "Jeunesse (Tous)";
+            cat.HasSubCategories = true;
+            Settings.Categories.Add(cat);
+
             Settings.DynamicCategoriesDiscovered = true;
 
-            return 9;
+            return 10;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategories = new List<Category>();
-                
-           
             List<RssLink> listDates = new List<RssLink>();
-            string webData = GetWebData((parentCategory as RssLink).Url);
 
-            Regex r = new Regex(@"<li\sclass=""prg.*?"">.*?<img\ssrc=""(?<thumb>[^""]*)""\salt=""[^""]*""></a><h2\sclass=""t4\sf1""><a\sclass=""cc""\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></h2>",
+            string webData = GetWebData((parentCategory as RssLink).Url);
+            Regex r = null;
+            Match m = null;
+
+            if (parentCategory.Name.Equals("Jeunesse (Tous)"))
+            {
+                r = new Regex(@"(?<=<a\shref=""/programmes-tv-jeunesse/""\s>\sAccueil.*)(?<!MultiUnesCategories.*)<li.*?class=""[^""]*"">.*?<a.*?href=""(?<url>[^""]*)"".*?>(?<title>[^<]*)</a>.*?</li>",
+                    RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+
+                m = r.Match(webData);
+                while (m.Success)
+                {
+                    if (m.Groups["url"].Value.StartsWith("http"))
+                    {
+                        RssLink date = new RssLink();
+                        date.Url = m.Groups["url"].Value;
+                        date.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+                        date.ParentCategory = parentCategory;
+                        listDates.Add(date);
+                    }
+                    
+                    m = m.NextMatch();
+                }
+
+                parentCategory.SubCategories.AddRange(listDates.ToArray());
+
+                return listDates.Count;
+            }
+            else if (parentCategory.Name.Equals("Jeunesse"))
+            {
+                r = new Regex(@"<div\sclass=""visuel"">\s<a\sonmousedown=""[^""]*""\shref=""[^""]*""\s*rel=""nofollow""><img\ssrc=""(?<thumb>[^""]*)""\salt=""[^""]*""\scp=""[^""]*""></a>\s</div>\s</div>\s<div\sclass=""[^""]*"">\s<h3\sclass=""[^""]*""><a\shref=""(?<url>[^""]*)""\sclass=""[^""]*"">(?<title>[^<]*)</a></h3>",
+                 RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+
+                m = r.Match(webData);
+                while (m.Success)
+                {
+                    if (m.Groups["url"].Value.StartsWith("http"))
+                    {
+                        RssLink date = new RssLink();
+                        date.Url = m.Groups["url"].Value;
+                        date.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+                        date.Thumb = m.Groups["thumb"].Value;
+                        date.ParentCategory = parentCategory;
+                        listDates.Add(date);
+                    }
+
+                    m = m.NextMatch();
+                }
+
+                parentCategory.SubCategories.AddRange(listDates.ToArray());
+
+                return listDates.Count;
+            }
+
+            
+
+
+            r = new Regex(@"<li\sclass=""prg.*?"">.*?<img\ssrc=""(?<thumb>[^""]*)""\salt=""[^""]*""></a><h2\sclass=""t4\sf1""><a\sclass=""cc""\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></h2>",
                 RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             
-            Match m = r.Match(webData);
+            m = r.Match(webData);
             while (m.Success)
             {
                 RssLink date = new RssLink();
@@ -177,7 +237,7 @@ namespace OnlineVideos.Sites
 
             }
 
-           string regex_Type1 = @"rel=""nofollow"">.*?<img\ssrc=""(?<thumb>[^""]*)""\scp=""[^""]*""\salt=""[^""]*""\sclass=""[^""]*"">.*?</a>\s<a\sonmousedown=""[^""]*""\shref=""\#""\s*class=""duree.*?""\srel=""nofollow"">(?<duree>[^<]*)<span\sclass=""[^""]*"">[^<]*</span></a>\s</div>\s<div\sclass=""[^""]*"">\s<div\sclass=""[^""]*"">\s<span\sclass=""[^""]*""\sstyle=""[^""]*"">[^<]*</span>.*?<span>.*?</span>.*?<span><img\ssrc=""[^""]*""\salt=""""\sclass=""[^""]*"">[^<]*</span>\s</div>\s<h3\sclass=""[^""]*"">.*?<a\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a>.*?</h3>\s<p\sclass=""[^""]*"">(?<description>[^<]*)</p>";
+            string regex_Type1 = @"rel=""nofollow"">.*?<img\ssrc=""(?<thumb>[^""]*)""\scp=""[^""]*""\salt=""[^""]*""\sclass=""[^""]*"">.*?</a>\s<a\sonmousedown=""[^""]*""\shref=""\#""\s*class=""duree.*?""\srel=""nofollow"">(?<duree>[^<]*)<span\sclass=""[^""]*"">[^<]*</span></a>\s</div>\s<div\sclass=""[^""]*"">\s<div\sclass=""[^""]*"">\s<span\sclass=""[^""]*""\sstyle=""[^""]*"">[^<]*</span>.*?</span>.*?<h3\sclass=""[^""]*"">.*?<a\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a>.*?</h3>\s<p\sclass=""[^""]*"">(?<description>[^<]*)</p>";
             
             Regex r = new Regex(regex_Type1,
                 RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
