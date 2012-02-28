@@ -19,26 +19,26 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {           
             RssLink cat = new RssLink();
-            cat.Url = baseUrl + "/jt/";
-            cat.Name = "JT";
+            cat.Url = baseUrl + "/info/";
+            cat.Name = "Info";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = baseUrl + "/decouverte/";
-            cat.Name = "Découverte";
+            cat.Url = baseUrl + "/documentaire/";
+            cat.Name = "Documentaire";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = baseUrl + "/series---fictions/";
-            cat.Name = "Séries - Fictions";
+            cat.Url = baseUrl + "/serie--fiction/";
+            cat.Name = "Série & Fiction";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = baseUrl + "/vie-pratique/";
-            cat.Name = "Vie pratique";
+            cat.Url = baseUrl + "/magazine/";
+            cat.Name = "Magazine";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
@@ -49,14 +49,8 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = baseUrl + "/actu---societe/";
-            cat.Name = "Actu - Société";
-            cat.HasSubCategories = false;
-            Settings.Categories.Add(cat);
-
-            cat = new RssLink();
-            cat.Url = baseUrl + "/ludo/";
-            cat.Name = "Ludo";
+            cat.Url = baseUrl + "/jeunesse/";
+            cat.Name = "Jeunesse";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
@@ -67,9 +61,27 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = baseUrl + "/sports/";
-            cat.Name = "Sports";
+            cat.Url = baseUrl + "/sport/";
+            cat.Name = "Sport";
             cat.HasSubCategories = false;
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink();
+            cat.Url = baseUrl + "/jeu/";
+            cat.Name = "Jeu";
+            cat.HasSubCategories = false;
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink();
+            cat.Url = baseUrl + "/autre/";
+            cat.Name = "Autre";
+            cat.HasSubCategories = false;
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink();
+            cat.Url = "/la_1ere/";
+            cat.Name = "La 1ère";
+            cat.HasSubCategories = true;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
@@ -104,7 +116,7 @@ namespace OnlineVideos.Sites
         
             Settings.DynamicCategoriesDiscovered = true;
 
-            return 14;
+            return Settings.Categories.Count;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
@@ -135,11 +147,42 @@ namespace OnlineVideos.Sites
             List<string> listUrls = new List<string>();
 
             string webData = GetWebData(video.VideoUrl);
-            string id = Regex.Match(webData, @"<a\shref=""http://info\.francetelevisions\.fr/\?id-video=(?<url>[^""]*)""\sid=""current_video""\sclass=""video""\stype=""video/cappuccino"">").Groups["url"].Value;
+            string id = Regex.Match(webData, @"<a\shref=""http://info\.francetelevisions\.fr/\?id-video=(?<url>[^""]*)""").Groups["url"].Value;
 
+            //webData = GetWebData(baseUrl + "/appftv/webservices/video/getInfosOeuvre.php?mode=zeri&id-diffusion=" + id);
             webData = GetWebData(baseUrl + "/appftv/webservices/video/getInfosVideo.php?src=cappuccino&video-type=simple&template=ftvi&template-format=complet&id-externe=" + id);
+           
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(webData);
+
+            //Recupère le lien du manifest
+            //string manifest = doc.SelectSingleNode("/oeuvre/videos/video/url").InnerText;
+            //manifest = "http://hdfauth.francetv.fr/esi/urltokengen2.html?url=" + manifest.Substring(manifest.IndexOf("/z/"), manifest.Length - manifest.IndexOf("/z/"));
+
+            //string manifestUrl = GetWebData(manifest);
+            //string manifestFile = GetWebData(manifestUrl);
+
+            //doc = new XmlDocument();
+            //doc.LoadXml(manifestFile);
+           
+            //XmlNodeList list = doc.GetElementsByTagName("manifest");
+
+            //foreach (XmlNode n in list[0].ChildNodes)
+            //{
+            //    if (n.Name.Equals("media"))
+            //    {
+            //        int i = 1;
+            //        string url = n.Attributes["url"].Value;
+            //        Log.Info("url : " + url);
+            //        string urlPart = manifestUrl.Substring(0, manifestUrl.IndexOf("manifest.f4m")) + url + "Seg1-Frag" + i;
+            //        i++;
+            //        Log.Info("urlPart : " + urlPart);
+            //        listUrls.Add(urlPart);
+            //    }
+
+            //}
+
+
             string ficName = doc.SelectSingleNode("/element/video/fichiers/fichier/nom").InnerText;
             string ficPath = doc.SelectSingleNode("/element/video/fichiers/fichier/chemin").InnerText;
             string prefix = "";
