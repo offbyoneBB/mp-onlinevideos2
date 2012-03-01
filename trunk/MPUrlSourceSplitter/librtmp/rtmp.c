@@ -499,6 +499,8 @@ static struct urlopt {
   	"Buffer time in milliseconds" },
   { AVC("timeout"),   OFF(Link.timeout),       OPT_INT, 0,
   	"Session timeout in seconds" },
+  { AVC("auth"),      OFF(Link.auth),          OPT_STR, 0,
+  	"Authentication string to be appended to the connect string" },
   { {NULL,0}, 0, 0}
 };
 
@@ -718,6 +720,11 @@ int RTMP_SetupURL(RTMP *r, char *url)
     ret = RTMP_SetOpt(r, &opt, &arg);
     if (!ret)
       return ret;
+  }
+
+  if (r->Link.auth.av_len)
+  {
+    r->Link.lFlags |= RTMP_LF_AUTH;
   }
 
   if (!r->Link.tcUrl.av_len)

@@ -150,6 +150,14 @@ namespace OnlineVideos.MPUrlSourceFilter
         public String FlashVersion { get; set; }
 
         /// <summary>
+        /// Gets or sets the authentication string to be appended to the connect string.
+        /// </summary>
+        /// <remarks>
+        /// <para>The default value is <see langword="null"/>.</para>
+        /// </remarks>
+        public String Auth { get; set; }
+
+        /// <summary>
         /// Gets or sets the playpath.
         /// </summary>
         /// <remarks>
@@ -353,6 +361,11 @@ namespace OnlineVideos.MPUrlSourceFilter
                 parameters.Add(new Parameter(RtmpUrl.ParameterFlashVer, this.FlashVersion));
             }
 
+            if (this.Auth != RtmpUrl.DefaultAuth)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterAuth, this.Auth));
+            }
+
             if (this.ArbitraryData.Count != 0)
             {
                 parameters.Add(new Parameter(RtmpUrl.ParameterArbitraryData, this.ArbitraryData.ToString()));
@@ -466,6 +479,8 @@ namespace OnlineVideos.MPUrlSourceFilter
 
         protected static String ParameterFlashVer = "RtmpFlashVer";
 
+        protected static String ParameterAuth = "RtmpAuth";
+
         protected static String ParameterArbitraryData = "RtmpArbitraryData";
 
         // session parameters of RTMP protocol
@@ -517,6 +532,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         public static String DefaultPageUrl = null;
         public static String DefaultSwfUrl = null;
         public static String DefaultFlashVersion = null;
+        public static String DefaultAuth = null;
         public static String DefaultPlayPath = null;
         public const Boolean DefaultPlaylist = false;
         public const Boolean DefaultLive = false;

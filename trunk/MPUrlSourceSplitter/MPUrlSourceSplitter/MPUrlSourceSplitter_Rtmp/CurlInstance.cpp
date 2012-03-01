@@ -42,6 +42,7 @@ CCurlInstance::CCurlInstance(CLogger *logger, wchar_t *url, wchar_t *protocolNam
   this->rtmpArbitraryData = RTMP_ARBITRARY_DATA_DEFAULT;
   this->rtmpBuffer = RTMP_BUFFER_DEFAULT;
   this->rtmpFlashVersion = RTMP_FLASH_VER_DEFAULT;
+  this->rtmpAuth = RTMP_AUTH_DEFAULT;
   this->rtmpJtv = RTMP_JTV_DEFAULT;
   this->rtmpLive = RTMP_LIVE_DEFAULT;
   this->rtmpPageUrl = RTMP_PAGE_URL_DEFAULT;
@@ -74,6 +75,7 @@ CCurlInstance::~CCurlInstance(void)
   FREE_MEM(this->rtmpApp);
   FREE_MEM(this->rtmpArbitraryData);
   FREE_MEM(this->rtmpFlashVersion);
+  FREE_MEM(this->rtmpAuth);
   FREE_MEM(this->rtmpJtv);
   FREE_MEM(this->rtmpPageUrl);
   FREE_MEM(this->rtmpPlayPath);
@@ -134,6 +136,10 @@ bool CCurlInstance::Initialize(void)
       if (this->rtmpFlashVersion != RTMP_FLASH_VER_DEFAULT)
       {
         this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_FLASHVER, this->rtmpFlashVersion, true);
+      }
+      if (this->rtmpAuth != RTMP_AUTH_DEFAULT)
+      {
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_AUTH, this->rtmpAuth, true);
       }
       if (this->rtmpJtv != RTMP_JTV_DEFAULT)
       {
@@ -416,6 +422,12 @@ void CCurlInstance::SetRtmpFlashVersion(const wchar_t *rtmpFlashVersion)
 {
   FREE_MEM(this->rtmpFlashVersion);
   this->rtmpFlashVersion = Duplicate(rtmpFlashVersion);
+}
+
+void CCurlInstance::SetRtmpAuth(const wchar_t *rtmpAuth)
+{
+  FREE_MEM(this->rtmpAuth);
+  this->rtmpAuth = Duplicate(rtmpAuth);
 }
 
 void CCurlInstance::SetRtmpArbitraryData(const wchar_t *rtmpArbitraryData)

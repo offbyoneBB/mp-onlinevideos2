@@ -224,3 +224,19 @@ if ((r->Link.seekTime > 0) && (r->m_bPlaying))
 RTMP_Log(r, RTMP_LOGDEBUG, "ConnectStream(): End");
 
 --------------------------------------------
+
+Comment: in options[] array add auth option before { {NULL,0}, 0, 0}
+Code:
+
+{ AVC("auth"),      OFF(Link.auth),          OPT_STR, 0,
+"Authentication string to be appended to the connect string" },
+
+--------------------------------------------
+
+Comment: in RTMP_SetupURL() method add changing flags when auth string is appended (before if (!r->Link.tcUrl.av_len) { ... } )
+Code:
+
+if (r->Link.auth.av_len)
+{
+  r->Link.lFlags |= RTMP_LF_AUTH;
+}

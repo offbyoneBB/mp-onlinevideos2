@@ -63,6 +63,9 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"RTMP", L"RTMPT", L
 // Version of the Flash plugin used to run the SWF player. The default is "WIN 10,0,32,18".
 #define PARAMETER_NAME_RTMP_FLASHVER                              L"RtmpFlashVer"
 
+// Authentication string to be appended to the connect string
+#define PARAMETER_NAME_RTMP_AUTH                                  L"RtmpAuth"
+
 // Append arbitrary AMF data to the Connect message.
 // The type must be B for Boolean, N for number, S for string, O for object, or Z for null.
 // For Booleans the data must be either 0 or 1 for FALSE or TRUE, respectively.
