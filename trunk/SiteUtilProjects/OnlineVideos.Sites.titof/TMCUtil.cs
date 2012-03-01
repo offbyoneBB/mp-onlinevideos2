@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videoList = new List<VideoInfo>();
             
             string webData = GetWebData(((RssLink)category).Url);
-            Regex reg = new Regex(@"rel=""nofollow"">\s<img\ssrc=""(?<ImageUrl>[^""]*)""\scp=""[^""]*""\salt=""[^""]*"">\s</a>\s<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""[^""]*""><div\sclass=""left"">(?<Duration>[^<]*)</div></a>\s</div>\s<div\sclass=""[^""]*"">\s<div\sclass=""[^""]*"">\s<span\sclass=""[^""]*""\sstyle=""[^""]*"">[^<]*</span>[^<]*<span>[^<]*</span>[^<]*<span><img\ssrc=""[^""]*""\salt=""[^""]*""\sclass=""[^""]*"">[^<]*</span>\s</div>\s<h3\sclass=""[^""]*"">\s<a\shref=""[^""]*"">(?<Title>[^<]*)</a>\s</h3>\s<p\sclass=""[^""]*"">(?<Description>[^<]*)</p>",
+            Regex reg = new Regex(@"rel=""nofollow"">.*?<img\ssrc=""(?<ImageUrl>[^""]*)""\scp=""[^""]*""\salt=""[^""]*"">.*?</a>.*?<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""[^""]*"">(?:<div\sclass=""left"">)?(?<Duration>[^<]*).*?href=""[^""]*"">(?<Title>[^<]*)</a>.*?</h3>.*?<p\sclass=""[^""]*"">(?<Description>[^<]*)</p>",
             RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             Match m = reg.Match(webData);
 
@@ -51,7 +51,7 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo videoInfo = CreateVideoInfo();
                 videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
-                videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
+                videoInfo.VideoUrl = ((RssLink)category).Url + m.Groups["VideoUrl"].Value;
                 videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                 videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
                 videoInfo.Description = m.Groups["Description"].Value;
