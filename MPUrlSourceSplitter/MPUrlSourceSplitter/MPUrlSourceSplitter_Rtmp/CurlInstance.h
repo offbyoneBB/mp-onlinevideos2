@@ -52,6 +52,7 @@
 #define RTMP_PAGE_URL_DEFAULT                               NULL
 #define RTMP_SWF_URL_DEFAULT                                NULL
 #define RTMP_FLASH_VER_DEFAULT                              NULL
+#define RTMP_AUTH_DEFAULT                                   NULL
 #define RTMP_ARBITRARY_DATA_DEFAULT                         NULL
 #define RTMP_PLAY_PATH_DEFAULT                              NULL
 #define RTMP_PLAYLIST_DEFAULT                               false
@@ -74,6 +75,7 @@
 #define RTMP_TOKEN_PAGE_URL                                 L"pageUrl"
 #define RTMP_TOKEN_SWF_URL                                  L"swfUrl"
 #define RTMP_TOKEN_FLASHVER                                 L"flashVer"
+#define RTMP_TOKEN_AUTH                                     L"auth"
 
 // arbitrary data are passed as they are = they MUST be escaped
 // so no token for abitrary data is needed
@@ -170,6 +172,7 @@ public:
   void SetRtmpPageUrl(const wchar_t *rtmpPageUrl);
   void SetRtmpSwfUrl(const wchar_t *rtmpSwfUrl);
   void SetRtmpFlashVersion(const wchar_t *rtmpFlashVersion);
+  void SetRtmpAuth(const wchar_t *rtmpAuth);
   void SetRtmpArbitraryData(const wchar_t *rtmpArbitraryData);
   void SetRtmpPlayPath(const wchar_t *rtmpPlayPath);
   void SetRtmpPlaylist(bool rtmpPlaylist);
@@ -217,6 +220,9 @@ private:
   // version of the Flash plugin used to run the SWF player
   // if not NULL than overrides the default flash version "LNX 10,0,32,18"
   wchar_t *rtmpFlashVersion;
+
+  // authentication string to be appended to the connect string
+  wchar_t *rtmpAuth;
 
   // if not NULL, than append arbitrary AMF data to the Connect message
   wchar_t *rtmpArbitraryData;
