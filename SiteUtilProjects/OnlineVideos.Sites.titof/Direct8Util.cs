@@ -22,9 +22,8 @@ namespace OnlineVideos.Sites
             List<string> listUrls = new List<string>();
             string webData = GetWebData(video.VideoUrl);
             string url = Regex.Match(webData, @"<script\stype=""text/javascript""\ssrc=""http://direct8\.hexaglobe\.com/player(?<url>[^""]*)""></script>").Groups["url"].Value;
-            webData = GetWebData(@"http://direct8.hexaglobe.com/player" + url);
-            string baseUrl = Regex.Match(webData, @"baseUrl:\s'(?<url>[^']*)',").Groups["url"].Value;
-
+            webData = GetWebData(@"http://direct8.hexaglobe.com/player" + url, null, video.VideoUrl);
+            string baseUrl = Regex.Match(webData, @"baseUrl:.*?'(?<url>[^']*)'").Groups["url"].Value;
             Match m = Regex.Match(webData, @"url\s:\s'(?<url>[^']*)'");
             while (m.Success)
             {
