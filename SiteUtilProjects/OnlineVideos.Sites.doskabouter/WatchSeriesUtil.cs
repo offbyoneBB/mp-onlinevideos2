@@ -558,7 +558,13 @@ namespace OnlineVideos.Sites
                 percentage = -1;
             }
             server = ser.TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }).Trim();
-            int i = server.LastIndexOf(".");
+            int i = server.IndexOf(" ");
+            if (i >= 0)
+            {
+                extra = server.Substring(i + 1);
+                server = server.Substring(0, i);
+            }
+            i = server.LastIndexOf(".");
             if (i >= 0)
                 server = server.Substring(0, i);
             url = aUrl;

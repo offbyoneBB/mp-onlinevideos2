@@ -245,6 +245,22 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string tmp = base.getUrl(video);
+            Dictionary<string, string> newPlaybackOptions = new Dictionary<string, string>();
+            if (video.PlaybackOptions == null)
+                newPlaybackOptions.Add("100%justone", tmp);
+            else
+            {
+                foreach (KeyValuePair<string, string> kv in video.PlaybackOptions)
+                {
+                    string newName;
+                    if (kv.Key.StartsWith("glink "))
+                        newName = kv.Key.Substring(5) + " on google";
+                    else
+                        newName = kv.Key.Substring(4);
+                    newPlaybackOptions.Add(newName, kv.Value);
+                }
+            }
+            video.PlaybackOptions = newPlaybackOptions;
             return WatchSeriesUtil.SortPlaybackOptions(video, baseUrl, tmp, 0, true);
         }
 
