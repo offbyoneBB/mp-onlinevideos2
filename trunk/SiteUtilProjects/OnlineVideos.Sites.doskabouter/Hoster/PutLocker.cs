@@ -34,7 +34,7 @@ namespace OnlineVideos.Hoster
             if (string.IsNullOrEmpty(data)) return string.Empty;
 
             string dlLink = string.Empty;
-                
+
             dlLink = getRegExData(@"<a href=""/gopro\.php"">Tired of ads and waiting\? Go Pro\!</a>[\t\n\rn ]+</div>[\t\n\rn ]+<a href=""(?<link>/.*?)""", data, "link");
 
             if (string.IsNullOrEmpty(dlLink))
@@ -44,7 +44,7 @@ namespace OnlineVideos.Hoster
 
             if (string.IsNullOrEmpty(dlLink))
             {
-                dlLink = getRegExData(@"playlist: \'(?<link>/get_file\.php\?stream=[A-Za-z0-9]+)\'", data, "link");
+                dlLink = getRegExData(@"playlist: \'(?<link>/get_file\.php\?stream=[A-Za-z0-9=]+)\'", data, "link");
                 if (!string.IsNullOrEmpty(dlLink))
                 {
                     string tempLink = new Uri(new Uri(string.Format("{0}{1}", "http://www.", getHosterUrl())), dlLink).AbsoluteUri;
@@ -65,7 +65,7 @@ namespace OnlineVideos.Hoster
             }
 
             if (new System.Uri(dlLink).IsAbsoluteUri) return dlLink;
-            else return new Uri(new Uri(string.Format("{0}{1}", "http://www.", getHosterUrl())), dlLink).AbsoluteUri; 
+            else return new Uri(new Uri(string.Format("{0}{1}", "http://www.", getHosterUrl())), dlLink).AbsoluteUri;
         }
 
         public override string getVideoUrls(string url)
