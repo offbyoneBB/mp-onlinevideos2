@@ -592,7 +592,14 @@ namespace OnlineVideos.MediaPortal1.Player
                 {
                     // wait 5 seconds for the graph to transition to the running state
                     FilterState filterState;
-                    hr = mediaCtrl.GetState(5000, out filterState);
+                    DateTime startTime = DateTime.Now;
+                    do
+                    {
+                        hr = mediaCtrl.GetState(10, out filterState);
+                        Thread.Sleep(1);
+                    }
+                    while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds < 6));
+                    //hr = mediaCtrl.GetState(5000, out filterState);
                     if (hr != 0) // S_OK
                     {
                         DsError.ThrowExceptionForHR(hr);
