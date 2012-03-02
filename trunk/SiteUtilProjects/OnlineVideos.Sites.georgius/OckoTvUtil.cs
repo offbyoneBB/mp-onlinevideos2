@@ -79,7 +79,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(OckoTvUtil.baseUrl);
+            String baseWebData = SiteUtilBase.GetWebData(OckoTvUtil.baseUrl, null, null, null, true);
 
             int index = baseWebData.IndexOf(OckoTvUtil.dynamicCategoryStart);
             if (index > 0)
