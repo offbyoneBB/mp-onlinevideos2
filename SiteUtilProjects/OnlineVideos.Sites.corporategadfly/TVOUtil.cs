@@ -7,6 +7,7 @@ using System.Web;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using OnlineVideos.AMF;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
@@ -284,24 +285,11 @@ namespace OnlineVideos.Sites
                         string playPath = leftover.Substring(0, leftover.IndexOf('&'));;
                         Log.Debug(@"rtmpUrl: {0}, PlayPath: {1}, App: {2}, Auth: {3}", rtmpUrl, playPath, app, auth);
                         
-                        // --auth xxxxxx data can be expressed equivalently as arbitrary data -C B:0 -C S:xxxxxx (boolean followed by string)
-                        /*
-                        RtmpObjectArbitraryData arbitraryData = new RtmpObjectArbitraryData();
-                        arbitraryData.Objects.Add(new RtmpBooleanArbitraryData(false));
-                        arbitraryData.Objects.Add(new RtmpStringArbitraryData(auth));
-                        
-                        RtmpUrl rtmp = new MPUrlSourceFilter.RtmpUrl(rtmpUrl) {
-                            PlayPath = playPath,
-                            App = app};
-                        rtmp.ArbitraryData.Add(arbitraryData);                       
-                        */
-                        string rtmp = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                                                       string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&app={1}&playpath={2}&auth={3}",
-                                                                                     HttpUtility.UrlEncode(rtmpUrl),
-                                                                                     HttpUtility.UrlEncode(app),
-                                                                                     HttpUtility.UrlEncode(playPath),
-                                                                                     HttpUtility.UrlEncode(auth)));
-                         video.PlaybackOptions.Add(optionKey, rtmp.ToString());
+                         video.PlaybackOptions.Add(optionKey, new RtmpUrl(rtmpUrl) {
+                                                     PlayPath = playPath,
+                                                     App = app,
+                                                     Auth = auth
+                                                  }.ToString());
                     }
                 }
 
