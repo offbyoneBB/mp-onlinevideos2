@@ -60,7 +60,8 @@
     <Compile Include="SliceUtil.cs" />
     <Compile Include="SpaceCastUtil.cs" />
     <Compile Include="TSNUtil.cs" />
-	<Compile Include="TVOUtil.cs" />
+    <Compile Include="TVOKidsUtil.cs" />
+    <Compile Include="TVOUtil.cs" />
     <Compile Include="TVtropolisUtil.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +69,9 @@
       <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
       <Name>OnlineVideos</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="OnlineVideos.Sites.corporategadfly.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
