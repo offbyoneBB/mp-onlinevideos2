@@ -106,14 +106,17 @@ namespace OnlineVideos.Sites
             AMFArray renditions = response.GetArray("renditions");
 
             video.PlaybackOptions = new Dictionary<string, string>();
+            // keep track of bitrates and URLs
+            Dictionary<string, string> urlsDictionary = new Dictionary<string, string>();
 
             for (int i = 0; i < renditions.Count; i++)
             {
                 AMFObject rendition = renditions.GetObject(i);
+                int bitrate = rendition.GetIntProperty("encodingRate");
                 string optionKey = String.Format("{0}x{1} {2}K",
                     rendition.GetIntProperty("frameWidth"),
                     rendition.GetIntProperty("frameHeight"),
-                    rendition.GetIntProperty("encodingRate") / 1024);
+                    bitrate / 1024);
                 string url = HttpUtility.UrlDecode(rendition.GetStringProperty("defaultURL"));
                 Log.Debug("Option: {0} URL: {1}", optionKey, url);
 
@@ -144,30 +147,38 @@ namespace OnlineVideos.Sites
                     string leftover = rtmpUrlMatch.Groups["leftover"].Value;
                     string playPath = leftover.Substring(0, leftover.IndexOf('&'));;
                     Log.Debug(@"rtmpUrl: {0}, PlayPath: {1}, App: {2}, Auth: {3}", rtmpUrl, playPath, app, auth);
-                    video.PlaybackOptions.Add(optionKey, new RtmpUrl(rtmpUrl) {
+                    urlsDictionary.Add(optionKey, new RtmpUrl(rtmpUrl) {
                                                  PlayPath = playPath,
                                                  App = app,
                                                  Auth = auth
                                               }.ToString());
                 }
             }
-
-            if (video.PlaybackOptions.Count > 0)
+            
+            // sort the URLs ascending by bitrate
+            foreach (var item in urlsDictionary.OrderBy(u => u.Key, new BitrateComparer()))
             {
-                if (video.PlaybackOptions.Count == 1)
-                {
-
-                    result = video.PlaybackOptions.Last().Value;
-                    // only one URL found, so PlaybackOptions not needed
-                    video.PlaybackOptions = null;
-                }
-                else
-                {
-                    // last value will be selected
-                    result = video.PlaybackOptions.Last().Value;
-                }
-                }
+                video.PlaybackOptions.Add(item.Key, item.Value);
+                // return last URL as the default (will be the highest bitrate)
+                result = item.Value;
+            }
             return result;
+        }
+    }
+    
+    class BitrateComparer : IComparer<string>
+    {
+        private static Regex bitrateRegex = new Regex(@"\d+x\d+\s(?<bitrate>\d+)K", RegexOptions.Compiled);
+
+        public int Compare(string x, string y)
+        {
+            int xKbps = 0, yKbps = 0;
+            Match match;
+            match = bitrateRegex.Match(x);
+            if (match.Success && !int.TryParse(match.Groups["bitrate"].Value, out xKbps)) return 1;
+            match = bitrateRegex.Match(y);
+            if (match.Success && !int.TryParse(match.Groups["bitrate"].Value, out yKbps)) return -1;
+            return xKbps.CompareTo(yKbps);
         }
     }
 }
