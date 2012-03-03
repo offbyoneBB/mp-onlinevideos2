@@ -114,9 +114,6 @@
     <Content Include="Skin\default\workflow\onlinevideos-actions.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Skin\default\workflow\onlinevideos-states.xml">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\sites.xaml">
