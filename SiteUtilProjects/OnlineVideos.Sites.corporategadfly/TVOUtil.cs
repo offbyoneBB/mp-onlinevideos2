@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
-using OnlineVideos.AMF;
-using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
-    public class TVOUtil : GenericSiteUtil
+    public class TVOUtil : CanadaBrightCoveUtilBase
     {
+        // following were found by looking at AMF POST requests using Firebug/Flashbug
+        protected override string hashValue { get { return @"82c0aa70e540000aa934812f3573fd475d131a63"; } }
+        protected override string playerId { get { return @"756015080001"; } }
+        protected override string publisherId { get { return @"18140038001"; } }
+
         private static string baseUrlPrefix = @"http://ww3.tvo.org";
         private static string mainCategoriesUrlPrefix = baseUrlPrefix + @"/views/ajax?view_name=video_landing_page&view_display_id=";
         private static string videoListUrl = baseUrlPrefix + @"/views/ajax?field_web_master_series_nid_1={0}&view_name=video_landing_page&view_display_id={1}";
-        private static string brightcoveUrl = @"http://c.brightcove.com/services/messagebroker/amf";
-        private static string hashValue = @"82c0aa70e540000aa934812f3573fd475d131a63";
-        // if this ever changes, it can be found by looking at AMF Response
-        private static string publisherId = @"18140038001";
         
         private static Regex nidRegex = new Regex(@"(?<nid>[\d]+)\-wrapper$", RegexOptions.Compiled);
         private static Regex rtmpUrlRegex = new Regex(@"(?<rtmp>rtmpe?)://(?<host>[^/]+)/(?<app>[^&]*)&(?<leftover>.*)", RegexOptions.Compiled);
@@ -122,8 +120,6 @@ namespace OnlineVideos.Sites
 
                 foreach (HtmlNode td in html.DocumentNode.SelectNodes("//td"))
                 {
-                    Log.Debug("<td> length: {0}", td.InnerHtml.Trim().Length);
-
                     HtmlNode anchor = td.SelectSingleNode("./span[@class='views-field-field-thumbnail-url-value']//a");                    
                     HtmlNode lengthNode = td.SelectSingleNode("./span[@class='views-field-field-length-value']");
                     HtmlNode releaseNode = td.SelectSingleNode("./span[@class='views-field-field-release-date-value']");
@@ -166,151 +162,6 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getNextPageVideos()
         {
             return getVideoListForSinglePage(currentCategory, nextPageUrl);
-        }
-        
-        public override string getUrl(VideoInfo video)
-        {
-            /*
-               sample AMF input (expressed in pretty-printed JSON for clarity - captured using Flashbug in Firebug)
-            [
-                {"targetURI":"com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience",
-                 "responseURI":"/1",
-                 "length":"461 B",
-                 "data":["82c0aa70e540000aa934812f3573fd475d131a63",
-                    {"contentOverrides":[
-                        {"contentType":0,
-                         "target":"videoPlayer",
-                         "featuredId":null,
-                         "contentId":1411956407001,
-                         "featuredRefId":null,
-                         "contentIds":null,
-                         "contentRefId":null,
-                         "contentRefIds":null,
-                         "__traits":
-                            {"type":"com.brightcove.experience.ContentOverride",
-                             "members":["contentType","target","featuredId","contentId","featuredRefId","contentIds","contentRefId","contentRefIds"],
-                             "count":8,
-                             "externalizable":false,
-                             "dynamic":false}}],
-                      "TTLToken":"",
-                      "deliveryType":null,
-                      "playerKey":"AQ~~,AAAABDk7A3E~,xYAUE9lVY9-LlLNVmcdybcRZ8v_nIl00",
-                      "URL":"http://ww3.tvo.org/video/171480/safe-houses",
-                      "experienceId":756015080001,
-                      "__traits":
-                        {"type":"com.brightcove.experience.ViewerExperienceRequest",
-                         "members":["contentOverrides","TTLToken","deliveryType","playerKey","URL","experienceId"],
-                         "count":6,
-                         "externalizable":false,
-                         "dynamic":false}}]}]
-            */
-           
-            string result = string.Empty;
-            
-            HtmlDocument document = GetWebData<HtmlDocument>(video.VideoUrl);
-
-            if (document != null)
-            {
-                HtmlNode brightcoveExperience = document.DocumentNode.SelectSingleNode(@"//object[@class='BrightcoveExperience']");
-                string playerId = brightcoveExperience.SelectSingleNode(@"./param[@name='playerID']").GetAttributeValue("value", "");
-                string videoId = brightcoveExperience.SelectSingleNode(@"./param[@name='@videoPlayer']").GetAttributeValue("value", "");
-                Log.Debug("PlayerId: {0}, VideoId: {1}", playerId, videoId);
-                
-                // content override
-                AMFObject contentOverride = new AMFObject(@"com.brightcove.experience.ContentOverride");
-                contentOverride.Add("contentId", videoId);
-                contentOverride.Add("contentIds", null);
-                contentOverride.Add("contentRefId", null);
-                contentOverride.Add("contentRefIds", null);
-                contentOverride.Add("contentType", 0);
-                contentOverride.Add("featuredId", double.NaN);
-                contentOverride.Add("featuredRefId", null);
-                contentOverride.Add("target", "videoPlayer");
-                AMFArray contentOverrideArray = new AMFArray();
-                contentOverrideArray.Add(contentOverride);
-
-                // viewer experience request
-                AMFObject viewerExperenceRequest = new AMFObject(@"com.brightcove.experience.ViewerExperienceRequest");
-                viewerExperenceRequest.Add("contentOverrides", contentOverrideArray);
-                viewerExperenceRequest.Add("experienceId", playerId);
-                viewerExperenceRequest.Add("deliveryType", null);
-                viewerExperenceRequest.Add("playerKey", string.Empty);
-                viewerExperenceRequest.Add("URL", video.VideoUrl);
-                viewerExperenceRequest.Add("TTLToken", string.Empty);
-
-                AMFSerializer serializer = new AMFSerializer();
-                AMFObject response = AMFObject.GetResponse(brightcoveUrl, serializer.Serialize(viewerExperenceRequest, hashValue));
-                
-                //Log.Debug("AMF Response: {0}", response.ToString());
-
-                AMFArray renditions = response.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
-
-                video.PlaybackOptions = new Dictionary<string, string>();
-
-                for (int i = 0; i < renditions.Count; i++)
-                {
-                    AMFObject rendition = renditions.GetObject(i);
-                    string optionKey = String.Format("{0}x{1} {2}K",
-                        rendition.GetIntProperty("frameWidth"),
-                        rendition.GetIntProperty("frameHeight"),
-                        rendition.GetIntProperty("encodingRate") / 1024);
-                    string url = HttpUtility.UrlDecode(rendition.GetStringProperty("defaultURL"));
-                    Log.Debug("Option: {0} URL: {1}", optionKey, url);
-
-                    // typical rtmp url from "defaultURL" is:
-                    // rtmp://brightcove.fcod.llnwd.net/a500/d20/&mp4:media/1351824783/1351824783_1411974095001_109856X-640x360-1500k.mp4&1330020000000&1b163106256f448754aff72969869479
-                    // 
-                    // following rtmpdump style command works
-                    // rtmpdump 
-                    // --app 'a500/d20/?videoId=1411956407001&lineUpId=&pubId=18140038001&playerId=756015080001&playerTag=&affiliateId='
-                    // --auth 'mp4:media/1351824783/1351824783_1411974097001_109856X-400x224-300k.mp4&1330027200000&23498dd8f4659cd07ad1b6c4ee5a013d'
-                    // --rtmp 'rtmp://brightcove.fcod.llnwd.net/a500/d20/?videoId=1411956407001&lineUpId=&pubId=18140038001&playerId=756015080001&playerTag=&affiliateId='
-                    // --flv 'TVO_org_-_Safe_as_Houses.flv'
-                    // --playpath 'mp4:media/1351824783/1351824783_1411974097001_109856X-400x224-300k.mp4'
-                    
-                    Match rtmpUrlMatch = rtmpUrlRegex.Match(url);
-                    
-                    if (rtmpUrlMatch.Success)
-                    {
-                        string query = String.Format(@"videoId={0}&lineUpId=&pubId={1}&playerId={2}&playerTag=&affiliateId=",
-                                                    videoId, publisherId, playerId);
-                        string app = String.Format("{0}?{1}", rtmpUrlMatch.Groups["app"], query);
-                        string auth = rtmpUrlMatch.Groups["leftover"].Value;
-                        string rtmpUrl = String.Format("{0}://{1}/{2}?{3}",
-                                                       rtmpUrlMatch.Groups["rtmp"].Value,
-                                                       rtmpUrlMatch.Groups["host"].Value,
-                                                       rtmpUrlMatch.Groups["app"].Value,
-                                                       query);
-                        string leftover = rtmpUrlMatch.Groups["leftover"].Value;
-                        string playPath = leftover.Substring(0, leftover.IndexOf('&'));;
-                        Log.Debug(@"rtmpUrl: {0}, PlayPath: {1}, App: {2}, Auth: {3}", rtmpUrl, playPath, app, auth);
-                        
-                         video.PlaybackOptions.Add(optionKey, new RtmpUrl(rtmpUrl) {
-                                                     PlayPath = playPath,
-                                                     App = app,
-                                                     Auth = auth
-                                                  }.ToString());
-                    }
-                }
-
-                if (video.PlaybackOptions.Count > 0)
-                {
-                    if (video.PlaybackOptions.Count == 1)
-                    {
-
-                        result = video.PlaybackOptions.Last().Value;
-                        // only one URL found, so PlaybackOptions not needed
-                        video.PlaybackOptions = null;
-                    }
-                    else
-                    {
-                        // last value will be selected
-                        result = video.PlaybackOptions.Last().Value;
-                    }
-                }
-            }
-            
-            return result;
         }
     }
 }
