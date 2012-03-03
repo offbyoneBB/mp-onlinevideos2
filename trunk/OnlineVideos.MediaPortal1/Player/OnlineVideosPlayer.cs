@@ -302,7 +302,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 {
                     string errorText = DirectShowLib.DsError.GetErrorText(result);
                     if (errorText != null) errorText = errorText.Trim();
-                    Log.Instance.Warn("BufferFile : FindFilterByName returned '{0}'{1}", "0x" + result.ToString("X"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
+                    Log.Instance.Warn("BufferFile : FindFilterByName returned '{0}'{1}", "0x" + result.ToString("X8"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
                     return false;
                 }
 
@@ -312,7 +312,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 {
                     string errorText = DirectShowLib.DsError.GetErrorText(result);
                     if (errorText != null) errorText = errorText.Trim();
-                    Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned '{0}'{1}", "0x" + result.ToString("X"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
+                    Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned '{0}'{1}", "0x" + result.ToString("X8"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
                     return false;
                 }
 
@@ -590,20 +590,19 @@ namespace OnlineVideos.MediaPortal1.Player
                 DsError.ThrowExceptionForHR(hr);
                 if (hr == 1) // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
                 {
-                    // wait 5 seconds for the graph to transition to the running state
-                    FilterState filterState;
+                    // wait max. 5 seconds for the graph to transition to the running state
                     DateTime startTime = DateTime.Now;
+                    FilterState filterState;
                     do
                     {
-                        hr = mediaCtrl.GetState(10, out filterState);
-                        Thread.Sleep(1);
+                        Thread.Sleep(100);
+                        hr = mediaCtrl.GetState(100, out filterState); // check with timeout max. 10 times a second if the state changed
                     }
-                    while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds < 6));
-                    //hr = mediaCtrl.GetState(5000, out filterState);
+                    while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 5));
                     if (hr != 0) // S_OK
                     {
                         DsError.ThrowExceptionForHR(hr);
-                        throw new Exception(string.Format("State after 5 seconds waiting for graph to run: {0} - {1}", hr, DsError.GetErrorText(hr)));
+                        throw new Exception(string.Format("IMediaControl.GetState after 5 seconds: 0x{0} - '{1}'", hr.ToString("X8"), DsError.GetErrorText(hr)));
                     }
                 }
             }
