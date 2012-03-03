@@ -62,6 +62,7 @@
     <Compile Include="SpaceCastUtil.cs" />
     <Compile Include="TSNUtil.cs" />
     <Compile Include="TVOKidsUtil.cs" />
+    <Compile Include="TVOParentsUtil.cs" />
     <Compile Include="TVOUtil.cs" />
     <Compile Include="TVtropolisUtil.cs" />
   </ItemGroup>

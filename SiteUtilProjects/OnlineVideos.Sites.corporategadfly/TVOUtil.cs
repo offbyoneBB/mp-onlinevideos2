@@ -15,9 +15,10 @@ namespace OnlineVideos.Sites
         protected override string playerId { get { return @"756015080001"; } }
         protected override string publisherId { get { return @"18140038001"; } }
 
-        private static string baseUrlPrefix = @"http://ww3.tvo.org";
-        private static string mainCategoriesUrlPrefix = baseUrlPrefix + @"/views/ajax?view_name=video_landing_page&view_display_id=";
-        private static string videoListUrl = baseUrlPrefix + @"/views/ajax?field_web_master_series_nid_1={0}&view_name=video_landing_page&view_display_id={1}";
+        protected virtual string baseUrlPrefix { get { return @"http://ww3.tvo.org"; } }
+        
+        protected static string mainCategoriesUrl = @"{0}/views/ajax?view_name=video_landing_page&view_display_id=page_{1}";
+        private static string videoListUrl = @"{0}/views/ajax?field_web_master_series_nid_1={1}&view_name=video_landing_page&view_display_id={2}";
         
         private static Regex nidRegex = new Regex(@"(?<nid>[\d]+)\-wrapper$", RegexOptions.Compiled);
         private static Regex rtmpUrlRegex = new Regex(@"(?<rtmp>rtmpe?)://(?<host>[^/]+)/(?<app>[^&]*)&(?<leftover>.*)", RegexOptions.Compiled);
@@ -30,22 +31,22 @@ namespace OnlineVideos.Sites
             Settings.Categories.Clear();
 
             Settings.Categories.Add(
-                new RssLink() { Name = "All Programs", Url = mainCategoriesUrlPrefix + "page_1", HasSubCategories = true }
+                new RssLink() { Name = "All Programs", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "1"), HasSubCategories = true }
                );
             Settings.Categories.Add(
-                new RssLink() { Name = "Documentaries", Url = mainCategoriesUrlPrefix + "page_4", HasSubCategories = true }
+                new RssLink() { Name = "Documentaries", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "4"), HasSubCategories = true }
                );
             Settings.Categories.Add(
-                new RssLink() { Name = "Dramas", Url = mainCategoriesUrlPrefix + "page_5", HasSubCategories = true }
+                new RssLink() { Name = "Dramas", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "5"), HasSubCategories = true }
                );
             Settings.Categories.Add(
-                new RssLink() { Name = "TVO Archive", Url = mainCategoriesUrlPrefix + "page_3", HasSubCategories = true }
+                new RssLink() { Name = "TVO Archive", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "3"), HasSubCategories = true }
                );
             Settings.Categories.Add(
-                new RssLink() { Name = "Topics", Url = mainCategoriesUrlPrefix + "page_2", HasSubCategories = true }
+                new RssLink() { Name = "Topics", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "2"), HasSubCategories = true }
                );
             Settings.Categories.Add(
-                new RssLink() { Name = "Playlists", Url = mainCategoriesUrlPrefix + "page_7", HasSubCategories = true }
+                new RssLink() { Name = "Playlists", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "7"), HasSubCategories = true }
                );
 
             Settings.DynamicCategoriesDiscovered = true;
@@ -81,11 +82,11 @@ namespace OnlineVideos.Sites
                     
                     if (nidMatch.Success)
                     {
-                        cat.Url = String.Format(videoListUrl, nidMatch.Groups["nid"], viewDisplayId);
+                        cat.Url = String.Format(videoListUrl, baseUrlPrefix, nidMatch.Groups["nid"], viewDisplayId);
                     }
                     else if (id.EndsWith("All-wrapper"))
                     {
-                        cat.Url = String.Format(videoListUrl, "All", viewDisplayId);
+                        cat.Url = String.Format(videoListUrl, baseUrlPrefix, "All", viewDisplayId);
                     }
                     cat.HasSubCategories = false;
                     Log.Debug("text: {0}, id: {1}", cat.Name, cat.Url);
