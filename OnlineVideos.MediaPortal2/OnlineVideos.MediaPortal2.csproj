@@ -117,19 +117,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\sites.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\categories.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\videos.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
@@ -142,33 +139,39 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\dialogSearch.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\dialogPlaybackOptions.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\details.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\Reflexion\screens\categories.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\Reflexion\screens\sites.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\Reflexion\screens\videos.xaml">
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y "$(ProjectDir)plugin.xml" "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos"
-mkdir "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language"
+    <PostBuildEvent>mkdir "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language"
 robocopy "$(ProjectDir)Language" "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language" /MIR /NP /XD .svn
 mkdir "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Skin"
 robocopy "$(ProjectDir)Skin" "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Skin" /MIR /NP /XD .svn
 xcopy /Y "$(TargetDir)$(ProjectName).*" "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
 xcopy /Y "$(TargetDir)OnlineVideos.*" "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
-
-
+xcopy /Y "$(ProjectDir)plugin.xml" "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

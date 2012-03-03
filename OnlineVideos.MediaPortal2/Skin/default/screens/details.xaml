@@ -3,7 +3,7 @@
     xmlns="www.team-mediaportal.com/2008/mpf/directx"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
-    Source="screens\master_menu.xaml">
+    Source="screens\master_bare.xaml">
     <Include.Resources>
 
         <!-- Header -->
@@ -14,8 +14,8 @@
         <ovs:ExtendedInfoConverter x:Key="ExtendedInfoConverter"/>
 
         <!-- Contents -->
-        <ControlTemplate x:Key="Contents_Template">
-            <Grid DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
+        <ControlTemplate x:Key="Client_Template">
+            <Grid DataContext="{Binding Source={StaticResource OnlineVideosModel}}" Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>

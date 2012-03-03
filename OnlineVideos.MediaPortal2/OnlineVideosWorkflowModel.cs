@@ -293,7 +293,7 @@ namespace OnlineVideos.MediaPortal2
 
                                 if (SelectedVideo.VideoInfo.PlaybackOptions != null && SelectedVideo.VideoInfo.PlaybackOptions.Count > 1)
                                 {
-                                    ShowPlaybackOptions(SelectedVideo.VideoInfo);
+                                    ShowPlaybackOptions(SelectedVideo.VideoInfo, urls[0]);
                                 }
                                 else
                                 {
@@ -332,7 +332,7 @@ namespace OnlineVideos.MediaPortal2
 
                     if (detailsVideo.VideoInfo.PlaybackOptions != null && detailsVideo.VideoInfo.PlaybackOptions.Count > 1)
                     {
-                        ShowPlaybackOptions(detailsVideo.VideoInfo);
+                        ShowPlaybackOptions(detailsVideo.VideoInfo, urls[0]);
                     }
                     else
                     {
@@ -344,8 +344,9 @@ namespace OnlineVideos.MediaPortal2
 
         public void SelectPlaybackOption(ListItem selectedItem)
         {
-            // todo : resolve playback option
-            Play(SelectedVideo, ((KeyValuePair<string,string>)selectedItem.AdditionalProperties[Consts.KEY_MEDIA_ITEM]).Value);
+            // resolve playback option
+            string resolvedUrl = SelectedVideo.VideoInfo.GetPlaybackOptionUrl(((KeyValuePair<string,string>)selectedItem.AdditionalProperties[Consts.KEY_MEDIA_ITEM]).Key);
+            Play(SelectedVideo, resolvedUrl);
         }
 
         public void StartSearch()
@@ -369,6 +370,14 @@ namespace OnlineVideos.MediaPortal2
                     ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
                     if (result != null && result.Count > 0)
                     {
+                        // pop all states up to the site state from the current navigation stack
+                        IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
+                        while (!(workflowManager.NavigationContextStack.Peek().WorkflowState.Name == Guids.WorkflowStateCategoriesName &&
+                            workflowManager.NavigationContextStack.Peek().WorkflowState.DisplayLabel == SelectedSite.Settings.Name))
+                        {
+                            workflowManager.NavigationContextStack.Pop();
+                        }
+                        // dislay results
                         if (result[0] is VideoInfo) ShowVideos(null, result.ConvertAll(i => i as VideoInfo));
                         else
                         {
@@ -424,7 +433,7 @@ namespace OnlineVideos.MediaPortal2
             ImageDownloader.GetImages<Category>(categories);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
 			workflowManager.NavigatePushTransientAsync(
-				WorkflowState.CreateTransientState("categories", navigationLabel, false, "categories", false, WorkflowType.Workflow), 
+				WorkflowState.CreateTransientState(Guids.WorkflowStateCategoriesName, navigationLabel, false, "categories", false, WorkflowType.Workflow), 
 				new NavigationContextConfig());
         }
 
@@ -460,13 +469,14 @@ namespace OnlineVideos.MediaPortal2
             workflowManager.NavigatePushAsync(Guids.WorkflowStateDetails, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedVideo.Title });
         }
 
-		void ShowPlaybackOptions(VideoInfo videoInfo)
+		void ShowPlaybackOptions(VideoInfo videoInfo, string defaultUrl)
 		{
 			PlaybackOptions = new ItemsList();
 			foreach (var item in videoInfo.PlaybackOptions)
 			{
 				var listItem = new ListItem(Consts.KEY_NAME, item.Key);
 				listItem.AdditionalProperties.Add(Consts.KEY_MEDIA_ITEM, item);
+                listItem.Selected = item.Value == defaultUrl;
 				PlaybackOptions.Add(listItem);
 			}
 			ServiceRegistration.Get<IScreenManager>().ShowDialog("dialogPlaybackOptions");
@@ -487,7 +497,7 @@ namespace OnlineVideos.MediaPortal2
 				SitesList.ForEach(s => s.FocusPrio = s.Site == SelectedSite ? SetFocusPriority.Highest : SetFocusPriority.None);
             }
             // going from categories to categories view
-			else if (newContext.WorkflowState.Name == "categories" && oldContext.WorkflowState.Name == "categories")
+			else if (newContext.WorkflowState.Name == Guids.WorkflowStateCategoriesName && oldContext.WorkflowState.Name == Guids.WorkflowStateCategoriesName)
             {
                 // going up in hierarchy
                 if (oldContext.Predecessor == newContext)
@@ -508,7 +518,7 @@ namespace OnlineVideos.MediaPortal2
                 }
             }
             // going from videos to categories view
-			else if (newContext.WorkflowState.Name == "categories" && oldContext.WorkflowState.StateId == Guids.WorkflowStateVideos)
+			else if (newContext.WorkflowState.Name == Guids.WorkflowStateCategoriesName && oldContext.WorkflowState.StateId == Guids.WorkflowStateVideos)
             {
                 VideosList = null;
                 CategoriesList = new ItemsList();
