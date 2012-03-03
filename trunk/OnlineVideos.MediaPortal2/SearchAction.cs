@@ -34,19 +34,22 @@ namespace OnlineVideos.MediaPortal2
 
         public bool IsActionEnabled(NavigationContext context)
         {
-            return !((OnlineVideosWorkflowModel)context.Models[context.WorkflowModelId.Value]).IsExecutingBackgroundTask;
+            if (context.WorkflowModelId == Guids.WorkFlowModel)
+            {
+                if (!((OnlineVideosWorkflowModel)context.Models[context.WorkflowModelId.Value]).IsExecutingBackgroundTask)
+                {
+                    if (context.WorkflowState.Name == Guids.WorkflowStateCategoriesName || context.WorkflowState.StateId == Guids.WorkflowStateVideos)
+                    {
+                        return ((OnlineVideosWorkflowModel)context.Models[context.WorkflowModelId.Value]).SelectedSite.CanSearch;
+                    }
+                }
+            }
+            return false;
         }
 
         public bool IsActionVisible(NavigationContext context)
         {
-            if (context.WorkflowModelId == Guids.WorkFlowModel)
-            {
-                if (context.WorkflowState.StateId == Guids.WorkflowStateCategories || context.WorkflowState.StateId == Guids.WorkflowStateVideos)
-                {
-                    return ((OnlineVideosWorkflowModel)context.Models[context.WorkflowModelId.Value]).SelectedSite.CanSearch;
-                }
-            }
-            return false;
+            return context.WorkflowModelId == Guids.WorkFlowModel;
         }
 
         public event ContributorStateChangeDelegate StateChanged;
