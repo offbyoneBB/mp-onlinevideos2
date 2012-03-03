@@ -8,6 +8,7 @@ using MediaPortal.Common.MediaManagement.DefaultItemAspects;
 using MediaPortal.Common.SystemResolver;
 using MediaPortal.Common.Settings;
 using MediaPortal.Common.Threading;
+using MediaPortal.Common.PathManager;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
@@ -22,7 +23,9 @@ namespace OnlineVideos.MediaPortal2
     {
         public OnlineVideosWorkflowModel()
         {
-            Configuration.SettingsBag settings = ServiceRegistration.Get<ISettingsManager>().Load<Configuration.SettingsBag>();
+            Configuration.Settings settings = ServiceRegistration.Get<ISettingsManager>().Load<Configuration.Settings>();
+            string ovConfigPath = ServiceRegistration.Get<IPathManager>().GetPath(string.Format(@"<CONFIG>\{0}\", Environment.UserName));
+            string ovDataPath = ServiceRegistration.Get<IPathManager>().GetPath(@"<DATA>\OnlineVideos");
 
             OnlineVideoSettings.Instance.Logger = new LogDelegator();
 
@@ -30,10 +33,10 @@ namespace OnlineVideos.MediaPortal2
             if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DllsDir)) OnlineVideoSettings.Instance.DllsDir = System.IO.Path.GetDirectoryName(this.GetType().Assembly.Location);
 
             OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\thumbs\OnlineVideos\");
-            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ThumbsDir)) OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.GetType().Assembly.Location), "Thumbs");
+            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ThumbsDir)) OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(ovDataPath, "Thumbs");
 
             OnlineVideoSettings.Instance.ConfigDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\");
-            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ConfigDir)) OnlineVideoSettings.Instance.ConfigDir = System.IO.Path.GetDirectoryName(this.GetType().Assembly.Location);
+            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ConfigDir)) OnlineVideoSettings.Instance.ConfigDir = ovConfigPath;
 
             OnlineVideoSettings.Instance.UseAgeConfirmation = settings.UseAgeConfirmation;
             OnlineVideoSettings.Instance.CacheTimeout = settings.CacheTimeout;

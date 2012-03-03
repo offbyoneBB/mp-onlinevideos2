@@ -7,7 +7,7 @@ using MediaPortal.Common.Configuration.ConfigurationClasses;
 
 namespace OnlineVideos.MediaPortal2.Configuration
 {
-    public class SettingsBag
+    public class Settings
     {
         [Setting(SettingScope.User, true)]
         public bool UseAgeConfirmation { get; set; }
@@ -23,12 +23,12 @@ namespace OnlineVideos.MediaPortal2.Configuration
     {
         public override void Load()
         {
-            _yes = SettingsManager.Load<SettingsBag>().UseAgeConfirmation;
+            _yes = SettingsManager.Load<Settings>().UseAgeConfirmation;
         }
 
         public override void Save()
         {
-            SettingsBag settings = SettingsManager.Load<SettingsBag>();
+            Settings settings = SettingsManager.Load<Settings>();
             settings.UseAgeConfirmation = _yes;
             SettingsManager.Save(settings);
         }
@@ -38,7 +38,7 @@ namespace OnlineVideos.MediaPortal2.Configuration
     {
         public override void Load()
         {
-            _value = SettingsManager.Load<SettingsBag>().AgeConfirmationPin;
+            _value = SettingsManager.Load<Settings>().AgeConfirmationPin;
         }
 
         public override int DisplayLength
@@ -47,7 +47,7 @@ namespace OnlineVideos.MediaPortal2.Configuration
         }
         public override void Save()
         {
-            SettingsBag settings = SettingsManager.Load<SettingsBag>();
+            Settings settings = SettingsManager.Load<Settings>();
             settings.AgeConfirmationPin = _value;
             SettingsManager.Save(settings);
         }
@@ -61,12 +61,12 @@ namespace OnlineVideos.MediaPortal2.Configuration
             _step = 1;
             _lowerLimit = 1;
             _upperLimit = 60;
-            _value = SettingsManager.Load<SettingsBag>().UtilTimeout;
+            _value = SettingsManager.Load<Settings>().UtilTimeout;
         }
 
         public override void Save()
         {
-            SettingsBag settings = SettingsManager.Load<SettingsBag>();
+            Settings settings = SettingsManager.Load<Settings>();
             settings.UtilTimeout = (int)_value;
             SettingsManager.Save(settings);
         }
@@ -80,12 +80,12 @@ namespace OnlineVideos.MediaPortal2.Configuration
             _step = 1;
             _lowerLimit = 0;
             _upperLimit = 600;
-            _value = SettingsManager.Load<SettingsBag>().CacheTimeout;
+            _value = SettingsManager.Load<Settings>().CacheTimeout;
         }
 
         public override void Save()
         {
-            SettingsBag settings = SettingsManager.Load<SettingsBag>();
+            Settings settings = SettingsManager.Load<Settings>();
             settings.CacheTimeout = (int)_value;
             SettingsManager.Save(settings);
         }
