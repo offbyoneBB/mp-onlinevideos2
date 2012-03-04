@@ -154,8 +154,8 @@ namespace OnlineVideos.Sites
                 // convert thumbnail URL to the playPath (episode has to be lower-case)
                 string playPath = String.Format(
                     hasLowResolution ?
-                    @"mp4:/abcvideo/video_fep/mov/{0}_768x432_700.mov" :
-                    @"mp4:/abcvideo/video_fep/mov/{0}_576x432_700.mov",
+                    @"mp4:/abcvideo/video_fep/mov/{0}_576x432_700.mov" :
+                    @"mp4:/abcvideo/video_fep/mov/{0}_768x432_700.mov",
                     episode.ToLower());
                 Log.Debug(@"playPath: {0}", playPath);
 
