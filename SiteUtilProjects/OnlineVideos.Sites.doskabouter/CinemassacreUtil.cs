@@ -79,41 +79,44 @@ namespace OnlineVideos.Sites
             if (data.IndexOf(@"param name=""src"" value=""") >= 0)
                 thisUrl = GetSubString(data, @"param name=""src"" value=""", @"""");
             else
-                if (data.IndexOf(@"<div id=""video-content"">") >= 0)
-                {
-                    data = GetSubString(data, @"<div id=""video-content"">", "</div>");
-                    thisUrl = GetSubString(data, @"src=""", @"""");
-                    if (String.IsNullOrEmpty(thisUrl))
+                if (data.IndexOf(@"param name=""movie"" value=""") >= 0)
+                    thisUrl = GetSubString(data, @"param name=""movie"" value=""", @"""");
+                else
+                    if (data.IndexOf(@"<div id=""video-content"">") >= 0)
                     {
-                        data = GetWebData(video.VideoUrl);
-                        data = GetSubString(data, @"<div id=""video-content"">", "<!-- /video -->");
-                        int i = data.IndexOf(@"><img class=");
-                        if (i >= 0)
+                        data = GetSubString(data, @"<div id=""video-content"">", "</div>");
+                        thisUrl = GetSubString(data, @"src=""", @"""");
+                        if (String.IsNullOrEmpty(thisUrl))
                         {
-                            int j = data.LastIndexOf(@"href=""", i);
-                            if (j >= 0)
+                            data = GetWebData(video.VideoUrl);
+                            data = GetSubString(data, @"<div id=""video-content"">", "<!-- /video -->");
+                            int i = data.IndexOf(@"><img class=");
+                            if (i >= 0)
                             {
-                                thisUrl = data.Substring(j + 6);
-                                i = thisUrl.IndexOf('"');
-                                if (i >= 0)
-                                    thisUrl = thisUrl.Substring(0, i);
+                                int j = data.LastIndexOf(@"href=""", i);
+                                if (j >= 0)
+                                {
+                                    thisUrl = data.Substring(j + 6);
+                                    i = thisUrl.IndexOf('"');
+                                    if (i >= 0)
+                                        thisUrl = thisUrl.Substring(0, i);
+                                }
                             }
                         }
                     }
-                }
-                else
-                {
-                    string data2 = GetSubString(data, @"<div id=""content"" class=""content page"">", @"<div id=""comments"">");
-                    thisUrl = GetSubString(data2, @"<p><a href=""", @"""");
-                    if (String.IsNullOrEmpty(thisUrl))
+                    else
                     {
-                        thisUrl = GetSubString(data2, @"src=""", @"""");
-                        if (thisUrl.EndsWith(".jpg"))
-                            thisUrl = null;
+                        string data2 = GetSubString(data, @"<div id=""content"" class=""content page"">", @"<div id=""comments"">");
+                        thisUrl = GetSubString(data2, @"<p><a href=""", @"""");
                         if (String.IsNullOrEmpty(thisUrl))
-                            thisUrl = GetSubString(data, @"<embed src=""", @"""");
+                        {
+                            thisUrl = GetSubString(data2, @"src=""", @"""");
+                            if (thisUrl.EndsWith(".jpg"))
+                                thisUrl = null;
+                            if (String.IsNullOrEmpty(thisUrl))
+                                thisUrl = GetSubString(data, @"<embed src=""", @"""");
+                        }
                     }
-                }
 
             if (thisUrl == null) return null;
             if (thisUrl.StartsWith("http://www.youtube.com"))
@@ -174,7 +177,7 @@ namespace OnlineVideos.Sites
                 return url = doc.SelectSingleNode("//rendition/src").InnerText;
             }
 
-            if (thisUrl.StartsWith("http://www.springboardplatform.com"))
+            if (thisUrl.StartsWith("http://cinemassacre.springboardplatform.com"))
             {
                 string newUrl = GetRedirectedUrl(thisUrl);
                 string[] parts = newUrl.Split(new[] { "%22" }, StringSplitOptions.RemoveEmptyEntries);
