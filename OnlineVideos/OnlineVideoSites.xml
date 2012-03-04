@@ -1620,15 +1620,16 @@
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<a[^>]+>\s*<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>\s*</a>\s*
 <h1><a\shref="(?<VideoUrl>/watch/[^"]+)">(?<Title>[^<]+)</a></h1>\s*
-<div\sclass="duration_views">\s*
-<h2>(?<Duration>\d+<span>:</span>\d+)</h2>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+page=\d+)">[^<]+&#187;</a>]]></item>
-        <item key="prevPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+page=\d+)">&#171;[^<]+</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<a\shref="(?<m0>http://download.youporn.com/download[^"]+)">]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}.flv]]></item>
+<div\s+class="information">\s*
+<(div|h2)\s+class="duration">(?<Duration>[^<]*)</(div|h2)>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li\s+class="prev-next">\s*<a\s+href="(?<url>[^"]+)">[^<]*<span>&raquo;</span>\s*</a>\s*</li>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[(?<=<h2>Download\:</h2>.*)(?<!<div\s+id="tab-general-details">.*)<li><a\s+href="(?<m0>[^"]+)">(?<n0>[^<]+)</a>(?<n1>[^<]*)</li>\s*]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
+        <item key="fileUrlNameFormatString"><![CDATA[{0} {1}]]></item>
+        <item key="fileUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="searchUrl"><![CDATA[http://www.youporn.com/search?type=straight&amp;query={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.youporn.com]]></item>
-        <item key="cookies"><![CDATA[age_check=1]]></item>
+        <item key="cookies"><![CDATA[age_verified=1]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Browse">http://www.youporn.com/browse</Category>

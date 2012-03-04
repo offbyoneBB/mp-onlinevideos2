@@ -65,7 +65,11 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Format string used with the groups (m0, m1, ..) of the regex matches of the fileUrlRegEx to create the Url for playback.")]
         protected string fileUrlFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("Format string used with the groups (n0, n1, ..) of the regex matches of the fileUrlRegEx to create the Name for a playback choice.")]
-        protected string fileUrlNameFormatString = "{0}";
+        protected string fileUrlNameFormatString = "{0}";        
+        [Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the (m0, m1, ...) matches of the fileUrlRegEx")]
+        protected UrlDecoding fileUrlDecoding = UrlDecoding.UrlDecode;
+        [Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the (n0, n1, ...) matches of the fileUrlRegEx")]
+        protected UrlDecoding fileUrlNameDecoding = UrlDecoding.HtmlDecode;
         [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
         protected string searchUrl;
         [Category("OnlineVideosConfiguration"), Description("Format string that should be sent as post data for getting the results of a search. {0} will be replaced with the query. If this is not set, search will be executed normal as GET.")]
@@ -361,9 +365,9 @@ namespace OnlineVideos.Sites
                 for (int i = 0; i < matchFileUrl.Groups.Count; i++)
                 {
                     if (matchFileUrl.Groups["m" + i.ToString()].Success)
-                        groupValues.Add(HttpUtility.UrlDecode(matchFileUrl.Groups["m" + i.ToString()].Value));
+                        groupValues.Add(ApplyUrlDecoding(matchFileUrl.Groups["m" + i.ToString()].Value, fileUrlDecoding));
                     if (matchFileUrl.Groups["n" + i.ToString()].Success)
-                        groupNameValues.Add(HttpUtility.HtmlDecode(matchFileUrl.Groups["n" + i.ToString()].Value));
+                        groupNameValues.Add(ApplyUrlDecoding(matchFileUrl.Groups["n" + i.ToString()].Value, fileUrlNameDecoding));
                 }
                 string foundUrl = string.Format(fileUrlFormatString, groupValues.ToArray());
                 // try to JSON deserialize
