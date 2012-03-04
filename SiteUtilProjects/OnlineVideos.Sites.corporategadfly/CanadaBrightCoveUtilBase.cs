@@ -169,7 +169,8 @@ namespace OnlineVideos.Sites
                                                    rtmpUrlMatch.Groups["app"].Value,
                                                    query);
                     string leftover = rtmpUrlMatch.Groups["leftover"].Value;
-                    string playPath = leftover.Substring(0, leftover.IndexOf('&'));;
+                    int ampersandPosition = leftover.IndexOf('&');
+                    string playPath = ampersandPosition == -1 ? leftover : leftover.Substring(0, ampersandPosition);
                     Log.Debug(@"rtmpUrl: {0}, PlayPath: {1}, App: {2}, Auth: {3}", rtmpUrl, playPath, app, auth);
                     urlsDictionary.Add(optionKey, new RtmpUrl(rtmpUrl) {
                                                  PlayPath = playPath,
