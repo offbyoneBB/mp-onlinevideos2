@@ -39,7 +39,7 @@ namespace OnlineVideos.Sites
             else
                 renditions = GetResultsFromFindByMediaId(m, video);
 
-            return FillPlaybackOpyions(video, renditions);
+            return FillPlaybackOptions(video, renditions);
         }
 
         private AMFArray GetResultsFromViewerExperienceRequest(Match m, VideoInfo video)
@@ -122,7 +122,7 @@ namespace OnlineVideos.Sites
             return obj.GetArray("renditions");
         }
 
-        private string FillPlaybackOpyions(VideoInfo video, AMFArray renditions)
+        private string FillPlaybackOptions(VideoInfo video, AMFArray renditions)
         {
             video.PlaybackOptions = new Dictionary<string, string>();
             for (int i = 0; i < renditions.Count; i++)
