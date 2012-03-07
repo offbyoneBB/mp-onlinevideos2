@@ -15,8 +15,9 @@ namespace OnlineVideos.Sites
         protected override string publisherId { get { return @"694915333001"; } }
         protected override BrightCoveType RequestType { get { return BrightCoveType.FindMediaById; } }
         
-        private static string baseUrlPrefix = @"http://media.treehousetv.com";
-        private static string categoryUrl = baseUrlPrefix + @"/videos.ashx{0}";
+        protected virtual string baseUrlPrefix { get { return @"http://media.treehousetv.com"; } }
+        protected virtual string categoryUrl { get { return baseUrlPrefix + @"/videos.ashx{0}"; } }
+        
         private static string mainCategoryXpath = @"//div[@id='video-navigation']/ul[@class='level_0']/li";
         private static string subCategoryXpath = mainCategoryXpath + "{0}";
         
@@ -33,7 +34,7 @@ namespace OnlineVideos.Sites
                     string url = anchor.GetAttributeValue("href", "");
                     
                     // skip in case of the "All Videos" category
-                    if (url.Equals("/")) continue;
+                    if ("All Videos".Equals(anchor.InnerText)) continue;
                     
                     RssLink cat = new RssLink() {
                         Name = anchor.InnerText,

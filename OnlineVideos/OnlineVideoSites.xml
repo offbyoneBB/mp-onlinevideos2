@@ -1555,6 +1555,9 @@
     <Site name="Treehouse TV" util="TreehouseTV" agecheck="false" enabled="true" lang="en">
       <Description>Treehouse TV is a Canadian English language cable television specialty channel with programming targeted towards preschoolers.</Description>
     </Site>
+    <Site name="YTV" util="YTV" agecheck="false" enabled="true" lang="en">
+      <Description>YTV is a Canadian English-language cable television specialty channel aimed at kids and their families. If a show is crazy, cool, clever and funny, chances are it’s on YTV! With shows like SpongeBob SquarePants, iCarly, and The Next Star - plus the latest and greatest movies – YTV is family headquarters!</Description>
+    </Site>
     <Site name="4oD" util="Fourod" agecheck="false" enabled="true" lang="en">
       <Description>Catchup on all your favourite Channel 4 shows (only available in the UK).</Description>
       <Categories>
