@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Threading;
 using System.Xml;
+using Newtonsoft.Json;
 
 namespace OnlineVideos.Hoster
 {
@@ -63,6 +64,31 @@ namespace OnlineVideos.Hoster
         public override string getHosterUrl()
         {
             return "dailymotion.com";
+        }
+
+        public override Dictionary<string, string> getPlaybackOptions(string url)
+        {
+            string webData = SiteUtilBase.GetWebData(url.Replace(@"/swf/", @"/video/"));
+
+            Dictionary<string, string> res = new Dictionary<string, string>();
+            Match matchFileUrl = Regex.Match(webData, @"%22(?<n0>sd|hq)URL%22%3A(?<m0>%22.+?%22)");
+            while (matchFileUrl.Success)
+            {
+                string foundUrl = matchFileUrl.Groups["m0"].Value;
+                foundUrl = HttpUtility.UrlDecode(foundUrl);
+                if (foundUrl.StartsWith("\"") && foundUrl.EndsWith("\""))
+                {
+                    try
+                    {
+                        string deJSONified = JsonConvert.DeserializeObject<string>(foundUrl);
+                        if (!String.IsNullOrEmpty(deJSONified)) foundUrl = deJSONified;
+                    }
+                    catch { }
+                }
+                res.Add(matchFileUrl.Groups["n0"].Value, foundUrl);
+                matchFileUrl = matchFileUrl.NextMatch();
+            }
+            return res;
         }
 
         public override string getVideoUrls(string url)
