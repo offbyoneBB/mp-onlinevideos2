@@ -21,17 +21,18 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("ThumbURL")]
         protected string thumbURL = "http://images.m6replay.fr";
         [Category("OnlineVideosConfiguration"), Description("ServerURL1")]
-        protected string serverURL1 = "rtmp://groupemsix.fcod.llnwd.net/a3100/d1/";
+        protected string serverURL1 = "rtmpe://groupemsix.fcod.llnwd.net/a2883/d1/";
         [Category("OnlineVideosConfiguration"), Description("ServerURL2")]
         protected string serverURL2 = "rtmpe://m6replayfs.fplive.net/m6replay/streaming/";
         [Category("OnlineVideosConfiguration"), Description("ServerURL3")]
         protected string serverURL3 = "rtmpe://m6dev.fcod.llnwd.net:443/a3100/d1/";
         [Category("OnlineVideosConfiguration"), Description("PlayerURL")]
-        protected string playerURL = "http://l3.player.M6.fr/swf/ReplayPlayer_20110228.swf";
+        protected string playerURL = "http://groupemsix.vo.llnwd.net/o24/u/players/ReplayPlayerV2Hds.swf";
         [Category("OnlineVideosConfiguration"), Description("PlayerSize")]
-        protected string playerSize = "1197361";
+        protected string playerSize = "1854813";
         [Category("OnlineVideosConfiguration"), Description("PlayerSHA")]
-        protected string playerSHA = "2166742885D94CD229060D98EE976F78F16953EAB0ECC431736DFFD153C7EAA4";
+        protected string playerSHA = "9de62bb8db4eccec47f6433381ab0728daec808ca591cf79a5bc9a27647ff356";
+        
 
         private XmlDocument doc = new XmlDocument();
             
