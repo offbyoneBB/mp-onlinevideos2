@@ -48,7 +48,7 @@ public:
   void Append(CCollection<TItem, TItemKey> *collection);
 
   // clear collection of items
-  void Clear(void);
+  virtual void Clear(void);
 
   // test if item exists in collection
   // @param key : item key to find

@@ -25,10 +25,26 @@
 CMediaPacketCollection::CMediaPacketCollection(void)
   : CCollection(CCollection::Delete)
 {
+  this->consolidatedMediaPackets = new CMediaPacketCollection(false);
+}
+
+CMediaPacketCollection::CMediaPacketCollection(bool consolidateSpace)
+  : CCollection(CCollection::Delete)
+{
+  this->consolidatedMediaPackets = NULL;
+  if (consolidateSpace)
+  {
+    this->consolidatedMediaPackets = new CMediaPacketCollection();
+  }
 }
 
 CMediaPacketCollection::~CMediaPacketCollection(void)
 {
+  if (this->consolidatedMediaPackets != NULL)
+  {
+    delete this->consolidatedMediaPackets;
+    this->consolidatedMediaPackets = NULL;
+  }
 }
 
 bool CMediaPacketCollection::Add(CMediaPacket *item)
@@ -72,6 +88,8 @@ bool CMediaPacketCollection::Add(CMediaPacket *item)
     // add new item to collection and increase item count
     *(this->items + endIndex) = item;
     this->itemCount++;
+
+    this->AddPacketToConsolidatedMediaPackets(item);
   }
 
   return true;
@@ -220,25 +238,119 @@ unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenPositions(int64_t
   }
 
   return index;
-
 }
-unsigned int CMediaPacketCollection::GetMediaPacketIndexOverlappingPositions(int64_t start, int64_t end)
+
+//unsigned int CMediaPacketCollection::GetMediaPacketIndexOverlappingPositions(int64_t start, int64_t end)
+//{
+//  unsigned int index = UINT_MAX;
+//
+//  for (unsigned int i = 0; i < this->itemCount; i++)
+//  {
+//    CMediaPacket *mediaPacket = this->GetItem(i);
+//    int64_t mediaPacketStart = mediaPacket->GetStart();
+//    int64_t mediaPacketEnd = mediaPacket->GetEnd();
+//
+//    if ((start <= mediaPacketEnd) && (end >= mediaPacketStart))
+//    {
+//      // we found media packet which overlaps position range
+//      index = i;
+//      break;
+//    }
+//  }
+//
+//  return index;
+//}
+
+CMediaPacket *CMediaPacketCollection::GetOverlappedRegion(CMediaPacket *packet)
 {
-  unsigned int index = UINT_MAX;
+  CMediaPacket *result = NULL;
 
-  for (unsigned int i = 0; i < this->itemCount; i++)
+  if ((this->consolidatedMediaPackets != NULL) && (packet != NULL))
   {
-    CMediaPacket *mediaPacket = this->GetItem(i);
-    int64_t mediaPacketStart = mediaPacket->GetStart();
-    int64_t mediaPacketEnd = mediaPacket->GetEnd();
-
-    if ((start <= mediaPacketEnd) && (end >= mediaPacketStart))
+    result = new CMediaPacket();
+    if (result != NULL)
     {
-      // we found media packet which overlaps position range
-      index = i;
-      break;
+      unsigned int count = this->consolidatedMediaPackets->Count();
+      for (unsigned int i = 0; i < count; i++)
+      {
+        CMediaPacket *consolidatedPacket = this->consolidatedMediaPackets->GetItem(i);
+
+        if ((packet->GetStart() <= consolidatedPacket->GetEnd()) &&
+          (packet->GetEnd() >= consolidatedPacket->GetStart()))
+        {
+          // overlapping region found, set values in result
+          result->SetStart(max(packet->GetStart(), consolidatedPacket->GetStart()));
+          result->SetEnd(min(packet->GetEnd(), consolidatedPacket->GetEnd()));
+        }
+      }
     }
   }
 
-  return index;
+  return result;
+}
+
+void CMediaPacketCollection::AddPacketToConsolidatedMediaPackets(CMediaPacket *packet)
+{
+  if ((this->consolidatedMediaPackets != NULL) && (packet != NULL))
+  {
+    bool merged = false;
+
+    unsigned int count = this->consolidatedMediaPackets->Count();
+    for (unsigned int i = 0; i < count; i++)
+    {
+      CMediaPacket *consolidatedPacket = this->consolidatedMediaPackets->GetItem(i);
+
+      if ((packet->GetEnd() + 1) == consolidatedPacket->GetStart())
+      {
+        consolidatedPacket->SetStart(packet->GetStart());
+        merged = true;
+        break;
+      }
+      else if (packet->GetStart() == (consolidatedPacket->GetEnd() + 1))
+      {
+        consolidatedPacket->SetEnd(packet->GetEnd());
+        merged = true;
+        break;
+      }
+    }
+
+    while (merged)
+    {
+      merged = false;
+      count = this->consolidatedMediaPackets->Count();
+
+      for (unsigned int i = 0; (i < count) && (!merged); i++)
+      {
+        CMediaPacket *first = this->consolidatedMediaPackets->GetItem(i);
+        for (unsigned int j = (i + 1); (j < count) && (!merged); j++)
+        {
+          CMediaPacket *second = this->consolidatedMediaPackets->GetItem(j);
+
+          if ((second->GetEnd() + 1) == first->GetStart())
+          {
+            first->SetStart(second->GetStart());
+            this->consolidatedMediaPackets->Remove(j);
+            merged = true;
+            break;
+          }
+          else if (second->GetStart() == (first->GetEnd() + 1))
+          {
+            first->SetEnd(second->GetEnd());
+            this->consolidatedMediaPackets->Remove(j);
+            merged = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
+void CMediaPacketCollection::Clear(void)
+{
+  CCollection::Clear();
+  if (this->consolidatedMediaPackets != NULL)
+  {
+    this->consolidatedMediaPackets->Clear();
+  }
 }

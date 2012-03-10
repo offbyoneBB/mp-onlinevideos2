@@ -80,6 +80,16 @@ bool LinearBuffer::InitializeBuffer(unsigned int size)
   return (this->buffer != NULL);
 }
 
+bool LinearBuffer::InitializeBuffer(unsigned int size, char value)
+{
+  bool result = this->InitializeBuffer(size);
+  if (result)
+  {
+    memset(this->buffer, value, this->bufferSize);
+  }
+  return result;
+}
+
 void LinearBuffer::ClearBuffer(void)
 {
   this->dataStart = this->buffer;

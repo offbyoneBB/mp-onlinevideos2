@@ -89,6 +89,12 @@ public:
   // @return : true if successful, false otherwise
   bool InitializeBuffer(unsigned int size);
 
+  // initialize buffer to specified size and set whole buffer with specified value
+  // @param size : required size of buffer
+  // @param value : value to set in buffer
+  // @return : true if successful, false otherwise
+  bool InitializeBuffer(unsigned int size, char value);
+
   // clear buffer content
   void ClearBuffer(void);
 

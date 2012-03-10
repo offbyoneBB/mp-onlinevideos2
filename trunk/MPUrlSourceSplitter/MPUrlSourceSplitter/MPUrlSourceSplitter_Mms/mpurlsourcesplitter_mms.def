@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_mms.dll
+
+EXPORTS
+			CreateProtocolInstance		PRIVATE
+			DestroyProtocolInstance		PRIVATE

@@ -559,7 +559,7 @@ STDMETHODIMP CLAVSplitter::GetCurFile(LPOLESTR *ppszFileName, AM_MEDIA_TYPE *pmt
   wcsncpy_s(*ppszFileName, strlen, m_fileName.c_str(), _TRUNCATE);
   return S_OK;*/
 
-  return m_pInput->GetCurFile(ppszFileName, pmt);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : m_pInput->GetCurFile(ppszFileName, pmt);
 }
 
 STDMETHODIMP CLAVSplitter::InitDemuxer()
@@ -921,7 +921,7 @@ STDMETHODIMP CLAVSplitter::GetCapabilities(DWORD* pCapabilities)
 
   return S_OK;*/
 
-  return this->m_pInput->GetCapabilities(pCapabilities);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetCapabilities(pCapabilities);
 }
 
 STDMETHODIMP CLAVSplitter::CheckCapabilities(DWORD* pCapabilities)
@@ -945,37 +945,37 @@ STDMETHODIMP CLAVSplitter::CheckCapabilities(DWORD* pCapabilities)
   //// otherwise, a partial match
   //return S_FALSE;
 
-  return this->m_pInput->CheckCapabilities(pCapabilities);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->CheckCapabilities(pCapabilities);
 }
 
 STDMETHODIMP CLAVSplitter::IsFormatSupported(const GUID* pFormat)
 {
   //return !pFormat ? E_POINTER : *pFormat == TIME_FORMAT_MEDIA_TIME ? S_OK : S_FALSE;
-  return this->m_pInput->IsFormatSupported(pFormat);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->IsFormatSupported(pFormat);
 }
 
 STDMETHODIMP CLAVSplitter::QueryPreferredFormat(GUID* pFormat)
 {
   //return GetTimeFormat(pFormat);
-  return this->m_pInput->QueryPreferredFormat(pFormat);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->QueryPreferredFormat(pFormat);
 }
 
 STDMETHODIMP CLAVSplitter::GetTimeFormat(GUID* pFormat)
 {
   //return pFormat ? *pFormat = TIME_FORMAT_MEDIA_TIME, S_OK : E_POINTER;
-  return this->m_pInput->GetTimeFormat(pFormat);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetTimeFormat(pFormat);
 }
 
 STDMETHODIMP CLAVSplitter::IsUsingTimeFormat(const GUID* pFormat)
 {
   //return IsFormatSupported(pFormat);
-  return this->m_pInput->IsUsingTimeFormat(pFormat);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->IsUsingTimeFormat(pFormat);
 }
 
 STDMETHODIMP CLAVSplitter::SetTimeFormat(const GUID* pFormat)
 {
   //return S_OK == IsFormatSupported(pFormat) ? S_OK : E_INVALIDARG;
-  return this->m_pInput->SetTimeFormat(pFormat);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->SetTimeFormat(pFormat);
 }
 
 STDMETHODIMP CLAVSplitter::GetDuration(LONGLONG* pDuration)
@@ -984,25 +984,25 @@ STDMETHODIMP CLAVSplitter::GetDuration(LONGLONG* pDuration)
   CheckPointer(m_pDemuxer, E_UNEXPECTED);
   *pDuration = m_pDemuxer->GetDuration();
   if (*pDuration < 0) return E_FAIL; return S_OK;*/
-  return this->m_pInput->GetDuration(pDuration);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetDuration(pDuration);
 }
 
 STDMETHODIMP CLAVSplitter::GetStopPosition(LONGLONG* pStop)
 {
   //return GetDuration(pStop);
-  return this->m_pInput->GetStopPosition(pStop);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetStopPosition(pStop);
 }
 
 STDMETHODIMP CLAVSplitter::GetCurrentPosition(LONGLONG* pCurrent)
 {
   //return E_NOTIMPL;
-  return this->m_pInput->GetCurrentPosition(pCurrent);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetCurrentPosition(pCurrent);
 }
 
 STDMETHODIMP CLAVSplitter::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat)
 {
   //return E_NOTIMPL;
-  return this->m_pInput->ConvertTimeFormat(pTarget, pTargetFormat, Source, pSourceFormat);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->ConvertTimeFormat(pTarget, pTargetFormat, Source, pSourceFormat);
 }
 
 STDMETHODIMP CLAVSplitter::SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
@@ -1115,14 +1115,14 @@ STDMETHODIMP CLAVSplitter::GetPositions(LONGLONG* pCurrent, LONGLONG* pStop)
   //if(pCurrent) *pCurrent = this->m_pInput->GetCurrent();
   //if(pStop) *pStop = this->m_pInput->GetStop();
   //return S_OK;
-  return this->m_pInput->GetPositions(pCurrent, pStop);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetPositions(pCurrent, pStop);
 }
 
 STDMETHODIMP CLAVSplitter::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest)
 {
   //if(pEarliest) *pEarliest = 0;
   //return GetDuration(pLatest);
-  return this->m_pInput->GetAvailable(pEarliest, pLatest);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetAvailable(pEarliest, pLatest);
 }
 
 STDMETHODIMP CLAVSplitter::SetRate(double dRate)
@@ -1142,7 +1142,7 @@ STDMETHODIMP CLAVSplitter::SetRate(double dRate)
     return E_INVALIDARG;
   }*/
 
-  return this->m_pInput->SetRate(dRate);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->SetRate(dRate);
 }
 
 STDMETHODIMP CLAVSplitter::GetRate(double* pdRate)
@@ -1154,13 +1154,13 @@ STDMETHODIMP CLAVSplitter::GetRate(double* pdRate)
   *pdRate = this->m_pInput->GetPlayRate();
   return S_OK;*/
 
-  return this->m_pInput->GetRate(pdRate);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetRate(pdRate);
 }
 
 STDMETHODIMP CLAVSplitter::GetPreroll(LONGLONG* pllPreroll)
 {
   //return pllPreroll ? *pllPreroll = 0, S_OK : E_POINTER;
-  return this->m_pInput->GetPreroll(pllPreroll);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetPreroll(pllPreroll);
 }
 
 STDMETHODIMP CLAVSplitter::UpdateForcedSubtitleMediaType()
@@ -1728,23 +1728,23 @@ STDMETHODIMP_(std::set<FormatInfo>&) CLAVSplitter::GetInputFormats()
 // IAMOpenProgress
 STDMETHODIMP CLAVSplitter::QueryProgress(LONGLONG *pllTotal, LONGLONG *pllCurrent)
 {
-  return m_pInput->QueryProgress(pllTotal, pllCurrent);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : m_pInput->QueryProgress(pllTotal, pllCurrent);
 }
 
 STDMETHODIMP CLAVSplitter::AbortOperation(void)
 {
-  return m_pInput->AbortOperation();
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : m_pInput->AbortOperation();
 }
 
 // IDownload interface
 STDMETHODIMP CLAVSplitter::Download(LPCOLESTR uri, LPCOLESTR fileName)
 {
-  return m_pInput->Download(uri, fileName);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : m_pInput->Download(uri, fileName);
 }
 
 STDMETHODIMP CLAVSplitter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDownloadCallback *downloadCallback)
 {
-  return m_pInput->DownloadAsync(uri, fileName, downloadCallback);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : m_pInput->DownloadAsync(uri, fileName, downloadCallback);
 }
 
 CBaseDemuxer *CLAVSplitter::GetDemuxer(void)
@@ -1819,7 +1819,7 @@ int64_t CLAVSplitter::SeekToPosition(int64_t start, int64_t end)
 
 HRESULT CLAVSplitter::GetTotalLength(int64_t *totalLength)
 {
-  return this->m_pInput->GetTotalLength(totalLength);
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetTotalLength(totalLength);
 }
 
 HRESULT CLAVSplitter::IsFilterReadyToConnectPins(bool *ready)
