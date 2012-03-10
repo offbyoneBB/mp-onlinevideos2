@@ -158,7 +158,7 @@
         <item key="videoListRegEx"><![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
 <div[^>]*>[^<]*</div>\s*
 (<div[^>]*>[^<]*</div>\s*)?
-<div\s+onclick=[^>]*>\s*(?<Airdate>[^<]*)</div>\s*
+<div\s+onclick=[^>]*>\s*<div[^<]*>[^<]*</div>\s*(?<Airdate>[^<]*)</div>\s*
 (?:(?!<div\sclass="buy">).)+
 <div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://rtl-now.rtl.de/sendung_a_z.php]]></item>
@@ -173,7 +173,7 @@
         <item key="videoListRegEx"><![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
 <div[^>]*>[^<]*</div>\s*
 (<div[^>]*>[^<]*</div>\s*)?
-<div\s+onclick=[^>]*>\s*(?<Airdate>[^<]*)</div>\s*
+<div\s+onclick=[^>]*>\s*<div[^<]*>[^<]*</div>\s*(?<Airdate>[^<]*)</div>\s*
 (?:(?!<div\sclass="buy">).)+
 <div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://rtl2now.rtl2.de]]></item>
@@ -188,7 +188,12 @@
 <div[^>]*>\s*
 <span[^>]*>\s*FREE\s+\|\s+Jetzt\s+ansehen\s*<br>\s*</span>\s*
 <h2>(?<title>[^<]+)</h2>\s*(?<description>[^<]*)</div>]]></item>
-        <item key="videoListRegEx"><![CDATA[>(?<Title>[^<]*)</a>[^']*'(?<VideoUrl>[^']*)'\)"\sclass="time">(?<Airdate>[^<]*)</div>(?:(?!minibutton).)*minibutton">kostenlos</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
+<div[^>]*>[^<]*</div>\s*
+(<div[^>]*>[^<]*</div>\s*)?
+<div\s+onclick=[^>]*>\s*<div[^<]*>[^<]*</div>\s*(?<Airdate>[^<]*)</div>\s*
+(?:(?!<div\sclass="buy">).)+
+<div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://www.voxnow.de/sendung_a_z.php]]></item>
         <item key="app"><![CDATA[voxnow]]></item>
       </Configuration>
@@ -197,7 +202,12 @@
       <Description>Kostenlos verfügbare Sendungen des Super RTL.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[FREE</a>\s*</div>\s*<div\sstyle=""\sclass="seriennavi_link">\s*<a.*?href="(?<url>[^"]+)"[^>]*>(?<title>[^<]+)</a>]]></item>
-        <item key="videoListRegEx"><![CDATA[>(?<Title>[^<]*)</a>[^']*'(?<VideoUrl>[^']*)'\)"\sclass="time">(?<Airdate>[^<]*)</div>(?:(?!minibutton).)*minibutton">kostenlos</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
+<div[^>]*>[^<]*</div>\s*
+(<div[^>]*>[^<]*</div>\s*)?
+<div\s+onclick=[^>]*>\s*<div[^<]*>[^<]*</div>\s*(?<Airdate>[^<]*)</div>\s*
+(?:(?!<div\sclass="buy">).)+
+<div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://www.superrtlnow.de]]></item>
         <item key="app"><![CDATA[superrtlnow]]></item>
       </Configuration>
