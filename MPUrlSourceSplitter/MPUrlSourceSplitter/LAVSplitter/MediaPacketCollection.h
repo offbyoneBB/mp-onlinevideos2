@@ -37,11 +37,11 @@ public:
   // @return : index of media packet or UINT_MAX if not exists
   unsigned int GetMediaPacketIndexBetweenPositions(int64_t position);
 
-  // gets index of media packet which overlap position range between start and end position
-  // @param start : start of position range
-  // @param end : end of position range
-  // @return : index of media packet or UINT_MAX if not exists
-  unsigned int GetMediaPacketIndexOverlappingPositions(int64_t start, int64_t end);
+  //// gets index of media packet which overlap position range between start and end position
+  //// @param start : start of position range
+  //// @param end : end of position range
+  //// @return : index of media packet or UINT_MAX if not exists
+  //unsigned int GetMediaPacketIndexOverlappingPositions(int64_t start, int64_t end);
 
   // get item index of item with specified start position
   // @param key : the key of item to find
@@ -66,7 +66,19 @@ public:
   // @return : true if successful, false otherwise
   bool GetItemInsertPosition(int64_t key, void *context, unsigned int *startIndex, unsigned int *endIndex);
 
+  // gets overlapped region between specified packet and consolidated space
+  // @param packet : packet to get overlapped region
+  // @return : media packet which holds overlapping region without data or NULL if error
+  //           if media packet start and end are zero then no overlapping region exists
+  CMediaPacket *GetOverlappedRegion(CMediaPacket *packet);
+
+  // clear collection of items
+  virtual void Clear(void);
+
 protected:
+
+  CMediaPacketCollection(bool consolidateSpace);
+
   // compare two item keys
   // @param firstKey : the first item key to compare
   // @param secondKey : the second item key to compare
@@ -87,7 +99,14 @@ protected:
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CMediaPacket *Clone(CMediaPacket *item);  
+  CMediaPacket *Clone(CMediaPacket *item);
+
+  // holds consolidated media packets space
+  CMediaPacketCollection *consolidatedMediaPackets;
+
+  // adds media packet to consolidated media packets space
+  // @param packet : packet to add
+  void AddPacketToConsolidatedMediaPackets(CMediaPacket *packet);
 };
 
 #endif

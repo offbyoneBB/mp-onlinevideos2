@@ -200,7 +200,7 @@ protected:
   // holds if length of stream was set
   bool setLenght;
 
-  // stream time and end stream time
+  // stream time
   int64_t streamTime;
 
   // specifies position in buffer

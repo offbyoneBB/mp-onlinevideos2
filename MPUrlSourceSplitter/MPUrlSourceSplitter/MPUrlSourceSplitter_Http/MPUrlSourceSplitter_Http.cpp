@@ -80,6 +80,7 @@ CMPUrlSourceSplitter_Http::CMPUrlSourceSplitter_Http(CParameterCollection *confi
   this->filledReceivedDataFromStart = false;
   this->filledReceivedDataFromRange = false;
   this->supressData = false;
+  this->checkRanges = HTTP_CHECK_RANGES_DEFAULT;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -141,6 +142,7 @@ HRESULT CMPUrlSourceSplitter_Http::ClearSession(void)
   this->filledReceivedDataFromRange = false;
   this->receiveDataTimeout = HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
+  this->checkRanges = HTTP_CHECK_RANGES_DEFAULT;
 
   if (this->receivedDataFromStart != NULL)
   {
@@ -292,9 +294,11 @@ HRESULT CMPUrlSourceSplitter_Http::OpenConnection(void)
     result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
   }
 
+  this->checkRanges = this->configurationParameters->GetValueBool(PARAMETER_NAME_HTTP_CHECK_RANGES, true, HTTP_CHECK_RANGES_DEFAULT);
+
   if (result == S_OK)
   {
-    if (this->rangesSupported == RANGES_STATE_UNKNOWN)
+    if ((this->rangesSupported == RANGES_STATE_UNKNOWN) && (this->checkRanges))
     {
       // we don't know if ranges are supported
       this->receivedDataFromStart = new LinearBuffer();

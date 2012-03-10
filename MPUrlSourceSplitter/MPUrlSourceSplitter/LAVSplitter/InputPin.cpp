@@ -921,11 +921,11 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
           int64_t unprocessedMediaPacketStart = unprocessedMediaPacket->GetStart();
           int64_t unprocessedMediaPacketEnd = unprocessedMediaPacket->GetEnd();
 
-          if (result == S_OK)
+          // try to find overlapping region
+          CMediaPacket *region = this->mediaPacketCollection->GetOverlappedRegion(unprocessedMediaPacket);
+          if (region != NULL)
           {
-            // try to find overlapping media packet
-            CMediaPacket *overlappingPacket = this->mediaPacketCollection->GetItem(this->mediaPacketCollection->GetMediaPacketIndexOverlappingPositions(unprocessedMediaPacketStart, unprocessedMediaPacketEnd));
-            if (overlappingPacket == NULL)
+            if ((region->GetStart() == 0) && (region->GetEnd() == 0))
             {
               // there isn't overlapping media packet
               // whole packet can be added to collection
@@ -937,160 +937,218 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
               // it means that this packet has same data (in overlapping range)
               // there is no need to duplicate data in collection
 
-              int64_t overlappingMediaPacketStart = overlappingPacket->GetStart();
-              int64_t overlappingMediaPacketEnd = overlappingPacket->GetEnd();
+              int64_t overlappingRegionStart = region->GetStart();
+              int64_t overlappingRegionEnd = region->GetEnd();
 
-              if (result == S_OK)
+              if (SUCCEEDED(result) && (unprocessedMediaPacketStart < overlappingRegionStart))
               {
-                // we get both media packets start and end
-                if (unprocessedMediaPacketStart < overlappingMediaPacketStart)
+                // initialize part
+                int64_t start = unprocessedMediaPacketStart;
+                int64_t end = overlappingRegionStart - 1;
+                CMediaPacket *part = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
+
+                result = (part != NULL) ? S_OK : E_POINTER;
+                if (SUCCEEDED(result))
                 {
-                  // split unprocessed media packet into two parts
-                  // insert them into unprocessed media packet collection
-
-                  // initialize first part
-                  int64_t start = unprocessedMediaPacketStart;
-                  int64_t end = overlappingMediaPacketStart - 1;
-                  CMediaPacket *firstPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
-
-                  // initialize second part
-                  start = overlappingMediaPacketStart;
-                  end = unprocessedMediaPacketEnd;
-                  CMediaPacket *secondPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
-
-                  result = ((firstPart != NULL) && (secondPart != NULL)) ? S_OK : E_POINTER;
-
-                  if (result == S_OK)
-                  {
-                    // delete first media packet because it is processed
-                    if (!unprocessedMediaPackets->Remove(0))
-                    {
-                      // some error occured
-                      result = E_FAIL;
-                    }
-                  }
-
-                  if (result == S_OK)
-                  {
-                    // both media packets are created correctly
-                    // now add both packets to unprocessed media collection
-
-                    result = (unprocessedMediaPackets->Add(firstPart)) ? S_OK : E_FAIL;
-
-                    if (result == S_OK)
-                    {
-                      result = (unprocessedMediaPackets->Add(secondPart)) ? S_OK : E_FAIL;
-
-                      if (FAILED(result))
-                      {
-                        // second part wasn't added to media collection
-                        delete secondPart;
-                      }
-                    }
-                    else
-                    {
-                      // first part wasn't added to media collection
-                      delete firstPart;
-                      delete secondPart;
-                    }
-                  }
-                  else
-                  {
-                    // some error occured
-                    // both media packets must be destroyed
-
-                    if (firstPart != NULL)
-                    {
-                      delete firstPart;
-                    }
-                    if (secondPart != NULL)
-                    {
-                      delete secondPart;
-                    }
-                  }
+                  result = (unprocessedMediaPackets->Add(part)) ? S_OK : E_FAIL;
                 }
-                else if (unprocessedMediaPacketEnd > overlappingMediaPacketEnd)
+              }
+
+              if (SUCCEEDED(result) && (unprocessedMediaPacketEnd > overlappingRegionEnd))
+              {
+                // initialize part
+                int64_t start = overlappingRegionEnd + 1;
+                int64_t end = unprocessedMediaPacketEnd;
+                CMediaPacket *part = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
+
+                result = (part != NULL) ? S_OK : E_POINTER;
+                if (SUCCEEDED(result))
                 {
-                  // split unprocessed media packet into two parts
-                  // insert them into unprocessed media packet collection
-
-                  // initialize first part
-                  int64_t start = unprocessedMediaPacketStart;
-                  int64_t end = overlappingMediaPacketEnd;
-                  CMediaPacket *firstPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
-
-                  // initialize second part
-                  start = overlappingMediaPacketEnd + 1;
-                  end = unprocessedMediaPacketEnd;
-                  CMediaPacket *secondPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
-
-                  result = ((firstPart != NULL) && (secondPart != NULL)) ? S_OK : E_POINTER;
-
-                  if (result == S_OK)
-                  {
-                    // delete first media packet because it is processed
-                    if (!unprocessedMediaPackets->Remove(0))
-                    {
-                      // some error occured
-                      result = E_FAIL;
-                    }
-                  }
-
-                  if (result == S_OK)
-                  {
-                    // both media packets are created correctly
-                    // now add both packets to unprocessed media collection
-
-                    result = (unprocessedMediaPackets->Add(firstPart)) ? S_OK : E_FAIL;
-
-                    if (result == S_OK)
-                    {
-                      result = (unprocessedMediaPackets->Add(secondPart)) ? S_OK : E_FAIL;
-
-                      if (FAILED(result))
-                      {
-                        // second part wasn't added to media collection
-                        delete secondPart;
-                      }
-                    }
-                    else
-                    {
-                      // first part wasn't added to media collection
-                      delete firstPart;
-                      delete secondPart;
-                    }
-                  }
-                  else
-                  {
-                    // some error occured
-                    // both media packets must be destroyed
-
-                    if (firstPart != NULL)
-                    {
-                      delete firstPart;
-                    }
-                    if (secondPart != NULL)
-                    {
-                      delete secondPart;
-                    }
-                  }
-                }
-                else
-                {
-                  // just delete processed media packet
-                  if (result == S_OK)
-                  {
-                    // delete first media packet because it is processed
-                    if (!unprocessedMediaPackets->Remove(0))
-                    {
-                      // some error occured
-                      result = E_FAIL;
-                    }
-                  }
+                  result = (unprocessedMediaPackets->Add(part)) ? S_OK : E_FAIL;
                 }
               }
             }
           }
+          else
+          {
+            // there is serious error
+            result = E_FAIL;
+          }
+
+          // remove first unprocessed media packet
+          // not this packet is processed
+          unprocessedMediaPackets->Remove(0);
+
+          //if (result == S_OK)
+          //{
+          //  // try to find overlapping media packet
+          //  CMediaPacket *overlappingPacket = this->mediaPacketCollection->GetItem(this->mediaPacketCollection->GetMediaPacketIndexOverlappingPositions(unprocessedMediaPacketStart, unprocessedMediaPacketEnd));
+          //  if (overlappingPacket == NULL)
+          //  {
+          //    // there isn't overlapping media packet
+          //    // whole packet can be added to collection
+          //    result = (this->mediaPacketCollection->Add(unprocessedMediaPacket->Clone())) ? S_OK : E_FAIL;
+          //  }
+          //  else
+          //  {
+          //    // current unprocessed media packet is overlapping some media packet in media packet collection
+          //    // it means that this packet has same data (in overlapping range)
+          //    // there is no need to duplicate data in collection
+
+          //    int64_t overlappingMediaPacketStart = overlappingPacket->GetStart();
+          //    int64_t overlappingMediaPacketEnd = overlappingPacket->GetEnd();
+
+          //    if (result == S_OK)
+          //    {
+          //      // we get both media packets start and end
+          //      if (unprocessedMediaPacketStart < overlappingMediaPacketStart)
+          //      {
+          //        // split unprocessed media packet into two parts
+          //        // insert them into unprocessed media packet collection
+
+          //        // initialize first part
+          //        int64_t start = unprocessedMediaPacketStart;
+          //        int64_t end = overlappingMediaPacketStart - 1;
+          //        CMediaPacket *firstPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
+
+          //        // initialize second part
+          //        start = overlappingMediaPacketStart;
+          //        end = unprocessedMediaPacketEnd;
+          //        CMediaPacket *secondPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
+
+          //        result = ((firstPart != NULL) && (secondPart != NULL)) ? S_OK : E_POINTER;
+
+          //        if (result == S_OK)
+          //        {
+          //          // delete first media packet because it is processed
+          //          if (!unprocessedMediaPackets->Remove(0))
+          //          {
+          //            // some error occured
+          //            result = E_FAIL;
+          //          }
+          //        }
+
+          //        if (result == S_OK)
+          //        {
+          //          // both media packets are created correctly
+          //          // now add both packets to unprocessed media collection
+
+          //          result = (unprocessedMediaPackets->Add(firstPart)) ? S_OK : E_FAIL;
+
+          //          if (result == S_OK)
+          //          {
+          //            result = (unprocessedMediaPackets->Add(secondPart)) ? S_OK : E_FAIL;
+
+          //            if (FAILED(result))
+          //            {
+          //              // second part wasn't added to media collection
+          //              delete secondPart;
+          //            }
+          //          }
+          //          else
+          //          {
+          //            // first part wasn't added to media collection
+          //            delete firstPart;
+          //            delete secondPart;
+          //          }
+          //        }
+          //        else
+          //        {
+          //          // some error occured
+          //          // both media packets must be destroyed
+
+          //          if (firstPart != NULL)
+          //          {
+          //            delete firstPart;
+          //          }
+          //          if (secondPart != NULL)
+          //          {
+          //            delete secondPart;
+          //          }
+          //        }
+          //      }
+          //      else if (unprocessedMediaPacketEnd > overlappingMediaPacketEnd)
+          //      {
+          //        // split unprocessed media packet into two parts
+          //        // insert them into unprocessed media packet collection
+
+          //        // initialize first part
+          //        int64_t start = unprocessedMediaPacketStart;
+          //        int64_t end = overlappingMediaPacketEnd;
+          //        CMediaPacket *firstPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
+
+          //        // initialize second part
+          //        start = overlappingMediaPacketEnd + 1;
+          //        end = unprocessedMediaPacketEnd;
+          //        CMediaPacket *secondPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
+
+          //        result = ((firstPart != NULL) && (secondPart != NULL)) ? S_OK : E_POINTER;
+
+          //        if (result == S_OK)
+          //        {
+          //          // delete first media packet because it is processed
+          //          if (!unprocessedMediaPackets->Remove(0))
+          //          {
+          //            // some error occured
+          //            result = E_FAIL;
+          //          }
+          //        }
+
+          //        if (result == S_OK)
+          //        {
+          //          // both media packets are created correctly
+          //          // now add both packets to unprocessed media collection
+
+          //          result = (unprocessedMediaPackets->Add(firstPart)) ? S_OK : E_FAIL;
+
+          //          if (result == S_OK)
+          //          {
+          //            result = (unprocessedMediaPackets->Add(secondPart)) ? S_OK : E_FAIL;
+
+          //            if (FAILED(result))
+          //            {
+          //              // second part wasn't added to media collection
+          //              delete secondPart;
+          //            }
+          //          }
+          //          else
+          //          {
+          //            // first part wasn't added to media collection
+          //            delete firstPart;
+          //            delete secondPart;
+          //          }
+          //        }
+          //        else
+          //        {
+          //          // some error occured
+          //          // both media packets must be destroyed
+
+          //          if (firstPart != NULL)
+          //          {
+          //            delete firstPart;
+          //          }
+          //          if (secondPart != NULL)
+          //          {
+          //            delete secondPart;
+          //          }
+          //        }
+          //      }
+          //      else
+          //      {
+          //        // just delete processed media packet
+          //        if (result == S_OK)
+          //        {
+          //          // delete first media packet because it is processed
+          //          if (!unprocessedMediaPackets->Remove(0))
+          //          {
+          //            // some error occured
+          //            result = E_FAIL;
+          //          }
+          //        }
+          //      }
+          //    }
+          //  }
+          //}
         }
       }
 

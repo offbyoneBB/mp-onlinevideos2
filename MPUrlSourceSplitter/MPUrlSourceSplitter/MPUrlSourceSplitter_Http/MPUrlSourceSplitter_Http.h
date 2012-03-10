@@ -36,6 +36,7 @@
 // we should get data in twenty seconds
 #define HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT                   20000
 #define HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
+#define HTTP_CHECK_RANGES_DEFAULT                           true
 
 #define PROTOCOL_NAME                                       L"HTTP"
 
@@ -59,6 +60,7 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"HTTP" };
 #define PARAMETER_NAME_HTTP_COOKIE                                L"HttpCookie"
 #define PARAMETER_NAME_HTTP_VERSION                               L"HttpVersion"
 #define PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH                 L"HttpIgnoreContentLength"
+#define PARAMETER_NAME_HTTP_CHECK_RANGES                          L"HttpCheckRanges"
 
 // returns protocol class instance
 PIProtocol CreateProtocolInstance(CParameterCollection *configuration);
@@ -160,6 +162,10 @@ protected:
 
   // specifies if filter requested supressing data
   bool supressData;
+
+  // specifies is protocol should check or not ranges
+  // default is HTTP_CHECK_RANGES_DEFAULT
+  bool checkRanges;
 };
 
 #endif
