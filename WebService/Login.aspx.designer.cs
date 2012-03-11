@@ -10,7 +10,7 @@
 namespace OnlineVideos.WebService {
     
     
-    public partial class Reports {
+    public partial class LoginForm {
         
         /// <summary>
         /// form1-Steuerelement
@@ -22,30 +22,21 @@ namespace OnlineVideos.WebService {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// linkOverview-Steuerelement
+        /// Login1-Steuerelement
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld
         /// Um dies zu ändern, verschieben Sie die Felddeklaration aus der Designerdatei in eine Code-Behind-Datei.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink linkOverview;
+        protected global::System.Web.UI.WebControls.Login Login1;
         
         /// <summary>
-        /// btnDeleteSite-Steuerelement
+        /// PasswordRecovery1-Steuerelement
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld
         /// Um dies zu ändern, verschieben Sie die Felddeklaration aus der Designerdatei in eine Code-Behind-Datei.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnDeleteSite;
-        
-        /// <summary>
-        /// reports-Steuerelement
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld
-        /// Um dies zu ändern, verschieben Sie die Felddeklaration aus der Designerdatei in eine Code-Behind-Datei.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView reports;
+        protected global::System.Web.UI.WebControls.PasswordRecovery PasswordRecovery1;
     }
 }
