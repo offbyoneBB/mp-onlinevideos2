@@ -33,7 +33,7 @@ namespace OnlineVideos.WebService
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 string creator = e.Row.Cells[3].Text;
-                creator = creator.Substring(0, creator.IndexOf('@'));
+                creator = creator.Substring(0, creator.IndexOf('@')).Replace('.', ' ').Replace('_', ' ');
                 e.Row.Cells[3].Text = creator;
                 e.Row.Cells[4].Text = LanguageName(e.Row.Cells[4].Text);
                 switch ((e.Row.DataItem as Site).State)
@@ -41,10 +41,6 @@ namespace OnlineVideos.WebService
                     case SiteState.Reported: e.Row.Cells[2].BackColor = System.Drawing.Color.FromArgb(255, 240, 79); break;
                     case SiteState.Broken: e.Row.Cells[2].BackColor = System.Drawing.Color.Red; break;
                 }
-				if ((e.Row.DataItem as Site).ReportCount > 0)
-				{
-					//e.Row.Cells[1].te
-				}
             }
         }
 

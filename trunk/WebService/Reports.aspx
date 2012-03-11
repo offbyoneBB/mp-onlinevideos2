@@ -9,17 +9,22 @@
 <body>
     <form id="form1" runat="server">
     <div>
+    <asp:HyperLink runat="server" ID="linkOverview" NavigateUrl="~/SiteOverview.aspx" Text="..." Visible="false" />
+    <asp:Button runat="server" ID="btnDeleteSite" Visible="false" Text="Delete Site" 
+            onclick="btnDeleteSite_Click" />
     <asp:GridView ID="reports" runat="server" AutoGenerateColumns="False" AllowSorting="True"
             CellPadding="3" 
-            onrowdatabound="reports_RowDataBound" BackColor="#EEEEEE" 
+            BackColor="#EEEEEE" 
             BorderColor="#CCCCCC" BorderStyle="None" BorderWidth="1px" 
-            EnableViewState="False" 
-            EnableModelValidation="True" Font-Names="Calibri">
+            EnableViewState="true" 
+            EnableModelValidation="True" Font-Names="Calibri" 
+            onrowcommand="reports_RowCommand">
             <RowStyle ForeColor="#000066" />
         <Columns>
             <asp:BoundField HeaderText="Type" DataField="Type" ItemStyle-HorizontalAlign="Center"/>
             <asp:BoundField HeaderText="Date" DataField="Date" DataFormatString="{0:g}"/>
             <asp:BoundField HeaderText="Message" DataField="Message"/>
+            <asp:ButtonField Text="Delete" ButtonType="Button" CommandName="DeleteReport" />
         </Columns>
             <FooterStyle BackColor="White" ForeColor="#000066" />
             <PagerStyle BackColor="White" ForeColor="#000066" HorizontalAlign="Left" />

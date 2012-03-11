@@ -69,6 +69,7 @@
     <Content Include="Reports.aspx" />
     <Content Include="SiteOverview.aspx" />
     <Content Include="Web.config" />
+    <Content Include="Login.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.designer.cs">
@@ -80,6 +81,8 @@
       <DependentUpon>OnlineVideos.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="OVMembershipProvider.cs" />
+    <Compile Include="OVRoleProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports.aspx.cs">
       <DependentUpon>Reports.aspx</DependentUpon>
@@ -94,6 +97,13 @@
     </Compile>
     <Compile Include="SiteOverview.aspx.designer.cs">
       <DependentUpon>SiteOverview.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
