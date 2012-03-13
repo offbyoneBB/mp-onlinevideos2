@@ -19,6 +19,7 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
+            url = SiteUtilBase.GetRedirectedUrl(url);
             string page = SiteUtilBase.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
@@ -31,7 +32,7 @@ namespace OnlineVideos.Hoster
                 }
 
                 //Thread.Sleep(iWaitTime * 1001);
-                
+
                 //Dictionary<string, string> post = new Dictionary<string, string>();
                 string postData = string.Empty;
 
@@ -43,7 +44,7 @@ namespace OnlineVideos.Hoster
                     if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
                     {
                         postData = postData + string.Format("{0}={1}&", key, HttpUtility.UrlEncode(value));
-                        
+
                         //if (post.ContainsKey(key))
                         //    post[key] = value;
                         //else
