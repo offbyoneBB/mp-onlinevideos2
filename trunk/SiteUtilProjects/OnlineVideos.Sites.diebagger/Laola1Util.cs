@@ -21,10 +21,10 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class Laola1Util : SiteUtilBase
     {
-        [Category("OnlineVideosUserConfiguration"), Description("Choose your preferred quality for the videos according to bandwidth.")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Quality"), Description("Choose your preferred quality for the videos according to bandwidth.")]
         VideoQuality videoQuality = VideoQuality.High;
 
-        [Category("OnlineVideosConfiguration")]
+        [Category("OnlineVideosConfiguration"), LocalizableDisplayName("Base Url"), Description("The url of the main loala1.tv site (e.g. int/de/at)")]
         String laola1TvBaseUrl = "http://www.laola1.tv/en/int/home/"; //default is international
 
         private const String PLAYDATA_URL = "http://www.laola1.tv/server/ondemand_xml_esi.php?playkey={0}-{1}";//0=playkey1, 1=playkey2
@@ -39,6 +39,9 @@ namespace OnlineVideos.Sites
         /// </summary>
         public enum LaolaCategoryTypes { Archive, Live }
 
+        /// <summary>
+        /// Type of the video format
+        /// </summary>
         private enum LiveStreamType { Default, HD }
 
         /// <summary>
@@ -49,10 +52,10 @@ namespace OnlineVideos.Sites
 
         //different regexes for parsing laola1.tv content
         private string regexSitemap = @"<div id=""sitemap""><a (.+?)</div>";//get sitemap(s)
-        private string regexVideoCategories = @"href=""(?<url>.+?)"".*?>(?<title>.+?)</a>";//get video categories
+        private string regexVideoCategories = @"href=""(?<url>.+?)""(?<optional>.*?)>(?<title>.+?)</a>";//get video categories
         private string regexVideoSubCategories = @"<td style="".+?"" width="".+?""><h2><a href=""(?<url>.+?)"" style="".+?"">(?<title>.+?)</a></h2></td>";//get sub-categories
         private string regexVideosArchive = @"<div class="".+?"" title="".+?""><a href=""(?<url>.+?)""><img src=""(?<img>.+?)"" border="".+?"" /></a></div>.+?<div class=""teaser_head_video"" title="".+?"">(?<date>.+?)</div>.+?<div class=""teaser_text"" title="".+?"">(?<title>.+?)</div>";//get archived videos
-        private string regexVideoNextPage = @"<a href=""(.+)"" class=""teaser_text"">vor</a>";//next page in videos
+        private string regexVideoNextPage = @"<a href=""(?<url>.+?)"" class=""teaser_text"">vor|next</a>";//next page in videos
         private string regexGetPlaykeys = @"AC_FL_RunContent.*?""src"", ""(?<flashplayer>.*?)"".*?""width"", ""(?<width>[0-9]*)"".*?""height"", ""(?<height>[0-9]*)"".*?playkey=(?<playkey1>.+?)-(?<playkey2>.+?)&adv.*?fversion=(?<flashversion>.+?)""";//get playkeys
         private string regexGetVideoInfo = @"<(?<quality>[^<]+?)server=""(?<server>.+?)/(?<servertype>.+?)"" pfad=""(?<path>.+?)"" .+? ptitle=""(?<title>.+?)""";//get playkeys
         private string regexGetAuthArchive = @"auth=""(?<auth>.+?)"".+?url=""(?<url>.+?)"".+?stream=""(?<stream>.+?)"".+?status=""(?<status>.+?)"".+?statustext=""(?<statustext>.+?)"".+?aifp=""(?<aifp>.+?)""";//get auth
@@ -62,6 +65,9 @@ namespace OnlineVideos.Sites
         private string regexIsLiveAvailable = @"(?<message>(<p>Lieber LAOLA1-User,</p>|<p>Dear LAOLA1-User,</p>).*?<p style=.*?>(?<inner>.*?)</p>.*?)</td>";
         private string regexGetAuthLive = @"auth=""(?<auth>.+?)&amp;p=.+?"".+?url=""(?<url>.+?)/live"".+?stream=""(?<stream>.+?)"".+?status=""(?<status>.+?)"".+?statustext=""(?<statustext>.+?)"".+?aifp=""(?<aifp>.+?)""";
 
+
+        //hd live streams
+        private string regexLiveHdPlaykes = @"AC_FL_RunContent.*?""src"", ""(?<flashplayer>.*?)"".*?""width"", ""(?<width>[0-9]*)"".*?""height"", ""(?<height>[0-9]*)"".*?videopfad=(?<streamaccess>http://streamaccess.*?(?<streamid>[0-9]*))&";
         private string regexLiveHdBaseUrls = @"name=""httpBase"" content=""(?<httpbase>.*?)"".*?name=""rtmpPlaybackBase"" content=""(?<rtmpbase>.*?)""";
         private string regexLiveHdSources = @"<video src=""(?<src>.+?)"" system-bitrate=""(?<bitrate>.+?)""/>";
 
@@ -80,6 +86,9 @@ namespace OnlineVideos.Sites
         Regex regEx_GetAuthLive;
         Regex regEx_GetLiveHdBaseUrls;
         Regex regEx_GetLiveHdSources;
+        Regex regEx_GetLiveHdPlaykeys;
+        private string nextVideoPage;
+        private Category currentCategory;
 
         /// <summary>
         /// Initialize the site util
@@ -92,7 +101,7 @@ namespace OnlineVideos.Sites
             regEx_Categories = new Regex(regexVideoCategories, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             regEx_SubCategories = new Regex(regexVideoSubCategories, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             regEx_VideosArchive = new Regex(regexVideosArchive, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
-            regEx_VideosNextPage = new Regex(regexVideoNextPage, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_VideosNextPage = new Regex(regexVideoNextPage, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             regEx_GetPlaykeys = new Regex(regexGetPlaykeys, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_GetVideoInfo = new Regex(regexGetVideoInfo, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_GetAuthArchive = new Regex(regexGetAuthArchive, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
@@ -101,6 +110,8 @@ namespace OnlineVideos.Sites
             regEx_VideosLive = new Regex(regexVideosLive, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_IsLiveAvailable = new Regex(regexIsLiveAvailable, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_GetAuthLive = new Regex(regexGetAuthLive, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+
+            regEx_GetLiveHdPlaykeys = new Regex(regexLiveHdPlaykes, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_GetLiveHdBaseUrls = new Regex(regexLiveHdBaseUrls, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_GetLiveHdSources = new Regex(regexLiveHdSources, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
         }
@@ -132,14 +143,19 @@ namespace OnlineVideos.Sites
             }
 
             //Parse and add the url for archived video
+            //TODO: currently we are using the sitemap for this, however the proper way would be to parse the javascript menu. This
+            //has some elements that the sitemap and even the detail pages of the categories don't have (e.g. La Liga 10/11). 
+            //The javascript loads the data from: http://www.laola1.tv/server/menu.php?menu=seochannels&geo=only_aut&lang=DE&rnd=13315931
             Match c = regEx_Sitemap.Match(data);
             while (c.Success)
             {
                 Match c2 = regEx_Categories.Match(c.Value);
+                RssLink currentToplevelCategory = null;
                 while (c2.Success)
                 {
                     String categoryUrl = c2.Groups["url"].Value;
                     String categoryTitle = c2.Groups["title"].Value;
+                    String optional = c2.Groups["optional"].Value;
 
                     RssLink cat = new RssLink();
                     cat.Name = categoryTitle;
@@ -147,7 +163,20 @@ namespace OnlineVideos.Sites
                     cat.HasSubCategories = true;
                     cat.Other = LaolaCategoryTypes.Archive;
 
-                    Settings.Categories.Add(cat);
+                    if (currentToplevelCategory == null || optional.Contains("line1"))
+                    {
+                        //only top-level categories
+                        Settings.Categories.Add(cat);
+                        currentToplevelCategory = cat;
+                    }
+                    else
+                    {
+                        if (currentToplevelCategory.SubCategories == null)
+                        {
+                            currentToplevelCategory.SubCategories = new List<Category>();
+                        }
+                        currentToplevelCategory.SubCategories.Add(cat);
+                    }
 
                     c2 = c2.NextMatch();
                 }
@@ -177,37 +206,42 @@ namespace OnlineVideos.Sites
         /// <returns>Count of sub-categories</returns>
         private int GetSubCategories(Category parentCategory, string url)
         {
-            parentCategory.SubCategories = new List<Category>();
-
-            String data = GetWebData(url);
-            Match c = regEx_SubCategories.Match(data);
-            while (c.Success)
+            if (parentCategory.SubCategories == null)
             {
+                //only take subcategories from site directly if we didn't already get them from the sitemap. The subcategories from the sitemap are
+                //better structured than what we get in the direct page for top-level-categories (e.g. Fuﬂball Int.). For subcategories (e.g. La Liga)
+                //we still have to get the subcategories from the page.
+                parentCategory.SubCategories = new List<Category>();
 
-                String categoryUrl = c.Groups["url"].Value;
-                String categoryTitle = c.Groups["title"].Value;
-
-                RssLink cat = new RssLink();
-                cat.Name = categoryTitle;
-                cat.Url = categoryUrl;
-                cat.HasSubCategories = false;
-
-                //if the title ends with "LIVE" or "- LIVE" the containing items are live videos
-                if (categoryTitle.EndsWith(" LIVE", StringComparison.OrdinalIgnoreCase))
+                String data = GetWebData(url);
+                Match c = regEx_SubCategories.Match(data);
+                while (c.Success)
                 {
-                    cat.Other = LaolaCategoryTypes.Live;
-                }
-                else
-                {
-                    cat.Other = LaolaCategoryTypes.Archive;
-                }
 
-                parentCategory.SubCategories.Add(cat);
-                cat.ParentCategory = parentCategory;
+                    String categoryUrl = c.Groups["url"].Value;
+                    String categoryTitle = c.Groups["title"].Value;
 
-                c = c.NextMatch();
+                    RssLink cat = new RssLink();
+                    cat.Name = categoryTitle;
+                    cat.Url = categoryUrl;
+                    cat.HasSubCategories = false;
+
+                    //if the title ends with "LIVE" or "- LIVE" the containing items are live videos
+                    if (categoryTitle.EndsWith(" LIVE", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cat.Other = LaolaCategoryTypes.Live;
+                    }
+                    else
+                    {
+                        cat.Other = LaolaCategoryTypes.Archive;
+                    }
+
+                    parentCategory.SubCategories.Add(cat);
+                    cat.ParentCategory = parentCategory;
+
+                    c = c.NextMatch();
+                }
             }
-
 
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
@@ -220,8 +254,8 @@ namespace OnlineVideos.Sites
         /// <returns>List of video items</returns>
         public override List<VideoInfo> getVideoList(Category category)
         {
+            currentCategory = category;
             List<VideoInfo> videos = new List<VideoInfo>();
-
             LaolaCategoryTypes type = (LaolaCategoryTypes)category.Other;
             if (type == LaolaCategoryTypes.Archive)
             {
@@ -241,10 +275,20 @@ namespace OnlineVideos.Sites
                     video.ImageUrl = categoryImage;
                     video.Airdate = categoryDate;
                     video.Other = LaolaCategoryTypes.Archive;
-
+                    
                     videos.Add(video);
 
                     videoMatches = videoMatches.NextMatch();
+                }
+
+                Match nextMatch = regEx_VideosNextPage.Match(data);
+                if (nextMatch.Success)
+                {
+                    nextVideoPage = nextMatch.Groups["url"].Value;
+                }
+                else
+                {
+                    nextVideoPage = null;
                 }
             }
             else if (type == LaolaCategoryTypes.Live)
@@ -275,6 +319,20 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
+        public override bool HasNextPage
+        {
+            get
+            {
+                return nextVideoPage != null;
+            }
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            (currentCategory as RssLink).Url = nextVideoPage;
+            return getVideoList(currentCategory);
+        }
+
         /// <summary>
         /// Gets the actual rtmp url for a given video
         /// </summary>
@@ -283,7 +341,7 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             Log.Info("Get url: " + video.VideoUrl);
-            
+
             LaolaCategoryTypes type = (LaolaCategoryTypes)video.Other;
             if (type == LaolaCategoryTypes.Archive)
             {
@@ -320,6 +378,17 @@ namespace OnlineVideos.Sites
             }
             else
             {
+                if (data.Contains("isLiveStream=true"))
+                {
+                    //throw new OnlineVideosException("This stream type isn't supported yet");
+                    return GetHdStreamingUrl(video, data);
+                }
+                else
+                {
+                    return GetHdStreaming2Url(video, data);
+                    //return GetDefaultStreamingUrl(video, data);
+                }
+                /*
                 Match c = regEx_GetPlaykeys.Match(data);
                 if (c.Success)
                 {
@@ -333,20 +402,15 @@ namespace OnlineVideos.Sites
                         //TODO: better detection of stream type
                         liveType = LiveStreamType.HD;
                     }
-
-                    /*
-                     *  Live Streaming: 
-                     */
                     if (liveType == LiveStreamType.HD)
                     {
-                        throw new OnlineVideosException("This stream type isn't supported yet");
-                        //return GetHdStreamingUrl(flashPlayer, playkey1, playkey2);
+
                     }
                     else
                     {
-                        return GetDefaultStreamingUrl(video, flashPlayer, playkey1, playkey2);
+                        return GetDefaultStreamingUrl(video, data);
                     }
-                }
+                }*/
             }
 
             //something has gone wrong -> return null
@@ -362,130 +426,218 @@ namespace OnlineVideos.Sites
         /// <param name="playkey1">Playkey1 for this video</param>
         /// <param name="playkey2">Playkey2 for this video</param>
         /// <returns>Url for streaming</returns>
-        private string GetDefaultStreamingUrl(VideoInfo video, string flashplayer, string playkey1, string playkey2)
+        private string GetDefaultStreamingUrl(VideoInfo video, string data)
         {
-            String playData = GetWebData(String.Format(PLAYDATA_URL, playkey1, playkey2));
-            Match c2 = regEx_GetVideoInfo.Match(playData);
-            bool videoQualityFound = false;
-            while (c2.Success)
+            Match c = regEx_GetPlaykeys.Match(data);
+            if (c.Success)
             {
-                String server = c2.Groups["server"].Value;
-                String path = c2.Groups["path"].Value;
-                String streamQuality = c2.Groups["quality"].Value.Trim();
+                String playkey1 = c.Groups["playkey1"].Value;
+                String playkey2 = c.Groups["playkey2"].Value;
+                String flashPlayer = c.Groups["flashplayer"].Value + ".swf";
+                String flashVersion = c.Groups["flashversion"].Value;
 
-                if (String.Compare(streamQuality, videoQuality.ToString(), true) == 0)
+                String playData = GetWebData(String.Format(PLAYDATA_URL, playkey1, playkey2));
+                Match c2 = regEx_GetVideoInfo.Match(playData);
+                bool videoQualityFound = false;
+                while (c2.Success)
                 {
-                    videoQualityFound = false;
-                    String accessData = GetWebData(String.Format(ACCESSDATA_URL_LIVE, playkey1, streamQuality));
-                    Match c3 = regEx_GetAuthLive.Match(accessData);
-                    String servertype = c2.Groups["servertype"].Value; ;
-                    String auth = null;
-                    String aifp = null;
-                    String stream = null;
-                    String url = null;
-                    if (c3.Success)
-                    {
-                        auth = c3.Groups["auth"].Value;
-                        auth = auth.Replace("amp;", "");
-                        aifp = c3.Groups["aifp"].Value;
-                        stream = c3.Groups["stream"].Value;
-                        url = c3.Groups["url"].Value;
-                        c3 = c3.NextMatch();
-                    }
-                    else
-                    {
-                        Log.Warn("Couldn't parse " + accessData);
-                    }
+                    String server = c2.Groups["server"].Value;
+                    String path = c2.Groups["path"].Value;
+                    String streamQuality = c2.Groups["quality"].Value.Trim();
 
-                    String ip = null;
-                    String identData = GetWebData(String.Format(IDENT_URL, server));
-                    Match c4 = regEx_GetIp.Match(identData);
-                    if (c4.Success)
+                    if (String.Compare(streamQuality, videoQuality.ToString(), true) == 0)
                     {
-                        ip = c4.Groups["ip"].Value;
-                        c4 = c4.NextMatch();
-                    }
-                    else
-                    {
-                        Log.Warn("Couldn't parse " + identData);
-                    }
+                        videoQualityFound = false;
+                        String accessData = GetWebData(String.Format(ACCESSDATA_URL_LIVE, playkey1, streamQuality));
+                        Match c3 = regEx_GetAuthLive.Match(accessData);
+                        String servertype = c2.Groups["servertype"].Value; ;
+                        String auth = null;
+                        String aifp = null;
+                        String stream = null;
+                        String url = null;
+                        if (c3.Success)
+                        {
+                            auth = c3.Groups["auth"].Value;
+                            auth = auth.Replace("amp;", "");
+                            aifp = c3.Groups["aifp"].Value;
+                            stream = c3.Groups["stream"].Value;
+                            url = c3.Groups["url"].Value;
+                            c3 = c3.NextMatch();
+                        }
+                        else
+                        {
+                            Log.Warn("Couldn't parse " + accessData);
+                        }
 
-                    String rtmpUrl = String.Format("rtmp://{0}:1935/{1}?_fcs_vhost={2}/{3}?auth={4}&p=1&e={5}&u=&t=livevideo&l=&a=&aifp={6}", ip, servertype, url, stream, auth, playkey1, aifp);
-                    MPUrlSourceFilter.RtmpUrl resultUrl = new MPUrlSourceFilter.RtmpUrl(rtmpUrl);
-                    //resultUrl.FlashVersion = flashVersion;
-                    resultUrl.Live = true;
-                    resultUrl.PageUrl = video.VideoUrl;
-                    resultUrl.SwfUrl = flashplayer;
-                    //TODO: I need the mp4, otherwise the stream isn't found, check if there are other formats than mp4 on laola1.tv
-                    resultUrl.PlayPath = "mp4:" + stream;
-                    //Log.Info("Playback Url: " + playpath);
+                        String ip = null;
+                        String identData = GetWebData(String.Format(IDENT_URL, server));
+                        Match c4 = regEx_GetIp.Match(identData);
+                        if (c4.Success)
+                        {
+                            ip = c4.Groups["ip"].Value;
+                            c4 = c4.NextMatch();
+                        }
+                        else
+                        {
+                            Log.Warn("Couldn't parse " + identData);
+                        }
 
-                    return resultUrl.ToString() ;
+                        String rtmpUrl = String.Format("rtmp://{0}:1935/{1}?_fcs_vhost={2}/{3}?auth={4}&p=1&e={5}&u=&t=livevideo&l=&a=&aifp={6}", ip, servertype, url, stream, auth, playkey1, aifp);
+                        MPUrlSourceFilter.RtmpUrl resultUrl = new MPUrlSourceFilter.RtmpUrl(rtmpUrl);
+                        //resultUrl.FlashVersion = flashVersion;
+                        resultUrl.Live = true;
+                        resultUrl.PageUrl = video.VideoUrl;
+                        resultUrl.SwfUrl = flashPlayer;
+                        //TODO: I need the mp4, otherwise the stream isn't found, check if there are other formats than mp4 on laola1.tv
+                        resultUrl.PlayPath = "mp4:" + stream;
+                        //Log.Info("Playback Url: " + playpath);
+
+                        return resultUrl.ToString();
+
+                    }
+                    c2 = c2.NextMatch();
+
+
 
                 }
-                c2 = c2.NextMatch();
-
-
-
+                if (!videoQualityFound)
+                {
+                    //this shouldn't happen, maybe the site has added/removed video qualities
+                    Log.Warn("Couldn't find the video stream with quality " + videoQuality.ToString());
+                }
             }
-            if (!videoQualityFound)
+            return null;
+        }
+        private string GetHdStreaming2Url(VideoInfo video, String data)
+        {
+            Match c = regEx_GetPlaykeys.Match(data);
+            if (c.Success)
             {
-                //this shouldn't happen, maybe the site has added/removed video qualities
-                Log.Warn("Couldn't find the video stream with quality " + videoQuality.ToString());
+                String playkey1 = c.Groups["playkey1"].Value;
+                String playkey2 = c.Groups["playkey2"].Value;
+                String flashPlayer = c.Groups["flashplayer"].Value + ".swf";
+                String flashVersion = c.Groups["flashversion"].Value;
+
+
+                String playData = GetWebData("http://streamaccess.unas.tv/hdflash/1/hdlaola1_" + playkey1 + ".xml?streamid=" + playkey1 + "&partnerid=1&quality=hdlive&t=.smil");
+
+                Match baseUrls = regEx_GetLiveHdBaseUrls.Match(playData);
+                Match sources = regEx_GetLiveHdSources.Match(playData);
+
+                //TODO: don't rely on the fact, the the quality is sorted (first item = worst quality, third = best)
+                if (videoQuality == VideoQuality.Medium)
+                {
+                    sources = sources.NextMatch();
+                }
+                else if (videoQuality == VideoQuality.High)
+                {
+                    sources = sources.NextMatch().NextMatch();
+                }
+
+
+                String httpUrl = baseUrls.Groups["httpbase"].Value + sources.Groups["src"].Value + "&v=2.4.5&fp=WIN%2011,1,102,55&r=" + GetHdLiveRandomString(5) + "&g=" + GetHdLiveRandomString(12);
+                httpUrl = httpUrl.Replace("amp;", "");
+                MPUrlSourceFilter.HttpUrl url = new MPUrlSourceFilter.HttpUrl(httpUrl);
+
+                return url.ToString();
             }
             return null;
         }
 
-
         /// <summary>
         /// HD streaming from laola1.tv
-        /// 
+        /// http://streamaccess.unas.tv/hdflash/1/hdlaola1_70429.xml?streamid=70429&partnerid=1&quality=hdlive&t=.smil
         /// This streaming type is used for many major sport events (e.g. soccer games, ice hockey, etc.) 
         /// </summary>
         /// <param name="video">Video object</param>
         /// <param name="playkey1">Playkey1 for this video</param>
         /// <param name="playkey2">Playkey2 for this video</param>
         /// <returns>Url for streaming</returns>
-        private string GetHdStreamingUrl(string flashplayer, string playkey1, string playkey2)
+        private string GetHdStreamingUrl(VideoInfo video, String data)
         {
             //TODO: this isn't working yet. MediaPortal doesn't play the stream for some reason.
             //Downloading works though and the file can be played after that.
 
-            String playData = GetWebData(String.Format("http://streamaccess.laola1.tv/hdflash/1/hdlaola1_{0}.xml?streamid={1}&partnerid=1&quality=hdlive&t=.smil", playkey1, playkey1));
-
-            Match baseUrls = regEx_GetLiveHdBaseUrls.Match(playData);
-            Match sources = regEx_GetLiveHdSources.Match(playData);
-
-            //TODO: don't rely on the fact, the the quality is sorted (first item = worst quality, third = best)
-            if (videoQuality == VideoQuality.Medium)
+            Match c = regEx_GetLiveHdPlaykeys.Match(data);
+            if (c.Success)
             {
-                sources = sources.NextMatch();
+                String streamAccess = c.Groups["streamaccess"].Value;
+                String streamId = c.Groups["streamid"].Value;
+                String flashPlayer = c.Groups["flashplayer"].Value + ".swf";
+                //String flashVersion = c.Groups["flashversion"].Value;
+
+                //String playData = GetWebData(String.Format("http://streamaccess.laola1.tv/hdflash/1/hdlaola1_{0}.xml?streamid={1}&partnerid=1&quality=hdlive&t=.smil", playkey1, playkey1));
+
+                System.Net.CookieContainer container = new System.Net.CookieContainer();
+                String playData = GetWebData(streamAccess, container);
+                Match baseUrls = regEx_GetLiveHdBaseUrls.Match(playData);
+                Match sources = regEx_GetLiveHdSources.Match(playData);
+
+                //TODO: don't rely on the fact, the the quality is sorted (first item = worst quality, third = best)
+                if (videoQuality == VideoQuality.Medium)
+                {
+                    sources = sources.NextMatch();
+                }
+                else if (videoQuality == VideoQuality.High)
+                {
+                    sources = sources.NextMatch().NextMatch();
+                }
+
+
+                String httpUrl = baseUrls.Groups["httpbase"].Value + sources.Groups["src"].Value;// +"&v=2.6.6&fp=WIN%2011,1,102,62&r=" + GetHdLiveRandomString(5) + "&g=" + GetHdLiveRandomString(12);
+                httpUrl = httpUrl.Replace("amp;", "");
+                httpUrl = httpUrl.Replace("e=&", "e=" + streamId + "&");
+                httpUrl = httpUrl.Replace("p=&", "p=1&");
+
+                /*String rtmpUrl = String.Format("rtmp://{0}:1935/{1}?_fcs_vhost={2}/{3}?auth={4}&p=1&e={5}&u=&t=livevideo&l=&a=&aifp={6}", ip, servertype, url, stream, auth, playkey1, aifp);
+                //Log.Info("RTMP Url: " + rtmpUrl);
+                String playpath = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}&live={2}",
+                        System.Web.HttpUtility.UrlEncode(rtmpUrl),
+                        System.Web.HttpUtility.UrlEncode("true"),
+                        System.Web.HttpUtility.UrlEncode("true")
+                        ));
+                String playpath = string.Format("{0}&swfVfy={1}&live={2}",
+                        rtmpUrl,
+                        System.Web.HttpUtility.UrlEncode("true"),
+                        System.Web.HttpUtility.UrlEncode("true")
+                        );*/
+
+                //String playpath = ReverseProxy.Instance.GetProxyUri(this, httpUrl);
+                MPUrlSourceFilter.HttpUrl url = new MPUrlSourceFilter.HttpUrl(httpUrl);
+                //url.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3";
+                url.Cookies.Add(container.GetCookies(new Uri(streamAccess)));
+                return url.ToString();
             }
-            else if (videoQuality == VideoQuality.High)
+            return null;
+        }
+
+        /*
+         		public static function getCacheBustString(_arg1:number=5):string{
+    var _local2 = "";
+    var _local3:number = 0;
+    while (_local3 < _arg1) {
+    _local2 = (_local2 + string.fromcharcode((65 + math.round((math.random() * 25)))));
+    _local3++;
+    };
+    return (_local2);
+    }
+         */
+
+        /// <summary>
+        /// Returns a random String mimicing the function getCacheBustString from the hd flash player
+        /// </summary>
+        /// <param name="_count"></param>
+        /// <returns></returns>
+        public String GetHdLiveRandomString(int _count)
+        {
+            String text = "";
+            Random rnd = new Random(DateTime.Now.Millisecond);
+            for (int i = 0; i < _count; i++)
             {
-                sources = sources.NextMatch().NextMatch();
+                text = text + char.ConvertFromUtf32(rnd.Next(65, 89));//capital chars
             }
-
-
-            String httpUrl = baseUrls.Groups["httpbase"].Value + sources.Groups["src"].Value;
-            httpUrl = httpUrl.Replace("amp;", "");
-
-            /*String rtmpUrl = String.Format("rtmp://{0}:1935/{1}?_fcs_vhost={2}/{3}?auth={4}&p=1&e={5}&u=&t=livevideo&l=&a=&aifp={6}", ip, servertype, url, stream, auth, playkey1, aifp);
-            //Log.Info("RTMP Url: " + rtmpUrl);
-            String playpath = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}&live={2}",
-                    System.Web.HttpUtility.UrlEncode(rtmpUrl),
-                    System.Web.HttpUtility.UrlEncode("true"),
-                    System.Web.HttpUtility.UrlEncode("true")
-                    ));
-            String playpath = string.Format("{0}&swfVfy={1}&live={2}",
-                    rtmpUrl,
-                    System.Web.HttpUtility.UrlEncode("true"),
-                    System.Web.HttpUtility.UrlEncode("true")
-                    );*/
-
-            //String playpath = ReverseProxy.Instance.GetProxyUri(this, httpUrl);
-            return httpUrl;
+            return text;
         }
 
         /// <summary>
@@ -551,7 +703,7 @@ namespace OnlineVideos.Sites
                         resultUrl.Live = false;
                         resultUrl.PageUrl = video.VideoUrl;
                         resultUrl.SwfUrl = flashplayer;
-                        
+
                         if (stream.EndsWith(".mp4"))
                         {
                             //for videos where the returned stream ends with .mp4, the laola1.tv server wants a play command like
@@ -562,8 +714,8 @@ namespace OnlineVideos.Sites
                         {
                             resultUrl.PlayPath = stream;
                         }
-                        
-                        
+
+
                         return resultUrl.ToString();
                     }
                     c2 = c2.NextMatch();
@@ -576,6 +728,25 @@ namespace OnlineVideos.Sites
             }
 
             //something has gone wrong -> return null
+            return null;
+        }
+
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            Log.Info("Get download name for : " + video.VideoUrl);
+
+            LaolaCategoryTypes type = (LaolaCategoryTypes)video.Other;
+            if (type == LaolaCategoryTypes.Archive)
+            {
+                String title = video.Title + ".flv";
+                return Utils.GetSaveFilename(title);
+            }
+            else if (type == LaolaCategoryTypes.Live)
+            {
+                String title = "LIVE - " + video.Title + ".flv";
+                return Utils.GetSaveFilename(title);
+            }
+
             return null;
         }
     }
