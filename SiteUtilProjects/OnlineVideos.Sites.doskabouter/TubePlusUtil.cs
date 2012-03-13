@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.IO;
 
 namespace OnlineVideos.Sites
 {
@@ -263,6 +264,31 @@ namespace OnlineVideos.Sites
             video.PlaybackOptions = newPlaybackOptions;
             return WatchSeriesUtil.SortPlaybackOptions(video, baseUrl, tmp, 0, true);
         }
+
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            if (string.IsNullOrEmpty(url)) // called for adding to favorites
+                return video.Title;
+            else // called for downloading
+            {
+                string name = base.GetFileNameForDownload(video, category, url);
+                if (Path.GetExtension(name) == String.Empty) name += ".flv";
+                if (category.ParentCategory != null && category.ParentCategory.Other.Equals(Mode.Series))
+                {
+                    string season = category.Name.Split('(')[0];
+                    name = category.ParentCategory.Name + ' ' + season + ' ' + name;
+                    int l;
+                    do
+                    {
+                        l = name.Length;
+                        name = name.Replace("  ", " ");
+                    } while (l != name.Length);
+
+                }
+                return Utils.GetSaveFilename(name);
+            }
+        }
+
 
         #region search
         public override bool CanSearch
