@@ -68,7 +68,15 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> getPlaybackOptions(string url)
         {
-            string webData = SiteUtilBase.GetWebData(url.Replace(@"/swf/", @"/video/"));
+            CookieContainer cc = new CookieContainer();
+            Cookie c = new Cookie();
+            c.Name = "family_filter";
+            c.Value = "off";
+            c.Expires = DateTime.Now.AddHours(1);
+            c.Domain = new Uri(url).Host;
+            cc.Add(c);
+
+            string webData = SiteUtilBase.GetWebData(url.Replace(@"/swf/", @"/video/"), cc);
 
             Dictionary<string, string> res = new Dictionary<string, string>();
             Match matchFileUrl = Regex.Match(webData, @"%22(?<n0>sd|hq)URL%22%3A(?<m0>%22.+?%22)");
