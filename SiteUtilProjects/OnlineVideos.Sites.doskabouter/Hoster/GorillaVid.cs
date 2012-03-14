@@ -14,7 +14,7 @@ namespace OnlineVideos.Hoster
     {
         public override string getHosterUrl()
         {
-            return "GorillaVid.com";
+            return "GorillaVid.in";
         }
 
         public override string getVideoUrls(string url)
@@ -81,11 +81,11 @@ namespace OnlineVideos.Hoster
         }
     }
 
-    public class GorillaVidIn : GorillaVid
+    public class GorillaVidCom : GorillaVid
     {
         public override string getHosterUrl()
         {
-            return "GorillaVid.in";
+            return "GorillaVid.com";
         }
 
         public override string getVideoUrls(string url)
