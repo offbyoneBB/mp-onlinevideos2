@@ -19,7 +19,6 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
-            url = SiteUtilBase.GetRedirectedUrl(url);
             string page = SiteUtilBase.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
@@ -81,4 +80,19 @@ namespace OnlineVideos.Hoster
             return String.Empty;
         }
     }
+
+    public class GorillaVidIn : GorillaVid
+    {
+        public override string getHosterUrl()
+        {
+            return "GorillaVid.in";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            url = SiteUtilBase.GetRedirectedUrl(url);
+            return base.getVideoUrls(url);
+        }
+    }
+
 }
