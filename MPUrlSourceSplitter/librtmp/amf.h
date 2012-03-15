@@ -151,8 +151,8 @@ extern "C"
     AVal *cd_props;
   } AMF3ClassDef;
 
-  void AMF3CD_AddProp(AMF3ClassDef * cd, AVal * prop);
-  AVal *AMF3CD_GetProp(AMF3ClassDef * cd, int idx);
+  void AMF3CD_AddProp(struct RTMP *r, AMF3ClassDef * cd, AVal * prop);
+  AVal *AMF3CD_GetProp(struct RTMP *r, AMF3ClassDef * cd, int idx);
 
 #ifdef __cplusplus
 }

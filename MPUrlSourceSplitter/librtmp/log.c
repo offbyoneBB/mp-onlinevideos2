@@ -74,31 +74,29 @@ static const char *levels[] = {
 //	fmsg = file;
 //}
 
-//void RTMP_LogSetLevel(RTMP *r, RTMP_LogLevel level)
+//void RTMP_LogSetLevel(RTMP_LogLevel level)
 //{
-//  if (r != NULL)
-//  {
-//    r->m_logLevel = level;
-//  }
+//	RTMP_debuglevel = level;
 //}
 
 void RTMP_LogSetCallback(RTMP *r, RTMP_LogCallback *cbp)
 {
-  if (r != NULL)
+	if (r != NULL)
   {
     r->m_logCallback = cbp;
   }
 }
 
-//RTMP_LogLevel RTMP_LogGetLevel(RTMP *r)
+//RTMP_LogLevel RTMP_LogGetLevel()
 //{
-//	return r->m_logLevel;
+//	return RTMP_debuglevel;
 //}
 
 void RTMP_Log(RTMP *r, int level, const char *format, ...)
 {
 	va_list args;
-	va_start(args, format);
+  va_start(args, format);
+
   if (r != NULL)
   {
     if (r->m_logCallback != NULL)
@@ -106,7 +104,8 @@ void RTMP_Log(RTMP *r, int level, const char *format, ...)
       r->m_logCallback(r, level, format, args);
     }
   }
-	va_end(args);
+
+  va_end(args);
 }
 
 static const char hexdig[] = "0123456789abcdef";
@@ -143,7 +142,7 @@ void RTMP_LogHexString(RTMP *r, int level, const uint8_t *data, unsigned long le
 	char	line[BP_LEN];
 	unsigned long i;
 
-  if ( !data)
+	if ( !data )
 		return;
 
 	/* in case len is zero */
@@ -209,7 +208,7 @@ void RTMP_LogHexString(RTMP *r, int level, const uint8_t *data, unsigned long le
 //    if (str[len-1] == '\n')
 //		fflush(fmsg);
 //}
-//
+
 //void RTMP_LogStatus(const char *format, ...)
 //{
 //	char str[MAX_PRINT_LEN]="";

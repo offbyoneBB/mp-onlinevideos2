@@ -77,20 +77,21 @@ static int MDH_compute_key(uint8_t *secret, size_t len, MP_t pub, MDH *dh)
 }
 
 #elif defined(USE_GNUTLS)
-#include <gcrypt.h>
-typedef gcry_mpi_t MP_t;
-#define MP_new(m)	m = gcry_mpi_new(1)
-#define MP_set_w(mpi, w)	gcry_mpi_set_ui(mpi, w)
-#define MP_cmp(u, v)	gcry_mpi_cmp(u, v)
-#define MP_set(u, v)	gcry_mpi_set(u, v)
-#define MP_sub_w(mpi, w)	gcry_mpi_sub_ui(mpi, mpi, w)
-#define MP_cmp_1(mpi)	gcry_mpi_cmp_ui(mpi, 1)
-#define MP_modexp(r, y, q, p)	gcry_mpi_powm(r, y, q, p)
-#define MP_free(mpi)	gcry_mpi_release(mpi)
-#define MP_gethex(u, hex, res)	res = (gcry_mpi_scan(&u, GCRYMPI_FMT_HEX, hex, 0, 0) == 0)
-#define MP_bytes(u)	(gcry_mpi_get_nbits(u) + 7) / 8
-#define MP_setbin(u,buf,len)	gcry_mpi_print(GCRYMPI_FMT_USG,buf,len,NULL,u)
-#define MP_getbin(u,buf,len)	gcry_mpi_scan(&u,GCRYMPI_FMT_USG,buf,len,NULL)
+#include <gmp.h>
+#include <nettle/bignum.h>
+typedef mpz_ptr MP_t;
+#define MP_new(m)	m = malloc(sizeof(*m)); mpz_init2(m, 1)
+#define MP_set_w(mpi, w)	mpz_set_ui(mpi, w)
+#define MP_cmp(u, v)	mpz_cmp(u, v)
+#define MP_set(u, v)	mpz_set(u, v)
+#define MP_sub_w(mpi, w)	mpz_sub_ui(mpi, mpi, w)
+#define MP_cmp_1(mpi)	mpz_cmp_ui(mpi, 1)
+#define MP_modexp(r, y, q, p)	mpz_powm(r, y, q, p)
+#define MP_free(mpi)	mpz_clear(mpi); free(mpi)
+#define MP_gethex(u, hex, res)	u = malloc(sizeof(*u)); mpz_init2(u, 1); res = (mpz_set_str(u, hex, 16) == 0)
+#define MP_bytes(u)	(mpz_sizeinbase(u, 2) + 7) / 8
+#define MP_setbin(u,buf,len)	nettle_mpz_get_str_256(len,buf,u)
+#define MP_getbin(u,buf,len)	u = malloc(sizeof(*u)); mpz_init2(u, 1); nettle_mpz_set_str_256_u(u,len,buf)
 
 typedef struct MDH {
   MP_t p;
@@ -151,7 +152,7 @@ typedef BIGNUM * MP_t;
 
 /* RFC 2631, Section 2.1.5, http://www.ietf.org/rfc/rfc2631.txt */
 static int
-isValidPublicKey(RTMP *r, MP_t y, MP_t p, MP_t q)
+isValidPublicKey(struct RTMP *r, MP_t y, MP_t p, MP_t q)
 {
   int ret = TRUE;
   MP_t bn;
@@ -202,7 +203,7 @@ failed:
 }
 
 static MDH *
-DHInit(RTMP *r, int nKeyBits)
+DHInit(struct RTMP *r, int nKeyBits)
 {
   size_t res;
   MDH *dh = MDH_new();
@@ -234,7 +235,7 @@ failed:
 }
 
 static int
-DHGenerateKey(RTMP *r, MDH *dh)
+DHGenerateKey(struct RTMP *r, MDH *dh)
 {
   size_t res = 0;
   if (!dh)
@@ -268,7 +269,7 @@ DHGenerateKey(RTMP *r, MDH *dh)
  */
 
 static int
-DHGetPublicKey(RTMP *r, MDH *dh, uint8_t *pubkey, size_t nPubkeyLen)
+DHGetPublicKey(struct RTMP *r, MDH *dh, uint8_t *pubkey, size_t nPubkeyLen)
 {
   int len;
   if (!dh || !dh->pub_key)
@@ -285,7 +286,7 @@ DHGetPublicKey(RTMP *r, MDH *dh, uint8_t *pubkey, size_t nPubkeyLen)
 
 #if 0	/* unused */
 static int
-DHGetPrivateKey(RTMP *r, MDH *dh, uint8_t *privkey, size_t nPrivkeyLen)
+DHGetPrivateKey(MDH *dh, uint8_t *privkey, size_t nPrivkeyLen)
 {
   if (!dh || !dh->priv_key)
     return 0;
@@ -304,7 +305,7 @@ DHGetPrivateKey(RTMP *r, MDH *dh, uint8_t *privkey, size_t nPrivkeyLen)
  * other party's public key (pubkey)
  */
 static int
-DHComputeSharedSecretKey(RTMP *r, MDH *dh, uint8_t *pubkey, size_t nPubkeyLen,
+DHComputeSharedSecretKey(struct RTMP *r, MDH *dh, uint8_t *pubkey, size_t nPubkeyLen,
 			 uint8_t *secret)
 {
   MP_t q1 = NULL, pubkeyBn = NULL;

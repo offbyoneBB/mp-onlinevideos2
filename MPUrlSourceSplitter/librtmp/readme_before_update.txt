@@ -2,7 +2,7 @@
 The purpose of this document is to remark all changes made in librtmp by any developer. These same changes
 (or at least their meaning) must be made in next releases of librtmp.
  
-Changes in Commit:30fcf46fc82f96ca41b710fc38bbc15f2489795e:
+Changes in Commit: 7340f6dbc6b3c8e552baab2e5a891c2de75cddcc:
 
 File: \amf.h, \dh.h, \handshake.h, \http.h
 Comment: add to each method as first parameter 'struct RTMP *'
@@ -147,7 +147,7 @@ void RTMP_LogSetCallback(RTMP *r, RTMP_LogCallback *cbp)
   }
 }
 
-void RTMP_Log(RTMP *r, int level, const char *format, ...)
+void RTMP_Log(r, RTMP *r, int level, const char *format, ...)
 {
   va_list args;
   va_start(args, format);
@@ -171,6 +171,21 @@ Code:
 void RTMP_LogHex(RTMP *r, int level, const uint8_t *data, unsigned long len)
 
 void RTMP_LogHexString(RTMP *r, int level, const uint8_t *data, unsigned long len)
+
+--------------------------------------------
+
+Comment: remove this code in RTMP_LogHex() method
+Code:
+
+if ( level > RTMP_debuglevel )
+    return;
+
+--------------------------------------------
+
+Comment: change this code 'if ( !data || level > RTMP_debuglevel )' in RTMP_LogHexString() method
+Code:
+
+if ( !data )
 
 --------------------------------------------
 

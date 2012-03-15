@@ -72,6 +72,7 @@ const struct Curl_handler Curl_handler_rtmp = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   rtmp_disconnect,                      /* disconnect */
   ZERO_NULL,                            /* readwrite */
@@ -91,6 +92,7 @@ const struct Curl_handler Curl_handler_rtmpt = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   rtmp_disconnect,                      /* disconnect */
   ZERO_NULL,                            /* readwrite */
@@ -110,6 +112,7 @@ const struct Curl_handler Curl_handler_rtmpe = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   rtmp_disconnect,                      /* disconnect */
   ZERO_NULL,                            /* readwrite */
@@ -129,6 +132,7 @@ const struct Curl_handler Curl_handler_rtmpte = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   rtmp_disconnect,                      /* disconnect */
   ZERO_NULL,                            /* readwrite */
@@ -148,6 +152,7 @@ const struct Curl_handler Curl_handler_rtmps = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   rtmp_disconnect,                      /* disconnect */
   ZERO_NULL,                            /* readwrite */
@@ -167,6 +172,7 @@ const struct Curl_handler Curl_handler_rtmpts = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   rtmp_disconnect,                      /* disconnect */
   ZERO_NULL,                            /* readwrite */
@@ -180,7 +186,7 @@ static CURLcode rtmp_setup(struct connectdata *conn)
   RTMP *r = RTMP_Alloc();
 
   if(!r)
-    return CURLE_OUT_OF_MEMORY;  
+    return CURLE_OUT_OF_MEMORY;
 
   RTMP_Init(r);
 
@@ -203,7 +209,7 @@ static CURLcode rtmp_connect(struct connectdata *conn, bool *done)
 {
   int on = 1;
   RTMP *r = conn->proto.generic;
-  SET_RCVTIMEO(tv, 10);
+  SET_RCVTIMEO(tv,10);
 
   r->m_sb.sb_socket = conn->sock[FIRSTSOCKET];
 
@@ -300,26 +306,14 @@ static ssize_t rtmp_recv(struct connectdata *conn, int sockindex, char *buf,
   (void)sockindex; /* unused */
 
   nread = RTMP_Read(r, buf, len);
-
-  if (conn->data->set.rtmp_total_duration == 0)
-  {
-    // RTMP stream duration not set
-    conn->data->set.rtmp_total_duration = RTMP_GetDuration(r);
-  }
-
-  conn->data->set.rtmp_current_time = r->m_mediaStamp / 1000;
-
   if(nread < 0) {
     if(r->m_read.status == RTMP_READ_COMPLETE ||
         r->m_read.status == RTMP_READ_EOF) {
-
       conn->data->req.size = conn->data->req.bytecount;
       nread = 0;
     }
     else
-    {
       *err = CURLE_RECV_ERROR;
-    }
   }
   return nread;
 }

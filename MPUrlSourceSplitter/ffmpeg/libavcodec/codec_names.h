@@ -456,6 +456,9 @@ case CODEC_ID_V410:
 case CODEC_ID_XWD:
     { extern AVCodec ff_xwd_decoder;
       return ff_xwd_decoder.name; }
+case CODEC_ID_CDXL:
+    { extern AVCodec ff_cdxl_decoder;
+      return ff_cdxl_decoder.name; }
 case CODEC_ID_Y41P:
     { extern AVCodec ff_y41p_decoder;
       return ff_y41p_decoder.name; }

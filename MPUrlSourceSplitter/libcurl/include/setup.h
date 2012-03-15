@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -319,6 +319,7 @@
 #  include <io.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
+#  undef  lseek
 #  define lseek(fdes,offset,whence)  _lseeki64(fdes, offset, whence)
 #  define fstat(fdes,stp)            _fstati64(fdes, stp)
 #  define stat(fname,stp)            _stati64(fname, stp)
@@ -334,6 +335,7 @@
 #  include <io.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
+#  undef  lseek
 #  define lseek(fdes,offset,whence)  _lseek(fdes, (long)offset, whence)
 #  define fstat(fdes,stp)            _fstat(fdes, stp)
 #  define stat(fname,stp)            _stat(fname, stp)
@@ -485,6 +487,9 @@
 #ifdef USE_ARES
 #  define CURLRES_ASYNCH
 #  define CURLRES_ARES
+/* now undef the stock libc functions just to avoid them being used */
+#  undef HAVE_GETADDRINFO
+#  undef HAVE_GETHOSTBYNAME
 #elif defined(USE_THREADS_POSIX) || defined(USE_THREADS_WIN32)
 #  define CURLRES_ASYNCH
 #  define CURLRES_THREADED
@@ -624,6 +629,16 @@ int netware_init(void);
      defined(HAVE_WS2TCPIP_H)
 #    error "Winsock and lwIP TCP/IP stack definitions shall not coexist!"
 #  endif
+#endif
+
+/*
+ * Portable symbolic names for Winsock shutdown() mode flags.
+ */
+
+#ifdef USE_WINSOCK
+#  define SHUT_RD   0x00
+#  define SHUT_WR   0x01
+#  define SHUT_RDWR 0x02
 #endif
 
 #endif /* HEADER_CURL_LIB_SETUP_H */

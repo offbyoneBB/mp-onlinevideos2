@@ -98,6 +98,7 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CurlInstance.h" />
+    <ClInclude Include="FlvPacket.h" />
     <ClInclude Include="MPUrlSourceSplitter_Rtmp.h" />
     <ClInclude Include="MPUrlSourceSplitter_Rtmp_Exports.h" />
     <ClInclude Include="stdafx.h" />
@@ -113,6 +114,7 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FlvPacket.cpp" />
     <ClCompile Include="MPUrlSourceSplitter_Rtmp.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

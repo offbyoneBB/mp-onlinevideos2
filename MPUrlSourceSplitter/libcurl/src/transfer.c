@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -63,6 +63,10 @@
 #error "We can't compile without socket() support!"
 #endif
 
+#ifdef USE_LIBRTMP
+#include <librtmp/rtmp.h>
+#endif
+
 #include "urldata.h"
 #include <curl/curl.h>
 #include "netrc.h"
@@ -89,10 +93,6 @@
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
-
-#ifdef USE_LIBRTMP
-#include <librtmp/rtmp.h>
-#endif
 
 /* The last #include file should be: */
 #include "memdebug.h"
@@ -336,7 +336,7 @@ static void read_rewind(struct connectdata *conn,
     }
 
     DEBUGF(infof(conn->data,
-                 "Buffer after stream rewind (read_pos = %zu): [%s]",
+                 "Buffer after stream rewind (read_pos = %zu): [%s]\n",
                  conn->read_pos, buf));
   }
 #endif
@@ -610,7 +610,8 @@ static CURLcode readwrite_data(struct SessionHandle *data,
 
           dataleft = conn->chunk.dataleft;
           if(dataleft != 0) {
-            infof(conn->data, "Leftovers after chunking: %zu bytes", dataleft);
+            infof(conn->data, "Leftovers after chunking: %zu bytes\n",
+                  dataleft);
             if(conn->data->multi &&
                Curl_multi_canPipeline(conn->data->multi)) {
               /* only attempt the rewind if we truly are pipelining */
@@ -990,14 +991,15 @@ static CURLcode readwrite_upload(struct SessionHandle *data,
 CURLcode Curl_readwrite(struct connectdata *conn,
                         bool *done)
 {
-  struct SessionHandle *data = conn->data;
-  struct SingleRequest *k = &data->req;
-  CURLcode result;
-  int didwhat=0;
 #ifdef USE_LIBRTMP
   bool rtmpProtocolActive = false;
   bool rtmpProtocolFinished = false;
 #endif
+
+  struct SessionHandle *data = conn->data;
+  struct SingleRequest *k = &data->req;
+  CURLcode result;
+  int didwhat=0;
 
   curl_socket_t fd_read;
   curl_socket_t fd_write;
@@ -1030,7 +1032,8 @@ CURLcode Curl_readwrite(struct connectdata *conn,
   /* We go ahead and do a read if we have a readable socket or if
      the stream was rewound (in which case we have data in a
      buffer) */
-#ifdef USE_LIBRTMP
+  
+  #ifdef USE_LIBRTMP
   rtmpProtocolActive = (conn->handler->protocol & (CURLPROTO_RTMP | CURLPROTO_RTMPE | CURLPROTO_RTMPS | CURLPROTO_RTMPT | CURLPROTO_RTMPTE | CURLPROTO_RTMPTS));
 
   if (rtmpProtocolActive)
@@ -1454,52 +1457,6 @@ Transfer(struct connectdata *conn)
   return CURLE_OK;
 }
 
-static CURLcode loadhostpairs(struct SessionHandle *data)
-{
-  struct curl_slist *hostp;
-  char hostname[256];
-  char address[256];
-  int port;
-
-  for(hostp = data->change.resolve; hostp; hostp = hostp->next ) {
-    if(!hostp->data)
-      continue;
-    if(hostp->data[0] == '-') {
-      /* TODO: mark an entry for removal */
-    }
-    else if(3 == sscanf(hostp->data, "%255[^:]:%d:%255s", hostname, &port,
-                        address)) {
-      struct Curl_dns_entry *dns;
-      Curl_addrinfo *addr;
-
-      addr = Curl_str2addr(address, port);
-      if(!addr) {
-        infof(data, "Resolve %s found illegal!\n", hostp->data);
-        continue;
-      }
-      infof(data, "Added %s:%d:%s to DNS cache\n",
-            hostname, port, address);
-
-      if(data->share)
-        Curl_share_lock(data, CURL_LOCK_DATA_DNS, CURL_LOCK_ACCESS_SINGLE);
-
-      /* put this host in the cache */
-      dns = Curl_cache_addr(data, addr, hostname, port);
-
-      if(data->share)
-        Curl_share_unlock(data, CURL_LOCK_DATA_DNS);
-
-      if(!dns) {
-        Curl_freeaddrinfo(addr);
-        return CURLE_OUT_OF_MEMORY;
-      }
-    }
-  }
-  data->change.resolve = NULL; /* dealt with now */
-
-  return CURLE_OK;
-}
-
 
 /*
  * Curl_pretransfer() is called immediately before a transfer starts.
@@ -1514,9 +1471,9 @@ CURLcode Curl_pretransfer(struct SessionHandle *data)
   }
 
   /* Init the SSL session ID cache here. We do it here since we want to do it
-     after the *_setopt() calls (that could change the size of the cache) but
+     after the *_setopt() calls (that could specify the size of the cache) but
      before any transfer takes place. */
-  res = Curl_ssl_initsessions(data, data->set.ssl.numsessions);
+  res = Curl_ssl_initsessions(data, data->set.ssl.max_ssl_sessions);
   if(res)
     return res;
 
@@ -1539,7 +1496,7 @@ CURLcode Curl_pretransfer(struct SessionHandle *data)
 
   /* If there is a list of host pairs to deal with */
   if(data->change.resolve)
-    res = loadhostpairs(data);
+    res = Curl_loadhostpairs(data);
 
   if(!res) {
     /* Allow data->set.use_port to set which port to use. This needs to be
@@ -1748,26 +1705,37 @@ static char *concat_url(const char *base, const char *relurl)
     }
   }
   else {
-    /* We got a new absolute path for this server, cut off from the
-       first slash */
-    pathsep = strchr(protsep, '/');
-    if(pathsep) {
-      /* When people use badly formatted URLs, such as
-         "http://www.url.com?dir=/home/daniel" we must not use the first
-         slash, if there's a ?-letter before it! */
-      char *sep = strchr(protsep, '?');
-      if(sep && (sep < pathsep))
-        pathsep = sep;
-      *pathsep=0;
+    /* We got a new absolute path for this server */
+
+    if((relurl[0] == '/') && (relurl[1] == '/')) {
+      /* the new URL starts with //, just keep the protocol part from the
+         original one */
+      *protsep=0;
+      useurl = &relurl[2]; /* we keep the slashes from the original, so we
+                              skip the new ones */
     }
     else {
-      /* There was no slash. Now, since we might be operating on a badly
-         formatted URL, such as "http://www.url.com?id=2380" which doesn't
-         use a slash separator as it is supposed to, we need to check for a
-         ?-letter as well! */
-      pathsep = strchr(protsep, '?');
-      if(pathsep)
+      /* cut off the original URL from the first slash, or deal with URLs
+         without slash */
+      pathsep = strchr(protsep, '/');
+      if(pathsep) {
+        /* When people use badly formatted URLs, such as
+           "http://www.url.com?dir=/home/daniel" we must not use the first
+           slash, if there's a ?-letter before it! */
+        char *sep = strchr(protsep, '?');
+        if(sep && (sep < pathsep))
+          pathsep = sep;
         *pathsep=0;
+      }
+      else {
+        /* There was no slash. Now, since we might be operating on a badly
+           formatted URL, such as "http://www.url.com?id=2380" which doesn't
+           use a slash separator as it is supposed to, we need to check for a
+           ?-letter as well! */
+        pathsep = strchr(protsep, '?');
+        if(pathsep)
+          *pathsep=0;
+      }
     }
   }
 
@@ -1780,8 +1748,8 @@ static char *concat_url(const char *base, const char *relurl)
 
   urllen = strlen(url_clone);
 
-  newest = malloc( urllen + 1 + /* possible slash */
-                         newlen + 1 /* zero byte */);
+  newest = malloc(urllen + 1 + /* possible slash */
+                  newlen + 1 /* zero byte */);
 
   if(!newest) {
     free(url_clone); /* don't leak this */
@@ -1844,15 +1812,14 @@ CURLcode Curl_follow(struct SessionHandle *data,
          when we get the next URL. We pick the ->url field, which may or may
          not be 100% correct */
 
-      if(data->change.referer_alloc)
-        /* If we already have an allocated referer, free this first */
-        free(data->change.referer);
+      if(data->change.referer_alloc) {
+        Curl_safefree(data->change.referer);
+        data->change.referer_alloc = FALSE;
+      }
 
       data->change.referer = strdup(data->change.url);
-      if(!data->change.referer) {
-        data->change.referer_alloc = FALSE;
+      if(!data->change.referer)
         return CURLE_OUT_OF_MEMORY;
-      }
       data->change.referer_alloc = TRUE; /* yes, free this later */
     }
   }
@@ -1899,12 +1866,13 @@ CURLcode Curl_follow(struct SessionHandle *data,
   if(disallowport)
     data->state.allow_port = FALSE;
 
-  if(data->change.url_alloc)
-    free(data->change.url);
-  else
-    data->change.url_alloc = TRUE; /* the URL is allocated */
+  if(data->change.url_alloc) {
+    Curl_safefree(data->change.url);
+    data->change.url_alloc = FALSE;
+  }
 
   data->change.url = newurl;
+  data->change.url_alloc = TRUE;
   newurl = NULL; /* don't free! */
 
   infof(data, "Issue another request to this URL: '%s'\n", data->change.url);
@@ -2029,12 +1997,17 @@ connect_host(struct SessionHandle *data,
     /* Now, if async is TRUE here, we need to wait for the name
        to resolve */
     res = Curl_resolver_wait_resolv(*conn, NULL);
-    if(CURLE_OK == res)
+    if(CURLE_OK == res) {
       /* Resolved, continue with the connection */
       res = Curl_async_resolved(*conn, &protocol_done);
-    else
+      if(res)
+        *conn = NULL;
+    }
+    else {
       /* if we can't resolve, we kill this "connection" now */
       (void)Curl_disconnect(*conn, /* dead_connection */ FALSE);
+      *conn = NULL;
+    }
   }
 
   return res;
@@ -2397,7 +2370,7 @@ Curl_setup_transfer(
          (data->state.proto.http->sending == HTTPSEND_BODY)) {
         /* wait with write until we either got 100-continue or a timeout */
         k->exp100 = EXP100_AWAITING_CONTINUE;
-        k->start100 = k->start;
+        k->start100 = Curl_tvnow();
 
         /* set a timeout for the multi interface */
         Curl_expire(data, CURL_TIMEOUT_EXPECT_100);

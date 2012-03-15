@@ -118,6 +118,7 @@ const struct Curl_handler Curl_handler_http = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   http_getsock_do,                      /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   ZERO_NULL,                            /* readwrite */
@@ -141,6 +142,7 @@ const struct Curl_handler Curl_handler_https = {
   ZERO_NULL,                            /* doing */
   https_getsock,                        /* proto_getsock */
   http_getsock_do,                      /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   ZERO_NULL,                            /* readwrite */
@@ -546,7 +548,7 @@ output_auth_headers(struct connectdata *conn,
   }
   else
 #endif
-#ifdef NTLM_WB_ENABLED
+#if defined(USE_NTLM) && defined(NTLM_WB_ENABLED)
   if(authstatus->picked == CURLAUTH_NTLM_WB) {
     auth="NTLM_WB";
     result = Curl_output_ntlm_wb(conn, proxy);
@@ -731,95 +733,74 @@ CURLcode Curl_http_input_auth(struct connectdata *conn,
    *
    */
 
+  while(*start) {
 #ifdef USE_HTTP_NEGOTIATE
-  if(checkprefix("GSS-Negotiate", start) ||
-      checkprefix("Negotiate", start)) {
-    int neg;
-    *availp |= CURLAUTH_GSSNEGOTIATE;
-    authp->avail |= CURLAUTH_GSSNEGOTIATE;
+    if(checkprefix("GSS-Negotiate", start) ||
+       checkprefix("Negotiate", start)) {
+      int neg;
+      *availp |= CURLAUTH_GSSNEGOTIATE;
+      authp->avail |= CURLAUTH_GSSNEGOTIATE;
 
-    if(data->state.negotiate.state == GSS_AUTHSENT) {
-      /* if we sent GSS authentication in the outgoing request and we get this
-         back, we're in trouble */
-      infof(data, "Authentication problem. Ignoring this.\n");
-      data->state.authproblem = TRUE;
-    }
-    else {
-      neg = Curl_input_negotiate(conn, (httpcode == 407)?TRUE:FALSE, start);
-      if(neg == 0) {
-        DEBUGASSERT(!data->req.newurl);
-        data->req.newurl = strdup(data->change.url);
-        if(!data->req.newurl)
-          return CURLE_OUT_OF_MEMORY;
-        data->state.authproblem = FALSE;
-        /* we received GSS auth info and we dealt with it fine */
-        data->state.negotiate.state = GSS_AUTHRECV;
-      }
-      else {
-        data->state.authproblem = TRUE;
-      }
-    }
-  }
-  else
-#endif
-#ifdef USE_NTLM
-    /* NTLM support requires the SSL crypto libs */
-    if(checkprefix("NTLM", start)) {
-      *availp |= CURLAUTH_NTLM;
-      authp->avail |= CURLAUTH_NTLM;
-      if(authp->picked == CURLAUTH_NTLM ||
-         authp->picked == CURLAUTH_NTLM_WB) {
-        /* NTLM authentication is picked and activated */
-        CURLcode ntlm =
-          Curl_input_ntlm(conn, (httpcode == 407)?TRUE:FALSE, start);
-        if(CURLE_OK == ntlm) {
-          data->state.authproblem = FALSE;
-#ifdef NTLM_WB_ENABLED
-          if(authp->picked == CURLAUTH_NTLM_WB) {
-            *availp &= ~CURLAUTH_NTLM;
-            authp->avail &= ~CURLAUTH_NTLM;
-            *availp |= CURLAUTH_NTLM_WB;
-            authp->avail |= CURLAUTH_NTLM_WB;
-
-            /* Get the challenge-message which will be passed to
-             * ntlm_auth for generating the type 3 message later */
-            while(*start && ISSPACE(*start))
-              start++;
-            if(checkprefix("NTLM", start)) {
-              start += strlen("NTLM");
-              while(*start && ISSPACE(*start))
-                start++;
-              if(*start)
-                if((conn->challenge_header = strdup(start)) == NULL)
-                  return CURLE_OUT_OF_MEMORY;
-            }
-          }
-#endif
-        }
-        else {
+      if(authp->picked == CURLAUTH_GSSNEGOTIATE) {
+        if(data->state.negotiate.state == GSS_AUTHSENT) {
+          /* if we sent GSS authentication in the outgoing request and we get
+             this back, we're in trouble */
           infof(data, "Authentication problem. Ignoring this.\n");
           data->state.authproblem = TRUE;
+        }
+        else {
+          neg = Curl_input_negotiate(conn, (bool)(httpcode == 407), start);
+          if(neg == 0) {
+            DEBUGASSERT(!data->req.newurl);
+            data->req.newurl = strdup(data->change.url);
+            if(!data->req.newurl)
+              return CURLE_OUT_OF_MEMORY;
+            data->state.authproblem = FALSE;
+            /* we received GSS auth info and we dealt with it fine */
+            data->state.negotiate.state = GSS_AUTHRECV;
+          }
+          else
+            data->state.authproblem = TRUE;
         }
       }
     }
     else
 #endif
-#ifndef CURL_DISABLE_CRYPTO_AUTH
-      if(checkprefix("Digest", start)) {
-        if((authp->avail & CURLAUTH_DIGEST) != 0) {
-          infof(data, "Ignoring duplicate digest auth header.\n");
-        }
-        else {
-          CURLdigest dig;
-          *availp |= CURLAUTH_DIGEST;
-          authp->avail |= CURLAUTH_DIGEST;
+#ifdef USE_NTLM
+      /* NTLM support requires the SSL crypto libs */
+      if(checkprefix("NTLM", start)) {
+        *availp |= CURLAUTH_NTLM;
+        authp->avail |= CURLAUTH_NTLM;
+        if(authp->picked == CURLAUTH_NTLM ||
+           authp->picked == CURLAUTH_NTLM_WB) {
+          /* NTLM authentication is picked and activated */
+          CURLcode ntlm =
+            Curl_input_ntlm(conn, (httpcode == 407)?TRUE:FALSE, start);
+          if(CURLE_OK == ntlm) {
+            data->state.authproblem = FALSE;
+#ifdef NTLM_WB_ENABLED
+            if(authp->picked == CURLAUTH_NTLM_WB) {
+              *availp &= ~CURLAUTH_NTLM;
+              authp->avail &= ~CURLAUTH_NTLM;
+              *availp |= CURLAUTH_NTLM_WB;
+              authp->avail |= CURLAUTH_NTLM_WB;
 
-          /* We call this function on input Digest headers even if Digest
-           * authentication isn't activated yet, as we need to store the
-           * incoming data from this header in case we are gonna use Digest. */
-          dig = Curl_input_digest(conn, (httpcode == 407)?TRUE:FALSE, start);
-
-          if(CURLDIGEST_FINE != dig) {
+              /* Get the challenge-message which will be passed to
+               * ntlm_auth for generating the type 3 message later */
+              while(*start && ISSPACE(*start))
+                start++;
+              if(checkprefix("NTLM", start)) {
+                start += strlen("NTLM");
+                while(*start && ISSPACE(*start))
+                  start++;
+                if(*start)
+                  if((conn->challenge_header = strdup(start)) == NULL)
+                    return CURLE_OUT_OF_MEMORY;
+              }
+            }
+#endif
+          }
+          else {
             infof(data, "Authentication problem. Ignoring this.\n");
             data->state.authproblem = TRUE;
           }
@@ -827,19 +808,51 @@ CURLcode Curl_http_input_auth(struct connectdata *conn,
       }
       else
 #endif
-      if(checkprefix("Basic", start)) {
-        *availp |= CURLAUTH_BASIC;
-        authp->avail |= CURLAUTH_BASIC;
-        if(authp->picked == CURLAUTH_BASIC) {
-          /* We asked for Basic authentication but got a 40X back
-             anyway, which basically means our name+password isn't
-             valid. */
-          authp->avail = CURLAUTH_NONE;
-          infof(data, "Authentication problem. Ignoring this.\n");
-          data->state.authproblem = TRUE;
-        }
-      }
+#ifndef CURL_DISABLE_CRYPTO_AUTH
+        if(checkprefix("Digest", start)) {
+          if((authp->avail & CURLAUTH_DIGEST) != 0) {
+            infof(data, "Ignoring duplicate digest auth header.\n");
+          }
+          else {
+            CURLdigest dig;
+            *availp |= CURLAUTH_DIGEST;
+            authp->avail |= CURLAUTH_DIGEST;
 
+            /* We call this function on input Digest headers even if Digest
+             * authentication isn't activated yet, as we need to store the
+             * incoming data from this header in case we are gonna use
+             * Digest. */
+            dig = Curl_input_digest(conn, (httpcode == 407)?TRUE:FALSE, start);
+
+            if(CURLDIGEST_FINE != dig) {
+              infof(data, "Authentication problem. Ignoring this.\n");
+              data->state.authproblem = TRUE;
+            }
+          }
+        }
+        else
+#endif
+          if(checkprefix("Basic", start)) {
+            *availp |= CURLAUTH_BASIC;
+            authp->avail |= CURLAUTH_BASIC;
+            if(authp->picked == CURLAUTH_BASIC) {
+              /* We asked for Basic authentication but got a 40X back
+                 anyway, which basically means our name+password isn't
+                 valid. */
+              authp->avail = CURLAUTH_NONE;
+              infof(data, "Authentication problem. Ignoring this.\n");
+              data->state.authproblem = TRUE;
+            }
+          }
+
+    /* there may be multiple methods on one line, so keep reading */
+    while(*start && *start != ',') /* read up to the next comma */
+      start++;
+    if(*start == ',') /* if we're on a comma, skip it */
+      start++;
+    while(*start && ISSPACE(*start))
+      start++;
+  }
   return CURLE_OK;
 }
 
@@ -1559,6 +1572,31 @@ CURLcode Curl_add_custom_headers(struct connectdata *conn,
         }
       }
     }
+    else {
+      ptr = strchr(headers->data, ';');
+      if(ptr) {
+
+        ptr++; /* pass the semicolon */
+        while(*ptr && ISSPACE(*ptr))
+          ptr++;
+
+        if(*ptr) {
+          /* this may be used for something else in the future */
+        }
+        else {
+          if(*(--ptr) == ';') {
+            CURLcode result;
+
+            /* send no-value custom header if terminated by semicolon */
+            *ptr = ':';
+            result = Curl_add_bufferf(req_buffer, "%s\r\n",
+                                             headers->data);
+            if(result)
+              return result;
+          }
+        }
+      }
+    }
     headers = headers->next;
   }
   return CURLE_OK;
@@ -1778,8 +1816,8 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
   }
   else {
     if((conn->handler->protocol&CURLPROTO_HTTP) &&
-        data->set.upload &&
-        (data->set.infilesize == -1)) {
+       data->set.upload &&
+       (data->set.infilesize == -1)) {
       if(conn->bits.authneg)
         /* don't enable chunked during auth neg */
         ;
@@ -1887,8 +1925,10 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
           memcpy(newurl + newlen + (ptr - url),
                  ptr + currlen, /* copy the trailing zero byte too */
                  urllen - (ptr-url) - currlen + 1);
-          if(data->change.url_alloc)
-            free(data->change.url);
+          if(data->change.url_alloc) {
+            Curl_safefree(data->change.url);
+            data->change.url_alloc = FALSE;
+          }
           data->change.url = newurl;
           data->change.url_alloc = TRUE;
         }
@@ -1957,7 +1997,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
        * This is meant to get the size of the present remote-file by itself.
        * We don't support this now. Bail out!
        */
-       data->state.resume_from = 0;
+      data->state.resume_from = 0;
     }
 
     if(data->state.resume_from && !data->state.this_is_a_follow) {
@@ -2048,17 +2088,17 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
         curl_off_t total_expected_size=
           data->state.resume_from + data->set.infilesize;
         conn->allocptr.rangeline =
-            aprintf("Content-Range: bytes %s%" FORMAT_OFF_T
-                    "/%" FORMAT_OFF_T "\r\n",
-                    data->state.range, total_expected_size-1,
-                    total_expected_size);
+          aprintf("Content-Range: bytes %s%" FORMAT_OFF_T
+                  "/%" FORMAT_OFF_T "\r\n",
+                  data->state.range, total_expected_size-1,
+                  total_expected_size);
       }
       else {
         /* Range was selected and then we just pass the incoming range and
            append total size */
         conn->allocptr.rangeline =
-            aprintf("Content-Range: bytes %s/%" FORMAT_OFF_T "\r\n",
-                    data->state.range, data->set.infilesize);
+          aprintf("Content-Range: bytes %s/%" FORMAT_OFF_T "\r\n",
+                  data->state.range, data->set.infilesize);
       }
       if(!conn->allocptr.rangeline)
         return CURLE_OUT_OF_MEMORY;
@@ -2091,45 +2131,47 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
   if(result)
     return result;
 
-  result = Curl_add_bufferf(req_buffer,
-                "%s" /* ftp typecode (;type=x) */
-                " HTTP/%s\r\n" /* HTTP version */
-                "%s" /* proxyuserpwd */
-                "%s" /* userpwd */
-                "%s" /* range */
-                "%s" /* user agent */
-                "%s" /* host */
-                "%s" /* accept */
-                "%s" /* TE: */
-                "%s" /* accept-encoding */
-                "%s" /* referer */
-                "%s" /* Proxy-Connection */
-                "%s",/* transfer-encoding */
+  result =
+    Curl_add_bufferf(req_buffer,
+                     "%s" /* ftp typecode (;type=x) */
+                     " HTTP/%s\r\n" /* HTTP version */
+                     "%s" /* proxyuserpwd */
+                     "%s" /* userpwd */
+                     "%s" /* range */
+                     "%s" /* user agent */
+                     "%s" /* host */
+                     "%s" /* accept */
+                     "%s" /* TE: */
+                     "%s" /* accept-encoding */
+                     "%s" /* referer */
+                     "%s" /* Proxy-Connection */
+                     "%s",/* transfer-encoding */
 
-                ftp_typecode,
-                httpstring,
-                conn->allocptr.proxyuserpwd?
-                conn->allocptr.proxyuserpwd:"",
-                conn->allocptr.userpwd?conn->allocptr.userpwd:"",
-                (data->state.use_range && conn->allocptr.rangeline)?
-                conn->allocptr.rangeline:"",
-                (data->set.str[STRING_USERAGENT] &&
-                 *data->set.str[STRING_USERAGENT] && conn->allocptr.uagent)?
-                conn->allocptr.uagent:"",
-                (conn->allocptr.host?conn->allocptr.host:""), /* Host: host */
-                http->p_accept?http->p_accept:"",
-                conn->allocptr.te?conn->allocptr.te:"",
-                (data->set.str[STRING_ENCODING] &&
-                 *data->set.str[STRING_ENCODING] &&
-                 conn->allocptr.accept_encoding)?
-                conn->allocptr.accept_encoding:"",
-                (data->change.referer && conn->allocptr.ref)?
-                conn->allocptr.ref:"" /* Referer: <data> */,
-                (conn->bits.httpproxy &&
-                 !conn->bits.tunnel_proxy &&
-                 !Curl_checkheaders(data, "Proxy-Connection:"))?
-                "Proxy-Connection: Keep-Alive\r\n":"",
-                te
+                     ftp_typecode,
+                     httpstring,
+                     conn->allocptr.proxyuserpwd?
+                     conn->allocptr.proxyuserpwd:"",
+                     conn->allocptr.userpwd?conn->allocptr.userpwd:"",
+                     (data->state.use_range && conn->allocptr.rangeline)?
+                     conn->allocptr.rangeline:"",
+                     (data->set.str[STRING_USERAGENT] &&
+                      *data->set.str[STRING_USERAGENT] &&
+                      conn->allocptr.uagent)?
+                     conn->allocptr.uagent:"",
+                     (conn->allocptr.host?conn->allocptr.host:""),
+                     http->p_accept?http->p_accept:"",
+                     conn->allocptr.te?conn->allocptr.te:"",
+                     (data->set.str[STRING_ENCODING] &&
+                      *data->set.str[STRING_ENCODING] &&
+                      conn->allocptr.accept_encoding)?
+                     conn->allocptr.accept_encoding:"",
+                     (data->change.referer && conn->allocptr.ref)?
+                     conn->allocptr.ref:"" /* Referer: <data> */,
+                     (conn->bits.httpproxy &&
+                      !conn->bits.tunnel_proxy &&
+                      !Curl_checkheaders(data, "Proxy-Connection:"))?
+                     "Proxy-Connection: Keep-Alive\r\n":"",
+                     te
       );
 
   /*
@@ -2169,8 +2211,8 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
               break;
           }
           result = Curl_add_bufferf(req_buffer,
-                               "%s%s=%s", count?"; ":"",
-                               co->name, co->value);
+                                    "%s%s=%s", count?"; ":"",
+                                    co->name, co->value);
           if(result)
             break;
           count++;
@@ -2184,8 +2226,8 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
         result = Curl_add_bufferf(req_buffer, "Cookie: ");
       if(CURLE_OK == result) {
         result = Curl_add_bufferf(req_buffer, "%s%s",
-                             count?"; ":"",
-                             addcookies);
+                                  count?"; ":"",
+                                  addcookies);
         count++;
       }
     }
@@ -2252,11 +2294,12 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
 
     http->sending = HTTPSEND_BODY;
 
-    if(!data->req.upload_chunky) {
+    if(!data->req.upload_chunky &&
+       !Curl_checkheaders(data, "Content-Length:")) {
       /* only add Content-Length if not uploading chunked */
       result = Curl_add_bufferf(req_buffer,
-                           "Content-Length: %" FORMAT_OFF_T "\r\n",
-                           http->postsize);
+                                "Content-Length: %" FORMAT_OFF_T "\r\n",
+                                http->postsize);
       if(result)
         return result;
     }
@@ -2323,11 +2366,12 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
     else
       postsize = data->set.infilesize;
 
-    if((postsize != -1) && !data->req.upload_chunky) {
+    if((postsize != -1) && !data->req.upload_chunky &&
+       !Curl_checkheaders(data, "Content-Length:")) {
       /* only add Content-Length if not uploading chunked */
       result = Curl_add_bufferf(req_buffer,
-                           "Content-Length: %" FORMAT_OFF_T "\r\n",
-                           postsize );
+                                "Content-Length: %" FORMAT_OFF_T "\r\n",
+                                postsize );
       if(result)
         return result;
     }
@@ -2377,8 +2421,8 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
         /* we allow replacing this header if not during auth negotiation,
            although it isn't very wise to actually set your own */
         result = Curl_add_bufferf(req_buffer,
-                             "Content-Length: %" FORMAT_OFF_T"\r\n",
-                             postsize);
+                                  "Content-Length: %" FORMAT_OFF_T"\r\n",
+                                  postsize);
         if(result)
           return result;
       }
@@ -2428,7 +2472,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
           /* We're not sending it 'chunked', append it to the request
              already now to reduce the number if send() calls */
           result = Curl_add_buffer(req_buffer, data->set.postfields,
-                              (size_t)postsize);
+                                   (size_t)postsize);
           included_body = postsize;
         }
         else {
@@ -2436,10 +2480,10 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
           result = Curl_add_bufferf(req_buffer, "%x\r\n", (int)postsize);
           if(CURLE_OK == result)
             result = Curl_add_buffer(req_buffer, data->set.postfields,
-                                (size_t)postsize);
+                                     (size_t)postsize);
           if(CURLE_OK == result)
             result = Curl_add_buffer(req_buffer,
-                                "\x0d\x0a\x30\x0d\x0a\x0d\x0a", 7);
+                                     "\x0d\x0a\x30\x0d\x0a\x0d\x0a", 7);
           /* CR  LF   0  CR  LF  CR  LF */
           included_body = postsize + 7;
         }
@@ -2475,7 +2519,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
         /* Chunky upload is selected and we're negotiating auth still, send
            end-of-data only */
         result = Curl_add_buffer(req_buffer,
-                            "\x0d\x0a\x30\x0d\x0a\x0d\x0a", 7);
+                                 "\x0d\x0a\x30\x0d\x0a\x0d\x0a", 7);
         /* CR  LF   0  CR  LF  CR  LF */
         if(result)
           return result;
@@ -2536,7 +2580,7 @@ CURLcode Curl_http(struct connectdata *conn, bool *done)
     if(http->writebytecount >= postsize) {
       /* already sent the entire request body, mark the "upload" as
          complete */
-      infof(data, "upload completely sent off: %" FORMAT_OFF_T "out of "
+      infof(data, "upload completely sent off: %" FORMAT_OFF_T " out of "
             "%" FORMAT_OFF_T " bytes\n",
             http->writebytecount, postsize);
       data->req.upload_done = TRUE;

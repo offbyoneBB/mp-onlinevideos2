@@ -11,6 +11,9 @@
 
 #include "streams.h"
 
+#pragma warning(push)
+#pragma warning(disable:4244)
+
 extern "C" {
 #define __STDC_CONSTANT_MACROS
 #include "libavformat/avformat.h"
@@ -19,6 +22,7 @@ extern "C" {
 
 //#include "libbluray/bluray.h"
 }
+#pragma warning(pop)
 
 #define AVFORMAT_INTERNAL_H
 typedef struct AVCodecTag {

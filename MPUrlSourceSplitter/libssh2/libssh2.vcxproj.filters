@@ -15,18 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\libssh2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\libssh2_config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\libssh2_publickey.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\libssh2_sftp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\comp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -39,7 +27,19 @@
     <ClInclude Include="include\libgcrypt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\libssh2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libssh2_config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\libssh2_priv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libssh2_publickey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libssh2_sftp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\mac.h">

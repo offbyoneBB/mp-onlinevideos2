@@ -67,6 +67,7 @@
 #include "url.h"
 #include "curl_memory.h"
 #include "parsedate.h" /* for the week day and month names */
+#include "warnless.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -93,6 +94,9 @@ static CURLcode file_do(struct connectdata *, bool *done);
 static CURLcode file_done(struct connectdata *conn,
                           CURLcode status, bool premature);
 static CURLcode file_connect(struct connectdata *conn, bool *done);
+static CURLcode file_disconnect(struct connectdata *conn,
+                                bool dead_connection);
+
 
 /*
  * FILE scheme handler.
@@ -109,12 +113,13 @@ const struct Curl_handler Curl_handler_file = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
-  ZERO_NULL,                            /* disconnect */
+  file_disconnect,                      /* disconnect */
   ZERO_NULL,                            /* readwrite */
   0,                                    /* defport */
   CURLPROTO_FILE,                       /* protocol */
-  PROTOPT_NONETWORK                     /* flags */
+  PROTOPT_NONETWORK | PROTOPT_NOURLQUERY /* flags */
 };
 
 
@@ -179,7 +184,7 @@ static CURLcode file_range(struct connectdata *conn)
 static CURLcode file_connect(struct connectdata *conn, bool *done)
 {
   struct SessionHandle *data = conn->data;
-  char *real_path = curl_easy_unescape(data, data->state.path, 0, NULL);
+  char *real_path;
   struct FILEPROTO *file;
   int fd;
 #ifdef DOS_FILESYSTEM
@@ -187,12 +192,13 @@ static CURLcode file_connect(struct connectdata *conn, bool *done)
   char *actual_path;
 #endif
 
-  if(!real_path)
-    return CURLE_OUT_OF_MEMORY;
-
   /* If there already is a protocol-specific struct allocated for this
      sessionhandle, deal with it */
   Curl_reset_reqproto(conn);
+
+  real_path = curl_easy_unescape(data, data->state.path, 0, NULL);
+  if(!real_path)
+    return CURLE_OUT_OF_MEMORY;
 
   if(!data->state.proto.file) {
     file = calloc(1, sizeof(struct FILEPROTO));
@@ -206,10 +212,9 @@ static CURLcode file_connect(struct connectdata *conn, bool *done)
     /* file is not a protocol that can deal with "persistancy" */
     file = data->state.proto.file;
     Curl_safefree(file->freepath);
+    file->path = NULL;
     if(file->fd != -1)
       close(file->fd);
-    file->path = NULL;
-    file->freepath = NULL;
     file->fd = -1;
   }
 
@@ -266,10 +271,31 @@ static CURLcode file_done(struct connectdata *conn,
   struct FILEPROTO *file = conn->data->state.proto.file;
   (void)status; /* not used */
   (void)premature; /* not used */
-  Curl_safefree(file->freepath);
 
-  if(file->fd != -1)
-    close(file->fd);
+  if(file) {
+    Curl_safefree(file->freepath);
+    file->path = NULL;
+    if(file->fd != -1)
+      close(file->fd);
+    file->fd = -1;
+  }
+
+  return CURLE_OK;
+}
+
+static CURLcode file_disconnect(struct connectdata *conn,
+                                bool dead_connection)
+{
+  struct FILEPROTO *file = conn->data->state.proto.file;
+  (void)dead_connection; /* not used */
+
+  if(file) {
+    Curl_safefree(file->freepath);
+    file->path = NULL;
+    if(file->fd != -1)
+      close(file->fd);
+    file->fd = -1;
+  }
 
   return CURLE_OK;
 }
@@ -422,7 +448,6 @@ static CURLcode file_do(struct connectdata *conn, bool *done)
   curl_off_t expected_size=0;
   bool fstated=FALSE;
   ssize_t nread;
-  size_t bytestoread;
   struct SessionHandle *data = conn->data;
   char *buf = data->state.buffer;
   curl_off_t bytecount = 0;
@@ -544,7 +569,10 @@ static CURLcode file_do(struct connectdata *conn, bool *done)
 
   while(res == CURLE_OK) {
     /* Don't fill a whole buffer if we want less than all data */
-    bytestoread = (expected_size < BUFSIZE-1)?(size_t)expected_size:BUFSIZE-1;
+    size_t bytestoread =
+      (expected_size < CURL_OFF_T_C(BUFSIZE) - CURL_OFF_T_C(1)) ?
+      curlx_sotouz(expected_size) : BUFSIZE - 1;
+
     nread = read(fd, buf, bytestoread);
 
     if(nread > 0)

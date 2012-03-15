@@ -43,21 +43,24 @@ typedef arc4_context *	RC4_handle;
 #define RC4_free(h)	free(h)
 
 #elif defined(USE_GNUTLS)
-#include <gcrypt.h>
+#include <nettle/hmac.h>
+#include <nettle/arcfour.h>
 #ifndef SHA256_DIGEST_LENGTH
 #define SHA256_DIGEST_LENGTH	32
 #endif
-#define HMAC_CTX	gcry_md_hd_t
-#define HMAC_setup(ctx, key, len)	gcry_md_open(&ctx, GCRY_MD_SHA256, GCRY_MD_FLAG_HMAC); gcry_md_setkey(ctx, key, len)
-#define HMAC_crunch(ctx, buf, len)	gcry_md_write(ctx, buf, len)
-#define HMAC_finish(ctx, dig, dlen)	dlen = SHA256_DIGEST_LENGTH; memcpy(dig, gcry_md_read(ctx, 0), dlen); gcry_md_close(ctx)
+#undef HMAC_CTX
+#define HMAC_CTX	struct hmac_sha256_ctx
+#define HMAC_setup(ctx, key, len)	hmac_sha256_set_key(&ctx, len, key)
+#define HMAC_crunch(ctx, buf, len)	hmac_sha256_update(&ctx, len, buf)
+#define HMAC_finish(ctx, dig, dlen)	dlen = SHA256_DIGEST_LENGTH; hmac_sha256_digest(&ctx, SHA256_DIGEST_LENGTH, dig)
+#define HMAC_close(ctx)
 
-typedef gcry_cipher_hd_t	RC4_handle;
-#define	RC4_alloc(h)	gcry_cipher_open(h, GCRY_CIPHER_ARCFOUR, GCRY_CIPHER_MODE_STREAM, 0)
-#define RC4_setkey(h,l,k)	gcry_cipher_setkey(h,k,l)
-#define RC4_encrypt(h,l,d)	gcry_cipher_encrypt(h,(void *)d,l,NULL,0)
-#define RC4_encrypt2(h,l,s,d)	gcry_cipher_encrypt(h,(void *)d,l,(void *)s,l)
-#define RC4_free(h)	gcry_cipher_close(h)
+typedef struct arcfour_ctx*	RC4_handle;
+#define RC4_alloc(h)	*h = malloc(sizeof(struct arcfour_ctx))
+#define RC4_setkey(h,l,k)	arcfour_set_key(h, l, k)
+#define RC4_encrypt(h,l,d)	arcfour_crypt(h,l,(uint8_t *)d,(uint8_t *)d)
+#define RC4_encrypt2(h,l,s,d)	arcfour_crypt(h,l,(uint8_t *)d,(uint8_t *)s)
+#define RC4_free(h)	free(h)
 
 #else	/* USE_OPENSSL */
 #include <openssl/sha.h>
@@ -108,7 +111,7 @@ static const uint8_t GenuineFPKey[] = {
 };				/* 62 */
 
 static void InitRC4Encryption
-  (RTMP *r, uint8_t * secretKey,
+  (struct RTMP *r, uint8_t * secretKey,
    uint8_t * pubKeyIn,
    uint8_t * pubKeyOut, RC4_handle *rc4keyIn, RC4_handle *rc4keyOut)
 {
@@ -138,10 +141,10 @@ static void InitRC4Encryption
   RC4_setkey(*rc4keyIn, 16, digest);
 }
 
-typedef unsigned int (getoff)(RTMP *r, uint8_t *buf, unsigned int len);
+typedef unsigned int (getoff)(RTMP *, uint8_t *buf, unsigned int len);
 
 static unsigned int
-GetDHOffset2(RTMP *r, uint8_t *handshake, unsigned int len)
+GetDHOffset2(struct RTMP *r, uint8_t *handshake, unsigned int len)
 {
   unsigned int offset = 0;
   uint8_t *ptr = handshake + 768;
@@ -170,7 +173,7 @@ GetDHOffset2(RTMP *r, uint8_t *handshake, unsigned int len)
 }
 
 static unsigned int
-GetDigestOffset2(RTMP *r, uint8_t *handshake, unsigned int len)
+GetDigestOffset2(struct RTMP *r, uint8_t *handshake, unsigned int len)
 {
   unsigned int offset = 0;
   uint8_t *ptr = handshake + 772;
@@ -197,7 +200,7 @@ GetDigestOffset2(RTMP *r, uint8_t *handshake, unsigned int len)
 }
 
 static unsigned int
-GetDHOffset1(RTMP *r, uint8_t *handshake, unsigned int len)
+GetDHOffset1(struct RTMP *r, uint8_t *handshake, unsigned int len)
 {
   unsigned int offset = 0;
   uint8_t *ptr = handshake + 1532;
@@ -226,7 +229,7 @@ GetDHOffset1(RTMP *r, uint8_t *handshake, unsigned int len)
 }
 
 static unsigned int
-GetDigestOffset1(RTMP *r, uint8_t *handshake, unsigned int len)
+GetDigestOffset1(struct RTMP *r, uint8_t *handshake, unsigned int len)
 {
   unsigned int offset = 0;
   uint8_t *ptr = handshake + 8;
@@ -259,7 +262,7 @@ static getoff *digoff[] = {GetDigestOffset1, GetDigestOffset2};
 static getoff *dhoff[] = {GetDHOffset1, GetDHOffset2};
 
 static void
-HMACsha256(const uint8_t *message, size_t messageLen, const uint8_t *key,
+HMACsha256(struct RTMP *r, const uint8_t *message, size_t messageLen, const uint8_t *key,
 	   size_t keylen, uint8_t *digest)
 {
   unsigned int digestLen;
@@ -273,7 +276,7 @@ HMACsha256(const uint8_t *message, size_t messageLen, const uint8_t *key,
 }
 
 static void
-CalculateDigest(unsigned int digestPos, uint8_t *handshakeMessage,
+CalculateDigest(struct RTMP *r, unsigned int digestPos, uint8_t *handshakeMessage,
 		const uint8_t *key, size_t keyLen, uint8_t *digest)
 {
   const int messageLen = RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH;
@@ -284,16 +287,16 @@ CalculateDigest(unsigned int digestPos, uint8_t *handshakeMessage,
 	 &handshakeMessage[digestPos + SHA256_DIGEST_LENGTH],
 	 messageLen - digestPos);
 
-  HMACsha256(message, messageLen, key, keyLen, digest);
+  HMACsha256(r, message, messageLen, key, keyLen, digest);
 }
 
 static int
-VerifyDigest(unsigned int digestPos, uint8_t *handshakeMessage, const uint8_t *key,
+VerifyDigest(struct RTMP *r, unsigned int digestPos, uint8_t *handshakeMessage, const uint8_t *key,
 	     size_t keyLen)
 {
   uint8_t calcDigest[SHA256_DIGEST_LENGTH];
 
-  CalculateDigest(digestPos, handshakeMessage, key, keyLen, calcDigest);
+  CalculateDigest(r, digestPos, handshakeMessage, key, keyLen, calcDigest);
 
   return memcmp(&handshakeMessage[digestPos], calcDigest,
 		SHA256_DIGEST_LENGTH) == 0;
@@ -331,7 +334,7 @@ static const uint32_t rtmpe8_keys[16][4] = {
 /* RTMPE type 8 uses XTEA on the regular signature
  * http://en.wikipedia.org/wiki/XTEA
  */
-static void rtmpe8_sig(uint8_t *in, uint8_t *out, int keyid)
+static void rtmpe8_sig(struct RTMP *r, uint8_t *in, uint8_t *out, int keyid)
 {
   unsigned int i, num_rounds = 32;
   uint32_t v0, v1, sum=0, delta=0x9E3779B9;
@@ -795,7 +798,7 @@ HandShake(RTMP * r, int FP9HandShake)
       RTMP_Log(r, RTMP_LOGDEBUG, "%s: Client digest offset: %d", __FUNCTION__,
 	  digestPosClient);
 
-      CalculateDigest(digestPosClient, clientsig, GenuineFPKey, 30,
+      CalculateDigest(r, digestPosClient, clientsig, GenuineFPKey, 30,
 		      &clientsig[digestPosClient]);
 
       RTMP_Log(r, RTMP_LOGDEBUG, "%s: Initial client digest: ", __FUNCTION__);
@@ -847,7 +850,7 @@ HandShake(RTMP * r, int FP9HandShake)
       /* we have to use this signature now to find the correct algorithms for getting the digest and DH positions */
       int digestPosServer = getdig(r, serversig, RTMP_SIG_SIZE);
 
-      if (!VerifyDigest(digestPosServer, serversig, GenuineFMSKey, 36))
+      if (!VerifyDigest(r, digestPosServer, serversig, GenuineFMSKey, 36))
 	{
 	  RTMP_Log(r, RTMP_LOGWARNING, "Trying different position for server digest!");
 	  offalg ^= 1;
@@ -855,7 +858,7 @@ HandShake(RTMP * r, int FP9HandShake)
 	  getdh  = dhoff[offalg];
 	  digestPosServer = getdig(r, serversig, RTMP_SIG_SIZE);
 
-	  if (!VerifyDigest(digestPosServer, serversig, GenuineFMSKey, 36))
+	  if (!VerifyDigest(r, digestPosServer, serversig, GenuineFMSKey, 36))
 	    {
 	      RTMP_Log(r, RTMP_LOGERROR, "Couldn't verify the server digest");	/* continuing anyway will probably fail */
 	      return FALSE;
@@ -871,7 +874,7 @@ HandShake(RTMP * r, int FP9HandShake)
 	  memcpy(r->Link.SWFVerificationResponse, swfVerify, 2);
 	  AMF_EncodeInt32(r, &r->Link.SWFVerificationResponse[2], vend, r->Link.SWFSize);
 	  AMF_EncodeInt32(r, &r->Link.SWFVerificationResponse[6], vend, r->Link.SWFSize);
-	  HMACsha256(r->Link.SWFHash, SHA256_DIGEST_LENGTH,
+	  HMACsha256(r, r->Link.SWFHash, SHA256_DIGEST_LENGTH,
 		     &serversig[RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH],
 		     SHA256_DIGEST_LENGTH,
 		     (uint8_t *)&r->Link.SWFVerificationResponse[10]);
@@ -916,9 +919,9 @@ HandShake(RTMP * r, int FP9HandShake)
       /* calculate response now */
       signatureResp = reply+RTMP_SIG_SIZE-SHA256_DIGEST_LENGTH;
 
-      HMACsha256(&serversig[digestPosServer], SHA256_DIGEST_LENGTH,
+      HMACsha256(r, &serversig[digestPosServer], SHA256_DIGEST_LENGTH,
 		 GenuineFPKey, sizeof(GenuineFPKey), digestResp);
-      HMACsha256(reply, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digestResp,
+      HMACsha256(r, reply, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digestResp,
 		 SHA256_DIGEST_LENGTH, signatureResp);
 
       /* some info output */
@@ -934,7 +937,7 @@ HandShake(RTMP * r, int FP9HandShake)
 	  uint8_t *sig = signatureResp;
 	  /* encrypt signatureResp */
           for (i=0; i<SHA256_DIGEST_LENGTH; i+=8)
-	    rtmpe8_sig(sig+i, sig+i, dptr[i] % 15);
+	    rtmpe8_sig(r, sig+i, sig+i, dptr[i] % 15);
         }
       else if (type == 9)
         {
@@ -991,9 +994,9 @@ HandShake(RTMP * r, int FP9HandShake)
 	     SHA256_DIGEST_LENGTH);
 
       /* verify server response */
-      HMACsha256(&clientsig[digestPosClient], SHA256_DIGEST_LENGTH,
+      HMACsha256(r, &clientsig[digestPosClient], SHA256_DIGEST_LENGTH,
 		 GenuineFMSKey, sizeof(GenuineFMSKey), digest);
-      HMACsha256(serversig, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digest,
+      HMACsha256(r, serversig, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digest,
 		 SHA256_DIGEST_LENGTH, signature);
 
       /* show some information */
@@ -1007,7 +1010,7 @@ HandShake(RTMP * r, int FP9HandShake)
 	  uint8_t *sig = signature;
 	  /* encrypt signature */
           for (i=0; i<SHA256_DIGEST_LENGTH; i+=8)
-	    rtmpe8_sig(sig+i, sig+i, dptr[i] % 15);
+	    rtmpe8_sig(r, sig+i, sig+i, dptr[i] % 15);
         }
       else if (type == 9)
         {
@@ -1184,7 +1187,7 @@ SHandShake(RTMP * r)
       RTMP_Log(r, RTMP_LOGDEBUG, "%s: Server digest offset: %d", __FUNCTION__,
 	  digestPosServer);
 
-      CalculateDigest(digestPosServer, serversig, GenuineFMSKey, 36,
+      CalculateDigest(r, digestPosServer, serversig, GenuineFMSKey, 36,
 		      &serversig[digestPosServer]);
 
       RTMP_Log(r, RTMP_LOGDEBUG, "%s: Initial server digest: ", __FUNCTION__);
@@ -1214,7 +1217,7 @@ SHandShake(RTMP * r)
       /* we have to use this signature now to find the correct algorithms for getting the digest and DH positions */
       int digestPosClient = getdig(r, clientsig, RTMP_SIG_SIZE);
 
-      if (!VerifyDigest(digestPosClient, clientsig, GenuineFPKey, 30))
+      if (!VerifyDigest(r, digestPosClient, clientsig, GenuineFPKey, 30))
 	{
 	  RTMP_Log(r, RTMP_LOGWARNING, "Trying different position for client digest!");
 	  offalg ^= 1;
@@ -1223,7 +1226,7 @@ SHandShake(RTMP * r)
 
 	  digestPosClient = getdig(r, clientsig, RTMP_SIG_SIZE);
 
-	  if (!VerifyDigest(digestPosClient, clientsig, GenuineFPKey, 30))
+	  if (!VerifyDigest(r, digestPosClient, clientsig, GenuineFPKey, 30))
 	    {
 	      RTMP_Log(r, RTMP_LOGERROR, "Couldn't verify the client digest");	/* continuing anyway will probably fail */
 	      return FALSE;
@@ -1239,7 +1242,7 @@ SHandShake(RTMP * r)
 	  memcpy(r->Link.SWFVerificationResponse, swfVerify, 2);
 	  AMF_EncodeInt32(r, &r->Link.SWFVerificationResponse[2], vend, r->Link.SWFSize);
 	  AMF_EncodeInt32(r, &r->Link.SWFVerificationResponse[6], vend, r->Link.SWFSize);
-	  HMACsha256(r->Link.SWFHash, SHA256_DIGEST_LENGTH,
+	  HMACsha256(r, r->Link.SWFHash, SHA256_DIGEST_LENGTH,
 		     &serversig[RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH],
 		     SHA256_DIGEST_LENGTH,
 		     (uint8_t *)&r->Link.SWFVerificationResponse[10]);
@@ -1278,9 +1281,9 @@ SHandShake(RTMP * r)
       /* calculate response now */
       signatureResp = clientsig+RTMP_SIG_SIZE-SHA256_DIGEST_LENGTH;
 
-      HMACsha256(&clientsig[digestPosClient], SHA256_DIGEST_LENGTH,
+      HMACsha256(r, &clientsig[digestPosClient], SHA256_DIGEST_LENGTH,
 		 GenuineFMSKey, sizeof(GenuineFMSKey), digestResp);
-      HMACsha256(clientsig, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digestResp,
+      HMACsha256(r, clientsig, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digestResp,
 		 SHA256_DIGEST_LENGTH, signatureResp);
 #ifdef FP10
       if (type == 8 )
@@ -1289,7 +1292,7 @@ SHandShake(RTMP * r)
 	  uint8_t *sig = signatureResp;
 	  /* encrypt signatureResp */
           for (i=0; i<SHA256_DIGEST_LENGTH; i+=8)
-	    rtmpe8_sig(sig+i, sig+i, dptr[i] % 15);
+	    rtmpe8_sig(r, sig+i, sig+i, dptr[i] % 15);
         }
       else if (type == 9)
         {
@@ -1342,9 +1345,9 @@ SHandShake(RTMP * r)
 	     SHA256_DIGEST_LENGTH);
 
       /* verify client response */
-      HMACsha256(&serversig[digestPosServer], SHA256_DIGEST_LENGTH,
+      HMACsha256(r, &serversig[digestPosServer], SHA256_DIGEST_LENGTH,
 		 GenuineFPKey, sizeof(GenuineFPKey), digest);
-      HMACsha256(clientsig, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digest,
+      HMACsha256(r, clientsig, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digest,
 		 SHA256_DIGEST_LENGTH, signature);
 #ifdef FP10
       if (type == 8 )
@@ -1353,7 +1356,7 @@ SHandShake(RTMP * r)
 	  uint8_t *sig = signature;
 	  /* encrypt signatureResp */
           for (i=0; i<SHA256_DIGEST_LENGTH; i+=8)
-	    rtmpe8_sig(sig+i, sig+i, dptr[i] % 15);
+	    rtmpe8_sig(r, sig+i, sig+i, dptr[i] % 15);
         }
       else if (type == 9)
         {
@@ -1406,7 +1409,7 @@ SHandShake(RTMP * r)
     {
       if (memcmp(serversig, clientsig, RTMP_SIG_SIZE) != 0)
 	{
-	  RTMP_Log(r,RTMP_LOGWARNING, "%s: client signature does not match!",
+	  RTMP_Log(r, RTMP_LOGWARNING, "%s: client signature does not match!",
 	      __FUNCTION__);
 	}
     }

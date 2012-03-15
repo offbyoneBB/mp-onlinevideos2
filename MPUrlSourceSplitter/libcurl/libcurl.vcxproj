@@ -11,6 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="readme_before_update.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\amigaos.h" />
     <ClInclude Include="include\arpa_telnet.h" />
     <ClInclude Include="include\asyn.h" />
@@ -30,6 +33,15 @@
     <ClInclude Include="include\content_encoding.h" />
     <ClInclude Include="include\cookie.h" />
     <ClInclude Include="include\curlx.h" />
+    <ClInclude Include="include\curl\curl.h" />
+    <ClInclude Include="include\curl\curlbuild.h" />
+    <ClInclude Include="include\curl\curlrules.h" />
+    <ClInclude Include="include\curl\curlver.h" />
+    <ClInclude Include="include\curl\easy.h" />
+    <ClInclude Include="include\curl\mprintf.h" />
+    <ClInclude Include="include\curl\multi.h" />
+    <ClInclude Include="include\curl\stdcheaders.h" />
+    <ClInclude Include="include\curl\typecheck-gcc.h" />
     <ClInclude Include="include\curl_addrinfo.h" />
     <ClInclude Include="include\curl_base64.h" />
     <ClInclude Include="include\curl_fnmatch.h" />
@@ -221,9 +233,6 @@
     <ClCompile Include="src\version.c" />
     <ClCompile Include="src\warnless.c" />
     <ClCompile Include="src\wildcard.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="readme_before_update.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B25D4555-F218-410A-A37E-176A17996325}</ProjectGuid>

@@ -358,6 +358,8 @@ STDMETHODIMP CLAVFDemuxer::InitAVFormat(LPCOLESTR pszFileName)
   // Increase default probe sizes
   //m_avFormat->probesize            = 5 * 5000000;
   //m_avFormat->max_analyze_duration = 5 * (5*AV_TIME_BASE);
+  if (m_bMPEGTS)
+    m_avFormat->max_analyze_duration = (m_avFormat->max_analyze_duration * 3) / 2;
 
   m_timeOpening = time(NULL);
   int ret = avformat_find_stream_info(m_avFormat, NULL);
@@ -704,11 +706,6 @@ STDMETHODIMP CLAVFDemuxer::GetNextPacket(Packet **ppPacket)
       DbgLog((LOG_TRACE, 10, L"::GetNextPacket() - Signaling Discontinuinty because of corrupt package"));
 #endif
 
-    // Update current time
-    if (rt != Packet::INVALID_TIME) {
-      m_rtCurrent = rt;
-    }
-
     av_free_packet(&pkt);
   }
 
@@ -812,7 +809,8 @@ STDMETHODIMP CLAVFDemuxer::Seek(REFERENCE_TIME rTime)
     {
       logger->Log(LOGGER_WARNING, L"%s: %s: first seek by time failed: 0x%08X", MODULE_NAME, METHOD_SEEK_NAME, result);
 
-      result = this->SeekByTime(rTime, flags | AVSEEK_FLAG_ANY);
+      flags = 0;
+      result = this->SeekByTime(rTime, flags);    // seek forward
       if (FAILED(result))
       {
         logger->Log(LOGGER_WARNING, L"%s: %s: second seek by time failed: 0x%08X", MODULE_NAME, METHOD_SEEK_NAME, result);
@@ -1012,7 +1010,8 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
           else
           {
             // seek to zero (after seeking byte position is set to zero)
-            logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking to position: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, 0);
+            logger->Log(LOGGER_VERBOSE, L"%s: %s: flushing, seeking to position: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, 0);
+            avio_flush(this->m_avFormat->pb);
             if (avio_seek(this->m_avFormat->pb, 0, SEEK_SET) < 0)
             {
               result = -5;
@@ -2195,7 +2194,7 @@ STDMETHODIMP CLAVFDemuxer::AddStream(int streamId)
   HRESULT hr = S_OK;
   AVStream *pStream = m_avFormat->streams[streamId];
 
-  if (pStream->discard == AVDISCARD_ALL || (pStream->codec->codec_id == CODEC_ID_NONE && pStream->codec->codec_tag == 0) || (!m_bSubStreams && (pStream->disposition & LAVF_DISPOSITION_SUB_STREAM)))
+  if (pStream->discard == AVDISCARD_ALL || (pStream->codec->codec_id == CODEC_ID_NONE && pStream->codec->codec_tag == 0) || (!m_bSubStreams && (pStream->disposition & LAVF_DISPOSITION_SUB_STREAM)) || (pStream->disposition & AV_DISPOSITION_ATTACHED_PIC))
     return S_FALSE;
 
   if (pStream->codec->codec_type == AVMEDIA_TYPE_VIDEO && (!pStream->codec->width || !pStream->codec->height))
@@ -2378,8 +2377,12 @@ REFERENCE_TIME CLAVFDemuxer::ConvertTimestampToRT(int64_t pts, int num, int den,
     return Packet::INVALID_TIME;
   }
 
-  if(starttime == (int64_t)AV_NOPTS_VALUE) {
-    starttime = av_rescale(m_avFormat->start_time, den, (int64_t)AV_TIME_BASE * num);
+  if(starttime == AV_NOPTS_VALUE) {
+    if (m_avFormat->start_time != AV_NOPTS_VALUE) {
+      starttime = av_rescale(m_avFormat->start_time, den, (int64_t)AV_TIME_BASE * num);
+    } else {
+      starttime = 0;
+    }
   }
 
   if(starttime != 0) {
@@ -2400,8 +2403,12 @@ int64_t CLAVFDemuxer::ConvertRTToTimestamp(REFERENCE_TIME timestamp, int num, in
     return (int64_t)AV_NOPTS_VALUE;
   }
 
-  if(starttime == (int64_t)AV_NOPTS_VALUE) {
-    starttime = av_rescale(m_avFormat->start_time, den, (int64_t)AV_TIME_BASE * num);
+  if(starttime == AV_NOPTS_VALUE) {
+    if (m_avFormat->start_time != AV_NOPTS_VALUE) {
+      starttime = av_rescale(m_avFormat->start_time, den, (int64_t)AV_TIME_BASE * num);
+    } else {
+      starttime = 0;
+    }
   }
 
   int64_t pts = av_rescale(timestamp, den, (int64_t)num * DSHOW_TIME_BASE);

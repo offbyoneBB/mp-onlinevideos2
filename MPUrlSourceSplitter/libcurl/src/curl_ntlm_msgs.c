@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -54,6 +54,13 @@
 #  endif
 #  include "ssluse.h"
 
+#elif defined(USE_GNUTLS_NETTLE)
+
+#  include <nettle/md5.h>
+#  include <gnutls/gnutls.h>
+#  include <gnutls/crypto.h>
+#  define MD5_DIGEST_LENGTH 16
+
 #elif defined(USE_GNUTLS)
 
 #  include <gcrypt.h>
@@ -92,9 +99,6 @@
 
 /* The last #include file should be: */
 #include "memdebug.h"
-
-/* Hostname buffer size */
-#define HOSTNAME_MAX 1024
 
 /* "NTLMSSP" signature is always in ASCII regardless of the platform */
 #define NTLMSSP_SIGNATURE "\x4e\x54\x4c\x4d\x53\x53\x50"
@@ -357,13 +361,15 @@ static void unicodecpy(unsigned char *dest,
  * ntlm    [in/out] - The ntlm data struct being used and modified.
  * outptr  [in/out] - The adress where a pointer to newly allocated memory
  *                    holding the result will be stored upon completion.
+ * outlen  [out]    - The length of the output message.
  *
  * Returns CURLE_OK on success.
  */
 CURLcode Curl_ntlm_create_type1_message(const char *userp,
                                         const char *passwdp,
                                         struct ntlmdata *ntlm,
-                                        char **outptr)
+                                        char **outptr,
+                                        size_t *outlen)
 {
   /* NTLM type-1 message structure:
 
@@ -380,7 +386,6 @@ CURLcode Curl_ntlm_create_type1_message(const char *userp,
   */
 
   unsigned char ntlmbuf[NTLM_BUFSIZE];
-  size_t base64_sz = 0;
   size_t size;
 
 #ifdef USE_WINDOWS_SSPI
@@ -559,7 +564,7 @@ CURLcode Curl_ntlm_create_type1_message(const char *userp,
   });
 
   /* Return with binary blob encoded into base64 */
-  return Curl_base64_encode(NULL, (char *)ntlmbuf, size, outptr, &base64_sz);
+  return Curl_base64_encode(NULL, (char *)ntlmbuf, size, outptr, outlen);
 }
 
 /*
@@ -577,6 +582,7 @@ CURLcode Curl_ntlm_create_type1_message(const char *userp,
  * ntlm    [in/out] - The ntlm data struct being used and modified.
  * outptr  [in/out] - The adress where a pointer to newly allocated memory
  *                    holding the result will be stored upon completion.
+ * outlen  [out]    - The length of the output message.
  *
  * Returns CURLE_OK on success.
  */
@@ -584,7 +590,8 @@ CURLcode Curl_ntlm_create_type3_message(struct SessionHandle *data,
                                         const char *userp,
                                         const char *passwdp,
                                         struct ntlmdata *ntlm,
-                                        char **outptr)
+                                        char **outptr,
+                                        size_t *outlen)
 {
   /* NTLM type-3 message structure:
 
@@ -605,7 +612,6 @@ CURLcode Curl_ntlm_create_type3_message(struct SessionHandle *data,
   */
 
   unsigned char ntlmbuf[NTLM_BUFSIZE];
-  size_t base64_sz = 0;
   size_t size;
 
 #ifdef USE_WINDOWS_SSPI
@@ -686,18 +692,13 @@ CURLcode Curl_ntlm_create_type3_message(struct SessionHandle *data,
   if(user)
     userlen = strlen(user);
 
-  if(Curl_gethostname(host, HOSTNAME_MAX)) {
-    infof(data, "gethostname() failed, continuing without!");
+  /* Get the machine's un-qualified host name as NTLM doesn't like the fully
+     qualified domain name */
+  if(Curl_gethostname(host, sizeof(host))) {
+    infof(data, "gethostname() failed, continuing without!\n");
     hostlen = 0;
   }
   else {
-    /* If the workstation if configured with a full DNS name (i.e.
-     * workstation.somewhere.net) gethostname() returns the fully qualified
-     * name, which NTLM doesn't like.
-     */
-    char *dot = strchr(host, '.');
-    if(dot)
-      *dot = '\0';
     hostlen = strlen(host);
   }
 
@@ -720,13 +721,16 @@ CURLcode Curl_ntlm_create_type3_message(struct SessionHandle *data,
     MD5_CTX MD5pw;
     Curl_ossl_seed(data); /* Initiate the seed if not already done */
     RAND_bytes(entropy, 8);
+#elif defined(USE_GNUTLS_NETTLE)
+    struct md5_ctx MD5pw;
+    gnutls_rnd(GNUTLS_RND_RANDOM, entropy, 8);
 #elif defined(USE_GNUTLS)
     gcry_md_hd_t MD5pw;
     Curl_gtls_seed(data); /* Initiate the seed if not already done */
     gcry_randomize(entropy, 8, GCRY_STRONG_RANDOM);
 #elif defined(USE_NSS)
     PK11Context *MD5pw;
-    unsigned int outlen;
+    unsigned int MD5len;
     Curl_nss_seed(data);  /* Initiate the seed if not already done */
     PK11_GenerateRandom(entropy, 8);
 #endif
@@ -745,6 +749,10 @@ CURLcode Curl_ntlm_create_type3_message(struct SessionHandle *data,
     MD5_Init(&MD5pw);
     MD5_Update(&MD5pw, tmp, 16);
     MD5_Final(md5sum, &MD5pw);
+#elif defined(USE_GNUTLS_NETTLE)
+    md5_init(&MD5pw);
+    md5_update(&MD5pw, 16, tmp);
+    md5_digest(&MD5pw, 16, md5sum);
 #elif defined(USE_GNUTLS)
     gcry_md_open(&MD5pw, GCRY_MD_MD5, 0);
     gcry_md_write(MD5pw, tmp, MD5_DIGEST_LENGTH);
@@ -753,7 +761,7 @@ CURLcode Curl_ntlm_create_type3_message(struct SessionHandle *data,
 #elif defined(USE_NSS)
     MD5pw = PK11_CreateDigestContext(SEC_OID_MD5);
     PK11_DigestOp(MD5pw, tmp, 16);
-    PK11_DigestFinal(MD5pw, md5sum, &outlen, MD5_DIGEST_LENGTH);
+    PK11_DigestFinal(MD5pw, md5sum, &MD5len, MD5_DIGEST_LENGTH);
     PK11_DestroyContext(MD5pw, PR_TRUE);
 #endif
 
@@ -958,7 +966,7 @@ CURLcode Curl_ntlm_create_type3_message(struct SessionHandle *data,
 #endif
 
   /* Return with binary blob encoded into base64 */
-  return Curl_base64_encode(NULL, (char *)ntlmbuf, size, outptr, &base64_sz);
+  return Curl_base64_encode(NULL, (char *)ntlmbuf, size, outptr, outlen);
 }
 
 #endif /* USE_NTLM */

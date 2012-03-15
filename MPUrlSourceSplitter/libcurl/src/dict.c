@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -92,12 +92,13 @@ const struct Curl_handler Curl_handler_dict = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   ZERO_NULL,                            /* readwrite */
   PORT_DICT,                            /* defport */
   CURLPROTO_DICT,                       /* protocol */
-  PROTOPT_NONE                          /* flags */
+  PROTOPT_NONE | PROTOPT_NOURLQUERY      /* flags */
 };
 
 static char *unescape_word(struct SessionHandle *data, const char *inputbuff)
@@ -177,7 +178,7 @@ static CURLcode dict_do(struct connectdata *conn, bool *done)
     }
 
     if((word == NULL) || (*word == (char)0)) {
-      infof(data, "lookup word is missing");
+      infof(data, "lookup word is missing\n");
       word=(char *)"default";
     }
     if((database == NULL) || (*database == (char)0)) {
@@ -231,7 +232,7 @@ static CURLcode dict_do(struct connectdata *conn, bool *done)
     }
 
     if((word == NULL) || (*word == (char)0)) {
-      infof(data, "lookup word is missing");
+      infof(data, "lookup word is missing\n");
       word=(char *)"default";
     }
     if((database == NULL) || (*database == (char)0)) {

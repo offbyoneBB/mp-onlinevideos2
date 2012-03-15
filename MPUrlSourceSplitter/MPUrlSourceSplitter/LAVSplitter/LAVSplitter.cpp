@@ -56,8 +56,6 @@
 #define METHOD_STREAM_READ_PAUSE_NAME                             L"stream_read_pause()"
 #define METHOD_STREAM_READ_SEEK_NAME                              L"stream_read_seek()"
 
-//unsigned int CLAVSplitter::instanceCounter = 0;
-
 // if ffmpeg_log_callback_set is true than ffmpeg log callback will not be set
 // in that case we don't receive messages from ffmpeg
 static volatile bool ffmpeg_log_callback_set = false;
@@ -367,13 +365,13 @@ STDMETHODIMP CLAVSplitter::GetSite(REFIID riid, void **ppvSite)
 STDMETHODIMP_(int) CLAVSplitter::GetCount()
 {
   CAutoLock pinLock(&m_csPins);
-  return m_pPins.size();
+  return (int)m_pPins.size();
 }
 
 STDMETHODIMP CLAVSplitter::GetStatus(int i, int& samples, int& size)
 {
   CAutoLock pinLock(&m_csPins);
-  if (i >= m_pPins.size())
+  if ((size_t)i >= m_pPins.size())
     return E_FAIL;
 
   CLAVOutputPin *pPin = m_pPins.at(i);

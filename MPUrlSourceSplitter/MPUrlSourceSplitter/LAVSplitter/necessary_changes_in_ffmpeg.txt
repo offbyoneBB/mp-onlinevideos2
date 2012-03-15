@@ -2,7 +2,7 @@
 The purpose of this document is to remark all changes made in ffmpeg by any developer. These same changes
 (or at least their meaning) must be made in next releases of ffmpeg.
 
-Changes in ffmpeg (lavfilters HEAD 765ba7c94528706a1e69e8cb461e19da9f52afb9):
+Changes in ffmpeg (lavfilters HEAD 15db26bd78df10e014b1d8966ab6dc3b6cdabf8f):
 
 File: build_ff_win32.sh
 Comment: change build suffix
@@ -11,12 +11,19 @@ Code:
 --build-suffix=-mpurlsourcesplitter"
 
 --------------------------------------------
+Comment: add option
+Code: 
+
+--disable-network
+
+--------------------------------------------
 Comment: remove options
 Code: 
 
 --enable-protocol=mmsh \
 --enable-protocol=mmst \
 --enable-protocol=rtp \
+--enable-protocol=http \
 
 --------------------------------------------
 Comment: change build command
