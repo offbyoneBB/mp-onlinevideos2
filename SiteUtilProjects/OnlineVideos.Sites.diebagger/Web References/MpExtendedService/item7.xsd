@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Picture" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Picture" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" />
+  <xs:complexType name="ArrayOfWebPictureBasic">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebPictureBasic" nillable="true" type="tns:WebPictureBasic" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebPictureBasic" nillable="true" type="tns:ArrayOfWebPictureBasic" />
+  <xs:complexType name="WebPictureBasic">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q1:WebMediaItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Categories" nillable="true" type="q1:ArrayOfWebCategory" />
+          <xs:element minOccurs="0" name="DateTaken" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebPictureBasic" nillable="true" type="tns:WebPictureBasic" />
+  <xs:complexType name="ArrayOfWebPictureDetailed">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebPictureDetailed" nillable="true" type="tns:WebPictureDetailed" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebPictureDetailed" nillable="true" type="tns:ArrayOfWebPictureDetailed" />
+  <xs:complexType name="WebPictureDetailed">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebPictureBasic">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Author" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="CameraManufacturer" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="CameraModel" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Comment" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Copyright" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Dpi" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Height" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Mpixel" type="xs:double" />
+          <xs:element minOccurs="0" name="Rating" type="xs:float" />
+          <xs:element minOccurs="0" name="Subject" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Width" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebPictureDetailed" nillable="true" type="tns:WebPictureDetailed" />
+</xs:schema>

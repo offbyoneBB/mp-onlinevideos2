@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OnlineVideos.Sites.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="OnlineVideos_Sites_diebagger_MpExtendedService_MediaAccessService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">net.pipe://127.0.0.1/MPExtended/MediaAccessService</Value>
+    </Setting>
+    <Setting Name="OnlineVideos_Sites_diebagger_MpExtendedStreamingService_StreamingService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">net.pipe://127.0.0.1/MPExtended/StreamingService/soap</Value>
+    </Setting>
+    <Setting Name="OnlineVideos_Sites_diebagger_MpExtendedTvService_TVAccessService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">net.pipe://127.0.0.1/MPExtended/TVAccessService</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
