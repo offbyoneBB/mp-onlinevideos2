@@ -30,14 +30,16 @@
 CURLcode Curl_ntlm_create_type1_message(const char *userp,
                                         const char *passwdp,
                                         struct ntlmdata *ntlm,
-                                        char **outptr);
+                                        char **outptr,
+                                        size_t *outlen);
 
 /* This is to generate a base64 encoded NTLM type-3 message */
 CURLcode Curl_ntlm_create_type3_message(struct SessionHandle *data,
                                         const char *userp,
                                         const char *passwdp,
                                         struct ntlmdata *ntlm,
-                                        char **outptr);
+                                        char **outptr,
+                                        size_t *outlen);
 
 /* This is to decode a NTLM type-2 message */
 CURLcode Curl_ntlm_decode_type2_message(struct SessionHandle *data,
@@ -47,6 +49,8 @@ CURLcode Curl_ntlm_decode_type2_message(struct SessionHandle *data,
 /* This is to clean up the ntlm data structure */
 #ifdef USE_WINDOWS_SSPI
 void Curl_ntlm_sspi_cleanup(struct ntlmdata *ntlm);
+#else
+#define Curl_ntlm_sspi_cleanup(x)
 #endif
 
 /* NTLM buffer fixed size, large enough for long user + host + domain */

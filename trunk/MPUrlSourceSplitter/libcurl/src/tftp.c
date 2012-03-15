@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -184,12 +184,13 @@ const struct Curl_handler Curl_handler_tftp = {
   tftp_doing,                           /* doing */
   tftp_getsock,                         /* proto_getsock */
   tftp_getsock,                         /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   tftp_disconnect,                      /* disconnect */
   ZERO_NULL,                            /* readwrite */
   PORT_TFTP,                            /* defport */
   CURLPROTO_TFTP,                       /* protocol */
-  PROTOPT_NONE                          /* flags */
+  PROTOPT_NONE | PROTOPT_NOURLQUERY     /* flags */
 };
 
 /**********************************************************
@@ -248,11 +249,11 @@ static CURLcode tftp_set_timeouts(tftp_state_data_t *state)
 
     state->max_time = state->start_time+maxtime;
 
-    /* Set per-block timeout to 10% of total */
-    timeout = maxtime/10 ;
+    /* Set per-block timeout to total */
+    timeout = maxtime;
 
-    /* Average reposting an ACK after 15 seconds */
-    state->retry_max = (int)timeout/15;
+    /* Average reposting an ACK after 5 seconds */
+    state->retry_max = (int)timeout/5;
   }
   /* But bound the total number */
   if(state->retry_max<3)
@@ -591,15 +592,10 @@ static CURLcode tftp_rx(tftp_state_data_t *state, tftp_event_t event)
     /* Is this the block we expect? */
     rblock = getrpacketblock(&state->rpacket);
     if(NEXT_BLOCKNUM(state->block) != rblock) {
-      /* No, log it, up the retry count and fail if over the limit */
+      /* No, log it */
       infof(data,
-            "Received unexpected DATA packet block %d\n", rblock);
-      state->retries++;
-      if(state->retries > state->retry_max) {
-        failf(data, "tftp_rx: giving up waiting for block %d",
-              NEXT_BLOCKNUM(state->block));
-        return CURLE_TFTP_ILLEGAL;
-      }
+            "Received unexpected DATA packet block %d, expecting block %d\n",
+            rblock, NEXT_BLOCKNUM(state->block));
       break;
     }
     /* This is the expected block.  Reset counters and ACK it. */
@@ -731,7 +727,7 @@ static CURLcode tftp_tx(tftp_state_data_t *state, tftp_event_t event)
         }
         else {
           /* Re-send the data packet */
-          sbytes = sendto(state->sockfd, (void *)&state->spacket.data,
+          sbytes = sendto(state->sockfd, (void *)state->spacket.data,
                           4+state->sbytes, SEND_4TH_ARG,
                           (struct sockaddr *)&state->remote_addr,
                           state->remote_addrlen);

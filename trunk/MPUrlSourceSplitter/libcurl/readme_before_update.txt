@@ -2,7 +2,7 @@
 The purpose of this document is to remark all changes made in libcurl by any developer. These same changes
 (or at least their meaning) must be made in next releases of libcurl.
  
-Changes in libcurl 7.22.0:
+Changes in libcurl 7.24.0:
 
 File: \include\curl\curl.h
 Comment: define RTMP callback function
@@ -19,10 +19,10 @@ Comment: in CURLoption enum define RTMP callback function and RTMP user data for
 Code:
 
 /* callback log function for RTMP protocol */
-CINIT(RTMP_LOG_CALLBACK, FUNCTIONPOINT, 211),
+CINIT(RTMP_LOG_CALLBACK, FUNCTIONPOINT, 213),
 
 /* user data (reference) for RTMP log function */
-CINIT(RTMP_LOG_USERDATA, OBJECTPOINT, 212),
+CINIT(RTMP_LOG_USERDATA, OBJECTPOINT, 214),
 
 --------------------------------------------
 Comment: in CURLINFO enum add RTMP total duration and RTMP current time for curl_easy_getinfo() method
@@ -68,7 +68,7 @@ Code:
 int on = 1;
 
 --------------------------------------------
-Comment: in rtmp_connect() method add after 'curlx_nonblock(r->m_sb.sb_socket, FALSE);'
+Comment: in rtmp_connect() method replace after 'curlx_nonblock(r->m_sb.sb_socket, FALSE);' and before 'if(!RTMP_Connect1(r, NULL))'
 Code:
 
 if (conn->data->set.connecttimeout != 0)

@@ -23,6 +23,7 @@
 #include "MPUrlSourceSplitter_RTMP.h"
 #include "Utilities.h"
 #include "LockMutex.h"
+#include "FlvPacket.h"
 
 #include <WinInet.h>
 #include <stdio.h>
@@ -74,6 +75,7 @@ CMPUrlSourceSplitter_Rtmp::CMPUrlSourceSplitter_Rtmp(CParameterCollection *confi
   this->bytePosition = 0;
   this->seekingActive = false;
   this->supressData = false;
+  this->bufferForProcessing = NULL;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -91,6 +93,12 @@ CMPUrlSourceSplitter_Rtmp::~CMPUrlSourceSplitter_Rtmp()
   {
     delete this->mainCurlInstance;
     this->mainCurlInstance = NULL;
+  }
+
+  if (this->bufferForProcessing != NULL)
+  {
+    delete this->bufferForProcessing;
+    this->bufferForProcessing = NULL;
   }
 
   delete this->configurationParameters;
@@ -115,6 +123,12 @@ HRESULT CMPUrlSourceSplitter_Rtmp::ClearSession(void)
   if (this->IsConnected())
   {
     this->CloseConnection();
+  }
+
+  if (this->bufferForProcessing != NULL)
+  {
+    delete this->bufferForProcessing;
+    this->bufferForProcessing = NULL;
   }
  
   this->internalExitRequest = false;
@@ -258,11 +272,24 @@ HRESULT CMPUrlSourceSplitter_Rtmp::OpenConnection(void)
   CLockMutex lock(this->lockMutex, INFINITE);
 
   this->wholeStreamDownloaded = false;
+  this->firstTimestamp = -1;
+  this->firstVideoTimestamp = -1;
 
   if (result == S_OK)
   {
     this->mainCurlInstance = new CCurlInstance(this->logger, this->url, PROTOCOL_IMPLEMENTATION_NAME);
     result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
+  }
+
+  if (SUCCEEDED(result) && (this->bufferForProcessing == NULL))
+  {
+    this->bufferForProcessing = new LinearBuffer();
+    result = (this->bufferForProcessing != NULL) ? S_OK : E_OUTOFMEMORY;
+
+    if (SUCCEEDED(result))
+    {
+      result = this->bufferForProcessing->InitializeBuffer(BUFFER_FOR_PROCESSING_SIZE_DEFAULT, 0) ? S_OK : E_OUTOFMEMORY;
+    }
   }
 
   if (result == S_OK)
@@ -347,6 +374,12 @@ void CMPUrlSourceSplitter_Rtmp::CloseConnection(void)
     this->mainCurlInstance = NULL;
   }
 
+  if (this->bufferForProcessing != NULL)
+  {
+    delete this->bufferForProcessing;
+    this->bufferForProcessing = NULL;
+  }
+
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
 }
 
@@ -380,6 +413,70 @@ void CMPUrlSourceSplitter_Rtmp::ReceiveData(bool *shouldExit)
   {
     if (!this->wholeStreamDownloaded)
     {
+      if ((!this->supressData) && (this->bufferForProcessing != NULL))
+      {
+        FlvPacket *flvPacket = new FlvPacket();
+        if (flvPacket != NULL)
+        {
+          while (flvPacket->ParsePacket(this->bufferForProcessing))
+          {
+            // FLV packet parsed correctly
+            // push FLV packet to filter
+
+            if ((flvPacket->GetType() != FLV_PACKET_HEADER) && (this->firstTimestamp == (-1)))
+            {
+              this->firstTimestamp = flvPacket->GetTimestamp();
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstTimestamp);
+            }
+
+            if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp == (-1)))
+            {
+              this->firstVideoTimestamp = flvPacket->GetTimestamp();
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first video timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstVideoTimestamp);
+            }
+
+            if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp != (-1)) && (this->firstTimestamp != (-1)))
+            {
+              // correction of video timestamps
+              flvPacket->SetTimestamp(flvPacket->GetTimestamp() + this->firstTimestamp - this->firstVideoTimestamp);
+            }
+
+            if ((flvPacket->GetType() == FLV_PACKET_AUDIO) ||
+              (flvPacket->GetType() == FLV_PACKET_HEADER) ||
+              (flvPacket->GetType() == FLV_PACKET_META) ||
+              (flvPacket->GetType() == FLV_PACKET_VIDEO))
+            {
+            }
+            else
+            {
+              this->logger->Log(LOGGER_WARNING, L"%s: %s: unknown FLV packet: %d, size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, flvPacket->GetType(), flvPacket->GetSize());
+            }
+
+            if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
+            {
+              // create media packet
+              // set values of media packet
+              CMediaPacket *mediaPacket = new CMediaPacket();
+              mediaPacket->GetBuffer()->InitializeBuffer(flvPacket->GetSize());
+              mediaPacket->GetBuffer()->AddToBuffer(flvPacket->GetData(), flvPacket->GetSize());
+              mediaPacket->SetStart(this->bytePosition);
+              mediaPacket->SetEnd(this->bytePosition + flvPacket->GetSize() - 1);
+
+              this->filter->PushMediaPacket(mediaPacket);
+              this->bytePosition += flvPacket->GetSize();
+            }
+            // we are definitely not seeking
+            this->seekingActive = false;
+            this->bufferForProcessing->RemoveFromBufferAndMove(flvPacket->GetSize());
+
+            flvPacket->Clear();
+          }
+
+          delete flvPacket;
+          flvPacket = NULL;
+        }
+      }
+
       if (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA)
       {
         // all data received, we're not receiving data
@@ -404,6 +501,12 @@ void CMPUrlSourceSplitter_Rtmp::ReceiveData(bool *shouldExit)
             // notify filter the we reached end of stream
             // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
             this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
+          }
+          else
+          {
+            // set byte position to start of buffer, because we are re-opening connection
+            // because we don't know exact time position to seek, we seek to last known (this->streamTime)
+            this->bytePosition = 0;
           }
         }
 
@@ -514,30 +617,6 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
   CLockMutex lock(caller->lockMutex, INFINITE);
   unsigned int bytesRead = size * nmemb;
 
-  /*
-
-  supression of data can occure only when seeking by time
-  supression of data is set before seeking and cleared after seeking when filter is ready to receive data
-  these situations can occure:
-  1. filter sets supression of data and this callback will be called after - in this case data are not needed, because all data
-     will be cleared after seeking, we just wait and we will be requested to exit
-  2. this callback will be called before filter sets supression of data - in this case data are also not needed, but will
-     be added to internal filter data and after seeking data will be cleared
-
-  3. after seeking is filter still not ready to receive data and this callback is called - we just wait for filter until is
-     ready (it clears all internal data)
-  4. after seeking is filter ready (supression is not set) and this callback is called - it is ideal combination and we will
-     proceeded without waiting
-
-  */
-
-  while ((caller->supressData) && (!caller->shouldExit) && (!caller->internalExitRequest))
-  {
-    // while we have to supress data and we don't have to exit
-    // just wait
-    Sleep(10);
-  }
-
   if (!((caller->shouldExit) || (caller->internalExitRequest)))
   {
     if (!caller->setLenght)
@@ -604,41 +683,30 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
 
     if (bytesRead != 0)
     {
-      // create media packet
-      // set values of media packet
-      CMediaPacket *mediaPacket = new CMediaPacket();
-      unsigned int bytesToCopy = bytesRead;
-
-      if (caller->seekingActive && (bytesRead > 12))
+      if (caller->bufferForProcessing != NULL)
       {
-        // when seeking is active and first 3 bytes are 'FLV' then remove first 13 bytes from buffer
-        if (strncmp("FLV", buffer, 3) == 0)
+        unsigned int bufferSize = caller->bufferForProcessing->GetBufferSize();
+        unsigned int freeSpace = caller->bufferForProcessing->GetBufferFreeSpace();
+
+        if (freeSpace < bytesRead)
         {
-          bytesToCopy = bytesRead - 13;
-          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking active, found 'FLV', removing first 13 bytes", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+          unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
+          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
+          if (!caller->bufferForProcessing->ResizeBuffer(bufferNewSize))
+          {
+            caller->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+          }
+
+          freeSpace = caller->bufferForProcessing->GetBufferFreeSpace();
+        }
+
+        if (freeSpace >= bytesRead)
+        {
+          caller->bufferForProcessing->AddToBuffer(buffer, bytesRead);
         }
       }
-
-      mediaPacket->GetBuffer()->InitializeBuffer(bytesToCopy);
-      if (bytesToCopy == bytesRead)
-      {
-        mediaPacket->GetBuffer()->AddToBuffer(buffer, bytesToCopy);
-      }
-      else
-      {
-        mediaPacket->GetBuffer()->AddToBuffer(buffer + 13, bytesToCopy);
-      }
-
-      mediaPacket->SetStart(caller->bytePosition);
-      mediaPacket->SetEnd(caller->bytePosition + bytesToCopy - 1);
-
-      caller->filter->PushMediaPacket(mediaPacket);
-      caller->bytePosition += bytesToCopy;
     }
   }
-
-  // we are definitely not seeking
-  caller->seekingActive = false;
 
   // if returned 0 (or lower value than bytesRead) it cause transfer interruption
   return ((caller->shouldExit) || (caller->internalExitRequest)) ? 0 : (bytesRead);
@@ -677,7 +745,7 @@ int64_t CMPUrlSourceSplitter_Rtmp::SeekToTime(int64_t time)
   if (this->IsConnected())
   {
     this->bytePosition = 0;
-    result = ((max(0, time - 1000) / 1000) * 1000);
+    result = max(0, time - 1000);
   }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);

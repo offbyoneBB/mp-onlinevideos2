@@ -33,8 +33,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "amf.h"
 #include "log.h"
+#include "amf.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -277,6 +277,7 @@ extern "C"
 
     void *m_logUserData;
     RTMP_LogCallback *m_logCallback;
+
   } RTMP;
 
   int RTMP_ParseURL(RTMP *r, const char *url, int *protocol, AVal *host,

@@ -410,6 +410,11 @@ unsigned int lav_xiphlacing(unsigned char *s, unsigned int v)
     return n;
 }
 
+void videoFormatTypeHandler(const AM_MEDIA_TYPE &mt, BITMAPINFOHEADER **pBMI, REFERENCE_TIME *prtAvgTime, DWORD *pDwAspectX, DWORD *pDwAspectY)
+{
+  videoFormatTypeHandler(mt.pbFormat, &mt.formattype, pBMI, prtAvgTime, pDwAspectX, pDwAspectY);
+}
+
 void videoFormatTypeHandler(const BYTE *format, const GUID *formattype, BITMAPINFOHEADER **pBMI, REFERENCE_TIME *prtAvgTime, DWORD *pDwAspectX, DWORD *pDwAspectY)
 {
   REFERENCE_TIME rtAvg = 0;
@@ -486,15 +491,15 @@ void audioFormatTypeHandler(const BYTE *format, const GUID *formattype, DWORD *p
     *pnBytesPerSec = nBytesPerSec;
 }
 
-void getExtraData(const CMediaType &mt, BYTE *extra, unsigned int *extralen)
+void getExtraData(const AM_MEDIA_TYPE &mt, BYTE *extra, size_t *extralen)
 {
-  return getExtraData(mt.Format(), mt.FormatType(), mt.FormatLength(), extra, extralen);
+  return getExtraData(mt.pbFormat, &mt.formattype, mt.cbFormat, extra, extralen);
 }
 
-void getExtraData(const BYTE *format, const GUID *formattype, const size_t formatlen, BYTE *extra, unsigned int *extralen)
+void getExtraData(const BYTE *format, const GUID *formattype, const size_t formatlen, BYTE *extra, size_t *extralen)
 {
   const BYTE *extraposition = NULL;
-  unsigned extralength = 0;
+  size_t extralength = 0;
   if (*formattype == FORMAT_WaveFormatEx) {
     WAVEFORMATEX *wfex = (WAVEFORMATEX *)format;
     extraposition = format + sizeof(WAVEFORMATEX);

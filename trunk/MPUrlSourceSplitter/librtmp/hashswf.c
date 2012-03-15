@@ -42,16 +42,16 @@
 #define HMAC_finish(ctx, dig, dlen)	dlen = SHA256_DIGEST_LENGTH; sha2_hmac_finish(&ctx, dig)
 #define HMAC_close(ctx)
 #elif defined(USE_GNUTLS)
-#include <gnutls/gnutls.h>
-#include <gcrypt.h>
+#include <nettle/hmac.h>
 #ifndef SHA256_DIGEST_LENGTH
 #define SHA256_DIGEST_LENGTH	32
 #endif
-#define HMAC_CTX	gcry_md_hd_t
-#define HMAC_setup(ctx, key, len)	gcry_md_open(&ctx, GCRY_MD_SHA256, GCRY_MD_FLAG_HMAC); gcry_md_setkey(ctx, key, len)
-#define HMAC_crunch(ctx, buf, len)	gcry_md_write(ctx, buf, len)
-#define HMAC_finish(ctx, dig, dlen)	dlen = SHA256_DIGEST_LENGTH; memcpy(dig, gcry_md_read(ctx, 0), dlen)
-#define HMAC_close(ctx)	gcry_md_close(ctx)
+#undef HMAC_CTX
+#define HMAC_CTX	struct hmac_sha256_ctx
+#define HMAC_setup(ctx, key, len)	hmac_sha256_set_key(&ctx, len, key)
+#define HMAC_crunch(ctx, buf, len)	hmac_sha256_update(&ctx, len, buf)
+#define HMAC_finish(ctx, dig, dlen)	dlen = SHA256_DIGEST_LENGTH; hmac_sha256_digest(&ctx, SHA256_DIGEST_LENGTH, dig)
+#define HMAC_close(ctx)
 #else	/* USE_OPENSSL */
 #include <openssl/ssl.h>
 #include <openssl/sha.h>
@@ -157,7 +157,7 @@ HTTP_get(RTMP *r, struct HTTP_ctx *http, const char *url, HTTP_read_callback *cb
   if (ssl)
     {
 #ifdef NO_SSL
-      RTMP_Log(RTMP_LOGERROR, "%s, No SSL/TLS support", __FUNCTION__);
+      RTMP_Log(r, RTMP_LOGERROR, "%s, No SSL/TLS support", __FUNCTION__);
       ret = HTTPRES_BAD_REQUEST;
       goto leave;
 #else
@@ -296,7 +296,7 @@ struct info
 };
 
 static size_t
-swfcrunch(void *ptr, size_t size, size_t nmemb, void *stream)
+swfcrunch(RTMP *r, void *ptr, size_t size, size_t nmemb, void *stream)
 {
   struct info *i = stream;
   char *p = ptr;
@@ -356,7 +356,7 @@ static const char *days[] =
 
 /* Parse an HTTP datestamp into Unix time */
 static time_t
-make_unix_time(char *s)
+make_unix_time(RTMP *r, char *s)
 {
   struct tm time;
   int i, ysub = 1900, fmt = 0;
@@ -436,7 +436,7 @@ make_unix_time(char *s)
  * Weekday, DD-MMM-YYYY HH:MM:SS GMT
  */
 static void
-strtime(time_t * t, char *s)
+strtime(RTMP *r, time_t * t, char *s)
 {
   struct tm *tm;
 
@@ -560,7 +560,7 @@ RTMP_HashSWF(RTMP *r, const char *url, unsigned int *size, unsigned char *hash,
 	      else if (!strncmp(buf, "ctim: ", 6))
 		{
 		  buf[strlen(buf) - 1] = '\0';
-		  ctim = make_unix_time(buf + 6);
+		  ctim = make_unix_time(r, buf + 6);
 		  got++;
 		}
 	      else if (!strncmp(buf, "url: ", 5))
@@ -632,7 +632,7 @@ RTMP_HashSWF(RTMP *r, const char *url, unsigned int *size, unsigned char *hash,
 
 	  fprintf(f, "url: %.*s\n", i, url);
 	}
-      strtime(&cnow, cctim);
+      strtime(r, &cnow, cctim);
       fprintf(f, "ctim: %s\n", cctim);
 
       if (!in.first)

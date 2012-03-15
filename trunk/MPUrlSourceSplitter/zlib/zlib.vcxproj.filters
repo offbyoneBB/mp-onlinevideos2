@@ -15,6 +15,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <None Include="zlib.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="crc32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -62,9 +67,6 @@
     <ClCompile Include="deflate.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="example.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="gzclose.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -89,9 +91,6 @@
     <ClCompile Include="inftrees.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="minigzip.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="trees.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -101,10 +100,5 @@
     <ClCompile Include="zutil.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="zlib.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

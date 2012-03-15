@@ -8,6 +8,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcurl", "libcurl\libcurl.
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libssh2", "libssh2\libssh2.vcxproj", "{BE26DC02-05AE-4B2E-ACEF-E3BF39BF31BC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{689B8880-334C-4BEB-8CBA-D512E2F24545} = {689B8880-334C-4BEB-8CBA-D512E2F24545}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "librtmp", "librtmp\librtmp.vcxproj", "{BDA0CC2F-E51F-4CD0-AE70-D6073C120026}"
 	ProjectSection(ProjectDependencies) = postProject

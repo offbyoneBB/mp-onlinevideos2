@@ -11,6 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="zlib.def" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="crc32.h" />
     <ClInclude Include="deflate.h" />
     <ClInclude Include="gzguts.h" />
@@ -28,7 +31,6 @@
     <ClCompile Include="compress.c" />
     <ClCompile Include="crc32.c" />
     <ClCompile Include="deflate.c" />
-    <ClCompile Include="example.c" />
     <ClCompile Include="gzclose.c" />
     <ClCompile Include="gzlib.c" />
     <ClCompile Include="gzread.c" />
@@ -37,13 +39,9 @@
     <ClCompile Include="inffast.c" />
     <ClCompile Include="inflate.c" />
     <ClCompile Include="inftrees.c" />
-    <ClCompile Include="minigzip.c" />
     <ClCompile Include="trees.c" />
     <ClCompile Include="uncompr.c" />
     <ClCompile Include="zutil.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="zlib.def" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{689B8880-334C-4BEB-8CBA-D512E2F24545}</ProjectGuid>

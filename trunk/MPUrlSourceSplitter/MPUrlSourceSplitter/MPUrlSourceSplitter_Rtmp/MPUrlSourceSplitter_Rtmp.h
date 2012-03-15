@@ -39,6 +39,7 @@
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"RTMP", L"RTMPT", L"RTMPE", L"RTMPTE", L"RTMPS", L"RTMPTS" };
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                        1 * 1024 * 1024
+#define BUFFER_FOR_PROCESSING_SIZE_DEFAULT                        256 * 1024
 
 /* CONNECTION PARAMETERS */
 
@@ -229,6 +230,15 @@ protected:
   bool seekingActive;
   // specifies if filter requested supressing data
   bool supressData;
+
+  // buffer for processing data before are send to filter
+  LinearBuffer *bufferForProcessing;
+
+  // holds first FLV packet timestamp for correction of video packet timestamps
+  int firstTimestamp;
+
+  // holds first video FLV packet timestamp for correction of video packet timestamps
+  int firstVideoTimestamp;
 };
 
 #endif

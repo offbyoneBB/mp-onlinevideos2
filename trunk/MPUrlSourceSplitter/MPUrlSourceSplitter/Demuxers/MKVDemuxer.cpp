@@ -37,7 +37,7 @@ extern "C" {
 __declspec(dllimport) extern const CodecTags ff_mkv_codec_tags[];
 __declspec(dllimport) extern const CodecMime ff_mkv_mime_tags[];
 __declspec(dllimport) extern const AVCodecTag ff_codec_bmp_tags[];
-__declspec(dllimport) extern const AVCodecTag codec_movvideo_tags[];
+__declspec(dllimport) extern const AVCodecTag ff_codec_movvideo_tags[];
 __declspec(dllimport) extern const unsigned char ff_sipr_subpk_size[4];
 __declspec(dllimport) extern const int avpriv_mpeg4audio_sample_rates[16];
 
@@ -87,11 +87,17 @@ static int aviostream_read(struct AVIOStream *cc,ulonglong pos,void *buffer,int 
   int ret;
   int64_t ret64;
 
-  /* Seek to the desired position */
-  ret64 = avio_seek(cc->ctx->pb, pos, SEEK_SET);
-  if(ret64 < 0) {
-    DbgLog((LOG_ERROR, 10, L"aviostream_read(): Seek to %I64u failed with code %I64d", pos, ret64));
-    return -1;
+  if (count == 0)
+    return 0;
+
+  int64_t cur_pos = avio_tell(cc->ctx->pb);
+  if (cur_pos != pos) {
+    /* Seek to the desired position */
+    ret64 = avio_seek(cc->ctx->pb, pos, SEEK_SET);
+    if(ret64 < 0) {
+      DbgLog((LOG_ERROR, 10, L"aviostream_read(): Seek to %I64u failed with code %I64d", pos, ret64));
+      return -1;
+    }
   }
 
   /* Read the requested number of bytes */
@@ -109,11 +115,14 @@ static longlong aviostream_scan(struct AVIOStream *cc,ulonglong start,unsigned s
   int64_t ret64;
   unsigned cmp = 0;
 
-  /* Seek to the desired position */
-  ret64 = avio_seek(cc->ctx->pb, start, SEEK_SET);
-  if(ret64 < 0) {
-    DbgLog((LOG_ERROR, 10, L"aviostream_scan(): Seek to %I64u failed with code %I64d", start, ret64));
-    return -1;
+  int64_t cur_pos = avio_tell(cc->ctx->pb);
+  if (cur_pos != start) {
+    /* Seek to the desired position */
+    ret64 = avio_seek(cc->ctx->pb, start, SEEK_SET);
+    if(ret64 < 0) {
+      DbgLog((LOG_ERROR, 10, L"aviostream_scan(): Seek to %I64u failed with code %I64d", start, ret64));
+      return -1;
+    }
   }
 
   /* Scan for the byte signature, until EOF was found */
@@ -192,7 +201,7 @@ static int mkv_probe(AVProbeData *p)
   * availability of that array of characters inside the header.
   * Not fully fool-proof, but good enough. */
   for (i = 0; i < FF_ARRAY_ELEMS(matroska_doctypes); i++) {
-    int probelen = strlen(matroska_doctypes[i]);
+    size_t probelen = strlen(matroska_doctypes[i]);
     if (total < probelen)
       continue;
     for (n = 4+size; n <= 4+size+total-probelen; n++)
@@ -366,7 +375,7 @@ static int mkv_read_header(AVFormatContext *s)
       extradata_offset = FFMIN(info->CodecPrivateSize, 18);
     } else if (!strcmp(info->CodecID, "V_QUICKTIME") && (info->CodecPrivateSize >= 86) && (info->CodecPrivate != NULL)) {
       fourcc = AV_RL32(info->CodecPrivate);
-      codec_id = ff_codec_get_id(codec_movvideo_tags, fourcc);
+      codec_id = ff_codec_get_id(ff_codec_movvideo_tags, fourcc);
     } else if (codec_id == CODEC_ID_PCM_S16BE) {
       switch (info->AV.Audio.BitDepth) {
       case  8:  codec_id = CODEC_ID_PCM_U8;     break;
@@ -410,33 +419,6 @@ static int mkv_read_header(AVFormatContext *s)
       avio_wl32(pb, mkv_TruncFloat(info->AV.Audio.OutputSamplingFreq));
       avio_wl32(pb, (unsigned int)(s->duration * info->AV.Audio.OutputSamplingFreq));
       av_free(pb);
-    } else if (codec_id == CODEC_ID_RA_144) {
-      info->AV.Audio.OutputSamplingFreq = 8000;
-      info->AV.Audio.Channels = 1;
-    } else if (codec_id == CODEC_ID_RA_288 || codec_id == CODEC_ID_COOK ||
-      codec_id == CODEC_ID_ATRAC3 || codec_id == CODEC_ID_SIPR) {
-        int flavor;
-        AVIOContext *pb = avio_alloc_context((uint8_t *)info->CodecPrivate, info->CodecPrivateSize, AVIO_FLAG_READ, NULL, NULL, NULL, NULL);
-        avio_skip(pb, 22);
-        flavor              = avio_rb16(pb);
-        int coded_framesize = avio_rb32(pb);
-        avio_skip(pb, 12);
-        int sub_packet_h    = avio_rb16(pb);
-        int frame_size      = avio_rb16(pb);
-        int sub_packet_size = avio_rb16(pb);
-        uint8_t *buf        = (uint8_t *)av_malloc(frame_size * sub_packet_h);
-        if (codec_id == CODEC_ID_RA_288) {
-          st->codec->block_align = coded_framesize;
-          info->CodecPrivateSize = 0;
-        } else {
-          if (codec_id == CODEC_ID_SIPR && flavor < 4) {
-            const int sipr_bit_rate[4] = { 6504, 8496, 5000, 16000 };
-            sub_packet_size = ff_sipr_subpk_size[flavor];
-            st->codec->bit_rate = sipr_bit_rate[flavor];
-          }
-          st->codec->block_align = sub_packet_size;
-          extradata_offset = 78;
-        }
     }
     info->CodecPrivateSize -= extradata_offset;
 
@@ -458,9 +440,6 @@ static int mkv_read_header(AVFormatContext *s)
     if (info->Forced)
       st->disposition |= AV_DISPOSITION_FORCED;
 
-    if (info->DefaultDuration)
-      av_reduce(&st->codec->time_base.num, &st->codec->time_base.den, info->DefaultDuration, 1000000000, 30000);
-
     if (!st->codec->extradata) {
       if(extradata){
         st->codec->extradata = extradata;
@@ -479,11 +458,10 @@ static int mkv_read_header(AVFormatContext *s)
       st->codec->codec_tag  = fourcc;
       st->codec->width  = info->AV.Video.PixelWidth;
       st->codec->height = info->AV.Video.PixelHeight;
-      av_reduce(&st->sample_aspect_ratio.num,
-        &st->sample_aspect_ratio.den,
+      av_reduce(&st->sample_aspect_ratio.num, &st->sample_aspect_ratio.den,
         st->codec->height * info->AV.Video.DisplayWidth,
         st->codec-> width * info->AV.Video.DisplayHeight,
-        255);
+        1 << 30);
       if (st->codec->codec_id != CODEC_ID_H264)
         st->need_parsing = AVSTREAM_PARSE_HEADERS;
       if (info->DefaultDuration)
@@ -572,15 +550,20 @@ static int mkv_read_packet(AVFormatContext *s, AVPacket *pkt)
   unsigned int size, offset = 0, flags, track_num;
   ulonglong start_time, end_time, pos;
   MatroskaTrack *track;
+  char *frame_data = NULL;
 
-  ulonglong mask = mkv_get_track_mask(ctx);
-  if (mask != ctx->mask) {
-    mkv_SetTrackMask(ctx->matroska, mask);
-    ctx->mask = mask;
+  ulonglong mask = 0;
+  if (!(s->flags & AVFMT_FLAG_NETWORK)) {
+    mask = mkv_get_track_mask(ctx);
+    if (mask != ctx->mask) {
+      mkv_SetTrackMask(ctx->matroska, mask);
+      ctx->mask = mask;
+    }
   }
 
 again:
-  ret = mkv_ReadFrame(ctx->matroska, mask, &track_num, &start_time, &end_time, &pos, &size, &flags);
+  av_freep(&frame_data);
+  ret = mkv_ReadFrame(ctx->matroska, mask, &track_num, &start_time, &end_time, &pos, &size, &frame_data, &flags);
   if (ret < 0)
     return AVERROR_EOF;
 
@@ -591,12 +574,13 @@ again:
   /* zlib compression */
   if (track->cs) {
     unsigned int frame_size = 0;
-    cs_NextFrame(track->cs, pos, size);
+    cs_NextFrame(track->cs, size, frame_data);
     for(;;) {
       ret = cs_ReadData(track->cs, ctx->CSBuffer, sizeof(ctx->CSBuffer));
       if (ret < 0) {
         DbgLog((LOG_ERROR, 10, L"cs_ReadData failed"));
-        return AVERROR(EIO);
+        ret = AVERROR(EIO);
+        goto done;
       } else if (ret == 0) {
         size = frame_size;
         break;
@@ -617,12 +601,7 @@ again:
     }
 
     av_new_packet(pkt, size+offset);
-    ret = aviostream_read(ctx->iostream, pos, pkt->data+offset, size);
-    if (ret < (int)size) {
-      av_free_packet(pkt);
-      return AVERROR(EIO);
-    }
-
+    memcpy(pkt->data+offset, frame_data, size);
     if (offset > 0)
       memcpy(pkt->data, track->info->CompMethodPrivate, offset);
   }
@@ -644,7 +623,10 @@ again:
   pkt->size = size+offset;
   pkt->stream_index = track->stream->index;
 
-  return 0;
+  ret = 0;
+done:
+  av_freep(&frame_data);
+  return ret;
 }
 
 static int mkv_read_close(AVFormatContext *s)
@@ -667,7 +649,7 @@ static int mkv_read_close(AVFormatContext *s)
 static int mkv_read_seek(AVFormatContext *s, int stream_index, int64_t timestamp, int flags)
 {
   MatroskaDemuxContext *ctx = (MatroskaDemuxContext *)s->priv_data;
-  int mkvflags = !(flags & AVSEEK_FLAG_ANY) ? MKVF_SEEK_TO_PREV_KEYFRAME : 0;
+  int mkvflags = (!(flags & AVSEEK_FLAG_ANY) && !(s->flags & AVFMT_FLAG_NETWORK)) ? MKVF_SEEK_TO_PREV_KEYFRAME : 0;
   int i;
   AVStream *st = ctx->tracks[stream_index].stream;
 
@@ -680,7 +662,8 @@ static int mkv_read_seek(AVFormatContext *s, int stream_index, int64_t timestamp
   }
 
   /* update track mask */
-  mkv_SetTrackMask(ctx->matroska, mkv_get_track_mask(ctx));
+  if (!(s->flags & AVFMT_FLAG_NETWORK))
+    mkv_SetTrackMask(ctx->matroska, mkv_get_track_mask(ctx));
 
   /* perform seek */
   DBG_TIMING("mkv_Seek", 0, mkv_Seek(ctx->matroska, timestamp, mkvflags))

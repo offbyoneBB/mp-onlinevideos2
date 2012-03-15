@@ -119,12 +119,14 @@ const struct Curl_handler Curl_handler_imap = {
   imap_doing,                       /* doing */
   imap_getsock,                     /* proto_getsock */
   imap_getsock,                     /* doing_getsock */
+  ZERO_NULL,                        /* domore_getsock */
   ZERO_NULL,                        /* perform_getsock */
   imap_disconnect,                  /* disconnect */
   ZERO_NULL,                        /* readwrite */
   PORT_IMAP,                        /* defport */
   CURLPROTO_IMAP,                   /* protocol */
-  PROTOPT_CLOSEACTION | PROTOPT_NEEDSPWD /* flags */
+  PROTOPT_CLOSEACTION | PROTOPT_NEEDSPWD
+  | PROTOPT_NOURLQUERY              /* flags */
 };
 
 
@@ -144,12 +146,14 @@ const struct Curl_handler Curl_handler_imaps = {
   imap_doing,                       /* doing */
   imap_getsock,                     /* proto_getsock */
   imap_getsock,                     /* doing_getsock */
+  ZERO_NULL,                        /* domore_getsock */
   ZERO_NULL,                        /* perform_getsock */
   imap_disconnect,                  /* disconnect */
   ZERO_NULL,                        /* readwrite */
   PORT_IMAPS,                       /* defport */
   CURLPROTO_IMAP | CURLPROTO_IMAPS, /* protocol */
-  PROTOPT_CLOSEACTION | PROTOPT_SSL | PROTOPT_NEEDSPWD /* flags */
+  PROTOPT_CLOSEACTION | PROTOPT_SSL | PROTOPT_NEEDSPWD
+  | PROTOPT_NOURLQUERY              /* flags */
 };
 #endif
 
@@ -169,6 +173,7 @@ static const struct Curl_handler Curl_handler_imap_proxy = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   ZERO_NULL,                            /* readwrite */
@@ -194,6 +199,7 @@ static const struct Curl_handler Curl_handler_imaps_proxy = {
   ZERO_NULL,                            /* doing */
   ZERO_NULL,                            /* proto_getsock */
   ZERO_NULL,                            /* doing_getsock */
+  ZERO_NULL,                            /* domore_getsock */
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   ZERO_NULL,                            /* readwrite */
@@ -348,8 +354,12 @@ static CURLcode imap_state_starttls_resp(struct connectdata *conn,
   (void)instate; /* no use for this yet */
 
   if(imapcode != 'O') {
-    failf(data, "STARTTLS denied. %c", imapcode);
-    result = CURLE_LOGIN_DENIED;
+    if(data->set.use_ssl != CURLUSESSL_TRY) {
+      failf(data, "STARTTLS denied. %c", imapcode);
+      result = CURLE_USE_SSL_FAILED;
+    }
+    else
+      result = imap_state_login(conn);
   }
   else {
     if(data->state.used_interface == Curl_if_multi) {
@@ -576,7 +586,7 @@ static CURLcode imap_statemach_act(struct connectdata *conn)
       return CURLE_FTP_WEIRD_SERVER_REPLY;
     }
 
-    if(data->set.ftp_ssl && !conn->ssl[FIRSTSOCKET].use) {
+    if(data->set.use_ssl && !conn->ssl[FIRSTSOCKET].use) {
       /* We don't have a SSL/TLS connection yet, but SSL is requested. Switch
          to TLS connection now */
       const char *str;
@@ -943,17 +953,12 @@ static CURLcode imap_parse_url_path(struct connectdata *conn)
   struct imap_conn *imapc = &conn->proto.imapc;
   struct SessionHandle *data = conn->data;
   const char *path = data->state.path;
-  int len;
 
   if(!*path)
     path = "INBOX";
 
   /* url decode the path and use this mailbox */
-  imapc->mailbox = curl_easy_unescape(data, path, 0, &len);
-  if(!imapc->mailbox)
-    return CURLE_OUT_OF_MEMORY;
-
-  return CURLE_OK;
+  return Curl_urldecode(data, path, 0, &imapc->mailbox, NULL, TRUE);
 }
 
 /* call this when the DO phase has completed */

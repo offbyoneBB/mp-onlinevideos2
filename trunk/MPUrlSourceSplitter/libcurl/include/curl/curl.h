@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -69,7 +69,7 @@
    require it! */
 #if defined(_AIX) || defined(__NOVELL_LIBC__) || defined(__NetBSD__) || \
     defined(__minix) || defined(__SYMBIAN32__) || defined(__INTEGRITY) || \
-    defined(ANDROID) || \
+    defined(ANDROID) || defined(__ANDROID__) || \
    (defined(__FreeBSD_version) && (__FreeBSD_version < 800000))
 #include <sys/select.h>
 #endif
@@ -187,20 +187,15 @@ typedef int (*curl_progress_callback)(void *clientp,
 #define CURL_MAX_HTTP_HEADER (100*1024)
 #endif
 
-
 /* This is a magic return code for the write callback that, when returned,
    will signal libcurl to pause receiving on the current transfer. */
 #define CURL_WRITEFUNC_PAUSE 0x10000001
+
 typedef size_t (*curl_write_callback)(char *buffer,
                                       size_t size,
                                       size_t nitems,
                                       void *outstream);
 
-#ifdef USE_LIBRTMP
-
-typedef void (*curl_rtmp_log_callback) (struct RTMP *r, int level, const char *fmt, va_list);
-
-#endif
 
 
 /* enumeration of file types */
@@ -416,9 +411,12 @@ typedef enum {
   CURLE_REMOTE_ACCESS_DENIED,    /* 9 a service was denied by the server
                                     due to lack of access - when login fails
                                     this is not returned. */
-  CURLE_OBSOLETE10,              /* 10 - NOT USED */
+  CURLE_FTP_ACCEPT_FAILED,       /* 10 - [was obsoleted in April 2006 for
+                                    7.15.4, reused in Dec 2011 for 7.24.0]*/
   CURLE_FTP_WEIRD_PASS_REPLY,    /* 11 */
-  CURLE_OBSOLETE12,              /* 12 - NOT USED */
+  CURLE_FTP_ACCEPT_TIMEOUT,      /* 12 - timeout occurred accepting server
+                                    [was obsoleted in August 2007 for 7.17.0,
+                                    reused in Dec 2011 for 7.24.0]*/
   CURLE_FTP_WEIRD_PASV_REPLY,    /* 13 */
   CURLE_FTP_WEIRD_227_FORMAT,    /* 14 */
   CURLE_FTP_CANT_GET_HOST,       /* 15 */
@@ -516,12 +514,15 @@ typedef enum {
   CURLE_RTSP_SESSION_ERROR,      /* 86 - mismatch of RTSP Session Ids */
   CURLE_FTP_BAD_FILE_LIST,       /* 87 - unable to parse FTP file list */
   CURLE_CHUNK_FAILED,            /* 88 - chunk callback reported error */
-
   CURL_LAST /* never use! */
 } CURLcode;
 
 #ifndef CURL_NO_OLDIES /* define this to test if your app builds with all
                           the obsolete stuff removed! */
+
+/* Previously obsoletes error codes re-used in 7.24.0 */
+#define CURLE_OBSOLETE10 CURLE_FTP_ACCEPT_FAILED
+#define CURLE_OBSOLETE12 CURLE_FTP_ACCEPT_TIMEOUT
 
 /*  compatibility with older names */
 #define CURLOPT_ENCODING CURLOPT_ACCEPT_ENCODING
@@ -1491,11 +1492,19 @@ typedef enum {
   /* allow GSSAPI credential delegation */
   CINIT(GSSAPI_DELEGATION, LONG, 210),
 
+  /* Set the name servers to use for DNS resolution */
+  CINIT(DNS_SERVERS, OBJECTPOINT, 211),
+
+  /* Time-out accept operations (currently for FTP only) after this amount
+     of miliseconds. */
+  CINIT(ACCEPTTIMEOUT_MS, LONG, 212),
+
   /* callback log function for RTMP protocol */
-  CINIT(RTMP_LOG_CALLBACK, FUNCTIONPOINT, 211),
+  CINIT(RTMP_LOG_CALLBACK, FUNCTIONPOINT, 213),
 
   /* user data (reference) for RTMP log function */
-  CINIT(RTMP_LOG_USERDATA, OBJECTPOINT, 212),
+  CINIT(RTMP_LOG_USERDATA, OBJECTPOINT, 214),
+
 
   CURLOPT_LASTENTRY /* the last unused */
 } CURLoption;
@@ -2028,8 +2037,9 @@ typedef enum {
   CURLSHE_BAD_OPTION, /* 1 */
   CURLSHE_IN_USE,     /* 2 */
   CURLSHE_INVALID,    /* 3 */
-  CURLSHE_NOMEM,      /* out of memory */
-  CURLSHE_LAST /* never use */
+  CURLSHE_NOMEM,      /* 4 out of memory */
+  CURLSHE_NOT_BUILT_IN, /* 5 feature not present in lib */
+  CURLSHE_LAST        /* never use */
 } CURLSHcode;
 
 typedef enum {
@@ -2188,5 +2198,11 @@ CURL_EXTERN CURLcode curl_easy_pause(CURL *handle, int bitmask);
 #define curl_multi_setopt(handle,opt,param) curl_multi_setopt(handle,opt,param)
 #endif /* __STDC__ >= 1 */
 #endif /* gcc >= 4.3 && !__cplusplus */
+
+#ifdef USE_LIBRTMP
+
+typedef void (*curl_rtmp_log_callback) (struct RTMP *r, int level, const char *fmt, va_list);
+
+#endif
 
 #endif /* __CURL_CURL_H */

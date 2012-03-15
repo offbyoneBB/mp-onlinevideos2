@@ -15,16 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <None Include="readme_before_update.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="amf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="bytes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="dh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dhgroups.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="handshake.h">
@@ -40,6 +37,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="rtmp_sys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bytes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dhgroups.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -59,8 +62,5 @@
     <ClCompile Include="rtmp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="readme_before_update.txt" />
   </ItemGroup>
 </Project>

@@ -122,17 +122,17 @@ DWORD avc_quant(BYTE *src, BYTE *dst, int extralen)
   return cb;
 }
 
-DWORD avc_parse_annexb(BYTE *extra, int extrasize, BYTE *dst)
+size_t avc_parse_annexb(BYTE *extra, int extrasize, BYTE *dst)
 {
-  DWORD dstSize = 0;
+  size_t dstSize = 0;
 
   CH264Nalu Nalu;
   Nalu.SetBuffer(extra, extrasize, 0);
   while (Nalu.ReadNext()) {
     const BYTE *data = Nalu.GetDataBuffer();
     if (((*data & 0x9f) == NALU_TYPE_SPS || (*data & 0x9f) == NALU_TYPE_PPS) && (*data & 0x60) != 0) {
-      int16_t len = Nalu.GetDataLength();
-      AV_WB16(dst+dstSize, len);
+      size_t len = Nalu.GetDataLength();
+      AV_WB16(dst+dstSize, (uint16_t)len);
       dstSize += 2;
       memcpy(dst+dstSize, Nalu.GetDataBuffer(), Nalu.GetDataLength());
       dstSize += Nalu.GetDataLength();
@@ -184,11 +184,27 @@ VIDEOINFOHEADER *CLAVFVideoHelper::CreateVIH(const AVStream* avstream, ULONG *si
   return pvi;
 }
 
+#define VC1_CODE_RES0 0x00000100
+#define IS_VC1_MARKER(x) (((x) & ~0xFF) == VC1_CODE_RES0)
+
 VIDEOINFOHEADER2 *CLAVFVideoHelper::CreateVIH2(const AVStream* avstream, ULONG *size, std::string container)
 {
   int extra = 0;
   BYTE *extradata = NULL;
-  BOOL bZeroPad = (avstream->codec->codec_id == CODEC_ID_VC1 && (container == "mpegts" || container == "mpeg" || container == "mp4"));
+  BOOL bZeroPad = FALSE;
+  if (avstream->codec->codec_id == CODEC_ID_VC1 && avstream->codec->extradata_size) {
+    int i = 0;
+    for (i = 0; i < (avstream->codec->extradata_size-4); i++) {
+      uint32_t code = AV_RB32(avstream->codec->extradata + i);
+      if (IS_VC1_MARKER(code))
+        break;
+    }
+    if (i == 0) {
+      bZeroPad = TRUE;
+    } else if (i > 1) {
+      DbgLog((LOG_TRACE, 10, L"CLAVFVideoHelper::CreateVIH2(): VC-1 extradata does not start at position 0/1, but %d", i));
+    }
+  }
 
   // Create a VIH that we'll convert
   VIDEOINFOHEADER *vih = CreateVIH(avstream, size);
@@ -287,7 +303,7 @@ MPEG1VIDEOINFO *CLAVFVideoHelper::CreateMPEG1VI(const AVStream* avstream, ULONG 
   // copy extradata over
   if(extra) {
     CExtradataParser parser = CExtradataParser(extradata, extra);
-    mp1vi->cbSequenceHeader = parser.ParseMPEGSequenceHeader(mp1vi->bSequenceHeader);
+    mp1vi->cbSequenceHeader = (DWORD)parser.ParseMPEGSequenceHeader(mp1vi->bSequenceHeader);
   }
 
   // Free the VIH that we converted
@@ -336,12 +352,12 @@ MPEG2VIDEOINFO *CLAVFVideoHelper::CreateMPEG2VI(const AVStream *avstream, ULONG 
           (BYTE *)(&mp2vi->dwSequenceHeader[0]), extra);
       } else {
         // MPEG-TS AnnexB
-        mp2vi->dwFlags = sizeof(DWORD);
-        mp2vi->cbSequenceHeader = avc_parse_annexb(extradata, extra, (BYTE *)(&mp2vi->dwSequenceHeader[0]));
+        mp2vi->dwFlags = 4;
+        mp2vi->cbSequenceHeader = (DWORD)avc_parse_annexb(extradata, extra, (BYTE *)(&mp2vi->dwSequenceHeader[0]));
       }
     } else if (avstream->codec->codec_id == CODEC_ID_MPEG2VIDEO) {
       CExtradataParser parser = CExtradataParser(extradata, extra);
-      mp2vi->cbSequenceHeader = parser.ParseMPEGSequenceHeader((BYTE *)&mp2vi->dwSequenceHeader[0]);
+      mp2vi->cbSequenceHeader = (DWORD)parser.ParseMPEGSequenceHeader((BYTE *)&mp2vi->dwSequenceHeader[0]);
       mp2vi->hdr.bmiHeader.biPlanes = 0;
       mp2vi->hdr.bmiHeader.biCompression = 0;
     } else {
