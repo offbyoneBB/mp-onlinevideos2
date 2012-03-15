@@ -1,0 +1,1967 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:i0="http://mpextended.github.com" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="MediaAccessService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="NetPipeEndpoint_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <msf:WindowsTransportSecurity xmlns:msf="http://schemas.microsoft.com/ws/2006/05/framing/policy">
+                  <msf:ProtectionLevel>EncryptAndSign</msf:ProtectionLevel>
+                </msf:WindowsTransportSecurity>
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256 />
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict />
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+        <wsam:Addressing>
+          <wsp:Policy>
+            <wsam:AnonymousResponses />
+          </wsp:Policy>
+        </wsam:Addressing>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:import namespace="http://mpextended.github.com" location="http://10.1.0.248:4322/MPExtended/MediaAccessService/?wsdl=wsdl0" />
+  <wsdl:types />
+  <wsdl:binding name="NetPipeEndpoint" type="i0:IMediaAccessService">
+    <wsp:PolicyReference URI="#NetPipeEndpoint_policy" />
+    <soap12:binding transport="http://schemas.microsoft.com/soap/named-pipe" />
+    <wsdl:operation name="GetFileSystemFolderBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFolderBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFileBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFileBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPathList">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPathList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileInfo">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsLocalFile">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/IsLocalFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetrieveFile">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/RetrieveFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesDetailedForTVShowByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForTVShowByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesBasicForSeason">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForSeason" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesDetailedForSeason">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForSeason" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeDetailedById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeDetailedById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVShowCategories">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVShowCategories" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVShowGenres">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVShowGenres" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowGenresByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowGenresCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVShowActors">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVShowActors" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowActorsByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowActorsByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowActorCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowActorCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemDriveCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllFileSystemDrives">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemDrives" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemDrivesByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemDrivesByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllFileSystemFolders">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFolders" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFoldersByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllFileSystemFiles">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFiles" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllFileSystemFilesAndFolders">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFilesAndFolders" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesAndFoldersByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesAndFoldersCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFoldersCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemDriveBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPictureSubCategories">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPictureSubCategories" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPicturesBasicByCategory">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPicturesBasicByCategory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPicturesDetailedByCategory">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPicturesDetailedByCategory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeCountForTVShow">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeCountForTVShow" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeCountForSeason">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeCountForSeason" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVSeasonCountForTVShow">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVSeasonCountForTVShow" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVShowsBasic">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVShowsBasic" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVShowsDetailed">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVShowsDetailed" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowsBasicByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowsBasicByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowsDetailedByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowsDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowDetailedById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowDetailedById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVSeasonsBasicForTVShow">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVSeasonsBasicForTVShow" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVSeasonsDetailedForTVShow">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVSeasonsDetailedForTVShow" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVSeasonBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVSeasonBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVSeasonDetailedById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVSeasonDetailedById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVEpisodesBasic">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVEpisodesBasic" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVEpisodesDetailed">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVEpisodesDetailed" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesBasicByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesDetailedByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesBasicForTVShow">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForTVShow" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesDetailedForTVShow">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForTVShow" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesBasicForTVShowByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForTVShowByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicArtistsBasic">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicArtistsBasic" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicArtistsBasicByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicArtistsBasicByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicArtistBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicArtistBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicArtistsDetailed">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicArtistsDetailed" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicArtistsDetailedByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicArtistsDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicArtistDetailedById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicArtistDetailedById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTrackCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTrackCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicTracksBasic">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicTracksBasic" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicTracksDetailed">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicTracksDetailed" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTracksBasicByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTracksBasicByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTracksDetailedByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTracksDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTracksBasicForAlbum">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTracksBasicForAlbum" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTracksDetailedForAlbum">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTracksDetailedForAlbum" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTrackBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTrackBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTrackDetailedById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTrackDetailedById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicGenres">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicGenres" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicGenresByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicGenresByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicGenresCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicGenresCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicCategories">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicCategories" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPictureCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPictureCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllPicturesBasic">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllPicturesBasic" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllPicturesDetailed">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllPicturesDetailed" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPictureBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPictureBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPictureDetailedById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPictureDetailedById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllPictureCategories">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllPictureCategories" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetServiceDescription">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetServiceDescription" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMediaItem">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMediaItem" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Search">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/Search" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchResultsByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/SearchResultsByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetExternalMediaInfo">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetExternalMediaInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMoviesBasic">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMoviesBasic" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMoviesDetailed">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMoviesDetailed" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMoviesBasicByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMoviesBasicByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMoviesDetailedByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMoviesDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieDetailedById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieDetailedById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMovieGenres">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMovieGenres" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieGenresByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieGenresByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieGenresCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieGenresCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMovieCategories">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMovieCategories" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMovieActors">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMovieActors" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieActorsByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieActorsByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieActorCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieActorCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicAlbumCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicAlbumsBasic">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicAlbumsBasic" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicAlbumsBasicByRange">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumsBasicByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicAlbumsBasicForArtist">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumsBasicForArtist" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicAlbumBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicArtistCount">
+      <soap12:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicArtistCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="SoapEndpoint" type="i0:IMediaAccessService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetFileSystemFolderBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFolderBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFileBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFileBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPathList">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPathList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileInfo">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsLocalFile">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/IsLocalFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetrieveFile">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/RetrieveFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesDetailedForTVShowByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForTVShowByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesBasicForSeason">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForSeason" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesDetailedForSeason">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForSeason" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeDetailedById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeDetailedById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVShowCategories">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVShowCategories" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVShowGenres">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVShowGenres" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowGenresByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowGenresCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVShowActors">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVShowActors" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowActorsByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowActorsByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowActorCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowActorCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemDriveCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllFileSystemDrives">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemDrives" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemDrivesByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemDrivesByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllFileSystemFolders">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFolders" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFoldersByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllFileSystemFiles">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFiles" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllFileSystemFilesAndFolders">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFilesAndFolders" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesAndFoldersByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesAndFoldersCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFoldersCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemDriveBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPictureSubCategories">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPictureSubCategories" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPicturesBasicByCategory">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPicturesBasicByCategory" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPicturesDetailedByCategory">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPicturesDetailedByCategory" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeCountForTVShow">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeCountForTVShow" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeCountForSeason">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeCountForSeason" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVSeasonCountForTVShow">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVSeasonCountForTVShow" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVShowsBasic">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVShowsBasic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVShowsDetailed">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVShowsDetailed" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowsBasicByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowsBasicByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowsDetailedByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowsDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowDetailedById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVShowDetailedById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVSeasonsBasicForTVShow">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVSeasonsBasicForTVShow" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVSeasonsDetailedForTVShow">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVSeasonsDetailedForTVShow" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVSeasonBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVSeasonBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVSeasonDetailedById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVSeasonDetailedById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVEpisodesBasic">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVEpisodesBasic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTVEpisodesDetailed">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllTVEpisodesDetailed" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesBasicByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesDetailedByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesBasicForTVShow">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForTVShow" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesDetailedForTVShow">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForTVShow" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesBasicForTVShowByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForTVShowByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicArtistsBasic">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicArtistsBasic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicArtistsBasicByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicArtistsBasicByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicArtistBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicArtistBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicArtistsDetailed">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicArtistsDetailed" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicArtistsDetailedByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicArtistsDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicArtistDetailedById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicArtistDetailedById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTrackCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTrackCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicTracksBasic">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicTracksBasic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicTracksDetailed">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicTracksDetailed" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTracksBasicByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTracksBasicByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTracksDetailedByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTracksDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTracksBasicForAlbum">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTracksBasicForAlbum" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTracksDetailedForAlbum">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTracksDetailedForAlbum" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTrackBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTrackBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTrackDetailedById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicTrackDetailedById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicGenres">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicGenres" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicGenresByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicGenresByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicGenresCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicGenresCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicCategories">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicCategories" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPictureCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPictureCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllPicturesBasic">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllPicturesBasic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllPicturesDetailed">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllPicturesDetailed" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPictureBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPictureBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPictureDetailedById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetPictureDetailedById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllPictureCategories">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllPictureCategories" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetServiceDescription">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetServiceDescription" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMediaItem">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMediaItem" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Search">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/Search" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchResultsByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/SearchResultsByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetExternalMediaInfo">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetExternalMediaInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMoviesBasic">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMoviesBasic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMoviesDetailed">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMoviesDetailed" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMoviesBasicByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMoviesBasicByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMoviesDetailedByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMoviesDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieDetailedById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieDetailedById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMovieGenres">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMovieGenres" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieGenresByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieGenresByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieGenresCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieGenresCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMovieCategories">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMovieCategories" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMovieActors">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMovieActors" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieActorsByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieActorsByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMovieActorCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMovieActorCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicAlbumCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllMusicAlbumsBasic">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetAllMusicAlbumsBasic" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicAlbumsBasicByRange">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumsBasicByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicAlbumsBasicForArtist">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumsBasicForArtist" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicAlbumBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicArtistCount">
+      <soap:operation soapAction="http://mpextended.github.com/IMediaAccessService/GetMusicArtistCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MediaAccessService">
+    <wsdl:port name="NetPipeEndpoint" binding="tns:NetPipeEndpoint">
+      <soap12:address location="net.pipe://127.0.0.1/MPExtended/MediaAccessService" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>net.pipe://127.0.0.1/MPExtended/MediaAccessService</wsa10:Address>
+        <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
+          <Upn>bagga-laptop\DieBagger</Upn>
+        </Identity>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+    <wsdl:port name="SoapEndpoint" binding="tns:SoapEndpoint">
+      <soap:address location="http://10.1.0.248:4322/MPExtended/MediaAccessService/" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

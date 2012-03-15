@@ -32,21 +32,340 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Laola1Util.cs" />
+    <Compile Include="MpExtended.cs" />
     <Compile Include="OrfUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\MpExtendedService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\MpExtendedStreamingService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\MpExtendedTvService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
       <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
       <Name>OnlineVideos</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://10.1.0.52:4322/MPExtended/MediaAccessService/">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\MpExtendedService\</RelPath>
+      <UpdateFromURL>http://10.1.0.52:4322/MPExtended/MediaAccessService/</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OnlineVideos_Sites_diebagger_MpExtendedService_MediaAccessService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://10.1.0.52:4322/MPExtended/StreamingService/%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\MpExtendedStreamingService\</RelPath>
+      <UpdateFromURL>http://10.1.0.52:4322/MPExtended/StreamingService/%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OnlineVideos_Sites_diebagger_MpExtendedStreamingService_StreamingService</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://10.1.0.52:4322/MPExtended/TvAccessService/">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\MpExtendedTvService\</RelPath>
+      <UpdateFromURL>http://10.1.0.52:4322/MPExtended/TvAccessService/</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>OnlineVideos_Sites_diebagger_MpExtendedTvService_TVAccessService</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\MpExtendedService\item.wsdl" />
+    <None Include="Web References\MpExtendedService\item.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedService\item0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedService\item1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedService\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedService\item3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedService\item4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedService\item5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedService\item6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedService\item7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedService\item8.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedService\MediaAccessService.wsdl" />
+    <None Include="Web References\MpExtendedService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\MpExtendedService\SerializableDictionaryOfstring.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebActor.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebCategory.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebDriveBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebFileBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebFileInfo.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebFilesystemItem.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebFolderBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebGenre.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebItemCount.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebMediaItem.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebMediaServiceDescription.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebMovieBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebMovieDetailed.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebMusicAlbumBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebMusicArtistBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebMusicArtistDetailed.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebMusicTrackBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebMusicTrackDetailed.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebPictureBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebPictureDetailed.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebSearchResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebTVEpisodeBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebTVEpisodeDetailed.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebTVSeasonBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebTVSeasonDetailed.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebTVShowBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebTVShowDetailed.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\item.wsdl" />
+    <None Include="Web References\MpExtendedStreamingService\item.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\item0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\item1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\StreamingService.wsdl" />
+    <None Include="Web References\MpExtendedStreamingService\WebItemSupportStatus.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\WebMediaInfo.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\WebResolution.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\WebStreamingSession.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\WebStreamServiceDescription.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\WebTranscoderProfile.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\WebTranscodingInfo.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\item.wsdl" />
+    <None Include="Web References\MpExtendedTvService\item.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedTvService\item0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedTvService\item1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedTvService\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedTvService\item3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedTvService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\MpExtendedTvService\TVAccessService.wsdl" />
+    <None Include="Web References\MpExtendedTvService\WebCard.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebChannelBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebChannelDetailed.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebChannelGroup.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebChannelProgramsOfWebProgramBasicmOh5d_SPI.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebChannelProgramsOfWebProgramDetailedmOh5d_SPI.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebChannelState.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebCount.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebDiskSpaceInformation.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebProgramBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebProgramDetailed.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebRecordingBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebRecordingFileInfo.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebRtspClient.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebScheduleBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebTVSearchResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebTVServiceDescription.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebUser.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebVirtualCard.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\MpExtendedService\item.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\MpExtendedTvService\item.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

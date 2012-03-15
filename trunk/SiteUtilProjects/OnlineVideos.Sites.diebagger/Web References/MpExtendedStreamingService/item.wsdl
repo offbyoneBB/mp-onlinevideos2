@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://mpextended.github.com" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://mpextended.github.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://mpextended.github.com/Imports">
+      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd0" namespace="http://mpextended.github.com" />
+      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.StreamingService.Interfaces" />
+      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd3" namespace="http://schemas.microsoft.com/Message" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IWebStreamingService_GetServiceDescription_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetServiceDescription" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetServiceDescription_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetServiceDescriptionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetTranscoderProfiles_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTranscoderProfiles" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetTranscoderProfiles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTranscoderProfilesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetTranscoderProfilesForTarget_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTranscoderProfilesForTarget" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetTranscoderProfilesForTarget_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTranscoderProfilesForTargetResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetTranscoderProfileByName_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTranscoderProfileByName" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetTranscoderProfileByName_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTranscoderProfileByNameResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetMediaInfo_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMediaInfo" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetMediaInfo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMediaInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetTranscodingInfo_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTranscodingInfo" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetTranscodingInfo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTranscodingInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_InitStream_InputMessage">
+    <wsdl:part name="parameters" element="tns:InitStream" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_InitStream_OutputMessage">
+    <wsdl:part name="parameters" element="tns:InitStreamResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_StartStream_InputMessage">
+    <wsdl:part name="parameters" element="tns:StartStream" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_StartStream_OutputMessage">
+    <wsdl:part name="parameters" element="tns:StartStreamResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_StartStreamWithStreamSelection_InputMessage">
+    <wsdl:part name="parameters" element="tns:StartStreamWithStreamSelection" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_StartStreamWithStreamSelection_OutputMessage">
+    <wsdl:part name="parameters" element="tns:StartStreamWithStreamSelectionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_FinishStream_InputMessage">
+    <wsdl:part name="parameters" element="tns:FinishStream" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_FinishStream_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FinishStreamResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetStreamingUrl_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetStreamingUrl" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetStreamingUrl_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetStreamingUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetStreamingSessions_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetStreamingSessions" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetStreamingSessions_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetStreamingSessionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetStreamSize_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetStreamSize" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetStreamSize_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetStreamSizeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_AuthorizeStreaming_InputMessage">
+    <wsdl:part name="parameters" element="tns:AuthorizeStreaming" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_AuthorizeStreaming_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AuthorizeStreamingResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_AuthorizeRemoteHostForStreaming_InputMessage">
+    <wsdl:part name="parameters" element="tns:AuthorizeRemoteHostForStreaming" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_AuthorizeRemoteHostForStreaming_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AuthorizeRemoteHostForStreamingResponse" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetItemSupportStatus_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetItemSupportStatus" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_GetItemSupportStatus_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetItemSupportStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_GetMediaItem_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMediaItem" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_GetMediaItem_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMediaItemResponse" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_RetrieveStream_InputMessage">
+    <wsdl:part name="parameters" element="tns:RetrieveStream" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_RetrieveStream_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RetrieveStreamResponse" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_DoStream_InputMessage">
+    <wsdl:part name="parameters" element="tns:DoStream" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_DoStream_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DoStreamResponse" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_ExtractImage_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExtractImage" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_ExtractImage_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExtractImageResponse" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_ExtractImageResized_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExtractImageResized" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_ExtractImageResized_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExtractImageResizedResponse" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_GetImage_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetImage" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_GetImage_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetImageResponse" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_GetImageResized_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetImageResized" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_GetImageResized_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetImageResizedResponse" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_CustomTranscoderData_InputMessage">
+    <wsdl:part name="parameters" element="tns:CustomTranscoderData" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_CustomTranscoderData_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CustomTranscoderDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_GetArtwork_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetArtwork" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_GetArtwork_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetArtworkResponse" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_GetArtworkResized_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetArtworkResized" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_GetArtworkResized_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetArtworkResizedResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IWebStreamingService">
+    <wsdl:operation name="GetServiceDescription">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetServiceDescription" message="tns:IWebStreamingService_GetServiceDescription_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/GetServiceDescriptionResponse" message="tns:IWebStreamingService_GetServiceDescription_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTranscoderProfiles">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetTranscoderProfiles" message="tns:IWebStreamingService_GetTranscoderProfiles_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/GetTranscoderProfilesResponse" message="tns:IWebStreamingService_GetTranscoderProfiles_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTranscoderProfilesForTarget">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetTranscoderProfilesForTarget" message="tns:IWebStreamingService_GetTranscoderProfilesForTarget_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/GetTranscoderProfilesForTargetResponse" message="tns:IWebStreamingService_GetTranscoderProfilesForTarget_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTranscoderProfileByName">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetTranscoderProfileByName" message="tns:IWebStreamingService_GetTranscoderProfileByName_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/GetTranscoderProfileByNameResponse" message="tns:IWebStreamingService_GetTranscoderProfileByName_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMediaInfo">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetMediaInfo" message="tns:IWebStreamingService_GetMediaInfo_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/GetMediaInfoResponse" message="tns:IWebStreamingService_GetMediaInfo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTranscodingInfo">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetTranscodingInfo" message="tns:IWebStreamingService_GetTranscodingInfo_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/GetTranscodingInfoResponse" message="tns:IWebStreamingService_GetTranscodingInfo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="InitStream">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/InitStream" message="tns:IWebStreamingService_InitStream_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/InitStreamResponse" message="tns:IWebStreamingService_InitStream_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="StartStream">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/StartStream" message="tns:IWebStreamingService_StartStream_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/StartStreamResponse" message="tns:IWebStreamingService_StartStream_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="StartStreamWithStreamSelection">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/StartStreamWithStreamSelection" message="tns:IWebStreamingService_StartStreamWithStreamSelection_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/StartStreamWithStreamSelectionResponse" message="tns:IWebStreamingService_StartStreamWithStreamSelection_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FinishStream">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/FinishStream" message="tns:IWebStreamingService_FinishStream_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/FinishStreamResponse" message="tns:IWebStreamingService_FinishStream_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStreamingUrl">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetStreamingUrl" message="tns:IWebStreamingService_GetStreamingUrl_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/GetStreamingUrlResponse" message="tns:IWebStreamingService_GetStreamingUrl_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStreamingSessions">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetStreamingSessions" message="tns:IWebStreamingService_GetStreamingSessions_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/GetStreamingSessionsResponse" message="tns:IWebStreamingService_GetStreamingSessions_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStreamSize">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetStreamSize" message="tns:IWebStreamingService_GetStreamSize_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/GetStreamSizeResponse" message="tns:IWebStreamingService_GetStreamSize_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AuthorizeStreaming">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/AuthorizeStreaming" message="tns:IWebStreamingService_AuthorizeStreaming_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/AuthorizeStreamingResponse" message="tns:IWebStreamingService_AuthorizeStreaming_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AuthorizeRemoteHostForStreaming">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/AuthorizeRemoteHostForStreaming" message="tns:IWebStreamingService_AuthorizeRemoteHostForStreaming_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/AuthorizeRemoteHostForStreamingResponse" message="tns:IWebStreamingService_AuthorizeRemoteHostForStreaming_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetItemSupportStatus">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetItemSupportStatus" message="tns:IWebStreamingService_GetItemSupportStatus_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/GetItemSupportStatusResponse" message="tns:IWebStreamingService_GetItemSupportStatus_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="IStreamingService">
+    <wsdl:operation name="GetMediaItem">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/GetMediaItem" message="tns:IStreamingService_GetMediaItem_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/GetMediaItemResponse" message="tns:IStreamingService_GetMediaItem_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RetrieveStream">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/RetrieveStream" message="tns:IStreamingService_RetrieveStream_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/RetrieveStreamResponse" message="tns:IStreamingService_RetrieveStream_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DoStream">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/DoStream" message="tns:IStreamingService_DoStream_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/DoStreamResponse" message="tns:IStreamingService_DoStream_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExtractImage">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/ExtractImage" message="tns:IStreamingService_ExtractImage_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/ExtractImageResponse" message="tns:IStreamingService_ExtractImage_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExtractImageResized">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/ExtractImageResized" message="tns:IStreamingService_ExtractImageResized_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/ExtractImageResizedResponse" message="tns:IStreamingService_ExtractImageResized_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetImage">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/GetImage" message="tns:IStreamingService_GetImage_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/GetImageResponse" message="tns:IStreamingService_GetImage_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetImageResized">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/GetImageResized" message="tns:IStreamingService_GetImageResized_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/GetImageResizedResponse" message="tns:IStreamingService_GetImageResized_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CustomTranscoderData">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/CustomTranscoderData" message="tns:IStreamingService_CustomTranscoderData_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/CustomTranscoderDataResponse" message="tns:IStreamingService_CustomTranscoderData_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetArtwork">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/GetArtwork" message="tns:IStreamingService_GetArtwork_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/GetArtworkResponse" message="tns:IStreamingService_GetArtwork_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetArtworkResized">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/GetArtworkResized" message="tns:IStreamingService_GetArtworkResized_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/GetArtworkResizedResponse" message="tns:IStreamingService_GetArtworkResized_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>
