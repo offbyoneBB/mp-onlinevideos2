@@ -305,7 +305,7 @@ namespace OnlineVideos.Sites
             return loVideoList;
         }
 
-        public string getFormattedVideoUrl(VideoInfo video)
+        public virtual string getFormattedVideoUrl(VideoInfo video)
         {
             string resultUrl = video.VideoUrl;
             // 1. do some formatting with the videoUrl
@@ -332,7 +332,7 @@ namespace OnlineVideos.Sites
             return resultUrl;
         }
 
-        public string getPlaylistUrl(string resultUrl)
+        public virtual string getPlaylistUrl(string resultUrl)
         {
             // 3.a extra step to get a playlist file if needed
             if (regEx_PlaylistUrl != null)
@@ -347,7 +347,7 @@ namespace OnlineVideos.Sites
                 return resultUrl;
         }
 
-        public Dictionary<string, string> GetPlaybackOptions(string playlistUrl)
+        public virtual Dictionary<string, string> GetPlaybackOptions(string playlistUrl)
         {
             string dataPage;
             if (String.IsNullOrEmpty(fileUrlPostString))
@@ -533,7 +533,7 @@ namespace OnlineVideos.Sites
             return resultUrl;
         }
 
-        private static string parseHosterLinks(string link, VideoInfo video)
+        protected static string parseHosterLinks(string link, VideoInfo video)
         {
             string webData = GetWebData(link);
             Dictionary<string, string> options = new Dictionary<string, string>();
@@ -775,7 +775,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-		protected string ApplyUrlDecoding(string text, UrlDecoding decoding)
+		protected virtual string ApplyUrlDecoding(string text, UrlDecoding decoding)
 		{
 			switch (decoding)
 			{
@@ -836,7 +836,7 @@ namespace OnlineVideos.Sites
 
         #region Cookie
 
-        protected CookieContainer GetCookie()
+        protected virtual CookieContainer GetCookie()
         {
             if (string.IsNullOrEmpty(cookies)) return null;
 
