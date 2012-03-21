@@ -171,9 +171,9 @@ namespace OnlineVideos.Sites
 
             if (cdn == "ll")
             {
-                string ip = new Regex("<ip>(.*?)</ip>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
+                //string ip = new Regex("<ip>(.*?)</ip>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
                 string e = new Regex("<e>(.*?)</e>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
-                auth = string.Format("e={0}&ip={1}&h={2}", e, ip, decryptedToken);
+                auth = string.Format("e={0}&h={1}", e, decryptedToken); //string.Format("e={0}&ip={1}&h={2}", e, ip, decryptedToken);
             }
             else
             {
