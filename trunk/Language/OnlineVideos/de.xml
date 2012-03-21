@@ -8,6 +8,8 @@
   <string Field="All">Alle</string>
   <string Field="Actions">Aktionen</string>
   <string Field="Actors">Darsteller</string>
+  <string Field="AddComment">Kommentar abgeben ...</string>
+  <string Field="AddToPlaylist">Zu Playlist hinzufügen ...</string>
   <string Field="AddToMySites">Zu meinen Sites hinzufügen</string>
   <string Field="AddToFavourites">Zu den Favoriten hinzufügen</string>
   <string Field="AddingToFavorites">beim Hinzufügen zu den Favoriten</string>
@@ -20,6 +22,7 @@
   <string Field="CategoryNotFound">Rubrik nicht gefunden</string>
   <string Field="Categories">Rubriken</string>
   <string Field="Creator">Ersteller</string>
+  <string Field="CreateNewPlaylist">Neue Playlist erstellen ...</string>
   <string Field="CheckingForPluginUpdate">beim Überprüfen auf aktuelle Version des Plugins</string>
   <string Field="Concurrent">Gleichzeitig</string>
   <string Field="Date">Datum</string>
@@ -37,6 +40,7 @@
   <string Field="DownloadedVideos">Heruntergeladene Videos</string>
   <string Field="DownloadsWillBeAborted">Downloads werden abgebrochen.</string>
   <string Field="Delete">Löschen</string>
+  <string Field="DeletePlaylist">Playlist löschen</string>
   <string Field="DeleteAll">Alle Löschen</string>
   <string Field="Default">Standard</string>
   <string Field="Done">Fertig</string>
@@ -91,8 +95,10 @@
   <string Field="PreviousPage">Vorherige Seite</string>
   <string Field="PerformAutomaticUpdate">Automatische Aktualisierung ausführen?</string>
   <string Field="Queued">Nacheinander</string>
+  <string Field="RateVideo">Video bewerten ...</string>
   <string Field="Recommendations">Empfehlungen</string>
   <string Field="RemoveFromFavorites">Von den Favoriten entfernen</string>
+  <string Field="RemoveFromPlaylist">Von Playlist entfernen</string>
   <string Field="RemovingFromFavorites">beim Entfernen von den Favoriten</string>
   <string Field="Refresh">Ansicht aktualisieren</string>
   <string Field="RelatedVideos">Ähnliche Videos</string>

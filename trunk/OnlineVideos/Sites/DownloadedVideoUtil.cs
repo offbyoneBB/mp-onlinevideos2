@@ -156,33 +156,32 @@ namespace OnlineVideos.Sites
             return loVideoInfoList;
         }
 
-        public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
-            List<string> options = new List<string>();
+            List<ContextMenuEntry> options = new List<ContextMenuEntry>();
             if (selectedItem != null)
             {
                 if (selectedItem.Other as DownloadInfo == null)
                 {
-					options.Add(Translation.Instance.Delete);
-					options.Add(Translation.Instance.DeleteAll);
+                    options.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.Delete });
+					options.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.DeleteAll });
                 }
                 else
                 {
-					options.Add(Translation.Instance.Cancel);
+                    options.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.Cancel });
                 }
             }
             return options;
         }
 
-        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
+        public override ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
         {
-            newVideos = null;
-			if (choice == Translation.Instance.Delete)
+			if (choice.DisplayText == Translation.Instance.Delete)
             {
                 if (System.IO.File.Exists(selectedItem.ImageUrl)) System.IO.File.Delete(selectedItem.ImageUrl);
                 if (System.IO.File.Exists(selectedItem.VideoUrl)) System.IO.File.Delete(selectedItem.VideoUrl);
             }
-			else if (choice == Translation.Instance.DeleteAll)
+			else if (choice.DisplayText == Translation.Instance.DeleteAll)
             {
 				FileInfo[] files = new DirectoryInfo((selectedCategory as RssLink).Url).GetFiles("*", selectedCategory.Name == Translation.Instance.All ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
                 foreach (FileInfo file in files)
@@ -199,11 +198,11 @@ namespace OnlineVideos.Sites
                     }
                 }
             }
-			else if (choice == Translation.Instance.Cancel)
+			else if (choice.DisplayText == Translation.Instance.Cancel)
             {
                 ((IDownloader)(selectedItem.Other as DownloadInfo).Downloader).CancelAsync();
             }
-            return true;
+            return new ContextMenuExecutionResult() { RefreshCurrentItems = true };
         }
 
         #region Search

@@ -169,45 +169,44 @@ namespace OnlineVideos.Sites
 
         #region Context Menu
 
-        public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
-            List<string> result = new List<string>();
+            List<ContextMenuEntry> result = new List<ContextMenuEntry>();
             if (selectedCategory is FavoriteCategory)
             {
-                if (selectedItem == null) result.Add(Translation.Instance.RemoveFromFavorites);
+                if (selectedItem == null) result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.RemoveFromFavorites });
             }
             else if (selectedItem != null)
             {
-                result.Add(Translation.Instance.RemoveFromFavorites);
-                result.Add(Translation.Instance.DeleteAll);
+                result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.RemoveFromFavorites });
+                result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.DeleteAll });
             }
             return result;
         }
 
-        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
+        public override ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
         {
-            newVideos = null;
-            bool result = false;
-            if (choice == Translation.Instance.DeleteAll)
+            ContextMenuExecutionResult result = new ContextMenuExecutionResult();
+            if (choice.DisplayText == Translation.Instance.DeleteAll)
             {
-                result = OnlineVideoSettings.Instance.FavDB.removeAllFavoriteVideos(((RssLink)selectedCategory).Url);
+                result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.removeAllFavoriteVideos(((RssLink)selectedCategory).Url);
                 // we have to manually refresh the categories
-                if (result && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
+                if (result.RefreshCurrentItems && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
             }
-            else if (choice == Translation.Instance.RemoveFromFavorites)
+            else if (choice.DisplayText == Translation.Instance.RemoveFromFavorites)
             {
                 if (selectedCategory is FavoriteCategory)
                 {
-                    result = OnlineVideoSettings.Instance.FavDB.removeFavoriteCategory(((FavoriteCategory)selectedCategory).Other as Category);
-                    if (result) selectedCategory.ParentCategory.SubCategories.Remove(selectedCategory);
+                    result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.removeFavoriteCategory(((FavoriteCategory)selectedCategory).Other as Category);
+                    if (result.RefreshCurrentItems) selectedCategory.ParentCategory.SubCategories.Remove(selectedCategory);
                     return result;
                 }
                 else
                 {
-                    result = OnlineVideoSettings.Instance.FavDB.removeFavoriteVideo(selectedItem);
+                    result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.removeFavoriteVideo(selectedItem);
                 }
                 // we have to manually refresh the categories
-                if (result && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
+                if (result.RefreshCurrentItems && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
             }
             return result;
         }

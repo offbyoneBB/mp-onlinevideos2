@@ -6,6 +6,7 @@ using Google.GData.Client;
 using Google.GData.Extensions;
 using Google.GData.YouTube;
 using Google.GData.Extensions.MediaRss;
+using Google.YouTube;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -117,6 +118,7 @@ namespace OnlineVideos.Sites
         bool useDynamicCategories = true;
 
         private YouTubeService service;
+        private YouTubeRequest request;
         private List<int> steps = new List<int>() { 10, 20, 30, 40, 50 };
         private Dictionary<String, String> orderByList;
         private Dictionary<String, String> timeFrameList = new Dictionary<string, string>();
@@ -141,6 +143,7 @@ namespace OnlineVideos.Sites
                                                             {"Rating", "rating"}};
             foreach (string name in Enum.GetNames(typeof(YouTubeQuery.UploadTime))) timeFrameList.Add(Utils.ToFriendlyCase(name), name);
             service = new YouTubeService("OnlineVideos", DEVELOPER_KEY);
+            request = new YouTubeRequest(new YouTubeRequestSettings("OnlineVideos", DEVELOPER_KEY, login, password));
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -500,58 +503,186 @@ namespace OnlineVideos.Sites
             return currentVideosTitle;
         }
 
-        public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
-            List<string> result = new List<string>();
+            List<ContextMenuEntry> result = new List<ContextMenuEntry>();
             if (selectedItem != null)
             {
-				result.Add(Translation.Instance.RelatedVideos);
+                result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.RelatedVideos, Action = ContextMenuEntry.UIAction.Execute });
 
                 MyYouTubeEntry ytEntry = selectedItem.Other as MyYouTubeEntry;
-                if (ytEntry != null && ytEntry.YouTubeEntry != null && ytEntry.YouTubeEntry.Uploader != null && !string.IsNullOrEmpty(ytEntry.YouTubeEntry.Uploader.Value))
+                if (ytEntry != null && ytEntry.YouTubeEntry != null)
                 {
-					result.Add(Translation.Instance.UploadsBy + " [" + ytEntry.YouTubeEntry.Uploader.Value + "]");
+                    if (ytEntry.YouTubeEntry.Uploader != null && !string.IsNullOrEmpty(ytEntry.YouTubeEntry.Uploader.Value))
+                    {
+                        result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.UploadsBy + " [" + ytEntry.YouTubeEntry.Uploader.Value + "]", Action = ContextMenuEntry.UIAction.Execute });
+                    }
+                    if (selectedCategory.Other == "Login" && selectedCategory.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Favourites))
+                    {
+                        result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.RemoveFromFavorites + " (" + Settings.Name + ")", Action = ContextMenuEntry.UIAction.Execute });
+                    }
+                    else if (!string.IsNullOrEmpty(accountname) && !string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(accountname))
+                    {
+                        result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.AddToFavourites + " (" + Settings.Name + ")", Action = ContextMenuEntry.UIAction.Execute });
+                    }
+                    if (!string.IsNullOrEmpty(accountname) && !string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(accountname))
+                    {
+                        // comment
+                        result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.AddComment, Action = ContextMenuEntry.UIAction.GetText });
+                        // rate (YouTube uses a 1-5 rating system in which 1 is the lowest rating that can be given)
+                        var rCtx = new ContextMenuEntry() { DisplayText = Translation.Instance.RateVideo, Action = ContextMenuEntry.UIAction.ShowList };
+                        for (int i = 1; i <= 5; i++) rCtx.SubEntries.Add(new ContextMenuEntry() { DisplayText = i.ToString() });
+                        result.Add(rCtx);
+                        // add to playlist
+                        var plCtx = new ContextMenuEntry() { DisplayText = Translation.Instance.AddToPlaylist, Action = ContextMenuEntry.UIAction.ShowList };
+                        plCtx.SubEntries.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.CreateNewPlaylist, Action = ContextMenuEntry.UIAction.GetText });
+                        foreach (var pl in request.GetPlaylistsFeed(accountname).Entries)
+                        {
+                            plCtx.SubEntries.Add(new ContextMenuEntry() { DisplayText = pl.Title, Other = pl.PlaylistsEntry.Content.Src.Content });
+                        }
+                        result.Add(plCtx);
+                        if (selectedCategory.ParentCategory != null && !(selectedCategory.ParentCategory is RssLink) && selectedCategory.ParentCategory.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Playlists))
+                        {
+                            result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.RemoveFromPlaylist, Other = (selectedCategory as RssLink).Url });
+                        }
+                    }
                 }
-                if (selectedCategory is RssLink)
+            }
+            else
+            {
+                if (selectedCategory.ParentCategory != null && !(selectedCategory.ParentCategory is RssLink) && selectedCategory.ParentCategory.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Playlists))
                 {
-					result.Add(Translation.Instance.AddToFavourites + " (" + Settings.Name + ")");
-                }
-                else if (selectedCategory is Category)
-                {
-					result.Add(Translation.Instance.RemoveFromFavorites + " (" + Settings.Name + ")");
+                    result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.DeletePlaylist, Other = (selectedCategory as RssLink).Url });
                 }
             }
             return result;
         }
 
-        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
+        public override ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
         {
-            newVideos = null;
-			if (choice == Translation.Instance.AddToFavourites + " (" + Settings.Name + ")")
+            ContextMenuExecutionResult result = new ContextMenuExecutionResult();
+            try
             {
-                addFavorite(selectedItem);
-                return false;
+                if (choice.DisplayText == Translation.Instance.AddToFavourites + " (" + Settings.Name + ")")
+                {
+                    addFavorite(selectedItem);
+                }
+                else if (choice.DisplayText == Translation.Instance.RemoveFromFavorites + " (" + Settings.Name + ")")
+                {
+                    removeFavorite(selectedItem);
+                    result.RefreshCurrentItems = true;
+                }
+                else if (choice.DisplayText == Translation.Instance.RelatedVideos)
+                {
+                    YouTubeQuery query = new YouTubeQuery() { Uri = new Uri((selectedItem.Other as MyYouTubeEntry).YouTubeEntry.RelatedVideosUri.Content), NumberToRetrieve = pageSize };
+                    result.ResultItems = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                    currentVideosTitle = Translation.Instance.RelatedVideos + " [" + selectedItem.Title + "]";
+                }
+                else if (choice.DisplayText.StartsWith(Translation.Instance.UploadsBy))
+                {
+                    YouTubeEntry ytEntry = (selectedItem.Other as MyYouTubeEntry).YouTubeEntry;
+                    YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateUserUri(ytEntry.Uploader.Value)) { NumberToRetrieve = pageSize };
+                    result.ResultItems = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                    currentVideosTitle = Translation.Instance.UploadsBy + " [" + ytEntry.Uploader.Value + "]";
+                }
+                else if (choice.DisplayText == Translation.Instance.AddComment)
+                {
+                    addComment(selectedItem, choice.UserInputText);
+                }
+                else if (choice.ParentEntry != null && choice.ParentEntry.DisplayText == Translation.Instance.RateVideo)
+                {
+                    rateVideo(selectedItem, byte.Parse(choice.DisplayText));
+                }
+                else if (choice.ParentEntry != null && choice.ParentEntry.DisplayText == Translation.Instance.AddToPlaylist)
+                {
+                    if (choice.Other == null)
+                    {
+                        choice.Other = request.Insert<Playlist>(new Uri(YouTubeQuery.CreatePlaylistsUri(accountname)), new Playlist() { Title = choice.UserInputText }).PlaylistsEntry.Content.Src.Content;
+                    }
+                    addToPlaylist(selectedItem, choice.Other as string);
+                    // force re-discovery of dynamic subcategories for my playlists category (as either a new catgeory was added ot the count changed)
+                    var playlistsCategory = Settings.Categories.FirstOrDefault(c => !(c is RssLink) && c.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Playlists));
+                    if (playlistsCategory != null) playlistsCategory.SubCategoriesDiscovered = false;
+                }
+                else if (choice.DisplayText == Translation.Instance.RemoveFromPlaylist)
+                {
+                    removeFromPlaylist(selectedItem, choice.Other as string);
+                    result.RefreshCurrentItems = true;
+                    if ((selectedCategory as RssLink).EstimatedVideoCount != null) (selectedCategory as RssLink).EstimatedVideoCount--;
+                }
+                else if (choice.DisplayText == Translation.Instance.DeletePlaylist)
+                {
+                    deletePlaylist((selectedCategory as RssLink).Url);
+                    selectedCategory.ParentCategory.SubCategoriesDiscovered = false;
+                    result.RefreshCurrentItems = true;
+                }
             }
-			else if (choice == Translation.Instance.RemoveFromFavorites + " (" + Settings.Name + ")")
+            catch (Exception ex)
             {
-                removeFavorite(selectedItem);
-                return true;
+                throw new OnlineVideosException(ex.Message);
             }
-			else if (choice == Translation.Instance.RelatedVideos)
+            return result;
+        }
+
+        protected void deletePlaylist(string playlistUrl)
+        {
+            if (CheckUsernameAndPassword())
             {
-                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri((selectedItem.Other as MyYouTubeEntry).YouTubeEntry.RelatedVideosUri.Content), NumberToRetrieve = pageSize };
-                newVideos = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
-				currentVideosTitle = Translation.Instance.RelatedVideos + " [" + selectedItem.Title + "]";
-                return false;
+                Login();
+                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreatePlaylistsUri(accountname)), StartIndex = 1, NumberToRetrieve = 50 }; // max. 50 per query
+				YouTubeFeed feed = service.Query(query);
+                foreach (PlaylistsEntry e in feed.Entries)
+                {
+                    if (e.Content.Src.Content.Substring(e.Content.Src.Content.IndexOf("://")) == playlistUrl.Substring(playlistUrl.IndexOf("://")))
+                    {
+                        e.Delete();
+                        break;
+                    }
+                }
             }
-			else if (choice.StartsWith(Translation.Instance.UploadsBy))
+        }
+
+        protected void addComment(VideoInfo video, string comment)
+        {
+            if (CheckUsernameAndPassword())
             {
-                YouTubeEntry ytEntry = (selectedItem.Other as MyYouTubeEntry).YouTubeEntry;
-                YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateUserUri(ytEntry.Uploader.Value)) { NumberToRetrieve = pageSize };
-                newVideos = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
-				currentVideosTitle = Translation.Instance.UploadsBy + " [" + ytEntry.Uploader.Value + "]";
+                Login();
+                YouTubeEntry entry = ((MyYouTubeEntry)video.Other).YouTubeEntry;
+                Comment c = new Comment() { Content = comment };
+                request.AddComment(new Video() { AtomEntry = entry }, c);
             }
-            return false;
+        }
+
+        protected void rateVideo(VideoInfo video, byte rating)
+        {
+            if (CheckUsernameAndPassword())
+            {
+                Login();
+                YouTubeEntry entry = ((MyYouTubeEntry)video.Other).YouTubeEntry;
+                Video v = new Video() { AtomEntry = entry };
+                v.Rating = rating;
+                request.Insert(v.RatingsUri, v);
+            }
+        }
+
+        protected void addToPlaylist(VideoInfo video, string playlistUri)
+        {
+            if (CheckUsernameAndPassword())
+            {
+                Login();
+                YouTubeEntry entry = ((MyYouTubeEntry)video.Other).YouTubeEntry;
+                service.Insert(playlistUri, entry);
+            }
+        }
+
+        protected void removeFromPlaylist(VideoInfo video, string playlistUri)
+        {
+            if (CheckUsernameAndPassword())
+            {
+                Login();
+                YouTubeEntry entry = ((MyYouTubeEntry)video.Other).YouTubeEntry;
+                service.Delete(entry);
+            }
         }
 
         protected void addFavorite(VideoInfo video)

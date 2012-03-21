@@ -10,6 +10,8 @@
   <string Field="All">All</string>
   <string Field="Actions">Actions</string>
   <string Field="Actors">Actors</string>
+  <string Field="AddComment">Add a Comment ...</string>
+  <string Field="AddToPlaylist">Add to Playlist ...</string>
   <string Field="AddToMySites">Add to my sites</string>
   <string Field="AddToFavourites">Add to favorites</string>
   <string Field="AddingToFavorites">adding to favorites</string>
@@ -26,6 +28,7 @@
   <string Field="CategoryNotFound">Category not found</string>
   <string Field="Categories">Categories</string>
   <string Field="Creator">Creator</string>
+  <string Field="CreateNewPlaylist">Create new Playlist ...</string>
   <string Field="CheckingForPluginUpdate">checking for updated plugin version</string>
   <string Field="Concurrent">concurrent</string>
 
@@ -45,6 +48,7 @@
   <string Field="DownloadedVideos">Downloaded Videos</string>
   <string Field="DownloadsWillBeAborted">Downloads will be aborted.</string>
   <string Field="Delete">Delete</string>
+  <string Field="DeletePlaylist">Delete Playlist</string>
   <string Field="DeleteAll">Delete All</string>
   <string Field="Default">Default</string>
   <string Field="Done">Done</string>
@@ -123,8 +127,10 @@
   <string Field="Queued">queued</string>
   
   <!-- R -->
+  <string Field="RateVideo">Rate the Video ...</string>
   <string Field="Recommendations">Recommendations</string>
   <string Field="RemoveFromFavorites">Remove from favorites</string>
+  <string Field="RemoveFromPlaylist">Remove from Playlist</string>
   <string Field="RemovingFromFavorites">removing from favorites</string>
   <string Field="Refresh">Refresh</string>
   <string Field="RelatedVideos">Related Videos</string>
