@@ -71,6 +71,8 @@ namespace OnlineVideos
         public string All = "All";
         public string Actions = "Actions";
         public string Actors = "Actors";
+        public string AddComment = "Add a Comment ...";
+        public string AddToPlaylist = "Add to Playlist ...";
         public string AddToMySites = "Add to my sites";
         public string AddToFavourites = "Add to favourites";
         public string AutomaticUpdate = "Automatic Update";
@@ -87,6 +89,7 @@ namespace OnlineVideos
         public string Categories = "Categories";
         public string Concurrent = "concurrent";
         public string Creator = "Creator";
+        public string CreateNewPlaylist = "Create new Playlist ...";
         public string CheckingForPluginUpdate = "checking for updated plugin version";
 
         // D
@@ -105,6 +108,7 @@ namespace OnlineVideos
         public string DownloadedVideos = "Downloaded Videos";
 		public string DownloadsWillBeAborted = "Downloads will be aborted.";
         public string Delete = "Delete";
+        public string DeletePlaylist = "Delete Playlist";
         public string DeleteAll = "Delete All";
         public string Default = "Default";
         public string Done = "Done";
@@ -183,8 +187,10 @@ namespace OnlineVideos
         public string Queued = "queued";
 
         // R
+        public string RateVideo = "Rate the Video ...";
 		public string Recommendations = "Recommendations";
         public string RemoveFromFavorites = "Remove from favorites";
+        public string RemoveFromPlaylist = "Remove from Playlist";
         public string RemovingFromFavorites = "removing from favorites";
         public string Refresh = "Refresh";
         public string RelatedVideos = "Related Videos";

@@ -180,6 +180,9 @@ namespace OnlineVideos.MediaPortal1
         public delegate void TrackVideoPlaybackHandler(ITrackingInfo info, double percentPlayed);
         public event TrackVideoPlaybackHandler TrackVideoPlayback;
 
+        public delegate void VideoDownloadedHandler(string file, string site, string categoryRecursiveName, string videoTitle);
+        public event VideoDownloadedHandler VideoDownloaded;
+
         OnlineVideosGuiListItem selectedSitesGroup;
         Category selectedCategory;
         VideoInfo selectedVideo;
@@ -333,31 +336,31 @@ namespace OnlineVideos.MediaPortal1
                     if (dlgCat == null) return;
                     dlgCat.Reset();
 					dlgCat.SetHeading(Translation.Instance.Actions);
-					List<KeyValuePair<string, bool>> dialogOptions = new List<KeyValuePair<string, bool>>();
-                    if (!(SelectedSite is Sites.FavoriteUtil)/* && !aCategory.HasSubCategories*/)
+                    List<KeyValuePair<string, Sites.ContextMenuEntry>> dialogOptions = new List<KeyValuePair<string, Sites.ContextMenuEntry>>();
+                    if (!(SelectedSite is Sites.FavoriteUtil))
                     {
 						if (selectedItem.IsPlayed)
 						{
 							dlgCat.Add(Translation.Instance.RemoveFromFavorites);
-							dialogOptions.Add(new KeyValuePair<string, bool>(Translation.Instance.RemoveFromFavorites, true));
+                            dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(Translation.Instance.RemoveFromFavorites, null));
 						}
 						else
 						{
 							dlgCat.Add(Translation.Instance.AddToFavourites);
-							dialogOptions.Add(new KeyValuePair<string, bool>(Translation.Instance.AddToFavourites, true));
+                            dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(Translation.Instance.AddToFavourites, null));
 						}
                     }
-					foreach (string entry in SelectedSite.GetContextMenuEntries(aCategory, null))
+					foreach (var entry in SelectedSite.GetContextMenuEntries(aCategory, null))
 					{
-						dlgCat.Add(entry);
-						dialogOptions.Add(new KeyValuePair<string, bool>(entry, false));
+						dlgCat.Add(entry.DisplayText);
+                        dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(entry.DisplayText, entry));
 					}
                     dlgCat.DoModal(GUIWindowManager.ActiveWindow);
                     if (dlgCat.SelectedId == -1) return;
                     else
                     {
 						var selectedOption = dialogOptions[dlgCat.SelectedId-1];
-						if (selectedOption.Value)
+						if (selectedOption.Value == null)
 						{
 							if (dlgCat.SelectedLabelText == Translation.Instance.AddToFavourites)
 							{
@@ -383,23 +386,7 @@ namespace OnlineVideos.MediaPortal1
 						}
 						else
 						{
-							List<ISearchResultItem> itemsToShow = null;
-							Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
-							{
-								return SelectedSite.ExecuteContextMenuEntry(aCategory, null, dlgCat.SelectedLabelText, out itemsToShow);
-							},
-							delegate(bool success, object result)
-							{
-								if (itemsToShow != null && itemsToShow.Count > 0)
-								{
-									SetSearchResultItemsToFacade(itemsToShow, VideosMode.Category);
-								}
-								else
-								{
-									if (success && result != null && (bool)result) DisplayCategories(selectedCategory, null);
-								}
-							},
-							": " + dlgCat.SelectedLabelText, true);
+                            HandleCustomContextMenuEntry(selectedOption.Value, aCategory, null);
 						}
                     }
                 }
@@ -417,11 +404,11 @@ namespace OnlineVideos.MediaPortal1
 
                 if (aVideo != null)
                 {
-                    List<string> dialogOptions = new List<string>();
                     GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                     if (dlgSel == null) return;
                     dlgSel.Reset();
 					dlgSel.SetHeading(Translation.Instance.Actions);
+                    List<KeyValuePair<string, Sites.ContextMenuEntry>> dialogOptions = new List<KeyValuePair<string, Sites.ContextMenuEntry>>();
                     // these context menu entries should only show if the item will not go to the details view
                     if (!(SelectedSite is IChoice && CurrentState == State.videos && aVideo.HasDetails))
                     {
@@ -429,25 +416,25 @@ namespace OnlineVideos.MediaPortal1
                             (selectedCategory is Sites.FavoriteUtil.FavoriteCategory && (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site is IChoice)))
                         {
 							dlgSel.Add(Translation.Instance.PlayWith);
-                            dialogOptions.Add("PlayWith");
+                            dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayWith", null));
                             if (numItemsShown > 1)
                             {
 								dlgSel.Add(Translation.Instance.PlayAll);
-                                dialogOptions.Add("PlayAll");
+                                dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAll", null));
 								dlgSel.Add(Translation.Instance.PlayAllRandom);
-								dialogOptions.Add("PlayAllRandom");
+								dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAllRandom", null));
                             }
                             if (!(SelectedSite is Sites.FavoriteUtil) && !(SelectedSite is Sites.DownloadedVideoUtil))
                             {
 								dlgSel.Add(Translation.Instance.AddToFavourites);
-                                dialogOptions.Add("AddToFav");
+                                dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("AddToFav", null));
                             }
                             if (!(SelectedSite is Sites.DownloadedVideoUtil))
                             {
 								dlgSel.Add(string.Format("{0} ({1})",Translation.Instance.Download, Translation.Instance.Concurrent));
-                                dialogOptions.Add("DownloadConcurrent");
+                                dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("DownloadConcurrent", null));
                                 dlgSel.Add(string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Queued));
-                                dialogOptions.Add("DownloadQueued");
+                                dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("DownloadQueued", null));
 
                                 if (loadParamInfo != null && !string.IsNullOrEmpty(loadParamInfo.DownloadDir) && System.IO.Directory.Exists(loadParamInfo.DownloadDir))
                                 {
@@ -455,18 +442,21 @@ namespace OnlineVideos.MediaPortal1
 										dlgSel.Add(Translation.Instance.DownloadUserdefined);
                                     else
                                         dlgSel.Add(loadParamInfo.DownloadMenuEntry);
-                                    dialogOptions.Add("UserdefinedDownload");
+                                    dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("UserdefinedDownload", null));
                                 }
                             }
-                            List<string> siteSpecificEntries = SelectedSite.GetContextMenuEntries(selectedCategory, aVideo);
-                            if (siteSpecificEntries != null) foreach (string entry in siteSpecificEntries) { dlgSel.Add(entry); dialogOptions.Add(entry); }
+                            foreach (var entry in SelectedSite.GetContextMenuEntries(selectedCategory, aVideo))
+                            {
+                                dlgSel.Add(entry.DisplayText);
+                                dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(entry.DisplayText, entry));
+                            }
                         }
                     }
                     // always allow the VK filtering in videos view
                     if (CurrentState == State.videos && numItemsShown > 1)
                     {
 						dlgSel.Add(Translation.Instance.Filter);
-                        dialogOptions.Add("Filter");
+                        dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("Filter", null));
                     }
                     if (dialogOptions.Count > 0)
                     {
@@ -474,26 +464,26 @@ namespace OnlineVideos.MediaPortal1
                         if (dlgSel.SelectedId == -1) return;
                         else
                         {
-                            switch (dialogOptions[dlgSel.SelectedId - 1])
+                            switch (dialogOptions[dlgSel.SelectedId - 1].Key)
                             {
                                 case "PlayWith":
                                     dialogOptions.Clear();
                                     dlgSel.Reset();
 									dlgSel.SetHeading(Translation.Instance.Actions);
                                     dlgSel.Add("MediaPortal");
-                                    dialogOptions.Add(OnlineVideos.PlayerType.Internal.ToString());
+                                    dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(OnlineVideos.PlayerType.Internal.ToString(), null));
                                     dlgSel.Add("Windows Media Player");
-                                    dialogOptions.Add(OnlineVideos.PlayerType.WMP.ToString());
+                                    dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(OnlineVideos.PlayerType.WMP.ToString(), null));
                                     if (VLCPlayer.IsInstalled)
                                     {
                                         dlgSel.Add("VLC media player");
-                                        dialogOptions.Add(OnlineVideos.PlayerType.VLC.ToString());
+                                        dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(OnlineVideos.PlayerType.VLC.ToString(), null));
                                     }
                                     dlgSel.DoModal(GUIWindowManager.ActiveWindow);
                                     if (dlgSel.SelectedId == -1) return;
                                     else
                                     {
-                                        OnlineVideos.PlayerType forcedPlayer = (OnlineVideos.PlayerType)Enum.Parse(typeof(OnlineVideos.PlayerType), dialogOptions[dlgSel.SelectedId - 1]);
+                                        OnlineVideos.PlayerType forcedPlayer = (OnlineVideos.PlayerType)Enum.Parse(typeof(OnlineVideos.PlayerType), dialogOptions[dlgSel.SelectedId - 1].Key);
                                         if (CurrentState == State.videos) selectedVideo = aVideo;
                                         else selectedClipIndex = GUI_infoList.SelectedListItemIndex;
                                         //play the video
@@ -543,26 +533,80 @@ namespace OnlineVideos.MediaPortal1
                                     if (GetUserInputString(ref videosVKfilter, false)) SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
                                     break;
                                 default:
-                                    List<ISearchResultItem> itemsToShow = null;
-                                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
-                                    {
-                                        return SelectedSite.ExecuteContextMenuEntry(selectedCategory, aVideo, dialogOptions[dlgSel.SelectedId - 1], out itemsToShow);
-                                    },
-                                    delegate(bool success, object result)
-                                    {
-                                        if (itemsToShow != null && itemsToShow.Count > 0)
-                                        {
-                                            SetSearchResultItemsToFacade(itemsToShow, VideosMode.Category);
-                                        }
-                                        else
-                                        {
-                                            if (success && result != null && (bool)result) DisplayVideos_Category(selectedCategory, true);
-                                        }
-                                    }, ": " + dialogOptions[dlgSel.SelectedId - 1], true);
+                                    HandleCustomContextMenuEntry(dialogOptions[dlgSel.SelectedId - 1].Value, selectedCategory, aVideo);
                                     break;
                             }
                         }
                     }
+                }
+            }
+        }
+
+        void HandleCustomContextMenuEntry(Sites.ContextMenuEntry currentEntry, Category aCategory, VideoInfo aVideo)
+        {
+            List<KeyValuePair<string, Sites.ContextMenuEntry>> dialogOptions = new List<KeyValuePair<string, Sites.ContextMenuEntry>>();
+            while (true)
+            {
+                bool execute = currentEntry.Action == Sites.ContextMenuEntry.UIAction.Execute;
+
+                if (currentEntry.Action == Sites.ContextMenuEntry.UIAction.GetText)
+                {
+                    string text = currentEntry.UserInputText ?? "";
+                    if (GetUserInputString(ref text, false))
+                    {
+                        currentEntry.UserInputText = text;
+                        execute = true;
+                    }
+                    else break;
+                }
+                if (currentEntry.Action == Sites.ContextMenuEntry.UIAction.ShowList)
+                {
+                    GUIDialogMenu dlgCat = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                    dlgCat.Reset();
+                    dlgCat.SetHeading(currentEntry.DisplayText);
+                    dialogOptions.Clear();
+                    foreach (var subEntry in currentEntry.SubEntries)
+                    {
+                        dlgCat.Add(subEntry.DisplayText);
+                        dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(subEntry.DisplayText, subEntry));
+                    }
+                    dlgCat.DoModal(GUIWindowManager.ActiveWindow);
+                    if (dlgCat.SelectedId == -1) break;
+                    else currentEntry = dialogOptions[dlgCat.SelectedId - 1].Value;
+                }
+                if (execute)
+                {
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    {
+                        return SelectedSite.ExecuteContextMenuEntry(aCategory, aVideo, currentEntry);
+                    },
+                    delegate(bool success, object result)
+                    {
+                        if (success && result is Sites.ContextMenuExecutionResult)
+                        {
+                            var cmer = result as Sites.ContextMenuExecutionResult;
+                            if (!string.IsNullOrEmpty(cmer.ExecutionResultMessage))
+                            {
+                                GUIDialogNotify dlg_notify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                                if (dlg_notify != null)
+                                {
+                                    dlg_notify.Reset();
+                                    dlg_notify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+                                    dlg_notify.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+                                    dlg_notify.SetText(cmer.ExecutionResultMessage);
+                                    dlg_notify.DoModal(GUIWindowManager.ActiveWindow);
+                                }
+                            }
+                            if (cmer.RefreshCurrentItems)
+                            {
+                                if (aVideo == null) DisplayCategories(selectedCategory, null); 
+                                else DisplayVideos_Category(selectedCategory, true);
+                            }
+                            if (cmer.ResultItems != null && cmer.ResultItems.Count > 0) SetSearchResultItemsToFacade(cmer.ResultItems, VideosMode.Category);
+                        }
+                    },
+                    ": " + currentEntry.DisplayText, true);
+                    break;
                 }
             }
         }
@@ -705,7 +749,54 @@ namespace OnlineVideos.MediaPortal1
             return base.OnMessage(message);
         }
 
-        private void GUIWindowManager_OnNewAction(Action action)
+        void GUIWindowManager_OnThreadMessageHandler(object sender, GUIMessage message)
+        {
+            if (message.Message == GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW && 
+                message.TargetWindowId == 0 && message.TargetControlId == 0 && message.SenderControlId == 0 &&
+                message.SendToTargetWindow == false && message.Object == null && message.Object2 == null &&
+                message.Param2 == 0 && message.Param3 == 0 && message.Param4 == 0 && 
+                (message.Param1 == (int)GUIWindow.Window.WINDOW_HOME || message.Param1 == (int)GUIWindow.Window.WINDOW_SECOND_HOME)
+                )
+            {
+                if (CurrentState != State.groups && GroupsEnabled)
+                {
+                    // prevent message from beeing sent to MP core
+                    message.SendToTargetWindow = true;
+                    message.TargetWindowId = GetID;
+                    message.Param1 = GetID;
+                    message.Message = GUIMessage.MessageType.GUI_MSG_HIDE_MESSAGE;
+
+                    // reset to groups view
+                    SelectedSite = null;
+                    selectedCategory = null;
+                    selectedVideo = null;
+                    currentVideoList = new List<VideoInfo>();
+                    currentTrailerList = new List<VideoInfo>();
+                    currentNavigationContextSwitch = null;
+                    loadParamInfo = null;
+                    DisplayGroups();
+                }
+                else if (CurrentState != State.sites && !GroupsEnabled)
+                {
+                    // prevent message from beeing sent to MP core
+                    message.SendToTargetWindow = true;
+                    message.TargetWindowId = GetID;
+                    message.Param1 = GetID;
+                    message.Message = GUIMessage.MessageType.GUI_MSG_HIDE_MESSAGE;
+
+                    // reset to sites view
+                    selectedCategory = null;
+                    selectedVideo = null;
+                    currentVideoList = new List<VideoInfo>();
+                    currentTrailerList = new List<VideoInfo>();
+                    currentNavigationContextSwitch = null;
+                    loadParamInfo = null;
+                    DisplaySites();
+                }
+            }
+        }
+
+        void GUIWindowManager_OnNewAction(Action action)
         {
             if (currentPlaylist != null && g_Player.HasVideo && g_Player.Player.GetType().Assembly == typeof(GUIOnlineVideos).Assembly)
             {
@@ -2624,6 +2715,19 @@ namespace OnlineVideos.MediaPortal1
                             loDlgNotify.SetHeading(Translation.Instance.DownloadComplete);
                         loDlgNotify.SetText(string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""));
                         loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+                    }
+                }
+
+                // invoke VideoDownloaded event
+                if (VideoDownloaded != null)
+                {
+                    try
+                    {
+                        VideoDownloaded(saveItems.CurrentItem.LocalFile, saveItems.CurrentItem.Util.Settings.Name, saveItems.CurrentItem.Category.RecursiveName(), saveItems.CurrentItem.Title);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Instance.Warn("Error invoking external VideoDownloaded event handler: {0}", ex.ToString());
                     }
                 }
             }

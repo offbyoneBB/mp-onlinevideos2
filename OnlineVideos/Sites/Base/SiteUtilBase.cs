@@ -368,29 +368,28 @@ namespace OnlineVideos.Sites
         }
 
         /// <summary>
-        /// This function will be called when a contextmenu for a video is shown in the GUI. 
+        /// This function will be called when a contextmenu for a video or category is to be shown in the GUI. 
         /// Override it to add your own entries (which should be localized).
         /// </summary>
-        /// <param name="selectedCategory"></param>
-        /// <param name="selectedItem">when this is null the context menu was called on the category</param>
-        /// <returns>A list of string to be added to the context menu for the given VideoInfo.</returns>
-        public virtual List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        /// <param name="selectedCategory">either the <see cref="Category"/> to show the context menu for, or the <see cref="Category"/> of the video to show the context menu for</param>
+        /// <param name="selectedItem">when this is null the context menu is called on the <see cref="Category"/> otherwise on the <see cref="VideoInfo"/></param>
+        /// <returns>A list of <see cref="ContextMenuEntry"/> items to be added to the context menu.</returns>
+        public virtual List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
-            return new List<string>();
+            return new List<ContextMenuEntry>();
         }
 
         /// <summary>
         /// This function is called when one of the custom contextmenu entries was selected by the user.
         /// Override it to handle the entries you added with <see cref="GetContextMenuEntries"/>.
         /// </summary>
-        /// <param name="selectedCategory"></param>
-        /// <param name="selectedItem"></param>
-        /// <param name="choice"></param>
-        /// <returns>true, if videos for the current category need to be retrieved again</returns>
-        public virtual bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
+        /// <param name="selectedCategory">either the <see cref="Category"/> the context menu was shown for, or the <see cref="Category"/> of the video the context menu was shown for</param>
+        /// <param name="selectedItem">when this is null the context menu was called on the <see cref="Category"/> otherwise on the <see cref="VideoInfo"/></param>
+        /// <param name="choice">the <see cref="ContextMenuEntry"/> that was chosen by the user</param>
+        /// <returns>a <see cref="ContextMenuExecutionResult"/> telling the GUI how to react to the execution of the choice</returns>
+        public virtual ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
         {
-            newVideos = null;
-            return false;
+            return null;
         }
 
         # region static helper functions

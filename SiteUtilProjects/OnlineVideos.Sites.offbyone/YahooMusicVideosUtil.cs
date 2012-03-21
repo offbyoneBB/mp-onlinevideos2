@@ -331,38 +331,38 @@ namespace OnlineVideos.Sites
             return currentVideosTitle;
         }
 
-        public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
-            List<string> result = new List<string>();
+            List<ContextMenuEntry> result = new List<ContextMenuEntry>();
             if (selectedItem != null)
             {
-				result.Add(Translation.Instance.RelatedVideos);
+                result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.RelatedVideos, Action = ContextMenuEntry.UIAction.Execute });
             }
             return result;
         }
 
-        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
+        public override ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
         {
-            newVideos = null;
-			if (choice == Translation.Instance.RelatedVideos)
+            ContextMenuExecutionResult result = new ContextMenuExecutionResult();
+			if (choice.DisplayText == Translation.Instance.RelatedVideos)
             {
                 RssLink rememberedCategory = currentCategory;
 
                 currentCategory = new RssLink() { Url = selectedItem.VideoUrl, Name = "similar" };
                 currentStart = 1;
-                newVideos = GetVideoForCurrentCategory().ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                result.ResultItems = GetVideoForCurrentCategory().ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
 
-                if (newVideos.Count == 0)
+                if (result.ResultItems.Count == 0)
                 {
                     currentCategory = rememberedCategory;
-					throw new OnlineVideosException(Translation.Instance.NoVideoFound);
+                    result.ExecutionResultMessage = Translation.Instance.NoVideoFound;
                 }
                 else
                 {
 					currentVideosTitle = Translation.Instance.RelatedVideos + " [" + selectedItem.Title + "]";
                 }
             }
-            return false;
+            return result;
         }
 
         #endregion

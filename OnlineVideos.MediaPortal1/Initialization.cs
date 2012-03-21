@@ -75,7 +75,8 @@ namespace OnlineVideos.MediaPortal1
 			g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
 			g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
 			// attach to global action event, to handle next and previous for playlist playback
-			GUIWindowManager.OnNewAction += new OnActionHandler(this.GUIWindowManager_OnNewAction);
+			GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
+            GUIWindowManager.OnThreadMessageHandler += new GUIWindowManager.ThreadMessageHandler(GUIWindowManager_OnThreadMessageHandler);
 			if (GroupsEnabled) CurrentState = State.groups;
 			firstLoadDone = true;
 			DoSubsequentLoad();
