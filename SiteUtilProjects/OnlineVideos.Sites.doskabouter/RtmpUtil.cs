@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Web;
+using Newtonsoft.Json;
 using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
@@ -40,6 +42,16 @@ namespace OnlineVideos.Sites
             else
                 url = base.getUrl(video);
 
+            if (url.Contains(@"\/"))
+            {
+                try
+                {
+                    string deJSONified = JsonConvert.DeserializeObject<string>('"' + url + '"');
+                    if (!string.IsNullOrEmpty(deJSONified)) url = deJSONified;
+                }
+                catch { }
+            }
+
             RtmpUrl theUrl = new RtmpUrl(url.Split('?')[0]);
 
             Uri uri = new Uri(url);
@@ -58,6 +70,28 @@ namespace OnlineVideos.Sites
             if ((t = GetValue(token, paramsHash["token"])) != null) theUrl.Token = t;
 
             return theUrl.ToString();
+        }
+
+        public override List<VideoInfo> getVideoList(Category category)
+        {
+            List<VideoInfo> loVideoList = null;
+            if (category is RssLink)
+            {
+                return Parse(((RssLink)category).Url, null);
+            }
+            else if (category is Group)
+            {
+                loVideoList = new List<VideoInfo>();
+                foreach (Channel channel in ((Group)category).Channels)
+                {
+                    VideoInfo video = CreateVideoInfo();
+                    video.Title = channel.StreamName;
+                    video.VideoUrl = channel.Url;
+                    video.ImageUrl = channel.Thumb;
+                    loVideoList.Add(video);
+                }
+            }
+            return loVideoList;
         }
 
         private string GetValue(string configValue, string urlValue)
