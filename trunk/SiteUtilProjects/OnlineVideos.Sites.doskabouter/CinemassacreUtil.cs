@@ -115,6 +115,8 @@ namespace OnlineVideos.Sites
                                 thisUrl = null;
                             if (String.IsNullOrEmpty(thisUrl))
                                 thisUrl = GetSubString(data, @"<embed src=""", @"""");
+                            if (String.IsNullOrEmpty(thisUrl))
+                                thisUrl = GetSubString(data, @"<iframe src=""", @"""");
                         }
                     }
 
