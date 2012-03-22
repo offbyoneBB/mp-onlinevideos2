@@ -425,7 +425,9 @@ namespace OnlineVideos.Sites
             else // called for downloading
             {
                 string name = base.GetFileNameForDownload(video, category, url);
-                if (Path.GetExtension(name) == String.Empty) name += ".flv";
+                string extension = Path.GetExtension(name);
+                if (String.IsNullOrEmpty(extension) || !OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension))
+                    name += ".flv";
                 if (category.ParentCategory != null && !category.Other.Equals(Depth.BareList))
                 {
                     string season = category.Name.Split('(')[0];
