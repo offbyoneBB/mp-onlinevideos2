@@ -1865,6 +1865,76 @@
               <ZipFileName>Installer{CopyFile}\{d2e80a96-704d-47ff-b3cd-4926d324a9a0}-RTL2 Now.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL2 Now.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\treehouse tv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f6b57e69-61fa-4840-8068-b5b7c0e5914f}-treehouse tv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\treehouse tv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\tvo kids.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{cafbe22e-8764-4230-847e-7bca20647513}-tvo kids.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvo kids.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\tvo parents.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{77e2dae8-b790-411c-ac98-90e151e10599}-tvo parents.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvo parents.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\tvo.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{99fbcd16-3ae8-4987-a8e4-533c266d65b8}-tvo.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvo.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\ytv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4001b999-8c49-4cb9-ae2c-254ed9d050a7}-ytv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ytv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\treehouse tv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{a85c8628-8cb4-4111-87a2-d9c163180f65}-treehouse tv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\treehouse tv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\tvo kids.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d551712a-a686-4fae-9a15-46aec3aa0b2a}-tvo kids.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tvo kids.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\tvo parents.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3a3bddab-8761-49e8-87b0-b8013dcd5cd7}-tvo parents.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tvo parents.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\tvo.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3ccf3c99-3539-49ac-a85c-4dff25065642}-tvo.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tvo.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\ytv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2cf95e69-2668-4131-812b-3164450292f2}-ytv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ytv.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2274,6 +2344,13 @@
               <ZipFileName>Installer{CopyFile}\{f001cd84-2ae8-49a2-8e17-24782c8a5d9d}-disk.png</ZipFileName>
               <DestinationFilename>%Skin%\Default\Media\OnlineVideos\disk.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Default\myonlinevideos.extended.youtube.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0282e23e-8de1-4372-9c24-1d5ad919926d}-myonlinevideos.extended.youtube.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Default\myonlinevideos.extended.youtube.xml</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2395,6 +2472,13 @@
               <LocalFileName>..\Skins\DefaultWide\Media\OnlineVideos\disk.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{98c71aad-43da-486b-b7d6-b831d579d7e2}-disk.png</ZipFileName>
               <DestinationFilename>%Skin%\DefaultWide\Media\OnlineVideos\disk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\DefaultWide\myonlinevideos.extended.youtube.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{608daa63-eb94-4a6c-baba-26f26d7413ba}-myonlinevideos.extended.youtube.xml</ZipFileName>
+              <DestinationFilename>%Skin%\DefaultWide\myonlinevideos.extended.youtube.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2531,6 +2615,13 @@
               <ZipFileName>Installer{CopyFile}\{5d5e57bd-d8dd-4347-bd5e-265700e9ad8f}-avformat-mpurlsourcesplitter-54.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-54.dll</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Mms.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{eb08ee36-8c3f-4411-8960-bca86d6a3b78}-MPUrlSourceSplitter_Mms.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Mms.dll</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2539,6 +2630,15 @@
         <DisplayName>LAV Filters</DisplayName>
         <DefaulChecked>false</DefaulChecked>
         <Description>LAV Filters are a set of open-source DirectShow filters, aimed to play all modern media.</Description>
+        <Files>
+          <Items />
+        </Files>
+      </GroupItem>
+      <GroupItem Name="ExtensionsPlugin">
+        <ParentGroup>Plugin</ParentGroup>
+        <DisplayName>Extensions Plugin</DisplayName>
+        <DefaulChecked>false</DefaulChecked>
+        <Description>The Extensions Plugin allows configuration and update of OnlineVideos (and other Plugins) from within MediaPortal.</Description>
         <Files>
           <Items />
         </Files>
@@ -2620,6 +2720,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
           <string>GenericSiteTool</string>
           <string>TrailerButton</string>
           <string>LAVFilters</string>
+          <string>ExtensionsPlugin</string>
         </IncludedGroups>
         <PanelName>Tree View Selector</PanelName>
         <WizardButtonsEnum>BackNextCancel</WizardButtonsEnum>
@@ -2856,6 +2957,23 @@ public class Script
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
+            <ActionItem Name="Extensions Plugin Installer" ActionType="Extension Installer" ConditionGroup="ExtensionsPlugin">
+              <Params>
+                <Items>
+                  <SectionParam Name="Extension package">
+                    <Value>Extensions.1.0.5.163.mpe1</Value>
+                    <ValueType>File</ValueType>
+                    <Description>Location of the extension package</Description>
+                  </SectionParam>
+                  <SectionParam Name="Silent Install">
+                    <Value>YES</Value>
+                    <ValueType>Bool</ValueType>
+                    <Description>Silent install, No wizard screen will be displayed </Description>
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
+            </ActionItem>
           </Items>
         </Actions>
         <IncludedGroups />
@@ -2934,11 +3052,11 @@ public class Script
         </CompatibleVersion>
         <SubSystemsUsed>
           <Items>
+            <SubSystemItem Name="MP.Input" />
             <SubSystemItem Name="MP.SkinEngine" />
             <SubSystemItem Name="MP.Players.Video" />
-            <SubSystemItem Name="MP.Input" />
-            <SubSystemItem Name="MP.Externals.SQLite" />
             <SubSystemItem Name="MP.Config" />
+            <SubSystemItem Name="MP.Externals.SQLite" />
           </Items>
         </SubSystemsUsed>
       </PluginDependencyItem>
@@ -2962,7 +3080,7 @@ public class Script
 added: allow refresh rate adaption according to FPS and settings in MediaPortal</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.1.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2012-02-18T11:00:00</ReleaseDate>
+    <ReleaseDate>2012-02-24T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -4854,6 +4972,76 @@ added: allow refresh rate adaption according to FPS and settings in MediaPortal<
         <ZipFileName>Installer{CopyFile}\{d2e80a96-704d-47ff-b3cd-4926d324a9a0}-RTL2 Now.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL2 Now.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\treehouse tv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f6b57e69-61fa-4840-8068-b5b7c0e5914f}-treehouse tv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\treehouse tv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\tvo kids.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{cafbe22e-8764-4230-847e-7bca20647513}-tvo kids.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvo kids.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\tvo parents.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{77e2dae8-b790-411c-ac98-90e151e10599}-tvo parents.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvo parents.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\tvo.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{99fbcd16-3ae8-4987-a8e4-533c266d65b8}-tvo.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvo.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\ytv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4001b999-8c49-4cb9-ae2c-254ed9d050a7}-ytv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ytv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\treehouse tv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{a85c8628-8cb4-4111-87a2-d9c163180f65}-treehouse tv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\treehouse tv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\tvo kids.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d551712a-a686-4fae-9a15-46aec3aa0b2a}-tvo kids.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tvo kids.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\tvo parents.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3a3bddab-8761-49e8-87b0-b8013dcd5cd7}-tvo parents.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tvo parents.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\tvo.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3ccf3c99-3539-49ac-a85c-4dff25065642}-tvo.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tvo.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\ytv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2cf95e69-2668-4131-812b-3164450292f2}-ytv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ytv.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -5228,6 +5416,13 @@ added: allow refresh rate adaption according to FPS and settings in MediaPortal<
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Default\myonlinevideos.extended.youtube.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0282e23e-8de1-4372-9c24-1d5ad919926d}-myonlinevideos.extended.youtube.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Default\myonlinevideos.extended.youtube.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Skins\DefaultWide\myonlinevideosFullScreen.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{3afc9b06-da28-4365-a581-c2fc7871e584}-myonlinevideosFullScreen.xml</ZipFileName>
         <DestinationFilename>%Skin%\DefaultWide\myonlinevideosFullScreen.xml</DestinationFilename>
@@ -5337,6 +5532,13 @@ added: allow refresh rate adaption according to FPS and settings in MediaPortal<
         <ZipFileName>Installer{CopyFile}\{98c71aad-43da-486b-b7d6-b831d579d7e2}-disk.png</ZipFileName>
         <DestinationFilename>%Skin%\DefaultWide\Media\OnlineVideos\disk.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\DefaultWide\myonlinevideos.extended.youtube.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{608daa63-eb94-4a6c-baba-26f26d7413ba}-myonlinevideos.extended.youtube.xml</ZipFileName>
+        <DestinationFilename>%Skin%\DefaultWide\myonlinevideos.extended.youtube.xml</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
@@ -5442,6 +5644,13 @@ added: allow refresh rate adaption according to FPS and settings in MediaPortal<
         <ZipFileName>Installer{CopyFile}\{5d5e57bd-d8dd-4347-bd5e-265700e9ad8f}-avformat-mpurlsourcesplitter-54.dll</ZipFileName>
         <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-54.dll</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Mms.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{eb08ee36-8c3f-4411-8960-bca86d6a3b78}-MPUrlSourceSplitter_Mms.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Mms.dll</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
@@ -5454,6 +5663,13 @@ added: allow refresh rate adaption according to FPS and settings in MediaPortal<
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>LAV\LAVFilters0.49.0.0.mpe1</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{bf87ba97-6256-4de1-a678-87cf2759385a}-LAVFilters0.49.0.0.mpe1</ZipFileName>
+        <DestinationFilename />
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>Extensions.1.0.5.163.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{32ccb45a-d734-46c5-9e83-38ecac610f60}-Extensions.1.0.5.163.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
