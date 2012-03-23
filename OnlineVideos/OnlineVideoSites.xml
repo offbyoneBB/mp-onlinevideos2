@@ -115,10 +115,10 @@
         <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass="show">\s*<figure>\s*<a\s+href="(?<url>[^"]+)"[^>]+>\s*<img\s+src="(?<thumb>[^"]+)"[^>]*>\s*<span[^>]*>\s*<span[^>]*>(?<description>.*?)</span>]]></item>
         <item key="dynamicCategoriesRegEx2"><![CDATA[(?<=<ul\s+class="sub_show">.*)(?<!</ul>\s*</section>.*)<li[^>]*>\s*<a\s+href="(?<url>[^"]+)"[^>]*>(?<title>[^<]*)</a>\s*</li>]]></item>
         <item key="videoListRegEx"><![CDATA[(<div\s+class="video_teaser[^"]*">\s*
-<figure\s+class="image">\s*<a\s+href="(?<VideoUrl>[^"]+)"\s*>\s*
-<img\s+src="(?<ImageUrl>[^"]+)"[^>]*>.*?</figure>.*?<span\s+class="length[^>]*>(?<Duration>.*?)</span>\s*
-<span\s+class="title">(?<Title>.*?)</span>)
-|(<a\s+href="(?<VideoUrl>[^"]+)"\s*>\s*<figure>\s*<img\s+src="(?<ImageUrl>[^"]+)".*?title="(?<Title>[^"]*)"[^>]*>.*?</figure>\s*</a>)]]></item>
+<figure\s+class="teaserimage[^"]*">\s*<a\s+href="(?<VideoUrl>[^"]+)"\s*>\s*
+<img\s+src="(?<ImageUrl>[^"]+)"(.*?data-src="(?<ImageUrl>[^"]+)")?[^>]*>.*?</figure>.*?<span\s+class="length[^>]*>(?<Duration>.*?)<span[^>]*>(?<Airdate>[^<]*)</span>\s*</span>\s*
+<span\s+class="title">(<a[^>]*>)?(\s*<strong>\s*)?(?<Title>.*?)(\s*</strong>\s*)?(</a>)?\s*</span>)
+|(<a\s+href="(?<VideoUrl>[^"]+)"\s*>\s*<figure[^>]*>\s*<img\s+src="(?<ImageUrl>[^"]+)".*?title="(?<Title>[^"]*)"[^>]*>.*?</figure>\s*</a>)]]></item>
       </Configuration>
     </Site>
     <Site name="Pro7" util="Pro7" agecheck="false" enabled="true" lang="de">
