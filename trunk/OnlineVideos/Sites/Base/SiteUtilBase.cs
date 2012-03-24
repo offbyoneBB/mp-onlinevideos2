@@ -489,8 +489,10 @@ namespace OnlineVideos.Sites
             HttpWebResponse response = null;
             try
             {
+                string requestCRC = Utils.EncryptLine(string.Format("{0}{1}{2}{3}{4}", url, referer, userAgent, proxy != null ? proxy.GetProxy(new Uri(url)).AbsoluteUri : "", cc != null ? cc.GetCookieHeader(new Uri(url)) : ""));
+
                 // try cache first
-                string cachedData = WebCache.Instance[url];
+                string cachedData = WebCache.Instance[requestCRC];
 				Log.Debug("GetWebData{1}: '{0}'", url, cachedData != null ? " (cached)" : "");
                 if (cachedData != null) return cachedData;
 
@@ -538,7 +540,7 @@ namespace OnlineVideos.Sites
                 {
                     string str = reader.ReadToEnd().Trim();
                     // add to cache if HTTP Status was 200 and we got more than 500 bytes (might just be an errorpage otherwise)
-                    if (response.StatusCode == HttpStatusCode.OK && str.Length > 500) WebCache.Instance[url] = str;
+                    if (response.StatusCode == HttpStatusCode.OK && str.Length > 500) WebCache.Instance[requestCRC] = str;
                     return str;
                 }
             }
