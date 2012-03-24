@@ -11,6 +11,46 @@ namespace OnlineVideos.Sites.georgius
 {
     public class MarkizaUtil : SiteUtilBase
     {
+        private class CategoryShowsRegex
+        {
+            #region Private fields
+            #endregion
+
+            #region Constructors
+
+            public CategoryShowsRegex()
+                : base()
+            {
+                this.CategoryNames = new List<string>();
+                this.ShowsBlockStart = String.Empty;
+                this.ShowsBlockEnd = String.Empty;
+                this.ShowStart = String.Empty;
+                this.ShowEnd = String.Empty;
+                this.ShowsNextPageRegex = String.Empty;
+                this.ShowThumbUrlRegex = String.Empty;
+                this.ShowUrlAndTitleRegex = String.Empty;
+                this.ShowDescriptionStart = String.Empty;
+                this.ShowDescriptionEnd = String.Empty;
+            }
+
+            #endregion
+
+            #region Properties
+
+            public List<String> CategoryNames { get; set; }
+            public String ShowsBlockStart { get; set; }
+            public String ShowsBlockEnd { get; set; }
+            public String ShowStart { get; set; }
+            public String ShowEnd { get; set; }
+            public String ShowThumbUrlRegex { get; set; }
+            public String ShowUrlAndTitleRegex { get; set; }
+            public String ShowDescriptionStart { get; set; }
+            public String ShowDescriptionEnd { get; set; }
+            public String ShowsNextPageRegex { get; set; }
+
+            #endregion
+        }
+
         #region Private fields
 
         private static String baseUrl = @"http://voyo.markiza.sk";
@@ -21,16 +61,36 @@ namespace OnlineVideos.Sites.georgius
         private static String categoryEnd = @"</li>";
         private static String categoryUrlAndTitleRegex = @"<a href=""(?<categoryUrl>[^""]+)"" title=""(?<categoryTitle>[^<]+)""";
 
-        private static String showsStart = @"<div class=""productsList"">";
-        private static String showsEnd = @"<div class=""body"">";
-        private static String showStart = @"<div class='section_item'>";
-        private static String showEnd = @"<div class='clearer'>";
-        private static String showNextPageRegex = @"<a href='(?<nextPageUrl>[^']*)' onclick='[^']*'>&gt;</a>";
+        private static List<CategoryShowsRegex> categoriesAndShows = new List<CategoryShowsRegex>()
+        {
+            new CategoryShowsRegex()
+            {
+                CategoryNames = new List<string>() { "Filmy" },
+                ShowsBlockStart = @"<div class=""productsList"">",
+                ShowsBlockEnd = @"<div class=""body"">",
+                ShowStart = @"<div class='section_item'>",
+                ShowEnd = @"<div class='clearer'>",
+                ShowThumbUrlRegex = @"<img src='(?<showThumbUrl>[^']*)",
+                ShowUrlAndTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>",
+                ShowDescriptionStart = @"<div class=""padding"" >",
+                ShowDescriptionEnd = @"</div>",
+                ShowsNextPageRegex = @"<a href='(?<nextPageUrl>[^']*)' onclick='[^']*'>&gt;</a>"
+            },
 
-        private static String showThumbUrlRegex = @"<img src='(?<showThumbUrl>[^']*)";
-        private static String showUrlAndTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>";
-        private static String showDescriptionStart = @"<div class=""padding"" >";
-        private static String showDescriptionEnd = @"</div>";
+            new CategoryShowsRegex()
+            {
+                CategoryNames = new List<string>(),
+                ShowsBlockStart = @"<div class=""box tv-broadcast-list"">",
+                ShowsBlockEnd = @"<div class=""clear"">",
+                ShowStart = @"<div class=""item"">",
+                ShowEnd = @"</h2>",
+                ShowThumbUrlRegex = @"<img src=""(?<showThumbUrl>[^""]*)",
+                ShowUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]*)"" title=""(?<showTitle>[^""]*)",
+                ShowDescriptionStart = @"<div class=""padding"" >",
+                ShowDescriptionEnd = @"</div>",
+                ShowsNextPageRegex = @"<a href='(?<nextPageUrl>[^']*)' onclick='[^']*'>&gt;</a>"
+            }
+        };
 
         private static String showEpisodesStart = @"<div class=""productsList"">";
 
@@ -178,16 +238,27 @@ namespace OnlineVideos.Sites.georgius
 
             String baseWebData = SiteUtilBase.GetWebData(url, null, null, null, true);
 
-            int startIndex = baseWebData.IndexOf(MarkizaUtil.showsStart);
+            // find shows
+            CategoryShowsRegex categoryShow = null;
+            foreach (var categoryAndShow in MarkizaUtil.categoriesAndShows)
+            {
+                if ((categoryAndShow.CategoryNames.Contains(parentCategory.Name)) || (categoryAndShow.CategoryNames.Count == 0))
+                {
+                    categoryShow = categoryAndShow;
+                    break;
+                }
+            }
+
+            int startIndex = baseWebData.IndexOf(categoryShow.ShowsBlockStart);
             if (startIndex >= 0)
             {
-                int endIndex = baseWebData.IndexOf(MarkizaUtil.showsEnd, startIndex);
+                int endIndex = baseWebData.IndexOf(categoryShow.ShowsBlockEnd, startIndex);
                 if (endIndex >= 0)
                 {
                     baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
                     String baseUrl = url;
 
-                    Match match = Regex.Match(baseWebData, MarkizaUtil.showNextPageRegex);
+                    Match match = Regex.Match(baseWebData, categoryShow.ShowsNextPageRegex);
                     if (match.Success)
                     {
                         url = Utils.FormatAbsoluteUrl(match.Groups["nextPageUrl"].Value, url);
@@ -199,10 +270,10 @@ namespace OnlineVideos.Sites.georgius
 
                     while (true)
                     {
-                        startIndex = baseWebData.IndexOf(MarkizaUtil.showStart);
+                        startIndex = baseWebData.IndexOf(categoryShow.ShowStart);
                         if (startIndex >= 0)
                         {
-                            endIndex = baseWebData.IndexOf(MarkizaUtil.showEnd, startIndex);
+                            endIndex = baseWebData.IndexOf(categoryShow.ShowEnd, startIndex);
                             if (endIndex >= 0)
                             {
                                 String showData = baseWebData.Substring(startIndex, endIndex - startIndex);
@@ -212,26 +283,26 @@ namespace OnlineVideos.Sites.georgius
                                 String showUrl = String.Empty;
                                 String showDescription = String.Empty;
 
-                                match = Regex.Match(showData, MarkizaUtil.showThumbUrlRegex);
+                                match = Regex.Match(showData, categoryShow.ShowThumbUrlRegex);
                                 if (match.Success)
                                 {
                                     showThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showThumbUrl"].Value, baseUrl);
                                 }
 
-                                match = Regex.Match(showData, MarkizaUtil.showUrlAndTitleRegex);
+                                match = Regex.Match(showData, categoryShow.ShowUrlAndTitleRegex);
                                 if (match.Success)
                                 {
                                     showUrl = Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, baseUrl);
                                     showTitle = HttpUtility.HtmlDecode(match.Groups["showTitle"].Value);
                                 }
 
-                                int descriptionStart = showData.IndexOf(MarkizaUtil.showDescriptionStart);
+                                int descriptionStart = showData.IndexOf(categoryShow.ShowDescriptionStart);
                                 if (descriptionStart >= 0)
                                 {
-                                    int descriptionEnd = showData.IndexOf(MarkizaUtil.showDescriptionEnd, descriptionStart);
+                                    int descriptionEnd = showData.IndexOf(categoryShow.ShowDescriptionEnd, descriptionStart);
                                     if (descriptionEnd >= 0)
                                     {
-                                        showDescription = OnlineVideos.Utils.PlainTextFromHtml(HttpUtility.HtmlDecode(showData.Substring(descriptionStart + MarkizaUtil.showDescriptionStart.Length, descriptionEnd - descriptionStart - MarkizaUtil.showDescriptionStart.Length)));
+                                        showDescription = OnlineVideos.Utils.PlainTextFromHtml(HttpUtility.HtmlDecode(showData.Substring(descriptionStart + categoryShow.ShowDescriptionStart.Length, descriptionEnd - descriptionStart - categoryShow.ShowDescriptionStart.Length)));
                                     }
                                 }
 
@@ -248,7 +319,7 @@ namespace OnlineVideos.Sites.georgius
                                     showsCount++;
                                 }
 
-                                baseWebData = baseWebData.Substring(endIndex + MarkizaUtil.showEnd.Length);
+                                baseWebData = baseWebData.Substring(endIndex + categoryShow.ShowEnd.Length);
                             }
                             else
                             {
