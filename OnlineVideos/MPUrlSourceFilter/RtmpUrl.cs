@@ -512,7 +512,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         // default values for some parameters
 
         /// <summary>
-        /// Default receive data timeout of MediaPortal Url Sorce Splitter.
+        /// Default receive data timeout of MediaPortal Url Source Splitter.
         /// </summary>
         /// <remarks>
         /// The value is in milliseconds. The default value is 20000.
