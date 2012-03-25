@@ -8,6 +8,8 @@
   <string Field="All">Alle</string>
   <string Field="Actions">Akties</string>
   <string Field="Actors">Acteurs</string>
+  <string Field="AddComment">Voeg opmerking toe</string>
+  <string Field="AddToPlaylist">Voeg toe aan afspeellijst</string>
   <string Field="AddToMySites">Toevoegen aan mijn sites</string>
   <string Field="AddToFavourites">Toevoegen aan favorieten</string>
   <string Field="AddingToFavorites">bij het toevoegen aan favorieten</string>
@@ -20,6 +22,7 @@
   <string Field="CategoryNotFound">Categorie niet gevonden</string>
   <string Field="Categories">Categoriën</string>
   <string Field="Creator">Maker</string>
+  <string Field="CreateNewPlaylist">Maak nieuwe afspeellijst</string>
   <string Field="CheckingForPluginUpdate">Testen op geupdate plugin versie</string>
   <string Field="Concurrent">Tegelijkertijd</string>
   <string Field="Date">Datum</string>
@@ -37,6 +40,7 @@
   <string Field="DownloadedVideos">Gedownloade videos</string>
   <string Field="DownloadsWillBeAborted">De downloads worden geannuleerd</string>
   <string Field="Delete">Verwijderen</string>
+  <string Field="DeletePlaylist">Verwijder afspeellijst</string>
   <string Field="DeleteAll">Alles verwijderen</string>
   <string Field="Default">Standaard</string>
   <string Field="Done">Gereed</string>
@@ -91,8 +95,10 @@
   <string Field="PreviousPage">Vorige pagina</string>
   <string Field="PerformAutomaticUpdate">Automatische update uitvoeren?</string>
   <string Field="Queued">in de wachtrij</string>
+  <string Field="RateVideo">Beoordeel video</string>
   <string Field="Recommendations">Aanbevelingen</string>
   <string Field="RemoveFromFavorites">Verwijderen uit favorieten</string>
+  <string Field="RemoveFromPlaylist">Verwijder van afspeellijst</string>
   <string Field="RemovingFromFavorites">bij het verwijderen uit de favorieten</string>
   <string Field="Refresh">Verversen</string>
   <string Field="RelatedVideos">Gerelateerde videos</string>
