@@ -2160,35 +2160,53 @@ namespace OnlineVideos.MediaPortal1
             // create playlist entries if more than one url
             if (loUrlList.Count > 1)
             {
-                Player.PlayList playbackItems = new Player.PlayList();
-                foreach (string url in loUrlList)
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-                    VideoInfo vi = playItem.Video.CloneForPlayList(url, url == loUrlList[0]);
-                    string url_new = url;
-                    if (url == loUrlList[0])
+                    Player.PlayList playbackItems = new Player.PlayList();
+                    foreach (string url in loUrlList)
                     {
-                        url_new = SelectedSite.getPlaylistItemUrl(vi, string.Empty, currentPlaylist != null && currentPlaylist.IsPlayAll);
+                        VideoInfo vi = playItem.Video.CloneForPlayList(url, url == loUrlList[0]);
+                        string url_new = url;
+                        if (url == loUrlList[0])
+                        {
+                            url_new = SelectedSite.getPlaylistItemUrl(vi, string.Empty, currentPlaylist != null && currentPlaylist.IsPlayAll);
+                        }
+                        PlayListItem pli = new PlayListItem(string.Format("{0} - {1} / {2}", playItem.Video.Title, (playbackItems.Count + 1).ToString(), loUrlList.Count), url_new);
+                        pli.Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream;
+                        pli.Video = vi;
+                        pli.Util = playItem.Util;
+                        pli.ForcedPlayer = playItem.ForcedPlayer;
+                        playbackItems.Add(pli);
                     }
-                    PlayListItem pli = new PlayListItem(string.Format("{0} - {1} / {2}", playItem.Video.Title, (playbackItems.Count + 1).ToString(), loUrlList.Count), url_new);
-                    pli.Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream;
-                    pli.Video = vi;
-                    pli.Util = playItem.Util;
-                    pli.ForcedPlayer = playItem.ForcedPlayer;
-                    playbackItems.Add(pli);
-                }
-                if (currentPlaylist == null)
+                    if (currentPlaylist == null)
+                    {
+                        currentPlaylist = playbackItems;
+                    }
+                    else
+                    {
+                        int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
+                        currentPlaylist.InsertRange(currentPlaylistIndex, playbackItems);
+                    }
+                    // make the first item the current to be played now
+                    playItem = playbackItems[0];
+                    loUrlList = new List<string>(new string[] { playItem.FileName });
+                    return null;
+                },
+                delegate(bool success, object result)
                 {
-                    currentPlaylist = playbackItems;
+                    if (success) Play_Step3(playItem, loUrlList, goFullScreen, skipPlaybackOptionsDialog);
+                    else currentPlaylist = null;
                 }
-                else
-                {
-                    int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
-                    currentPlaylist.InsertRange(currentPlaylistIndex, playbackItems);
-                }
-                // make the first item the current to be played now
-                playItem = playbackItems[0];
-                loUrlList = new List<string>(new string[] { playItem.FileName });
+                , Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
+            else
+            {
+                Play_Step3(playItem, loUrlList, goFullScreen, skipPlaybackOptionsDialog);
+            }
+        }
+
+        private void Play_Step3(PlayListItem playItem, List<String> loUrlList, bool goFullScreen, bool skipPlaybackOptionsDialog)
+        {
             // if multiple quality choices are available show a selection dialogue (also on playlist playback)
             string lsUrl = loUrlList[0];
             bool resolve = DisplayPlaybackOptions(playItem.Video, ref lsUrl, skipPlaybackOptionsDialog); // resolve only when any playbackoptions were set
@@ -2203,17 +2221,17 @@ namespace OnlineVideos.MediaPortal1
                 },
                 delegate(bool success, object result)
                 {
-                    if (success) Play_Step3(playItem, result as string, goFullScreen);
+                    if (success) Play_Step4(playItem, result as string, goFullScreen);
                 }
-				, Translation.Instance.GettingPlaybackUrlsForVideo, true);
+                , Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
             else
             {
-                Play_Step3(playItem, lsUrl, goFullScreen);
+                Play_Step4(playItem, lsUrl, goFullScreen);
             }
         }
 
-        void Play_Step3(PlayListItem playItem, string lsUrl, bool goFullScreen)
+        void Play_Step4(PlayListItem playItem, string lsUrl, bool goFullScreen)
         {
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(lsUrl) ||
@@ -2240,7 +2258,7 @@ namespace OnlineVideos.MediaPortal1
             if (factory.PreparedPlayerType != PlayerType.Internal)
             {
                 // external players can only be created on the main thread
-                Play_Step4(playItem, lsUrl, goFullScreen, factory, true);
+                Play_Step5(playItem, lsUrl, goFullScreen, factory, true);
             }
             else
             {
@@ -2273,12 +2291,12 @@ namespace OnlineVideos.MediaPortal1
                         },
                         delegate(bool success, object result)
                         {
-                            Play_Step4(playItem, lsUrl, goFullScreen, factory, result as bool?);
+                            Play_Step5(playItem, lsUrl, goFullScreen, factory, result as bool?);
                         },
 						Translation.Instance.StartingPlayback, false);
                         break;
                     case false:// play without buffering in background
-                        Play_Step4(playItem, lsUrl, goFullScreen, factory, prepareResult);
+                        Play_Step5(playItem, lsUrl, goFullScreen, factory, prepareResult);
                         break;
                     default: // error building graph
                         GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
@@ -2295,7 +2313,7 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        void Play_Step4(PlayListItem playItem, string lsUrl, bool goFullScreen, OnlineVideos.MediaPortal1.Player.PlayerFactory factory, bool? factoryPrepareResult)
+        void Play_Step5(PlayListItem playItem, string lsUrl, bool goFullScreen, OnlineVideos.MediaPortal1.Player.PlayerFactory factory, bool? factoryPrepareResult)
         {
             if (factoryPrepareResult == null)
             {
@@ -2335,18 +2353,18 @@ namespace OnlineVideos.MediaPortal1
                     },
                     delegate(bool success, object result)
                     {
-                        Play_Step5(playItem, lsUrl, factory);
+                        Play_Step6(playItem, lsUrl, factory);
                     },
 					Translation.Instance.DownloadingSubtitle, true);
                 }
                 else
                 {
-                    Play_Step5(playItem, lsUrl, factory);
+                    Play_Step6(playItem, lsUrl, factory);
                 }
             }
         }
 
-        private void Play_Step5(PlayListItem playItem, string lsUrl, OnlineVideos.MediaPortal1.Player.PlayerFactory factory)
+        private void Play_Step6(PlayListItem playItem, string lsUrl, OnlineVideos.MediaPortal1.Player.PlayerFactory factory)
         {
             IPlayerFactory savedFactory = g_Player.Factory;
             g_Player.Factory = factory;
