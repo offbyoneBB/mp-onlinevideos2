@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ComponentModel;
 
 namespace OnlineVideos.MPUrlSourceFilter
 {
@@ -90,6 +91,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// The default value is <see langword="null"/>.
         /// </para>
         /// </remarks>
+        [Category("librtmp"), Description("Name of application to connect to on the RTMP server. Sometimes the librtmp URL parser cannot determine the app name automatically, so it must be given explicitly using this option.")]
         public String App { get; set; }
 
         /// <summary>
@@ -100,6 +102,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// The default value is empty collection.
         /// </para>
         /// </remarks>
+        [Category("librtmp"), Description("Arbitrary Data appended to the connect packet.")]
         public RtmpArbitraryDataCollection ArbitraryData
         {
             get { return this.arbitraryData; }
@@ -116,6 +119,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// The default value is <see langword="null"/>.
         /// </para>
         /// </remarks>
+        [Category("librtmp"), Description("The URL of the target stream. If not set, rtmp[t][e|s]://host[:port]/app is used.")]
         public String TcUrl { get; set; }
 
         /// <summary>
@@ -129,6 +133,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// The default value is <see langword="null"/>.
         /// </para>
         /// </remarks>
+        [Category("librtmp"), Description("The URL of the web page in which the media was embedded.")]
         public String PageUrl { get; set; }
 
         /// <summary>
@@ -138,6 +143,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>If is <see langword="null"/> then no value will be sent.</para>
         /// <para>The default value is <see langword="null"/>.</para>
         /// </remarks>
+        [Category("librtmp"), Description("URL of the SWF player for the media. Used for SWF Verification.")]
         public String SwfUrl { get; set; }
 
         /// <summary>
@@ -147,6 +153,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>If is <see langword="null"/> then "WIN 10,0,32,18" is sent.</para>
         /// <para>The default value is <see langword="null"/>.</para>
         /// </remarks>
+        [Category("librtmp"), Description("The version of the Flash plugin used to run the SWF player. Default is 'WIN 10,0,32,18'")]
         public String FlashVersion { get; set; }
 
         /// <summary>
@@ -155,6 +162,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <remarks>
         /// <para>The default value is <see langword="null"/>.</para>
         /// </remarks>
+        [Category("librtmp"), Description("Authentication string to be appended to the connect string.")]
         public String Auth { get; set; }
 
         /// <summary>
@@ -168,6 +176,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// </para>
         /// <para>The default value is <see langword="null"/>.</para>
         /// </remarks>
+        [Category("librtmp"), Description("Overrides playpath that is parsed from RTMP URL, as sometimes the librtmp URL parser cannot determine the correct playpath automatically.")]
         public String PlayPath { get; set; }
 
         /// <summary>
@@ -181,6 +190,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// </para>
         /// <para>The default value is <see langword="false"/>.</para>
         /// </remarks>
+        [Category("librtmp"), DefaultValue(false), Description("When true the set_playlist command has to be sent before the play command.")]
         public Boolean Playlist { get; set; }
 
         /// <summary>
@@ -190,6 +200,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>No resuming or seeking in live streams is possible.</para>
         /// <para>The default value is <see langword="false"/>.</para>
         /// </remarks>
+        [Category("librtmp"), DefaultValue(false), Description("Has to be set to true when the media is a live stream.")]
         public Boolean Live { get; set; }
 
         /// <summary>
@@ -203,6 +214,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// The default value is <see langword="null"/>.
         /// </para>
         /// </remarks>
+        [Category("librtmp"), Description("Name of live stream to subscribe to - defaults to playpath.")]
         public String Subscribe { get; set; }
 
         /// <summary>
@@ -212,6 +224,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>Start at seconds into the stream. Not valid for live streams.</para>
         /// <para>The default value is <see cref="uint"/>.<see cref="uint.MaxValue"/>, which means that value is not set.</para>
         /// </remarks>
+        [Category("librtmp"), DefaultValue(uint.MaxValue), Description("Start at seconds into the stream. Not valid for live streams.")]
         public uint Start { get; set; }
 
         /// <summary>
@@ -221,6 +234,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>Stop at seconds into the stream.</para>
         /// <para>The default value is <see cref="uint"/>.<see cref="uint.MaxValue"/>, which means that value is not set.</para>
         /// </remarks>
+        [Category("librtmp"), DefaultValue(uint.MaxValue), Description("Stop at seconds into the stream.")]
         public uint Stop { get; set; }
 
         /// <summary>
@@ -230,6 +244,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>Buffer time is in milliseconds.</para>
         /// <para>The default value is <see cref="RtmpUrl.DefaultBufferTime"/>.</para>
         /// </remarks>
+        [Category("librtmp"), DefaultValue(DefaultBufferTime), Description("milliseconds to buffer")]
         public uint BufferTime { get; set; }
 
         /// <summary>
@@ -243,6 +258,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// The default value is <see langword="null"/>.
         /// </para>
         /// </remarks>
+        [Category("librtmp"), Description("The key for SecureToken response if the server requires SecureToken authentication.")]
         public String Token { get; set; }
 
         /// <summary>
@@ -252,6 +268,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>JSON token used by legacy Justin.tv servers. Invokes NetStream.Authenticate.UsherToken.</para>
         /// <para>The default value is <see langword="null"/>.</para>
         /// </remarks>
+        [Category("librtmp"), Description("The JSON token used by legacy Justin.tv servers. Invokes NetStream.Authenticate.UsherToken.")]
         public String Jtv { get; set; }
 
         /// <summary>
@@ -271,6 +288,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// The default value is <see cref="RtmpUrl.DefaultSwfVerify"/>.
         /// </para>
         /// </remarks>
+        [Category("librtmp"), DefaultValue(DefaultSwfVerify), Description("If true, the SWF player is retrieved from the specified SwfUrl for performing SWF verification. The SWF hash and size (used in the verification step) are computed automatically.")]
         public Boolean SwfVerify { get; set; }
 
         /// <summary>
@@ -287,6 +305,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// The default value is <see cref="RtmpUrl.DefaultSwfAge"/>.
         /// </para>
         /// </remarks>
+        [Category("librtmp"), DefaultValue(DefaultSwfAge), Description("Specify how many days to use the cached SWF info before re-checking.")]
         public uint SwfAge { get; set; }
 
         /// <summary>
@@ -298,6 +317,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <remarks>
         /// The value is in milliseconds.
         /// </remarks>
+        [Category("librtmp"), DefaultValue(RtmpUrl.DefaultReceiveDataTimeout), Description("receive data timeout in milliseconds.")]
         public int ReceiveDataTimeout
         {
             get { return this.receiveDataTimeout; }
@@ -318,6 +338,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <exception cref="ArgumentOutOfRangeException">
         /// <para>The <see cref="OpenConnectionMaximumAttempts"/> is less than zero.</para>
         /// </exception>
+        [Category("MPUrlSourceSplitter"), DefaultValue(RtmpUrl.DefaultOpenConnectionMaximumAttempts), Description("The maximum attempts of opening connection to remote server.")]
         public int OpenConnectionMaximumAttempts
         {
             get { return this.openConnectionMaximumAttempts; }
@@ -421,7 +442,6 @@ namespace OnlineVideos.MPUrlSourceFilter
                 parameters.Add(new Parameter(RtmpUrl.ParameterSubscribe, this.Subscribe));
             }
 
-
             if (this.SwfAge != RtmpUrl.DefaultSwfAge)
             {
                 parameters.Add(new Parameter(RtmpUrl.ParameterSwfAge, this.SwfAge.ToString()));
@@ -450,6 +470,52 @@ namespace OnlineVideos.MPUrlSourceFilter
 			// return formatted connection string
 			return base.ToString() + ParameterCollection.ParameterSeparator + parameters.FilterParameters;
 		}
+
+        /// <summary>
+        /// Parses back a string that was created via <see cref="ToString"/> into a <see cref="RtmpUrl"/> instance with all the parameters.
+        /// </summary>
+        /// <param name="url">The Url string to parse.</param>
+        /// <returns>A <see cref="RtmpUrl"/> instance with the parameters from the url.</returns>
+        public static RtmpUrl Parse(string url)
+        {
+            if (!url.Contains(SimpleUrl.ParameterSeparator)) return new RtmpUrl(url);
+            else
+            {
+                string[] url_split = url.Split(new string[] {SimpleUrl.ParameterSeparator}, StringSplitOptions.None);
+                RtmpUrl rtmpUrl = new RtmpUrl(url_split[0]);
+                string[] parameters = url_split[1].Split(new string[] { ParameterCollection.ParameterSeparator }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string parameter in parameters)
+                {
+                    string[] param_value = parameter.Split(new string[] { Parameter.ParameterAssign }, StringSplitOptions.None);
+                    string paramName = param_value[0];
+                    string paramValue = System.Web.HttpUtility.UrlDecode(param_value[1]);
+                    if (paramName == RtmpUrl.ParameterApp) rtmpUrl.App = paramValue;
+                    else if (paramName == RtmpUrl.ParameterBufferTime) rtmpUrl.BufferTime = uint.Parse(paramValue);
+                    else if (paramName == RtmpUrl.ParameterFlashVer) rtmpUrl.FlashVersion = paramValue;
+                    else if (paramName == RtmpUrl.ParameterAuth) rtmpUrl.Auth = paramValue;
+                    else if (paramName == RtmpUrl.ParameterJtv) rtmpUrl.Jtv = paramValue;
+                    else if (paramName == RtmpUrl.ParameterLive) rtmpUrl.Live = paramValue == "1";
+                    else if (paramName == RtmpUrl.ParameterOpenConnectionMaximumAttempts) rtmpUrl.OpenConnectionMaximumAttempts = int.Parse(paramValue);
+                    else if (paramName == RtmpUrl.ParameterPageUrl) rtmpUrl.PageUrl = paramValue;
+                    else if (paramName == RtmpUrl.ParameterPlaylist) rtmpUrl.Playlist = paramValue == "1";
+                    else if (paramName == RtmpUrl.ParameterPlayPath) rtmpUrl.PlayPath = paramValue;
+                    else if (paramName == RtmpUrl.ParameterReceiveDataTimeout) rtmpUrl.ReceiveDataTimeout = int.Parse(paramValue);
+                    else if (paramName == RtmpUrl.ParameterStart) rtmpUrl.Start = uint.Parse(paramValue);
+                    else if (paramName == RtmpUrl.ParameterStop) rtmpUrl.Stop = uint.Parse(paramValue);
+                    else if (paramName == RtmpUrl.ParameterSubscribe) rtmpUrl.Subscribe = paramValue;
+                    else if (paramName == RtmpUrl.ParameterSwfAge) rtmpUrl.SwfAge = uint.Parse(paramValue);
+                    else if (paramName == RtmpUrl.ParameterSwfUrl) rtmpUrl.SwfUrl = paramValue;
+                    else if (paramName == RtmpUrl.ParameterSwfVerify) rtmpUrl.SwfVerify = paramValue == "1";
+                    else if (paramName == RtmpUrl.ParameterTcUrl) rtmpUrl.TcUrl = paramValue;
+                    else if (paramName == RtmpUrl.ParameterToken) rtmpUrl.Token = paramValue;
+                    else if (paramName == SimpleUrl.ParameterLogVerbosity) rtmpUrl.Verbosity = (LogVerbosity)Enum.Parse(typeof(LogVerbosity), paramValue);
+                    else if (paramName == SimpleUrl.ParameterMaximumLogSize) rtmpUrl.MaximumLogSize = int.Parse(paramValue);
+                    else if (paramName == SimpleUrl.ParameterMaximumPlugins) rtmpUrl.MaximumPlugins = int.Parse(paramValue);
+                    else if (paramName == SimpleUrl.ParameterNetworkInterface) rtmpUrl.NetworkInterface = paramValue;
+                }
+                return rtmpUrl;
+            }
+        }
 
 		#endregion
 

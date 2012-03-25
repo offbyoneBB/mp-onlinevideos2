@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ComponentModel;
 
 namespace OnlineVideos.MPUrlSourceFilter
 {
@@ -56,6 +57,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <exception cref="ArgumentNullException">
         /// <para>The <see cref="Uri"/> is <see langword="null"/>.</para>
         /// </exception>
+        [Category("General"), Description("The uniform resource identifier for this instance.")]
         public Uri Uri
         {
             get { return this.uri; }
@@ -74,6 +76,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <summary>
         /// Gets or sets the verbosity level of MediaPortal Url Source Splitter.
         /// </summary>
+        [Category("MPUrlSourceSplitter"), DefaultValue(DefaultVerbosity), Description("The verbosity level of the logging.")]
         public LogVerbosity Verbosity
         {
             get { return this.verbosity; }
@@ -92,6 +95,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <remarks>
         /// The network interface have to be name of network interface card. The empty string ("") means the default system network interface.
         /// </remarks>
+        [Category("MPUrlSourceSplitter"), Description("The network interface which should be used for the connection.")]
         public String NetworkInterface
         {
             get { return this.networkInterface; }
@@ -112,6 +116,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <exception cref="ArgumentOutOfRangeException">
         /// <para>The <see cref="MaximumLogSize"/> is less than zero.</para>
         /// </exception>
+        [Category("MPUrlSourceSplitter"), DefaultValue(DefaultMaximumLogSize), Description("Number of bytes after which a new logfile is started.")]
         public int MaximumLogSize
         {
             get { return this.maximumLogSize; }
@@ -132,6 +137,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <exception cref="ArgumentOutOfRangeException">
         /// <para>The <see cref="MaximumPlugins"/> is less than zero.</para>
         /// </exception>
+        [Category("MPUrlSourceSplitter"), DefaultValue(DefaultMaximumPlugins), Description("Maximum number of plugins to load.")]
         public int MaximumPlugins
         {
             get { return this.maximumPlugins; }
