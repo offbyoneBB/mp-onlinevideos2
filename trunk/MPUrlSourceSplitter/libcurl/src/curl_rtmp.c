@@ -230,7 +230,7 @@ static CURLcode rtmp_connect(struct connectdata *conn, bool *done)
   {
     // connect timeout set
     // timeout is divided by three to make at least two connection attempts
-    tv = max((int)conn->data->set.connecttimeout / 3, 1000);
+    tv = max((int)conn->data->set.connecttimeout, 1000);
   }
 
   RTMP_Log(r, RTMP_LOGDEBUG, "socket timeout: %d (ms)", tv);

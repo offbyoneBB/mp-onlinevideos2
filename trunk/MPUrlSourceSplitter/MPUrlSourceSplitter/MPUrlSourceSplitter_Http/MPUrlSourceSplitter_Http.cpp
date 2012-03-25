@@ -73,6 +73,7 @@ CMPUrlSourceSplitter_Http::CMPUrlSourceSplitter_Http(CParameterCollection *confi
   this->internalExitRequest = false;
   this->wholeStreamDownloaded = false;
   this->rangesSupported = RANGES_STATE_UNKNOWN;
+  this->receivedData = NULL;
   this->receivedDataFromStart = NULL;
   this->receivedDataFromRange = NULL;
   this->mainCurlInstance = NULL;
@@ -143,6 +144,12 @@ HRESULT CMPUrlSourceSplitter_Http::ClearSession(void)
   this->receiveDataTimeout = HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->checkRanges = HTTP_CHECK_RANGES_DEFAULT;
+
+  if (this->receivedData != NULL)
+  {
+    delete this->receivedData;
+    this->receivedData = NULL;
+  }
 
   if (this->receivedDataFromStart != NULL)
   {
@@ -298,6 +305,17 @@ HRESULT CMPUrlSourceSplitter_Http::OpenConnection(void)
 
   if (result == S_OK)
   {
+    this->receivedData = new LinearBuffer();
+    result = (this->receivedData == NULL) ? E_POINTER : result;
+
+    if (result == S_OK)
+    {
+      result = (this->receivedData->InitializeBuffer(RANGES_SUPPORTED_BUFFER_SIZE)) ? result : E_FAIL;
+    }
+  }
+
+  if (result == S_OK)
+  {
     if ((this->rangesSupported == RANGES_STATE_UNKNOWN) && (this->checkRanges))
     {
       // we don't know if ranges are supported
@@ -420,6 +438,12 @@ void CMPUrlSourceSplitter_Http::CloseConnection(void)
     this->rangesDetectionCurlInstance = NULL;
   }
 
+  if (this->receivedData != NULL)
+  {
+    delete this->receivedData;
+    this->receivedData = NULL;
+  }
+
   if (this->receivedDataFromStart != NULL)
   {
     delete this->receivedDataFromStart;
@@ -489,6 +513,30 @@ void CMPUrlSourceSplitter_Http::ReceiveData(bool *shouldExit)
   {
     if (!this->wholeStreamDownloaded)
     {
+      unsigned int bufferOccupiedSpace = this->receivedData->GetBufferOccupiedSpace();
+      if (bufferOccupiedSpace > 0)
+      {
+        ALLOC_MEM_DEFINE_SET(buffer, char, bufferOccupiedSpace, 0);
+        if (buffer != NULL)
+        {
+          this->receivedData->CopyFromBuffer(buffer, bufferOccupiedSpace, 0, 0);
+          // create media packet
+          // set values of media packet
+          CMediaPacket *mediaPacket = new CMediaPacket();
+          mediaPacket->GetBuffer()->InitializeBuffer(bufferOccupiedSpace);
+          mediaPacket->GetBuffer()->AddToBuffer(buffer, bufferOccupiedSpace);
+          mediaPacket->SetStart(this->streamTime);
+          mediaPacket->SetEnd(this->streamTime + bufferOccupiedSpace - 1);
+          if (FAILED(this->filter->PushMediaPacket(mediaPacket)))
+          {
+            this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+          }
+          this->streamTime += bufferOccupiedSpace;
+          this->receivedData->RemoveFromBufferAndMove(bufferOccupiedSpace);
+        }
+        FREE_MEM(buffer);
+      }
+
       if (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA)
       {
         // all data received, we're not receiving data
@@ -702,55 +750,61 @@ size_t CMPUrlSourceSplitter_Http::CurlReceiveData(char *buffer, size_t size, siz
 
       if (bytesRead != 0)
       {
-        if (caller->rangesDetectionCurlInstance != NULL)
-        {
-          if (caller->rangesDetectionCurlInstance->GetCurlState() == CURL_STATE_CREATED)
-          {
-            // ranges detection wasn't initialized and started
-            caller->rangesDetectionCurlInstance->SetReceivedDataTimeout(caller->receiveDataTimeout);
-            caller->rangesDetectionCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Http::CurlRangesDetectionReceiveData, caller);
-            caller->rangesDetectionCurlInstance->SetStartStreamTime(caller->streamLength / 2);
-            caller->rangesDetectionCurlInstance->SetEndStreamTime(caller->streamLength / 2);
-            caller->rangesDetectionCurlInstance->SetReferer(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL));
-            caller->rangesDetectionCurlInstance->SetUserAgent(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
-            caller->rangesDetectionCurlInstance->SetCookie(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL));
-            caller->rangesDetectionCurlInstance->SetHttpVersion(caller->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
-            caller->rangesDetectionCurlInstance->SetIgnoreContentLength((caller->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+        unsigned int bufferSize = caller->receivedData->GetBufferSize();
+        unsigned int freeSpace = caller->receivedData->GetBufferFreeSpace();
+        unsigned int newBufferSize = max(bufferSize * 2, bufferSize + bytesRead);
 
-            if (caller->rangesDetectionCurlInstance->Initialize())
-            {
-              caller->rangesDetectionCurlInstance->StartReceivingData();
-            }
+        if (freeSpace < bytesRead)
+        {
+          caller->logger->Log(LOGGER_INFO, L"%s: %s: not enough free space in buffer for received data, buffer size: %d, free size: %d, received data: %d, new buffer size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, freeSpace, bytesRead, newBufferSize);
+          if (!caller->receivedData->ResizeBuffer(newBufferSize))
+          {
+            caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"resizing of buffer unsuccessful");
+            // it indicates error
+            bytesRead = 0;
           }
         }
 
-        if (caller->rangesSupported == RANGES_STATE_PENDING_REQUEST)
+        if (bytesRead != 0)
         {
-          // there is pending request if ranges are supported or not          
-
-          if ((!caller->filledReceivedDataFromStart) && (caller->receivedDataFromStart->AddToBuffer(buffer, min(bytesRead, caller->receivedDataFromStart->GetBufferFreeSpace())) != bytesRead))
-          {
-            caller->filledReceivedDataFromStart = true;
-            // data wasn't added to buffer
-            // compare buffers and set ranges supported state
-
-            caller->CompareRangesBuffers();
-          }
+          caller->receivedData->AddToBuffer(buffer, bytesRead);
         }
 
-        // create media packet
-        // set values of media packet
-        CMediaPacket *mediaPacket = new CMediaPacket();
-        mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
-        mediaPacket->GetBuffer()->AddToBuffer(buffer, bytesRead);
-        mediaPacket->SetStart(caller->streamTime);
-        mediaPacket->SetEnd(caller->streamTime + bytesRead - 1);
+         if (caller->rangesDetectionCurlInstance != NULL)
+         {
+           if (caller->rangesDetectionCurlInstance->GetCurlState() == CURL_STATE_CREATED)
+           {
+             // ranges detection wasn't initialized and started
+             caller->rangesDetectionCurlInstance->SetReceivedDataTimeout(caller->receiveDataTimeout);
+             caller->rangesDetectionCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Http::CurlRangesDetectionReceiveData, caller);
+             caller->rangesDetectionCurlInstance->SetStartStreamTime(caller->streamLength / 2);
+             caller->rangesDetectionCurlInstance->SetEndStreamTime(caller->streamLength / 2);
+             caller->rangesDetectionCurlInstance->SetReferer(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL));
+             caller->rangesDetectionCurlInstance->SetUserAgent(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
+             caller->rangesDetectionCurlInstance->SetCookie(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL));
+             caller->rangesDetectionCurlInstance->SetHttpVersion(caller->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
+             caller->rangesDetectionCurlInstance->SetIgnoreContentLength((caller->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
 
-        if (FAILED(caller->filter->PushMediaPacket(mediaPacket)))
-        {
-          caller->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-        }
-        caller->streamTime += bytesRead;
+             if (caller->rangesDetectionCurlInstance->Initialize())
+             {
+               caller->rangesDetectionCurlInstance->StartReceivingData();
+             }
+           }
+         }
+
+         if (caller->rangesSupported == RANGES_STATE_PENDING_REQUEST)
+         {
+           // there is pending request if ranges are supported or not          
+
+           if ((!caller->filledReceivedDataFromStart) && (caller->receivedDataFromStart->AddToBuffer(buffer, min(bytesRead, caller->receivedDataFromStart->GetBufferFreeSpace())) != bytesRead))
+           {
+             caller->filledReceivedDataFromStart = true;
+             // data wasn't added to buffer
+             // compare buffers and set ranges supported state
+
+             caller->CompareRangesBuffers();
+           }
+         }
       }
     }
   }

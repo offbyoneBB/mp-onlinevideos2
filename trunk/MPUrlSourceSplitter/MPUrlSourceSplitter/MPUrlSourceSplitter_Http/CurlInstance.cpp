@@ -84,7 +84,7 @@ bool CCurlInstance::Initialize(void)
     CURLcode errorCode = CURLE_OK;
     if (this->receiveDataTimeout != UINT_MAX)
     {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(this->receiveDataTimeout / 2000));
+      errorCode = curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(this->receiveDataTimeout / 1000));
       if (errorCode != CURLE_OK)
       {
         this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_OPEN_CONNECTION_NAME, L"error while setting connection timeout", errorCode);
