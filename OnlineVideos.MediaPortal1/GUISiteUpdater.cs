@@ -97,6 +97,12 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#header.image",
                                            GUIOnlineVideos.GetImageForSite("OnlineVideos"));
 
+            GUIOnlineVideos ovGuiInstance = (GUIOnlineVideos)GUIWindowManager.GetWindow(GUIOnlineVideos.WindowId);
+            if (ovGuiInstance != null && ovGuiInstance.SelectedSite != null && ovGuiInstance.CurrentState != GUIOnlineVideos.State.sites)
+            {
+                selectedSite = ovGuiInstance.SelectedSite.Settings.Name;
+            }
+
             RefreshDisplayedOnlineSites();
         }
 
