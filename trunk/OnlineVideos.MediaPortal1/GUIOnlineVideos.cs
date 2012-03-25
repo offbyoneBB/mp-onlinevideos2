@@ -137,10 +137,10 @@ namespace OnlineVideos.MediaPortal1
         #endregion
         #region SelectedSite
         Sites.SiteUtilBase selectedSite;
-        Sites.SiteUtilBase SelectedSite
+        internal Sites.SiteUtilBase SelectedSite
         {
             get { return selectedSite; }
-            set
+            private set
             {
                 selectedSite = value;
                 if (selectedSite == null)
