@@ -198,5 +198,16 @@ namespace OnlineVideos.MediaPortal1
             parentCategory.AddSubCategoryForSerialization(link);
             RebuildTreeView(link);
         }
+
+        private void btnCreateRtmpLink_Click(object sender, EventArgs e)
+        {
+            RtmpUrlGenerator r = new RtmpUrlGenerator();
+            string url = (!string.IsNullOrEmpty(tbxStreamUrl.Text) && tbxStreamUrl.Text.ToLower().StartsWith("rtmp")) ? tbxStreamUrl.Text : "rtmp://host.domain/app";
+            r.propertyGrid1.SelectedObject = MPUrlSourceFilter.RtmpUrl.Parse(url);
+            if (r.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                tbxStreamUrl.Text = ((MPUrlSourceFilter.RtmpUrl)r.propertyGrid1.SelectedObject).ToString();
+            }
+        }
     }
 }

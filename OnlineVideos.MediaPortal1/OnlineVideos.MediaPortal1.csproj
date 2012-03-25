@@ -209,6 +209,12 @@
     <Compile Include="Configuration\RegisterEmail.Designer.cs">
       <DependentUpon>RegisterEmail.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\RtmpUrlGenerator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\RtmpUrlGenerator.Designer.cs">
+      <DependentUpon>RtmpUrlGenerator.cs</DependentUpon>
+    </Compile>
     <Compile Include="Configuration\SubmitSiteReport.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -346,6 +352,9 @@
     <EmbeddedResource Include="Configuration\ObjectListView\Utilities\ColumnSelectionForm.resx">
       <DependentUpon>ColumnSelectionForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\RtmpUrlGenerator.resx">
+      <DependentUpon>RtmpUrlGenerator.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -435,6 +444,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\tv.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\flash.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
