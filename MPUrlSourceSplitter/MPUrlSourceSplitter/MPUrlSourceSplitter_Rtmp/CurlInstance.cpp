@@ -161,10 +161,7 @@ bool CCurlInstance::Initialize(void)
       {
         this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_PLAY_PATH, this->rtmpPlayPath, true);
       }
-      if (this->rtmpReceiveDataTimeout != RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT)
-      {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_RECEIVE_DATA_TIMEOUT, this->rtmpReceiveDataTimeout);
-      }
+      // timeout for RTMP protocol is set through libcurl options
       if (this->rtmpStart != RTMP_START_DEFAULT)
       {
         this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_START, this->rtmpStart);

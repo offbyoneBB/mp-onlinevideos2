@@ -106,6 +106,8 @@ protected:
   LinearBuffer *receivedDataFromStart;
   // holds received data from specified reange
   LinearBuffer *receivedDataFromRange;
+  // holds received data for filter
+  LinearBuffer *receivedData;
   // holds supported ranges status
   int rangesSupported;
   // holds if received data from start buffer was filled

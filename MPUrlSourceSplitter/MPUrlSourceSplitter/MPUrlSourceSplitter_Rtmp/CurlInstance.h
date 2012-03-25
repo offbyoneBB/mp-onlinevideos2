@@ -89,7 +89,6 @@
 #define RTMP_TOKEN_START                                    L"start"
 #define RTMP_TOKEN_STOP                                     L"stop"
 #define RTMP_TOKEN_BUFFER                                   L"buffer"
-#define RTMP_TOKEN_RECEIVE_DATA_TIMEOUT                     L"timeout"
 
  /* SECURITY PARAMETERS */
 
