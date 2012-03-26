@@ -611,7 +611,7 @@ STDMETHODIMP CLAVInputPin::Load()
     // now we have active protocol with loaded url, but still not working
     // create thread for receiving data
 
-    //result = this->CreateReceiveDataWorker();
+    result = this->CreateReceiveDataWorker();
   }
 
   if (SUCCEEDED(result))
@@ -636,7 +636,7 @@ STDMETHODIMP CLAVInputPin::Load()
     if (SUCCEEDED(result))
     {
       // wait for receiving data, timeout or exit
-      /*while ((this->status != STATUS_RECEIVING_DATA) && (this->status != STATUS_NO_DATA_ERROR) && ((GetTickCount() - ticks) <= timeout) && (!this->receiveDataWorkerShouldExit))
+      while ((this->status != STATUS_RECEIVING_DATA) && (this->status != STATUS_NO_DATA_ERROR) && ((GetTickCount() - ticks) <= timeout) && (!this->receiveDataWorkerShouldExit))
       {
         Sleep(1);
       }
@@ -655,9 +655,7 @@ STDMETHODIMP CLAVInputPin::Load()
       default:
         result = E_UNEXPECTED;
         break;
-      }*/
-
-      result = S_OK;
+      }
 
       if (FAILED(result))
       {
