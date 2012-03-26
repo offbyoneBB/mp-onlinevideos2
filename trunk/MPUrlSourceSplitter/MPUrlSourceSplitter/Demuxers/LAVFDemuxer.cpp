@@ -203,7 +203,6 @@ int CLAVFDemuxer::avio_interrupt_cb(void *opaque)
 
 STDMETHODIMP CLAVFDemuxer::OpenInputStream(AVIOContext *byteContext, LPCOLESTR pszFileName)
 {
-  //CAutoLock lock(m_pLock);
   HRESULT hr = S_OK;
 
   int ret; // return code from avformat functions
