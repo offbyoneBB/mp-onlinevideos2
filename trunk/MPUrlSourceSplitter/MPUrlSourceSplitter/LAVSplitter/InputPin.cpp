@@ -418,7 +418,7 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   if (SUCCEEDED(result) && (!this->downloadingFile))
   {
     // splitter is not needed when downloading file
-    //result = this->CreateDemuxerWorker();
+    result = this->CreateDemuxerWorker();
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, result);

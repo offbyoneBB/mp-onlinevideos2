@@ -80,8 +80,6 @@ public:
   CBasePin *GetPin(int n);
   STDMETHODIMP GetClassID(CLSID* pClsID);
 
-  STDMETHODIMP JoinFilterGraph(__inout_opt IFilterGraph * pGraph, __in_opt LPCWSTR pName);
-
   STDMETHODIMP Stop();
   STDMETHODIMP Pause();
   STDMETHODIMP Run(REFERENCE_TIME tStart);

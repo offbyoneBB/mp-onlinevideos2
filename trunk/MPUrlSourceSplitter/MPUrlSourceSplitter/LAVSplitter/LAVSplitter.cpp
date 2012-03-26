@@ -1849,14 +1849,3 @@ HRESULT CLAVSplitter::GetCacheFileName(wchar_t **path)
 
 	return S_OK;
 }
-
-STDMETHODIMP CLAVSplitter::JoinFilterGraph(__inout_opt IFilterGraph * pGraph, __in_opt LPCWSTR pName)
-{
-  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, L"JoinFilterGraph()");
-  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: graph: %p, name: %s", MODULE_NAME, L"JoinFilterGraph()", pGraph, pName);
-
-  HRESULT result = __super::JoinFilterGraph(pGraph, pName);
-
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, MODULE_NAME, L"JoinFilterGraph()", result);
-  return result;
-}
