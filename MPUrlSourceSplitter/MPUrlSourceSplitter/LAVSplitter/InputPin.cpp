@@ -418,7 +418,7 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   if (SUCCEEDED(result) && (!this->downloadingFile))
   {
     // splitter is not needed when downloading file
-    result = this->CreateDemuxerWorker();
+    //result = this->CreateDemuxerWorker();
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, result);
@@ -611,7 +611,7 @@ STDMETHODIMP CLAVInputPin::Load()
     // now we have active protocol with loaded url, but still not working
     // create thread for receiving data
 
-    result = this->CreateReceiveDataWorker();
+    //result = this->CreateReceiveDataWorker();
   }
 
   if (SUCCEEDED(result))
@@ -636,7 +636,7 @@ STDMETHODIMP CLAVInputPin::Load()
     if (SUCCEEDED(result))
     {
       // wait for receiving data, timeout or exit
-      while ((this->status != STATUS_RECEIVING_DATA) && (this->status != STATUS_NO_DATA_ERROR) && ((GetTickCount() - ticks) <= timeout) && (!this->receiveDataWorkerShouldExit))
+      /*while ((this->status != STATUS_RECEIVING_DATA) && (this->status != STATUS_NO_DATA_ERROR) && ((GetTickCount() - ticks) <= timeout) && (!this->receiveDataWorkerShouldExit))
       {
         Sleep(1);
       }
@@ -655,7 +655,9 @@ STDMETHODIMP CLAVInputPin::Load()
       default:
         result = E_UNEXPECTED;
         break;
-      }
+      }*/
+
+      result = S_OK;
 
       if (FAILED(result))
       {
