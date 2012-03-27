@@ -2058,6 +2058,19 @@ namespace OnlineVideos.MediaPortal1
 
         void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
         {
+			try
+			{
+				if (currentPlayingItem != null && currentPlayingItem.Util != null)
+				{
+					double percent = g_Player.Duration > 0 ? g_Player.CurrentPosition / g_Player.Duration : 0;
+					currentPlayingItem.Util.OnPlaybackEnded(currentPlayingItem.Video, currentPlayingItem.FileName, percent, false);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Instance.Warn("Error on Util.OnPlaybackEnded: {0}", ex);
+			}
+
             if (currentPlaylist != null)
             {
                 if (g_Player.Player.GetType().Assembly == typeof(GUIOnlineVideos).Assembly)
@@ -2098,6 +2111,19 @@ namespace OnlineVideos.MediaPortal1
 
         void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
         {
+			try
+			{
+				if (currentPlayingItem != null && currentPlayingItem.Util != null)
+				{
+					double percent = g_Player.Duration > 0 ? g_Player.CurrentPosition / g_Player.Duration : 0;
+					currentPlayingItem.Util.OnPlaybackEnded(currentPlayingItem.Video, currentPlayingItem.FileName, percent, true);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Instance.Warn("Error on Util.OnPlaybackEnded: {0}", ex);
+			}
+
             if (stoptime > 0 && g_Player.Duration > 0 && (stoptime / g_Player.Duration) > 0.8) TrackPlayback();
             currentPlayingItem = null;
         }
@@ -2674,6 +2700,19 @@ namespace OnlineVideos.MediaPortal1
 
         private void OnDownloadFileCompleted(DownloadList saveItems, Exception error)
         {
+			// notify the Util of the downloaded video that the download has stopped
+			try
+			{
+				if (saveItems.CurrentItem != null && saveItems.CurrentItem.Util != null)
+				{
+					saveItems.CurrentItem.Util.OnDownloadEnded(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Url, (double)saveItems.CurrentItem.PercentComplete / 100.0d, error != null);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Instance.Warn("Error on Util.OnDownloadEnded: {0}", ex.ToString());
+			}
+
             bool preventMessageDuetoAdult = (saveItems.CurrentItem.Util != null && saveItems.CurrentItem.Util.Settings.ConfirmAge && OnlineVideoSettings.Instance.UseAgeConfirmation && !OnlineVideoSettings.Instance.AgeConfirmed);
 
             if (error != null && !saveItems.CurrentItem.Downloader.Cancelled)
