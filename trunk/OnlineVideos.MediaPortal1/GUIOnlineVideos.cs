@@ -1020,6 +1020,11 @@ namespace OnlineVideos.MediaPortal1
             else if (control == GUI_btnViewAs)
             {
                 ToggleFacadeViewMode();
+				// store as preferred layout in DB
+				if (SelectedSite != null && PluginConfiguration.Instance.StoreLayoutPerCategory && (currentState == State.categories || currentState == State.videos))
+				{
+					FavoritesDatabase.Instance.SetPreferredLayout(SelectedSite.Settings.Name, selectedCategory, (int)currentView);
+				}
             }
             else if (control == GUI_btnMaxResult)
             {
@@ -1487,7 +1492,8 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             CurrentState = State.categories;
             selectedCategory = parentCategory;
-            UpdateViewState();
+			if (PluginConfiguration.Instance.StoreLayoutPerCategory) suggestedView = FavoritesDatabase.Instance.GetPreferredLayout(SelectedSite.Settings.Name, selectedCategory) ?? suggestedView;
+			UpdateViewState();
 
             // automatically browse up or down if only showing a single category and parameter was set
             if (categories.Count == 1 && diveDownOrUpIfSingle != null)
@@ -1904,6 +1910,7 @@ namespace OnlineVideos.MediaPortal1
 
             currentVideosDisplayMode = mode;
             CurrentState = State.videos;
+			if (PluginConfiguration.Instance.StoreLayoutPerCategory) suggestedView = FavoritesDatabase.Instance.GetPreferredLayout(SelectedSite.Settings.Name, selectedCategory) ?? suggestedView;
             UpdateViewState();
             return true;
         }
