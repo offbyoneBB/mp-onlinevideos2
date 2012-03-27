@@ -9,6 +9,7 @@ using System.Web;
 using System.Threading;
 using System.Xml;
 using Newtonsoft.Json;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Hoster
 {
@@ -664,13 +665,15 @@ namespace OnlineVideos.Hoster
             }
             string file = GetSubString(webData, "'file','", "'");
             string streamer = GetSubString(webData, "'streamer','", "'");
-            string resultUrl = string.Format("rtmpurl={0}&swfurl={1}&pageurl={2}&tcUrl={3}",
-                                        System.Web.HttpUtility.UrlEncode(streamer + file),
-                                        System.Web.HttpUtility.UrlEncode(@"http://xtshare.com/player.swf"),
-                                        System.Web.HttpUtility.UrlEncode(url),
-                                        System.Web.HttpUtility.UrlEncode(streamer));
-            return ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                "http://127.0.0.1/stream.flv?" + resultUrl);
+            // not tested, couldn't find a video hosted by xtshare
+            RtmpUrl rtmpUrl = new RtmpUrl(streamer + file)
+            {
+                SwfVerify = true,
+                SwfUrl = @"http://xtshare.com/player.swf",
+                PageUrl = url,
+                TcUrl = streamer
+            };
+            return rtmpUrl.ToString();
         }
     }
 

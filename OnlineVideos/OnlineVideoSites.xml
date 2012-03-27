@@ -1239,7 +1239,7 @@
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
     </Site>
-    <Site name="LuckyTV" util="LuckyTV" agecheck="false" enabled="true" lang="nl">
+    <Site name="LuckyTV" util="GenericSite" agecheck="false" enabled="true" lang="nl">
       <Description>LuckyTV. Uw dagelijkse mediarevolte na De Wereld Draait Door. Bekijk hier de laatste Lucky of bezoek het ontzagwekkende LuckyTV videoarchief:  honderden filmpjes uit DWDD, De Staat van Verwarring, Vara Laat, Jensen en meer. LuckyTV. Wir leben Fernsehen.</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[(<img\sclass="border\ssmall\sleft"\ssrc="(?<ImageUrl>[^"]*)"[^>]*></a>\s*<div\sclass="meta\ssmall">\s*<h3\sclass="title"><a\shref="(?<VideoUrl>[^"]*)"[^>]*>(?<Title>[^<]*)</a></h3>\s*<div\sclass="date">(?<Airdate>[^<]*)</div>)
