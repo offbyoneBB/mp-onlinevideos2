@@ -218,6 +218,28 @@ namespace OnlineVideos.Sites
             return new TrackingInfo() { VideoKind = VideoKind.Other, Title = video.Title };
         }
 
+		/// <summary>
+		/// This method will be called after playback of a video from this site was stopped or has ended.
+		/// </summary>
+		/// <param name="video"></param>
+		/// <param name="url"></param>
+		/// <param name="percent"></param>
+		/// <param name="stoppedByUser"></param>
+		public virtual void OnPlaybackEnded(VideoInfo video, string url, double percent, bool stoppedByUser)
+		{
+		}
+
+		/// <summary>
+		/// This method will be called after download of a video from this site was stopped or has ended.
+		/// </summary>
+		/// <param name="video"></param>
+		/// <param name="url"></param>
+		/// <param name="percent"></param>
+		/// <param name="stoppedByUser"></param>
+		public virtual void OnDownloadEnded(VideoInfo video, string url, double percent, bool stoppedByUser)
+		{
+		}
+
         /// <summary>
         /// This function will be called when the user selects a video for playback. It should return the absolute url to the video file.<br/>
         /// By default, the <see cref="VideoInfo.VideoUrl"/> fields value will be returned.
