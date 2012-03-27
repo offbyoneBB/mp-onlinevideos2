@@ -273,5 +273,6 @@ namespace OnlineVideos
 		public string Settings_LatestVideosRandomize = "Randomize all latest videos before displaying";
 		public string Settings_LatestVideosOnlineDataRefresh = "Refresh latest videos data from web every x minutes";
 		public string Settings_LatestVideosGuiDataRefresh = "Refresh displayed latest videos every x seconds";
+		public string Settings_StoreLayoutPerCategory = "Remember view layout per Site and Category";
     }
 }

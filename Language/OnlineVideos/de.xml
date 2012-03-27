@@ -165,4 +165,5 @@
   <string Field="Settings_LatestVideosRandomize">Zufällige Anordnung der neuesten Videos</string>
   <string Field="Settings_LatestVideosOnlineDataRefresh">Aktualisierung (Minuten) der neuesten Videos aus dem Internet</string>
   <string Field="Settings_LatestVideosGuiDataRefresh">Aktualisierung (Sekunden) der Anzeige der neuesten Videos</string>
+  <string Field="Settings_StoreLayoutPerCategory">Ansicht für jede Rubrik und Site speichern</string>
 </strings>

@@ -44,6 +44,7 @@ namespace OnlineVideos.MediaPortal1
 		public uint LatestVideosOnlineDataRefresh = 30; // minutes
 		public uint LatestVideosGuiDataRefresh = 30; // seconds
         public bool AllowRefreshRateChange = false;
+		public bool StoreLayoutPerCategory = true;
 
         // runtime (while inside MediaPortal OnlineVideos) changeable values
         public Dictionary<string, List<string>> searchHistory;
@@ -98,6 +99,7 @@ namespace OnlineVideos.MediaPortal1
 		const string CFG_LATESTVIDEOS_ONLINEDATA_REFRESH = "latestVideosOnlineDataRefresh";
 		const string CFG_LATESTVIDEOS_GUIDATA_REFRESH = "latestVideosGuiDataRefresh";
         const string CFG_ALLOW_REFRESHRATE_CHANGE = "allowRefreshRateChange";
+		const string CFG_STORE_LAYOUT_PER_CATEGORY = "storeLayoutPerCategory";
         #endregion
 
         #region Singleton
@@ -131,7 +133,8 @@ namespace OnlineVideos.MediaPortal1
 				LatestVideosRandomize = settings.GetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);
 				LatestVideosOnlineDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, (int)LatestVideosOnlineDataRefresh);
 				LatestVideosGuiDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, (int)LatestVideosGuiDataRefresh);
-                AllowRefreshRateChange = settings.GetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, false);
+				AllowRefreshRateChange = settings.GetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
+				StoreLayoutPerCategory = settings.GetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
             }
         }
 
@@ -252,7 +255,8 @@ namespace OnlineVideos.MediaPortal1
 					LatestVideosOnlineDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, (int)LatestVideosOnlineDataRefresh);
 					LatestVideosGuiDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, (int)LatestVideosGuiDataRefresh);
 
-                    AllowRefreshRateChange = settings.GetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, false);
+					AllowRefreshRateChange = settings.GetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
+					StoreLayoutPerCategory = settings.GetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
                 }
                 LoadSitesGroups();
                 ovsconf.LoadSites();
@@ -321,7 +325,8 @@ namespace OnlineVideos.MediaPortal1
 						settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_MAXITEMS, LatestVideosMaxItems);
 						settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, LatestVideosOnlineDataRefresh);
 						settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, LatestVideosGuiDataRefresh);
-                        settings.SetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE,AllowRefreshRateChange);
+						settings.SetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
+						settings.SetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
                         SaveSitesGroups();
                         ovsconf.SaveSites();
                     }

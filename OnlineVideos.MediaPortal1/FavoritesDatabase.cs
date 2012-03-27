@@ -29,6 +29,7 @@ namespace OnlineVideos.MediaPortal1
                 DatabaseUtility.SetPragmas(m_db);
                 DatabaseUtility.AddTable(m_db, "FAVORITE_VIDEOS", "CREATE TABLE FAVORITE_VIDEOS(VDO_ID integer primary key autoincrement,VDO_NM text,VDO_URL text,VDO_DESC text,VDO_TAGS text,VDO_LENGTH text,VDO_OTHER_NFO text,VDO_IMG_URL text,VDO_SITE_ID text)\n");
                 DatabaseUtility.AddTable(m_db, "FAVORITE_Categories", "CREATE TABLE FAVORITE_Categories(CAT_ID integer primary key autoincrement,CAT_Name text,CAT_Desc text,CAT_ThumbUrl text,CAT_Hierarchy text,CAT_SITE_ID text)\n");
+				DatabaseUtility.AddTable(m_db, "PREFERRED_LAYOUT", "CREATE TABLE PREFERRED_LAYOUT(Site_Name text, Category_Hierarchy text, Layout integer, PRIMARY KEY (Site_Name, Category_Hierarchy) ON CONFLICT REPLACE)\n");
             }
             catch (SQLiteException ex)
             {
@@ -247,5 +248,53 @@ namespace OnlineVideos.MediaPortal1
 			return null;
 		}
 		#endregion
+
+		public bool SetPreferredLayout(string siteName, Category cat, int Layout)
+		{
+			try
+			{
+
+				if (string.IsNullOrEmpty(siteName)) return false;
+				string categoryHierarchyName = cat != null ? EscapeString(DatabaseUtility.RemoveInvalidChars(cat.RecursiveName("|"))) : "";
+				m_db.Execute(string.Format("insert into PREFERRED_LAYOUT(Site_Name, Category_Hierarchy, Layout) VALUES ('{0}','{1}',{2})", DatabaseUtility.RemoveInvalidChars(siteName), categoryHierarchyName, Layout));
+				return m_db.ChangedRows() > 0;
+			}
+			catch (Exception ex)
+			{
+				Log.Instance.Warn("Exception storing preferred Layout in DB: {0}", ex.ToString());
+				return false;
+			}
+		}
+
+		public MediaPortal.GUI.Library.GUIFacadeControl.Layout? GetPreferredLayout(string siteName, Category cat)
+		{
+			try
+			{
+				if (string.IsNullOrEmpty(siteName)) return null;
+				string cleanSiteName = DatabaseUtility.RemoveInvalidChars(siteName);
+				string categoryHierarchyName = cat != null ? EscapeString(DatabaseUtility.RemoveInvalidChars(cat.RecursiveName("|"))) : "";
+				// 1. try to find layout specific to this category
+				if (!string.IsNullOrEmpty(categoryHierarchyName))
+				{
+					var resultSet = m_db.Execute(string.Format("SELECT Layout FROM PREFERRED_LAYOUT WHERE Site_Name = '{0}' AND Category_Hierarchy = '{1}'", cleanSiteName, categoryHierarchyName));
+					if (resultSet.Rows.Count > 0)
+					{
+						return (MediaPortal.GUI.Library.GUIFacadeControl.Layout)int.Parse(DatabaseUtility.Get(resultSet, 0, "Layout"));
+					}
+				}
+				// 2. try to find layout for this site
+				var resultSet2 = m_db.Execute(string.Format("SELECT Layout FROM PREFERRED_LAYOUT WHERE Site_Name = '{0}' AND Category_Hierarchy = ''", cleanSiteName));
+				if (resultSet2.Rows.Count > 0) return (MediaPortal.GUI.Library.GUIFacadeControl.Layout)int.Parse(DatabaseUtility.Get(resultSet2, 0, "Layout"));
+				// 3. use the first layout found for any category of the site
+				var resultSet3 = m_db.Execute(string.Format("SELECT Layout FROM PREFERRED_LAYOUT WHERE Site_Name = '{0}' LIMIT 1", cleanSiteName));
+				if (resultSet3.Rows.Count > 0) return (MediaPortal.GUI.Library.GUIFacadeControl.Layout)int.Parse(DatabaseUtility.Get(resultSet3, 0, "Layout"));
+				return null;
+			}
+			catch (Exception ex)
+			{
+				Log.Instance.Warn("Exception getting preferred Layout from DB: {0}", ex.ToString());
+				return null;
+			}
+		}
     }
 }
