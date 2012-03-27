@@ -20,14 +20,10 @@ namespace OnlineVideos.MediaPortal1
 
         [SkinControlAttribute(50)]
         protected GUIListControl GUI_infoList = null;
-        [SkinControlAttribute(502)]
-        protected GUIButtonControl GUI_btnUpdate = null;
         [SkinControlAttribute(503)]
         protected GUISelectButtonControl GUI_btnFilterState = null;
         [SkinControlAttribute(504)]
         protected GUISelectButtonControl GUI_btnSort = null;
-        [SkinControlAttribute(505)]
-        protected GUIButtonControl GUI_btnFullUpdate = null;
         [SkinControlAttribute(506)]
         protected GUISelectButtonControl GUI_btnFilterCreator = null;
         [SkinControlAttribute(507)]
@@ -243,26 +239,25 @@ namespace OnlineVideos.MediaPortal1
 
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
-            if (control == GUI_btnUpdate)
-            {
-                RefreshDisplayedOnlineSites();
-                GUIControl.FocusControl(GetID, GUI_infoList.GetID);
-            }
-            else if (control == GUI_btnSort)
+            if (control == GUI_btnSort)
             {
                 GUIControl.SelectItemControl(GetID, GUI_btnSort.GetID, GUI_btnSort.SelectedItem);
+                RefreshDisplayedOnlineSites();
             }
             else if (control == GUI_btnFilterState)
             {
                 GUIControl.SelectItemControl(GetID, GUI_btnFilterState.GetID, GUI_btnFilterState.SelectedItem);
+                RefreshDisplayedOnlineSites();
             }
             else if (control == GUI_btnFilterCreator)
             {
                 GUIControl.SelectItemControl(GetID, GUI_btnFilterCreator.GetID, GUI_btnFilterCreator.SelectedItem);
+                RefreshDisplayedOnlineSites();
             }
             else if (control == GUI_btnFilterLang)
             {
                 GUIControl.SelectItemControl(GetID, GUI_btnFilterLang.GetID, GUI_btnFilterLang.SelectedItem);
+                RefreshDisplayedOnlineSites();
             }
             else if (control == GUI_infoList && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
@@ -270,28 +265,6 @@ namespace OnlineVideos.MediaPortal1
                 {
                     ShowOptionsForSite(GUI_infoList.SelectedListItem.TVTag as OnlineVideosWebservice.Site);
                 }
-            }
-            else if (control == GUI_btnFullUpdate)
-            {
-				Log.Instance.Info("SiteManager: Running Full Update");
-				GUIDialogProgress dlgPrgrs = PrepareProgressDialog(Translation.Instance.FullUpdate);
-                new System.Threading.Thread(delegate()
-                {
-					bool? updateResult = OnlineVideos.Sites.Updater.UpdateSites((m, p) =>
-					{
-						if (dlgPrgrs != null)
-						{
-							if (!string.IsNullOrEmpty(m)) dlgPrgrs.SetLine(1, m);
-							if (p != null) dlgPrgrs.SetPercentage(p.Value);
-							return dlgPrgrs.ShouldRenderLayer();
-						}
-						else return true;
-					}, null, false);
-					if (updateResult == true) newDllsDownloaded = true;
-					else if (updateResult == null) newDataSaved = true;
-					if (dlgPrgrs != null) dlgPrgrs.Close();
-                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
-                }) { Name = "OVFullUpdate", IsBackground = true }.Start();
             }
             else if (control == GUI_btnAutoUpdate)
             {
