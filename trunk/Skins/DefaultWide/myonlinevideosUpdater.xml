@@ -73,7 +73,7 @@
       <PinIconYOff>8</PinIconYOff>
       <IconXOff>50</IconXOff>
       <textXOff>60</textXOff>
-      <onleft>502</onleft>
+      <onleft>508</onleft>
       <animation effect="zoom" time="70" end="75" center="0,0">unfocus</animation>
       <animation effect="slide" time="70" end="185,0">unfocus</animation>
       <animation effect="zoom" time="70" start="75" center="0,0">focus</animation>
@@ -186,23 +186,11 @@
       <animation effect="slide" time="70" start="-300,0">visible</animation>
       <animation effect="slide" time="70" end="-300,0">hidden</animation>
       <control>
-        <type>button</type>
-        <description>refresh button</description>
-        <id>502</id>
-        <onright>50</onright>
-        <onup>17</onup>          
-        <label>#OnlineVideos.Translation.Refresh.Label</label>
-        <font>font11</font>
-        <height>37</height>
-        <textYOff>3</textYOff>
-        <visible allowhiddenfocus="true">!Control.HasFocus(50)</visible>
-      </control>             
-      <control>
         <type>selectbutton</type>          
         <description>filter button</description>
         <id>503</id>
         <onright>50</onright>
-        <onup>502</onup>
+        <onup>17</onup>
         <label>#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.State.Label</label>
         <font>font11</font>
         <height>37</height>
@@ -239,7 +227,7 @@
         <id>504</id>
         <onright>50</onright>
         <onup>507</onup>
-        <ondown>505</ondown>
+        <ondown>508</ondown>
         <label>#OnlineVideos.Translation.SortOptions.Label</label>
         <font>font11</font>
         <height>37</height>
@@ -248,29 +236,17 @@
       </control>   
       <control>
         <type>button</type>
-        <description>full update button</description>
-        <id>505</id>
-        <onright>50</onright>
-        <onup>504</onup>          
-        <ondown>508</ondown>
-        <label>#OnlineVideos.Translation.FullUpdate.Label</label>
-        <font>font11</font>
-        <height>37</height>
-        <textYOff>3</textYOff>        
-      </control>         
-      <control>
-        <type>button</type>
         <description>automatic update button</description>
         <id>508</id>
         <onright>50</onright>
-        <onup>505</onup>          
+        <onup>504</onup>          
         <ondown>50</ondown>
         <label>#OnlineVideos.Translation.AutomaticUpdate.Label</label>
         <font>font11</font>
         <height>37</height>
-        <textYOff>3</textYOff>        
+        <textYOff>3</textYOff>
+        <visible allowhiddenfocus="true">!Control.HasFocus(50)</visible>
       </control>      
-    </control>    
-    
+    </control>
   </controls>
 </window>
