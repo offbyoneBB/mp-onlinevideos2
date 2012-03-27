@@ -69,9 +69,9 @@
   <string Field="Groups">Groepen</string>
   <string Field="LatestVersionRequired">Laatste versie {0} benodigd!</string>
   <string Field="Language">Taal</string>
-  <string Field="LayoutList">Lay-out: Lijst</string>
-  <string Field="LayoutIcons">Lay-out: Pictogrammen</string>
-  <string Field="LayoutBigIcons">Lay-out: Grote pictogrammen</string>
+  <string Field="LayoutList">Weergave: Lijst</string>
+  <string Field="LayoutIcons">Weergave: Pictogrammen</string>
+  <string Field="LayoutBigIcons">Weergave: Grote pictogrammen</string>
   <string Field="ManageSites">Sites beheren</string>
   <string Field="MaxResults">Max. aantal resultaten</string>
   <string Field="Name">Naam</string>
@@ -165,4 +165,5 @@
   <string Field="Settings_LatestVideosRandomize">Alle laatste videos in willekeurige volgorde laten zien</string>
   <string Field="Settings_LatestVideosOnlineDataRefresh">Tijd (in minuten) waarna opnieuw de laatste videos worden opgezocht</string>
   <string Field="Settings_LatestVideosGuiDataRefresh">Tijd (in seconden) waarna opnieuw de laatste videos worden getoond</string>
+  <string Field="Settings_StoreLayoutPerCategory">Onthoud weergave voor iedere site en categorie onthouden </string>
 </strings>
