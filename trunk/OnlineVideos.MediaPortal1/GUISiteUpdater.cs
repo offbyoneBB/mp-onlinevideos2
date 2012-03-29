@@ -153,11 +153,13 @@ namespace OnlineVideos.MediaPortal1
 
             GUIControl.ClearControl(GetID, GUI_infoList.GetID);
 
+            var localSitesDic = OnlineVideoSettings.Instance.SiteSettingsList.ToDictionary(s => s.Name, s => s);
+            var onlyLocalSites = OnlineVideoSettings.Instance.SiteSettingsList.ToDictionary(s => s.Name, s => s);
 			List<OnlineVideosWebservice.Site> filteredsortedSites = new List<OnlineVideos.OnlineVideosWebservice.Site>(Sites.Updater.OnlineSites);
+            filteredsortedSites.ForEach(os => { if (localSitesDic.ContainsKey(os.Name)) onlyLocalSites.Remove(os.Name); });
+            filteredsortedSites.AddRange(onlyLocalSites.Select(ls => new OnlineVideosWebservice.Site() { Name = ls.Value.Name, IsAdult = ls.Value.ConfirmAge, Description = ls.Value.Description, Language = ls.Value.Language, LastUpdated = ls.Value.LastUpdated }));
             filteredsortedSites = filteredsortedSites.FindAll(SitePassesFilter);
             filteredsortedSites.Sort(CompareSiteForSort);
-
-			var localSitesDic = OnlineVideoSettings.Instance.SiteSettingsList.ToDictionary(s => s.Name, s => s);
 
             foreach (OnlineVideosWebservice.Site site in filteredsortedSites)
             {
@@ -169,7 +171,7 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.Label3 = site.LastUpdated.ToString("g", OnlineVideoSettings.Instance.Locale);
                     string image = GUIOnlineVideos.GetImageForSite(site.Name, "", "Icon");
                     if (!string.IsNullOrEmpty(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
-                    loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
+                    if (!string.IsNullOrEmpty(site.Owner_FK)) loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
                     loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
 					loListItem.IsPlayed = localSitesDic.ContainsKey(site.Name);// GetLocalSite(site.Name) != -1;
                     GUI_infoList.Add(loListItem);
@@ -191,7 +193,8 @@ namespace OnlineVideos.MediaPortal1
             OnlineVideosWebservice.Site site = item.TVTag as OnlineVideosWebservice.Site;
             if (site != null)
             {
-                GUIPropertyManager.SetProperty("#OnlineVideos.owner", site.Owner_FK.Substring(0, site.Owner_FK.IndexOf('@')));
+                if (!string.IsNullOrEmpty(site.Owner_FK)) GUIPropertyManager.SetProperty("#OnlineVideos.owner", site.Owner_FK.Substring(0, site.Owner_FK.IndexOf('@')));
+                else GUIPropertyManager.SetProperty("#OnlineVideos.owner", string.Empty);
                 if (!string.IsNullOrEmpty(site.Description)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", site.Description);
                 else GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
             }
@@ -239,6 +242,8 @@ namespace OnlineVideos.MediaPortal1
 
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
+            if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. online sites retrieval to finish
+
             if (control == GUI_btnSort)
             {
                 GUIControl.SelectItemControl(GetID, GUI_btnSort.GetID, GUI_btnSort.SelectedItem);
@@ -340,8 +345,11 @@ namespace OnlineVideos.MediaPortal1
 					dlgSel.Add(Translation.Instance.UpdateAllSkipCategories);
                 }
 
-				dlgSel.Add(Translation.Instance.ShowReports);
-				if (site.State != OnlineVideosWebservice.SiteState.Broken) dlgSel.Add(Translation.Instance.ReportBroken);
+                if (!string.IsNullOrEmpty(site.Owner_FK)) // only local
+                {
+                    dlgSel.Add(Translation.Instance.ShowReports);
+                    if (site.State != OnlineVideosWebservice.SiteState.Broken) dlgSel.Add(Translation.Instance.ReportBroken);
+                }
             }
             dlgSel.DoModal(GUIWindowManager.ActiveWindow);
             if (dlgSel.SelectedId == -1) return; // ESC used, nothing selected
