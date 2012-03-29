@@ -590,7 +590,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 DsError.ThrowExceptionForHR(hr);
                 if (hr == 1) // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
                 {
-                    // wait max. 5 seconds for the graph to transition to the running state
+                    // wait max. 20 seconds for the graph to transition to the running state
                     DateTime startTime = DateTime.Now;
                     FilterState filterState;
                     do
@@ -598,7 +598,7 @@ namespace OnlineVideos.MediaPortal1.Player
                         Thread.Sleep(100);
                         hr = mediaCtrl.GetState(100, out filterState); // check with timeout max. 10 times a second if the state changed
                     }
-                    while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 5));
+                    while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 20));
                     if (hr != 0) // S_OK
                     {
                         DsError.ThrowExceptionForHR(hr);
