@@ -4,6 +4,7 @@ using System.Xml;
 using System.Text;
 using RssToolkit.Rss;
 using OnlineVideos.MPUrlSourceFilter;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
@@ -46,7 +47,7 @@ namespace OnlineVideos.Sites
             if (category is Group)
                 return base.getVideoList(category);
 
-            string xmlData = GetWebData(((RssLink)category).Url);
+            string xmlData = GetWebData(((RssLink)category).Url, forceUTF8: true);
             List<VideoInfo> videoList = new List<VideoInfo>();
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xmlData);
@@ -75,6 +76,7 @@ namespace OnlineVideos.Sites
                 return result;
             }
             string xmlData = GetWebData(video.VideoUrl);
+            xmlData = Regex.Replace(xmlData, @"url=""http[^""]*""", @"url=""""");
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xmlData);
             XmlNamespaceManager nsmgr = GetNameSpaceManager(doc);
