@@ -102,6 +102,8 @@ namespace OnlineVideos.MediaPortal1
                 tvGroups.ContextMenuStrip = null;
                 btnAddStream.Enabled = false;
                 btnDelete.Enabled = false;
+				btnItemUp.Enabled = false;
+				btnItemDown.Enabled = false;
                 tablessTabControl1.SelectedTab = tabPageEmpty;
             }
             else if (tag is Group)
@@ -109,6 +111,8 @@ namespace OnlineVideos.MediaPortal1
                 tvGroups.ContextMenuStrip = null;
                 btnAddStream.Enabled = true;
                 btnDelete.Enabled = true;
+				btnItemUp.Enabled = true;
+				btnItemDown.Enabled = true;
                 groupBindingSource.DataSource = tag;
                 tablessTabControl1.SelectedTab = tabPageGroup;
             }
@@ -117,6 +121,8 @@ namespace OnlineVideos.MediaPortal1
                 tvGroups.ContextMenuStrip = null;
                 btnAddStream.Enabled = false;
                 btnDelete.Enabled = true;
+				btnItemUp.Enabled = true;
+				btnItemDown.Enabled = true;
                 channelBindingSource.DataSource = tag;
                 tablessTabControl1.SelectedTab = tabPageChannel;
             }
@@ -125,6 +131,8 @@ namespace OnlineVideos.MediaPortal1
                 tvGroups.ContextMenuStrip = contextMenuTreeView;
                 btnAddStream.Enabled = false;
                 btnDelete.Enabled = true;
+				btnItemUp.Enabled = true;
+				btnItemDown.Enabled = true;
                 bindingSourceRssLink.DataSource = tag;
                 tablessTabControl1.SelectedTab = tabPageRssLink;
             }
@@ -208,6 +216,74 @@ namespace OnlineVideos.MediaPortal1
             {
                 tbxStreamUrl.Text = ((MPUrlSourceFilter.RtmpUrl)r.propertyGrid1.SelectedObject).ToString();
             }
+        }
+
+        private void btnItemUp_Click(object sender, EventArgs e)
+        {
+			object item = (tvGroups.SelectedNode as DataboundTreeNode).Tag;
+			if (item is Category)
+			{
+				Category c = item as Category;
+				var parentNode = tvGroups.SelectedNode.Parent as DataboundTreeNode;
+				IList<Category> list;
+				if (parentNode != null)
+				{
+					list = (parentNode.Tag as Category).SubCategories;
+				}
+				else
+				{
+					list = (SiteSettingsBindingSource.Current as SiteSettings).Categories;
+				}
+				int index = list.IndexOf(c);
+				list.RemoveAt(index);
+				if (index == 0) list.Add(c);
+				else list.Insert(index - 1, c);
+				RebuildTreeView(c);
+			}
+			else if (item is Channel)
+			{
+				Channel c = item as Channel;
+				Group g = (tvGroups.SelectedNode.Parent as DataboundTreeNode).Tag as Group;
+				int index = g.Channels.IndexOf(c);
+				g.Channels.RemoveAt(index);
+				if (index == 0) g.Channels.Add(c);
+				else g.Channels.Insert(index - 1, c);
+				RebuildTreeView(c);
+			}
+        }
+
+        private void btnItemDown_Click(object sender, EventArgs e)
+        {
+			object item = (tvGroups.SelectedNode as DataboundTreeNode).Tag;
+			if (item is Category)
+			{
+				Category c = item as Category;
+				var parentNode = tvGroups.SelectedNode.Parent as DataboundTreeNode;
+				IList<Category> list;
+				if (parentNode != null)
+				{
+					list = (parentNode.Tag as Category).SubCategories;
+				}
+				else
+				{
+					list = (SiteSettingsBindingSource.Current as SiteSettings).Categories;
+				}
+				int index = list.IndexOf(c);
+				list.RemoveAt(index);
+				if (index >= list.Count) index = -1;
+				list.Insert(index + 1, c);
+				RebuildTreeView(c);
+			}
+			else if (item is Channel)
+			{
+				Channel c = item as Channel;
+				Group g = (tvGroups.SelectedNode.Parent as DataboundTreeNode).Tag as Group;
+				int index = g.Channels.IndexOf(c);
+				g.Channels.RemoveAt(index);
+				if (index >= g.Channels.Count) index = -1;
+				g.Channels.Insert(index + 1, c);
+				RebuildTreeView(c);
+			}
         }
     }
 }
