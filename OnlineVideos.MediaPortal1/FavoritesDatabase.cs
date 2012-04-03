@@ -273,7 +273,6 @@ namespace OnlineVideos.MediaPortal1
 				if (string.IsNullOrEmpty(siteName)) return null;
 				string cleanSiteName = DatabaseUtility.RemoveInvalidChars(siteName);
 				string categoryHierarchyName = cat != null ? EscapeString(DatabaseUtility.RemoveInvalidChars(cat.RecursiveName("|"))) : "";
-				// 1. try to find layout specific to this category
 				if (!string.IsNullOrEmpty(categoryHierarchyName))
 				{
 					var resultSet = m_db.Execute(string.Format("SELECT Layout FROM PREFERRED_LAYOUT WHERE Site_Name = '{0}' AND Category_Hierarchy = '{1}'", cleanSiteName, categoryHierarchyName));
@@ -282,12 +281,6 @@ namespace OnlineVideos.MediaPortal1
 						return (MediaPortal.GUI.Library.GUIFacadeControl.Layout)int.Parse(DatabaseUtility.Get(resultSet, 0, "Layout"));
 					}
 				}
-				// 2. try to find layout for this site
-				var resultSet2 = m_db.Execute(string.Format("SELECT Layout FROM PREFERRED_LAYOUT WHERE Site_Name = '{0}' AND Category_Hierarchy = ''", cleanSiteName));
-				if (resultSet2.Rows.Count > 0) return (MediaPortal.GUI.Library.GUIFacadeControl.Layout)int.Parse(DatabaseUtility.Get(resultSet2, 0, "Layout"));
-				// 3. use the first layout found for any category of the site
-				var resultSet3 = m_db.Execute(string.Format("SELECT Layout FROM PREFERRED_LAYOUT WHERE Site_Name = '{0}' LIMIT 1", cleanSiteName));
-				if (resultSet3.Rows.Count > 0) return (MediaPortal.GUI.Library.GUIFacadeControl.Layout)int.Parse(DatabaseUtility.Get(resultSet3, 0, "Layout"));
 				return null;
 			}
 			catch (Exception ex)
