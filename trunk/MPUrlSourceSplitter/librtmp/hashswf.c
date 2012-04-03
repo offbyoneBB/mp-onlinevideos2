@@ -296,7 +296,7 @@ struct info
 };
 
 static size_t
-swfcrunch(RTMP *r, void *ptr, size_t size, size_t nmemb, void *stream)
+swfcrunch(void *ptr, size_t size, size_t nmemb, void *stream)
 {
   struct info *i = stream;
   char *p = ptr;
