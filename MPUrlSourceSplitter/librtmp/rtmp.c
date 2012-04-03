@@ -2877,14 +2877,14 @@ HandleCtrl(RTMP *r, const RTMPPacket *packet)
       if (packet->m_nBodySize > 2 && packet->m_body[2] > 0x01)
 	{
 	  RTMP_Log(r, RTMP_LOGERROR,
-            "%s: SWFVerification Type %d request not supported! Patches welcome...",
+            "%s: SWFVerification Type %d request not supported! attempting to use SWFVerification Type 1! Patches welcome...",
 	    __FUNCTION__, packet->m_body[2]);
 	}
 #ifdef CRYPTO
       /*RTMP_LogHex(packet.m_body, packet.m_nBodySize); */
 
       /* respond with HMAC SHA256 of decompressed SWF, key is the 30byte player key, also the last 30 bytes of the server handshake are applied */
-      else if (r->Link.SWFSize)
+      /*else*/ if (r->Link.SWFSize)
 	{
 	  RTMP_SendCtrl(r, 0x1B, 0, 0);
 	}
