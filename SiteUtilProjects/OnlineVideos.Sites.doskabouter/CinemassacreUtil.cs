@@ -75,50 +75,51 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
-            string thisUrl = null;
-            if (data.IndexOf(@"param name=""src"" value=""") >= 0)
-                thisUrl = GetSubString(data, @"param name=""src"" value=""", @"""");
-            else
-                if (data.IndexOf(@"param name=""movie"" value=""") >= 0)
-                    thisUrl = GetSubString(data, @"param name=""movie"" value=""", @"""");
-                else
-                    if (data.IndexOf(@"<div id=""video-content"">") >= 0)
+            string data2;
+            string thisUrl = GetSubString(data, @"param name=""src"" value=""", @"""");
+            if (String.IsNullOrEmpty(thisUrl))
+                thisUrl = GetSubString(data, @"param name=""movie"" value=""", @"""");
+            if (String.IsNullOrEmpty(thisUrl))
+            {
+                data2 = GetSubString(data, @"<div id=""video-content"">", "</div>");
+                thisUrl = GetSubString(data2, @"src=""", @"""");
+            }
+            if (String.IsNullOrEmpty(thisUrl))
+            {
+                data2 = GetSubString(data, @"<div id=""video-content"">", "<!-- /video -->");
+                int i = data2.IndexOf(@"><img class=");
+                if (i >= 0)
+                {
+                    int j = data2.LastIndexOf(@"href=""", i);
+                    if (j >= 0)
                     {
-                        data = GetSubString(data, @"<div id=""video-content"">", "</div>");
-                        thisUrl = GetSubString(data, @"src=""", @"""");
-                        if (String.IsNullOrEmpty(thisUrl))
-                        {
-                            data = GetWebData(video.VideoUrl);
-                            data = GetSubString(data, @"<div id=""video-content"">", "<!-- /video -->");
-                            int i = data.IndexOf(@"><img class=");
-                            if (i >= 0)
-                            {
-                                int j = data.LastIndexOf(@"href=""", i);
-                                if (j >= 0)
-                                {
-                                    thisUrl = data.Substring(j + 6);
-                                    i = thisUrl.IndexOf('"');
-                                    if (i >= 0)
-                                        thisUrl = thisUrl.Substring(0, i);
-                                }
-                            }
-                        }
+                        thisUrl = data2.Substring(j + 6);
+                        i = thisUrl.IndexOf('"');
+                        if (i >= 0)
+                            thisUrl = thisUrl.Substring(0, i);
                     }
-                    else
-                    {
-                        string data2 = GetSubString(data, @"<div id=""content"" class=""content page"">", @"<div id=""comments"">");
-                        thisUrl = GetSubString(data2, @"<p><a href=""", @"""");
-                        if (String.IsNullOrEmpty(thisUrl))
-                        {
-                            thisUrl = GetSubString(data2, @"src=""", @"""");
-                            if (thisUrl.EndsWith(".jpg"))
-                                thisUrl = null;
-                            if (String.IsNullOrEmpty(thisUrl))
-                                thisUrl = GetSubString(data, @"<embed src=""", @"""");
-                            if (String.IsNullOrEmpty(thisUrl))
-                                thisUrl = GetSubString(data, @"<iframe src=""", @"""");
-                        }
-                    }
+                }
+            }
+            if (String.IsNullOrEmpty(thisUrl))
+            {
+                data2 = GetSubString(data, @"<div id=""content"" class=""content page"">", @"<div id=""comments"">");
+                thisUrl = GetSubString(data2, @"<p><a href=""", @"""");
+                if (String.IsNullOrEmpty(thisUrl))
+                {
+                    thisUrl = GetSubString(data2, @"src=""", @"""");
+                    if (thisUrl.EndsWith(".jpg"))
+                        thisUrl = null;
+                }
+            }
+            if (String.IsNullOrEmpty(thisUrl))
+            {
+                data2 = GetSubString(data, @"<div id=""video-details"" class=""content""", @"<div id=""comments"">");
+                thisUrl = GetSubString(data2, @"<p><a href=""", @"""");
+            }
+            if (String.IsNullOrEmpty(thisUrl))
+                thisUrl = GetSubString(data, @"<embed src=""", @"""");
+            if (String.IsNullOrEmpty(thisUrl))
+                thisUrl = GetSubString(data, @"<iframe src=""", @"""");
 
             if (thisUrl == null) return null;
             if (thisUrl.StartsWith("http://www.youtube.com"))
@@ -150,16 +151,16 @@ namespace OnlineVideos.Sites
                 return null;
             }
 
-            if (thisUrl.StartsWith("http://www.gametrailers.com/video"))
+            if (thisUrl.StartsWith("http://www.gametrailers.com"))
             {
                 //http://www.gametrailers.com/video/angry-video-screwattack/60232
                 int i = thisUrl.LastIndexOf('/');
                 data = thisUrl.Substring(i + 1);
                 string url = String.Format(@"http://www.gametrailers.com/neo/?page=xml.mediaplayer.Mediagen&movieId={0}", data);
-                string data2 = GetWebData(url);
+                string data3 = GetWebData(url);
 
                 XmlDocument doc = new XmlDocument();
-                doc.LoadXml(data2);
+                doc.LoadXml(data3);
                 return url = doc.SelectSingleNode("//rendition/src").InnerText;
             }
 
@@ -172,14 +173,14 @@ namespace OnlineVideos.Sites
                     id = GetSubString(data, "flvbaseclip=", @"""");
                 }
                 string url = String.Format(@"http://www.spike.com/ui/xml/mediaplayer/mediagen.groovy?videoId={0}", id);
-                string data2 = GetWebData(url);
+                string data3 = GetWebData(url);
 
                 XmlDocument doc = new XmlDocument();
-                doc.LoadXml(data2);
+                doc.LoadXml(data3);
                 return url = doc.SelectSingleNode("//rendition/src").InnerText;
             }
 
-            if (thisUrl.StartsWith("http://cinemassacre.springboardplatform.com"))
+            if (thisUrl.StartsWith("http://www.springboardplatform.com"))
             {
                 string newUrl = GetRedirectedUrl(thisUrl);
                 string[] parts = newUrl.Split(new[] { "%22" }, StringSplitOptions.RemoveEmptyEntries);
