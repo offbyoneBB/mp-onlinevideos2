@@ -602,7 +602,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     if (hr != 0) // S_OK
                     {
                         DsError.ThrowExceptionForHR(hr);
-                        throw new Exception(string.Format("IMediaControl.GetState after 5 seconds: 0x{0} - '{1}'", hr.ToString("X8"), DsError.GetErrorText(hr)));
+                        throw new Exception(string.Format("IMediaControl.GetState after 20 seconds: 0x{0} - '{1}'", hr.ToString("X8"), DsError.GetErrorText(hr)));
                     }
                 }
             }
