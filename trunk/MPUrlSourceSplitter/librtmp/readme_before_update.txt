@@ -255,3 +255,10 @@ if (r->Link.auth.av_len)
 {
   r->Link.lFlags |= RTMP_LF_AUTH;
 }
+
+--------------------------------------------
+
+Comment: in HandleCtrl() method replace 'else if (r->Link.SWFSize)'
+Code:
+
+/*else*/ if (r->Link.SWFSize)
