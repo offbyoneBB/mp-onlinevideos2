@@ -3076,22 +3076,25 @@ public class Script
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>improved context menu handling for more flexibility for utils (rate, comment a video on YouTube, manage playlists)
+    <VersionDescription>improved: context menu handling - more flexibility for utils (YouTube: rate and comment a video, manage playlists)
 improved: you can now add any category at any hierarchy level to favorites
 improved: SiteManager screen autorefreshes + removed unneccessary buttons
+improved: MPUrlSourceSplitter filter freezing on slow connections
+added: when going to SiteManager from inside a Site, preselect that Site in the list
 added: allow refresh rate adaption according to FPS and settings in MediaPortal
 added: press the INFO key (F9) when in videos view to show additional information (skin update required)
 added: event when a download finished for other plugins
 added: pressing HOME (H) goes to OnlineVideos root view
-added: include Extensions plugin mpe in the installer (optional)
+added: include Extensions plugin mpe in the installer (optional install)
 added: dialog to create a RtmpUrl with parameters from the CreateEditSite dialog
-added: when going to SiteManager from inside a Site, preselect that Site in the list
+added: Allow reordering of Groups, RssLinks and Channels in Edit Site dialog
 added: methods OnPlaybackEnded and OnDownloadEnded to SiteUtilBase class
 added: remember Layout per Category and Site
-fixed: possible MP GUI freezing on stopping videos</VersionDescription>
+fixed: possible MP GUI freezing on stopping videos
+fixed: SiteManager now also shows sites that are only in local file, so user can delete them</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.1.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2012-04-01T11:00:00</ReleaseDate>
+    <ReleaseDate>2012-04-06T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
