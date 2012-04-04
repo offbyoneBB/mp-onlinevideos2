@@ -1197,7 +1197,7 @@
         |
         (<dt>[^<]*</dt>\s*<dd>\s*<a\srel="[^"]*"\stitle="[^"]*"\shref="(?<VideoUrl>[^"]*)"><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*><cite>(?<Title>[^<]*)</cite></a><em><span>(?<Description>[^<]*)</span></em>\s*</dd>)]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\stitle='Ir\sa\sla\spágina\ssiguiente'\sclass="siguiente">\s*<a\sname="paginaIR"\shref="(?<url>[^"]*)"><span>Siguiente</span></a>]]></item>
-        <item key="nextPageRegExUrlDecoding"><![CDATA[True]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="baseUrl"><![CDATA[http://www.rtve.es/]]></item>
       </Configuration>
       <Categories>

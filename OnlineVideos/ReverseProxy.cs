@@ -57,6 +57,16 @@ namespace OnlineVideos {
         }
 
         /// <summary>
+        /// Check if the handler has already been added
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <returns></returns>
+        public bool HasHandler(IProxyHandler handler)
+        {
+            return _handlers.Contains(handler);
+        }
+
+        /// <summary>
         /// Returns the proxy url based on the handler and original uri
         /// </summary>
         /// <param name="handler"></param>
@@ -64,7 +74,10 @@ namespace OnlineVideos {
         /// <returns></returns>
         public string GetProxyUri(IProxyHandler handler, string uri) {
             int index = _handlers.IndexOf(handler);
-            return string.Format("http://127.0.0.1:{0}/{1}/{2}", _serverPort, index, uri.Substring(7));
+            if (index >= 0)
+                return string.Format("http://127.0.0.1:{0}/{1}/{2}", _serverPort, index, uri.Substring(7));
+            else 
+                return "";
         }
 
         class RequestHandlerFactory : IHTTPRequestHandlerFactory {
