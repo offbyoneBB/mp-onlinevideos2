@@ -3093,7 +3093,7 @@ added: remember Layout per Category and Site
 fixed: possible MP GUI freezing on stopping videos
 fixed: SiteManager now also shows sites that are only in local file, so user can delete them</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.1.0.0.mpe1</OnlineLocation>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.2.0.0.mpe1</OnlineLocation>
     <ReleaseDate>2012-04-06T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
