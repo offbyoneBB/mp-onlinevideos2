@@ -10,6 +10,8 @@
   <string Field="All">Všetko</string>
   <string Field="Actions">Akcie</string>
   <string Field="Actors">Herci</string>
+  <string Field="AddComment">Pridať poznámku ...</string>
+  <string Field="AddToPlaylist">Pridať do zoznamu na prehratie ...</string>
   <string Field="AddToMySites">Pridať k mojim stránkám</string>
   <string Field="AddToFavourites">Pridať k obľúbeným</string>
   <string Field="AddingToFavorites">pridávam k obľúbeným</string>
@@ -23,8 +25,10 @@
   <!-- C -->
   <string Field="Cancel">Zrušiť</string>
   <string Field="Category">Kategória</string>
+  <string Field="CategoryNotFound">Kategória nenájdená</string>
   <string Field="Categories">Kategórie</string>
   <string Field="Creator">Autor</string>
+  <string Field="CreateNewPlaylist">Vytvoriť nový zoznam na prehratie ...</string>
   <string Field="CheckingForPluginUpdate">kontrolujem nové verzie modulov</string>
   <string Field="Concurrent">naraz</string>
 
@@ -44,6 +48,7 @@
   <string Field="DownloadedVideos">Stiahnuté videá</string>
   <string Field="DownloadsWillBeAborted">Sťahovanie bude zrušené.</string>
   <string Field="Delete">Vymazať</string>
+  <string Field="DeletePlaylist">Vymazať zoznam na prehratie</string>
   <string Field="DeleteAll">Vymazať všetko</string>
   <string Field="Default">Predvolené</string>
   <string Field="Done">Hotovo</string>
@@ -122,8 +127,10 @@
   <string Field="Queued">zaradené</string>
 
   <!-- R -->
+  <string Field="RateVideo">Ohodnotiť video ...</string>
   <string Field="Recommendations">Odporúčania</string>
   <string Field="RemoveFromFavorites">Odstrániť z obľúbených</string>
+  <string Field="RemoveFromPlaylist">Odstrániť zo zoznamu na prehratie</string>
   <string Field="RemovingFromFavorites">odstraňujem z obľúbených</string>
   <string Field="Refresh">Obnoviť</string>
   <string Field="RelatedVideos">Príbuzné videá</string>
@@ -198,9 +205,11 @@
   <string Field="Settings_UtilTimeout">Časový limit (sekundy) pre webové požiadavky</string>
   <string Field="Settings_WmpBuffer">Veľkosť vyrovnávacej pamäte (milisekundy) pre Windows Media Player</string>
   <string Field="Settings_PlayBuffer">Percento stiahnutých dát pred začatím prehrávania</string>
+  <string Field="Settings_AllowRefreshrateChange">Povoliť dynamické zmeny obnovovacej frekvencie</string>
   <string Field="Settings_FavoritesFirst">Dať Obľúbené a Stiahnuté videá na prvé miesta</string>
   <string Field="Settings_LatestVideosRandomize">Náhodne zoradiť najnovšie videá pred zobrazením</string>
   <string Field="Settings_LatestVideosOnlineDataRefresh">Obnov najnovšie videá z internetu každých x minút</string>
   <string Field="Settings_LatestVideosGuiDataRefresh">Obnov posledne zobrazené videá každých x sekúnd</string>
+  <string Field="Settings_StoreLayoutPerCategory">Zapamätať výzor pre stránku a kategóriu</string>
 
 </strings>
