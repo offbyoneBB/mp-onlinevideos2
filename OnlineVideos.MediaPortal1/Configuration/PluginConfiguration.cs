@@ -182,13 +182,13 @@ namespace OnlineVideos.MediaPortal1
 #endif
                     ovsconf.ThumbsDir = settings.GetValueAsString(CFG_SECTION, CFG_THUMBNAIL_DIR, ovsconf.ThumbsDir).Replace("/", @"\");
                     if (!ovsconf.ThumbsDir.EndsWith(@"\")) ovsconf.ThumbsDir = ovsconf.ThumbsDir + @"\"; // fix thumbnail dir to include the trailing slash
-                    try { if (!Directory.Exists(ovsconf.ThumbsDir)) Directory.CreateDirectory(ovsconf.ThumbsDir); }
+                    try { if (!string.IsNullOrEmpty(ovsconf.ThumbsDir) && !Directory.Exists(ovsconf.ThumbsDir)) Directory.CreateDirectory(ovsconf.ThumbsDir); }
                     catch (Exception e) { Log.Instance.Error("Failed to create thumb dir: {0}", e.ToString()); }
                     ThumbsAge = settings.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, ThumbsAge);
                     Log.Instance.Info("Thumbnails will be stored in {0} with a maximum age of {1} days.", ovsconf.ThumbsDir, ThumbsAge);
 
                     ovsconf.DownloadDir = settings.GetValueAsString(CFG_SECTION, CFG_DOWNLOAD_DIR, "");
-                    try { if (!Directory.Exists(ovsconf.DownloadDir)) Directory.CreateDirectory(ovsconf.DownloadDir); }
+                    try { if (!string.IsNullOrEmpty(ovsconf.DownloadDir) && !Directory.Exists(ovsconf.DownloadDir)) Directory.CreateDirectory(ovsconf.DownloadDir); }
                     catch (Exception e) { Log.Instance.Error("Failed to create download dir: {0}", e.ToString()); }
 
                     ovsconf.CacheTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, ovsconf.CacheTimeout);                    
