@@ -24,6 +24,7 @@
 #include "LAVSplitter.h"
 #include "OutputPin.h"
 #include "InputPin.h"
+#include "VersionInfo.h"
 
 #include "BaseDemuxer.h"
 #include "LAVFDemuxer.h"
@@ -37,6 +38,28 @@
 #include "registry.h"
 
 #include "IGraphRebuildDelegate.h"
+
+extern "C"
+{
+#include "config.h"
+#include "..\..\ffmpeg\version.h"
+#if CONFIG_AVFILTER
+#include "libavfilter\version.h"
+#include "libavfilter\avfilter.h"
+#endif
+#if CONFIG_SWSCALE
+#include "libswscale\swscale.h"
+#endif
+#if CONFIG_AVDEVICE
+#include "libavdevice\avdevice.h"
+#endif
+#if CONFIG_SWRESAMPLE
+#include "libswresample\swresample.h"
+#endif
+#if CONFIG_POSTPROC
+#include "libpostproc\postprocess.h"
+#endif
+}
 
 #ifdef _DEBUG
 #define MODULE_NAME                                               L"LAVSplitterd"
@@ -61,6 +84,62 @@
 static volatile bool ffmpeg_log_callback_set = false;
 static CLogger ffmpeg_logger_instance(NULL);
 
+#define SHOW_VERSION  2
+#define SHOW_CONFIG   4
+
+static int warned_cfg = 0;
+
+#define GET_LIB_INFO(libInfo, libname, LIBNAME, flags)                                        \
+{                                                                                             \
+    libInfo = NULL;                                                                           \
+    if (CONFIG_##LIBNAME)                                                                     \
+    {                                                                                         \
+        char *versionStringA = NULL;                                                          \
+        char *configurationStringA = NULL;                                                    \
+        if (flags & SHOW_VERSION)                                                             \
+        {                                                                                     \
+            unsigned int version = libname##_version();                                       \
+            versionStringA = FormatStringA("lib%-11s %2d.%3d.%3d / %2d.%3d.%3d",              \
+                   #libname,                                                                  \
+                   LIB##LIBNAME##_VERSION_MAJOR,                                              \
+                   LIB##LIBNAME##_VERSION_MINOR,                                              \
+                   LIB##LIBNAME##_VERSION_MICRO,                                              \
+                   version >> 16, version >> 8 & 0xff, version & 0xff);                       \
+        }                                                                                     \
+        if (flags & SHOW_CONFIG)                                                              \
+        {                                                                                     \
+            const char *cfg = libname##_configuration();                                      \
+            if (strcmp(FFMPEG_CONFIGURATION, cfg))                                            \
+            {                                                                                 \
+                configurationStringA = FormatStringA("%-11s configuration: %s",               \
+                        #libname, cfg);                                                       \
+            }                                                                                 \
+        }                                                                                     \
+        wchar_t *versionStringW = ConvertToUnicodeA(versionStringA);                          \
+        wchar_t *configurationStringW = ConvertToUnicodeA(configurationStringA);              \
+        FREE_MEM(versionStringA);                                                             \
+        FREE_MEM(configurationStringA);                                                       \
+        if ((versionStringW == NULL) && (configurationStringW == NULL))                       \
+        {                                                                                     \
+            libInfo = NULL;                                                                   \
+        }                                                                                     \
+        else if (versionStringW == NULL)                                                      \
+        {                                                                                     \
+            libInfo = Duplicate(configurationStringW);                                        \
+        }                                                                                     \
+        else if (configurationStringW == NULL)                                                \
+        {                                                                                     \
+            libInfo = Duplicate(versionStringW);                                              \
+        }                                                                                     \
+        else                                                                                  \
+        {                                                                                     \
+            libInfo = FormatStringW(L"%s %s", versionStringW, configurationStringW);          \
+        }                                                                                     \
+        FREE_MEM(versionStringW);                                                             \
+        FREE_MEM(configurationStringW);                                                       \
+    }                                                                                         \
+}                                                                                             \
+
 CLAVSplitter::CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr) 
   : CBaseFilter(NAME("lavf dshow source filter"), pUnk, this,  __uuidof(this), phr)
   //, m_rtStart(0)
@@ -80,6 +159,81 @@ CLAVSplitter::CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr)
   this->logger = new CLogger(NULL);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 
+  wchar_t *version = GetVersionInfo(VERSION_INFO_MPURLSOURCESPLITTER, COMPILE_INFO_MPURLSOURCESPLITTER);
+  this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, version);
+  FREE_MEM(version);
+
+  wchar_t *ffmpegVersion = ConvertToUnicodeA(FFMPEG_VERSION);
+  this->logger->Log(LOGGER_INFO, L"%s: %s: FFMPEG version: %s", MODULE_NAME, METHOD_CONSTRUCTOR_NAME, ffmpegVersion);
+  FREE_MEM(ffmpegVersion);
+  
+  wchar_t *result = NULL;
+
+#if CONFIG_AVUTIL
+  GET_LIB_INFO(result, avutil,   AVUTIL,   SHOW_VERSION);
+  if (result != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, result);
+  }
+  FREE_MEM(result);
+#endif
+#if CONFIG_AVCODEC
+  GET_LIB_INFO(result, avcodec,  AVCODEC,  SHOW_VERSION);
+  if (result != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, result);
+  }
+  FREE_MEM(result);
+#endif
+#if CONFIG_AVFORMAT
+  GET_LIB_INFO(result, avformat, AVFORMAT, SHOW_VERSION);
+  if (result != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, result);
+  }
+  FREE_MEM(result);
+#endif
+#if CONFIG_AVDEVICE
+  GET_LIB_INFO(result, avdevice, AVDEVICE, SHOW_VERSION);
+  if (result != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, result);
+  }
+  FREE_MEM(result);
+#endif
+#if CONFIG_AVFILTER
+  GET_LIB_INFO(result, avfilter, AVFILTER, SHOW_VERSION);
+  if (result != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, result);
+  }
+  FREE_MEM(result);
+#endif
+#if CONFIG_SWSCALE
+  GET_LIB_INFO(result, swscale,  SWSCALE,  SHOW_VERSION);
+  if (result != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, result);
+  }
+  FREE_MEM(result);
+#endif
+#if CONFIG_SWRESAMPLE
+  GET_LIB_INFO(result, swresample,SWRESAMPLE,  SHOW_VERSION);
+  if (result != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, result);
+  }
+  FREE_MEM(result);
+#endif
+#if CONFIG_POSTPROC
+  GET_LIB_INFO(result, postproc, POSTPROC, SHOW_VERSION);
+  if (result != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, result);
+  }
+  FREE_MEM(result);
+#endif
+
   WCHAR fileName[1024];
   GetModuleFileName(NULL, fileName, 1024);
   m_processName = PathFindFileName (fileName);
@@ -87,7 +241,7 @@ CLAVSplitter::CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr)
   m_pInput = new CLAVInputPin(this->logger, NAME("LAV Input Pin"), this, this, phr);
 
   CLAVFDemuxer::ffmpeg_init();
-
+  
   if (!ffmpeg_log_callback_set)
   {
     // callback for ffmpeg log is not set
@@ -1848,4 +2002,9 @@ HRESULT CLAVSplitter::GetCacheFileName(wchar_t **path)
 	}
 
 	return S_OK;
+}
+
+wchar_t *GetVersionInfo(const wchar_t *version, const wchar_t *compile)
+{
+  return FormatString(L"Version: %s Compile date: %s", version, compile);
 }

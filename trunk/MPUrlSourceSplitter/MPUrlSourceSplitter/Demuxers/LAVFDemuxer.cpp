@@ -22,6 +22,8 @@
 #include "LAVFUtils.h"
 #include "LAVFStreamInfo.h"
 #include "ILAVPinInfo.h"
+#include "VersionInfo.h"
+#include "..\LAVSplitter\VersionInfo.h"
 
 #include "LAVSplitterSettingsInternal.h"
 
@@ -154,6 +156,10 @@ CLAVFDemuxer::CLAVFDemuxer(CCritSec *pLock, ILAVFSettingsInternal *settings, IFi
   m_pFilter = filter;
   this->flvTimestamps = ALLOC_MEM_SET(this->flvTimestamps, FlvTimestamp, FLV_TIMESTAMP_MAX, 0);
   this->dontChangeTimestamps = false;
+
+  wchar_t *version = GetVersionInfo(VERSION_INFO_DEMUXERS, COMPILE_INFO_DEMUXERS);
+  filter->GetLogger()->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, version);
+  FREE_MEM(version);
 }
 
 CLAVFDemuxer::~CLAVFDemuxer()

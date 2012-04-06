@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Version Info">
+      <UniqueIdentifier>{6a092246-6247-474a-8035-5782aaf478dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -42,6 +45,9 @@
   <ItemGroup>
     <None Include="mpurlsourcesplitter_file.def">
       <Filter>Source Files</Filter>
+    </None>
+    <None Include="VersionInfo.h.template">
+      <Filter>Version Info</Filter>
     </None>
   </ItemGroup>
 </Project>

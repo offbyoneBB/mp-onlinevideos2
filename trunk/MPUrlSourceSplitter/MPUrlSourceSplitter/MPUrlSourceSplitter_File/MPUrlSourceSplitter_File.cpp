@@ -23,6 +23,8 @@
 #include "MPUrlSourceSplitter_FILE.h"
 #include "Utilities.h"
 #include "LockMutex.h"
+#include "VersionInfo.h"
+#include "..\LAVSplitter\VersionInfo.h"
 
 // protocol implementation name
 #ifdef _DEBUG
@@ -55,6 +57,13 @@ CMPUrlSourceSplitter_File::CMPUrlSourceSplitter_File(CParameterCollection *confi
 
   this->logger = new CLogger(this->configurationParameters);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+
+  wchar_t *version = GetVersionInfo(VERSION_INFO_MPURLSOURCESPLITTER_FILE, COMPILE_INFO_MPURLSOURCESPLITTER_FILE);
+  if (version != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, version);
+  }
+  FREE_MEM(version);
 
   this->filePath = NULL;
   this->fileStream = NULL;

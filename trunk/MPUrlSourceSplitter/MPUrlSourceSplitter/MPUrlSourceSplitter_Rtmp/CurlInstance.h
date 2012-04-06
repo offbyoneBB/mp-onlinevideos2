@@ -185,6 +185,11 @@ public:
   void SetRtmpSwfVerify(bool rtmpSwfVerify);
   void SetRtmpSwfAge(unsigned int rtmpSwfAge);
 
+  // gets libcurl version
+  // caller is responsible for freeing memory
+  // @return : libcurl version or NULL if error
+  static wchar_t *GetCurlVersion(void);
+
 private:
   CURL *curl;
   CLogger *logger;

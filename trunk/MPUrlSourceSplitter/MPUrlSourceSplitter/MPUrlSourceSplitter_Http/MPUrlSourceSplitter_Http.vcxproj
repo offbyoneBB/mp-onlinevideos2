@@ -66,6 +66,9 @@
       <Command>copy /Y "$(TargetDir)$(TargetName).lib" "$(SolutionDir)bin_$(PlatformName)d\lib\$(TargetName).lib"
 copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)d\$(TargetFileName)"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>subwcrev "$(ProjectDir)." "$(ProjectDir)VersionInfo.h.template" "$(ProjectDir)VersionInfo.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -92,6 +95,9 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <Message>
       </Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>subwcrev "$(ProjectDir)." "$(ProjectDir)VersionInfo.h.template" "$(ProjectDir)VersionInfo.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CurlInstance.h" />
@@ -118,6 +124,7 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
   </ItemGroup>
   <ItemGroup>
     <None Include="mpurlsourcesplitter_Http.def" />
+    <None Include="VersionInfo.h.template" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

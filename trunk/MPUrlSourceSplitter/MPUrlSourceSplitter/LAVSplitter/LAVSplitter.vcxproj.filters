@@ -16,6 +16,9 @@
     <Filter Include="Header Files\common">
       <UniqueIdentifier>{31a9533d-6d33-49b2-929c-40167cb6f0e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Version Info">
+      <UniqueIdentifier>{e727079f-caee-4602-88ce-1e9bb6b112df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -203,5 +206,8 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="necessary_changes_in_ffmpeg.txt" />
+    <None Include="VersionInfo.h.template">
+      <Filter>Version Info</Filter>
+    </None>
   </ItemGroup>
 </Project>

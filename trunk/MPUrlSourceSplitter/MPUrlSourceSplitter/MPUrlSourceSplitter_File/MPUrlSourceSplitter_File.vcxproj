@@ -66,6 +66,9 @@
     <PostBuildEvent>
       <Command>copy /Y "$(TargetDir)$(TargetName).lib" "$(SolutionDir)bin_$(PlatformName)d\lib\$(TargetName).lib"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>subwcrev "$(ProjectDir)." "$(ProjectDir)VersionInfo.h.template" "$(ProjectDir)VersionInfo.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -93,6 +96,9 @@
       <Message>
       </Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>subwcrev "$(ProjectDir)." "$(ProjectDir)VersionInfo.h.template" "$(ProjectDir)VersionInfo.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="MPUrlSourceSplitter_File.h" />
@@ -117,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="mpurlsourcesplitter_file.def" />
+    <None Include="VersionInfo.h.template" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

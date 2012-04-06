@@ -66,6 +66,9 @@
       <Command>copy /Y "$(TargetDir)$(TargetName).lib" "$(SolutionDir)bin_$(PlatformName)d\lib\$(TargetName).lib"
 copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)d\$(TargetFileName)"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>subwcrev "$(ProjectDir)." "$(ProjectDir)VersionInfo.h.template" "$(ProjectDir)VersionInfo.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -92,9 +95,13 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <Message>
       </Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>subwcrev "$(ProjectDir)." "$(ProjectDir)VersionInfo.h.template" "$(ProjectDir)VersionInfo.h"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="mpurlsourcesplitter_Rtmp.def" />
+    <None Include="VersionInfo.h.template" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CurlInstance.h" />

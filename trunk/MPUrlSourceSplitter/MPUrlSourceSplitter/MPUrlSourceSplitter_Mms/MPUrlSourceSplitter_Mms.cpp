@@ -23,6 +23,8 @@
 #include "MPUrlSourceSplitter_Mms.h"
 #include "Utilities.h"
 #include "LockMutex.h"
+#include "VersionInfo.h"
+#include "..\LAVSplitter\VersionInfo.h"
 
 #include <WinInet.h>
 #include <stdio.h>
@@ -83,6 +85,20 @@ CMPUrlSourceSplitter_Mms::CMPUrlSourceSplitter_Mms(CParameterCollection *configu
 
   this->logger = new CLogger(this->configurationParameters);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+
+  wchar_t *version = GetVersionInfo(VERSION_INFO_MPURLSOURCESPLITTER_MMS, COMPILE_INFO_MPURLSOURCESPLITTER_MMS);
+  if (version != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, version);
+  }
+  FREE_MEM(version);
+
+  version = CCurlInstance::GetCurlVersion();
+  if (version != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, version);
+  }
+  FREE_MEM(version);
   
   this->receiveDataTimeout = MMS_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = MMS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
