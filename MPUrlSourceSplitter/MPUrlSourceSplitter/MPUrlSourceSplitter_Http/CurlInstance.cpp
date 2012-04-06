@@ -493,3 +493,10 @@ void CCurlInstance::SetCloseWithoutWaiting(bool closeWithoutWaiting)
 {
   this->closeWithoutWaiting = closeWithoutWaiting;
 }
+
+wchar_t *CCurlInstance::GetCurlVersion(void)
+{
+  char *curlVersion = curl_version();
+
+  return ConvertToUnicodeA(curlVersion);
+}

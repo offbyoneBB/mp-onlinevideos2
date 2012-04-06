@@ -160,6 +160,11 @@ public:
   // clears headers
   void ClearHeaders(void);
 
+  // gets libcurl version
+  // caller is responsible for freeing memory
+  // @return : libcurl version or NULL if error
+  static wchar_t *GetCurlVersion(void);
+
 private:
   CURL *curl;
   CLogger *logger;

@@ -516,3 +516,10 @@ void CCurlInstance::ClearHeaders(void)
   curl_slist_free_all(this->mmsHeaders);
   this->mmsHeaders = NULL;
 }
+
+wchar_t *CCurlInstance::GetCurlVersion(void)
+{
+  char *curlVersion = curl_version();
+
+  return ConvertToUnicodeA(curlVersion);
+}

@@ -24,6 +24,8 @@
 #include "Utilities.h"
 #include "LockMutex.h"
 #include "FlvPacket.h"
+#include "VersionInfo.h"
+#include "..\LAVSplitter\VersionInfo.h"
 
 #include <WinInet.h>
 #include <stdio.h>
@@ -59,6 +61,20 @@ CMPUrlSourceSplitter_Rtmp::CMPUrlSourceSplitter_Rtmp(CParameterCollection *confi
 
   this->logger = new CLogger(this->configurationParameters);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+
+  wchar_t *version = GetVersionInfo(VERSION_INFO_MPURLSOURCESPLITTER_RTMP, COMPILE_INFO_MPURLSOURCESPLITTER_RTMP);
+  if (version != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, version);
+  }
+  FREE_MEM(version);
+
+  version = CCurlInstance::GetCurlVersion();
+  if (version != NULL)
+  {
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, version);
+  }
+  FREE_MEM(version);
   
   this->receiveDataTimeout = RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;

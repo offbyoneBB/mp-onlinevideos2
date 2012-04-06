@@ -153,6 +153,11 @@ public:
   // @param closeWithoutWaiting : true if connection be closed without waiting, false otherwise
   void SetCloseWithoutWaiting(bool closeWithoutWaiting);
 
+  // gets libcurl version
+  // caller is responsible for freeing memory
+  // @return : libcurl version or NULL if error
+  static wchar_t *GetCurlVersion(void);
+
 private:
   CURL *curl;
   CLogger *logger;
