@@ -35,7 +35,7 @@
 class CLAVOutputPin
   : public CBaseOutputPin
   , public ILAVPinInfo
-  , IMediaSeeking
+  //, IMediaSeeking
   , protected CAMThread
 {
 public:
@@ -59,7 +59,7 @@ public:
   STDMETHODIMP Connect(IPin * pReceivePin, const AM_MEDIA_TYPE *pmt);
 
   // IMediaSeeking
-  STDMETHODIMP GetCapabilities(DWORD* pCapabilities);
+  /*STDMETHODIMP GetCapabilities(DWORD* pCapabilities);
   STDMETHODIMP CheckCapabilities(DWORD* pCapabilities);
   STDMETHODIMP IsFormatSupported(const GUID* pFormat);
   STDMETHODIMP QueryPreferredFormat(GUID* pFormat);
@@ -75,7 +75,7 @@ public:
   STDMETHODIMP GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest);
   STDMETHODIMP SetRate(double dRate);
   STDMETHODIMP GetRate(double* pdRate);
-  STDMETHODIMP GetPreroll(LONGLONG* pllPreroll);
+  STDMETHODIMP GetPreroll(LONGLONG* pllPreroll);*/
 
   // ILAVPinInfo
   STDMETHODIMP_(DWORD) GetStreamFlags();

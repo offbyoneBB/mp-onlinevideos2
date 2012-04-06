@@ -594,47 +594,6 @@ CLAVOutputPin *CLAVSplitter::GetOutputPin(DWORD streamId, BOOL bActiveOnly)
   return NULL;
 }
 
-//STDMETHODIMP CLAVSplitter::CompleteInputConnection()
-//{
-//  HRESULT hr = S_OK;
-//
-//  SAFE_DELETE(m_pDemuxer);
-//  CLAVFDemuxer *pDemux = new CLAVFDemuxer(this, this);
-//
-//  AVIOContext *pContext = NULL;
-//
-//  if (FAILED(hr = m_pInput->GetAVIOContext(&pContext))) {
-//    return hr;
-//  }
-//
-//  LPOLESTR pszFileName = NULL;
-//
-//  PIN_INFO info;
-//  hr = m_pInput->GetConnected()->QueryPinInfo(&info);
-//  if (SUCCEEDED(hr) && info.pFilter) {
-//    IFileSourceFilter *pSource = NULL;
-//    if (SUCCEEDED(info.pFilter->QueryInterface(&pSource)) && pSource) {
-//      pSource->GetCurFile(&pszFileName, NULL);
-//      SafeRelease(&pSource);
-//    }
-//    SafeRelease(&info.pFilter);
-//  }
-//
-//  if(FAILED(hr = pDemux->OpenInputStream(pContext, pszFileName))) {
-//    SAFE_DELETE(pDemux);
-//    return hr;
-//  }
-//  m_pDemuxer = pDemux;
-//  m_pDemuxer->AddRef();
-//
-//  return InitDemuxer();
-//}
-
-//STDMETHODIMP CLAVSplitter::BreakInputConnection()
-//{
-//  return Close();
-//}
-
 STDMETHODIMP CLAVSplitter::CreateDemuxer(wchar_t *pszFileName)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_NAME);
@@ -700,17 +659,6 @@ STDMETHODIMP CLAVSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
 // Get the currently loaded file
 STDMETHODIMP CLAVSplitter::GetCurFile(LPOLESTR *ppszFileName, AM_MEDIA_TYPE *pmt)
 {
-  /*CheckPointer(ppszFileName, E_POINTER);
-
-  size_t strlen = m_fileName.length() + 1;
-  *ppszFileName = (LPOLESTR)CoTaskMemAlloc(sizeof(wchar_t) * strlen);
-
-  if(!(*ppszFileName))
-    return E_OUTOFMEMORY;
-
-  wcsncpy_s(*ppszFileName, strlen, m_fileName.c_str(), _TRUNCATE);
-  return S_OK;*/
-
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : m_pInput->GetCurFile(ppszFileName, pmt);
 }
 
@@ -823,48 +771,79 @@ DWORD CLAVSplitter::ThreadProc()
   m_eEndFlush.Set();
   for(DWORD cmd = (DWORD)-1; ; cmd = GetRequest())
   {
+    switch (cmd)
+    {
+    case CMD_EXIT:
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, L"ThreadProc()", L"CMD_EXIT");
+      break;
+    case CMD_PAUSE:
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, L"ThreadProc()", L"CMD_PAUSE");
+      break;
+    case CMD_SEEK:
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, L"ThreadProc()", L"CMD_SEEK");
+      break;
+    case (DWORD)-1:
+      // ignore, it means no command
+      break;
+    default:
+      this->logger->Log(LOGGER_INFO, L"%s: %s: unknown command: %d", MODULE_NAME, L"ThreadProc()", cmd);
+      break;
+    }
+    
     if(cmd == CMD_EXIT)
     {
       Reply(S_OK);
       return 0;
     }
 
-    SetThreadPriority(m_hThread, THREAD_PRIORITY_BELOW_NORMAL);
+    if (cmd != CMD_PAUSE)
+    {
+      SetThreadPriority(m_hThread, THREAD_PRIORITY_BELOW_NORMAL);
 
-    //m_rtStart = m_rtNewStart;
-    this->m_pInput->SetStart(this->m_pInput->GetNewStart());
-    //m_rtStop = m_rtNewStop;
-    this->m_pInput->SetStop(this->m_pInput->GetNewStop());
+      //m_rtStart = m_rtNewStart;
+      this->m_pInput->SetStart(this->m_pInput->GetNewStart());
+      //m_rtStop = m_rtNewStop;
+      this->m_pInput->SetStop(this->m_pInput->GetNewStop());
 
-    //if(m_bPlaybackStarted || m_rtStart != 0 || cmd == CMD_SEEK)
-    if(m_bPlaybackStarted || this->m_pInput->GetStart() != 0 || cmd == CMD_SEEK)
-      //DemuxSeek(m_rtStart);
-      DemuxSeek(this->m_pInput->GetStart());
+      //if(m_bPlaybackStarted || m_rtStart != 0 || cmd == CMD_SEEK)
+      if(m_bPlaybackStarted || this->m_pInput->GetStart() != 0 || cmd == CMD_SEEK)
+        //DemuxSeek(m_rtStart);
+        DemuxSeek(this->m_pInput->GetStart());
 
-    if(cmd != (DWORD)-1)
-      Reply(S_OK);
+      if(cmd != (DWORD)-1)
+        Reply(S_OK);
 
-    // Wait for the end of any flush
-    m_eEndFlush.Wait();
+      // Wait for the end of any flush
+      m_eEndFlush.Wait();
 
-    m_pActivePins.clear();
+      m_pActivePins.clear();
 
-    for(pinIter = m_pPins.begin(); pinIter != m_pPins.end() && !m_fFlushing; ++pinIter) {
-      if ((*pinIter)->IsConnected()) {
-        //(*pinIter)->DeliverNewSegment(m_rtStart, m_rtStop, m_dRate);
-        (*pinIter)->DeliverNewSegment(this->m_pInput->GetStart(), this->m_pInput->GetStop(), this->m_pInput->GetPlayRate());
-        m_pActivePins.push_back(*pinIter);
+      for(pinIter = m_pPins.begin(); pinIter != m_pPins.end() && !m_fFlushing; ++pinIter) {
+        if ((*pinIter)->IsConnected()) {
+          //(*pinIter)->DeliverNewSegment(m_rtStart, m_rtStop, m_dRate);
+          (*pinIter)->DeliverNewSegment(this->m_pInput->GetStart(), this->m_pInput->GetStop(), this->m_pInput->GetPlayRate());
+          m_pActivePins.push_back(*pinIter);
+        }
+      }
+      m_rtOffset = 0;
+
+      m_bDiscontinuitySent.clear();
+
+      m_bPlaybackStarted = TRUE;
+    }
+    else
+    {
+      if(cmd != (DWORD)-1)
+      {
+        Reply(S_OK);
       }
     }
-    m_rtOffset = 0;
-
-    m_bDiscontinuitySent.clear();
-
-    m_bPlaybackStarted = TRUE;
 
     HRESULT hr = S_OK;
-    while(SUCCEEDED(hr) && !CheckRequest(&cmd)) {
-      hr = DemuxNextPacket();
+    while(SUCCEEDED(hr) && !CheckRequest(&cmd))
+    {
+      hr = (cmd == CMD_PAUSE) ? S_OK : DemuxNextPacket();
+      Sleep(1);
     }
 
     // If we didnt exit by request, deliver end-of-stream
@@ -1008,6 +987,8 @@ STDMETHODIMP CLAVSplitter::Pause()
     return hr;
   }
 
+  CAMThread::CallWorker(CMD_PAUSE);
+
   // The filter graph will set us to pause before running
   // So if we were stopped before, create the thread
   // Note that the splitter will always be running,
@@ -1078,82 +1059,51 @@ STDMETHODIMP CLAVSplitter::GetCapabilities(DWORD* pCapabilities)
 
 STDMETHODIMP CLAVSplitter::CheckCapabilities(DWORD* pCapabilities)
 {
-  //CheckPointer(pCapabilities, E_POINTER);
-  //// capabilities is empty, all is good
-  //if(*pCapabilities == 0) return S_OK;
-  //// read caps
-  //DWORD caps;
-  //GetCapabilities(&caps);
-
-  //// Store the caps that we wanted
-  //DWORD wantCaps = *pCapabilities;
-  //// Update pCapabilities with what we have
-  //*pCapabilities = caps & wantCaps;
-
-  //// if nothing matches, its a disaster!
-  //if(*pCapabilities == 0) return E_FAIL;
-  //// if all matches, its all good
-  //if(*pCapabilities == wantCaps) return S_OK;
-  //// otherwise, a partial match
-  //return S_FALSE;
-
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->CheckCapabilities(pCapabilities);
 }
 
 STDMETHODIMP CLAVSplitter::IsFormatSupported(const GUID* pFormat)
 {
-  //return !pFormat ? E_POINTER : *pFormat == TIME_FORMAT_MEDIA_TIME ? S_OK : S_FALSE;
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->IsFormatSupported(pFormat);
 }
 
 STDMETHODIMP CLAVSplitter::QueryPreferredFormat(GUID* pFormat)
 {
-  //return GetTimeFormat(pFormat);
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->QueryPreferredFormat(pFormat);
 }
 
 STDMETHODIMP CLAVSplitter::GetTimeFormat(GUID* pFormat)
 {
-  //return pFormat ? *pFormat = TIME_FORMAT_MEDIA_TIME, S_OK : E_POINTER;
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetTimeFormat(pFormat);
 }
 
 STDMETHODIMP CLAVSplitter::IsUsingTimeFormat(const GUID* pFormat)
 {
-  //return IsFormatSupported(pFormat);
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->IsUsingTimeFormat(pFormat);
 }
 
 STDMETHODIMP CLAVSplitter::SetTimeFormat(const GUID* pFormat)
 {
-  //return S_OK == IsFormatSupported(pFormat) ? S_OK : E_INVALIDARG;
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->SetTimeFormat(pFormat);
 }
 
 STDMETHODIMP CLAVSplitter::GetDuration(LONGLONG* pDuration)
 {
-  /*CheckPointer(pDuration, E_POINTER);
-  CheckPointer(m_pDemuxer, E_UNEXPECTED);
-  *pDuration = m_pDemuxer->GetDuration();
-  if (*pDuration < 0) return E_FAIL; return S_OK;*/
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetDuration(pDuration);
 }
 
 STDMETHODIMP CLAVSplitter::GetStopPosition(LONGLONG* pStop)
 {
-  //return GetDuration(pStop);
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetStopPosition(pStop);
 }
 
 STDMETHODIMP CLAVSplitter::GetCurrentPosition(LONGLONG* pCurrent)
 {
-  //return E_NOTIMPL;
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetCurrentPosition(pCurrent);
 }
 
 STDMETHODIMP CLAVSplitter::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat)
 {
-  //return E_NOTIMPL;
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->ConvertTimeFormat(pTarget, pTargetFormat, Source, pSourceFormat);
 }
 
@@ -1187,131 +1137,28 @@ STDMETHODIMP CLAVSplitter::SetPositionsInternal(void *caller, LONGLONG* pCurrent
   return result;
 }
 
-//STDMETHODIMP CLAVSplitter::SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
-//{
-//  DbgLog((LOG_TRACE, 20, "::SetPositions() - seek request; caller: %p, current: %I64d; start: %I64d; flags: 0x%x, stop: %I64d; flags: 0x%x", caller, m_rtCurrent, pCurrent ? *pCurrent : -1, dwCurrentFlags, pStop ? *pStop : -1, dwStopFlags));
-//  CAutoLock cAutoLock(this);
-//
-//  if(!pCurrent && !pStop
-//    || (dwCurrentFlags&AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning 
-//    && (dwStopFlags&AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning) {
-//      return S_OK;
-//  }
-//
-//  /*REFERENCE_TIME
-//    rtCurrent = m_rtCurrent,
-//    rtStop = m_rtStop;*/
-//  REFERENCE_TIME rtCurrent = this->m_pInput->GetCurrent();
-//  REFERENCE_TIME rtStop = this->m_pInput->GetStop();
-//
-//  if(pCurrent) {
-//    switch(dwCurrentFlags&AM_SEEKING_PositioningBitsMask)
-//    {
-//    case AM_SEEKING_NoPositioning: break;
-//    case AM_SEEKING_AbsolutePositioning: rtCurrent = *pCurrent; break;
-//    case AM_SEEKING_RelativePositioning: rtCurrent = rtCurrent + *pCurrent; break;
-//    case AM_SEEKING_IncrementalPositioning: rtCurrent = rtCurrent + *pCurrent; break;
-//    }
-//  }
-//
-//  if(pStop){
-//    switch(dwStopFlags&AM_SEEKING_PositioningBitsMask)
-//    {
-//    case AM_SEEKING_NoPositioning: break;
-//    /*case AM_SEEKING_AbsolutePositioning: rtStop = *pStop; m_bStopValid = TRUE; break;
-//    case AM_SEEKING_RelativePositioning: rtStop += *pStop; m_bStopValid = TRUE; break;
-//    case AM_SEEKING_IncrementalPositioning: rtStop = rtCurrent + *pStop; m_bStopValid = TRUE; break;*/
-//    case AM_SEEKING_AbsolutePositioning: rtStop = *pStop; this->m_pInput->SetStopValid(TRUE); break;
-//    case AM_SEEKING_RelativePositioning: rtStop += *pStop; this->m_pInput->SetStopValid(TRUE); break;
-//    case AM_SEEKING_IncrementalPositioning: rtStop = rtCurrent + *pStop; this->m_pInput->SetStopValid(TRUE); break;
-//    }
-//  }
-//
-//  //if(m_rtCurrent == rtCurrent && m_rtStop == rtStop) {
-//  if(this->m_pInput->GetCurrent() == rtCurrent && this->m_pInput->GetStop() == rtStop) {
-//    return S_OK;
-//  }
-//
-//  if(m_rtLastStart == rtCurrent && m_rtLastStop == rtStop && m_LastSeekers.find(caller) == m_LastSeekers.end()) {
-//    m_LastSeekers.insert(caller);
-//    return S_OK;
-//  }
-//
-//  m_rtLastStart = rtCurrent;
-//  m_rtLastStop = rtStop;
-//  m_LastSeekers.clear();
-//  m_LastSeekers.insert(caller);
-//
-//  //m_rtNewStart = m_rtCurrent = rtCurrent;
-//  this->m_pInput->SetCurrent(rtCurrent);
-//  this->m_pInput->SetNewStart(rtCurrent);
-//  //m_rtNewStop = rtStop;
-//  this->m_pInput->SetNewStop(rtStop);
-//
-//  DbgLog((LOG_TRACE, 20, " -> Performing seek to %I64d", m_rtNewStart));
-//  if(ThreadExists())
-//  {
-//    DeliverBeginFlush();
-//    CallWorker(CMD_SEEK);
-//    DeliverEndFlush();
-//  }
-//  DbgLog((LOG_TRACE, 20, " -> Seek finished", m_rtNewStart));
-//
-//  return S_OK;
-//}
-
 STDMETHODIMP CLAVSplitter::GetPositions(LONGLONG* pCurrent, LONGLONG* pStop)
 {
-  /*if(pCurrent) *pCurrent = m_rtCurrent;
-  if(pStop) *pStop = m_rtStop;*/
-  //if(pCurrent) *pCurrent = this->m_pInput->GetCurrent();
-  //if(pStop) *pStop = this->m_pInput->GetStop();
-  //return S_OK;
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetPositions(pCurrent, pStop);
 }
 
 STDMETHODIMP CLAVSplitter::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest)
 {
-  //if(pEarliest) *pEarliest = 0;
-  //return GetDuration(pLatest);
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetAvailable(pEarliest, pLatest);
 }
 
 STDMETHODIMP CLAVSplitter::SetRate(double dRate)
 {
-  //this->m_pInput->SetPlayRate(dRate);
-  //return dRate > 0 ? m_dRate = dRate, S_OK : E_INVALIDARG;
-  //return dRate > 0 ? S_OK : E_INVALIDARG;
-  //return this->m_pInput->SetRate(dRate);
-
-  /*if (dRate > 0)
-  {
-    this->m_pInput->SetPlayRate(dRate);
-    return S_OK;
-  }
-  else
-  {
-    return E_INVALIDARG;
-  }*/
-
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->SetRate(dRate);
 }
 
 STDMETHODIMP CLAVSplitter::GetRate(double* pdRate)
 {
-  //return pdRate ? *pdRate = m_dRate, S_OK : E_POINTER;
-  //return pdRate ? *pdRate = this->m_pInput->GetPlayRate(), S_OK : E_POINTER;
-
-  /*CheckPointer(pdRate, E_POINTER);
-  *pdRate = this->m_pInput->GetPlayRate();
-  return S_OK;*/
-
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetRate(pdRate);
 }
 
 STDMETHODIMP CLAVSplitter::GetPreroll(LONGLONG* pllPreroll)
 {
-  //return pllPreroll ? *pllPreroll = 0, S_OK : E_POINTER;
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetPreroll(pllPreroll);
 }
 

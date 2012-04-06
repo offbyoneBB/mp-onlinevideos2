@@ -175,7 +175,7 @@ public:
 
 protected:
   // CAMThread
-  enum {CMD_EXIT, CMD_SEEK};
+  enum {CMD_EXIT, CMD_SEEK, CMD_PAUSE};
   DWORD ThreadProc();
 
   HRESULT DemuxSeek(REFERENCE_TIME rtStart);
