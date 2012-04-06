@@ -80,7 +80,7 @@ STDMETHODIMP CLAVOutputPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
   CheckPointer(ppv, E_POINTER);
 
   return 
-    QI(IMediaSeeking)
+    //QI(IMediaSeeking)
     QI(ILAVPinInfo)
     __super::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -435,74 +435,74 @@ done:
 }
 
 // IMediaSeeking
-STDMETHODIMP CLAVOutputPin::GetCapabilities(DWORD* pCapabilities)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->GetCapabilities(pCapabilities);
-}
-STDMETHODIMP CLAVOutputPin::CheckCapabilities(DWORD* pCapabilities)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->CheckCapabilities(pCapabilities);
-}
-STDMETHODIMP CLAVOutputPin::IsFormatSupported(const GUID* pFormat)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->IsFormatSupported(pFormat);
-}
-STDMETHODIMP CLAVOutputPin::QueryPreferredFormat(GUID* pFormat)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->QueryPreferredFormat(pFormat);
-}
-STDMETHODIMP CLAVOutputPin::GetTimeFormat(GUID* pFormat)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->GetTimeFormat(pFormat);
-}
-STDMETHODIMP CLAVOutputPin::IsUsingTimeFormat(const GUID* pFormat)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->IsUsingTimeFormat(pFormat);
-}
-STDMETHODIMP CLAVOutputPin::SetTimeFormat(const GUID* pFormat)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->SetTimeFormat(pFormat);
-}
-STDMETHODIMP CLAVOutputPin::GetDuration(LONGLONG* pDuration)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->GetDuration(pDuration);
-}
-STDMETHODIMP CLAVOutputPin::GetStopPosition(LONGLONG* pStop)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->GetStopPosition(pStop);
-}
-STDMETHODIMP CLAVOutputPin::GetCurrentPosition(LONGLONG* pCurrent)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->GetCurrentPosition(pCurrent);
-}
-STDMETHODIMP CLAVOutputPin::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->ConvertTimeFormat(pTarget, pTargetFormat, Source, pSourceFormat);
-}
-STDMETHODIMP CLAVOutputPin::SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->SetPositionsInternal(this, pCurrent, dwCurrentFlags, pStop, dwStopFlags);
-}
-STDMETHODIMP CLAVOutputPin::GetPositions(LONGLONG* pCurrent, LONGLONG* pStop)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->GetPositions(pCurrent, pStop);
-}
-STDMETHODIMP CLAVOutputPin::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->GetAvailable(pEarliest, pLatest);
-}
-STDMETHODIMP CLAVOutputPin::SetRate(double dRate)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->SetRate(dRate);
-}
-STDMETHODIMP CLAVOutputPin::GetRate(double* pdRate)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->GetRate(pdRate);
-}
-STDMETHODIMP CLAVOutputPin::GetPreroll(LONGLONG* pllPreroll)
-{
-  return (static_cast<CLAVSplitter*>(m_pFilter))->GetPreroll(pllPreroll);
-}
+//STDMETHODIMP CLAVOutputPin::GetCapabilities(DWORD* pCapabilities)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->GetCapabilities(pCapabilities);
+//}
+//STDMETHODIMP CLAVOutputPin::CheckCapabilities(DWORD* pCapabilities)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->CheckCapabilities(pCapabilities);
+//}
+//STDMETHODIMP CLAVOutputPin::IsFormatSupported(const GUID* pFormat)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->IsFormatSupported(pFormat);
+//}
+//STDMETHODIMP CLAVOutputPin::QueryPreferredFormat(GUID* pFormat)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->QueryPreferredFormat(pFormat);
+//}
+//STDMETHODIMP CLAVOutputPin::GetTimeFormat(GUID* pFormat)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->GetTimeFormat(pFormat);
+//}
+//STDMETHODIMP CLAVOutputPin::IsUsingTimeFormat(const GUID* pFormat)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->IsUsingTimeFormat(pFormat);
+//}
+//STDMETHODIMP CLAVOutputPin::SetTimeFormat(const GUID* pFormat)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->SetTimeFormat(pFormat);
+//}
+//STDMETHODIMP CLAVOutputPin::GetDuration(LONGLONG* pDuration)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->GetDuration(pDuration);
+//}
+//STDMETHODIMP CLAVOutputPin::GetStopPosition(LONGLONG* pStop)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->GetStopPosition(pStop);
+//}
+//STDMETHODIMP CLAVOutputPin::GetCurrentPosition(LONGLONG* pCurrent)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->GetCurrentPosition(pCurrent);
+//}
+//STDMETHODIMP CLAVOutputPin::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->ConvertTimeFormat(pTarget, pTargetFormat, Source, pSourceFormat);
+//}
+//STDMETHODIMP CLAVOutputPin::SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->SetPositionsInternal(this, pCurrent, dwCurrentFlags, pStop, dwStopFlags);
+//}
+//STDMETHODIMP CLAVOutputPin::GetPositions(LONGLONG* pCurrent, LONGLONG* pStop)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->GetPositions(pCurrent, pStop);
+//}
+//STDMETHODIMP CLAVOutputPin::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->GetAvailable(pEarliest, pLatest);
+//}
+//STDMETHODIMP CLAVOutputPin::SetRate(double dRate)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->SetRate(dRate);
+//}
+//STDMETHODIMP CLAVOutputPin::GetRate(double* pdRate)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->GetRate(pdRate);
+//}
+//STDMETHODIMP CLAVOutputPin::GetPreroll(LONGLONG* pllPreroll)
+//{
+//  return (static_cast<CLAVSplitter*>(m_pFilter))->GetPreroll(pllPreroll);
+//}
 
 STDMETHODIMP_(DWORD) CLAVOutputPin::GetStreamFlags()
 {
