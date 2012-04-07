@@ -72,7 +72,7 @@ CMPUrlSourceSplitter_File::CMPUrlSourceSplitter_File(CParameterCollection *confi
   this->openConnetionMaximumAttempts = FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->filter = NULL;
   this->fileLength = 0;
-  this->setLenght = false;
+  this->setLength = false;
   this->streamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->wholeStreamDownloaded = false;
@@ -114,7 +114,7 @@ HRESULT CMPUrlSourceSplitter_File::ClearSession(void)
   }
 
   this->fileLength = 0;
-  this->setLenght = false;
+  this->setLength = false;
   this->streamTime = 0;
   this->wholeStreamDownloaded = false;
 
@@ -391,10 +391,10 @@ void CMPUrlSourceSplitter_File::ReceiveData(bool *shouldExit)
     {
       if (!this->wholeStreamDownloaded)
       {
-        if (!this->setLenght)
+        if (!this->setLength)
         {
           this->filter->SetTotalLength(this->fileLength, false);
-          this->setLenght = true;
+          this->setLength = true;
         }
 
         if (!feof(this->fileStream))

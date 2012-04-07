@@ -131,7 +131,7 @@ protected:
   LONGLONG streamLength;
 
   // holds if length of stream was set
-  bool setLenght;
+  bool setLength;
 
   // stream time and end stream time
   int64_t streamTime;

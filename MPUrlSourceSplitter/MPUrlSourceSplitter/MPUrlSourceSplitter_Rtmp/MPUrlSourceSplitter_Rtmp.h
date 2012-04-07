@@ -199,7 +199,7 @@ protected:
   double streamDuration;
 
   // holds if length of stream was set
-  bool setLenght;
+  bool setLength;
 
   // stream time
   int64_t streamTime;
