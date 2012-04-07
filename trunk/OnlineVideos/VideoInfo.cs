@@ -292,9 +292,10 @@ namespace OnlineVideos
 
             if (!playbackOptions.ContainsValue(content.Url.Trim()))
             {
-                string baseInfo = string.Format("{0}x{1} ({2}) | {3}:// | {4}",
-                        content.Width,
-                        content.Height,
+                string baseInfo = string.Format("{0}({1}) | {2}:// | {3}",
+                        content.Width > 0 || content.Height > 0 ? 
+                            string.Format("{0}x{1} ", content.Width, content.Height) : 
+                            "",
                         content.Bitrate != 0 ?
                             content.Bitrate.ToString() + " kbps" :
                             (sizeInBytes != 0 ? (sizeInBytes / 1024).ToString("N0") + " KB" : ""),
