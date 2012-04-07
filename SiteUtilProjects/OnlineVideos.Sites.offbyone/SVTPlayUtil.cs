@@ -29,6 +29,9 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to find the current start index and total amount of items and page size. Groups should be named 'max', 'start' and 'pageSize'.")]
         protected string nextPageRegEx;
 
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Preferred Kbps"), Description("Chose your desired bitrate that will be preselected.")]
+        protected int preferredKbps = 1400;
+
         protected uint currentPageSize = 20;
         protected uint currentStartIndex = 1;
         protected uint currentMaxVideos = 0;
@@ -223,22 +226,43 @@ namespace OnlineVideos.Sites
             cat.Description = m.Groups["description"].Value;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            string result = base.getUrl(video);
+            List<String> result = new List<string>();
+
+            // deserialize PlaybackOptions from Other object
+            if (video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
+                video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
             
-            // translate rtmp urls correctly
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
+                // sort by bitrate descending
                 string[] keys = new string[video.PlaybackOptions.Count];
                 video.PlaybackOptions.Keys.CopyTo(keys, 0);
-                foreach (string key in keys)
-                {                    
-                    if (video.PlaybackOptions[key].StartsWith("rtmp"))
-                    {
-                        video.PlaybackOptions[key] = video.PlaybackOptions[key].Replace("_definst_", "?slist=");
-                    }
+                var keysList = keys.ToList();
+                keysList.Sort((s1, s2) => 
+                {
+                    int kbps1 = 0;
+                    int kbps2 = 0;
+                    int.TryParse(Regex.Match(s1, @"\((?<kbps>\d+)\skbps\)").Groups["kbps"].Value, out kbps1);
+                    int.TryParse(Regex.Match(s2, @"\((?<kbps>\d+)\skbps\)").Groups["kbps"].Value, out kbps2);
+                    return kbps2.CompareTo(kbps1);
+                });
+                Dictionary<string, string> sortedPlaybackoptions = new Dictionary<string, string>();
+                string bestkbpsMatch = "";
+                foreach (string key in keysList)
+                {
+                    // fix rtmp links
+                    sortedPlaybackoptions.Add(key, video.PlaybackOptions[key].StartsWith("rtmp") ? video.PlaybackOptions[key].Replace("_definst_", "?slist=") : video.PlaybackOptions[key]);
+                    // select the one that is equal or the first below the configured bitrate
+                    int kbps = 0;
+                    int.TryParse(Regex.Match(key, @"\((?<kbps>\d+)\skbps\)").Groups["kbps"].Value, out kbps);
+                    if (string.IsNullOrEmpty(bestkbpsMatch) && kbps <= preferredKbps) bestkbpsMatch = sortedPlaybackoptions[key];
                 }
+                video.PlaybackOptions = sortedPlaybackoptions;
+                if (!string.IsNullOrEmpty(bestkbpsMatch)) result.Add(bestkbpsMatch);
+                else result.Add(video.PlaybackOptions.First().Value);
+                if (inPlaylist) video.PlaybackOptions = null;
             }
 
             return result;
