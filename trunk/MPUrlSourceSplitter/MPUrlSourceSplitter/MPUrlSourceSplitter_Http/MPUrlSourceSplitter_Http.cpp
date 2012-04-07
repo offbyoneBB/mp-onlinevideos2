@@ -81,7 +81,7 @@ CMPUrlSourceSplitter_Http::CMPUrlSourceSplitter_Http(CParameterCollection *confi
   this->openConnetionMaximumAttempts = HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->filter = NULL;
   this->streamLength = 0;
-  this->setLenght = false;
+  this->setLength = false;
   this->streamTime = 0;
   this->endStreamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
@@ -149,7 +149,7 @@ HRESULT CMPUrlSourceSplitter_Http::ClearSession(void)
  
   this->internalExitRequest = false;
   this->streamLength = 0;
-  this->setLenght = false;
+  this->setLength = false;
   this->streamTime = 0;
   this->endStreamTime = 0;
   FREE_MEM(this->url);
@@ -562,12 +562,12 @@ void CMPUrlSourceSplitter_Http::ReceiveData(bool *shouldExit)
           // whole stream downloaded
           this->wholeStreamDownloaded = true;
 
-          if (!this->setLenght)
+          if (!this->setLength)
           {
             this->streamLength = this->streamTime;
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
             this->filter->SetTotalLength(this->streamLength, false);
-            this->setLenght = true;
+            this->setLength = true;
           }
 
           // notify filter the we reached end of stream
@@ -732,7 +732,7 @@ size_t CMPUrlSourceSplitter_Http::CurlReceiveData(char *buffer, size_t size, siz
 
     if ((responseCode >= 200) && (responseCode < 400))
     {
-      if (!caller->setLenght)
+      if (!caller->setLength)
       {
         double streamSize = 0;
         CURLcode errorCode = curl_easy_getinfo(caller->mainCurlInstance->GetCurlHandle(), CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
@@ -742,7 +742,7 @@ size_t CMPUrlSourceSplitter_Http::CurlReceiveData(char *buffer, size_t size, siz
           caller->streamLength = total;
           caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
           caller->filter->SetTotalLength(total, false);
-          caller->setLenght = true;
+          caller->setLength = true;
         }
         else
         {

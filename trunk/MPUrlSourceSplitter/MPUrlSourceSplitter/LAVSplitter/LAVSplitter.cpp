@@ -78,6 +78,7 @@ extern "C"
 #define METHOD_STREAM_GET_FILE_HANDLE_NAME                        L"stream_get_file_handle()"
 #define METHOD_STREAM_READ_PAUSE_NAME                             L"stream_read_pause()"
 #define METHOD_STREAM_READ_SEEK_NAME                              L"stream_read_seek()"
+#define METHOD_THREAD_PROC_NAME                                   L"ThreadProc()"
 
 // if ffmpeg_log_callback_set is true than ffmpeg log callback will not be set
 // in that case we don't receive messages from ffmpeg
@@ -774,19 +775,22 @@ DWORD CLAVSplitter::ThreadProc()
     switch (cmd)
     {
     case CMD_EXIT:
-      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, L"ThreadProc()", L"CMD_EXIT");
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, L"CMD_EXIT");
       break;
     case CMD_PAUSE:
-      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, L"ThreadProc()", L"CMD_PAUSE");
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, L"CMD_PAUSE");
       break;
     case CMD_SEEK:
-      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, L"ThreadProc()", L"CMD_SEEK");
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, L"CMD_SEEK");
+      break;
+    case CMD_PLAY:
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, L"CMD_PLAY");
       break;
     case (DWORD)-1:
       // ignore, it means no command
       break;
     default:
-      this->logger->Log(LOGGER_INFO, L"%s: %s: unknown command: %d", MODULE_NAME, L"ThreadProc()", cmd);
+      this->logger->Log(LOGGER_INFO, L"%s: %s: unknown command: %d", MODULE_NAME, METHOD_THREAD_PROC_NAME, cmd);
       break;
     }
     
@@ -796,7 +800,7 @@ DWORD CLAVSplitter::ThreadProc()
       return 0;
     }
 
-    if (cmd != CMD_PAUSE)
+    if ((cmd != CMD_PAUSE) && (cmd != CMD_PLAY))
     {
       SetThreadPriority(m_hThread, THREAD_PRIORITY_BELOW_NORMAL);
 
@@ -1012,6 +1016,8 @@ STDMETHODIMP CLAVSplitter::Run(REFERENCE_TIME tStart)
   if(FAILED(hr = __super::Run(tStart))) {
     return hr;
   }
+
+  CAMThread::CallWorker(CMD_PLAY);
 
   return S_OK;
 }

@@ -1791,13 +1791,13 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
           if ((packetIndex == UINT_MAX) && (request->GetState() == CAsyncRequest::Waiting))
           {
             // first check current stream position and request start
-            // if request start is just next to current stream position then only wait for data and do not issue ranges request
+            // if request start is just next to current stream position then only wait for data and do not issue seek request
             if (currentStreamPosition != (-1))
             {
               // current stream position has valid value
               if (request->GetStart() > currentStreamPosition)
               {
-                // if request start is after current stream position than we have to issue ranges request (if supported)
+                // if request start is after current stream position than we have to issue seek request (if supported)
                 caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: request '%u', start '%llu' (size '%lu') after current stream position '%llu'", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition);
               }
               else if ((request->GetStart() <= currentStreamPosition) && ((request->GetStart() + request->GetBufferLength()) > currentStreamPosition))
@@ -1809,7 +1809,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
               }
               else
               {
-                // if request start is before current stream position than we have to issue ranges request
+                // if request start is before current stream position than we have to issue seek request
                 caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: request '%u', start '%llu' (size '%lu') before current stream position '%llu'", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition);
               }
             }
@@ -1817,7 +1817,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
             if (request->GetState() == CAsyncRequest::Waiting)
             {
               // there isn't any packet containg some data for request
-              // check if ranges are supported
+              // check if seeking by position is supported
 
               unsigned int seekingCapabilities = caller->GetSeekingCapabilities();
               if (seekingCapabilities & SEEKING_METHOD_POSITION)

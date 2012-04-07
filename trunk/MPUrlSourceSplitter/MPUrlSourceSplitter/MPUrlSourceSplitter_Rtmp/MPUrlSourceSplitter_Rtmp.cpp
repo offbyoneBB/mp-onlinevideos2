@@ -80,7 +80,7 @@ CMPUrlSourceSplitter_Rtmp::CMPUrlSourceSplitter_Rtmp(CParameterCollection *confi
   this->openConnetionMaximumAttempts = RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->filter = NULL;
   this->streamLength = 0;
-  this->setLenght = false;
+  this->setLength = false;
   this->streamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->url = NULL;
@@ -149,13 +149,14 @@ HRESULT CMPUrlSourceSplitter_Rtmp::ClearSession(void)
  
   this->internalExitRequest = false;
   this->streamLength = 0;
-  this->setLenght = false;
+  this->setLength = false;
   this->streamTime = 0;
   FREE_MEM(this->url);
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->streamDuration = 0;
+  this->bytePosition = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -290,6 +291,9 @@ HRESULT CMPUrlSourceSplitter_Rtmp::OpenConnection(void)
   this->wholeStreamDownloaded = false;
   this->firstTimestamp = -1;
   this->firstVideoTimestamp = -1;
+  this->bytePosition = 0;
+  this->streamLength = 0;
+  this->setLength = false;
 
   if (result == S_OK)
   {
@@ -462,6 +466,7 @@ void CMPUrlSourceSplitter_Rtmp::ReceiveData(bool *shouldExit)
               (flvPacket->GetType() == FLV_PACKET_META) ||
               (flvPacket->GetType() == FLV_PACKET_VIDEO))
             {
+              // do nothing, known packet types
             }
             else
             {
@@ -502,27 +507,26 @@ void CMPUrlSourceSplitter_Rtmp::ReceiveData(bool *shouldExit)
           // whole stream downloaded
           this->wholeStreamDownloaded = true;
 
-          if (this->streamTime == 0)
+          if (!this->seekingActive)
           {
-            // if stream time is zero than we receive data from beginning
-            // in that case we can set total length and call EndOfStreamReached() method (required for ending download)
-            if (!this->setLenght)
+            // we are not seeking, so we can set total length
+            if (!this->setLength)
             {
               this->streamLength = this->bytePosition;
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
               this->filter->SetTotalLength(this->streamLength, false);
-              this->setLenght = true;
+              this->setLength = true;
             }
 
-            // notify filter the we reached end of stream
-            // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-            this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
-          }
-          else
-          {
-            // set byte position to start of buffer, because we are re-opening connection
-            // because we don't know exact time position to seek, we seek to last known (this->streamTime)
-            this->bytePosition = 0;
+            if (this->streamTime == 0)
+            {
+              // if stream time is zero than we receive data from beginning
+              // in that case we call EndOfStreamReached() method (required for ending download)
+
+              // notify filter the we reached end of stream
+              // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+              this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
+            }
           }
         }
 
@@ -596,7 +600,7 @@ HRESULT CMPUrlSourceSplitter_Rtmp::QueryStreamProgress(LONGLONG *total, LONGLONG
     *total = (this->streamLength == 0) ? 1 : this->streamLength;
     *current = (this->streamLength == 0) ? 0 : this->bytePosition;
 
-    if (!this->setLenght)
+    if (!this->setLength)
     {
       result = VFW_S_ESTIMATED;
     }
@@ -614,7 +618,7 @@ HRESULT CMPUrlSourceSplitter_Rtmp::QueryStreamAvailableLength(CStreamAvailableLe
   if (result == S_OK)
   {
     availableLength->SetQueryResult(S_OK);
-    if (!this->setLenght)
+    if (!this->setLength)
     {
       availableLength->SetAvailableLength(this->bytePosition);
     }
@@ -635,7 +639,7 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
 
   if (!((caller->shouldExit) || (caller->internalExitRequest)))
   {
-    if (!caller->setLenght)
+    if (!caller->setLength)
     {
       double streamSize = 0;
       CURLcode errorCode = curl_easy_getinfo(caller->mainCurlInstance->GetCurlHandle(), CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
@@ -645,7 +649,7 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
         caller->streamLength = total;
         caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
         caller->filter->SetTotalLength(total, false);
-        caller->setLenght = true;
+        caller->setLength = true;
       }
     }
 
@@ -660,7 +664,7 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
       }
     }
 
-    if (!caller->setLenght)
+    if (!caller->setLength)
     {
       if ((caller->streamLength == 0) || (caller->bytePosition > (caller->streamLength * 3 / 4)))
       {
@@ -673,7 +677,7 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
           {
             caller->streamLength = tempLength;
             caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess by stream duration total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
-            caller->filter->SetTotalLength(caller->streamLength, false);
+            caller->filter->SetTotalLength(caller->streamLength, true);
           }
         }
         else if (caller->bytePosition != 0)
@@ -684,14 +688,14 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
             // just make guess
             caller->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
             caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
-            caller->filter->SetTotalLength(caller->streamLength, false);
+            caller->filter->SetTotalLength(caller->streamLength, true);
           }
           else if ((caller->bytePosition > (caller->streamLength * 3 / 4)))
           {
             // it is time to adjust stream length, we are approaching to end but still we don't know total length
             caller->streamLength = caller->bytePosition * 2;
             caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
-            caller->filter->SetTotalLength(caller->streamLength, false);
+            caller->filter->SetTotalLength(caller->streamLength, true);
           }
         }
       }
@@ -760,7 +764,6 @@ int64_t CMPUrlSourceSplitter_Rtmp::SeekToTime(int64_t time)
 
   if (this->IsConnected())
   {
-    this->bytePosition = 0;
     result = max(0, time - 1000);
   }
 
