@@ -44,12 +44,24 @@ namespace OnlineVideos.Sites
 
         public void GetBaseCookie()
         {
-            WebCache.Instance[baseUrl] = null;
-            CookieContainer tmpcc = new CookieContainer();
-            GetWebData(baseUrl, tmpcc);
+            HttpWebRequest request = WebRequest.Create(baseUrl) as HttpWebRequest;
+            if (request == null) return;
+            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+            request.Accept = "*/*";
+            request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+            request.CookieContainer = new CookieContainer();
+            HttpWebResponse response = null;
+            try
+            {
+                response = (HttpWebResponse)request.GetResponse();
+            }
+            finally
+            {
+                if (response != null) ((IDisposable)response).Dispose();
+            }
 
             cc = new CookieContainer();
-            CookieCollection ccol = tmpcc.GetCookies(new Uri(baseUrl));
+            CookieCollection ccol = request.CookieContainer.GetCookies(new Uri(baseUrl));
             foreach (Cookie c in ccol)
                 cc.Add(c);
         }
