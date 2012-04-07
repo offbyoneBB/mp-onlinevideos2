@@ -214,6 +214,7 @@
     </Compile>
     <Compile Include="SVTPlayUtil.cs" />
     <Compile Include="TEDTalksUtil.cs" />
+    <Compile Include="Tube8Util.cs" />
     <Compile Include="TV4Play.cs" />
     <Compile Include="ViasatUtil.cs" />
     <Compile Include="VidiLifeUtil.cs" />
