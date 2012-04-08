@@ -24,7 +24,6 @@
 #include "IDownload.h"
 
 #include "AsyncRequest.h"
-#include "AsyncRequestCollection.h"
 #include "MediaPacketCollection.h"
 #include "StreamAvailableLength.h"
 #include "IFilter.h"
@@ -33,7 +32,6 @@
 
 class CLAVSplitter;
 class CAsyncRequest;
-class CAsyncRequestCollection;
 class CMediaPacketCollection;
 
 struct ProtocolImplementation
@@ -211,8 +209,8 @@ private:
   CLogger *logger;
   // the parent of this pin
   CLAVSplitter *filter;
-  // the collection of asynchronous requests
-  CAsyncRequestCollection *requestsCollection;
+  // holds current read request
+  CAsyncRequest *currentReadRequest;
   // collection of media packets
   CMediaPacketCollection *mediaPacketCollection;
   // mutex for accessing requests
@@ -221,6 +219,8 @@ private:
   HANDLE mediaPacketMutex;
   // request ID for async requests
   unsigned int requestId;
+  // holds last received media packet time
+  DWORD lastReceivedMediaPacketTime;
 
   int64_t totalLength;
   bool estimate;
@@ -278,8 +278,7 @@ private:
   // @return : reference to variable holding collection of parameters or NULL if error
   CParameterCollection *ParseParameters(const wchar_t *parameters);
 
-  HRESULT Request(unsigned int *requestId, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData);
-  HRESULT EnqueueAsyncRequest(CAsyncRequest *request);
+  HRESULT Request(CAsyncRequest **request, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData);
 
   // handle for thread which makes relation between CMediaPacket and CAsyncRequest
   HANDLE hAsyncRequestProcessingThread;

@@ -75,9 +75,6 @@
     <ClCompile Include="AsyncRequest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AsyncRequestCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MediaPacketCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -174,9 +171,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AsyncRequest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AsyncRequestCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MediaPacketCollection.h">

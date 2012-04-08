@@ -69,6 +69,12 @@ static volatile int ffmpeg_initialized = 0;
 
 static const AVRational AV_RATIONAL_TIMEBASE = {1, AV_TIME_BASE};
 
+struct FlvSeekPosition
+{
+  int64_t time;
+  int64_t position;
+};
+
 void CLAVFDemuxer::ffmpeg_init()
 {
 //#ifdef DEBUG
@@ -1266,16 +1272,28 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
           }
 
           // allocate memory for seeking positions
-          ALLOC_MEM_DEFINE_SET(flvSeekingPositions, int64_t, FLV_SEEKING_POSITIONS, -1);
+          ALLOC_MEM_DEFINE_SET(flvSeekingPositions, FlvSeekPosition, FLV_SEEKING_POSITIONS, 0);
+          for (int i = 0; i < FLV_SEEKING_POSITIONS; i++)
+          {
+            flvSeekingPositions[i].position = 0;
+            flvSeekingPositions[i].time = -1;
+          }
+
           int activeFlvSeekingPosition = -1;    // any position is active
           bool backwardSeeking = false;         // specify if we seek back in flvSeekingPositions
+          bool enabledSeeking = true;           // specify if seeking is enabled
 
           // read stream until we find requested time
           while ((!found) && SUCCEEDED(result))
           {
             int read_status = 0;
+            int64_t currentPosition = -1;
             do
             {
+              if (this->m_bFlv)
+              {
+                currentPosition = avio_seek(this->m_avFormat->pb, 0, SEEK_CUR);
+              }
               read_status = av_read_frame(this->m_avFormat, &avPacket);
             } while (read_status == AVERROR(EAGAIN));
 
@@ -1328,7 +1346,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
               // was wrong seeking value (it means that we didn't find key frame after seeking)
               logger->Log(LOGGER_VERBOSE, L"%s: %s: trying to seek backward: %lld, active seeking position: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, flvSeekingPositions[activeFlvSeekingPosition], activeFlvSeekingPosition);
 
-              avio_seek(this->m_avFormat->pb, flvSeekingPositions[activeFlvSeekingPosition--], SEEK_SET);
+              avio_seek(this->m_avFormat->pb, flvSeekingPositions[activeFlvSeekingPosition--].position, SEEK_SET);
             }
 
             if ((videoStreamId == avPacket.stream_index) && 
@@ -1336,12 +1354,11 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
                 (this->m_bFlv) && 
                 (totalLength > 0) && 
                 (flvSeekingPositions != NULL) &&
-                (!backwardSeeking))
+                (!backwardSeeking) &&
+                (enabledSeeking))
             {
               // in case of FLV video try to guess right position value
               // do not try to guess when we are closer than FLV_DO_NOT_SEEK_DIFFERENCE ms (avPacket.dts + FLV_DO_NOT_SEEK_DIFFERENCE)
-
-              logger->Log(LOGGER_VERBOSE, L"%s: %s: dts: %lld, seek: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, avPacket.dts, seek_pts);
 
               int64_t duration = this->GetDuration() / 10000;
               // make guess of position by current packet position, time and seek time
@@ -1349,12 +1366,48 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
               int64_t guessPosition1 = min(totalLength, (avPacket.dts > 0) ? (seek_pts * avPacket.pos / avPacket.dts) : 0);
               int64_t guessPosition2 = seek_pts * totalLength / duration;
 
+              logger->Log(LOGGER_VERBOSE, L"%s: %s: dts: %lld, position: %lld, total length: %lld, duration: %lld, seek: %lld, remembered packet position: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, avPacket.dts, avPacket.pos, totalLength, duration, seek_pts, currentPosition);
+
+              // check for packet which is nearest lower than seek_pts and is closer than current packet
+              int64_t checkNearestPosition = -1;
+              int64_t checkNearestTime = -1;
+              for (int i = 0; i < FLV_SEEKING_POSITIONS; i++)
+              {
+                if ((flvSeekingPositions[i].time != (-1)) && (flvSeekingPositions[i].time < seek_pts) && (flvSeekingPositions[i].time > checkNearestTime))
+                {
+                  checkNearestTime = flvSeekingPositions[i].time;
+                  checkNearestPosition = flvSeekingPositions[i].position;
+                }
+              }
+
+              if ((checkNearestTime != (-1)) && (checkNearestTime > avPacket.dts))
+              {
+                logger->Log(LOGGER_VERBOSE, L"%s: %s: current packet dts is lower than some of previous seeks, disabling seeks, packet dts: %lld, stored dts: %lld, stored position: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, avPacket.dts, checkNearestTime, checkNearestPosition);
+
+                avio_seek(this->m_avFormat->pb, checkNearestPosition, SEEK_SET);
+                enabledSeeking = false;
+              }
+
+              flvSeekingPositions[++activeFlvSeekingPosition].position = currentPosition;
+              flvSeekingPositions[activeFlvSeekingPosition].time = avPacket.dts;
+
               int64_t guessPosition = (guessPosition1 + guessPosition2) / 2;
 
-              // guess position have to be lower than total length
-              if (guessPosition < totalLength)
+              if ((enabledSeeking) && (checkNearestPosition != (-1)) && (checkNearestPosition > guessPosition))
               {
-                if (avio_seek(this->m_avFormat->pb, guessPosition, SEEK_SET) >= 0)
+                logger->Log(LOGGER_VERBOSE, L"%s: %s: guessed position is lower than some of previous seeks, disabling seeks, guess position: %lld, stored dts: %lld, stored position: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, guessPosition, checkNearestTime, checkNearestPosition);
+
+                avio_seek(this->m_avFormat->pb, checkNearestPosition, SEEK_SET);
+                enabledSeeking = false;
+              }
+
+              // guess position have to be lower than total length
+              if ((guessPosition < totalLength) && (enabledSeeking))
+              {
+                // we can't do avio_seek because we need data from exact position
+                // we need to call our seek
+                
+                if (this->m_avFormat->pb->seek(this->m_avFormat->pb->opaque, guessPosition, SEEK_SET) >= 0)
                 {
                   int firstFlvPacketPosition = -1;    // position of first FLV packet
                   int packetsChecked  = 0;            // checked FLV packets count
@@ -1365,7 +1418,10 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
                   while ((firstFlvPacketPosition < 0) || (packetsChecked <= FLV_PACKET_MINIMUM_CHECKED))
                   {
                     // repeat until first FLV packet is found and verified by at least (FLV_PACKET_MINIMUM_CHECKED + 1) another FLV packet
-                    int readBytes = avio_read(this->m_avFormat->pb, buffer, FLV_SEEKING_BUFFER_SIZE);
+
+                    // we can't read data with avio_read, because it uses internal FLV format methods to parse data
+                    // because in most cases we seek to non-FLV packet (but somewhere else) we need to use our method to read data
+                    int readBytes = this->m_avFormat->pb->read_packet(this->m_avFormat->pb->opaque, buffer, FLV_SEEKING_BUFFER_SIZE);
                     if (readBytes > 0)
                     {
                       // try to find flv packets in buffer
@@ -1489,7 +1545,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
                     bool canSeek = true;
                     for (int i = 0; i <= activeFlvSeekingPosition; i++)
                     {
-                      if (valueToSeek == flvSeekingPositions[i])
+                      if (valueToSeek == flvSeekingPositions[i].position)
                       {
                         logger->Log(LOGGER_VERBOSE, L"%s: %s: trying to seek to same position: %lld, disabled", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, valueToSeek);
                         canSeek = false;
@@ -1499,10 +1555,41 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
 
                     if (canSeek)
                     {
-                      flvSeekingPositions[++activeFlvSeekingPosition] = valueToSeek;
+                      flvSeekingPositions[++activeFlvSeekingPosition].position = valueToSeek;
 
                       logger->Log(LOGGER_VERBOSE, L"%s: %s: trying to seek: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, valueToSeek);
                       avio_seek(this->m_avFormat->pb, valueToSeek, SEEK_SET);
+                    }
+                    else
+                    {
+                      // we must seek to relevant FLV packet
+                      // just use nearest lower packet for specified seek_pts
+                      int64_t nearestPosition = -1;
+                      int64_t nearestTime = -1;
+                      for (int i = 0; i < FLV_SEEKING_POSITIONS; i++)
+                      {
+                        if ((flvSeekingPositions[i].time != (-1)) && (flvSeekingPositions[i].time < seek_pts) && (flvSeekingPositions[i].time > nearestTime))
+                        {
+                          nearestTime = flvSeekingPositions[i].time;
+                          nearestPosition = flvSeekingPositions[i].position;
+                        }
+                      }
+
+                      if (nearestPosition != (-1))
+                      {
+                        // disable another seeking, just wait for data by sequence reading
+                        enabledSeeking = false;
+
+                        logger->Log(LOGGER_VERBOSE, L"%s: %s: trying to seek: %lld, disabling further seek", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, nearestPosition);
+                        avio_seek(this->m_avFormat->pb, nearestPosition, SEEK_SET);
+                      }
+                      else
+                      {
+                        // very bad, but this should not happen, because at least one FLV packet is added to flvSeekingPositions
+                        // when starting this special seeking procedure
+
+                        logger->Log(LOGGER_WARNING, L"%s: %s: cannot find any seeking position, computed seeking position was disabled", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME);
+                      }
                     }
                   }
                   else

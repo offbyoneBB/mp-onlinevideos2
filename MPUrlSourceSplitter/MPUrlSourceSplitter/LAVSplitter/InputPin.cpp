@@ -118,7 +118,7 @@ CLAVInputPin::CLAVInputPin(CLogger *logger, TCHAR *pName, CLAVSplitter *pFilter,
   this->hReceiveDataWorkerThread = NULL;
   this->status = STATUS_NONE;
   this->mainModuleHandle = GetModuleHandle(MODULE_FILE_NAME);
-  this->requestsCollection = new CAsyncRequestCollection();
+  this->currentReadRequest = NULL;
   this->mediaPacketCollection = new CMediaPacketCollection();
   this->totalLength = 0;
   this->estimate = true;
@@ -126,6 +126,7 @@ CLAVInputPin::CLAVInputPin(CLogger *logger, TCHAR *pName, CLAVSplitter *pFilter,
   this->requestId = 0;
   this->requestMutex = CreateMutex(NULL, FALSE, NULL);
   this->mediaPacketMutex = CreateMutex(NULL, FALSE, NULL);
+  this->lastReceivedMediaPacketTime = GetTickCount();
   
   this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
   this->downloadingFile = (this->storeFilePath != NULL);
@@ -176,8 +177,11 @@ CLAVInputPin::~CLAVInputPin(void)
   this->DestroyAsyncRequestProcessWorker();
   this->ReleaseAVIOContext();
 
-  // decrements the number of pins on this filter
-  delete this->requestsCollection;
+  if (this->currentReadRequest != NULL)
+  {
+    delete this->currentReadRequest;
+    this->currentReadRequest = NULL;
+  }
   delete this->mediaPacketCollection;
 
   if (this->requestMutex != NULL)
@@ -900,6 +904,9 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
     CLockMutex lock(this->mediaPacketMutex, INFINITE);
     HRESULT result = S_OK;
 
+    // remember last received media packet time
+    this->lastReceivedMediaPacketTime = GetTickCount();
+
     CHECK_POINTER_DEFAULT_HRESULT(result, mediaPacket);
 
     if (result == S_OK)
@@ -1423,51 +1430,23 @@ HRESULT CLAVInputPin::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
   return result;
 }
 
-HRESULT CLAVInputPin::Request(unsigned int *requestId, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData)
+HRESULT CLAVInputPin::Request(CAsyncRequest **request, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData)
 {
-  CAsyncRequest* request = new CAsyncRequest();
-  if (!request)
+  CheckPointer(request, E_POINTER);
+
+  *request = new CAsyncRequest();
+  if ((*request) == NULL)
   {
     return E_OUTOFMEMORY;
   }
 
-  HRESULT result = request->Request(this->requestId++, position, length, buffer, userData);
-
-  if (SUCCEEDED(result))
-  {
-    // might fail if flushing
-    result = EnqueueAsyncRequest(request);
-  }
+  HRESULT result = (*request)->Request(this->requestId++, position, length, buffer, userData);
 
   if (FAILED(result))
   {
-    delete request;
-  }
-  else
-  {
-    if (requestId != NULL)
-    {
-      *requestId = request->GetRequestId();
-    }
-  }
-
-  return result;
-}
-
-HRESULT CLAVInputPin::EnqueueAsyncRequest(CAsyncRequest *request)
-{
-  CLockMutex lock(this->requestMutex, INFINITE);
-
-  HRESULT result = (request != NULL) ? S_OK : E_POINTER;
-
-  if (this->requestsCollection->Add(request))
-  {
-    // request correctly added
-    result = S_OK;
-  }
-  else
-  {
-    result = E_OUTOFMEMORY;
+    // error occured while creating request
+    delete (*request);
+    *request = NULL;
   }
 
   return result;
@@ -1611,10 +1590,9 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
       // lock access to requests
       CLockMutex requestLock(caller->requestMutex, INFINITE);
 
-      unsigned int requestCount = caller->requestsCollection->Count();
-      for (unsigned int i = 0; i < requestCount; i++)
+      if (caller->currentReadRequest != NULL)
       {
-        CAsyncRequest *request = caller->requestsCollection->GetItem(i);
+        CAsyncRequest *request = caller->currentReadRequest;
 
         if ((request->GetState() == CAsyncRequest::Waiting) || (request->GetState() == CAsyncRequest::WaitingIgnoreTimeout) || (request->GetState() == CAsyncRequest::Requested))
         {
@@ -1736,8 +1714,15 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                 if (foundDataLength < (unsigned int)request->GetBufferLength())
                 {
                   // found data length is lower than requested, return S_FALSE
-
-                  if ((!caller->estimate) && (caller->totalLength > (request->GetStart() + request->GetBufferLength())))
+                  DWORD currentTime = GetTickCount();
+                  if ((currentTime - caller->lastReceivedMediaPacketTime) > caller->GetReceiveDataTimeout())
+                  {
+                    // we don't receive data from protocol at least for specified timeout
+                    // finish request with error to avoid freeze
+                    caller->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u' doesn't receive data for specified time, current time: %d, last received data time: %d, specified timeout: %d", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), currentTime, caller->lastReceivedMediaPacketTime, caller->GetReceiveDataTimeout());
+                    request->Complete(VFW_E_TIMEOUT);
+                  }
+                  else if ((!caller->estimate) && (caller->totalLength > (request->GetStart() + request->GetBufferLength())))
                   {
                     // we are receiving data, wait for all requested data
                   }
@@ -2068,10 +2053,14 @@ STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
   CHECK_CONDITION(result, length >= 0, S_OK, E_INVALIDARG);
   CHECK_POINTER_DEFAULT_HRESULT(result, buffer);
 
-  if ((SUCCEEDED(result)) && (length > 0))
+  if ((SUCCEEDED(result)) && (length > 0) && (this->currentReadRequest == NULL))
   {
-    unsigned int requestId = 0;
-    result = this->Request(&requestId, position, length, buffer, NULL);
+    {
+      // lock access to current read request
+      CLockMutex lock(this->requestMutex, INFINITE);
+
+      result = this->Request(&this->currentReadRequest, position, length, buffer, NULL);
+    }
 
     if (SUCCEEDED(result))
     {
@@ -2092,59 +2081,45 @@ STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
         {
           unsigned int seekingCapabilities = this->GetSeekingCapabilities();
 
-          CAsyncRequest *request = NULL;
-
           {
-            // lock access to collection
+            // lock access to current read request
             CLockMutex lock(this->requestMutex, INFINITE);
-            request = this->requestsCollection->GetRequest(requestId);
 
-            if (request != NULL)
+            if ((!this->estimate) && (this->currentReadRequest->GetStart() >= this->totalLength))
             {
+              // something bad occured
+              // graph requests data that are beyond stream (data doesn't exists)
+              this->logger->Log(LOGGER_WARNING, L"%s: %s: graph requests data beyond stream, stream total length: %llu, request start: %llu", MODULE_NAME, METHOD_SYNC_READ_NAME, this->totalLength, this->currentReadRequest->GetStart());
+              // complete result with error code
+              this->currentReadRequest->Complete(E_FAIL);
+            }
 
-              if ((!this->estimate) && (request->GetStart() >= this->totalLength))
-              {
-                // something bad occured
-                // graph requests data that are beyond stream (data doesn't exists)
-                this->logger->Log(LOGGER_WARNING, L"%s: %s: graph requests data beyond stream, stream total length: %llu, request start: %llu", MODULE_NAME, METHOD_SYNC_READ_NAME, this->totalLength, request->GetStart());
-                // complete result with error code
-                request->Complete(E_FAIL);
-              }
-
-              if (request->GetState() == CAsyncRequest::Completed)
-              {
-                // request is completed
-                result = request->GetErrorCode();
-                this->logger->Log(LOGGER_DATA, L"%s: %s: returned data length: %lu, result: 0x%08X", MODULE_NAME, METHOD_SYNC_READ_NAME, request->GetBufferLength(), result);
-                break;
-              }
-              else if (request->GetState() == CAsyncRequest::Cancelled)
-              {
-                // request is cancelled
-                result = E_ABORT;
-                break;
-              }
-              else if (request->GetState() == CAsyncRequest::WaitingIgnoreTimeout)
-              {
-                // we are waiting for data and we have to ignore timeout
-              }
-              else
-              {
-                // common case
-                if ((seekingCapabilities != SEEKING_METHOD_NONE) && ((GetTickCount() - ticks) > timeout))
-                {
-                  // if ranges are supported and timeout occured then stop waiting for data and exit with VFW_E_TIMEOUT error
-                  result = VFW_E_TIMEOUT;
-                  break;
-                }
-              }
+            if (this->currentReadRequest->GetState() == CAsyncRequest::Completed)
+            {
+              // request is completed
+              result = this->currentReadRequest->GetErrorCode();
+              this->logger->Log(LOGGER_DATA, L"%s: %s: returned data length: %lu, result: 0x%08X", MODULE_NAME, METHOD_SYNC_READ_NAME, this->currentReadRequest->GetBufferLength(), result);
+              break;
+            }
+            else if (this->currentReadRequest->GetState() == CAsyncRequest::Cancelled)
+            {
+              // request is cancelled
+              result = E_ABORT;
+              break;
+            }
+            else if (this->currentReadRequest->GetState() == CAsyncRequest::WaitingIgnoreTimeout)
+            {
+              // we are waiting for data and we have to ignore timeout
             }
             else
             {
-              // request should not disappear before is processed
-              result = E_FAIL;
-              this->logger->Log(LOGGER_WARNING, L"%s: %s: request '%u' disappeared before processed", MODULE_NAME, METHOD_SYNC_READ_NAME, request->GetRequestId());
-              break;
+              // common case
+              if ((seekingCapabilities != SEEKING_METHOD_NONE) && ((GetTickCount() - ticks) > timeout))
+              {
+                // if ranges are supported and timeout occured then stop waiting for data and exit with VFW_E_TIMEOUT error
+                result = VFW_E_TIMEOUT;
+                break;
+              }
             }
           }
 
@@ -2154,22 +2129,33 @@ STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
       }
 
       {
-        // lock access to collection
-        CLockMutex lock(this->requestMutex, INFINITE);                
-        if (!this->requestsCollection->Remove(this->requestsCollection->GetRequestIndex(requestId)))
+        // lock access to current read request
+        CLockMutex lock(this->requestMutex, INFINITE);
+
+        if (this->currentReadRequest != NULL)
         {
-          this->logger->Log(LOGGER_WARNING, L"%s: %s: request '%u' cannot be removed", METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, requestId);
+          delete this->currentReadRequest;
+          this->currentReadRequest = NULL;
         }
       }
 
       if (FAILED(result))
       {
-        this->logger->Log(LOGGER_WARNING, L"%s: %s: requesting data from position: %llu, length: %lu, request id: %u, result: 0x%08X", MODULE_NAME, METHOD_SYNC_READ_NAME, position, length, requestId, result);
+        this->logger->Log(LOGGER_WARNING, L"%s: %s: requesting data from position: %llu, length: %lu, request id: %u, result: 0x%08X", MODULE_NAME, METHOD_SYNC_READ_NAME, position, length, this->requestId, result);
       }
     }
   }
+  else if ((SUCCEEDED(result)) && (length > 0) && (this->currentReadRequest != NULL))
+  {
+    {
+      // lock access to current read request
+      CLockMutex lock(this->requestMutex, INFINITE);
 
-  this->logger->Log(LOGGER_DATA, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, result);
+      this->logger->Log(LOGGER_WARNING, L"%s: %s: current read request is not finished, current read request: position: %llu, length: %lu, new request: position: %llu, length: %lu", MODULE_NAME, METHOD_SYNC_READ_NAME, this->currentReadRequest->GetStart(), this->currentReadRequest->GetBufferLength(), position, length);
+    }
+  }
+
+  this->logger->Log(SUCCEEDED(result) ? LOGGER_DATA : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, result);
   return result;
 }
 
