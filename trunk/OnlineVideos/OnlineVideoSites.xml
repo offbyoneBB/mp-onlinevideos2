@@ -799,13 +799,23 @@
     <Site name="MSNBC" util="Msnbc" agecheck="false" enabled="true" lang="en">
       <Description>MSNBC is a cable news channel based in the United States and a partnership of Microsoft and NBC Universal.</Description>
       <Categories>
-        <Category xsi:type="RssLink" name="Today">http://rss.msnbc.msn.com/id/3032632/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Today Show">http://rss.msnbc.msn.com/id/18424824/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="MSNBC TV">http://rss.msnbc.msn.com/id/3096433/device/rss/rss.xml</Category>
         <Category xsi:type="RssLink" name="Nightly News">http://www.msnbc.msn.com/id/3032618/device/rss/rss.xml</Category>
         <Category xsi:type="RssLink" name="Dateline">http://rss.msnbc.msn.com/id/18424719/device/rss/rss.xml</Category>
         <Category xsi:type="RssLink" name="Meet the Press">http://rss.msnbc.msn.com/id/18424744/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="CNBC">http://rss.msnbc.msn.com/id/18424696/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Way Too Early">http://rss.msnbc.msn.com/id/32178079/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Morning Joe">http://rss.msnbc.msn.com/id/18424787/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="The Daily Rundown">http://rss.msnbc.msn.com/id/34419168/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Mitchell Reports">http://rss.msnbc.msn.com/id/34510812/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="NewsNation">http://rss.msnbc.msn.com/id/38244200/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Dylan Ratigan Show">http://rss.msnbc.msn.com/id/34419165/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Hardball">http://rss.msnbc.msn.com/id/18424736/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="The Last Word">http://rss.msnbc.msn.com/id/38865210/device/rss/rss.xml</Category>
         <Category xsi:type="RssLink" name="Rachel Maddow Show">http://rss.msnbc.msn.com/id/26548304/device/rss/rss.xml</Category>
-        <Category xsi:type="RssLink" name="Today Show">http://rss.msnbc.msn.com/id/18424824/device/rss/rss.xml"</Category>
-        <Category xsi:type="RssLink" name="MSNBC TV">http://rss.msnbc.msn.com/id/3096433/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="The Ed Show">http://rss.msnbc.msn.com/id/30012522/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="ZeitGeist">http://rss.msnbc.msn.com/id/20418176/device/rss/rss.xml</Category>
         <Category xsi:type="RssLink" name="Business Video">http://rss.msnbc.msn.com/id/18424696/device/rss/rss.xml</Category>
       </Categories>
     </Site>
