@@ -12,9 +12,11 @@ namespace OnlineVideos.Sites
 	public class MsnbcUtil: SiteUtilBase
 	{
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the video id from an html page.")]
-        string idRegEx = @"vPlayer\('(\d{5,10})'";
+        string idRegEx = @"(\[{""videos"":\[{""launch"":(?<id>\d+))|(<param\s+name=""FlashVars""\s+value=""launch=(?<id>\d+))";
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the video url of an item that was found in the rss.")]
-        string videoUrlFormatString = "http://www.msnbc.msn.com/id/{0}/displaymode/1157/?t=.flv";
+        string videoUrlFormatString = "http://www.msnbc.msn.com/default.cdnx/id/{0}/displaymode/1157/?t=.flv";
+        
+        //"http://www.msnbc.msn.com/id/{0}/displaymode/1157/?t=.flv";
 
         Regex regEx_Id;
 
@@ -36,7 +38,7 @@ namespace OnlineVideos.Sites
                 string data = GetWebData(video.VideoUrl);
                 Match m = regEx_Id.Match(data);
                 if (m.Success)
-                    return String.Format(videoUrlFormatString, m.Groups[1].Value);
+                    return String.Format(videoUrlFormatString, m.Groups["id"].Value);
                 else
                     return "";
             }
@@ -47,16 +49,17 @@ namespace OnlineVideos.Sites
             List<VideoInfo> loVideoList = new List<VideoInfo>();
             foreach (RssItem rssItem in GetWebData<RssDocument>(((RssLink)category).Url).Channel.Items)
             {
-                if (rssItem.MediaContents.Count == 0) continue;
-                if (rssItem.MediaContents[0].Medium != "video") continue;
-
-                VideoInfo video = new VideoInfo();
-                video.Description = rssItem.Description;
-                video.ImageUrl = rssItem.MediaContents[0].Url;
-                video.Title = rssItem.Title.Replace("Video: ", "");
-                video.Airdate = rssItem.PubDateParsed.ToString("g", OnlineVideoSettings.Instance.Locale);
-                video.VideoUrl = rssItem.Guid.Text;
-                loVideoList.Add(video);
+                if (rssItem.Guid.Text.ToLower().StartsWith("http"))
+                {
+                    VideoInfo video = new VideoInfo();
+                    video.Description = rssItem.Description;
+                    if (rssItem.MediaContents.Count > 0 && rssItem.MediaContents[0].Url != null && rssItem.MediaContents[0].Url.ToLower().EndsWith(".jpg"))
+                        video.ImageUrl = rssItem.MediaContents[0].Url;
+                    video.Title = rssItem.Title.Replace("Video: ", "");
+                    video.Airdate = rssItem.PubDateParsed.ToString("g", OnlineVideoSettings.Instance.Locale);
+                    video.VideoUrl = rssItem.Guid.Text;
+                    loVideoList.Add(video);
+                }
             }
             return loVideoList;
         }
