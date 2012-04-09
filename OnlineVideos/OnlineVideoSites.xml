@@ -246,6 +246,7 @@
         <item key="videoListRegEx"><![CDATA[(?<!id_series_newest_movies_init.*)<a\s+href='(?<VideoUrl>[^']+)'\s+title='(?<Title>[^']+)'><img(?:(?!src).)+src='(?<ImageUrl>[^']+)'[^>]*><span[^>]*>(?<Duration>[^<]+)</span></a>]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www.myvideo.de{0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.myvideo.de/Serien]]></item>
+        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
       </Configuration>
     </Site>
     <Site name="Bild.de Filme" util="BildFilme" agecheck="false" enabled="true" lang="de">
