@@ -470,6 +470,8 @@ namespace OnlineVideos.Sites
 
                 url = Regex.Match(webData, @"<a\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay").Groups["url"].Value;
                 url = GetRedirectedUrl(url);
+                if (url.StartsWith(parent.baseUrl))
+                    return String.Empty;
                 return GetVideoUrl(url);
             }
         }
