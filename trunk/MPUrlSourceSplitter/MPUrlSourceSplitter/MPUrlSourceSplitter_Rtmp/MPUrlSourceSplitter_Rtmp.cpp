@@ -84,7 +84,6 @@ CMPUrlSourceSplitter_Rtmp::CMPUrlSourceSplitter_Rtmp(CParameterCollection *confi
   this->streamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->url = NULL;
-  this->internalExitRequest = false;
   this->wholeStreamDownloaded = false;
   this->mainCurlInstance = NULL;
   this->streamDuration = 0;
@@ -92,6 +91,7 @@ CMPUrlSourceSplitter_Rtmp::CMPUrlSourceSplitter_Rtmp(CParameterCollection *confi
   this->seekingActive = false;
   this->supressData = false;
   this->bufferForProcessing = NULL;
+  this->shouldExit = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -147,7 +147,6 @@ HRESULT CMPUrlSourceSplitter_Rtmp::ClearSession(void)
     this->bufferForProcessing = NULL;
   }
  
-  this->internalExitRequest = false;
   this->streamLength = 0;
   this->setLength = false;
   this->streamTime = 0;
@@ -157,6 +156,7 @@ HRESULT CMPUrlSourceSplitter_Rtmp::ClearSession(void)
   this->openConnetionMaximumAttempts = RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->streamDuration = 0;
   this->bytePosition = 0;
+  this->shouldExit = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -410,25 +410,6 @@ void CMPUrlSourceSplitter_Rtmp::ReceiveData(bool *shouldExit)
 
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  if (this->internalExitRequest)
-  {
-    // there is internal exit request pending == changed timestamp
-
-    if (this->mainCurlInstance != NULL)
-    {
-      this->mainCurlInstance->SetCloseWithoutWaiting(true);
-    }
-
-    // close connection
-    this->CloseConnection();
-
-    // reopen connection
-    // OpenConnection() reset wholeStreamDownloaded
-    this->OpenConnection();
-
-    this->internalExitRequest = false;
-  }
-
   if (this->IsConnected())
   {
     if (!this->wholeStreamDownloaded)
@@ -501,8 +482,11 @@ void CMPUrlSourceSplitter_Rtmp::ReceiveData(bool *shouldExit)
       if (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA)
       {
         // all data received, we're not receiving data
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
 
-        if (this->mainCurlInstance->GetErrorCode() == CURLE_OK)
+        // only in case that we started video and received some data
+        // in other case close and open connection again
+        if ((this->bytePosition != 0) && (this->streamTime == 0))
         {
           // whole stream downloaded
           this->wholeStreamDownloaded = true;
@@ -532,6 +516,17 @@ void CMPUrlSourceSplitter_Rtmp::ReceiveData(bool *shouldExit)
 
         // connection is no longer needed
         this->CloseConnection();
+      }
+    }
+    else
+    {
+      // set total length (if not set earlier)
+      if (!this->setLength)
+      {
+        this->streamLength = this->bytePosition;
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+        this->filter->SetTotalLength(this->streamLength, false);
+        this->setLength = true;
       }
     }
   }
@@ -637,7 +632,7 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
   CLockMutex lock(caller->lockMutex, INFINITE);
   unsigned int bytesRead = size * nmemb;
 
-  if (!((caller->shouldExit) || (caller->internalExitRequest)))
+  if (!(caller->shouldExit))
   {
     if (!caller->setLength)
     {
@@ -729,7 +724,7 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
   }
 
   // if returned 0 (or lower value than bytesRead) it cause transfer interruption
-  return ((caller->shouldExit) || (caller->internalExitRequest)) ? 0 : (bytesRead);
+  return (caller->shouldExit) ? 0 : (bytesRead);
 }
 
 unsigned int CMPUrlSourceSplitter_Rtmp::GetSeekingCapabilities(void)
@@ -748,7 +743,6 @@ int64_t CMPUrlSourceSplitter_Rtmp::SeekToTime(int64_t time)
 
   this->seekingActive = true;
 
-  // there is internal exit request pending == changed timestamp
   // close connection
   this->CloseConnection();
 

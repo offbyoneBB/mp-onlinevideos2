@@ -98,6 +98,7 @@ CMPUrlSourceSplitter_Http::CMPUrlSourceSplitter_Http(CParameterCollection *confi
   this->filledReceivedDataFromRange = false;
   this->supressData = false;
   this->checkRanges = HTTP_CHECK_RANGES_DEFAULT;
+  this->shouldExit = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -160,6 +161,7 @@ HRESULT CMPUrlSourceSplitter_Http::ClearSession(void)
   this->receiveDataTimeout = HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->checkRanges = HTTP_CHECK_RANGES_DEFAULT;
+  this->shouldExit = false;
 
   if (this->receivedData != NULL)
   {

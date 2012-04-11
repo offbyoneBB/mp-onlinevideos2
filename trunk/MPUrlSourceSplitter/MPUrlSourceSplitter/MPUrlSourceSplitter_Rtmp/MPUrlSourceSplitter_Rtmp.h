@@ -222,8 +222,6 @@ protected:
 
   // reference to variable that signalize if protocol is requested to exit
   bool shouldExit;
-  // internal variable for requests to interrupt transfers
-  bool internalExitRequest;
   // specifies if whole stream is downloaded
   bool wholeStreamDownloaded;
   // specifies if seeking (cleared when first data arrive)
