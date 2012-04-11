@@ -116,6 +116,7 @@ CMPUrlSourceSplitter_Mms::CMPUrlSourceSplitter_Mms(CParameterCollection *configu
   this->sequenceNumber = 1;
   this->receivingData = false;
   this->mmsContext = NULL;
+  this->shouldExit = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -176,6 +177,8 @@ HRESULT CMPUrlSourceSplitter_Mms::ClearSession(void)
   this->openConnetionMaximumAttempts = MMS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->sequenceNumber = 1;
   this->receivingData = false;
+  this->shouldExit = false;
+
   if (this->mmsContext != NULL)
   {
     delete this->mmsContext;
