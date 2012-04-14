@@ -167,6 +167,10 @@ namespace OnlineVideos
                 {
                     image.Save(file, System.Drawing.Imaging.ImageFormat.Gif);
                 }
+                else if (image.RawFormat.Guid == System.Drawing.Imaging.ImageFormat.Png.Guid && file.EndsWith(".png"))
+                {
+                    image.Save(file, System.Drawing.Imaging.ImageFormat.Png);
+                }
                 else
                 {
                     image.Save(file, System.Drawing.Imaging.ImageFormat.Jpeg);

@@ -264,9 +264,9 @@ namespace OnlineVideos
 
         public static string GetThumbFile(string url)
         {
-            // gets a CRC code for the given url and returns a full file path to the image: thums_dir\crc.jpg|gif
+            // gets a CRC code for the given url and returns a full file path to the image: thums_dir\crc.jpg|gif|png
             string possibleExtension = System.IO.Path.GetExtension(url).ToLower();
-            if (possibleExtension != ".gif" & possibleExtension != ".jpg") possibleExtension = ".jpg";
+            if (possibleExtension != ".gif" & possibleExtension != ".jpg" & possibleExtension != ".png") possibleExtension = ".jpg";
             string name = string.Format("Thumbs{0}L{1}", EncryptLine(url), possibleExtension);
 			return Path.Combine(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Cache\"), name);
         }
