@@ -517,7 +517,7 @@ namespace OnlineVideos.Sites
                     {
                         result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.UploadsBy + " [" + ytEntry.YouTubeEntry.Uploader.Value + "]", Action = ContextMenuEntry.UIAction.Execute });
                     }
-                    if (selectedCategory.Other == "Login" && selectedCategory.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Favourites))
+                    if (selectedCategory != null && selectedCategory.Other as string == "Login" && selectedCategory.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Favourites))
                     {
                         result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.RemoveFromFavorites + " (" + Settings.Name + ")", Action = ContextMenuEntry.UIAction.Execute });
                     }
@@ -541,7 +541,7 @@ namespace OnlineVideos.Sites
                             plCtx.SubEntries.Add(new ContextMenuEntry() { DisplayText = pl.Title, Other = pl.PlaylistsEntry.Content.Src.Content });
                         }
                         result.Add(plCtx);
-                        if (selectedCategory.ParentCategory != null && !(selectedCategory.ParentCategory is RssLink) && selectedCategory.ParentCategory.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Playlists))
+                        if (selectedCategory != null && selectedCategory.ParentCategory != null && !(selectedCategory.ParentCategory is RssLink) && selectedCategory.ParentCategory.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Playlists))
                         {
                             result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.RemoveFromPlaylist, Other = (selectedCategory as RssLink).Url });
                         }
@@ -550,7 +550,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                if (selectedCategory.ParentCategory != null && !(selectedCategory.ParentCategory is RssLink) && selectedCategory.ParentCategory.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Playlists))
+                if (selectedCategory != null && selectedCategory.ParentCategory != null && !(selectedCategory.ParentCategory is RssLink) && selectedCategory.ParentCategory.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Playlists))
                 {
                     result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.DeletePlaylist, Other = (selectedCategory as RssLink).Url });
                 }
