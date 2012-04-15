@@ -207,6 +207,7 @@
   <string Field="Settings_PlayBuffer">Percento stiahnutých dát pred začatím prehrávania</string>
   <string Field="Settings_AllowRefreshrateChange">Povoliť dynamické zmeny obnovovacej frekvencie</string>
   <string Field="Settings_FavoritesFirst">Dať Obľúbené a Stiahnuté videá na prvé miesta</string>
+  <string Field="Settings_LatestVideosMaxItems">Počet zobrazených najnovších videí</string>
   <string Field="Settings_LatestVideosRandomize">Náhodne zoradiť najnovšie videá pred zobrazením</string>
   <string Field="Settings_LatestVideosOnlineDataRefresh">Obnov najnovšie videá z internetu každých x minút</string>
   <string Field="Settings_LatestVideosGuiDataRefresh">Obnov posledne zobrazené videá každých x sekúnd</string>
