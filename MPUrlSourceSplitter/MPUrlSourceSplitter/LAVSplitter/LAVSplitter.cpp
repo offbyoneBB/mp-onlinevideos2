@@ -847,6 +847,7 @@ DWORD CLAVSplitter::ThreadProc()
     while(SUCCEEDED(hr) && !CheckRequest(&cmd))
     {
       hr = (cmd == CMD_PAUSE) ? S_OK : DemuxNextPacket();
+
       Sleep(1);
     }
 
@@ -984,14 +985,14 @@ STDMETHODIMP CLAVSplitter::Pause()
 {
   CAutoLock cAutoLock(this);
 
+  CAMThread::CallWorker(CMD_PAUSE);
+
   FILTER_STATE fs = m_State;
 
   HRESULT hr;
   if(FAILED(hr = __super::Pause())) {
     return hr;
   }
-
-  CAMThread::CallWorker(CMD_PAUSE);
 
   // The filter graph will set us to pause before running
   // So if we were stopped before, create the thread
@@ -1769,28 +1770,6 @@ void CLAVSplitter::ffmpeg_log_callback(void *ptr, int log_level, const char *for
 
     if (logLine != NULL)
     {
-      int loggerLevel = LOGGER_DATA;
-      switch (log_level)
-      {
-      case AV_LOG_PANIC:
-      case AV_LOG_FATAL:
-      case AV_LOG_ERROR:
-        loggerLevel = LOGGER_ERROR;
-        break;
-      case AV_LOG_INFO:
-        loggerLevel = LOGGER_INFO;
-        break;
-      case AV_LOG_DEBUG:
-        loggerLevel = LOGGER_DATA;
-        break;
-      case AV_LOG_VERBOSE:
-        loggerLevel = LOGGER_VERBOSE;
-        break;
-      case AV_LOG_WARNING:
-        loggerLevel = LOGGER_WARNING;
-        break;
-      }
-      //ffmpeg_logger_instance.Log(loggerLevel, L"%s: %s: log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", log_level, logLine);
       ffmpeg_logger_instance.Log(LOGGER_VERBOSE, L"%s: %s: log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", log_level, logLine);
     }
 
