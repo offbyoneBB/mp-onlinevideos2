@@ -162,6 +162,7 @@
   <string Field="Settings_PlayBuffer">Buffer-percentage voor afspelen (overig)</string>
   <string Field="Settings_AllowRefreshrateChange">Gebruik "dynamic refresh rate" instelling</string>
   <string Field="Settings_FavoritesFirst">Favorieten en Downloads bovenaan in de lijst in plaats van onderaan</string>
+  <string Field="Settings_LatestVideosMaxItems">Aantal weer te geven videos</string>
   <string Field="Settings_LatestVideosRandomize">Alle laatste videos in willekeurige volgorde laten zien</string>
   <string Field="Settings_LatestVideosOnlineDataRefresh">Tijd (in minuten) waarna opnieuw de laatste videos worden opgezocht</string>
   <string Field="Settings_LatestVideosGuiDataRefresh">Tijd (in seconden) waarna opnieuw de laatste videos worden getoond</string>
