@@ -164,7 +164,7 @@
 (?:(?!<div\sclass="buy">).)+
 <div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://rtl-now.rtl.de/sendung_a_z.php]]></item>
-        <item key="app"><![CDATA[rtlnow]]></item>
+        <item key="app"><![CDATA[rtlnow/]]></item>
       </Configuration>
     </Site>
     <Site name="RTL2 Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
@@ -179,7 +179,7 @@
 (?:(?!<div\sclass="buy">).)+
 <div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://rtl2now.rtl2.de]]></item>
-        <item key="app"><![CDATA[rtl2now]]></item>
+        <item key="app"><![CDATA[rtl2now/]]></item>
       </Configuration>
     </Site>    
     <Site name="Vox Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
@@ -197,7 +197,7 @@
 (?:(?!<div\sclass="buy">).)+
 <div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://www.voxnow.de/sendung_a_z.php]]></item>
-        <item key="app"><![CDATA[voxnow]]></item>
+        <item key="app"><![CDATA[voxnow/]]></item>
       </Configuration>
     </Site>
     <Site name="SuperRTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
@@ -211,7 +211,7 @@
 (?:(?!<div\sclass="buy">).)+
 <div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://www.superrtlnow.de]]></item>
-        <item key="app"><![CDATA[superrtlnow]]></item>
+        <item key="app"><![CDATA[superrtlnow/]]></item>
       </Configuration>
     </Site>
     <Site name="Orf" util="Orf" agecheck="false" enabled="true" lang="de">
@@ -225,28 +225,11 @@
       <Description>Videoportal des Schweizer Fernsehens (SF).</Description>
     </Site>
     <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
-      <Description>Deutscher YouTube Clone.</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="Top 10 Heute">http://www.myvideo.de/feeds/myVideo-Top10-daily.rss</Category>
-        <Category xsi:type="RssLink" name="Top 10 der Woche">http://www.myvideo.de/feeds/myVideo-Top10-weekly.rss</Category>
-        <Category xsi:type="RssLink" name="Top 10 des Monats">http://www.myvideo.de/feeds/myVideo-Top10-monthly.rss</Category>
-        <Category xsi:type="RssLink" name="Top 10 Alltime">http://www.myvideo.de/feeds/myVideo-Top10-alltime.rss</Category>
-        <Category xsi:type="RssLink" name="Top 10 Musik Charts">http://www.myvideo.de/feeds/myVideo-Top10-music_charts.rss</Category>
-        <Category xsi:type="RssLink" name="Top 10 Entertainment">http://www.myvideo.de/feeds/myVideo-Top10_entertainment.rss</Category>
-        <Category xsi:type="RssLink" name="Top 10 Serien">http://www.myvideo.de/feeds/myVideo-Top10-serien_charts.rss</Category>
-      </Categories>
-    </Site>
-    <Site name="MyVideo - Serien" util="MyVideoSerien" agecheck="false" enabled="true" lang="de">
-      <Description>Ganze Folgen deutscher Fernsehserien.</Description>
+      <Description>Auf MyVideo findest Du kostenlos die besten Videos und Clips. Werbespots, lustige Videos, funny Clips uvm.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div\s+class='sThumb'[^>]*>\s*<a\shref='(?<url>[^']+)'\sclass='sThumb'\starget='_top'\s*title='(?<title>[^']+)'>\s*<img\s+src='(?<thumb>[^']+)']]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.myvideo.de{0}]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[src='(?<thumb>[^']+)'\s*alt=''\sclass='vThumb'/></a></div></div><div\sclass='lContent\spChContent'>\s*<div\sclass='pChHead'><a\shref='(?<url>[^']+)'\sclass[^>]+>(?<title>[^<]+)</a></div><div\s*class='pChText'>(?<description>[^<]+)</div>]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.myvideo.de{0}]]></item>
-        <item key="videoListRegEx"><![CDATA[(?<!id_series_newest_movies_init.*)<a\s+href='(?<VideoUrl>[^']+)'\s+title='(?<Title>[^']+)'><img(?:(?!src).)+src='(?<ImageUrl>[^']+)'[^>]*><span[^>]*>(?<Duration>[^<]+)</span></a>]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://www.myvideo.de{0}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.myvideo.de/Serien]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
+        <item key="serienSenderRegEx"><![CDATA["<a\shref='(?<url>[^']+)'\sclass='sThumb'\starget='_top'\s*title='(?<title>[^']+)'>\s*<img\s+src='(?<thumb>[^']+)']]></item>
+        <item key="serienRegEx"><![CDATA[src='(?<thumb>[^']+)'\s*alt=''\sclass='vThumb'/></a></div></div><div\sclass='lContent\spChContent'>\s*<div\sclass='pChHead'><a\shref='(?<url>[^']+)'\sclass[^>]+>(?<title>[^<]+)</a></div><div\s*class='pChText'>(?<description>[^<]+)</div>]]></item>
+        <item key="episodenRegEx"><![CDATA[(?<!id_series_newest_movies_init.*)<a\s+href='(?<VideoUrl>[^']+)'\s+title='(?<Title>[^']+)'><img(?:(?!src).)+src='(?<ImageUrl>[^']+)'[^>]*><span[^>]*>(?<Duration>[^<]+)</span></a>]]></item>
       </Configuration>
     </Site>
     <Site name="Bild.de Filme" util="BildFilme" agecheck="false" enabled="true" lang="de">
