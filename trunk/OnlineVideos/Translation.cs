@@ -270,7 +270,8 @@ namespace OnlineVideos
 		public string Settings_PlayBuffer = "Percentage to buffer before starting playback";
         public string Settings_AllowRefreshrateChange = "Enable dynamic refresh rate adaption";
 		public string Settings_FavoritesFirst = "Put Favorites and Downloads sites first in the list instead of last";
-		public string Settings_LatestVideosRandomize = "Randomize all latest videos before displaying";
+        public string Settings_LatestVideosMaxItems = "Amount of latest videos to display";
+        public string Settings_LatestVideosRandomize = "Randomize all latest videos before displaying";
 		public string Settings_LatestVideosOnlineDataRefresh = "Refresh latest videos data from web every x minutes";
 		public string Settings_LatestVideosGuiDataRefresh = "Refresh displayed latest videos every x seconds";
 		public string Settings_StoreLayoutPerCategory = "Remember view layout per Site and Category";
