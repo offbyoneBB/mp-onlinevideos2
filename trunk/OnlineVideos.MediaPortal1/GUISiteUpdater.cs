@@ -565,7 +565,7 @@ namespace OnlineVideos.MediaPortal1
             // owner
 			if (GUI_btnFilterCreator.SelectedLabel != Translation.Instance.All)
             {
-                string owner = site.Owner_FK.Substring(0, site.Owner_FK.IndexOf('@'));
+                string owner = site.Owner_FK != null ? site.Owner_FK.Substring(0, site.Owner_FK.IndexOf('@')) : "";
                 if (owner != GUI_btnFilterCreator.SelectedLabel) return false;
             }
             // state
