@@ -139,12 +139,13 @@ namespace OnlineVideos.Sites
                 string url = list[i].InnerText;
 
                 string swfUrl = null;
-                switch (spc)
+                /*switch (spc)
                 {
                     case SouthParkCountry.World:
-                    case SouthParkCountry.De: swfUrl = @"http://media.mtvnservices.com/player/prime/mediaplayerprime.1.8.5.swf"; break;
+                    case SouthParkCountry.De: 
+                        swfUrl = @"http://media.mtvnservices.com/player/prime/mediaplayerprime.1.11.3.swf"; break;
                     //case SouthParkCountry.Nl: swfUrl = String.Empty; break;
-                }
+                }*/
 
                 res.Add(bitrate + "K " + videoType,
                     new MPUrlSourceFilter.RtmpUrl(url) { SwfVerify = swfUrl != null, SwfUrl = swfUrl }.ToString());
