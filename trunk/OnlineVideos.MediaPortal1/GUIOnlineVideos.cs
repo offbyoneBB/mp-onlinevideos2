@@ -1156,6 +1156,8 @@ namespace OnlineVideos.MediaPortal1
 
         private void HideAndDisable(int iControlId)
         {
+            GUIControl.UnfocusControl(GetID, iControlId);
+            GUIControl.DeSelectControl(GetID, iControlId);
             GUIControl.HideControl(GetID, iControlId);
             GUIControl.DisableControl(GetID, iControlId);
         }
@@ -2995,6 +2997,7 @@ namespace OnlineVideos.MediaPortal1
 
         private void HideSearchButtons()
         {
+            GUI_btnSearchCategories.Clear();
             HideAndDisable(GUI_btnSearchCategories.GetID);
             HideAndDisable(GUI_btnSearch.GetID);
         }
