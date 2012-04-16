@@ -672,7 +672,7 @@
         <item key="baseUrl"><![CDATA[http://www.collegehumor.com/videos]]></item>
       </Configuration>
     </Site>
-    <Site name="5min" util="GenericSite" agecheck="false" enabled="true" lang="en">
+    <Site name="5min" util="FiveMin" agecheck="false" enabled="true" lang="en">
       <Description>Free instructional videos.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\s*style="background-image:\surl\('(?<thumb>[^']+)'\);"\s*>\s*<a\shref="(?<url>[^"]+)">\s*(?<title>[^<]+)</a>]]></item>
@@ -689,8 +689,8 @@
 <div[^>]*>(?<Duration>[^<]*)</div>]]></item>
         <item key="nextPageRegEx"><![CDATA[href="(?<url>[^"]+)">Next</a>]]></item>
         <item key="prevPageRegEx"><![CDATA[href="(?<url>[^"]+)">Previous</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[videoUrl=(?<m0>[^&]+)&pageUrl]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[videoUrl=(?<m0>.*?)(?<m2>\.mp4|\.flv)&(activeRenditions=\d+&defaultRendition=(?<m1>\d+))?]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}_{1}{2}]]></item>
         <item key="baseUrl"><![CDATA[http://www.5min.com/]]></item>
       </Configuration>
     </Site>
