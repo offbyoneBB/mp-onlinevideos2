@@ -25,14 +25,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+#if !PORTABLE
 using System.Collections.Specialized;
+#endif
 using System.ComponentModel;
-using System.Linq;
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+using System.Dynamic;
+using System.Linq.Expressions;
+#endif
 using System.IO;
 using Newtonsoft.Json.Utilities;
 using System.Globalization;
-#if !PocketPC && !SILVERLIGHT
-using Newtonsoft.Json.Linq.ComponentModel;
+#if NET20
+using Newtonsoft.Json.Utilities.LinqBridge;
+#else
+using System.Linq;
 #endif
 
 namespace Newtonsoft.Json.Linq
@@ -40,20 +48,31 @@ namespace Newtonsoft.Json.Linq
   /// <summary>
   /// Represents a JSON object.
   /// </summary>
-#if !PocketPC && !SILVERLIGHT
-  [TypeDescriptionProvider(typeof(JTypeDescriptionProvider))]
-#endif
   public class JObject : JContainer, IDictionary<string, JToken>, INotifyPropertyChanged
-#if !PocketPC && !SILVERLIGHT && !NET20
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
+    , ICustomTypeDescriptor
+#endif
+#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE)
     , INotifyPropertyChanging
 #endif
   {
+    private readonly JPropertyKeyedCollection _properties = new JPropertyKeyedCollection();
+
+    /// <summary>
+    /// Gets the container's children tokens.
+    /// </summary>
+    /// <value>The container's children tokens.</value>
+    protected override IList<JToken> ChildrenTokens
+    {
+      get { return _properties; }
+    }
+
     /// <summary>
     /// Occurs when a property value changes.
     /// </summary>
     public event PropertyChangedEventHandler PropertyChanged;
 
-#if !PocketPC && !SILVERLIGHT && !NET20
+#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE)
     /// <summary>
     /// Occurs when a property value is changing.
     /// </summary>
@@ -97,7 +116,19 @@ namespace Newtonsoft.Json.Linq
     internal override bool DeepEquals(JToken node)
     {
       JObject t = node as JObject;
-      return (t != null && ContentsEqual(t));
+      if (t == null)
+        return false;
+
+      return _properties.Compare(t._properties);
+    }
+
+    internal override void InsertItem(int index, JToken item, bool skipParentCheck)
+    {
+      // don't add comments to JObject, no name to reference comment by
+      if (item != null && item.Type == JTokenType.Comment)
+        return;
+
+      base.InsertItem(index, item, skipParentCheck);
     }
 
     internal override void ValidateToken(JToken o, JToken existing)
@@ -107,29 +138,34 @@ namespace Newtonsoft.Json.Linq
       if (o.Type != JTokenType.Property)
         throw new ArgumentException("Can not add {0} to {1}.".FormatWith(CultureInfo.InvariantCulture, o.GetType(), GetType()));
 
-      // looping over all properties every time isn't good
-      // need to think about performance here
-      JProperty property = (JProperty)o;
-      foreach (JProperty childProperty in Children())
+      JProperty newProperty = (JProperty) o;
+
+      if (existing != null)
       {
-        if (childProperty != existing && string.Equals(childProperty.Name, property.Name, StringComparison.Ordinal))
-          throw new ArgumentException("Can not add property {0} to {1}. Property with the same name already exists on object.".FormatWith(CultureInfo.InvariantCulture, property.Name, GetType()));
+        JProperty existingProperty = (JProperty) existing;
+
+        if (newProperty.Name == existingProperty.Name)
+          return;
       }
+
+      if (_properties.TryGetValue(newProperty.Name, out existing))
+        throw new ArgumentException("Can not add property {0} to {1}. Property with the same name already exists on object.".FormatWith(CultureInfo.InvariantCulture, newProperty.Name, GetType()));
     }
 
     internal void InternalPropertyChanged(JProperty childProperty)
     {
       OnPropertyChanged(childProperty.Name);
-#if !SILVERLIGHT
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
       OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, IndexOfItem(childProperty)));
-#else
+#endif
+#if SILVERLIGHT || !(NET20 || NET35 || PORTABLE)
       OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, childProperty, childProperty, IndexOfItem(childProperty)));
 #endif
     }
 
     internal void InternalPropertyChanging(JProperty childProperty)
     {
-#if !PocketPC && !SILVERLIGHT && !NET20
+#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE)
       OnPropertyChanging(childProperty.Name);
 #endif
     }
@@ -154,7 +190,7 @@ namespace Newtonsoft.Json.Linq
     /// <returns>An <see cref="IEnumerable{JProperty}"/> of this object's properties.</returns>
     public IEnumerable<JProperty> Properties()
     {
-      return Children().Cast<JProperty>();
+      return ChildrenTokens.Cast<JProperty>();
     }
 
     /// <summary>
@@ -164,9 +200,12 @@ namespace Newtonsoft.Json.Linq
     /// <returns>A <see cref="JProperty"/> with the specified name or null.</returns>
     public JProperty Property(string name)
     {
-      return Properties()
-        .Where(p => string.Equals(p.Name, name, StringComparison.Ordinal))
-        .SingleOrDefault();
+      if (name == null)
+        return null;
+
+      JToken property;
+      _properties.TryGetValue(name, out property);
+      return (JProperty)property;
     }
 
     /// <summary>
@@ -229,7 +268,7 @@ namespace Newtonsoft.Json.Linq
         }
         else
         {
-#if !PocketPC && !SILVERLIGHT && !NET20
+#if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE)
           OnPropertyChanging(propertyName);
 #endif
           Add(new JProperty(propertyName, value));
@@ -243,27 +282,25 @@ namespace Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="reader">A <see cref="JsonReader"/> that will be read for the content of the <see cref="JObject"/>.</param>
     /// <returns>A <see cref="JObject"/> that contains the JSON that was read from the specified <see cref="JsonReader"/>.</returns>
-    public static JObject Load(JsonReader reader)
+    public static new JObject Load(JsonReader reader)
     {
       ValidationUtils.ArgumentNotNull(reader, "reader");
 
       if (reader.TokenType == JsonToken.None)
       {
         if (!reader.Read())
-          throw new Exception("Error reading JObject from JsonReader.");
+          throw JsonReaderException.Create(reader, "Error reading JObject from JsonReader.");
       }
+
       if (reader.TokenType != JsonToken.StartObject)
-        throw new Exception(
-          "Error reading JObject from JsonReader. Current JsonReader item is not an object: {0}".FormatWith(
-            CultureInfo.InvariantCulture, reader.TokenType));
+      {
+        throw JsonReaderException.Create(reader, "Error reading JObject from JsonReader. Current JsonReader item is not an object: {0}".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
+      }
 
       JObject o = new JObject();
       o.SetLineInfo(reader as IJsonLineInfo);
       
-      if (!reader.Read())
-        throw new Exception("Error reading JObject from JsonReader.");
-
-      o.ReadContentFrom(reader);
+      o.ReadTokenFrom(reader);
 
       return o;
     }
@@ -273,11 +310,16 @@ namespace Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="json">A <see cref="String"/> that contains JSON.</param>
     /// <returns>A <see cref="JObject"/> populated from the string that contains JSON.</returns>
-    public static JObject Parse(string json)
+    public static new JObject Parse(string json)
     {
-      JsonReader jsonReader = new JsonTextReader(new StringReader(json));
+      JsonReader reader = new JsonTextReader(new StringReader(json));
 
-      return Load(jsonReader);
+      JObject o = Load(reader);
+
+      if (reader.Read() && reader.TokenType != JsonToken.Comment)
+        throw JsonReaderException.Create(reader, "Additional text found in JSON string after parsing content.");
+
+      return o;
     }
 
     /// <summary>
@@ -315,7 +357,7 @@ namespace Newtonsoft.Json.Linq
     {
       writer.WriteStartObject();
 
-      foreach (JProperty property in Properties())
+      foreach (JProperty property in ChildrenTokens)
       {
         property.WriteTo(writer, converters);
       }
@@ -336,12 +378,13 @@ namespace Newtonsoft.Json.Linq
 
     bool IDictionary<string, JToken>.ContainsKey(string key)
     {
-      return (Property(key) != null);
+      return _properties.Contains(key);
     }
 
     ICollection<string> IDictionary<string, JToken>.Keys
     {
-      get { throw new NotImplementedException(); }
+      // todo: make order the collection returned match JObject order
+      get { return _properties.Keys; }
     }
 
     /// <summary>
@@ -380,7 +423,11 @@ namespace Newtonsoft.Json.Linq
 
     ICollection<JToken> IDictionary<string, JToken>.Values
     {
-      get { throw new NotImplementedException(); }
+      get
+      {
+        // todo: need to wrap _properties.Values with a collection to get the JProperty value
+        throw new NotImplementedException();
+      }
     }
 
     #endregion
@@ -418,21 +465,11 @@ namespace Newtonsoft.Json.Linq
         throw new ArgumentException("The number of elements in the source JObject is greater than the available space from arrayIndex to the end of the destination array.");
 
       int index = 0;
-      foreach (JProperty property in Properties())
+      foreach (JProperty property in ChildrenTokens)
       {
         array[arrayIndex + index] = new KeyValuePair<string, JToken>(property.Name, property.Value);
         index++;
       }
-    }
-
-    /// <summary>
-    /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
-    /// </summary>
-    /// <value></value>
-    /// <returns>The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.</returns>
-    public int Count
-    {
-      get { return Children().Count(); }
     }
 
     bool ICollection<KeyValuePair<string,JToken>>.IsReadOnly
@@ -464,7 +501,7 @@ namespace Newtonsoft.Json.Linq
     /// </returns>
     public IEnumerator<KeyValuePair<string, JToken>> GetEnumerator()
     {
-      foreach (JProperty property in Properties())
+      foreach (JProperty property in ChildrenTokens)
       {
         yield return new KeyValuePair<string, JToken>(property.Name, property.Value);
       }
@@ -480,7 +517,7 @@ namespace Newtonsoft.Json.Linq
         PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
     }
 
-#if !PocketPC && !SILVERLIGHT && !NET20
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE || NET20)
     /// <summary>
     /// Raises the <see cref="PropertyChanging"/> event with the provided arguments.
     /// </summary>
@@ -489,6 +526,206 @@ namespace Newtonsoft.Json.Linq
     {
       if (PropertyChanging != null)
         PropertyChanging(this, new PropertyChangingEventArgs(propertyName));
+    }
+#endif
+
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
+    // include custom type descriptor on JObject rather than use a provider because the properties are specific to a type
+    #region ICustomTypeDescriptor
+    /// <summary>
+    /// Returns the properties for this instance of a component.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.ComponentModel.PropertyDescriptorCollection"/> that represents the properties for this component instance.
+    /// </returns>
+    PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties()
+    {
+      return ((ICustomTypeDescriptor) this).GetProperties(null);
+    }
+
+    private static Type GetTokenPropertyType(JToken token)
+    {
+      if (token is JValue)
+      {
+        JValue v = (JValue)token;
+        return (v.Value != null) ? v.Value.GetType() : typeof(object);
+      }
+
+      return token.GetType();
+    }
+
+    /// <summary>
+    /// Returns the properties for this instance of a component using the attribute array as a filter.
+    /// </summary>
+    /// <param name="attributes">An array of type <see cref="T:System.Attribute"/> that is used as a filter.</param>
+    /// <returns>
+    /// A <see cref="T:System.ComponentModel.PropertyDescriptorCollection"/> that represents the filtered properties for this component instance.
+    /// </returns>
+    PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[] attributes)
+    {
+      PropertyDescriptorCollection descriptors = new PropertyDescriptorCollection(null);
+
+      foreach (KeyValuePair<string, JToken> propertyValue in this)
+      {
+        descriptors.Add(new JPropertyDescriptor(propertyValue.Key, GetTokenPropertyType(propertyValue.Value)));
+      }
+
+      return descriptors;
+    }
+
+    /// <summary>
+    /// Returns a collection of custom attributes for this instance of a component.
+    /// </summary>
+    /// <returns>
+    /// An <see cref="T:System.ComponentModel.AttributeCollection"/> containing the attributes for this object.
+    /// </returns>
+    AttributeCollection ICustomTypeDescriptor.GetAttributes()
+    {
+      return AttributeCollection.Empty;
+    }
+
+    /// <summary>
+    /// Returns the class name of this instance of a component.
+    /// </summary>
+    /// <returns>
+    /// The class name of the object, or null if the class does not have a name.
+    /// </returns>
+    string ICustomTypeDescriptor.GetClassName()
+    {
+      return null;
+    }
+
+    /// <summary>
+    /// Returns the name of this instance of a component.
+    /// </summary>
+    /// <returns>
+    /// The name of the object, or null if the object does not have a name.
+    /// </returns>
+    string ICustomTypeDescriptor.GetComponentName()
+    {
+      return null;
+    }
+
+    /// <summary>
+    /// Returns a type converter for this instance of a component.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.ComponentModel.TypeConverter"/> that is the converter for this object, or null if there is no <see cref="T:System.ComponentModel.TypeConverter"/> for this object.
+    /// </returns>
+    TypeConverter ICustomTypeDescriptor.GetConverter()
+    {
+      return new TypeConverter();
+    }
+
+    /// <summary>
+    /// Returns the default event for this instance of a component.
+    /// </summary>
+    /// <returns>
+    /// An <see cref="T:System.ComponentModel.EventDescriptor"/> that represents the default event for this object, or null if this object does not have events.
+    /// </returns>
+    EventDescriptor ICustomTypeDescriptor.GetDefaultEvent()
+    {
+      return null;
+    }
+
+    /// <summary>
+    /// Returns the default property for this instance of a component.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.ComponentModel.PropertyDescriptor"/> that represents the default property for this object, or null if this object does not have properties.
+    /// </returns>
+    PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty()
+    {
+      return null;
+    }
+
+    /// <summary>
+    /// Returns an editor of the specified type for this instance of a component.
+    /// </summary>
+    /// <param name="editorBaseType">A <see cref="T:System.Type"/> that represents the editor for this object.</param>
+    /// <returns>
+    /// An <see cref="T:System.Object"/> of the specified type that is the editor for this object, or null if the editor cannot be found.
+    /// </returns>
+    object ICustomTypeDescriptor.GetEditor(Type editorBaseType)
+    {
+      return null;
+    }
+
+    /// <summary>
+    /// Returns the events for this instance of a component using the specified attribute array as a filter.
+    /// </summary>
+    /// <param name="attributes">An array of type <see cref="T:System.Attribute"/> that is used as a filter.</param>
+    /// <returns>
+    /// An <see cref="T:System.ComponentModel.EventDescriptorCollection"/> that represents the filtered events for this component instance.
+    /// </returns>
+    EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes)
+    {
+      return EventDescriptorCollection.Empty;
+    }
+
+    /// <summary>
+    /// Returns the events for this instance of a component.
+    /// </summary>
+    /// <returns>
+    /// An <see cref="T:System.ComponentModel.EventDescriptorCollection"/> that represents the events for this component instance.
+    /// </returns>
+    EventDescriptorCollection ICustomTypeDescriptor.GetEvents()
+    {
+      return EventDescriptorCollection.Empty;
+    }
+
+    /// <summary>
+    /// Returns an object that contains the property described by the specified property descriptor.
+    /// </summary>
+    /// <param name="pd">A <see cref="T:System.ComponentModel.PropertyDescriptor"/> that represents the property whose owner is to be found.</param>
+    /// <returns>
+    /// An <see cref="T:System.Object"/> that represents the owner of the specified property.
+    /// </returns>
+    object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd)
+    {
+      return null;
+    }
+    #endregion
+#endif
+
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+    /// <summary>
+    /// Returns the <see cref="T:System.Dynamic.DynamicMetaObject"/> responsible for binding operations performed on this object.
+    /// </summary>
+    /// <param name="parameter">The expression tree representation of the runtime value.</param>
+    /// <returns>
+    /// The <see cref="T:System.Dynamic.DynamicMetaObject"/> to bind this object.
+    /// </returns>
+    protected override DynamicMetaObject GetMetaObject(Expression parameter)
+    {
+      return new DynamicProxyMetaObject<JObject>(parameter, this, new JObjectDynamicProxy(), true);
+    }
+
+    private class JObjectDynamicProxy : DynamicProxy<JObject>
+    {
+      public override bool TryGetMember(JObject instance, GetMemberBinder binder, out object result)
+      {
+        // result can be null
+        result = instance[binder.Name];
+        return true;
+      }
+
+      public override bool TrySetMember(JObject instance, SetMemberBinder binder, object value)
+      {
+        JToken v = value as JToken;
+
+        // this can throw an error if value isn't a valid for a JValue
+        if (v == null)
+          v = new JValue(value);
+
+        instance[binder.Name] = v;
+        return true;
+      }
+
+      public override IEnumerable<string> GetDynamicMemberNames(JObject instance)
+      {
+        return instance.Properties().Select(p => p.Name);
+      }
     }
 #endif
   }

@@ -31,7 +31,7 @@ namespace Newtonsoft.Json.Serialization
   /// <summary>
   /// Contract details for a <see cref="Type"/> used by the <see cref="JsonSerializer"/>.
   /// </summary>
-  public class JsonObjectContract : JsonContract
+  public class JsonObjectContract : JsonContainerContract
   {
     /// <summary>
     /// Gets or sets the object member serialization.
@@ -46,6 +46,19 @@ namespace Newtonsoft.Json.Serialization
     public JsonPropertyCollection Properties { get; private set; }
 
     /// <summary>
+    /// Gets the constructor parameters required for any non-default constructor
+    /// </summary>
+    public JsonPropertyCollection ConstructorParameters { get; private set; }
+
+    /// <summary>
+    /// Gets or sets the override constructor used to create the object.
+    /// This is set when a constructor is marked up using the
+    /// JsonConstructor attribute.
+    /// </summary>
+    /// <value>The override constructor.</value>
+    public ConstructorInfo OverrideConstructor { get; set; }
+
+    /// <summary>
     /// Gets or sets the parametrized constructor used to create the object.
     /// </summary>
     /// <value>The parametrized constructor.</value>
@@ -58,7 +71,10 @@ namespace Newtonsoft.Json.Serialization
     public JsonObjectContract(Type underlyingType)
       : base(underlyingType)
     {
-      Properties = new JsonPropertyCollection(this);
+      ContractType = JsonContractType.Object;
+
+      Properties = new JsonPropertyCollection(UnderlyingType);
+      ConstructorParameters = new JsonPropertyCollection(UnderlyingType);
     }
   }
 }

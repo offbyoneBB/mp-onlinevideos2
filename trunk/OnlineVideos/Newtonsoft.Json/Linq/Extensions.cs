@@ -25,11 +25,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json.Utilities;
-using System.Collections;
 using System.Globalization;
+#if NET20
+using Newtonsoft.Json.Utilities.LinqBridge;
+#else
+using System.Linq;
+#endif
 
 namespace Newtonsoft.Json.Linq
 {
@@ -182,7 +184,7 @@ namespace Newtonsoft.Json.Linq
           {
             foreach (JToken t in token.Children())
             {
-              yield return t.Convert<JToken, U>(); ;
+              yield return t.Convert<JToken, U>();
             }
           }
         }
@@ -236,36 +238,32 @@ namespace Newtonsoft.Json.Linq
     {
       ValidationUtils.ArgumentNotNull(source, "source");
 
-      bool cast = typeof(JToken).IsAssignableFrom(typeof(U));
-
-      foreach (JToken token in source)
+      foreach (T token in source)
       {
-        yield return Convert<JToken, U>(token, cast);
+        yield return Convert<JToken, U>(token);
       }
     }
 
     internal static U Convert<T, U>(this T token) where T : JToken
     {
-      bool cast = typeof(JToken).IsAssignableFrom(typeof(U));
+      if (token == null)
+        return default(U);
 
-      return Convert<T, U>(token, cast);
-    }
-
-    internal static U Convert<T, U>(this T token, bool cast) where T : JToken
-    {
-      if (cast)
+      if (token is U
+        // don't want to cast JValue to its interfaces, want to get the internal value
+        && typeof(U) != typeof(IComparable) && typeof(U) != typeof(IFormattable))
       {
         // HACK
         return (U)(object)token;
       }
       else
       {
-        if (token == null)
-          return default(U);
-
         JValue value = token as JValue;
         if (value == null)
           throw new InvalidCastException("Cannot cast {0} to {1}.".FormatWith(CultureInfo.InvariantCulture, token.GetType(), typeof(T)));
+
+        if (value.Value is U)
+          return (U)value.Value;
 
         Type targetType = typeof(U);
 

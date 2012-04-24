@@ -23,11 +23,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Newtonsoft.Json
 {
   /// <summary>
@@ -36,11 +31,11 @@ namespace Newtonsoft.Json
   public enum ConstructorHandling
   {
     /// <summary>
-    /// First attempt to use the public default constructor then fall back to single paramatized constructor.
+    /// First attempt to use the public default constructor, then fall back to single paramatized constructor, then the non-public default constructor.
     /// </summary>
     Default = 0,
     /// <summary>
-    /// Allow Json.NET to use a non-public default constructor.
+    /// Json.NET will use a non-public default constructor before falling back to a paramatized constructor.
     /// </summary>
     AllowNonPublicDefaultConstructor = 1
   }

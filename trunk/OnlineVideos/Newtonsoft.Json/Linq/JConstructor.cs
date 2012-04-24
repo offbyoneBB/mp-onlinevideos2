@@ -25,8 +25,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json.Utilities;
 using System.Globalization;
 
@@ -38,6 +36,16 @@ namespace Newtonsoft.Json.Linq
   public class JConstructor : JContainer
   {
     private string _name;
+    private readonly IList<JToken> _values = new List<JToken>();
+
+    /// <summary>
+    /// Gets the container's children tokens.
+    /// </summary>
+    /// <value>The container's children tokens.</value>
+    protected override IList<JToken> ChildrenTokens
+    {
+      get { return _values; }
+    }
 
     /// <summary>
     /// Gets or sets the name of this constructor.
@@ -171,24 +179,21 @@ namespace Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="reader">A <see cref="JsonReader"/> that will be read for the content of the <see cref="JConstructor"/>.</param>
     /// <returns>A <see cref="JConstructor"/> that contains the JSON that was read from the specified <see cref="JsonReader"/>.</returns>
-    public static JConstructor Load(JsonReader reader)
+    public static new JConstructor Load(JsonReader reader)
     {
       if (reader.TokenType == JsonToken.None)
       {
         if (!reader.Read())
-          throw new Exception("Error reading JConstructor from JsonReader.");
+          throw JsonReaderException.Create(reader, "Error reading JConstructor from JsonReader.");
       }
 
       if (reader.TokenType != JsonToken.StartConstructor)
-        throw new Exception("Error reading JConstructor from JsonReader. Current JsonReader item is not a constructor: {0}".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
+        throw JsonReaderException.Create(reader, "Error reading JConstructor from JsonReader. Current JsonReader item is not a constructor: {0}".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
 
       JConstructor c = new JConstructor((string)reader.Value);
       c.SetLineInfo(reader as IJsonLineInfo);
 
-      if (!reader.Read())
-        throw new Exception("Error reading JConstructor from JsonReader.");
-
-      c.ReadContentFrom(reader);
+      c.ReadTokenFrom(reader);
 
       return c;
     }

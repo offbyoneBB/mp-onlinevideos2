@@ -39,10 +39,10 @@ namespace Newtonsoft.Json.Bson
   public class BsonReader : JsonReader
   {
     private const int MaxCharBytesSize = 128;
-    private static readonly byte[] _seqRange1 = new byte[] { 0, 127 }; // range of 1-byte sequence
-    private static readonly byte[] _seqRange2 = new byte[] { 194, 223 }; // range of 2-byte sequence
-    private static readonly byte[] _seqRange3 = new byte[] { 224, 239 }; // range of 3-byte sequence
-    private static readonly byte[] _seqRange4 = new byte[] { 240, 244 }; // range of 4-byte sequence
+    private static readonly byte[] SeqRange1 = new byte[] {0, 127}; // range of 1-byte sequence
+    private static readonly byte[] SeqRange2 = new byte[] {194, 223}; // range of 2-byte sequence
+    private static readonly byte[] SeqRange3 = new byte[] {224, 239}; // range of 3-byte sequence
+    private static readonly byte[] SeqRange4 = new byte[] {240, 244}; // range of 4-byte sequence
 
     private readonly BinaryReader _reader;
     private readonly List<ContainerContext> _stack;
@@ -55,6 +55,7 @@ namespace Newtonsoft.Json.Bson
     private ContainerContext _currentContext;
 
     private bool _readRootValueAsArray;
+    private bool _jsonNet35BinaryCompatibility;
     private DateTimeKind _dateTimeKindHandling;
 
     private enum BsonReaderState
@@ -80,6 +81,18 @@ namespace Newtonsoft.Json.Bson
       {
         Type = type;
       }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether binary data reading should compatible with incorrect Json.NET 3.5 written binary.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if binary data reading will be compatible with incorrect Json.NET 3.5 written binary; otherwise, <c>false</c>.
+    /// </value>
+    public bool JsonNet35BinaryCompatibility
+    {
+      get { return _jsonNet35BinaryCompatibility; }
+      set { _jsonNet35BinaryCompatibility = value; }
     }
 
     /// <summary>
@@ -116,6 +129,15 @@ namespace Newtonsoft.Json.Bson
     /// <summary>
     /// Initializes a new instance of the <see cref="BsonReader"/> class.
     /// </summary>
+    /// <param name="reader">The reader.</param>
+    public BsonReader(BinaryReader reader)
+      : this(reader, false, DateTimeKind.Local)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BsonReader"/> class.
+    /// </summary>
     /// <param name="stream">The stream.</param>
     /// <param name="readRootValueAsArray">if set to <c>true</c> the root object will be read as a JSON array.</param>
     /// <param name="dateTimeKindHandling">The <see cref="DateTimeKind" /> used when reading <see cref="DateTime"/> values from BSON.</param>
@@ -123,6 +145,21 @@ namespace Newtonsoft.Json.Bson
     {
       ValidationUtils.ArgumentNotNull(stream, "stream");
       _reader = new BinaryReader(stream);
+      _stack = new List<ContainerContext>();
+      _readRootValueAsArray = readRootValueAsArray;
+      _dateTimeKindHandling = dateTimeKindHandling;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BsonReader"/> class.
+    /// </summary>
+    /// <param name="reader">The reader.</param>
+    /// <param name="readRootValueAsArray">if set to <c>true</c> the root object will be read as a JSON array.</param>
+    /// <param name="dateTimeKindHandling">The <see cref="DateTimeKind" /> used when reading <see cref="DateTime"/> values from BSON.</param>
+    public BsonReader(BinaryReader reader, bool readRootValueAsArray, DateTimeKind dateTimeKindHandling)
+    {
+      ValidationUtils.ArgumentNotNull(reader, "reader");
+      _reader = reader;
       _stack = new List<ContainerContext>();
       _readRootValueAsArray = readRootValueAsArray;
       _dateTimeKindHandling = dateTimeKindHandling;
@@ -139,16 +176,61 @@ namespace Newtonsoft.Json.Bson
     /// Reads the next JSON token from the stream as a <see cref="T:Byte[]"/>.
     /// </summary>
     /// <returns>
-    /// A <see cref="T:Byte[]"/> or a null reference if the next JSON token is null.
+    /// A <see cref="T:Byte[]"/> or a null reference if the next JSON token is null. This method will return <c>null</c> at the end of an array.
     /// </returns>
     public override byte[] ReadAsBytes()
     {
-      Read();
-      if (TokenType != JsonToken.Bytes)
-        throw new JsonReaderException("Error reading bytes. Expected bytes but got {0}.".FormatWith(CultureInfo.InvariantCulture, TokenType));
-
-      return (byte[])Value;
+      return ReadAsBytesInternal();
     }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{Decimal}"/>.
+    /// </summary>
+    /// <returns>A <see cref="Nullable{Decimal}"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override decimal? ReadAsDecimal()
+    {
+      return ReadAsDecimalInternal();
+    }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{Int32}"/>.
+    /// </summary>
+    /// <returns>A <see cref="Nullable{Int32}"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override int? ReadAsInt32()
+    {
+      return ReadAsInt32Internal();
+    }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="String"/>.
+    /// </summary>
+    /// <returns>A <see cref="String"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override string ReadAsString()
+    {
+      return ReadAsStringInternal();
+    }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{DateTime}"/>.
+    /// </summary>
+    /// <returns>A <see cref="String"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override DateTime? ReadAsDateTime()
+    {
+      return ReadAsDateTimeInternal();
+    }
+
+#if !NET20
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{DateTimeOffset}"/>.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="Nullable{DateTimeOffset}"/>. This method will return <c>null</c> at the end of an array.
+    /// </returns>
+    public override DateTimeOffset? ReadAsDateTimeOffset()
+    {
+      return ReadAsDateTimeOffsetInternal();
+    }
+#endif
 
     /// <summary>
     /// Reads the next JSON token from the stream.
@@ -158,30 +240,66 @@ namespace Newtonsoft.Json.Bson
     /// </returns>
     public override bool Read()
     {
+      _readType = Json.ReadType.Read;
+
+      return ReadInternal();
+    }
+
+    internal override bool ReadInternal()
+    {
       try
       {
+        bool success;
+
         switch (_bsonReaderState)
         {
           case BsonReaderState.Normal:
-            return ReadNormal();
+            success = ReadNormal();
+            break;
           case BsonReaderState.ReferenceStart:
           case BsonReaderState.ReferenceRef:
           case BsonReaderState.ReferenceId:
-            return ReadReference();
+            success = ReadReference();
+            break;
           case BsonReaderState.CodeWScopeStart:
           case BsonReaderState.CodeWScopeCode:
           case BsonReaderState.CodeWScopeScope:
           case BsonReaderState.CodeWScopeScopeObject:
           case BsonReaderState.CodeWScopeScopeEnd:
-            return ReadCodeWScope();
+            success = ReadCodeWScope();
+            break;
           default:
-            throw new JsonReaderException("Unexpected state: {0}".FormatWith(CultureInfo.InvariantCulture, _bsonReaderState));
+            throw JsonReaderException.Create(this, "Unexpected state: {0}".FormatWith(CultureInfo.InvariantCulture, _bsonReaderState));
         }
+
+        if (!success)
+        {
+          SetToken(JsonToken.None);
+          return false;
+        }
+
+        return true;
       }
       catch (EndOfStreamException)
       {
+        SetToken(JsonToken.None);
         return false;
       }
+    }
+
+    /// <summary>
+    /// Changes the <see cref="JsonReader.State"/> to Closed.
+    /// </summary>
+    public override void Close()
+    {
+      base.Close();
+
+      if (CloseInput && _reader != null)
+#if !(NETFX_CORE || PORTABLE)
+        _reader.Close();
+#else
+        _reader.Dispose();
+#endif
     }
 
     private bool ReadCodeWScope()
@@ -255,7 +373,7 @@ namespace Newtonsoft.Json.Bson
             }
             else
             {
-              throw new JsonReaderException("Unexpected state when reading BSON reference: " + _bsonReaderState);
+              throw JsonReaderException.Create(this, "Unexpected state when reading BSON reference: " + _bsonReaderState);
             }
           }
         case State.PostValue:
@@ -274,11 +392,11 @@ namespace Newtonsoft.Json.Bson
             }
             else
             {
-              throw new JsonReaderException("Unexpected state when reading BSON reference: " + _bsonReaderState);
+              throw JsonReaderException.Create(this, "Unexpected state when reading BSON reference: " + _bsonReaderState);
             }
           }
         default:
-          throw new JsonReaderException("Unexpected state when reading BSON reference: " + CurrentState);
+          throw JsonReaderException.Create(this, "Unexpected state when reading BSON reference: " + CurrentState);
       }
     }
 
@@ -331,7 +449,7 @@ namespace Newtonsoft.Json.Bson
           else if (context.Position == lengthMinusEnd)
           {
             if (ReadByte() != 0)
-              throw new JsonReaderException("Unexpected end of object byte value.");
+              throw JsonReaderException.Create(this, "Unexpected end of object byte value.");
 
             PopContext();
             if (_currentContext != null)
@@ -343,7 +461,7 @@ namespace Newtonsoft.Json.Bson
           }
           else
           {
-            throw new JsonReaderException("Read past end of current container context.");
+            throw JsonReaderException.Create(this, "Read past end of current container context.");
           }
         case State.ConstructorStart:
           break;
@@ -432,7 +550,7 @@ namespace Newtonsoft.Json.Bson
           switch (DateTimeKindHandling)
           {
             case DateTimeKind.Unspecified:
-              dateTime = DateTime.SpecifyKind(utcDateTime.ToLocalTime(), DateTimeKind.Unspecified);
+              dateTime = DateTime.SpecifyKind(utcDateTime, DateTimeKind.Unspecified);
               break;
             case DateTimeKind.Local:
               dateTime = utcDateTime.ToLocalTime();
@@ -466,7 +584,7 @@ namespace Newtonsoft.Json.Bson
           _bsonReaderState = BsonReaderState.CodeWScopeStart;
           break;
         case BsonType.Integer:
-          SetToken(JsonToken.Integer, (long)ReadInt32());
+          SetToken(JsonToken.Integer, (long) ReadInt32());
           break;
         case BsonType.TimeStamp:
         case BsonType.Long:
@@ -481,8 +599,15 @@ namespace Newtonsoft.Json.Bson
     {
       int dataLength = ReadInt32();
 
-      // BsonBinaryType not used
-      ReadByte();
+      BsonBinaryType binaryType = (BsonBinaryType) ReadByte();
+
+#pragma warning disable 612,618
+      // the old binary type has the data length repeated in the data for some reason
+      if (binaryType == BsonBinaryType.Data && !_jsonNet35BinaryCompatibility)
+      {
+        dataLength = ReadInt32();
+      }
+#pragma warning restore 612,618
 
       return ReadBytes(dataLength);
     }
@@ -524,7 +649,7 @@ namespace Newtonsoft.Json.Bson
           int charCount = Encoding.UTF8.GetChars(_byteBuffer, 0, lastFullCharStop + 1, _charBuffer, 0);
 
           if (builder == null)
-            builder = new StringBuilder(MaxCharBytesSize * 2);
+            builder = new StringBuilder(MaxCharBytesSize*2);
 
           builder.Append(_charBuffer, 0, charCount);
 
@@ -546,8 +671,7 @@ namespace Newtonsoft.Json.Bson
             offset = 0;
           }
         }
-      }
-      while (true);
+      } while (true);
     }
 
     private string ReadLengthString()
@@ -572,21 +696,27 @@ namespace Newtonsoft.Json.Bson
       StringBuilder builder = null;
 
       int totalBytesRead = 0;
+
+      // used in case of left over multibyte characters in the buffer
       int offset = 0;
       do
       {
         int count = ((length - totalBytesRead) > MaxCharBytesSize - offset)
-          ? MaxCharBytesSize - offset
-          : length - totalBytesRead;
+                      ? MaxCharBytesSize - offset
+                      : length - totalBytesRead;
 
-        int byteCount = _reader.BaseStream.Read(_byteBuffer, offset, count);
+        int byteCount = _reader.Read(_byteBuffer, offset, count);
 
         if (byteCount == 0)
           throw new EndOfStreamException("Unable to read beyond the end of the stream.");
 
+        totalBytesRead += byteCount;
+
+        // Above, byteCount is how many bytes we read this time.
+        // Below, byteCount is how many bytes are in the _byteBuffer.
         byteCount += offset;
 
-        if (totalBytesRead == 0 && byteCount == length)
+        if (byteCount == length)
         {
           // pref optimization to avoid reading into a string builder
           // first iteration and all bytes read then return string directly
@@ -613,11 +743,8 @@ namespace Newtonsoft.Json.Bson
           {
             offset = 0;
           }
-
-          totalBytesRead += (byteCount - offset);
         }
-      }
-      while (totalBytesRead < length);
+      } while (totalBytesRead < length);
 
       return builder.ToString();
     }
@@ -657,10 +784,10 @@ namespace Newtonsoft.Json.Bson
 
     private int BytesInSequence(byte b)
     {
-      if (b <= _seqRange1[1]) return 1;
-      if (b >= _seqRange2[0] && b <= _seqRange2[1]) return 2;
-      if (b >= _seqRange3[0] && b <= _seqRange3[1]) return 3;
-      if (b >= _seqRange4[0] && b <= _seqRange4[1]) return 4;
+      if (b <= SeqRange1[1]) return 1;
+      if (b >= SeqRange2[0] && b <= SeqRange2[1]) return 2;
+      if (b >= SeqRange3[0] && b <= SeqRange3[1]) return 3;
+      if (b >= SeqRange4[0] && b <= SeqRange4[1]) return 4;
       return 0;
     }
 
@@ -698,7 +825,7 @@ namespace Newtonsoft.Json.Bson
     private BsonType ReadType()
     {
       MovePosition(1);
-      return (BsonType)_reader.ReadSByte();
+      return (BsonType) _reader.ReadSByte();
     }
 
     private void MovePosition(int count)

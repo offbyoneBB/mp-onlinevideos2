@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Newtonsoft.Json
@@ -32,7 +33,10 @@ namespace Newtonsoft.Json
   /// <summary>
   /// The exception thrown when an error occurs while reading Json text.
   /// </summary>
-  public class JsonWriterException : Exception
+#if !(SILVERLIGHT || WINDOWS_PHONE || NETFX_CORE || PORTABLE)
+  [Serializable]
+#endif
+  public class JsonWriterException : JsonException
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="JsonWriterException"/> class.
@@ -61,5 +65,19 @@ namespace Newtonsoft.Json
       : base(message, innerException)
     {
     }
+
+#if !(WINDOWS_PHONE || SILVERLIGHT || NETFX_CORE || PORTABLE)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JsonWriterException"/> class.
+    /// </summary>
+    /// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+    /// <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+    /// <exception cref="T:System.ArgumentNullException">The <paramref name="info"/> parameter is null. </exception>
+    /// <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0). </exception>
+    public JsonWriterException(SerializationInfo info, StreamingContext context)
+      : base(info, context)
+    {
+    }
+#endif
   }
 }

@@ -23,12 +23,8 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-#if !SILVERLIGHT && !PocketPC
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json.Utilities;
 
 namespace Newtonsoft.Json.Serialization
 {
@@ -50,6 +46,7 @@ namespace Newtonsoft.Json.Serialization
     public JsonISerializableContract(Type underlyingType)
       : base(underlyingType)
     {
+      ContractType = JsonContractType.Serializable;
     }
   }
 }

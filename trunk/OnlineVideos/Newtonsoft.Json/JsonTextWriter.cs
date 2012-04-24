@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.IO;
 using System.Xml;
@@ -56,7 +57,7 @@ namespace Newtonsoft.Json
     }
 
     /// <summary>
-    /// Gets or sets how many IndentChars to write for each level in the hierarchy when <paramref name="Formatting"/> is set to <c>Formatting.Indented</c>.
+    /// Gets or sets how many IndentChars to write for each level in the hierarchy when <see cref="Formatting"/> is set to <c>Formatting.Indented</c>.
     /// </summary>
     public int Indentation
     {
@@ -86,7 +87,7 @@ namespace Newtonsoft.Json
     }
 
     /// <summary>
-    /// Gets or sets which character to use for indenting when <paramref name="Formatting"/> is set to <c>Formatting.Indented</c>.
+    /// Gets or sets which character to use for indenting when <see cref="Formatting"/> is set to <c>Formatting.Indented</c>.
     /// </summary>
     public char IndentChar
     {
@@ -134,7 +135,12 @@ namespace Newtonsoft.Json
     {
       base.Close();
 
-      _writer.Close();
+      if (CloseOutput && _writer != null)
+#if !(NETFX_CORE || PORTABLE)
+        _writer.Close();
+#else
+        _writer.Dispose();
+#endif
     }
 
     /// <summary>
@@ -210,17 +216,19 @@ namespace Newtonsoft.Json
     /// </summary>
     protected override void WriteIndent()
     {
-      if (Formatting == Formatting.Indented)
+      _writer.Write(Environment.NewLine);
+
+      // levels of indentation multiplied by the indent count
+      int currentIndentCount = Top*_indentation;
+
+      while (currentIndentCount > 0)
       {
-        _writer.Write(Environment.NewLine);
+        // write up to a max of 10 characters at once to avoid creating too many new strings
+        int writeCount = Math.Min(currentIndentCount, 10);
 
-        // levels of indentation multiplied by the indent count
-        int currentIndentCount = Top * _indentation;
+        _writer.Write(new string(_indentChar, writeCount));
 
-        for (int i = 0; i < currentIndentCount; i++)
-        {
-          _writer.Write(_indentChar);
-        }
+        currentIndentCount -= writeCount;
       }
     }
 
@@ -302,6 +310,7 @@ namespace Newtonsoft.Json
     /// Writes a <see cref="UInt32"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt32"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(uint value)
     {
       base.WriteValue(value);
@@ -322,6 +331,7 @@ namespace Newtonsoft.Json
     /// Writes a <see cref="UInt64"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt64"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(ulong value)
     {
       base.WriteValue(value);
@@ -372,6 +382,7 @@ namespace Newtonsoft.Json
     /// Writes a <see cref="UInt16"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt16"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(ushort value)
     {
       base.WriteValue(value);
@@ -402,6 +413,7 @@ namespace Newtonsoft.Json
     /// Writes a <see cref="SByte"/> value.
     /// </summary>
     /// <param name="value">The <see cref="SByte"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(sbyte value)
     {
       base.WriteValue(value);
@@ -425,7 +437,8 @@ namespace Newtonsoft.Json
     public override void WriteValue(DateTime value)
     {
       base.WriteValue(value);
-      JsonConvert.WriteDateTimeString(_writer, value);
+      value = JsonConvert.EnsureDateTime(value, DateTimeZoneHandling);
+      JsonConvert.WriteDateTimeString(_writer, value, DateFormatHandling);
     }
 
     /// <summary>
@@ -453,9 +466,39 @@ namespace Newtonsoft.Json
     public override void WriteValue(DateTimeOffset value)
     {
       base.WriteValue(value);
-      WriteValueInternal(JsonConvert.ToString(value), JsonToken.Date);
+      WriteValueInternal(JsonConvert.ToString(value, DateFormatHandling), JsonToken.Date);
     }
 #endif
+
+    /// <summary>
+    /// Writes a <see cref="Guid"/> value.
+    /// </summary>
+    /// <param name="value">The <see cref="Guid"/> value to write.</param>
+    public override void WriteValue(Guid value)
+    {
+      base.WriteValue(value);
+      WriteValueInternal(JsonConvert.ToString(value), JsonToken.String);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="TimeSpan"/> value.
+    /// </summary>
+    /// <param name="value">The <see cref="TimeSpan"/> value to write.</param>
+    public override void WriteValue(TimeSpan value)
+    {
+      base.WriteValue(value);
+      WriteValueInternal(JsonConvert.ToString(value), JsonToken.String);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="Uri"/> value.
+    /// </summary>
+    /// <param name="value">The <see cref="Uri"/> value to write.</param>
+    public override void WriteValue(Uri value)
+    {
+      base.WriteValue(value);
+      WriteValueInternal(JsonConvert.ToString(value), JsonToken.String);
+    }
     #endregion
 
     /// <summary>

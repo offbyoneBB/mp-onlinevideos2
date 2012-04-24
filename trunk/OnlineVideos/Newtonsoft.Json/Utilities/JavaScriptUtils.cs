@@ -35,21 +35,25 @@ namespace Newtonsoft.Json.Utilities
 {
   internal static class JavaScriptUtils
   {
-    public static void WriteEscapedJavaScriptString(TextWriter writer, string value, char delimiter, bool appendDelimiters)
+    public static void WriteEscapedJavaScriptString(TextWriter writer, string s, char delimiter, bool appendDelimiters)
     {
       // leading delimiter
       if (appendDelimiters)
         writer.Write(delimiter);
 
-      if (value != null)
+      if (s != null)
       {
-        int lastWritePosition = 0;
-        int skipped = 0;
         char[] chars = null;
+        int lastWritePosition = 0;
 
-        for (int i = 0; i < value.Length; i++)
+        for (int i = 0; i < s.Length; i++)
         {
-          char c = value[i];
+          var c = s[i];
+
+          // don't escape standard text/numbers except '\' and the text delimiter
+          if (c >= ' ' && c < 128 && c != '\\' && c != delimiter)
+            continue;
+
           string escapedValue;
 
           switch (c)
@@ -82,47 +86,46 @@ namespace Newtonsoft.Json.Utilities
               escapedValue = @"\u2029";
               break;
             case '\'':
-              // only escape if this charater is being used as the delimiter
-              escapedValue = (delimiter == '\'') ? @"\'" : null;
+              // this charater is being used as the delimiter
+              escapedValue = @"\'";
               break;
             case '"':
-              // only escape if this charater is being used as the delimiter
-              escapedValue = (delimiter == '"') ? "\\\"" : null;
+              // this charater is being used as the delimiter
+              escapedValue = "\\\"";
               break;
             default:
               escapedValue = (c <= '\u001f') ? StringUtils.ToCharAsUnicode(c) : null;
               break;
           }
 
-          if (escapedValue != null)
+          if (escapedValue == null)
+            continue;
+
+          if (i > lastWritePosition)
           {
             if (chars == null)
-              chars = value.ToCharArray();
+              chars = s.ToCharArray();
 
-            // write skipped text
-            if (skipped > 0)
-            {
-              writer.Write(chars, lastWritePosition, skipped);
-              skipped = 0;
-            }
+            // write unchanged chars before writing escaped text
+            writer.Write(chars, lastWritePosition, i - lastWritePosition);
+          }
 
-            // write escaped value and note position
-            writer.Write(escapedValue);
-            lastWritePosition = i + 1;
-          }
-          else
-          {
-            skipped++;
-          }
+          lastWritePosition = i + 1;
+          writer.Write(escapedValue);
         }
 
-        // write any remaining skipped text
-        if (skipped > 0)
+        if (lastWritePosition == 0)
         {
-          if (lastWritePosition == 0)
-            writer.Write(value);
-          else
-            writer.Write(chars, lastWritePosition, skipped);
+          // no escaped text, write entire string
+          writer.Write(s);
+        }
+        else
+        {
+          if (chars == null)
+            chars = s.ToCharArray();
+
+          // write remaining text
+          writer.Write(chars, lastWritePosition, s.Length - lastWritePosition);
         }
       }
 

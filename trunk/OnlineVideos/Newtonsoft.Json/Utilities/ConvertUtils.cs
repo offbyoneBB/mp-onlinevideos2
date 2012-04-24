@@ -24,22 +24,202 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Globalization;
 using System.ComponentModel;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
+#if NET20
+using Newtonsoft.Json.Utilities.LinqBridge;
+#endif
 
-#if !SILVERLIGHT
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
 using System.Data.SqlTypes;
+#endif
+#if NETFX_CORE
+using IConvertible = Newtonsoft.Json.Utilities.Convertible;
 #endif
 
 namespace Newtonsoft.Json.Utilities
 {
+  internal class Convertible
+  {
+    private object _underlyingValue;
+
+    public Convertible(object o)
+    {
+      _underlyingValue = o;
+    }
+
+    public TypeCode GetTypeCode()
+    {
+      return ConvertUtils.GetTypeCode(_underlyingValue);
+    }
+
+    public bool ToBoolean(IFormatProvider provider)
+    {
+      return Convert.ToBoolean(_underlyingValue, provider);
+    }
+    public byte ToByte(IFormatProvider provider)
+    {
+      return Convert.ToByte(_underlyingValue, provider);
+    }
+    public char ToChar(IFormatProvider provider)
+    {
+      return Convert.ToChar(_underlyingValue, provider);
+    }
+    public DateTime ToDateTime(IFormatProvider provider)
+    {
+      return Convert.ToDateTime(_underlyingValue, provider);
+    }
+    public decimal ToDecimal(IFormatProvider provider)
+    {
+      return Convert.ToDecimal(_underlyingValue, provider);
+    }
+    public double ToDouble(IFormatProvider provider)
+    {
+      return Convert.ToDouble(_underlyingValue, provider);
+    }
+    public short ToInt16(IFormatProvider provider)
+    {
+      return Convert.ToInt16(_underlyingValue, provider);
+    }
+    public int ToInt32(IFormatProvider provider)
+    {
+      return Convert.ToInt32(_underlyingValue, provider);
+    }
+    public long ToInt64(IFormatProvider provider)
+    {
+      return Convert.ToInt64(_underlyingValue, provider);
+    }
+    public sbyte ToSByte(IFormatProvider provider)
+    {
+      return Convert.ToSByte(_underlyingValue, provider);
+    }
+    public float ToSingle(IFormatProvider provider)
+    {
+      return Convert.ToSingle(_underlyingValue, provider);
+    }
+    public string ToString(IFormatProvider provider)
+    {
+      return Convert.ToString(_underlyingValue, provider);
+    }
+    public object ToType(Type conversionType, IFormatProvider provider)
+    {
+      return Convert.ChangeType(_underlyingValue, conversionType, provider);
+    }
+    public ushort ToUInt16(IFormatProvider provider)
+    {
+      return Convert.ToUInt16(_underlyingValue, provider);
+    }
+    public uint ToUInt32(IFormatProvider provider)
+    {
+      return Convert.ToUInt32(_underlyingValue, provider);
+    }
+    public ulong ToUInt64(IFormatProvider provider)
+    {
+      return Convert.ToUInt64(_underlyingValue, provider);
+    }
+  }
+
   internal static class ConvertUtils
   {
+    public static TypeCode GetTypeCode(this IConvertible convertible)
+    {
+#if !NETFX_CORE
+      return convertible.GetTypeCode();
+#else
+      return GetTypeCode((object)convertible);
+#endif
+    }
+
+    public static TypeCode GetTypeCode(object o)
+    {
+#if !(NETFX_CORE || PORTABLE)
+      return System.Convert.GetTypeCode(o);
+#else
+      return GetTypeCode(o.GetType());
+#endif
+    }
+
+    public static TypeCode GetTypeCode(Type t)
+    {
+#if !NETFX_CORE
+      return Type.GetTypeCode(t);
+#else
+      if (t == typeof(bool))
+        return TypeCode.Boolean;
+      if (t == typeof(byte))
+        return TypeCode.Byte;
+      if (t == typeof(char))
+        return TypeCode.Char;
+      if (t == typeof(DateTime))
+        return TypeCode.DateTime;
+      if (t == typeof(decimal))
+        return TypeCode.Decimal;
+      if (t == typeof(double))
+        return TypeCode.Double;
+      if (t == typeof(short))
+        return TypeCode.Int16;
+      if (t == typeof(int))
+        return TypeCode.Int32;
+      if (t == typeof(long))
+        return TypeCode.Int64;
+      if (t == typeof(sbyte))
+        return TypeCode.SByte;
+      if (t == typeof(float))
+        return TypeCode.Single;
+      if (t == typeof(string))
+        return TypeCode.String;
+      if (t == typeof(ushort))
+        return TypeCode.UInt16;
+      if (t == typeof(uint))
+        return TypeCode.UInt32;
+      if (t == typeof(ulong))
+        return TypeCode.UInt64;
+      if (t.IsEnum())
+        return GetTypeCode(Enum.GetUnderlyingType(t));
+
+      return TypeCode.Object;
+#endif
+    }
+
+    public static IConvertible ToConvertible(object o)
+    {
+#if !NETFX_CORE
+      return o as IConvertible;
+#else
+      if (!IsConvertible(o))
+        return null;
+
+      return new IConvertible(o);
+#endif
+    }
+
+    public static bool IsConvertible(object o)
+    {
+#if !NETFX_CORE
+      return o is IConvertible;
+#else
+      if (o == null)
+        return false;
+
+      return (
+        o is bool || o is byte || o is char || o is DateTime || o is decimal || o is double || o is short || o is int ||
+        o is long || o is sbyte || o is float || o is string || o is ushort || o is uint || o is ulong || o is Enum);
+#endif
+    }
+
+    public static bool IsConvertible(Type t)
+    {
+#if !NETFX_CORE
+      return typeof(IConvertible).IsAssignableFrom(t);
+#else
+      return (
+        t == typeof(bool) || t == typeof(byte) || t == typeof(char) || t == typeof(DateTime) || t == typeof(decimal) || t == typeof(double) || t == typeof(short) || t == typeof(int) ||
+        t == typeof(long) || t == typeof(sbyte) || t == typeof(float) || t == typeof(string) || t == typeof(ushort) || t == typeof(uint) || t == typeof(ulong) || t.IsEnum());
+#endif
+    }
+
     internal struct TypeConvertKey : IEquatable<TypeConvertKey>
     {
       private readonly Type _initialType;
@@ -97,92 +277,7 @@ namespace Newtonsoft.Json.Utilities
       return o => call(null, o);
     }
 
-    public static bool CanConvertType(Type initialType, Type targetType, bool allowTypeNameToString)
-    {
-      ValidationUtils.ArgumentNotNull(initialType, "initialType");
-      ValidationUtils.ArgumentNotNull(targetType, "targetType");
-
-      if (ReflectionUtils.IsNullableType(targetType))
-        targetType = Nullable.GetUnderlyingType(targetType);
-
-      if (targetType == initialType)
-        return true;
-
-      if (typeof(IConvertible).IsAssignableFrom(initialType) && typeof(IConvertible).IsAssignableFrom(targetType))
-      {
-        return true;
-      }
-
-#if !PocketPC && !NET20
-      if (initialType == typeof(DateTime) && targetType == typeof(DateTimeOffset))
-        return true;
-#endif
-
-      if (initialType == typeof(Guid) && (targetType == typeof(Guid) || targetType == typeof(string)))
-        return true;
-
-      if (initialType == typeof(Type) && targetType == typeof(string))
-        return true;
-
-#if !PocketPC
-      // see if source or target types have a TypeConverter that converts between the two
-      TypeConverter toConverter = GetConverter(initialType);
-
-      if (toConverter != null && !IsComponentConverter(toConverter) && toConverter.CanConvertTo(targetType))
-      {
-        if (allowTypeNameToString || toConverter.GetType() != typeof(TypeConverter))
-          return true;
-      }
-
-      TypeConverter fromConverter = GetConverter(targetType);
-
-      if (fromConverter != null && !IsComponentConverter(fromConverter) && fromConverter.CanConvertFrom(initialType))
-        return true;
-#endif
-
-      // handle DBNull and INullable
-      if (initialType == typeof(DBNull))
-      {
-        if (ReflectionUtils.IsNullable(targetType))
-          return true;
-      }
-
-      return false;
-    }
-
-    private static bool IsComponentConverter(TypeConverter converter)
-    {
-#if !SILVERLIGHT && !PocketPC
-      return (converter is ComponentConverter);
-#else
-      return false;
-#endif
-    }
-
     #region Convert
-    /// <summary>
-    /// Converts the value to the specified type.
-    /// </summary>
-    /// <typeparam name="T">The type to convert the value to.</typeparam>
-    /// <param name="initialValue">The value to convert.</param>
-    /// <returns>The converted type.</returns>
-    public static T Convert<T>(object initialValue)
-    {
-      return Convert<T>(initialValue, CultureInfo.CurrentCulture);
-    }
-
-    /// <summary>
-    /// Converts the value to the specified type.
-    /// </summary>
-    /// <typeparam name="T">The type to convert the value to.</typeparam>
-    /// <param name="initialValue">The value to convert.</param>
-    /// <param name="culture">The culture to use when converting.</param>
-    /// <returns>The converted type.</returns>
-    public static T Convert<T>(object initialValue, CultureInfo culture)
-    {
-      return (T)Convert(initialValue, culture, typeof(T));
-    }
-
     /// <summary>
     /// Converts the value to the specified type.
     /// </summary>
@@ -203,25 +298,25 @@ namespace Newtonsoft.Json.Utilities
       if (targetType == initialType)
         return initialValue;
 
-      if (initialValue is string && typeof(Type).IsAssignableFrom(targetType))
-        return Type.GetType((string) initialValue, true);
-
-      if (targetType.IsInterface || targetType.IsGenericTypeDefinition || targetType.IsAbstract)
-        throw new ArgumentException("Target type {0} is not a value type or a non-abstract class.".FormatWith(CultureInfo.InvariantCulture, targetType), "targetType");
-
       // use Convert.ChangeType if both types are IConvertible
-      if (initialValue is IConvertible && typeof(IConvertible).IsAssignableFrom(targetType))
+      if (ConvertUtils.IsConvertible(initialValue) && ConvertUtils.IsConvertible(targetType))
       {
-        if (targetType.IsEnum)
+        if (targetType.IsEnum())
         {
           if (initialValue is string)
             return Enum.Parse(targetType, initialValue.ToString(), true);
           else if (IsInteger(initialValue))
             return Enum.ToObject(targetType, initialValue);
         }
-        
+
         return System.Convert.ChangeType(initialValue, targetType, culture);
       }
+
+      if (initialValue is string && typeof(Type).IsAssignableFrom(targetType))
+        return Type.GetType((string) initialValue, true);
+
+      if (targetType.IsInterface() || targetType.IsGenericTypeDefinition() || targetType.IsAbstract())
+        throw new ArgumentException("Target type {0} is not a value type or a non-abstract class.".FormatWith(CultureInfo.InvariantCulture, targetType), "targetType");
 
 #if !PocketPC && !NET20
       if (initialValue is DateTime && targetType == typeof(DateTimeOffset))
@@ -235,10 +330,14 @@ namespace Newtonsoft.Json.Utilities
         if (targetType == typeof (Uri))
           return new Uri((string) initialValue);
         if (targetType == typeof (TimeSpan))
-          return TimeSpan.Parse((string) initialValue);
+#if !(NET35 || NET20 || SILVERLIGHT || PORTABLE)
+          return TimeSpan.Parse((string) initialValue, CultureInfo.InvariantCulture);
+#else
+          return TimeSpan.Parse((string)initialValue);
+#endif
       }
 
-#if !PocketPC
+#if !(NETFX_CORE || PORTABLE)
       // see if source or target types have a TypeConverter that converts between the two
       TypeConverter toConverter = GetConverter(initialType);
 
@@ -262,7 +361,7 @@ namespace Newtonsoft.Json.Utilities
 #endif
       }
 #endif
-
+#if !(NETFX_CORE || PORTABLE)
       // handle DBNull and INullable
       if (initialValue == DBNull.Value)
       {
@@ -271,51 +370,17 @@ namespace Newtonsoft.Json.Utilities
         
         throw new Exception("Can not convert null {0} into non-nullable {1}.".FormatWith(CultureInfo.InvariantCulture, initialType, targetType));
       }
-#if !SILVERLIGHT
+#endif
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
       if (initialValue is INullable)
         return EnsureTypeAssignable(ToValue((INullable)initialValue), initialType, targetType);
 #endif
 
-      throw new Exception("Can not convert from {0} to {1}.".FormatWith(CultureInfo.InvariantCulture, initialType, targetType));
+      throw new InvalidOperationException("Can not convert from {0} to {1}.".FormatWith(CultureInfo.InvariantCulture, initialType, targetType));
     }
     #endregion
 
     #region TryConvert
-    /// <summary>
-    /// Converts the value to the specified type.
-    /// </summary>
-    /// <typeparam name="T">The type to convert the value to.</typeparam>
-    /// <param name="initialValue">The value to convert.</param>
-    /// <param name="convertedValue">The converted value if the conversion was successful or the default value of <c>T</c> if it failed.</param>
-    /// <returns>
-    /// 	<c>true</c> if <c>initialValue</c> was converted successfully; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool TryConvert<T>(object initialValue, out T convertedValue)
-    {
-      return TryConvert(initialValue, CultureInfo.CurrentCulture, out convertedValue);
-    }
-
-    /// <summary>
-    /// Converts the value to the specified type.
-    /// </summary>
-    /// <typeparam name="T">The type to convert the value to.</typeparam>
-    /// <param name="initialValue">The value to convert.</param>
-    /// <param name="culture">The culture to use when converting.</param>
-    /// <param name="convertedValue">The converted value if the conversion was successful or the default value of <c>T</c> if it failed.</param>
-    /// <returns>
-    /// 	<c>true</c> if <c>initialValue</c> was converted successfully; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool TryConvert<T>(object initialValue, CultureInfo culture, out T convertedValue)
-    {
-      return MiscellaneousUtils.TryAction<T>(delegate
-      {
-        object tempConvertedValue;
-        TryConvert(initialValue, CultureInfo.CurrentCulture, typeof(T), out tempConvertedValue);
-
-        return (T)tempConvertedValue;
-      }, out convertedValue);
-    }
-
     /// <summary>
     /// Converts the value to the specified type.
     /// </summary>
@@ -333,31 +398,6 @@ namespace Newtonsoft.Json.Utilities
     #endregion
 
     #region ConvertOrCast
-    /// <summary>
-    /// Converts the value to the specified type. If the value is unable to be converted, the
-    /// value is checked whether it assignable to the specified type.
-    /// </summary>
-    /// <typeparam name="T">The type to convert or cast the value to.</typeparam>
-    /// <param name="initialValue">The value to convert.</param>
-    /// <returns>The converted type. If conversion was unsuccessful, the initial value is returned if assignable to the target type</returns>
-    public static T ConvertOrCast<T>(object initialValue)
-    {
-      return ConvertOrCast<T>(initialValue, CultureInfo.CurrentCulture);
-    }
-
-    /// <summary>
-    /// Converts the value to the specified type. If the value is unable to be converted, the
-    /// value is checked whether it assignable to the specified type.
-    /// </summary>
-    /// <typeparam name="T">The type to convert or cast the value to.</typeparam>
-    /// <param name="initialValue">The value to convert.</param>
-    /// <param name="culture">The culture to use when converting.</param>
-    /// <returns>The converted type. If conversion was unsuccessful, the initial value is returned if assignable to the target type</returns>
-    public static T ConvertOrCast<T>(object initialValue, CultureInfo culture)
-    {
-      return (T)ConvertOrCast(initialValue, culture, typeof(T));
-    }
-
     /// <summary>
     /// Converts the value to the specified type. If the value is unable to be converted, the
     /// value is checked whether it assignable to the specified type.
@@ -386,61 +426,6 @@ namespace Newtonsoft.Json.Utilities
     }
     #endregion
 
-    #region TryConvertOrCast
-    /// <summary>
-    /// Converts the value to the specified type. If the value is unable to be converted, the
-    /// value is checked whether it assignable to the specified type.
-    /// </summary>
-    /// <typeparam name="T">The type to convert the value to.</typeparam>
-    /// <param name="initialValue">The value to convert.</param>
-    /// <param name="convertedValue">The converted value if the conversion was successful or the default value of <c>T</c> if it failed.</param>
-    /// <returns>
-    /// 	<c>true</c> if <c>initialValue</c> was converted successfully or is assignable; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool TryConvertOrCast<T>(object initialValue, out T convertedValue)
-    {
-      return TryConvertOrCast<T>(initialValue, CultureInfo.CurrentCulture, out convertedValue);
-    }
-
-    /// <summary>
-    /// Converts the value to the specified type. If the value is unable to be converted, the
-    /// value is checked whether it assignable to the specified type.
-    /// </summary>
-    /// <typeparam name="T">The type to convert the value to.</typeparam>
-    /// <param name="initialValue">The value to convert.</param>
-    /// <param name="culture">The culture to use when converting.</param>
-    /// <param name="convertedValue">The converted value if the conversion was successful or the default value of <c>T</c> if it failed.</param>
-    /// <returns>
-    /// 	<c>true</c> if <c>initialValue</c> was converted successfully or is assignable; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool TryConvertOrCast<T>(object initialValue, CultureInfo culture, out T convertedValue)
-    {
-      return MiscellaneousUtils.TryAction<T>(delegate
-      {
-        object tempConvertedValue;
-        TryConvertOrCast(initialValue, CultureInfo.CurrentCulture, typeof(T), out tempConvertedValue);
-
-        return (T)tempConvertedValue;
-      }, out convertedValue);
-    }
-
-    /// <summary>
-    /// Converts the value to the specified type. If the value is unable to be converted, the
-    /// value is checked whether it assignable to the specified type.
-    /// </summary>
-    /// <param name="initialValue">The value to convert.</param>
-    /// <param name="culture">The culture to use when converting.</param>
-    /// <param name="targetType">The type to convert the value to.</param>
-    /// <param name="convertedValue">The converted value if the conversion was successful or the default value of <c>T</c> if it failed.</param>
-    /// <returns>
-    /// 	<c>true</c> if <c>initialValue</c> was converted successfully or is assignable; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool TryConvertOrCast(object initialValue, CultureInfo culture, Type targetType, out object convertedValue)
-    {
-      return MiscellaneousUtils.TryAction<object>(delegate { return ConvertOrCast(initialValue, culture, targetType); }, out convertedValue);
-    }
-    #endregion
-
     private static object EnsureTypeAssignable(object value, Type initialType, Type targetType)
     {
       Type valueType = (value != null) ? value.GetType() : null;
@@ -460,10 +445,10 @@ namespace Newtonsoft.Json.Utilities
           return null;
       }
 
-      throw new Exception("Could not cast or convert from {0} to {1}.".FormatWith(CultureInfo.InvariantCulture, (initialType != null) ? initialType.ToString() : "{null}", targetType));
+      throw new ArgumentException("Could not cast or convert from {0} to {1}.".FormatWith(CultureInfo.InvariantCulture, (initialType != null) ? initialType.ToString() : "{null}", targetType));
     }
 
-#if !SILVERLIGHT
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
     public static object ToValue(INullable nullableValue)
     {
       if (nullableValue == null)
@@ -479,11 +464,11 @@ namespace Newtonsoft.Json.Utilities
       else if (nullableValue is SqlDateTime)
         return ToValue((SqlDateTime)nullableValue);
 
-      throw new Exception("Unsupported INullable type: {0}".FormatWith(CultureInfo.InvariantCulture, nullableValue.GetType()));
+      throw new ArgumentException("Unsupported INullable type: {0}".FormatWith(CultureInfo.InvariantCulture, nullableValue.GetType()));
     }
 #endif
 
-#if !PocketPC
+#if !(NETFX_CORE || PORTABLE)
     internal static TypeConverter GetConverter(Type t)
     {
       return JsonTypeReflector.GetTypeConverter(t);
@@ -492,7 +477,7 @@ namespace Newtonsoft.Json.Utilities
 
     public static bool IsInteger(object value)
     {
-      switch (System.Convert.GetTypeCode(value))
+      switch (GetTypeCode(value))
       {
         case TypeCode.SByte:
         case TypeCode.Byte:

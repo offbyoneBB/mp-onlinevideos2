@@ -25,9 +25,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json.Utilities;
 using System.Diagnostics;
 using System.Globalization;
@@ -39,7 +36,17 @@ namespace Newtonsoft.Json.Linq
   /// </summary>
   public class JProperty : JContainer
   {
+    private readonly List<JToken> _content = new List<JToken>();
     private readonly string _name;
+
+    /// <summary>
+    /// Gets the container's children tokens.
+    /// </summary>
+    /// <value>The container's children tokens.</value>
+    protected override IList<JToken> ChildrenTokens
+    {
+      get { return _content; }
+    }
 
     /// <summary>
     /// Gets the property name.
@@ -58,40 +65,22 @@ namespace Newtonsoft.Json.Linq
     public JToken Value
     {
       [DebuggerStepThrough]
-      get { return Content; }
+      get { return (ChildrenTokens.Count > 0) ? ChildrenTokens[0] : null; }
       set
       {
         CheckReentrancy();
 
         JToken newValue = value ?? new JValue((object) null);
 
-        if (Content == null)
+        if (ChildrenTokens.Count == 0)
         {
-          newValue = EnsureParentToken(newValue);
-
-          Content = newValue;
-          Content.Parent = this;
-          Content.Next = Content;
+          InsertItem(0, newValue, false);
         }
         else
         {
-          Content.Replace(newValue);
+          SetItem(0, newValue);
         }
       }
-    }
-
-    internal override void ReplaceItem(JToken existing, JToken replacement)
-    {
-      if (IsTokenUnchanged(existing, replacement))
-        return;
-
-      if (Parent != null)
-        ((JObject)Parent).InternalPropertyChanging(this);
-
-      base.ReplaceItem(existing, replacement);
-
-      if (Parent != null)
-        ((JObject)Parent).InternalPropertyChanged(this);
     }
 
     /// <summary>
@@ -102,14 +91,6 @@ namespace Newtonsoft.Json.Linq
       : base(other)
     {
       _name = other.Name;
-    }
-
-    internal override void AddItem(bool isLast, JToken previous, JToken item)
-    {
-      if (Value != null)
-        throw new Exception("{0} cannot have multiple values.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
-
-      Value = item;
     }
 
     internal override JToken GetItem(int index)
@@ -124,23 +105,35 @@ namespace Newtonsoft.Json.Linq
     {
       if (index != 0)
         throw new ArgumentOutOfRangeException();
-      
-      Value = item;
+
+      if (IsTokenUnchanged(Value, item))
+        return;
+
+      if (Parent != null)
+        ((JObject)Parent).InternalPropertyChanging(this);
+
+      base.SetItem(0, item);
+
+      if (Parent != null)
+        ((JObject)Parent).InternalPropertyChanged(this);
     }
 
     internal override bool RemoveItem(JToken item)
     {
-      throw new Exception("Cannot add or remove items from {0}.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
+      throw new JsonException("Cannot add or remove items from {0}.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
     }
 
     internal override void RemoveItemAt(int index)
     {
-      throw new Exception("Cannot add or remove items from {0}.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
+      throw new JsonException("Cannot add or remove items from {0}.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
     }
 
-    internal override void InsertItem(int index, JToken item)
+    internal override void InsertItem(int index, JToken item, bool skipParentCheck)
     {
-      throw new Exception("Cannot add or remove items from {0}.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
+      if (Value != null)
+        throw new JsonException("{0} cannot have multiple values.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
+
+      base.InsertItem(0, item, false);
     }
 
     internal override bool ContainsItem(JToken item)
@@ -150,23 +143,7 @@ namespace Newtonsoft.Json.Linq
 
     internal override void ClearItems()
     {
-      throw new Exception("Cannot add or remove items from {0}.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
-    }
-
-    /// <summary>
-    /// Returns a collection of the child tokens of this token, in document order.
-    /// </summary>
-    /// <returns>
-    /// An <see cref="IEnumerable{T}"/> of <see cref="JToken"/> containing the child tokens of this <see cref="JToken"/>, in document order.
-    /// </returns>
-    public override JEnumerable<JToken> Children()
-    {
-      return new JEnumerable<JToken>(ChildrenInternal());
-    }
-
-    private IEnumerable<JToken> ChildrenInternal()
-    {
-      yield return Value;
+      throw new JsonException("Cannot add or remove items from {0}.".FormatWith(CultureInfo.InvariantCulture, typeof(JProperty)));
     }
 
     internal override bool DeepEquals(JToken node)
@@ -245,25 +222,20 @@ namespace Newtonsoft.Json.Linq
     /// </summary>
     /// <param name="reader">A <see cref="JsonReader"/> that will be read for the content of the <see cref="JProperty"/>.</param>
     /// <returns>A <see cref="JProperty"/> that contains the JSON that was read from the specified <see cref="JsonReader"/>.</returns>
-    public static JProperty Load(JsonReader reader)
+    public static new JProperty Load(JsonReader reader)
     {
       if (reader.TokenType == JsonToken.None)
       {
         if (!reader.Read())
-          throw new Exception("Error reading JProperty from JsonReader.");
+          throw JsonReaderException.Create(reader, "Error reading JProperty from JsonReader.");
       }
       if (reader.TokenType != JsonToken.PropertyName)
-        throw new Exception(
-          "Error reading JProperty from JsonReader. Current JsonReader item is not a property: {0}".FormatWith(
-            CultureInfo.InvariantCulture, reader.TokenType));
+        throw JsonReaderException.Create(reader, "Error reading JProperty from JsonReader. Current JsonReader item is not a property: {0}".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
 
       JProperty p = new JProperty((string)reader.Value);
       p.SetLineInfo(reader as IJsonLineInfo);
 
-      if (!reader.Read())
-        throw new Exception("Error reading JProperty from JsonReader.");
-
-      p.ReadContentFrom(reader);
+      p.ReadTokenFrom(reader);
 
       return p;
     }

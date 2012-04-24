@@ -35,7 +35,7 @@ namespace Newtonsoft.Json.Utilities
     private char[] _buffer;
     private int _position;
 
-    private static readonly char[] _emptyBuffer = new char[0];
+    private static readonly char[] EmptyBuffer = new char[0];
 
     public int Position
     {
@@ -45,7 +45,7 @@ namespace Newtonsoft.Json.Utilities
 
     public StringBuffer()
     {
-      _buffer = _emptyBuffer;
+      _buffer = EmptyBuffer;
     }
 
     public StringBuffer(int initalSize)
@@ -57,17 +57,25 @@ namespace Newtonsoft.Json.Utilities
     {
       // test if the buffer array is large enough to take the value
       if (_position == _buffer.Length)
-      {
         EnsureSize(1);
-      }
 
       // set value and increment poisition
       _buffer[_position++] = value;
     }
 
+    public void Append(char[] buffer, int startIndex, int count)
+    {
+      if (_position + count >= _buffer.Length)
+        EnsureSize(count);
+
+      Array.Copy(buffer, startIndex, _buffer, _position, count);
+
+      _position += count;
+    }
+
     public void Clear()
     {
-      _buffer = _emptyBuffer;
+      _buffer = EmptyBuffer;
       _position = 0;
     }
 

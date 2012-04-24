@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.IO;
 using System.Xml;
@@ -33,17 +34,36 @@ using Newtonsoft.Json.Utilities;
 
 namespace Newtonsoft.Json
 {
+  internal enum ReadType
+  {
+    Read,
+    ReadAsInt32,
+    ReadAsBytes,
+    ReadAsString,
+    ReadAsDecimal,
+    ReadAsDateTime,
+#if !NET20
+    ReadAsDateTimeOffset
+#endif
+  }
+
   /// <summary>
-  /// Represents a reader that provides fast, non-cached, forward-only access to serialized Json data.
+  /// Represents a reader that provides fast, non-cached, forward-only access to JSON text data.
   /// </summary>
   public class JsonTextReader : JsonReader, IJsonLineInfo
   {
+    private const char UnicodeReplacementChar = '\uFFFD';
+
     private readonly TextReader _reader;
-    private readonly StringBuffer _buffer;
-    private char? _lastChar;
-    private int _currentLinePosition;
-    private int _currentLineNumber;
-    private bool _end;
+
+    private char[] _chars;
+    private int _charsUsed;
+    private int _charPos;
+    private int _lineStartPos;
+    private int _lineNumber;
+    private bool _isEndOfFile;
+    private StringBuffer _buffer;
+    private StringReference _stringReference;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JsonReader"/> class with the specified <see cref="TextReader"/>.
@@ -55,130 +75,124 @@ namespace Newtonsoft.Json
         throw new ArgumentNullException("reader");
 
       _reader = reader;
-      _buffer = new StringBuffer(4096);
-      _currentLineNumber = 1;
+      _lineNumber = 1;
+
+      _chars = new char[4097];
+    }
+
+    internal void SetCharBuffer(char[] chars)
+    {
+      _chars = chars;
+    }
+
+    private StringBuffer GetBuffer()
+    {
+      if (_buffer == null)
+      {
+        _buffer = new StringBuffer(4096);
+      }
+      else
+      {
+        _buffer.Position = 0;
+      }
+
+      return _buffer;
+    }
+
+    private void OnNewLine(int pos)
+    {
+      _lineNumber++;
+      _lineStartPos = pos - 1;
     }
 
     private void ParseString(char quote)
     {
+      _charPos++;
+
+      ShiftBufferIfNeeded();
       ReadStringIntoBuffer(quote);
 
-      string text = _buffer.ToString();
-      _buffer.Position = 0;
-
-      if (text.StartsWith("/Date(", StringComparison.Ordinal) && text.EndsWith(")/", StringComparison.Ordinal))
+      if (_readType == ReadType.ReadAsBytes)
       {
-        ParseDate(text);
+        byte[] data;
+        if (_stringReference.Length == 0)
+        {
+          data = new byte[0];
+        }
+        else
+        {
+          data = Convert.FromBase64CharArray(_stringReference.Chars, _stringReference.StartIndex, _stringReference.Length);
+        }
+
+        SetToken(JsonToken.Bytes, data);
+      }
+      else if (_readType == ReadType.ReadAsString)
+      {
+        string text = _stringReference.ToString();
+
+        SetToken(JsonToken.String, text);
+        QuoteChar = quote;
       }
       else
       {
+        string text = _stringReference.ToString();
+
+        if (_dateParseHandling != DateParseHandling.None)
+        {
+          if (text.Length > 0)
+          {
+            if (text[0] == '/')
+            {
+              if (text.StartsWith("/Date(", StringComparison.Ordinal) && text.EndsWith(")/", StringComparison.Ordinal))
+              {
+                ParseDateMicrosoft(text);
+                return;
+              }
+            }
+            else if (char.IsDigit(text[0]) && text.Length >= 19 && text.Length <= 40)
+            {
+              if (ParseDateIso(text))
+                return;
+            }
+          }
+        }
+
         SetToken(JsonToken.String, text);
         QuoteChar = quote;
       }
     }
 
-    private void ReadStringIntoBuffer(char quote)
+    private bool ParseDateIso(string text)
     {
-      while (true)
+      const string isoDateFormat = "yyyy-MM-ddTHH:mm:ss.FFFFFFFK";
+
+#if !NET20
+      if (_readType == ReadType.ReadAsDateTimeOffset || (_readType == ReadType.Read && _dateParseHandling == DateParseHandling.DateTimeOffset))
       {
-        char currentChar = MoveNext();
-
-        switch (currentChar)
+        DateTimeOffset dateTimeOffset;
+        if (DateTimeOffset.TryParseExact(text, isoDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTimeOffset))
         {
-          case '\0':
-            if (_end)
-              throw CreateJsonReaderException("Unterminated string. Expected delimiter: {0}. Line {1}, position {2}.", quote, _currentLineNumber, _currentLinePosition);
-
-            _buffer.Append('\0');
-            break;
-          case '\\':
-            if ((currentChar = MoveNext()) != '\0' || !_end)
-            {
-              switch (currentChar)
-              {
-                case 'b':
-                  _buffer.Append('\b');
-                  break;
-                case 't':
-                  _buffer.Append('\t');
-                  break;
-                case 'n':
-                  _buffer.Append('\n');
-                  break;
-                case 'f':
-                  _buffer.Append('\f');
-                  break;
-                case 'r':
-                  _buffer.Append('\r');
-                  break;
-                case '\\':
-                  _buffer.Append('\\');
-                  break;
-                case '"':
-                case '\'':
-                case '/':
-                  _buffer.Append(currentChar);
-                  break;
-                case 'u':
-                  char[] hexValues = new char[4];
-                  for (int i = 0; i < hexValues.Length; i++)
-                  {
-                    if ((currentChar = MoveNext()) != '\0' || !_end)
-                      hexValues[i] = currentChar;
-                    else
-                      throw CreateJsonReaderException("Unexpected end while parsing unicode character. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
-                  }
-
-                  char hexChar = Convert.ToChar(int.Parse(new string(hexValues), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo));
-                  _buffer.Append(hexChar);
-                  break;
-                case 'x':
-                  hexValues = new char[2];
-                  for (int i = 0; i < hexValues.Length; i++)
-                  {
-                      if ((currentChar = MoveNext()) != '\0' || !_end)
-                          hexValues[i] = currentChar;
-                      else
-                          throw CreateJsonReaderException("Unexpected end while parsing hexadecimal escape sequence. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
-                  }
-
-                  hexChar = Convert.ToChar(int.Parse(new string(hexValues), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo));
-                  _buffer.Append(hexChar);
-                  break;
-                default:
-                  throw CreateJsonReaderException("Bad JSON escape sequence: {0}. Line {1}, position {2}.", @"\" + currentChar, _currentLineNumber, _currentLinePosition);
-              }
-            }
-            else
-            {
-              throw CreateJsonReaderException("Unterminated string. Expected delimiter: {0}. Line {1}, position {2}.", quote, _currentLineNumber, _currentLinePosition);
-            }
-            break;
-          case '"':
-          case '\'':
-            if (currentChar == quote)
-            {
-              return;
-            }
-            else
-            {
-              _buffer.Append(currentChar);
-            }
-            break;
-          default:
-            _buffer.Append(currentChar);
-            break;
+          SetToken(JsonToken.Date, dateTimeOffset);
+          return true;
         }
       }
+      else
+#endif
+      {
+        DateTime dateTime;
+        if (DateTime.TryParseExact(text, isoDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out dateTime))
+        {
+          dateTime = JsonConvert.EnsureDateTime(dateTime, DateTimeZoneHandling);
+
+          SetToken(JsonToken.Date, dateTime);
+          return true;
+        }
+      }
+
+      return false;
     }
 
-    private JsonReaderException CreateJsonReaderException(string format, params object[] args)
-    {
-      string message = format.FormatWith(CultureInfo.InvariantCulture, args);
-      return new JsonReaderException(message, null, _currentLineNumber, _currentLinePosition);
-    }
-
-    private void ParseDate(string text)
+    private void ParseDateMicrosoft(string text)
     {
       string value = text.Substring(6, text.Length - 8);
       DateTimeKind kind = DateTimeKind.Utc;
@@ -188,71 +202,187 @@ namespace Newtonsoft.Json
       if (index == -1)
         index = value.IndexOf('-', 1);
 
+      TimeSpan offset = TimeSpan.Zero;
+
       if (index != -1)
       {
         kind = DateTimeKind.Local;
+        offset = ReadOffset(value.Substring(index));
         value = value.Substring(0, index);
       }
 
       long javaScriptTicks = long.Parse(value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
       DateTime utcDateTime = JsonConvert.ConvertJavaScriptTicksToDateTime(javaScriptTicks);
-      DateTime dateTime;
 
-      switch (kind)
+#if !NET20
+      if (_readType == ReadType.ReadAsDateTimeOffset || (_readType == ReadType.Read && _dateParseHandling == DateParseHandling.DateTimeOffset))
       {
-        case DateTimeKind.Unspecified:
-          dateTime = DateTime.SpecifyKind(utcDateTime.ToLocalTime(), DateTimeKind.Unspecified);
-          break;
-        case DateTimeKind.Local:
-          dateTime = utcDateTime.ToLocalTime();
-          break;
-        default:
-          dateTime = utcDateTime;
-          break;
+        SetToken(JsonToken.Date, new DateTimeOffset(utcDateTime.Add(offset).Ticks, offset));
+      }
+      else
+#endif
+      {
+        DateTime dateTime;
+
+        switch (kind)
+        {
+          case DateTimeKind.Unspecified:
+            dateTime = DateTime.SpecifyKind(utcDateTime.ToLocalTime(), DateTimeKind.Unspecified);
+            break;
+          case DateTimeKind.Local:
+            dateTime = utcDateTime.ToLocalTime();
+            break;
+          default:
+            dateTime = utcDateTime;
+            break;
+        }
+
+        dateTime = JsonConvert.EnsureDateTime(dateTime, DateTimeZoneHandling);
+
+        SetToken(JsonToken.Date, dateTime);
+      }
+    }
+
+    private static void BlockCopyChars(char[] src, int srcOffset, char[] dst, int dstOffset, int count)
+    {
+      const int charByteCount = 2;
+
+      Buffer.BlockCopy(src, srcOffset * charByteCount, dst, dstOffset * charByteCount, count * charByteCount);
+    }
+
+    private void ShiftBufferIfNeeded()
+    {
+      // once in the last 10% of the buffer shift the remainling content to the start to avoid
+      // unnessesarly increasing the buffer size when reading numbers/strings
+      int length = _chars.Length;
+      if (length - _charPos <= length * 0.1)
+      {
+        int count = _charsUsed - _charPos;
+        if (count > 0)
+          BlockCopyChars(_chars, _charPos, _chars, 0, count);
+
+        _lineStartPos -= _charPos;
+        _charPos = 0;
+        _charsUsed = count;
+        _chars[_charsUsed] = '\0';
+      }
+    }
+
+    private int ReadData(bool append)
+    {
+      return ReadData(append, 0);
+    }
+
+    private int ReadData(bool append, int charsRequired)
+    {
+      if (_isEndOfFile)
+        return 0;
+
+      // char buffer is full
+      if (_charsUsed + charsRequired >= _chars.Length - 1)
+      {
+        if (append)
+        {
+          // copy to new array either double the size of the current or big enough to fit required content
+          int newArrayLength = Math.Max(_chars.Length * 2, _charsUsed + charsRequired + 1);
+
+          // increase the size of the buffer
+          char[] dst = new char[newArrayLength];
+
+          BlockCopyChars(_chars, 0, dst, 0, _chars.Length);
+
+          _chars = dst;
+        }
+        else
+        {
+          int remainingCharCount = _charsUsed - _charPos;
+
+          if (remainingCharCount + charsRequired + 1 >= _chars.Length)
+          {
+            // the remaining count plus the required is bigger than the current buffer size
+            char[] dst = new char[remainingCharCount + charsRequired + 1];
+
+            if (remainingCharCount > 0)
+              BlockCopyChars(_chars, _charPos, dst, 0, remainingCharCount);
+
+            _chars = dst;
+          }
+          else
+          {
+            // copy any remaining data to the beginning of the buffer if needed and reset positions
+            if (remainingCharCount > 0)
+              BlockCopyChars(_chars, _charPos, _chars, 0, remainingCharCount);
+          }
+
+          _lineStartPos -= _charPos;
+          _charPos = 0;
+          _charsUsed = remainingCharCount;
+        }
       }
 
-      SetToken(JsonToken.Date, dateTime);
+      int attemptCharReadCount = _chars.Length - _charsUsed - 1;
+
+      int charsRead = _reader.Read(_chars, _charsUsed, attemptCharReadCount);
+      _charsUsed += charsRead;
+
+      if (charsRead == 0)
+        _isEndOfFile = true;
+
+      _chars[_charsUsed] = '\0';
+      return charsRead;
     }
 
-    private const int LineFeedValue = StringUtils.LineFeed;
-    private const int CarriageReturnValue = StringUtils.CarriageReturn;
-
-    private char MoveNext()
+    private bool EnsureChars(int relativePosition, bool append)
     {
-      int value = _reader.Read();
+      if (_charPos + relativePosition >= _charsUsed)
+        return ReadChars(relativePosition, append);
 
-      switch (value)
+      return true;
+    }
+
+    private bool ReadChars(int relativePosition, bool append)
+    {
+      if (_isEndOfFile)
+        return false;
+
+      int charsRequired = _charPos + relativePosition - _charsUsed + 1;
+
+      int totalCharsRead = 0;
+
+      // it is possible that the TextReader doesn't return all data at once
+      // repeat read until the required text is returned or the reader is out of content
+      do
       {
-        case -1:
-          _end = true;
-          return '\0';
-        case CarriageReturnValue:
-          if (_reader.Peek() == LineFeedValue)
-            _reader.Read();
+        int charsRead = ReadData(append, charsRequired - totalCharsRead);
 
-          _currentLineNumber++;
-          _currentLinePosition = 0;
+        // no more content
+        if (charsRead == 0)
           break;
-        case LineFeedValue:
-          _currentLineNumber++;
-          _currentLinePosition = 0;
-          break;
-        default:
-          _currentLinePosition++;
-          break;
+
+        totalCharsRead += charsRead;
       }
+      while (totalCharsRead < charsRequired);
 
-      return (char)value;
+      if (totalCharsRead < charsRequired)
+        return false;
+      return true;
     }
 
-    private bool HasNext()
+    private static TimeSpan ReadOffset(string offsetText)
     {
-      return (_reader.Peek() != -1);
-    }
+      bool negative = (offsetText[0] == '-');
 
-    private int PeekNext()
-    {
-      return _reader.Peek();
+      int hours = int.Parse(offsetText.Substring(1, 2), NumberStyles.Integer, CultureInfo.InvariantCulture);
+      int minutes = 0;
+      if (offsetText.Length >= 5)
+        minutes = int.Parse(offsetText.Substring(3, 2), NumberStyles.Integer, CultureInfo.InvariantCulture);
+
+      TimeSpan offset = TimeSpan.FromHours(hours) + TimeSpan.FromMinutes(minutes);
+      if (negative)
+        offset = offset.Negate();
+
+      return offset;
     }
 
     /// <summary>
@@ -261,253 +391,557 @@ namespace Newtonsoft.Json
     /// <returns>
     /// true if the next token was read successfully; false if there are no more tokens to read.
     /// </returns>
+    [DebuggerStepThrough]
     public override bool Read()
     {
-      while (true)
+      _readType = ReadType.Read;
+      if (!ReadInternal())
       {
-        char currentChar;
-        if (_lastChar != null)
-        {
-          currentChar = _lastChar.Value;
-          _lastChar = null;
-        }
-        else
-        {
-          currentChar = MoveNext();
-        }
-
-        if (currentChar == '\0' && _end)
-          return false;
-
-        switch (CurrentState)
-        {
-          case State.Start:
-          case State.Property:
-          case State.Array:
-          case State.ArrayStart:
-          case State.Constructor:
-          case State.ConstructorStart:
-            return ParseValue(currentChar);
-          case State.Complete:
-            break;
-          case State.Object:
-          case State.ObjectStart:
-            return ParseObject(currentChar);
-          case State.PostValue:
-            // returns true if it hits
-            // end of object or array
-            if (ParsePostValue(currentChar))
-              return true;
-            break;
-          case State.Closed:
-            break;
-          case State.Error:
-            break;
-          default:
-            throw CreateJsonReaderException("Unexpected state: {0}. Line {1}, position {2}.", CurrentState, _currentLineNumber, _currentLinePosition);
-        }
+        SetToken(JsonToken.None);
+        return false;
       }
+
+      return true;
     }
 
     /// <summary>
     /// Reads the next JSON token from the stream as a <see cref="T:Byte[]"/>.
     /// </summary>
     /// <returns>
-    /// A <see cref="T:Byte[]"/> or a null reference if the next JSON token is null.
+    /// A <see cref="T:Byte[]"/> or a null reference if the next JSON token is null. This method will return <c>null</c> at the end of an array.
     /// </returns>
     public override byte[] ReadAsBytes()
     {
+      return ReadAsBytesInternal();
+    }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{Decimal}"/>.
+    /// </summary>
+    /// <returns>A <see cref="Nullable{Decimal}"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override decimal? ReadAsDecimal()
+    {
+      return ReadAsDecimalInternal();
+    }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{Int32}"/>.
+    /// </summary>
+    /// <returns>A <see cref="Nullable{Int32}"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override int? ReadAsInt32()
+    {
+      return ReadAsInt32Internal();
+    }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="String"/>.
+    /// </summary>
+    /// <returns>A <see cref="String"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override string ReadAsString()
+    {
+      return ReadAsStringInternal();
+    }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{DateTime}"/>.
+    /// </summary>
+    /// <returns>A <see cref="String"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override DateTime? ReadAsDateTime()
+    {
+      return ReadAsDateTimeInternal();
+    }
+
+#if !NET20
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{DateTimeOffset}"/>.
+    /// </summary>
+    /// <returns>A <see cref="DateTimeOffset"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override DateTimeOffset? ReadAsDateTimeOffset()
+    {
+      return ReadAsDateTimeOffsetInternal();
+    }
+#endif
+
+    internal override bool ReadInternal()
+    {
       while (true)
       {
-        char currentChar;
-        if (_lastChar != null)
+        switch (_currentState)
         {
-          currentChar = _lastChar.Value;
-          _lastChar = null;
-        }
-        else
-        {
-          currentChar = MoveNext();
-        }
-
-        if (currentChar == '\0' && _end)
-          throw CreateJsonReaderException("Unexpected end when reading bytes: Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
-
-        switch (CurrentState)
-        {
-          case State.PostValue:
           case State.Start:
           case State.Property:
           case State.Array:
           case State.ArrayStart:
           case State.Constructor:
           case State.ConstructorStart:
-            do
+            return ParseValue();
+          case State.Complete:
+            break;
+          case State.Object:
+          case State.ObjectStart:
+            return ParseObject();
+          case State.PostValue:
+            // returns true if it hits
+            // end of object or array
+            if (ParsePostValue())
+              return true;
+            break;
+          case State.Finished:
+            if (EnsureChars(0, false))
             {
-              switch (currentChar)
+              EatWhitespace(false);
+              if (_isEndOfFile)
               {
-                case '"':
-                case '\'':
-                  ReadStringIntoBuffer(currentChar);
-
-                  byte[] data;
-                  if (_buffer.Position == 0)
-                  {
-                    data = new byte[0];
-                  }
-                  else
-                  {
-                    data = Convert.FromBase64CharArray(_buffer.GetInternalBuffer(), 0, _buffer.Position);
-                    _buffer.Position = 0;
-                  }
-
-                  SetToken(JsonToken.Bytes, data);
-
-                  return data;
-                case 'n':
-                  ParseNull();
-                  return null;
-                case ' ':
-                case StringUtils.Tab:
-                case StringUtils.LineFeed:
-                case StringUtils.CarriageReturn:
-                  // eat
-                  break;
-                case ',':
-                  SetStateBasedOnCurrent();
-                  break;
-                default:
-                  if (char.IsWhiteSpace(currentChar))
-                  {
-                    // eat
-                  }
-                  else
-                  {
-                    throw CreateJsonReaderException("Unexpected character encountered while parsing value: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
-                  }
-                  break;
+                return false;
               }
-            } while ((currentChar = MoveNext()) != '\0' || !_end);
+              if (_chars[_charPos] == '/')
+              {
+                ParseComment();
+                return true;
+              }
+              else
+              {
+                throw JsonReaderException.Create(this, "Additional text encountered after finished reading JSON content: {0}.".FormatWith(CultureInfo.InvariantCulture, _chars[_charPos]));
+              }
+            }
+            return false;
+          case State.Closed:
+            break;
+          case State.Error:
             break;
           default:
-            throw CreateJsonReaderException("Unexpected state: {0}. Line {1}, position {2}.", CurrentState, _currentLineNumber, _currentLinePosition);
+            throw JsonReaderException.Create(this, "Unexpected state: {0}.".FormatWith(CultureInfo.InvariantCulture, CurrentState));
         }
       }
     }
 
-    private bool ParsePostValue(char currentChar)
+    private void ReadStringIntoBuffer(char quote)
     {
-      do
+      int charPos = _charPos;
+      int initialPosition = _charPos;
+      int lastWritePosition = _charPos;
+      StringBuffer buffer = null;
+
+      while (true)
       {
+        switch (_chars[charPos++])
+        {
+          case '\0':
+            if (_charsUsed == charPos - 1)
+            {
+              charPos--;
+
+              if (ReadData(true) == 0)
+              {
+                _charPos = charPos;
+                throw JsonReaderException.Create(this, "Unterminated string. Expected delimiter: {0}.".FormatWith(CultureInfo.InvariantCulture, quote));
+              }
+            }
+            break;
+          case '\\':
+            _charPos = charPos;
+            if (!EnsureChars(0, true))
+            {
+              _charPos = charPos;
+              throw JsonReaderException.Create(this, "Unterminated string. Expected delimiter: {0}.".FormatWith(CultureInfo.InvariantCulture, quote));
+            }
+
+            // start of escape sequence
+            int escapeStartPos = charPos - 1;
+
+            char currentChar = _chars[charPos];
+
+            char writeChar;
+
+            switch (currentChar)
+            {
+              case 'b':
+                charPos++;
+                writeChar = '\b';
+                break;
+              case 't':
+                charPos++;
+                writeChar = '\t';
+                break;
+              case 'n':
+                charPos++;
+                writeChar = '\n';
+                break;
+              case 'f':
+                charPos++;
+                writeChar = '\f';
+                break;
+              case 'r':
+                charPos++;
+                writeChar = '\r';
+                break;
+              case '\\':
+                charPos++;
+                writeChar = '\\';
+                break;
+              case '"':
+              case '\'':
+              case '/':
+                writeChar = currentChar;
+                charPos++;
+                break;
+              case 'u':
+                charPos++;
+                _charPos = charPos;
+                writeChar = ParseUnicode();
+                
+                if (StringUtils.IsLowSurrogate(writeChar))
+                {
+                  // low surrogate with no preceding high surrogate; this char is replaced
+                  writeChar = UnicodeReplacementChar;
+                }
+                else if (StringUtils.IsHighSurrogate(writeChar))
+                {
+                  bool anotherHighSurrogate;
+
+                  // loop for handling situations where there are multiple consecutive high surrogates
+                  do
+                  {
+                    anotherHighSurrogate = false;
+
+                    // potential start of a surrogate pair
+                    if (EnsureChars(2, true) && _chars[_charPos] == '\\' && _chars[_charPos + 1] == 'u')
+                    {
+                      char highSurrogate = writeChar;
+
+                      _charPos += 2;
+                      writeChar = ParseUnicode();
+
+                      if (StringUtils.IsLowSurrogate(writeChar))
+                      {
+                        // a valid surrogate pair!
+                      }
+                      else if (StringUtils.IsHighSurrogate(writeChar))
+                      {
+                        // another high surrogate; replace current and start check over
+                        highSurrogate = UnicodeReplacementChar;
+                        anotherHighSurrogate = true;
+                      }
+                      else
+                      {
+                        // high surrogate not followed by low surrogate; original char is replaced
+                        highSurrogate = UnicodeReplacementChar;
+                      }
+
+                      if (buffer == null)
+                        buffer = GetBuffer();
+
+                      WriteCharToBuffer(buffer, highSurrogate, lastWritePosition, escapeStartPos);
+                      lastWritePosition = _charPos;
+                    }
+                    else
+                    {
+                      // there are not enough remaining chars for the low surrogate or is not follow by unicode sequence
+                      // replace high surrogate and continue on as usual
+                      writeChar = UnicodeReplacementChar;
+                    }
+                  } while (anotherHighSurrogate);
+                }
+
+                charPos = _charPos;
+                break;
+              default:
+                charPos++;
+                _charPos = charPos;
+                throw JsonReaderException.Create(this, "Bad JSON escape sequence: {0}.".FormatWith(CultureInfo.InvariantCulture, @"\" + currentChar));
+            }
+
+            if (buffer == null)
+              buffer = GetBuffer();
+
+            WriteCharToBuffer(buffer, writeChar, lastWritePosition, escapeStartPos);
+
+            lastWritePosition = charPos;
+            break;
+          case StringUtils.CarriageReturn:
+            _charPos = charPos - 1;
+            ProcessCarriageReturn(true);
+            charPos = _charPos;
+            break;
+          case StringUtils.LineFeed:
+            _charPos = charPos - 1;
+            ProcessLineFeed();
+            charPos = _charPos;
+            break;
+          case '"':
+          case '\'':
+            if (_chars[charPos - 1] == quote)
+            {
+              charPos--;
+
+              if (initialPosition == lastWritePosition)
+              {
+                _stringReference = new StringReference(_chars, initialPosition, charPos - initialPosition);
+              }
+              else
+              {
+                if (buffer == null)
+                  buffer = GetBuffer();
+
+                if (charPos > lastWritePosition)
+                  buffer.Append(_chars, lastWritePosition, charPos - lastWritePosition);
+
+                _stringReference = new StringReference(buffer.GetInternalBuffer(), 0, buffer.Position);
+              }
+
+              charPos++;
+              _charPos = charPos;
+              return;
+            }
+            break;
+        }
+      }
+    }
+
+    private void WriteCharToBuffer(StringBuffer buffer, char writeChar, int lastWritePosition, int writeToPosition)
+    {
+      if (writeToPosition > lastWritePosition)
+      {
+        buffer.Append(_chars, lastWritePosition, writeToPosition - lastWritePosition);
+      }
+
+      buffer.Append(writeChar);
+    }
+
+    private char ParseUnicode()
+    {
+      char writeChar;
+      if (EnsureChars(4, true))
+      {
+        string hexValues = new string(_chars, _charPos, 4);
+        char hexChar = Convert.ToChar(int.Parse(hexValues, NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo));
+        writeChar = hexChar;
+
+        _charPos += 4;
+      }
+      else
+      {
+        throw JsonReaderException.Create(this, "Unexpected end while parsing unicode character.");
+      }
+      return writeChar;
+    }
+
+    private void ReadNumberIntoBuffer()
+    {
+      int charPos = _charPos;
+
+      while (true)
+      {
+        switch (_chars[charPos++])
+        {
+          case '\0':
+            if (_charsUsed == charPos - 1)
+            {
+              charPos--;
+              _charPos = charPos;
+              if (ReadData(true) == 0)
+                return;
+            }
+            break;
+          case '-':
+          case '+':
+          case 'a':
+          case 'A':
+          case 'b':
+          case 'B':
+          case 'c':
+          case 'C':
+          case 'd':
+          case 'D':
+          case 'e':
+          case 'E':
+          case 'f':
+          case 'F':
+          case 'x':
+          case 'X':
+          case '.':
+          case '0':
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          case '8':
+          case '9':
+            break;
+          default:
+            _charPos = charPos - 1;
+            return;
+        }
+      }
+    }
+
+    private void ClearRecentString()
+    {
+      if (_buffer != null)
+        _buffer.Position = 0;
+
+      _stringReference = new StringReference();
+    }
+
+    private bool ParsePostValue()
+    {
+      while (true)
+      {
+        char currentChar = _chars[_charPos];
+
         switch (currentChar)
         {
+          case '\0':
+            if (_charsUsed == _charPos)
+            {
+              if (ReadData(false) == 0)
+              {
+                _currentState = State.Finished;
+                return false;
+              }
+            }
+            else
+            {
+              _charPos++;
+            }
+            break;
           case '}':
+            _charPos++;
             SetToken(JsonToken.EndObject);
             return true;
           case ']':
+            _charPos++;
             SetToken(JsonToken.EndArray);
             return true;
           case ')':
+            _charPos++;
             SetToken(JsonToken.EndConstructor);
             return true;
           case '/':
             ParseComment();
             return true;
           case ',':
+            _charPos++;
+
             // finished parsing
             SetStateBasedOnCurrent();
             return false;
           case ' ':
           case StringUtils.Tab:
-          case StringUtils.LineFeed:
-          case StringUtils.CarriageReturn:
             // eat
+            _charPos++;
+            break;
+          case StringUtils.CarriageReturn:
+            ProcessCarriageReturn(false);
+            break;
+          case StringUtils.LineFeed:
+            ProcessLineFeed();
             break;
           default:
             if (char.IsWhiteSpace(currentChar))
             {
               // eat
+              _charPos++;
             }
             else
             {
-              throw CreateJsonReaderException("After parsing a value an unexpected character was encountered: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
+              throw JsonReaderException.Create(this, "After parsing a value an unexpected character was encountered: {0}.".FormatWith(CultureInfo.InvariantCulture, currentChar));
             }
             break;
         }
-      } while ((currentChar = MoveNext()) != '\0' || !_end);
-
-      return false;
+      }
     }
 
-    private bool ParseObject(char currentChar)
+    private bool ParseObject()
     {
-      do
+      while (true)
       {
+        char currentChar = _chars[_charPos];
+
         switch (currentChar)
         {
+          case '\0':
+            if (_charsUsed == _charPos)
+            {
+              if (ReadData(false) == 0)
+                return false;
+            }
+            else
+            {
+              _charPos++;
+            }
+            break;
           case '}':
             SetToken(JsonToken.EndObject);
+            _charPos++;
             return true;
           case '/':
             ParseComment();
             return true;
+          case StringUtils.CarriageReturn:
+            ProcessCarriageReturn(false);
+            break;
+          case StringUtils.LineFeed:
+            ProcessLineFeed();
+            break;
           case ' ':
           case StringUtils.Tab:
-          case StringUtils.LineFeed:
-          case StringUtils.CarriageReturn:
             // eat
+            _charPos++;
             break;
           default:
             if (char.IsWhiteSpace(currentChar))
             {
               // eat
+              _charPos++;
             }
             else
             {
-              return ParseProperty(currentChar);
+              return ParseProperty();
             }
             break;
         }
-      } while ((currentChar = MoveNext()) != '\0' || !_end);
-
-      return false;
+      }
     }
 
-    private bool ParseProperty(char firstChar)
+    private bool ParseProperty()
     {
-      char currentChar = firstChar;
+      char firstChar = _chars[_charPos];
       char quoteChar;
 
-      if (ValidIdentifierChar(currentChar))
+      if (firstChar == '"' || firstChar == '\'')
+      {
+        _charPos++;
+        quoteChar = firstChar;
+        ShiftBufferIfNeeded();
+        ReadStringIntoBuffer(quoteChar);
+      }
+      else if (ValidIdentifierChar(firstChar))
       {
         quoteChar = '\0';
-        currentChar = ParseUnquotedProperty(currentChar);
-      }
-      else if (currentChar == '"' || currentChar == '\'')
-      {
-        quoteChar = currentChar;
-        ReadStringIntoBuffer(quoteChar);
-        currentChar = MoveNext();
+        ShiftBufferIfNeeded();
+        ParseUnquotedProperty();
       }
       else
       {
-        throw CreateJsonReaderException("Invalid property identifier character: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
+        throw JsonReaderException.Create(this, "Invalid property identifier character: {0}.".FormatWith(CultureInfo.InvariantCulture, _chars[_charPos]));
       }
 
-      if (currentChar != ':')
-      {
-        currentChar = MoveNext();
+      string propertyName = _stringReference.ToString();
 
-        // finished property. skip any whitespace and move to colon
-        EatWhitespace(currentChar, false, out currentChar);
+      EatWhitespace(false);
 
-        if (currentChar != ':')
-          throw CreateJsonReaderException("Invalid character after parsing property name. Expected ':' but got: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
-      }
+      if (_chars[_charPos] != ':')
+        throw JsonReaderException.Create(this, "Invalid character after parsing property name. Expected ':' but got: {0}.".FormatWith(CultureInfo.InvariantCulture, _chars[_charPos]));
 
-      SetToken(JsonToken.PropertyName, _buffer.ToString());
+      _charPos++;
+
+      SetToken(JsonToken.PropertyName, propertyName);
       QuoteChar = quoteChar;
-      _buffer.Position = 0;
+      ClearRecentString();
 
       return true;
     }
@@ -517,38 +951,64 @@ namespace Newtonsoft.Json
       return (char.IsLetterOrDigit(value) || value == '_' || value == '$');
     }
 
-    private char ParseUnquotedProperty(char firstChar)
+    private void ParseUnquotedProperty()
     {
+      int initialPosition = _charPos;
+
       // parse unquoted property name until whitespace or colon
-      _buffer.Append(firstChar);
-
-      char currentChar;
-
-      while ((currentChar = MoveNext()) != '\0' || !_end)
+      while (true)
       {
-        if (char.IsWhiteSpace(currentChar) || currentChar == ':')
+        switch (_chars[_charPos])
         {
-          return currentChar;
-        }
-        else if (ValidIdentifierChar(currentChar))
-        {
-          _buffer.Append(currentChar);
-        }
-        else
-        {
-          throw CreateJsonReaderException("Invalid JavaScript property identifier character: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
+          case '\0':
+            if (_charsUsed == _charPos)
+            {
+              if (ReadData(true) == 0)
+                throw JsonReaderException.Create(this, "Unexpected end while parsing unquoted property name.");
+
+              break;
+            }
+
+            _stringReference = new StringReference(_chars, initialPosition, _charPos - initialPosition);
+            return;
+          default:
+            char currentChar = _chars[_charPos];
+
+            if (ValidIdentifierChar(currentChar))
+            {
+              _charPos++;
+              break;
+            }
+            else if (char.IsWhiteSpace(currentChar) || currentChar == ':')
+            {
+              _stringReference = new StringReference(_chars, initialPosition, _charPos - initialPosition);
+              return;
+            }
+
+            throw JsonReaderException.Create(this, "Invalid JavaScript property identifier character: {0}.".FormatWith(CultureInfo.InvariantCulture, currentChar));
         }
       }
-
-      throw CreateJsonReaderException("Unexpected end when parsing unquoted property name. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
     }
 
-    private bool ParseValue(char currentChar)
+    private bool ParseValue()
     {
-      do
+      while (true)
       {
+        char currentChar = _chars[_charPos];
+
         switch (currentChar)
         {
+          case '\0':
+            if (_charsUsed == _charPos)
+            {
+              if (ReadData(false) == 0)
+                return false;
+            }
+            else
+            {
+              _charPos++;
+            }
+            break;
           case '"':
           case '\'':
             ParseString(currentChar);
@@ -560,20 +1020,20 @@ namespace Newtonsoft.Json
             ParseFalse();
             return true;
           case 'n':
-            if (HasNext())
+            if (EnsureChars(1, true))
             {
-              char next = (char)PeekNext();
+              char next = _chars[_charPos + 1];
 
               if (next == 'u')
                 ParseNull();
               else if (next == 'e')
                 ParseConstructor();
               else
-                throw CreateJsonReaderException("Unexpected character encountered while parsing value: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
+                throw JsonReaderException.Create(this, "Unexpected character encountered while parsing value: {0}.".FormatWith(CultureInfo.InvariantCulture, _chars[_charPos]));
             }
             else
             {
-              throw CreateJsonReaderException("Unexpected end. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+              throw JsonReaderException.Create(this, "Unexpected end.");
             }
             return true;
           case 'N':
@@ -583,10 +1043,10 @@ namespace Newtonsoft.Json
             ParseNumberPositiveInfinity();
             return true;
           case '-':
-            if (PeekNext() == 'I')
+            if (EnsureChars(1, true) && _chars[_charPos + 1] == 'I')
               ParseNumberNegativeInfinity();
             else
-              ParseNumber(currentChar);
+              ParseNumber();
             return true;
           case '/':
             ParseComment();
@@ -595,137 +1055,310 @@ namespace Newtonsoft.Json
             ParseUndefined();
             return true;
           case '{':
+            _charPos++;
             SetToken(JsonToken.StartObject);
             return true;
           case '[':
+            _charPos++;
             SetToken(JsonToken.StartArray);
             return true;
-          case '}':
-            SetToken(JsonToken.EndObject);
-            return true;
           case ']':
+            _charPos++;
             SetToken(JsonToken.EndArray);
             return true;
           case ',':
+            // don't increment position, the next call to read will handle comma
+            // this is done to handle multiple empty comma values
             SetToken(JsonToken.Undefined);
             return true;
           case ')':
+            _charPos++;
             SetToken(JsonToken.EndConstructor);
             return true;
+          case StringUtils.CarriageReturn:
+            ProcessCarriageReturn(false);
+            break;
+          case StringUtils.LineFeed:
+            ProcessLineFeed();
+            break;
           case ' ':
           case StringUtils.Tab:
-          case StringUtils.LineFeed:
-          case StringUtils.CarriageReturn:
             // eat
+            _charPos++;
             break;
           default:
             if (char.IsWhiteSpace(currentChar))
             {
               // eat
+              _charPos++;
+              break;
             }
             else if (char.IsNumber(currentChar) || currentChar == '-' || currentChar == '.')
             {
-              ParseNumber(currentChar);
+              ParseNumber();
               return true;
             }
             else
             {
-              throw CreateJsonReaderException("Unexpected character encountered while parsing value: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
+              throw JsonReaderException.Create(this, "Unexpected character encountered while parsing value: {0}.".FormatWith(CultureInfo.InvariantCulture, currentChar));
+            }
+        }
+      }
+    }
+
+    private void ProcessLineFeed()
+    {
+      _charPos++;
+      OnNewLine(_charPos);
+    }
+
+    private void ProcessCarriageReturn(bool append)
+    {
+      _charPos++;
+
+      if (EnsureChars(1, append) && _chars[_charPos] == StringUtils.LineFeed)
+        _charPos++;
+
+      OnNewLine(_charPos);
+    }
+
+    private bool EatWhitespace(bool oneOrMore)
+    {
+      bool finished = false;
+      bool ateWhitespace = false;
+      while (!finished)
+      {
+        char currentChar = _chars[_charPos];
+
+        switch (currentChar)
+        {
+          case '\0':
+            if (_charsUsed == _charPos)
+            {
+              if (ReadData(false) == 0)
+                finished = true;
+            }
+            else
+            {
+              _charPos++;
+            }
+            break;
+          case StringUtils.CarriageReturn:
+            ProcessCarriageReturn(false);
+            break;
+          case StringUtils.LineFeed:
+            ProcessLineFeed();
+            break;
+          default:
+            if (currentChar == ' ' || char.IsWhiteSpace(currentChar))
+            {
+              ateWhitespace = true;
+              _charPos++;
+            }
+            else
+            {
+              finished = true;
             }
             break;
         }
-      } while ((currentChar = MoveNext()) != '\0' || !_end);
-
-      return false;
-    }
-
-    private bool EatWhitespace(char initialChar, bool oneOrMore, out char finalChar)
-    {
-      bool whitespace = false;
-      char currentChar = initialChar;
-      while (currentChar == ' ' || char.IsWhiteSpace(currentChar))
-      {
-        whitespace = true;
-        currentChar = MoveNext();
       }
 
-      finalChar = currentChar;
-
-      return (!oneOrMore || whitespace);
+      return (!oneOrMore || ateWhitespace);
     }
 
     private void ParseConstructor()
     {
-      if (MatchValue('n', "new", true))
+      if (MatchValueWithTrailingSeperator("new"))
       {
-        char currentChar = MoveNext();
+        EatWhitespace(false);
 
-        if (EatWhitespace(currentChar, true, out currentChar))
+        int initialPosition = _charPos;
+        int endPosition;
+
+        while (true)
         {
-          while (char.IsLetter(currentChar))
+          char currentChar = _chars[_charPos];
+          if (currentChar == '\0')
           {
-            _buffer.Append(currentChar);
-            currentChar = MoveNext();
+            if (_charsUsed == _charPos)
+            {
+              if (ReadData(true) == 0)
+                throw JsonReaderException.Create(this, "Unexpected end while parsing constructor.");
+            }
+            else
+            {
+              endPosition = _charPos;
+              _charPos++;
+              break;
+            }
           }
-
-          EatWhitespace(currentChar, false, out currentChar);
-
-          if (currentChar != '(')
-            throw CreateJsonReaderException("Unexpected character while parsing constructor: {0}. Line {1}, position {2}.", currentChar, _currentLineNumber, _currentLinePosition);
-
-          string constructorName = _buffer.ToString();
-          _buffer.Position = 0;
-
-          SetToken(JsonToken.StartConstructor, constructorName);
+          else if (char.IsLetterOrDigit(currentChar))
+          {
+            _charPos++;
+          }
+          else if (currentChar == StringUtils.CarriageReturn)
+          {
+            endPosition = _charPos;
+            ProcessCarriageReturn(true);
+            break;
+          }
+          else if (currentChar == StringUtils.LineFeed)
+          {
+            endPosition = _charPos;
+            ProcessLineFeed();
+            break;
+          }
+          else if (char.IsWhiteSpace(currentChar))
+          {
+            endPosition = _charPos;
+            _charPos++;
+            break;
+          }
+          else if (currentChar == '(')
+          {
+            endPosition = _charPos;
+            break;
+          }
+          else
+          {
+            throw JsonReaderException.Create(this, "Unexpected character while parsing constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, currentChar));
+          }
         }
+
+        _stringReference = new StringReference(_chars, initialPosition, endPosition - initialPosition);
+        string constructorName = _stringReference.ToString();
+
+        EatWhitespace(false);
+
+        if (_chars[_charPos] != '(')
+          throw JsonReaderException.Create(this, "Unexpected character while parsing constructor: {0}.".FormatWith(CultureInfo.InvariantCulture, _chars[_charPos]));
+
+        _charPos++;
+
+        ClearRecentString();
+
+        SetToken(JsonToken.StartConstructor, constructorName);
       }
     }
 
-    private void ParseNumber(char firstChar)
+    private void ParseNumber()
     {
-      char currentChar = firstChar;
-      bool nonBase10 = (firstChar == '0');
+      ShiftBufferIfNeeded();
 
-      // parse until seperator character or end
-      bool end = false;
-      do
-      {
-        if (IsSeperator(currentChar))
-        {
-          end = true;
-          _lastChar = currentChar;
-        }
-        else
-        {
-          _buffer.Append(currentChar);
-        }
+      char firstChar = _chars[_charPos];
+      int initialPosition = _charPos;
 
-      } while (!end && ((currentChar = MoveNext()) != '\0' || !_end));
+      ReadNumberIntoBuffer();
 
-      string number = _buffer.ToString();
+      _stringReference = new StringReference(_chars, initialPosition, _charPos - initialPosition);
+
       object numberValue;
       JsonToken numberType;
 
-      if (number.IndexOf(".", StringComparison.OrdinalIgnoreCase) != -1
-        || number.IndexOf("e", StringComparison.OrdinalIgnoreCase) != -1)
+      bool singleDigit = (char.IsDigit(firstChar) && _stringReference.Length == 1);
+      bool nonBase10 = (firstChar == '0' && _stringReference.Length > 1
+        && _stringReference.Chars[_stringReference.StartIndex + 1] != '.'
+        && _stringReference.Chars[_stringReference.StartIndex + 1] != 'e'
+        && _stringReference.Chars[_stringReference.StartIndex + 1] != 'E');
+
+      if (_readType == ReadType.ReadAsInt32)
       {
-        numberValue = Convert.ToDouble(number, CultureInfo.InvariantCulture);
-        numberType = JsonToken.Float;
-      }
-      else if (nonBase10)
-      {
-        numberValue = number.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
-          ? Convert.ToInt64(number, 16)
-          : Convert.ToInt64(number, 8);
+        if (singleDigit)
+        {
+          // digit char values start at 48
+          numberValue = firstChar - 48;
+        }
+        else if (nonBase10)
+        {
+          string number = _stringReference.ToString();
+
+          // decimal.Parse doesn't support parsing hexadecimal values
+          int integer = number.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
+                           ? Convert.ToInt32(number, 16)
+                           : Convert.ToInt32(number, 8);
+
+          numberValue = integer;
+        }
+        else
+        {
+          string number = _stringReference.ToString();
+
+          numberValue = Convert.ToInt32(number, CultureInfo.InvariantCulture);
+        }
+
         numberType = JsonToken.Integer;
+      }
+      else if (_readType == ReadType.ReadAsDecimal)
+      {
+        if (singleDigit)
+        {
+          // digit char values start at 48
+          numberValue = (decimal)firstChar - 48;
+        }
+        else if (nonBase10)
+        {
+          string number = _stringReference.ToString();
+
+          // decimal.Parse doesn't support parsing hexadecimal values
+          long integer = number.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
+                           ? Convert.ToInt64(number, 16)
+                           : Convert.ToInt64(number, 8);
+
+          numberValue = Convert.ToDecimal(integer);
+        }
+        else
+        {
+          string number = _stringReference.ToString();
+
+          numberValue = decimal.Parse(number, NumberStyles.Number | NumberStyles.AllowExponent, CultureInfo.InvariantCulture);
+        }
+
+        numberType = JsonToken.Float;
       }
       else
       {
-        numberValue = Convert.ToInt64(number, CultureInfo.InvariantCulture);
-        numberType = JsonToken.Integer;
+        if (singleDigit)
+        {
+          // digit char values start at 48
+          numberValue = (long)firstChar - 48;
+          numberType = JsonToken.Integer;
+        }
+        else if (nonBase10)
+        {
+          string number = _stringReference.ToString();
+
+          numberValue = number.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
+                          ? Convert.ToInt64(number, 16)
+                          : Convert.ToInt64(number, 8);
+          numberType = JsonToken.Integer;
+        }
+        else
+        {
+          string number = _stringReference.ToString();
+
+          // it's faster to do 3 indexof with single characters than an indexofany
+          if (number.IndexOf('.') != -1 || number.IndexOf('E') != -1 || number.IndexOf('e') != -1)
+          {
+            numberValue = Convert.ToDouble(number, CultureInfo.InvariantCulture);
+            numberType = JsonToken.Float;
+          }
+          else
+          {
+            try
+            {
+              numberValue = Convert.ToInt64(number, CultureInfo.InvariantCulture);
+            }
+            catch (OverflowException ex)
+            {
+              throw JsonReaderException.Create((JsonReader)this, "JSON integer {0} is too large or small for an Int64.".FormatWith(CultureInfo.InvariantCulture, number), ex);
+            }
+
+            numberType = JsonToken.Integer;
+          }
+        }
       }
 
-      _buffer.Position = 0;
+      ClearRecentString();
 
       SetToken(numberType, numberValue);
     }
@@ -733,79 +1366,93 @@ namespace Newtonsoft.Json
     private void ParseComment()
     {
       // should have already parsed / character before reaching this method
+      _charPos++;
 
-      char currentChar = MoveNext();
+      if (!EnsureChars(1, false) || _chars[_charPos] != '*')
+        throw JsonReaderException.Create(this, "Error parsing comment. Expected: *, got {0}.".FormatWith(CultureInfo.InvariantCulture, _chars[_charPos]));
+      else
+        _charPos++;
 
-      if (currentChar == '*')
+      int initialPosition = _charPos;
+
+      bool commentFinished = false;
+
+      while (!commentFinished)
       {
-        while ((currentChar = MoveNext()) != '\0' || !_end)
+        switch (_chars[_charPos])
         {
-          if (currentChar == '*')
-          {
-            if ((currentChar = MoveNext()) != '\0' || !_end)
+          case '\0':
+            if (_charsUsed == _charPos)
             {
-              if (currentChar == '/')
+              if (ReadData(true) == 0)
+                throw JsonReaderException.Create(this, "Unexpected end while parsing comment.");
+            }
+            else
+            {
+              _charPos++;
+            }
+            break;
+          case '*':
+            _charPos++;
+
+            if (EnsureChars(0, true))
+            {
+              if (_chars[_charPos] == '/')
               {
-                break;
-              }
-              else
-              {
-                _buffer.Append('*');
-                _buffer.Append(currentChar);
+                _stringReference = new StringReference(_chars, initialPosition, _charPos - initialPosition - 1);
+
+                _charPos++;
+                commentFinished = true;
               }
             }
-          }
-          else
-          {
-            _buffer.Append(currentChar);
-          }
+            break;
+          case StringUtils.CarriageReturn:
+            ProcessCarriageReturn(true);
+            break;
+          case StringUtils.LineFeed:
+            ProcessLineFeed();
+            break;
+          default:
+            _charPos++;
+            break;
         }
       }
-      else
-      {
-        throw CreateJsonReaderException("Error parsing comment. Expected: *. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
-      }
 
-      SetToken(JsonToken.Comment, _buffer.ToString());
+      SetToken(JsonToken.Comment, _stringReference.ToString());
 
-      _buffer.Position = 0;
+      ClearRecentString();
     }
 
-    private bool MatchValue(char firstChar, string value)
+    private bool MatchValue(string value)
     {
-      char currentChar = firstChar;
+      if (!EnsureChars(value.Length - 1, true))
+        return false;
 
-      int i = 0;
-      do
+      for (int i = 0; i < value.Length; i++)
       {
-        if (currentChar != value[i])
+        if (_chars[_charPos + i] != value[i])
         {
-          break;
+          return false;
         }
-        i++;
       }
-      while (i < value.Length && ((currentChar = MoveNext()) != '\0' || !_end));
 
-      return (i == value.Length);
+      _charPos += value.Length;
+
+      return true;
     }
 
-    private bool MatchValue(char firstChar, string value, bool noTrailingNonSeperatorCharacters)
+    private bool MatchValueWithTrailingSeperator(string value)
     {
       // will match value and then move to the next character, checking that it is a seperator character
-      bool match = MatchValue(firstChar, value);
+      bool match = MatchValue(value);
 
-      if (!noTrailingNonSeperatorCharacters)
-      {
-        return match;
-      }
-      else
-      {
-        int c = PeekNext();
-        char next = (c != -1) ? (char) c : '\0';
-        bool matchAndNoTrainingNonSeperatorCharacters = (match && (next == '\0' || IsSeperator(next)));
+      if (!match)
+        return false;
 
-        return matchAndNoTrainingNonSeperatorCharacters;
-      }
+      if (!EnsureChars(0, false))
+        return true;
+
+      return IsSeperator(_chars[_charPos]) || _chars[_charPos] == '\0';
     }
 
     private bool IsSeperator(char c)
@@ -818,7 +1465,10 @@ namespace Newtonsoft.Json
           return true;
         case '/':
           // check next character to see if start of a comment
-          return (HasNext() && PeekNext() == '*');
+          if (!EnsureChars(1, false))
+            return false;
+
+          return (_chars[_charPos + 1] == '*');
         case ')':
           if (CurrentState == State.Constructor || CurrentState == State.ConstructorStart)
             return true;
@@ -842,85 +1492,85 @@ namespace Newtonsoft.Json
       // check characters equal 'true'
       // and that it is followed by either a seperator character
       // or the text ends
-      if (MatchValue('t', JsonConvert.True, true))
+      if (MatchValueWithTrailingSeperator(JsonConvert.True))
       {
         SetToken(JsonToken.Boolean, true);
       }
       else
       {
-        throw CreateJsonReaderException("Error parsing boolean value. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+        throw JsonReaderException.Create(this, "Error parsing boolean value.");
       }
     }
 
     private void ParseNull()
     {
-      if (MatchValue('n', JsonConvert.Null, true))
+      if (MatchValueWithTrailingSeperator(JsonConvert.Null))
       {
         SetToken(JsonToken.Null);
       }
       else
       {
-        throw CreateJsonReaderException("Error parsing null value. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+        throw JsonReaderException.Create(this, "Error parsing null value.");
       }
     }
 
     private void ParseUndefined()
     {
-      if (MatchValue('u', JsonConvert.Undefined, true))
+      if (MatchValueWithTrailingSeperator(JsonConvert.Undefined))
       {
         SetToken(JsonToken.Undefined);
       }
       else
       {
-        throw CreateJsonReaderException("Error parsing undefined value. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+        throw JsonReaderException.Create(this, "Error parsing undefined value.");
       }
     }
 
     private void ParseFalse()
     {
-      if (MatchValue('f', JsonConvert.False, true))
+      if (MatchValueWithTrailingSeperator(JsonConvert.False))
       {
         SetToken(JsonToken.Boolean, false);
       }
       else
       {
-        throw CreateJsonReaderException("Error parsing boolean value. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+        throw JsonReaderException.Create(this, "Error parsing boolean value.");
       }
     }
 
     private void ParseNumberNegativeInfinity()
     {
-      if (MatchValue('-', JsonConvert.NegativeInfinity, true))
+      if (MatchValueWithTrailingSeperator(JsonConvert.NegativeInfinity))
       {
         SetToken(JsonToken.Float, double.NegativeInfinity);
       }
       else
       {
-        throw CreateJsonReaderException("Error parsing negative infinity value. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+        throw JsonReaderException.Create(this, "Error parsing negative infinity value.");
       }
     }
 
     private void ParseNumberPositiveInfinity()
     {
-      if (MatchValue('I', JsonConvert.PositiveInfinity, true))
+      if (MatchValueWithTrailingSeperator(JsonConvert.PositiveInfinity))
       {
         SetToken(JsonToken.Float, double.PositiveInfinity);
       }
       else
       {
-        throw CreateJsonReaderException("Error parsing positive infinity value. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+        throw JsonReaderException.Create(this, "Error parsing positive infinity value.");
       }
     }
 
     private void ParseNumberNaN()
     {
-      if (MatchValue('N', JsonConvert.NaN, true))
+      if (MatchValueWithTrailingSeperator(JsonConvert.NaN))
       {
         SetToken(JsonToken.Float, double.NaN);
       }
       else
       {
-        throw CreateJsonReaderException("Error parsing NaN value. Line {0}, position {1}.", _currentLineNumber, _currentLinePosition);
+        throw JsonReaderException.Create(this, "Error parsing NaN value.");
       }
     }
 
@@ -931,8 +1581,12 @@ namespace Newtonsoft.Json
     {
       base.Close();
 
-      if (_reader != null)
+      if (CloseInput && _reader != null)
+#if !(NETFX_CORE || PORTABLE)
         _reader.Close();
+#else
+        _reader.Dispose();
+#endif
 
       if (_buffer != null)
         _buffer.Clear();
@@ -959,10 +1613,10 @@ namespace Newtonsoft.Json
     {
       get
       {
-        if (CurrentState == State.Start)
+        if (CurrentState == State.Start && LinePosition == 0)
           return 0;
 
-        return _currentLineNumber;
+        return _lineNumber;
       }
     }
 
@@ -974,7 +1628,7 @@ namespace Newtonsoft.Json
     /// </value>
     public int LinePosition
     {
-      get { return _currentLinePosition; }
+      get { return _charPos - _lineStartPos; }
     }
   }
 }
