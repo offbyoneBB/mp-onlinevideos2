@@ -24,16 +24,38 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json.Utilities;
 
 namespace Newtonsoft.Json.Serialization
 {
   internal abstract class JsonSerializerInternalBase
   {
-    private ErrorContext _currentErrorContext;
+    private class ReferenceEqualsEqualityComparer : IEqualityComparer<object>
+    {
+      bool IEqualityComparer<object>.Equals(object x, object y)
+      {
+        return ReferenceEquals(x, y);
+      }
 
-    internal JsonSerializer Serializer { get; private set; }
+      int IEqualityComparer<object>.GetHashCode(object obj)
+      {
+#if !(NETFX_CORE || PORTABLE)
+        // put objects in a bucket based on their reference
+        return RuntimeHelpers.GetHashCode(obj);
+#else
+        // put all objects in the same bucket so ReferenceEquals is called on all
+        return -1;
+#endif
+      }
+    }
+
+    private ErrorContext _currentErrorContext;
+    private BidirectionalDictionary<string, object> _mappings;
+
+    internal readonly JsonSerializer Serializer;
 
     protected JsonSerializerInternalBase(JsonSerializer serializer)
     {
@@ -42,10 +64,25 @@ namespace Newtonsoft.Json.Serialization
       Serializer = serializer;
     }
 
-    protected ErrorContext GetErrorContext(object currentObject, object member, Exception error)
+    internal BidirectionalDictionary<string, object> DefaultReferenceMappings
+    {
+      get
+      {
+        // override equality comparer for object key dictionary
+        // object will be modified as it deserializes and might have mutable hashcode
+        if (_mappings == null)
+          _mappings = new BidirectionalDictionary<string, object>(
+            EqualityComparer<string>.Default,
+            new ReferenceEqualsEqualityComparer());
+
+        return _mappings;
+      }
+    }
+
+    protected ErrorContext GetErrorContext(object currentObject, object member, string path, Exception error)
     {
       if (_currentErrorContext == null)
-        _currentErrorContext = new ErrorContext(currentObject, member, error);
+        _currentErrorContext = new ErrorContext(currentObject, member, path, error);
 
       if (_currentErrorContext.Error != error)
         throw new InvalidOperationException("Current error context error is different to requested error.");
@@ -61,9 +98,9 @@ namespace Newtonsoft.Json.Serialization
       _currentErrorContext = null;
     }
 
-    protected bool IsErrorHandled(object currentObject, JsonContract contract, object keyValue, Exception ex)
+    protected bool IsErrorHandled(object currentObject, JsonContract contract, object keyValue, string path, Exception ex)
     {
-      ErrorContext errorContext = GetErrorContext(currentObject, keyValue, ex);
+      ErrorContext errorContext = GetErrorContext(currentObject, keyValue, path, ex);
       contract.InvokeOnError(currentObject, Serializer.Context, errorContext);
 
       if (!errorContext.Handled)

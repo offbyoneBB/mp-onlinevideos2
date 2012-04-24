@@ -24,17 +24,35 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection;
+using System.Runtime.Serialization;
 using Newtonsoft.Json.Utilities;
+#if NET20
+using Newtonsoft.Json.Utilities.LinqBridge;
+#else
+using System.Linq;
+#endif
 
 namespace Newtonsoft.Json.Converters
 {
   /// <summary>
   /// Converts an <see cref="Enum"/> to and from its name string value.
   /// </summary>
+  /// <summary>
+  /// Converts an <see cref="Enum"/> to and from its name string value.
+  /// </summary>
   public class StringEnumConverter : JsonConverter
   {
+    private readonly Dictionary<Type, BidirectionalDictionary<string, string>> _enumMemberNamesPerType = new Dictionary<Type, BidirectionalDictionary<string, string>>();
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the written enum text should be camel case.
+    /// </summary>
+    /// <value><c>true</c> if the written enum text will be camel case; otherwise, <c>false</c>.</value>
+    public bool CamelCaseText { get; set; }
+    
     /// <summary>
     /// Writes the JSON representation of the object.
     /// </summary>
@@ -49,13 +67,30 @@ namespace Newtonsoft.Json.Converters
         return;
       }
 
-      Enum e = (Enum) value;
+      Enum e = (Enum)value;
+
       string enumName = e.ToString("G");
 
       if (char.IsNumber(enumName[0]) || enumName[0] == '-')
+      {
         writer.WriteValue(value);
+      }
       else
-        writer.WriteValue(enumName);
+      {
+        BidirectionalDictionary<string, string> map = GetEnumNameMap(e.GetType());
+
+        string resolvedEnumName;
+        map.TryGetByFirst(enumName, out resolvedEnumName);
+        resolvedEnumName = resolvedEnumName ?? enumName;
+
+        if (CamelCaseText)
+        {
+          string[] names = resolvedEnumName.Split(',').Select(item => StringUtils.ToCamelCase(item.Trim())).ToArray();
+          resolvedEnumName = string.Join(", ", names);
+        }
+
+        writer.WriteValue(resolvedEnumName);
+      }
     }
 
     /// <summary>
@@ -69,24 +104,82 @@ namespace Newtonsoft.Json.Converters
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
       Type t = (ReflectionUtils.IsNullableType(objectType))
-        ? Nullable.GetUnderlyingType(objectType)
-        : objectType;
+      ? Nullable.GetUnderlyingType(objectType)
+      : objectType;
 
       if (reader.TokenType == JsonToken.Null)
       {
         if (!ReflectionUtils.IsNullableType(objectType))
-          throw new Exception("Cannot convert null value to {0}.".FormatWith(CultureInfo.InvariantCulture, objectType));
+          throw JsonSerializationException.Create(reader, "Cannot convert null value to {0}.".FormatWith(CultureInfo.InvariantCulture, objectType));
 
         return null;
       }
 
       if (reader.TokenType == JsonToken.String)
-        return Enum.Parse(t, reader.Value.ToString(), true);
-      
+      {
+        var map = GetEnumNameMap(t);
+        string resolvedEnumName;
+        map.TryGetBySecond(reader.Value.ToString(), out resolvedEnumName);
+        resolvedEnumName = resolvedEnumName ?? reader.Value.ToString();
+
+        return Enum.Parse(t, resolvedEnumName, true);
+      }
+
       if (reader.TokenType == JsonToken.Integer)
         return ConvertUtils.ConvertOrCast(reader.Value, CultureInfo.InvariantCulture, t);
-      
-      throw new Exception("Unexpected token when parsing enum. Expected String or Integer, got {0}.".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
+
+      throw JsonSerializationException.Create(reader, "Unexpected token when parsing enum. Expected String or Integer, got {0}.".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
+    }
+
+    /// <summary>
+    /// A cached representation of the Enum string representation to respect per Enum field name.
+    /// </summary>
+    /// <param name="t">The type of the Enum.</param>
+    /// <returns>A map of enum field name to either the field name, or the configured enum member name (<see cref="EnumMemberAttribute"/>).</returns>
+    private BidirectionalDictionary<string, string> GetEnumNameMap(Type t)
+    {
+      BidirectionalDictionary<string, string> map;
+
+      if (!_enumMemberNamesPerType.TryGetValue(t, out map))
+      {
+        lock (_enumMemberNamesPerType)
+        {
+          if (_enumMemberNamesPerType.TryGetValue(t, out map))
+            return map;
+
+          map = new BidirectionalDictionary<string, string>(
+            StringComparer.OrdinalIgnoreCase,
+            StringComparer.OrdinalIgnoreCase);
+
+          foreach (FieldInfo f in t.GetFields())
+          {
+            string n1 = f.Name;
+            string n2;
+            
+#if !NET20
+            n2 = f.GetCustomAttributes(typeof (EnumMemberAttribute), true)
+                          .Cast<EnumMemberAttribute>()
+                          .Select(a => a.Value)
+                          .SingleOrDefault() ?? f.Name;
+#else
+            n2 = f.Name;
+#endif
+
+            string s;
+            if (map.TryGetBySecond(n2, out s))
+            {
+              throw new InvalidOperationException("Enum name '{0}' already exists on enum '{1}'."
+                .FormatWith(CultureInfo.InvariantCulture, n2, t.Name));
+            }
+
+            map.Add(n1, n2);
+          }
+
+          _enumMemberNamesPerType[t] = map;
+        }
+      }
+
+      return map;
     }
 
     /// <summary>
@@ -94,15 +187,15 @@ namespace Newtonsoft.Json.Converters
     /// </summary>
     /// <param name="objectType">Type of the object.</param>
     /// <returns>
-    /// 	<c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
+    /// <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
     /// </returns>
     public override bool CanConvert(Type objectType)
     {
       Type t = (ReflectionUtils.IsNullableType(objectType))
-        ? Nullable.GetUnderlyingType(objectType)
-        : objectType;
+      ? Nullable.GetUnderlyingType(objectType)
+      : objectType;
 
-      return t.IsEnum;
+      return t.IsEnum();
     }
   }
 }

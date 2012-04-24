@@ -12,6 +12,30 @@ namespace Newtonsoft.Json.Utilities
 
   internal static class MiscellaneousUtils
   {
+    public static bool ValueEquals(object objA, object objB)
+    {
+      if (objA == null && objB == null)
+        return true;
+      if (objA != null && objB == null)
+        return false;
+      if (objA == null && objB != null)
+        return false;
+
+      // comparing an Int32 and Int64 both of the same value returns false
+      // make types the same then compare
+      if (objA.GetType() != objB.GetType())
+      {
+        if (ConvertUtils.IsInteger(objA) && ConvertUtils.IsInteger(objB))
+          return Convert.ToDecimal(objA, CultureInfo.CurrentCulture).Equals(Convert.ToDecimal(objB, CultureInfo.CurrentCulture));
+        else if ((objA is double || objA is float || objA is decimal) && (objB is double || objB is float || objB is decimal))
+          return MathUtils.ApproxEquals(Convert.ToDouble(objA, CultureInfo.CurrentCulture), Convert.ToDouble(objB, CultureInfo.CurrentCulture));
+        else
+          return false;
+      }
+
+      return objA.Equals(objB);
+    }
+
     public static ArgumentOutOfRangeException CreateArgumentOutOfRangeException(string paramName, object actualValue, string message)
     {
       string newMessage = message + Environment.NewLine + @"Actual value was {0}.".FormatWith(CultureInfo.InvariantCulture, actualValue);
@@ -85,18 +109,20 @@ namespace Newtonsoft.Json.Utilities
       return hex;
     }
 
-    public static bool ByteArrayCompare(byte[] a1, byte[] a2)
+    public static int ByteArrayCompare(byte[] a1, byte[] a2)
     {
-      if (a1.Length != a2.Length)
-        return false;
+      int lengthCompare = a1.Length.CompareTo(a2.Length);
+      if (lengthCompare != 0)
+        return lengthCompare;
 
       for (int i = 0; i < a1.Length; i++)
       {
-        if (a1[i] != a2[i])
-          return false;
+        int valueCompare = a1[i].CompareTo(a2[i]);
+        if (valueCompare != 0)
+          return valueCompare;
       }
 
-      return true;
+      return 0;
     }
 
     public static string GetPrefix(string qualifiedName)

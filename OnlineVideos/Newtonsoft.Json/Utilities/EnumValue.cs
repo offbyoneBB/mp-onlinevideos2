@@ -23,17 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Newtonsoft.Json.Utilities
 {
   internal class EnumValue<T> where T : struct
   {
-    private string _name;
-    private T _value;
+    private readonly string _name;
+    private readonly T _value;
 
     public string Name
     {

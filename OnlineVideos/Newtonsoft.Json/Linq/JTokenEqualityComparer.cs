@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Newtonsoft.Json.Linq
 {
@@ -13,8 +10,8 @@ namespace Newtonsoft.Json.Linq
     /// <summary>
     /// Determines whether the specified objects are equal.
     /// </summary>
-    /// <param name="x">The first object of type <paramref name="T"/> to compare.</param>
-    /// <param name="y">The second object of type <paramref name="T"/> to compare.</param>
+    /// <param name="x">The first object of type <see cref="JToken"/> to compare.</param>
+    /// <param name="y">The second object of type <see cref="JToken"/> to compare.</param>
     /// <returns>
     /// true if the specified objects are equal; otherwise, false.
     /// </returns>

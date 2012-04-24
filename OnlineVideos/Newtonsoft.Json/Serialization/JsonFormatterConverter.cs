@@ -23,13 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-#if !SILVERLIGHT && !PocketPC
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using Newtonsoft.Json.Utilities;
 using Newtonsoft.Json.Linq;
 

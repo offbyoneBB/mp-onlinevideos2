@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Newtonsoft.Json
@@ -32,8 +33,10 @@ namespace Newtonsoft.Json
   /// <summary>
   /// The exception thrown when an error occurs during Json serialization or deserialization.
   /// </summary>
+#if !(SILVERLIGHT || WINDOWS_PHONE || NETFX_CORE || PORTABLE)
   [Serializable]
-  public class JsonSerializationException : Exception
+#endif
+  public class JsonSerializationException : JsonException
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="JsonSerializationException"/> class.
@@ -61,6 +64,37 @@ namespace Newtonsoft.Json
     public JsonSerializationException(string message, Exception innerException)
       : base(message, innerException)
     {
+    }
+
+#if !(WINDOWS_PHONE || SILVERLIGHT || NETFX_CORE || PORTABLE)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JsonSerializationException"/> class.
+    /// </summary>
+    /// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+    /// <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+    /// <exception cref="T:System.ArgumentNullException">The <paramref name="info"/> parameter is null. </exception>
+    /// <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0). </exception>
+    public JsonSerializationException(SerializationInfo info, StreamingContext context)
+      : base(info, context)
+    {
+    }
+#endif
+
+    internal static JsonSerializationException Create(JsonReader reader, string message)
+    {
+      return Create(reader, message, null);
+    }
+
+    internal static JsonSerializationException Create(JsonReader reader, string message, Exception ex)
+    {
+      return Create(reader as IJsonLineInfo, reader.Path, message, ex);
+    }
+
+    internal static JsonSerializationException Create(IJsonLineInfo lineInfo, string path, string message, Exception ex)
+    {
+      message = JsonReaderException.FormatExceptionMessage(lineInfo, path, message);
+
+      return new JsonSerializationException(message, ex);
     }
   }
 }

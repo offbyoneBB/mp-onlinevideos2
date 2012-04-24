@@ -23,10 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
 using System.Collections.Generic;
+#if NET20
+using Newtonsoft.Json.Utilities.LinqBridge;
+#else
 using System.Linq;
-using System.Text;
+#endif
 
 namespace Newtonsoft.Json.Schema
 {
@@ -71,13 +73,9 @@ namespace Newtonsoft.Json.Schema
 
       _nodes.Add(currentNode);
 
-      if (schema.Properties != null)
-      {
-        foreach (KeyValuePair<string, JsonSchema> property in schema.Properties)
-        {
-          AddProperty(currentNode, property.Key, property.Value);
-        }
-      }
+      AddProperties(schema.Properties, currentNode.Properties);
+
+      AddProperties(schema.PatternProperties, currentNode.PatternProperties);
 
       if (schema.Items != null)
       {
@@ -96,12 +94,23 @@ namespace Newtonsoft.Json.Schema
       return currentNode;
     }
 
-    public void AddProperty(JsonSchemaNode parentNode, string propertyName, JsonSchema schema)
+    public void AddProperties(IDictionary<string, JsonSchema> source, IDictionary<string, JsonSchemaNode> target)
+    {
+      if (source != null)
+      {
+        foreach (KeyValuePair<string, JsonSchema> property in source)
+        {
+          AddProperty(target, property.Key, property.Value);
+        }
+      }
+    }
+
+    public void AddProperty(IDictionary<string, JsonSchemaNode> target, string propertyName, JsonSchema schema)
     {
       JsonSchemaNode propertyNode;
-      parentNode.Properties.TryGetValue(propertyName, out propertyNode);
+      target.TryGetValue(propertyName, out propertyNode);
 
-      parentNode.Properties[propertyName] = AddSchema(propertyNode, schema);
+      target[propertyName] = AddSchema(propertyNode, schema);
     }
 
     public void AddItem(JsonSchemaNode parentNode, int index, JsonSchema schema)
@@ -143,12 +152,19 @@ namespace Newtonsoft.Json.Schema
 
         model.Properties[property.Key] = BuildNodeModel(property.Value);
       }
-      for (int i = 0; i < node.Items.Count; i++)
+      foreach (KeyValuePair<string, JsonSchemaNode> property in node.PatternProperties)
+      {
+        if (model.PatternProperties == null)
+          model.PatternProperties = new Dictionary<string, JsonSchemaModel>();
+
+        model.PatternProperties[property.Key] = BuildNodeModel(property.Value);
+      }
+      foreach (JsonSchemaNode t in node.Items)
       {
         if (model.Items == null)
           model.Items = new List<JsonSchemaModel>();
 
-        model.Items.Add(BuildNodeModel(node.Items[i]));
+        model.Items.Add(BuildNodeModel(t));
       }
       if (node.AdditionalProperties != null)
         model.AdditionalProperties = BuildNodeModel(node.AdditionalProperties);

@@ -23,10 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Utilities;
 
@@ -50,6 +47,25 @@ namespace Newtonsoft.Json.Schema
       bool valid = true;
       source.Validate(schema, (sender, args) => { valid = false; });
       return valid;
+    }
+
+    /// <summary>
+    /// Determines whether the <see cref="JToken"/> is valid.
+    /// </summary>
+    /// <param name="source">The source <see cref="JToken"/> to test.</param>
+    /// <param name="schema">The schema to test with.</param>
+    /// <param name="errorMessages">When this method returns, contains any error messages generated while validating. </param>
+    /// <returns>
+    /// 	<c>true</c> if the specified <see cref="JToken"/> is valid; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool IsValid(this JToken source, JsonSchema schema, out IList<string> errorMessages)
+    {
+      IList<string> errors = new List<string>();
+
+      source.Validate(schema, (sender, args) => errors.Add(args.Message));
+
+      errorMessages = errors;
+      return (errorMessages.Count == 0);
     }
 
     /// <summary>

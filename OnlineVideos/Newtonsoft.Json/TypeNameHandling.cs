@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Newtonsoft.Json
 {
@@ -26,6 +23,10 @@ namespace Newtonsoft.Json
     /// <summary>
     /// Always include the .NET type name when serializing.
     /// </summary>
-    All = Objects | Arrays
+    All = Objects | Arrays,
+    /// <summary>
+    /// Include the .NET type name when the type of the object being serialized is not the same as its declared type.
+    /// </summary>
+    Auto = 4
   }
 }

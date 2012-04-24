@@ -23,10 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-#if !PocketPC && !SILVERLIGHT
+#if !(SILVERLIGHT || PORTABLE)
 using System;
 using System.Collections.Generic;
-using System.Linq;
+#if NET20
+using Newtonsoft.Json.Utilities.LinqBridge;
+#endif
 using System.Text;
 using System.Reflection;
 using Newtonsoft.Json.Utilities;
@@ -71,11 +73,11 @@ namespace Newtonsoft.Json.Serialization
         if (value == null)
         {
           if (!ReflectionUtils.IsNullable(ReflectionUtils.GetMemberUnderlyingType(_memberInfo)))
-            throw new Exception("Incompatible value. Cannot set {0} to null.".FormatWith(CultureInfo.InvariantCulture, _memberInfo));
+            throw new JsonSerializationException("Incompatible value. Cannot set {0} to null.".FormatWith(CultureInfo.InvariantCulture, _memberInfo));
         }
         else if (!ReflectionUtils.GetMemberUnderlyingType(_memberInfo).IsAssignableFrom(value.GetType()))
         {
-            throw new Exception("Incompatible value. Cannot set {0} to type {1}.".FormatWith(CultureInfo.InvariantCulture, _memberInfo, value.GetType()));
+          throw new JsonSerializationException("Incompatible value. Cannot set {0} to type {1}.".FormatWith(CultureInfo.InvariantCulture, _memberInfo, value.GetType()));
         }
 #endif
 

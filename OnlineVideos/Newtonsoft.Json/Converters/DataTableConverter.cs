@@ -23,9 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-#if !SILVERLIGHT
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
 using System;
 using System.Data;
+using Newtonsoft.Json.Serialization;
 
 namespace Newtonsoft.Json.Converters
 {
@@ -43,6 +44,7 @@ namespace Newtonsoft.Json.Converters
     public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
     {
       DataTable table = (DataTable)value;
+      DefaultContractResolver resolver = serializer.ContractResolver as DefaultContractResolver;
 
       writer.WriteStartArray();
 
@@ -51,7 +53,10 @@ namespace Newtonsoft.Json.Converters
         writer.WriteStartObject();
         foreach (DataColumn column in row.Table.Columns)
         {
-          writer.WritePropertyName(column.ColumnName);
+          if (serializer.NullValueHandling == NullValueHandling.Ignore && (row[column] == null || row[column] == DBNull.Value))
+            continue;
+
+          writer.WritePropertyName((resolver != null) ? resolver.ResolvePropertyName(column.ColumnName) : column.ColumnName);
           serializer.Serialize(writer, row[column]);
         }
         writer.WriteEndObject();
@@ -91,7 +96,7 @@ namespace Newtonsoft.Json.Converters
 
         while (reader.TokenType == JsonToken.PropertyName)
         {
-          string columnName = (string) reader.Value;
+          string columnName = (string)reader.Value;
 
           reader.Read();
 
@@ -101,7 +106,7 @@ namespace Newtonsoft.Json.Converters
             dt.Columns.Add(new DataColumn(columnName, columnType));
           }
 
-          dr[columnName] = reader.Value;
+          dr[columnName] = reader.Value ?? DBNull.Value;
           reader.Read();
         }
 
@@ -110,8 +115,6 @@ namespace Newtonsoft.Json.Converters
 
         reader.Read();
       }
-
-      reader.Read();
 
       return dt;
     }

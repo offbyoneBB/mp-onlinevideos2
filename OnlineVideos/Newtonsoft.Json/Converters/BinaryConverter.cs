@@ -23,16 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
 using System;
-#if !SILVERLIGHT
 using System.Data.SqlTypes;
-#endif
 using System.Globalization;
 using Newtonsoft.Json.Utilities;
+using System.Collections.Generic;
 
 namespace Newtonsoft.Json.Converters
 {
-#if !SILVERLIGHT && !PocketPC && !NET20
+#if !NET20
   internal interface IBinary
   {
     byte[] ToArray();
@@ -44,7 +44,7 @@ namespace Newtonsoft.Json.Converters
   /// </summary>
   public class BinaryConverter : JsonConverter
   {
-#if !SILVERLIGHT && !PocketPC && !NET20
+#if !NET20
     private const string BinaryTypeName = "System.Data.Linq.Binary";
 #endif
 
@@ -69,18 +69,17 @@ namespace Newtonsoft.Json.Converters
 
     private byte[] GetByteArray(object value)
     {
-#if !SILVERLIGHT && !PocketPC && !NET20
+#if !(NET20)
       if (value.GetType().AssignableToTypeName(BinaryTypeName))
       {
         IBinary binary = DynamicWrapper.CreateWrapper<IBinary>(value);
         return binary.ToArray();
       }
 #endif
-#if !SILVERLIGHT
       if (value is SqlBinary)
         return ((SqlBinary) value).Value;
-#endif
-      throw new Exception("Unexpected value type when writing binary: {0}".FormatWith(CultureInfo.InvariantCulture, value.GetType()));
+
+      throw new JsonSerializationException("Unexpected value type when writing binary: {0}".FormatWith(CultureInfo.InvariantCulture, value.GetType()));
     }
 
     /// <summary>
@@ -100,28 +99,63 @@ namespace Newtonsoft.Json.Converters
       if (reader.TokenType == JsonToken.Null)
       {
         if (!ReflectionUtils.IsNullable(objectType))
-          throw new Exception("Cannot convert null value to {0}.".FormatWith(CultureInfo.InvariantCulture, objectType));
+          throw JsonSerializationException.Create(reader, "Cannot convert null value to {0}.".FormatWith(CultureInfo.InvariantCulture, objectType));
 
         return null;
       }
 
-      if (reader.TokenType != JsonToken.String)
-        throw new Exception("Unexpected token parsing binary. Expected String, got {0}.".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
+      byte[] data;
 
-      // current token is already at base64 string
-      // unable to call ReadAsBytes so do it the old fashion way
-      string encodedData = reader.Value.ToString();
-      byte[] data = Convert.FromBase64String(encodedData);
+      if (reader.TokenType == JsonToken.StartArray)
+      {
+        data = ReadByteArray(reader);
+      }
+      else if (reader.TokenType == JsonToken.String)
+      {
+        // current token is already at base64 string
+        // unable to call ReadAsBytes so do it the old fashion way
+        string encodedData = reader.Value.ToString();
+        data = Convert.FromBase64String(encodedData);
+      }
+      else
+      {
+        throw JsonSerializationException.Create(reader, "Unexpected token parsing binary. Expected String or StartArray, got {0}.".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
+      }
 
-#if !SILVERLIGHT && !PocketPC && !NET20
+      
+#if !NET20
       if (t.AssignableToTypeName(BinaryTypeName))
         return Activator.CreateInstance(t, data);
 #endif
-#if !SILVERLIGHT
+
       if (t == typeof(SqlBinary))
         return new SqlBinary(data);
-#endif
-      throw new Exception("Unexpected object type when writing binary: {0}".FormatWith(CultureInfo.InvariantCulture, objectType));
+
+      throw JsonSerializationException.Create(reader, "Unexpected object type when writing binary: {0}".FormatWith(CultureInfo.InvariantCulture, objectType));
+    }
+
+    private byte[] ReadByteArray(JsonReader reader)
+    {
+      List<byte> byteList = new List<byte>();
+
+      while (reader.Read())
+      {
+        switch (reader.TokenType)
+        {
+          case JsonToken.Integer:
+            byteList.Add(Convert.ToByte(reader.Value, CultureInfo.InvariantCulture));
+            break;
+          case JsonToken.EndArray:
+            return byteList.ToArray();
+          case JsonToken.Comment:
+            // skip
+            break;
+          default:
+            throw JsonSerializationException.Create(reader, "Unexpected token when reading bytes: {0}".FormatWith(CultureInfo.InvariantCulture, reader.TokenType));
+        }
+      }
+
+      throw JsonSerializationException.Create(reader, "Unexpected end when reading bytes.");
     }
 
     /// <summary>
@@ -133,15 +167,16 @@ namespace Newtonsoft.Json.Converters
     /// </returns>
     public override bool CanConvert(Type objectType)
     {
-#if !SILVERLIGHT && !PocketPC && !NET20
+#if !NET20
       if (objectType.AssignableToTypeName(BinaryTypeName))
         return true;
 #endif
-#if !SILVERLIGHT
+
       if (objectType == typeof(SqlBinary) || objectType == typeof(SqlBinary?))
         return true;
-#endif
+
       return false;
     }
   }
 }
+#endif

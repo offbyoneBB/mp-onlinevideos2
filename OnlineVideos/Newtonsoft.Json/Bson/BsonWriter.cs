@@ -46,13 +46,34 @@ namespace Newtonsoft.Json.Bson
     private string _propertyName;
 
     /// <summary>
+    /// Gets or sets the <see cref="DateTimeKind" /> used when writing <see cref="DateTime"/> values to BSON.
+    /// When set to <see cref="DateTimeKind.Unspecified" /> no conversion will occur.
+    /// </summary>
+    /// <value>The <see cref="DateTimeKind" /> used when writing <see cref="DateTime"/> values to BSON.</value>
+    public DateTimeKind DateTimeKindHandling
+    {
+      get { return _writer.DateTimeKindHandling; }
+      set { _writer.DateTimeKindHandling = value; }
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="BsonWriter"/> class.
     /// </summary>
     /// <param name="stream">The stream.</param>
     public BsonWriter(Stream stream)
     {
       ValidationUtils.ArgumentNotNull(stream, "stream");
-      _writer = new BsonBinaryWriter(stream);
+      _writer = new BsonBinaryWriter(new BinaryWriter(stream));
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BsonWriter"/> class.
+    /// </summary>
+    /// <param name="writer">The writer.</param>
+    public BsonWriter(BinaryWriter writer)
+    {
+      ValidationUtils.ArgumentNotNull(writer, "writer");
+      _writer = new BsonBinaryWriter(writer);
     }
 
     /// <summary>
@@ -145,6 +166,17 @@ namespace Newtonsoft.Json.Bson
       _propertyName = name;
     }
 
+    /// <summary>
+    /// Closes this stream and the underlying stream.
+    /// </summary>
+    public override void Close()
+    {
+      base.Close();
+
+      if (CloseOutput && _writer != null)
+        _writer.Close();
+    }
+
     private void AddParent(BsonToken container)
     {
       AddToken(container);
@@ -167,22 +199,26 @@ namespace Newtonsoft.Json.Bson
       {
         if (_parent is BsonObject)
         {
-          ((BsonObject)_parent).Add(_propertyName, token);
+          ((BsonObject) _parent).Add(_propertyName, token);
           _propertyName = null;
         }
         else
         {
-          ((BsonArray)_parent).Add(token);
+          ((BsonArray) _parent).Add(token);
         }
       }
       else
       {
+        if (token.Type != BsonType.Object && token.Type != BsonType.Array)
+          throw new JsonWriterException("Error writing {0} value. BSON must start with an Object or Array.".FormatWith(CultureInfo.InvariantCulture, token.Type));
+
         _parent = token;
         _root = token;
       }
     }
 
     #region WriteValue methods
+
     /// <summary>
     /// Writes a null value.
     /// </summary>
@@ -228,6 +264,7 @@ namespace Newtonsoft.Json.Bson
     /// Writes a <see cref="UInt32"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt32"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(uint value)
     {
       if (value > int.MaxValue)
@@ -251,6 +288,7 @@ namespace Newtonsoft.Json.Bson
     /// Writes a <see cref="UInt64"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt64"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(ulong value)
     {
       if (value > long.MaxValue)
@@ -304,6 +342,7 @@ namespace Newtonsoft.Json.Bson
     /// Writes a <see cref="UInt16"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt16"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(ushort value)
     {
       base.WriteValue(value);
@@ -317,7 +356,13 @@ namespace Newtonsoft.Json.Bson
     public override void WriteValue(char value)
     {
       base.WriteValue(value);
-      AddToken(new BsonString(value.ToString(), true));
+      string s = null;
+#if !(NETFX_CORE || PORTABLE)
+      s = value.ToString(CultureInfo.InvariantCulture);
+#else
+      s = value.ToString();
+#endif
+      AddToken(new BsonString(s, true));
     }
 
     /// <summary>
@@ -334,6 +379,7 @@ namespace Newtonsoft.Json.Bson
     /// Writes a <see cref="SByte"/> value.
     /// </summary>
     /// <param name="value">The <see cref="SByte"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(sbyte value)
     {
       base.WriteValue(value);
@@ -357,6 +403,7 @@ namespace Newtonsoft.Json.Bson
     public override void WriteValue(DateTime value)
     {
       base.WriteValue(value);
+      value = JsonConvert.EnsureDateTime(value, DateTimeZoneHandling);
       AddValue(value, BsonType.Date);
     }
 
@@ -381,6 +428,37 @@ namespace Newtonsoft.Json.Bson
       base.WriteValue(value);
       AddValue(value, BsonType.Binary);
     }
+
+    /// <summary>
+    /// Writes a <see cref="Guid"/> value.
+    /// </summary>
+    /// <param name="value">The <see cref="Guid"/> value to write.</param>
+    public override void WriteValue(Guid value)
+    {
+      base.WriteValue(value);
+      AddToken(new BsonString(value.ToString(), true));
+    }
+
+    /// <summary>
+    /// Writes a <see cref="TimeSpan"/> value.
+    /// </summary>
+    /// <param name="value">The <see cref="TimeSpan"/> value to write.</param>
+    public override void WriteValue(TimeSpan value)
+    {
+      base.WriteValue(value);
+      AddToken(new BsonString(value.ToString(), true));
+    }
+
+    /// <summary>
+    /// Writes a <see cref="Uri"/> value.
+    /// </summary>
+    /// <param name="value">The <see cref="Uri"/> value to write.</param>
+    public override void WriteValue(Uri value)
+    {
+      base.WriteValue(value);
+      AddToken(new BsonString(value.ToString(), true));
+    }
+
     #endregion
 
     /// <summary>
@@ -392,7 +470,7 @@ namespace Newtonsoft.Json.Bson
       ValidationUtils.ArgumentNotNull(value, "value");
 
       if (value.Length != 12)
-        throw new Exception("An object id must be 12 bytes");
+        throw new ArgumentException("An object id must be 12 bytes", "value");
 
       // hack to update the writer state
       AutoComplete(JsonToken.Undefined);

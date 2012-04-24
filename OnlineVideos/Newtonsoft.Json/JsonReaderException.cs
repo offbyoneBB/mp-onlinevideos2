@@ -24,14 +24,19 @@
 #endregion
 
 using System;
+using System.Globalization;
+using System.Runtime.Serialization;
+using Newtonsoft.Json.Utilities;
 
 namespace Newtonsoft.Json
 {
   /// <summary>
   /// The exception thrown when an error occurs while reading Json text.
   /// </summary>
+#if !(SILVERLIGHT || WINDOWS_PHONE || NETFX_CORE || PORTABLE)
   [Serializable]
-  public class JsonReaderException : Exception
+#endif
+  public class JsonReaderException : JsonException
   {
     /// <summary>
     /// Gets the line number indicating where the error occurred.
@@ -45,6 +50,12 @@ namespace Newtonsoft.Json
     /// </summary>
     /// <value>The line position indicating where the error occurred.</value>
     public int LinePosition { get; private set; }
+
+    /// <summary>
+    /// Gets the path to the JSON where the error occurred.
+    /// </summary>
+    /// <value>The path to the JSON where the error occurred.</value>
+    public string Path { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JsonReaderException"/> class.
@@ -74,11 +85,73 @@ namespace Newtonsoft.Json
     {
     }
 
-    internal JsonReaderException(string message, Exception innerException, int lineNumber, int linePosition)
+#if !(WINDOWS_PHONE || SILVERLIGHT || NETFX_CORE || PORTABLE)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JsonReaderException"/> class.
+    /// </summary>
+    /// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+    /// <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+    /// <exception cref="T:System.ArgumentNullException">The <paramref name="info"/> parameter is null. </exception>
+    /// <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0). </exception>
+    public JsonReaderException(SerializationInfo info, StreamingContext context)
+      : base(info, context)
+    {
+    }
+#endif
+
+    internal JsonReaderException(string message, Exception innerException, string path, int lineNumber, int linePosition)
       : base(message, innerException)
     {
+      Path = path;
       LineNumber = lineNumber;
       LinePosition = linePosition;
+    }
+
+    internal static JsonReaderException Create(JsonReader reader, string message)
+    {
+      return Create(reader, message, null);
+    }
+
+    internal static JsonReaderException Create(JsonReader reader, string message, Exception ex)
+    {
+      return Create(reader as IJsonLineInfo, reader.Path, message, ex);
+    }
+
+    internal static JsonReaderException Create(IJsonLineInfo lineInfo, string path, string message, Exception ex)
+    {
+      message = FormatExceptionMessage(lineInfo, path, message);
+
+      int lineNumber;
+      int linePosition;
+      if (lineInfo != null && lineInfo.HasLineInfo())
+      {
+        lineNumber = lineInfo.LineNumber;
+        linePosition = lineInfo.LinePosition;
+      }
+      else
+      {
+        lineNumber = 0;
+        linePosition = 0;
+      }
+
+      return new JsonReaderException(message, ex, path, lineNumber, linePosition);
+    }
+
+    internal static string FormatExceptionMessage(IJsonLineInfo lineInfo, string path, string message)
+    {
+      message = message.Trim();
+
+      if (!message.EndsWith("."))
+        message += ".";
+
+      message += " Path '{0}'".FormatWith(CultureInfo.InvariantCulture, path);
+
+      if (lineInfo != null && lineInfo.HasLineInfo())
+        message += ", line {0}, position {1}".FormatWith(CultureInfo.InvariantCulture, lineInfo.LineNumber, lineInfo.LinePosition);
+
+      message += ".";
+
+      return message;
     }
   }
 }

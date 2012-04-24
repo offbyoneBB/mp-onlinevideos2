@@ -23,12 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Utilities;
+#if NET20
+using Newtonsoft.Json.Utilities.LinqBridge;
+#else
+using System.Linq;
+#endif
 
 namespace Newtonsoft.Json.Schema
 {
@@ -70,7 +72,7 @@ namespace Newtonsoft.Json.Schema
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.IdPropertyName, schema.Id);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.TitlePropertyName, schema.Title);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.DescriptionPropertyName, schema.Description);
-      WritePropertyIfNotNull(_writer, JsonSchemaConstants.OptionalPropertyName, schema.Optional);
+      WritePropertyIfNotNull(_writer, JsonSchemaConstants.RequiredPropertyName, schema.Required);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.ReadOnlyPropertyName, schema.ReadOnly);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.HiddenPropertyName, schema.Hidden);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.TransientPropertyName, schema.Transient);
@@ -89,25 +91,18 @@ namespace Newtonsoft.Json.Schema
           ReferenceOrWriteSchema(schema.AdditionalProperties);
         }
       }
-      if (schema.Properties != null)
-      {
-        _writer.WritePropertyName(JsonSchemaConstants.PropertiesPropertyName);
-        _writer.WriteStartObject();
-        foreach (KeyValuePair<string, JsonSchema> property in schema.Properties)
-        {
-          _writer.WritePropertyName(property.Key);
-          ReferenceOrWriteSchema(property.Value);
-        }
-        _writer.WriteEndObject();
-      }
+      WriteSchemaDictionaryIfNotNull(_writer, JsonSchemaConstants.PropertiesPropertyName, schema.Properties);
+      WriteSchemaDictionaryIfNotNull(_writer, JsonSchemaConstants.PatternPropertiesPropertyName, schema.PatternProperties);
       WriteItems(schema);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.MinimumPropertyName, schema.Minimum);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.MaximumPropertyName, schema.Maximum);
+      WritePropertyIfNotNull(_writer, JsonSchemaConstants.ExclusiveMinimumPropertyName, schema.ExclusiveMinimum);
+      WritePropertyIfNotNull(_writer, JsonSchemaConstants.ExclusiveMaximumPropertyName, schema.ExclusiveMaximum);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.MinimumLengthPropertyName, schema.MinimumLength);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.MaximumLengthPropertyName, schema.MaximumLength);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.MinimumItemsPropertyName, schema.MinimumItems);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.MaximumItemsPropertyName, schema.MaximumItems);
-      WritePropertyIfNotNull(_writer, JsonSchemaConstants.MaximumDecimalsPropertyName, schema.MaximumDecimals);
+      WritePropertyIfNotNull(_writer, JsonSchemaConstants.DivisibleByPropertyName, schema.DivisibleBy);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.FormatPropertyName, schema.Format);
       WritePropertyIfNotNull(_writer, JsonSchemaConstants.PatternPropertyName, schema.Pattern);
       if (schema.Enum != null)
@@ -136,7 +131,7 @@ namespace Newtonsoft.Json.Schema
           option.Key.WriteTo(_writer);
           if (option.Value != null)
           {
-            _writer.WritePropertyName(JsonSchemaConstants.OptionValuePropertyName);
+            _writer.WritePropertyName(JsonSchemaConstants.OptionLabelPropertyName);
             _writer.WriteValue(option.Value);
           }
           _writer.WriteEndObject();
@@ -151,6 +146,21 @@ namespace Newtonsoft.Json.Schema
         ReferenceOrWriteSchema(schema.Extends);
       }
       _writer.WriteEndObject();
+    }
+
+    private void WriteSchemaDictionaryIfNotNull(JsonWriter writer, string propertyName, IDictionary<string, JsonSchema> properties)
+    {
+      if (properties != null)
+      {
+        writer.WritePropertyName(propertyName);
+        writer.WriteStartObject();
+        foreach (KeyValuePair<string, JsonSchema> property in properties)
+        {
+          writer.WritePropertyName(property.Key);
+          ReferenceOrWriteSchema(property.Value);
+        }
+        writer.WriteEndObject();
+      }
     }
 
     private void WriteItems(JsonSchema schema)

@@ -24,13 +24,17 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 
 namespace Newtonsoft.Json.Schema
 {
   /// <summary>
   /// Returns detailed information about the schema exception.
   /// </summary>
-  public class JsonSchemaException : Exception
+#if !(SILVERLIGHT || WINDOWS_PHONE || NETFX_CORE || PORTABLE)
+  [Serializable]
+#endif
+  public class JsonSchemaException : JsonException
   {
     /// <summary>
     /// Gets the line number indicating where the error occurred.
@@ -44,6 +48,12 @@ namespace Newtonsoft.Json.Schema
     /// </summary>
     /// <value>The line position indicating where the error occurred.</value>
     public int LinePosition { get; private set; }
+
+    /// <summary>
+    /// Gets the path to the JSON where the error occurred.
+    /// </summary>
+    /// <value>The path to the JSON where the error occurred.</value>
+    public string Path { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JsonSchemaException"/> class.
@@ -73,9 +83,24 @@ namespace Newtonsoft.Json.Schema
     {
     }
 
-    internal JsonSchemaException(string message, Exception innerException, int lineNumber, int linePosition)
+ #if !(WINDOWS_PHONE || SILVERLIGHT || NETFX_CORE || PORTABLE)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JsonSchemaException"/> class.
+    /// </summary>
+    /// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+    /// <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+    /// <exception cref="T:System.ArgumentNullException">The <paramref name="info"/> parameter is null. </exception>
+    /// <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0). </exception>
+    public JsonSchemaException(SerializationInfo info, StreamingContext context)
+      : base(info, context)
+    {
+    }
+#endif
+
+    internal JsonSchemaException(string message, Exception innerException, string path, int lineNumber, int linePosition)
       : base(message, innerException)
     {
+      Path = path;
       LineNumber = lineNumber;
       LinePosition = linePosition;
     }

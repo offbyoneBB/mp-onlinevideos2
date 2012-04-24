@@ -24,9 +24,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 
 namespace Newtonsoft.Json
 {
@@ -36,12 +34,19 @@ namespace Newtonsoft.Json
   public enum MemberSerialization
   {
     /// <summary>
-    /// All members are serialized by default. Members can be excluded using the <see cref="JsonIgnoreAttribute"/>.
+    /// All public members are serialized by default. Members can be excluded using <see cref="JsonIgnoreAttribute"/> or <see cref="NonSerializedAttribute"/>.
+    /// This is the default member serialization mode.
     /// </summary>
     OptOut,
     /// <summary>
-    /// Only members must be marked with the <see cref="JsonPropertyAttribute"/> are serialized.
+    /// Only members must be marked with <see cref="JsonPropertyAttribute"/> or <see cref="DataMemberAttribute"/> are serialized.
+    /// This member serialization mode can also be set by marking the class with <see cref="DataContractAttribute"/>.
     /// </summary>
-    OptIn
+    OptIn,
+    /// <summary>
+    /// All public and private fields are serialized. Members can be excluded using <see cref="JsonIgnoreAttribute"/> or <see cref="NonSerializedAttribute"/>.
+    /// This member serialization mode can also be set by marking the class with <see cref="SerializableAttribute"/>.
+    /// </summary>
+    Fields
   }
 }

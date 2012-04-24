@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json.Utilities;
 using System.Globalization;
 
@@ -10,7 +7,7 @@ namespace Newtonsoft.Json
   /// <summary>
   /// Instructs the <see cref="JsonSerializer"/> to use the specified <see cref="JsonConverter"/> when serializing the member or class.
   /// </summary>
-  [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class, AllowMultiple = false)]
+  [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface | AttributeTargets.Enum | AttributeTargets.Parameter, AllowMultiple = false)]
   public sealed class JsonConverterAttribute : Attribute
   {
     private readonly Type _converterType;
@@ -44,7 +41,7 @@ namespace Newtonsoft.Json
       }
       catch (Exception ex)
       {
-        throw new Exception("Error creating {0}".FormatWith(CultureInfo.InvariantCulture, converterType), ex);
+        throw new JsonException("Error creating {0}".FormatWith(CultureInfo.InvariantCulture, converterType), ex);
       }
     }
   }

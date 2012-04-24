@@ -27,9 +27,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using Newtonsoft.Json.Utilities;
-using System.Linq;
 using System.Globalization;
+#if NET20
+using Newtonsoft.Json.Utilities.LinqBridge;
+#else
+using System.Linq;
+#endif
 
 namespace Newtonsoft.Json.Utilities
 {
@@ -61,7 +64,7 @@ namespace Newtonsoft.Json.Utilities
       _genericCollection = list;
     }
 
-    public void Add(T item)
+    public virtual void Add(T item)
     {
       if (_genericCollection != null)
         _genericCollection.Add(item);
@@ -69,7 +72,7 @@ namespace Newtonsoft.Json.Utilities
         _list.Add(item);
     }
 
-    public void Clear()
+    public virtual void Clear()
     {
       if (_genericCollection != null)
         _genericCollection.Clear();
@@ -77,7 +80,7 @@ namespace Newtonsoft.Json.Utilities
         _list.Clear();
     }
 
-    public bool Contains(T item)
+    public virtual bool Contains(T item)
     {
       if (_genericCollection != null)
         return _genericCollection.Contains(item);
@@ -85,7 +88,7 @@ namespace Newtonsoft.Json.Utilities
         return _list.Contains(item);
     }
 
-    public void CopyTo(T[] array, int arrayIndex)
+    public virtual void CopyTo(T[] array, int arrayIndex)
     {
       if (_genericCollection != null)
         _genericCollection.CopyTo(array, arrayIndex);
@@ -93,7 +96,7 @@ namespace Newtonsoft.Json.Utilities
         _list.CopyTo(array, arrayIndex);
     }
 
-    public int Count
+    public virtual int Count
     {
       get
       {
@@ -104,7 +107,7 @@ namespace Newtonsoft.Json.Utilities
       }
     }
 
-    public bool IsReadOnly
+    public virtual bool IsReadOnly
     {
       get
       {
@@ -115,7 +118,7 @@ namespace Newtonsoft.Json.Utilities
       }
     }
 
-    public bool Remove(T item)
+    public virtual bool Remove(T item)
     {
       if (_genericCollection != null)
       {
@@ -132,7 +135,7 @@ namespace Newtonsoft.Json.Utilities
       }
     }
 
-    public IEnumerator<T> GetEnumerator()
+    public virtual IEnumerator<T> GetEnumerator()
     {
       if (_genericCollection != null)
         return _genericCollection.GetEnumerator();
@@ -167,7 +170,7 @@ namespace Newtonsoft.Json.Utilities
     int IList.IndexOf(object value)
     {
       if (_genericCollection != null)
-        throw new Exception("Wrapped ICollection<T> does not support IndexOf.");
+        throw new InvalidOperationException("Wrapped ICollection<T> does not support IndexOf.");
 
       if (IsCompatibleObject(value))
         return _list.IndexOf((T)value);
@@ -178,7 +181,7 @@ namespace Newtonsoft.Json.Utilities
     void IList.RemoveAt(int index)
     {
       if (_genericCollection != null)
-        throw new Exception("Wrapped ICollection<T> does not support RemoveAt.");
+        throw new InvalidOperationException("Wrapped ICollection<T> does not support RemoveAt.");
 
       _list.RemoveAt(index);
     }
@@ -186,7 +189,7 @@ namespace Newtonsoft.Json.Utilities
     void IList.Insert(int index, object value)
     {
       if (_genericCollection != null)
-        throw new Exception("Wrapped ICollection<T> does not support Insert.");
+        throw new InvalidOperationException("Wrapped ICollection<T> does not support Insert.");
 
       VerifyValueType(value);
       _list.Insert(index, (T)value);
@@ -194,7 +197,14 @@ namespace Newtonsoft.Json.Utilities
 
     bool IList.IsFixedSize
     {
-      get { return false; }
+      get
+      {
+        if (_genericCollection != null)
+          // ICollection<T> only has IsReadOnly
+          return _genericCollection.IsReadOnly;
+        else
+          return _list.IsFixedSize;
+      }
     }
 
     void IList.Remove(object value)
@@ -208,14 +218,14 @@ namespace Newtonsoft.Json.Utilities
       get
       {
         if (_genericCollection != null)
-          throw new Exception("Wrapped ICollection<T> does not support indexer.");
+          throw new InvalidOperationException("Wrapped ICollection<T> does not support indexer.");
 
         return _list[index];
       }
       set
       {
         if (_genericCollection != null)
-          throw new Exception("Wrapped ICollection<T> does not support indexer.");
+          throw new InvalidOperationException("Wrapped ICollection<T> does not support indexer.");
 
         VerifyValueType(value);
         _list[index] = (T)value;
@@ -251,7 +261,7 @@ namespace Newtonsoft.Json.Utilities
 
     private static bool IsCompatibleObject(object value)
     {
-      if (!(value is T) && (value != null || (typeof(T).IsValueType && !ReflectionUtils.IsNullableType(typeof(T)))))
+      if (!(value is T) && (value != null || (typeof(T).IsValueType() && !ReflectionUtils.IsNullableType(typeof(T)))))
         return false;
 
       return true;

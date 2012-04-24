@@ -29,8 +29,13 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Collections;
+#if NET20
+using Newtonsoft.Json.Utilities.LinqBridge;
+#else
 using System.Linq;
+#endif
 using System.Globalization;
+using Newtonsoft.Json.Serialization;
 
 namespace Newtonsoft.Json.Utilities
 {
@@ -41,27 +46,6 @@ namespace Newtonsoft.Json.Utilities
       ValidationUtils.ArgumentNotNull(enumerable, "enumerable");
 
       return enumerable.Cast<object>().Where(o => o is T).Cast<T>();
-    }
-
-    public static List<T> CreateList<T>(params T[] values)
-    {
-      return new List<T>(values);
-    }
-
-    /// <summary>
-    /// Determines whether the collection is null or empty.
-    /// </summary>
-    /// <param name="collection">The collection.</param>
-    /// <returns>
-    /// 	<c>true</c> if the collection is null or empty; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool IsNullOrEmpty(ICollection collection)
-    {
-      if (collection != null)
-      {
-        return (collection.Count == 0);
-      }
-      return true;
     }
 
     /// <summary>
@@ -78,113 +62,6 @@ namespace Newtonsoft.Json.Utilities
         return (collection.Count == 0);
       }
       return true;
-    }
-
-    /// <summary>
-    /// Determines whether the collection is null, empty or its contents are uninitialized values.
-    /// </summary>
-    /// <param name="list">The list.</param>
-    /// <returns>
-    /// 	<c>true</c> if the collection is null or empty or its contents are uninitialized values; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool IsNullOrEmptyOrDefault<T>(IList<T> list)
-    {
-      if (IsNullOrEmpty<T>(list))
-        return true;
-
-      return ReflectionUtils.ItemsUnitializedValue<T>(list);
-    }
-
-    /// <summary>
-    /// Makes a slice of the specified list in between the start and end indexes.
-    /// </summary>
-    /// <param name="list">The list.</param>
-    /// <param name="start">The start index.</param>
-    /// <param name="end">The end index.</param>
-    /// <returns>A slice of the list.</returns>
-    public static IList<T> Slice<T>(IList<T> list, int? start, int? end)
-    {
-      return Slice<T>(list, start, end, null);
-    }
-
-    /// <summary>
-    /// Makes a slice of the specified list in between the start and end indexes,
-    /// getting every so many items based upon the step.
-    /// </summary>
-    /// <param name="list">The list.</param>
-    /// <param name="start">The start index.</param>
-    /// <param name="end">The end index.</param>
-    /// <param name="step">The step.</param>
-    /// <returns>A slice of the list.</returns>
-    public static IList<T> Slice<T>(IList<T> list, int? start, int? end, int? step)
-    {
-      if (list == null)
-        throw new ArgumentNullException("list");
-
-      if (step == 0)
-        throw new ArgumentException("Step cannot be zero.", "step");
-
-      List<T> slicedList = new List<T>();
-
-      // nothing to slice
-      if (list.Count == 0)
-        return slicedList;
-
-      // set defaults for null arguments
-      int s = step ?? 1;
-      int startIndex = start ?? 0;
-      int endIndex = end ?? list.Count;
-
-      // start from the end of the list if start is negitive
-      startIndex = (startIndex < 0) ? list.Count + startIndex : startIndex;
-
-      // end from the start of the list if end is negitive
-      endIndex = (endIndex < 0) ? list.Count + endIndex : endIndex;
-
-      // ensure indexes keep within collection bounds
-      startIndex = Math.Max(startIndex, 0);
-      endIndex = Math.Min(endIndex, list.Count - 1);
-
-      // loop between start and end indexes, incrementing by the step
-      for (int i = startIndex; i < endIndex; i += s)
-      {
-        slicedList.Add(list[i]);
-      }
-
-      return slicedList;
-    }
-
-
-    /// <summary>
-    /// Group the collection using a function which returns the key.
-    /// </summary>
-    /// <param name="source">The source collection to group.</param>
-    /// <param name="keySelector">The key selector.</param>
-    /// <returns>A Dictionary with each key relating to a list of objects in a list grouped under it.</returns>
-    public static Dictionary<K, List<V>> GroupBy<K, V>(ICollection<V> source, Func<V, K> keySelector)
-    {
-      if (keySelector == null)
-        throw new ArgumentNullException("keySelector");
-
-      Dictionary<K, List<V>> groupedValues = new Dictionary<K, List<V>>();
-
-      foreach (V value in source)
-      {
-        // using delegate to get the value's key
-        K key = keySelector(value);
-        List<V> groupedValueList;
-
-        // add a list for grouped values if the key is not already in Dictionary
-        if (!groupedValues.TryGetValue(key, out groupedValueList))
-        {
-          groupedValueList = new List<V>();
-          groupedValues.Add(key, groupedValueList);
-        }
-
-        groupedValueList.Add(value);
-      }
-
-      return groupedValues;
     }
 
     /// <summary>
@@ -214,126 +91,6 @@ namespace Newtonsoft.Json.Utilities
       wrapper.AddRange(collection.Cast<object>());
     }
 
-    public static List<T> Distinct<T>(List<T> collection)
-    {
-      List<T> distinctList = new List<T>();
-
-      foreach (T value in collection)
-      {
-        if (!distinctList.Contains(value))
-          distinctList.Add(value);
-      }
-
-      return distinctList;
-    }
-
-    public static List<List<T>> Flatten<T>(params IList<T>[] lists)
-    {
-      List<List<T>> flattened = new List<List<T>>();
-      Dictionary<int, T> currentList = new Dictionary<int, T>();
-
-      Recurse<T>(new List<IList<T>>(lists), 0, currentList, flattened);
-
-      return flattened;
-    }
-
-    private static void Recurse<T>(IList<IList<T>> global, int current, Dictionary<int, T> currentSet, List<List<T>> flattenedResult)
-    {
-      IList<T> currentArray = global[current];
-
-      for (int i = 0; i < currentArray.Count; i++)
-      {
-        currentSet[current] = currentArray[i];
-
-        if (current == global.Count - 1)
-        {
-          List<T> items = new List<T>();
-
-          for (int k = 0; k < currentSet.Count; k++)
-          {
-            items.Add(currentSet[k]);
-          }
-
-          flattenedResult.Add(items);
-        }
-        else
-        {
-          Recurse(global, current + 1, currentSet, flattenedResult);
-        }
-      }
-    }
-
-    public static List<T> CreateList<T>(ICollection collection)
-    {
-      if (collection == null)
-        throw new ArgumentNullException("collection");
-
-      T[] array = new T[collection.Count];
-      collection.CopyTo(array, 0);
-
-      return new List<T>(array);
-    }
-
-    public static bool ListEquals<T>(IList<T> a, IList<T> b)
-    {
-      if (a == null || b == null)
-        return (a == null && b == null);
-
-      if (a.Count != b.Count)
-        return false;
-
-      EqualityComparer<T> comparer = EqualityComparer<T>.Default;
-
-      for (int i = 0; i < a.Count; i++)
-      {
-        if (!comparer.Equals(a[i], b[i]))
-          return false;
-      }
-
-      return true;
-    }
-
-    #region GetSingleItem
-    public static bool TryGetSingleItem<T>(IList<T> list, out T value)
-    {
-      return TryGetSingleItem<T>(list, false, out value);
-    }
-
-    public static bool TryGetSingleItem<T>(IList<T> list, bool returnDefaultIfEmpty, out T value)
-    {
-      return MiscellaneousUtils.TryAction<T>(delegate { return GetSingleItem(list, returnDefaultIfEmpty); }, out value);
-    }
-
-    public static T GetSingleItem<T>(IList<T> list)
-    {
-      return GetSingleItem<T>(list, false);
-    }
-
-    public static T GetSingleItem<T>(IList<T> list, bool returnDefaultIfEmpty)
-    {
-      if (list.Count == 1)
-        return list[0];
-      else if (returnDefaultIfEmpty && list.Count == 0)
-        return default(T);
-      else
-        throw new Exception("Expected single {0} in list but got {1}.".FormatWith(CultureInfo.InvariantCulture, typeof(T), list.Count));
-    }
-    #endregion
-
-    public static IList<T> Minus<T>(IList<T> list, IList<T> minus)
-    {
-      ValidationUtils.ArgumentNotNull(list, "list");
-
-      List<T> result = new List<T>(list.Count);
-      foreach (T t in list)
-      {
-        if (minus == null || !minus.Contains(t))
-          result.Add(t);
-      }
-
-      return result;
-    }
-
     public static IList CreateGenericList(Type listType)
     {
       ValidationUtils.ArgumentNotNull(listType, "listType");
@@ -341,48 +98,14 @@ namespace Newtonsoft.Json.Utilities
       return (IList)ReflectionUtils.CreateGeneric(typeof(List<>), listType);
     }
 
-    public static IDictionary CreateGenericDictionary(Type keyType, Type valueType)
-    {
-      ValidationUtils.ArgumentNotNull(keyType, "keyType");
-      ValidationUtils.ArgumentNotNull(valueType, "valueType");
-
-      return (IDictionary)ReflectionUtils.CreateGeneric(typeof(Dictionary<,>), keyType, valueType);
-    }
-
-    public static bool IsListType(Type type)
-    {
-      ValidationUtils.ArgumentNotNull(type, "type");
-
-      if (type.IsArray)
-        return true;
-      if (typeof(IList).IsAssignableFrom(type))
-        return true;
-      if (ReflectionUtils.ImplementsGenericDefinition(type, typeof(IList<>)))
-        return true;
-
-      return false;
-    }
-
-    public static bool IsCollectionType(Type type)
-    {
-      ValidationUtils.ArgumentNotNull(type, "type");
-
-      if (type.IsArray)
-        return true;
-      if (typeof(ICollection).IsAssignableFrom(type))
-        return true;
-      if (ReflectionUtils.ImplementsGenericDefinition(type, typeof(ICollection<>)))
-        return true;
-
-      return false;
-    }
-
     public static bool IsDictionaryType(Type type)
     {
       ValidationUtils.ArgumentNotNull(type, "type");
 
+#if !NETFX_CORE
       if (typeof(IDictionary).IsAssignableFrom(type))
         return true;
+#endif
       if (ReflectionUtils.ImplementsGenericDefinition(type, typeof (IDictionary<,>)))
         return true;
 
@@ -413,34 +136,7 @@ namespace Newtonsoft.Json.Utilities
       }
       else
       {
-        throw new Exception("Can not create ListWrapper for type {0}.".FormatWith(CultureInfo.InvariantCulture, list.GetType()));
-      }
-    }
-    public static IWrappedList CreateListWrapper(object list)
-    {
-      ValidationUtils.ArgumentNotNull(list, "list");
-
-      Type listDefinition;
-      if (ReflectionUtils.ImplementsGenericDefinition(list.GetType(), typeof(IList<>), out listDefinition))
-      {
-        Type collectionItemType = ReflectionUtils.GetCollectionItemType(listDefinition);
-
-        // Activator.CreateInstance throws AmbiguousMatchException. Manually invoke constructor
-        Func<Type, IList<object>, object> instanceCreator = (t, a) =>
-        {
-          ConstructorInfo c = t.GetConstructor(new[] {listDefinition});
-          return c.Invoke(new[] { list });
-        };
-
-        return (IWrappedList)ReflectionUtils.CreateGeneric(typeof(ListWrapper<>), new[] { collectionItemType }, instanceCreator, list);
-      }
-      else if (list is IList)
-      {
-        return new ListWrapper<object>((IList)list);
-      }
-      else
-      {
-        throw new Exception("Can not create ListWrapper for type {0}.".FormatWith(CultureInfo.InvariantCulture, list.GetType()));
+        throw new ArgumentException("Can not create ListWrapper for type {0}.".FormatWith(CultureInfo.InvariantCulture, list.GetType()), "list");
       }
     }
 
@@ -463,13 +159,15 @@ namespace Newtonsoft.Json.Utilities
 
         return (IWrappedDictionary)ReflectionUtils.CreateGeneric(typeof(DictionaryWrapper<,>), new[] { dictionaryKeyType, dictionaryValueType }, instanceCreator, dictionary);
       }
+#if !NETFX_CORE
       else if (dictionary is IDictionary)
       {
         return new DictionaryWrapper<object, object>((IDictionary)dictionary);
       }
+#endif
       else
       {
-        throw new Exception("Can not create DictionaryWrapper for type {0}.".FormatWith(CultureInfo.InvariantCulture, dictionary.GetType()));
+        throw new ArgumentException("Can not create DictionaryWrapper for type {0}.".FormatWith(CultureInfo.InvariantCulture, dictionary.GetType()), "dictionary");
       }
     }
 
@@ -539,7 +237,7 @@ namespace Newtonsoft.Json.Utilities
       }
 
       if (list == null)
-        throw new Exception("Cannot create and populate list type {0}.".FormatWith(CultureInfo.InvariantCulture, listType));
+        throw new InvalidOperationException("Cannot create and populate list type {0}.".FormatWith(CultureInfo.InvariantCulture, listType));
 
       populateList(list, isReadOnlyOrFixedSize);
 
@@ -601,11 +299,6 @@ namespace Newtonsoft.Json.Utilities
       return false;
     }
 
-    public static bool AddRangeDistinct<T>(this IList<T> list, IEnumerable<T> values)
-    {
-      return list.AddRangeDistinct(values, EqualityComparer<T>.Default);
-    }
-
     public static bool AddRangeDistinct<T>(this IList<T> list, IEnumerable<T> values, IEqualityComparer<T> comparer)
     {
       bool allAdded = true;
@@ -629,6 +322,28 @@ namespace Newtonsoft.Json.Utilities
         index++;
       }
 
+      return -1;
+    }
+
+    /// <summary>
+    /// Returns the index of the first occurrence in a sequence by using a specified IEqualityComparer.
+    /// </summary>
+    /// <typeparam name="TSource">The type of the elements of source.</typeparam>
+    /// <param name="list">A sequence in which to locate a value.</param>
+    /// <param name="value">The object to locate in the sequence</param>
+    /// <param name="comparer">An equality comparer to compare values.</param>
+    /// <returns>The zero-based index of the first occurrence of value within the entire sequence, if found; otherwise, –1.</returns>
+    public static int IndexOf<TSource>(this IEnumerable<TSource> list, TSource value, IEqualityComparer<TSource> comparer)
+    {
+      int index = 0;
+      foreach (TSource item in list)
+      {
+        if (comparer.Equals(item, value))
+        {
+          return index;
+        }
+        index++;
+      }
       return -1;
     }
   }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json.Utilities;
-using System.Globalization;
 
 namespace Newtonsoft.Json.Linq
 {
@@ -32,33 +28,61 @@ namespace Newtonsoft.Json.Linq
     /// Reads the next JSON token from the stream as a <see cref="T:Byte[]"/>.
     /// </summary>
     /// <returns>
-    /// A <see cref="T:Byte[]"/> or a null reference if the next JSON token is null.
+    /// A <see cref="T:Byte[]"/> or a null reference if the next JSON token is null. This method will return <c>null</c> at the end of an array.
     /// </returns>
     public override byte[] ReadAsBytes()
     {
-      Read();
-
-      // attempt to convert possible base 64 string to bytes
-      if (TokenType == JsonToken.String)
-      {
-        string s = (string) Value;
-        byte[] data = (s.Length == 0) ? new byte[0] : Convert.FromBase64String(s);
-        SetToken(JsonToken.Bytes, data);
-      }
-
-      if (TokenType != JsonToken.Bytes)
-        throw new JsonReaderException("Error reading bytes. Expected bytes but got {0}.".FormatWith(CultureInfo.InvariantCulture, TokenType));
-
-      return (byte[])Value;
+      return ReadAsBytesInternal();
     }
 
     /// <summary>
-    /// Reads the next JSON token from the stream.
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{Decimal}"/>.
     /// </summary>
-    /// <returns>
-    /// true if the next token was read successfully; false if there are no more tokens to read.
-    /// </returns>
-    public override bool Read()
+    /// <returns>A <see cref="Nullable{Decimal}"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override decimal? ReadAsDecimal()
+    {
+      return ReadAsDecimalInternal();
+    }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{Int32}"/>.
+    /// </summary>
+    /// <returns>A <see cref="Nullable{Int32}"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override int? ReadAsInt32()
+    {
+      return ReadAsInt32Internal();
+    }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="String"/>.
+    /// </summary>
+    /// <returns>A <see cref="String"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override string ReadAsString()
+    {
+      return ReadAsStringInternal();
+    }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{DateTime}"/>.
+    /// </summary>
+    /// <returns>A <see cref="String"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override DateTime? ReadAsDateTime()
+    {
+      return ReadAsDateTimeInternal();
+    }
+
+#if !NET20
+    /// <summary>
+    /// Reads the next JSON token from the stream as a <see cref="Nullable{DateTimeOffset}"/>.
+    /// </summary>
+    /// <returns>A <see cref="Nullable{DateTimeOffset}"/>. This method will return <c>null</c> at the end of an array.</returns>
+    public override DateTimeOffset? ReadAsDateTimeOffset()
+    {
+      return ReadAsDateTimeOffsetInternal();
+    }
+#endif
+
+    internal override bool ReadInternal()
     {
       if (CurrentState != State.Start)
       {
@@ -71,6 +95,19 @@ namespace Newtonsoft.Json.Linq
 
       SetToken(_current);
       return true;
+    }
+
+    /// <summary>
+    /// Reads the next JSON token from the stream.
+    /// </summary>
+    /// <returns>
+    /// true if the next token was read successfully; false if there are no more tokens to read.
+    /// </returns>
+    public override bool Read()
+    {
+      _readType = ReadType.Read;
+
+      return ReadInternal();
     }
 
     private bool ReadOver(JToken t)
@@ -96,7 +133,7 @@ namespace Newtonsoft.Json.Linq
 
     private bool ReadToEnd()
     {
-      //CurrentState = State.Finished;
+      SetToken(JsonToken.None);
       return false;
     }
 
@@ -200,9 +237,23 @@ namespace Newtonsoft.Json.Linq
         case JTokenType.Bytes:
           SetToken(JsonToken.Bytes, ((JValue)token).Value);
           break;
+        case JTokenType.Guid:
+          SetToken(JsonToken.String, SafeToString(((JValue)token).Value));
+          break;
+        case JTokenType.Uri:
+          SetToken(JsonToken.String, SafeToString(((JValue)token).Value));
+          break;
+        case JTokenType.TimeSpan:
+          SetToken(JsonToken.String, SafeToString(((JValue)token).Value));
+          break;
         default:
           throw MiscellaneousUtils.CreateArgumentOutOfRangeException("Type", token.Type, "Unexpected JTokenType.");
       }
+    }
+
+    private string SafeToString(object value)
+    {
+      return (value != null) ? value.ToString() : null;
     }
 
     bool IJsonLineInfo.HasLineInfo()

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using Newtonsoft.Json.Utilities;
 
 namespace Newtonsoft.Json.Linq
@@ -80,7 +78,7 @@ namespace Newtonsoft.Json.Linq
       if (_parent == null)
         _token = container;
       else
-        _parent.Add(container);
+        _parent.AddAndSkipParentCheck(container);
 
       _parent = container;
     }
@@ -217,6 +215,7 @@ namespace Newtonsoft.Json.Linq
     /// Writes a <see cref="UInt32"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt32"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(uint value)
     {
       base.WriteValue(value);
@@ -237,6 +236,7 @@ namespace Newtonsoft.Json.Linq
     /// Writes a <see cref="UInt64"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt64"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(ulong value)
     {
       base.WriteValue(value);
@@ -287,6 +287,7 @@ namespace Newtonsoft.Json.Linq
     /// Writes a <see cref="UInt16"/> value.
     /// </summary>
     /// <param name="value">The <see cref="UInt16"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(ushort value)
     {
       base.WriteValue(value);
@@ -300,7 +301,13 @@ namespace Newtonsoft.Json.Linq
     public override void WriteValue(char value)
     {
       base.WriteValue(value);
-      AddValue(value.ToString(), JsonToken.String);
+      string s = null;
+#if !(NETFX_CORE || PORTABLE)
+      s = value.ToString(CultureInfo.InvariantCulture);
+#else
+      s = value.ToString();
+#endif
+      AddValue(s, JsonToken.String);
     }
 
     /// <summary>
@@ -317,6 +324,7 @@ namespace Newtonsoft.Json.Linq
     /// Writes a <see cref="SByte"/> value.
     /// </summary>
     /// <param name="value">The <see cref="SByte"/> value to write.</param>
+    [CLSCompliant(false)]
     public override void WriteValue(sbyte value)
     {
       base.WriteValue(value);
@@ -340,6 +348,7 @@ namespace Newtonsoft.Json.Linq
     public override void WriteValue(DateTime value)
     {
       base.WriteValue(value);
+      value = JsonConvert.EnsureDateTime(value, DateTimeZoneHandling);
       AddValue(value, JsonToken.Date);
     }
 
@@ -363,6 +372,36 @@ namespace Newtonsoft.Json.Linq
     {
       base.WriteValue(value);
       AddValue(value, JsonToken.Bytes);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="TimeSpan"/> value.
+    /// </summary>
+    /// <param name="value">The <see cref="TimeSpan"/> value to write.</param>
+    public override void WriteValue(TimeSpan value)
+    {
+      base.WriteValue(value);
+      AddValue(value, JsonToken.String);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="Guid"/> value.
+    /// </summary>
+    /// <param name="value">The <see cref="Guid"/> value to write.</param>
+    public override void WriteValue(Guid value)
+    {
+      base.WriteValue(value);
+      AddValue(value, JsonToken.String);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="Uri"/> value.
+    /// </summary>
+    /// <param name="value">The <see cref="Uri"/> value to write.</param>
+    public override void WriteValue(Uri value)
+    {
+      base.WriteValue(value);
+      AddValue(value, JsonToken.String);
     }
     #endregion
   }

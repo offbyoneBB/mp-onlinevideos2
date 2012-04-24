@@ -24,17 +24,27 @@
 #endregion
 
 using System;
-using System.Globalization;
+using Newtonsoft.Json.Serialization;
 using System.Reflection;
+#if NET20
+using Newtonsoft.Json.Utilities.LinqBridge;
+#endif
 
 namespace Newtonsoft.Json.Utilities
 {
   internal class LateBoundReflectionDelegateFactory : ReflectionDelegateFactory
   {
-    public static readonly LateBoundReflectionDelegateFactory Instance = new LateBoundReflectionDelegateFactory();
+    private static readonly LateBoundReflectionDelegateFactory _instance = new LateBoundReflectionDelegateFactory();
+
+    internal static ReflectionDelegateFactory Instance
+    {
+      get { return _instance; }
+    }
 
     public override MethodCall<T, object> CreateMethodCall<T>(MethodBase method)
     {
+      ValidationUtils.ArgumentNotNull(method, "method");
+
       ConstructorInfo c = method as ConstructorInfo;
       if (c != null)
         return (o, a) => c.Invoke(a);
@@ -44,7 +54,9 @@ namespace Newtonsoft.Json.Utilities
 
     public override Func<T> CreateDefaultConstructor<T>(Type type)
     {
-      if (type.IsValueType)
+      ValidationUtils.ArgumentNotNull(type, "type");
+
+      if (type.IsValueType())
         return () => (T)ReflectionUtils.CreateInstance(type);
 
       ConstructorInfo constructorInfo = ReflectionUtils.GetDefaultConstructor(type, true);
@@ -54,21 +66,29 @@ namespace Newtonsoft.Json.Utilities
 
     public override Func<T, object> CreateGet<T>(PropertyInfo propertyInfo)
     {
+      ValidationUtils.ArgumentNotNull(propertyInfo, "propertyInfo");
+
       return o => propertyInfo.GetValue(o, null);
     }
 
     public override Func<T, object> CreateGet<T>(FieldInfo fieldInfo)
     {
+      ValidationUtils.ArgumentNotNull(fieldInfo, "fieldInfo");
+
       return o => fieldInfo.GetValue(o);
     }
 
     public override Action<T, object> CreateSet<T>(FieldInfo fieldInfo)
     {
+      ValidationUtils.ArgumentNotNull(fieldInfo, "fieldInfo");
+
       return (o, v) => fieldInfo.SetValue(o, v);
     }
 
     public override Action<T, object> CreateSet<T>(PropertyInfo propertyInfo)
     {
+      ValidationUtils.ArgumentNotNull(propertyInfo, "propertyInfo");
+
       return (o, v) => propertyInfo.SetValue(o, v, null);
     }
   }

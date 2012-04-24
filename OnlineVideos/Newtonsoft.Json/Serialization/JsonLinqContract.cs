@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Newtonsoft.Json.Serialization
 {
@@ -17,6 +14,7 @@ namespace Newtonsoft.Json.Serialization
     public JsonLinqContract(Type underlyingType)
       : base(underlyingType)
     {
+      ContractType = JsonContractType.Linq;
     }
   }
 }

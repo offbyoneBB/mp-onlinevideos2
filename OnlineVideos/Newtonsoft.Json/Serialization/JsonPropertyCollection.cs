@@ -37,16 +37,17 @@ namespace Newtonsoft.Json.Serialization
   /// </summary>
   public class JsonPropertyCollection : KeyedCollection<string, JsonProperty>
   {
-    private readonly JsonObjectContract _contract;
+    private readonly Type _type;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JsonPropertyCollection"/> class.
     /// </summary>
-    /// <param name="contract">The contract.</param>
-    public JsonPropertyCollection(JsonObjectContract contract)
+    /// <param name="type">The type.</param>
+    public JsonPropertyCollection(Type type)
+      : base(StringComparer.Ordinal)
     {
-      ValidationUtils.ArgumentNotNull(contract, "contract");
-      _contract = contract;
+      ValidationUtils.ArgumentNotNull(type, "type");
+      _type = type;
     }
 
     /// <summary>
@@ -72,13 +73,32 @@ namespace Newtonsoft.Json.Serialization
           return;
 
         JsonProperty existingProperty = this[property.PropertyName];
+        bool duplicateProperty = true;
 
-        if (!existingProperty.Ignored)
-          throw new JsonSerializationException(
-            "A member with the name '{0}' already exists on '{1}'. Use the JsonPropertyAttribute to specify another name.".FormatWith(CultureInfo.InvariantCulture, property.PropertyName, _contract.UnderlyingType));
+        if (existingProperty.Ignored)
+        {
+          // remove ignored property so it can be replaced in collection
+          Remove(existingProperty);
+          duplicateProperty = false;
+        }
 
-        // remove ignored property so it can be replaced in collection
-        Remove(existingProperty);
+        if (property.DeclaringType != null && existingProperty.DeclaringType != null)
+        {
+          if (property.DeclaringType.IsSubclassOf(existingProperty.DeclaringType))
+          {
+            // current property is on a derived class and hides the existing
+            Remove(existingProperty);
+            duplicateProperty = false;
+          }
+          if (existingProperty.DeclaringType.IsSubclassOf(property.DeclaringType))
+          {
+            // current property is hidden by the existing so don't add it
+            return;
+          }
+        }
+
+        if (duplicateProperty)
+          throw new JsonSerializationException("A member with the name '{0}' already exists on '{1}'. Use the JsonPropertyAttribute to specify another name.".FormatWith(CultureInfo.InvariantCulture, property.PropertyName, _type));
       }
 
       Add(property);
@@ -100,6 +120,18 @@ namespace Newtonsoft.Json.Serialization
       return property;
     }
 
+    private bool TryGetValue(string key, out JsonProperty item)
+    {
+      if (Dictionary == null)
+      {
+        item = default(JsonProperty);
+        return false;
+      }
+
+      return Dictionary.TryGetValue(key, out item);
+    }
+
+
     /// <summary>
     /// Gets a property by property name.
     /// </summary>
@@ -108,6 +140,16 @@ namespace Newtonsoft.Json.Serialization
     /// <returns>A matching property if found.</returns>
     public JsonProperty GetProperty(string propertyName, StringComparison comparisonType)
     {
+      // KeyedCollection has an ordinal comparer
+      if (comparisonType == StringComparison.Ordinal)
+      {
+        JsonProperty property;
+        if (TryGetValue(propertyName, out property))
+          return property;
+
+        return null;
+      }
+
       foreach (JsonProperty property in this)
       {
         if (string.Equals(propertyName, property.PropertyName, comparisonType))

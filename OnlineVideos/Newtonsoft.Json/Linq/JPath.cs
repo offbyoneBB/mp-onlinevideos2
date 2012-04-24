@@ -46,7 +46,7 @@ namespace Newtonsoft.Json.Linq
             break;
           case ']':
           case ')':
-            throw new Exception("Unexpected character while parsing path: " + currentChar);
+            throw new JsonException("Unexpected character while parsing path: " + currentChar);
           case '.':
             if (_currentIndex > currentPartStartIndex)
             {
@@ -58,14 +58,14 @@ namespace Newtonsoft.Json.Linq
             break;
           default:
             if (followingIndexer)
-              throw new Exception("Unexpected character following indexer: " + currentChar);
+              throw new JsonException("Unexpected character following indexer: " + currentChar);
             break;
         }
 
         _currentIndex++;
       }
 
-      if (_currentIndex - 1 > currentPartStartIndex)
+      if (_currentIndex > currentPartStartIndex)
       {
         string member = _expression.Substring(currentPartStartIndex, _currentIndex - currentPartStartIndex);
         Parts.Add(member);
@@ -95,17 +95,17 @@ namespace Newtonsoft.Json.Linq
         }
         else
         {
-          throw new Exception("Unexpected character while parsing path indexer: " + currentCharacter);
+          throw new JsonException("Unexpected character while parsing path indexer: " + currentCharacter);
         }
 
         _currentIndex++;
       }
 
       if (!indexerClosed)
-        throw new Exception("Path ended with open indexer. Expected " + indexerCloseChar);
+        throw new JsonException("Path ended with open indexer. Expected " + indexerCloseChar);
 
       if (indexerLength == 0)
-        throw new Exception("Empty path indexer.");
+        throw new JsonException("Empty path indexer.");
 
       string indexer = _expression.Substring(indexerStart, indexerLength);
       Parts.Add(Convert.ToInt32(indexer, CultureInfo.InvariantCulture));
@@ -126,12 +126,12 @@ namespace Newtonsoft.Json.Linq
             current = o[propertyName];
 
             if (current == null && errorWhenNoMatch)
-              throw new Exception("Property '{0}' does not exist on JObject.".FormatWith(CultureInfo.InvariantCulture, propertyName));
+              throw new JsonException("Property '{0}' does not exist on JObject.".FormatWith(CultureInfo.InvariantCulture, propertyName));
           }
           else
           {
             if (errorWhenNoMatch)
-              throw new Exception("Property '{0}' not valid on {1}.".FormatWith(CultureInfo.InvariantCulture, propertyName, current.GetType().Name));
+              throw new JsonException("Property '{0}' not valid on {1}.".FormatWith(CultureInfo.InvariantCulture, propertyName, current.GetType().Name));
 
             return null;
           }
@@ -141,6 +141,7 @@ namespace Newtonsoft.Json.Linq
           int index = (int) part;
 
           JArray a = current as JArray;
+          JConstructor c = current as JConstructor;
 
           if (a != null)
           {
@@ -154,10 +155,22 @@ namespace Newtonsoft.Json.Linq
 
             current = a[index];
           }
+          else if (c != null)
+          {
+            if (c.Count <= index)
+            {
+              if (errorWhenNoMatch)
+                throw new IndexOutOfRangeException("Index {0} outside the bounds of JConstructor.".FormatWith(CultureInfo.InvariantCulture, index));
+
+              return null;
+            }
+
+            current = c[index];
+          }
           else
           {
             if (errorWhenNoMatch)
-              throw new Exception("Index {0} not valid on {1}.".FormatWith(CultureInfo.InvariantCulture, index, current.GetType().Name));
+              throw new JsonException("Index {0} not valid on {1}.".FormatWith(CultureInfo.InvariantCulture, index, current.GetType().Name));
 
             return null;
           }

@@ -25,17 +25,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json.Utilities;
 using System.Globalization;
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+using System.Dynamic;
+using System.Linq.Expressions;
+#endif
 
 namespace Newtonsoft.Json.Linq
 {
   /// <summary>
   /// Represents a value in JSON (string, integer, date, etc).
   /// </summary>
-  public class JValue : JToken, IEquatable<JValue>
+  public class JValue : JToken, IEquatable<JValue>, IFormattable, IComparable, IComparable<JValue>
   {
     private JTokenType _valueType;
     private object _value;
@@ -68,6 +70,7 @@ namespace Newtonsoft.Json.Linq
     /// Initializes a new instance of the <see cref="JValue"/> class with the given value.
     /// </summary>
     /// <param name="value">The value.</param>
+    [CLSCompliant(false)]
     public JValue(ulong value)
       : this(value, JTokenType.Integer)
     {
@@ -113,6 +116,33 @@ namespace Newtonsoft.Json.Linq
     /// Initializes a new instance of the <see cref="JValue"/> class with the given value.
     /// </summary>
     /// <param name="value">The value.</param>
+    public JValue(Guid value)
+      : this(value, JTokenType.String)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JValue"/> class with the given value.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    public JValue(Uri value)
+      : this(value, JTokenType.String)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JValue"/> class with the given value.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    public JValue(TimeSpan value)
+      : this(value, JTokenType.String)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JValue"/> class with the given value.
+    /// </summary>
+    /// <param name="value">The value.</param>
     public JValue(object value)
       : this(value, GetValueType(null, value))
     {
@@ -123,6 +153,8 @@ namespace Newtonsoft.Json.Linq
       JValue other = node as JValue;
       if (other == null)
         return false;
+      if (other == this)
+        return true;
 
       return ValuesEquals(this, other);
     }
@@ -138,40 +170,224 @@ namespace Newtonsoft.Json.Linq
       get { return false; }
     }
 
-    private static bool Compare(JTokenType valueType, object objA, object objB)
+    private static int Compare(JTokenType valueType, object objA, object objB)
     {
       if (objA == null && objB == null)
-        return true;
-      if (objA == null || objB == null)
-        return false;
+        return 0;
+      if (objA != null && objB == null)
+        return 1;
+      if (objA == null && objB != null)
+        return -1;
 
       switch (valueType)
       {
         case JTokenType.Integer:
-          if (objA is ulong || objB is ulong)
-            return Convert.ToDecimal(objA, CultureInfo.InvariantCulture).Equals(Convert.ToDecimal(objB, CultureInfo.InvariantCulture));
+          if (objA is ulong || objB is ulong || objA is decimal || objB is decimal)
+            return Convert.ToDecimal(objA, CultureInfo.InvariantCulture).CompareTo(Convert.ToDecimal(objB, CultureInfo.InvariantCulture));
+          else if (objA is float || objB is float || objA is double || objB is double)
+            return CompareFloat(objA, objB);
           else
-            return Convert.ToInt64(objA, CultureInfo.InvariantCulture).Equals(Convert.ToInt64(objB, CultureInfo.InvariantCulture));
+            return Convert.ToInt64(objA, CultureInfo.InvariantCulture).CompareTo(Convert.ToInt64(objB, CultureInfo.InvariantCulture));
         case JTokenType.Float:
-          return Convert.ToDouble(objA, CultureInfo.InvariantCulture).Equals(Convert.ToDouble(objB, CultureInfo.InvariantCulture));
+          return CompareFloat(objA, objB);
         case JTokenType.Comment:
         case JTokenType.String:
-        case JTokenType.Boolean:
         case JTokenType.Raw:
-          return objA.Equals(objB);
-        case JTokenType.Date:
-          return objA.Equals(objB);
-        case JTokenType.Bytes:
-          byte[] b1 = objA as byte[];
-          byte[] b2 = objB as byte[];
-          if (b1 == null || b2 == null)
-            return false;
+          string s1 = Convert.ToString(objA, CultureInfo.InvariantCulture);
+          string s2 = Convert.ToString(objB, CultureInfo.InvariantCulture);
 
-          return MiscellaneousUtils.ByteArrayCompare(b1, b2);
+          return string.CompareOrdinal(s1, s2);
+        case JTokenType.Boolean:
+          bool b1 = Convert.ToBoolean(objA, CultureInfo.InvariantCulture);
+          bool b2 = Convert.ToBoolean(objB, CultureInfo.InvariantCulture);
+
+          return b1.CompareTo(b2);
+        case JTokenType.Date:
+#if !NET20
+          if (objA is DateTime)
+          {
+#endif
+            DateTime date1 = Convert.ToDateTime(objA, CultureInfo.InvariantCulture);
+            DateTime date2 = Convert.ToDateTime(objB, CultureInfo.InvariantCulture);
+
+            return date1.CompareTo(date2);
+#if !NET20
+          }
+          else
+          {
+            if (!(objB is DateTimeOffset))
+              throw new ArgumentException("Object must be of type DateTimeOffset.");
+
+            DateTimeOffset date1 = (DateTimeOffset) objA;
+            DateTimeOffset date2 = (DateTimeOffset) objB;
+
+            return date1.CompareTo(date2);
+          }
+#endif
+        case JTokenType.Bytes:
+          if (!(objB is byte[]))
+            throw new ArgumentException("Object must be of type byte[].");
+
+          byte[] bytes1 = objA as byte[];
+          byte[] bytes2 = objB as byte[];
+          if (bytes1 == null)
+            return -1;
+          if (bytes2 == null)
+            return 1;
+
+          return MiscellaneousUtils.ByteArrayCompare(bytes1, bytes2);
+        case JTokenType.Guid:
+          if (!(objB is Guid))
+            throw new ArgumentException("Object must be of type Guid.");
+
+          Guid guid1 = (Guid) objA;
+          Guid guid2 = (Guid) objB;
+
+          return guid1.CompareTo(guid2);
+        case JTokenType.Uri:
+          if (!(objB is Uri))
+            throw new ArgumentException("Object must be of type Uri.");
+
+          Uri uri1 = (Uri)objA;
+          Uri uri2 = (Uri)objB;
+
+          return Comparer<string>.Default.Compare(uri1.ToString(), uri2.ToString());
+        case JTokenType.TimeSpan:
+          if (!(objB is TimeSpan))
+            throw new ArgumentException("Object must be of type TimeSpan.");
+
+          TimeSpan ts1 = (TimeSpan)objA;
+          TimeSpan ts2 = (TimeSpan)objB;
+
+          return ts1.CompareTo(ts2);
         default:
           throw MiscellaneousUtils.CreateArgumentOutOfRangeException("valueType", valueType, "Unexpected value type: {0}".FormatWith(CultureInfo.InvariantCulture, valueType));
       }
     }
+
+    private static int CompareFloat(object objA, object objB)
+    {
+      double d1 = Convert.ToDouble(objA, CultureInfo.InvariantCulture);
+      double d2 = Convert.ToDouble(objB, CultureInfo.InvariantCulture);
+
+      // take into account possible floating point errors
+      if (MathUtils.ApproxEquals(d1, d2))
+        return 0;
+
+      return d1.CompareTo(d2);
+    }
+
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+    private static bool Operation(ExpressionType operation, object objA, object objB, out object result)
+    {
+      if (objA is string || objB is string)
+      {
+        if (operation == ExpressionType.Add || operation == ExpressionType.AddAssign)
+        {
+          result = ((objA != null) ? objA.ToString() : null) + ((objB != null) ? objB.ToString() : null);
+          return true;
+        }
+      }
+
+      if (objA is ulong || objB is ulong || objA is decimal || objB is decimal)
+      {
+        if (objA == null || objB == null)
+        {
+          result = null;
+          return true;
+        }
+
+        decimal d1 = Convert.ToDecimal(objA, CultureInfo.InvariantCulture);
+        decimal d2 = Convert.ToDecimal(objB, CultureInfo.InvariantCulture);
+
+        switch (operation)
+        {
+          case ExpressionType.Add:
+          case ExpressionType.AddAssign:
+            result = d1 + d2;
+            return true;
+          case ExpressionType.Subtract:
+          case ExpressionType.SubtractAssign:
+            result = d1 - d2;
+            return true;
+          case ExpressionType.Multiply:
+          case ExpressionType.MultiplyAssign:
+            result = d1 * d2;
+            return true;
+          case ExpressionType.Divide:
+          case ExpressionType.DivideAssign:
+            result = d1 / d2;
+            return true;
+        }
+      }
+      else if (objA is float || objB is float || objA is double || objB is double)
+      {
+        if (objA == null || objB == null)
+        {
+          result = null;
+          return true;
+        }
+
+        double d1 = Convert.ToDouble(objA, CultureInfo.InvariantCulture);
+        double d2 = Convert.ToDouble(objB, CultureInfo.InvariantCulture);
+
+        switch (operation)
+        {
+          case ExpressionType.Add:
+          case ExpressionType.AddAssign:
+            result = d1 + d2;
+            return true;
+          case ExpressionType.Subtract:
+          case ExpressionType.SubtractAssign:
+            result = d1 - d2;
+            return true;
+          case ExpressionType.Multiply:
+          case ExpressionType.MultiplyAssign:
+            result = d1 * d2;
+            return true;
+          case ExpressionType.Divide:
+          case ExpressionType.DivideAssign:
+            result = d1 / d2;
+            return true;
+        }
+      }
+      else if (objA is int || objA is uint || objA is long || objA is short || objA is ushort || objA is sbyte || objA is byte ||
+        objB is int || objB is uint || objB is long || objB is short || objB is ushort || objB is sbyte || objB is byte)
+      {
+        if (objA == null || objB == null)
+        {
+          result = null;
+          return true;
+        }
+
+        long l1 = Convert.ToInt64(objA, CultureInfo.InvariantCulture);
+        long l2 = Convert.ToInt64(objB, CultureInfo.InvariantCulture);
+
+        switch (operation)
+        {
+          case ExpressionType.Add:
+          case ExpressionType.AddAssign:
+            result = l1 + l2;
+            return true;
+          case ExpressionType.Subtract:
+          case ExpressionType.SubtractAssign:
+            result = l1 - l2;
+            return true;
+          case ExpressionType.Multiply:
+          case ExpressionType.MultiplyAssign:
+            result = l1 * l2;
+            return true;
+          case ExpressionType.Divide:
+          case ExpressionType.DivideAssign:
+            result = l1 / l2;
+            return true;
+        }
+      }
+
+      result = null;
+      return false;
+    }
+#endif
 
     internal override JToken CloneToken()
     {
@@ -202,8 +418,10 @@ namespace Newtonsoft.Json.Linq
     {
       if (value == null)
         return JTokenType.Null;
+#if !(NETFX_CORE || PORTABLE)
       else if (value == DBNull.Value)
         return JTokenType.Null;
+#endif
       else if (value is string)
         return GetStringValueType(current);
       else if (value is long || value is int || value is short || value is sbyte
@@ -223,6 +441,12 @@ namespace Newtonsoft.Json.Linq
         return JTokenType.Bytes;
       else if (value is bool)
         return JTokenType.Boolean;
+      else if (value is Guid)
+        return JTokenType.Guid;
+      else if (value is Uri)
+        return JTokenType.Uri;
+      else if (value is TimeSpan)
+        return JTokenType.TimeSpan;
 
       throw new ArgumentException("Could not determine JSON object type for type {0}.".FormatWith(CultureInfo.InvariantCulture, value.GetType()));
     }
@@ -271,16 +495,6 @@ namespace Newtonsoft.Json.Linq
       }
     }
 
-    private static void WriteConvertableValue(JsonWriter writer, IList<JsonConverter> converters, Action<object> defaultWrite, object value)
-    {
-      JsonConverter matchingConverter;
-
-      if (value != null && ((matchingConverter = JsonSerializer.GetMatchingConverter(converters, value.GetType())) != null))
-        matchingConverter.WriteJson(writer, value, new JsonSerializer());
-      else
-        defaultWrite(value);
-    }
-
     /// <summary>
     /// Writes this token to a <see cref="JsonWriter"/>.
     /// </summary>
@@ -292,57 +506,70 @@ namespace Newtonsoft.Json.Linq
       {
         case JTokenType.Comment:
           writer.WriteComment(_value.ToString());
-          break;
-        case JTokenType.Integer:
-          WriteConvertableValue(writer, converters, v => writer.WriteValue(Convert.ToInt64(v, CultureInfo.InvariantCulture)), _value);
-          break;
-        case JTokenType.Float:
-          WriteConvertableValue(writer, converters, v => writer.WriteValue(Convert.ToDouble(v, CultureInfo.InvariantCulture)), _value);
-          break;
-        case JTokenType.String:
-          WriteConvertableValue(writer, converters, v => writer.WriteValue((v != null) ? v.ToString() : null), _value);
-          break;
-        case JTokenType.Boolean:
-          WriteConvertableValue(writer, converters, v => writer.WriteValue(Convert.ToBoolean(v, CultureInfo.InvariantCulture)), _value);
-          break;
-        case JTokenType.Date:
-          WriteConvertableValue(writer, converters, v =>
-          {
-#if !PocketPC && !NET20
-            if (v is DateTimeOffset)
-              writer.WriteValue((DateTimeOffset)v);
-            else
-#endif
-            writer.WriteValue(Convert.ToDateTime(v, CultureInfo.InvariantCulture));
-          }, _value);
-          break;
+          return;
         case JTokenType.Raw:
           writer.WriteRawValue((_value != null) ? _value.ToString() : null);
-          break;
-        case JTokenType.Bytes:
-          WriteConvertableValue(writer, converters, v => writer.WriteValue((byte[])v), _value);
-          break;
+          return;
         case JTokenType.Null:
           writer.WriteNull();
-          break;
+          return;
         case JTokenType.Undefined:
           writer.WriteUndefined();
-          break;
-        default:
-          throw MiscellaneousUtils.CreateArgumentOutOfRangeException("TokenType", _valueType, "Unexpected token type.");
+          return;
       }
+
+      JsonConverter matchingConverter;
+      if (_value != null && ((matchingConverter = JsonSerializer.GetMatchingConverter(converters, _value.GetType())) != null))
+      {
+        matchingConverter.WriteJson(writer, _value, new JsonSerializer());
+        return;
+      }
+
+      switch (_valueType)
+      {
+        case JTokenType.Integer:
+          writer.WriteValue(Convert.ToInt64(_value, CultureInfo.InvariantCulture));
+          return;
+        case JTokenType.Float:
+          writer.WriteValue(Convert.ToDouble(_value, CultureInfo.InvariantCulture));
+          return;
+        case JTokenType.String:
+          writer.WriteValue((_value != null) ? _value.ToString() : null);
+          return;
+        case JTokenType.Boolean:
+          writer.WriteValue(Convert.ToBoolean(_value, CultureInfo.InvariantCulture));
+          return;
+        case JTokenType.Date:
+#if !PocketPC && !NET20
+          if (_value is DateTimeOffset)
+            writer.WriteValue((DateTimeOffset)_value);
+          else
+#endif
+            writer.WriteValue(Convert.ToDateTime(_value, CultureInfo.InvariantCulture));
+          return;
+        case JTokenType.Bytes:
+          writer.WriteValue((byte[])_value);
+          return;
+        case JTokenType.Guid:
+        case JTokenType.Uri:
+        case JTokenType.TimeSpan:
+          writer.WriteValue((_value != null) ? _value.ToString() : null);
+          return;
+      }
+
+      throw MiscellaneousUtils.CreateArgumentOutOfRangeException("TokenType", _valueType, "Unexpected token type.");
     }
 
     internal override int GetDeepHashCode()
     {
       int valueHashCode = (_value != null) ? _value.GetHashCode() : 0;
-      
+
       return _valueType.GetHashCode() ^ valueHashCode;
     }
 
     private static bool ValuesEquals(JValue v1, JValue v2)
     {
-      return (v1 == v2|| (v1._valueType == v2._valueType && Compare(v1._valueType, v1._value, v2._value)));
+      return (v1 == v2 || (v1._valueType == v2._valueType && Compare(v1._valueType, v1._value, v2._value) == 0));
     }
 
     /// <summary>
@@ -394,6 +621,181 @@ namespace Newtonsoft.Json.Linq
         return 0;
 
       return _value.GetHashCode();
+    }
+
+    /// <summary>
+    /// Returns a <see cref="System.String"/> that represents this instance.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="System.String"/> that represents this instance.
+    /// </returns>
+    public override string ToString()
+    {
+      if (_value == null)
+        return string.Empty;
+
+      return _value.ToString();
+    }
+
+    /// <summary>
+    /// Returns a <see cref="System.String"/> that represents this instance.
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <returns>
+    /// A <see cref="System.String"/> that represents this instance.
+    /// </returns>
+    public string ToString(string format)
+    {
+      return ToString(format, CultureInfo.CurrentCulture);
+    }
+
+    /// <summary>
+    /// Returns a <see cref="System.String"/> that represents this instance.
+    /// </summary>
+    /// <param name="formatProvider">The format provider.</param>
+    /// <returns>
+    /// A <see cref="System.String"/> that represents this instance.
+    /// </returns>
+    public string ToString(IFormatProvider formatProvider)
+    {
+      return ToString(null, formatProvider);
+    }
+
+    /// <summary>
+    /// Returns a <see cref="System.String"/> that represents this instance.
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="formatProvider">The format provider.</param>
+    /// <returns>
+    /// A <see cref="System.String"/> that represents this instance.
+    /// </returns>
+    public string ToString(string format, IFormatProvider formatProvider)
+    {
+      if (_value == null)
+        return string.Empty;
+
+      IFormattable formattable = _value as IFormattable;
+      if (formattable != null)
+        return formattable.ToString(format, formatProvider);
+      else
+        return _value.ToString();
+    }
+
+#if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
+    /// <summary>
+    /// Returns the <see cref="T:System.Dynamic.DynamicMetaObject"/> responsible for binding operations performed on this object.
+    /// </summary>
+    /// <param name="parameter">The expression tree representation of the runtime value.</param>
+    /// <returns>
+    /// The <see cref="T:System.Dynamic.DynamicMetaObject"/> to bind this object.
+    /// </returns>
+    protected override DynamicMetaObject GetMetaObject(Expression parameter)
+    {
+      return new DynamicProxyMetaObject<JValue>(parameter, this, new JValueDynamicProxy(), true);
+    }
+
+    private class JValueDynamicProxy : DynamicProxy<JValue>
+    {
+      public override bool TryConvert(JValue instance, ConvertBinder binder, out object result)
+      {
+        if (binder.Type == typeof(JValue))
+        {
+          result = instance;
+          return true;
+        }
+
+        object value = instance.Value;
+
+        if (value == null)
+        {
+          result = null;
+          return ReflectionUtils.IsNullable(binder.Type);
+        }
+
+        result = ConvertUtils.Convert(instance.Value, CultureInfo.InvariantCulture, binder.Type);
+        return true;
+      }
+
+      public override bool TryBinaryOperation(JValue instance, BinaryOperationBinder binder, object arg, out object result)
+      {
+        object compareValue = (arg is JValue) ? ((JValue) arg).Value : arg;
+
+        switch (binder.Operation)
+        {
+          case ExpressionType.Equal:
+            result = (Compare(instance.Type, instance.Value, compareValue) == 0);
+            return true;
+          case ExpressionType.NotEqual:
+            result = (Compare(instance.Type, instance.Value, compareValue) != 0);
+            return true;
+          case ExpressionType.GreaterThan:
+            result = (Compare(instance.Type, instance.Value, compareValue) > 0);
+            return true;
+          case ExpressionType.GreaterThanOrEqual:
+            result = (Compare(instance.Type, instance.Value, compareValue) >= 0);
+            return true;
+          case ExpressionType.LessThan:
+            result = (Compare(instance.Type, instance.Value, compareValue) < 0);
+            return true;
+          case ExpressionType.LessThanOrEqual:
+            result = (Compare(instance.Type, instance.Value, compareValue) <= 0);
+            return true;
+          case ExpressionType.Add:
+          case ExpressionType.AddAssign:
+          case ExpressionType.Subtract:
+          case ExpressionType.SubtractAssign:
+          case ExpressionType.Multiply:
+          case ExpressionType.MultiplyAssign:
+          case ExpressionType.Divide:
+          case ExpressionType.DivideAssign:
+            if (Operation(binder.Operation, instance.Value, compareValue, out result))
+            {
+              result = new JValue(result);
+              return true;
+            }
+            break;
+        }
+
+        result = null;
+        return false;
+      }
+    }
+#endif
+
+    int IComparable.CompareTo(object obj)
+    {
+      if (obj == null)
+        return 1;
+
+      object otherValue = (obj is JValue) ? ((JValue) obj).Value : obj;
+
+      return Compare(_valueType, _value, otherValue);
+    }
+
+    /// <summary>
+    /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+    /// </summary>
+    /// <param name="obj">An object to compare with this instance.</param>
+    /// <returns>
+    /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings:
+    /// Value
+    /// Meaning
+    /// Less than zero
+    /// This instance is less than <paramref name="obj"/>.
+    /// Zero
+    /// This instance is equal to <paramref name="obj"/>.
+    /// Greater than zero
+    /// This instance is greater than <paramref name="obj"/>.
+    /// </returns>
+    /// <exception cref="T:System.ArgumentException">
+    /// 	<paramref name="obj"/> is not the same type as this instance.
+    /// </exception>
+    public int CompareTo(JValue obj)
+    {
+      if (obj == null)
+        return 1;
+
+      return Compare(_valueType, _value, obj._value);
     }
   }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Bson;
+using System.Globalization;
 
 namespace Newtonsoft.Json.Converters
 {
@@ -93,7 +91,7 @@ namespace Newtonsoft.Json.Converters
     private object ReadBson(BsonReader reader)
     {
       string regexText = (string)reader.Value;
-      int patternOptionDelimiterIndex = regexText.LastIndexOf(@"/");
+      int patternOptionDelimiterIndex = regexText.LastIndexOf('/');
 
       string patternText = regexText.Substring(1, patternOptionDelimiterIndex - 1);
       string optionsText = regexText.Substring(patternOptionDelimiterIndex + 1);
@@ -125,15 +123,15 @@ namespace Newtonsoft.Json.Converters
     {
       reader.Read();
       reader.Read();
-      string pattern = (string) reader.Value;
+      string pattern = (string)reader.Value;
 
       reader.Read();
       reader.Read();
-      int options = Convert.ToInt32(reader.Value);
+      int options = Convert.ToInt32(reader.Value, CultureInfo.InvariantCulture);
 
       reader.Read();
 
-      return new Regex(pattern, (RegexOptions)options);
+      return new Regex(pattern, (RegexOptions) options);
     }
 
     /// <summary>
