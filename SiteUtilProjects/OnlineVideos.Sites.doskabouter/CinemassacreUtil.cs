@@ -180,7 +180,7 @@ namespace OnlineVideos.Sites
                 return url = doc.SelectSingleNode("//rendition/src").InnerText;
             }
 
-            if (thisUrl.StartsWith("http://www.springboardplatform.com"))
+            if (thisUrl.StartsWith("http://www.springboardplatform.com") || thisUrl.StartsWith("http://cinemassacre.springboardplatform.com"))
             {
                 string newUrl = GetRedirectedUrl(thisUrl);
                 string[] parts = newUrl.Split(new[] { "%22" }, StringSplitOptions.RemoveEmptyEntries);
