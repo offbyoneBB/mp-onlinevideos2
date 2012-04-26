@@ -75,78 +75,40 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
-            string data2;
-            string thisUrl = GetSubString(data, @"param name=""src"" value=""", @"""");
-            if (String.IsNullOrEmpty(thisUrl))
-                thisUrl = GetSubString(data, @"param name=""movie"" value=""", @"""");
-            if (String.IsNullOrEmpty(thisUrl))
+            string data2 = GetSubString(data, @"<div id=""video-content""", @"<div\sid=""video-details""");
+            if (String.IsNullOrEmpty(data2))
+                data2 = data;
+            Match matchFileUrl = regEx_FileUrl.Match(data2);
+            string thisUrl = null;
+            while (matchFileUrl.Success && thisUrl == null)
             {
-                data2 = GetSubString(data, @"<div id=""video-content"">", "</div>");
-                thisUrl = GetSubString(data2, @"src=""", @"""");
+                thisUrl = matchFileUrl.Groups["m0"].Value;
+                if (thisUrl.Contains("facebook"))
+                    thisUrl = null;
+                matchFileUrl = matchFileUrl.NextMatch();
             }
-            if (String.IsNullOrEmpty(thisUrl))
-            {
-                data2 = GetSubString(data, @"<div id=""video-content"">", "<!-- /video -->");
-                int i = data2.IndexOf(@"><img class=");
-                if (i >= 0)
-                {
-                    int j = data2.LastIndexOf(@"href=""", i);
-                    if (j >= 0)
-                    {
-                        thisUrl = data2.Substring(j + 6);
-                        i = thisUrl.IndexOf('"');
-                        if (i >= 0)
-                            thisUrl = thisUrl.Substring(0, i);
-                    }
-                }
-            }
-            if (String.IsNullOrEmpty(thisUrl))
-            {
-                data2 = GetSubString(data, @"<div id=""content"" class=""content page"">", @"<div id=""comments"">");
-                thisUrl = GetSubString(data2, @"<p><a href=""", @"""");
-                if (String.IsNullOrEmpty(thisUrl))
-                {
-                    thisUrl = GetSubString(data2, @"src=""", @"""");
-                    if (thisUrl.EndsWith(".jpg"))
-                        thisUrl = null;
-                }
-            }
-            if (String.IsNullOrEmpty(thisUrl))
-            {
-                data2 = GetSubString(data, @"<div id=""video-details"" class=""content""", @"<div id=""comments"">");
-                thisUrl = GetSubString(data2, @"<p><a href=""", @"""");
-            }
-            if (String.IsNullOrEmpty(thisUrl))
-                thisUrl = GetSubString(data, @"<embed src=""", @"""");
-            if (String.IsNullOrEmpty(thisUrl))
-                thisUrl = GetSubString(data, @"<iframe src=""", @"""");
 
-            if (thisUrl == null) return null;
+            if (String.IsNullOrEmpty(thisUrl)) return null;
+
             if (thisUrl.StartsWith("http://www.youtube.com"))
                 return GetVideoUrl(thisUrl);
 
             if (thisUrl.StartsWith("http://blip.tv/play"))
                 return GetVideoUrl(thisUrl);
 
-            if (thisUrl.StartsWith("http://screwattack.com"))
+            if (thisUrl.StartsWith("http://v.giantrealm.com"))
             {
-                data = GetWebData(thisUrl);
-
                 // next is shamelessly copied from hioctane
-                Match m = Regex.Match(data, @"<embed\sname=""[^""]+""\sFlashVars="".+&vi=(?<vid>[^&]*)&pid=(?<pid>[^&]*)&");
-                if (m.Success)
+                Match m = Regex.Match(data, @"<param\sname=""FlashVars""\svalue=""vi=(?<vi>[^&]*)&amp;pid=(?<pid>[^&]*)&amp");
+                thisUrl = String.Format(@"http://v.giantrealm.com/sax/{0}/{1}", m.Groups["pid"].Value, m.Groups["vi"].Value);
+                data = GetWebData(thisUrl);
+                if (!string.IsNullOrEmpty(data))
                 {
-                    string url = "http://v.giantrealm.com/sax/" + m.Groups["pid"].Value + "/" + m.Groups["vid"].Value;
-                    data = GetWebData(url);
-                    if (!string.IsNullOrEmpty(data))
-                    {
-                        m = Regex.Match(data, @"<file-hq>\s*(.+?)\s*</file-hq>");
-                        if (m.Success) return m.Groups[1].Value;
+                    m = Regex.Match(data, @"<file-hq>\s*(.+?)\s*</file-hq>");
+                    if (m.Success) return m.Groups[1].Value;
 
-                        m = Regex.Match(data, @"<file>\s*(.+?)\s*</file>");
-                        if (m.Success) return m.Groups[1].Value;
-                    }
-
+                    m = Regex.Match(data, @"<file>\s*(.+?)\s*</file>");
+                    if (m.Success) return m.Groups[1].Value;
                 }
                 return null;
             }
@@ -164,7 +126,7 @@ namespace OnlineVideos.Sites
                 return url = doc.SelectSingleNode("//rendition/src").InnerText;
             }
 
-            if (thisUrl.IndexOf("spike.com") >= 0)
+            if (thisUrl.StartsWith("http://www.spike.com"))
             {
                 int p = thisUrl.LastIndexOf('/');
                 string id = thisUrl.Substring(p + 1);
@@ -180,7 +142,7 @@ namespace OnlineVideos.Sites
                 return url = doc.SelectSingleNode("//rendition/src").InnerText;
             }
 
-            if (thisUrl.StartsWith("http://www.springboardplatform.com") || thisUrl.StartsWith("http://cinemassacre.springboardplatform.com"))
+            if (thisUrl.IndexOf("springboardplatform.com") >= 0)
             {
                 string newUrl = GetRedirectedUrl(thisUrl);
                 string[] parts = newUrl.Split(new[] { "%22" }, StringSplitOptions.RemoveEmptyEntries);
