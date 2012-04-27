@@ -316,6 +316,216 @@ namespace Google.YouTube {
         }
     }
 
+    /// <summary>
+    /// the Show entry in feed&lt;Shows&gt; for YouTube
+    /// </summary>
+    public class Show : Entry {
+        /// <summary>
+        /// creates the inner show object when needed
+        /// </summary>
+        /// <returns></returns>
+        protected override void EnsureInnerObject() {
+            if (this.AtomEntry == null) {
+                this.AtomEntry = new ShowEntry();
+            }
+        }
+
+        /// <summary>
+        /// returns the internal atomentry as a ShowEntry
+        /// </summary>
+        /// <returns></returns>
+        public ShowEntry ShowEntry {
+            get {
+                return this.AtomEntry as ShowEntry;
+            }
+        }
+
+        /// <summary>
+        /// contains a summary or description of a show.
+        /// </summary>
+        /// <returns></returns>
+        public string Description {
+            get {
+                if (this.ShowEntry != null &&
+                    this.ShowEntry.Media != null &&
+                    this.ShowEntry.Media.Description != null) {
+                    return this.ShowEntry.Media.Description.Value;
+                }
+                return null;
+            }
+            set {
+                EnsureInnerObject();
+                if (this.ShowEntry.Media == null) {
+                    this.ShowEntry.Media = new Google.GData.YouTube.MediaGroup();
+                }
+                if (this.ShowEntry.Media.Description == null) {
+                    this.ShowEntry.Media.Description = new MediaDescription();
+                }
+                this.ShowEntry.Media.Description.Value = value;
+            }
+        }
+
+        /// <summary>
+        /// returns the URL for a feed of show seasons
+        /// </summary>
+        /// <returns></returns>
+        public string SeasonUrl {
+            get {
+                if (this.ShowEntry != null &&
+                    this.ShowEntry.FeedLink != null) {
+                    try {
+                        return this.ShowEntry.FeedLink.Href;
+                    } catch (FormatException) {
+                        return null;
+                    }
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// returns the keywords for the video, see MediaKeywords for more
+        /// </summary>
+        /// <returns></returns>
+        public string Keywords {
+            get {
+                if (this.ShowEntry != null && this.ShowEntry.Media != null && this.ShowEntry.Media.Keywords != null) {
+                    return this.ShowEntry.Media.Keywords.Value;
+                }
+                return null;
+            }
+            set {
+                EnsureInnerObject();
+                if (this.ShowEntry.Media == null) {
+                    this.ShowEntry.Media = new Google.GData.YouTube.MediaGroup();
+                }
+                if (this.ShowEntry.Media.Keywords == null) {
+                    this.ShowEntry.Media.Keywords = new MediaKeywords();
+                }
+                this.ShowEntry.Media.Keywords.Value = value;
+            }
+        }
+
+        /// <summary>
+        /// the title of the show. Overloaded to keep entry.title and the media.title 
+        /// in sync. 
+        /// </summary>
+        /// <returns></returns>
+        public override string Title {
+            get {
+                return base.Title;
+            }
+            set {
+                base.Title = value;
+                EnsureInnerObject();
+                if (this.ShowEntry.Media == null) {
+                    this.ShowEntry.Media = new Google.GData.YouTube.MediaGroup();
+                }
+                if (this.ShowEntry.Media.Title == null) {
+                    this.ShowEntry.Media.Title = new MediaTitle();
+                }
+                this.ShowEntry.Media.Title.Value = value;
+            }
+        }
+
+        /// <summary>
+        /// returns the collection of thumbnails for the show
+        /// </summary>
+        /// <returns></returns>
+        public ExtensionCollection<MediaThumbnail> Thumbnails {
+            get {
+                if (this.ShowEntry != null) {
+                    if (this.ShowEntry.Media == null) {
+                        this.ShowEntry.Media = new Google.GData.YouTube.MediaGroup();
+                    }
+                    return this.ShowEntry.Media.Thumbnails;
+                }
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// the Show entry in feed&lt;Shows&gt; for YouTube
+    /// </summary>
+    public class ShowSeason : Entry {
+        /// <summary>
+        /// creates the inner show season object when needed
+        /// </summary>
+        /// <returns></returns>
+        protected override void EnsureInnerObject() {
+            if (this.AtomEntry == null) {
+                this.AtomEntry = new ShowSeasonEntry();
+            }
+        }
+
+        /// <summary>
+        /// returns the internal atomentry as a ShowSeasonEntry
+        /// </summary>
+        /// <returns></returns>
+        public ShowSeasonEntry ShowSeasonEntry {
+            get {
+                return this.AtomEntry as ShowSeasonEntry;
+            }
+        }
+
+        /// <summary>
+        /// returns the count of expected Clips for the season
+        /// </summary>
+        /// <returns></returns>
+        public int ClipCount {
+            get {
+                EnsureInnerObject();
+                if (this.ShowSeasonEntry.ClipLink != null) {
+                    return this.ShowSeasonEntry.ClipLink.CountHint;
+                }
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// returns the feed URL for season Clips
+        /// </summary>
+        /// <returns></returns>
+        public string ClipUrl {
+            get {
+                EnsureInnerObject();
+                if (this.ShowSeasonEntry.ClipLink != null) {
+                    return this.ShowSeasonEntry.ClipLink.Href;
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// returns the count of expected Episodes for the season
+        /// </summary>
+        /// <returns></returns>
+        public int EpisodeCount {
+            get {
+                EnsureInnerObject();
+                if (this.ShowSeasonEntry.EpisodeLink != null) {
+                    return this.ShowSeasonEntry.EpisodeLink.CountHint;
+                }
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// returns the feed URL for season Episodes
+        /// </summary>
+        /// <returns></returns>
+        public string EpisodeUrl {
+            get {
+                EnsureInnerObject();
+                if (this.ShowSeasonEntry.EpisodeLink != null) {
+                    return this.ShowSeasonEntry.EpisodeLink.Href;
+                }
+                return null;
+            }
+        }
+    }
+
     /// <summary>the Video Entry in feed&lt;Videos&gt; for YouTube
     /// </summary> 
     public class Video : Entry {
@@ -446,7 +656,7 @@ namespace Google.YouTube {
         }
 
         /// <summary>
-        /// returns the collection of thumbnails for the vido
+        /// returns the collection of thumbnails for the video
         /// </summary>
         /// <returns></returns>
         public ExtensionCollection<MediaThumbnail> Thumbnails {
@@ -683,6 +893,16 @@ namespace Google.YouTube {
                 return this.YouTubeEntry.State;
             }
         }
+
+        public int? EpisodeNumber {
+            get {
+                EnsureInnerObject();
+                if (this.YouTubeEntry.Episode != null) {
+                    return this.YouTubeEntry.Episode.Number;
+                }
+                return null;
+            }
+        }
     }
 
     /// <summary>
@@ -861,13 +1081,23 @@ namespace Google.YouTube {
         }
 
         /// <summary>
-        ///  returns one of the youtube default feeds. 
+        /// returns one of the youtube default feeds. 
         /// </summary>
         /// <param name="feedspec">the string representation of the URI to use</param>
         /// <returns>a feed of Videos</returns>
         public Feed<Video> GetStandardFeed(string feedspec) {
             YouTubeQuery q = PrepareQuery<YouTubeQuery>(feedspec);
             return PrepareFeed<Video>(q);
+        }
+
+        /// <summary>
+        /// returns the youtube standard show feed. 
+        /// </summary>
+        /// <param name="feedspec">the string representation of the URI to use</param>
+        /// <returns>a feed of Videos</returns>
+        public Feed<Show> GetStandardShowFeed(string feedspec) {
+            YouTubeQuery q = PrepareQuery<YouTubeQuery>(feedspec);
+            return PrepareFeed<Show>(q);
         }
 
         /// <summary>
@@ -898,6 +1128,36 @@ namespace Google.YouTube {
         public Feed<Playlist> GetPlaylistsFeed(string user) {
             YouTubeQuery q = PrepareQuery<YouTubeQuery>(YouTubeQuery.CreatePlaylistsUri(user));
             return PrepareFeed<Playlist>(q);
+        }
+
+        /// <summary>
+        /// returns a Feed of shows for a given username
+        /// </summary>
+        /// <param name="user">the username</param>
+        /// <returns>a feed of Shows</returns>
+        public Feed<Show> GetShowsFeed(string user) {
+            YouTubeQuery q = PrepareQuery<YouTubeQuery>(YouTubeQuery.CreateShowsUri(user));
+            return PrepareFeed<Show>(q);
+        }
+
+        /// <summary>
+        /// returns a Feed of seasons for a given show
+        /// </summary>
+        /// <param name="user">the username</param>
+        /// <returns>a feed of Shows</returns>
+        public Feed<ShowSeason> GetShowSeasonFeed(string uri) {
+            YouTubeQuery q = PrepareQuery<YouTubeQuery>(uri);
+            return PrepareFeed<ShowSeason>(q);
+        }
+
+        /// <summary>
+        /// returns a Feed of videos for a given show season
+        /// </summary>
+        /// <param name="user">the username</param>
+        /// <returns>a feed of Shows</returns>
+        public Feed<Video> GetShowSeasonVideos(string uri) {
+            YouTubeQuery q = PrepareQuery<YouTubeQuery>(uri);
+            return PrepareFeed<Video>(q);
         }
 
         /// <summary>

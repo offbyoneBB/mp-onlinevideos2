@@ -30,17 +30,13 @@ using System.ComponentModel;
 
 #endregion
 
-/////////////////////////////////////////////////////////////////////
 // <summary>contains GDataRequest, our thin wrapper class for request/response
 // </summary>
-////////////////////////////////////////////////////////////////////
 namespace Google.GData.Client {
-    //////////////////////////////////////////////////////////////////////
     /// <summary>constants for the authentication handler
     /// </summary> 
-    //////////////////////////////////////////////////////////////////////
     public static class GoogleAuthentication {
-        ///  <summary>account prefix path </summary>
+        /// <summary>account prefix path </summary>
         public const string AccountPrefix = "/accounts";
 
         /// <summary>protocol</summary>
@@ -89,12 +85,10 @@ namespace Google.GData.Client {
         public const string CaptchaToken = "logintoken";
     }
 
-    //////////////////////////////////////////////////////////////////////
     /// <summary>base GDataRequestFactory implementation</summary> 
-    //////////////////////////////////////////////////////////////////////
     public class GDataGAuthRequestFactory : GDataRequestFactory, IVersionAware {
         /// <summary>
-        ///  the header used to indicate version requests
+        /// the header used to indicate version requests
         /// </summary>
         public const string GDataVersion = "GData-Version";
 
@@ -111,16 +105,12 @@ namespace Google.GData.Client {
 
         private const int RetryCount = 3;	// default retry count for failed requests       
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
         public GDataGAuthRequestFactory(string service, string applicationName)
             : this(service, applicationName, RetryCount) {
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>overloaded constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
         public GDataGAuthRequestFactory(string service, string applicationName, int numberOfRetries)
             : base(applicationName) {
             this.Service = service;
@@ -128,16 +118,12 @@ namespace Google.GData.Client {
             this.NumberOfRetries = numberOfRetries;
         }
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
+        /// <summary>default constructor</summary>
         public override IGDataRequest CreateRequest(GDataRequestType type, Uri uriTarget) {
             return new GDataGAuthRequest(type, uriTarget, this);
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Get/Set accessor for gAuthToken</summary> 
-        //////////////////////////////////////////////////////////////////////
         public string GAuthToken {
             get { return this.gAuthToken; }
             set {
@@ -146,42 +132,33 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Gets an authentication token for the current credentials</summary> 
-        //////////////////////////////////////////////////////////////////////
         public string QueryAuthToken(GDataCredentials gc) {
             GDataGAuthRequest request = new GDataGAuthRequest(GDataRequestType.Query, null, this);
             return request.QueryAuthToken(gc);
         }
 
-        ////////////////////////////////////////////////////////////////////////////////
         /// <summary>accessor method public string UserAgent, with GFE support</summary> 
         /// <remarks>GFE will enable gzip support ONLY for browser that have the string
         /// "gzip" in their user agent (IE or Mozilla), since lot of browsers have a
         /// broken gzip support.</remarks>
-        ////////////////////////////////////////////////////////////////////////////////
         public override string UserAgent {
             get { return (base.UserAgent + (this.UseGZip ? " (gzip)" : "")); }
             set { base.UserAgent = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Get/Set accessor for the application name</summary> 
-        //////////////////////////////////////////////////////////////////////
         public string ApplicationName {
             get { return this.applicationName == null ? "" : this.applicationName; }
             set { this.applicationName = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>returns the service string</summary> 
-        //////////////////////////////////////////////////////////////////////
         public string Service {
             get { return this.gService; }
             set { this.gService = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Let's assume you are behind a corporate firewall that does not 
         /// allow all HTTP verbs (as you know, the atom protocol uses GET, 
         /// POST, PUT and DELETE). If you set MethodOverride to true,
@@ -190,16 +167,13 @@ namespace Google.GData.Client {
         /// indicates the "real" method we wanted to send. 
         /// </summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public bool MethodOverride {
             get { return this.fMethodOverride; }
             set { this.fMethodOverride = value; }
         }
-        
-        //////////////////////////////////////////////////////////////////////
+
         /// <summary>indicates if a redirect should be followed on not HTTPGet</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public bool StrictRedirect {
             get { return this.fStrictRedirect; }
             set { this.fStrictRedirect = value; }
@@ -222,28 +196,22 @@ namespace Google.GData.Client {
             set { this.accountType = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>property to hold the Answer for a challenge</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string CaptchaAnswer {
             get { return this.captchaAnswer; }
             set { this.captchaAnswer = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>property to hold the token for a challenge</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string CaptchaToken {
             get { return this.captchaToken; }
             set { this.captchaToken = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>accessor method public string Handler</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string Handler {
             get {
                 return this.handler != null ? this.handler : GoogleAuthentication.UriHandler;
@@ -252,7 +220,7 @@ namespace Google.GData.Client {
         }
 
         private VersionInformation versionInfo = new VersionInformation();
-        
+
         /// <summary>
         /// returns the major protocol version number this element 
         /// is working against. 
@@ -282,9 +250,7 @@ namespace Google.GData.Client {
         }
     }
 
-    //////////////////////////////////////////////////////////////////////
     /// <summary>base GDataRequest implementation</summary> 
-    //////////////////////////////////////////////////////////////////////
     public class GDataGAuthRequest : GDataRequest {
         /// <summary>holds the input in memory stream</summary> 
         private MemoryStream requestCopy;
@@ -293,27 +259,21 @@ namespace Google.GData.Client {
         private AsyncData asyncData;
         private VersionInformation responseVersion;
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
         internal GDataGAuthRequest(GDataRequestType type, Uri uriTarget, GDataGAuthRequestFactory factory)
             : base(type, uriTarget, factory as GDataRequestFactory) {
             // need to remember the factory, so that we can pass the new authtoken back there if need be
             this.factory = factory;
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>returns the writable request stream</summary> 
         /// <returns> the stream to write into</returns>
-        //////////////////////////////////////////////////////////////////////
         public override Stream GetRequestStream() {
             this.requestCopy = new MemoryStream();
             return this.requestCopy;
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Read only accessor for requestCopy</summary> 
-        //////////////////////////////////////////////////////////////////////
         internal Stream RequestCopy {
             get { return this.requestCopy; }
         }
@@ -324,15 +284,14 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>does the real disposition</summary> 
         /// <param name="disposing">indicates if dispose called it or finalize</param>
-        //////////////////////////////////////////////////////////////////////
         protected override void Dispose(bool disposing) {
             base.Dispose(disposing);
             if (this.disposed) {
                 return;
             }
+
             if (disposing) {
                 if (this.requestCopy != null) {
                     this.requestCopy.Close();
@@ -342,15 +301,14 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>sets up the correct credentials for this call, pending 
         /// security scheme</summary> 
-        //////////////////////////////////////////////////////////////////////
         protected override void EnsureCredentials() {
             Tracing.Assert(this.Request != null, "We should have a webrequest now");
             if (this.Request == null) {
                 return;
             }
+
             // if the token is NULL, we need to get a token. 
             if (this.factory.GAuthToken == null) {
                 // we will take the standard credentials for that
@@ -361,6 +319,7 @@ namespace Google.GData.Client {
                     this.factory.GAuthToken = QueryAuthToken(gc);
                 }
             }
+
             if (this.factory.GAuthToken != null && this.factory.GAuthToken.Length > 0) {
                 // Tracing.Assert(this.factory.GAuthToken != null, "We should have a token now"); 
                 Tracing.TraceMsg("Using auth token: " + this.factory.GAuthToken);
@@ -379,10 +338,8 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>sets the redirect to false after everything else
         /// is done </summary> 
-        //////////////////////////////////////////////////////////////////////
         protected override void EnsureWebRequest() {
             base.EnsureWebRequest();
             HttpWebRequest http = this.Request as HttpWebRequest;
@@ -396,7 +353,7 @@ namespace Google.GData.Client {
                 IVersionAware v = this.factory as IVersionAware;
                 if (v != null) {
                     // need to add the version header to the request
-                    http.Headers.Add(GDataGAuthRequestFactory.GDataVersion, v.ProtocolMajor.ToString() + "." + v.ProtocolMinor.ToString());
+                    http.Headers.Set(GDataGAuthRequestFactory.GDataVersion, v.ProtocolMajor.ToString() + "." + v.ProtocolMinor.ToString());
                 }
 
                 // we do not want this to autoredirect, our security header will be 
@@ -412,7 +369,7 @@ namespace Google.GData.Client {
                     // to open the request stream with a DELETE method.
                     string currentMethod = http.Method;
 
-                    http.Headers.Add(GoogleAuthentication.Override, currentMethod);
+                    http.Headers.Set(GoogleAuthentication.Override, currentMethod);
                     http.Method = HttpMethods.Post;
 
                     // not put and delete, all is post
@@ -427,10 +384,8 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>goes to the Google auth service, and gets a new auth token</summary> 
         /// <returns>the auth token, or NULL if none received</returns>
-        //////////////////////////////////////////////////////////////////////
         internal string QueryAuthToken(GDataCredentials gc) {
             Uri authHandler = null;
 
@@ -457,20 +412,16 @@ namespace Google.GData.Client {
                 authHandler);
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Executes the request and prepares the response stream. Also 
-        /// does error checking</summary> 
-        //////////////////////////////////////////////////////////////////////
+        /// does error checking</summary>
         public override void Execute() {
-            // call him the first time
+            // call it the first time
             Execute(1);
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Executes the request and prepares the response stream. Also 
         /// does error checking</summary> 
         /// <param name="retryCounter">indicates the n-th time this is run</param>
-        //////////////////////////////////////////////////////////////////////
         protected void Execute(int retryCounter) {
             Tracing.TraceCall("GoogleAuth: Execution called");
             try {
@@ -538,9 +489,7 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>takes our copy of the stream, and puts it into the request stream</summary> 
-        //////////////////////////////////////////////////////////////////////
         protected void CopyRequestData() {
             if (this.requestCopy != null) {
                 // Since we don't use write buffering on the WebRequest object,
@@ -578,10 +527,10 @@ namespace Google.GData.Client {
                             this.asyncData.DataHandler != null) {
                             AsyncOperationProgressEventArgs args;
                             args = new AsyncOperationProgressEventArgs(this.requestCopy.Length,
-                                            bytesWritten, (int)current,
-                                            this.Request.RequestUri,
-                                            this.Request.Method,
-                                            this.asyncData.UserData);
+                                bytesWritten, (int)current,
+                                this.Request.RequestUri,
+                                this.Request.Method,
+                                this.asyncData.UserData);
                             current += oneLoop;
                             if (!this.asyncData.DataHandler.SendProgressData(asyncData, args))
                                 break;

@@ -56,7 +56,7 @@ namespace Google.GData.Extensions {
         }
 
         /// <summary>
-        ///  Accessor Method for the value as string
+        /// Accessor Method for the value as string
         /// </summary>
         public virtual string Value {
             get { return value; }
@@ -64,7 +64,7 @@ namespace Google.GData.Extensions {
         }
 
         /// <summary>
-        ///  Accessor Method for the value as integer
+        /// Accessor Method for the value as integer
         /// </summary>
         public int IntegerValue {
             get { return Convert.ToInt32(this.Value, CultureInfo.InvariantCulture); }
@@ -72,7 +72,7 @@ namespace Google.GData.Extensions {
         }
 
         /// <summary>
-        ///  Accessor Method for the value as unsigned integer
+        /// Accessor Method for the value as unsigned integer
         /// </summary>
         [CLSCompliant(false)]
         public uint UnsignedIntegerValue {
@@ -81,7 +81,7 @@ namespace Google.GData.Extensions {
         }
 
         /// <summary>
-        ///  Accessor Method for the value as unsigned long
+        /// Accessor Method for the value as unsigned long
         /// </summary>
         [CLSCompliant(false)]
         public ulong UnsignedLongValue {
@@ -90,7 +90,7 @@ namespace Google.GData.Extensions {
         }
 
         /// <summary>
-        ///  Accessor Method for the value as float
+        /// Accessor Method for the value as float
         /// </summary>
         public double FloatValue {
             get { return Convert.ToDouble(this.Value, CultureInfo.InvariantCulture); }
@@ -98,7 +98,7 @@ namespace Google.GData.Extensions {
         }
 
         /// <summary>
-        ///  Accessor Method for the value as boolean
+        /// Accessor Method for the value as boolean
         /// </summary>
         public virtual bool BooleanValue {
             get { return Utilities.XSDTrue == this.Value; }
@@ -115,12 +115,10 @@ namespace Google.GData.Extensions {
             return base.ToString() + " for: " + XmlNameSpace + " - " + XmlName;
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Parses an xml node to create an instance object.</summary> 
         /// <param name="node">the parsed xml node, can be NULL</param>
         /// <param name="parser">the xml parser to use if we need to dive deeper</param>
         /// <returns>the created SimpleElement object</returns>
-        //////////////////////////////////////////////////////////////////////
         public override IExtensionElementFactory CreateInstance(XmlNode node, AtomFeedParser parser) {
             Tracing.TraceCall();
 
@@ -193,10 +191,8 @@ namespace Google.GData.Extensions {
             this.Attributes.Add(BaseNameTable.XmlValue, value);
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Accessor for "value" attribute.</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public override string Value {
             get {
                 return this.Attributes[BaseNameTable.XmlValue] as string;
@@ -223,10 +219,8 @@ namespace Google.GData.Extensions {
             this.Attributes.Add(BaseNameTable.XmlName, null);
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Accessor for "name" attribute.</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string Name {
             get {
                 return this.Attributes[BaseNameTable.XmlName] as string;

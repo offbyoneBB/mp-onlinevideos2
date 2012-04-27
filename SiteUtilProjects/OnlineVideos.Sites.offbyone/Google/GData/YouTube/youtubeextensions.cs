@@ -141,6 +141,10 @@ namespace Google.GData.YouTube {
         /// </summary>
         public const string Duration = "duration";
         /// <summary>
+        /// Episode element string
+        /// </summary>
+        public const string Episode = "episode";
+        /// <summary>
         /// FirstName element string
         /// </summary>
         public const string FirstName = "firstName";
@@ -322,7 +326,8 @@ namespace Google.GData.YouTube {
     public class MediaGroup : Google.GData.Extensions.MediaRss.MediaGroup {
         private ExtensionCollection<MediaContent> contents;
 
-        public MediaGroup() : base() {
+        public MediaGroup()
+            : base() {
             this.ExtensionFactories.Add(new Duration());
             this.ExtensionFactories.Add(new Private());
             this.ExtensionFactories.Add(new VideoId());
@@ -412,7 +417,8 @@ namespace Google.GData.YouTube {
         /// <summary>
         /// default constructor for media:credit
         /// </summary>
-        public MediaCredit() : base() {
+        public MediaCredit()
+            : base() {
             this.AttributeNamespaces.Add("type", YouTubeNameTable.NSYouTube);
             this.Attributes.Add("type", null);
         }
@@ -435,7 +441,8 @@ namespace Google.GData.YouTube {
         /// <summary>
         /// default constructor for media:credit
         /// </summary>
-        public MediaContent() : base() {
+        public MediaContent()
+            : base() {
             this.AttributeNamespaces.Add("format", YouTubeNameTable.NSYouTube);
             this.Attributes.Add("format", null);
         }
@@ -646,16 +653,59 @@ namespace Google.GData.YouTube {
             this.Attributes.Add(AttributeSeconds, null);
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>returns you the seconds attribute</summary>
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string Seconds {
             get {
                 return this.Attributes[AttributeSeconds] as string;
             }
             set {
                 this.Attributes[AttributeSeconds] = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The yt:episode element contains the episode number for the video.
+    /// </summary>
+    public class Episode : SimpleElement {
+        /// <summary>the number xml attribute </summary>
+        private const string AttributeNumber = "number";
+
+        /// <summary>
+        /// default constructor for yt:episode.
+        /// </summary>
+        public Episode()
+            : base(YouTubeNameTable.Episode,
+            YouTubeNameTable.ytPrefix,
+            YouTubeNameTable.NSYouTube) {
+            this.Attributes.Add(AttributeNumber, null);
+        }
+
+        /// <summary>
+        /// default constructor for yt:rating.
+        /// </summary>
+        public Episode(string value)
+            : base(YouTubeNameTable.Episode,
+            YouTubeNameTable.ytPrefix,
+            YouTubeNameTable.NSYouTube) {
+            this.Attributes.Add(AttributeNumber, null);
+        }
+
+        /// <summary>
+        /// convenience accessor for Episode Number.
+        /// </summary>
+        /// <returns></returns>
+        public int? Number {
+            get {
+                int parsed;
+                if (int.TryParse(this.Attributes[AttributeNumber] as string, out parsed)) {
+                    return parsed;
+                }
+                return null;
+            }
+            set {
+                this.Attributes[AttributeNumber] = value;
             }
         }
     }
@@ -1268,7 +1318,7 @@ namespace Google.GData.YouTube {
         /// <summary>the like video rating</summary>
         public const string Like = "like";
         /// <summary>the dislike video rating</summary>
-        public const string Dislikes = "dislikes";
+        public const string Dislike = "dislike";
 
         /// <summary>
         /// default constructor for yt:rating.

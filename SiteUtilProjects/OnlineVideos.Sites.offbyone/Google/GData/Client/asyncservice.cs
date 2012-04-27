@@ -27,11 +27,9 @@ using System.Collections.Specialized;
 
 #endregion
 
-/////////////////////////////////////////////////////////////////////
 // <summary>contains Service, the base interface that 
 //   allows to query a service for different feeds
 //  </summary>
-////////////////////////////////////////////////////////////////////
 namespace Google.GData.Client {
     public class AsyncSendData : AsyncData, IAsyncEntryData {
         private AtomEntry entry;
@@ -97,7 +95,7 @@ namespace Google.GData.Client {
     }
 
     public class AsyncDeleteData : AsyncData, IAsyncEntryData {
-        private readonly AtomEntry _entry;
+        private AtomEntry _entry;
         private readonly bool _permanentDelete;
 
         public AsyncDeleteData(AtomEntry entry, bool permanentDelete, object userData, SendOrPostCallback callback)
@@ -116,13 +114,14 @@ namespace Google.GData.Client {
             get {
                 return _entry;
             }
+            set {
+                _entry = value;
+            }
         }
     }
 
-    //////////////////////////////////////////////////////////////////////
     /// <summary>async functionality of the Service implementation
     /// </summary> 
-    //////////////////////////////////////////////////////////////////////
     public partial class Service : AsyncDataHandler, IService, IVersionAware {
 
         private delegate void WorkerSendEventHandler(AsyncSendData data, AsyncOperation asyncOp,

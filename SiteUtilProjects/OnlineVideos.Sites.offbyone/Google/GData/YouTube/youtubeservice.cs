@@ -21,6 +21,7 @@ using System.Net;
 using Google.GData.Client;
 using Google.GData.Extensions;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Google.GData.YouTube {
     /// <summary>
@@ -125,6 +126,24 @@ namespace Google.GData.YouTube {
         /// <returns>EventFeed</returns>
         public PlaylistsFeed GetPlaylists(YouTubeQuery feedQuery) {
             return base.Query(feedQuery) as PlaylistsFeed;
+        }
+
+        /// <summary>
+        /// returns a shows feed based on a youtubeQuery
+        /// </summary>
+        /// <param name="feedQuery"></param>
+        /// <returns>EventFeed</returns>
+        public ShowFeed GetShows(YouTubeQuery feedQuery) {
+            return base.Query(feedQuery) as ShowFeed;
+        }
+
+        /// <summary>
+        /// returns a show season feed based on a youtubeQuery
+        /// </summary>
+        /// <param name="feedQuery"></param>
+        /// <returns>EventFeed</returns>
+        public ShowSeasonFeed GetShowSeasons(YouTubeQuery feedQuery) {
+            return base.Query(feedQuery) as ShowSeasonFeed;
         }
 
         /// <summary>
@@ -241,42 +260,45 @@ namespace Google.GData.YouTube {
                 throw new ArgumentNullException("e");
             }
 
-            if (e.Uri.AbsolutePath.IndexOf("feeds/api/playlists/") != -1) {
+            string path = e.Uri.AbsolutePath;
+
+            if (Regex.IsMatch(@"/feeds/api/playlists/", path)) {
                 // playlists base url https://gdata.youtube.com/feeds/api/playlists/
                 e.Feed = new PlaylistFeed(e.Uri, e.Service);
-            } else if (e.Uri.AbsolutePath.IndexOf("feeds/api") != -1 &&
-                e.Uri.AbsolutePath.IndexOf("contacts") != -1) {
+            } else if (Regex.IsMatch(path, @"/feeds/api/users/(\w+)/contacts")) {
                 // contacts feeds are https://gdata.youtube.com/feeds/api/users/username/contacts
                 e.Feed = new FriendsFeed(e.Uri, e.Service);
-            } else if (e.Uri.AbsolutePath.IndexOf("feeds/api/users") != -1 &&
-                e.Uri.AbsolutePath.IndexOf("playlists") != -1) {
+            } else if (Regex.IsMatch(path, @"/feeds/api/users/(\w+)/playlists")) {
                 // user based list of playlists are https://gdata.youtube.com/feeds/api/users/username/playlists
                 e.Feed = new PlaylistsFeed(e.Uri, e.Service);
-            } else if (e.Uri.AbsolutePath.IndexOf("feeds/api/users") != -1 &&
-                e.Uri.AbsolutePath.IndexOf("subscriptions") != -1) {
+            } else if (Regex.IsMatch(path, @"/feeds/api/users/(\w+)/subscriptions")) {
                 // user based list of subscriptions are https://gdata.youtube.com/feeds/api/users/username/subscriptions
                 e.Feed = new SubscriptionFeed(e.Uri, e.Service);
-            } else if (e.Uri.AbsolutePath.IndexOf("feeds/api/users") != -1 &&
-                e.Uri.AbsolutePath.IndexOf("inbox") != -1) {
+            } else if (Regex.IsMatch(path, @"/feeds/api/users/(\w+)/inbox")) {
                 // user based list of messages are https://gdata.youtube.com/feeds/api/users/username/inbox
                 e.Feed = new MessageFeed(e.Uri, e.Service);
-            } else if (e.Uri.AbsolutePath.IndexOf("feeds/api/videos") != -1 &&
-                e.Uri.AbsolutePath.IndexOf("comments") != -1) {
+            } else if (Regex.IsMatch(path, @"/feeds/api/users/(\w+)/comments")) {
                 // user based list of comments are https://gdata.youtube.com/feeds/api/videos/videoid/comments
                 e.Feed = new CommentsFeed(e.Uri, e.Service);
-            } else if (e.Uri.AbsolutePath.IndexOf("feeds/api/users") != -1 &&
-                e.Uri.AbsolutePath.IndexOf("uploads") != -1) {
+            } else if (Regex.IsMatch(path, @"/feeds/api/users/(\w+)/shows")) {
+                // user based list of shows are https://gdata.youtube.com/feeds/api/users/username/shows
+                e.Feed = new ShowFeed(e.Uri, e.Service);
+            } else if (Regex.IsMatch(path, @"/feeds/api/charts/shows/(\w+)")) {
+                // standard list of shows are https://gdata.youtube.com/feeds/api/charts/shows/feedname
+                e.Feed = new ShowFeed(e.Uri, e.Service);
+            } else if (Regex.IsMatch(path, @"/feeds/api/shows/([\w-]+)/content")) {
+                // show based list of seasons are https://gdata.youtube.com/feeds/api/shows/showname/content
+                e.Feed = new ShowSeasonFeed(e.Uri, e.Service);
+            } else if (Regex.IsMatch(path, @"/feeds/api/users/(\w+)/uploads")) {
                 // user based upload service url https://gdata.youtube.com/feeds/api/users/videoid/uploads
                 e.Feed = new YouTubeFeed(e.Uri, e.Service);
-            } else if (e.Uri.AbsolutePath.IndexOf("feeds/api/events") != -1 &&
-                e.Uri.PathAndQuery.IndexOf("author") != -1) {
+            } else if (Regex.IsMatch(path, @"/feeds/api/users/events")) {
                 // event feeds https://gdata.youtube.com/feeds/api/events?author=usernames
                 e.Feed = new ActivitiesFeed(e.Uri, e.Service);
-            } else if (e.Uri.AbsolutePath.IndexOf("feeds/api/users") != -1 &&
-                e.Uri.AbsolutePath.IndexOf("friendsactivity") != -1) {
+            } else if (Regex.IsMatch(path, @"/feeds/api/users/(\w+)/friendsactivity")) {
                 // event feeds https://gdata.youtube.com/feeds/api/users/default/friendsactivity
                 e.Feed = new ActivitiesFeed(e.Uri, e.Service);
-            } else if (IsProfileUri(e.Uri)) {
+            } else if (IsProfileUri(path)) {
                 // user based list of playlists are https://gdata.youtube.com/feeds/api/users/username/playlists
                 e.Feed = new ProfileFeed(e.Uri, e.Service);
             } else {
@@ -285,21 +307,20 @@ namespace Google.GData.YouTube {
             }
         }
 
-        private bool IsProfileUri(Uri uri) {
-            String str = uri.AbsolutePath;
-            if (str.StartsWith("/")) {
-                str = str.Substring(1);
+        private bool IsProfileUri(String path) {
+            if (path.StartsWith("/")) {
+                path = path.Substring(1);
             }
 
-            if (str.EndsWith("/")) {
+            if (path.EndsWith("/")) {
                 // remove the last char
-                str.Remove(str.Length - 1, 1);
+                path.Remove(path.Length - 1, 1);
             }
 
-            if (str.StartsWith("feeds/api/users/")) {
-                str = str.Substring(16);
+            if (path.StartsWith("feeds/api/users/")) {
+                path = path.Substring(16);
                 // now there should be one word left, no more slashes
-                if (str.IndexOf('/') == -1)
+                if (path.IndexOf('/') == -1)
                     return true;
             }
 
