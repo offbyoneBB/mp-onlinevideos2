@@ -23,27 +23,20 @@ using System.Collections;
 using Google.GData.Extensions.AppControl;
 using Google.GData.Extensions;
 
-
-
 #endregion
 
-//////////////////////////////////////////////////////////////////////
 // <summary>Contains AtomEntry, an object to represent the atom:entry
 // element.</summary>
-//////////////////////////////////////////////////////////////////////
-namespace Google.GData.Client
-{
-   /// <summary>
+namespace Google.GData.Client {
+    /// <summary>
     /// Entry API customization class for defining entries in a custom feed
     /// </summary>
-    public abstract class AbstractEntry : AtomEntry, ISupportsEtag
-    {
+    public abstract class AbstractEntry : AtomEntry, ISupportsEtag {
         private string eTag;
         /// <summary>
         /// default constructor, adding app:edited and etag extensions
         /// </summary>
-        public AbstractEntry()
-        {
+        public AbstractEntry() {
             this.AddExtension(new AppEdited());
         }
 
@@ -54,8 +47,7 @@ namespace Google.GData.Client
         /// the gnamespace
         /// </summary>
         /// <param name="writer">The XmlWrite, where we want to add default namespaces to</param>
-        protected override void AddOtherNamespaces(XmlWriter writer)
-        {
+        protected override void AddOtherNamespaces(XmlWriter writer) {
             base.AddOtherNamespaces(writer);
             Utilities.EnsureGDataNamespace(writer);
         }
@@ -65,92 +57,67 @@ namespace Google.GData.Client
         /// </summary>
         /// <param name="node">XmlNode to check</param>
         /// <returns>True if this node should be skipped</returns>
-        protected override bool SkipNode(XmlNode node)
-        {
-            if (base.SkipNode(node))
-            {
+        protected override bool SkipNode(XmlNode node) {
+            if (base.SkipNode(node)) {
                 return true;
             }
 
-            return (node.NodeType == XmlNodeType.Attribute && 
-                    node.Name.StartsWith("xmlns") && 
-                    (String.Compare(node.Value,BaseNameTable.gNamespace)==0));
+            return (node.NodeType == XmlNodeType.Attribute &&
+                node.Name.StartsWith("xmlns") &&
+                (String.Compare(node.Value, BaseNameTable.gNamespace) == 0));
         }
-
 
         /// <summary>
         /// helper to toggle categories
         /// </summary>
         /// <param name="cat"></param>
         /// <param name="value"></param>
-        public void ToggleCategory(AtomCategory cat, bool value)
-        {
-            if (value)
-            {
-                if (!this.Categories.Contains(cat))
-                {
+        public void ToggleCategory(AtomCategory cat, bool value) {
+            if (value) {
+                if (!this.Categories.Contains(cat)) {
                     this.Categories.Add(cat);
                 }
-            } 
-            else 
-            { 
+            } else {
                 this.Categories.Remove(cat);
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>access the associated media element. Note, that setting this
         /// WILL cause subsequent updates to be done using MIME multipart posts
         /// </summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
-        public MediaSource MediaSource
-        {
-            get {return this.mediaSource;}
-            set {this.mediaSource = value;}
+        public MediaSource MediaSource {
+            get { return this.mediaSource; }
+            set { this.mediaSource = value; }
         }
-        // end of accessor public MediaSource Media
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>returns this entries etag, if any
         /// This is a protocol version 2 feature
         /// </summary>
-        //////////////////////////////////////////////////////////////////////
-        public string Etag
-        {
-            get
-            {
+        public string Etag {
+            get {
                 return eTag;
             }
-            set
-            {
+            set {
                 eTag = value;
             }
         }
-        
-
-
 
         /// <summary>
         /// returns the app:edited element of the entry, if any. 
         /// This is a protocol version 2 feature
         /// </summary>
-        public AppEdited Edited
-        {
-            get
-            {
-
+        public AppEdited Edited {
+            get {
                 return FindExtension(BaseNameTable.XmlElementPubEdited,
-                                     BaseNameTable.NSAppPublishingFinal) as AppEdited;
+                    BaseNameTable.NSAppPublishingFinal) as AppEdited;
             }
-            set
-            {
+            set {
                 ReplaceExtension(BaseNameTable.XmlElementPubEdited,
-                                 BaseNameTable.NSAppPublishingFinal,
-                                 value);
+                    BaseNameTable.NSAppPublishingFinal,
+                    value);
             }
         }
-
 
         /// <summary>
         /// we have one string based getter
@@ -159,18 +126,13 @@ namespace Google.GData.Client
         /// <param name="extension">the name of the extension to look for</param>
         /// <param name="ns">the namespace of the extension to look for</param>
         /// <returns>value as string, or NULL if the extension was not found</returns>
-        public string GetExtensionValue(string extension, string ns) 
-        {
+        public string GetExtensionValue(string extension, string ns) {
             SimpleElement e = FindExtension(extension, ns) as SimpleElement;
-            if (e != null)
-            {
+            if (e != null) {
                 return e.Value;
             }
             return null;
         }
-
-
-
 
         /// <summary>
         /// we have one string based setter
@@ -184,19 +146,15 @@ namespace Google.GData.Client
         /// <param name="newValue">the new value for this extension element</param>
         /// <returns>SimpleElement, either a brand new one, or the one
         /// returned by the service</returns>
-        public SimpleElement SetExtensionValue(string extension, string ns, string newValue) 
-        {
-            if (extension == null)
-            {
+        public SimpleElement SetExtensionValue(string extension, string ns, string newValue) {
+            if (extension == null) {
                 throw new System.ArgumentNullException("extension");
             }
-            
+
             SimpleElement ele = FindExtension(extension, ns) as SimpleElement;
-            if (ele == null)
-            {
+            if (ele == null) {
                 ele = CreateExtension(extension, ns) as SimpleElement;
-                if (ele == null)
-                {
+                if (ele == null) {
                     throw new System.ArgumentException("The namespace or tagname was invalid");
                 }
                 this.ExtensionElements.Add(ele);
@@ -205,32 +163,22 @@ namespace Google.GData.Client
             return ele;
         }
 
-
-        protected void SetStringValue<T>(string value, string elementName, string ns) where T : SimpleElement, new()
-        {
+        protected void SetStringValue<T>(string value, string elementName, string ns) where T : SimpleElement, new() {
             T v = null;
-            if (!String.IsNullOrEmpty(value))
-            {
+            if (!String.IsNullOrEmpty(value)) {
                 v = new T();
                 v.Value = value;
             }
-           
+
             ReplaceExtension(elementName, ns, v);
         }
 
-
-        protected string GetStringValue<T>(string elementName, string ns) where T : SimpleElement
-        {
-            T e =  FindExtension(elementName, ns) as T;
-            if (e!= null)
-            {
+        protected string GetStringValue<T>(string elementName, string ns) where T : SimpleElement {
+            T e = FindExtension(elementName, ns) as T;
+            if (e != null) {
                 return e.Value;
             }
             return null;
         }
-
-
     }
 }
-/////////////////////////////////////////////////////////////////////////////
- 

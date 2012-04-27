@@ -11,8 +11,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
- * 
+ *
+ *
 */
 
 using System;
@@ -57,8 +57,8 @@ namespace Google.GData.Client {
         /// <returns>The OAuth authorization header</returns>
         public static string GenerateHeader(Uri uri, String consumerKey, String consumerSecret, String token,
             String tokenSecret, String httpMethod) {
-            OAuthParameters parameters = new OAuthParameters() { 
-                ConsumerKey = consumerKey, ConsumerSecret = consumerSecret, Token = token, TokenSecret = tokenSecret, SignatureMethod = OAuthBase.HMACSHA1SignatureType 
+            OAuthParameters parameters = new OAuthParameters() {
+                ConsumerKey = consumerKey, ConsumerSecret = consumerSecret, Token = token, TokenSecret = tokenSecret, SignatureMethod = OAuthBase.HMACSHA1SignatureType
             };
             return GenerateHeader(uri, httpMethod, parameters);
         }
@@ -195,6 +195,65 @@ namespace Google.GData.Client {
             SortedDictionary<string, string> responseValues = OAuthBase.GetQueryParameters(result);
             parameters.Token = responseValues[OAuthBase.OAuthTokenKey];
             parameters.TokenSecret = responseValues[OAuthBase.OAuthTokenSecretKey];
+        }
+
+        /// <summary>
+        /// Generates the url which the user should visit in order to authenticate and
+        /// authorize with the Service Provider.
+        /// When successful, updates the OAuth2Parameters instance passed as parameter by setting
+        /// the returned access code.
+        /// </summary>
+        /// <param name="parameters">The OAuth 2.0 parameters</param>
+        /// <returns>The full authorization url the user should visit</returns>
+        public static string CreateOAuth2AuthorizationUrl(OAuth2Parameters parameters) {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(parameters.AuthUri);
+
+            sb.AppendFormat("?{0}={1}", OAuthBase.OAuth2ResponseType, OAuthBase.EncodingPerRFC3986(parameters.ResponseType));
+            sb.AppendFormat("&{0}={1}", OAuthBase.OAuth2ClientId, OAuthBase.EncodingPerRFC3986(parameters.ClientId));
+            sb.AppendFormat("&{0}={1}", OAuthBase.OAuth2RedirectUri, OAuthBase.EncodingPerRFC3986(parameters.RedirectUri));
+            sb.AppendFormat("&{0}={1}", OAuthBase.OAuthScopeKey, OAuthBase.EncodingPerRFC3986(parameters.Scope));
+            sb.AppendFormat("&{0}={1}", OAuthBase.OAuth2AccessType, OAuthBase.EncodingPerRFC3986(parameters.AccessType));
+            sb.AppendFormat("&{0}={1}", OAuthBase.OAuth2ApprovalPrompt, OAuthBase.EncodingPerRFC3986(parameters.ApprovalPrompt));
+            if (!string.IsNullOrEmpty(parameters.State)) {
+                sb.AppendFormat("&{0}={1}", OAuthBase.OAuth2State, OAuthBase.EncodingPerRFC3986(parameters.State));
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Exchanges the user-authorized request token for an OAuth 2.0 access token.
+        /// When successful, updates the OAuthParameter instance passed as parameter by setting
+        /// AccessToken, RefreshToken and TokenExpiry.
+        /// </summary>
+        /// <param name="queryString">The query string containing the access code</param>
+        /// <param name="parameters">The OAuth 2.0 parameters</param>
+        public static void GetAccessToken(String queryString, OAuth2Parameters parameters) {
+            //split results and update parameters
+            SortedDictionary<string, string> responseValues = OAuthBase.GetQueryParameters(queryString);
+
+            parameters.AccessCode = responseValues[OAuthBase.OAuth2AccessCode];
+            GetAccessToken(parameters);
+        }
+
+        /// <summary>
+        /// Exchanges the user-authorized request token for an OAuth 2.0 access token.
+        /// When successful, updates the OAuthParameter instance passed as parameter by setting
+        /// AccessToken, RefreshToken and TokenExpiry.
+        /// </summary>
+        /// <param name="parameters">The OAuth 2.0 parameters</param>
+        public static void GetAccessToken(OAuth2Parameters parameters) {
+          OAuthBase.GetOAuth2AccessToken(parameters, OAuthBase.GetExchangeAccessCodeRequestBody(parameters));
+        }
+
+        /// <summary>
+        /// Refresh the OAuth 2.0 access token.
+        /// When successful, updates the OAuthParameter instance passed as parameter by setting
+        /// AccessToken, RefreshToken and TokenExpiry.
+        /// </summary>
+        /// <param name="parameters">The OAuth 2.0 parameters</param>
+        public static void RefreshAccessToken(OAuth2Parameters parameters) {
+          OAuthBase.GetOAuth2AccessToken(parameters, OAuthBase.GetRefreshAccessTokenRequestBody(parameters));
         }
     }
 }

@@ -23,102 +23,83 @@ using System.Security.Cryptography;
 
 #endregion
 
-/////////////////////////////////////////////////////////////////////
-// <summary>contains AuthSub request helper classes
-// </summary>
-////////////////////////////////////////////////////////////////////
-namespace Google.GData.Client
-{
-    //////////////////////////////////////////////////////////////////////
-    /// <summary> GDataAuthSubRequestFactory implementation</summary> 
-    //////////////////////////////////////////////////////////////////////
-    public class GAuthSubRequestFactory : GDataGAuthRequestFactory
-    {
+/// <summary>
+/// contains AuthSub request helper classes
+/// </summary>
+namespace Google.GData.Client {
+    /// <summary>
+    /// GDataAuthSubRequestFactory implementation
+    /// </summary>
+    public class GAuthSubRequestFactory : GDataGAuthRequestFactory {
 
         /// holds the private key that is used to sign the requests
         private AsymmetricAlgorithm privateKey;
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
-        public GAuthSubRequestFactory(string service, string applicationName) : base(service, applicationName)
-        {
+        /// <summary>
+        /// default constructor
+        /// </summary>
+        public GAuthSubRequestFactory(string service, string applicationName)
+            : base(service, applicationName) {
         }
-        /////////////////////////////////////////////////////////////////////////////
-
-
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
-        public override IGDataRequest CreateRequest(GDataRequestType type, Uri uriTarget)
-        {
-            return new GAuthSubRequest(type, uriTarget, this); 
+        
+        /// <summary>
+        /// default constructor
+        /// </summary>
+        public override IGDataRequest CreateRequest(GDataRequestType type, Uri uriTarget) {
+            return new GAuthSubRequest(type, uriTarget, this);
         }
-        /////////////////////////////////////////////////////////////////////////////
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>accessor method public string Token</summary> 
-        /// <returns>the string token for the authsub request </returns>
-        //////////////////////////////////////////////////////////////////////
-        public string Token
-        {
-            get {return this.GAuthToken;}
-            set {this.GAuthToken = value;}
+        /// <summary>
+        /// accessor method public string Token
+        /// </summary>
+        /// <returns>
+        /// the string token for the authsub request
+        /// </returns>
+        public string Token {
+            get { return this.GAuthToken; }
+            set { this.GAuthToken = value; }
         }
-        // end of accessor public string Token
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>accessor method public AsymmetricAlgorithm PrivateKey</summary> 
-        /// <returns>the private Key used for the authsub request </returns>
-        //////////////////////////////////////////////////////////////////////
-        public AsymmetricAlgorithm PrivateKey
-        {
-            get {return this.privateKey;}
-            set {this.privateKey = value;}
+        /// <summary>
+        /// accessor method public AsymmetricAlgorithm PrivateKey
+        /// </summary>
+        /// <returns>
+        /// the private Key used for the authsub request
+        /// </returns>
+        public AsymmetricAlgorithm PrivateKey {
+            get { return this.privateKey; }
+            set { this.privateKey = value; }
         }
-        // end of accessor public string Token
-
-
 
     }
-    /////////////////////////////////////////////////////////////////////////////
 
-
-    //////////////////////////////////////////////////////////////////////
-    /// <summary>base GDataRequest implementation</summary> 
-    //////////////////////////////////////////////////////////////////////
-    public class GAuthSubRequest : GDataGAuthRequest
-    {
+    /// <summary>
+    /// base GDataRequest implementation
+    /// </summary>
+    public class GAuthSubRequest : GDataGAuthRequest {
         /// <summary>holds the factory instance</summary> 
-        private GAuthSubRequestFactory factory; 
+        private GAuthSubRequestFactory factory;
 
-
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
-        internal GAuthSubRequest(GDataRequestType type, Uri uriTarget, GAuthSubRequestFactory factory)  : 
-                base(type, uriTarget, factory)
-        {
-            this.factory = factory; 
+        /// <summary>
+        /// default constructor
+        /// </summary>
+        internal GAuthSubRequest(GDataRequestType type, Uri uriTarget, GAuthSubRequestFactory factory) :
+            base(type, uriTarget, factory) {
+            this.factory = factory;
         }
-        /////////////////////////////////////////////////////////////////////////////
 
-         //////////////////////////////////////////////////////////////////////
-        /// <summary>sets up the correct credentials for this call, pending 
-        /// security scheme</summary> 
-        //////////////////////////////////////////////////////////////////////
-        protected override void EnsureCredentials()
-        {
-            HttpWebRequest http = this.Request as HttpWebRequest; 
+        /// <summary>
+        /// sets up the correct credentials for this call, pending 
+        /// security scheme
+        /// </summary>
+        protected override void EnsureCredentials() {
+            HttpWebRequest http = this.Request as HttpWebRequest;
 
-            string header = AuthSubUtil.formAuthorizationHeader(this.factory.Token, 
-                                                                               this.factory.PrivateKey, 
-                                                                               http.RequestUri,
-                                                                               http.Method);
+            string header = AuthSubUtil.formAuthorizationHeader(this.factory.Token,
+                this.factory.PrivateKey,
+                http.RequestUri,
+                http.Method);
             this.Request.Headers.Add(header);
         }
-        /////////////////////////////////////////////////////////////////////////////
     }
-    /////////////////////////////////////////////////////////////////////////////
-} 
-/////////////////////////////////////////////////////////////////////////////
+}

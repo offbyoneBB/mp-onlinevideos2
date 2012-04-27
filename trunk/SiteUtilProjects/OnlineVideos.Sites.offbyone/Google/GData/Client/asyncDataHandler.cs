@@ -434,7 +434,25 @@ namespace Google.GData.Client {
         /// <param name="contentLength"></param>
         /// <returns></returns>
         protected virtual void HandleResponseStream(AsyncData data, Stream responseStream, long contentLength) {
+            HandleResponseStream(data, responseStream, contentLength, null);
+        }
+
+        /// <summary>
+        /// handles the response stream
+        /// copies it into the memory stream, or parses it into a feed.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="responseStream"></param>
+        /// <param name="contentLength"></param>
+        /// <returns></returns>
+        protected virtual void HandleResponseStream(AsyncData data, Stream responseStream, long contentLength, IService service) {
             data.DataStream = CopyResponseToMemory(data, responseStream, contentLength);
+            
+            IAsyncEntryData entryData = data as IAsyncEntryData;
+            Service serviceImpl = service as Service;
+            if (entryData != null && service != null) {
+                entryData.Entry = serviceImpl.CreateAndParseEntry(data.DataStream, data.UriToUse);
+            }
         }
 
         private MemoryStream CopyResponseToMemory(AsyncData data, Stream responseStream, long contentLength) {
@@ -498,6 +516,7 @@ namespace Google.GData.Client {
     public interface IAsyncEntryData {
         AtomEntry Entry {
             get;
+            set;
         }
     }
 }

@@ -26,55 +26,47 @@ using System.Globalization;
 using Google.GData.Client;
 
 namespace Google.GData.Extensions {
-
     /// <summary>
     /// The resource ID is an identifier for a resource that an entry might 
     /// be refering to
     /// </summary>
-    public class ResourceId : SimpleElement
-    {
+    public class ResourceId : SimpleElement {
         /// <summary>
         /// default constructor for gd:resourceid 
         /// </summary>
         public ResourceId()
-        : base(GDataParserNameTable.XmlResourceIdElement, 
-               GDataParserNameTable.gDataPrefix,
-               GDataParserNameTable.gNamespace)
-        {
+            : base(GDataParserNameTable.XmlResourceIdElement,
+            GDataParserNameTable.gDataPrefix,
+            GDataParserNameTable.gNamespace) {
         }
     }
 
     /// <summary>
     /// Identifies when an entry was last viewed
     /// </summary>
-    public class LastViewed : SimpleElement
-    {
+    public class LastViewed : SimpleElement {
         /// <summary>
         /// default constructor for gd:resourceid 
         /// </summary>
         public LastViewed()
-        : base(GDataParserNameTable.XmlLastViewedElement, 
-               GDataParserNameTable.gDataPrefix,
-               GDataParserNameTable.gNamespace)
-        {
+            : base(GDataParserNameTable.XmlLastViewedElement,
+            GDataParserNameTable.gDataPrefix,
+            GDataParserNameTable.gNamespace) {
         }
     }
-
 
     /// <summary>
     /// identifies the person who last modified an entry
     /// </summary>
     /// <returns></returns>
-    public class LastModifiedBy : SimpleContainer
-    {
+    public class LastModifiedBy : SimpleContainer {
         /// <summary>
-        /// default constructor for media:group
+        /// default constructor
         /// </summary>
-        public LastModifiedBy() 
-            : base(GDataParserNameTable.XmlLastModifiedByElement, 
-               GDataParserNameTable.gDataPrefix,
-               GDataParserNameTable.gNamespace)
-        {
+        public LastModifiedBy()
+            : base(GDataParserNameTable.XmlLastModifiedByElement,
+            GDataParserNameTable.gDataPrefix,
+            GDataParserNameTable.gNamespace) {
             this.ExtensionFactories.Add(new LastModifiedByName());
             this.ExtensionFactories.Add(new LastModifiedByEMail());
         }
@@ -83,13 +75,10 @@ namespace Google.GData.Extensions {
         /// the name portion of the element
         /// </summary>
         /// <returns></returns>
-        public string Name
-        {
-
-            get
-            {
+        public string Name {
+            get {
                 return GetStringValue<LastModifiedByName>(GDataParserNameTable.XmlName,
-                                                          GDataParserNameTable.NSAtom);
+                    GDataParserNameTable.NSAtom);
             }
         }
 
@@ -97,61 +86,53 @@ namespace Google.GData.Extensions {
         /// the email portion of the element
         /// </summary>
         /// <returns></returns>
-        public string EMail
-        {
-            get
-            {
+        public string EMail {
+            get {
                 return GetStringValue<LastModifiedByEMail>(GDataParserNameTable.XmlEmailElement,
-                                                          GDataParserNameTable.NSAtom);
+                    GDataParserNameTable.NSAtom);
             }
         }
     }
 
     /// <summary>
-    /// simple subclass to hold the name subportion for the lastmodifed container
+    /// simple subclass to hold the name subportion for the lastmodified container
     /// </summary>
-    public class LastModifiedByName : SimpleElement
-    {
+    public class LastModifiedByName : SimpleElement {
         /// <summary>
         /// default constructor for a name subobject
         /// </summary>
         public LastModifiedByName()
-        : base(GDataParserNameTable.XmlName, 
-               GDataParserNameTable.AtomPrefix,
-               GDataParserNameTable.NSAtom)
-        {
+            : base(GDataParserNameTable.XmlName,
+            GDataParserNameTable.AtomPrefix,
+            GDataParserNameTable.NSAtom) {
         }
     }
 
     /// <summary>
-    /// simple sublcass to hold the email subportion of the lastmodified container
+    /// simple subclass to hold the email subportion of the lastmodified container
     /// </summary>
-    public class LastModifiedByEMail : SimpleElement
-    {
+    public class LastModifiedByEMail : SimpleElement {
         /// <summary>
         /// default constructor for a email subobject
         /// </summary>
         public LastModifiedByEMail()
-        : base(GDataParserNameTable.XmlEmailElement, 
-               GDataParserNameTable.AtomPrefix,
-               GDataParserNameTable.NSAtom)
-        {
+            : base(GDataParserNameTable.XmlEmailElement,
+            GDataParserNameTable.AtomPrefix,
+            GDataParserNameTable.NSAtom) {
         }
     }
 
     /// <summary>
     /// The amount of quota consumed by the entry. 
     /// </summary>
-    public class QuotaBytesUsed : SimpleElement
-    {
+    public class QuotaBytesUsed : SimpleElement {
         /// <summary>
         /// default constructor for gd:resourceid 
         /// </summary>
         public QuotaBytesUsed()
             : base(GDataParserNameTable.XmlQuotaBytesUsedElement,
-                   GDataParserNameTable.gDataPrefix,
-                   GDataParserNameTable.gNamespace)
-        {
+            GDataParserNameTable.gDataPrefix,
+            GDataParserNameTable.gNamespace) {
         }
     }
 }

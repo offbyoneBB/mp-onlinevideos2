@@ -901,7 +901,7 @@ namespace Google.GData.Client {
                 feed.BatchData = new GDataBatchFeedData();
             }
             Stream returnStream = EntrySend(uriToUse, feed, GDataRequestType.Batch, data);
-            return CreateAndParseFeed(returnStream, uriToUse); ;
+            return CreateAndParseFeed(returnStream, uriToUse);
         }
 
         /// <summary>deletes an Atom entry object</summary> 

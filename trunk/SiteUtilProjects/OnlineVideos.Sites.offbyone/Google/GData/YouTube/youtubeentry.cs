@@ -69,6 +69,7 @@ namespace Google.GData.YouTube {
             this.AddExtension(new Rating());
 
             // add youtube namespace elements
+            this.AddExtension(new Episode());
             this.AddExtension(new Statistics());
             this.AddExtension(new Location());
             this.AddExtension(new Recorded());
@@ -86,6 +87,21 @@ namespace Google.GData.YouTube {
                     this.accessControls = new ExtensionCollection<YtAccessControl>(this);
                 }
                 return this.accessControls;
+            }
+        }
+
+        /// <summary>
+        /// getter/setter for the Episode extension element
+        /// </summary>
+        public Episode Episode {
+            get {
+                return FindExtension(YouTubeNameTable.Episode,
+                    YouTubeNameTable.NSYouTube) as Episode;
+            }
+            set {
+                ReplaceExtension(YouTubeNameTable.Episode,
+                    YouTubeNameTable.NSYouTube,
+                    value);
             }
         }
 

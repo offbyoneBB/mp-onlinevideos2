@@ -35,7 +35,7 @@ namespace Google.GData.Client {
     }
 
     /// <summary>
-    ///  this is the static collection of all google service names
+    /// this is the static collection of all google service names
     /// </summary>
     public static class ServiceNames {
         public static string YouTube = "youtube";
@@ -152,7 +152,7 @@ namespace Google.GData.Client {
         private string serviceName;
 
         /// <summary>
-        ///  a constructor for client login use cases
+        /// a constructor for client login use cases
         /// </summary>
         /// <param name="applicationName"></param>
         /// <param name="username"></param>
@@ -163,7 +163,7 @@ namespace Google.GData.Client {
         }
 
         /// <summary>
-        ///  a constructor for client login use cases
+        /// a constructor for client login use cases
         /// </summary>
         /// <param name="applicationName">The name of the application</param>
         /// <param name="credentials">the user credentials</param>
@@ -176,7 +176,7 @@ namespace Google.GData.Client {
         }
 
         /// <summary>
-        ///  a constructor for client login use cases
+        /// a constructor for client login use cases
         /// </summary>
         /// <param name="applicationName">The name of the application</param>
         /// <param name="credentials">the user credentials</param>
@@ -355,11 +355,12 @@ namespace Google.GData.Client {
     public class OAuth2LeggedAuthenticator : OAuthAuthenticator {
         private string oAuthUser;
         private string oAuthDomain;
+        private OAuthParameters parameters;
 
         public static string OAuthParameter = "xoauth_requestor_id";
 
         /// <summary>
-        /// a constructor for OpenAuthentication login use cases
+        /// a constructor for 2-legged OAuth
         /// </summary>
         /// <param name="applicationName">The name of the application</param>
         /// <param name="consumerKey">the consumerKey to use</param>
@@ -372,10 +373,12 @@ namespace Google.GData.Client {
             string consumerKey,
             string consumerSecret,
             string user,
-            string domain)
+            string domain,
+            string signatureMethod)
             : base(applicationName, consumerKey, consumerSecret) {
             this.oAuthUser = user;
             this.oAuthDomain = domain;
+            this.parameters = new OAuthParameters() { ConsumerKey = consumerKey, ConsumerSecret = consumerSecret, SignatureMethod = signatureMethod };
         }
 
         /// <summary>
@@ -409,11 +412,8 @@ namespace Google.GData.Client {
 
             string oauthHeader = OAuthUtil.GenerateHeader(
                 request.RequestUri,
-                this.ConsumerKey,
-                this.ConsumerSecret,
-                null,
-                null,
-                request.Method);
+                request.Method,
+                parameters);
             request.Headers.Add(oauthHeader);
         }
 
@@ -426,7 +426,7 @@ namespace Google.GData.Client {
         /// <returns></returns>
         public override Uri ApplyAuthenticationToUri(Uri source) {
             UriBuilder builder = new UriBuilder(source);
-            string queryToAppend = OAuth2LeggedAuthenticator.OAuthParameter + "=" + this.oAuthUser + "%40" + this.OAuthDomain;
+            string queryToAppend = OAuthParameter + "=" + this.oAuthUser + "%40" + this.OAuthDomain;
 
             if (builder.Query != null && builder.Query.Length > 1) {
                 builder.Query = builder.Query.Substring(1) + "&" + queryToAppend;
@@ -441,9 +441,10 @@ namespace Google.GData.Client {
     public class OAuth3LeggedAuthenticator : OAuthAuthenticator {
         private string token;
         private string tokenSecret;
+        private OAuthParameters parameters;
 
         /// <summary>
-        ///  a constructor for OpenAuthentication login use cases using 3-legged oAuth
+        /// a constructor for 3-legged OAuth
         /// </summary>
         /// <param name="applicationName">The name of the application</param>
         /// <param name="consumerKey">the consumerKey to use</param>
@@ -455,10 +456,11 @@ namespace Google.GData.Client {
             string consumerKey,
             string consumerSecret,
             string token,
-            string tokenSecret)
+            string tokenSecret,
+            string scope,
+            string signatureMethod)
             : base(applicationName, consumerKey, consumerSecret) {
-            this.token = token;
-            this.tokenSecret = tokenSecret;
+            this.parameters = new OAuthParameters() { ConsumerKey = consumerKey, ConsumerSecret = consumerSecret, Token = token, TokenSecret = tokenSecret, Scope = scope, SignatureMethod = signatureMethod };
         }
 
         /// <summary>
@@ -467,7 +469,7 @@ namespace Google.GData.Client {
         /// <returns></returns>
         public string Token {
             get {
-                return this.token;
+                return this.parameters.Token;
             }
         }
 
@@ -477,7 +479,7 @@ namespace Google.GData.Client {
         /// <returns></returns>
         public string TokenSecret {
             get {
-                return this.tokenSecret;
+                return this.parameters.TokenSecret;
             }
         }
 
@@ -492,12 +494,44 @@ namespace Google.GData.Client {
 
             string oauthHeader = OAuthUtil.GenerateHeader(
                 request.RequestUri,
-                this.ConsumerKey,
-                this.ConsumerSecret,
-                this.Token,
-                this.TokenSecret,
-                request.Method);
+                request.Method,
+                parameters);
             request.Headers.Add(oauthHeader);
+        }
+    }
+
+    public class OAuth2Authenticator : Authenticator {
+        private OAuth2Parameters parameters;
+
+        /// <summary>
+        /// a constructor for OAuth 2.0
+        /// </summary>
+        /// <param name="applicationName">The name of the application</param>
+        /// <param name="consumerKey">the consumerKey to use</param>
+        /// <param name="consumerSecret">the consumerSecret to use</param>
+        /// <param name="token">The token to be used</param>
+        /// <param name="tokenSecret">The tokenSecret to be used</param>
+        /// <returns></returns>
+        public OAuth2Authenticator(string applicationName, OAuth2Parameters parameters)
+            : base(applicationName) {
+            this.parameters = parameters;
+        }
+
+        /// <summary>
+        /// Takes an existing httpwebrequest and modifies its headers according to
+        /// the authentication system used.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public override void ApplyAuthenticationToRequest(HttpWebRequest request) {
+            base.ApplyAuthenticationToRequest(request);
+
+            if (!string.IsNullOrEmpty(parameters.AccessCode) && string.IsNullOrEmpty(parameters.AccessToken)) {
+                OAuthUtil.GetAccessToken(parameters);
+            }
+
+            request.Headers.Set("Authorization", String.Format(
+                "{0} {1}", parameters.TokenType, parameters.AccessToken));
         }
     }
 }

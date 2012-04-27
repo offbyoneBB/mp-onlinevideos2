@@ -26,10 +26,8 @@ using System.ComponentModel;
 
 #endregion
 
-/////////////////////////////////////////////////////////////////////
 // <summary>contains GDataRequest our thin wrapper class for request/response
 //  </summary>
-////////////////////////////////////////////////////////////////////
 namespace Google.GData.Client {
     /// <summary>
     /// the class holds username and password to replace networkcredentials
@@ -60,46 +58,36 @@ namespace Google.GData.Client {
             this.clientToken = clientToken;
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>the username used for authentication</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string Username {
             get { return this.userName; }
             set { this.userName = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>the type of Account used</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string AccountType {
             get { return this.accountType; }
             set { this.accountType = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>in case you need to handle catpcha responses for this account</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string CaptchaToken {
             get { return this.captchaToken; }
             set { this.captchaToken = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>in case you need to handle catpcha responses for this account</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string CaptchaAnswer {
             get { return this.captchaAnswer; }
             set { this.captchaAnswer = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>accessor method Password</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string Password {
             set { this.passWord = value; }
         }
@@ -131,9 +119,7 @@ namespace Google.GData.Client {
         }
     }
 
-    //////////////////////////////////////////////////////////////////////
     /// <summary>base GDataRequestFactory implementation</summary> 
-    //////////////////////////////////////////////////////////////////////
     public class GDataRequestFactory : IGDataRequestFactory {
         /// <summary>this factory's agent</summary> 
         public const string GDataAgent = "SA";
@@ -150,7 +136,7 @@ namespace Google.GData.Client {
         private bool keepAlive;
         private bool useGZip;
         // whether https should be used
-        private bool useSSL = true;                        
+        private bool useSSL = true;
         private string contentType = DefaultContentType;
         private string slugHeader;
         // set to default by default
@@ -187,35 +173,26 @@ namespace Google.GData.Client {
         /// </summary>
         public const string IfMatchAll = "*";
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
         public GDataRequestFactory(string userAgent) {
             this.userAgent = Utilities.ConstructUserAgent(userAgent, this.GetType().Name);
             this.keepAlive = true;
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
         public virtual IGDataRequest CreateRequest(GDataRequestType type, Uri uriTarget) {
             return new GDataRequest(type, uriTarget, this);
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>whether or not new requests should use GZip</summary>
-        //////////////////////////////////////////////////////////////////////
         public bool UseGZip {
             get { return this.useGZip; }
             set { this.useGZip = value; }
         }
 
         private CookieContainer cookies;
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>The cookie container that is used for requests. Note 
-        /// that this is not available on the compact framework</summary> 
+        /// <summary>The cookie container that is used for requests.</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public CookieContainer Cookies {
             get {
                 if (this.cookies == null) {
@@ -227,21 +204,17 @@ namespace Google.GData.Client {
             set { this.cookies = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>sets and gets the Content Type, used for binary transfers</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string ContentType {
             get { return this.contentType; }
             set { this.contentType = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>sets and gets the slug header, used for binary transfers
         /// note that the data will be converted to ASCII and URLencoded on setting it
         /// </summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string Slug {
             get { return this.slugHeader; }
             set {
@@ -249,51 +222,41 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>accessor method public string UserAgent</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public virtual string UserAgent {
             get { return this.userAgent; }
             set { this.userAgent = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>accessor method to the webproxy object to use</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public IWebProxy Proxy {
             get { return this.webProxy; }
             set { this.webProxy = value; }
         }
 
-        /////////////////////////////////////////////////////////////////////
         /// <summary>indicates if the connection should be kept alive, default
         /// is true</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public bool KeepAlive {
             get { return this.keepAlive; }
             set { this.keepAlive = value; }
         }
 
-        /////////////////////////////////////////////////////////////////////
         /// <summary>indicates if the connection should use https</summary>
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public bool UseSSL {
             get { return this.useSSL; }
             set { this.useSSL = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>gets and sets the Timeout property used for the created
         /// HTTPRequestObject in milliseconds. if you set it to -1 it will stick 
         /// with the default of the HTTPRequestObject. From MSDN:
         /// The number of milliseconds to wait before the request times out. 
         /// The default is 100,000 milliseconds (100 seconds).</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public int Timeout {
             get { return this.timeOut; }
             set { this.timeOut = value; }
@@ -305,10 +268,8 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>accessor method public StringArray CustomHeaders</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public List<string> CustomHeaders {
             get {
                 if (this.customHeaders == null) {
@@ -319,9 +280,7 @@ namespace Google.GData.Client {
         }
     }
 
-    //////////////////////////////////////////////////////////////////////
-    /// <summary>base GDataRequest implmentation</summary> 
-    //////////////////////////////////////////////////////////////////////
+    /// <summary>base GDataRequest implementation</summary> 
     public class GDataRequest : IGDataRequest, IDisposable, ISupportsEtag {
         /// <summary>holds the webRequest object</summary> 
         private WebRequest webRequest;
@@ -352,9 +311,7 @@ namespace Google.GData.Client {
         private long contentLength;
         private string eTag;
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
         internal GDataRequest(GDataRequestType type, Uri uriTarget, GDataRequestFactory factory) {
             this.type = type;
             this.targetUri = uriTarget;
@@ -362,9 +319,7 @@ namespace Google.GData.Client {
             this.useGZip = this.factory.UseGZip; // use gzip setting from factory
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>implements the disposable interface</summary> 
-        //////////////////////////////////////////////////////////////////////
         public void Dispose() {
             if (this.responseStream != null) {
                 this.responseStream.Close();
@@ -386,26 +341,20 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>set whether or not this request should use GZip</summary>
-        //////////////////////////////////////////////////////////////////////
         public bool UseGZip {
             get { return (this.useGZip); }
             set { this.useGZip = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>set a timestamp for conditional GET</summary>
-        //////////////////////////////////////////////////////////////////////
         public DateTime IfModifiedSince {
             get { return (this.ifModifiedSince); }
             set { this.ifModifiedSince = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>does the real disposition</summary> 
         /// <param name="disposing">indicates if dispose called it or finalize</param>
-        //////////////////////////////////////////////////////////////////////
         protected virtual void Dispose(bool disposing) {
             if (this.disposed) {
                 return;
@@ -418,39 +367,31 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>accessor method for the GDataCredentials used</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public GDataCredentials Credentials {
             get { return this.credentials; }
             set { this.credentials = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>sets and gets the content Type, used for binary transfers</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string ContentType {
             get { return this.contentType == null ? this.factory.ContentType : this.contentType; }
             set { this.contentType = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>sets and gets the etag header value, used for concurrency</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string Etag {
             get { return this.eTag; }
             set { this.eTag = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>sets and gets the slugHeader, used for binary transfers
         /// will encode to ascii and urlencode the string on setting it. 
         /// </summary>
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         public string Slug {
             get { return this.slugHeader == null ? this.factory.Slug : this.slugHeader; }
             set {
@@ -459,7 +400,7 @@ namespace Google.GData.Client {
         }
 
         /// <summary>
-        /// returnes the contentlength of the response, -1 if none was given
+        /// returnes the content-length of the response, -1 if none was given
         /// </summary>
         /// <returns></returns>
         public long ContentLength {
@@ -468,27 +409,21 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>accessor method protected WebRequest Request</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         protected WebRequest Request {
             get { return this.webRequest; }
             set { this.webRequest = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>accessor method protected WebResponse Response</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
         protected WebResponse Response {
             get { return this.webResponse; }
             set { this.webResponse = value; }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>resets the object's state</summary> 
-        //////////////////////////////////////////////////////////////////////
         protected virtual void Reset() {
             this.requestStream = null;
             this.webRequest = null;
@@ -498,19 +433,15 @@ namespace Google.GData.Client {
             this.webResponse = null;
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>returns the writable request stream</summary> 
         /// <returns> the stream to write into</returns>
-        //////////////////////////////////////////////////////////////////////
         public virtual Stream GetRequestStream() {
             EnsureWebRequest();
             this.requestStream = this.webRequest.GetRequestStream();
             return this.requestStream;
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>ensures that the correct HTTP verb is set on the stream</summary> 
-        //////////////////////////////////////////////////////////////////////
         protected virtual void EnsureWebRequest() {
             if (this.webRequest == null && this.targetUri != null) {
                 if (this.factory.UseSSL && !this.targetUri.Scheme.ToLower().Equals("https")) {
@@ -523,6 +454,7 @@ namespace Google.GData.Client {
                 if (this.webRequest == null) {
                     throw new OutOfMemoryException("Could not create a new Webrequest");
                 }
+
                 HttpWebRequest web = this.webRequest as HttpWebRequest;
 
                 if (web != null) {
@@ -543,22 +475,22 @@ namespace Google.GData.Client {
                     }
 
                     if (this.useGZip) {
-                        web.Headers.Add("Accept-Encoding", "gzip");
+                        web.Headers.Set("Accept-Encoding", "gzip");
                     }
 
                     if (this.Etag != null) {
                         if (this.Etag != GDataRequestFactory.IfMatchAll) {
-                            web.Headers.Add(GDataRequestFactory.EtagHeader, this.Etag);
+                            web.Headers.Set(GDataRequestFactory.EtagHeader, this.Etag);
                         }
                         switch (this.type) {
                             case GDataRequestType.Update:
                             case GDataRequestType.Delete:
                                 if (!Utilities.IsWeakETag(this)) {
-                                    web.Headers.Add(GDataRequestFactory.IfMatch, this.Etag);
+                                    web.Headers.Set(GDataRequestFactory.IfMatch, this.Etag);
                                 }
                                 break;
                             case GDataRequestType.Query:
-                                web.Headers.Add(GDataRequestFactory.IfNoneMatch, this.Etag);
+                                web.Headers.Set(GDataRequestFactory.IfNoneMatch, this.Etag);
                                 break;
                         }
                     }
@@ -584,7 +516,7 @@ namespace Google.GData.Client {
                     }
 
                     if (this.Slug != null) {
-                        this.Request.Headers.Add(GDataRequestFactory.SlugHeader + ": " + this.Slug);
+                        this.Request.Headers.Set(GDataRequestFactory.SlugHeader, this.Slug);
                     }
 
                     if (this.factory.Proxy != null) {
@@ -596,34 +528,26 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>sets up the correct credentials for this call, pending 
         /// security scheme</summary> 
-        //////////////////////////////////////////////////////////////////////
         protected virtual void EnsureCredentials() {
             if (this.Credentials != null) {
                 this.webRequest.Credentials = this.Credentials.NetworkCredential;
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Logs the request object if overridden in subclass</summary>
         /// <param name="request">the request to log</param> 
-        //////////////////////////////////////////////////////////////////////
         protected virtual void LogRequest(WebRequest request) {
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Logs the response object if overridden in subclass</summary>
-        /// <param name="response">the response to log</param> 
-        //////////////////////////////////////////////////////////////////////
+        /// <param name="response">the response to log</param>
         protected virtual void LogResponse(WebResponse response) {
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Executes the request and prepares the response stream. Also 
         /// does error checking</summary> 
-        //////////////////////////////////////////////////////////////////////
         public virtual void Execute() {
             try {
                 EnsureWebRequest();
@@ -676,7 +600,7 @@ namespace Google.GData.Client {
                         this.targetUri.ToString() + response.StatusCode.ToString(), this.webResponse);
                 }
 
-                if ((this.IfModifiedSince != DateTime.MinValue || this.Etag != null) 
+                if ((this.IfModifiedSince != DateTime.MinValue || this.Etag != null)
                     && response.StatusCode == HttpStatusCode.NotModified) {
                     // Throw an exception for conditional GET
                     throw new GDataNotModifiedException("Content not modified: " + this.targetUri.ToString(), this.webResponse);
@@ -698,7 +622,6 @@ namespace Google.GData.Client {
                 this.contentLength = response.ContentLength;
 
                 // if we got an etag back, remember it
-
                 this.eTag = response.Headers[GDataRequestFactory.EtagHeader];
 
                 response = null;
@@ -706,12 +629,18 @@ namespace Google.GData.Client {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>gets the readable response stream</summary> 
         /// <returns> the response stream</returns>
-        //////////////////////////////////////////////////////////////////////
         public virtual Stream GetResponseStream() {
             return (this.responseStream);
+        }
+
+        /// <summary>returns a valid web request with the correct credentials</summary> 
+        /// <returns>the HTTP web request</returns>
+        public HttpWebRequest GetFinalizedRequest() {
+            this.EnsureWebRequest();
+            this.EnsureCredentials();
+            return this.Request as HttpWebRequest;
         }
     }
 }

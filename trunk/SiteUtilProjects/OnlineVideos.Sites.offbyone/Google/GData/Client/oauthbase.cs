@@ -3,6 +3,9 @@ using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Google.GData.Client {
     /// <summary>
@@ -17,7 +20,7 @@ namespace Google.GData.Client {
 
         //
         // List of known and used oauth parameters' names
-        //        
+        //
         public static string OAuthConsumerKeyKey = "oauth_consumer_key";
         public static string OAuthConsumerSecretKey = "oauth_consumer_secret";
         public static string OAuthCallbackKey = "oauth_callback";
@@ -30,6 +33,23 @@ namespace Google.GData.Client {
         public static string OAuthTokenSecretKey = "oauth_token_secret";
         public static string OAuthVerifierKey = "oauth_verifier";
         public static string OAuthScopeKey = "scope";
+
+        //
+        // List of known and used OAuth 2.0 parameters' names
+        //
+        public static string OAuth2ClientId = "client_id";
+        public static string OAuth2ClientSecret = "client_secret";
+        public static string OAuth2RedirectUri = "redirect_uri";
+        public static string OAuth2AccessType = "access_type";
+        public static string OAuth2GrantType = "grant_type";
+        public static string OAuth2ResponseType = "response_type";
+        public static string OAuth2State = "state";
+        public static string OAuth2ApprovalPrompt = "approval_prompt";
+        public static string OAuth2AccessCode = "code";
+        public static string OAuth2AccessToken = "access_token";
+        public static string OAuth2TokenType = "token_type";
+        public static string OAuth2RefreshToken = "refresh_token";
+        public static string OAuth2ExpiresIn = "expires_in";
 
         public const string HMACSHA1SignatureType = "HMAC-SHA1";
         public const string PlainTextSignatureType = "PLAINTEXT";
@@ -88,7 +108,7 @@ namespace Google.GData.Client {
                     if (!string.IsNullOrEmpty(s)) {
                         if (s.IndexOf('=') > -1) {
                             string[] temp = s.Split('=');
-                            // now temp[1], the value, might contain encoded data, that would be double encoded later. 
+                            // now temp[1], the value, might contain encoded data, that would be double encoded later.
                             // also it MIGHT contain encoding of the lowercase kind, which throws OAUTH off
                             // the same is true for the name
                             string name = Utilities.UrlDecodedValue(temp[0]);
@@ -109,11 +129,11 @@ namespace Google.GData.Client {
         }
 
         /// <summary>
-        /// All parameter names and values are escaped using the [RFC3986]  
-        /// percent-encoding (%xx) mechanism. Characters not in the unreserved character 
-        /// MUST be encoded. Characters in the unreserved character set MUST NOT be encoded. 
-        /// Hexadecimal characters in encodings MUST be upper case. Text names and values MUST be 
-        /// encoded as UTF-8 octets before percent-encoding them per [RFC3629] 
+        /// All parameter names and values are escaped using the [RFC3986]
+        /// percent-encoding (%xx) mechanism. Characters not in the unreserved character
+        /// MUST be encoded. Characters in the unreserved character set MUST NOT be encoded.
+        /// Hexadecimal characters in encodings MUST be upper case. Text names and values MUST be
+        /// encoded as UTF-8 octets before percent-encoding them per [RFC3629]
         /// </summary>
         /// <param name="value">The value to Url encode</param>
         /// <returns>Returns a Url encoded string</returns>
@@ -166,7 +186,7 @@ namespace Google.GData.Client {
         /// Generate the signature base that is used to produce the signature
         /// </summary>
         /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
-        /// <param name="consumerKey">The consumer key</param>        
+        /// <param name="consumerKey">The consumer key</param>
         /// <param name="token">The token, if available. If not available pass null or an empty string</param>
         /// <param name="tokenSecret">The token secret, if available. If not available pass null or an empty string</param>
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
@@ -177,7 +197,7 @@ namespace Google.GData.Client {
         /// <returns>The signature base</returns>
         public static string GenerateSignatureBase(Uri url, string consumerKey, string token, string tokenSecret,
             string httpMethod, string timeStamp, string nonce, string signatureType) {
-            OAuthParameters parameters = new OAuthParameters() { 
+            OAuthParameters parameters = new OAuthParameters() {
                 ConsumerKey = consumerKey, Token = token, TokenSecret = tokenSecret, Timestamp = timeStamp, Nonce = nonce, SignatureMethod = signatureType
             };
             return GenerateSignatureBase(url, httpMethod, parameters);
@@ -187,7 +207,7 @@ namespace Google.GData.Client {
         /// Generate the signature base that is used to produce the signature
         /// </summary>
         /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
-        /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>       
+        /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
         /// <param name="parameters">The OAuth parameters</param>
         /// <returns>The signature base</returns>
         public static string GenerateSignatureBase(Uri url, string httpMethod, OAuthParameters parameters) {
@@ -239,7 +259,7 @@ namespace Google.GData.Client {
 
         /// <summary>
         /// Generates a signature using the HMAC-SHA1 algorithm
-        /// </summary>		
+        /// </summary>
         /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
         /// <param name="consumerKey">The consumer key</param>
         /// <param name="consumerSecret">The consumer seceret</param>
@@ -256,8 +276,8 @@ namespace Google.GData.Client {
         }
 
         /// <summary>
-        /// Generates a signature using the specified signatureMethod 
-        /// </summary>		
+        /// Generates a signature using the specified signatureMethod
+        /// </summary>
         /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
         /// <param name="consumerKey">The consumer key</param>
         /// <param name="consumerSecret">The consumer seceret</param>
@@ -271,16 +291,16 @@ namespace Google.GData.Client {
         /// <returns>A base64 string of the hash value</returns>
         public static string GenerateSignature(Uri url, string consumerKey, string consumerSecret, string token,
             string tokenSecret, string httpMethod, string timeStamp, string nonce, string signatureMethod) {
-            OAuthParameters parameters = new OAuthParameters() { 
+            OAuthParameters parameters = new OAuthParameters() {
                 ConsumerKey = consumerKey, ConsumerSecret = consumerSecret, Token = token, TokenSecret = tokenSecret,
-                Timestamp = timeStamp, Nonce = nonce, SignatureMethod = signatureMethod 
+                Timestamp = timeStamp, Nonce = nonce, SignatureMethod = signatureMethod
             };
             return GenerateSignature(url, httpMethod, parameters);
         }
 
         /// <summary>
-        /// Generates a signature using the specified signatureMethod 
-        /// </summary>		
+        /// Generates a signature using the specified signatureMethod
+        /// </summary>
         /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
         /// <param name="parameters">The OAuth parameters</param>
@@ -304,10 +324,10 @@ namespace Google.GData.Client {
         }
 
         /// <summary>
-        /// oauth_signature is set to the concatenated encoded values of the Consumer Secret and Token Secret, 
+        /// oauth_signature is set to the concatenated encoded values of the Consumer Secret and Token Secret,
         /// separated by a ‘&’ character (ASCII code 38), even if either secret is empty. This version calls
         /// GenerateOAuthSignature and encodes the whole signature again
-        /// The result MUST be encoded again. 
+        /// The result MUST be encoded again.
         /// </summary>
         /// <param name="consumerSecret"></param>
         /// <param name="tokenSecret"></param>
@@ -317,9 +337,9 @@ namespace Google.GData.Client {
         }
 
         /// <summary>
-        /// oauth_signature is set to the concatenated encoded values of the Consumer Secret and Token Secret, 
-        /// separated by a ‘&’ character (ASCII code 38), even if either secret is empty. 
-        /// The result MUST be encoded again. 
+        /// oauth_signature is set to the concatenated encoded values of the Consumer Secret and Token Secret,
+        /// separated by a ‘&’ character (ASCII code 38), even if either secret is empty.
+        /// The result MUST be encoded again.
         /// </summary>
         /// <param name="consumerSecret"></param>
         /// <param name="tokenSecret"></param>
@@ -331,7 +351,7 @@ namespace Google.GData.Client {
         }
 
         /// <summary>
-        /// Generate the timestamp for the signature        
+        /// Generate the timestamp for the signature
         /// </summary>
         /// <returns></returns>
         public static string GenerateTimeStamp() {
@@ -354,6 +374,87 @@ namespace Google.GData.Client {
             // changed from the original oauth code to use Guid
             return Guid.NewGuid().ToString().ToLower().Replace("-", "");
         }
+
+        /// <summary>
+        /// Generate the request body for exchanging an access code for an access token.
+        /// </summary>
+        /// <param name="parameters">The OAuth 2.0 parameters</param>
+        public static String GetExchangeAccessCodeRequestBody(OAuth2Parameters parameters) {
+            if (string.IsNullOrEmpty(parameters.AccessCode)) {
+                throw new ArgumentNullException("access_code");
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("{0}={1}", OAuth2GrantType, "authorization_code");
+            sb.AppendFormat("&{0}={1}", OAuth2ClientId, EncodingPerRFC3986(parameters.ClientId));
+            sb.AppendFormat("&{0}={1}", OAuth2ClientSecret, EncodingPerRFC3986(parameters.ClientSecret));
+            sb.AppendFormat("&{0}={1}", OAuth2AccessCode, EncodingPerRFC3986(parameters.AccessCode));
+            sb.AppendFormat("&{0}={1}", OAuth2RedirectUri, EncodingPerRFC3986(parameters.RedirectUri));
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Generate the request body for refreshing an access token.
+        /// </summary>
+        /// <param name="parameters">The OAuth 2.0 parameters</param>
+        public static String GetRefreshAccessTokenRequestBody(OAuth2Parameters parameters) {
+            if (string.IsNullOrEmpty(parameters.RefreshToken)) {
+                throw new ArgumentNullException("refresh_token");
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("{0}={1}", OAuth2GrantType, "refresh_token");
+            sb.AppendFormat("&{0}={1}", OAuth2ClientId, EncodingPerRFC3986(parameters.ClientId));
+            sb.AppendFormat("&{0}={1}", OAuth2ClientSecret, EncodingPerRFC3986(parameters.ClientSecret));
+            sb.AppendFormat("&{0}={1}", OAuth2RefreshToken, EncodingPerRFC3986(parameters.RefreshToken));
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Send the request body to the OAuth 2.0 token endpoint to retrieve an access token.
+        /// When successful, updates the OAuthParameter instance passed as parameter by setting
+        /// AccessToken, RefreshToken and TokenExpiry.
+        /// </summary>
+        /// <param name="parameters">The OAuth 2.0 parameters</param>
+        /// <param name="requestBody">The request body to send</param>
+        public static void GetOAuth2AccessToken(OAuth2Parameters parameters, String requestBody) {
+            Uri requestUri = new Uri(parameters.TokenUri);
+            WebRequest request = WebRequest.Create(requestUri);
+            request.Method = "POST";
+
+            request.ContentType = "application/x-www-form-urlencoded";
+
+            Stream outputStream = request.GetRequestStream();
+            StreamWriter w = new StreamWriter(outputStream);
+            w.Write(requestBody);
+            w.Flush();
+            w.Close();
+
+            WebResponse response = request.GetResponse();
+            string result = "";
+            if (response != null) {
+                Stream responseStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(responseStream);
+                result = reader.ReadToEnd();
+
+                Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
+
+                if (dict.ContainsKey(OAuth2AccessToken)) {
+                  parameters.AccessToken = dict[OAuth2AccessToken];
+                }
+                if (dict.ContainsKey(OAuth2RefreshToken)) {
+                  parameters.RefreshToken = dict[OAuth2RefreshToken];
+                }
+                if (dict.ContainsKey(OAuth2TokenType)) {
+                  parameters.TokenType = dict[OAuth2TokenType];
+                }
+                if (dict.ContainsKey(OAuth2ExpiresIn)) {
+                  parameters.TokenExpiry = DateTime.Now.AddSeconds(int.Parse(dict[OAuth2ExpiresIn]));
+                }
+            }
+        }
+
     }
 }
-

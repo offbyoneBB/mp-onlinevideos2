@@ -149,7 +149,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getVideoList(Category category)
         {
             currentVideosTitle = null;  // use default title for videos retrieved via this method (which is the Category Name)
-			if (((RssLink)category).Other == "Login") Login();
+			if (((RssLink)category).Other.ToString() == "Login") Login();
             string fsUrl = ((RssLink)category).Url;
             YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(fsUrl) };
             query.NumberToRetrieve = pageSize;
@@ -247,7 +247,7 @@ namespace OnlineVideos.Sites
             parentCategory.SubCategories = new List<Category>();
             if (parentCategory is RssLink)
             {
-                YouTubeQuery ytq = new YouTubeQuery((parentCategory as RssLink).Url) { NumberToRetrieve = 50 };
+                YouTubeQuery ytq = new YouTubeQuery((parentCategory as RssLink).Url) { NumberToRetrieve = pageSize };
                 YouTubeFeed feed = service.Query(ytq);
                 foreach (PlaylistsEntry entry in feed.Entries)
                 {
@@ -262,79 +262,113 @@ namespace OnlineVideos.Sites
                         playlistLink.ParentCategory = parentCategory;
                     }
                 }
+                // if there are more results add a new NextPageCategory
+                if (feed.NextChunk != null)
+                {
+                    parentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = parentCategory, Url = feed.NextChunk });
+                }
             }
             else
             {
                 Login();
 
-				if (parentCategory.Name.EndsWith(Translation.Instance.Playlists))
-				{
-					// users playlists
-					YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreatePlaylistsUri(accountname)), StartIndex = 1, NumberToRetrieve = 50 }; // max. 50 per query
-					YouTubeFeed feed = null;
-					try
-					{
-						feed = service.Query(query);
-					}
-					catch (Google.GData.Client.GDataRequestException queryEx)
-					{
-						string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
-						if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
-						else throw queryEx;
-					}
-					foreach (PlaylistsEntry entry in feed.Entries)
-					{
-						RssLink playlistLink = new RssLink();
-						playlistLink.Name = entry.Title.Text;
-						playlistLink.EstimatedVideoCount = (uint)entry.CountHint;
-						XmlExtension playlistExt = entry.FindExtension(YouTubeNameTable.PlaylistId, YouTubeNameTable.NSYouTube) as XmlExtension;
-						if (playlistExt != null)
-						{
-							playlistLink.Url = string.Format(PLAYLIST_FEED, playlistExt.Node.InnerText);
-							parentCategory.SubCategories.Add(playlistLink);
-							playlistLink.ParentCategory = parentCategory;
-						}
-					}
-				}
-				else
-				{
-					// users subscriptions
-					RssLink newVidsLink = new RssLink();
-					newVidsLink.Name = Translation.Instance.NewVideos;
-					newVidsLink.Url = USER_NEWSUBSCRIPTIONS_FEED;
-					parentCategory.SubCategories.Add(newVidsLink);
-					newVidsLink.ParentCategory = parentCategory;
+                if (parentCategory.Name.EndsWith(Translation.Instance.Playlists))
+                {
+                    // authenticated user's playlists
+                    YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreatePlaylistsUri(accountname)), StartIndex = 1, NumberToRetrieve = pageSize };
+                    YouTubeFeed feed = null;
+                    try
+                    {
+                        feed = service.Query(query);
+                    }
+                    catch (Google.GData.Client.GDataRequestException queryEx)
+                    {
+                        string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
+                        if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
+                        else throw queryEx;
+                    }
+                    foreach (PlaylistsEntry entry in feed.Entries)
+                    {
+                        RssLink playlistLink = new RssLink();
+                        playlistLink.Name = entry.Title.Text;
+                        playlistLink.EstimatedVideoCount = (uint)entry.CountHint;
+                        XmlExtension playlistExt = entry.FindExtension(YouTubeNameTable.PlaylistId, YouTubeNameTable.NSYouTube) as XmlExtension;
+                        if (playlistExt != null)
+                        {
+                            playlistLink.Url = string.Format(PLAYLIST_FEED, playlistExt.Node.InnerText);
+                            parentCategory.SubCategories.Add(playlistLink);
+                            playlistLink.ParentCategory = parentCategory;
+                        }
+                    }
+                    // if there are more results add a new NextPageCategory
+                    if (feed.NextChunk != null)
+                    {
+                        parentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = parentCategory, Url = feed.NextChunk });
+                    }
+                }
+                else
+                {
+                    // authenticated user's subscriptions
+                    RssLink newVidsLink = new RssLink();
+                    newVidsLink.Name = Translation.Instance.NewVideos;
+                    newVidsLink.Url = USER_NEWSUBSCRIPTIONS_FEED;
+                    parentCategory.SubCategories.Add(newVidsLink);
+                    newVidsLink.ParentCategory = parentCategory;
 
-					YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateSubscriptionUri(accountname)), StartIndex = 1, NumberToRetrieve = 50 }; // max. 50 per query
-					bool hasNextPage = false;
-					do
-					{
-						YouTubeFeed feed = null;
-						try
-						{
-							feed = service.Query(query);
-						}
-						catch (Google.GData.Client.GDataRequestException queryEx)
-						{
-							string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
-							if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
-							else throw queryEx;
-						}
-						foreach (SubscriptionEntry subScr in feed.Entries)
-						{
-							RssLink subScrLink = new RssLink();
-							subScrLink.Name = subScr.UserName;
-							subScrLink.Url = YouTubeQuery.CreateUserUri(subScr.UserName);
-							parentCategory.SubCategories.Add(subScrLink);
-							subScrLink.ParentCategory = parentCategory;
-						}
-						hasNextPage = !string.IsNullOrEmpty(feed.NextChunk);
-						query.StartIndex += 50;
-					} while (hasNextPage);
-				}
+                    YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateSubscriptionUri(accountname)), StartIndex = 1, NumberToRetrieve = pageSize };
+                    YouTubeFeed feed = null;
+                    try
+                    {
+                        feed = service.Query(query);
+                    }
+                    catch (Google.GData.Client.GDataRequestException queryEx)
+                    {
+                        string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
+                        if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
+                        else throw queryEx;
+                    }
+                    foreach (SubscriptionEntry subScr in feed.Entries)
+                    {
+                        RssLink subScrLink = new RssLink();
+                        subScrLink.Name = subScr.UserName;
+                        subScrLink.Url = YouTubeQuery.CreateUserUri(subScr.UserName);
+                        parentCategory.SubCategories.Add(subScrLink);
+                        subScrLink.ParentCategory = parentCategory;
+                    }
+                    // if there are more results add a new NextPageCategory
+                    if (feed.NextChunk != null)
+                    {
+                        parentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = parentCategory, Url = feed.NextChunk });
+                    }
+                }
             }
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
+        }
+
+        public override int DiscoverNextPageCategories(NextPageCategory category)
+        {
+            // remove the NextPageCategory from the list as we are resolving it now
+            category.ParentCategory.SubCategories.Remove(category);
+            // query Youtube to get the feed results
+            var feed = service.Query(new YouTubeQuery(category.Url));
+            foreach (var entry in feed.Entries)
+            {
+                category.ParentCategory.SubCategories.Add(new RssLink()
+                {
+                    Name = entry.Title.Text,
+                    Url = entry.Content.Src.Content,
+                    ParentCategory = category.ParentCategory,
+                    EstimatedVideoCount = (entry is PlaylistsEntry) ? (uint?)(entry as PlaylistsEntry).CountHint : null
+                });
+            }
+            // if there are more results add a new NextPageCategory
+            if (feed.NextChunk != null)
+            {
+                category.ParentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = category.ParentCategory, Url = feed.NextChunk });
+            }
+            // return the number of categories we discovered
+            return feed.Entries.Count;
         }
        
         List<VideoInfo> parseGData(YouTubeQuery query)
@@ -600,7 +634,7 @@ namespace OnlineVideos.Sites
                         choice.Other = request.Insert<Playlist>(new Uri(YouTubeQuery.CreatePlaylistsUri(accountname)), new Playlist() { Title = choice.UserInputText }).PlaylistsEntry.Content.Src.Content;
                     }
                     addToPlaylist(selectedItem, choice.Other as string);
-                    // force re-discovery of dynamic subcategories for my playlists category (as either a new catgeory was added ot the count changed)
+                    // force re-discovery of dynamic subcategories for my playlists category (as either a new catgeory was added or the count changed)
                     var playlistsCategory = Settings.Categories.FirstOrDefault(c => !(c is RssLink) && c.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Playlists));
                     if (playlistsCategory != null) playlistsCategory.SubCategoriesDiscovered = false;
                 }
@@ -782,7 +816,7 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-		#region LatestVideosSiteUtilBase Member
+		#region LatestVideos
 
 		public override uint LatestVideosCount
 		{
@@ -791,7 +825,16 @@ namespace OnlineVideos.Sites
 
 		public override List<VideoInfo> GetLatestVideos()
 		{
-			if (Login())
+            bool authenticated = false;
+            try
+            {
+                 authenticated = Login();
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("Error getting Latest Videos from YouTube with credentials: {0}", ex.Message);
+            }
+            if (authenticated)
 			{
 				YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(USER_NEWSUBSCRIPTIONS_FEED) };
 				query.NumberToRetrieve = (int)latestVideosCount;

@@ -39,7 +39,7 @@ namespace Google.GData.Extensions {
         private bool readOnly;
         /// <summary>holds the feed property</summary>
         private AtomFeed feed;
-          /// <summary>holds the rel attribute of the EntyrLink element</summary> 
+          /// <summary>holds the rel attribute of the EntryLink element</summary> 
         private string rel;
 
 

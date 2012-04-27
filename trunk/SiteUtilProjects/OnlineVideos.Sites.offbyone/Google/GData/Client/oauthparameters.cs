@@ -11,8 +11,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
- * 
+ *
+ *
 */
 
 using System;
@@ -20,6 +20,7 @@ using System.Text;
 using System.Collections.Generic;
 
 namespace Google.GData.Client {
+
     /// <summary>
     /// Stores the parameters used to make OAuth requests
     /// </summary>
@@ -129,7 +130,7 @@ namespace Google.GData.Client {
         /// <summary>
         /// Adds a new key-value pair to the dictionary or updates the value if the key is already present
         /// </summary>
-        private void addOrUpdate(IDictionary<string, string> dictionary, string key, string value) {
+        protected void addOrUpdate(IDictionary<string, string> dictionary, string key, string value) {
             if (dictionary.ContainsKey(key)) {
                 if (value == null) {
                     dictionary.Remove(key);
@@ -144,7 +145,7 @@ namespace Google.GData.Client {
         /// <summary>
         /// Returns the value corresponding to the key in the dictionary or null if the key is not present
         /// </summary>
-        private string safeGet(IDictionary<string, string> dictionary, string key) {
+        protected string safeGet(IDictionary<string, string> dictionary, string key) {
             if (dictionary.ContainsKey(key)) {
                 return dictionary[key];
             } else {
@@ -152,4 +153,68 @@ namespace Google.GData.Client {
             }
         }
     }
+
+
+    /// <summary>
+    /// Stores the parameters used to make OAuth 2.0 requests
+    /// </summary>
+    public class OAuth2Parameters {
+        public static string GoogleAuthUri = "https://accounts.google.com/o/oauth2/auth";
+        public static string GoogleTokenUri = "https://accounts.google.com/o/oauth2/token";
+
+        public OAuth2Parameters() {
+            TokenUri = GoogleTokenUri;
+            AuthUri = GoogleAuthUri;
+            AccessType = "offline";
+            ResponseType = "code";
+            TokenType = "Bearer";
+            ApprovalPrompt = "auto";
+        }
+
+        public string ClientId { get; set; }
+
+        public string ClientSecret { get; set; }
+
+        public string RedirectUri { get; set; }
+
+        /// <summary>
+        /// Valid values are:
+        ///   * "offline" (default): token endpoint returns both an access and refresh token.
+        ///   * "online": only an access token is returned by the token endpoint.
+        /// </summary>
+        public string AccessType { get; set; }
+
+        /// <summary>
+        /// Valid values are:
+        ///   * "code" (default): retrieve a code to be exchanged for an acces token.
+        ///   * "token": directly retrieve an access token from the auth endpoint.
+        /// </summary>
+        public string ResponseType { get; set; }
+
+        /// <summary>
+        /// Valid values are:
+        ///   * "auto" (default): only show the approval prompt if the user never approved.
+        ///   * "force": always show the approval prompt.
+        /// </summary>
+        public String ApprovalPrompt { get; set; }
+
+        public String State { get; set; }
+
+        public String Scope { get; set; }
+
+        public string TokenUri { get; set; }
+
+        public string AuthUri { get; set; }
+
+        public string AccessCode { get; set; }
+
+        public string AccessToken { get; set; }
+
+        public string TokenType { get; set; }
+
+        public string RefreshToken { get; set; }
+
+        public DateTime TokenExpiry { get; set; }
+    }
+
 }

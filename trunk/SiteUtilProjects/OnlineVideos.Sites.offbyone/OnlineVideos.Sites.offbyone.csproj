@@ -66,110 +66,335 @@
   <ItemGroup>
     <Compile Include="DasErsteMediathekUtil.cs" />
     <Compile Include="GameTrailersUtil.cs" />
-    <Compile Include="Google\GData\Client\abstractentry.cs" />
-    <Compile Include="Google\GData\Client\abstractfeed.cs" />
-    <Compile Include="Google\GData\Client\appcontrol.cs" />
-    <Compile Include="Google\GData\Client\asyncDataHandler.cs" />
-    <Compile Include="Google\GData\Client\asyncservice.cs" />
-    <Compile Include="Google\GData\Client\atombase.cs" />
-    <Compile Include="Google\GData\Client\atombaselink.cs" />
-    <Compile Include="Google\GData\Client\atomcategory.cs" />
-    <Compile Include="Google\GData\Client\atomcontent.cs" />
-    <Compile Include="Google\GData\Client\atomfeed.cs" />
-    <Compile Include="Google\GData\Client\atomfeedentry.cs" />
-    <Compile Include="Google\GData\Client\atomFeedgenerator.cs" />
-    <Compile Include="Google\GData\Client\atomfeedparser.cs" />
-    <Compile Include="Google\GData\Client\atomicon.cs" />
-    <Compile Include="Google\GData\Client\atomId.cs" />
-    <Compile Include="Google\GData\Client\atomlink.cs" />
-    <Compile Include="Google\GData\Client\atomlogo.cs" />
-    <Compile Include="Google\GData\Client\atomnametable.cs" />
-    <Compile Include="Google\GData\Client\atomperson.cs" />
-    <Compile Include="Google\GData\Client\atomsource.cs" />
-    <Compile Include="Google\GData\Client\atomtextconstruct.cs" />
-    <Compile Include="Google\GData\Client\atomuri.cs" />
-    <Compile Include="Google\GData\Client\authentication.cs" />
-    <Compile Include="Google\GData\Client\authexceptions.cs" />
-    <Compile Include="Google\GData\Client\authsubutil.cs" />
-    <Compile Include="Google\GData\Client\basefeedparser.cs" />
-    <Compile Include="Google\GData\Client\basenametable.cs" />
-    <Compile Include="Google\GData\Client\collections.cs" />
-    <Compile Include="Google\GData\Client\documentquery.cs" />
-    <Compile Include="Google\GData\Client\exceptions.cs" />
-    <Compile Include="Google\GData\Client\extcollections.cs" />
-    <Compile Include="Google\GData\Client\extensionbase.cs" />
-    <Compile Include="Google\GData\Client\feedconstants.cs" />
-    <Compile Include="Google\GData\Client\feedmodel.cs" />
-    <Compile Include="Google\GData\Client\feedquery.cs" />
-    <Compile Include="Google\GData\Client\gauthrequest.cs" />
-    <Compile Include="Google\GData\Client\gauthsubrequest.cs" />
-    <Compile Include="Google\GData\Client\gdatabatch.cs" />
-    <Compile Include="Google\GData\Client\goauthrequest.cs" />
-    <Compile Include="Google\GData\Client\HttpUtility.cs" />
-    <Compile Include="Google\GData\Client\logrequest.cs" />
-    <Compile Include="Google\GData\Client\mediaservice.cs" />
-    <Compile Include="Google\GData\Client\mediasource.cs" />
-    <Compile Include="Google\GData\Client\oauthbase.cs" />
-    <Compile Include="Google\GData\Client\oauthparameters.cs" />
-    <Compile Include="Google\GData\Client\oauthuri.cs" />
-    <Compile Include="Google\GData\Client\oauthutil.cs" />
-    <Compile Include="Google\GData\Client\request.cs" />
-    <Compile Include="Google\GData\Client\resumableupload.cs" />
-    <Compile Include="Google\GData\Client\rssfeedparser.cs" />
-    <Compile Include="Google\GData\Client\service.cs" />
-    <Compile Include="Google\GData\Client\serviceinterface.cs" />
-    <Compile Include="Google\GData\Client\simplecontainer.cs" />
-    <Compile Include="Google\GData\Client\simpleelement.cs" />
-    <Compile Include="Google\GData\Client\tracing.cs" />
-    <Compile Include="Google\GData\Client\utilities.cs" />
-    <Compile Include="Google\GData\Client\versioninterface.cs" />
-    <Compile Include="Google\GData\Client\xmlextension.cs" />
-    <Compile Include="Google\GData\Extensions\apps.cs" />
-    <Compile Include="Google\GData\Extensions\comments.cs" />
-    <Compile Include="Google\GData\Extensions\contacts.cs" />
-    <Compile Include="Google\GData\Extensions\entrylink.cs" />
-    <Compile Include="Google\GData\Extensions\enumconstruct.cs" />
-    <Compile Include="Google\GData\Extensions\exif.cs" />
-    <Compile Include="Google\GData\Extensions\extended.cs" />
-    <Compile Include="Google\GData\Extensions\feedlink.cs" />
-    <Compile Include="Google\GData\Extensions\gdatanametable.cs" />
-    <Compile Include="Google\GData\Extensions\georsswhere.cs" />
+    <Compile Include="Google\GData\Client\abstractentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\abstractfeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\appcontrol.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\asyncDataHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\asyncservice.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atombase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atombaselink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomcategory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomcontent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomfeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomfeedentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomFeedgenerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomfeedparser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomicon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomId.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomlink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomlogo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomnametable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomperson.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomsource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomtextconstruct.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\atomuri.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\authentication.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\authexceptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\authsubutil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\basefeedparser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\basenametable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\batcherror.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\batcherrors.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\collections.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\documentquery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\exceptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\extcollections.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\extensionbase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\feedconstants.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\feedmodel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\feedquery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\gauthrequest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\gauthsubrequest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\gdatabatch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\goauth2request.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\goauthrequest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\HttpUtility.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\logrequest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\mediaservice.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\mediasource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\oauthbase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\oauthparameters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\oauthuri.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\oauthutil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\request.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\resumableupload.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\rssfeedparser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\service.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\serviceinterface.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\simplecontainer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\simpleelement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\tracing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\utilities.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\versioninterface.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Client\xmlextension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\apps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\comments.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\contacts.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\entrylink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\enumconstruct.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\exif.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\extended.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\feedlink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\gdatanametable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\georsswhere.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Google\GData\Extensions\labelcollection.cs" />
     <Compile Include="Google\GData\Extensions\mailitempropertycollection.cs" />
-    <Compile Include="Google\GData\Extensions\mediarss.cs" />
-    <Compile Include="Google\GData\Extensions\misc.cs" />
-    <Compile Include="Google\GData\Extensions\originalevent.cs" />
-    <Compile Include="Google\GData\Extensions\ratings.cs" />
-    <Compile Include="Google\GData\Extensions\recurexception.cs" />
-    <Compile Include="Google\GData\Extensions\recurrence.cs" />
-    <Compile Include="Google\GData\Extensions\reminder.cs" />
-    <Compile Include="Google\GData\Extensions\when.cs" />
-    <Compile Include="Google\GData\Extensions\where.cs" />
-    <Compile Include="Google\GData\Extensions\who.cs" />
-    <Compile Include="Google\GData\YouTube\activitiesfeed.cs" />
-    <Compile Include="Google\GData\YouTube\activityentry.cs" />
-    <Compile Include="Google\GData\YouTube\commententry.cs" />
-    <Compile Include="Google\GData\YouTube\commentsfeed.cs" />
-    <Compile Include="Google\GData\YouTube\complaintentry.cs" />
-    <Compile Include="Google\GData\YouTube\friendsentry.cs" />
-    <Compile Include="Google\GData\YouTube\friendsfeed.cs" />
-    <Compile Include="Google\GData\YouTube\messageentry.cs" />
-    <Compile Include="Google\GData\YouTube\messagefeed.cs" />
-    <Compile Include="Google\GData\YouTube\playlistentry.cs" />
-    <Compile Include="Google\GData\YouTube\playlistfeed.cs" />
-    <Compile Include="Google\GData\YouTube\playlistsentry.cs" />
-    <Compile Include="Google\GData\YouTube\playlistsfeed.cs" />
-    <Compile Include="Google\GData\YouTube\profileentry.cs" />
-    <Compile Include="Google\GData\YouTube\profilefeed.cs" />
-    <Compile Include="Google\GData\YouTube\subscriptionentry.cs" />
-    <Compile Include="Google\GData\YouTube\subscriptionfeed.cs" />
-    <Compile Include="Google\GData\YouTube\youtubebaseentry.cs" />
-    <Compile Include="Google\GData\YouTube\youtubeentry.cs" />
-    <Compile Include="Google\GData\YouTube\youtubeextensions.cs" />
-    <Compile Include="Google\GData\YouTube\youtubefeed.cs" />
-    <Compile Include="Google\GData\YouTube\youtubequery.cs" />
-    <Compile Include="Google\GData\YouTube\youtuberequest.cs" />
-    <Compile Include="Google\GData\YouTube\youtubeservice.cs" />
+    <Compile Include="Google\GData\Extensions\mediarss.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\misc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\originalevent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\ratings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\recurexception.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\recurrence.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\reminder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\when.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\where.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\Extensions\who.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\activitiesfeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\activityentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\commententry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\commentsfeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\complaintentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\friendsentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\friendsfeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\messageentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\messagefeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\playlistentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\playlistfeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\playlistsentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\playlistsfeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\profileentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\profilefeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\showentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\showfeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\showseasonentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\showseasonfeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\subscriptionentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\subscriptionfeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\youtubebaseentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\youtubeentry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\youtubeextensions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\youtubefeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\youtubequery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\youtuberequest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Google\GData\YouTube\youtubeservice.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Hoster\Youtube.cs" />
     <Compile Include="Hoster\LiveVideo.cs" />
     <Compile Include="KinoDeUtil.cs" />
@@ -355,6 +580,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

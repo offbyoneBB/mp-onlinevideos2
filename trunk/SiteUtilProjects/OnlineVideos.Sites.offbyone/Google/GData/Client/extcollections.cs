@@ -59,10 +59,13 @@ namespace Google.GData.Extensions
         {
             IExtensionElementFactory val;
             Type t = typeof(T);
-            if (!_cache.TryGetValue(t, out val))
+            lock (_cache)
             {
-                val = new T();
-                _cache[t] = val;
+                if (!_cache.TryGetValue(t, out val))
+                {
+                    val = new T();
+                    _cache[t] = val;
+                }
             }
             return val.XmlName;
         }
@@ -75,10 +78,13 @@ namespace Google.GData.Extensions
         {
             IExtensionElementFactory val;
             Type t = typeof(T);
-            if (!_cache.TryGetValue(t, out val))
+            lock (_cache)
             {
-                val = new T();
-                _cache[t] = val;
+                if (!_cache.TryGetValue(t, out val))
+                {
+                    val = new T();
+                    _cache[t] = val;
+                }
             }
             return val.XmlNameSpace;
         }
