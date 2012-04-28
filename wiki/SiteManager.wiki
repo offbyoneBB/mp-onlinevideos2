@@ -1,5 +1,7 @@
 #summary Manage (Update, Add and Remove) Sites
 
+<wiki:toc max_depth="3" />
+
 = Global Sites =
 !OnlineVideos is an open community project and relies on the creativity of users from around the world to create and maintain sites with the provided API. In order to achieve a quick and easy workflow, we provide a public webservice that allows every user to publish and update sites from the !OnlineVideos Configuration window. The server stores the configuration data (xml), required library (dll), icon and banner (png) for every site and keeps track of the current state for each site: working, reported, broken.
 
