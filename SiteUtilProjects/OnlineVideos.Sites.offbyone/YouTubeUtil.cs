@@ -149,7 +149,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getVideoList(Category category)
         {
             currentVideosTitle = null;  // use default title for videos retrieved via this method (which is the Category Name)
-			if (((RssLink)category).Other.ToString() == "Login") Login();
+			if ((((RssLink)category).Other as string) == "Login") Login();
             string fsUrl = ((RssLink)category).Url;
             YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(fsUrl) };
             query.NumberToRetrieve = pageSize;
