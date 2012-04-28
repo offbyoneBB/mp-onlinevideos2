@@ -34,12 +34,23 @@ The default view, that will be shown upon entering the plugin.<br/>
 ==sites view==
 You can order the list of sites by Name or as defined in your local xml.<br/>
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg"/>
+===site context menu===
+When a site has configuration options that the user can change, the context menu (F9) will allow to modify them.<br/>
+<img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ContextMenu.jpg"/>
 ==categories view==
 Shows a list of categories with thumbs. If the number of videos in a category is known, it will be displayed right aligned in the list mode.<br/>
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png"/>
 ==videos view==
 Example for the video view with large icons. In the lower part, the title, a description and the runtime as well as the publication date (if known) of the selected clip are displayed.<br/>
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg"/>
+=== video context menu===
+ * play with ... to chose Internal, WMP or VLC player
+ * play all videos currently showing
+ * add to favorites / delete from favorites (when displaying _Favorites_)
+ * download video (only visible when download folder was set in config)
+ * delete file (only when showing _DownloadedVideos_)
+ * custom entries depending on the site (e.g. show related videos on _YouTube_)
+<img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg"/>
 ==details view== 
 This screen is only available on sites that have multiple choices for a video (e.g. iTunes Moview Trailers and IMDB)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg"/>
 ==side menu==
@@ -50,14 +61,6 @@ This screen is only available on sites that have multiple choices for a video (e
  * SiteManager (update, add or remove sites)
  * Settings (when the [https://code.google.com/p/mpei-plugin/ MPEI plugin] is installed)
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg"/>
-==context menu (video view)==
- * play with ... to chose Internal, WMP or VLC player
- * play all videos currently showing
- * add to favorites / delete from favorites (when displaying _Favorites_)
- * download video (only visible when download folder was set in config)
- * delete file (only when showing _DownloadedVideos_)
- * custom entries depending on the site (e.g. show related videos on _YouTube_)
-<img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg"/>
 
 ----
 = Configuration =
@@ -76,14 +79,12 @@ The configuration form for the OnlineVideos plugin has four tabs where you can c
  * change the order of sites
  * delete, create and import or publish/update sites
  * edit settings that the util of that site exposes (e.g. quality for videos on YouTube)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png"/>
-==Codecs== 
-On the Codec tab, you can test your system for playback of different video types. If playback succeeds here, it will tell you what filter is used to split the file into audio and video and you should have no problems playing files of that type in MediaPortal.
-==How to add live-streams==
- * Create a new site (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/Add.png"/> at sites) or select the site where you want to add the live streams to.
- * Select the "Channels" tab at the lower part.
- * Create a new group (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/NewFolder.png"/>)
- * Fill the name and optional url to logo
- * Select that group and add a new channel (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/Add.png"/>)
+===How to add live-streams===
+ * Create a new site (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/Add.png"/>) or select the site where you want to add the live streams and press Edit (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/edit.png"/>).
+ * Create a new group (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/NewFolder.png"/>) in the lower part and fill the name and optional url of a logo
+ * Select that group and add a new stream(<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/tv.png"/>)
  * Fill the streamname, streamUrl (remember: this must be the direct url of the stream, and not some url to a page with a flashplayer playing that stream), and optionally the url of the logo.
  * Save, Start Mediaportal and enjoy.
+==Codecs== 
+On the Codec tab, you can test your system for playback of different video types. If playback succeeds here, it will tell you what filter is used to split the file into audio and video and you should have no problems playing files of that type in MediaPortal.
 ----
