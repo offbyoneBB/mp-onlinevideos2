@@ -11,6 +11,23 @@ namespace OnlineVideos.Sites
 		[Category("OnlineVideosConfiguration"), Description("Value used to connect to the RTMP server.")]
 		protected string app;
 
+		[Category("OnlineVideosConfiguration"), Description("Secondary Url used for parsing Categories.")]
+		protected string baseUrl2;
+
+		public override int DiscoverDynamicCategories()
+		{
+			var result = base.DiscoverDynamicCategories();
+			if (!string.IsNullOrEmpty(baseUrl2))
+			{
+				string data = GetWebData(baseUrl2, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+				if (!string.IsNullOrEmpty(data))
+				{
+					return ParseCategories(data);
+				}
+			}
+			return result;
+		}
+
 		public override String getUrl(VideoInfo video)
 		{
 			string data = GetWebData(HttpUtility.HtmlDecode(video.VideoUrl));

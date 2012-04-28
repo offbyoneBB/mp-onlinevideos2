@@ -164,6 +164,7 @@
 (?:(?!<div\sclass="buy">).)+
 <div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://rtl-now.rtl.de/sendung_a_z.php]]></item>
+        <item key="baseUrl2"><![CDATA[http://rtl-now.rtl.de/newsuebersicht.php]]></item>
         <item key="app"><![CDATA[rtlnow/]]></item>
       </Configuration>
     </Site>
