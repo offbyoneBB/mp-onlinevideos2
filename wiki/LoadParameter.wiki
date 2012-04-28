@@ -1,5 +1,7 @@
 #summary Specification for the possibilities of opening OnlineVideos with a parameter
 
+<wiki:toc max_depth="3" />
+
 = Introduction =
 
 Starting with !MediaPortal 1.2 a designer can add a button in the skinfile that calls any Plugin with a parameter ({{{<hyperlinkParameter>}}}). This allows calling !OnlineVideos showing a given Site, Category or results of a search. You can also use !GuiProperties inside the parameter, they are resolved before handed to the plugin.
