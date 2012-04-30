@@ -1122,23 +1122,20 @@
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
       <Description>Videos from cbc.ca</Description>
     </Site>
-    <Site name="OnsNetNuenen" util="OnsNetNuenen" agecheck="false" enabled="true" lang="nl">
+    <Site name="OnsNetNuenen" util="GenericSite" agecheck="false" enabled="true" lang="nl">
       <Description>Videos van en over Nuenen</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="[^\s]+\sSubMenuItem[^"]*"><a\shref="(?<url>[^"]*)"\s*><span>(?<title>[^<]*)</span></a></li>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass="Subject"><h1>(?<title>[^<]*)</h1><a\shref="(?<url>[^"]*)"><img\ssrc="(?<thumb>[^"]*)"\swidth="80"\sheight="45"\stitle="(?<description>[^"]*)"\salt="[^"]*"/></a></div>]]></item>
         <item key="dynamicCategoryUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<=videoalbumsubject.*)<option\s*value="(?<url>[^"]*)">(?<title>[^<]*)</option>]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.onsnet.tv/corp/index.php?itemid={0}&page=52&site=4&ln=nl]]></item>
-        <item key="videoListRegEx"><![CDATA[(<div\sclass="SearchVideoThumb"><a\shref="index\.php\?(?:(?!visid).)*visid=(?<VideoUrl>[^&]+)&[^<]+<img\ssrc="(?<ImageUrl>[^"]+)"[^>]*>[^>]*>(?<Title>[^<]*)<)|(onclick="playItemInPlayer\('video',\s(?<VideoUrl>[^,]*),'[^>]*><img\s(?:width="75"\s)?src="(?<ImageUrl>[^"]*)"\s(?:width="70"\sheight="50"\s)?title="(?<Description>[^"]*)"[^>]*>(?<Title>[^<]*)<)]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://www.onsnet.tv/corp/index.php?site=4&ln=nl&playerxml=1&type=video&id={0}]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="VideoThumbnail"><div\sid="ThemeButtons_[^"]*"\sstyle="display:none"><div\sstyle="clear:both;"></div></div><div\sid="ReactionContent_[^"]*"\sstyle="display:none;"></div><a\shref="(?<VideoUrl>[^"]*)"\s*onclick="[^"]*"><img\ssrc="(?<ImageUrl>[^"]*)"\swidth="110"\sheight="62"\stitle="[^"]*"\salt="[^"]*"/><span\sclass="VideoTitle">(?<Title>[^<]*)</span></a></div>]]></item>
+        <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>
+        <item key="videoUrlRegEx"><![CDATA[http://www\.onsnet\.tv/corp/index\.php\?page=[^&]*&founditem=[^&]*&visid=(?<m0>[^&]*)]]></item>
+        <item key="videoUrlFormatString"><![CDATA[http://www.onsnet.tv/corp/index.php?site=4&ln=nl&playerxml=1&type=video&id={0}]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"><span>volgende\s&gt;</span>]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="fileUrlRegEx"><![CDATA[<movie\surl="(?<m0>[^"]*)"]]></item>
-        <item key="baseUrl"><![CDATA[http://www.onsnet.tv/corp/index.php?page=48&site=4]]></item>
-        <item key="searchUrl"><![CDATA[http://www.onsnet.tv/corp/?page=54&site=4&search=1&srch_str={0}&x=0&y=0&submit_frmSearch=1]]></item>
+        <item key="baseUrl"><![CDATA[http://www.onsnet.tv/corp/?site=4]]></item>
       </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Beste video's">http://www.onsnet.tv/corp/index.php?ord=hig&amp;page=48&amp;site=4&amp;ln=nl</Category>
-        <Category xsi:type="RssLink" name="Nieuwste video's">http://www.onsnet.tv/corp/index.php?ord=new&amp;page=48&amp;site=4&amp;ln=nl</Category>
-      </Categories>
     </Site>
     <Site name="EscapistMagazine" util="TheEscapist" agecheck="false" enabled="true" lang="en">
       <Description>The mouthpiece of the gaming generation, The Escapist aims to capture and celebrate the contemporary video gaming lifestyle and the diverse global video game culture by way of in-depth features, thought provoking articles and relevant columns authored by leading video game authorities, as well as cutting-edge video shorts, engaging forums and robust social media elements that incorporate the video gaming experience.</Description>
