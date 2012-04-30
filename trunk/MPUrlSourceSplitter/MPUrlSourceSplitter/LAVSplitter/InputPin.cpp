@@ -2174,17 +2174,22 @@ unsigned int CLAVInputPin::GetReceiveDataTimeout(void)
 STDMETHODIMP CLAVInputPin::Length(LONGLONG *total, LONGLONG *available)
 {
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME);
-  CLockMutex lock(this->mediaPacketMutex, INFINITE);
-
+  
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, total);
   CHECK_POINTER_DEFAULT_HRESULT(result, available);
+
+  unsigned int mediaPacketCount = 0;
+  {
+    CLockMutex lock(this->mediaPacketMutex, INFINITE);
+    mediaPacketCount = this->mediaPacketCollection->Count();
+  }
 
   if (result == S_OK)
   {
     *total = this->totalLength;
     *available = this->totalLength;
-    unsigned int mediaPacketCount = this->mediaPacketCollection->Count();
+    
 
     CStreamAvailableLength *availableLength = new CStreamAvailableLength();
     result = this->QueryStreamAvailableLength(availableLength);
@@ -2202,6 +2207,9 @@ STDMETHODIMP CLAVInputPin::Length(LONGLONG *total, LONGLONG *available)
     {
       // error occured while requesting stream available length
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: cannot query available stream length, result: 0x%08X", MODULE_NAME, METHOD_LENGTH_NAME, result);
+
+      CLockMutex lock(this->mediaPacketMutex, INFINITE);
+      mediaPacketCount = this->mediaPacketCollection->Count();
 
       // return default value = last media packet end
       *available = 0;

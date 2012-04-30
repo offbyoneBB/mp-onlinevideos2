@@ -22,6 +22,9 @@
 
 #pragma once
 
+#ifndef __LAVSPLITTER_DEFINED
+#define __LAVSPLITTER_DEFINED
+
 #include <string>
 #include <list>
 #include <set>
@@ -299,3 +302,5 @@ private:
   // ffmpeg log callback
   static void ffmpeg_log_callback(void *ptr, int log_level, const char *format, va_list vl);
 };
+
+#endif

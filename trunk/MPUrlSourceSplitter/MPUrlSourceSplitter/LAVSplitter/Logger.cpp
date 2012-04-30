@@ -27,7 +27,7 @@
 
 CLogger::CLogger(CParameterCollection *configuration)
 {
-  // create mutex can return NULL
+  // create mutex, can return NULL
   this->mutex = CreateMutex(NULL, false, L"Global\\MPUrlSourceFilter");
   if (CoCreateGuid(&this->loggerInstance) != S_OK)
   {
@@ -59,41 +59,73 @@ CLogger::~CLogger(void)
 
 void CLogger::Log(unsigned int level, const wchar_t *format, ...)
 {
+  va_list vl;
+  va_start(vl, format);
+
+  this->Log(level, format, vl);
+
+  va_end(vl);
+}
+
+wchar_t *CLogger::GetLogLevel(unsigned int level)
+{
+  switch(level)
+  {
+  case LOGGER_NONE:
+    return FormatString(L"         ");
+  case LOGGER_ERROR:
+    return FormatString(L"[Error]  ");
+  case LOGGER_WARNING:
+    return FormatString(L"[Warning]");
+  case LOGGER_INFO:
+    return FormatString(L"[Info]   ");
+  case LOGGER_VERBOSE:
+    return FormatString(L"[Verbose]");
+  case LOGGER_DATA:
+    return FormatString(L"[Data]   ");
+  default:
+    return FormatString(L"         ");
+  }
+}
+
+void CLogger::Log(unsigned int level, const wchar_t *format, va_list vl)
+{
   if (level <= this->allowedLogVerbosity)
   {
-    SYSTEMTIME systemTime;
-    GetLocalTime(&systemTime);
-
-    va_list ap;
-    va_start(ap, format);
-
-    int length = _vscwprintf(format, ap) + 1;
-    ALLOC_MEM_DEFINE_SET(buffer, wchar_t, length, 0);
-    if (buffer != NULL)
-    {
-      vswprintf_s(buffer, length, format, ap);
-    }
-    va_end(ap);
-
     if (this->mutex != NULL)
     {
       // wait for mutex free
       WaitForSingleObject(this->mutex, INFINITE);
     }
 
-    wchar_t *levelBuffer = this->GetLogLevel(level);
-    wchar_t *guid = ConvertGuidToString(this->loggerInstance);
-
-    wchar_t *logRow = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
-      systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-      systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-      systemTime.wMilliseconds,
-      GetCurrentThreadId(),
-      guid,
-      levelBuffer,
-      buffer);
+    wchar_t *logRow = this->GetLogMessage(level, format, vl);
+    
 
     if (logRow != NULL)
+    {
+      this->LogMessage(level, logRow);
+      FREE_MEM(logRow);      
+    }
+
+    if (this->mutex != NULL)
+    {
+      // release mutex
+      ReleaseMutex(this->mutex);
+    }
+  }
+}
+
+void CLogger::LogMessage(unsigned int logLevel, const wchar_t *message)
+{
+  if (logLevel <= this->allowedLogVerbosity)
+  {
+    if (this->mutex != NULL)
+    {
+      // wait for mutex free
+      WaitForSingleObject(this->mutex, INFINITE);
+    }
+
+    if (message != NULL)
     {
       // now we have log row
       // get log file
@@ -119,7 +151,7 @@ void CLogger::Log(unsigned int level, const wchar_t *format, ...)
           hLogFile = INVALID_HANDLE_VALUE;
         }
 
-        if ((size.LowPart + wcslen(logRow)) > this->maxLogSize)
+        if ((size.LowPart + wcslen(message)) > this->maxLogSize)
         {
           // log file exceedes maximum log size
           wchar_t *moveFileName = GetMediaPortalFilePath(MPURLSOURCESPLITTER_LOG_FILE_BAK);
@@ -143,7 +175,7 @@ void CLogger::Log(unsigned int level, const wchar_t *format, ...)
 
           // write data to log file
           DWORD written = 0;
-          WriteFile(hLogFile, logRow, wcslen(logRow) * sizeof(wchar_t), &written, NULL);
+          WriteFile(hLogFile, message, wcslen(message) * sizeof(wchar_t), &written, NULL);
 
           CloseHandle(hLogFile);
           hLogFile = INVALID_HANDLE_VALUE;
@@ -151,13 +183,7 @@ void CLogger::Log(unsigned int level, const wchar_t *format, ...)
 
         FREE_MEM(fileName);
       }
-
-      FREE_MEM(logRow);
     }
-
-    FREE_MEM(guid);
-    FREE_MEM(levelBuffer);
-    FREE_MEM(buffer);
 
     if (this->mutex != NULL)
     {
@@ -167,23 +193,34 @@ void CLogger::Log(unsigned int level, const wchar_t *format, ...)
   }
 }
 
-wchar_t *CLogger::GetLogLevel(unsigned int level)
+wchar_t *CLogger::GetLogMessage(unsigned int level, const wchar_t *format, va_list vl)
 {
-  switch(level)
+  SYSTEMTIME systemTime;
+  GetLocalTime(&systemTime);
+
+  int length = _vscwprintf(format, vl) + 1;
+  ALLOC_MEM_DEFINE_SET(buffer, wchar_t, length, 0);
+  if (buffer != NULL)
   {
-  case LOGGER_NONE:
-    return FormatString(L"         ");
-  case LOGGER_ERROR:
-    return FormatString(L"[Error]  ");
-  case LOGGER_WARNING:
-    return FormatString(L"[Warning]");
-  case LOGGER_INFO:
-    return FormatString(L"[Info]   ");
-  case LOGGER_VERBOSE:
-    return FormatString(L"[Verbose]");
-  case LOGGER_DATA:
-    return FormatString(L"[Data]   ");
-  default:
-    return FormatString(L"         ");
+    vswprintf_s(buffer, length, format, vl);
   }
+
+  wchar_t *levelBuffer = this->GetLogLevel(level);
+  wchar_t *guid = ConvertGuidToString(this->loggerInstance);
+
+  wchar_t *logRow = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
+    systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+    systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+    systemTime.wMilliseconds,
+    GetCurrentThreadId(),
+    guid,
+    levelBuffer,
+    buffer);
+
+  FREE_MEM(levelBuffer);
+  FREE_MEM(guid);
+  FREE_MEM(buffer);
+
+  return logRow;
 }
+

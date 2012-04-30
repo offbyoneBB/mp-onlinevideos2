@@ -79,13 +79,19 @@ public:
 
   // the logger identifier
   GUID loggerInstance;
-private:
-  HANDLE mutex;
 
-  static wchar_t *GetLogLevel(unsigned int level);
+  void Log(unsigned int logLevel, const wchar_t *format, va_list vl);
+  void LogMessage(unsigned int logLevel, const wchar_t *message);
+  wchar_t *GetLogMessage(unsigned int logLevel, const wchar_t *format, va_list vl);
+
+protected:
+  HANDLE mutex;
 
   DWORD maxLogSize;
   unsigned int allowedLogVerbosity;
+
+  static wchar_t *GetLogLevel(unsigned int level);
+private:
 };
 
 #endif

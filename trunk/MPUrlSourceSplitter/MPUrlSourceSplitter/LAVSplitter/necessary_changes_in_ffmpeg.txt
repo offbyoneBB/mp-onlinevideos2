@@ -2,7 +2,7 @@
 The purpose of this document is to remark all changes made in ffmpeg by any developer. These same changes
 (or at least their meaning) must be made in next releases of ffmpeg.
 
-Changes in ffmpeg (lavfilters HEAD 15db26bd78df10e014b1d8966ab6dc3b6cdabf8f):
+Changes in ffmpeg (lavfilters HEAD 06c3ae334edc1e32f17293a531a807ee49beeb78):
 
 File: build_ff_win32.sh
 Comment: change build suffix
@@ -14,7 +14,7 @@ Code:
 Comment: add option
 Code: 
 
---disable-network
+--disable-network \
 
 --------------------------------------------
 Comment: remove options

@@ -197,10 +197,6 @@ typedef struct ScanTable{
     const uint8_t *scantable;
     uint8_t permutated[64];
     uint8_t raster_end[64];
-#if ARCH_PPC
-                /** Used by dct_quantize_altivec to find last-non-zero */
-    DECLARE_ALIGNED(16, uint8_t, inverse)[64];
-#endif
 } ScanTable;
 
 void ff_init_scantable(uint8_t *, ScanTable *st, const uint8_t *src_scantable);
@@ -378,7 +374,7 @@ typedef struct DSPContext {
 
     /* huffyuv specific */
     void (*add_bytes)(uint8_t *dst/*align 16*/, uint8_t *src/*align 16*/, int w);
-    void (*diff_bytes)(uint8_t *dst/*align 16*/, uint8_t *src1/*align 16*/, uint8_t *src2/*align 1*/,int w);
+    void (*diff_bytes)(uint8_t *dst/*align 16*/, const uint8_t *src1/*align 16*/, const uint8_t *src2/*align 1*/,int w);
     /**
      * subtract huffyuv's variant of median prediction
      * note, this might read from src1[-1], src2[-1]
@@ -537,9 +533,8 @@ typedef struct DSPContext {
     /**
      * Calculate scalar product of two vectors.
      * @param len length of vectors, should be multiple of 16
-     * @param shift number of bits to discard from product
      */
-    int32_t (*scalarproduct_int16)(const int16_t *v1, const int16_t *v2/*align 16*/, int len, int shift);
+    int32_t (*scalarproduct_int16)(const int16_t *v1, const int16_t *v2/*align 16*/, int len);
     /* ape functions */
     /**
      * Calculate scalar product of v1 and v2,
