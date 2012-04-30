@@ -156,7 +156,8 @@ case CODEC_ID_MSZH:
     { extern AVCodec ff_mszh_decoder;
       return ff_mszh_decoder.name; }
 case CODEC_ID_ZLIB:
-    return "zlib";
+    { extern AVCodec ff_zlib_decoder;
+      return ff_zlib_decoder.name; }
 case CODEC_ID_QTRLE:
     { extern AVCodec ff_qtrle_decoder;
       return ff_qtrle_decoder.name; }
@@ -164,7 +165,8 @@ case CODEC_ID_SNOW:
     { extern AVCodec ff_snow_decoder;
       return ff_snow_decoder.name; }
 case CODEC_ID_TSCC:
-    return "tscc";
+    { extern AVCodec ff_tscc_decoder;
+      return ff_tscc_decoder.name; }
 case CODEC_ID_ULTI:
     { extern AVCodec ff_ulti_decoder;
       return ff_ulti_decoder.name; }
@@ -177,7 +179,8 @@ case CODEC_ID_QPEG:
     { extern AVCodec ff_qpeg_decoder;
       return ff_qpeg_decoder.name; }
 case CODEC_ID_PNG:
-    return "png";
+    { extern AVCodec ff_png_decoder;
+      return ff_png_decoder.name; }
 case CODEC_ID_PPM:
     { extern AVCodec ff_ppm_decoder;
       return ff_ppm_decoder.name; }
@@ -236,7 +239,8 @@ case CODEC_ID_MMVIDEO:
     { extern AVCodec ff_mmvideo_decoder;
       return ff_mmvideo_decoder.name; }
 case CODEC_ID_ZMBV:
-    return "zmbv";
+    { extern AVCodec ff_zmbv_decoder;
+      return ff_zmbv_decoder.name; }
 case CODEC_ID_AVS:
     { extern AVCodec ff_avs_decoder;
       return ff_avs_decoder.name; }
@@ -249,7 +253,8 @@ case CODEC_ID_KMVC:
     { extern AVCodec ff_kmvc_decoder;
       return ff_kmvc_decoder.name; }
 case CODEC_ID_FLASHSV:
-    return "flashsv";
+    { extern AVCodec ff_flashsv_decoder;
+      return ff_flashsv_decoder.name; }
 case CODEC_ID_CAVS:
     { extern AVCodec ff_cavs_decoder;
       return ff_cavs_decoder.name; }
@@ -284,7 +289,8 @@ case CODEC_ID_GIF:
     { extern AVCodec ff_gif_decoder;
       return ff_gif_decoder.name; }
 case CODEC_ID_DXA:
-    return "dxa";
+    { extern AVCodec ff_dxa_decoder;
+      return ff_dxa_decoder.name; }
 case CODEC_ID_DNXHD:
     { extern AVCodec ff_dnxhd_decoder;
       return ff_dnxhd_decoder.name; }
@@ -377,7 +383,8 @@ case CODEC_ID_FRWU:
     { extern AVCodec ff_frwu_decoder;
       return ff_frwu_decoder.name; }
 case CODEC_ID_FLASHSV2:
-    return "flashsv2";
+    { extern AVCodec ff_flashsv2_decoder;
+      return ff_flashsv2_decoder.name; }
 case CODEC_ID_CDGRAPHICS:
     { extern AVCodec ff_cdgraphics_decoder;
       return ff_cdgraphics_decoder.name; }
@@ -459,12 +466,21 @@ case CODEC_ID_XWD:
 case CODEC_ID_CDXL:
     { extern AVCodec ff_cdxl_decoder;
       return ff_cdxl_decoder.name; }
+case CODEC_ID_XBM:
+    { extern AVCodec ff_xbm_decoder;
+      return ff_xbm_decoder.name; }
+case CODEC_ID_ZEROCODEC:
+    { extern AVCodec ff_zerocodec_decoder;
+      return ff_zerocodec_decoder.name; }
 case CODEC_ID_Y41P:
     { extern AVCodec ff_y41p_decoder;
       return ff_y41p_decoder.name; }
 case CODEC_ID_ESCAPE130:
     { extern AVCodec ff_escape130_decoder;
       return ff_escape130_decoder.name; }
+case CODEC_ID_EXR:
+    { extern AVCodec ff_exr_decoder;
+      return ff_exr_decoder.name; }
 case CODEC_ID_AVRP:
     { extern AVCodec ff_avrp_decoder;
       return ff_avrp_decoder.name; }
@@ -838,6 +854,9 @@ case CODEC_ID_8SVX_FIB:
 case CODEC_ID_BMV_AUDIO:
     { extern AVCodec ff_bmv_audio_decoder;
       return ff_bmv_audio_decoder.name; }
+case CODEC_ID_RALF:
+    { extern AVCodec ff_ralf_decoder;
+      return ff_ralf_decoder.name; }
 case CODEC_ID_FFWAVESYNTH:
     { extern AVCodec ff_ffwavesynth_decoder;
       return ff_ffwavesynth_decoder.name; }
@@ -870,6 +889,8 @@ case CODEC_ID_SRT:
       return ff_srt_decoder.name; }
 case CODEC_ID_MICRODVD:
     return "microdvd";
+case CODEC_ID_EIA_608:
+    return "eia_608";
 case CODEC_ID_TTF:
     return "ttf";
 case CODEC_ID_BINTEXT:

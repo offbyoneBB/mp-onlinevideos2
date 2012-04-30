@@ -29,6 +29,8 @@
 
 #include "libavutil/rational.h"
 #include "avcodec.h"
+#include "dsputil.h"
+#include "get_bits.h"
 
 typedef struct DVwork_chunk {
     uint16_t  buf_offset;
@@ -65,6 +67,20 @@ typedef struct DVprofile {
     const uint8_t  (*audio_shuffle)[9];     /* PCM shuffling table */
 } DVprofile;
 
+typedef struct DVVideoContext {
+    const DVprofile *sys;
+    AVFrame          picture;
+    AVCodecContext  *avctx;
+    uint8_t         *buf;
+
+    uint8_t  dv_zigzag[2][64];
+
+    void (*get_pixels)(DCTELEM *block, const uint8_t *pixels, int line_size);
+    void (*fdct[2])(DCTELEM *block);
+    void (*idct_put[2])(uint8_t *dest, int line_size, DCTELEM *block);
+    me_cmp_func ildct_cmp;
+} DVVideoContext;
+
 enum dv_section_type {
      dv_sect_header  = 0x1f,
      dv_sect_subcode = 0x3f,
@@ -88,6 +104,16 @@ enum dv_pack_type {
      dv_unknown_pack  = 0xff,
 };
 
+extern const uint8_t ff_dv_quant_shifts[22][4];
+extern const uint8_t ff_dv_quant_offset[4];
+
+extern const int ff_dv_iweight_88[64];
+extern const int ff_dv_iweight_248[64];
+extern const int ff_dv_iweight_1080_y[64];
+extern const int ff_dv_iweight_1080_c[64];
+extern const int ff_dv_iweight_720_y[64];
+extern const int ff_dv_iweight_720_c[64];
+
 #define DV_PROFILE_IS_HD(p) ((p)->video_stype & 0x10)
 #define DV_PROFILE_IS_1080i50(p) (((p)->video_stype == 0x14) && ((p)->dsf == 1))
 #define DV_PROFILE_IS_720p50(p)  (((p)->video_stype == 0x18) && ((p)->dsf == 1))
@@ -106,10 +132,43 @@ enum dv_pack_type {
  */
 #define DV_MAX_BPM 8
 
+#define TEX_VLC_BITS 9
+
+extern RL_VLC_ELEM ff_dv_rl_vlc[1184];
+
 const DVprofile* avpriv_dv_frame_profile(const DVprofile *sys,
                                   const uint8_t* frame, unsigned buf_size);
 const DVprofile* avpriv_dv_frame_profile2(AVCodecContext* codec, const DVprofile *sys,
                                   const uint8_t* frame, unsigned buf_size);
 const DVprofile* avpriv_dv_codec_profile(AVCodecContext* codec);
+
+int ff_dv_init_dynamic_tables(const DVprofile *d);
+int ff_dvvideo_init(AVCodecContext *avctx);
+
+static inline int dv_work_pool_size(const DVprofile *d)
+{
+    int size = d->n_difchan*d->difseg_size*27;
+    if (DV_PROFILE_IS_1080i50(d))
+        size -= 3*27;
+    if (DV_PROFILE_IS_720p50(d))
+        size -= 4*27;
+    return size;
+}
+
+static inline void dv_calculate_mb_xy(DVVideoContext *s, DVwork_chunk *work_chunk, int m, int *mb_x, int *mb_y)
+{
+     *mb_x = work_chunk->mb_coordinates[m] & 0xff;
+     *mb_y = work_chunk->mb_coordinates[m] >> 8;
+
+     /* We work with 720p frames split in half. The odd half-frame (chan==2,3) is displaced :-( */
+     if (s->sys->height == 720 && !(s->buf[1]&0x0C)) {
+         *mb_y -= (*mb_y>17)?18:-72; /* shifting the Y coordinate down by 72/2 macro blocks */
+     }
+}
+
+/**
+ *  Print all allowed DV profiles into logctx at specified logging level.
+ */
+void ff_dv_print_profiles(void *logctx, int loglevel);
 
 #endif /* AVCODEC_DVDATA_H */

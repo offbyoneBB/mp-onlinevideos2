@@ -29,6 +29,10 @@
 
 #include "moreuuids.h"
 
+extern "C" {
+#include "libavformat/mpegts.h"
+}
+
 //#ifdef DEBUG
 //#include "lavf_log.h"
 //extern "C" {
@@ -63,7 +67,6 @@ extern "C" void ff_update_cur_dts(AVFormatContext *s, AVStream *ref_st, int64_t 
 #define AVFORMAT_OPEN_TIMEOUT 20
 
 extern void lavf_get_iformat_infos(AVInputFormat *pFormat, const char **pszName, const char **pszDescription);
-extern AVInputFormat lav_mkv_demuxer;
 
 static volatile int ffmpeg_initialized = 0;
 
@@ -87,7 +90,6 @@ void CLAVFDemuxer::ffmpeg_init()
     ffmpeg_initialized = 1;
 
     av_register_all();
-    av_register_input_format(&lav_mkv_demuxer);
   }
 }
 
@@ -253,6 +255,22 @@ done:
   CleanupAVFormat();
   return E_FAIL;
 }
+
+void CLAVFDemuxer::AddMPEGTSStream(int pid, uint32_t stream_type)
+{
+  if (m_avFormat) {
+    int program = -1;
+    if (m_avFormat->nb_programs > 0) {
+      unsigned nb_streams = 0;
+      for (unsigned i = 0; i < m_avFormat->nb_programs; i++) {
+        if (m_avFormat->programs[i]->nb_stream_indexes > nb_streams)
+          program = i;
+      }
+    }
+    avpriv_mpegts_add_stream(m_avFormat, pid, stream_type, program >= 0 ? m_avFormat->programs[program]->id : -1);
+  }
+}
+
 
 //HRESULT CLAVFDemuxer::CheckBDM2TSCPLI(LPCOLESTR pszFileName)
 //{
@@ -519,7 +537,7 @@ void CLAVFDemuxer::UpdateSubStreams()
 void CLAVFDemuxer::SettingsChanged(ILAVFSettingsInternal *pSettings)
 {
   int vc1Mode = pSettings->GetVC1TimestampMode();
-  if (vc1Mode == 1) {
+    if (vc1Mode == 1 || strcmp(m_pszInputFormat, "rawvideo") == 0) {
     m_bVC1Correction = true;
   } else if (vc1Mode == 2) {
     BOOL bReq = pSettings->IsVC1CorrectionRequired();
@@ -591,7 +609,7 @@ STDMETHODIMP CLAVFDemuxer::GetNextPacket(Packet **ppPacket)
   } else if (result < 0) {
     // meh, fail
   } else if (pkt.size < 0 || pkt.stream_index < 0 || (unsigned)pkt.stream_index >= m_avFormat->nb_streams) {
-    // XXX, in some cases ffmpeg returns a negative packet size
+    // XXX, in some cases ffmpeg returns a zero or negative packet size
     if(m_avFormat->pb && !m_avFormat->pb->eof_reached) {
       bReturnEmpty = true;
     }
@@ -1138,6 +1156,23 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
     if (videoStreamId != -1)
     {
       AVStream *stream = this->m_avFormat->streams[videoStreamId];
+      int64_t start_time = AV_NOPTS_VALUE;
+
+      // MPEG-TS needs a protection against a wrapped around start time
+      // It is possible for the start_time in m_avFormat to be wrapped around, but the start_time in the current stream not to be.
+      // In this case, ConvertRTToTimestamp would produce timestamps not valid for seeking.
+      //
+      // Compensate for this by creating a negative start_time, resembling the actual value in m_avFormat->start_time without wrapping.
+      if (m_bMPEGTS && stream->start_time != AV_NOPTS_VALUE) {
+        int64_t start = av_rescale_q(stream->start_time, stream->time_base, AV_RATIONAL_TIMEBASE);
+
+        if (start < m_avFormat->start_time
+          && m_avFormat->start_time > av_rescale_q(3LL << (stream->pts_wrap_bits - 2), stream->time_base, AV_RATIONAL_TIMEBASE)
+          && start < av_rescale_q(3LL << (stream->pts_wrap_bits - 3), stream->time_base, AV_RATIONAL_TIMEBASE)) {
+            start_time = m_avFormat->start_time - av_rescale_q(1LL << stream->pts_wrap_bits, stream->time_base, AV_RATIONAL_TIMEBASE);
+        }
+      }
+
       seek_pts = ConvertRTToTimestamp(time, stream->time_base.num, stream->time_base.den);
     }
     else
@@ -1145,6 +1180,12 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
       seek_pts = ConvertRTToTimestamp(time, 1, AV_TIME_BASE);
     }
   }
+
+  if (seek_pts < 0)
+    seek_pts = 0;
+
+  if (strcmp(m_pszInputFormat, "rawvideo") == 0 && seek_pts == 0)
+    return SeekByte(0, AVSEEK_FLAG_BACKWARD);
 
   if (videoStreamId < 0)
   {

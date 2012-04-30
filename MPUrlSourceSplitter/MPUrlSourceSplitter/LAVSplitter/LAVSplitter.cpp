@@ -80,6 +80,11 @@ extern "C"
 #define METHOD_STREAM_READ_SEEK_NAME                              L"stream_read_seek()"
 #define METHOD_THREAD_PROC_NAME                                   L"ThreadProc()"
 
+#define METHOD_STOP_NAME                                          L"Stop()"
+#define METHOD_CLOSE_NAME                                         L"Close()"
+#define METHOD_PAUSE_NAME                                         L"Pause()"
+#define METHOD_RUN_NAME                                           L"Run()"
+
 // if ffmpeg_log_callback_set is true than ffmpeg log callback will not be set
 // in that case we don't receive messages from ffmpeg
 static volatile bool ffmpeg_log_callback_set = false;
@@ -299,6 +304,8 @@ CLAVSplitter::~CLAVSplitter()
 
 STDMETHODIMP CLAVSplitter::Close()
 {
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CLOSE_NAME);
+
   CAutoLock cAutoLock(this);
 
   AbortOperation();
@@ -310,6 +317,7 @@ STDMETHODIMP CLAVSplitter::Close()
 
   SafeRelease(&m_pDemuxer);
 
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_STOP_NAME);
   return S_OK;
 }
 
@@ -770,6 +778,7 @@ DWORD CLAVSplitter::ThreadProc()
 
   m_fFlushing = false;
   m_eEndFlush.Set();
+
   for(DWORD cmd = (DWORD)-1; ; cmd = GetRequest())
   {
     switch (cmd)
@@ -788,16 +797,17 @@ DWORD CLAVSplitter::ThreadProc()
       break;
     case (DWORD)-1:
       // ignore, it means no command
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_THREAD_PROC_NAME, L"no command");
       break;
     default:
       this->logger->Log(LOGGER_INFO, L"%s: %s: unknown command: %d", MODULE_NAME, METHOD_THREAD_PROC_NAME, cmd);
       break;
     }
-    
+
     if(cmd == CMD_EXIT)
     {
       Reply(S_OK);
-      return 0;
+      break;
     }
 
     if ((cmd != CMD_PAUSE) && (cmd != CMD_PLAY))
@@ -815,7 +825,9 @@ DWORD CLAVSplitter::ThreadProc()
         DemuxSeek(this->m_pInput->GetStart());
 
       if(cmd != (DWORD)-1)
+      {
         Reply(S_OK);
+      }
 
       // Wait for the end of any flush
       m_eEndFlush.Wait();
@@ -859,7 +871,6 @@ DWORD CLAVSplitter::ThreadProc()
     }
 
   }
-  ASSERT(0); // we should only exit via CMD_EXIT
 
   return 0;
 }
@@ -880,22 +891,29 @@ HRESULT CLAVSplitter::DemuxNextPacket()
   Packet *pPacket;
   HRESULT hr = S_OK;
   hr = m_pDemuxer->GetNextPacket(&pPacket);
+
   // Only S_OK indicates we have a proper packet
   // S_FALSE is a "soft error", don't deliver the packet
   if (hr != S_OK) {
     return hr;
   }
+
   return DeliverPacket(pPacket);
 }
 
 HRESULT CLAVSplitter::DeliverPacket(Packet *pPacket)
 {
+  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, L"DeliverPacket()");
+
   HRESULT hr = S_FALSE;
 
   if (pPacket->dwFlags & LAV_PACKET_FORCED_SUBTITLE)
     pPacket->StreamId = FORCED_SUBTITLE_PID;
 
   CLAVOutputPin* pPin = GetOutputPin(pPacket->StreamId, TRUE);
+
+  this->logger->Log(LOGGER_DATA, METHOD_MESSAGE_FORMAT, MODULE_NAME, L"DeliverPacket()", L"after GetOutputPin()");
+
   if(!pPin || !pPin->IsConnected()) {
     delete pPacket;
     return S_FALSE;
@@ -935,6 +953,9 @@ HRESULT CLAVSplitter::DeliverPacket(Packet *pPacket)
 
       pPin->m_rtPrev = pPacket->rtStart;
     }
+
+    pPacket->rtStart = (REFERENCE_TIME)(pPacket->rtStart / this->m_pInput->GetPlayRate());
+    pPacket->rtStop = (REFERENCE_TIME)(pPacket->rtStop / this->m_pInput->GetPlayRate());
   }
 
   if(m_bDiscontinuitySent.find(pPacket->StreamId) == m_bDiscontinuitySent.end()) {
@@ -945,7 +966,6 @@ HRESULT CLAVSplitter::DeliverPacket(Packet *pPacket)
   DWORD streamId = pPacket->StreamId;
 
   hr = pPin->QueuePacket(pPacket);
-
   if (hr != S_OK) {
     // Find a iterator pointing to the pin
     std::vector<CLAVOutputPin *>::iterator it = std::find(m_pActivePins.begin(), m_pActivePins.end(), pPin);
@@ -966,15 +986,19 @@ HRESULT CLAVSplitter::DeliverPacket(Packet *pPacket)
 // State Control
 STDMETHODIMP CLAVSplitter::Stop()
 {
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_STOP_NAME);
+
+  CAMThread::CallWorker(CMD_EXIT);
+
   CAutoLock cAutoLock(this);
 
   DeliverBeginFlush();
-  CAMThread::CallWorker(CMD_EXIT);
   CAMThread::Close();
   DeliverEndFlush();
 
   HRESULT hr;
   if(FAILED(hr = __super::Stop())) {
+    this->logger->Log(LOGGER_ERROR, METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_STOP_NAME, hr);
     return hr;
   }
 
@@ -983,14 +1007,17 @@ STDMETHODIMP CLAVSplitter::Stop()
 
 STDMETHODIMP CLAVSplitter::Pause()
 {
-  CAutoLock cAutoLock(this);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_PAUSE_NAME);
 
   CAMThread::CallWorker(CMD_PAUSE);
+
+  CAutoLock cAutoLock(this);
 
   FILTER_STATE fs = m_State;
 
   HRESULT hr;
   if(FAILED(hr = __super::Pause())) {
+    this->logger->Log(LOGGER_ERROR, METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_PAUSE_NAME, hr);
     return hr;
   }
 
@@ -1006,20 +1033,27 @@ STDMETHODIMP CLAVSplitter::Pause()
     Create();
   }
 
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_PAUSE_NAME);
   return S_OK;
 }
 
 STDMETHODIMP CLAVSplitter::Run(REFERENCE_TIME tStart)
 {
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_RUN_NAME);
+
+  //this->Pause();
+
   CAutoLock cAutoLock(this);
 
   HRESULT hr;
   if(FAILED(hr = __super::Run(tStart))) {
+    this->logger->Log(LOGGER_ERROR, METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_RUN_NAME, hr);
     return hr;
   }
 
   CAMThread::CallWorker(CMD_PLAY);
 
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_RUN_NAME);
   return S_OK;
 }
 
@@ -1130,7 +1164,7 @@ STDMETHODIMP CLAVSplitter::SetPositionsInternal(void *caller, LONGLONG* pCurrent
   {
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: performing seek to %I64d", MODULE_NAME, METHOD_SET_POSITIONS_INTERNAL_NAME, this->m_pInput->GetNewStart());
 
-    if(ThreadExists())
+    if (ThreadExists())
     {
       DeliverBeginFlush();
       CallWorker(CMD_SEEK);
@@ -1443,6 +1477,7 @@ std::list<std::string> CLAVSplitter::GetPreferredAudioLanguageList()
   std::list<std::string> list;
 
   split(std::string(buffer), std::string(",; "), list);
+  CoTaskMemFree(buffer);
 
   return list;
 }
@@ -1838,5 +1873,5 @@ HRESULT CLAVSplitter::GetCacheFileName(wchar_t **path)
 
 wchar_t *GetVersionInfo(const wchar_t *version, const wchar_t *compile)
 {
-  return FormatString(L"Version: %s Compile date: %s", version, compile);
+  return FormatString(L"Version: %s Build date: %s", version, compile);
 }
