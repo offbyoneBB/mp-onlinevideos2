@@ -57,7 +57,10 @@ namespace OnlineVideos.Sites
 
             string res = GetWebDataFromPost(url, postData, cc);
             if (!res.Contains(@"<Success>1</Success>"))
-                Log.Error("login unsuccessfull");
+            {
+                Log.Error("Eurosport: login unsuccessfull");
+                Log.Debug("login unsuccessfull");// so it's in mediaportal.log as wel ass onlinevideos.log
+            }
 
             CookieCollection ccol = cc.GetCookies(new Uri(baseUrl));
             foreach (Cookie c in ccol)
