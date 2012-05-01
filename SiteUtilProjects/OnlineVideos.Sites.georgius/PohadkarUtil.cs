@@ -16,7 +16,7 @@ namespace OnlineVideos.Sites.georgius
         private static String baseUrl = @"http://www.pohadkar.cz";
 
         private static String categoriesStart = @"<div class=""vypis_body extra2"">";
-        private static String categoriesEnd = @"<div class=""vypis_data"">";
+        private static String categoriesEnd = @"<div class=""vypis_data""";
         private static String categoryStart = @"<a class";
         private static String categoryEnd = @"</a>";
         private static String categoryUrlAndTitleRegex = @"<a class=""[^""]*""[\s]*onclick=""loadVypis\('(?<categoryUrl>[^']+)'[^""]*"">(?<categoryTitle>[^<]+)";

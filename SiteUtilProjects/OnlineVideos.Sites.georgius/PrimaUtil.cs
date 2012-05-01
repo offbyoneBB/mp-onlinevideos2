@@ -212,7 +212,7 @@ namespace OnlineVideos.Sites.georgius
         public override string getUrl(VideoInfo video)
         {
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
-            String episodeJS = SiteUtilBase.GetWebData(PrimaUtil.episodeUrlJS, null, null, null, true);
+            String episodeJS = SiteUtilBase.GetWebData(PrimaUtil.episodeUrlJS, null, video.VideoUrl, null, true);
             baseWebData = HttpUtility.HtmlDecode(baseWebData);
 
             video.PlaybackOptions = new Dictionary<string, string>();
