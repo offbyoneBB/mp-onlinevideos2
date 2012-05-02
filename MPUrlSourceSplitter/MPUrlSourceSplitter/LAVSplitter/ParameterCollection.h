@@ -34,6 +34,7 @@
 #define PARAMETER_NAME_LOG_VERBOSITY                                L"LogVerbosity"
 #define PARAMETER_NAME_MAX_PLUGINS                                  L"MaxPlugins"
 #define PARAMETER_NAME_DOWNLOAD_FILE_NAME                           L"DownloadFileName"
+#define PARAMETER_NAME_CACHE_FOLDER                                 L"CacheFolder"
 
 #include "Parameter.h"
 #include "Logger.h"

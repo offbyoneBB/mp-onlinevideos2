@@ -16,6 +16,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         private Uri uri;
         private LogVerbosity verbosity = SimpleUrl.DefaultVerbosity;
         private String networkInterface = String.Empty;
+        private String cacheFolder = String.Empty;
         private int maximumLogSize = SimpleUrl.DefaultMaximumLogSize;
         private int maximumPlugins = SimpleUrl.DefaultMaximumPlugins;
 
@@ -152,6 +153,30 @@ namespace OnlineVideos.MPUrlSourceFilter
             }
         }
 
+        /// <summary>
+        /// Gets or sets the cache folder which MediaPortal Url Source Splitter have to use.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <para>The <see cref="CacheFolder"/> is <see langword="null"/>.</para>
+        /// </exception>
+        /// <remarks>
+        /// The empty string ("") means the default cache folder.
+        /// </remarks>
+        [Category("MPUrlSourceSplitter"), Description("The cache folder which MediaPortal Url Source Splitter have to use.")]
+        public String CacheFolder
+        {
+            get { return this.cacheFolder; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("CacheFolder");
+                }
+
+                this.cacheFolder = value;
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -182,6 +207,10 @@ namespace OnlineVideos.MPUrlSourceFilter
             if (!String.IsNullOrEmpty(this.NetworkInterface))
             {
                 parameters.Add(new Parameter(SimpleUrl.ParameterNetworkInterface, this.NetworkInterface));
+            }
+            if (!String.IsNullOrEmpty(this.CacheFolder))
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterCacheFolder, this.CacheFolder));
             }
 
             // return current URI and formatted connection string
@@ -225,6 +254,11 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// Specifies maximum plugins parameter name.
         /// </summary>
         protected static String ParameterMaximumPlugins = "MaxPlugins";
+
+        /// <summary>
+        /// Specifies cache folder parameter name.
+        /// </summary>
+        protected static String ParameterCacheFolder = "CacheFolder";
 
         // default values for some parameters
 
