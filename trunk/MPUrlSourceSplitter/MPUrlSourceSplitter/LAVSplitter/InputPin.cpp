@@ -1925,30 +1925,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
           // store all media packets (which are not stored) to file
           if (caller->storeFilePath == NULL)
           {
-            TCHAR *guid = ConvertGuidToString(caller->logger->loggerInstance);
-            ALLOC_MEM_DEFINE_SET(folder, TCHAR, MAX_PATH, 0);
-            if ((guid != NULL) && (folder != NULL))
-            {
-              // get common application data folder
-              if (SHGetSpecialFolderPath(NULL, folder, CSIDL_LOCAL_APPDATA, FALSE))
-              {
-                TCHAR *storeFolder = FormatString(L"%s\\MPUrlSourceSplitter\\", folder);
-                wchar_t *unicodeStoreFolder = ConvertToUnicode(storeFolder);
-                if ((storeFolder != NULL) && (unicodeStoreFolder != NULL))
-                {
-                  int error = SHCreateDirectory(NULL, unicodeStoreFolder);
-                  if ((error == ERROR_SUCCESS) || (error == ERROR_FILE_EXISTS) || (error == ERROR_ALREADY_EXISTS))
-                  {
-                    // correct, directory exists
-                    caller->storeFilePath = FormatString(L"%smpurlsourcesplitter_%s.temp", storeFolder, guid);
-                  }
-                }
-                FREE_MEM(storeFolder);
-                FREE_MEM(unicodeStoreFolder);
-              }
-            }
-            FREE_MEM(guid);
-            FREE_MEM(folder);
+            caller->storeFilePath = caller->GetStoreFilePath();
           }
 
           if (caller->storeFilePath != NULL)
@@ -2043,6 +2020,56 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
 
   caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME);
   return S_OK;
+}
+
+wchar_t *CLAVInputPin::GetStoreFilePath(void)
+{
+  wchar_t *result = NULL;
+  wchar_t *guid = ConvertGuidToString(this->logger->loggerInstance);
+  ALLOC_MEM_DEFINE_SET(folder, wchar_t, MAX_PATH, 0);
+  if ((guid != NULL) && (folder != NULL))
+  {
+    // check if we have path in configuration
+    wchar_t *cacheFolder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
+    if (cacheFolder == NULL)
+    {
+      // get new folder in local app data
+      // get common application data folder
+      if (SHGetSpecialFolderPath(NULL, folder, CSIDL_LOCAL_APPDATA, FALSE))
+      {
+        wcscat_s(folder, MAX_PATH, L"\\MPUrlSourceSplitter\\");
+      }
+    }
+    else
+    {
+      // copy cache folder to folder
+      wcscat_s(folder, MAX_PATH, cacheFolder);
+    }
+
+    unsigned int length = wcslen(folder);
+    if ((length > 0) && (folder[length - 1] != L'\\'))
+    {
+      // append last '\' if not already in path
+      wcscat_s(folder, MAX_PATH, L"\\");
+    }
+
+    length = wcslen(folder);
+    if (length > 0)
+    {
+      // there is something in folder variable
+      // create directory path
+      int error = SHCreateDirectory(NULL, folder);
+      if ((error == ERROR_SUCCESS) || (error == ERROR_FILE_EXISTS) || (error == ERROR_ALREADY_EXISTS))
+      {
+        // correct, directory exists
+        result = FormatString(L"%smpurlsourcesplitter_%s.temp", folder, guid);
+      }
+    }
+  }
+  FREE_MEM(guid);
+  FREE_MEM(folder);
+
+  return result;
 }
 
 STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)

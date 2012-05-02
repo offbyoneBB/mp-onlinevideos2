@@ -343,4 +343,9 @@ private:
 
   friend class CLAVSplitter;
   STDMETHODIMP SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
+
+  // gets store file path based on configuration
+  // creates folder structure if not created
+  // @return : store file path or NULL if error
+  wchar_t *GetStoreFilePath(void);
 };
