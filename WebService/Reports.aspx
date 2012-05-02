@@ -1,16 +1,7 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Reports.aspx.cs" Inherits="OnlineVideos.WebService.Reports" %>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title></title>
-</head>
-<body>
-    <form id="form1" runat="server">
-    <div>
-    <asp:HyperLink runat="server" ID="linkOverview" NavigateUrl="~/SiteOverview.aspx" Text="..." Visible="false" />
-    <asp:Button runat="server" ID="btnDeleteSite" Visible="false" Text="Delete Site" 
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/OnlineVideos.Master" CodeBehind="Reports.aspx.cs" Inherits="OnlineVideos.WebService.Reports" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="body" runat="server">
+  <div>
+    <asp:Button runat="server" ID="btnDeleteSite" Visible="false" Text="Delete Site" OnClientClick="return confirm('Sure to delete ?')"
             onclick="btnDeleteSite_Click" />
     <asp:GridView ID="reports" runat="server" AutoGenerateColumns="False" AllowSorting="True"
             CellPadding="3" 
@@ -33,6 +24,4 @@
             <AlternatingRowStyle BackColor="LightBlue" />
         </asp:GridView>
     </div>
-    </form>
-</body>
-</html>
+</asp:Content>

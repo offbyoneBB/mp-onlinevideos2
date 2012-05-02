@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="OnlineVideos.asmx" />
+    <Content Include="OnlineVideos.png" />
     <Content Include="Reports.aspx" />
     <Content Include="SiteOverview.aspx" />
     <Content Include="Web.config" />
@@ -83,6 +84,13 @@
     <Compile Include="OnlineVideos.asmx.cs">
       <DependentUpon>OnlineVideos.asmx</DependentUpon>
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="OnlineVideos.Master.cs">
+      <DependentUpon>OnlineVideos.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OnlineVideos.Master.designer.cs">
+      <DependentUpon>OnlineVideos.Master</DependentUpon>
     </Compile>
     <Compile Include="OVMembershipProvider.cs" />
     <Compile Include="OVRoleProvider.cs" />
@@ -115,6 +123,7 @@
       <LastGenOutput>Database.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
+    <Content Include="OnlineVideos.Master" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />

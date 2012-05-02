@@ -12,6 +12,7 @@ namespace OnlineVideos.WebService
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
+			Title = this.Request.Params["site"];
 			if (!IsPostBack)
 			{
                 BindGrid();
@@ -59,7 +60,6 @@ namespace OnlineVideos.WebService
                         dc.Report.DeleteOnSubmit(rep);
                         dc.SubmitChanges();
                         BindGrid();
-                        linkOverview.Visible = true;
                     }
                 }
             }
@@ -72,6 +72,12 @@ namespace OnlineVideos.WebService
                 dc.Report.DeleteAllOnSubmit(dc.Report.Where(r => r.Site_FK == this.Request.Params["site"]));
                 dc.Site.DeleteOnSubmit(dc.Site.FirstOrDefault(s => s.Name == this.Request.Params["site"]));
                 dc.SubmitChanges();
+				try {
+					System.IO.File.Delete(Server.MapPath("~/Icons/") + this.Request.Params["site"] + ".png");
+				} catch { }
+				try {
+					System.IO.File.Delete(Server.MapPath("~/Banners/") + this.Request.Params["site"] + ".png");
+				} catch { }
                 Response.Redirect(ResolveUrl("~/SiteOverview.aspx"));
             }
         }
