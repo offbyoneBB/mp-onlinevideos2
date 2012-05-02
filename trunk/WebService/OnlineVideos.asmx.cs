@@ -195,9 +195,7 @@ namespace OnlineVideos.WebService
                     }
                     // write the file and calc its MD5 hash
                     System.IO.File.WriteAllBytes(Server.MapPath("~/Dlls/") + name + ".dll", data);
-                    System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-                    byte[] md5Hash = md5.ComputeHash(data);
-                    string md5String = BitConverter.ToString(md5Hash).Replace("-", "").ToLower();
+					string md5String = GetMD5Hash(data);
                     // does the dll already exist?
                     if (dc.Dll.Any(d => d.Name == name))
                     {
@@ -398,6 +396,22 @@ namespace OnlineVideos.WebService
             }
         }
 
+		[WebMethod(Description="Returns the Icon for a Site as byte array, when MD5 Hash of file on server is different to given parameter.")]
+		public byte[] GetSiteIconIfChanged(string siteName, string md5)
+		{
+			NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
+			try
+			{
+				byte[] bytes = System.IO.File.ReadAllBytes(Server.MapPath("~/Icons/") + siteName + ".png");
+				if (!string.IsNullOrEmpty(md5) && GetMD5Hash(bytes) == md5) return null;
+				return bytes;
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
         [WebMethod]
         public byte[] GetSiteBanner(string siteName)
         {
@@ -405,6 +419,22 @@ namespace OnlineVideos.WebService
             try
             {
                 return System.IO.File.ReadAllBytes(Server.MapPath("~/Banners/") + siteName + ".png");
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+		[WebMethod(Description="Returns the Banner for a Site as byte array, when MD5 Hash of file on server is different to given parameter.")]
+        public byte[] GetSiteBannerIfChanged(string siteName, string md5)
+        {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
+            try
+            {
+                byte[] bytes = System.IO.File.ReadAllBytes(Server.MapPath("~/Banners/") + siteName + ".png");
+				if (!string.IsNullOrEmpty(md5) && GetMD5Hash(bytes) == md5) return null;
+				return bytes;
             }
             catch
             {
@@ -542,6 +572,14 @@ namespace OnlineVideos.WebService
             return message;
         }
 
+		string GetMD5Hash(byte[] data)
+		{
+			System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+			byte[] md5Hash = md5.ComputeHash(data);
+			string md5String = BitConverter.ToString(md5Hash).Replace("-", "").ToLower();
+			return md5String;
+		}
+
         #endregion
     }
 
@@ -550,7 +588,7 @@ namespace OnlineVideos.WebService
         public static object ToType<T>(this object obj, T type)
         {
             //create instance of T type object:
-            var tmp = Activator.CreateInstance(Type.GetType(type.ToString())); 
+            var tmp = Activator.CreateInstance(Type.GetType(type.ToString()));
             //loop through the properties of the object you want to covert:
             foreach (System.Reflection.PropertyInfo pi in obj.GetType().GetProperties())
             {
@@ -581,7 +619,6 @@ namespace OnlineVideos.WebService
             //loop through the calling list:
             foreach (T item in list)
             {
-
                 //convert each object of the list into T object 
                 //by calling extension ToType<T>()
                 //Add this object to newly created list:

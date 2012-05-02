@@ -1,13 +1,5 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="OnlineVideos.WebService.LoginForm" %>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>OnlineVideos Sites Management Login</title>
-</head>
-<body>
-    <form id="form1" runat="server">
+﻿<%@ Page Title="OnlineVideos Sites Management Login" Language="C#" AutoEventWireup="true" MasterPageFile="~/OnlineVideos.Master" CodeBehind="Login.aspx.cs" Inherits="OnlineVideos.WebService.LoginForm" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="body" runat="server">
     <table style="width: 100%;">
         <tr>
             <td>
@@ -38,6 +30,4 @@
             </td>
         </tr>
     </table>
-    </form>
-</body>
-</html>
+</asp:Content>

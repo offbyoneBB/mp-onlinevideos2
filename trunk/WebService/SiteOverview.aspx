@@ -1,13 +1,5 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SiteOverview.aspx.cs" Inherits="OnlineVideos.WebService.SiteOverview" %>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" >
-<head runat="server">
-    <title>OnlineVideos Sites Overview</title>
-</head>
-<body>
-    <form id="form1" runat="server">
+﻿<%@ Page Title="OnlineVideos Sites Overview" Language="C#" AutoEventWireup="true" MasterPageFile="~/OnlineVideos.Master" CodeBehind="SiteOverview.aspx.cs" Inherits="OnlineVideos.WebService.SiteOverview" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="body" runat="server">
     <div>        
         <asp:GridView ID="siteOverview" runat="server" AutoGenerateColumns="False" AllowSorting="True"
             CellPadding="3" 
@@ -51,6 +43,4 @@
             <AlternatingRowStyle BackColor="LightBlue" />
         </asp:GridView>
     </div>    
-    </form>
-</body>
-</html>
+</asp:Content>
