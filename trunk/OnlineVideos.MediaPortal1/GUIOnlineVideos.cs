@@ -251,7 +251,7 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool Init()
         {
-			OnlineVideosAppDomain.UseSeperateDomain = true;
+            OnlineVideosAppDomain.UseSeperateDomain = true;
 
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
 
@@ -272,7 +272,7 @@ namespace OnlineVideos.MediaPortal1
                 preventDialogOnLoad = (lastActiveModuleSetting && (lastActiveModule == GetID));
             }
 
-			StartBackgroundInitialization();
+            StartBackgroundInitialization();
 
             return result;
         }
@@ -285,25 +285,25 @@ namespace OnlineVideos.MediaPortal1
 
         protected override void OnPageLoad()
         {
-			GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
+            GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
 
             base.OnPageLoad(); // let animations run
 
-			if (initializationBackgroundWorker.IsBusy)
-			{
-				GUIWaitCursor.Init(); GUIWaitCursor.Show();
-				initializationBackgroundWorker.RunWorkerCompleted += (o, e) =>
-				{
-					GUIWaitCursor.Hide();
-					if (!firstLoadDone) DoFirstLoad();
-					else DoSubsequentLoad();
-				};
-			}
-			else
-			{
-				if (!firstLoadDone) DoFirstLoad();
-				else DoSubsequentLoad();
-			}
+            if (initializationBackgroundWorker.IsBusy)
+            {
+                GUIWaitCursor.Init(); GUIWaitCursor.Show();
+                initializationBackgroundWorker.RunWorkerCompleted += (o, e) =>
+                {
+                    GUIWaitCursor.Hide();
+                    if (!firstLoadDone) DoFirstLoad();
+                    else DoSubsequentLoad();
+                };
+            }
+            else
+            {
+                if (!firstLoadDone) DoFirstLoad();
+                else DoSubsequentLoad();
+            }
         }
 
         protected override void OnShowContextMenu()
@@ -335,59 +335,59 @@ namespace OnlineVideos.MediaPortal1
                     GUIDialogMenu dlgCat = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                     if (dlgCat == null) return;
                     dlgCat.Reset();
-					dlgCat.SetHeading(Translation.Instance.Actions);
+                    dlgCat.SetHeading(Translation.Instance.Actions);
                     List<KeyValuePair<string, Sites.ContextMenuEntry>> dialogOptions = new List<KeyValuePair<string, Sites.ContextMenuEntry>>();
                     if (!(SelectedSite is Sites.FavoriteUtil))
                     {
-						if (selectedItem.IsPlayed)
-						{
-							dlgCat.Add(Translation.Instance.RemoveFromFavorites);
+                        if (selectedItem.IsPlayed)
+                        {
+                            dlgCat.Add(Translation.Instance.RemoveFromFavorites);
                             dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(Translation.Instance.RemoveFromFavorites, null));
-						}
-						else
-						{
-							dlgCat.Add(Translation.Instance.AddToFavourites);
+                        }
+                        else
+                        {
+                            dlgCat.Add(Translation.Instance.AddToFavourites);
                             dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(Translation.Instance.AddToFavourites, null));
-						}
+                        }
                     }
-					foreach (var entry in SelectedSite.GetContextMenuEntries(aCategory, null))
-					{
-						dlgCat.Add(entry.DisplayText);
+                    foreach (var entry in SelectedSite.GetContextMenuEntries(aCategory, null))
+                    {
+                        dlgCat.Add(entry.DisplayText);
                         dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(entry.DisplayText, entry));
-					}
+                    }
                     dlgCat.DoModal(GUIWindowManager.ActiveWindow);
                     if (dlgCat.SelectedId == -1) return;
                     else
                     {
-						var selectedOption = dialogOptions[dlgCat.SelectedId-1];
-						if (selectedOption.Value == null)
-						{
-							if (dlgCat.SelectedLabelText == Translation.Instance.AddToFavourites)
-							{
-								bool result = OnlineVideoSettings.Instance.FavDB.addFavoriteCategory(aCategory, SelectedSite.Settings.Name);
-								if (result)
-								{
-									cachedFavoritedCategoriesOfSelectedSite = default(KeyValuePair<string, List<string>>);
-									selectedItem.IsPlayed = true;
-									selectedItem.PinImage = GetImageForSite(Translation.Instance.Favourites, type: "Icon");
-								}
-							}
-							else if (dlgCat.SelectedLabelText == Translation.Instance.RemoveFromFavorites)
-							{
-								bool result = OnlineVideoSettings.Instance.FavDB.removeFavoriteCategory(SelectedSite.Settings.Name, aCategory.RecursiveName("|"));
-								if (result)
-								{
-									cachedFavoritedCategoriesOfSelectedSite = default(KeyValuePair<string, List<string>>);
-									selectedItem.IsPlayed = false;
-									selectedItem.PinImage = "";
-									selectedItem.RefreshCoverArt();
-								}
-							}
-						}
-						else
-						{
+                        var selectedOption = dialogOptions[dlgCat.SelectedId - 1];
+                        if (selectedOption.Value == null)
+                        {
+                            if (dlgCat.SelectedLabelText == Translation.Instance.AddToFavourites)
+                            {
+                                bool result = OnlineVideoSettings.Instance.FavDB.addFavoriteCategory(aCategory, SelectedSite.Settings.Name);
+                                if (result)
+                                {
+                                    cachedFavoritedCategoriesOfSelectedSite = default(KeyValuePair<string, List<string>>);
+                                    selectedItem.IsPlayed = true;
+                                    selectedItem.PinImage = GetImageForSite(Translation.Instance.Favourites, type: "Icon");
+                                }
+                            }
+                            else if (dlgCat.SelectedLabelText == Translation.Instance.RemoveFromFavorites)
+                            {
+                                bool result = OnlineVideoSettings.Instance.FavDB.removeFavoriteCategory(SelectedSite.Settings.Name, aCategory.RecursiveName("|"));
+                                if (result)
+                                {
+                                    cachedFavoritedCategoriesOfSelectedSite = default(KeyValuePair<string, List<string>>);
+                                    selectedItem.IsPlayed = false;
+                                    selectedItem.PinImage = "";
+                                    selectedItem.RefreshCoverArt();
+                                }
+                            }
+                        }
+                        else
+                        {
                             HandleCustomContextMenuEntry(selectedOption.Value, aCategory, null);
-						}
+                        }
                     }
                 }
             }
@@ -407,7 +407,7 @@ namespace OnlineVideos.MediaPortal1
                     GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                     if (dlgSel == null) return;
                     dlgSel.Reset();
-					dlgSel.SetHeading(Translation.Instance.Actions);
+                    dlgSel.SetHeading(Translation.Instance.Actions);
                     List<KeyValuePair<string, Sites.ContextMenuEntry>> dialogOptions = new List<KeyValuePair<string, Sites.ContextMenuEntry>>();
                     // these context menu entries should only show if the item will not go to the details view
                     if (!(SelectedSite is IChoice && CurrentState == State.videos && aVideo.HasDetails))
@@ -415,31 +415,31 @@ namespace OnlineVideos.MediaPortal1
                         if (!(SelectedSite is Sites.FavoriteUtil && aVideo.HasDetails &&
                             (selectedCategory is Sites.FavoriteUtil.FavoriteCategory && (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site is IChoice)))
                         {
-							dlgSel.Add(Translation.Instance.PlayWith);
+                            dlgSel.Add(Translation.Instance.PlayWith);
                             dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayWith", null));
                             if (numItemsShown > 1)
                             {
-								dlgSel.Add(Translation.Instance.PlayAll);
+                                dlgSel.Add(Translation.Instance.PlayAll);
                                 dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAll", null));
-								dlgSel.Add(Translation.Instance.PlayAllRandom);
-								dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAllRandom", null));
+                                dlgSel.Add(Translation.Instance.PlayAllRandom);
+                                dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAllRandom", null));
                             }
                             if (!(SelectedSite is Sites.FavoriteUtil) && !(SelectedSite is Sites.DownloadedVideoUtil))
                             {
-								dlgSel.Add(Translation.Instance.AddToFavourites);
+                                dlgSel.Add(Translation.Instance.AddToFavourites);
                                 dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("AddToFav", null));
                             }
                             if (!(SelectedSite is Sites.DownloadedVideoUtil))
                             {
-								dlgSel.Add(string.Format("{0} ({1})",Translation.Instance.Download, Translation.Instance.Concurrent));
+                                dlgSel.Add(string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Concurrent));
                                 dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("DownloadConcurrent", null));
                                 dlgSel.Add(string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Queued));
                                 dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("DownloadQueued", null));
 
                                 if (loadParamInfo != null && !string.IsNullOrEmpty(loadParamInfo.DownloadDir) && System.IO.Directory.Exists(loadParamInfo.DownloadDir))
                                 {
-                                    if(string.IsNullOrEmpty(loadParamInfo.DownloadMenuEntry))
-										dlgSel.Add(Translation.Instance.DownloadUserdefined);
+                                    if (string.IsNullOrEmpty(loadParamInfo.DownloadMenuEntry))
+                                        dlgSel.Add(Translation.Instance.DownloadUserdefined);
                                     else
                                         dlgSel.Add(loadParamInfo.DownloadMenuEntry);
                                     dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("UserdefinedDownload", null));
@@ -455,7 +455,7 @@ namespace OnlineVideos.MediaPortal1
                     // always allow the VK filtering in videos view
                     if (CurrentState == State.videos && numItemsShown > 1)
                     {
-						dlgSel.Add(Translation.Instance.Filter);
+                        dlgSel.Add(Translation.Instance.Filter);
                         dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("Filter", null));
                     }
                     if (dialogOptions.Count > 0)
@@ -469,7 +469,7 @@ namespace OnlineVideos.MediaPortal1
                                 case "PlayWith":
                                     dialogOptions.Clear();
                                     dlgSel.Reset();
-									dlgSel.SetHeading(Translation.Instance.Actions);
+                                    dlgSel.SetHeading(Translation.Instance.Actions);
                                     dlgSel.Add("MediaPortal");
                                     dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(OnlineVideos.PlayerType.Internal.ToString(), null));
                                     dlgSel.Add("Windows Media Player");
@@ -501,8 +501,8 @@ namespace OnlineVideos.MediaPortal1
                                 case "PlayAll":
                                     PlayAll();
                                     break;
-								case "PlayAllRandom":
-									PlayAll(true);
+                                case "PlayAllRandom":
+                                    PlayAll(true);
                                     break;
                                 case "AddToFav":
                                     string suggestedTitle = SelectedSite.GetFileNameForDownload(aVideo, selectedCategory, null);
@@ -518,16 +518,16 @@ namespace OnlineVideos.MediaPortal1
                                     }
                                     break;
                                 case "DownloadConcurrent":
-									SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) });
+                                    SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) });
                                     break;
                                 case "DownloadQueued":
                                     SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) }, true);
                                     break;
                                 case "UserdefinedDownload":
-									var dlInfo = DownloadInfo.Create(aVideo, selectedCategory, selectedSite);
-									dlInfo.OverrideFolder = loadParamInfo.DownloadDir;
-									dlInfo.OverrideFileName = loadParamInfo.DownloadFilename;
-									SaveVideo_Step1(new DownloadList() { CurrentItem = dlInfo });
+                                    var dlInfo = DownloadInfo.Create(aVideo, selectedCategory, selectedSite);
+                                    dlInfo.OverrideFolder = loadParamInfo.DownloadDir;
+                                    dlInfo.OverrideFileName = loadParamInfo.DownloadFilename;
+                                    SaveVideo_Step1(new DownloadList() { CurrentItem = dlInfo });
                                     break;
                                 case "Filter":
                                     if (GetUserInputString(ref videosVKfilter, false)) SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
@@ -599,7 +599,7 @@ namespace OnlineVideos.MediaPortal1
                             }
                             if (cmer.RefreshCurrentItems)
                             {
-                                if (aVideo == null) DisplayCategories(selectedCategory, null); 
+                                if (aVideo == null) DisplayCategories(selectedCategory, null);
                                 else DisplayVideos_Category(selectedCategory, true);
                             }
                             if (cmer.ResultItems != null && cmer.ResultItems.Count > 0) SetSearchResultItemsToFacade(cmer.ResultItems, VideosMode.Category);
@@ -624,7 +624,7 @@ namespace OnlineVideos.MediaPortal1
                             {
                                 VideoInfo aVideo = selectedItem.Item as VideoInfo;
                                 if (aVideo != null && !(SelectedSite is IChoice && aVideo.HasDetails))
-									SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) });
+                                    SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) });
                             }
                         }
                         else if (CurrentState == State.details)
@@ -634,7 +634,7 @@ namespace OnlineVideos.MediaPortal1
                             {
                                 VideoInfo aVideo = selectedItem.Item as VideoInfo;
                                 if (aVideo != null)
-									SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) });
+                                    SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) });
                             }
                         }
                         break;
@@ -713,10 +713,10 @@ namespace OnlineVideos.MediaPortal1
                     }
                     break;
             }
-			GUI_btnOrderBy.Label = Translation.Instance.SortOptions;
-			GUI_btnMaxResult.Label = Translation.Instance.MaxResults;
-			GUI_btnSearchCategories.Label = Translation.Instance.Category;
-			GUI_btnTimeFrame.Label = Translation.Instance.Timeframe;
+            GUI_btnOrderBy.Label = Translation.Instance.SortOptions;
+            GUI_btnMaxResult.Label = Translation.Instance.MaxResults;
+            GUI_btnSearchCategories.Label = Translation.Instance.Category;
+            GUI_btnTimeFrame.Label = Translation.Instance.Timeframe;
             base.OnAction(action);
         }
 
@@ -751,10 +751,10 @@ namespace OnlineVideos.MediaPortal1
 
         void GUIWindowManager_OnThreadMessageHandler(object sender, GUIMessage message)
         {
-            if (message.Message == GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW && 
+            if (message.Message == GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW &&
                 message.TargetWindowId == 0 && message.TargetControlId == 0 && message.SenderControlId == 0 &&
                 message.SendToTargetWindow == false && message.Object == null && message.Object2 == null &&
-                message.Param2 == 0 && message.Param3 == 0 && message.Param4 == 0 && 
+                message.Param2 == 0 && message.Param3 == 0 && message.Param4 == 0 &&
                 (message.Param1 == (int)GUIWindow.Window.WINDOW_HOME || message.Param1 == (int)GUIWindow.Window.WINDOW_SECOND_HOME)
                 )
             {
@@ -828,45 +828,45 @@ namespace OnlineVideos.MediaPortal1
             if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
             if (control == GUI_facadeView)
             {
-				if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
-				{
-					currentFilter.Clear();
-					GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
-					switch (CurrentState)
-					{
-						case State.groups:
-							selectedSitesGroup = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
-							if (selectedSitesGroup.Item is SitesGroup)
-								DisplaySites();
-							else
-							{
-								SelectedSite = selectedSitesGroup.Item as Sites.SiteUtilBase;
-								DisplayCategories(null, true);
-							}
-							break;
-						case State.sites:
-							if (GUI_facadeView.SelectedListItem.Label == "..")
-							{
-								ShowPreviousMenu();
-							}
-							else
-							{
-								SelectedSite = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Sites.SiteUtilBase;
-								DisplayCategories(null, true);
-							}
-							break;
-						case State.categories:
-							if (GUI_facadeView.SelectedListItemIndex == 0)
-							{
-								ShowPreviousMenu();
-							}
-							else
-							{
-								Category categoryToDisplay = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Category;
-								if (categoryToDisplay is NextPageCategory)
-								{
-									DisplayCategories_NextPage(categoryToDisplay as NextPageCategory);
-								}
+                if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
+                {
+                    currentFilter.Clear();
+                    GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
+                    switch (CurrentState)
+                    {
+                        case State.groups:
+                            selectedSitesGroup = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
+                            if (selectedSitesGroup.Item is SitesGroup)
+                                DisplaySites();
+                            else
+                            {
+                                SelectedSite = selectedSitesGroup.Item as Sites.SiteUtilBase;
+                                DisplayCategories(null, true);
+                            }
+                            break;
+                        case State.sites:
+                            if (GUI_facadeView.SelectedListItem.Label == "..")
+                            {
+                                ShowPreviousMenu();
+                            }
+                            else
+                            {
+                                SelectedSite = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Sites.SiteUtilBase;
+                                DisplayCategories(null, true);
+                            }
+                            break;
+                        case State.categories:
+                            if (GUI_facadeView.SelectedListItem.Label == "..")
+                            {
+                                ShowPreviousMenu();
+                            }
+                            else
+                            {
+                                Category categoryToDisplay = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Category;
+                                if (categoryToDisplay is NextPageCategory)
+                                {
+                                    DisplayCategories_NextPage(categoryToDisplay as NextPageCategory);
+                                }
                                 else if (categoryToDisplay is Sites.FavoriteUtil.FavoriteCategory)
                                 {
                                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
@@ -920,83 +920,83 @@ namespace OnlineVideos.MediaPortal1
                                 {
                                     DisplayVideos_Category(categoryToDisplay, false);
                                 }
-							}
-							break;
-						case State.videos:
-							ImageDownloader.StopDownload = true;
-							if (GUI_facadeView.SelectedListItemIndex == 0)
-							{
-								ShowPreviousMenu();
-							}
-							else if (GUI_facadeView.SelectedListItem.Label == Translation.Instance.NextPage)
-							{
-								DisplayVideos_NextPage();
-							}
-							else
-							{
-								selectedVideo = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
-								if (SelectedSite is IChoice && selectedVideo.HasDetails)
-								{
-									// show details view
-									DisplayDetails();
-								}
-								else if (SelectedSite is Sites.FavoriteUtil && selectedVideo.HasDetails &&
-									(selectedCategory is Sites.FavoriteUtil.FavoriteCategory && (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site is IChoice))
-								{
-									SelectedSite = (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site;
-									// show details view
-									DisplayDetails();
-								}
-								else
-								{
-									//play the video
-									currentPlaylist = null;
-									currentPlayingItem = null;
+                            }
+                            break;
+                        case State.videos:
+                            ImageDownloader.StopDownload = true;
+                            if (GUI_facadeView.SelectedListItem.Label == "..")
+                            {
+                                ShowPreviousMenu();
+                            }
+                            else if (GUI_facadeView.SelectedListItem.Label == Translation.Instance.NextPage)
+                            {
+                                DisplayVideos_NextPage();
+                            }
+                            else
+                            {
+                                selectedVideo = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
+                                if (SelectedSite is IChoice && selectedVideo.HasDetails)
+                                {
+                                    // show details view
+                                    DisplayDetails();
+                                }
+                                else if (SelectedSite is Sites.FavoriteUtil && selectedVideo.HasDetails &&
+                                    (selectedCategory is Sites.FavoriteUtil.FavoriteCategory && (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site is IChoice))
+                                {
+                                    SelectedSite = (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site;
+                                    // show details view
+                                    DisplayDetails();
+                                }
+                                else
+                                {
+                                    //play the video
+                                    currentPlaylist = null;
+                                    currentPlayingItem = null;
 
-									Play_Step1(new PlayListItem(null, null)
-											{
-												Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
-												Video = selectedVideo,
-												Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
-											}, true);
-								}
-							}
-							break;
-					}
-				}
-				else if (CurrentState == State.videos && !(SelectedSite is IChoice && selectedVideo.HasDetails) && 
-					(actionType == Action.ActionType.ACTION_MUSIC_PLAY || actionType == Action.ActionType.ACTION_PLAY))
-				{
-					VideoInfo videoPressedPlayOn = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
-					if (videoPressedPlayOn != null)
-					{
-						ImageDownloader.StopDownload = true;
+                                    Play_Step1(new PlayListItem(null, null)
+                                            {
+                                                Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
+                                                Video = selectedVideo,
+                                                Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
+                                            }, true);
+                                }
+                            }
+                            break;
+                    }
+                }
+                else if (CurrentState == State.videos && !(SelectedSite is IChoice && selectedVideo.HasDetails) &&
+                    (actionType == Action.ActionType.ACTION_MUSIC_PLAY || actionType == Action.ActionType.ACTION_PLAY))
+                {
+                    VideoInfo videoPressedPlayOn = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
+                    if (videoPressedPlayOn != null)
+                    {
+                        ImageDownloader.StopDownload = true;
 
-						currentFilter.Clear();
-						GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
-						
-						selectedVideo = videoPressedPlayOn;
+                        currentFilter.Clear();
+                        GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
 
-						//play the video
-						currentPlaylist = null;
-						currentPlayingItem = null;
+                        selectedVideo = videoPressedPlayOn;
 
-						Play_Step1(new PlayListItem(null, null)
-						{
-							Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
-							Video = selectedVideo,
-							Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
-						}, true, true);
-					}
-				}
+                        //play the video
+                        currentPlaylist = null;
+                        currentPlayingItem = null;
+
+                        Play_Step1(new PlayListItem(null, null)
+                        {
+                            Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
+                            Video = selectedVideo,
+                            Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
+                        }, true, true);
+                    }
+                }
                 else if (CurrentState == State.videos && actionType == Action.ActionType.ACTION_SHOW_INFO)
                 {
                     // toggles showing detailed info about a selectected video - is automatically reset when leaving videos view
                     ExtendedVideoInfo = !ExtendedVideoInfo;
                 }
             }
-			else if (control == GUI_infoList && CurrentState == State.details && 
-				(actionType == Action.ActionType.ACTION_SELECT_ITEM || actionType == Action.ActionType.ACTION_MUSIC_PLAY || actionType == Action.ActionType.ACTION_PLAY))
+            else if (control == GUI_infoList && CurrentState == State.details &&
+                (actionType == Action.ActionType.ACTION_SELECT_ITEM || actionType == Action.ActionType.ACTION_MUSIC_PLAY || actionType == Action.ActionType.ACTION_PLAY))
             {
                 ImageDownloader.StopDownload = true;
                 if (GUI_infoList.SelectedListItemIndex == 0)
@@ -1014,17 +1014,17 @@ namespace OnlineVideos.MediaPortal1
                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                         Video = (GUI_infoList.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo,
                         Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
-					}, true, actionType != Action.ActionType.ACTION_SELECT_ITEM);
+                    }, true, actionType != Action.ActionType.ACTION_SELECT_ITEM);
                 }
             }
             else if (control == GUI_btnViewAs)
             {
                 ToggleFacadeViewMode();
-				// store as preferred layout in DB
-				if (SelectedSite != null && PluginConfiguration.Instance.StoreLayoutPerCategory && (currentState == State.categories || currentState == State.videos))
-				{
-					FavoritesDatabase.Instance.SetPreferredLayout(SelectedSite.Settings.Name, selectedCategory, (int)currentView);
-				}
+                // store as preferred layout in DB
+                if (SelectedSite != null && PluginConfiguration.Instance.StoreLayoutPerCategory && (currentState == State.categories || currentState == State.videos))
+                {
+                    FavoritesDatabase.Instance.SetPreferredLayout(SelectedSite.Settings.Name, selectedCategory, (int)currentView);
+                }
             }
             else if (control == GUI_btnMaxResult)
             {
@@ -1189,9 +1189,9 @@ namespace OnlineVideos.MediaPortal1
             }
 
             // add the item for all ungrouped sites if there are any
-			SitesGroup othersGroup = new SitesGroup() { Name = Translation.Instance.Others };
+            SitesGroup othersGroup = new SitesGroup() { Name = Translation.Instance.Others };
             foreach (string site in OnlineVideoSettings.Instance.SiteUtilsList.Keys)
-				if (!groupedSites.Contains(site) && site != Translation.Instance.Favourites && site != Translation.Instance.DownloadedVideos)
+                if (!groupedSites.Contains(site) && site != Translation.Instance.Favourites && site != Translation.Instance.DownloadedVideos)
                     othersGroup.Sites.Add(site);
             if (othersGroup.Sites.Count > 0)
             {
@@ -1212,7 +1212,7 @@ namespace OnlineVideos.MediaPortal1
         private void AddFavoritesAndDownloadsSitesToFacade()
         {
             Sites.SiteUtilBase aSite;
-			if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Translation.Instance.Favourites, out aSite))
+            if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Translation.Instance.Favourites, out aSite))
             {
                 OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(aSite);
                 listItem.OnItemSelected += OnItemSelected;
@@ -1220,7 +1220,7 @@ namespace OnlineVideos.MediaPortal1
                 GUI_facadeView.Add(listItem);
                 if (selectedSitesGroup != null && selectedSitesGroup.Label == listItem.Label) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
             }
-			if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Translation.Instance.DownloadedVideos, out aSite))
+            if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Translation.Instance.DownloadedVideos, out aSite))
             {
                 OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(aSite);
                 listItem.OnItemSelected += OnItemSelected;
@@ -1240,9 +1240,9 @@ namespace OnlineVideos.MediaPortal1
 
             // set order by options
             GUI_btnOrderBy.Clear();
-			GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Instance.Default);
-			GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Instance.Name);
-			GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Instance.Language);
+            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Instance.Default);
+            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Instance.Name);
+            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Instance.Language);
             GUI_btnOrderBy.SelectedItem = (int)PluginConfiguration.Instance.siteOrder;
 
             // previous selected group was actually a site or currently selected site Fav or Downl and groups enabled -> skip this step
@@ -1253,8 +1253,8 @@ namespace OnlineVideos.MediaPortal1
                 DisplayGroups();
                 return;
             }
-			var siteutils = OnlineVideoSettings.Instance.SiteUtilsList;
-			string[] names = selectedSitesGroup == null ? siteutils.Keys.ToArray() : (selectedSitesGroup.Item as SitesGroup).Sites.ToArray();
+            var siteutils = OnlineVideoSettings.Instance.SiteUtilsList;
+            string[] names = selectedSitesGroup == null ? siteutils.Keys.ToArray() : (selectedSitesGroup.Item as SitesGroup).Sites.ToArray();
 
             // get names in right order
             switch (PluginConfiguration.Instance.siteOrder)
@@ -1267,7 +1267,7 @@ namespace OnlineVideos.MediaPortal1
                     foreach (string name in names)
                     {
                         Sites.SiteUtilBase aSite;
-						if (siteutils.TryGetValue(name, out aSite))
+                        if (siteutils.TryGetValue(name, out aSite))
                         {
                             string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "zzzzz" : aSite.Settings.Language; // puts empty lang at the end
                             List<string> listForLang = null;
@@ -1303,7 +1303,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 Sites.SiteUtilBase aSite;
                 if (currentFilter.Matches(name) &&
-					siteutils.TryGetValue(name, out aSite) &&
+                    siteutils.TryGetValue(name, out aSite) &&
                     aSite.Settings.IsEnabled &&
                     !(GroupsEnabled & (aSite is Sites.FavoriteUtil | aSite is Sites.DownloadedVideoUtil)) && // don't show Favorites and Downloads site if groups are enabled (because they are added as groups)
                     (!aSite.Settings.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
@@ -1348,7 +1348,7 @@ namespace OnlineVideos.MediaPortal1
                             SetCategoriesToFacade(parentCategory, result as IList<Category>, diveDownOrUpIfSingle);
                         }
                     },
-					Translation.Instance.GettingDynamicCategories, true);
+                    Translation.Instance.GettingDynamicCategories, true);
                 }
                 else
                 {
@@ -1373,7 +1373,7 @@ namespace OnlineVideos.MediaPortal1
                             SetCategoriesToFacade(parentCategory, result as IList<Category>, diveDownOrUpIfSingle);
                         }
                     },
-					Translation.Instance.GettingDynamicCategories, true);
+                    Translation.Instance.GettingDynamicCategories, true);
                 }
                 else
                 {
@@ -1382,23 +1382,23 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-		private void DisplayCategories_NextPage(NextPageCategory cat)
-		{
-			Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
-			{
-				return SelectedSite.DiscoverNextPageCategories(cat);
-			},
-			delegate(bool success, object result)
-			{
-				if (success) SetCategoriesToFacade(cat.ParentCategory, cat.ParentCategory == null ? SelectedSite.Settings.Categories as IList<Category> : cat.ParentCategory.SubCategories, false, true);
-			},
-			Translation.Instance.GettingNextPageVideos, true);
-		}
+        private void DisplayCategories_NextPage(NextPageCategory cat)
+        {
+            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+            {
+                return SelectedSite.DiscoverNextPageCategories(cat);
+            },
+            delegate(bool success, object result)
+            {
+                if (success) SetCategoriesToFacade(cat.ParentCategory, cat.ParentCategory == null ? SelectedSite.Settings.Categories as IList<Category> : cat.ParentCategory.SubCategories, false, true);
+            },
+            Translation.Instance.GettingNextPageVideos, true);
+        }
 
         KeyValuePair<string, List<string>> cachedFavoritedCategoriesOfSelectedSite;
         List<string> FavoritedCategoriesOfSelectedSite
         {
-            get 
+            get
             {
                 string siteName = SelectedSite.Settings.Name;
                 if (!string.IsNullOrEmpty(siteName) && cachedFavoritedCategoriesOfSelectedSite.Key != siteName)
@@ -1428,12 +1428,12 @@ namespace OnlineVideos.MediaPortal1
                 return;
             }
 
-			int categoryIndexToSelect = (categories != null && categories.Count > 0) ? 1 : 0; // select the first category by default if there is one
-			if (append)
-			{
-				currentFilter.Clear();
-				categoryIndexToSelect = GUI_facadeView.Count - 1;
-			}
+            int categoryIndexToSelect = (categories != null && categories.Count > 0) ? 1 : 0; // select the first category by default if there is one
+            if (append)
+            {
+                currentFilter.Clear();
+                categoryIndexToSelect = GUI_facadeView.Count - 1;
+            }
 
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
             currentFacadeItems.Clear();
@@ -1494,8 +1494,8 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             CurrentState = State.categories;
             selectedCategory = parentCategory;
-			if (PluginConfiguration.Instance.StoreLayoutPerCategory) suggestedView = FavoritesDatabase.Instance.GetPreferredLayout(SelectedSite.Settings.Name, selectedCategory) ?? suggestedView;
-			UpdateViewState();
+            if (PluginConfiguration.Instance.StoreLayoutPerCategory) suggestedView = FavoritesDatabase.Instance.GetPreferredLayout(SelectedSite.Settings.Name, selectedCategory) ?? suggestedView;
+            UpdateViewState();
 
             // automatically browse up or down if only showing a single category and parameter was set
             if (categories.Count == 1 && diveDownOrUpIfSingle != null)
@@ -1528,7 +1528,7 @@ namespace OnlineVideos.MediaPortal1
                     SetVideosToInfoList(result as List<VideoInfo>);
                 }
             },
-			Translation.Instance.GettingVideoDetails, true);
+            Translation.Instance.GettingVideoDetails, true);
         }
 
         private void SetVideosToInfoList(List<VideoInfo> loVideoList)
@@ -1588,14 +1588,14 @@ namespace OnlineVideos.MediaPortal1
                         selectedCategory = currentNavigationContextSwitch.ReturnToCategory;
                         currentNavigationContextSwitch = null;
                     }
-                    
+
                     if (displayCategoriesOnError)// an error occured or no videos were found -> return to the category selection if param was set
                     {
                         DisplayCategories(category.ParentCategory, false);
                     }
                 }
             },
-			Translation.Instance.GettingCategoryVideos, true);
+            Translation.Instance.GettingCategoryVideos, true);
         }
 
         private void Display_SearchResults(string query = null)
@@ -1614,8 +1614,8 @@ namespace OnlineVideos.MediaPortal1
                     if (dlgSel != null)
                     {
                         dlgSel.Reset();
-						dlgSel.SetHeading(Translation.Instance.SearchHistory);
-						dlgSel.Add(Translation.Instance.NewSearch);
+                        dlgSel.SetHeading(Translation.Instance.SearchHistory);
+                        dlgSel.Add(Translation.Instance.NewSearch);
                         int numAdded = 0;
                         for (int i = searchHistoryForSite.Count - 1; i >= 0; i--)
                         {
@@ -1680,7 +1680,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-					if (moSupportedSearchCategoryList != null && moSupportedSearchCategoryList.Count > 1 && GUI_btnSearchCategories.SelectedLabel != Translation.Instance.All
+                    if (moSupportedSearchCategoryList != null && moSupportedSearchCategoryList.Count > 1 && GUI_btnSearchCategories.SelectedLabel != Translation.Instance.All
                         && !string.IsNullOrEmpty(GUI_btnSearchCategories.SelectedLabel) && moSupportedSearchCategoryList.ContainsKey(GUI_btnSearchCategories.SelectedLabel))
                     {
                         string category = moSupportedSearchCategoryList[GUI_btnSearchCategories.SelectedLabel];
@@ -1705,51 +1705,51 @@ namespace OnlineVideos.MediaPortal1
                     }
                     else
                     {
-						SetSearchResultItemsToFacade(resultList, VideosMode.Search, Translation.Instance.SearchResults + " [" + lastSearchQuery + "]");
+                        SetSearchResultItemsToFacade(resultList, VideosMode.Search, Translation.Instance.SearchResults + " [" + lastSearchQuery + "]");
                     }
                 },
-				Translation.Instance.GettingSearchResults, true);
+                Translation.Instance.GettingSearchResults, true);
             }
         }
 
         private void SetSearchResultItemsToFacade(List<ISearchResultItem> resultList, VideosMode mode = VideosMode.Search, string categoryName = "")
         {
-			if (resultList != null && resultList.Count > 0)
-			{
-				if (resultList[0] is VideoInfo)
-				{
-					SetVideosToFacade(resultList.ConvertAll(i => i as VideoInfo), mode);
-					// if only 1 result found and the current site has a details view for this video - open it right away
-					if (SelectedSite is IChoice && resultList.Count == 1 && (resultList[0] as VideoInfo).HasDetails)
-					{
-						// actually select this item, so fanart can be shown in this and the coming screen! (fanart handler inspects the #selecteditem proeprty of teh facade)
-						GUI_facadeView.SelectedListItemIndex = 1;
-						selectedVideo = (GUI_facadeView[1] as OnlineVideosGuiListItem).Item as VideoInfo;
-						DisplayDetails();
-					}
-				}
-				else
-				{
-					Category searchCategory = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(Category).Assembly.FullName, typeof(Category).FullName) as Category;
-					searchCategory.Name = categoryName;
-					searchCategory.HasSubCategories = true;
-					searchCategory.SubCategoriesDiscovered = true;
-					searchCategory.SubCategories = resultList.ConvertAll(i => { (i as Category).ParentCategory = searchCategory; return i as Category; });
-					SetCategoriesToFacade(searchCategory, searchCategory.SubCategories, true);
-				}
-			}
-			else
-			{
-				GUIDialogNotify dlg_error = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-				if (dlg_error != null)
-				{
-					dlg_error.Reset();
-					dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-					dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
-					dlg_error.SetText(Translation.Instance.NoVideoFound);
-					dlg_error.DoModal(GUIWindowManager.ActiveWindow);
-				}
-			}
+            if (resultList != null && resultList.Count > 0)
+            {
+                if (resultList[0] is VideoInfo)
+                {
+                    SetVideosToFacade(resultList.ConvertAll(i => i as VideoInfo), mode);
+                    // if only 1 result found and the current site has a details view for this video - open it right away
+                    if (SelectedSite is IChoice && resultList.Count == 1 && (resultList[0] as VideoInfo).HasDetails)
+                    {
+                        // actually select this item, so fanart can be shown in this and the coming screen! (fanart handler inspects the #selecteditem proeprty of teh facade)
+                        GUI_facadeView.SelectedListItemIndex = 1;
+                        selectedVideo = (GUI_facadeView[1] as OnlineVideosGuiListItem).Item as VideoInfo;
+                        DisplayDetails();
+                    }
+                }
+                else
+                {
+                    Category searchCategory = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(Category).Assembly.FullName, typeof(Category).FullName) as Category;
+                    searchCategory.Name = categoryName;
+                    searchCategory.HasSubCategories = true;
+                    searchCategory.SubCategoriesDiscovered = true;
+                    searchCategory.SubCategories = resultList.ConvertAll(i => { (i as Category).ParentCategory = searchCategory; return i as Category; });
+                    SetCategoriesToFacade(searchCategory, searchCategory.SubCategories, true);
+                }
+            }
+            else
+            {
+                GUIDialogNotify dlg_error = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                if (dlg_error != null)
+                {
+                    dlg_error.Reset();
+                    dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+                    dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+                    dlg_error.SetText(Translation.Instance.NoVideoFound);
+                    dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                }
+            }
         }
 
         private void DisplayVideos_Filter()
@@ -1804,7 +1804,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (success) SetVideosToFacade(result as List<VideoInfo>, currentVideosDisplayMode);
             }
-			, Translation.Instance.GettingFilteredVideos, true);
+            , Translation.Instance.GettingFilteredVideos, true);
         }
 
         private void DisplayVideos_NextPage()
@@ -1817,7 +1817,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (success) SetVideosToFacade(result as List<VideoInfo>, currentVideosDisplayMode, true);
             },
-			Translation.Instance.GettingNextPageVideos, true);
+            Translation.Instance.GettingNextPageVideos, true);
         }
 
         private bool SetVideosToFacade(List<VideoInfo> videos, VideosMode mode, bool append = false)
@@ -1831,7 +1831,7 @@ namespace OnlineVideos.MediaPortal1
                     dlg_error.Reset();
                     dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
-					dlg_error.SetText(Translation.Instance.NoVideoFound);
+                    dlg_error.SetText(Translation.Instance.NoVideoFound);
                     dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                 }
                 return false;
@@ -1890,7 +1890,7 @@ namespace OnlineVideos.MediaPortal1
 
             if (SelectedSite.HasNextPage)
             {
-				OnlineVideosGuiListItem nextPageItem = new OnlineVideosGuiListItem(Translation.Instance.NextPage);
+                OnlineVideosGuiListItem nextPageItem = new OnlineVideosGuiListItem(Translation.Instance.NextPage);
                 nextPageItem.ItemId = GUI_facadeView.Count;
                 nextPageItem.IsFolder = true;
                 nextPageItem.IconImage = "OnlineVideos\\NextPage.png";
@@ -1912,7 +1912,7 @@ namespace OnlineVideos.MediaPortal1
 
             currentVideosDisplayMode = mode;
             CurrentState = State.videos;
-			if (PluginConfiguration.Instance.StoreLayoutPerCategory) suggestedView = FavoritesDatabase.Instance.GetPreferredLayout(SelectedSite.Settings.Name, selectedCategory) ?? suggestedView;
+            if (PluginConfiguration.Instance.StoreLayoutPerCategory) suggestedView = FavoritesDatabase.Instance.GetPreferredLayout(SelectedSite.Settings.Name, selectedCategory) ?? suggestedView;
             UpdateViewState();
             return true;
         }
@@ -1924,13 +1924,13 @@ namespace OnlineVideos.MediaPortal1
             if (CurrentState == State.sites)
             {
                 if (GroupsEnabled)
-				{
-					// if plugin was called with loadParameter set to the current group and return locked -> go to previous window 
-					if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Group == selectedSitesGroup.Label)
-						OnPreviousWindow();
-					else
-						DisplayGroups();
-				}
+                {
+                    // if plugin was called with loadParameter set to the current group and return locked -> go to previous window 
+                    if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Group == selectedSitesGroup.Label)
+                        OnPreviousWindow();
+                    else
+                        DisplayGroups();
+                }
                 else
                     OnPreviousWindow();
             }
@@ -2029,8 +2029,8 @@ namespace OnlineVideos.MediaPortal1
                 int i = 0;
                 while (i < loUrlList.Count)
                 {
-                    if (string.IsNullOrEmpty(loUrlList[i]) || 
-						!Utils.IsValidUri((loUrlList[i].IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? loUrlList[i].Substring(0, loUrlList[i].IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : loUrlList[i]))
+                    if (string.IsNullOrEmpty(loUrlList[i]) ||
+                        !Utils.IsValidUri((loUrlList[i].IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? loUrlList[i].Substring(0, loUrlList[i].IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : loUrlList[i]))
                     {
                         Log.Instance.Debug("removed invalid url: '{0}'", loUrlList[i]);
                         loUrlList.RemoveAt(i);
@@ -2060,18 +2060,18 @@ namespace OnlineVideos.MediaPortal1
 
         void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
         {
-			try
-			{
-				if (currentPlayingItem != null && currentPlayingItem.Util != null)
-				{
-					double percent = g_Player.Duration > 0 ? g_Player.CurrentPosition / g_Player.Duration : 0;
-					currentPlayingItem.Util.OnPlaybackEnded(currentPlayingItem.Video, currentPlayingItem.FileName, percent, false);
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.Instance.Warn("Error on Util.OnPlaybackEnded: {0}", ex);
-			}
+            try
+            {
+                if (currentPlayingItem != null && currentPlayingItem.Util != null)
+                {
+                    double percent = g_Player.Duration > 0 ? g_Player.CurrentPosition / g_Player.Duration : 0;
+                    currentPlayingItem.Util.OnPlaybackEnded(currentPlayingItem.Video, currentPlayingItem.FileName, percent, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Instance.Warn("Error on Util.OnPlaybackEnded: {0}", ex);
+            }
 
             if (currentPlaylist != null)
             {
@@ -2113,18 +2113,18 @@ namespace OnlineVideos.MediaPortal1
 
         void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
         {
-			try
-			{
-				if (currentPlayingItem != null && currentPlayingItem.Util != null)
-				{
-					double percent = g_Player.Duration > 0 ? g_Player.CurrentPosition / g_Player.Duration : 0;
-					currentPlayingItem.Util.OnPlaybackEnded(currentPlayingItem.Video, currentPlayingItem.FileName, percent, true);
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.Instance.Warn("Error on Util.OnPlaybackEnded: {0}", ex);
-			}
+            try
+            {
+                if (currentPlayingItem != null && currentPlayingItem.Util != null)
+                {
+                    double percent = g_Player.Duration > 0 ? g_Player.CurrentPosition / g_Player.Duration : 0;
+                    currentPlayingItem.Util.OnPlaybackEnded(currentPlayingItem.Video, currentPlayingItem.FileName, percent, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Instance.Warn("Error on Util.OnPlaybackEnded: {0}", ex);
+            }
 
             if (stoptime > 0 && g_Player.Duration > 0 && (stoptime / g_Player.Duration) > 0.8) TrackPlayback();
             currentPlayingItem = null;
@@ -2154,10 +2154,10 @@ namespace OnlineVideos.MediaPortal1
                 },
                 delegate(bool success, object result)
                 {
-					if (success) Play_Step2(playItem, new List<String>() { result as string }, goFullScreen, skipPlaybackOptionsDialog);
+                    if (success) Play_Step2(playItem, new List<String>() { result as string }, goFullScreen, skipPlaybackOptionsDialog);
                     else if (currentPlaylist != null && currentPlaylist.Count > 1) PlayNextPlaylistItem();
                 }
-				, Translation.Instance.GettingPlaybackUrlsForVideo, true);
+                , Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
             else
             {
@@ -2167,14 +2167,14 @@ namespace OnlineVideos.MediaPortal1
                 },
                 delegate(bool success, object result)
                 {
-					if (success) Play_Step2(playItem, result as List<String>, goFullScreen, skipPlaybackOptionsDialog);
+                    if (success) Play_Step2(playItem, result as List<String>, goFullScreen, skipPlaybackOptionsDialog);
                     else if (currentPlaylist != null && currentPlaylist.Count > 1) PlayNextPlaylistItem();
                 }
-				, Translation.Instance.GettingPlaybackUrlsForVideo, true);
+                , Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
         }
 
-		private void Play_Step2(PlayListItem playItem, List<String> loUrlList, bool goFullScreen, bool skipPlaybackOptionsDialog)
+        private void Play_Step2(PlayListItem playItem, List<String> loUrlList, bool goFullScreen, bool skipPlaybackOptionsDialog)
         {
             removeInvalidEntries(loUrlList);
 
@@ -2186,8 +2186,8 @@ namespace OnlineVideos.MediaPortal1
                 {
                     dlg.Reset();
                     dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-					dlg.SetHeading(Translation.Instance.Error);
-					dlg.SetText(Translation.Instance.UnableToPlayVideo);
+                    dlg.SetHeading(Translation.Instance.Error);
+                    dlg.SetText(Translation.Instance.UnableToPlayVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                 }
                 return;
@@ -2270,15 +2270,15 @@ namespace OnlineVideos.MediaPortal1
         {
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(lsUrl) ||
-				!Utils.IsValidUri((lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? lsUrl.Substring(0, lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : lsUrl))
+                !Utils.IsValidUri((lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? lsUrl.Substring(0, lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : lsUrl))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
                 {
                     dlg.Reset();
                     dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-					dlg.SetHeading(Translation.Instance.Error);
-					dlg.SetText(Translation.Instance.UnableToPlayVideo);
+                    dlg.SetHeading(Translation.Instance.Error);
+                    dlg.SetText(Translation.Instance.UnableToPlayVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                 }
                 return;
@@ -2328,7 +2328,7 @@ namespace OnlineVideos.MediaPortal1
                         {
                             Play_Step5(playItem, lsUrl, goFullScreen, factory, result as bool?);
                         },
-						Translation.Instance.StartingPlayback, false);
+                        Translation.Instance.StartingPlayback, false);
                         break;
                     case false:// play without buffering in background
                         Play_Step5(playItem, lsUrl, goFullScreen, factory, prepareResult);
@@ -2339,8 +2339,8 @@ namespace OnlineVideos.MediaPortal1
                         {
                             dlg.Reset();
                             dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-							dlg.SetHeading(Translation.Instance.Error);
-							dlg.SetText(Translation.Instance.UnableToPlayVideo);
+                            dlg.SetHeading(Translation.Instance.Error);
+                            dlg.SetText(Translation.Instance.UnableToPlayVideo);
                             dlg.DoModal(GUIWindowManager.ActiveWindow);
                         }
                         break;
@@ -2362,8 +2362,8 @@ namespace OnlineVideos.MediaPortal1
                     {
                         dlg.Reset();
                         dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-						dlg.SetHeading(Translation.Instance.Error);
-						dlg.SetText(Translation.Instance.UnableToPlayVideo);
+                        dlg.SetHeading(Translation.Instance.Error);
+                        dlg.SetText(Translation.Instance.UnableToPlayVideo);
                         dlg.DoModal(GUIWindowManager.ActiveWindow);
                     }
                 }
@@ -2390,7 +2390,7 @@ namespace OnlineVideos.MediaPortal1
                     {
                         Play_Step6(playItem, lsUrl, factory);
                     },
-					Translation.Instance.DownloadingSubtitle, true);
+                    Translation.Instance.DownloadingSubtitle, true);
                 }
                 else
                 {
@@ -2403,14 +2403,14 @@ namespace OnlineVideos.MediaPortal1
         {
             IPlayerFactory savedFactory = g_Player.Factory;
             g_Player.Factory = factory;
-			try
-			{
-				g_Player.Play(lsUrl, g_Player.MediaType.Video);
-			}
-			catch (Exception ex) // since many plugins attach to the g_Player.PlayBackStarted event, this might throw unexpected errors
-			{
-				Log.Instance.Warn(ex.ToString());
-			}
+            try
+            {
+                g_Player.Play(lsUrl, g_Player.MediaType.Video);
+            }
+            catch (Exception ex) // since many plugins attach to the g_Player.PlayBackStarted event, this might throw unexpected errors
+            {
+                Log.Instance.Warn(ex.ToString());
+            }
             g_Player.Factory = savedFactory;
 
             if (g_Player.Player != null && g_Player.HasVideo)
@@ -2440,22 +2440,22 @@ namespace OnlineVideos.MediaPortal1
                 // when not in details view of a site with details view only include videos that don't have details
                 if (currentState != State.details && SelectedSite is IChoice && video.HasDetails) continue;
 
-				// filter out by the current filter
-				if (!currentFilter.Matches(video.Title) || FilterOut(video.Title) || FilterOut(video.Description)) continue;
-				if (!string.IsNullOrEmpty(videosVKfilter) && !video.Title.ToLower().Contains(videosVKfilter.ToLower())) continue;
+                // filter out by the current filter
+                if (!currentFilter.Matches(video.Title) || FilterOut(video.Title) || FilterOut(video.Description)) continue;
+                if (!string.IsNullOrEmpty(videosVKfilter) && !video.Title.ToLower().Contains(videosVKfilter.ToLower())) continue;
 
-				currentPlaylist.Add(new Player.PlayListItem(video.Title, null)
+                currentPlaylist.Add(new Player.PlayListItem(video.Title, null)
                 {
                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                     Video = video,
                     Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName] : SelectedSite
                 });
             }
-			if (currentPlaylist.Count > 0)
-			{
-				if (random) ((List<PlayListItem>)currentPlaylist).Randomize();
-				Play_Step1(currentPlaylist[0], true);
-			}
+            if (currentPlaylist.Count > 0)
+            {
+                if (random) ((List<PlayListItem>)currentPlaylist).Randomize();
+                Play_Step1(currentPlaylist[0], true);
+            }
         }
 
         /// <summary>
@@ -2472,8 +2472,8 @@ namespace OnlineVideos.MediaPortal1
                 {
                     dlg.Reset();
                     dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-					dlg.SetHeading(Translation.Instance.Error);
-					dlg.SetText(Translation.Instance.SetDownloadFolderInConfig);
+                    dlg.SetHeading(Translation.Instance.Error);
+                    dlg.SetText(Translation.Instance.SetDownloadFolderInConfig);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                 }
                 return;
@@ -2495,7 +2495,7 @@ namespace OnlineVideos.MediaPortal1
                     return;
                 }
                 // check if there is already a download running from this site - yes? -> enque | no -> start now
-                if (enque == true && DownloadManager.Instance.Contains(saveItems.CurrentItem.Util.Settings.Name)) 
+                if (enque == true && DownloadManager.Instance.Contains(saveItems.CurrentItem.Util.Settings.Name))
                 {
                     DownloadManager.Instance.Add(saveItems.CurrentItem.Util.Settings.Name, saveItems);
                     return;
@@ -2511,7 +2511,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     if (success) SaveVideo_Step2(saveItems, new List<string>() { result as string }, enque);
                 },
-				Translation.Instance.GettingPlaybackUrlsForVideo, true);
+                Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
             else
             {
@@ -2523,7 +2523,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     if (success) SaveVideo_Step2(saveItems, result as List<String>, enque);
                 },
-				Translation.Instance.GettingPlaybackUrlsForVideo, true);
+                Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
         }
 
@@ -2539,8 +2539,8 @@ namespace OnlineVideos.MediaPortal1
                 {
                     dlg.Reset();
                     dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-					dlg.SetHeading(Translation.Instance.Error);
-					dlg.SetText(Translation.Instance.UnableToDownloadVideo);
+                    dlg.SetHeading(Translation.Instance.Error);
+                    dlg.SetText(Translation.Instance.UnableToDownloadVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                 }
                 return;
@@ -2561,8 +2561,8 @@ namespace OnlineVideos.MediaPortal1
                     DownloadInfo pli = DownloadInfo.Create(vi, saveItems.CurrentItem.Category, saveItems.CurrentItem.Util);
                     pli.Title = string.Format("{0} - {1} / {2}", vi.Title, (saveItems.DownloadItems.Count + 1).ToString(), loUrlList.Count);
                     pli.Url = url_new;
-					pli.OverrideFolder = saveItems.CurrentItem.OverrideFolder;
-					pli.OverrideFileName = saveItems.CurrentItem.OverrideFileName;
+                    pli.OverrideFolder = saveItems.CurrentItem.OverrideFolder;
+                    pli.OverrideFileName = saveItems.CurrentItem.OverrideFileName;
                     saveItems.DownloadItems.Add(pli);
                 }
                 // make the first item the current to be saved now
@@ -2591,7 +2591,7 @@ namespace OnlineVideos.MediaPortal1
                     {
                         if (success) SaveVideo_Step3(saveItems, result as string, enque);
                     }
-					, Translation.Instance.GettingPlaybackUrlsForVideo, true);
+                    , Translation.Instance.GettingPlaybackUrlsForVideo, true);
                 }
             }
             else
@@ -2604,34 +2604,34 @@ namespace OnlineVideos.MediaPortal1
         {
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(url) ||
-				!Utils.IsValidUri((url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : url))
+                !Utils.IsValidUri((url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : url))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
                 {
                     dlg.Reset();
                     dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-					dlg.SetHeading(Translation.Instance.Error);
-					dlg.SetText(Translation.Instance.UnableToDownloadVideo);
+                    dlg.SetHeading(Translation.Instance.Error);
+                    dlg.SetText(Translation.Instance.UnableToDownloadVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                 }
                 return;
             }
 
-			saveItems.CurrentItem.Url = url;
+            saveItems.CurrentItem.Url = url;
             if (string.IsNullOrEmpty(saveItems.CurrentItem.Title)) saveItems.CurrentItem.Title = saveItems.CurrentItem.VideoInfo.Title;
 
-			if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFolder))
-			{
-				if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFileName))
-					saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.OverrideFileName);
-				else
-					saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
-			}
-			else
-			{
-				saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, saveItems.CurrentItem.Util.Settings.Name), saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
-			}
+            if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFolder))
+            {
+                if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFileName))
+                    saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.OverrideFileName);
+                else
+                    saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
+            }
+            else
+            {
+                saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, saveItems.CurrentItem.Util.Settings.Name), saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
+            }
 
             if (saveItems.DownloadItems != null && saveItems.DownloadItems.Count > 1)
             {
@@ -2661,29 +2661,29 @@ namespace OnlineVideos.MediaPortal1
 
             System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
             {
-				DownloadList dlList = o as DownloadList;
-				try
-				{
-					IDownloader dlHelper = null;
-					if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloader();
-					else dlHelper = new MPUrlSourceFilter.MPUrlSourceFilterDownloader();
-					dlList.CurrentItem.Downloader = dlHelper;
-					dlList.CurrentItem.Start = DateTime.Now;
+                DownloadList dlList = o as DownloadList;
+                try
+                {
+                    IDownloader dlHelper = null;
+                    if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloader();
+                    else dlHelper = new MPUrlSourceFilter.MPUrlSourceFilterDownloader();
+                    dlList.CurrentItem.Downloader = dlHelper;
+                    dlList.CurrentItem.Start = DateTime.Now;
                     Log.Instance.Info("Starting download of '{0}' to '{1}' from Site '{2}'", dlList.CurrentItem.Url, dlList.CurrentItem.LocalFile, dlList.CurrentItem.Util.Settings.Name);
-					Exception exception = dlHelper.Download(dlList.CurrentItem);
-					if (exception != null) Log.Instance.Warn("Error downloading '{0}', Msg: {1}", dlList.CurrentItem.Url, exception.Message);
-					OnDownloadFileCompleted(dlList, exception);
-				}
-				catch (System.Threading.ThreadAbortException)
-				{
-					// the thread was aborted on purpose, let it finish gracefully
-					System.Threading.Thread.ResetAbort();
-				}
-				catch (Exception ex)
-				{
-					Log.Instance.Warn("Error downloading '{0}', Msg: {1}", dlList.CurrentItem.Url, ex.Message);
-					OnDownloadFileCompleted(dlList, ex);
-				}
+                    Exception exception = dlHelper.Download(dlList.CurrentItem);
+                    if (exception != null) Log.Instance.Warn("Error downloading '{0}', Msg: {1}", dlList.CurrentItem.Url, exception.Message);
+                    OnDownloadFileCompleted(dlList, exception);
+                }
+                catch (System.Threading.ThreadAbortException)
+                {
+                    // the thread was aborted on purpose, let it finish gracefully
+                    System.Threading.Thread.ResetAbort();
+                }
+                catch (Exception ex)
+                {
+                    Log.Instance.Warn("Error downloading '{0}', Msg: {1}", dlList.CurrentItem.Url, ex.Message);
+                    OnDownloadFileCompleted(dlList, ex);
+                }
             });
             downloadThread.IsBackground = true;
             downloadThread.Name = "OVDownload";
@@ -2694,7 +2694,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 dlgNotify.Reset();
                 dlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-				dlgNotify.SetHeading(Translation.Instance.DownloadStarted);
+                dlgNotify.SetHeading(Translation.Instance.DownloadStarted);
                 dlgNotify.SetText(saveItems.CurrentItem.Title);
                 dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
             }
@@ -2702,18 +2702,18 @@ namespace OnlineVideos.MediaPortal1
 
         private void OnDownloadFileCompleted(DownloadList saveItems, Exception error)
         {
-			// notify the Util of the downloaded video that the download has stopped
-			try
-			{
-				if (saveItems.CurrentItem != null && saveItems.CurrentItem.Util != null)
-				{
-					saveItems.CurrentItem.Util.OnDownloadEnded(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Url, (double)saveItems.CurrentItem.PercentComplete / 100.0d, error != null);
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.Instance.Warn("Error on Util.OnDownloadEnded: {0}", ex.ToString());
-			}
+            // notify the Util of the downloaded video that the download has stopped
+            try
+            {
+                if (saveItems.CurrentItem != null && saveItems.CurrentItem.Util != null)
+                {
+                    saveItems.CurrentItem.Util.OnDownloadEnded(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Url, (double)saveItems.CurrentItem.PercentComplete / 100.0d, error != null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Instance.Warn("Error on Util.OnDownloadEnded: {0}", ex.ToString());
+            }
 
             bool preventMessageDuetoAdult = (saveItems.CurrentItem.Util != null && saveItems.CurrentItem.Util.Settings.ConfirmAge && OnlineVideoSettings.Instance.UseAgeConfirmation && !OnlineVideoSettings.Instance.AgeConfirmed);
 
@@ -2734,29 +2734,29 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-				try
-				{
-					// if the image given was an url -> check if thumb exists otherwise download
-					if (saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http"))
-					{
-						string thumbFile = Utils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
-						if (System.IO.File.Exists(thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
-						else if (ImageDownloader.DownloadAndCheckImage(saveItems.CurrentItem.ThumbFile, thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
-					}
-					// save thumb for this video as well if it exists
-					if (!saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http") && System.IO.File.Exists(saveItems.CurrentItem.ThumbFile))
-					{
-						string localImageName = System.IO.Path.Combine(
-							System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
-							System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile))
-							+ System.IO.Path.GetExtension(saveItems.CurrentItem.ThumbFile);
-						System.IO.File.Copy(saveItems.CurrentItem.ThumbFile, localImageName, true);
-					}
-				}
-				catch (Exception ex)
-				{
-					Log.Instance.Warn("Error saving thumbnail for download: {0}", ex.ToString());
-				}
+                try
+                {
+                    // if the image given was an url -> check if thumb exists otherwise download
+                    if (saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http"))
+                    {
+                        string thumbFile = Utils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
+                        if (System.IO.File.Exists(thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
+                        else if (ImageDownloader.DownloadAndCheckImage(saveItems.CurrentItem.ThumbFile, thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
+                    }
+                    // save thumb for this video as well if it exists
+                    if (!saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http") && System.IO.File.Exists(saveItems.CurrentItem.ThumbFile))
+                    {
+                        string localImageName = System.IO.Path.Combine(
+                            System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
+                            System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile))
+                            + System.IO.Path.GetExtension(saveItems.CurrentItem.ThumbFile);
+                        System.IO.File.Copy(saveItems.CurrentItem.ThumbFile, localImageName, true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Instance.Warn("Error saving thumbnail for download: {0}", ex.ToString());
+                }
 
                 // get file size
                 int fileSize = saveItems.CurrentItem.KbTotal;
@@ -2834,7 +2834,7 @@ namespace OnlineVideos.MediaPortal1
         {
             currentFilter.StartMatching();
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
-            foreach(var item in currentFacadeItems)
+            foreach (var item in currentFacadeItems)
             {
                 if (currentFilter.Matches(item.Label))
                 {
@@ -2877,7 +2877,7 @@ namespace OnlineVideos.MediaPortal1
                         HideAndDisable(GUI_btnEnterPin.GetID);
                     currentView = PluginConfiguration.Instance.currentGroupView;
                     SetFacadeViewMode();
-					GUIPropertyManager.SetProperty("#itemtype", Translation.Instance.Groups);
+                    GUIPropertyManager.SetProperty("#itemtype", Translation.Instance.Groups);
                     break;
                 case State.sites:
                     GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName + (selectedSitesGroup != null ? ": " + selectedSitesGroup.Label : ""));
@@ -2892,7 +2892,7 @@ namespace OnlineVideos.MediaPortal1
                         HideAndDisable(GUI_btnEnterPin.GetID);
                     currentView = PluginConfiguration.Instance.currentSiteView;
                     SetFacadeViewMode();
-					GUIPropertyManager.SetProperty("#itemtype", Translation.Instance.Sites);
+                    GUIPropertyManager.SetProperty("#itemtype", Translation.Instance.Sites);
                     break;
                 case State.categories:
                     string cat_headerlabel = selectedCategory != null ? selectedCategory.RecursiveName() : SelectedSite.Settings.Name;
@@ -2904,12 +2904,12 @@ namespace OnlineVideos.MediaPortal1
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     currentView = suggestedView != null ? suggestedView.Value : PluginConfiguration.Instance.currentCategoryView;
                     SetFacadeViewMode();
-					GUIPropertyManager.SetProperty("#itemtype", Translation.Instance.Categories);
+                    GUIPropertyManager.SetProperty("#itemtype", Translation.Instance.Categories);
                     break;
                 case State.videos:
                     switch (currentVideosDisplayMode)
                     {
-						case VideosMode.Search: GUIPropertyManager.SetProperty("#header.label", Translation.Instance.SearchResults + " [" + lastSearchQuery + "]"); break;
+                        case VideosMode.Search: GUIPropertyManager.SetProperty("#header.label", Translation.Instance.SearchResults + " [" + lastSearchQuery + "]"); break;
                         default:
                             {
                                 string proposedLabel = SelectedSite.getCurrentVideosTitle();
@@ -2924,7 +2924,7 @@ namespace OnlineVideos.MediaPortal1
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     currentView = suggestedView != null ? suggestedView.Value : PluginConfiguration.Instance.currentVideoView;
                     SetFacadeViewMode();
-					GUIPropertyManager.SetProperty("#itemtype", Translation.Instance.Videos);
+                    GUIPropertyManager.SetProperty("#itemtype", Translation.Instance.Videos);
                     break;
                 case State.details:
                     GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
@@ -2935,7 +2935,7 @@ namespace OnlineVideos.MediaPortal1
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     break;
             }
-			GUIWindowManager.Process(); // required for the next statement to work correctly, so the skinengine has correct state for visibility and focus
+            GUIWindowManager.Process(); // required for the next statement to work correctly, so the skinengine has correct state for visibility and focus
             if (CurrentState == State.details) GUIControl.FocusControl(GetID, GUI_infoList.GetID);
             else GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
         }
@@ -3006,7 +3006,7 @@ namespace OnlineVideos.MediaPortal1
         {
             GUI_btnSearchCategories.Clear();
             moSupportedSearchCategoryList = SelectedSite.GetSearchableCategories();
-			GUIControl.AddItemLabelControl(GetID, GUI_btnSearchCategories.GetID, Translation.Instance.All);
+            GUIControl.AddItemLabelControl(GetID, GUI_btnSearchCategories.GetID, Translation.Instance.All);
             foreach (String category in moSupportedSearchCategoryList.Keys)
             {
                 GUIControl.AddItemLabelControl(GetID, GUI_btnSearchCategories.GetID, category);
@@ -3087,13 +3087,13 @@ namespace OnlineVideos.MediaPortal1
                     break;
 #else
                 case GUIFacadeControl.Layout.List:
-					strLine = Translation.Instance.LayoutList;
+                    strLine = Translation.Instance.LayoutList;
                     break;
                 case GUIFacadeControl.Layout.SmallIcons:
-					strLine = Translation.Instance.LayoutIcons;
+                    strLine = Translation.Instance.LayoutIcons;
                     break;
                 case GUIFacadeControl.Layout.LargeIcons:
-					strLine = Translation.Instance.LayoutBigIcons;
+                    strLine = Translation.Instance.LayoutBigIcons;
                     break;
 #endif
             }
@@ -3124,7 +3124,7 @@ namespace OnlineVideos.MediaPortal1
         /// </summary>
         /// <param name="videoInfo"></param>
         /// <param name="defaultUrl">will be set to -1 when the user canceled the dialog, will not be touched if no playbackoptions are set, otherwise set to the chosen key</param>
-		/// <param name="skipDialog">when set to true, the dialog will not display, the default choice is returned</param>
+        /// <param name="skipDialog">when set to true, the dialog will not display, the default choice is returned</param>
         /// <returns>true when a choice from the PlaybackOptions was made (or only one option was available)</returns>
         private bool DisplayPlaybackOptions(VideoInfo videoInfo, ref string defaultUrl, bool skipDialog)
         {
@@ -3137,64 +3137,64 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-				if (skipDialog)
-				{
-					string defaultUrlUnRef = defaultUrl;
-					var defaultOption = videoInfo.PlaybackOptions.FirstOrDefault(p => p.Value == defaultUrlUnRef).Key;
-					if (!string.IsNullOrEmpty(defaultOption)) defaultUrl = defaultOption;
-					else defaultUrl = videoInfo.PlaybackOptions.First().Key;
-				}
-				else
-				{
-					int defaultOption = -1;
-					// show a list of available options and let the user decide
-					GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-					if (dlgSel != null)
-					{
-						dlgSel.Reset();
-						dlgSel.SetHeading(string.Format("{0} - {1}", videoInfo.Title, Translation.Instance.SelectSource));
-						int option = 0;
-						foreach (string key in videoInfo.PlaybackOptions.Keys)
-						{
-							dlgSel.Add(key);
-							if (videoInfo.PlaybackOptions[key] == defaultUrl) defaultOption = option;
-							option++;
-						}
-					}
-					if (defaultOption != -1) dlgSel.SelectedLabel = defaultOption;
-					dlgSel.DoModal(GUIWindowManager.ActiveWindow);
-					defaultUrl = (dlgSel.SelectedId == -1) ? "-1" : dlgSel.SelectedLabelText;
-				}
+                if (skipDialog)
+                {
+                    string defaultUrlUnRef = defaultUrl;
+                    var defaultOption = videoInfo.PlaybackOptions.FirstOrDefault(p => p.Value == defaultUrlUnRef).Key;
+                    if (!string.IsNullOrEmpty(defaultOption)) defaultUrl = defaultOption;
+                    else defaultUrl = videoInfo.PlaybackOptions.First().Key;
+                }
+                else
+                {
+                    int defaultOption = -1;
+                    // show a list of available options and let the user decide
+                    GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                    if (dlgSel != null)
+                    {
+                        dlgSel.Reset();
+                        dlgSel.SetHeading(string.Format("{0} - {1}", videoInfo.Title, Translation.Instance.SelectSource));
+                        int option = 0;
+                        foreach (string key in videoInfo.PlaybackOptions.Keys)
+                        {
+                            dlgSel.Add(key);
+                            if (videoInfo.PlaybackOptions[key] == defaultUrl) defaultOption = option;
+                            option++;
+                        }
+                    }
+                    if (defaultOption != -1) dlgSel.SelectedLabel = defaultOption;
+                    dlgSel.DoModal(GUIWindowManager.ActiveWindow);
+                    defaultUrl = (dlgSel.SelectedId == -1) ? "-1" : dlgSel.SelectedLabelText;
+                }
             }
             return true;
         }
 
-		internal static Dictionary<string, string> cachedImageForSite = new Dictionary<string, string>();
+        internal static Dictionary<string, string> cachedImageForSite = new Dictionary<string, string>();
         internal static string GetImageForSite(string siteName, string utilName = "", string type = "Banner")
-		{
-			string image = null;
-			if (!cachedImageForSite.TryGetValue(string.Format("{0}{1}", siteName, type), out image))
-			{
-				// use png with the same name as the Site - first check subfolder of current skin (allows skinners to use custom icons)
-				image = string.Format(@"{0}\Media\OnlineVideos\{1}s\{2}.png", GUIGraphicsContext.Skin, type, siteName);
-				if (!System.IO.File.Exists(image))
-				{
-					// use png with the same name as the Site
-					image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, siteName);
-					if (!System.IO.File.Exists(image))
-					{
-						image = string.Empty;
-						// if that does not exist, try image with the same name as the Util
-						if (!string.IsNullOrEmpty(utilName))
-						{
-							image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, utilName);
-							if (!System.IO.File.Exists(image)) image = string.Empty;
-						}
-					}
-				}
-				if (string.IsNullOrEmpty(image)) Log.Instance.Debug("{0} for site '{1}' not found!", type, siteName);
-				cachedImageForSite[string.Format("{0}{1}", siteName, type)] = image;
-			}
+        {
+            string image = null;
+            if (!cachedImageForSite.TryGetValue(string.Format("{0}{1}", siteName, type), out image))
+            {
+                // use png with the same name as the Site - first check subfolder of current skin (allows skinners to use custom icons)
+                image = string.Format(@"{0}\Media\OnlineVideos\{1}s\{2}.png", GUIGraphicsContext.Skin, type, siteName);
+                if (!System.IO.File.Exists(image))
+                {
+                    // use png with the same name as the Site
+                    image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, siteName);
+                    if (!System.IO.File.Exists(image))
+                    {
+                        image = string.Empty;
+                        // if that does not exist, try image with the same name as the Util
+                        if (!string.IsNullOrEmpty(utilName))
+                        {
+                            image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, utilName);
+                            if (!System.IO.File.Exists(image)) image = string.Empty;
+                        }
+                    }
+                }
+                if (string.IsNullOrEmpty(image)) Log.Instance.Debug("{0} for site '{1}' not found!", type, siteName);
+                cachedImageForSite[string.Format("{0}{1}", siteName, type)] = image;
+            }
             return image;
         }
 
@@ -3202,46 +3202,46 @@ namespace OnlineVideos.MediaPortal1
         {
             // first reset our own properties
             GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", string.Empty);
-			GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteName", string.Empty);
+            GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteName", string.Empty);
 
             // start a thread that will set the properties in 2 seconds (otherwise MediaPortal core logic would overwrite them)
             if (playItem == null || playItem.Video == null) return;
             new System.Threading.Thread(delegate(object o)
             {
-				try
-				{
-					VideoInfo video = (o as PlayListItem).Video;
-					string alternativeTitle = (o as PlayListItem).Description;
-					Sites.SiteUtilBase site = (o as PlayListItem).Util;
+                try
+                {
+                    VideoInfo video = (o as PlayListItem).Video;
+                    string alternativeTitle = (o as PlayListItem).Description;
+                    Sites.SiteUtilBase site = (o as PlayListItem).Util;
 
-					System.Threading.Thread.Sleep(2000);
+                    System.Threading.Thread.Sleep(2000);
 
-					string quality = video.PlaybackOptions != null ? video.PlaybackOptions.FirstOrDefault(po => po.Value == g_Player.CurrentFile).Key : null;
+                    string quality = video.PlaybackOptions != null ? video.PlaybackOptions.FirstOrDefault(po => po.Value == g_Player.CurrentFile).Key : null;
 
-					string titleToShow = "";
-					if (!string.IsNullOrEmpty(alternativeTitle))
-						titleToShow = alternativeTitle;
-					else if (!string.IsNullOrEmpty(video.Title))
-						titleToShow = video.Title + (string.IsNullOrEmpty(quality) ? "" : " (" + quality + ")");
+                    string titleToShow = "";
+                    if (!string.IsNullOrEmpty(alternativeTitle))
+                        titleToShow = alternativeTitle;
+                    else if (!string.IsNullOrEmpty(video.Title))
+                        titleToShow = video.Title + (string.IsNullOrEmpty(quality) ? "" : " (" + quality + ")");
 
-					Log.Instance.Info("Setting Video Properties for '{0}'", titleToShow);
+                    Log.Instance.Info("Setting Video Properties for '{0}'", titleToShow);
 
-					if (!string.IsNullOrEmpty(titleToShow)) GUIPropertyManager.SetProperty("#Play.Current.Title", titleToShow);
-					if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
-					if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
-					if (!string.IsNullOrEmpty(video.Airdate)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Airdate);
-					else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", VideoInfo.GetDuration(video.Length));
+                    if (!string.IsNullOrEmpty(titleToShow)) GUIPropertyManager.SetProperty("#Play.Current.Title", titleToShow);
+                    if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
+                    if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
+                    if (!string.IsNullOrEmpty(video.Airdate)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Airdate);
+                    else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", VideoInfo.GetDuration(video.Length));
 
-					if (site != null)
-					{
-						GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", GetImageForSite(site.Settings.Name, site.Settings.UtilName, "Icon"));
-						GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteName", site.Settings.Name);
-					}
-				}
-				catch (Exception ex)
-				{
-					Log.Instance.Warn("Error setting playing video properties: {0}", ex.ToString());
-				}
+                    if (site != null)
+                    {
+                        GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", GetImageForSite(site.Settings.Name, site.Settings.UtilName, "Icon"));
+                        GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteName", site.Settings.Name);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Instance.Warn("Error setting playing video properties: {0}", ex.ToString());
+                }
             }) { IsBackground = true, Name = "OVPlaying" }.Start(playItem);
 
             TrackPlayback();
@@ -3269,16 +3269,16 @@ namespace OnlineVideos.MediaPortal1
 
             if (videoInfo != null)
             {
-				Dictionary<string, string> custom = videoInfo.GetExtendedProperties();
-				if (custom != null)
-				{
-					foreach (string property in custom.Keys)
-					{
-						string label = prefix + property;
-						string value = custom[property];
-						SetExtendedGuiProperty(label, value);
-					}
-				}
+                Dictionary<string, string> custom = videoInfo.GetExtendedProperties();
+                if (custom != null)
+                {
+                    foreach (string property in custom.Keys)
+                    {
+                        string label = prefix + property;
+                        string value = custom[property];
+                        SetExtendedGuiProperty(label, value);
+                    }
+                }
             }
         }
 
@@ -3325,19 +3325,19 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
         }
 
-		public void ResetToFirstView()
-		{
-			selectedSitesGroup = null;
-			SelectedSite = null;
-			selectedCategory = null;
-			selectedVideo = null;
-			currentVideoList = new List<VideoInfo>();
-			currentTrailerList = new List<VideoInfo>();
+        public void ResetToFirstView()
+        {
+            selectedSitesGroup = null;
+            SelectedSite = null;
+            selectedCategory = null;
+            selectedVideo = null;
+            currentVideoList = new List<VideoInfo>();
+            currentTrailerList = new List<VideoInfo>();
             currentNavigationContextSwitch = null;
-			currentPlaylist = null;
-			currentPlayingItem = null;
-			CurrentState = State.groups;
-		}
+            currentPlaylist = null;
+            currentPlayingItem = null;
+            CurrentState = State.groups;
+        }
 
         #endregion
     }
