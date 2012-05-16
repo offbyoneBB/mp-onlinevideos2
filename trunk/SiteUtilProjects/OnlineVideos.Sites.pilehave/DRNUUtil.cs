@@ -56,7 +56,7 @@ namespace OnlineVideos.Sites
           {
             playpath = "flv:" + paths[1].Substring(0, paths[1].Length - 4);
           }
-		  string vUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://" + q_l[1]) { PlayPath = playpath }.ToString();
+          string vUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://" + q_l[1]) { PlayPath = playpath }.ToString();
           video.PlaybackOptions.Add(q_l[0], vUrl);
         }
         return aUrl;
@@ -71,12 +71,13 @@ namespace OnlineVideos.Sites
     private List<VideoInfo> getlivestreams()
     {
       List<VideoInfo> res = new List<VideoInfo>();
-      string[] channels = new string[5] { "DR1", "DR2", "DR Update", "DR K", "DR Ramasjang" };
-      for (int i = 0; i < 5; i++)
+      string[] channels = new string[6] { "DR1", "DR2", "DR Update", "DR K", "DR Ramasjang", "DR HD" };
+      string[] paths = new string[6] { "astream3", "astream3", "astream3", "astream3", "astream3", "bstream3" };
+      for (int i = 0; i < 6; i++)
       {
         VideoInfo video = new VideoInfo();
         video.Title = channels[i];
-		video.VideoUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://rtmplive.dr.dk/live/livedr0" + (i + 1) + "astream3") { Live = true }.ToString();
+        video.VideoUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://rtmplive.dr.dk/live/livedr0" + (i + 1) + paths[i]) { Live = true }.ToString();
         res.Add(video);
       }
       return res;
@@ -100,7 +101,7 @@ namespace OnlineVideos.Sites
             video.Description = subContentData.Value<string>("description");
             video.VideoUrl = redirectUrl.Replace("rtmp://vod.dr.dk/", "rtmp://vod.dr.dk/cms/");
             video.ImageUrl = baseUrlDrNu + "/videos/" + item.Value<string>("id") + "/images/400x225.jpg";
-			video.Length = subContentData.Value<string>("duration");
+            video.Length = subContentData.Value<string>("duration");
             video.Airdate = subContentData.Value<string>("formattedBroadcastTime");
             res.Add(video);
           }
@@ -122,7 +123,7 @@ namespace OnlineVideos.Sites
           video.Description = item.Value<string>("description");
           video.VideoUrl = redirectUrl.Replace("rtmp://vod.dr.dk/", "rtmp://vod.dr.dk/cms/");
           video.ImageUrl = baseUrlDrNu + "/videos/" + item.Value<string>("id") + "/images/400x225.jpg";
-		  video.Length = item.Value<string>("duration");
+          video.Length = item.Value<string>("duration");
           video.Airdate = item.Value<string>("formattedBroadcastTime");
           res.Add(video);
         }
@@ -155,9 +156,9 @@ namespace OnlineVideos.Sites
         return getSpecialvideos(contentData);
       }
 
-      if (myString[0] == "drnuspot")
+      if (myString[0] == "drnuhighlight")
       {
-        string url = baseUrlDrNu + "/videos/spot";
+        string url = baseUrlDrNu + "/videos/highlight";
         string json = GetWebData(url);
         JArray contentData = JArray.Parse(json);
         return getSpecialvideos(contentData);
@@ -166,6 +167,14 @@ namespace OnlineVideos.Sites
       if (myString[0] == "drnumostviewed")
       {
         string url = baseUrlDrNu + "/videos/mostviewed";
+        string json = GetWebData(url);
+        JArray contentData = JArray.Parse(json);
+        return getvideos(contentData);
+      }
+
+      if (myString[0] == "drnulastchance")
+      {
+        string url = baseUrlDrNu + "/videos/lastchance";
         string json = GetWebData(url);
         JArray contentData = JArray.Parse(json);
         return getvideos(contentData);
@@ -180,8 +189,7 @@ namespace OnlineVideos.Sites
           Match m = regEx_bonanzaVideolist.Match(data);
           while (m.Success)
           {
-            VideoInfo videoInfo = new VideoInfo()
-            { Title = m.Groups["title"].Value, Length = m.Groups["length"].Value, ImageUrl = m.Groups["thumb"].Value };
+            VideoInfo videoInfo = new VideoInfo() { Title = m.Groups["title"].Value, Length = m.Groups["length"].Value, ImageUrl = m.Groups["thumb"].Value };
 
             var info = Newtonsoft.Json.Linq.JObject.Parse(HttpUtility.HtmlDecode(m.Groups["url"].Value));
             if (info != null)
@@ -214,10 +222,10 @@ namespace OnlineVideos.Sites
         Name = "Live TV",
         HasSubCategories = false,
         SubCategoriesDiscovered = false,
-        Description = "Se de 5 danske TV-kanaler DR1, DR2, DR K, DR Ramasjang og DR Update.",
+        Description = "Se de 6 danske TV-kanaler DR1, DR2, DR K, DR Ramasjang, DR Update og DR HD.",
         Url = "http://www.dr.dk/live",
         Other = "drlive,",
-        EstimatedVideoCount = 5
+        EstimatedVideoCount = 6
       };
       Settings.Categories.Add(mainCategory);
 
@@ -265,9 +273,8 @@ namespace OnlineVideos.Sites
           ParentCategory = parentCategory,
           HasSubCategories = false,
           SubCategoriesDiscovered = false,
-          EstimatedVideoCount = 10,
           Other = "drnunewest,"
-      };
+        };
         parentCategory.SubCategories.Add(subCategory);
 
         subCategory = new RssLink()
@@ -276,8 +283,9 @@ namespace OnlineVideos.Sites
           ParentCategory = parentCategory,
           HasSubCategories = false,
           SubCategoriesDiscovered = false,
-          Other = "drnuspot,"
-      };
+          EstimatedVideoCount = 9,
+          Other = "drnuhighlight,"
+        };
         parentCategory.SubCategories.Add(subCategory);
 
         subCategory = new RssLink()
@@ -291,6 +299,17 @@ namespace OnlineVideos.Sites
         };
         parentCategory.SubCategories.Add(subCategory);
 
+        subCategory = new RssLink()
+        {
+          Name = "Sidste chance",
+          ParentCategory = parentCategory,
+          HasSubCategories = false,
+          SubCategoriesDiscovered = false,
+          EstimatedVideoCount = 9,
+          Other = "drnulastchance,"
+        };
+        parentCategory.SubCategories.Add(subCategory);
+
         string json = GetWebData(parentCat.Url + "/programseries");
         if (!string.IsNullOrEmpty(json))
         {
@@ -301,7 +320,7 @@ namespace OnlineVideos.Sites
               Name = item.Value<string>("title"),
               HasSubCategories = false,
               SubCategoriesDiscovered = false,
-			  ParentCategory = parentCat,
+              ParentCategory = parentCat,
               Description = item.Value<string>("description"),
               EstimatedVideoCount = item.Value<uint>("videoCount"),
               Other = "drnu," + item.Value<string>("slug"),
