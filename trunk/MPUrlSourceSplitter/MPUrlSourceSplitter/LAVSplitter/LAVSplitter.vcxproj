@@ -124,6 +124,7 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
   <ItemGroup>
     <ClCompile Include="AsyncRequest.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Hoster.cpp" />
     <ClCompile Include="InputPin.cpp" />
     <ClCompile Include="LinearBuffer.cpp" />
     <ClCompile Include="LockMutex.cpp" />
@@ -131,9 +132,12 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="MediaPacket.cpp" />
     <ClCompile Include="MediaPacketCollection.cpp" />
     <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="OutputStreamHoster.cpp" />
     <ClCompile Include="PacketAllocator.cpp" />
     <ClCompile Include="Parameter.cpp" />
     <ClCompile Include="ParameterCollection.cpp" />
+    <ClCompile Include="ParserHoster.cpp" />
+    <ClCompile Include="ProtocolHoster.cpp" />
     <ClCompile Include="SettingsProp.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -158,11 +162,18 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="..\..\common\includes\version.h" />
     <ClInclude Include="AsyncRequest.h" />
     <ClInclude Include="Collection.h" />
+    <ClInclude Include="Hoster.h" />
     <ClInclude Include="IDownload.h" />
     <ClInclude Include="IFilter.h" />
     <ClInclude Include="IFilterState.h" />
     <ClInclude Include="InputPin.h" />
+    <ClInclude Include="IOutputStream.h" />
+    <ClInclude Include="IParserPlugin.h" />
+    <ClInclude Include="IParserOutputStream.h" />
+    <ClInclude Include="IPlugin.h" />
+    <ClInclude Include="IProtocolPlugin.h" />
     <ClInclude Include="ISeeking.h" />
+    <ClInclude Include="ISimpleProtocol.h" />
     <ClInclude Include="LinearBuffer.h" />
     <ClInclude Include="LockMutex.h" />
     <ClInclude Include="Logger.h" />
@@ -170,10 +181,13 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="MediaPacketCollection.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="MPUrlSourceSplitterExports.h" />
+    <ClInclude Include="OutputStreamHoster.h" />
     <ClInclude Include="PacketAllocator.h" />
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="ParameterCollection.h" />
     <ClInclude Include="IProtocol.h" />
+    <ClInclude Include="ParserHoster.h" />
+    <ClInclude Include="ProtocolHoster.h" />
     <ClInclude Include="SettingsProp.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />

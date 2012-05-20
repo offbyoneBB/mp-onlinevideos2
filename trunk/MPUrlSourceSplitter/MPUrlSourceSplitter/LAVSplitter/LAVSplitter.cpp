@@ -1816,14 +1816,21 @@ void CLAVSplitter::ffmpeg_log_callback(void *ptr, int log_level, const char *for
 
 // IFilter interface
 
-unsigned int CLAVSplitter::GetSeekingCapabilities(void)
-{
-  return m_pInput->GetSeekingCapabilities();
-}
-
 CLogger *CLAVSplitter::GetLogger(void)
 {
   return m_pInput->GetLogger();
+}
+
+HRESULT CLAVSplitter::GetTotalLength(int64_t *totalLength)
+{
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetTotalLength(totalLength);
+}
+
+// ISeeking interface
+
+unsigned int CLAVSplitter::GetSeekingCapabilities(void)
+{
+  return m_pInput->GetSeekingCapabilities();
 }
 
 int64_t CLAVSplitter::SeekToTime(int64_t time)
@@ -1836,10 +1843,15 @@ int64_t CLAVSplitter::SeekToPosition(int64_t start, int64_t end)
   return m_pInput->SeekToPosition(start, end);
 }
 
-HRESULT CLAVSplitter::GetTotalLength(int64_t *totalLength)
+void CLAVSplitter::SetSupressData(bool supressData)
 {
-  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetTotalLength(totalLength);
+  if (this->m_pInput != NULL)
+  {
+    this->m_pInput->SetSupressData(supressData);
+  }
 }
+
+// IFilterState interface
 
 HRESULT CLAVSplitter::IsFilterReadyToConnectPins(bool *ready)
 {

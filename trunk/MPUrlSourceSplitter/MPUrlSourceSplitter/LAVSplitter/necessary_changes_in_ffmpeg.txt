@@ -42,6 +42,7 @@ Code:
 
 ff_read_frame_flush;
 ff_update_cur_dts;
+asf_reset_header2;
 
 --------------------------------------------
 File: \libavformat\flvdec.c
@@ -52,4 +53,14 @@ whole condition starting with: if(s->pb->seekable && (!s->duration || s->duratio
 must be disabled (comment it)
 
 --------------------------------------------
+File: \libavformat\asfdec.c
+Comment: after including section add
+Code:
+
+void asf_reset_header2(AVFormatContext *s);
+
+--------------------------------------------
+Comment: copy asf_reset_header() method and rename it to asf_reset_header2 (remove static)
+Code:
+
 

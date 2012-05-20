@@ -62,6 +62,7 @@ extern "C" {
 //#include "libavformat\internal.h"
 extern "C" void ff_read_frame_flush(AVFormatContext *s);
 extern "C" void ff_update_cur_dts(AVFormatContext *s, AVStream *ref_st, int64_t timestamp);
+extern "C" void asf_reset_header2(AVFormatContext *s);
 
 #define AVFORMAT_GENPTS 0
 #define AVFORMAT_OPEN_TIMEOUT 20
@@ -112,6 +113,7 @@ CLAVFDemuxer::CLAVFDemuxer(CCritSec *pLock, ILAVFSettingsInternal *settings, IFi
   , m_program(0)
   , m_rtCurrent(0)
   , m_bFlv(FALSE)
+  , m_bAsf(FALSE)
   , m_bMatroska(FALSE)
   , m_bOgg(FALSE)
   , m_bAVI(FALSE)
@@ -371,6 +373,7 @@ STDMETHODIMP CLAVFDemuxer::InitAVFormat(LPCOLESTR pszFileName)
   LPWSTR extension = pszFileName ? PathFindExtensionW(pszFileName) : NULL;
 
   m_bFlv = (_strnicmp(m_pszInputFormat, "flv", 3) == 0);
+  m_bAsf = (_strnicmp(m_pszInputFormat, "asf", 3) == 0);
   m_bMatroska = (_strnicmp(m_pszInputFormat, "matroska", 8) == 0);
   m_bOgg = (_strnicmp(m_pszInputFormat, "ogg", 3) == 0);
   m_bAVI = (_strnicmp(m_pszInputFormat, "avi", 3) == 0);
@@ -968,7 +971,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
       found = true;
     }
 
-    if (!found)
+    if (!found) 
     {
       st->nb_index_entries = 0;
       st->nb_frames = 0;
@@ -981,6 +984,11 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
         result = -2;
       }
 
+      if (SUCCEEDED(result) && (this->m_bAsf))
+      {
+        found = true;
+        asf_reset_header2(this->m_avFormat);
+      }
       logger->Log(LOGGER_VERBOSE, L"%s: %s: seeked to time: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, seekedTime);
     }
 
@@ -1098,7 +1106,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
       }
     }
 
-    if (SUCCEEDED(result) && found)
+    if (SUCCEEDED(result) && found && (st->nb_index_entries))
     {
       ff_read_frame_flush(this->m_avFormat);
       logger->Log(LOGGER_VERBOSE, L"%s: %s: searching keyframe with timestamp: %lld, stream index: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, seek_pts, videoStreamId);
@@ -1799,29 +1807,6 @@ STDMETHODIMP CLAVFDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
   }
 
   bool found = false;
-  // if it isn't FLV video, try to seek by internal ffmpeg time seeking method
-  if (SUCCEEDED(result) && (!this->m_bFlv))
-  {
-    logger->Log(LOGGER_VERBOSE, L"%s: %s: time: %lld, seek_pts: %lld", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, time, seek_pts);
-
-    int ret = 0;
-    if (this->m_avFormat->iformat->read_seek)
-    {
-      logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking by internal format time seeking method", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME);
-      ff_read_frame_flush(this->m_avFormat);
-      ret = m_avFormat->iformat->read_seek(this->m_avFormat, videoStreamId, seek_pts, flags);
-      logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking by internal format time seeking method result: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, ret);
-    } 
-    else
-    {
-      ret = -1;
-    }
-
-    if (ret >= 0)
-    {
-      found = true;
-    }
-  }
 
   if (SUCCEEDED(result) && (!found))
   {

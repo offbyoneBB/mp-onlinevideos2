@@ -37,12 +37,6 @@ public:
   // @return : index of media packet or UINT_MAX if not exists
   unsigned int GetMediaPacketIndexBetweenPositions(int64_t position);
 
-  //// gets index of media packet which overlap position range between start and end position
-  //// @param start : start of position range
-  //// @param end : end of position range
-  //// @return : index of media packet or UINT_MAX if not exists
-  //unsigned int GetMediaPacketIndexOverlappingPositions(int64_t start, int64_t end);
-
   // get item index of item with specified start position
   // @param key : the key of item to find
   // @param context : reference to user defined context

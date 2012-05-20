@@ -157,6 +157,7 @@ private:
   const char *m_pszInputFormat;
 
   BOOL m_bFlv;
+  BOOL m_bAsf;
   BOOL m_bMatroska;
   BOOL m_bOgg;
   BOOL m_bAVI;
