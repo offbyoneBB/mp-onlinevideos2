@@ -33,15 +33,10 @@
 #else
 #define MODULE_NAME                                               L"InputPin"
 #endif
-#define MODULE_FILE_NAME                                          L"MPUrlSourceSplitter.ax"
 
 #define METHOD_PARSE_PARAMETERS_NAME                              L"ParseParameters()"
 #define METHOD_LOAD_PLUGINS_NAME                                  L"LoadPlugins()"
 #define METHOD_LOAD_NAME                                          L"Load()"
-#define METHOD_RECEIVE_DATA_WORKER_NAME                           L"ReceiveDataWorker()"
-#define METHOD_CREATE_RECEIVE_DATA_WORKER_NAME                    L"CreateReceiveDataWorker()"
-#define METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME                   L"DestroyReceiveDataWorker()"
-#define METHOD_PUSH_DATA_NAME                                     L"PushData()"
 #define METHOD_SET_TOTAL_LENGTH_NAME                              L"SetTotalLength()"
 #define METHOD_DOWNLOAD_NAME                                      L"Download()"
 #define METHOD_DOWNLOAD_ASYNC_NAME                                L"DownloadAsync()"
@@ -104,20 +99,12 @@ CLAVInputPin::CLAVInputPin(CLogger *logger, TCHAR *pName, CLAVSplitter *pFilter,
   this->m_pAVIOContext = NULL;
   this->m_llBufferPosition = 0;
   this->filter = pFilter;
-  this->receiveDataWorkerShouldExit = false;
-  this->activeProtocol = NULL;
-  this->protocolImplementationsCount = 0;
-  this->protocolImplementations = NULL;
-  this->url = NULL;
   this->downloadFileName = NULL;
   this->asyncDownloadFinished = false;
-  this->downloadFinished = false;
+  this->allDataReceived = false;
   this->downloadCallbackCalled = false;
   this->asyncDownloadResult = S_OK;
   this->asyncDownloadCallback = NULL;
-  this->hReceiveDataWorkerThread = NULL;
-  this->status = STATUS_NONE;
-  this->mainModuleHandle = GetModuleHandle(MODULE_FILE_NAME);
   this->currentReadRequest = NULL;
   this->mediaPacketCollection = new CMediaPacketCollection();
   this->totalLength = 0;
@@ -127,19 +114,16 @@ CLAVInputPin::CLAVInputPin(CLogger *logger, TCHAR *pName, CLAVSplitter *pFilter,
   this->requestMutex = CreateMutex(NULL, FALSE, NULL);
   this->mediaPacketMutex = CreateMutex(NULL, FALSE, NULL);
   this->lastReceivedMediaPacketTime = GetTickCount();
+  this->parserHoster = new CParserHoster(this->logger, this->configuration, this);
+  if (this->parserHoster != NULL)
+  {
+    this->parserHoster->LoadPlugins();
+  }
   
   this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
   this->downloadingFile = (this->storeFilePath != NULL);
 
   this->hCreateDemuxerWorkerThread = NULL;
-
-  if (this->mainModuleHandle == NULL)
-  {
-    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, L"main module handle not found");
-  }
-
-  // load plugins from directory
-  this->LoadPlugins();
 
   HRESULT result = S_OK;
   if (SUCCEEDED(result))
@@ -160,20 +144,15 @@ CLAVInputPin::~CLAVInputPin(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
 
   this->DestroyDemuxerWorker();
-  this->DestroyReceiveDataWorker();
 
-  // close active protocol connection
-  if (this->activeProtocol != NULL)
+  if (this->parserHoster != NULL)
   {
-    if (this->activeProtocol->IsConnected())
-    {
-      this->activeProtocol->CloseConnection();
-    }
-
-    this->activeProtocol = NULL;
+    this->parserHoster->StopReceivingData();
+    this->parserHoster->RemoveAllPlugins();
+    delete this->parserHoster;
+    this->parserHoster = NULL;
   }
 
-  this->receiveDataWorkerShouldExit = false;
   this->DestroyAsyncRequestProcessWorker();
   this->ReleaseAVIOContext();
 
@@ -201,36 +180,7 @@ CLAVInputPin::~CLAVInputPin(void)
 
   FREE_MEM(this->storeFilePath);
 
-  // release all protocol implementations
-  if (this->protocolImplementations != NULL)
-  {
-    for(unsigned int i = 0; i < this->protocolImplementationsCount; i++)
-    {
-      this->logger->Log(LOGGER_INFO, L"%s: %s: destroying protocol: %s", MODULE_NAME, METHOD_DESTRUCTOR_NAME, protocolImplementations[i].protocol);
-
-      if (protocolImplementations[i].pImplementation != NULL)
-      {
-        protocolImplementations[i].destroyProtocolInstance(protocolImplementations[i].pImplementation);
-        protocolImplementations[i].pImplementation = NULL;
-        protocolImplementations[i].destroyProtocolInstance = NULL;
-      }
-      if (protocolImplementations[i].protocol != NULL)
-      {
-        CoTaskMemFree(protocolImplementations[i].protocol);
-        protocolImplementations[i].protocol = NULL;
-      }
-      if (protocolImplementations[i].hLibrary != NULL)
-      {
-        FreeLibrary(protocolImplementations[i].hLibrary);
-        protocolImplementations[i].hLibrary = NULL;
-      }
-    }
-    this->protocolImplementationsCount = 0;
-  }
-  FREE_MEM(this->protocolImplementations);
-
   delete this->configuration;
-  FREE_MEM(this->url);
   FREE_MEM(this->downloadFileName);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
@@ -364,33 +314,30 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
 
-  this->DestroyDemuxerWorker();
-  // stop receiving data
-  this->DestroyReceiveDataWorker();
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->parserHoster);
 
-  // reset all protocol implementations
-  if (this->protocolImplementations != NULL)
+  if (SUCCEEDED(result))
   {
-    for(unsigned int i = 0; i < this->protocolImplementationsCount; i++)
-    {
-      this->logger->Log(LOGGER_INFO, L"%s: %s: reseting protocol: %s", MODULE_NAME, METHOD_LOAD_NAME, protocolImplementations[i].protocol);
-      if (protocolImplementations[i].pImplementation != NULL)
-      {
-        protocolImplementations[i].pImplementation->ClearSession();
-      }
-    }
+    this->DestroyDemuxerWorker();
+    // stop receiving data
+    this->parserHoster->StopReceivingData();
+
+    // reset all parser and protocol implementations
+    this->parserHoster->ClearSession();
   }
 
-  this->url = ConvertToUnicodeW(pszFileName);
+  wchar_t *url = ConvertToUnicodeW(pszFileName);
+  //wchar_t *url = ConvertToUnicodeA("file://D:/mms_test.dat");
+  //wchar_t *url = ConvertToUnicodeA("http://odi.omroep.nl/video/embedplayer/wmv_bb/627b73a601d18db0d21dcbb55ac92b31/4fafd64e/EO_101186575/?type=asx");
 
-  if (this->url == NULL)
+  if (url == NULL)
   {
     result = E_OUTOFMEMORY;
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
-    CParameterCollection *suppliedParameters = this->ParseParameters(this->url);
+    CParameterCollection *suppliedParameters = this->ParseParameters(url);
     if (suppliedParameters != NULL)
     {
       // we have set some parameters
@@ -399,7 +346,7 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
       this->configuration->Append(suppliedParameters);
       if (!this->configuration->Contains(PARAMETER_NAME_URL, true))
       {
-        this->configuration->Add(new CParameter(PARAMETER_NAME_URL, this->url));
+        this->configuration->Add(new CParameter(PARAMETER_NAME_URL, url));
       }
 
       delete suppliedParameters;
@@ -409,11 +356,11 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
     {
       // parameters are not supplied, just set current url as only one parameter in configuration
       this->configuration->Clear();
-      this->configuration->Add(new CParameter(PARAMETER_NAME_URL, this->url));
+      this->configuration->Add(new CParameter(PARAMETER_NAME_URL, url));
     }
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     // loads protocol based on current configuration parameters
     result = this->Load();
@@ -424,6 +371,8 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
     // splitter is not needed when downloading file
     result = this->CreateDemuxerWorker();
   }
+
+  FREE_MEM(url);
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, result);
   return result;
@@ -436,7 +385,7 @@ STDMETHODIMP CLAVInputPin::GetCurFile(LPOLESTR *ppszFileName, AM_MEDIA_TYPE *pmt
     return E_POINTER;
   }
 
-  *ppszFileName = ConvertToUnicode(this->url);
+  *ppszFileName = ConvertToUnicode(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
   if ((*ppszFileName) == NULL)
   {
     return E_FAIL;
@@ -456,7 +405,6 @@ STDMETHODIMP CLAVInputPin::QueryProgress(LONGLONG *pllTotal, LONGLONG *pllCurren
 STDMETHODIMP CLAVInputPin::AbortOperation(void)
 {
   this->DestroyDemuxerWorker();
-  this->DestroyReceiveDataWorker();
   return this->AbortStreamReceive();
 }
 
@@ -510,41 +458,31 @@ STDMETHODIMP CLAVInputPin::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDow
   CHECK_POINTER_DEFAULT_HRESULT(result, uri);
   CHECK_POINTER_DEFAULT_HRESULT(result, fileName);
   CHECK_POINTER_DEFAULT_HRESULT(result, downloadCallback);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->parserHoster);
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     // stop receiving data
-    this->DestroyReceiveDataWorker();
+    this->parserHoster->StopReceivingData();
 
-    // reset all protocol implementations
-    if (this->protocolImplementations != NULL)
-    {
-      for(unsigned int i = 0; i < this->protocolImplementationsCount; i++)
-      {
-        this->logger->Log(LOGGER_INFO, L"%s: %s: reseting protocol: %s", MODULE_NAME, METHOD_DOWNLOAD_ASYNC_NAME, protocolImplementations[i].protocol);
-        if (protocolImplementations[i].pImplementation != NULL)
-        {
-          protocolImplementations[i].pImplementation->ClearSession();
-        }
-      }
-    }
+    // reset all parser and protocol implementations
+    this->parserHoster->ClearSession();
 
     this->asyncDownloadResult = S_OK;
     this->asyncDownloadFinished = false;
     this->asyncDownloadCallback = downloadCallback;
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
-    this->url = ConvertToUnicodeW(uri);
     this->downloadFileName = ConvertToUnicodeW(fileName);
 
-    result = ((this->url == NULL) || (this->downloadFileName == NULL)) ? E_OUTOFMEMORY : S_OK;
+    result = (this->downloadFileName == NULL) ? E_OUTOFMEMORY : S_OK;
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
-    CParameterCollection *suppliedParameters = this->ParseParameters(this->url);
+    CParameterCollection *suppliedParameters = this->ParseParameters(uri);
     if (suppliedParameters != NULL)
     {
       // we have set some parameters
@@ -553,7 +491,7 @@ STDMETHODIMP CLAVInputPin::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDow
       this->configuration->Append(suppliedParameters);
       if (!this->configuration->Contains(PARAMETER_NAME_URL, true))
       {
-        this->configuration->Add(new CParameter(PARAMETER_NAME_URL, this->url));
+        this->configuration->Add(new CParameter(PARAMETER_NAME_URL, uri));
       }
       this->configuration->Add(new CParameter(PARAMETER_NAME_DOWNLOAD_FILE_NAME, this->downloadFileName));
 
@@ -564,12 +502,12 @@ STDMETHODIMP CLAVInputPin::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDow
     {
       // parameters are not supplied, just set current url and download file name as only parameters in configuration
       this->configuration->Clear();
-      this->configuration->Add(new CParameter(PARAMETER_NAME_URL, this->url));
+      this->configuration->Add(new CParameter(PARAMETER_NAME_URL, uri));
       this->configuration->Add(new CParameter(PARAMETER_NAME_DOWNLOAD_FILE_NAME, this->downloadFileName));
     }
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     // loads protocol based on current configuration parameters
     result = this->Load();
@@ -582,6 +520,7 @@ STDMETHODIMP CLAVInputPin::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDow
 STDMETHODIMP CLAVInputPin::Load()
 {
   HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->parserHoster);
 
   if (this->configuration == NULL)
   {
@@ -590,9 +529,7 @@ STDMETHODIMP CLAVInputPin::Load()
 
   if (SUCCEEDED(result))
   {
-    FREE_MEM(this->url);
-    this->url = Duplicate(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
-    result = (this->url == NULL) ? E_OUTOFMEMORY : S_OK;
+    result = (this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL) == NULL) ? E_OUTOFMEMORY : S_OK;
   }
 
   if (SUCCEEDED(result))
@@ -604,300 +541,17 @@ STDMETHODIMP CLAVInputPin::Load()
 
   if (SUCCEEDED(result))
   {
-    if(!this->LoadProtocolImplementation(this->url, this->configuration))
-    {
-      result = E_FAIL;
-    }
-  }
-
-  if (SUCCEEDED(result))
-  {
-    // now we have active protocol with loaded url, but still not working
-    // create thread for receiving data
-
-    result = this->CreateReceiveDataWorker();
-  }
-
-  if (SUCCEEDED(result))
-  {
-    DWORD ticks = GetTickCount();
-    DWORD timeout = 0;
-
-    if (this->activeProtocol != NULL)
-    {
-      // get receive data timeout for active protocol
-      timeout = this->activeProtocol->GetReceiveDataTimeout();
-      wchar_t *protocolName = this->activeProtocol->GetProtocolName();
-      this->logger->Log(LOGGER_INFO, L"%s: %s: active protocol '%s' timeout: %d (ms)", MODULE_NAME, METHOD_LOAD_NAME, protocolName, timeout);
-      FREE_MEM(protocolName);
-    }
-    else
-    {
-      this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, L"no active protocol");
-      result = E_FAIL;
-    }
-
-    if (SUCCEEDED(result))
-    {
-      // wait for receiving data, timeout or exit
-      while ((this->status != STATUS_RECEIVING_DATA) && (this->status != STATUS_NO_DATA_ERROR) && ((GetTickCount() - ticks) <= timeout) && (!this->receiveDataWorkerShouldExit))
-      {
-        Sleep(1);
-      }
-
-      switch(this->status)
-      {
-      case STATUS_NONE:
-        result = E_FAIL;
-        break;
-      case STATUS_NO_DATA_ERROR:
-        result = -1;
-        break;
-      case STATUS_RECEIVING_DATA:
-        result = S_OK;
-        break;
-      default:
-        result = E_UNEXPECTED;
-        break;
-      }
-
-      if (FAILED(result))
-      {
-        this->DestroyReceiveDataWorker();
-      }
-    }
+    result = this->parserHoster->StartReceivingData(this->configuration);
   }
 
   return result;
 }
 
-HRESULT CLAVInputPin::CreateReceiveDataWorker(void)
-{
-  HRESULT result = S_OK;
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME);
-
-  this->hReceiveDataWorkerThread = CreateThread( 
-    NULL,                                   // default security attributes
-    0,                                      // use default stack size  
-    &CLAVInputPin::ReceiveDataWorker,       // thread function name
-    this,                                   // argument to thread function 
-    0,                                      // use default creation flags 
-    &dwReceiveDataWorkerThreadId);          // returns the thread identifier
-
-  if (this->hReceiveDataWorkerThread == NULL)
-  {
-    // thread not created
-    result = HRESULT_FROM_WIN32(GetLastError());
-    this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
-  }
-
-  if (result == S_OK)
-  {
-    if (!SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL))
-    {
-      this->logger->Log(LOGGER_WARNING, L"%s: %s: cannot set thread priority for main thread, error: %u", MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, GetLastError());
-    }
-    if (!SetThreadPriority(this->hReceiveDataWorkerThread, THREAD_PRIORITY_TIME_CRITICAL))
-    {
-      this->logger->Log(LOGGER_WARNING, L"%s: %s: cannot set thread priority for receive data thread, error: %u", MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, GetLastError());
-    }
-  }
-
-  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
-  return result;
-}
-
-HRESULT CLAVInputPin::DestroyReceiveDataWorker(void)
-{
-  HRESULT result = S_OK;
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME);
-
-  this->receiveDataWorkerShouldExit = true;
-
-  // wait for the receive data worker thread to exit      
-  if (this->hReceiveDataWorkerThread != NULL)
-  {
-    if (WaitForSingleObject(this->hReceiveDataWorkerThread, 1000) == WAIT_TIMEOUT)
-    {
-      // thread didn't exit, kill it now
-      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME, L"thread didn't exit, terminating thread");
-      TerminateThread(this->hReceiveDataWorkerThread, 0);
-    }
-  }
-
-  this->hReceiveDataWorkerThread = NULL;
-  this->receiveDataWorkerShouldExit = false;
-
-  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME, result);
-  return result;
-}
-
-void CLAVInputPin::LoadPlugins()
-{
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME);
-
-  unsigned int maxPlugins = this->configuration->GetValueLong(PARAMETER_NAME_MAX_PLUGINS, true, MAX_PLUGINS_DEFAULT);
-  maxPlugins = (maxPlugins < 0) ? MAX_PLUGINS_DEFAULT : maxPlugins;
-
-  if (maxPlugins > 0)
-  {
-    this->protocolImplementations = ALLOC_MEM(ProtocolImplementation, maxPlugins);
-    if (this->protocolImplementations != NULL)
-    {
-      WIN32_FIND_DATA info;
-      HANDLE h;
-
-      ALLOC_MEM_DEFINE_SET(strDllPath, wchar_t, _MAX_PATH, 0);
-      ALLOC_MEM_DEFINE_SET(strDllSearch, wchar_t, _MAX_PATH, 0);
-
-      GetModuleFileName(this->mainModuleHandle, strDllPath, _MAX_PATH);
-      PathRemoveFileSpec(strDllPath);
-
-      wcscat_s(strDllPath, _MAX_PATH, L"\\");
-      wcscpy_s(strDllSearch, _MAX_PATH, strDllPath);
-      wcscat_s(strDllSearch, _MAX_PATH, L"mpurlsourcesplitter_*.dll");
-
-      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: search path: %s", MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, strDllPath);
-      // add plugins directory to search path
-      SetDllDirectory(strDllPath);
-
-      h = FindFirstFile(strDllSearch, &info);
-      if (h != INVALID_HANDLE_VALUE) 
-      {
-        do 
-        {
-          BOOL result = TRUE;
-          ALLOC_MEM_DEFINE_SET(strDllName, wchar_t, _MAX_PATH, 0);
-
-          wcscpy_s(strDllName, _MAX_PATH, strDllPath);
-          wcscat_s(strDllName, _MAX_PATH, info.cFileName);
-
-          // load library
-          this->logger->Log(LOGGER_INFO, L"%s: %s: loading library: %s", MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, strDllName);
-          HINSTANCE hLibrary = LoadLibrary(strDllName);        
-          if (hLibrary == NULL)
-          {
-            this->logger->Log(LOGGER_ERROR, L"%s: %s: library '%s' not loaded", MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, strDllName);
-            result = FALSE;
-          }
-
-          if (result)
-          {
-            // find CreateProtocolInstance() function
-            // find DestroyProtocolInstance() function
-            PIProtocol pIProtocol = NULL;
-            CREATEPROTOCOLINSTANCE createProtocolInstance;
-            DESTROYPROTOCOLINSTANCE destroyProtocolInstance;
-
-            createProtocolInstance = (CREATEPROTOCOLINSTANCE)GetProcAddress(hLibrary, "CreateProtocolInstance");
-            destroyProtocolInstance = (DESTROYPROTOCOLINSTANCE)GetProcAddress(hLibrary, "DestroyProtocolInstance");
-
-            if (createProtocolInstance == NULL)
-            {
-              this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot find CreateProtocolInstance() function, error: %d", MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, GetLastError());
-              result = FALSE;
-            }
-            if (destroyProtocolInstance == NULL)
-            {
-              this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot find DestroyProtocolInstance() function, error: %d", MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, GetLastError());
-              result = FALSE;
-            }
-
-            if (result)
-            {
-              // create protocol instance
-              pIProtocol = (PIProtocol)createProtocolInstance(this->configuration);
-              if (pIProtocol == NULL)
-              {
-                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, L"cannot create protocol implementation instance");
-                result = FALSE;
-              }
-
-              if (result)
-              {
-                // library is loaded and protocol implementation is instanced
-                protocolImplementations[this->protocolImplementationsCount].hLibrary = hLibrary;
-                protocolImplementations[this->protocolImplementationsCount].pImplementation = pIProtocol;
-                protocolImplementations[this->protocolImplementationsCount].protocol = pIProtocol->GetProtocolName();
-                protocolImplementations[this->protocolImplementationsCount].supported = false;
-                protocolImplementations[this->protocolImplementationsCount].destroyProtocolInstance = destroyProtocolInstance;
-
-                if (protocolImplementations[this->protocolImplementationsCount].protocol == NULL)
-                {
-                  // error occured while getting protocol name
-                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, L"cannot get protocol name");
-                  protocolImplementations[this->protocolImplementationsCount].destroyProtocolInstance(protocolImplementations[this->protocolImplementationsCount].pImplementation);
-
-                  protocolImplementations[this->protocolImplementationsCount].hLibrary = NULL;
-                  protocolImplementations[this->protocolImplementationsCount].pImplementation = NULL;
-                  protocolImplementations[this->protocolImplementationsCount].protocol = NULL;
-                  protocolImplementations[this->protocolImplementationsCount].supported = false;
-                  protocolImplementations[this->protocolImplementationsCount].destroyProtocolInstance = NULL;
-
-                  result = FALSE;
-                }
-              }
-
-              if (result)
-              {
-                // initialize protocol implementation
-                // we don't have protocol specific parameters
-                // all parameters are supplied with calling IFileSourceFilter.Load() method
-
-                // initialize protocol
-                HRESULT initialized = protocolImplementations[this->protocolImplementationsCount].pImplementation->Initialize(this, this->configuration);
-
-                if (SUCCEEDED(initialized))
-                {
-                  TCHAR *guid = ConvertGuidToString(protocolImplementations[this->protocolImplementationsCount].pImplementation->GetInstanceId());
-                  this->logger->Log(LOGGER_INFO, L"%s: %s: protocol '%s' successfully instanced, id: %s", MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, protocolImplementations[this->protocolImplementationsCount].protocol, guid);
-                  FREE_MEM(guid);
-                  this->protocolImplementationsCount++;
-                }
-                else
-                {
-                  this->logger->Log(LOGGER_INFO, L"%s: %s: protocol '%s' not initialized", MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, protocolImplementations[this->protocolImplementationsCount].protocol);
-                  protocolImplementations[this->protocolImplementationsCount].destroyProtocolInstance(protocolImplementations[this->protocolImplementationsCount].pImplementation);
-                }
-              }
-            }
-
-            if (!result)
-            {
-              // any error occured while loading protocol
-              // free library and continue with another
-              FreeLibrary(hLibrary);
-            }
-          }
-
-          FREE_MEM(strDllName);
-          if (this->protocolImplementationsCount == maxPlugins)
-          {
-            break;
-          }
-        } while (FindNextFile(h, &info));
-        FindClose(h);
-      } 
-
-      this->logger->Log(LOGGER_INFO, L"%s: %s: found protocols: %u", MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, this->protocolImplementationsCount);
-
-      FREE_MEM(strDllPath);
-      FREE_MEM(strDllSearch);
-    }
-    else
-    {
-      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, L"cannot allocate memory for protocol implementations");
-    }
-  }
-
-  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME);
-}
+// IOutputStream interface
 
 HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
 {
-  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
-  this->status = STATUS_RECEIVING_DATA;
-
+  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME);
   HRESULT result = S_OK;
 
   {
@@ -916,14 +570,18 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
       {
         int64_t start = mediaPacket->GetStart();
         int64_t stop = mediaPacket->GetEnd();
-        this->logger->Log(LOGGER_DATA, L"%s: %s media packet start: %016llu, length: %08u", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, start, mediaPacket->GetBuffer()->GetBufferOccupiedSpace());
+        this->logger->Log(LOGGER_DATA, L"%s: %s: media packet start: %016llu, length: %08u", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, start, mediaPacket->GetBuffer()->GetBufferOccupiedSpace());
 
         result = S_OK;
         while ((unprocessedMediaPackets->Count() != 0) && (result == S_OK))
         {
           // there is still some unprocessed media packets
           // get first media packet
-          CMediaPacket *unprocessedMediaPacket = unprocessedMediaPackets->GetItem(0);
+          CMediaPacket *unprocessedMediaPacket = unprocessedMediaPackets->GetItem(0)->Clone();
+
+          // remove first unprocessed media packet
+          // its clone is going to be processed
+          unprocessedMediaPackets->Remove(0);
 
           int64_t unprocessedMediaPacketStart = unprocessedMediaPacket->GetStart();
           int64_t unprocessedMediaPacketEnd = unprocessedMediaPacket->GetEnd();
@@ -934,6 +592,8 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
           {
             if ((region->GetStart() == 0) && (region->GetEnd() == 0))
             {
+              this->logger->Log(LOGGER_DATA, L"%s: %s: no overlapped region", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME);
+
               // there isn't overlapping media packet
               // whole packet can be added to collection
               result = (this->mediaPacketCollection->Add(unprocessedMediaPacket->Clone())) ? S_OK : E_FAIL;
@@ -947,12 +607,16 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
               int64_t overlappingRegionStart = region->GetStart();
               int64_t overlappingRegionEnd = region->GetEnd();
 
+              this->logger->Log(LOGGER_DATA, L"%s: %s: overlapped region, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, overlappingRegionStart, overlappingRegionEnd);
+
               if (SUCCEEDED(result) && (unprocessedMediaPacketStart < overlappingRegionStart))
               {
                 // initialize part
                 int64_t start = unprocessedMediaPacketStart;
                 int64_t end = overlappingRegionStart - 1;
                 CMediaPacket *part = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
+
+                this->logger->Log(LOGGER_DATA, L"%s: %s: creating packet, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, start, end);
 
                 result = (part != NULL) ? S_OK : E_POINTER;
                 if (SUCCEEDED(result))
@@ -968,6 +632,8 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
                 int64_t end = unprocessedMediaPacketEnd;
                 CMediaPacket *part = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
 
+                this->logger->Log(LOGGER_DATA, L"%s: %s: creating packet, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, start, end);
+
                 result = (part != NULL) ? S_OK : E_POINTER;
                 if (SUCCEEDED(result))
                 {
@@ -982,36 +648,23 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
             result = E_FAIL;
           }
 
-          // remove first unprocessed media packet
-          // not this packet is processed
-          unprocessedMediaPackets->Remove(0);
+          // delete processed media packet
+          delete unprocessedMediaPacket;
         }
       }
 
       // media packets collection is not longer needed
       delete unprocessedMediaPackets;
-
-      // in any case there is need to delete media packet
-      // because media packet must be destroyed after processing
-
-      delete mediaPacket;
     }
   }
 
-  if ((result != S_OK) && (mediaPacket != NULL))
-  {
-    // if result if not STATUS_OK than release media packet
-    // because receiver is responsible of deleting media packet
-    delete mediaPacket;
-  }
-
-  this->logger->Log(LOGGER_DATA, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
+  this->logger->Log(SUCCEEDED(result) ? LOGGER_DATA : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, result);
   return result;
 }
 
 HRESULT CLAVInputPin::EndOfStreamReached(int64_t streamPosition)
 {
-  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
 
   HRESULT result = E_FAIL;
 
@@ -1038,12 +691,13 @@ HRESULT CLAVInputPin::EndOfStreamReached(int64_t streamPosition)
       for (int i = 0; i < 2; i++)
       {
         // because collection is sorted
-        // then simle going through all media packets will reveal if there is some empty place
+        // then simple going through all media packets will reveal if there is some empty place
         while (mediaPacketIndex != UINT_MAX)
         {
           CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(mediaPacketIndex);
           int64_t mediaPacketStart = mediaPacket->GetStart();
-          int64_t mediaPacketEnd = mediaPacket->GetEnd();;
+          int64_t mediaPacketEnd = mediaPacket->GetEnd();
+
           if (startPosition == mediaPacketStart)
           {
             // next start time is next to end of current media packet
@@ -1093,18 +747,16 @@ HRESULT CLAVInputPin::EndOfStreamReached(int64_t streamPosition)
       else
       {
         // all data received
-        // if downloading file, mark that download callback can be called after storing all data to download file
-        if (this->downloadingFile)
-        {
-          this->downloadFinished = true;
-        }
+        this->allDataReceived = true;
+
+        // if downloading file, download callback can be called after storing all data to download file
       }
     }
 
     result = S_OK;
   }
   
-  this->logger->Log(LOGGER_DATA, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
+  this->logger->Log(LOGGER_VERBOSE, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
   return result;
 }
 
@@ -1124,86 +776,16 @@ HRESULT CLAVInputPin::SetTotalLength(int64_t total, bool estimate)
   return result;
 }
 
-bool CLAVInputPin::LoadProtocolImplementation(const wchar_t *url, const CParameterCollection *parameters)
+// IParserOutputStream interface
+
+bool CLAVInputPin::IsDownloading(void)
 {
-  // for each protocol run ParseUrl() method
-  // those which return STATUS_OK supports protocol
-  // set active protocol to first implementation
-  bool retval = false;
-  for(unsigned int i = 0; i < this->protocolImplementationsCount; i++)
-  {
-    if (protocolImplementations[i].pImplementation != NULL)
-    {
-      protocolImplementations[i].supported = (protocolImplementations[i].pImplementation->ParseUrl(url, parameters) == S_OK);
-      if ((protocolImplementations[i].supported) && (!retval))
-      {
-        // active protocol wasn't set yet
-        this->activeProtocol = protocolImplementations[i].pImplementation;
-      }
-
-      retval |= protocolImplementations[i].supported;
-    }
-  }
-
-  return retval;
+  return this->downloadingFile;
 }
 
-DWORD WINAPI CLAVInputPin::ReceiveDataWorker(LPVOID lpParam)
+void CLAVInputPin::FinishDownload(HRESULT result)
 {
-  CLAVInputPin *caller = (CLAVInputPin *)lpParam;
-  caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME);
-
-  unsigned int attempts = 0;
-  bool stopReceivingData = false;
-
-  HRESULT result = S_OK;
-  while ((!caller->receiveDataWorkerShouldExit) && (!stopReceivingData))
-  {
-    Sleep(1);
-
-    if (caller->activeProtocol != NULL)
-    {
-      unsigned int maximumAttempts = caller->activeProtocol->GetOpenConnectionMaximumAttempts();
-
-      // if in active protocol is opened connection than receive data
-      // if not than open connection
-      if (caller->activeProtocol->IsConnected())
-      {
-        caller->activeProtocol->ReceiveData(&caller->receiveDataWorkerShouldExit);
-      }
-      else
-      {
-        if (attempts < maximumAttempts)
-        {
-          result = caller->activeProtocol->OpenConnection();
-          if (SUCCEEDED(result))
-          {
-            // set attempts to zero
-            attempts = 0;
-          }
-          else
-          {
-            // increase attempts
-            attempts++;
-          }
-        }
-        else
-        {
-          caller->logger->Log(LOGGER_ERROR, L"%s: %s: maximum attempts of opening connection reached, attempts: %u, maximum attempts: %u", MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, attempts, maximumAttempts);
-          caller->status = STATUS_NO_DATA_ERROR;
-          stopReceivingData = true;
-
-          if (caller->downloadFileName != NULL)
-          {
-            caller->OnDownloadCallback(result);
-          }
-        }
-      }
-    }
-  }
-
-  caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME);
-  return S_OK;
+  this->OnDownloadCallback(result);
 }
 
 // split parameters string by separator
@@ -1410,9 +992,10 @@ HRESULT CLAVInputPin::AbortStreamReceive(void)
 {
   HRESULT result = E_NOT_VALID_STATE;
 
-  if (this->activeProtocol != NULL)
+  if (this->parserHoster != NULL)
   {
-    result = this->activeProtocol->AbortStreamReceive();
+    this->parserHoster->StopReceivingData();
+    result = S_OK;
   }
 
   return result;
@@ -1422,9 +1005,9 @@ HRESULT CLAVInputPin::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
 {
   HRESULT result = E_NOT_VALID_STATE;
 
-  if (this->activeProtocol != NULL)
+  if (this->parserHoster != NULL)
   {
-    result = this->activeProtocol->QueryStreamProgress(total, current);
+    result = this->parserHoster->QueryStreamProgress(total, current);
   }
 
   return result;
@@ -1583,6 +1166,8 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
   caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME);
 
   DWORD lastCheckTime = GetTickCount();
+  // holds last waiting request id to avoid multiple message logging
+  unsigned int lastWaitingRequestId = 0;
 
   while (!caller->asyncRequestProcessingShouldExit)
   {
@@ -1715,14 +1300,14 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                 {
                   // found data length is lower than requested, return S_FALSE
                   DWORD currentTime = GetTickCount();
-                  if ((currentTime - caller->lastReceivedMediaPacketTime) > caller->GetReceiveDataTimeout())
+                  if ((!caller->allDataReceived) && ((currentTime - caller->lastReceivedMediaPacketTime) > caller->GetReceiveDataTimeout()))
                   {
                     // we don't receive data from protocol at least for specified timeout
                     // finish request with error to avoid freeze
                     caller->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u' doesn't receive data for specified time, current time: %d, last received data time: %d, specified timeout: %d", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), currentTime, caller->lastReceivedMediaPacketTime, caller->GetReceiveDataTimeout());
                     request->Complete(VFW_E_TIMEOUT);
                   }
-                  else if ((!caller->estimate) && (caller->totalLength > (request->GetStart() + request->GetBufferLength())))
+                  else if ((!caller->allDataReceived) && (!caller->estimate) && (caller->totalLength > (request->GetStart() + request->GetBufferLength())))
                   {
                     // we are receiving data, wait for all requested data
                   }
@@ -1783,7 +1368,11 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
               if (request->GetStart() > currentStreamPosition)
               {
                 // if request start is after current stream position than we have to issue seek request (if supported)
-                caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: request '%u', start '%llu' (size '%lu') after current stream position '%llu'", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition);
+                if (request->GetRequestId() != lastWaitingRequestId)
+                {
+                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: request '%u', start '%llu' (size '%lu') after current stream position '%llu'", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition);
+                  lastWaitingRequestId = request->GetRequestId();
+                }
               }
               else if ((request->GetStart() <= currentStreamPosition) && ((request->GetStart() + request->GetBufferLength()) > currentStreamPosition))
               {
@@ -1795,7 +1384,11 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
               else
               {
                 // if request start is before current stream position than we have to issue seek request
-                caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: request '%u', start '%llu' (size '%lu') before current stream position '%llu'", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition);
+                if (request->GetRequestId() != lastWaitingRequestId)
+                {
+                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: request '%u', start '%llu' (size '%lu') before current stream position '%llu'", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition);
+                  lastWaitingRequestId = request->GetRequestId();
+                }
               }
             }
 
@@ -1994,7 +1587,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   i++;
                 }
 
-                if (caller->downloadingFile && caller->downloadFinished && allMediaPacketsStored && (!caller->downloadCallbackCalled))
+                if (caller->downloadingFile && caller->allDataReceived && allMediaPacketsStored && (!caller->downloadCallbackCalled))
                 {
                   // all data received
                   // call download callback method
@@ -2190,9 +1783,9 @@ unsigned int CLAVInputPin::GetReceiveDataTimeout(void)
 {
   unsigned int result = UINT_MAX;
 
-  if (this->activeProtocol != NULL)
+  if (this->parserHoster != NULL)
   {
-    result = this->activeProtocol->GetReceiveDataTimeout();
+    result = this->parserHoster->GetReceiveDataTimeout();
   }
 
   return result;
@@ -2267,9 +1860,9 @@ HRESULT CLAVInputPin::QueryStreamAvailableLength(CStreamAvailableLength *availab
 {
   HRESULT result = E_NOTIMPL;
 
-  if (this->activeProtocol != NULL)
+  if (this->parserHoster != NULL)
   {
-    result = this->activeProtocol->QueryStreamAvailableLength(availableLength);
+    result = this->parserHoster->QueryStreamAvailableLength(availableLength);
   }
 
   return result;
@@ -2279,9 +1872,9 @@ int64_t CLAVInputPin::SeekToPosition(int64_t start, int64_t end)
 {
   int64_t result = -1;
 
-  if (this->activeProtocol != NULL)
+  if (this->parserHoster != NULL)
   {
-    result = this->activeProtocol->SeekToPosition(start, end);
+    result = this->parserHoster->SeekToPosition(start, end);
   }
 
   return result;
@@ -2348,7 +1941,8 @@ DWORD WINAPI CLAVInputPin::DemuxerWorker(LPVOID lpParam)
     if (!caller->createdDemuxer)
     {
       caller->m_llBufferPosition = 0;
-      if (SUCCEEDED(caller->filter->CreateDemuxer(caller->url)))
+      wchar_t *url = caller->configuration->GetValue(PARAMETER_NAME_URL, true, NULL);
+      if (SUCCEEDED(caller->filter->CreateDemuxer(url)))
       {
         caller->createdDemuxer = true;
         break;
@@ -2601,52 +2195,9 @@ void CLAVInputPin::SetStopValid(BOOL valid) { this->m_bStopValid = valid; }
 
 // IFilter interface
 
-unsigned int CLAVInputPin::GetSeekingCapabilities(void)
-{
-  unsigned int capabilities = SEEKING_METHOD_NONE;
-
-  if (this->activeProtocol != NULL)
-  {
-    capabilities = this->activeProtocol->GetSeekingCapabilities();
-  }
-
-  return capabilities;
-}
-
 CLogger *CLAVInputPin::GetLogger(void)
 {
   return this->logger;
-}
-
-int64_t CLAVInputPin::SeekToTime(int64_t time)
-{
-  int64_t result = -1;
-
-  if (this->activeProtocol != NULL)
-  {
-    // notify protocol that we can't receive any data
-    // protocol have to supress sending data and will wait until we are ready
-    this->activeProtocol->SetSupressData(true);
-    result = this->activeProtocol->SeekToTime(time);
-    if (result >= 0)
-    {
-      // lock access to media packets
-      CLockMutex mediaPacketLock(this->mediaPacketMutex, INFINITE);
-      // clear media packets, we are starting from beginning
-      // delete buffer file and set buffer position to zero
-      this->mediaPacketCollection->Clear();
-      if (this->storeFilePath != NULL)
-      {
-        DeleteFile(this->storeFilePath);
-      }
-      this->m_llBufferPosition = 0;
-    }
-    // now we are ready to receive data
-    // notify protocol that we can receive data
-    this->activeProtocol->SetSupressData(false);
-  }
-
-  return result;
 }
 
 HRESULT CLAVInputPin::GetTotalLength(int64_t *totalLength)
@@ -2662,3 +2213,60 @@ HRESULT CLAVInputPin::GetTotalLength(int64_t *totalLength)
 
   return result;
 }
+
+// ISeeking interface
+
+unsigned int CLAVInputPin::GetSeekingCapabilities(void)
+{
+  unsigned int capabilities = SEEKING_METHOD_NONE;
+
+  if (this->parserHoster != NULL)
+  {
+    capabilities = this->parserHoster->GetSeekingCapabilities();
+  }
+
+  return capabilities;
+}
+
+
+int64_t CLAVInputPin::SeekToTime(int64_t time)
+{
+  int64_t result = -1;
+
+  if (this->parserHoster != NULL)
+  {
+    // notify protocol that we can't receive any data
+    // protocol have to supress sending data and will wait until we are ready
+    this->parserHoster->SetSupressData(true);
+    result = this->parserHoster->SeekToTime(time);
+
+    if (result >= 0)
+    {
+      // lock access to media packets
+      CLockMutex mediaPacketLock(this->mediaPacketMutex, INFINITE);
+
+      // clear media packets, we are starting from beginning
+      // delete buffer file and set buffer position to zero
+      this->mediaPacketCollection->Clear();
+      if (this->storeFilePath != NULL)
+      {
+        DeleteFile(this->storeFilePath);
+      }
+      this->m_llBufferPosition = 0;
+    }
+    // now we are ready to receive data
+    // notify protocol that we can receive data
+    this->parserHoster->SetSupressData(false);
+  }
+
+  return result;
+}
+
+void CLAVInputPin::SetSupressData(bool supressData)
+{
+  if (this->parserHoster != NULL)
+  {
+    this->parserHoster->SetSupressData(supressData);
+  }
+}
+

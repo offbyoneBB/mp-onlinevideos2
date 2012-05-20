@@ -30,25 +30,30 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter", "MPUr
 		{E2012DB5-33CB-44A7-B521-04287F6D0D80} = {E2012DB5-33CB-44A7-B521-04287F6D0D80}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_File", "MPUrlSourceSplitter\MPUrlSourceSplitter_File\MPUrlSourceSplitter_File.vcxproj", "{4215E997-3CF4-45DA-87D5-7FD5CBDC3078}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Parser_Asx", "MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Asx\MPUrlSourceSplitter_Parser_Asx.vcxproj", "{EE404965-E07C-42BE-B006-AC972AB3ED2E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F475F86F-3F7F-4B1D-82A6-078339F599FD} = {F475F86F-3F7F-4B1D-82A6-078339F599FD}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Protocol_File", "MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_File\MPUrlSourceSplitter_Protocol_File.vcxproj", "{4215E997-3CF4-45DA-87D5-7FD5CBDC3078}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F475F86F-3F7F-4B1D-82A6-078339F599FD} = {F475F86F-3F7F-4B1D-82A6-078339F599FD}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Protocol_Http", "MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http\MPUrlSourceSplitter_Protocol_Http.vcxproj", "{87E58044-FF74-4E9D-B592-83619028C485}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B25D4555-F218-410A-A37E-176A17996325} = {B25D4555-F218-410A-A37E-176A17996325}
 		{F475F86F-3F7F-4B1D-82A6-078339F599FD} = {F475F86F-3F7F-4B1D-82A6-078339F599FD}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Http", "MPUrlSourceSplitter\MPUrlSourceSplitter_Http\MPUrlSourceSplitter_Http.vcxproj", "{87E58044-FF74-4E9D-B592-83619028C485}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Protocol_Rtmp", "MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp\MPUrlSourceSplitter_Protocol_Rtmp.vcxproj", "{A96533F6-8B52-45A2-864C-FB2239CFEAD5}"
 	ProjectSection(ProjectDependencies) = postProject
+		{BDA0CC2F-E51F-4CD0-AE70-D6073C120026} = {BDA0CC2F-E51F-4CD0-AE70-D6073C120026}
 		{B25D4555-F218-410A-A37E-176A17996325} = {B25D4555-F218-410A-A37E-176A17996325}
 		{F475F86F-3F7F-4B1D-82A6-078339F599FD} = {F475F86F-3F7F-4B1D-82A6-078339F599FD}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Rtmp", "MPUrlSourceSplitter\MPUrlSourceSplitter_Rtmp\MPUrlSourceSplitter_Rtmp.vcxproj", "{A96533F6-8B52-45A2-864C-FB2239CFEAD5}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B25D4555-F218-410A-A37E-176A17996325} = {B25D4555-F218-410A-A37E-176A17996325}
-		{F475F86F-3F7F-4B1D-82A6-078339F599FD} = {F475F86F-3F7F-4B1D-82A6-078339F599FD}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Mms", "MPUrlSourceSplitter\MPUrlSourceSplitter_Mms\MPUrlSourceSplitter_Mms.vcxproj", "{813C8406-5BF8-4B44-A610-A98070E1FDF7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Protocol_Mms", "MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mms\MPUrlSourceSplitter_Protocol_Mms.vcxproj", "{813C8406-5BF8-4B44-A610-A98070E1FDF7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B25D4555-F218-410A-A37E-176A17996325} = {B25D4555-F218-410A-A37E-176A17996325}
 		{F475F86F-3F7F-4B1D-82A6-078339F599FD} = {F475F86F-3F7F-4B1D-82A6-078339F599FD}
@@ -88,6 +93,10 @@ Global
 		{F475F86F-3F7F-4B1D-82A6-078339F599FD}.Debug|Win32.Build.0 = Debug|Win32
 		{F475F86F-3F7F-4B1D-82A6-078339F599FD}.Release|Win32.ActiveCfg = Release|Win32
 		{F475F86F-3F7F-4B1D-82A6-078339F599FD}.Release|Win32.Build.0 = Release|Win32
+		{EE404965-E07C-42BE-B006-AC972AB3ED2E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EE404965-E07C-42BE-B006-AC972AB3ED2E}.Debug|Win32.Build.0 = Debug|Win32
+		{EE404965-E07C-42BE-B006-AC972AB3ED2E}.Release|Win32.ActiveCfg = Release|Win32
+		{EE404965-E07C-42BE-B006-AC972AB3ED2E}.Release|Win32.Build.0 = Release|Win32
 		{4215E997-3CF4-45DA-87D5-7FD5CBDC3078}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4215E997-3CF4-45DA-87D5-7FD5CBDC3078}.Debug|Win32.Build.0 = Debug|Win32
 		{4215E997-3CF4-45DA-87D5-7FD5CBDC3078}.Release|Win32.ActiveCfg = Release|Win32

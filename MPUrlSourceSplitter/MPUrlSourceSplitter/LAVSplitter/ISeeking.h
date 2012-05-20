@@ -50,6 +50,10 @@ struct ISeeking
   // @param end : the requested end position, if end position is lower or equal to start position than end position is not specified
   // @return : position where seek finished or lower than zero if error
   virtual int64_t SeekToPosition(int64_t start, int64_t end) = 0;
+
+  // sets if protocol implementation have to supress sending data to filter
+  // @param supressData : true if protocol have to supress sending data to filter, false otherwise
+  virtual void SetSupressData(bool supressData) = 0;
 };
 
 #endif

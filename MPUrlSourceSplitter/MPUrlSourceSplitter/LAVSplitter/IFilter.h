@@ -28,14 +28,6 @@
 
 #include <stdint.h>
 
-// define seeking capabilities of protocol
-// protocol doesn't support seeking
-#define SEEKING_METHOD_NONE                                             0
-// protocol supports seeking by position (in bytes)
-#define SEEKING_METHOD_POSITION                                         1
-// protocol supports seeking by time (in ms)
-#define SEEKING_METHOD_TIME                                             2
-
 // defines interface for filter
 struct IFilter : public ISeeking
 {

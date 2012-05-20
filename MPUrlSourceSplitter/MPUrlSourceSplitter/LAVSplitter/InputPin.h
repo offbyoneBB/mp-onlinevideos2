@@ -27,6 +27,8 @@
 #include "MediaPacketCollection.h"
 #include "StreamAvailableLength.h"
 #include "IFilter.h"
+#include "ParserHoster.h"
+#include "IParserOutputStream.h"
 
 #include <set>
 
@@ -34,24 +36,11 @@ class CLAVSplitter;
 class CAsyncRequest;
 class CMediaPacketCollection;
 
-struct ProtocolImplementation
-{
-  wchar_t *protocol;
-  HINSTANCE hLibrary;
-  PIProtocol pImplementation;
-  bool supported;
-  DESTROYPROTOCOLINSTANCE destroyProtocolInstance;
-};
-
-#define STATUS_NONE                                               0
-#define STATUS_NO_DATA_ERROR                                      -1
-#define STATUS_RECEIVING_DATA                                     1
-
 class CLAVInputPin 
   : public CUnknown
   , public CCritSec
   , public IFileSourceFilter
-  , public IOutputStream
+  , public IParserOutputStream
   , public IDownload
   , public IDownloadCallback
   , public IMediaSeeking
@@ -105,6 +94,16 @@ public:
   // @return : S_OK if successful
   HRESULT EndOfStreamReached(int64_t streamPosition);
 
+  // IParserOutputStream interface
+
+  // tests if filter is downloading
+  // @return : true if downloading, false otherwise
+  bool IsDownloading(void);
+
+  // finishes download with specified result
+  // @param result : the result of download
+  void FinishDownload(HRESULT result);
+
   // request protocol implementation to cancel the stream reading operation
   // @return : S_OK if successful
   HRESULT AbortStreamReceive(void);
@@ -152,13 +151,20 @@ public:
 
   // IFilter interface
 
-  // gets seeking capabilities of protocol
-  // @return : bitwise combination of SEEKING_METHOD flags
-  unsigned int GetSeekingCapabilities(void);
-
   // gets logger instance
   // @return : logger instance or NULL if error
   CLogger *GetLogger(void);
+
+  // gets total length of stream in bytes
+  // @param totalLength : reference to total length variable
+  // @return : S_OK if success, VFW_S_ESTIMATED if total length is not surely known, error code if error
+  HRESULT GetTotalLength(int64_t *totalLength);
+
+  // ISeeking interface
+
+  // gets seeking capabilities of protocol
+  // @return : bitwise combination of SEEKING_METHOD flags
+  unsigned int GetSeekingCapabilities(void);
 
   // seeks to time (in ms)
   // @return : time in ms where seek finished or lower than zero if error
@@ -170,10 +176,9 @@ public:
   // @return : position where seek finished or lower than zero if error
   int64_t SeekToPosition(int64_t start, int64_t end);
 
-  // gets total length of stream in bytes
-  // @param totalLength : reference to total length variable
-  // @return : S_OK if success, VFW_S_ESTIMATED if total length is not surely known, error code if error
-  HRESULT GetTotalLength(int64_t *totalLength);
+  // sets if protocol have to supress sending data to filter
+  // @param supressData : true if protocol have to supress sending data to filter, false otherwise
+  void SetSupressData(bool supressData);
 
 protected:
   static int Read(void *opaque, uint8_t *buf, int buf_size);
@@ -196,7 +201,6 @@ private:
 
   AVIOContext *m_pAVIOContext;
 
-  wchar_t* url;
   wchar_t* downloadFileName;
 
   bool asyncDownloadFinished;
@@ -230,48 +234,17 @@ private:
   // specifies if we are downloading file
   // in that case we don't delete file on end
   bool downloadingFile;
-  // specifies if download finished (all data from stream has been received - it doesn't mean that has been stored to file)
-  bool downloadFinished;
   // specifies if download callback has been called
   bool downloadCallbackCalled;
 
-  // handle to MPUrlSourceSplitter.ax
-  HMODULE mainModuleHandle;
+  // specifies if all data are received (all data from stream has been received - it doesn't mean that has been stored to file)
+  bool allDataReceived;
 
-  // status of processing
-  int status;
-  HANDLE hReceiveDataWorkerThread;
-  DWORD dwReceiveDataWorkerThreadId;
-  bool receiveDataWorkerShouldExit;
-  static DWORD WINAPI ReceiveDataWorker(LPVOID lpParam);
+  CParserHoster *parserHoster;
 
-  // creates receive data worker
-  // @return : S_OK if successful
-  HRESULT CreateReceiveDataWorker(void);
-
-  // destroys receive data worker
-  // @return : S_OK if successful
-  HRESULT DestroyReceiveDataWorker(void);
-
-  // array of available protocol implementations
-  ProtocolImplementation *protocolImplementations;
-  unsigned int protocolImplementationsCount;
-
-  // loads plugins from directory
-  void LoadPlugins(void);
-
-  // stores active protocol
-  PIProtocol activeProtocol;  
-
-  // initializes input pin and loads protocol implementation based on configuration
+  // initializes input pin and loads url based on configuration
   // @result : S_OK if successful
   STDMETHODIMP Load();
-
-  // loads protocol implementation based on specified url and configuration parameters
-  // @param url : the url to load
-  // @param parameters : the parameters used for connection
-  // @return : true if url is loaded, false otherwise
-  bool LoadProtocolImplementation(const wchar_t *url, const CParameterCollection *parameters);
 
   // parses parameters from specified string
   // @param parameters : null-terminated string with specified parameters

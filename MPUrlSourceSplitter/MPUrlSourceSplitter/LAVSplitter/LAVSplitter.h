@@ -210,13 +210,20 @@ public:
 
   // IFilter interface
 
-  // gets seeking capabilities of protocol
-  // @return : bitwise combination of SEEKING_METHOD flags
-  unsigned int GetSeekingCapabilities(void);
-
   // gets logger instance
   // @return : logger instance or NULL if error
   CLogger *GetLogger(void);
+
+  // gets total length of stream in bytes
+  // @param totalLength : reference to total length variable
+  // @return : S_OK if success, VFW_S_ESTIMATED if total length is not surely known, error code if error
+  HRESULT GetTotalLength(int64_t *totalLength);
+
+  // ISeeking interface
+
+  // gets seeking capabilities of protocol
+  // @return : bitwise combination of SEEKING_METHOD flags
+  unsigned int GetSeekingCapabilities(void);
 
   // seeks to time (in ms)
   // @return : time in ms where seek finished or lower than zero if error
@@ -228,10 +235,9 @@ public:
   // @return : position where seek finished or lower than zero if error
   int64_t SeekToPosition(int64_t start, int64_t end);
 
-  // gets total length of stream in bytes
-  // @param totalLength : reference to total length variable
-  // @return : S_OK if success, VFW_S_ESTIMATED if total length is not surely known, error code if error
-  HRESULT GetTotalLength(int64_t *totalLength);
+  // sets if protocol have to supress sending data to filter
+  // @param supressData : true if protocol have to supress sending data to filter, false otherwise
+  void SetSupressData(bool supressData);
 
   // IFilterState interface
 

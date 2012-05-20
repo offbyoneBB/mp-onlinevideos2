@@ -240,27 +240,6 @@ unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenPositions(int64_t
   return index;
 }
 
-//unsigned int CMediaPacketCollection::GetMediaPacketIndexOverlappingPositions(int64_t start, int64_t end)
-//{
-//  unsigned int index = UINT_MAX;
-//
-//  for (unsigned int i = 0; i < this->itemCount; i++)
-//  {
-//    CMediaPacket *mediaPacket = this->GetItem(i);
-//    int64_t mediaPacketStart = mediaPacket->GetStart();
-//    int64_t mediaPacketEnd = mediaPacket->GetEnd();
-//
-//    if ((start <= mediaPacketEnd) && (end >= mediaPacketStart))
-//    {
-//      // we found media packet which overlaps position range
-//      index = i;
-//      break;
-//    }
-//  }
-//
-//  return index;
-//}
-
 CMediaPacket *CMediaPacketCollection::GetOverlappedRegion(CMediaPacket *packet)
 {
   CMediaPacket *result = NULL;
@@ -296,6 +275,7 @@ void CMediaPacketCollection::AddPacketToConsolidatedMediaPackets(CMediaPacket *p
     bool merged = false;
 
     unsigned int count = this->consolidatedMediaPackets->Count();
+
     for (unsigned int i = 0; i < count; i++)
     {
       CMediaPacket *consolidatedPacket = this->consolidatedMediaPackets->GetItem(i);
@@ -311,6 +291,19 @@ void CMediaPacketCollection::AddPacketToConsolidatedMediaPackets(CMediaPacket *p
         consolidatedPacket->SetEnd(packet->GetEnd());
         merged = true;
         break;
+      }
+    }
+
+    if (!merged)
+    {
+      // not merged media packet, just add to consolidated packets
+      CMediaPacket *consolidatedPacket = new CMediaPacket();
+      if (consolidatedPacket != NULL)
+      {
+        consolidatedPacket->SetStart(packet->GetStart());
+        consolidatedPacket->SetEnd(packet->GetEnd());
+
+        this->consolidatedMediaPackets->Add(consolidatedPacket);
       }
     }
 
