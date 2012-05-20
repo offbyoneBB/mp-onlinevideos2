@@ -249,24 +249,7 @@ namespace OnlineVideos.Sites
             {
                 YouTubeQuery ytq = new YouTubeQuery((parentCategory as RssLink).Url) { NumberToRetrieve = pageSize };
                 YouTubeFeed feed = service.Query(ytq);
-                foreach (PlaylistsEntry entry in feed.Entries)
-                {
-                    RssLink playlistLink = new RssLink();
-                    playlistLink.Name = entry.Title.Text;
-                    playlistLink.EstimatedVideoCount = (uint)entry.CountHint;
-                    XmlExtension playlistExt = entry.FindExtension(YouTubeNameTable.PlaylistId, YouTubeNameTable.NSYouTube) as XmlExtension;
-                    if (playlistExt != null)
-                    {
-                        playlistLink.Url = string.Format(PLAYLIST_FEED, playlistExt.Node.InnerText);
-                        parentCategory.SubCategories.Add(playlistLink);
-                        playlistLink.ParentCategory = parentCategory;
-                    }
-                }
-                // if there are more results add a new NextPageCategory
-                if (feed.NextChunk != null)
-                {
-                    parentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = parentCategory, Url = feed.NextChunk });
-                }
+                GetPlaylistEntriesAsCategories(parentCategory, feed);
             }
             else
             {
@@ -286,25 +269,8 @@ namespace OnlineVideos.Sites
                         string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
                         if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
                         else throw queryEx;
-                    }
-                    foreach (PlaylistsEntry entry in feed.Entries)
-                    {
-                        RssLink playlistLink = new RssLink();
-                        playlistLink.Name = entry.Title.Text;
-                        playlistLink.EstimatedVideoCount = (uint)entry.CountHint;
-                        XmlExtension playlistExt = entry.FindExtension(YouTubeNameTable.PlaylistId, YouTubeNameTable.NSYouTube) as XmlExtension;
-                        if (playlistExt != null)
-                        {
-                            playlistLink.Url = string.Format(PLAYLIST_FEED, playlistExt.Node.InnerText);
-                            parentCategory.SubCategories.Add(playlistLink);
-                            playlistLink.ParentCategory = parentCategory;
-                        }
-                    }
-                    // if there are more results add a new NextPageCategory
-                    if (feed.NextChunk != null)
-                    {
-                        parentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = parentCategory, Url = feed.NextChunk });
-                    }
+                    }                    
+                    GetPlaylistEntriesAsCategories(parentCategory, feed);
                 }
                 else
                 {
@@ -344,6 +310,28 @@ namespace OnlineVideos.Sites
             }
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
+        }
+
+        private static void GetPlaylistEntriesAsCategories(Category parentCategory, YouTubeFeed feed)
+        {
+            foreach (PlaylistsEntry entry in feed.Entries)
+            {
+                RssLink playlistLink = new RssLink();
+                playlistLink.Name = entry.Title.Text;
+                playlistLink.EstimatedVideoCount = (uint)entry.CountHint;
+                XmlExtension playlistExt = entry.FindExtension(YouTubeNameTable.PlaylistId, YouTubeNameTable.NSYouTube) as XmlExtension;
+                if (playlistExt != null)
+                {
+                    playlistLink.Url = string.Format(PLAYLIST_FEED, playlistExt.Node.InnerText);
+                    parentCategory.SubCategories.Add(playlistLink);
+                    playlistLink.ParentCategory = parentCategory;
+                }
+            }
+            // if there are more results add a new NextPageCategory
+            if (feed.NextChunk != null)
+            {
+                parentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = parentCategory, Url = feed.NextChunk });
+            }
         }
 
         public override int DiscoverNextPageCategories(NextPageCategory category)
@@ -550,6 +538,7 @@ namespace OnlineVideos.Sites
                     if (ytEntry.YouTubeEntry.Uploader != null && !string.IsNullOrEmpty(ytEntry.YouTubeEntry.Uploader.Value))
                     {
                         result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.UploadsBy + " [" + ytEntry.YouTubeEntry.Uploader.Value + "]", Action = ContextMenuEntry.UIAction.Execute });
+                        result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.Playlists + " [" + ytEntry.YouTubeEntry.Uploader.Value + "]", Action = ContextMenuEntry.UIAction.Execute });
                     }
                     if (selectedCategory != null && selectedCategory.Other as string == "Login" && selectedCategory.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Favourites))
                     {
@@ -618,6 +607,15 @@ namespace OnlineVideos.Sites
                     YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateUserUri(ytEntry.Uploader.Value)) { NumberToRetrieve = pageSize };
                     result.ResultItems = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
                     currentVideosTitle = Translation.Instance.UploadsBy + " [" + ytEntry.Uploader.Value + "]";
+                }
+                else if (choice.DisplayText.StartsWith(Translation.Instance.Playlists))
+                {
+                    YouTubeEntry ytEntry = (selectedItem.Other as MyYouTubeEntry).YouTubeEntry;
+                    YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreatePlaylistsUri(ytEntry.Uploader.Value)) { NumberToRetrieve = pageSize };
+                    YouTubeFeed feed = service.Query(query);
+                    Category parentCategory = new Category() { SubCategories = new List<Category>() };
+                    GetPlaylistEntriesAsCategories(parentCategory, feed);
+                    result.ResultItems = parentCategory.SubCategories.ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
                 }
                 else if (choice.DisplayText == Translation.Instance.AddComment)
                 {

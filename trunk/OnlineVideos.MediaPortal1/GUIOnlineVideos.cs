@@ -602,7 +602,7 @@ namespace OnlineVideos.MediaPortal1
                                 if (aVideo == null) DisplayCategories(selectedCategory, null);
                                 else DisplayVideos_Category(selectedCategory, true);
                             }
-                            if (cmer.ResultItems != null && cmer.ResultItems.Count > 0) SetSearchResultItemsToFacade(cmer.ResultItems, VideosMode.Category);
+                            if (cmer.ResultItems != null && cmer.ResultItems.Count > 0) SetSearchResultItemsToFacade(cmer.ResultItems, VideosMode.Category, currentEntry.DisplayText);
                         }
                     },
                     ": " + currentEntry.DisplayText, true);
