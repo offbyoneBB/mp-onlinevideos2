@@ -37,14 +37,14 @@ namespace OnlineVideos.Sites
                     int type = int.Parse(infos[0]);
                     VideoQuality quality = (VideoQuality)int.Parse(infos[1]);
                     string resultUrl = "";
-                    if (infos[infos.Length - 2].ToLower().StartsWith("rtmp"))
+                    if (infos[infos.Length - 3].ToLower().StartsWith("rtmp"))
                     {
-						resultUrl = new MPUrlSourceFilter.RtmpUrl(infos[infos.Length - 2]) { PlayPath = infos[infos.Length - 1].Trim(new char[] { '"', ' ' }) }.ToString();
-                        video.PlaybackOptions.Add(string.Format("{0} | rtmp:// | {1}", quality.ToString().PadRight(4, ' '), infos[infos.Length - 1].ToLower().Contains("mp4:") ? ".mp4" : ".flv"), resultUrl);
+						resultUrl = new MPUrlSourceFilter.RtmpUrl(infos[infos.Length - 3].Replace("rtmpt://", "rtmp://")) { PlayPath = infos[infos.Length - 2].Trim(new char[] { '"', ' ' }) }.ToString();
+                        video.PlaybackOptions.Add(string.Format("{0} | rtmp:// | {1}", quality.ToString().PadRight(4, ' '), infos[infos.Length - 2].ToLower().Contains("mp4:") ? ".mp4" : ".flv"), resultUrl);
                     }
                     else
                     {
-                        resultUrl = infos[infos.Length - 1].Trim(new char[] { '"', ' ' });                        
+                        resultUrl = infos[infos.Length - 2].Trim(new char[] { '"', ' ' });                        
                         if (!resultUrl.EndsWith(".mp3"))
                         {
                             try
