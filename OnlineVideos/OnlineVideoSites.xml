@@ -1123,7 +1123,7 @@
       </Configuration>
     </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
-      <Description>Videos from cbc.ca</Description>
+      <Description>CBC.ca is the English-language online service of the Canadian Broadcasting Corporation. It was introduced in 1996. Under its previous names, the CBC's online service first went live in 1993.</Description>
     </Site>
     <Site name="OnsNetNuenen" util="GenericSite" agecheck="false" enabled="true" lang="nl">
       <Description>Videos van en over Nuenen</Description>
