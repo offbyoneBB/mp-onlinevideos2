@@ -60,6 +60,7 @@
     <Compile Include="ShowcaseUtil.cs" />
     <Compile Include="SliceUtil.cs" />
     <Compile Include="SpaceCastUtil.cs" />
+    <Compile Include="TouTvUtil.cs" />
     <Compile Include="TreehouseTVUtil.cs" />
     <Compile Include="TSNUtil.cs" />
     <Compile Include="TVOKidsUtil.cs" />
