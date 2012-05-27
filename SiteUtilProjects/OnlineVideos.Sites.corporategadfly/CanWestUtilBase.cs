@@ -274,7 +274,7 @@ namespace OnlineVideos.Sites
                 {
                     Match rtmpUrlMatch = rtmpUrlRegex.Match(url);
 
-                    if (rtmpUrlMatch.Success)
+                    if (rtmpUrlMatch.Success && !urlsDictionary.ContainsKey(bitrate / 1000))
                     {
                         string host = rtmpUrlMatch.Groups["host"].Value;
                         string playPath = rtmpUrlMatch.Groups["playPath"].Value;
