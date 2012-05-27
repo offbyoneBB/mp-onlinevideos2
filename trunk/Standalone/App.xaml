@@ -6,6 +6,7 @@
     <Application.Resources>
         <local:ThumbnailConverter x:Key="ThumbnailConverter"/>
         <local:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
+        <local:ZeroVisibilityConverter x:Key="ZeroVisibilityConverter"/>
         <local:LanguageConverter x:Key="LanguageConverter"/> 
         <DataTemplate x:Key="SiteUtilBase">
             <Grid Width="100" Height="100" Margin="2">

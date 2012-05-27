@@ -249,6 +249,7 @@
     <Resource Include="Images\GlobalSites.png" />
     <Resource Include="Images\Add.png" />
     <Resource Include="Images\Help.png" />
+    <Resource Include="Images\Disk.png" />
     <Content Include="Images\NextPage.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

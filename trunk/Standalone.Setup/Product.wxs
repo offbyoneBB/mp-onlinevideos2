@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="OnlineVideos" Language="1033" Version="1.2.0.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
+	<Product Id="*" Name="OnlineVideos" Language="1033" Version="1.2.1.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
 		<Package InstallerVersion="200" Compressed="yes" />
 
     <Property Id="ARPPRODUCTICON">$(var.Standalone.TargetFileName)</Property>
@@ -9,6 +9,10 @@
 
     <PropertyRef Id="NETFRAMEWORK35_SP_LEVEL"/>
 
+    <Condition Message="This application is only supported on Windows Vista or higher.">
+      <![CDATA[Installed OR (VersionNT >= 600)]]>
+    </Condition>
+    
     <Condition Message="This application requires the .NET Framework 3.5 SP1.">
       <![CDATA[Installed OR (NETFRAMEWORK35_SP_LEVEL and NOT NETFRAMEWORK35_SP_LEVEL = "#0")]]>
     </Condition>
@@ -33,8 +37,8 @@
             <Component Id="MPUrlSource" Guid="04047A84-E2C0-4EC8-A490-8467EDC2D302">
               <File Id="MPUrlSource_ax" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter.ax" DiskId="1" Vital="yes"/>
               <File Id="libcurl_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\libcurl.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Http_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Http.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Rtmp_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Rtmp.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Http_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Rtmp_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll" DiskId="1" Vital="yes"/>
               <File Id="avcodec_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
               <File Id="avfilter_2_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avfilter-mpurlsourcesplitter-2.dll" DiskId="1" Vital="yes"/>
               <File Id="avformat_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
