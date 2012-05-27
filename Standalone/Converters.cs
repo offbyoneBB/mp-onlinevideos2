@@ -71,6 +71,21 @@ namespace Standalone
         }
     }
 
+    [ValueConversion(typeof(int), typeof(Visibility))]
+    public class ZeroVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if ((value is int) && (int)value > 0) return Visibility.Visible;
+            else return Visibility.Hidden;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     [ValueConversion(typeof(string), typeof(ImageSource))]
     public class LanguageConverter : IValueConverter
     {

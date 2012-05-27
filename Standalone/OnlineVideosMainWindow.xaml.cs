@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using OnlineVideos;
 using OnlineVideos.Sites;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace Standalone
 {
@@ -34,7 +35,7 @@ namespace Standalone
         {
 			//OnlineVideosAppDomain.UseSeperateDomain = true;
 
-			// The default connection limit is 2 in .net on most platforms! This means downloading two file will block all other WebRequests.
+			// The default connection limit is 2 in .net on most platforms! This means downloading two files will block all other WebRequests.
 			System.Net.ServicePointManager.DefaultConnectionLimit = 100;
 
 			string writeableBaseDir = GetBaseDirectory();
@@ -50,6 +51,9 @@ namespace Standalone
 
 			OnlineVideoSettings.Instance.ConfigDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\");
 			if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ConfigDir)) OnlineVideoSettings.Instance.ConfigDir = writeableBaseDir;
+
+            OnlineVideoSettings.Instance.DownloadDir = System.IO.Path.Combine(writeableBaseDir, "Downloads");
+            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DownloadDir)) System.IO.Directory.CreateDirectory(OnlineVideoSettings.Instance.DownloadDir);
 
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asf")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asf", false);
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asx")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asx", false);
@@ -130,6 +134,17 @@ namespace Standalone
                 OnItemSelected(sender);
                 e.Handled = true;
             }
+            else if (e.Key == Key.F9)
+            {
+                OnItemContextMenuRequested(sender);
+                e.Handled = true;
+            }
+        }
+
+        protected void HandleItemRightClicked(object sender, MouseButtonEventArgs e)
+        {
+            OnItemContextMenuRequested(sender);
+            e.Handled = true;
         }
 
         protected void HandleItemClicked(object sender, MouseButtonEventArgs e)
@@ -160,6 +175,17 @@ namespace Standalone
             }
         }
 
+        protected void OnItemContextMenuRequested(object sender)
+        {
+            if (Gui2UtilConnector.Instance.IsBusy) return; // don't do anything if currently working on a background task
+            object boundObject = ((ListViewItem)sender).Content;
+            if (boundObject is VideoInfo)
+            {
+                VideoInfo video = boundObject as VideoInfo;
+                ShowContextMenuForVideo(video);
+            }
+        }
+
 		void SiteSelected(SiteUtilBase site)
 		{
 			waitCursor.Visibility = System.Windows.Visibility.Visible;
@@ -180,6 +206,7 @@ namespace Standalone
                         {
                             SelectedSite.Settings.Categories[SelectedSite.Settings.Categories.Count - 1].ThumbnailImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png");
                         }
+                        SelectedSite.Settings.Categories.RaiseListChangedEvents = false;
 						listViewMain.ItemsSource = SelectedSite.Settings.Categories;
 						SelectAndFocusItem();
 						ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
@@ -192,7 +219,43 @@ namespace Standalone
 		{
 			waitCursor.Visibility = System.Windows.Visibility.Visible;
 
-			if (category.HasSubCategories)
+            if (category is NextPageCategory)
+            {
+                int selectedIndex = listViewMain.Items.Count - 1;
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
+                    delegate()
+                    {
+                        return SelectedSite.DiscoverNextPageCategories(category as NextPageCategory);
+                    },
+                    delegate(Gui2UtilConnector.ResultInfo resultInfo)
+                    {
+                        waitCursor.Visibility = System.Windows.Visibility.Hidden;
+                        if (ReactToResult(resultInfo, Translation.Instance.GettingNextPageVideos))
+                        {
+                            listViewMain.ItemsSource = null;
+                            if (category.ParentCategory == null)
+                            {
+                                if (SelectedSite.Settings.Categories != null && SelectedSite.Settings.Categories.Count > 0 && SelectedSite.Settings.Categories[SelectedSite.Settings.Categories.Count - 1] is NextPageCategory)
+                                {
+                                    SelectedSite.Settings.Categories[SelectedSite.Settings.Categories.Count - 1].ThumbnailImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png");
+                                }
+                                listViewMain.ItemsSource = SelectedSite.Settings.Categories;
+                            }
+                            else
+                            {
+                                if (category.ParentCategory.SubCategories != null && category.ParentCategory.SubCategories.Count > 0 && category.ParentCategory.SubCategories[category.ParentCategory.SubCategories.Count - 1] is NextPageCategory)
+                                {
+                                    category.ParentCategory.SubCategories[category.ParentCategory.SubCategories.Count - 1].ThumbnailImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png");
+                                }
+                                listViewMain.ItemsSource = category.ParentCategory.SubCategories;
+                            }
+                            SelectAndFocusItem(selectedIndex);
+                            ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
+                        }
+                    }
+                );
+            }
+			else if (category.HasSubCategories)
 			{
 				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
 					delegate()
@@ -315,6 +378,114 @@ namespace Standalone
 					}, false);
 			}
 		}
+
+        void ShowContextMenuForVideo(VideoInfo video)
+        {
+            List<KeyValuePair<string, ContextMenuEntry>> dialogOptions = new List<KeyValuePair<string, ContextMenuEntry>>();
+            if (!(SelectedSite is DownloadedVideoUtil))
+            {
+                dialogOptions.Add(new KeyValuePair<string, ContextMenuEntry>(string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Concurrent), null));
+                dialogOptions.Add(new KeyValuePair<string, ContextMenuEntry>(string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Queued), null));
+            }
+            foreach (var entry in SelectedSite.GetContextMenuEntries(SelectedCategory, video))
+            {
+                dialogOptions.Add(new KeyValuePair<string, ContextMenuEntry>(entry.DisplayText, entry));
+            }
+            if (dialogOptions.Count > 0)
+            {
+                PlaybackChoices dlg = new PlaybackChoices() { Owner = this };
+                dlg.lblHeading.Content = string.Format("{0}: {1}", Translation.Instance.Actions, video.Title);
+                dlg.lvChoices.ItemsSource = dialogOptions.Select(dO => dO.Key).ToList();
+                dlg.lvChoices.SelectedIndex = 0;
+                if (dlg.ShowDialog() == true)
+                {
+                    if (dialogOptions[dlg.lvChoices.SelectedIndex].Value == null)
+                    {
+                        if (dlg.lvChoices.SelectedItem.ToString().Contains(Translation.Instance.Concurrent))
+                        {
+                            SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(video, SelectedCategory, SelectedSite) });
+                        }
+                        else if (dlg.lvChoices.SelectedItem.ToString().Contains(Translation.Instance.Queued))
+                        {
+                            SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(video, SelectedCategory, SelectedSite) }, true);
+                        }
+                    }
+                    else
+                        HandleCustomContextMenuEntry(dialogOptions[dlg.lvChoices.SelectedIndex].Value, SelectedCategory, video);
+                }
+            }
+        }
+
+        void HandleCustomContextMenuEntry(ContextMenuEntry currentEntry, Category aCategory, VideoInfo aVideo)
+        {
+            List<KeyValuePair<string, ContextMenuEntry>> dialogOptions = new List<KeyValuePair<string, ContextMenuEntry>>();
+            while (true)
+            {
+                bool execute = currentEntry.Action == ContextMenuEntry.UIAction.Execute;
+
+                if (currentEntry.Action == ContextMenuEntry.UIAction.GetText)
+                {
+                    SearchDialog dlg = new SearchDialog() { Owner = this };
+                    dlg.tbxSearch.Text = currentEntry.UserInputText ?? "";
+                    dlg.lblHeading.Content = currentEntry.DisplayText;
+                    if (dlg.ShowDialog() == true && !string.IsNullOrEmpty(dlg.tbxSearch.Text))
+                    {
+                        currentEntry.UserInputText = dlg.tbxSearch.Text;
+                        execute = true;
+                    }
+                    else break;
+                }
+                if (currentEntry.Action == ContextMenuEntry.UIAction.ShowList)
+                {
+                    PlaybackChoices dlg = new PlaybackChoices() { Owner = this };
+                    dlg.lblHeading.Content = currentEntry.DisplayText;
+                    dialogOptions.Clear();
+                    foreach (var subEntry in currentEntry.SubEntries)
+                    {
+                        dialogOptions.Add(new KeyValuePair<string, ContextMenuEntry>(subEntry.DisplayText, subEntry));
+                    }
+                    dlg.lvChoices.ItemsSource = dialogOptions.Select(dO => dO.Key).ToList();
+                    dlg.lvChoices.SelectedIndex = 0;
+                    if (dlg.ShowDialog() != true)
+                        break;
+                    else
+                        currentEntry = dialogOptions[dlg.lvChoices.SelectedIndex].Value;
+                }
+                if (execute)
+                {
+                    waitCursor.Visibility = System.Windows.Visibility.Visible;
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
+                        delegate()
+                        {
+                            return SelectedSite.ExecuteContextMenuEntry(aCategory, aVideo, currentEntry);
+                        },
+                        delegate(Gui2UtilConnector.ResultInfo resultInfo)
+                        {
+                            waitCursor.Visibility = System.Windows.Visibility.Hidden;
+                            if (ReactToResult(resultInfo, currentEntry.DisplayText))
+                            {
+                                if (resultInfo.ResultObject is ContextMenuExecutionResult)
+                                {
+                                    var cmer = resultInfo.ResultObject as ContextMenuExecutionResult;
+                                    if (!string.IsNullOrEmpty(cmer.ExecutionResultMessage))
+                                    {
+                                        MessageBox.Show(cmer.ExecutionResultMessage, "OnlineVideos", MessageBoxButton.OK);
+                                    }
+                                    if (cmer.RefreshCurrentItems)
+                                    {
+                                        CategorySelected(SelectedCategory);
+                                    }
+                                    if (cmer.ResultItems != null && cmer.ResultItems.Count > 0)
+                                    {
+                                        DisplaySearchResultItems(currentEntry.DisplayText, cmer.ResultItems);
+                                    }
+                                }
+                            }
+                        });
+                    break;
+                }
+            }
+        }
 
 		private void Play_Step1(PlayListItem playItem, bool goFullScreen)
 		{
@@ -474,6 +645,330 @@ namespace Standalone
 			return false;
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="saveItems"></param>
+        /// <param name="enque">null : download the next item in a DownloadList that is already in the Manager</param>
+        private void SaveVideo_Step1(DownloadList saveItems, bool? enque = false)
+        {
+            if (enque != null) 
+            {
+                // when the DownloadManager already contains the current DownloadInfo of the given list - show already downloading message
+                if (DownloadManager.Instance.Contains(saveItems.CurrentItem))
+                {
+                    MessageBox.Show(Translation.Instance.AlreadyDownloading, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+                // check if there is already a download running from this site - yes? -> enque | no -> start now
+                if (enque == true && DownloadManager.Instance.Contains(saveItems.CurrentItem.Util.Settings.Name))
+                {
+                    DownloadManager.Instance.Add(saveItems.CurrentItem.Util.Settings.Name, saveItems);
+                    return;
+                }
+            }
+            if (!string.IsNullOrEmpty(saveItems.CurrentItem.Url))
+            {
+                waitCursor.Visibility = System.Windows.Visibility.Visible;
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
+                    delegate()
+                    {
+                        return saveItems.CurrentItem.Util.getPlaylistItemUrl(saveItems.CurrentItem.VideoInfo, saveItems.ChosenPlaybackOption);
+                    },
+                    delegate(Gui2UtilConnector.ResultInfo resultInfo)
+                    {
+                        waitCursor.Visibility = System.Windows.Visibility.Hidden;
+                        if (ReactToResult(resultInfo, Translation.Instance.GettingPlaybackUrlsForVideo))
+                        {
+                            SaveVideo_Step2(saveItems, new List<string>() { resultInfo.ResultObject as string }, enque);
+                        }
+                    }
+                );
+            }
+            else
+            {
+                waitCursor.Visibility = System.Windows.Visibility.Visible;
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
+                    delegate()
+                    {
+                        return saveItems.CurrentItem.Util.getMultipleVideoUrls(saveItems.CurrentItem.VideoInfo);
+                    },
+                    delegate(Gui2UtilConnector.ResultInfo resultInfo)
+                    {
+                        waitCursor.Visibility = System.Windows.Visibility.Hidden;
+                        if (ReactToResult(resultInfo, Translation.Instance.GettingPlaybackUrlsForVideo))
+                        {
+                            SaveVideo_Step2(saveItems, resultInfo.ResultObject as List<String>, enque);
+                        }
+                    }
+                );
+            }
+        }
+
+        private void SaveVideo_Step2(DownloadList saveItems, List<String> loUrlList, bool? enque)
+        {
+            RemoveInvalidUrls(loUrlList);
+
+            // if no valid urls were returned show error msg
+            if (loUrlList == null || loUrlList.Count == 0)
+            {
+                MessageBox.Show(Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            // create download list if more than one url
+            if (loUrlList.Count > 1)
+            {
+                saveItems.DownloadItems = new List<DownloadInfo>();
+                foreach (string url in loUrlList)
+                {
+                    VideoInfo vi = saveItems.CurrentItem.VideoInfo.CloneForPlayList(url, url == loUrlList[0]);
+                    string url_new = url;
+                    if (url == loUrlList[0])
+                    {
+                        url_new = saveItems.CurrentItem.Util.getPlaylistItemUrl(vi, string.Empty);
+                    }
+                    DownloadInfo pli = DownloadInfo.Create(vi, saveItems.CurrentItem.Category, saveItems.CurrentItem.Util);
+                    pli.Title = string.Format("{0} - {1} / {2}", vi.Title, (saveItems.DownloadItems.Count + 1).ToString(), loUrlList.Count);
+                    pli.Url = url_new;
+                    pli.OverrideFolder = saveItems.CurrentItem.OverrideFolder;
+                    pli.OverrideFileName = saveItems.CurrentItem.OverrideFileName;
+                    saveItems.DownloadItems.Add(pli);
+                }
+                // make the first item the current to be saved now
+                saveItems.CurrentItem = saveItems.DownloadItems[0];
+                loUrlList = new List<string>(new string[] { saveItems.CurrentItem.Url });
+            }
+            // if multiple quality choices are available show a selection dialogue
+            string urlToSave = loUrlList[0];
+            if (saveItems.CurrentItem.VideoInfo.PlaybackOptions != null && saveItems.CurrentItem.VideoInfo.PlaybackOptions.Count > 0)
+            {
+                string choice = null;
+                if (saveItems.CurrentItem.VideoInfo.PlaybackOptions.Count > 1)
+                {
+                    PlaybackChoices dlg = new PlaybackChoices();
+                    dlg.Owner = this;
+                    dlg.lvChoices.ItemsSource = saveItems.CurrentItem.VideoInfo.PlaybackOptions.Keys;
+                    var preSelectedItem = saveItems.CurrentItem.VideoInfo.PlaybackOptions.FirstOrDefault(kvp => kvp.Value == urlToSave);
+                    if (!string.IsNullOrEmpty(preSelectedItem.Key)) dlg.lvChoices.SelectedValue = preSelectedItem.Key;
+                    if (dlg.lvChoices.SelectedIndex < 0) dlg.lvChoices.SelectedIndex = 0;
+                    if (dlg.ShowDialog() == true) choice = dlg.lvChoices.SelectedItem.ToString();
+                }
+                else
+                {
+                    choice = saveItems.CurrentItem.VideoInfo.PlaybackOptions.Keys.First();
+                }
+
+                if (choice != null)
+                {
+                    waitCursor.Visibility = System.Windows.Visibility.Visible;
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    {
+                        return saveItems.CurrentItem.VideoInfo.GetPlaybackOptionUrl(choice);
+                    },
+                    delegate(Gui2UtilConnector.ResultInfo resultInfo)
+                    {
+                        waitCursor.Visibility = System.Windows.Visibility.Hidden;
+                        if (ReactToResult(resultInfo, Translation.Instance.GettingPlaybackUrlsForVideo))
+                        {
+                            SaveVideo_Step3(saveItems, resultInfo.ResultObject as string, enque);
+                        }
+                    }, true);
+                }
+            }
+            else
+            {
+                SaveVideo_Step3(saveItems, urlToSave, enque);
+            }
+        }
+
+        private void SaveVideo_Step3(DownloadList saveItems, string url, bool? enque)
+        {
+            // check for valid url and cut off additional parameter
+            if (String.IsNullOrEmpty(url) ||
+                !Utils.IsValidUri((url.IndexOf(SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(SimpleUrl.ParameterSeparator)) : url))
+            {
+                MessageBox.Show(Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            saveItems.CurrentItem.Url = url;
+            if (string.IsNullOrEmpty(saveItems.CurrentItem.Title)) saveItems.CurrentItem.Title = saveItems.CurrentItem.VideoInfo.Title;
+
+            if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFolder))
+            {
+                if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFileName))
+                    saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.OverrideFileName);
+                else
+                    saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
+            }
+            else
+            {
+                saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, saveItems.CurrentItem.Util.Settings.Name), saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
+            }
+
+            if (saveItems.DownloadItems != null && saveItems.DownloadItems.Count > 1)
+            {
+                saveItems.CurrentItem.LocalFile = string.Format(@"{0}\{1} - {2}#{3}{4}",
+                    System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
+                    System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile),
+                    (saveItems.DownloadItems.IndexOf(saveItems.CurrentItem) + 1).ToString().PadLeft((saveItems.DownloadItems.Count).ToString().Length, '0'),
+                    (saveItems.DownloadItems.Count).ToString(),
+                    System.IO.Path.GetExtension(saveItems.CurrentItem.LocalFile));
+            }
+
+            saveItems.CurrentItem.LocalFile = Utils.GetNextFileName(saveItems.CurrentItem.LocalFile);
+            saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.ImageUrl : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
+
+            // make sure the target dir exists
+            if (!(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile))))
+            {
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile));
+            }
+
+            if (enque == true)
+                DownloadManager.Instance.Add(saveItems.CurrentItem.Util.Settings.Name, saveItems);
+            else if (enque == false)
+                DownloadManager.Instance.Add(null, saveItems);
+
+            downloadNotifier.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
+            downloadNotifier.GetBindingExpression(TextBlock.VisibilityProperty).UpdateTarget();
+
+            System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
+            {
+                DownloadList dlList = o as DownloadList;
+                try
+                {
+                    IDownloader dlHelper = null;
+                    if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloader();
+                    else dlHelper = new MPUrlSourceFilterDownloader();
+                    dlList.CurrentItem.Downloader = dlHelper;
+                    dlList.CurrentItem.Start = DateTime.Now;
+                    Log.Info("Starting download of '{0}' to '{1}' from Site '{2}'", dlList.CurrentItem.Url, dlList.CurrentItem.LocalFile, dlList.CurrentItem.Util.Settings.Name);
+                    Exception exception = dlHelper.Download(dlList.CurrentItem);
+                    if (exception != null) Log.Warn("Error downloading '{0}', Msg: {1}", dlList.CurrentItem.Url, exception.Message);
+                    OnDownloadFileCompleted(dlList, exception);
+                }
+                catch (System.Threading.ThreadAbortException)
+                {
+                    // the thread was aborted on purpose, let it finish gracefully
+                    System.Threading.Thread.ResetAbort();
+                }
+                catch (Exception ex)
+                {
+                    Log.Warn("Error downloading '{0}', Msg: {1}", dlList.CurrentItem.Url, ex.Message);
+                    OnDownloadFileCompleted(dlList, ex);
+                }
+            });
+            downloadThread.IsBackground = true;
+            downloadThread.Name = "OVDownload";
+            downloadThread.Start(saveItems);
+        }
+
+        private void OnDownloadFileCompleted(DownloadList saveItems, Exception error)
+        {
+            // notify the Util of the downloaded video that the download has stopped
+            try
+            {
+                if (saveItems.CurrentItem != null && saveItems.CurrentItem.Util != null)
+                {
+                    saveItems.CurrentItem.Util.OnDownloadEnded(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Url, (double)saveItems.CurrentItem.PercentComplete / 100.0d, error != null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("Error on Util.OnDownloadEnded: {0}", ex.ToString());
+            }
+
+            bool preventMessageDuetoAdult = (saveItems.CurrentItem.Util != null && saveItems.CurrentItem.Util.Settings.ConfirmAge && OnlineVideoSettings.Instance.UseAgeConfirmation && !OnlineVideoSettings.Instance.AgeConfirmed);
+
+            if (error != null && !saveItems.CurrentItem.Downloader.Cancelled)
+            {
+                if (!preventMessageDuetoAdult)
+                {
+                    MessageBox.Show(string.Format(Translation.Instance.DownloadFailed, saveItems.CurrentItem.Title), Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                try
+                {
+                    // if the image given was an url -> check if thumb exists otherwise download
+                    if (saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http"))
+                    {
+                        string thumbFile = Utils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
+                        if (System.IO.File.Exists(thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
+                        else if (ImageDownloader.DownloadAndCheckImage(saveItems.CurrentItem.ThumbFile, thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
+                    }
+                    // save thumb for this video as well if it exists
+                    if (!saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http") && System.IO.File.Exists(saveItems.CurrentItem.ThumbFile))
+                    {
+                        string localImageName = System.IO.Path.Combine(
+                            System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
+                            System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile))
+                            + System.IO.Path.GetExtension(saveItems.CurrentItem.ThumbFile);
+                        System.IO.File.Copy(saveItems.CurrentItem.ThumbFile, localImageName, true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Warn("Error saving thumbnail for download: {0}", ex.ToString());
+                }
+
+                // get file size
+                int fileSize = saveItems.CurrentItem.KbTotal;
+                if (fileSize <= 0)
+                {
+                    try { fileSize = (int)((new System.IO.FileInfo(saveItems.CurrentItem.LocalFile)).Length / 1024); }
+                    catch { }
+                }
+
+                Log.Info("{3} download of '{0}' - {1} KB in {2}", saveItems.CurrentItem.LocalFile, fileSize, (DateTime.Now - saveItems.CurrentItem.Start).ToString(), saveItems.CurrentItem.Downloader.Cancelled ? "Cancelled" : "Finished");
+
+                if (!preventMessageDuetoAdult)
+                {
+                    MessageBox.Show(string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""), 
+                        saveItems.CurrentItem.Downloader.Cancelled ? Translation.Instance.DownloadCancelled : Translation.Instance.DownloadComplete,
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+
+            // download the next if list not empty and not last in list and not cancelled by the user
+            string site = null;
+            if (saveItems.DownloadItems != null && saveItems.DownloadItems.Count > 1 && !saveItems.CurrentItem.Downloader.Cancelled)
+            {
+                int currentDlIndex = saveItems.DownloadItems.IndexOf(saveItems.CurrentItem);
+                if (currentDlIndex >= 0 && currentDlIndex + 1 < saveItems.DownloadItems.Count)
+                {
+                    saveItems.CurrentItem = saveItems.DownloadItems[currentDlIndex + 1];
+                    SaveVideo_Step1(saveItems, null);
+                }
+                else
+                {
+                    site = DownloadManager.Instance.Remove(saveItems);
+                }
+            }
+            else
+            {
+                site = DownloadManager.Instance.Remove(saveItems);
+            }
+
+            Dispatcher.Invoke((Action)(() =>
+            {
+                downloadNotifier.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
+                downloadNotifier.GetBindingExpression(TextBlock.VisibilityProperty).UpdateTarget();
+            }));
+
+            if (!string.IsNullOrEmpty(site))
+            {
+                var continuationList = DownloadManager.Instance.GetNext(site);
+                if (continuationList != null)
+                {
+                    SaveVideo_Step1(continuationList, null);
+                }
+            }
+        }
+
         public void SelectAndFocusItem(int index = 0)
         {
             if (listViewMain.Items.Count > 0)
@@ -530,37 +1025,43 @@ namespace Standalone
 							waitCursor.Visibility = System.Windows.Visibility.Hidden;
 							if (ReactToResult(resultInfo, Translation.Instance.GettingCategoryVideos))
 							{
-								List<ISearchResultItem> result = resultInfo.ResultObject as List<ISearchResultItem>;
-								if (result.Count > 0)
-								{
-									if (result[0] is VideoInfo)
-									{
-										SelectedCategory = new Category() { Name = Translation.Instance.SearchResults + " [" + search + "]" };
-										List<VideoInfo> converted = result.ConvertAll(i => i as VideoInfo);
-										converted.ForEach(r => ((VideoInfo)r).CleanDescriptionAndTitle());
-										if (SelectedSite.HasNextPage) converted.Add(new VideoInfo() { Title = Translation.Instance.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
-										listViewMain.ItemsSource = converted;
-										SelectAndFocusItem();
-										ImageDownloader.GetImages<VideoInfo>((IList<VideoInfo>)listViewMain.ItemsSource);
-									}
-									else
-									{
-										SelectedCategory = new Category()
-										{
-											Name = Translation.Instance.SearchResults + " [" + search + "]", HasSubCategories = true, SubCategoriesDiscovered = true,
-										};
-										SelectedCategory.SubCategories = result.ConvertAll(i => { (i as Category).ParentCategory = SelectedCategory; return i as Category; });
-										listViewMain.ItemsSource = SelectedCategory.SubCategories;
-										SelectAndFocusItem();
-										ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
-									}
-								}
+                                DisplaySearchResultItems(Translation.Instance.SearchResults + " [" + search + "]", resultInfo.ResultObject as List<ISearchResultItem>);
 							}
 						}
 					);
 				}
 			}
 		}
+
+        private void DisplaySearchResultItems(string title, List<ISearchResultItem> result)
+        {
+            if (result.Count > 0)
+            {
+                if (result[0] is VideoInfo)
+                {
+                    SelectedCategory = new Category() { Name = title };
+                    List<VideoInfo> converted = result.ConvertAll(i => i as VideoInfo);
+                    converted.ForEach(r => ((VideoInfo)r).CleanDescriptionAndTitle());
+                    if (SelectedSite.HasNextPage) converted.Add(new VideoInfo() { Title = Translation.Instance.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
+                    listViewMain.ItemsSource = converted;
+                    SelectAndFocusItem();
+                    ImageDownloader.GetImages<VideoInfo>((IList<VideoInfo>)listViewMain.ItemsSource);
+                }
+                else
+                {
+                    SelectedCategory = new Category()
+                    {
+                        Name = title,
+                        HasSubCategories = true,
+                        SubCategoriesDiscovered = true,
+                    };
+                    SelectedCategory.SubCategories = result.ConvertAll(i => { (i as Category).ParentCategory = SelectedCategory; return i as Category; });
+                    listViewMain.ItemsSource = SelectedCategory.SubCategories;
+                    SelectAndFocusItem();
+                    ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
+                }
+            }
+        }
 
         private void Back_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -599,7 +1100,7 @@ namespace Standalone
 							Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
 								delegate()
 								{
-									if (!SelectedSite.Settings.DynamicCategoriesDiscovered) SelectedSite.DiscoverDynamicCategories();
+                                    if (!SelectedSite.Settings.DynamicCategoriesDiscovered) SelectedSite.DiscoverDynamicCategories();
 									return null;
 								},
 								delegate(Gui2UtilConnector.ResultInfo resultInfo)
@@ -607,6 +1108,7 @@ namespace Standalone
 									waitCursor.Visibility = System.Windows.Visibility.Hidden;
 									if (ReactToResult(resultInfo, Translation.Instance.GettingDynamicCategories))
 									{
+                                        SelectedSite.Settings.Categories.RaiseListChangedEvents = false;
 										listViewMain.ItemsSource = SelectedSite.Settings.Categories;
 										listViewMain.SelectedValue = SelectedSite.Settings.Categories.FirstOrDefault(o => o.Name == SelectedCategory.Name);
 										if (listViewMain.SelectedIndex >= 0)

@@ -5,11 +5,11 @@
         WindowStyle="None" ResizeMode="NoResize" FontSize="14" SizeToContent="WidthAndHeight" FocusManager.FocusedElement="{Binding ElementName=tbxSearch}">
 
     <StackPanel>
-        <Label Content="Search:" FontWeight="Bold"/>
+        <Label x:Name="lblHeading" Content="Search:" FontWeight="Bold"/>
         <TextBox x:Name="tbxSearch" Margin="5" Width="400"/>
         <WrapPanel HorizontalAlignment="Right">
-            <Button Width="50" Height="30" Content="OK" Margin="0 5 5 5" Click="OK_Click" />
-            <Button Width="50" Height="30" Content="Cancel" Margin="0 5 5 5" Click="Cancel_Click" />
+            <Button IsDefault="True" Width="50" Height="30" Content="OK" Margin="0 5 5 5" Click="OK_Click" />
+            <Button IsCancel="True" Width="50" Height="30" Content="Cancel" Margin="0 5 5 5" Click="Cancel_Click" />
         </WrapPanel>
     </StackPanel>
 </Window>

@@ -8,6 +8,7 @@
     <Window.Resources>
 
         <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
+            <EventSetter Event="MouseRightButtonUp" Handler="HandleItemRightClicked" />
             <EventSetter Event="MouseLeftButtonUp" Handler="HandleItemClicked" />
             <EventSetter Event="KeyDown" Handler="HandleItemKeyDown" />
             <EventSetter Event="MouseEnter" Handler="HandleItemMouseEnter" />
@@ -75,6 +76,12 @@
                 <TextBlock Text="{Binding ElementName=mainWindow, Path=SelectedCategory, Converter={StaticResource myCategoryPathConverter}}" FontSize="16" VerticalAlignment="Center"/>
             </WrapPanel>
             <WrapPanel Grid.Column="2">
+                <TextBlock x:Name="downloadNotifier" Height="34" Width="34" Text="{Binding Source={x:Static ovs:DownloadManager.Instance}, Path=Count}" TextAlignment="Center" Padding="0 10 3 0" FontSize="16"
+                           Visibility="{Binding Source={x:Static ovs:DownloadManager.Instance}, Path=Count, Converter={StaticResource ZeroVisibilityConverter}}">
+                    <TextBlock.Background>
+                        <ImageBrush ImageSource="Images/Disk.png"/>
+                    </TextBlock.Background>
+                </TextBlock>
                 <ToggleButton Height="34" VerticalAlignment="Center" ToolTip="Add Sites from global list" Margin="5 0 5 0" Command="NavigateJournal">
                     <Image Source="Images/GlobalSites.png"/>
                 </ToggleButton>
@@ -94,7 +101,7 @@
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
         </ListView>
-        <local:DetailsView Grid.Row="1" x:Name="detailsView" Visibility="Hidden" ItemSelected="OnItemSelected"/>
+        <local:DetailsView Grid.Row="1" x:Name="detailsView" Visibility="Hidden" ItemSelected="OnItemSelected" BorderThickness="0 1 0 1" BorderBrush="Black"/>
         <local:GlobalSites Grid.Row="1" x:Name="globalSitesView" Visibility="Hidden"/>
         <Grid Grid.Row="2" Height="120">
             <Grid.ColumnDefinitions>
