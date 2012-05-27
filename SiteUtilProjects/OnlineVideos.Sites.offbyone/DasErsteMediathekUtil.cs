@@ -13,6 +13,46 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName="VideoQuality"), Description("Choose your preferred quality for the videos according to bandwidth.")]
         VideoQuality videoQuality = VideoQuality.High;
 
+		[Category("OnlineVideosConfiguration")]
+		string SendungVerpasst_baseUrl = "http://www.ardmediathek.de/ard/servlet/ajax-cache/3551682/view=module/index.html";
+		[Category("OnlineVideosConfiguration")]
+		string SendungVerpasst_dynamicSubCategoriesRegEx = @"<li[^>]*><a\s+href=""/sendung-verpasst\?(?<url>datum=[^""]+)""[^>]*>(?<title>.*?)</a></li>";
+		[Category("OnlineVideosConfiguration")]
+		string SendungVerpasst_dynamicSubCategoryUrlFormatString = @"/ard/servlet/ajax-cache/3517242/view=list/{0}/senderId=208/zeit=1/index.html";
+
+		public override int DiscoverDynamicCategories()
+		{
+			int result = base.DiscoverDynamicCategories();
+			Settings.Categories.Add(new RssLink() { Name = "Sendung verpasst?", HasSubCategories = true, Url = SendungVerpasst_baseUrl });
+			return result + 1;
+		}
+
+		public override int DiscoverSubCategories(Category parentCategory)
+		{
+			if (parentCategory.Name == "Sendung verpasst?")
+			{
+				parentCategory.SubCategories = new List<Category>();
+				var m = Regex.Match(GetWebData((parentCategory as RssLink).Url), SendungVerpasst_dynamicSubCategoriesRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+				while (m.Success)
+				{
+					RssLink cat = new RssLink();
+					cat.Url = m.Groups["url"].Value;
+					cat.Url = string.Format(SendungVerpasst_dynamicSubCategoryUrlFormatString, cat.Url);
+					cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
+					cat.Name = Utils.PlainTextFromHtml(System.Web.HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim()));
+					cat.ParentCategory = parentCategory;
+					parentCategory.SubCategories.Add(cat);
+					m = m.NextMatch();
+				}
+				parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0; // only set to true if actually discovered (forces re-discovery until found)
+				return parentCategory.SubCategories.Count;
+			}
+			else
+			{
+				return base.DiscoverSubCategories(parentCategory);
+			}
+		}
+
         public override String getUrl(VideoInfo video)
         {
             if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
