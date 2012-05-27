@@ -93,7 +93,7 @@ namespace Standalone
 
             OnlineVideoSettings.Instance.LoadSites();
 
-            if (MessageBox.Show(Translation.Instance.PerformAutomaticUpdate, Translation.Instance.AutomaticUpdate, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes)
+            if (MessageBox.Show(this, Translation.Instance.PerformAutomaticUpdate, Translation.Instance.AutomaticUpdate, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes)
             {
                 Title = "OnlineVideos - Checking for Updates ...";
                 waitCursor.Visibility = System.Windows.Visibility.Visible;
@@ -469,7 +469,7 @@ namespace Standalone
                                     var cmer = resultInfo.ResultObject as ContextMenuExecutionResult;
                                     if (!string.IsNullOrEmpty(cmer.ExecutionResultMessage))
                                     {
-                                        MessageBox.Show(cmer.ExecutionResultMessage, "OnlineVideos", MessageBoxButton.OK);
+                                        MessageBox.Show(this, cmer.ExecutionResultMessage, "OnlineVideos", MessageBoxButton.OK);
                                     }
                                     if (cmer.RefreshCurrentItems)
                                     {
@@ -657,7 +657,7 @@ namespace Standalone
                 // when the DownloadManager already contains the current DownloadInfo of the given list - show already downloading message
                 if (DownloadManager.Instance.Contains(saveItems.CurrentItem))
                 {
-                    MessageBox.Show(Translation.Instance.AlreadyDownloading, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(this, Translation.Instance.AlreadyDownloading, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
                 // check if there is already a download running from this site - yes? -> enque | no -> start now
@@ -712,7 +712,7 @@ namespace Standalone
             // if no valid urls were returned show error msg
             if (loUrlList == null || loUrlList.Count == 0)
             {
-                MessageBox.Show(Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(this, Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -788,7 +788,7 @@ namespace Standalone
             if (String.IsNullOrEmpty(url) ||
                 !Utils.IsValidUri((url.IndexOf(SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(SimpleUrl.ParameterSeparator)) : url))
             {
-                MessageBox.Show(Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(this, Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -886,7 +886,7 @@ namespace Standalone
             {
                 if (!preventMessageDuetoAdult)
                 {
-                    MessageBox.Show(string.Format(Translation.Instance.DownloadFailed, saveItems.CurrentItem.Title), Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(this, string.Format(Translation.Instance.DownloadFailed, saveItems.CurrentItem.Title), Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
@@ -927,7 +927,7 @@ namespace Standalone
 
                 if (!preventMessageDuetoAdult)
                 {
-                    MessageBox.Show(string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""), 
+                    MessageBox.Show(this, string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""), 
                         saveItems.CurrentItem.Downloader.Cancelled ? Translation.Instance.DownloadCancelled : Translation.Instance.DownloadComplete,
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -1239,7 +1239,7 @@ namespace Standalone
 
         private void mediaPlayer_MediaFailed(object sender, WPFMediaKit.DirectShow.MediaPlayers.MediaFailedEventArgs e)
         {
-            MessageBox.Show(Translation.Instance.UnableToPlayVideo + ": " +e.Message, Translation.Instance.Error, MessageBoxButton.OK);
+            MessageBox.Show(this, Translation.Instance.UnableToPlayVideo + ": " +e.Message, Translation.Instance.Error, MessageBoxButton.OK);
             Dispatcher.Invoke((Action)(() => { Stop_Executed(sender, null); }));
         }
 
