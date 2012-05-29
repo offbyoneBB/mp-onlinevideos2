@@ -143,6 +143,26 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class FileBox : HosterBase
+    {
+        public override string getHosterUrl()
+        {
+            return "filebox.com";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            string data = SiteUtilBase.GetWebData(url);
+            if (!string.IsNullOrEmpty(data))
+            {
+                Match n = Regex.Match(data, @"{url:\s*'(?<url>[^']*)',\sautoPlay");
+                if (n.Success)
+                    return n.Groups["url"].Value;
+            }
+            return String.Empty;
+        }
+    }
+
     public class FrogMovz : HosterBase
     {
         public override string getHosterUrl()

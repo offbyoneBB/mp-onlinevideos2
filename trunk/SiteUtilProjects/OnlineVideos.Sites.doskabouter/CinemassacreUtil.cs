@@ -88,6 +88,17 @@ namespace OnlineVideos.Sites
                 matchFileUrl = matchFileUrl.NextMatch();
             }
 
+            if (String.IsNullOrEmpty(thisUrl))
+            {
+                // for some springboards
+                Match m = Regex.Match(data2, @"{""sbFeed"":{""partnerId"":(?<partnerid>[^,]*),""type"":""video"",""contentId"":(?<contentid>[^,]*),""cname"":""(?<cname>[^,]*)""}");
+                if (m.Success)
+                {
+                    thisUrl = String.Format(@"http://{0}.springboardplatform.com/mediaplayer/springboard/video/ciin001/{1}/{2}/",
+                        m.Groups["cname"].Value, m.Groups["partnerid"].Value, m.Groups["contentid"].Value);
+                }
+            }
+
             if (String.IsNullOrEmpty(thisUrl)) return null;
 
             if (thisUrl.StartsWith("http://www.youtube.com"))
