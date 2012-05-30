@@ -1591,7 +1591,7 @@
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="cat_pic">\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*<img\s+src="(?<thumb>[^"]+)"[^>]*>\s*<span[^>]*>[^<]*</span>\s*</a>\s*<div>\s*<a[^>]*>\s*<strong>(?<title>[^<]*)</strong>\s*</a>\s*</div>]]></item>
         <item key="videoListRegEx"><![CDATA[<li\s+class="videoBox">\s*<a[^>]+>\s*<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>\s*</a>\s*
-<h1><a\shref="(?<VideoUrl>/watch/[^"]+)">(?<Title>[^<]+)</a></h1>\s*
+<a\s+class="videoTitle"\s+href="(?<VideoUrl>/watch/[^"]+)">(?<Title>[^<]+)</a>\s*
 <div\s+class="information">\s*
 <(div|h2)\s+class="duration[^"]*">(?<Duration>[^<]*)</(div|h2)>]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\s+class="prev-next">\s*<a\s+href="(?<url>[^"]+)">[^<]*<span>&raquo;</span>\s*</a>\s*</li>]]></item>
