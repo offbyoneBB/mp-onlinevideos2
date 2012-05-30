@@ -289,6 +289,9 @@ namespace OnlineVideos.Sites.georgius
                     serializedDataForPost = HttpUtility.UrlEncode(serializedDataForPost).Replace("%3d", "=").Replace("%26", "&");
                     String videoDataUrl = CeskaTelevizeUtil.GetWebDataFromPost("http://www.ceskatelevize.cz/ajax/playlistURL.php", serializedDataForPost, container, video.VideoUrl);
 
+                    CeskaTelevizeVideoCollection videos = new CeskaTelevizeVideoCollection();
+                    int videoPart = 1;
+
                     XmlDocument videoData = new XmlDocument();
                     videoData.LoadXml(SiteUtilBase.GetWebData(videoDataUrl));
 
@@ -303,19 +306,8 @@ namespace OnlineVideos.Sites.georgius
                             {
                                 // now select source with highest bitrate
                                 XmlNodeList sources = itemData.SelectNodes("./video");
-                                XmlNode source = null;
-                                int bitrate = 0;
-                                foreach (XmlNode tempSource in sources)
-                                {
-                                    int tempBitrate = int.Parse(tempSource.Attributes["system-bitrate"].Value);
-                                    if (tempBitrate > bitrate)
-                                    {
-                                        bitrate = tempBitrate;
-                                        source = tempSource;
-                                    }
-                                }
 
-                                if (source != null)
+                                foreach (XmlNode source in sources)
                                 {
                                     // create rtmp proxy for selected source
                                     String baseUrl = itemData.Attributes["base"].Value.Replace("/_definst_", "");
@@ -337,18 +329,68 @@ namespace OnlineVideos.Sites.georgius
                                         {
                                             String swfUrl = baseWebData.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
                                             String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl }.ToString();
-                                            
-                                            resultUrls.Add(resultUrl);
+
+                                            videos.Add(new CeskaTelevizeVideo()
+                                            {
+                                                Part = videoPart,
+                                                Label = source.Attributes["label"].Value,
+                                                Url = resultUrl
+                                            });
+
                                         }
                                     }
                                 }
                             }
+
+                            videoPart++;
+                        }
+                    }
+
+                    // remember all videos with their quality
+                    video.Other = videos;
+
+                    videoPart = 0;
+                    foreach (var ctVideo in videos)
+                    {
+                        if (ctVideo.Part != videoPart)
+                        {
+                            resultUrls.Add(ctVideo.Url);
+                            videoPart = ctVideo.Part;
                         }
                     }
                 }
             }
 
             return resultUrls;
+        }
+
+        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
+        {
+            CeskaTelevizeVideoCollection videos = (CeskaTelevizeVideoCollection)clonedVideoInfo.Other;
+            CeskaTelevizeVideo keyVideo = videos[clonedVideoInfo.VideoUrl];
+
+            if (clonedVideoInfo.PlaybackOptions == null)
+            {
+                clonedVideoInfo.PlaybackOptions = new Dictionary<string, string>();
+            }
+            clonedVideoInfo.PlaybackOptions.Clear();
+
+            foreach (var ctVideo in videos)
+            {
+                if (ctVideo.Part == keyVideo.Part)
+                {
+                    clonedVideoInfo.PlaybackOptions.Add(ctVideo.Label, ctVideo.Url);
+                }
+            }
+
+            if (clonedVideoInfo.PlaybackOptions.Count > 0)
+            {
+                var enumer = clonedVideoInfo.PlaybackOptions.GetEnumerator();
+                enumer.MoveNext();
+                return enumer.Current.Value;
+            }
+
+            return clonedVideoInfo.VideoUrl;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
