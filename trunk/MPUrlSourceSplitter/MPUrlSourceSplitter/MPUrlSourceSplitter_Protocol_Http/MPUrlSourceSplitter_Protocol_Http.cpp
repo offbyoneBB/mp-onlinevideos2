@@ -701,6 +701,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::Initialize(PluginConfiguration *conf
   }
 
   ProtocolPluginConfiguration *protocolConfiguration = (ProtocolPluginConfiguration *)configuration;
+  this->logger->SetParameters(protocolConfiguration->configuration);
   this->filter = protocolConfiguration->outputStream;
   if (this->filter == NULL)
   {

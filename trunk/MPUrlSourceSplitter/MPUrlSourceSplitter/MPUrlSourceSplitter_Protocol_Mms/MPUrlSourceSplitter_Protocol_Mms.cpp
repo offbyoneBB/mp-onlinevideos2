@@ -970,6 +970,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::Initialize(PluginConfiguration *confi
   }
 
   ProtocolPluginConfiguration *protocolConfiguration = (ProtocolPluginConfiguration *)configuration;
+  this->logger->SetParameters(protocolConfiguration->configuration);
   this->filter = protocolConfiguration->outputStream;
   if (this->filter == NULL)
   {

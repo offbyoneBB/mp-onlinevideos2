@@ -651,6 +651,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::Initialize(PluginConfiguration *conf
   }
 
   ProtocolPluginConfiguration *protocolConfiguration = (ProtocolPluginConfiguration *)configuration;
+  this->logger->SetParameters(protocolConfiguration->configuration);
   this->filter = protocolConfiguration->outputStream;
   if (this->filter == NULL)
   {

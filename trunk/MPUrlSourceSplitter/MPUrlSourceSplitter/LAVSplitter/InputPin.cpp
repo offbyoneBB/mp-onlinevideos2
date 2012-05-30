@@ -327,8 +327,6 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   }
 
   wchar_t *url = ConvertToUnicodeW(pszFileName);
-  //wchar_t *url = ConvertToUnicodeA("file://D:/mms_test.dat");
-  //wchar_t *url = ConvertToUnicodeA("http://odi.omroep.nl/video/embedplayer/wmv_bb/627b73a601d18db0d21dcbb55ac92b31/4fafd64e/EO_101186575/?type=asx");
 
   if (url == NULL)
   {
@@ -525,6 +523,12 @@ STDMETHODIMP CLAVInputPin::Load()
   if (this->configuration == NULL)
   {
     result = E_FAIL;
+  }
+
+  if (SUCCEEDED(result))
+  {
+    // set logger parameters
+    this->logger->SetParameters(this->configuration);
   }
 
   if (SUCCEEDED(result))
