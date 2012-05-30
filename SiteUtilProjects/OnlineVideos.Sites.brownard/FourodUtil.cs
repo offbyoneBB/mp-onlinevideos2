@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -82,7 +82,7 @@ namespace OnlineVideos.Sites
 
             string epHtml = new Regex("<ol class=\"all-series\">(.*?)</div>", RegexOptions.Singleline).Match(html).Groups[1].Value;
 
-            foreach (Match vidMatch in new Regex("<li.*?data-episode-number=\"(.*?)\".*?data-assetid=\"(.*?)\".*?data-episodeUrl=\"(.*?)\".*?data-image-url=\"(.*?)\".*?data-episodeTitle=\"(.*?)\".*?data-episodeInfo=\"(.*?)\".*?data-episodeSynopsis=\"(.*?)\".*?data-series-number=\"(.*?)\"", RegexOptions.Singleline).Matches(epHtml))
+            foreach (Match vidMatch in new Regex("<li.*?data-episode-number=\"(.*?)\".*?data-assetid=\"(.*?)\".*?data-episodeurl=\"(.*?)\".*?data-image-url=\"(.*?)\".*?data-episodetitle=\"(.*?)\".*?data-episodeinfo=\"(.*?)\".*?data-episodesynopsis=\"(.*?)\".*?data-series-number=\"(.*?)\"", RegexOptions.Singleline).Matches(epHtml))
             {
                 VideoInfo vid = new VideoInfo();
 
@@ -149,7 +149,7 @@ namespace OnlineVideos.Sites
 
         string cleanString(string s)
         {
-            return s.Replace("&amp;", "&").Replace("&pound;", "£").Trim();
+            return s.Replace("&amp;", "&").Replace("&pound;", "�").Trim();
         }
 
         string playUrl = "";
