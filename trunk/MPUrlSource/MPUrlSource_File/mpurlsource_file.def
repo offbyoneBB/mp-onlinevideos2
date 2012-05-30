@@ -1,5 +1,0 @@
-LIBRARY     mpurlsource_file.dll
-
-EXPORTS
-			CreateProtocolInstance		PRIVATE
-			DestroyProtocolInstance		PRIVATE
