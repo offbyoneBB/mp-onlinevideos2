@@ -552,30 +552,6 @@
           </SubCategories>http://mobile.gametrailers.com/</Category>
       </Categories>
     </Site>
-    <Site name="kino.de" util="KinoDe" agecheck="false" enabled="true" lang="de">
-      <Description>Trailer für Kinofilme und Videospiele.</Description>
-      <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"\sclass="showroomFontColor_kino">(?<title>[^<]+)</a>]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]+)"><img\ssrc='(?<ImageUrl>[^']+)'\sstyle='border:\snone;\smargin:\s3px'\salt="(?<Title>[^"]+)"]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><img\sclass="nav_arrow"\ssrc="/showroom/pix/kino/arr_double_right.png"\s/></a>]]></item>
-        <item key="prevPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><img\sclass="nav_arrow"\ssrc="/showroom/pix/kino/arr_double_left.png"\s/></a>]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[flashvars.initItemXML\s\=\s"(?<url>[^"]*)"]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<url>(?<m0>[^<]*)</url>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.kino.de]]></item>
-        <item key="searchUrl"><![CDATA[http://www.kino.de/showroom/ajax/search.php]]></item>
-        <item key="searchPostString"><![CDATA[mode=searchdetails&db=mlorigin&searchstring={0}]]></item>
-        <item key="searchResultsListRegEx"><![CDATA[<div\sstyle="background-color[^"]+">\s*
-  <div[^>]*>\s*<a\shref="[^"]+">(?<Title>[^<]+)</a>\s*<br>\s*</div>\s*
-  <div[^>]*>\s*
-    <div[^>]*>\s*
-      <a\shref="(?<VideoUrl>[^"]+)"[^>]*>\s*Tr\s*</a>\s*
-    </div>\s*]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Filmtrailer">http://www.kino.de/showroom/trailer/film</Category>
-        <Category xsi:type="RssLink" name="Gamestrailer">http://www.kino.de/showroom/trailer/games</Category>
-      </Categories>
-    </Site>
     <Site name="IMDb Movie Trailers" util="IMDb" agecheck="false" enabled="true" lang="en">
       <Description>View trailers and other movie related clips sourced by the most complete online movie database. Many trailers are available in high-quality HD</Description>
     </Site>
