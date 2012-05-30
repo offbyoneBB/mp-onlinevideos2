@@ -1,5 +1,0 @@
-LIBRARY     mpurlsource_rtmp.dll
-
-EXPORTS
-			CreateProtocolInstance		PRIVATE
-			DestroyProtocolInstance		PRIVATE
