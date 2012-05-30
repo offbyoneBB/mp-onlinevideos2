@@ -126,7 +126,7 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
       char *lowerBuffer = DuplicateA(buffer);
       if (lowerBuffer != NULL)
       {
-        lowerBuffer = strlwr(lowerBuffer);
+        _strlwr_s(lowerBuffer, strlen(lowerBuffer));
         if (strncmp(lowerBuffer, "<asx ", 5) == 0)
         {
           // possible ASX file
@@ -260,6 +260,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Asx::Initialize(PluginConfiguration *configu
   this->connectionParameters->Clear();
   if (parserPluginConfiguration->configuration != NULL)
   {
+    this->logger->SetParameters(configuration->configuration);
     this->connectionParameters->Append(parserPluginConfiguration->configuration);
   }
   this->connectionParameters->LogCollection(this->logger, LOGGER_VERBOSE, PARSER_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);

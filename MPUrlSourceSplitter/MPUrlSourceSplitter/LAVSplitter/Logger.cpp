@@ -37,16 +37,7 @@ CLogger::CLogger(CParameterCollection *configuration)
   this->maxLogSize = MAX_LOG_SIZE_DEFAULT;
   this->allowedLogVerbosity = LOG_VERBOSITY_DEFAULT;
 
-  // set maximum log size
-  if (configuration != NULL)
-  {
-    this->maxLogSize = configuration->GetValueLong(PARAMETER_NAME_MAX_LOG_SIZE, true, MAX_LOG_SIZE_DEFAULT);
-    this->allowedLogVerbosity = configuration->GetValueLong(PARAMETER_NAME_LOG_VERBOSITY, true, LOG_VERBOSITY_DEFAULT);
-
-    // check value
-    this->maxLogSize = (this->maxLogSize <= 0) ? MAX_LOG_SIZE_DEFAULT : this->maxLogSize;
-    this->allowedLogVerbosity = (this->allowedLogVerbosity < 0) ? LOG_VERBOSITY_DEFAULT : this->allowedLogVerbosity;
-  }
+  this->SetParameters(configuration);
 }
 
 CLogger::~CLogger(void)
@@ -54,6 +45,20 @@ CLogger::~CLogger(void)
   if (this->mutex != NULL)
   {
     CloseHandle(this->mutex);
+  }
+}
+
+void CLogger::SetParameters(CParameterCollection *configuration)
+{
+  if (configuration != NULL)
+  {
+    // set maximum log size
+    this->maxLogSize = configuration->GetValueLong(PARAMETER_NAME_MAX_LOG_SIZE, true, MAX_LOG_SIZE_DEFAULT);
+    this->allowedLogVerbosity = configuration->GetValueLong(PARAMETER_NAME_LOG_VERBOSITY, true, LOG_VERBOSITY_DEFAULT);
+
+    // check value
+    this->maxLogSize = (this->maxLogSize <= 0) ? MAX_LOG_SIZE_DEFAULT : this->maxLogSize;
+    this->allowedLogVerbosity = (this->allowedLogVerbosity < 0) ? LOG_VERBOSITY_DEFAULT : this->allowedLogVerbosity;
   }
 }
 

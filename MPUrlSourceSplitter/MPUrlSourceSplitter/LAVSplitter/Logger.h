@@ -83,6 +83,8 @@ public:
   void LogMessage(unsigned int logLevel, const wchar_t *message);
   wchar_t *GetLogMessage(unsigned int logLevel, const wchar_t *format, va_list vl);
 
+  void SetParameters(CParameterCollection *configuration);
+
 protected:
   HANDLE mutex;
 
