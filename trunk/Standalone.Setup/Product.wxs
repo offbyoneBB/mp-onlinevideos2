@@ -90,25 +90,29 @@
       <Directory Id="DesktopFolder" Name="Desktop"/>      
 		</Directory>
 
-		<Feature Id="ProductFeature" Title="OnlineVideos Standalone" Level="1">
+		<Feature Id="ProductFeature" Title="OnlineVideos Standalone" Level="1" ConfigurableDirectory="INSTALLLOCATION" Absent="disallow" Description="Required core files of the OnlineVideos Standalone application.">
 			<ComponentRef Id="OnlineVideosStandalone" />
       <ComponentRef Id="OnlineVideosStandaloneImages" />
       <ComponentRef Id="OnlineVideosLanguageFlags" />
-      <ComponentRef Id="MPUrlSource" />
 
       <!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
 			<ComponentGroupRef Id="Product.Generated" />
+
+      <Feature Id="SplitterFeature" Title="Source Splitter Filter" Level="1" Description="Required DirectShow Filter. Only deselect when OnlineVideos for MediaPortal is installed on this PC.">
+        <ComponentRef Id="MPUrlSource" />
+      </Feature>
+      
 		</Feature>
 
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
     
     <UI>
-      <UIRef Id="WixUI_InstallDir" />
+      <UIRef Id="WixUI_FeatureTree" />
     </UI>
 
     <InstallExecuteSequence>
-      <Custom Action="RegisterAx" After="InstallFinalize">NOT Installed</Custom>
-      <Custom Action="UnregisterAx" Before="InstallInitialize">Installed</Custom>
+      <Custom Action="RegisterAx" After="InstallFinalize"><![CDATA[&SplitterFeature = 3]]></Custom>
+      <Custom Action="UnregisterAx" Before="InstallInitialize"><![CDATA[&SplitterFeature = 2]]></Custom>
     </InstallExecuteSequence>
 
     <CustomAction Id="StartAppOnExit" FileKey="MainExecutable" ExeCommand="" Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
