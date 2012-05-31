@@ -39,9 +39,10 @@ namespace Standalone
 			System.Net.ServicePointManager.DefaultConnectionLimit = 100;
 
 			string writeableBaseDir = GetBaseDirectory();
-			Gui2UtilConnector.Instance.TaskFinishedCallback += () => Dispatcher.Invoke((Action)Gui2UtilConnector.Instance.ExecuteTaskResultHandler);
 
 			OnlineVideoSettings.Instance.Logger = new Logger(writeableBaseDir);
+			
+			Config.Load(writeableBaseDir);
 
 			OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES(X86)") ?? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\");
 			if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DllsDir)) OnlineVideoSettings.Instance.DllsDir = writeableBaseDir;
@@ -66,6 +67,8 @@ namespace Standalone
 
 			TranslationLoader.LoadTranslations(System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages"));
 
+			Gui2UtilConnector.Instance.TaskFinishedCallback += () => Dispatcher.Invoke((Action)Gui2UtilConnector.Instance.ExecuteTaskResultHandler);
+
             InitializeComponent();
         }
 
@@ -74,13 +77,17 @@ namespace Standalone
             try
             {
                 // Attempt to create the Thumbs directory in the applications startup folder
-                // This will raise an exception if the path is read only or do not have write access. 
                 System.IO.Directory.CreateDirectory(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Thumbs"));
+				// since the Thumbs directory might have already existed, try to write a file in it
+				System.IO.File.WriteAllText(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Thumbs\\Temp.txt"), "");
                 return AppDomain.CurrentDomain.BaseDirectory;
             }
             catch (Exception)
             {
-                return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "OnlineVideos\\");
+				// an exception is raised if the path is read only or do not have write access (UAC might be on)
+                string writeableBaseDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "OnlineVideos\\");
+				if (!System.IO.Directory.Exists(writeableBaseDir)) System.IO.Directory.CreateDirectory(writeableBaseDir);
+				return writeableBaseDir;
             }
         }
 
@@ -95,9 +102,9 @@ namespace Standalone
 
             OnlineVideoSettings.Instance.LoadSites();
 
-            if (MessageBox.Show(this, Translation.Instance.PerformAutomaticUpdate, Translation.Instance.AutomaticUpdate, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes)
+            if (DateTime.Now - Config.Instance.LastAutoUpdate > TimeSpan.FromHours(1) && MessageBox.Show(this, Translation.Instance.PerformAutomaticUpdate, Translation.Instance.AutomaticUpdate, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes)
             {
-                Title = "OnlineVideos - Checking for Updates ...";
+				Title = "OnlineVideos - " + Translation.Instance.AutomaticUpdate + " ...";
                 waitCursor.Visibility = System.Windows.Visibility.Visible;
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
                     delegate()
@@ -107,6 +114,7 @@ namespace Standalone
                     },
                     delegate(Gui2UtilConnector.ResultInfo resultInfo)
                     {
+						Config.Instance.LastAutoUpdate = DateTime.Now;
                         Title = "OnlineVideos";
                         waitCursor.Visibility = System.Windows.Visibility.Hidden;
                         ReactToResult(resultInfo, Translation.Instance.AutomaticUpdate);
@@ -1308,5 +1316,10 @@ namespace Standalone
             dlg.Owner = this;
             dlg.ShowDialog();
         }
+
+		private void Window_Closed(object sender, EventArgs e)
+		{
+			Config.Instance.Save();
+		}
     }
 }

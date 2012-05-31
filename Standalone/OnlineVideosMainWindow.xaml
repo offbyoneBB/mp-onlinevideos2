@@ -4,7 +4,7 @@
     xmlns:ovs="clr-namespace:OnlineVideos;assembly=OnlineVideos"
     xmlns:DirectShowControls="clr-namespace:WPFMediaKit.DirectShow.Controls"
     xmlns:local="clr-namespace:Standalone" x:Name="mainWindow"
-    Title="OnlineVideos" Height="620" Width="820" Loaded="Window_Loaded" FocusManager.FocusedElement="{Binding ElementName=listViewMain}" Icon="OnlineVideos.ico">
+    Title="OnlineVideos" Height="620" Width="820" Loaded="Window_Loaded" Closed="Window_Closed" FocusManager.FocusedElement="{Binding ElementName=listViewMain}" Icon="OnlineVideos.ico">
     <Window.Resources>
 
         <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
