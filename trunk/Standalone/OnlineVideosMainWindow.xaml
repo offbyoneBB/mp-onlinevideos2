@@ -67,7 +67,7 @@
                 <Button Height="34" Command="BrowseBack" ToolTip="Back">
                     <Image Source="Images/Back.png"/>
                 </Button>
-                <Button Height="34" Command="Search" ToolTip="Search" Margin="5 0 0 0">
+				<Button Height="34" Command="Search" ToolTip="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='Search'}" Margin="5 0 0 0">
                     <Image Source="Images/Search.png"/>
                 </Button>
             </WrapPanel>
@@ -139,11 +139,11 @@
                             <ColumnDefinition Width="0.5*"/>
                         </Grid.ColumnDefinitions>
                         <WrapPanel Margin="0 0 0 5">
-                            <TextBlock Text="{Binding Source={x:Static ovs:Translation.Instance}, Path=Runtime, StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtLength, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
+                            <TextBlock Text="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='Runtime', StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtLength, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
                             <TextBlock x:Name="txtLength" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Length}"/>
                         </WrapPanel>
                         <WrapPanel Grid.Column="1" Margin="0 0 0 5">
-                            <TextBlock Text="{Binding Source={x:Static ovs:Translation.Instance}, Path=Airdate, StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtAired, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
+                            <TextBlock Text="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='Airdate', StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtAired, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
                             <TextBlock x:Name="txtAired" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Airdate}"/>
                         </WrapPanel>
                     </Grid>

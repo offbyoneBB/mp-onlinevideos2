@@ -429,7 +429,7 @@ namespace Standalone
                 {
                     SearchDialog dlg = new SearchDialog() { Owner = this };
                     dlg.tbxSearch.Text = currentEntry.UserInputText ?? "";
-                    dlg.lblHeading.Content = currentEntry.DisplayText;
+                    dlg.lblHeading.Text = currentEntry.DisplayText;
                     if (dlg.ShowDialog() == true && !string.IsNullOrEmpty(dlg.tbxSearch.Text))
                     {
                         currentEntry.UserInputText = dlg.tbxSearch.Text;
