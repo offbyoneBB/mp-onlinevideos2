@@ -550,7 +550,7 @@ namespace OnlineVideos.MediaPortal1
 			}
 			// now reload the appdomain
 			OnlineVideoSettings.Reload();
-			Translator.SetTranslationsToSingleton();
+			TranslationLoader.SetTranslationsToSingleton();
 			OnlineVideoSettings.Instance.BuildSiteUtilsList();
 			GC.Collect();
 			GC.WaitForFullGCComplete();

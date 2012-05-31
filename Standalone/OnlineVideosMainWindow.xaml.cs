@@ -64,6 +64,8 @@ namespace Standalone
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mp4")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mp4", false);
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".wmv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".wmv", false);
 
+			TranslationLoader.LoadTranslations(System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages"));
+
             InitializeComponent();
         }
 

@@ -84,6 +84,33 @@
               <File Id="LF_zh" Source="$(var.Standalone.TargetDir)\LanguageFlags\zh.png" DiskId="1" Vital="yes"/>
             </Component>
           </Directory>
+          <Directory Id="Languages" Name="Languages">
+            <Component Id="OnlineVideosLanguages" Guid="8E20FDD2-384E-43D4-8E9F-CB4EAFF72A4F">
+              <File Id="bg_xml" Source="$(var.SolutionDir)Language\OnlineVideos\bg.xml" DiskId="1" Vital="yes"/>
+              <File Id="ca_xml" Source="$(var.SolutionDir)Language\OnlineVideos\ca.xml" DiskId="1" Vital="yes"/>
+              <File Id="cs_xml" Source="$(var.SolutionDir)Language\OnlineVideos\cs.xml" DiskId="1" Vital="yes"/>
+              <File Id="da_xml" Source="$(var.SolutionDir)Language\OnlineVideos\da.xml" DiskId="1" Vital="yes"/>
+              <File Id="de_xml" Source="$(var.SolutionDir)Language\OnlineVideos\de.xml" DiskId="1" Vital="yes"/>
+              <File Id="el_xml" Source="$(var.SolutionDir)Language\OnlineVideos\el.xml" DiskId="1" Vital="yes"/>
+              <File Id="en_US_xml" Source="$(var.SolutionDir)Language\OnlineVideos\en-US.xml" DiskId="1" Vital="yes"/>
+              <File Id="es_xml" Source="$(var.SolutionDir)Language\OnlineVideos\es.xml" DiskId="1" Vital="yes"/>
+              <File Id="et_xml" Source="$(var.SolutionDir)Language\OnlineVideos\et.xml" DiskId="1" Vital="yes"/>
+              <File Id="fi_xml" Source="$(var.SolutionDir)Language\OnlineVideos\fi.xml" DiskId="1" Vital="yes"/>
+              <File Id="fr_xml" Source="$(var.SolutionDir)Language\OnlineVideos\fr.xml" DiskId="1" Vital="yes"/>
+              <File Id="he_xml" Source="$(var.SolutionDir)Language\OnlineVideos\he.xml" DiskId="1" Vital="yes"/>
+              <File Id="it_xml" Source="$(var.SolutionDir)Language\OnlineVideos\it.xml" DiskId="1" Vital="yes"/>
+              <File Id="lt_LT_xml" Source="$(var.SolutionDir)Language\OnlineVideos\lt-LT.xml" DiskId="1" Vital="yes"/>
+              <File Id="nl_xml" Source="$(var.SolutionDir)Language\OnlineVideos\nl.xml" DiskId="1" Vital="yes"/>
+              <File Id="no_xml" Source="$(var.SolutionDir)Language\OnlineVideos\no.xml" DiskId="1" Vital="yes"/>
+              <File Id="pl_xml" Source="$(var.SolutionDir)Language\OnlineVideos\pl.xml" DiskId="1" Vital="yes"/>
+              <File Id="pt_xml" Source="$(var.SolutionDir)Language\OnlineVideos\pt.xml" DiskId="1" Vital="yes"/>
+              <File Id="ru_xml" Source="$(var.SolutionDir)Language\OnlineVideos\ru.xml" DiskId="1" Vital="yes"/>
+              <File Id="sk_xml" Source="$(var.SolutionDir)Language\OnlineVideos\sk.xml" DiskId="1" Vital="yes"/>
+              <File Id="sv_xml" Source="$(var.SolutionDir)Language\OnlineVideos\sv.xml" DiskId="1" Vital="yes"/>
+              <File Id="tr_xml" Source="$(var.SolutionDir)Language\OnlineVideos\tr.xml" DiskId="1" Vital="yes"/>
+              <File Id="zh_CN_xml" Source="$(var.SolutionDir)Language\OnlineVideos\zh-CN.xml" DiskId="1" Vital="yes"/>
+            </Component>
+          </Directory>
 				</Directory>
 			</Directory>
 
@@ -94,6 +121,7 @@
 			<ComponentRef Id="OnlineVideosStandalone" />
       <ComponentRef Id="OnlineVideosStandaloneImages" />
       <ComponentRef Id="OnlineVideosLanguageFlags" />
+      <ComponentRef Id="OnlineVideosLanguages" />
 
       <!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
 			<ComponentGroupRef Id="Product.Generated" />
