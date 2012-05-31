@@ -155,6 +155,28 @@ namespace OnlineVideos.Hoster
             string data = SiteUtilBase.GetWebData(url);
             if (!string.IsNullOrEmpty(data))
             {
+                string op = Regex.Match(data, @"<input\stype=""hidden""\sname=""op""\svalue=""(?<value>[^""]+)""\s*>").Groups["value"].Value;
+                string id = Regex.Match(data, @"<input\stype=""hidden""\sname=""id""\svalue=""(?<value>[^""]+)""\s*>").Groups["value"].Value;
+                string rand = Regex.Match(data, @"<input\stype=""hidden""\sname=""rand""\svalue=""(?<value>[^""]+)""\s*>").Groups["value"].Value;
+                string referer = Regex.Match(data, @"<input\stype=""hidden""\sname=""referer""\svalue=""(?<value>[^""]+)""\s*>").Groups["value"].Value;
+                string method_free = Regex.Match(data, @"<input\stype=""hidden""\sname=""method_free""\svalue=""(?<value>[^""]+)""\s*>").Groups["value"].Value;
+                string method_premium = Regex.Match(data, @"<input\stype=""hidden""\sname=""method_premium""\svalue=""(?<value>[^""]+)""\s*>").Groups["value"].Value;
+
+                string timeToWait = Regex.Match(data, @"<span\sid=""countdown_str"">[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
+                if (Convert.ToInt32(timeToWait) < 10)
+                {
+                    string postdata = "op=" + op +
+                                      "&id=" + id +
+                                      "&rand=" + rand +
+                                      "&referer=" + referer +
+                                      "&method_free=" + method_free +
+                                      "&method_premium=" + method_premium +
+                                      "&down_direct=1";
+                    //op=download2&id=benm0xrsl2s2&rand=6kuq6s4slrihwlq55ar5b7hukpvomewfy6i645i&referer=http%3A%2F%2Fwatchseries.eu%2Fopen%2Fcale%2F5764571%2Fidepisod%2F167374.html&method_free=&method_premium=&down_direct=1
+                    System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
+                    data = SiteUtilBase.GetWebDataFromPost(url, postdata);
+                }
+
                 Match n = Regex.Match(data, @"{url:\s*'(?<url>[^']*)',\sautoPlay");
                 if (n.Success)
                     return n.Groups["url"].Value;
@@ -333,6 +355,8 @@ namespace OnlineVideos.Hoster
                 string format = node.Attributes["compressie_formaat"].Value;
                 string streamUrl = node.SelectSingleNode("streamurl").InnerText.Trim();
                 if (format == "mov") streamUrl += ".mp4"; //so file will be played by internal player
+                //else
+                //  streamUrl = SiteUtilBase.ParseASX(streamUrl)[0];
 
                 if (!String.IsNullOrEmpty(streamUrl) && Uri.IsWellFormedUriString(streamUrl, System.UriKind.Absolute))
                 {
