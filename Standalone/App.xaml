@@ -8,6 +8,7 @@
         <local:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
         <local:ZeroVisibilityConverter x:Key="ZeroVisibilityConverter"/>
         <local:LanguageConverter x:Key="LanguageConverter"/> 
+        <local:TranslationConverter x:Key="TranslationConverter"/>
         <DataTemplate x:Key="SiteUtilBase">
             <Grid Width="100" Height="100" Margin="2">
                 <Border x:Name="frame" BorderBrush="Black" BorderThickness="1" CornerRadius="4">

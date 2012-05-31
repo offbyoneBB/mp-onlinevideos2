@@ -23,6 +23,6 @@
     <StackPanel>
         <Label x:Name="lblHeading" Content="Playback Choices" FontWeight="Bold" HorizontalAlignment="Center"/>
         <ListView x:Name="lvChoices" SelectionMode="Single" Background="Transparent" MaxHeight="500" MinWidth="200" ItemContainerStyle="{StaticResource itemstyle}" BorderThickness="0 1 0 1"/>
-        <Button Command="Close" Width="50" Height="30" HorizontalAlignment="Right" Content="Cancel" Margin="0 5 5 5"/>
+		<Button Command="Close" Width="80" Height="30" HorizontalAlignment="Right" Content="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='Cancel'}" Margin="0 5 5 5"/>
     </StackPanel>
 </Window>

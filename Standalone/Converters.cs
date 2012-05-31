@@ -175,6 +175,19 @@ namespace Standalone
         }
     }
 
+	[ValueConversion(typeof(Translation), typeof(string))]
+	public class TranslationConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			return Translation.Instance.GetByName(parameter as string);
+		}
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
     [ValueConversion(typeof(string), typeof(string))]
     public class EmailToNameConverter : IValueConverter
     {

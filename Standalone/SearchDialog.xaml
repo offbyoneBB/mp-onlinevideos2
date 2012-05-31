@@ -3,13 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Search" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="#DDE3F4FC" AllowsTransparency="True" Margin="10" BorderThickness="2" BorderBrush="Black"
         WindowStyle="None" ResizeMode="NoResize" FontSize="14" SizeToContent="WidthAndHeight" FocusManager.FocusedElement="{Binding ElementName=tbxSearch}">
-
     <StackPanel>
-        <Label x:Name="lblHeading" Content="Search:" FontWeight="Bold"/>
+    <TextBlock x:Name="lblHeading" Text="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='Search', StringFormat=\{0\}:}" FontWeight="Bold"/>
         <TextBox x:Name="tbxSearch" Margin="5" Width="400"/>
         <WrapPanel HorizontalAlignment="Right">
-            <Button IsDefault="True" Width="50" Height="30" Content="OK" Margin="0 5 5 5" Click="OK_Click" />
-            <Button IsCancel="True" Width="50" Height="30" Content="Cancel" Margin="0 5 5 5" Click="Cancel_Click" />
+            <Button IsDefault="True" Width="80" Height="30" Content="OK" Margin="0 5 5 5" Click="OK_Click" />
+            <Button IsCancel="True" Width="80" Height="30" Content="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='Cancel'}" Margin="0 5 5 5" Click="Cancel_Click" />
         </WrapPanel>
     </StackPanel>
 </Window>

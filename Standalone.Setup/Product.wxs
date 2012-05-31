@@ -117,7 +117,7 @@
       <Directory Id="DesktopFolder" Name="Desktop"/>      
 		</Directory>
 
-		<Feature Id="ProductFeature" Title="OnlineVideos Standalone" Level="1" ConfigurableDirectory="INSTALLLOCATION" Absent="disallow" Description="Required core files of the OnlineVideos Standalone application.">
+		<Feature Id="ProductFeature" Title="OnlineVideos Standalone" Level="1" ConfigurableDirectory="INSTALLLOCATION" Display="expand" Absent="disallow" Description="Required core files of the OnlineVideos Standalone application.">
 			<ComponentRef Id="OnlineVideosStandalone" />
       <ComponentRef Id="OnlineVideosStandaloneImages" />
       <ComponentRef Id="OnlineVideosLanguageFlags" />
