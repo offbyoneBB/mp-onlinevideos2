@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.IO;
 
 namespace OnlineVideos
 {
@@ -276,4 +278,70 @@ namespace OnlineVideos
 		public string Settings_LatestVideosGuiDataRefresh = "Refresh displayed latest videos every x seconds";
 		public string Settings_StoreLayoutPerCategory = "Remember view layout per Site and Category";
     }
+
+	public static class TranslationLoader
+	{
+		static Dictionary<string, string> TranslatedStrings = new Dictionary<string, string>();
+
+		public static string LoadTranslations(string language, string translationFilesPath)
+		{
+			XmlDocument doc = new XmlDocument();
+
+			string langPath = "";
+			try
+			{
+				langPath = Path.Combine(translationFilesPath, language + ".xml");
+				doc.Load(langPath);
+			}
+			catch (Exception ex)
+			{
+				if (language == "en-US")
+				{
+					return language; // otherwise we are in an endless loop!
+				}
+				if (ex.GetType() == typeof(FileNotFoundException) || ex.GetType() == typeof(DirectoryNotFoundException))
+				{
+					Log.Warn("Cannot find translation xml file '{0}'.  Falling back to English (US)", langPath);
+				}
+				else
+				{
+					Log.Error("Error in translation xml file: '{0}'. Falling back to English (US) : {1}", langPath, ex.Message);
+				}
+				language = "en-US";
+				return LoadTranslations(language, translationFilesPath);
+			}
+
+			
+			foreach (XmlNode stringEntry in doc.DocumentElement.ChildNodes)
+			{
+				if (stringEntry.NodeType == XmlNodeType.Element)
+				{
+					try
+					{
+						TranslatedStrings.Add(stringEntry.Attributes.GetNamedItem("Field").Value, stringEntry.InnerText);
+					}
+					catch (Exception ex)
+					{
+						Log.Error("Error in Translation Engine: {0}", ex.ToString());
+					}
+				}
+			}
+
+			SetTranslationsToSingleton();
+			return language;
+		}
+
+		public static void SetTranslationsToSingleton()
+		{
+			Type TransType = typeof(Translation);
+			FieldInfo[] fieldInfos = TransType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			foreach (FieldInfo fi in fieldInfos)
+			{
+				if (TranslatedStrings != null && TranslatedStrings.ContainsKey(fi.Name))
+					fi.SetValue(Translation.Instance, TranslatedStrings[fi.Name]);
+				else
+					Log.Debug("Translation not found for field: '{0}'. Using hard-coded English default.", fi.Name);
+			}
+		}
+	}
 }
