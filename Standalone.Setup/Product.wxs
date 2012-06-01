@@ -1,156 +1,161 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Product Id="*" Name="OnlineVideos" Language="1033" Version="1.2.1.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
-		<Package InstallerVersion="200" Compressed="yes" />
+		<Package InstallerVersion="400" Compressed="yes" />
 
-    <Property Id="ARPPRODUCTICON">$(var.Standalone.TargetFileName)</Property>
-    <Property Id="ARPURLINFOABOUT">http://code.google.com/p/mp-onlinevideos2/</Property>
-    <Property Id="ARPURLUPDATEINFO">http://code.google.com/p/mp-onlinevideos2/</Property>
+		<Property Id="ARPPRODUCTICON">$(var.Standalone.TargetFileName)</Property>
+		<Property Id="ARPURLINFOABOUT">http://code.google.com/p/mp-onlinevideos2/</Property>
+		<Property Id="ARPURLUPDATEINFO">https://code.google.com/p/mp-onlinevideos2/downloads/list</Property>
+		<Property Id='ARPHELPLINK'>https://code.google.com/p/mp-onlinevideos2/w/list</Property>
+		<Property Id='ARPCOMMENTS'>Standalone WPF Application front-end for the OnlineVideos API.</Property>
 
-    <PropertyRef Id="NETFRAMEWORK35_SP_LEVEL"/>
+		<PropertyRef Id="NETFRAMEWORK35_SP_LEVEL"/>
 
-    <Condition Message="This application is only supported on Windows Vista or higher.">
-      <![CDATA[Installed OR (VersionNT >= 600)]]>
-    </Condition>
-    
-    <Condition Message="This application requires the .NET Framework 3.5 SP1.">
-      <![CDATA[Installed OR (NETFRAMEWORK35_SP_LEVEL and NOT NETFRAMEWORK35_SP_LEVEL = "#0")]]>
-    </Condition>
+		<Condition Message="This application is only supported on Windows Vista or higher.">
+			<![CDATA[Installed OR (VersionNT >= 600)]]>
+		</Condition>
 
-    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+		<Condition Message="This application requires the .NET Framework 3.5 SP1.">
+			<![CDATA[Installed OR (NETFRAMEWORK35_SP_LEVEL and NOT NETFRAMEWORK35_SP_LEVEL = "#0")]]>
+		</Condition>
+
+		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder">
 				<Directory Id="INSTALLLOCATION" Name="OnlineVideos">
 					<Component Id="OnlineVideosStandalone" Guid="ec34fc0c-8073-4313-9b8a-3a00e95ba836">
-            <File KeyPath="yes" Id="MainExecutable" Source="$(var.Standalone.TargetPath)" DiskId="1" Vital="yes">
-              <Shortcut Advertise="yes" Id="DesktopShortcut" Directory="DesktopFolder" WorkingDirectory="INSTALLDIR" Name="OnlineVideos" Icon="$(var.Standalone.TargetFileName)">
-                <Icon Id="$(var.Standalone.TargetFileName)" SourceFile="$(var.Standalone.TargetPath)" />
-              </Shortcut>
-            </File>
-            <File Id="OnlineVideosCore" Source="$(var.OnlineVideos.TargetPath)" DiskId="1" Vital="yes"/>
-            <File Id="DirectShowLib" Source="$(var.Standalone.TargetDir)DirectShowLib-2005.dll" DiskId="1" Vital="yes"/>
-            <File Id="EVRPresenter32" Source="$(var.Standalone.TargetDir)EVRPresenter32.dll" DiskId="1" Vital="yes"/>
-            <File Id="NLog" Source="$(var.Standalone.TargetDir)NLog.dll" DiskId="1" Vital="yes"/>
-          </Component>
-          <Directory Id="MPUrlSource" Name="MPUrlSource">
-            <Component Id="MPUrlSource" Guid="04047A84-E2C0-4EC8-A490-8467EDC2D302">
-              <File Id="MPUrlSource_ax" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter.ax" DiskId="1" Vital="yes"/>
-              <File Id="libcurl_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\libcurl.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Http_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Rtmp_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll" DiskId="1" Vital="yes"/>
-              <File Id="avcodec_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
-              <File Id="avfilter_2_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avfilter-mpurlsourcesplitter-2.dll" DiskId="1" Vital="yes"/>
-              <File Id="avformat_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
-              <File Id="avutil_51_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll" DiskId="1" Vital="yes"/>
-              <File Id="swscale_2_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\swscale-mpurlsourcesplitter-2.dll" DiskId="1" Vital="yes"/>
-            </Component>
-          </Directory>
-          <Directory Id="Images" Name="Images">
-            <Component Id="OnlineVideosStandaloneImages" Guid="5212c6f7-6f1c-4b97-ab7c-4929c69fc7b0">
-              <File Id="NextPage" Source="$(var.Standalone.TargetDir)\Images\NextPage.png" DiskId="1" Vital="yes"/>
-            </Component>
-          </Directory>
-          <Directory Id="LanguageFlags" Name="LanguageFlags">
-            <Component Id="OnlineVideosLanguageFlags" Guid="522a4c3a-2527-4b1e-8173-a79070ab1caf">
-              <File Id="LF_gl" Source="$(var.Standalone.TargetDir)\LanguageFlags\--.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_bg" Source="$(var.Standalone.TargetDir)\LanguageFlags\bg.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_cs" Source="$(var.Standalone.TargetDir)\LanguageFlags\cs.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_da" Source="$(var.Standalone.TargetDir)\LanguageFlags\da.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_de" Source="$(var.Standalone.TargetDir)\LanguageFlags\de.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_en" Source="$(var.Standalone.TargetDir)\LanguageFlags\en.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_es" Source="$(var.Standalone.TargetDir)\LanguageFlags\es.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_fi" Source="$(var.Standalone.TargetDir)\LanguageFlags\fi.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_fr" Source="$(var.Standalone.TargetDir)\LanguageFlags\fr.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_hr" Source="$(var.Standalone.TargetDir)\LanguageFlags\hr.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_hu" Source="$(var.Standalone.TargetDir)\LanguageFlags\hu.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_it" Source="$(var.Standalone.TargetDir)\LanguageFlags\it.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_ja" Source="$(var.Standalone.TargetDir)\LanguageFlags\ja.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_ko" Source="$(var.Standalone.TargetDir)\LanguageFlags\ko.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_lv" Source="$(var.Standalone.TargetDir)\LanguageFlags\lv.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_nl" Source="$(var.Standalone.TargetDir)\LanguageFlags\nl.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_no" Source="$(var.Standalone.TargetDir)\LanguageFlags\no.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_pl" Source="$(var.Standalone.TargetDir)\LanguageFlags\pl.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_pt" Source="$(var.Standalone.TargetDir)\LanguageFlags\pt.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_ro" Source="$(var.Standalone.TargetDir)\LanguageFlags\ro.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_ru" Source="$(var.Standalone.TargetDir)\LanguageFlags\ru.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_sk" Source="$(var.Standalone.TargetDir)\LanguageFlags\sk.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_sr" Source="$(var.Standalone.TargetDir)\LanguageFlags\sr.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_sv" Source="$(var.Standalone.TargetDir)\LanguageFlags\sv.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_th" Source="$(var.Standalone.TargetDir)\LanguageFlags\th.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_tr" Source="$(var.Standalone.TargetDir)\LanguageFlags\tr.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_uk" Source="$(var.Standalone.TargetDir)\LanguageFlags\uk.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_uz" Source="$(var.Standalone.TargetDir)\LanguageFlags\uz.png" DiskId="1" Vital="yes"/>
-              <File Id="LF_zh" Source="$(var.Standalone.TargetDir)\LanguageFlags\zh.png" DiskId="1" Vital="yes"/>
-            </Component>
-          </Directory>
-          <Directory Id="Languages" Name="Languages">
-            <Component Id="OnlineVideosLanguages" Guid="8E20FDD2-384E-43D4-8E9F-CB4EAFF72A4F">
-              <File Id="bg_xml" Source="$(var.SolutionDir)Language\OnlineVideos\bg.xml" DiskId="1" Vital="yes"/>
-              <File Id="ca_xml" Source="$(var.SolutionDir)Language\OnlineVideos\ca.xml" DiskId="1" Vital="yes"/>
-              <File Id="cs_xml" Source="$(var.SolutionDir)Language\OnlineVideos\cs.xml" DiskId="1" Vital="yes"/>
-              <File Id="da_xml" Source="$(var.SolutionDir)Language\OnlineVideos\da.xml" DiskId="1" Vital="yes"/>
-              <File Id="de_xml" Source="$(var.SolutionDir)Language\OnlineVideos\de.xml" DiskId="1" Vital="yes"/>
-              <File Id="el_xml" Source="$(var.SolutionDir)Language\OnlineVideos\el.xml" DiskId="1" Vital="yes"/>
-              <File Id="en_US_xml" Source="$(var.SolutionDir)Language\OnlineVideos\en-US.xml" DiskId="1" Vital="yes"/>
-              <File Id="es_xml" Source="$(var.SolutionDir)Language\OnlineVideos\es.xml" DiskId="1" Vital="yes"/>
-              <File Id="et_xml" Source="$(var.SolutionDir)Language\OnlineVideos\et.xml" DiskId="1" Vital="yes"/>
-              <File Id="fi_xml" Source="$(var.SolutionDir)Language\OnlineVideos\fi.xml" DiskId="1" Vital="yes"/>
-              <File Id="fr_xml" Source="$(var.SolutionDir)Language\OnlineVideos\fr.xml" DiskId="1" Vital="yes"/>
-              <File Id="he_xml" Source="$(var.SolutionDir)Language\OnlineVideos\he.xml" DiskId="1" Vital="yes"/>
-              <File Id="it_xml" Source="$(var.SolutionDir)Language\OnlineVideos\it.xml" DiskId="1" Vital="yes"/>
-              <File Id="lt_LT_xml" Source="$(var.SolutionDir)Language\OnlineVideos\lt-LT.xml" DiskId="1" Vital="yes"/>
-              <File Id="nl_xml" Source="$(var.SolutionDir)Language\OnlineVideos\nl.xml" DiskId="1" Vital="yes"/>
-              <File Id="no_xml" Source="$(var.SolutionDir)Language\OnlineVideos\no.xml" DiskId="1" Vital="yes"/>
-              <File Id="pl_xml" Source="$(var.SolutionDir)Language\OnlineVideos\pl.xml" DiskId="1" Vital="yes"/>
-              <File Id="pt_xml" Source="$(var.SolutionDir)Language\OnlineVideos\pt.xml" DiskId="1" Vital="yes"/>
-              <File Id="ru_xml" Source="$(var.SolutionDir)Language\OnlineVideos\ru.xml" DiskId="1" Vital="yes"/>
-              <File Id="sk_xml" Source="$(var.SolutionDir)Language\OnlineVideos\sk.xml" DiskId="1" Vital="yes"/>
-              <File Id="sv_xml" Source="$(var.SolutionDir)Language\OnlineVideos\sv.xml" DiskId="1" Vital="yes"/>
-              <File Id="tr_xml" Source="$(var.SolutionDir)Language\OnlineVideos\tr.xml" DiskId="1" Vital="yes"/>
-              <File Id="zh_CN_xml" Source="$(var.SolutionDir)Language\OnlineVideos\zh-CN.xml" DiskId="1" Vital="yes"/>
-            </Component>
-          </Directory>
+						<File KeyPath="yes" Id="MainExecutable" Source="$(var.Standalone.TargetPath)" DiskId="1" Vital="yes">
+							<Shortcut Advertise="yes" Id="DesktopShortcut" Directory="DesktopFolder" WorkingDirectory="INSTALLDIR" Name="OnlineVideos" Icon="$(var.Standalone.TargetFileName)">
+								<Icon Id="$(var.Standalone.TargetFileName)" SourceFile="$(var.Standalone.TargetPath)" />
+							</Shortcut>
+						</File>
+						<File Id="OnlineVideosCore" Source="$(var.OnlineVideos.TargetPath)" DiskId="1" Vital="yes"/>
+						<File Id="DirectShowLib" Source="$(var.Standalone.TargetDir)DirectShowLib-2005.dll" DiskId="1" Vital="yes"/>
+						<File Id="EVRPresenter32" Source="$(var.Standalone.TargetDir)EVRPresenter32.dll" DiskId="1" Vital="yes"/>
+						<File Id="NLog" Source="$(var.Standalone.TargetDir)NLog.dll" DiskId="1" Vital="yes"/>
+						<RemoveFile Id="LogFile" On="both" Name="log.txt" />
+					</Component>
+					<Directory Id="MPUrlSource" Name="MPUrlSource">
+						<Component Id="MPUrlSource" Guid="04047A84-E2C0-4EC8-A490-8467EDC2D302">
+							<File Id="MPUrlSource_ax" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter.ax" DiskId="1" Vital="yes"/>
+							<File Id="libcurl_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\libcurl.dll" DiskId="1" Vital="yes"/>
+							<File Id="MPUrlSource_Http_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll" DiskId="1" Vital="yes"/>
+							<File Id="MPUrlSource_Rtmp_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll" DiskId="1" Vital="yes"/>
+							<File Id="avcodec_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
+							<File Id="avfilter_2_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avfilter-mpurlsourcesplitter-2.dll" DiskId="1" Vital="yes"/>
+							<File Id="avformat_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
+							<File Id="avutil_51_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll" DiskId="1" Vital="yes"/>
+							<File Id="swscale_2_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\swscale-mpurlsourcesplitter-2.dll" DiskId="1" Vital="yes"/>
+						</Component>
+					</Directory>
+					<Directory Id="Images" Name="Images">
+						<Component Id="OnlineVideosStandaloneImages" Guid="5212c6f7-6f1c-4b97-ab7c-4929c69fc7b0">
+							<File Id="NextPage" Source="$(var.Standalone.TargetDir)\Images\NextPage.png" DiskId="1" Vital="yes"/>
+						</Component>
+					</Directory>
+					<Directory Id="LanguageFlags" Name="LanguageFlags">
+						<Component Id="OnlineVideosLanguageFlags" Guid="522a4c3a-2527-4b1e-8173-a79070ab1caf">
+							<File Id="LF_gl" Source="$(var.Standalone.TargetDir)\LanguageFlags\--.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_bg" Source="$(var.Standalone.TargetDir)\LanguageFlags\bg.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_cs" Source="$(var.Standalone.TargetDir)\LanguageFlags\cs.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_da" Source="$(var.Standalone.TargetDir)\LanguageFlags\da.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_de" Source="$(var.Standalone.TargetDir)\LanguageFlags\de.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_en" Source="$(var.Standalone.TargetDir)\LanguageFlags\en.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_es" Source="$(var.Standalone.TargetDir)\LanguageFlags\es.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_fi" Source="$(var.Standalone.TargetDir)\LanguageFlags\fi.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_fr" Source="$(var.Standalone.TargetDir)\LanguageFlags\fr.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_hr" Source="$(var.Standalone.TargetDir)\LanguageFlags\hr.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_hu" Source="$(var.Standalone.TargetDir)\LanguageFlags\hu.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_it" Source="$(var.Standalone.TargetDir)\LanguageFlags\it.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_ja" Source="$(var.Standalone.TargetDir)\LanguageFlags\ja.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_ko" Source="$(var.Standalone.TargetDir)\LanguageFlags\ko.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_lv" Source="$(var.Standalone.TargetDir)\LanguageFlags\lv.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_nl" Source="$(var.Standalone.TargetDir)\LanguageFlags\nl.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_no" Source="$(var.Standalone.TargetDir)\LanguageFlags\no.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_pl" Source="$(var.Standalone.TargetDir)\LanguageFlags\pl.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_pt" Source="$(var.Standalone.TargetDir)\LanguageFlags\pt.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_ro" Source="$(var.Standalone.TargetDir)\LanguageFlags\ro.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_ru" Source="$(var.Standalone.TargetDir)\LanguageFlags\ru.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_sk" Source="$(var.Standalone.TargetDir)\LanguageFlags\sk.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_sr" Source="$(var.Standalone.TargetDir)\LanguageFlags\sr.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_sv" Source="$(var.Standalone.TargetDir)\LanguageFlags\sv.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_th" Source="$(var.Standalone.TargetDir)\LanguageFlags\th.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_tr" Source="$(var.Standalone.TargetDir)\LanguageFlags\tr.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_uk" Source="$(var.Standalone.TargetDir)\LanguageFlags\uk.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_uz" Source="$(var.Standalone.TargetDir)\LanguageFlags\uz.png" DiskId="1" Vital="yes"/>
+							<File Id="LF_zh" Source="$(var.Standalone.TargetDir)\LanguageFlags\zh.png" DiskId="1" Vital="yes"/>
+						</Component>
+					</Directory>
+					<Directory Id="Languages" Name="Languages">
+						<Component Id="OnlineVideosLanguages" Guid="8E20FDD2-384E-43D4-8E9F-CB4EAFF72A4F">
+							<File Id="bg_xml" Source="$(var.SolutionDir)Language\OnlineVideos\bg.xml" DiskId="1" Vital="yes"/>
+							<File Id="ca_xml" Source="$(var.SolutionDir)Language\OnlineVideos\ca.xml" DiskId="1" Vital="yes"/>
+							<File Id="cs_xml" Source="$(var.SolutionDir)Language\OnlineVideos\cs.xml" DiskId="1" Vital="yes"/>
+							<File Id="da_xml" Source="$(var.SolutionDir)Language\OnlineVideos\da.xml" DiskId="1" Vital="yes"/>
+							<File Id="de_xml" Source="$(var.SolutionDir)Language\OnlineVideos\de.xml" DiskId="1" Vital="yes"/>
+							<File Id="el_xml" Source="$(var.SolutionDir)Language\OnlineVideos\el.xml" DiskId="1" Vital="yes"/>
+							<File Id="en_US_xml" Source="$(var.SolutionDir)Language\OnlineVideos\en-US.xml" DiskId="1" Vital="yes"/>
+							<File Id="es_xml" Source="$(var.SolutionDir)Language\OnlineVideos\es.xml" DiskId="1" Vital="yes"/>
+							<File Id="et_xml" Source="$(var.SolutionDir)Language\OnlineVideos\et.xml" DiskId="1" Vital="yes"/>
+							<File Id="fi_xml" Source="$(var.SolutionDir)Language\OnlineVideos\fi.xml" DiskId="1" Vital="yes"/>
+							<File Id="fr_xml" Source="$(var.SolutionDir)Language\OnlineVideos\fr.xml" DiskId="1" Vital="yes"/>
+							<File Id="he_xml" Source="$(var.SolutionDir)Language\OnlineVideos\he.xml" DiskId="1" Vital="yes"/>
+							<File Id="it_xml" Source="$(var.SolutionDir)Language\OnlineVideos\it.xml" DiskId="1" Vital="yes"/>
+							<File Id="lt_LT_xml" Source="$(var.SolutionDir)Language\OnlineVideos\lt-LT.xml" DiskId="1" Vital="yes"/>
+							<File Id="nl_xml" Source="$(var.SolutionDir)Language\OnlineVideos\nl.xml" DiskId="1" Vital="yes"/>
+							<File Id="no_xml" Source="$(var.SolutionDir)Language\OnlineVideos\no.xml" DiskId="1" Vital="yes"/>
+							<File Id="pl_xml" Source="$(var.SolutionDir)Language\OnlineVideos\pl.xml" DiskId="1" Vital="yes"/>
+							<File Id="pt_xml" Source="$(var.SolutionDir)Language\OnlineVideos\pt.xml" DiskId="1" Vital="yes"/>
+							<File Id="ru_xml" Source="$(var.SolutionDir)Language\OnlineVideos\ru.xml" DiskId="1" Vital="yes"/>
+							<File Id="sk_xml" Source="$(var.SolutionDir)Language\OnlineVideos\sk.xml" DiskId="1" Vital="yes"/>
+							<File Id="sv_xml" Source="$(var.SolutionDir)Language\OnlineVideos\sv.xml" DiskId="1" Vital="yes"/>
+							<File Id="tr_xml" Source="$(var.SolutionDir)Language\OnlineVideos\tr.xml" DiskId="1" Vital="yes"/>
+							<File Id="zh_CN_xml" Source="$(var.SolutionDir)Language\OnlineVideos\zh-CN.xml" DiskId="1" Vital="yes"/>
+						</Component>
+					</Directory>
 				</Directory>
 			</Directory>
 
-      <Directory Id="DesktopFolder" Name="Desktop"/>      
+			<Directory Id="DesktopFolder" Name="Desktop"/>
 		</Directory>
 
-		<Feature Id="ProductFeature" Title="OnlineVideos Standalone" Level="1" ConfigurableDirectory="INSTALLLOCATION" Display="expand" Absent="disallow" Description="Required core files of the OnlineVideos Standalone application.">
+		<Feature Id="ProductFeature" Title="OnlineVideos Standalone" Level="1" ConfigurableDirectory="INSTALLLOCATION" Display="expand" AllowAdvertise="no" Absent="disallow" Description="Required core files of the OnlineVideos Standalone application.">
 			<ComponentRef Id="OnlineVideosStandalone" />
-      <ComponentRef Id="OnlineVideosStandaloneImages" />
-      <ComponentRef Id="OnlineVideosLanguageFlags" />
-      <ComponentRef Id="OnlineVideosLanguages" />
+			<ComponentRef Id="OnlineVideosStandaloneImages" />
+			<ComponentRef Id="OnlineVideosLanguageFlags" />
+			<ComponentRef Id="OnlineVideosLanguages" />
 
-      <!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
+			<!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
 			<ComponentGroupRef Id="Product.Generated" />
 
-      <Feature Id="SplitterFeature" Title="Source Splitter Filter" Level="1" Description="Required DirectShow Filter. Only deselect when OnlineVideos for MediaPortal is installed on this PC.">
-        <ComponentRef Id="MPUrlSource" />
-      </Feature>
-      
+			<Feature Id="SplitterFeature" Title="Source Splitter Filter" AllowAdvertise="no" Level="1" Description="Required DirectShow Filter. Only deselect when OnlineVideos for MediaPortal is installed on this PC.">
+				<ComponentRef Id="MPUrlSource" />
+			</Feature>
 		</Feature>
 
-    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
-    
-    <UI>
-      <UIRef Id="WixUI_FeatureTree" />
-    </UI>
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
 
-    <InstallExecuteSequence>
-      <Custom Action="RegisterAx" After="InstallFinalize"><![CDATA[&SplitterFeature = 3]]></Custom>
-      <Custom Action="UnregisterAx" Before="InstallInitialize"><![CDATA[&SplitterFeature = 2]]></Custom>
-    </InstallExecuteSequence>
+		<WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
+		<WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
+		
+		<UI>
+			<UIRef Id="WixUI_FeatureTree" />
+		</UI>
 
-    <CustomAction Id="StartAppOnExit" FileKey="MainExecutable" ExeCommand="" Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
-    <CustomAction Id="RegisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s "MPUrlSourceSplitter.ax"' Return="check"/>
-    <CustomAction Id="UnregisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s /u "MPUrlSourceSplitter.ax"'/>
-    
-    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Start OnlineVideos Standalone" />
-    <UI>
-      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="StartAppOnExit">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
-    </UI>
-    
+		<InstallExecuteSequence>
+			<Custom Action="RegisterAx" After="InstallFinalize"><![CDATA[&SplitterFeature = 3]]></Custom>
+			<Custom Action="UnregisterAx" Before="InstallInitialize"><![CDATA[&SplitterFeature = 2]]></Custom>
+		</InstallExecuteSequence>
+
+		<CustomAction Id="StartAppOnExit" FileKey="MainExecutable" ExeCommand="" Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
+		<CustomAction Id="RegisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s "MPUrlSourceSplitter.ax"' Return="check"/>
+		<CustomAction Id="UnregisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s /u "MPUrlSourceSplitter.ax"'/>
+
+		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Start OnlineVideos Standalone" />
+		<UI>
+			<Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="StartAppOnExit">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+		</UI>
+
 	</Product>
 </Wix>
