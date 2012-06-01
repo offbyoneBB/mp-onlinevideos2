@@ -44,18 +44,34 @@ namespace Standalone
 			
 			Config.Load(writeableBaseDir);
 
+			#region Set Directory for SiteUtilDlls with write access
 			OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES(X86)") ?? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\");
 			if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DllsDir)) OnlineVideoSettings.Instance.DllsDir = writeableBaseDir;
-
+			try
+			{
+				System.IO.File.WriteAllText(System.IO.Path.Combine(OnlineVideoSettings.Instance.DllsDir, "Temp.txt"), "");
+				System.IO.File.Delete(System.IO.Path.Combine(OnlineVideoSettings.Instance.DllsDir, "Temp.txt"));
+			}
+			catch
+			{
+				// could not write to the DllsDir - force using the writeableBaseDir
+				OnlineVideoSettings.Instance.DllsDir = writeableBaseDir;
+			}
+			#endregion
+			#region Set Directory for Thumbs (Icons, Banners and downloaded Thumbs)
 			OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\thumbs\OnlineVideos\");
 			if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ThumbsDir)) OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(writeableBaseDir, "Thumbs");
-
+			if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ThumbsDir)) System.IO.Directory.CreateDirectory(OnlineVideoSettings.Instance.ThumbsDir);
+			#endregion
+			#region Set Directory for Sites xml
 			OnlineVideoSettings.Instance.ConfigDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\");
 			if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ConfigDir)) OnlineVideoSettings.Instance.ConfigDir = writeableBaseDir;
-
-            OnlineVideoSettings.Instance.DownloadDir = System.IO.Path.Combine(writeableBaseDir, "Downloads");
+			#endregion
+			#region Set Directory for Downloads
+			OnlineVideoSettings.Instance.DownloadDir = System.IO.Path.Combine(writeableBaseDir, "Downloads");
             if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DownloadDir)) System.IO.Directory.CreateDirectory(OnlineVideoSettings.Instance.DownloadDir);
-
+			#endregion
+			#region Define default video extensions
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asf")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asf", false);
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asx")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asx", false);
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".flv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".flv", false);
@@ -64,6 +80,7 @@ namespace Standalone
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mov")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mov", false);
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mp4")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mp4", false);
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".wmv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".wmv", false);
+			#endregion
 
 			TranslationLoader.LoadTranslations(System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages"));
 
@@ -101,15 +118,23 @@ namespace Standalone
                 .Start();
 
             OnlineVideoSettings.Instance.LoadSites();
-
-            if (DateTime.Now - Config.Instance.LastAutoUpdate > TimeSpan.FromHours(1) && MessageBox.Show(this, Translation.Instance.PerformAutomaticUpdate, Translation.Instance.AutomaticUpdate, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes)
+			// force autoupdate when no dlls or icons or banners are found -> fresh install
+			bool forceUpdate = System.IO.Directory.GetFiles(OnlineVideoSettings.Instance.DllsDir, "OnlineVideos.Sites.*.dll").Length == 0 || System.IO.Directory.GetFiles(OnlineVideoSettings.Instance.ThumbsDir, "*.png", System.IO.SearchOption.AllDirectories).Length == 0;
+			if (forceUpdate || (DateTime.Now - Config.Instance.LastAutoUpdate > TimeSpan.FromHours(1) && MessageBox.Show(Translation.Instance.PerformAutomaticUpdate, Translation.Instance.AutomaticUpdate, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes))
             {
 				Title = "OnlineVideos - " + Translation.Instance.AutomaticUpdate + " ...";
                 waitCursor.Visibility = System.Windows.Visibility.Visible;
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
                     delegate()
                     {
-                        OnlineVideos.Sites.Updater.UpdateSites();
+						OnlineVideos.Sites.Updater.UpdateSites((string action, byte? percent) => 
+						{
+							if (percent != null || !string.IsNullOrEmpty(action))
+								Dispatcher.Invoke((Action)(() => {
+									if (!string.IsNullOrEmpty(action)) Title = string.Format("OnlineVideos - {0} ... {1}", Translation.Instance.AutomaticUpdate, action);
+									if (percent != null) waitCursor.tbxCenter.Text = string.Format("{0}%", percent); }));
+							return true; 
+						});
                         return null;
                     },
                     delegate(Gui2UtilConnector.ResultInfo resultInfo)
@@ -479,7 +504,7 @@ namespace Standalone
                                     var cmer = resultInfo.ResultObject as ContextMenuExecutionResult;
                                     if (!string.IsNullOrEmpty(cmer.ExecutionResultMessage))
                                     {
-                                        MessageBox.Show(this, cmer.ExecutionResultMessage, "OnlineVideos", MessageBoxButton.OK);
+                                        MessageBox.Show(cmer.ExecutionResultMessage, "OnlineVideos", MessageBoxButton.OK);
                                     }
                                     if (cmer.RefreshCurrentItems)
                                     {
@@ -539,7 +564,7 @@ namespace Standalone
 
 			// if no valid urls were returned show error msg
 			if (urlList == null || urlList.Count == 0) {
-				MessageBox.Show(this, Translation.Instance.Error, Translation.Instance.UnableToPlayVideo, MessageBoxButton.OK);
+				MessageBox.Show(Translation.Instance.Error, Translation.Instance.UnableToPlayVideo, MessageBoxButton.OK);
 				return;
 			}
 
@@ -623,7 +648,7 @@ namespace Standalone
             if (String.IsNullOrEmpty(urlToPlay) ||
 				!Utils.IsValidUri((urlToPlay.IndexOf(OnlineVideos.MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? urlToPlay.Substring(0, urlToPlay.IndexOf(OnlineVideos.MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : urlToPlay))
 			{
-				MessageBox.Show(this, Translation.Instance.Error, Translation.Instance.UnableToPlayVideo, MessageBoxButton.OK);
+				MessageBox.Show(Translation.Instance.Error, Translation.Instance.UnableToPlayVideo, MessageBoxButton.OK);
 				return;
 			}
 
@@ -667,7 +692,7 @@ namespace Standalone
                 // when the DownloadManager already contains the current DownloadInfo of the given list - show already downloading message
                 if (DownloadManager.Instance.Contains(saveItems.CurrentItem))
                 {
-                    MessageBox.Show(this, Translation.Instance.AlreadyDownloading, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(Translation.Instance.AlreadyDownloading, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
                 // check if there is already a download running from this site - yes? -> enque | no -> start now
@@ -722,7 +747,7 @@ namespace Standalone
             // if no valid urls were returned show error msg
             if (loUrlList == null || loUrlList.Count == 0)
             {
-                MessageBox.Show(this, Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -798,7 +823,7 @@ namespace Standalone
             if (String.IsNullOrEmpty(url) ||
                 !Utils.IsValidUri((url.IndexOf(SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(SimpleUrl.ParameterSeparator)) : url))
             {
-                MessageBox.Show(this, Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -896,7 +921,7 @@ namespace Standalone
             {
                 if (!preventMessageDuetoAdult)
                 {
-                    MessageBox.Show(this, string.Format(Translation.Instance.DownloadFailed, saveItems.CurrentItem.Title), Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(string.Format(Translation.Instance.DownloadFailed, saveItems.CurrentItem.Title), Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
@@ -937,7 +962,7 @@ namespace Standalone
 
                 if (!preventMessageDuetoAdult)
                 {
-                    MessageBox.Show(this, string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""), 
+                    MessageBox.Show(string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""), 
                         saveItems.CurrentItem.Downloader.Cancelled ? Translation.Instance.DownloadCancelled : Translation.Instance.DownloadComplete,
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -995,14 +1020,14 @@ namespace Standalone
             {
                 if (result.TaskError != null)
                 {
-                    MessageBox.Show(this, string.Format("{0} {1}", Translation.Instance.Error, taskDescription), result.TaskError.Message, MessageBoxButton.OK);
+                    MessageBox.Show(string.Format("{0} {1}", Translation.Instance.Error, taskDescription), result.TaskError.Message, MessageBoxButton.OK);
                 }
                 else
                 {
                     if (!result.AbortedByUser)
                     {
                         string header = result.TaskSuccess.HasValue ? Translation.Instance.Error : Translation.Instance.Timeout;
-                        MessageBox.Show(this, taskDescription, header, MessageBoxButton.OK);
+                        MessageBox.Show(taskDescription, header, MessageBoxButton.OK);
                     }
                 }
                 return false;
@@ -1249,7 +1274,7 @@ namespace Standalone
 
         private void mediaPlayer_MediaFailed(object sender, WPFMediaKit.DirectShow.MediaPlayers.MediaFailedEventArgs e)
         {
-            MessageBox.Show(this, Translation.Instance.UnableToPlayVideo + ": " +e.Message, Translation.Instance.Error, MessageBoxButton.OK);
+			MessageBox.Show(Translation.Instance.Error + ": " + e.Message, Translation.Instance.UnableToPlayVideo, MessageBoxButton.OK, MessageBoxImage.Error);
             Dispatcher.Invoke((Action)(() => { Stop_Executed(sender, null); }));
         }
 

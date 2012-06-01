@@ -34,5 +34,6 @@
                 </Canvas.RenderTransform>
             </Canvas>
         </Viewbox>
+		<TextBlock x:Name="tbxCenter" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="18"/>
     </Grid>
 </UserControl>
