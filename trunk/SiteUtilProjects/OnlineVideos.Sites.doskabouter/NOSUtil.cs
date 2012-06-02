@@ -64,21 +64,7 @@ namespace OnlineVideos.Sites
         {
             if (Specials.Live.Equals(video.Other))
                 return ParseASX(video.VideoUrl)[0];
-
-            string webData = GetWebData(video.VideoUrl);
-
-            Match m = regEx_PlaylistUrl.Match(webData);
-            if (!m.Success) return String.Empty;
-
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData(m.Groups["url"].Value));
-            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
-            nsmRequest.AddNamespace("a", "http://xspf.org/ns/0/");
-
-            XmlNode node = doc.SelectSingleNode(@"//a:location", nsmRequest);
-            if (node != null)
-                return node.InnerText;
-            return String.Empty;
+            return base.getUrl(video);
         }
 
         public override string getCurrentVideosTitle()
@@ -93,7 +79,18 @@ namespace OnlineVideos.Sites
                 switch ((Specials)category.Other)
                 {
                     case Specials.Live: return getLive();
-                    case Specials.LaatsteJournaal: return base.getVideoList(category);
+                    case Specials.LaatsteJournaal:
+                        {
+                            List<VideoInfo> res = base.getVideoList(category);
+                            foreach (VideoInfo video in res)
+                                if (!String.IsNullOrEmpty(video.VideoUrl))
+                                {
+                                    Match matchVideoUrl = Regex.Match(video.VideoUrl, @"http://nos\.nl/uitzendingen/(?<m0>\d+)-");
+                                    if (matchVideoUrl.Success)
+                                        video.VideoUrl = String.Format(@"http://content.nos.nl/content/playlist/counters/?playlist=uitzending2/flv-web01/{0}.xml", matchVideoUrl.Groups["m0"].Value);
+                                }
+                            return res;
+                        }
                 }
             string url = ((RssLink)category).Url;
 
