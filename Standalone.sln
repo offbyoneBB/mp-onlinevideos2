@@ -5,7 +5,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Standalone", "Standalone\St
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos", "OnlineVideos\OnlineVideos.csproj", "{E0D9D390-CDD6-4B98-86F3-6EB04A958882}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Standalone.Setup", "Standalone.Setup\Standalone.Setup.wixproj", "{9B495B83-5932-476C-8872-5D7BEFBD3589}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "StandaloneMSI", "Standalone.Setup\StandaloneMSI.wixproj", "{9B495B83-5932-476C-8872-5D7BEFBD3589}"
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "StandaloneEXE", "Standalone.Bootstrapper\StandaloneEXE.wixproj", "{8C248BA5-5847-49CF-B6D9-67AB85FDC34E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,16 @@ Global
 		{9B495B83-5932-476C-8872-5D7BEFBD3589}.Release|Mixed Platforms.Build.0 = Release|x86
 		{9B495B83-5932-476C-8872-5D7BEFBD3589}.Release|x86.ActiveCfg = Release|x86
 		{9B495B83-5932-476C-8872-5D7BEFBD3589}.Release|x86.Build.0 = Release|x86
+		{8C248BA5-5847-49CF-B6D9-67AB85FDC34E}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{8C248BA5-5847-49CF-B6D9-67AB85FDC34E}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{8C248BA5-5847-49CF-B6D9-67AB85FDC34E}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{8C248BA5-5847-49CF-B6D9-67AB85FDC34E}.Debug|x86.ActiveCfg = Debug|x86
+		{8C248BA5-5847-49CF-B6D9-67AB85FDC34E}.Debug|x86.Build.0 = Debug|x86
+		{8C248BA5-5847-49CF-B6D9-67AB85FDC34E}.Release|Any CPU.ActiveCfg = Release|x86
+		{8C248BA5-5847-49CF-B6D9-67AB85FDC34E}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{8C248BA5-5847-49CF-B6D9-67AB85FDC34E}.Release|Mixed Platforms.Build.0 = Release|x86
+		{8C248BA5-5847-49CF-B6D9-67AB85FDC34E}.Release|x86.ActiveCfg = Release|x86
+		{8C248BA5-5847-49CF-B6D9-67AB85FDC34E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

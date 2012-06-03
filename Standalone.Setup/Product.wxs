@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Product Id="*" Name="OnlineVideos" Language="1033" Version="1.2.1.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
-		<Package InstallerVersion="400" Compressed="yes" />
+		<Package InstallerVersion="400" Compressed="yes" InstallScope="perMachine" Platform="x86" />
 
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
+		
+		<Property Id="MPURLSOURCESPLITTERREGISTERED">
+			<RegistrySearch Id="MpUrlSourceSplitterPath" Root="HKCR" Key="CLSID\{59ED045A-A938-4A09-A8A6-8231F5834259}\InprocServer32" Type="file" Win64="no">
+				<FileSearch Id="MpUrlSourceSplitterFileFound" Name="[MpUrlSourceSplitterPath]"/>
+			</RegistrySearch>
+		</Property>
+		
 		<Property Id="ARPPRODUCTICON">$(var.Standalone.TargetFileName)</Property>
 		<Property Id="ARPURLINFOABOUT">http://code.google.com/p/mp-onlinevideos2/</Property>
 		<Property Id="ARPURLUPDATEINFO">https://code.google.com/p/mp-onlinevideos2/downloads/list</Property>
@@ -131,31 +139,17 @@
 
 			<Feature Id="SplitterFeature" Title="Source Splitter Filter" AllowAdvertise="no" Level="1" Description="Required DirectShow Filter. Only deselect when OnlineVideos for MediaPortal is installed on this PC.">
 				<ComponentRef Id="MPUrlSource" />
+				<Condition Level="0">MPURLSOURCESPLITTERREGISTERED</Condition>
 			</Feature>
 		</Feature>
 
-		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
-
-		<WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
-		<WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
-		
-		<UI>
-			<UIRef Id="WixUI_FeatureTree" />
-		</UI>
+		<CustomAction Id="RegisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s "MPUrlSourceSplitter.ax"' Return="check"/>
+		<CustomAction Id="UnregisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s /u "MPUrlSourceSplitter.ax"'/>
 
 		<InstallExecuteSequence>
 			<Custom Action="RegisterAx" After="InstallFinalize"><![CDATA[&SplitterFeature = 3]]></Custom>
 			<Custom Action="UnregisterAx" Before="InstallInitialize"><![CDATA[&SplitterFeature = 2]]></Custom>
 		</InstallExecuteSequence>
-
-		<CustomAction Id="StartAppOnExit" FileKey="MainExecutable" ExeCommand="" Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
-		<CustomAction Id="RegisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s "MPUrlSourceSplitter.ax"' Return="check"/>
-		<CustomAction Id="UnregisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s /u "MPUrlSourceSplitter.ax"'/>
-
-		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Start OnlineVideos Standalone" />
-		<UI>
-			<Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="StartAppOnExit">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
-		</UI>
-
+		
 	</Product>
 </Wix>
