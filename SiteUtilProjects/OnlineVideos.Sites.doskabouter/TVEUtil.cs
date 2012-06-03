@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Web;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
@@ -46,6 +47,28 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            if ("livestream".Equals(video.Other))
+            {
+                string data = GetWebData(video.VideoUrl);
+                Match m2 = Regex.Match(data, @"<param\sname=""flashvars""\svalue=""assetID=(?<assetid>[^_]*)_");
+                if (m2.Success)
+                {
+                    data = GetWebData(String.Format(@"http://www.rtve.es/api/videos/{0}/config/portada.json", m2.Groups["assetid"].Value));
+                    m2 = Regex.Match(data, @"""file"":""(?<url>[^""]*)""");
+                    if (m2.Success)
+                    {
+                        RtmpUrl rtmpUrl = new RtmpUrl(m2.Groups["url"].Value)
+                        {
+                            Live = true,
+                            SwfVerify = true,
+                            SwfUrl = @"http://www.rtve.es/swf/4.0.32/RTVEPlayerVideo.swf"
+                        };
+                        return rtmpUrl.ToString();
+                    }
+                }
+                return null;
+            }
+
             //http://www.rtve.es/alacarta/videos/amar-en-tiempos-revueltos/amar-tiempos-revueltos-t6-capitulos-211-212/1137920/
             string[] parts = video.VideoUrl.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             string url = String.Format(@"http://www.rtve.es/swf/data/es/videos/video/{0}/{1}.xml",
@@ -60,6 +83,13 @@ namespace OnlineVideos.Sites
             Match m = Regex.Match(webData, @"<key>ASD_FILE</key>\s*<value>/deliverty/demo/resources/(?<url>[^<]*)</value>");
             if (m.Success)
                 return baseUrl + @"/resources/TE_NGVA/" + m.Groups["url"].Value;
+            // get ipad url
+            webData = GetWebData(video.VideoUrl, userAgent: "Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10");
+            m = Regex.Match(webData, @"<a\shref=""/usuarios/sharesend.shtml\?urlContent\=(?<url>[^""]+)"" target");
+            if (m.Success)
+            {
+                return new Uri(new Uri(baseUrl), m.Groups["url"].Value).AbsoluteUri;
+            }
             return null;
         }
 
