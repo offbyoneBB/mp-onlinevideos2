@@ -1160,6 +1160,14 @@
         <Category xsi:type="RssLink" name="Canal 24 horas">http://www.rtve.es/alacarta/programas/24-horas/todos/1/</Category>
         <Category xsi:type="RssLink" name="Teledeporte">http://www.rtve.es/alacarta/programas/teledeporte/todos/1/</Category>
         <Category xsi:type="RssLink" name="Clan TVE">http://www.rtve.es/alacarta/programas/clan/todos/1/</Category>
+        <Category xsi:type="Group" name="Live TV">
+          <Channels>
+            <Channel name="La 1" thumb="http://img.irtve.es/imagenes/jpg/1331812793943.jpg" desc="">http://www.rtve.es/noticias/directo-la-1/</Channel>
+            <Channel name="La 2" thumb="http://img.irtve.es/imagenes/jpg/1331812807613.jpg" desc="">http://www.rtve.es/television/la-2-directo/</Channel>
+            <Channel name="24h" thumb="http://img.irtve.es/imagenes/jpg/1331812821628.jpg" desc="">http://www.rtve.es/noticias/directo/canal-24h/</Channel>
+            <Channel name="TDP" thumb="http://img.irtve.es/imagenes/jpg/1331812833746.jpg" desc="">http://www.rtve.es/deportes/directo/teledeporte/</Channel>
+          </Channels>
+        </Category>
       </Categories>
     </Site>
     <Site name="TVNZOnDemand" util="TVNZOnDemand" agecheck="false" enabled="true" lang="en" player="Internal">
