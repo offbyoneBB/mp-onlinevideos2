@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2009 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2009 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -32,9 +32,7 @@ typedef enum {
   POP3_USER,
   POP3_PASS,
   POP3_STARTTLS,
-  POP3_LIST,
-  POP3_LIST_SINGLE,
-  POP3_RETR,
+  POP3_COMMAND,
   POP3_QUIT,
   POP3_LAST  /* never used */
 } pop3state;
@@ -43,11 +41,12 @@ typedef enum {
    struct */
 struct pop3_conn {
   struct pingpong pp;
-  char *mailbox;     /* what to RETR */
+  char *mailbox;     /* message id */
+  char *custom;      /* custom request */
   size_t eob;        /* number of bytes of the EOB (End Of Body) that has been
                         received thus far */
   size_t strip;      /* number of bytes from the start to ignore as non-body */
-  pop3state state; /* always use pop3.c:state() to change state! */
+  pop3state state;   /* always use pop3.c:state() to change state! */
 };
 
 extern const struct Curl_handler Curl_handler_pop3;

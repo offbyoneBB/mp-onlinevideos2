@@ -63,10 +63,6 @@
 #error "We can't compile without socket() support!"
 #endif
 
-#ifdef USE_LIBRTMP
-#include <librtmp/rtmp.h>
-#endif
-
 #include "urldata.h"
 #include <curl/curl.h>
 #include "netrc.h"
@@ -90,6 +86,10 @@
 #include "multiif.h"
 #include "connect.h"
 #include "non-ascii.h"
+
+#ifdef USE_LIBRTMP
+#include <librtmp/rtmp.h>
+#endif
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -995,7 +995,6 @@ CURLcode Curl_readwrite(struct connectdata *conn,
   bool rtmpProtocolActive = false;
   bool rtmpProtocolFinished = false;
 #endif
-
   struct SessionHandle *data = conn->data;
   struct SingleRequest *k = &data->req;
   CURLcode result;
@@ -1032,8 +1031,7 @@ CURLcode Curl_readwrite(struct connectdata *conn,
   /* We go ahead and do a read if we have a readable socket or if
      the stream was rewound (in which case we have data in a
      buffer) */
-  
-  #ifdef USE_LIBRTMP
+#ifdef USE_LIBRTMP
   rtmpProtocolActive = (conn->handler->protocol & (CURLPROTO_RTMP | CURLPROTO_RTMPE | CURLPROTO_RTMPS | CURLPROTO_RTMPT | CURLPROTO_RTMPTE | CURLPROTO_RTMPTS));
 
   if (rtmpProtocolActive)
@@ -1050,35 +1048,35 @@ CURLcode Curl_readwrite(struct connectdata *conn,
 #endif
 
   if((k->keepon & KEEP_RECV) &&
-     ((select_res & CURL_CSELECT_IN) || conn->bits.stream_was_rewound
+    ((select_res & CURL_CSELECT_IN) || conn->bits.stream_was_rewound
 #ifdef USE_LIBRTMP
-     // in case of RTMP protocol read always data independently of socket state
-     // in another case can be some data unprocessed and we will be waiting for no reason
-     || rtmpProtocolActive
+    // in case of RTMP protocol read always data independently of socket state
+    // in another case can be some data unprocessed and we will be waiting for no reason
+    || rtmpProtocolActive
 #endif
-     )) {
+    )) {
 #ifdef USE_LIBRTMP
-       if ((rtmpProtocolActive && (!rtmpProtocolFinished)) || (!rtmpProtocolActive))
-       {
+      if ((rtmpProtocolActive && (!rtmpProtocolFinished)) || (!rtmpProtocolActive))
+      {
 #endif
-         result = readwrite_data(data, conn, k, &didwhat, done);
+        result = readwrite_data(data, conn, k, &didwhat, done);
 
 #ifdef USE_LIBRTMP
-         if (rtmpProtocolActive)
-         {
-           RTMP *r = (RTMP *)conn->proto.generic;
-           if ((r->m_read.status == RTMP_READ_COMPLETE))
-           {
-             // set done flag
-             *done = TRUE;
-           }
-         }
+        if (rtmpProtocolActive)
+        {
+          RTMP *r = (RTMP *)conn->proto.generic;
+          if ((r->m_read.status == RTMP_READ_COMPLETE))
+          {
+            // set done flag
+            *done = TRUE;
+          }
+        }
 #endif
 
-         if(result || *done)
-           return result;
+        if(result || *done)
+          return result;
 #ifdef USE_LIBRTMP
-       }
+      }
 #endif
   }
   else if(k->keepon & KEEP_RECV) {
@@ -1915,7 +1913,7 @@ CURLcode Curl_follow(struct SessionHandle *data,
      */
     if((data->set.httpreq == HTTPREQ_POST
         || data->set.httpreq == HTTPREQ_POST_FORM)
-       && !data->set.post301) {
+       && !(data->set.keep_post & CURL_REDIR_POST_301)) {
       infof(data,
             "Violate RFC 2616/10.3.2 and switch from POST to GET\n");
       data->set.httpreq = HTTPREQ_GET;
@@ -1943,7 +1941,7 @@ CURLcode Curl_follow(struct SessionHandle *data,
     */
     if((data->set.httpreq == HTTPREQ_POST
         || data->set.httpreq == HTTPREQ_POST_FORM)
-       && !data->set.post302) {
+       && !(data->set.keep_post & CURL_REDIR_POST_302)) {
       infof(data,
             "Violate RFC 2616/10.3.3 and switch from POST to GET\n");
       data->set.httpreq = HTTPREQ_GET;
@@ -1951,9 +1949,10 @@ CURLcode Curl_follow(struct SessionHandle *data,
     break;
 
   case 303: /* See Other */
-    /* Disable both types of POSTs, since doing a second POST when
-     * following isn't what anyone would want! */
-    if(data->set.httpreq != HTTPREQ_GET) {
+    /* Disable both types of POSTs, unless the user explicitely
+       asks for POST after POST */
+    if(data->set.httpreq != HTTPREQ_GET
+      && !(data->set.keep_post & CURL_REDIR_POST_303)) {
       data->set.httpreq = HTTPREQ_GET; /* enforce GET request */
       infof(data, "Disables POST, goes with %s\n",
             data->set.opt_no_body?"HEAD":"GET");
@@ -1975,7 +1974,7 @@ CURLcode Curl_follow(struct SessionHandle *data,
     break;
   }
   Curl_pgrsTime(data, TIMER_REDIRECT);
-  Curl_pgrsResetTimes(data);
+  Curl_pgrsResetTimesSizes(data);
 
   return CURLE_OK;
 #endif /* CURL_DISABLE_HTTP */

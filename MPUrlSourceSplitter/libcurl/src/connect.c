@@ -91,6 +91,35 @@
 
 static bool verifyconnect(curl_socket_t sockfd, int *error);
 
+static void
+tcpkeepalive(struct SessionHandle *data,
+             curl_socket_t sockfd)
+{
+  int optval = data->set.tcp_keepalive?1:0;
+
+  /* only set IDLE and INTVL if setting KEEPALIVE is successful */
+  if(setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE,
+        (void *)&optval, sizeof(optval)) < 0) {
+    infof(data, "Failed to set SO_KEEPALIVE on fd %d\n", sockfd);
+  }
+  else {
+#ifdef TCP_KEEPIDLE
+    optval = curlx_sltosi(data->set.tcp_keepidle);
+    if(setsockopt(sockfd, IPPROTO_TCP, TCP_KEEPIDLE,
+          (void *)&optval, sizeof(optval)) < 0) {
+      infof(data, "Failed to set TCP_KEEPIDLE on fd %d\n", sockfd);
+    }
+#endif
+#ifdef TCP_KEEPINTVL
+    optval = curlx_sltosi(data->set.tcp_keepintvl);
+    if(setsockopt(sockfd, IPPROTO_TCP, TCP_KEEPINTVL,
+          (void *)&optval, sizeof(optval)) < 0) {
+      infof(data, "Failed to set TCP_KEEPINTVL on fd %d\n", sockfd);
+    }
+#endif
+  }
+}
+
 static CURLcode
 singleipconnect(struct connectdata *conn,
                 const Curl_addrinfo *ai, /* start connecting to this */
@@ -732,6 +761,8 @@ CURLcode Curl_is_connected(struct connectdata *conn,
   }
   next:
 
+  conn->timeoutms_per_addr = conn->ip_addr->ai_next == NULL ?
+                             allow : allow / 2;
   code = trynextip(conn, sockindex, connected);
 
   if(code) {
@@ -850,7 +881,10 @@ singleipconnect(struct connectdata *conn,
 
   res = Curl_socket(conn, ai, &addr, &sockfd);
   if(res)
-    return res;
+    /* Failed to create the socket, but still return OK since we signal the
+       lack of socket as well. This allows the parent function to keep looping
+       over alternative addresses/socket families etc. */
+    return CURLE_OK;
 
   /* store remote address and port used in this connection attempt */
   if(!getaddressinfo((struct sockaddr*)&addr.sa_addr,
@@ -873,6 +907,9 @@ singleipconnect(struct connectdata *conn,
   nosigpipe(conn, sockfd);
 
   Curl_sndbufset(sockfd);
+
+  if(data->set.tcp_keepalive)
+    tcpkeepalive(data, sockfd);
 
   if(data->set.fsockopt) {
     /* activate callback for setting socket options */
@@ -989,7 +1026,6 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
 {
   struct SessionHandle *data = conn->data;
   curl_socket_t sockfd = CURL_SOCKET_BAD;
-  int aliasindex;
   Curl_addrinfo *ai;
   Curl_addrinfo *curr_addr;
 
@@ -1013,9 +1049,7 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
     return CURLE_OPERATION_TIMEDOUT;
   }
 
-  /* Max time for each address */
   conn->num_addr = Curl_num_addresses(remotehost->addr);
-  conn->timeoutms_per_addr = timeout_ms / conn->num_addr;
 
   ai = remotehost->addr;
 
@@ -1026,16 +1060,18 @@ CURLcode Curl_connecthost(struct connectdata *conn,  /* context */
   /*
    * Connecting with a Curl_addrinfo chain
    */
-  for(curr_addr = ai, aliasindex=0; curr_addr;
-      curr_addr = curr_addr->ai_next, aliasindex++) {
+  for(curr_addr = ai; curr_addr; curr_addr = curr_addr->ai_next) {
+    CURLcode res;
+
+    /* Max time for the next address */
+    conn->timeoutms_per_addr = curr_addr->ai_next == NULL ?
+                               timeout_ms : timeout_ms / 2;
 
     /* start connecting to the IP curr_addr points to */
-    CURLcode res =
-      singleipconnect(conn, curr_addr,
-                      /* don't hang when doing multi */
-                      (data->state.used_interface == Curl_if_multi)?0:
-                      conn->timeoutms_per_addr, &sockfd, connected);
-
+    res = singleipconnect(conn, curr_addr,
+                          /* don't hang when doing multi */
+                          (data->state.used_interface == Curl_if_multi)?0:
+                          conn->timeoutms_per_addr, &sockfd, connected);
     if(res)
       return res;
 
@@ -1195,7 +1231,7 @@ CURLcode Curl_socket(struct connectdata *conn,
 
   if(*sockfd == CURL_SOCKET_BAD)
     /* no socket, no connection */
-    return CURLE_FAILED_INIT;
+    return CURLE_COULDNT_CONNECT;
 
 #if defined(ENABLE_IPV6) && defined(HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID)
   if(conn->scope && (addr->family == AF_INET6)) {

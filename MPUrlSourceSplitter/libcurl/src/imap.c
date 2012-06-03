@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -78,7 +78,6 @@
 #include "url.h"
 #include "rawstr.h"
 #include "strtoofft.h"
-#include "http_proxy.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -344,6 +343,36 @@ static void imap_to_imaps(struct connectdata *conn)
 #define imap_to_imaps(x) Curl_nop_stmt
 #endif
 
+/* for the initial server greeting */
+static CURLcode imap_state_servergreet_resp(struct connectdata *conn,
+                                            int imapcode,
+                                            imapstate instate)
+{
+  CURLcode result = CURLE_OK;
+  struct SessionHandle *data = conn->data;
+
+  (void)instate; /* no use for this yet */
+
+  if(imapcode != 'O') {
+    failf(data, "Got unexpected imap-server response");
+    return CURLE_FTP_WEIRD_SERVER_REPLY;
+  }
+
+  if(data->set.use_ssl && !conn->ssl[FIRSTSOCKET].use) {
+    /* We don't have a SSL/TLS connection yet, but SSL is requested. Switch
+       to TLS connection now */
+    const char *str;
+
+    str = getcmdid(conn);
+    result = imapsendf(conn, str, "%s STARTTLS", str);
+    state(conn, IMAP_STARTTLS);
+  }
+  else
+    result = imap_state_login(conn);
+
+  return result;
+}
+
 /* for STARTTLS responses */
 static CURLcode imap_state_starttls_resp(struct connectdata *conn,
                                          int imapcode,
@@ -374,7 +403,9 @@ static CURLcode imap_state_starttls_resp(struct connectdata *conn,
       }
     }
   }
+
   state(conn, IMAP_STOP);
+
   return result;
 }
 
@@ -401,6 +432,7 @@ static CURLcode imap_state_login_resp(struct connectdata *conn,
 {
   CURLcode result = CURLE_OK;
   struct SessionHandle *data = conn->data;
+
   (void)instate; /* no use for this yet */
 
   if(imapcode != 'O') {
@@ -409,6 +441,7 @@ static CURLcode imap_state_login_resp(struct connectdata *conn,
   }
 
   state(conn, IMAP_STOP);
+
   return result;
 }
 
@@ -423,6 +456,7 @@ static CURLcode imap_state_fetch_resp(struct connectdata *conn,
   struct FTP *imap = data->state.proto.imap;
   struct pingpong *pp = &imapc->pp;
   const char *ptr = data->state.buffer;
+
   (void)instate; /* no use for this yet */
 
   if('*' != imapcode) {
@@ -490,6 +524,7 @@ static CURLcode imap_state_fetch_resp(struct connectdata *conn,
     result = CURLE_FTP_WEIRD_SERVER_REPLY; /* TODO: fix this code */
 
   state(conn, IMAP_STOP);
+
   return result;
 }
 
@@ -559,7 +594,6 @@ static CURLcode imap_statemach_act(struct connectdata *conn)
 {
   CURLcode result;
   curl_socket_t sock = conn->sock[FIRSTSOCKET];
-  struct SessionHandle *data=conn->data;
   int imapcode;
   struct imap_conn *imapc = &conn->proto.imapc;
   struct pingpong *pp = &imapc->pp;
@@ -581,24 +615,7 @@ static CURLcode imap_statemach_act(struct connectdata *conn)
   /* we have now received a full IMAP server response */
   switch(imapc->state) {
   case IMAP_SERVERGREET:
-    if(imapcode != 'O') {
-      failf(data, "Got unexpected imap-server response");
-      return CURLE_FTP_WEIRD_SERVER_REPLY;
-    }
-
-    if(data->set.use_ssl && !conn->ssl[FIRSTSOCKET].use) {
-      /* We don't have a SSL/TLS connection yet, but SSL is requested. Switch
-         to TLS connection now */
-      const char *str;
-
-      str = getcmdid(conn);
-      result = imapsendf(conn, str, "%s STARTTLS", str);
-      state(conn, IMAP_STARTTLS);
-    }
-    else
-      result = imap_state_login(conn);
-    if(result)
-      return result;
+    result = imap_state_servergreet_resp(conn, imapcode, imapc->state);
     break;
 
   case IMAP_LOGIN:
@@ -720,33 +737,6 @@ static CURLcode imap_connect(struct connectdata *conn,
   pp->statemach_act = imap_statemach_act;
   pp->endofresp = imap_endofresp;
   pp->conn = conn;
-
-  if(conn->bits.tunnel_proxy && conn->bits.httpproxy) {
-    /* for IMAP over HTTP proxy */
-    struct HTTP http_proxy;
-    struct FTP *imap_save;
-
-    /* BLOCKING */
-    /* We want "seamless" IMAP operations through HTTP proxy tunnel */
-
-    /* Curl_proxyCONNECT is based on a pointer to a struct HTTP at the member
-     * conn->proto.http; we want IMAP through HTTP and we have to change the
-     * member temporarily for connecting to the HTTP proxy. After
-     * Curl_proxyCONNECT we have to set back the member to the original struct
-     * IMAP pointer
-     */
-    imap_save = data->state.proto.imap;
-    memset(&http_proxy, 0, sizeof(http_proxy));
-    data->state.proto.http = &http_proxy;
-
-    result = Curl_proxyCONNECT(conn, FIRSTSOCKET,
-                               conn->host.name, conn->remote_port);
-
-    data->state.proto.imap = imap_save;
-
-    if(CURLE_OK != result)
-      return result;
-  }
 
   if((conn->handler->flags & PROTOPT_SSL) &&
      data->state.used_interface != Curl_if_multi) {

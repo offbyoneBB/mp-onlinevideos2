@@ -67,6 +67,7 @@
 #include <x509v3.h>
 #endif
 
+#include "warnless.h"
 #include "curl_memory.h"
 #include "non-ascii.h" /* for Curl_convert_from_utf8 prototype */
 
@@ -144,7 +145,7 @@
 static char global_passwd[64];
 #endif
 
-static int passwd_callback(char *buf, int num, int verify
+static int passwd_callback(char *buf, int num, int encrypting
 #ifdef HAVE_USERDATA_IN_PWD_CALLBACK
                            /* This was introduced in 0.9.4, we can set this
                               using SSL_CTX_set_default_passwd_cb_userdata()
@@ -153,12 +154,13 @@ static int passwd_callback(char *buf, int num, int verify
 #endif
                            )
 {
-  if(verify)
-    fprintf(stderr, "%s\n", buf);
-  else {
-    if(num > (int)strlen((char *)global_passwd)) {
-      strcpy(buf, global_passwd);
-      return (int)strlen(buf);
+  DEBUGASSERT(0 == encrypting);
+
+  if(!encrypting) {
+    int klen = curlx_uztosi(strlen((char *)global_passwd));
+    if(num > klen) {
+      memcpy(buf, global_passwd, klen+1);
+      return klen;
     }
   }
   return 0;
@@ -254,7 +256,7 @@ static int ossl_seed(struct SessionHandle *data)
       if(!area)
         return 3; /* out of memory */
 
-      len = (int)strlen(area);
+      len = curlx_uztosi(strlen(area));
       RAND_add(area, len, (len >> 1));
 
       free(area); /* now remove the random junk */
@@ -338,6 +340,8 @@ int cert_stuff(struct connectdata *conn,
       size_t len = strlen(data->set.str[STRING_KEY_PASSWD]);
       if(len < sizeof(global_passwd))
         memcpy(global_passwd, data->set.str[STRING_KEY_PASSWD], len+1);
+      else
+        global_passwd[0] = '\0';
 #else
       /*
        * We set the password in the callback userdata
@@ -1044,40 +1048,50 @@ static int asn1_output(const ASN1_UTCTIME *tm,
  * E.g.
  *  "foo.host.com" matches "*.host.com".
  *
- * We are a bit more liberal than RFC2818 describes in that we
- * accept multiple "*" in pattern (similar to what some other browsers do).
- * E.g.
- *  "abc.def.domain.com" should strickly not match "*.domain.com", but we
- *  don't consider "." to be important in CERT checking.
+ * We use the matching rule described in RFC6125, section 6.4.3.
+ * http://tools.ietf.org/html/rfc6125#section-6.4.3
  */
 #define HOST_NOMATCH 0
 #define HOST_MATCH   1
 
 static int hostmatch(const char *hostname, const char *pattern)
 {
-  for(;;) {
-    char c = *pattern++;
-
-    if(c == '\0')
-      return (*hostname ? HOST_NOMATCH : HOST_MATCH);
-
-    if(c == '*') {
-      c = *pattern;
-      if(c == '\0')      /* "*\0" matches anything remaining */
-        return HOST_MATCH;
-
-      while(*hostname) {
-        /* The only recursive function in libcurl! */
-        if(hostmatch(hostname++,pattern) == HOST_MATCH)
-          return HOST_MATCH;
-      }
-      break;
-    }
-
-    if(Curl_raw_toupper(c) != Curl_raw_toupper(*hostname++))
-      break;
+  const char *pattern_label_end, *pattern_wildcard, *hostname_label_end;
+  int wildcard_enabled;
+  size_t prefixlen, suffixlen;
+  pattern_wildcard = strchr(pattern, '*');
+  if(pattern_wildcard == NULL) {
+    return Curl_raw_equal(pattern, hostname) ? HOST_MATCH : HOST_NOMATCH;
   }
-  return HOST_NOMATCH;
+  /* We require at least 2 dots in pattern to avoid too wide wildcard
+     match. */
+  wildcard_enabled = 1;
+  pattern_label_end = strchr(pattern, '.');
+  if(pattern_label_end == NULL || strchr(pattern_label_end+1, '.') == NULL ||
+     pattern_wildcard > pattern_label_end ||
+     Curl_raw_nequal(pattern, "xn--", 4)) {
+    wildcard_enabled = 0;
+  }
+  if(!wildcard_enabled) {
+    return Curl_raw_equal(pattern, hostname) ? HOST_MATCH : HOST_NOMATCH;
+  }
+  hostname_label_end = strchr(hostname, '.');
+  if(hostname_label_end == NULL ||
+     !Curl_raw_equal(pattern_label_end, hostname_label_end)) {
+    return HOST_NOMATCH;
+  }
+  /* The wildcard must match at least one character, so the left-most
+     label of the hostname is at least as large as the left-most label
+     of the pattern. */
+  if(hostname_label_end - hostname < pattern_label_end - pattern) {
+    return HOST_NOMATCH;
+  }
+  prefixlen = pattern_wildcard - pattern;
+  suffixlen = pattern_label_end - (pattern_wildcard+1);
+  return Curl_raw_nequal(pattern, hostname, prefixlen) &&
+    Curl_raw_nequal(pattern_wildcard+1, hostname_label_end - suffixlen,
+                    suffixlen) ?
+    HOST_MATCH : HOST_NOMATCH;
 }
 
 static int
@@ -1252,7 +1266,7 @@ static CURLcode verifyhost(struct connectdata *conn,
         else /* not a UTF8 name */
           j = ASN1_STRING_to_UTF8(&peer_CN, tmp);
 
-        if(peer_CN && ((int)strlen((char *)peer_CN) != j)) {
+        if(peer_CN && (curlx_uztosi(strlen((char *)peer_CN)) != j)) {
           /* there was a terminating zero before the end of string, this
              cannot match and we return failure! */
           failf(data, "SSL: illegal cert name field");
@@ -1566,7 +1580,10 @@ ossl_connect_step1(struct connectdata *conn,
 #endif
 
 #ifdef SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS
-  ctx_options &= ~SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS;
+  /* unless the user explicitly ask to allow the protocol vulnerability we
+     use the work-around */
+  if(!conn->data->set.ssl_enable_beast)
+    ctx_options &= ~SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS;
 #endif
 
   /* disable SSLv2 in the default case (i.e. allow SSLv3 and TLSv1) */
@@ -1786,6 +1803,7 @@ ossl_connect_step2(struct connectdata *conn, int sockindex)
                                  256 bytes long. */
       CURLcode rc;
       const char *cert_problem = NULL;
+      long lerr;
 
       connssl->connecting_state = ssl_connect_2; /* the connection failed,
                                                     we're not waiting for
@@ -1807,12 +1825,22 @@ ossl_connect_step2(struct connectdata *conn, int sockindex)
            SSL routines:
            SSL3_GET_SERVER_CERTIFICATE:
            certificate verify failed */
-        cert_problem = "SSL certificate problem, verify that the CA cert is"
-          " OK. Details:\n";
         rc = CURLE_SSL_CACERT;
+
+        lerr = SSL_get_verify_result(connssl->handle);
+        if(lerr != X509_V_OK) {
+          snprintf(error_buffer, sizeof(error_buffer),
+                   "SSL certificate problem: %s",
+                   X509_verify_cert_error_string(lerr));
+        }
+        else
+          cert_problem = "SSL certificate problem, verify that the CA cert is"
+            " OK.";
+
         break;
       default:
         rc = CURLE_SSL_CONNECT_ERROR;
+        SSL_strerror(errdetail, error_buffer, sizeof(error_buffer));
         break;
       }
 
@@ -1829,7 +1857,6 @@ ossl_connect_step2(struct connectdata *conn, int sockindex)
       }
       /* Could be a CERT problem */
 
-      SSL_strerror(errdetail, error_buffer, sizeof(error_buffer));
       failf(data, "%s%s", cert_problem ? cert_problem : "", error_buffer);
       return rc;
     }

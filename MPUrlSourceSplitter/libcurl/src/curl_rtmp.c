@@ -30,7 +30,6 @@
 #include "transfer.h"
 #include <curl/curl.h>
 #include <librtmp/rtmp.h>
-#include <librtmp/log.h>
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -38,6 +37,8 @@
 #include "curl_memory.h"
 /* The last #include file should be: */
 #include "memdebug.h"
+
+#include <librtmp/log.h>
 
 #ifdef _WIN32
 #define setsockopt(a,b,c,d,e) (setsockopt)(a,b,c,(const char *)d,(int)e)
@@ -225,12 +226,11 @@ static CURLcode rtmp_connect(struct connectdata *conn, bool *done)
     r->Link.lFlags |= RTMP_LF_BUFX;
 
   curlx_nonblock(r->m_sb.sb_socket, FALSE);
-
   if (conn->data->set.connecttimeout != 0)
   {
     // connect timeout set
     // timeout is divided by three to make at least two connection attempts
-    tv = max((int)conn->data->set.connecttimeout, 1000);
+    tv = max((int)conn->data->set.connecttimeout / 3, 1000);
   }
 
   RTMP_Log(r, RTMP_LOGDEBUG, "socket timeout: %d (ms)", tv);
