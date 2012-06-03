@@ -3197,33 +3197,6 @@ static CURLcode ftp_connect(struct connectdata *conn,
   pp->endofresp = ftp_endofresp;
   pp->conn = conn;
 
-  if(conn->bits.tunnel_proxy && conn->bits.httpproxy) {
-    /* for FTP over HTTP proxy */
-    struct HTTP http_proxy;
-    struct FTP *ftp_save;
-
-    /* BLOCKING */
-    /* We want "seamless" FTP operations through HTTP proxy tunnel */
-
-    /* Curl_proxyCONNECT is based on a pointer to a struct HTTP at the member
-     * conn->proto.http; we want FTP through HTTP and we have to change the
-     * member temporarily for connecting to the HTTP proxy. After
-     * Curl_proxyCONNECT we have to set back the member to the original struct
-     * FTP pointer
-     */
-    ftp_save = data->state.proto.ftp;
-    memset(&http_proxy, 0, sizeof(http_proxy));
-    data->state.proto.http = &http_proxy;
-
-    result = Curl_proxyCONNECT(conn, FIRSTSOCKET,
-                               conn->host.name, conn->remote_port);
-
-    data->state.proto.ftp = ftp_save;
-
-    if(CURLE_OK != result)
-      return result;
-  }
-
   if(conn->handler->flags & PROTOPT_SSL) {
     /* BLOCKING */
     result = Curl_ssl_connect(conn, FIRSTSOCKET);
@@ -3851,15 +3824,17 @@ static CURLcode init_wc_data(struct connectdata *conn)
      resources for wildcard transfer */
 
   /* allocate ftp protocol specific temporary wildcard data */
-  ftp_tmp = malloc(sizeof(struct ftp_wc_tmpdata));
+  ftp_tmp = calloc(1, sizeof(struct ftp_wc_tmpdata));
   if(!ftp_tmp) {
+    Curl_safefree(wildcard->pattern);
     return CURLE_OUT_OF_MEMORY;
   }
 
   /* INITIALIZE parselist structure */
   ftp_tmp->parser = Curl_ftp_parselist_data_alloc();
   if(!ftp_tmp->parser) {
-    free(ftp_tmp);
+    Curl_safefree(wildcard->pattern);
+    Curl_safefree(ftp_tmp);
     return CURLE_OUT_OF_MEMORY;
   }
 
@@ -3873,7 +3848,20 @@ static CURLcode init_wc_data(struct connectdata *conn)
   /* try to parse ftp url */
   ret = ftp_parse_url_path(conn);
   if(ret) {
+    Curl_safefree(wildcard->pattern);
+    wildcard->tmp_dtor(wildcard->tmp);
+    wildcard->tmp_dtor = ZERO_NULL;
+    wildcard->tmp = NULL;
     return ret;
+  }
+
+  wildcard->path = strdup(conn->data->state.path);
+  if(!wildcard->path) {
+    Curl_safefree(wildcard->pattern);
+    wildcard->tmp_dtor(wildcard->tmp);
+    wildcard->tmp_dtor = ZERO_NULL;
+    wildcard->tmp = NULL;
+    return CURLE_OUT_OF_MEMORY;
   }
 
   /* backup old write_function */
@@ -3884,11 +3872,6 @@ static CURLcode init_wc_data(struct connectdata *conn)
   ftp_tmp->backup.file_descriptor = conn->data->set.out;
   /* let the writefunc callback know what curl pointer is working with */
   conn->data->set.out = conn;
-
-  wildcard->path = strdup(conn->data->state.path);
-  if(!wildcard->path) {
-    return CURLE_OUT_OF_MEMORY;
-  }
 
   infof(conn->data, "Wildcard - Parsing started\n");
   return CURLE_OK;
@@ -3916,6 +3899,8 @@ static CURLcode wc_statemach(struct connectdata *conn)
     struct ftp_wc_tmpdata *ftp_tmp = wildcard->tmp;
     conn->data->set.fwrite_func = ftp_tmp->backup.write_function;
     conn->data->set.out = ftp_tmp->backup.file_descriptor;
+    ftp_tmp->backup.write_function = ZERO_NULL;
+    ftp_tmp->backup.file_descriptor = NULL;
     wildcard->state = CURLWC_DOWNLOADING;
 
     if(Curl_ftp_parselist_geterror(ftp_tmp->parser)) {
@@ -4271,7 +4256,8 @@ CURLcode ftp_parse_url_path(struct connectdata *conn)
         return CURLE_OUT_OF_MEMORY;
 
       ftpc->dirs[0] = curl_easy_unescape(conn->data, slash_pos ? cur_pos : "/",
-                                         slash_pos?(int)(slash_pos-cur_pos):1,
+                                         slash_pos ?
+                                         curlx_sztosi(slash_pos-cur_pos) : 1,
                                          NULL);
       if(!ftpc->dirs[0]) {
         freedirs(ftpc);
@@ -4310,7 +4296,7 @@ CURLcode ftp_parse_url_path(struct connectdata *conn)
           /* we skip empty path components, like "x//y" since the FTP command
              CWD requires a parameter and a non-existent parameter a) doesn't
              work on many servers and b) has no effect on the others. */
-          int len = (int)(slash_pos - cur_pos + absolute_dir);
+          int len = curlx_sztosi(slash_pos - cur_pos + absolute_dir);
           ftpc->dirs[ftpc->dirdepth] =
             curl_easy_unescape(conn->data, cur_pos - absolute_dir, len, NULL);
           if(!ftpc->dirs[ftpc->dirdepth]) { /* run out of memory ... */
@@ -4381,8 +4367,8 @@ CURLcode ftp_parse_url_path(struct connectdata *conn)
       return CURLE_OUT_OF_MEMORY;
     }
 
-    dlen -= ftpc->file?(int)strlen(ftpc->file):0;
-    if((dlen == (int)strlen(ftpc->prevpath)) &&
+    dlen -= ftpc->file?curlx_uztosi(strlen(ftpc->file)):0;
+    if((dlen == curlx_uztosi(strlen(ftpc->prevpath))) &&
        strnequal(path, ftpc->prevpath, dlen)) {
       infof(data, "Request has same path as previous transfer\n");
       ftpc->cwddone = TRUE;

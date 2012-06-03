@@ -1,5 +1,5 @@
-#ifndef HEADER_CURL_LIB_SETUP_H
-#define HEADER_CURL_LIB_SETUP_H
+#ifndef HEADER_CURL_SETUP_H
+#define HEADER_CURL_SETUP_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -54,8 +54,12 @@
 #  include "config-mac.h"
 #endif
 
+#ifdef __riscos__
+#  include "config-riscos.h"
+#endif
+
 #ifdef __AMIGA__
-#  include "amigaos.h"
+#  include "config-amigaos.h"
 #endif
 
 #ifdef __SYMBIAN32__
@@ -279,6 +283,16 @@
 #ifdef __VXWORKS__
 #  include <sockLib.h>    /* for generic BSD socket functions */
 #  include <ioLib.h>      /* for basic I/O interface functions */
+#endif
+
+#ifdef __AMIGA__
+#  ifndef __ixemul__
+#    include <exec/types.h>
+#    include <exec/execbase.h>
+#    include <proto/exec.h>
+#    include <proto/dos.h>
+#    define select(a,b,c,d,e) WaitSelect(a,b,c,d,e,0)
+#  endif
 #endif
 
 #include <stdio.h>
@@ -591,13 +605,17 @@ int netware_init(void);
 #define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
 #endif
 
-/* Provide a mechanism to silence picky compilers, such as gcc 4.6+.
-   Parameters should of course normally not be unused, but for example when we
-   have multiple implementations of the same interface it may happen. */
-#ifndef __GNUC__
-#define UNUSED_PARAM /*NOTHING*/
+/*
+ * Provide a mechanism to silence picky compilers, such as gcc 4.6+.
+ * Parameters should of course normally not be unused, but for example when
+ * we have multiple implementations of the same interface it may happen.
+ */
+
+#if defined(__GNUC__) && ((__GNUC__ >= 3) || \
+  ((__GNUC__ == 2) && defined(__GNUC_MINOR__) && (__GNUC_MINOR__ >= 7)))
+#  define UNUSED_PARAM __attribute__((__unused__))
 #else
-#define UNUSED_PARAM __attribute__((unused))
+#  define UNUSED_PARAM /*NOTHING*/
 #endif
 
 /*
@@ -623,7 +641,6 @@ int netware_init(void);
 #if defined(__LWIP_OPT_H__)
 #  if defined(SOCKET) || \
      defined(USE_WINSOCK) || \
-     defined(HAVE_ERRNO_H) || \
      defined(HAVE_WINSOCK_H) || \
      defined(HAVE_WINSOCK2_H) || \
      defined(HAVE_WS2TCPIP_H)
@@ -641,4 +658,4 @@ int netware_init(void);
 #  define SHUT_RDWR 0x02
 #endif
 
-#endif /* HEADER_CURL_LIB_SETUP_H */
+#endif /* HEADER_CURL_SETUP_H */

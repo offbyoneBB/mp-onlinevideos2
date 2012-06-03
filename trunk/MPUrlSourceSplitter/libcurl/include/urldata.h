@@ -112,7 +112,7 @@
 #endif
 
 #ifdef USE_CYASSL
-#include <openssl/ssl.h>
+#include <cyassl/openssl/ssl.h>
 #endif
 
 #ifdef USE_NSS
@@ -261,6 +261,7 @@ struct ssl_connect_data {
   x509_cert clicert;
   x509_crl crl;
   rsa_context rsa;
+  ssl_connect_state connecting_state;
 #endif /* USE_POLARSSL */
 #ifdef USE_CYASSL
   SSL_CTX* ctx;
@@ -271,10 +272,8 @@ struct ssl_connect_data {
   PRFileDesc *handle;
   char *client_nickname;
   struct SessionHandle *data;
-#ifdef HAVE_PK11_CREATEGENERICOBJECT
   struct curl_llist *obj_list;
   PK11GenericObject *obj_clicert;
-#endif
 #endif /* USE_NSS */
 #ifdef USE_QSOSSL
   SSLHandle *handle;
@@ -422,8 +421,6 @@ struct ConnectBits {
                          This is implicit when SSL-protocols are used through
                          proxies, but can also be enabled explicitly by
                          apps */
-  bool tunnel_connecting; /* TRUE while we're still waiting for a proxy CONNECT
-                           */
   bool authneg;       /* TRUE when the auth phase has started, which means
                          that we are creating a request with an auth header,
                          but it is not the final request in the auth
@@ -964,6 +961,12 @@ struct connectdata {
   unsigned short localport;
   int localportrange;
 
+  /* tunnel as in tunnel through a HTTP proxy with CONNECT */
+  enum {
+    TUNNEL_INIT,    /* init/default/no tunnel state */
+    TUNNEL_CONNECT, /* CONNECT has been sent off */
+    TUNNEL_COMPLETE /* CONNECT response received completely */
+  } tunnel_state[2]; /* two separate ones to allow FTP */
 };
 
 /* The end of connectdata. */
@@ -983,8 +986,8 @@ struct PureInfo {
                      thus made the document NOT get fetched */
   long header_size;  /* size of read header(s) in bytes */
   long request_size; /* the amount of bytes sent in the request(s) */
-  long proxyauthavail; /* what proxy auth types were announced */
-  long httpauthavail;  /* what host auth types were announced */
+  unsigned long proxyauthavail; /* what proxy auth types were announced */
+  unsigned long httpauthavail;  /* what host auth types were announced */
   long numconnects; /* how many new connection did libcurl created */
   char *contenttype; /* the content type of the object */
   char *wouldredirect; /* URL this would've been redirected to if asked to */
@@ -1086,11 +1089,11 @@ typedef enum {
 #define MAX_CURL_PASSWORD_LENGTH_TXT "255"
 
 struct auth {
-  long want;  /* Bitmask set to the authentication methods wanted by the app
-                 (with CURLOPT_HTTPAUTH or CURLOPT_PROXYAUTH). */
-  long picked;
-  long avail; /* bitmask for what the server reports to support for this
-                 resource */
+  unsigned long want;  /* Bitmask set to the authentication methods wanted by
+                          app (with CURLOPT_HTTPAUTH or CURLOPT_PROXYAUTH). */
+  unsigned long picked;
+  unsigned long avail; /* Bitmask for what the server reports to support for
+                          this resource */
   bool done;  /* TRUE when the auth phase is done and ready to do the *actual*
                  request */
   bool multi; /* TRUE if this is not yet authenticated but within the auth
@@ -1335,6 +1338,7 @@ enum dupstring {
   STRING_SOCKS5_GSSAPI_SERVICE,  /* GSSAPI service name */
 #endif
   STRING_MAIL_FROM,
+  STRING_MAIL_AUTH,
 
 #ifdef USE_TLS_SRP
   STRING_TLSAUTH_USERNAME,     /* TLS auth <username> */
@@ -1357,14 +1361,14 @@ struct UserDefined {
   void *writeheader; /* write the header to this if non-NULL */
   void *rtp_out;     /* write RTP to this if non-NULL */
   long use_port;     /* which port to use (when not using default) */
-  long httpauth;     /* what kind of HTTP authentication to use (bitmask) */
-  long proxyauth;    /* what kind of proxy authentication to use (bitmask) */
+  unsigned long httpauth;  /* kind of HTTP authentication to use (bitmask) */
+  unsigned long proxyauth; /* kind of proxy authentication to use (bitmask) */
   long followlocation; /* as in HTTP Location: */
   long maxredirs;    /* maximum no. of http(s) redirects to follow, set to -1
                         for infinity */
-  bool post301;      /* Obey RFC 2616/10.3.2 and keep POSTs as POSTs after a
-                        301 */
-  bool post302;      /* keep POSTs as POSTs after a 302 */
+
+  int keep_post;     /* keep POSTs as POSTs after a 30x request; each
+                        bit represents a request, from 301 to 303 */
   bool free_referer; /* set TRUE if 'referer' points to a string we
                         allocated */
   void *postfields;  /* if POST, set the fields' values here */
@@ -1508,6 +1512,8 @@ struct UserDefined {
   bool ftp_skip_ip;      /* skip the IP address the FTP server passes on to
                             us */
   bool connect_only;     /* make connection, let application use the socket */
+  bool ssl_enable_beast; /* especially allow this flaw for interoperability's
+                            sake*/
   long ssh_auth_types;   /* allowed SSH auth types */
   bool http_te_skip;     /* pass the raw body data to the user, even when
                             transfer-encoded (chunked, compressed) */
@@ -1539,6 +1545,11 @@ struct UserDefined {
 
   long gssapi_delegation; /* GSSAPI credential delegation, see the
                              documentation of CURLOPT_GSSAPI_DELEGATION */
+
+  bool tcp_keepalive;    /* use TCP keepalives */
+  long tcp_keepidle;     /* seconds in idle before sending keepalive probe */
+  long tcp_keepintvl;    /* seconds between TCP keepalive probes */
+
 #ifdef USE_LIBRTMP
   curl_rtmp_log_callback frtmp_log_func;   /* function that write RTMP protocol log data  */
   void *curl_rtmp_log_user_data; /* user data for RTMP log callback */

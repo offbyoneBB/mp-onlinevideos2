@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -62,6 +62,7 @@
 #include <certdb.h>
 #include <base64.h>
 #include <cert.h>
+#include <prerror.h>
 
 #include "curl_memory.h"
 #include "rawstr.h"
@@ -78,6 +79,9 @@ PRFileDesc *PR_ImportTCPSocket(PRInt32 osfd);
 
 PRLock * nss_initlock = NULL;
 PRLock * nss_crllock = NULL;
+#ifdef HAVE_NSS_INITCONTEXT
+NSSInitContext * nss_context = NULL;
+#endif
 
 volatile int initialized = 0;
 
@@ -170,10 +174,17 @@ static const int enable_ciphers_by_default[] = {
   SSL_NULL_WITH_NULL_NULL
 };
 
-#ifdef HAVE_PK11_CREATEGENERICOBJECT
 static const char* pem_library = "libnsspem.so";
-#endif
 SECMODModule* mod = NULL;
+
+static const char* nss_error_to_name(PRErrorCode code)
+{
+  const char *name = PR_ErrorToName(code);
+  if(name)
+    return name;
+
+  return "unknown error";
+}
 
 static SECStatus set_ciphers(struct SessionHandle *data, PRFileDesc * model,
                              char *cipher_list)
@@ -305,7 +316,6 @@ static char* dup_nickname(struct SessionHandle *data, enum dupstring cert_kind)
   return NULL;
 }
 
-#ifdef HAVE_PK11_CREATEGENERICOBJECT
 /* Call PK11_CreateGenericObject() with the given obj_class and filename.  If
  * the call succeeds, append the object handle to the list of objects so that
  * the object can be destroyed in Curl_nss_close(). */
@@ -369,7 +379,6 @@ static void nss_destroy_object(void *user, void *ptr)
   (void) user;
   PK11_DestroyGenericObject(obj);
 }
-#endif
 
 static CURLcode nss_load_cert(struct ssl_connect_data *ssl,
                               const char *filename, PRBool cacert)
@@ -378,7 +387,6 @@ static CURLcode nss_load_cert(struct ssl_connect_data *ssl,
     ? CURLE_SSL_CACERT_BADFILE
     : CURLE_SSL_CERTPROBLEM;
 
-#ifdef HAVE_PK11_CREATEGENERICOBJECT
   /* libnsspem.so leaks memory if the requested file does not exist.  For more
    * details, go to <https://bugzilla.redhat.com/734760>. */
   if(is_file(filename))
@@ -405,7 +413,6 @@ static CURLcode nss_load_cert(struct ssl_connect_data *ssl,
       free(nickname);
     }
   }
-#endif
 
   return err;
 }
@@ -499,12 +506,13 @@ fail:
 static CURLcode nss_load_key(struct connectdata *conn, int sockindex,
                              char *key_file)
 {
-#ifdef HAVE_PK11_CREATEGENERICOBJECT
   PK11SlotInfo *slot;
   SECStatus status;
+  CURLcode rv;
   struct ssl_connect_data *ssl = conn->ssl;
+  (void)sockindex; /* unused */
 
-  CURLcode rv = nss_create_object(ssl, CKO_PRIVATE_KEY, key_file, FALSE);
+  rv = nss_create_object(ssl, CKO_PRIVATE_KEY, key_file, FALSE);
   if(CURLE_OK != rv) {
     PR_SetError(SEC_ERROR_BAD_KEY, 0);
     return rv;
@@ -524,15 +532,6 @@ static CURLcode nss_load_key(struct connectdata *conn, int sockindex,
   return (SECSuccess == status)
     ? CURLE_OK
     : CURLE_SSL_CERTPROBLEM;
-#else
-  /* If we don't have PK11_CreateGenericObject then we can't load a file-based
-   * key.
-   */
-  (void)conn; /* unused */
-  (void)key_file; /* unused */
-  return CURLE_SSL_CERTPROBLEM;
-#endif
-  (void)sockindex; /* unused */
 }
 
 static int display_error(struct connectdata *conn, PRInt32 err,
@@ -560,8 +559,11 @@ static CURLcode cert_stuff(struct connectdata *conn, int sockindex,
   if(cert_file) {
     rv = nss_load_cert(&conn->ssl[sockindex], cert_file, PR_FALSE);
     if(CURLE_OK != rv) {
-      if(!display_error(conn, PR_GetError(), cert_file))
-        failf(data, "Unable to load client cert %d.", PR_GetError());
+      const PRErrorCode err = PR_GetError();
+      if(!display_error(conn, err, cert_file)) {
+        const char *err_name = nss_error_to_name(err);
+        failf(data, "unable to load client cert: %d (%s)", err, err_name);
+      }
 
       return rv;
     }
@@ -574,8 +576,11 @@ static CURLcode cert_stuff(struct connectdata *conn, int sockindex,
       /* In case the cert file also has the key */
       rv = nss_load_key(conn, sockindex, cert_file);
     if(CURLE_OK != rv) {
-      if(!display_error(conn, PR_GetError(), key_file))
-        failf(data, "Unable to load client key %d.", PR_GetError());
+      const PRErrorCode err = PR_GetError();
+      if(!display_error(conn, err, key_file)) {
+        const char *err_name = nss_error_to_name(err);
+        failf(data, "unable to load client key: %d (%s)", err, err_name);
+      }
 
       return rv;
     }
@@ -775,7 +780,6 @@ static SECStatus SelectClientCert(void *arg, PRFileDesc *sock,
   struct SessionHandle *data = connssl->data;
   const char *nickname = connssl->client_nickname;
 
-#ifdef HAVE_PK11_CREATEGENERICOBJECT
   if(connssl->obj_clicert) {
     /* use the cert/key provided by PEM reader */
     static const char pem_slotname[] = "PEM Token #1";
@@ -815,7 +819,6 @@ static SECStatus SelectClientCert(void *arg, PRFileDesc *sock,
     display_cert_info(data, *pRetCert);
     return SECSuccess;
   }
-#endif
 
   /* use the default NSS hook */
   if(SECSuccess != NSS_GetClientAuthData((void *)nickname, sock, caNames,
@@ -878,29 +881,57 @@ isTLSIntoleranceError(PRInt32 err)
 
 static CURLcode nss_init_core(struct SessionHandle *data, const char *cert_dir)
 {
-  if(NSS_IsInitialized())
+#ifdef HAVE_NSS_INITCONTEXT
+  NSSInitParameters initparams;
+
+  if(nss_context != NULL)
     return CURLE_OK;
 
+  memset((void *) &initparams, '\0', sizeof(initparams));
+  initparams.length = sizeof(initparams);
+#else /* HAVE_NSS_INITCONTEXT */
+  SECStatus rv;
+
+  if(NSS_IsInitialized())
+    return CURLE_OK;
+#endif
+
   if(cert_dir) {
-    SECStatus rv;
     const bool use_sql = NSS_VersionCheck("3.12.0");
     char *certpath = aprintf("%s%s", use_sql ? "sql:" : "", cert_dir);
     if(!certpath)
       return CURLE_OUT_OF_MEMORY;
 
     infof(data, "Initializing NSS with certpath: %s\n", certpath);
+#ifdef HAVE_NSS_INITCONTEXT
+    nss_context = NSS_InitContext(certpath, "", "", "", &initparams,
+            NSS_INIT_READONLY | NSS_INIT_PK11RELOAD);
+    free(certpath);
+
+    if(nss_context != NULL)
+      return CURLE_OK;
+#else /* HAVE_NSS_INITCONTEXT */
     rv = NSS_Initialize(certpath, "", "", "", NSS_INIT_READONLY);
     free(certpath);
 
     if(rv == SECSuccess)
       return CURLE_OK;
+#endif
 
     infof(data, "Unable to initialize NSS database\n");
   }
 
   infof(data, "Initializing NSS with certpath: none\n");
+#ifdef HAVE_NSS_INITCONTEXT
+  nss_context = NSS_InitContext("", "", "", "", &initparams, NSS_INIT_READONLY
+         | NSS_INIT_NOCERTDB   | NSS_INIT_NOMODDB       | NSS_INIT_FORCEOPEN
+         | NSS_INIT_NOROOTINIT | NSS_INIT_OPTIMIZESPACE | NSS_INIT_PK11RELOAD);
+  if(nss_context != NULL)
+    return CURLE_OK;
+#else /* HAVE_NSS_INITCONTEXT */
   if(NSS_NoDB_Init(NULL) == SECSuccess)
     return CURLE_OK;
+#endif
 
   infof(data, "Unable to initialize NSS\n");
   return CURLE_SSL_CACERT_BADFILE;
@@ -996,7 +1027,12 @@ void Curl_nss_cleanup(void)
       SECMOD_DestroyModule(mod);
       mod = NULL;
     }
+#ifdef HAVE_NSS_INITCONTEXT
+    NSS_ShutdownContext(nss_context);
+    nss_context = NULL;
+#else /* HAVE_NSS_INITCONTEXT */
     NSS_Shutdown();
+#endif
   }
   PR_Unlock(nss_initlock);
 
@@ -1053,12 +1089,11 @@ void Curl_nss_close(struct connectdata *conn, int sockindex)
        * next time to the same server */
       SSL_InvalidateSession(connssl->handle);
     }
-#ifdef HAVE_PK11_CREATEGENERICOBJECT
     /* destroy all NSS objects in order to avoid failure of NSS shutdown */
     Curl_llist_destroy(connssl->obj_list, NULL);
     connssl->obj_list = NULL;
     connssl->obj_clicert = NULL;
-#endif
+
     PR_Close(connssl->handle);
     connssl->handle = NULL;
   }
@@ -1158,6 +1193,7 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
   PRBool ssl3 = PR_FALSE;
   PRBool tlsv1 = PR_FALSE;
   PRBool ssl_no_cache;
+  PRBool ssl_cbc_random_iv;
   struct SessionHandle *data = conn->data;
   curl_socket_t sockfd = conn->sock[sockindex];
   struct ssl_connect_data *connssl = &conn->ssl[sockindex];
@@ -1172,12 +1208,10 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
 
   connssl->data = data;
 
-#ifdef HAVE_PK11_CREATEGENERICOBJECT
   /* list of all NSS objects we need to destroy in Curl_nss_close() */
   connssl->obj_list = Curl_llist_alloc(nss_destroy_object);
   if(!connssl->obj_list)
     return CURLE_OUT_OF_MEMORY;
-#endif
 
   /* FIXME. NSS doesn't support multiple databases open at the same time. */
   PR_Lock(nss_initlock);
@@ -1189,7 +1223,6 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
 
   curlerr = CURLE_SSL_CONNECT_ERROR;
 
-#ifdef HAVE_PK11_CREATEGENERICOBJECT
   if(!mod) {
     char *configstring = aprintf("library=%s name=PEM", pem_library);
     if(!configstring) {
@@ -1208,7 +1241,6 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
             "OpenSSL PEM certificates will not work.\n", pem_library);
     }
   }
-#endif
 
   PK11_SetPasswordFunc(nss_get_password);
   PR_Unlock(nss_initlock);
@@ -1265,6 +1297,18 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
 
   if(SSL_OptionSet(model, SSL_V2_COMPATIBLE_HELLO, ssl2) != SECSuccess)
     goto error;
+
+  ssl_cbc_random_iv = !data->set.ssl_enable_beast;
+#ifdef SSL_CBC_RANDOM_IV
+  /* unless the user explicitly asks to allow the protocol vulnerability, we
+     use the work-around */
+  if(SSL_OptionSet(model, SSL_CBC_RANDOM_IV, ssl_cbc_random_iv) != SECSuccess)
+    infof(data, "warning: failed to set SSL_CBC_RANDOM_IV = %d\n",
+          ssl_cbc_random_iv);
+#else
+  if(ssl_cbc_random_iv)
+    infof(data, "warning: support for SSL_CBC_RANDOM_IV not compiled in\n");
+#endif
 
   /* reset the flag to avoid an infinite loop */
   data->state.ssl_connect_retry = FALSE;
@@ -1327,9 +1371,7 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
     char *nickname = dup_nickname(data, STRING_CERT);
     if(nickname) {
       /* we are not going to use libnsspem.so to read the client cert */
-#ifdef HAVE_PK11_CREATEGENERICOBJECT
       connssl->obj_clicert = NULL;
-#endif
     }
     else {
       CURLcode rv = cert_stuff(conn, sockindex, data->set.str[STRING_CERT],
@@ -1424,16 +1466,14 @@ CURLcode Curl_nss_connect(struct connectdata *conn, int sockindex)
   if(handle_cc_error(err, data))
     curlerr = CURLE_SSL_CERTPROBLEM;
   else
-    infof(data, "NSS error %d\n", err);
+    infof(data, "NSS error %d (%s)\n", err, nss_error_to_name(err));
 
   if(model)
     PR_Close(model);
 
-#ifdef HAVE_PK11_CREATEGENERICOBJECT
     /* cleanup on connection failure */
     Curl_llist_destroy(connssl->obj_list, NULL);
     connssl->obj_list = NULL;
-#endif
 
   if(ssl3 && tlsv1 && isTLSIntoleranceError(err)) {
     /* schedule reconnect through Curl_retry_request() */
@@ -1462,7 +1502,8 @@ static ssize_t nss_send(struct connectdata *conn,  /* connection data */
     else if(handle_cc_error(err, conn->data))
       *curlcode = CURLE_SSL_CERTPROBLEM;
     else {
-      failf(conn->data, "SSL write: error %d", err);
+      const char *err_name = nss_error_to_name(err);
+      failf(conn->data, "SSL write: error %d (%s)", err, err_name);
       *curlcode = CURLE_SEND_ERROR;
     }
     return -1;
@@ -1488,7 +1529,8 @@ static ssize_t nss_recv(struct connectdata * conn, /* connection data */
     else if(handle_cc_error(err, conn->data))
       *curlcode = CURLE_SSL_CERTPROBLEM;
     else {
-      failf(conn->data, "SSL read: errno %d", err);
+      const char *err_name = nss_error_to_name(err);
+      failf(conn->data, "SSL read: errno %d (%s)", err, err_name);
       *curlcode = CURLE_RECV_ERROR;
     }
     return -1;
