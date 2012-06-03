@@ -343,7 +343,7 @@ inline static int init_parser(AVFormatContext *s, AVStream *st) {
 
 void CLAVFDemuxer::UpdateParserFlags(AVStream *st) {
   if (st->parser) {
-    if (st->codec->codec_id == CODEC_ID_MPEG2VIDEO || st->codec->codec_id == CODEC_ID_MPEG1VIDEO) {
+    if ((st->codec->codec_id == CODEC_ID_MPEG2VIDEO || st->codec->codec_id == CODEC_ID_MPEG1VIDEO) && _stricmp(m_pszInputFormat, "mpegvideo") != 0) {
       st->parser->flags |= PARSER_FLAG_NO_TIMESTAMP_MANGLING;
     } else if (st->codec->codec_id == CODEC_ID_VC1) {
       if (m_bVC1Correction) {
@@ -389,7 +389,6 @@ STDMETHODIMP CLAVFDemuxer::InitAVFormat(LPCOLESTR pszFileName)
 
   // Increase default probe sizes
   //m_avFormat->probesize            = 5 * 5000000;
-  //m_avFormat->max_analyze_duration = 5 * (5*AV_TIME_BASE);
   if (m_bMPEGTS)
     m_avFormat->max_analyze_duration = (m_avFormat->max_analyze_duration * 3) / 2;
 
@@ -611,7 +610,7 @@ STDMETHODIMP CLAVFDemuxer::GetNextPacket(Packet **ppPacket)
     DbgLog((LOG_TRACE, 10, L"::GetNextPacket(): End of File reached"));
   } else if (result < 0) {
     // meh, fail
-  } else if (pkt.size < 0 || pkt.stream_index < 0 || (unsigned)pkt.stream_index >= m_avFormat->nb_streams) {
+  } else if (pkt.size <= 0 || pkt.stream_index < 0 || (unsigned)pkt.stream_index >= m_avFormat->nb_streams) {
     // XXX, in some cases ffmpeg returns a zero or negative packet size
     if(m_avFormat->pb && !m_avFormat->pb->eof_reached) {
       bReturnEmpty = true;
@@ -2312,11 +2311,14 @@ STDMETHODIMP CLAVFDemuxer::AddStream(int streamId)
   HRESULT hr = S_OK;
   AVStream *pStream = m_avFormat->streams[streamId];
 
-  if (pStream->discard == AVDISCARD_ALL || (pStream->codec->codec_id == CODEC_ID_NONE && pStream->codec->codec_tag == 0) || (!m_bSubStreams && (pStream->disposition & LAVF_DISPOSITION_SUB_STREAM)) || (pStream->disposition & AV_DISPOSITION_ATTACHED_PIC))
-    return S_FALSE;
-
-  if (pStream->codec->codec_type == AVMEDIA_TYPE_VIDEO && (!pStream->codec->width || !pStream->codec->height))
-    return S_FALSE;
+  if ( pStream->codec->codec_type == AVMEDIA_TYPE_UNKNOWN
+    || pStream->discard == AVDISCARD_ALL 
+    || (pStream->codec->codec_id == CODEC_ID_NONE && pStream->codec->codec_tag == 0) 
+    || (!m_bSubStreams && (pStream->disposition & LAVF_DISPOSITION_SUB_STREAM)) 
+    || (pStream->disposition & AV_DISPOSITION_ATTACHED_PIC)) {
+      pStream->discard = AVDISCARD_ALL;
+      return S_FALSE;
+  }
 
   stream s;
   s.pid = streamId;
@@ -2331,6 +2333,7 @@ STDMETHODIMP CLAVFDemuxer::AddStream(int streamId)
 
   if(FAILED(hr)) {
     delete s.streamInfo;
+    pStream->discard = AVDISCARD_ALL;
     return hr;
   }
 
@@ -2589,6 +2592,11 @@ const CBaseDemuxer::stream *CLAVFDemuxer::SelectVideoStream()
     if (!best) { best = check; continue; }
     uint64_t bestPixels = m_avFormat->streams[best->pid]->codec->width * m_avFormat->streams[best->pid]->codec->height;
     uint64_t checkPixels = m_avFormat->streams[check->pid]->codec->width * m_avFormat->streams[check->pid]->codec->height;
+
+    if (m_avFormat->streams[best->pid]->codec->codec_id == CODEC_ID_NONE && m_avFormat->streams[check->pid]->codec->codec_id != CODEC_ID_NONE) {
+      best = check;
+      continue;
+    }
 
     int check_nb_f = m_avFormat->streams[check->pid]->codec_info_nb_frames;
     int best_nb_f  = m_avFormat->streams[best->pid]->codec_info_nb_frames;
