@@ -486,6 +486,9 @@ case CODEC_ID_AVRP:
       return ff_avrp_decoder.name; }
 case CODEC_ID_G2M:
     return "g2m";
+case CODEC_ID_AVUI:
+    { extern AVCodec ff_avui_decoder;
+      return ff_avui_decoder.name; }
 case CODEC_ID_AYUV:
     { extern AVCodec ff_ayuv_decoder;
       return ff_ayuv_decoder.name; }
@@ -888,9 +891,13 @@ case CODEC_ID_SRT:
     { extern AVCodec ff_srt_decoder;
       return ff_srt_decoder.name; }
 case CODEC_ID_MICRODVD:
-    return "microdvd";
+    { extern AVCodec ff_microdvd_decoder;
+      return ff_microdvd_decoder.name; }
 case CODEC_ID_EIA_608:
     return "eia_608";
+case CODEC_ID_JACOSUB:
+    { extern AVCodec ff_jacosub_decoder;
+      return ff_jacosub_decoder.name; }
 case CODEC_ID_TTF:
     return "ttf";
 case CODEC_ID_BINTEXT:

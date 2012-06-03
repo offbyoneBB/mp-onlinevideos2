@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Mans Rullgard
+ * copyright (C) 2006 Corey Hickey
  *
  * This file is part of FFmpeg.
  *
@@ -18,20 +18,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef AVCODEC_PPC_REGS_H
-#define AVCODEC_PPC_REGS_H
+#ifndef AVCODEC_LIBXVID_H
+#define AVCODEC_LIBXVID_H
 
-#include "libavutil/avutil.h"
-#include "config.h"
+/**
+ * @file
+ * common functions for use with the Xvid wrappers
+ */
 
-#if HAVE_IBM_ASM
-#   define r(n) AV_TOSTRING(n)
-#   define f(n) AV_TOSTRING(n)
-#   define v(n) AV_TOSTRING(n)
-#else
-#   define r(n) AV_TOSTRING(r ## n)
-#   define f(n) AV_TOSTRING(f ## n)
-#   define v(n) AV_TOSTRING(v ## n)
-#endif
 
-#endif /* AVCODEC_PPC_REGS_H */
+int ff_tempfile(const char *prefix, char **filename);
+
+#endif /* AVCODEC_LIBXVID_H */

@@ -1,5 +1,5 @@
 /*
- * copyright (C) 2006 Corey Hickey
+ * Copyright (c) 2007 Bobby Bingham
  *
  * This file is part of FFmpeg.
  *
@@ -18,15 +18,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef AVCODEC_LIBXVID_INTERNAL_H
-#define AVCODEC_LIBXVID_INTERNAL_H
 
-/**
- * @file
- * common functions for use with the Xvid wrappers
- */
+#ifndef AVFILTER_VIDEO_H
+#define AVFILTER_VIDEO_H
+
+#include "avfilter.h"
+
+AVFilterBufferRef *ff_default_get_video_buffer(AVFilterLink *link,
+                                               int perms, int w, int h);
+AVFilterBufferRef *ff_null_get_video_buffer(AVFilterLink *link, int perms, int w, int h);
 
 
-int ff_tempfile(const char *prefix, char **filename);
+void ff_null_start_frame(AVFilterLink *link, AVFilterBufferRef *picref);
+void ff_null_draw_slice(AVFilterLink *link, int y, int h, int slice_dir);
+void ff_null_end_frame(AVFilterLink *link);
 
-#endif /* AVCODEC_LIBXVID_INTERNAL_H */
+#endif /* AVFILTER_VIDEO_H */
