@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-	<Bundle Name="OnlineVideos WPF" Version="1.0.0.0" Manufacturer="offbyone" UpgradeCode="a94a432b-1ce5-4b42-b119-ccb4ff697dae"
+	<Bundle Name="OnlineVideos WPF" Version="1.0.0.0" Manufacturer="offbyone" UpgradeCode="a94a432b-1ce5-4b42-b119-ccb4ff697dae" 
 			Condition="VersionNT >= v6.0"> <!-- Vista or Higher -->
 		
 		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense" />
@@ -35,8 +35,8 @@
 				SourceFile="vcredist_x86.exe"
 				InstallCommand="/q"
 				DownloadUrl="http://go.microsoft.com/fwlink/?LinkID=210621"
-				InstallCondition="NOT VCpp2010SP1_Installed">
-			</ExePackage>
+				InstallCondition="NOT VCpp2010SP1_Installed"
+				DetectCondition="VCpp2010SP1_Installed"/>
 
 			<ExePackage Id="Directx9"
 				Cache="no"
@@ -47,8 +47,8 @@
 				SourceFile="dxwebsetup.exe"
 				InstallCommand="/Q"
 				DownloadUrl="http://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
-				InstallCondition="NOT Directx9c_Version OR (Directx9c_Version &lt;= v9.29.952.3111)"
-				/>
+				InstallCondition="NOT Directx9c_Version OR (Directx9c_Version &lt; v9.29.952.3111)"
+				DetectCondition="Directx9c_Version AND (Directx9c_Version &gt;= v9.29.952.3111)"/>
 
 			<ExePackage Id="LAVFilters"
 				Cache="no"
@@ -59,7 +59,8 @@
 				SourceFile="LAVFilters-0.50.5.exe"
 				InstallCommand="/SILENT /SP-"
 				DownloadUrl="https://lavfilters.googlecode.com/files/LAVFilters-0.50.5.exe"
-				InstallCondition="NOT LAVAudioDecoderPath OR NOT LAVVideoDecoderPath"/>
+				InstallCondition="NOT LAVAudioDecoderPath OR NOT LAVVideoDecoderPath"
+				DetectCondition="LAVAudioDecoderPath AND LAVVideoDecoderPath"/>
 			
 			<MsiPackage Id="OnlineVideosWPF"
 				Compressed="yes"

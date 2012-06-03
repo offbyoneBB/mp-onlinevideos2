@@ -51,10 +51,8 @@
 							<File Id="MPUrlSource_Http_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll" DiskId="1" Vital="yes"/>
 							<File Id="MPUrlSource_Rtmp_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll" DiskId="1" Vital="yes"/>
 							<File Id="avcodec_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
-							<File Id="avfilter_2_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avfilter-mpurlsourcesplitter-2.dll" DiskId="1" Vital="yes"/>
 							<File Id="avformat_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
 							<File Id="avutil_51_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll" DiskId="1" Vital="yes"/>
-							<File Id="swscale_2_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\swscale-mpurlsourcesplitter-2.dll" DiskId="1" Vital="yes"/>
 						</Component>
 					</Directory>
 					<Directory Id="Images" Name="Images">
