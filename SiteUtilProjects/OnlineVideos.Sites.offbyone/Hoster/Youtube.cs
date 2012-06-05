@@ -92,6 +92,8 @@ namespace OnlineVideos.Hoster
                 PlaybackOptions = new Dictionary<string, string>();
                 foreach (var quality in qualities)
                 {
+                    if (!fmtOptionsQualitySorted.Contains(byte.Parse(quality.Key[0]))) continue;
+
                     var urlOptions = HttpUtility.ParseQueryString(quality.Value);
                     string type = urlOptions.Get("type");
 					string stereo = urlOptions["stereo3d"] == "1" ? " 3D " : " ";
