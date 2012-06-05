@@ -11,7 +11,7 @@ namespace OnlineVideos.Sites
 {
 	public class TV4Play : GenericSiteUtil
 	{
-		protected string tv4VideolistDividingRegEx = @"<div\sclass=""module-center-wrapper"">.*?<h2>.*?{0}.*?</h2>(?<data>.*?)</section>";
+		protected string tv4VideolistDividingRegEx = @"<div\sclass=""module-center-wrapper"">.*?<h2[^>]*>.*?{0}.*?</h2>(?<data>.*?)</section>";
 		
 		[Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for dynamic categories. Group names: 'url', 'title', 'thumb', 'description'. Will be used on the web pages resulting from the links from the dynamicCategoriesRegEx. Will not be used if not set.")]
 		protected string dynamicSubCategoriesRegEx2;
@@ -39,20 +39,20 @@ namespace OnlineVideos.Sites
 					if (m.Success)
 					{
 						found = true;
-						jsonUrl += System.Web.HttpUtility.UrlDecode(m.Groups["ids"].Value) + "&rows=100";
+						jsonUrl += System.Web.HttpUtility.UrlDecode(m.Groups["ids"].Value) + "&rows=120";
 					}
 					if (found)
 					{
-						Newtonsoft.Json.Linq.JObject json = GetWebData<Newtonsoft.Json.Linq.JObject>(jsonUrl);
+						var json = Newtonsoft.Json.Linq.JArray.Parse(GetWebData(jsonUrl));
 						if (json != null)
 						{
-							foreach (var result in json["results"])
+							foreach (var result in json)
 							{
 								RssLink cat = new RssLink();
-								cat.Url = result.Value<string>("href");
+								cat.Url = result.Value<string>("url_category") + "/" + result.Value<string>("url_name");
 								if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
 								cat.Name = result.Value<string>("name");
-								cat.Thumb = result.Value<string>("smallformatimage");
+								cat.Thumb = result.Value<string>("image");
 								cat.Description = result.Value<string>("text");
 								cat.HasSubCategories = true;
 								parentCategory.SubCategories.Add(cat);
@@ -80,7 +80,7 @@ namespace OnlineVideos.Sites
 				}
 				else
 				{
-					Match m3 = Regex.Match(data, @"<h2><span>(?<title>[^<]+)</span></h2>");
+					Match m3 = Regex.Match(data, @"<h2[^>]*><span>(?<title>[^<]+)</span></h2>");
 					while (m3.Success)
 					{
 						parentCategory.SubCategories.Add(new RssLink() 
@@ -128,6 +128,7 @@ namespace OnlineVideos.Sites
 				video.Airdate = HttpUtility.HtmlDecode(m.Groups["date"].Value.Trim());
 				video.ImageUrl = m.Groups["thumb"].Value;
 				video.VideoUrl = m.Groups["url"].Value;
+				video.Description = m.Groups["Description"].Value;
 				videos.Add(video);
 				m = m.NextMatch();
 			}
@@ -141,21 +142,11 @@ namespace OnlineVideos.Sites
 				nextPageUrl = HttpUtility.HtmlDecode(m.Groups["url"].Value);
 				if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute)) nextPageUrl = new Uri(new Uri(baseUrl), nextPageUrl).AbsoluteUri;
 
-				int inc = 12;
-				string incString = Regex.Match(nextPageUrl, @"increment=(\d+)").Groups[1].Value;
-				if (incString != "")
-				{
-					int.TryParse(incString, out inc);
-					nextPageUrl = Regex.Replace(nextPageUrl, @"&increment=(\d+)", "");
-				}
-
 				string rowsString = Regex.Match(nextPageUrl, @"rows=(\d+)").Groups[1].Value;
-				int rows = 12;
+				int rows = 15;
 				if (rowsString != "") int.TryParse(rowsString, out rows);
 
-				nextPageUrl = Regex.Replace(nextPageUrl, @"rows=(\d+)", "rows=" + inc.ToString());
-
-				currentStart += inc;
+				currentStart += rows;
 
 				if (currentStart < currentMaxVideos)
 				{
