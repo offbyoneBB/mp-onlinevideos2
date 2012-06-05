@@ -711,15 +711,23 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> DoSearch(string query)
         {
-            return this.getVideoList(new CategoryLink()
+            List<VideoInfo> videoList = this.getVideoList(new CategoryLink()
             {
                 Name = "Search",
                 Other = query,
                 Url = String.Format(searchQueryUrl, query),
                 BaseUrl = StreamCzUtil.baseUrl
             });
+
+            List<ISearchResultItem> result = new List<ISearchResultItem>(videoList.Count);
+            foreach (var video in videoList)
+            {
+                result.Add(video);
+            }
+
+            return result;
         }
 
         #endregion

@@ -49,6 +49,7 @@
     <None Include="DomaUtil.cs" />
     <Compile Include="CeskaTelevizeVideo.cs" />
     <Compile Include="CeskaTelevizeVideoCollection.cs" />
+    <Compile Include="CzTraileryUtil.cs" />
     <Compile Include="Flowplayer\Commercial\V3_1_5_17_002\Aes.cs" />
     <Compile Include="Flowplayer\Commercial\V3_1_5_17_002\Base64.cs" />
     <Compile Include="Flowplayer\Commercial\V3_1_5_17_002\Utf8.cs" />

@@ -467,14 +467,22 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> DoSearch(string query)
         {
-            return this.getVideoList(new RssLink()
+            List<VideoInfo> videoList = this.getVideoList(new RssLink()
             {
                 Name = "Search",
                 Other = query,
                 Url = String.Format(PohadkarUtil.searchQueryUrl, query)
             });
+
+            List<ISearchResultItem> result = new List<ISearchResultItem>(videoList.Count);
+            foreach (var video in videoList)
+            {
+                result.Add(video);
+            }
+
+            return result;
         }
 
         #endregion
