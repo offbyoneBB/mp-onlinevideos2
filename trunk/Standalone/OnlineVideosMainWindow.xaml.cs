@@ -110,6 +110,9 @@ namespace Standalone
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (Environment.OSVersion.Version.Major < 6)
+                mediaPlayer.VideoRenderer = WPFMediaKit.DirectShow.MediaPlayers.VideoRendererType.VideoMixingRenderer9;
+
             new DispatcherTimer(
                 TimeSpan.FromSeconds(1),
                 DispatcherPriority.Normal,
@@ -141,6 +144,7 @@ namespace Standalone
                     {
 						Config.Instance.LastAutoUpdate = DateTime.Now;
                         Title = "OnlineVideos";
+                        waitCursor.tbxCenter.Text = "";
                         waitCursor.Visibility = System.Windows.Visibility.Hidden;
                         ReactToResult(resultInfo, Translation.Instance.AutomaticUpdate);
                         OnlineVideoSettings.Instance.BuildSiteUtilsList();
