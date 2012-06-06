@@ -225,6 +225,8 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
                     }
                 }
 
+                AddPreferredFiltersToGraph();
+
                 /* Loop over each pin of the source filter */
                 while (pinEnum.Next(pins.Length, pins, fetched) == 0)
                 {
@@ -313,6 +315,12 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
                  * initialized filter graph */
                 InvokeMediaClosed(new EventArgs());
             }
+        }
+
+        protected void AddPreferredFiltersToGraph()
+        {
+            AddFilterByName(m_graph, FilterCategory.LegacyAmFilterCategory, "LAV Audio Decoder");
+            AddFilterByName(m_graph, FilterCategory.LegacyAmFilterCategory, "LAV Video Decoder");
         }
     }
 }
