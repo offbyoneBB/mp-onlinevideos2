@@ -521,7 +521,7 @@ void CCurlInstance::RtmpLogCallback(RTMP *r, int level, const char *format, va_l
     loggerLevel = LOGGER_INFO;
     break;
   case RTMP_LOGDEBUG:
-    loggerLevel = LOGGER_VERBOSE;
+    loggerLevel = (caller->state == CURL_STATE_RECEIVING_DATA) ? LOGGER_DATA : LOGGER_VERBOSE;
     break;
   case RTMP_LOGDEBUG2:
     loggerLevel = LOGGER_DATA;
