@@ -1,4 +1,4 @@
-#summary Screenshots of the plugin running in MediaPortal using Blue3Wide skin.
+#summary Screenshots of the plugin running in MediaPortal using the DefaultWide skin.
 
 =state: {{{groups}}}, layout: {{{small icons}}}=
 <img width="640" src="https://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg"/>
@@ -11,7 +11,7 @@
 
 <img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg"/>
 
-=state: {{{categories}}}, layout: {{{list}}}, showing hidden menu=
+=state: {{{categories}}}, showing hidden menu and search=
 
 <img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg"/>
 
