@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-	<Bundle Name="OnlineVideos WPF" Version="1.0.0.0" Manufacturer="offbyone" UpgradeCode="a94a432b-1ce5-4b42-b119-ccb4ff697dae" 
-			Condition="VersionNT >= v6.0"> <!-- Vista or Higher -->
+	<Bundle Name="OnlineVideos" Version="1.0.0.0" Manufacturer="offbyone" UpgradeCode="a94a432b-1ce5-4b42-b119-ccb4ff697dae"
+			Condition="((VersionNT >= v5.1) AND (ServicePackLevel >= 3)) OR ((VersionNT >= v5.2) AND (ServicePackLevel >= 2)) OR (VersionNT >= v6.0)"> <!-- XP SP3 or Higher -->
 		
 		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense" />
 		<WixVariable Id="WixStdbaLicenseUrl" Value="" />
@@ -22,6 +22,7 @@
 				Vital="yes"
 				SourceFile="dotnetfx35setup.exe"
 				DownloadUrl="http://go.microsoft.com/fwlink/?linkid=118076"
+				InstallCommand="/q /norestart"
 				InstallCondition="NOT Netfx35Version OR (Netfx35Version &lt; v3.5.30729.1)"
 				DetectCondition="Netfx35Version AND (Netfx35Version &gt;= v3.5.30729.1)">
 				<ExitCode Value="3010" Behavior="forceReboot" />
