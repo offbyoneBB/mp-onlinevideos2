@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="OnlineVideos" Language="1033" Version="1.2.1.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
-		<Package InstallerVersion="400" Compressed="yes" InstallScope="perMachine" Platform="x86" />
+	<Product Id="*" Name="OnlineVideosWPF" Language="1033" Version="1.2.1.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x86" />
 
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
 		
@@ -20,7 +20,7 @@
 		<PropertyRef Id="NETFRAMEWORK35_SP_LEVEL"/>
 
 		<Condition Message="This application is only supported on Windows Vista or higher.">
-			<![CDATA[Installed OR (VersionNT >= 600)]]>
+			<![CDATA[Installed OR (((VersionNT >= v5.1) AND (ServicePackLevel >= 3)) OR ((VersionNT >= v5.2) AND (ServicePackLevel >= 2)) OR (VersionNT >= v6.0))]]>
 		</Condition>
 
 		<Condition Message="This application requires the .NET Framework 3.5 SP1.">
