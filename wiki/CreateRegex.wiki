@@ -1,4 +1,4 @@
-#summary Explanation on how to create a regex
+#summary Explanation on how to create a regex in the SiteParser
 
 = Table of Contents =
 <wiki:toc max_depth="2" />
@@ -20,6 +20,9 @@ For all the remaining data, you can select parts, and choose e.g. "skip to" (mul
 After that, you can click "Test<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteParser/Resources/Intersect.png"/> " to see the results of your regex.
 
 You have to play with this to get some experience, because if you leave too much data in your regex, there will only be 1 match instead of a list, and if you remove too much, there will be more matches than you actually want.
+
+When manually editing the regex, note that these are the default settings:
+*_Compiled, !CultureInvariant, Multiline, Singleline, !IgnorePatternWhitespace, !ExplicitCapture_*
 
 = Regex-shortcuts =
 
