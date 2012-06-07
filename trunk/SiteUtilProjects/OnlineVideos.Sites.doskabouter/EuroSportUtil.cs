@@ -39,8 +39,9 @@ namespace OnlineVideos.Sites
 
             CookieContainer cc = new CookieContainer();
 
-            string url = baseUrl + "_wsplayerxrm_/PlayerCrmApi.asmx/LoginWithUserCredentials";
-            string postData = "u=" + emailAddress + "&p=" + password + "&g=" + tld.ToUpper() + "&d=1&s=1";
+            string url = baseUrl + "_wsplayerxrm_/PlayerCrmApi.asmx/Login";
+            string postData = @"data={""ul"":""" + emailAddress + @""",""p"":""" + password +
+                @"""}&context={""g"":""" + tld.ToUpper() + @""",""d"":""1"",""s"":""1"",""p"":""1"",""b"":""1"",""bp"":""""}";
 
             string cookies = @"ns_cookietest=true,ns_session=true";
             string[] myCookies = cookies.Split(',');
@@ -215,21 +216,24 @@ namespace OnlineVideos.Sites
         {
             string getData = GetWebData(video.VideoUrl, newcc);
             Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
+            string videoId = m.Groups["vidid"].Value;
+            if (videoId == "-1")
+                videoId = m.Groups["cuvid"].Value;
 
             string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
 <s:Body xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
 <GetVideoSecurizedAsync xmlns=""http://tempuri.org/"">
-<videoId>171969</videoId>
+<videoId>{0}</videoId>
 <videoPartnerCode />
-<countryCode>{0}</countryCode>
-<videoLanguageId>{1}</videoLanguageId>
-<service>{2}</service>
-<realIp>{3}</realIp>
-<userId>{4}</userId>
-<hkey>{5}</hkey>
-<responseLangId>{1}</responseLangId>
+<countryCode>{1}</countryCode>
+<videoLanguageId>{2}</videoLanguageId>
+<service>{3}</service>
+<realIp>{4}</realIp>
+<userId>{5}</userId>
+<hkey>{6}</hkey>
+<responseLangId>{2}</responseLangId>
 </GetVideoSecurizedAsync>
-</s:Body></s:Envelope>", tld.ToUpperInvariant(), m.Groups["lang"].Value, 1, m.Groups["realip"].Value,
+</s:Body></s:Envelope>", videoId, tld.ToUpperInvariant(), m.Groups["lang"].Value, 1, m.Groups["realip"].Value,
                    m.Groups["ut"].Value, m.Groups["ht"].Value);
 
             string postData = GetWebDataFromPost("http://videoshop.eurosport.com/PlayerVideoService.asmx",
