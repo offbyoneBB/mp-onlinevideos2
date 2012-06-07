@@ -508,7 +508,7 @@ namespace Standalone
                                     var cmer = resultInfo.ResultObject as ContextMenuExecutionResult;
                                     if (!string.IsNullOrEmpty(cmer.ExecutionResultMessage))
                                     {
-                                        MessageBox.Show(cmer.ExecutionResultMessage, "OnlineVideos", MessageBoxButton.OK);
+                                        notification.Show(currentEntry.DisplayText, cmer.ExecutionResultMessage);
                                     }
                                     if (cmer.RefreshCurrentItems)
                                     {
@@ -568,7 +568,7 @@ namespace Standalone
 
 			// if no valid urls were returned show error msg
 			if (urlList == null || urlList.Count == 0) {
-				MessageBox.Show(Translation.Instance.Error, Translation.Instance.UnableToPlayVideo, MessageBoxButton.OK);
+				notification.Show(Translation.Instance.Error, Translation.Instance.UnableToPlayVideo);
 				return;
 			}
 
@@ -652,7 +652,7 @@ namespace Standalone
             if (String.IsNullOrEmpty(urlToPlay) ||
 				!Utils.IsValidUri((urlToPlay.IndexOf(OnlineVideos.MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? urlToPlay.Substring(0, urlToPlay.IndexOf(OnlineVideos.MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : urlToPlay))
 			{
-				MessageBox.Show(Translation.Instance.Error, Translation.Instance.UnableToPlayVideo, MessageBoxButton.OK);
+				notification.Show(Translation.Instance.Error, Translation.Instance.UnableToPlayVideo);
 				return;
 			}
 
@@ -696,7 +696,7 @@ namespace Standalone
                 // when the DownloadManager already contains the current DownloadInfo of the given list - show already downloading message
                 if (DownloadManager.Instance.Contains(saveItems.CurrentItem))
                 {
-                    MessageBox.Show(Translation.Instance.AlreadyDownloading, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
+                    notification.Show(Translation.Instance.Error, Translation.Instance.AlreadyDownloading);
                     return;
                 }
                 // check if there is already a download running from this site - yes? -> enque | no -> start now
@@ -751,7 +751,7 @@ namespace Standalone
             // if no valid urls were returned show error msg
             if (loUrlList == null || loUrlList.Count == 0)
             {
-                MessageBox.Show(Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Information);
+                notification.Show(Translation.Instance.Error, Translation.Instance.UnableToDownloadVideo);
                 return;
             }
 
@@ -827,7 +827,7 @@ namespace Standalone
             if (String.IsNullOrEmpty(url) ||
                 !Utils.IsValidUri((url.IndexOf(SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(SimpleUrl.ParameterSeparator)) : url))
             {
-                MessageBox.Show(Translation.Instance.UnableToDownloadVideo, Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                notification.Show(Translation.Instance.Error, Translation.Instance.UnableToDownloadVideo);
                 return;
             }
 
@@ -925,7 +925,7 @@ namespace Standalone
             {
                 if (!preventMessageDuetoAdult)
                 {
-                    MessageBox.Show(string.Format(Translation.Instance.DownloadFailed, saveItems.CurrentItem.Title), Translation.Instance.Error, MessageBoxButton.OK, MessageBoxImage.Error);
+                    notification.Show(Translation.Instance.Error, string.Format(Translation.Instance.DownloadFailed, saveItems.CurrentItem.Title));
                 }
             }
             else
@@ -966,9 +966,8 @@ namespace Standalone
 
                 if (!preventMessageDuetoAdult)
                 {
-                    MessageBox.Show(string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""), 
-                        saveItems.CurrentItem.Downloader.Cancelled ? Translation.Instance.DownloadCancelled : Translation.Instance.DownloadComplete,
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    notification.Show(saveItems.CurrentItem.Downloader.Cancelled ? Translation.Instance.DownloadCancelled : Translation.Instance.DownloadComplete,
+                        string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""));
                 }
             }
 
@@ -1024,14 +1023,13 @@ namespace Standalone
             {
                 if (result.TaskError != null)
                 {
-                    MessageBox.Show(string.Format("{0} {1}", Translation.Instance.Error, taskDescription), result.TaskError.Message, MessageBoxButton.OK);
+                    notification.Show(string.Format("{0} {1}", Translation.Instance.Error, taskDescription), result.TaskError.Message);
                 }
                 else
                 {
                     if (!result.AbortedByUser)
                     {
-                        string header = result.TaskSuccess.HasValue ? Translation.Instance.Error : Translation.Instance.Timeout;
-                        MessageBox.Show(taskDescription, header, MessageBoxButton.OK);
+                        notification.Show(result.TaskSuccess.HasValue ? Translation.Instance.Error : Translation.Instance.Timeout, taskDescription);
                     }
                 }
                 return false;
@@ -1278,7 +1276,7 @@ namespace Standalone
 
         private void mediaPlayer_MediaFailed(object sender, WPFMediaKit.DirectShow.MediaPlayers.MediaFailedEventArgs e)
         {
-			MessageBox.Show(Translation.Instance.Error + ": " + e.Message, Translation.Instance.UnableToPlayVideo, MessageBoxButton.OK, MessageBoxImage.Error);
+            notification.Show(Translation.Instance.UnableToPlayVideo, e.Message);
             Dispatcher.Invoke((Action)(() => { Stop_Executed(sender, null); }));
         }
 

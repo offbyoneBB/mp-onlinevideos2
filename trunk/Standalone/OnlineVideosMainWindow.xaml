@@ -185,5 +185,6 @@
             </Grid>
         </Border>
         <local:CircularProgressBar Width="100" Height="100" x:Name="waitCursor" Grid.RowSpan="3" Visibility="Hidden"/>
+        <local:Notification Style="{StaticResource FadeInOut}" x:Name="notification" HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.RowSpan="3" Visibility="Hidden"/>
     </Grid>
 </Window>
