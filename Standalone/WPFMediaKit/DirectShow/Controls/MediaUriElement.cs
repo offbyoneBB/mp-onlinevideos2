@@ -24,6 +24,29 @@ namespace WPFMediaKit.DirectShow.Controls
             }
         }
 
+        #region BufferedPercent
+
+        public float BufferedPercent
+        {
+            get { return (float)GetValue(BufferedPercentProperty); }
+        }
+
+        public static readonly DependencyPropertyKey BufferedPercentPropertyKey =
+            DependencyProperty.RegisterReadOnly("BufferedPercent", typeof(float), typeof(MediaUriElement), new UIPropertyMetadata(0.0f));
+
+        public static readonly DependencyProperty BufferedPercentProperty
+            = BufferedPercentPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Internal method to set the read-only BufferedPercent
+        /// </summary>
+        protected void SetBufferedPercent(float value)
+        {
+            SetValue(BufferedPercentPropertyKey, value);
+        }
+
+        #endregion
+
         #region VideoRenderer
 
         public static readonly DependencyProperty VideoRendererProperty =
@@ -226,7 +249,16 @@ namespace WPFMediaKit.DirectShow.Controls
         protected override MediaPlayerBase OnRequestMediaPlayer()
         {
             var player = new MediaUriPlayer();
+            player.BufferedPercentChanged += OnMediaPlayerBufferedPercentChanged;
             return player;
+        }
+
+        protected virtual void OnMediaPlayerBufferedPercentChanged(float percent)
+        {
+            Dispatcher.BeginInvoke((Action)delegate
+            {
+                SetBufferedPercent(percent);
+            });
         }
     }
 }

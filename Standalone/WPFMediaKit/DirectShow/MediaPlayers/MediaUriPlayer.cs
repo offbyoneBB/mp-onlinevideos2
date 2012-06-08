@@ -124,6 +124,35 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
                 base.OnMediaEvent(code, lparam1, lparam2);
         }
 
+        protected override void OnGraphTimerTick()
+        {
+            if (m_graph != null)
+            {
+                IBaseFilter sourceFilter = null;
+                try
+                {
+                    int result = m_graph.FindFilterByName(OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName, out sourceFilter);
+                    if (result == 0)
+                    {
+                        long total = 0, current = 0;
+                        ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
+                        m_BufferedPercent = (float)current / (float)total * 100.0f;
+                        InvokeBufferedPercentChanged();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    OnlineVideos.Log.Warn("Error Quering Progress: {0}", ex.Message);
+                }
+                finally
+                {
+                    if (sourceFilter != null) Marshal.ReleaseComObject(sourceFilter);
+                }
+            }
+
+            base.OnGraphTimerTick();
+        }
+
         int AddSourceFilter(Uri uri, IFilterGraph2 filterGraph, out IBaseFilter sourceFilter)
         {
             sourceFilter = null;
@@ -196,7 +225,13 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
                 if (filterState != null)
                 {
                     while (!filterState.IsFilterReadyToConnectPins())
+                    {
+                        long total = 0, current = 0;
+                        ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
+                        m_BufferedPercent = (float)current / (float)total * 100.0f;
+                        InvokeBufferedPercentChanged();
                         System.Threading.Thread.Sleep(100);
+                    }
                 }
 
                 /* We will want to enum all the pins on the source filter */
@@ -315,12 +350,25 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
                  * initialized filter graph */
                 InvokeMediaClosed(new EventArgs());
             }
+
+            m_BufferedPercent = 0.0f;
+            InvokeBufferedPercentChanged();
         }
 
         protected void AddPreferredFiltersToGraph()
         {
             AddFilterByName(m_graph, FilterCategory.LegacyAmFilterCategory, "LAV Audio Decoder");
             AddFilterByName(m_graph, FilterCategory.LegacyAmFilterCategory, "LAV Video Decoder");
+        }
+
+        float m_BufferedPercent;
+
+        public event Action<float> BufferedPercentChanged;
+
+        protected void InvokeBufferedPercentChanged()
+        {
+            var handler = BufferedPercentChanged;
+            if (handler != null) handler(m_BufferedPercent);
         }
     }
 }

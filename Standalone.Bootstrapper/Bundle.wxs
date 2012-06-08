@@ -60,7 +60,7 @@
 				Vital="no"
 				SourceFile="LAVFilters-0.50.5.exe"
 				InstallCommand="/SILENT /SP-"
-				DownloadUrl="http://lavfilters.googlecode.com/files/LAVFilters-0.50.5.exe"
+				DownloadUrl="http://mp-onlinevideos2.googlecode.com/svn/trunk/Standalone.Bootstrapper/LAVFilters-0.50.5.exe"
 				InstallCondition="NOT LAVAudioDecoderPath OR NOT LAVVideoDecoderPath"
 				DetectCondition="LAVAudioDecoderPath AND LAVVideoDecoderPath"/>
 			

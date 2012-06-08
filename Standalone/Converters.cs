@@ -261,4 +261,25 @@ namespace Standalone
             throw new NotImplementedException();
         }
     }
+
+    [ValueConversion(typeof(float), typeof(string))]
+    public class BufferPercentConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            // format the percentage nicely depeding on range
+            float percent = (float)value;
+            string formatString = "###";
+            if (percent == 0f) return ""; //formatString = "0.0";
+            else if (percent < 1f) formatString = ".00";
+            else if (percent < 10f) formatString = "0.0";
+            else if (percent < 100f) formatString = "##";
+            return string.Format("{0}: {1} %", Translation.Instance.Buffered, percent.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

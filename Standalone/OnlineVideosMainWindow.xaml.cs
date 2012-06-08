@@ -114,9 +114,21 @@ namespace Standalone
                 mediaPlayer.VideoRenderer = WPFMediaKit.DirectShow.MediaPlayers.VideoRendererType.VideoMixingRenderer9;
 
             new DispatcherTimer(
-                TimeSpan.FromSeconds(1),
+                TimeSpan.FromSeconds(0.5),
                 DispatcherPriority.Normal,
-                (o, ev) => txtPlayPos.Text = mediaPlayer != null && mediaPlayer.Source != null && mediaPlayer.HasVideo ? string.Format("{0} / {1}", new DateTime(mediaPlayer.MediaPosition).ToString("HH:mm:ss"), new DateTime(mediaPlayer.MediaDuration).ToString("HH:mm:ss")) : "",
+                (o, ev) =>
+                    {
+                        if (mediaPlayer != null && mediaPlayer.Source != null)
+                        {
+                            // only set position/duration when playing
+                            txtPlayPos.Text = mediaPlayer.HasVideo && (mediaPlayer.MediaPosition != 0 || mediaPlayer.MediaDuration != 0) ?
+                            string.Format("{0} / {1}", new DateTime(mediaPlayer.MediaPosition).ToString("HH:mm:ss"), new DateTime(mediaPlayer.MediaDuration).ToString("HH:mm:ss")) : "";
+                        }
+                        else
+                        {
+                            txtPlayPos.Text = "";
+                        }
+                    },
                 Dispatcher)
                 .Start();
 
@@ -228,7 +240,7 @@ namespace Standalone
 		void SiteSelected(SiteUtilBase site)
 		{
 			waitCursor.Visibility = System.Windows.Visibility.Visible;
-
+            Log.Info("Entering Site: '{0}'", site.Settings.Name);
 			Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
 				delegate()
 				{
@@ -257,7 +269,7 @@ namespace Standalone
 		void CategorySelected(Category category)
 		{
 			waitCursor.Visibility = System.Windows.Visibility.Visible;
-
+            Log.Info("Entering Category: '{0}'", category.Name);
             if (category is NextPageCategory)
             {
                 int selectedIndex = listViewMain.Items.Count - 1;
@@ -546,6 +558,7 @@ namespace Standalone
 			}
 			else
 			{
+                Log.Info("Going to play: '{0}'{1}", playItem.Video.Title, string.IsNullOrEmpty(playItem.Video.Title2) ? "" : string.Format(" -  '{0}'", playItem.Video.Title2));
 				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
 				{
 					return SelectedSite.getMultipleVideoUrls(playItem.Video, CurrentPlayList != null && CurrentPlayList.Count > 1);
@@ -625,6 +638,7 @@ namespace Standalone
 
 				if (choice != null)
 				{
+                    Log.Info("Chosen quality: '{0}'", choice);
 					waitCursor.Visibility = System.Windows.Visibility.Visible;
 					Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
 					{
@@ -658,6 +672,7 @@ namespace Standalone
 
 			// Play
 			CurrentPlayListItem = null;
+            Log.Info("Starting Playback: '{0}'", urlToPlay);
 			mediaPlayer.Source = new Uri(urlToPlay);
 			CurrentPlayListItem = playItem;
 		}
@@ -1023,6 +1038,7 @@ namespace Standalone
             {
                 if (result.TaskError != null)
                 {
+                    Log.Warn(string.Format("Error {0}: {1}", taskDescription, result.TaskError));
                     notification.Show(string.Format("{0} {1}", Translation.Instance.Error, taskDescription), result.TaskError.Message);
                 }
                 else
