@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Standalone.SearchDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Search" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="#DDE3F4FC" AllowsTransparency="True" Margin="10" BorderThickness="2" BorderBrush="Black"
+        Title="Search" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="{StaticResource TransparentBackgroundColor}" AllowsTransparency="True" Margin="10" BorderThickness="2" BorderBrush="Black"
         WindowStyle="None" ResizeMode="NoResize" FontSize="14" SizeToContent="WidthAndHeight" FocusManager.FocusedElement="{Binding ElementName=tbxSearch}">
     <StackPanel>
     <TextBlock x:Name="lblHeading" Text="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='Search', StringFormat=\{0\}:}" FontWeight="Bold"/>

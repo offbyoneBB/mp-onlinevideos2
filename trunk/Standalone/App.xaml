@@ -9,12 +9,28 @@
         <local:ZeroVisibilityConverter x:Key="ZeroVisibilityConverter"/>
         <local:LanguageConverter x:Key="LanguageConverter"/> 
         <local:TranslationConverter x:Key="TranslationConverter"/>
+
+        <SolidColorBrush x:Key="BackgroundColor" Color="#FFE3F4FC"/>
+        <SolidColorBrush x:Key="TransparentBackgroundColor" Color="#DDE3F4FC"/>
+
+        <Storyboard x:Key="WobbleAnimation">
+            <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleX" To="1.4" 
+                                                 Duration="0:0:0.15" />
+            <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleY" To="1.4" 
+                                                 Duration="0:0:0.15" />
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="frameRotate" Storyboard.TargetProperty="Angle" RepeatBehavior="Forever">
+                <LinearDoubleKeyFrame Value="0" KeyTime="0:0:1"/>
+                <LinearDoubleKeyFrame Value="-5" KeyTime="0:0:1.05"/>
+                <LinearDoubleKeyFrame Value="5" KeyTime="0:0:1.15"/>
+                <LinearDoubleKeyFrame Value="-5" KeyTime="0:0:1.25"/>
+                <LinearDoubleKeyFrame Value="0" KeyTime="0:0:1.3"/>
+                <LinearDoubleKeyFrame Value="0" KeyTime="0:0:2.2"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
         <DataTemplate x:Key="SiteUtilBase">
             <Grid Width="100" Height="100" Margin="2">
                 <Border x:Name="frame" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
-                    <Border.BitmapEffect>
-                        <DropShadowBitmapEffect Color="Black" Opacity="0.75" ShadowDepth="8"/>
-                    </Border.BitmapEffect>
                     <Grid ToolTip="{Binding Path=Key}">
                         <Image Margin="0 2 2 0" Width="16" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding Path=Value.Settings.Language, Converter={StaticResource LanguageConverter}}"/>
                         <Image Margin="5" Name="thumb" Source="{Binding Path=Value, Converter={StaticResource ThumbnailConverter}}"/>
@@ -25,27 +41,17 @@
                 <Grid.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1" CenterX="50" CenterY="50" />
+                        <RotateTransform x:Name="frameRotate" CenterX="50" CenterY="50" Angle="0" />
                     </TransformGroup>
                 </Grid.RenderTransform>
             </Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}" Value="True">                                        
                     <DataTrigger.Setters>
-                        <Setter TargetName="frame" Property="Background" Value="#FFE3F4FC"/>
+                        <Setter TargetName="frame" Property="Background" Value="{StaticResource BackgroundColor}"/>
                     </DataTrigger.Setters>
                     <DataTrigger.EnterActions>
-                        <BeginStoryboard x:Name="wobbleAnim">
-                            <Storyboard>
-                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleX" To="1.3" 
-                                                 Duration="0:0:0.2" />
-                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleY" To="1.3" 
-                                                 Duration="0:0:0.2" />
-                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleX" To="1.4" 
-                                                 Duration="0:0:0.8" RepeatBehavior="Forever" AutoReverse="True" />
-                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleY" To="1.4" 
-                                                 Duration="0:0:0.8" RepeatBehavior="Forever" AutoReverse="True" />                                
-                            </Storyboard>
-                        </BeginStoryboard>
+                        <BeginStoryboard x:Name="wobbleAnim" Storyboard="{StaticResource WobbleAnimation}" />
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
                         <RemoveStoryboard BeginStoryboardName="wobbleAnim" />
@@ -58,17 +64,34 @@
                 <Grid ToolTip="{Binding Path=Name}">
                     <DockPanel>
                         <Image DockPanel.Dock="Left" MaxWidth="60" Name="thumb" Source="{Binding Path=ThumbnailImage, Converter={StaticResource ThumbnailConverter}}"/>
-                        <TextBlock Text="{Binding Path=Name}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding Path=Name}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="Black"/>
                     </DockPanel>
-                    <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="9" Padding="0 0 2 0" Text="{Binding Path=EstimatedVideoCount}"/>
+                    <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="9" Padding="0 0 2 0" Text="{Binding Path=EstimatedVideoCount}" Foreground="Black"/>
                 </Grid>
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1" CenterX="90" CenterY="30" />
+                    </TransformGroup>
+                </Border.RenderTransform>
             </Border>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}" Value="True">
                     <DataTrigger.Setters>
-                        <Setter TargetName="frame" Property="Background" Value="Blue"/>
-                        <Setter TargetName="frame" Property="BorderBrush" Value="White"/>                                  
+                        <Setter TargetName="frame" Property="Background" Value="{StaticResource BackgroundColor}"/>
                     </DataTrigger.Setters>
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="enlargeAnim">
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleX" To="1.26" 
+                                                 Duration="0:0:0.15" />
+                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleY" To="1.26" 
+                                                 Duration="0:0:0.15" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <RemoveStoryboard BeginStoryboardName="enlargeAnim" />
+                    </DataTrigger.ExitActions>
                 </DataTrigger>
             </DataTemplate.Triggers>            
         </DataTemplate>
@@ -81,31 +104,27 @@
                 </Grid>
                 <Border.RenderTransform>
                     <TransformGroup>
-                        <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1" CenterX="50" CenterY="50" />
+                        <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1" CenterX="70" CenterY="60" />
                     </TransformGroup>
                 </Border.RenderTransform>
             </Border>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}" Value="True">
                     <DataTrigger.Setters>
-                        <Setter TargetName="frame" Property="Background" Value="#FFE3F4FC"/>
+                        <Setter TargetName="frame" Property="Background" Value="{StaticResource BackgroundColor}"/>
                     </DataTrigger.Setters>
                     <DataTrigger.EnterActions>
-                        <BeginStoryboard x:Name="wobbleAnim">
+                        <BeginStoryboard x:Name="enlargeAnim">
                             <Storyboard>
-                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleX" To="1.3" 
-                                                 Duration="0:0:0.2" />
-                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleY" To="1.3" 
-                                                 Duration="0:0:0.2" />
-                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleX" To="1.4" 
-                                                 Duration="0:0:0.8" RepeatBehavior="Forever" AutoReverse="True" />
-                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleY" To="1.4" 
-                                                 Duration="0:0:0.8" RepeatBehavior="Forever" AutoReverse="True" />
+                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleX" To="1.35" 
+                                                 Duration="0:0:0.15" />
+                                <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleY" To="1.35" 
+                                                 Duration="0:0:0.15" />
                             </Storyboard>
                         </BeginStoryboard>
                     </DataTrigger.EnterActions>
                     <DataTrigger.ExitActions>
-                        <RemoveStoryboard BeginStoryboardName="wobbleAnim" />
+                        <RemoveStoryboard BeginStoryboardName="enlargeAnim" />
                     </DataTrigger.ExitActions>
                 </DataTrigger>
             </DataTemplate.Triggers>

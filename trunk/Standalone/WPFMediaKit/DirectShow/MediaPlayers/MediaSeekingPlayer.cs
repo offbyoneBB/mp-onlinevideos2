@@ -142,6 +142,9 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
             
             m_mediaSeeking = null;
             m_currentPosition = 0;
+            Duration = 0;
+
+            InvokeMediaPositionChanged(null);
         }
 
         /// <summary>

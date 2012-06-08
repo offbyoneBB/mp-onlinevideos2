@@ -22,6 +22,7 @@
         <local:CategoryPathConverter x:Key="myCategoryPathConverter"/>
         <local:PlayListPositionConverter x:Key="myPlayListPositionConverter"/>
         <local:LongToDateTimeConverter x:Key="myLongToDateTimeConverter"/>
+        <local:BufferPercentConverter x:Key="myBufferPercentConverter"/>
 
     </Window.Resources>
     
@@ -128,6 +129,7 @@
                     <WrapPanel Grid.Row="2">
                         <Button Height="32" Width="45" Padding="2" Margin="0 0 5 0" Command="MediaCommands.TogglePlayPause" ToolTip="Play/Pause" Style="{StaticResource PlayButton}"/>
                         <Button Height="32" Width="45" Padding="2" Command="MediaCommands.Stop" ToolTip="Stop" Style="{StaticResource StopButton}"/>
+                        <TextBlock VerticalAlignment="Center" Padding="5 0 0 0" Text="{Binding ElementName=mediaPlayer, Path=BufferedPercent, Converter={StaticResource myBufferPercentConverter}}"/>
                     </WrapPanel>
                 </Grid>
             </Grid>
