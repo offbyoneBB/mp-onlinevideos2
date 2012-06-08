@@ -38,10 +38,11 @@
     
     <Window.InputBindings>
         <KeyBinding Key="Escape" Command="BrowseBack"/>
-        <KeyBinding Key="C" Command="MediaCommands.TogglePlayPause"/>
-        <KeyBinding Key="B" Command="MediaCommands.Stop"/>
-        <KeyBinding Key="X" Command="NavigationCommands.Zoom"/>
+        <KeyBinding Key="SPACE" Command="MediaCommands.TogglePlayPause"/>
+        <KeyBinding Key="F12" Command="MediaCommands.Stop"/>
+        <KeyBinding Key="Multiply" Command="NavigationCommands.Zoom"/>
         <KeyBinding Key="F" Modifiers="CTRL" Command="Search"/>
+        <KeyBinding Key="F3" Modifiers="CTRL" Command="Search"/>
     </Window.InputBindings>
 
     <Grid Name="LayoutRoot">
@@ -92,7 +93,11 @@
             </WrapPanel>
         </Grid>
         <ListView Grid.Row="1" Name="listViewMain" SelectionChanged="listViewMain_SelectionChanged" SelectionMode="Single"
-                  ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource itemstyle}" ItemTemplateSelector="{StaticResource myTemplateSelector}" Background="Transparent">            
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource itemstyle}" ItemTemplateSelector="{StaticResource myTemplateSelector}" Background="Transparent">
+            <ListView.InputBindings>
+                <!--Repeat the KeyBinding here, otherwise SPACE is not bubbled to the window-->
+                <KeyBinding Key="SPACE" Command="MediaCommands.TogglePlayPause"/>
+            </ListView.InputBindings>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Margin="20" Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"

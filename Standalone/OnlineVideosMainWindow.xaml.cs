@@ -185,7 +185,7 @@ namespace Standalone
                 OnItemSelected(sender);
                 e.Handled = true;
             }
-            else if (e.Key == Key.F9)
+            else if (e.Key == Key.F10)
             {
                 OnItemContextMenuRequested(sender);
                 e.Handled = true;
