@@ -189,6 +189,9 @@ protected:
   // holds if length of stream was set
   bool setLength;
 
+  // specifies if length can be set
+  bool lengthCanBeSet;
+
   // stream time
   int64_t streamTime;
 

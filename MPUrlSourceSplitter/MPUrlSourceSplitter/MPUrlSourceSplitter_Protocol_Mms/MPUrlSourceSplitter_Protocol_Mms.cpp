@@ -104,6 +104,7 @@ CMPUrlSourceSplitter_Protocol_Mms::CMPUrlSourceSplitter_Protocol_Mms(CParameterC
   this->filter = NULL;
   this->streamLength = 0;
   this->setLength = false;
+  this->lengthCanBeSet = false;
   this->streamTime = 0;
   this->bytePosition = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
@@ -418,7 +419,7 @@ void CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit)
             if (!this->seekingActive)
             {
               // we are not seeking, so we can set total length
-              if (!this->setLength)
+              if ((!this->setLength) && (this->lengthCanBeSet))
               {
                 this->streamLength = this->bytePosition;
                 this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
@@ -442,7 +443,7 @@ void CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit)
       else
       {
         // set total length (if not set earlier)
-        if (!this->setLength)
+        if ((!this->setLength) && (this->lengthCanBeSet))
         {
           this->streamLength = this->bytePosition;
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
@@ -785,6 +786,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
   // we are definitely not seeking
   this->seekingActive = false;
 
+  // length can be set now
+  this->lengthCanBeSet = true;
+
   this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
   return result;
 }
@@ -806,6 +810,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StopReceivingData(void)
     delete this->mainCurlInstance;
     this->mainCurlInstance = NULL;
   }
+
+  this->lengthCanBeSet = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
@@ -867,6 +873,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ClearSession(void)
   this->internalExitRequest = false;
   this->streamLength = 0;
   this->setLength = false;
+  this->lengthCanBeSet = false;
   this->streamTime = 0;
   this->bytePosition = 0;
   this->wholeStreamDownloaded = false;
@@ -1026,7 +1033,7 @@ size_t CMPUrlSourceSplitter_Protocol_Mms::CurlReceiveData(char *buffer, size_t s
     {
       if (caller->receivingData)
       {
-        if (!caller->setLength)
+        if ((!caller->setLength) && (caller->lengthCanBeSet))
         {
           double streamSize = 0;
           CURLcode errorCode = curl_easy_getinfo(caller->mainCurlInstance->GetCurlHandle(), CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
