@@ -30,6 +30,8 @@ namespace Standalone
 		public PlayListItem CurrentPlayListItem { get { return _CurrentPlayListItem; } set { _CurrentPlayListItem = value; PropertyChanged(this, new PropertyChangedEventArgs("CurrentPlayListItem")); } }
         bool _IsFullScreen = false;
         public bool IsFullScreen { get { return _IsFullScreen; } set { _IsFullScreen = value; PropertyChanged(this, new PropertyChangedEventArgs("IsFullScreen")); } }
+        string _CurrentFilter = "";
+        public string CurrentFilter { get { return _CurrentFilter; } set { _CurrentFilter = value; PropertyChanged(this, new PropertyChangedEventArgs("CurrentFilter")); } }
 
         public OnlineVideosMainWindow()
         {
@@ -121,14 +123,20 @@ namespace Standalone
                         waitCursor.Visibility = System.Windows.Visibility.Hidden;
                         ReactToResult(resultInfo, Translation.Instance.AutomaticUpdate);
                         OnlineVideoSettings.Instance.BuildSiteUtilsList();
-                        listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
+                        listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(OnlineVideoSettings.Instance.SiteUtilsList.ToList()) 
+                        {
+                            Filter = new Predicate<object>(su => ((KeyValuePair<string, SiteUtilBase>)su).Key.ToLower().Contains(CurrentFilter)) 
+                        };
                         SelectAndFocusItem();
                     }, false);
             }
             else
             {
                 OnlineVideoSettings.Instance.BuildSiteUtilsList();
-                listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
+                listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(OnlineVideoSettings.Instance.SiteUtilsList.ToList())
+                {
+                    Filter = new Predicate<object>(su => ((KeyValuePair<string, SiteUtilBase>)su).Key.ToLower().Contains(CurrentFilter))
+                };
                 SelectAndFocusItem();
             }
         }
@@ -151,6 +159,33 @@ namespace Standalone
                 OnItemContextMenuRequested(sender);
                 e.Handled = true;
             }
+            else
+            {
+                if (detailsView.Visibility == System.Windows.Visibility.Hidden)
+                {
+                    char c = Util.GetCharFromKey(e.Key);
+                    if (char.IsLetterOrDigit(c))
+                    {
+                        FilterItems(c);
+                        e.Handled = true;
+                    }
+                }
+            }
+        }
+
+        void FilterItems(char newChar)
+        {
+            var view = listViewMain.ItemsSource as System.Windows.Data.ListCollectionView;
+            if (newChar == char.MinValue)
+            {
+                CurrentFilter = CurrentFilter.Substring(0, CurrentFilter.Length - 1);
+            }
+            else
+            {
+                CurrentFilter += newChar;
+            }
+            view.Refresh();
+            SelectAndFocusItem();
         }
 
         protected void HandleItemRightClicked(object sender, MouseButtonEventArgs e)
@@ -168,6 +203,8 @@ namespace Standalone
         protected void OnItemSelected(object sender)
         {
             if (Gui2UtilConnector.Instance.IsBusy) return; // don't do anything if currently working on a background task
+
+            CurrentFilter = "";
 
             object boundObject = ((ListViewItem)sender).Content;
             if (boundObject is KeyValuePair<string, OnlineVideos.Sites.SiteUtilBase>)
@@ -219,9 +256,12 @@ namespace Standalone
                             SelectedSite.Settings.Categories[SelectedSite.Settings.Categories.Count - 1].ThumbnailImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png");
                         }
                         SelectedSite.Settings.Categories.RaiseListChangedEvents = false;
-						listViewMain.ItemsSource = SelectedSite.Settings.Categories;
+						listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(SelectedSite.Settings.Categories) 
+                        {
+                            Filter = new Predicate<object>(cat => ((Category)cat).Name.ToLower().Contains(CurrentFilter)) 
+                        };
 						SelectAndFocusItem();
-						ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
+                        ImageDownloader.GetImages<Category>(SelectedSite.Settings.Categories);
 					}
 				}
 			);
@@ -251,7 +291,11 @@ namespace Standalone
                                 {
                                     SelectedSite.Settings.Categories[SelectedSite.Settings.Categories.Count - 1].ThumbnailImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png");
                                 }
-                                listViewMain.ItemsSource = SelectedSite.Settings.Categories;
+                                listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(SelectedSite.Settings.Categories)
+                                {
+                                    Filter = new Predicate<object>(cat => ((Category)cat).Name.ToLower().Contains(CurrentFilter))
+                                };
+                                ImageDownloader.GetImages<Category>(SelectedSite.Settings.Categories);
                             }
                             else
                             {
@@ -259,10 +303,13 @@ namespace Standalone
                                 {
                                     category.ParentCategory.SubCategories[category.ParentCategory.SubCategories.Count - 1].ThumbnailImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png");
                                 }
-                                listViewMain.ItemsSource = category.ParentCategory.SubCategories;
+                                listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(category.ParentCategory.SubCategories)
+                                {
+                                    Filter = new Predicate<object>(cat => ((Category)cat).Name.ToLower().Contains(CurrentFilter))
+                                };
+                                ImageDownloader.GetImages<Category>(category.ParentCategory.SubCategories);
                             }
                             SelectAndFocusItem(selectedIndex);
-                            ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
                         }
                     }
                 );
@@ -285,9 +332,12 @@ namespace Standalone
                             {
                                 category.SubCategories[category.SubCategories.Count - 1].ThumbnailImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png");
                             }
-							listViewMain.ItemsSource = category.SubCategories;
-							SelectAndFocusItem();
-							ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
+                            listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(category.SubCategories)
+                            {
+                                Filter = new Predicate<object>(cat => ((Category)cat).Name.ToLower().Contains(CurrentFilter))
+                            };
+                            ImageDownloader.GetImages<Category>(category.SubCategories);
+                            SelectAndFocusItem();
 						}
 					}
 				);
@@ -308,9 +358,12 @@ namespace Standalone
 							List<VideoInfo> result = resultInfo.ResultObject as List<VideoInfo>;
 							result.ForEach(r => r.CleanDescriptionAndTitle());
 							if (SelectedSite.HasNextPage) result.Add(new VideoInfo() { Title = Translation.Instance.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
-							listViewMain.ItemsSource = result;
-							SelectAndFocusItem();
-							ImageDownloader.GetImages<VideoInfo>((IList<VideoInfo>)listViewMain.ItemsSource);
+                            listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(result)
+                            {
+                                Filter = new Predicate<object>(vid => ((VideoInfo)vid).Title.ToLower().Contains(CurrentFilter))
+                            };
+                            ImageDownloader.GetImages<VideoInfo>(result);
+                            SelectAndFocusItem();
 						}
 					}
 				);
@@ -336,13 +389,16 @@ namespace Standalone
 							List<VideoInfo> result = resultInfo.ResultObject as List<VideoInfo>;
 							result.ForEach(r => r.CleanDescriptionAndTitle());
 							if (SelectedSite.HasNextPage) result.Add(new VideoInfo() { Title = Translation.Instance.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
-							List<VideoInfo> currentSource = listViewMain.ItemsSource as List<VideoInfo>;
+                            List<VideoInfo> currentSource = (listViewMain.ItemsSource as System.Windows.Data.ListCollectionView).SourceCollection as List<VideoInfo>;
 							int indexToSelect = currentSource.Count - 1;
 							currentSource.RemoveAt(indexToSelect);
 							result.InsertRange(0, currentSource);
-							listViewMain.ItemsSource = result;
-							(listViewMain.ItemContainerGenerator.ContainerFromIndex(indexToSelect) as ListBoxItem).Focus();
-							ImageDownloader.GetImages<VideoInfo>((IList<VideoInfo>)listViewMain.ItemsSource);
+                            listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(result)
+                            {
+                                Filter = new Predicate<object>(vid => ((VideoInfo)vid).Title.ToLower().Contains(CurrentFilter))
+                            };
+                            ImageDownloader.GetImages<VideoInfo>(result);
+                            SelectAndFocusItem(indexToSelect);
 						}
 					}
 				);
@@ -1079,7 +1135,7 @@ namespace Standalone
 
         private void Back_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = !Gui2UtilConnector.Instance.IsBusy && SelectedSite != null;
+            e.CanExecute = !Gui2UtilConnector.Instance.IsBusy && (SelectedSite != null || CurrentFilter != "");
         }
 
 		private void Back_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -1090,9 +1146,15 @@ namespace Standalone
 			}
 			else
 			{
+                if (CurrentFilter != "")
+                {
+                    FilterItems(char.MinValue);
+                    return;
+                }
+
 				if (SelectedCategory == null)
 				{
-					listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
+                    listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(OnlineVideoSettings.Instance.SiteUtilsList.ToList());
 					listViewMain.SelectedValue = OnlineVideoSettings.Instance.SiteUtilsList.FirstOrDefault(o => o.Value == SelectedSite);
 					(listViewMain.ItemContainerGenerator.ContainerFromIndex(listViewMain.SelectedIndex) as ListBoxItem).Focus();
 					SelectedSite = null;
