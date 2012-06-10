@@ -119,6 +119,7 @@
     </Compile>
     <Compile Include="TemplateSelector.cs" />
     <Compile Include="Converters.cs" />
+    <Compile Include="Util.cs" />
     <Compile Include="WPFMediaKit\DirectShow\Controls\D3DRenderer.cs" />
     <Compile Include="WPFMediaKit\DirectShow\Controls\DvdPlayerElement.cs" />
     <Compile Include="WPFMediaKit\DirectShow\Controls\MediaDetectorElement.cs" />
