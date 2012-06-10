@@ -35,11 +35,19 @@ namespace Standalone
             }
             else if (value is string && !string.IsNullOrEmpty((string)value))
             {
-                try { if (System.IO.Path.IsPathRooted(value as string) && System.IO.File.Exists(value as string)) return value; }
+                try { if (System.IO.Path.IsPathRooted(value as string) && System.IO.File.Exists(value as string)) file = value as string; }
                 catch { }
-            }    
-            if (string.IsNullOrEmpty(file))return null;
-            else return file;            
+            }
+
+            if (string.IsNullOrEmpty(file)) return null;
+
+            // load the image, specify CacheOption so the file is not locked
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.UriSource = new Uri(file);
+            bitmapImage.EndInit();
+            return bitmapImage;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

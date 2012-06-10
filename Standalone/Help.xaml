@@ -42,7 +42,7 @@
         <TextBlock Grid.Row="7" Text="Select Item"/>
         <TextBlock Grid.Row="7" Grid.Column="1" Text="ENTER / Mouse Left"/>
         <TextBlock Grid.Row="8" Text="Context Menu"/>
-        <TextBlock Grid.Row="8" Grid.Column="1" Text="F10 / Mouse Right"/>
+        <TextBlock Grid.Row="8" Grid.Column="1" Text="F9 / Mouse Right"/>
         <TextBlock Grid.Row="9" Text="© offbyone 2012" VerticalAlignment="Bottom" FontStyle="Italic"/>
         <Button IsCancel="True" Command="Close" Grid.Column="1" Grid.Row="9" Width="50" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="OK" Margin="0 5 0 0"/>
     </Grid>

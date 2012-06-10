@@ -38,39 +38,19 @@ namespace Standalone
 			// The default connection limit is 2 in .net on most platforms! This means downloading two files will block all other WebRequests.
 			System.Net.ServicePointManager.DefaultConnectionLimit = 100;
 
-			string writeableBaseDir = GetBaseDirectory();
-
-			OnlineVideoSettings.Instance.Logger = new Logger(writeableBaseDir);
-			
-			Config.Load(writeableBaseDir);
-
-			#region Set Directory for SiteUtilDlls with write access
-			OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES(X86)") ?? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\");
-			if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DllsDir)) OnlineVideoSettings.Instance.DllsDir = writeableBaseDir;
-			try
-			{
-				System.IO.File.WriteAllText(System.IO.Path.Combine(OnlineVideoSettings.Instance.DllsDir, "Temp.txt"), "");
-				System.IO.File.Delete(System.IO.Path.Combine(OnlineVideoSettings.Instance.DllsDir, "Temp.txt"));
-			}
-			catch
-			{
-				// could not write to the DllsDir - force using the writeableBaseDir
-				OnlineVideoSettings.Instance.DllsDir = writeableBaseDir;
-			}
-			#endregion
-			#region Set Directory for Thumbs (Icons, Banners and downloaded Thumbs)
-			OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\thumbs\OnlineVideos\");
-			if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ThumbsDir)) OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(writeableBaseDir, "Thumbs");
+            // set and create folders at CommonApplicationData/OnlineVideos
+            string writeableBaseDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "OnlineVideos\\");
+            if (!System.IO.Directory.Exists(writeableBaseDir)) System.IO.Directory.CreateDirectory(writeableBaseDir);
+            Config.Load(writeableBaseDir);
+            OnlineVideoSettings.Instance.ConfigDir = writeableBaseDir;
+            OnlineVideoSettings.Instance.Logger = new Logger(System.IO.Path.Combine(writeableBaseDir, "Logs"));
+            OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(writeableBaseDir, "SiteUtilDlls");
+            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DllsDir)) System.IO.Directory.CreateDirectory(OnlineVideoSettings.Instance.DllsDir);
+			OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(writeableBaseDir, "Thumbs");
 			if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ThumbsDir)) System.IO.Directory.CreateDirectory(OnlineVideoSettings.Instance.ThumbsDir);
-			#endregion
-			#region Set Directory for Sites xml
-			OnlineVideoSettings.Instance.ConfigDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\");
-			if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ConfigDir)) OnlineVideoSettings.Instance.ConfigDir = writeableBaseDir;
-			#endregion
-			#region Set Directory for Downloads
 			OnlineVideoSettings.Instance.DownloadDir = System.IO.Path.Combine(writeableBaseDir, "Downloads");
             if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DownloadDir)) System.IO.Directory.CreateDirectory(OnlineVideoSettings.Instance.DownloadDir);
-			#endregion
+
 			#region Define default video extensions
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asf")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asf", false);
 			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asx")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asx", false);
@@ -87,25 +67,6 @@ namespace Standalone
 			Gui2UtilConnector.Instance.TaskFinishedCallback += () => Dispatcher.Invoke((Action)Gui2UtilConnector.Instance.ExecuteTaskResultHandler);
 
             InitializeComponent();
-        }
-
-        private string GetBaseDirectory()
-        {
-            try
-            {
-                // Attempt to create the Thumbs directory in the applications startup folder
-                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Thumbs"));
-				// since the Thumbs directory might have already existed, try to write a file in it
-				System.IO.File.WriteAllText(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Thumbs\\Temp.txt"), "");
-                return AppDomain.CurrentDomain.BaseDirectory;
-            }
-            catch (Exception)
-            {
-				// an exception is raised if the path is read only or do not have write access (UAC might be on)
-                string writeableBaseDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "OnlineVideos\\");
-				if (!System.IO.Directory.Exists(writeableBaseDir)) System.IO.Directory.CreateDirectory(writeableBaseDir);
-				return writeableBaseDir;
-            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -185,7 +146,7 @@ namespace Standalone
                 OnItemSelected(sender);
                 e.Handled = true;
             }
-            else if (e.Key == Key.F10)
+            else if (e.Key == Key.F9)
             {
                 OnItemContextMenuRequested(sender);
                 e.Handled = true;

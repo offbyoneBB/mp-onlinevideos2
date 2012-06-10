@@ -30,6 +30,7 @@
 		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
+      
 			<Directory Id="ProgramFilesFolder">
 				<Directory Id="INSTALLLOCATION" Name="OnlineVideos">
 					<Component Id="OnlineVideosStandalone" Guid="ec34fc0c-8073-4313-9b8a-3a00e95ba836">
@@ -123,16 +124,36 @@
 				</Directory>
 			</Directory>
 
-			<Directory Id="DesktopFolder" Name="Desktop"/>
-		</Directory>
+      <Directory Id="CommonAppDataFolder">
+        <Directory Id="OVDataFolder" Name="OnlineVideos">
+          <Directory Id="OVDataFolderThumbs" Name="Thumbs">
+            <Directory Id="OVDataFolderThumbsIcons" Name="Icons">
+              <Component Id="OnlineVideosSiteIcons" Guid="E5D9F5CC-25AA-4A57-91E5-8935D6E76067">
+                <File Id="DownloadsIcon" Source="$(var.SolutionDir)SiteImages\Icons\DownloadedVideo.png" DiskId="1" Vital="yes"/>
+              </Component>
+            </Directory>
+            <Directory Id="OVDataFolderThumbsBanners" Name="Banners">
+              <Component Id="OnlineVideosSiteBanners" Guid="128C5F93-A0F2-48A7-B9F1-059350CC88A9">
+                <File Id="DownloadsBanner" Source="$(var.SolutionDir)SiteImages\Banners\DownloadedVideo.png" DiskId="1" Vital="yes"/>
+              </Component>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop"/>
+
+    </Directory>
 
 		<Feature Id="ProductFeature" Title="OnlineVideos Standalone" Level="1" ConfigurableDirectory="INSTALLLOCATION" Display="expand" AllowAdvertise="no" Absent="disallow" Description="Required core files of the OnlineVideos Standalone application.">
 			<ComponentRef Id="OnlineVideosStandalone" />
 			<ComponentRef Id="OnlineVideosStandaloneImages" />
 			<ComponentRef Id="OnlineVideosLanguageFlags" />
 			<ComponentRef Id="OnlineVideosLanguages" />
+      <ComponentRef Id="OnlineVideosSiteIcons" />
+      <ComponentRef Id="OnlineVideosSiteBanners" />
 
-			<!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
+      <!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
 			<ComponentGroupRef Id="Product.Generated" />
 
 			<Feature Id="SplitterFeature" Title="Source Splitter Filter" AllowAdvertise="no" Level="1" Description="Required DirectShow Filter. Only deselect when OnlineVideos for MediaPortal is installed on this PC.">
