@@ -169,6 +169,9 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
                 case "mms":
                     sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{187463A0-5BB7-11D3-ACBE-0080C75E246E}"))) as IBaseFilter;
                     return filterGraph.AddFilter(sourceFilter, "WM ASF Reader");
+                case "file":
+                    sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{E436EBB5-524F-11CE-9F53-0020AF0BA770}"))) as IBaseFilter;
+                    return filterGraph.AddFilter(sourceFilter, "File Source (Async.)");
             }
             return -1;
         }

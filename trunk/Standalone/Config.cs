@@ -9,7 +9,7 @@ namespace Standalone
 	[DataContract(Name = "OnlineVideos")]
 	public class Config
 	{
-		const string FileName = "OnlineVideosSettings.xml";
+		const string FileName = "OnlineVideoSettings.xml";
 
 		public static void Load(string writeableBaseDir)
 		{
