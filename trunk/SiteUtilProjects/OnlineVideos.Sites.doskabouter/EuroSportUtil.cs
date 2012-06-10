@@ -216,11 +216,30 @@ namespace OnlineVideos.Sites
         {
             string getData = GetWebData(video.VideoUrl, newcc);
             Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
-            string videoId = m.Groups["vidid"].Value;
-            if (videoId == "-1")
-                videoId = m.Groups["cuvid"].Value;
+            string postData;
+            bool catchUp = m.Groups["vidid"].Value == "-1";
+            if (catchUp)
+            {
+                string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
+<s:Body xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+<GetCatchUpVideoSecurized xmlns=""http://tempuri.org/"">
+<catchUpVideoId>{0}</catchUpVideoId>
+<geolocCountry>{1}</geolocCountry>
+<realIp>{4}</realIp>
+<userId>{5}</userId>
+<hkey>{6}</hkey>
+<responseLangId>{2}</responseLangId>
+</GetCatchUpVideoSecurized>
+</s:Body></s:Envelope>", m.Groups["cuvid"].Value, tld.ToUpperInvariant(), m.Groups["lang"].Value, 1, m.Groups["realip"].Value,
+                       m.Groups["ut"].Value, m.Groups["ht"].Value);
 
-            string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
+                postData = GetWebDataFromPost("http://videoshop.eurosport.com/PlayerCatchupService.asmx",
+                    post, @"SOAPAction: ""http://tempuri.org/GetCatchUpVideoSecurized""");
+            }
+            else
+            {
+
+                string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
 <s:Body xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
 <GetVideoSecurizedAsync xmlns=""http://tempuri.org/"">
 <videoId>{0}</videoId>
@@ -233,19 +252,20 @@ namespace OnlineVideos.Sites
 <hkey>{6}</hkey>
 <responseLangId>{2}</responseLangId>
 </GetVideoSecurizedAsync>
-</s:Body></s:Envelope>", videoId, tld.ToUpperInvariant(), m.Groups["lang"].Value, 1, m.Groups["realip"].Value,
-                   m.Groups["ut"].Value, m.Groups["ht"].Value);
+</s:Body></s:Envelope>", m.Groups["vidid"].Value, tld.ToUpperInvariant(), m.Groups["lang"].Value, 1, m.Groups["realip"].Value,
+                       m.Groups["ut"].Value, m.Groups["ht"].Value);
 
-            string postData = GetWebDataFromPost("http://videoshop.eurosport.com/PlayerVideoService.asmx",
-                post, @"SOAPAction: ""http://tempuri.org/GetVideoSecurizedAsync""");
-
+                postData = GetWebDataFromPost("http://videoshop.eurosport.com/PlayerVideoService.asmx",
+                    post, @"SOAPAction: ""http://tempuri.org/GetVideoSecurizedAsync""");
+            }
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(postData);
 
             nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("a", "http://tempuri.org/");
 
-            XmlNode uri = doc.SelectSingleNode("//a:playlistitem/a:uri", nsmRequest);
+            XmlNode uri = catchUp ? doc.SelectSingleNode("//a:catchupstream/a:securedurl", nsmRequest) :
+                doc.SelectSingleNode("//a:playlistitem/a:uri", nsmRequest);
             if (uri != null)
                 return uri.InnerText;
             return null;
