@@ -60,7 +60,6 @@ namespace OnlineVideos.Sites
                         RtmpUrl rtmpUrl = new RtmpUrl(m2.Groups["url"].Value)
                         {
                             Live = true,
-                            SwfVerify = true,
                             SwfUrl = @"http://www.rtve.es/swf/4.0.32/RTVEPlayerVideo.swf"
                         };
                         return rtmpUrl.ToString();
