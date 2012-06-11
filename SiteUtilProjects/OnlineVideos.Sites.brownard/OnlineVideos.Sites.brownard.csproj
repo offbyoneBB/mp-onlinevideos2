@@ -46,10 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BBCiPlayerUtil.cs" />
+    <Compile Include="LivetvruUtil.cs" />
     <Compile Include="Utils\AMF3.cs" />
     <Compile Include="Demand5Util.cs" />
     <Compile Include="FootballStreamingInfoUtil.cs" />
     <Compile Include="FourodUtil.cs" />
+    <Compile Include="Utils\Flashi.cs" />
     <Compile Include="Utils\FourodDecrypter.cs" />
     <Compile Include="Utils\MyBlowFish.cs" />
     <Compile Include="ITVPlayerUtil.cs" />
