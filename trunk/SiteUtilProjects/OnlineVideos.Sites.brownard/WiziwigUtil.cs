@@ -57,9 +57,10 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getVideoList(Category category)
         {
             string channelRegex = @"<tr class=""broadcast"">\s*<td class=""logo"".*?><img src=""(?<thumb>[^""]*)"".*?></td>\s*<td class=""stationname"">(?<name>[^<]*)</td>\s*(<td.*?>.*?</td>\s*){3}</tr>\s*(?<vidhtml><tr class=""streamrow.*?</tr>)";
-            string videoRegex = @"<tr class=""streamrow (odd|even)"">\s*<td>.*?</td>\s*<td>\s*<a class=""broadcast go"" href=""(?<url>sop://[^""]*)"".*?</td>\s*<td>(?<bitrate>[^<]*)</td>\s*<td><div class=""rating"" rel=""(?<rating>[^""]*)""";
+            string videoRegex = @"<tr class=""streamrow (odd|even)"">\s*<td>.*?</td>\s*<td>\s*<a class=""broadcast go"" href=""(?<url>[^""]*)"".*?</td>\s*<td>(?<bitrate>[^<]*)</td>\s*<td><div class=""rating"" rel=""(?<rating>[^""]*)""";
 
             List<VideoInfo> vids = new List<VideoInfo>();
+
             //links page
             string html = GetWebData(((RssLink)category).Url);
 
@@ -76,9 +77,12 @@ namespace OnlineVideos.Sites
                 //individual links
                 foreach (Match vidmatch in vidregex.Matches(match.Groups["vidhtml"].Value))
                 {
+                    string url = vidmatch.Groups["url"].Value;
+                    if (!url.StartsWith("sop://") && !url.StartsWith("http://www.hitsports.net"))
+                        continue;
                     VideoInfo vid = new VideoInfo();
                     vid.ImageUrl = imageurl;
-                    vid.VideoUrl = vidmatch.Groups["url"].Value;
+                    vid.VideoUrl = url;
                     vid.Title = channel + " - " + vidmatch.Groups["bitrate"].Value;
                     vid.Description = category.Description + "\n" + string.Format("Rating: {0}/100", vidmatch.Groups["rating"]);
                     vid.Length = getVidLength(category.Description);
@@ -88,6 +92,34 @@ namespace OnlineVideos.Sites
             return vids;
         }
 
+        public override string getUrl(VideoInfo video)
+        {
+            if (video.VideoUrl.StartsWith("sop://"))
+                return base.getUrl(video);
+
+            return getHitSportsUrl(video.VideoUrl);
+        }
+
+        private string getHitSportsUrl(string url)
+        {
+            string html = GetWebData(url);
+            Match m = new Regex(@"http://hitsports.net/stream-\d+.php").Match(html);
+            if (!m.Success)
+                return "";
+            html = GetWebData(m.Value);
+            m = new Regex(@"fid='(.*?)'").Match(html);
+            if (!m.Success)
+                return "";
+
+            return new MPUrlSourceFilter.RtmpUrl("rtmp://50.115.124.69/flashi")
+            {
+                PlayPath = m.Groups[1].Value,
+                SwfUrl = "http://www.flashi.tv/player/player-licensed.swf",
+                SwfVerify = true,
+                PageUrl = "http://www.flashi.tv/embed.php?v=" + m.Groups[1].Value,
+                Live = true
+            }.ToString();
+        }
 
         private string getVidLength(string description)
         {
