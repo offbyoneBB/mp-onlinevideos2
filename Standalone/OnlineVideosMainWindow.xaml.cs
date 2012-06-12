@@ -258,7 +258,7 @@ namespace Standalone
                         SelectedSite.Settings.Categories.RaiseListChangedEvents = false;
 						listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(SelectedSite.Settings.Categories) 
                         {
-                            Filter = new Predicate<object>(cat => ((Category)cat).Name.ToLower().Contains(CurrentFilter)) 
+                            Filter = new Predicate<object>(cat => (((Category)cat).Name ?? "").ToLower().Contains(CurrentFilter)) 
                         };
 						SelectAndFocusItem();
                         ImageDownloader.GetImages<Category>(SelectedSite.Settings.Categories);
@@ -293,7 +293,7 @@ namespace Standalone
                                 }
                                 listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(SelectedSite.Settings.Categories)
                                 {
-                                    Filter = new Predicate<object>(cat => ((Category)cat).Name.ToLower().Contains(CurrentFilter))
+                                    Filter = new Predicate<object>(cat => (((Category)cat).Name ?? "").ToLower().Contains(CurrentFilter))
                                 };
                                 ImageDownloader.GetImages<Category>(SelectedSite.Settings.Categories);
                             }
@@ -305,7 +305,7 @@ namespace Standalone
                                 }
                                 listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(category.ParentCategory.SubCategories)
                                 {
-                                    Filter = new Predicate<object>(cat => ((Category)cat).Name.ToLower().Contains(CurrentFilter))
+                                    Filter = new Predicate<object>(cat => (((Category)cat).Name ?? "").ToLower().Contains(CurrentFilter))
                                 };
                                 ImageDownloader.GetImages<Category>(category.ParentCategory.SubCategories);
                             }
@@ -334,7 +334,7 @@ namespace Standalone
                             }
                             listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(category.SubCategories)
                             {
-                                Filter = new Predicate<object>(cat => ((Category)cat).Name.ToLower().Contains(CurrentFilter))
+                                Filter = new Predicate<object>(cat => (((Category)cat).Name ?? "").ToLower().Contains(CurrentFilter))
                             };
                             ImageDownloader.GetImages<Category>(category.SubCategories);
                             SelectAndFocusItem();
@@ -360,7 +360,7 @@ namespace Standalone
 							if (SelectedSite.HasNextPage) result.Add(new VideoInfo() { Title = Translation.Instance.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
                             listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(result)
                             {
-                                Filter = new Predicate<object>(vid => ((VideoInfo)vid).Title.ToLower().Contains(CurrentFilter))
+                                Filter = new Predicate<object>(vid => (((VideoInfo)vid).Title ?? "").ToLower().Contains(CurrentFilter))
                             };
                             ImageDownloader.GetImages<VideoInfo>(result);
                             SelectAndFocusItem();
@@ -395,7 +395,7 @@ namespace Standalone
 							result.InsertRange(0, currentSource);
                             listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(result)
                             {
-                                Filter = new Predicate<object>(vid => ((VideoInfo)vid).Title.ToLower().Contains(CurrentFilter))
+                                Filter = new Predicate<object>(vid => (((VideoInfo)vid).Title ?? "").ToLower().Contains(CurrentFilter))
                             };
                             ImageDownloader.GetImages<VideoInfo>(result);
                             SelectAndFocusItem(indexToSelect);
@@ -1113,9 +1113,12 @@ namespace Standalone
                     List<VideoInfo> converted = result.ConvertAll(i => i as VideoInfo);
                     converted.ForEach(r => ((VideoInfo)r).CleanDescriptionAndTitle());
                     if (SelectedSite.HasNextPage) converted.Add(new VideoInfo() { Title = Translation.Instance.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
-                    listViewMain.ItemsSource = converted;
+					listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(converted)
+					{
+						Filter = new Predicate<object>(vid => (((VideoInfo)vid).Title ?? "").ToLower().Contains(CurrentFilter))
+					};
                     SelectAndFocusItem();
-                    ImageDownloader.GetImages<VideoInfo>((IList<VideoInfo>)listViewMain.ItemsSource);
+					ImageDownloader.GetImages<VideoInfo>(converted);
                 }
                 else
                 {
@@ -1126,9 +1129,12 @@ namespace Standalone
                         SubCategoriesDiscovered = true,
                     };
                     SelectedCategory.SubCategories = result.ConvertAll(i => { (i as Category).ParentCategory = SelectedCategory; return i as Category; });
-                    listViewMain.ItemsSource = SelectedCategory.SubCategories;
+					listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(SelectedCategory.SubCategories)
+					{
+						Filter = new Predicate<object>(cat => (((Category)cat).Name ?? "").ToLower().Contains(CurrentFilter))
+					};
                     SelectAndFocusItem();
-                    ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
+					ImageDownloader.GetImages<Category>(SelectedCategory.SubCategories);
                 }
             }
         }
@@ -1154,7 +1160,10 @@ namespace Standalone
 
 				if (SelectedCategory == null)
 				{
-                    listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(OnlineVideoSettings.Instance.SiteUtilsList.ToList());
+                    listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(OnlineVideoSettings.Instance.SiteUtilsList.ToList())
+					{
+						Filter = new Predicate<object>(su => ((KeyValuePair<string, SiteUtilBase>)su).Key.ToLower().Contains(CurrentFilter))
+					};
 					listViewMain.SelectedValue = OnlineVideoSettings.Instance.SiteUtilsList.FirstOrDefault(o => o.Value == SelectedSite);
 					(listViewMain.ItemContainerGenerator.ContainerFromIndex(listViewMain.SelectedIndex) as ListBoxItem).Focus();
 					SelectedSite = null;
@@ -1185,13 +1194,16 @@ namespace Standalone
 									if (ReactToResult(resultInfo, Translation.Instance.GettingDynamicCategories))
 									{
                                         SelectedSite.Settings.Categories.RaiseListChangedEvents = false;
-										listViewMain.ItemsSource = SelectedSite.Settings.Categories;
+										listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(SelectedSite.Settings.Categories)
+										{
+											Filter = new Predicate<object>(cat => (((Category)cat).Name ?? "").ToLower().Contains(CurrentFilter))
+										};
 										listViewMain.SelectedValue = SelectedSite.Settings.Categories.FirstOrDefault(o => o.Name == SelectedCategory.Name);
 										if (listViewMain.SelectedIndex >= 0)
 										{
 											(listViewMain.ItemContainerGenerator.ContainerFromIndex(listViewMain.SelectedIndex) as ListBoxItem).Focus();
 										}
-										ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
+										ImageDownloader.GetImages<Category>(SelectedSite.Settings.Categories);
 									}
 									SelectedCategory = null;
 								}
@@ -1210,12 +1222,14 @@ namespace Standalone
 									waitCursor.Visibility = System.Windows.Visibility.Hidden;
 									if (ReactToResult(resultInfo, Translation.Instance.GettingDynamicCategories))
 									{
-										listViewMain.ItemsSource = SelectedCategory.ParentCategory.SubCategories;
-
+										listViewMain.ItemsSource = new System.Windows.Data.ListCollectionView(SelectedCategory.ParentCategory.SubCategories)
+										{
+											Filter = new Predicate<object>(cat => (((Category)cat).Name ?? "").ToLower().Contains(CurrentFilter))
+										};
 										listViewMain.SelectedValue = SelectedCategory.ParentCategory.SubCategories.FirstOrDefault(o => o.Name == SelectedCategory.Name);
 										(listViewMain.ItemContainerGenerator.ContainerFromIndex(listViewMain.SelectedIndex) as ListBoxItem).Focus();
 
-										ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
+										ImageDownloader.GetImages<Category>(SelectedCategory.ParentCategory.SubCategories);
 									}
 									SelectedCategory = SelectedCategory.ParentCategory;
 								}

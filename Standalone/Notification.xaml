@@ -1,7 +1,7 @@
 ﻿<UserControl x:Class="Standalone.Notification"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Height="150" Width="250" BorderThickness="2" BorderBrush="Black"
+             Height="150" Width="300" BorderThickness="2" BorderBrush="Black"
              Background="{StaticResource TransparentBackgroundColor}">
     <DockPanel>
         <Border BorderThickness="0 0 0 1" BorderBrush="Black" DockPanel.Dock="Top" >
