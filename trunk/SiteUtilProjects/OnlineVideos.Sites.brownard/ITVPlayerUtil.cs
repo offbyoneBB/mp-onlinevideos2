@@ -14,7 +14,8 @@ namespace OnlineVideos.Sites
     {
         ATOZ,
         SHOWS,
-        DYNAMIC
+        DYNAMIC,
+        LIVE
     }
 
     public class ITVPlayerUtil : SiteUtilBase
@@ -34,20 +35,28 @@ namespace OnlineVideos.Sites
                 {
                     if (cat is RssLink)
                     {
+                        VidType vidType;
                         if (!(cat.Other is VidType))
-                            cat.Other = getVidType((cat as RssLink).Url);
+                        {
+                            vidType = getVidType((cat as RssLink).Url);
+                            cat.Other = vidType;
+                        }
+                        else
+                            vidType = (VidType)cat.Other;
 
-                        if ((VidType)cat.Other == VidType.DYNAMIC)
+                        if (vidType == VidType.DYNAMIC)
                         {
                             removeCats.Add(cat);//remove dynamic cats as they will be re-added
                             continue;
                         }
-
-                        cat.HasSubCategories = true;
-                        cat.SubCategoriesDiscovered = false;
-                        if (string.IsNullOrEmpty(cat.Thumb))
-                            cat.Thumb = string.Format(@"{0}\Icons\{1}.png", OnlineVideoSettings.Instance.ThumbsDir, Settings.Name); 
+                        else if (vidType != VidType.LIVE)
+                        {
+                            cat.HasSubCategories = true;
+                            cat.SubCategoriesDiscovered = false;
+                        }
                     }
+                    if (string.IsNullOrEmpty(cat.Thumb))
+                        cat.Thumb = string.Format(@"{0}\Icons\{1}.png", OnlineVideoSettings.Instance.ThumbsDir, Settings.Name);
                 }
 
                 foreach (Category cat in removeCats)
@@ -174,6 +183,20 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
+            if (category is Group)
+            {
+                List<VideoInfo> vids = new List<VideoInfo>();
+                foreach (Channel chan in ((Group)category).Channels)
+                {
+                    VideoInfo vid = new VideoInfo();
+                    vid.Title = chan.StreamName;
+                    vid.VideoUrl = chan.Url;
+                    vid.ImageUrl = chan.Thumb;
+                    vids.Add(vid);
+                }
+                return vids;
+            }
+
             VidType vidType = (VidType)category.Other;
 
             if (vidType == VidType.ATOZ)
@@ -182,6 +205,7 @@ namespace OnlineVideos.Sites
                 return getTimeSavingVids(category);
 
             return getShowsVids(category);
+
         }
 
         private List<VideoInfo> getTimeSavingVids(Category category)
@@ -198,6 +222,7 @@ namespace OnlineVideos.Sites
             vid.Title = cleanString(match.Groups[2].Value);
             vid.Description = cleanString(match.Groups[2].Value);
             vid.ImageUrl = category.Thumb;
+            vid.Other = VidType.DYNAMIC;
             vids.Add(vid);
             return vids;
         }
@@ -215,7 +240,7 @@ namespace OnlineVideos.Sites
                 vid.ImageUrl = match.Groups[2].Value;
                 vid.Title = cleanString(match.Groups[3].Value);
                 vid.Description = cleanString(match.Groups[4].Value);
-
+                vid.Other = VidType.SHOWS;
                 vids.Add(vid);
             }
 
@@ -255,6 +280,11 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            if (video.VideoUrl.StartsWith("http://") || video.VideoUrl.StartsWith("rtmp://") || video.VideoUrl.StartsWith("rtmpe://"))
+                return video.VideoUrl;
+            else if (video.VideoUrl.StartsWith("sim"))
+                return getLiveUrl(video);
+
             string xml = getPlaylist(video.VideoUrl);
             
             string res = new Regex("<ClosedCaptioningURIs.+", RegexOptions.Singleline).Match(xml).Groups[0].Value;
@@ -266,6 +296,8 @@ namespace OnlineVideos.Sites
             for (int x = 1; x < streams.Length; x++ )
             {
                 string stream = streams[x];
+                if (!stream.StartsWith("\"Streaming"))
+                    continue;
                 Match match = new Regex(@"bitrate=""([^""]+)"" base=""([^""]*)""").Match(stream);
                 string title = match.Groups[1].Value; int br;
                 if (int.TryParse(title, out br))
@@ -276,9 +308,9 @@ namespace OnlineVideos.Sites
                 string url = new MPUrlSourceFilter.RtmpUrl(rtmpUrl)
                 {
                     PlayPath = playPath,
-                    SwfUrl = "http://www.itv.com/mercury/Mercury_VideoPlayer.swf",
+                    SwfUrl = "http://www.itv.com/mediaplayer/ITVMediaPlayer.swf?v=12.11.3", //"http://www.itv.com/mercury/Mercury_VideoPlayer.swf",
                     SwfVerify = true,
-                    Live = false
+                    Live = (VidType)video.Other == VidType.LIVE
                 }.ToString();
 
                 if (!options.ContainsKey(title))
@@ -390,15 +422,17 @@ namespace OnlineVideos.Sites
 		        <itv:Platform>DotCom</itv:Platform>
 		        <itv:Site>ItvCom</itv:Site>
 	        </tem:siteInfo>
+            <tem:deviceInfo> 
+                <itv:ScreenSize>Big</itv:ScreenSize> 
+            </tem:deviceInfo>
 	    </tem:GetPlaylist>
 	</SOAP-ENV:Body>
 </SOAP-ENV:Envelope>";
 
-        /*
+        
         string getLiveUrl(VideoInfo video)
         {
-            string xml = getPlaylist("sim1");
-
+            string xml = getPlaylist(video.VideoUrl);            
             video.PlaybackOptions = new Dictionary<string, string>();
 
             string res = new Regex("<ClosedCaptioningURIs.+", RegexOptions.Singleline).Match(xml).Groups[0].Value;
@@ -409,6 +443,9 @@ namespace OnlineVideos.Sites
             for (int x = 1; x < streams.Length; x++)
             {
                 string stream = streams[x];
+                if (!stream.StartsWith("\"Streaming\""))
+                    continue;
+
                 Match match = new Regex(@"bitrate=""([^""]+)"" base=""([^""]*)""").Match(stream);
                 string title = match.Groups[1].Value;
                 int br;
@@ -419,66 +456,29 @@ namespace OnlineVideos.Sites
                 }
 
                 string playPath = new Regex("<URL><![[]CDATA[[]([^]]+)").Match(stream).Groups[1].Value;
-                string[] playParams = playPath.Split('?');
-
-                string url;
-
                 string baseUrl = match.Groups[2].Value;
-                if (!string.IsNullOrEmpty(baseUrl))
-                {
-                    url = new MPUrlSourceFilter.HttpUrl(baseUrl + playPath + "&MEDEXT=.flv")
-                    {
-                        IgnoreContentLength = true,
-                        Referer = "http://www.itv.com/mercury/Mercury_VideoPlayer.swf?v=1.6.479/[[DYNAMIC]]/2",
-                    }
-                    .ToString();
-                }
-                else
-                {
-                    baseUrl = rtmpUrl.Replace(".net", ".net:1935") + "?" + playParams[1];
+                if (string.IsNullOrEmpty(baseUrl))
+                    baseUrl = rtmpUrl;
 
-
-                    url = new MPUrlSourceFilter.RtmpUrl(baseUrl)
-                    {
-                        PlayPath = playPath,
-                        SwfUrl = "http://www.itv.com/mercury/Mercury_VideoPlayer.swf",
-                        SwfVerify = true,
-                        Live = true
-                    }.ToString();
-                }
+                baseUrl = baseUrl.Replace(".net", ".net:1935");
+                string url = new MPUrlSourceFilter.RtmpUrl(baseUrl)
+                {
+                    PlayPath = playPath,
+                    SwfUrl = "http://www.itv.com/mediaplayer/ITVMediaPlayer.swf?v=12.11.3",
+                    SwfVerify = true,
+                    Live = true
+                }.ToString();                
 
                 if (video.PlaybackOptions.ContainsKey(title))
                     video.PlaybackOptions[title] = url;
                 else
                     video.PlaybackOptions.Add(title, url);
                 lastUrl = url;
+
+                break;
             }
 
             return lastUrl;
         }
-         
-        private List<VideoInfo> getLiveStreams()
-        {
-            List<VideoInfo> vids = new List<VideoInfo>();
-            string key = GetWebData("http://www.itv.com/_app/dynamic/AsxHandler.ashx?getkey=please");
-            Regex reg = new Regex(@"<TITLE>(.+?)</TITLE><REF href=""(.+?)"" />");
-            for (int channel = 1; channel < 6; channel++)
-            {
-                string html = GetWebData(string.Format("http://www.itv.com/_app/dynamic/AsxHandler.ashx?key={0}&simid=sim{1}&itvsite=ITV&itvarea=SIMULCAST.SIM{1}&pageid=4567756521", key, channel));
-                MatchCollection matches = reg.Matches(html);
-                if (matches.Count < 2)
-                    continue;
-
-                Match match = matches[1];
-                VideoInfo vid = new VideoInfo();
-                vid.Other = VidType.LIVE;
-                vid.Title = match.Groups[1].Value;
-                vid.VideoUrl = match.Groups[2].Value;
-                vids.Add(vid);
-            }
-
-            return vids;
-        }
-        */
     }
 }
