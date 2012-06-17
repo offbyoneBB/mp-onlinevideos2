@@ -24,6 +24,12 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("The string used to replace the match if the pattern from the thumbReplaceRegExPattern matched")]
 		protected string thumbReplaceString;
 
+        //TV Guide options
+        [Category("OnlineVideosUserConfiguration"), Description("Whether to retrieve current program info for live streams.")]
+        protected bool retrieveTVGuide = true;
+        [Category("OnlineVideosConfiguration"), Description("The layout to use to display TV Guide info, possible wildcards are <nowtitle>,<nowdescription>,<nowstart>,<nowend>,<nexttitle>,<nextstart>,<nextend>,<newline>")]
+        protected string tvGuideFormatString;
+
         public override string getUrl(VideoInfo video)
         {
             XmlDocument doc = new XmlDocument();
@@ -73,21 +79,24 @@ namespace OnlineVideos.Sites
                     if (Array.BinarySearch<string>(new string[] { "akamai", "level3", "limelight" }, connectionElem.Attributes["kind"].Value) >= 0)
                     {
                         // rtmp
+                        if (connectionElem.Attributes["protocol"] == null || connectionElem.Attributes["protocol"].Value != "rtmp")
+                            continue;
+
                         string server = connectionElem.Attributes["server"].Value;
                         string identifier = connectionElem.Attributes["identifier"].Value;
                         string auth = connectionElem.Attributes["authString"].Value;
                         string application = connectionElem.GetAttribute("application");
 						if (string.IsNullOrEmpty(application)) application = video.Other == "livestream" ? "live" : "ondemand";
-                        string SWFPlayer = "http://www.bbc.co.uk/emp/10player.swf";
+                        string SWFPlayer = "http://www.bbc.co.uk/emp/releases/iplayer/revisions/617463_618125_4/617463_618125_4_emp.swf"; // "http://www.bbc.co.uk/emp/10player.swf";
 
                         info = string.Format("{0}x{1} | {2} kbps | {3}", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"), connectionElem.Attributes["kind"].Value);
                         resultUrl = "";
                         if (connectionElem.Attributes["kind"].Value == "limelight")
                         {
-							resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth), server, 1935) 
+                            resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth), server, 1935)
 							{ 
 								App = application + "?" + auth,
-								PlayPath = identifier,
+                                PlayPath = identifier,
 								SwfUrl = SWFPlayer,
 								SwfVerify = true,
 								Live = video.Other == "livestream"
@@ -109,7 +118,7 @@ namespace OnlineVideos.Sites
                         {
 							resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}?{2}", server, application, auth)) 
 							{
-								PlayPath = identifier,
+								PlayPath = identifier + "?" + auth,
 								SwfUrl = SWFPlayer,
 								SwfVerify = true,
 								Live = video.Other == "livestream"
@@ -146,9 +155,20 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = new VideoInfo();
                     video.Title = channel.StreamName;
-                    video.VideoUrl = channel.Url;
+
+                    int argIndex = channel.Url.IndexOf('?');
+                    if(argIndex < 0) video.VideoUrl = channel.Url;
+                    else video.VideoUrl = channel.Url.Remove(argIndex);
+
                     video.Other = "livestream";
                     video.ImageUrl = channel.Thumb;
+                    if (retrieveTVGuide && argIndex > -1)
+                    {
+                        Utils.TVGuideGrabber tvGuide = new Utils.TVGuideGrabber();
+                        if (tvGuide.GetNowNextForChannel(channel.Url))
+                            video.Description = tvGuide.FormatTVGuide(tvGuideFormatString);
+                    }
+
                     list.Add(video);
                 }
                 return list;
