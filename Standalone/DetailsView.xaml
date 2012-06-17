@@ -14,7 +14,7 @@
         </Style>
     </UserControl.Resources>
     <DockPanel>
-        <TextBlock DockPanel.Dock="Top" Text="{Binding Path=Title}" HorizontalAlignment="Center" FontSize="16" FontWeight="Heavy" Margin="5"/>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding Path=Name}" HorizontalAlignment="Center" FontSize="16" FontWeight="Heavy" Margin="5"/>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -24,8 +24,8 @@
                 <ColumnDefinition MaxWidth="300"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Image Grid.RowSpan="2" Source="{Binding Path=ImageUrl}" VerticalAlignment="Top" Margin="5 0 5 5"/>
-            <ListView Grid.Column="1" Background="Transparent" Name="listViewTrailers" DisplayMemberPath="Title2" ItemContainerStyle="{StaticResource itemstyle}"/>
+			<Image Grid.RowSpan="2" Source="{Binding Path=ThumbnailImage}" VerticalAlignment="Top" Margin="5 0 5 5"/>
+            <ListView Grid.Column="1" Background="Transparent" Name="listViewTrailers" DisplayMemberPath="Name" ItemContainerStyle="{StaticResource itemstyle}"/>
             <TextBlock Grid.Column="1" Grid.Row="1" Name="txtSynopsis" TextWrapping="Wrap"/>
         </Grid>
     </DockPanel>
