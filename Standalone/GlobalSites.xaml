@@ -13,6 +13,9 @@
                 <local:EmailToNameConverter x:Key="emailToNameConverter"/>
                 <local:SiteStateToBrushConverter x:Key="SiteStateToBrushConverter"/>
                 <local:SiteVisibilityConverter x:Key="SiteVisibilityConverter"/>
+                <Style x:Key="LeftAlignedHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                </Style>
             </ListView.Resources>
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
@@ -44,10 +47,37 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}" local:GridViewSort.PropertyName="Name"/>
+                    <GridViewColumn Header="Name" local:GridViewSort.PropertyName="Name">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="32"/>
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="{Binding Path=., Converter={StaticResource ThumbnailConverter}}"/>
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Name}" Margin="5 0 0 0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="Creator" DisplayMemberBinding="{Binding Path=Owner_FK, Converter={StaticResource emailToNameConverter}}" local:GridViewSort.PropertyName="Owner_FK"/>
-                    <GridViewColumn Header="Updated" DisplayMemberBinding="{Binding Path=LastUpdated, StringFormat={}{0:yyyy/MM/dd HH:mm}}" local:GridViewSort.PropertyName="LastUpdated"/>
-                    <GridViewColumn Header="Language" DisplayMemberBinding="{Binding Path=Language, Converter={StaticResource langCodeConverter}}" local:GridViewSort.PropertyName="Language"/>
+                    <GridViewColumn Header="Updated" DisplayMemberBinding="{Binding Path=LastUpdated, StringFormat={}{0:g}}" local:GridViewSort.PropertyName="LastUpdated"/>
+                    <GridViewColumn Header="Language" local:GridViewSort.PropertyName="Language">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Image VerticalAlignment="Center" Source="{Binding Path=Language, Converter={StaticResource LanguageConverter}}"/>
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Language, Converter={StaticResource langCodeConverter}}" Margin="5 0 0 0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Description" HeaderContainerStyle="{StaticResource LeftAlignedHeaderStyle}" DisplayMemberBinding="{Binding Path=Description}"/>
                 </GridView>
             </ListView.View>
         </ListView>

@@ -32,17 +32,29 @@ namespace Standalone
             DependencyPropertyDescriptor descriptor = DependencyPropertyDescriptor.FromProperty(UIElement.VisibilityProperty, typeof(UIElement));
             descriptor.AddValueChanged(this, new EventHandler(VisibilityChanged));           
         }
-
+        
+        bool changedXml = false;
+        bool newDlls = false;
         int rememberedIndex = -1;
+
         void VisibilityChanged(object sender, EventArgs e)
         {
             if (Visibility == System.Windows.Visibility.Hidden)
             {
-                if (changes)
+                if (changedXml)
                 {
                     (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.ItemsSource = null;
-                    (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
-                    changes = false;
+                    if (newDlls)
+                    {
+                        OnlineVideoSettings.Reload();
+                        TranslationLoader.SetTranslationsToSingleton();
+                        GC.Collect();
+                        GC.WaitForFullGCComplete();
+                        newDlls = false;
+                    }
+                    OnlineVideoSettings.Instance.BuildSiteUtilsList();
+                    (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.ItemsSource = ViewModels.SiteList.GetSitesView(App.Current.MainWindow as OnlineVideosMainWindow);
+                    changedXml = false;
                 }
                 (App.Current.MainWindow as OnlineVideosMainWindow).SelectAndFocusItem(rememberedIndex);
             }
@@ -70,20 +82,14 @@ namespace Standalone
             }
         }
 
-        bool changes = false;
-
         private void AddSite(object sender, RoutedEventArgs e)
         {
             OnlineVideos.OnlineVideosWebservice.Site site = (sender as FrameworkElement).DataContext as OnlineVideos.OnlineVideosWebservice.Site;
 			bool? result = OnlineVideos.Sites.Updater.UpdateSites(null, new List<OnlineVideos.OnlineVideosWebservice.Site> { site }, false, false);
 			if (result != false)
 			{
-				OnlineVideoSettings.Instance.BuildSiteUtilsList();
-				// refresh this list
-				lvSites.ItemsSource = null;
-				lvSites.ItemsSource = OnlineVideos.Sites.Updater.OnlineSites;
-				Dispatcher.BeginInvoke((Action)(() => { (lvSites.ItemContainerGenerator.ContainerFromItem(site) as ListViewItem).Focus(); }), DispatcherPriority.Input);
-				changes = true;
+                RefreshList(site);
+                if (result == null) newDlls = true;
 			}
         }
 
@@ -99,15 +105,20 @@ namespace Standalone
                 }
             if (localSiteIndex != -1)
             {
-                OnlineVideoSettings.Instance.SiteSettingsList.RemoveAt(localSiteIndex);
+                OnlineVideoSettings.Instance.RemoveSiteAt(localSiteIndex);
                 OnlineVideoSettings.Instance.SaveSites();
-                OnlineVideoSettings.Instance.BuildSiteUtilsList();
-                // refresh this list
-                lvSites.ItemsSource = null;
-				lvSites.ItemsSource = OnlineVideos.Sites.Updater.OnlineSites;
-                Dispatcher.BeginInvoke((Action)(() =>  { (lvSites.ItemContainerGenerator.ContainerFromItem(site) as ListViewItem).Focus(); }), DispatcherPriority.Input);
-                changes = true;
+                RefreshList(site);
             }
         }
+
+        private void RefreshList(OnlineVideos.OnlineVideosWebservice.Site site)
+        {
+            // refresh this list
+            lvSites.ItemsSource = null;
+            lvSites.ItemsSource = OnlineVideos.Sites.Updater.OnlineSites;
+            Dispatcher.BeginInvoke((Action)(() => { (lvSites.ItemContainerGenerator.ContainerFromItem(site) as ListViewItem).Focus(); }), DispatcherPriority.Input);
+            changedXml = true;
+        }
+
     }
 }

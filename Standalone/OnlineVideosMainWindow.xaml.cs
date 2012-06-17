@@ -35,6 +35,12 @@ namespace Standalone
 
         public OnlineVideosMainWindow()
         {
+            // default culture is en-us for all xaml, set the current ui culture, so it is used for all conversions
+            FrameworkElement.LanguageProperty.OverrideMetadata(
+                typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(
+                    System.Windows.Markup.XmlLanguage.GetLanguage(System.Globalization.CultureInfo.CurrentUICulture.IetfLanguageTag)));
+
 			OnlineVideosAppDomain.UseSeperateDomain = true;
 
 			// The default connection limit is 2 in .net on most platforms! This means downloading two files will block all other WebRequests.
