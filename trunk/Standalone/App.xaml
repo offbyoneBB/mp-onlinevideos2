@@ -28,16 +28,16 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
-        <DataTemplate x:Key="SiteUtilBase">
+        <DataTemplate x:Key="Site">
             <Grid Width="100" Height="100" Margin="2">
                 <Border x:Name="frame" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
-                    <Grid ToolTip="{Binding Path=Key}">
-                        <Image Margin="0 2 2 0" Width="16" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding Path=Value.Settings.Language, Converter={StaticResource LanguageConverter}}"/>
-                        <Image Margin="5" Name="thumb" Source="{Binding Path=Value, Converter={StaticResource ThumbnailConverter}}"/>
+                    <Grid ToolTip="{Binding Path=Name}">
+                        <Image Margin="0 2 2 0" Width="16" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding Path=Language, Converter={StaticResource LanguageConverter}}"/>
+                        <Image Margin="5" Name="thumb" Source="{Binding Path=., Converter={StaticResource ThumbnailConverter}}"/>
                     </Grid>
                 </Border>
-                <TextBlock Text="{Binding Path=Key}" Foreground="Black" FontWeight="Bold" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Visibility="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}}"/>
-                <TextBlock Text="{Binding Path=Key}" Foreground="Black" FontSize="9" VerticalAlignment="Bottom" HorizontalAlignment="Center" Visibility="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}, ConverterParameter=inverted}"/>
+                <TextBlock Text="{Binding Path=Name}" Foreground="Black" FontWeight="Bold" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Visibility="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}}"/>
+                <TextBlock Text="{Binding Path=Name}" Foreground="Black" FontSize="9" VerticalAlignment="Bottom" HorizontalAlignment="Center" Visibility="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}, ConverterParameter=inverted}"/>
                 <Grid.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1" CenterX="50" CenterY="50" />
@@ -97,12 +97,12 @@
             </DataTemplate.Triggers>            
         </DataTemplate>
         
-        <DataTemplate x:Key="VideoInfo">
+        <DataTemplate x:Key="Video">
             <Border x:Name="frame" BorderBrush="Black" BorderThickness="1" Width="140" Height="120" Margin="2">
-                <Grid ToolTip="{Binding Path=Title}">
-                    <TextBlock Text="{Binding Path=Title}" Foreground="Black" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Visibility="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}}"/>
+                <Grid ToolTip="{Binding Path=Name}">
+					<TextBlock Text="{Binding Path=Name}" Foreground="Black" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Visibility="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}}"/>
                     <Image VerticalAlignment="Top" HorizontalAlignment="Center" MaxHeight="95" Name="thumb" Source="{Binding Path=ThumbnailImage, Converter={StaticResource ThumbnailConverter}}"/>
-                    <TextBlock Height="20" FontSize="10" LineHeight="10" TextWrapping="Wrap" Foreground="Black" LineStackingStrategy="BlockLineHeight" Text="{Binding Path=Title}" VerticalAlignment="Bottom" HorizontalAlignment="Center" Visibility="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}, ConverterParameter=inverted}"/>
+					<TextBlock Height="20" FontSize="10" LineHeight="10" TextWrapping="Wrap" Foreground="Black" LineStackingStrategy="BlockLineHeight" Text="{Binding Path=Name}" VerticalAlignment="Bottom" HorizontalAlignment="Center" Visibility="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}, ConverterParameter=inverted}"/>
                 </Grid>
                 <Border.RenderTransform>
                     <TransformGroup>

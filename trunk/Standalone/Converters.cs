@@ -14,30 +14,39 @@ using System.Windows.Controls;
 
 namespace Standalone
 {
-    [ValueConversion(typeof(SiteUtilBase), typeof(ImageSource))]
+    [ValueConversion(typeof(object), typeof(ImageSource))]
     public class ThumbnailConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             string file = string.Empty;
-            if (value is SiteUtilBase)
-            {
-                string subDir = string.IsNullOrEmpty(parameter as string) ? "Icons" : parameter as string;    
-                // use Icon with the same name as the Site
-                string image = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, subDir + @"/" + ((SiteUtilBase)value).Settings.Name + ".png");
-                if (System.IO.File.Exists(image)) file = image;                
-                else
-                {
-                    // if that does not exist, try icon with the same name as the Util
-                    image = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, subDir + @"/" + ((SiteUtilBase)value).Settings.UtilName + ".png");
-                    if (System.IO.File.Exists(image)) file = image;
-                }                
-            }
-            else if (value is string && !string.IsNullOrEmpty((string)value))
-            {
-                try { if (System.IO.Path.IsPathRooted(value as string) && System.IO.File.Exists(value as string)) file = value as string; }
-                catch { }
-            }
+			if (value is string && !string.IsNullOrEmpty((string)value))
+			{
+				try { if (System.IO.Path.IsPathRooted(value as string) && System.IO.File.Exists(value as string)) file = value as string; }
+				catch { }
+			}
+			else
+			{
+				SiteUtilBase site = value as SiteUtilBase;
+				if (site == null)
+				{
+					var siteViewModel = value as ViewModels.Site;
+					if (siteViewModel != null) site = siteViewModel.Model;
+				}
+				if (site != null)
+				{
+					string subDir = string.IsNullOrEmpty(parameter as string) ? "Icons" : parameter as string;
+					// use Icon with the same name as the Site
+					string image = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, subDir + @"/" + site.Settings.Name + ".png");
+					if (System.IO.File.Exists(image)) file = image;
+					else
+					{
+						// if that does not exist, try icon with the same name as the Util
+						image = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, subDir + @"/" + site.Settings.UtilName + ".png");
+						if (System.IO.File.Exists(image)) file = image;
+					}
+				}
+			}
 
             if (string.IsNullOrEmpty(file)) return null;
 

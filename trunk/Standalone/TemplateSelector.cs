@@ -11,10 +11,7 @@ namespace Standalone
     {    
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            Type type = item.GetType();
-            if (type.IsGenericType) type = type.GetGenericArguments().Last();
-            while (type.BaseType != typeof(object) && type.BaseType != typeof(MarshalByRefObject)) type = type.BaseType;
-            return Application.Current.Resources[type.Name] as DataTemplate;            
+            return Application.Current.Resources[item.GetType().Name] as DataTemplate;            
         }
     }
 }
