@@ -24,6 +24,11 @@ namespace OnlineVideos.Sites
         protected bool AutoSelectStream = false;
         [Category("OnlineVideosUserConfiguration"), Description("Stream quality preference\r\n1 is low, 5 high")]
         protected int StreamQualityPref = 5;
+        [Category("OnlineVideosUserConfiguration"), Description("Whether to retrieve current program info for live streams.")]
+        protected bool retrieveTVGuide = true;
+
+        [Category("OnlineVideosConfiguration"), Description("The layout to use to display TV Guide info, possible wildcards are <nowtitle>,<nowdescription>,<nowstart>,<nowend>,<nexttitle>,<nextstart>,<nextend>,<newline>")]
+        protected string tvGuideFormatString;// = "Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>";
 
         DateTime lastRefresh = DateTime.MinValue;
         public override int DiscoverDynamicCategories()
@@ -185,13 +190,26 @@ namespace OnlineVideos.Sites
         {
             if (category is Group)
             {
+                //Live streams
                 List<VideoInfo> vids = new List<VideoInfo>();
                 foreach (Channel chan in ((Group)category).Channels)
                 {
                     VideoInfo vid = new VideoInfo();
                     vid.Title = chan.StreamName;
-                    vid.VideoUrl = chan.Url;
+
+                    int argIndex = chan.Url.IndexOf('?');
+                    if (argIndex < 0) vid.VideoUrl = chan.Url;
+                    else vid.VideoUrl = chan.Url.Remove(argIndex);
+
                     vid.ImageUrl = chan.Thumb;
+
+                    if (retrieveTVGuide && argIndex > -1) //retrieve tv guide
+                    {
+                        Utils.TVGuideGrabber guide = new Utils.TVGuideGrabber();
+                        if (guide.GetNowNextForChannel(chan.Url))
+                            vid.Description = guide.FormatTVGuide(tvGuideFormatString);                     
+                    }
+
                     vids.Add(vid);
                 }
                 return vids;
@@ -475,10 +493,11 @@ namespace OnlineVideos.Sites
                     video.PlaybackOptions.Add(title, url);
                 lastUrl = url;
 
-                break;
+                break; //hack, only lowest quality stream seems to play
             }
 
             return lastUrl;
         }
+
     }
 }
