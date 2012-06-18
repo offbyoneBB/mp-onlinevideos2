@@ -63,6 +63,7 @@
         <item key="videoThumbXml"><![CDATA[images/image]]></item>
         <item key="videoUrlXml"><![CDATA[@id]]></item>
         <item key="videoDurationXml"><![CDATA[duration]]></item>
+        <item key="videoAirDateXml"><![CDATA[date]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www1.ndr.de/mediathek/{0}-mediathek_details-true.xml]]></item>
         <item key="baseUrl"><![CDATA[http://www1.ndr.de/mediathek/mediathek100-mediathek_medium-tv_searchtype-broadcasts.xml]]></item>
       </Configuration>
