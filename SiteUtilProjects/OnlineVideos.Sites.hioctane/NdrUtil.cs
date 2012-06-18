@@ -6,6 +6,8 @@ namespace OnlineVideos.Sites
 {
     public class NdrUtil : GenericSiteUtil
     {
+        string rtmpBaseLink = "rtmp://cp160844.edgefcs.net/ondemand/flashmedia/streams/ndr/";
+
         public override String getUrl(VideoInfo video)
         {
             if (video.PlaybackOptions == null)
@@ -24,7 +26,8 @@ namespace OnlineVideos.Sites
                     {
                         string title = node.SelectSingleNode("@mimetype").InnerText + " - " + node.SelectSingleNode("@format").InnerText;
                         string url = node.InnerText;
-                        url = url.Replace("rtmpt://fms.edge.newmedia.nacamar.net", "rtmpt://ndr.fcod.llnwd.net/a3715/d1/flashmedia/streams");
+                        int index = url.IndexOf("ndr/");
+                        if (index >= 0) url = rtmpBaseLink + url.Substring(index + 4);
                         video.PlaybackOptions.Add(title, url);
                     }
                 }
