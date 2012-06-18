@@ -1313,6 +1313,8 @@ namespace Standalone
 
         private void SiteManager_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            CurrentFilter = "";
+            (listViewMain.ItemsSource as System.Windows.Data.ListCollectionView).Refresh();
             if (listViewMain.Visibility == System.Windows.Visibility.Visible)
             {
                 listViewMain.Visibility = System.Windows.Visibility.Hidden;

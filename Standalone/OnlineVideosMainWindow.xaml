@@ -77,7 +77,7 @@
                 <Image Margin="5 2 5 2" Height="32" Source="{Binding ElementName=mainWindow, Path=SelectedSite, Converter={StaticResource ThumbnailConverter}, ConverterParameter=Banners}"/>
                 <TextBlock Text="{Binding ElementName=mainWindow, Path=SelectedCategory, Converter={StaticResource myCategoryPathConverter}}" FontSize="16" VerticalAlignment="Center"/>
             </WrapPanel>
-			<TextBlock Grid.Column="1" VerticalAlignment="Bottom" Text="{Binding ElementName=mainWindow, Path=CurrentFilter, StringFormat=[\{0\}]}" HorizontalAlignment="Right" FontSize="10" Margin="5 0 0 0" Foreground="Gray"/>
+            <TextBlock Grid.Column="1" VerticalAlignment="Bottom" Text="{Binding ElementName=mainWindow, Path=CurrentFilter, StringFormat=[\{0\}]}" HorizontalAlignment="Right" FontSize="10" Margin="5 0 0 0" Foreground="Gray" Visibility="{Binding ElementName=mainWindow, Path=CurrentFilter, Converter={StaticResource NullVisibilityConverter}}"/>
             <WrapPanel Grid.Column="2">
                 <TextBlock x:Name="downloadNotifier" Height="34" Width="34" Text="{Binding Source={x:Static ovs:DownloadManager.Instance}, Path=Count}" TextAlignment="Center" Padding="0 10 3 0" FontSize="16"
                            Visibility="{Binding Source={x:Static ovs:DownloadManager.Instance}, Path=Count, Converter={StaticResource ZeroVisibilityConverter}}">
