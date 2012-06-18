@@ -98,8 +98,9 @@ namespace Standalone
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if ((value is int) && (int)value > 0) return Visibility.Visible;
-            else return Visibility.Hidden;
+            if (value is int) return (int)value > 0 ? Visibility.Visible : Visibility.Hidden;
+            if (value is bool) return (bool)value ? Visibility.Visible : Visibility.Hidden;
+            return Visibility.Hidden;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

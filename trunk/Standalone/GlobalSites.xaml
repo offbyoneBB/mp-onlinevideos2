@@ -7,7 +7,7 @@
              mc:Ignorable="d" Loaded="OnLoaded"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ListView x:Name="lvSites" SelectionMode="Single" Background="Transparent" Foreground="Black" FontSize="13" local:GridViewSort.AutoSort="True">
+        <ListView x:Name="lvSites" SelectionMode="Single" Background="Transparent" Foreground="Black" FontSize="13" local:GridViewSort.AutoSort="True" AlternationCount="2">
             <ListView.Resources>
                 <local:LanguageCodeConverter x:Key="langCodeConverter"/>
                 <local:EmailToNameConverter x:Key="emailToNameConverter"/>
@@ -20,6 +20,15 @@
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <EventSetter Event="KeyDown" Handler="HandleItemKeyDown" />
+                    <Style.Triggers>
+                        <!-- setting up triggers for alternate background colors -->
+                        <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                            <Setter Property="Background" Value="#77E3F4FC" />
+                        </Trigger>
+                        <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                            <Setter Property="Background" Value="#77BEE6FD" />
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.View>
@@ -63,6 +72,13 @@
                     </GridViewColumn>
                     <GridViewColumn Header="Creator" DisplayMemberBinding="{Binding Path=Owner_FK, Converter={StaticResource emailToNameConverter}}" local:GridViewSort.PropertyName="Owner_FK"/>
                     <GridViewColumn Header="Updated" DisplayMemberBinding="{Binding Path=LastUpdated, StringFormat={}{0:g}}" local:GridViewSort.PropertyName="LastUpdated"/>
+                    <GridViewColumn Header="Adult" local:GridViewSort.PropertyName="IsAdult">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Height="20" Source="Images\Check.png" Visibility="{Binding Path=IsAdult, Converter={StaticResource ZeroVisibilityConverter}}" ToolTip="Adult"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="Language" local:GridViewSort.PropertyName="Language">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

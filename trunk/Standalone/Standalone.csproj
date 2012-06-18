@@ -257,6 +257,7 @@
     <Content Include="EVRPresenter64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\Check.png" />
     <Content Include="NLog.dll" />
     <Resource Include="Images\GlobalSites.png" />
     <Resource Include="Images\Add.png" />
