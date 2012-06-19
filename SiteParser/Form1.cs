@@ -211,12 +211,22 @@ namespace SiteParser
         {
             //get categories
             GuiToUtil(generic);
-            generic.Settings.Categories.Clear();
-            foreach (Category cat in staticList)
-                generic.Settings.Categories.Add(cat);
 
-            if (GetRegex(generic, "regEx_dynamicCategories") != null)
-                generic.DiscoverDynamicCategories();
+            TreeNode selected = treeView1.SelectedNode;
+            if (selected != null && selected.Tag is NextPageCategory && selected.Parent.Parent == null)
+            {
+                generic.Settings.Categories.RemoveAt(generic.Settings.Categories.Count - 1);
+                generic.DiscoverNextPageCategories((NextPageCategory)selected.Tag);
+            }
+            else
+            {
+                generic.Settings.Categories.Clear();
+                foreach (Category cat in staticList)
+                    generic.Settings.Categories.Add(cat);
+
+                if (GetRegex(generic, "regEx_dynamicCategories") != null)
+                    generic.DiscoverDynamicCategories();
+            }
             treeView1.Nodes.Clear();
             TreeNode root = treeView1.Nodes.Add("site");
             foreach (Category cat in generic.Settings.Categories)
@@ -228,15 +238,16 @@ namespace SiteParser
 
         private void CreateCategoryNextPageRegexButton_Click(object sender, EventArgs e)
         {
-            Category parentCat = GetTreeViewSelectedNode() as Category;
-            if (parentCat != null)
+            string baseUrl = (string)GetProperty(generic, "baseUrl");
+            if (!String.IsNullOrEmpty(baseUrl))
             {
                 Form2 f2 = new Form2();
-                categoryNextPageRegexTextBox.Text = f2.Execute(categoryNextPageRegexTextBox.Text, ((RssLink)parentCat).Url,
+                categoryNextPageRegexTextBox.Text = f2.Execute(categoryNextPageRegexTextBox.Text, baseUrl,
                     new string[] { "url" });
             }
             else
-                MessageBox.Show("no valid category selected");
+                MessageBox.Show("No BaseUrl specified");
+
         }
 
         private void manageStaticCategoriesButton_Click(object sender, EventArgs e)
