@@ -12,40 +12,11 @@ namespace OnlineVideos.Sites.georgius
     {
         #region Private fields
 
-        private static String baseUrl = @"http://ocko.idnes.cz/stream.aspx";
+        private static String baseUrl = @"http://ocko.tv/ocko-tv-zive/";
 
-        private static String dynamicCategoryStart = @"Misc.videoFLV({";
-        private static String dynamicCategoryEnd = @"})";
-        private static String showUrlRegex = @"data: ""(?<showUrl>[^""]+)""";
-
-        //private static String showEpisodesStart = @"<div class=""post"">";
-        //private static String showEpisodesEnd = @"<script type=""text/javascript"">";
-        //private static String showEpisodeStart = @"<h2 class=""postTitle"">";
-        //private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showEpisodeUrl>[^""]+)"" title=""[^""]*"">(?<showEpisodeTitle>[^<]+)</a>";
-        //private static String showEpisodeThumbRegex = @"<img src=""(?<showEpisodeThumbUrl>[^""]+)";
-        //private static String showEpisodeDescriptionStart = @"<div id=""obs"">";
-        //private static String showEpisodeDescriptionEnd = @"</div>";
-
-        //private static String showEpisodeNextPageRegex = @"<a href=""(?<nextPageUrl>[^""]+)"" class=""nextpostslink"">&raquo;</a>";
-
-        //private static String optionTitleRegex = @"(?<width>[0-9]+)x(?<height>[0-9]+) \| \([\s]*[0-9]+\) \| \.(?<format>[a-z0-9]+)";
-        //private static String videoSectionStart = @"<div class=""postContent"">";
-        //private static String videoSectionEnd = @"</div>";
-        //private static String videoUrlRegex = @";file=(?<videoUrl>[^&]+)";
-        //private static String videoCaptionsRegex = @";captions.file=(?<videoUrl>[^&]+)";
-
-        //private static String showVideoUrlsRegex = @"<param name=""movie"" value=""(?<showVideoUrl>[^""]+)"">";
-        //private static String optionTitleRegex = @"(?<width>[0-9]+)x(?<height>[0-9]+) \| \([\s]*[0-9]+\) \| \.(?<format>[a-z0-9]+)";
-
-        //private static String searchQueryUrl = @"http://www.pohadkar.cz/?s={0}";
-
-        //private static String videoUrlFormat = @"http://cdn-dispatcher.stream.cz/?id={0}"; // add 'cdnId'
-
-        //private static String flashVarsStartRegex = @"(<param name=""flashvars"" value=)|(writeSWF)";
-        //private static String flashVarsEnd = @"/>";
-        //private static String idRegex = @"id=(?<id>[^&]+)";
-        //private static String cdnLqRegex = @"((cdnLQ)|(cdnID)){1}=(?<cdnLQ>[^&]+)";
-        //private static String cdnHqRegex = @"((cdnHQ)|(hdID)){1}=(?<cdnHQ>[^&]+)";
+        private static String dynamicCategoryStart = @"mediaPlayer.options";
+        private static String dynamicCategoryEnd = @"mediaPlayer.init";
+        private static String showUrlRegex = @"file : '(?<showUrl>[^']+)";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -128,39 +99,31 @@ namespace OnlineVideos.Sites.georgius
                 XmlDocument document = new XmlDocument();
                 document.LoadXml(baseWebData);
 
-                XmlNode replace = document.SelectSingleNode("//root/properties/replace[@old and @new]");
-                XmlNode item = document.SelectSingleNode("//root/items/item/linkvideo/server");
-                XmlNode title = document.SelectSingleNode("//root/items/item/title");
-                XmlNode image = document.SelectSingleNode("//root/items/item/imageprev");
+                XmlNamespaceManager namespaceManager = new XmlNamespaceManager(document.NameTable);
+                namespaceManager.AddNamespace("media", "http://search.yahoo.com/mrss/");
+                namespaceManager.AddNamespace("jwplayer", "http://developer.longtailvideo.com/trac/wiki/FlashFormats");
 
-                String rtmpUrl = String.Empty;
-                if (item != null)
+                XmlNodeList media = document.SelectNodes("//media:content", namespaceManager);
+                XmlNode url = document.SelectSingleNode("//jwplayer:streamer", namespaceManager);
+
+                if ((media != null) && (url != null) && (media.Count != 0))
                 {
-                    rtmpUrl = item.InnerText;
+                    String rtmpUrl = url.InnerText;
+
+                    String tcUrl = rtmpUrl;
+                    String app = rtmpUrl.Substring(rtmpUrl.IndexOf("/", rtmpUrl.IndexOf("//") + 2) + 1);
+                    String playPath = "ockoHQ1";
+
+                    String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, PageUrl = OckoTvUtil.baseUrl, Live = true }.ToString();
+
+                    VideoInfo videoInfo = new VideoInfo()
+                    {
+                        Title = "Live",
+                        ImageUrl = "http://ocko.tv/public/templates/default/img/drop-logo.png",
+                        VideoUrl = resultUrl
+                    };
+                    pageVideos.Add(videoInfo);
                 }
-                if (replace != null)
-                {
-                    rtmpUrl = rtmpUrl.Replace(replace.Attributes["old"].Value, replace.Attributes["new"].Value);
-                }
-                if ((!String.IsNullOrEmpty(rtmpUrl)) && (!rtmpUrl.Contains("rtmp://")))
-                {
-                    rtmpUrl = "rtmp://" + rtmpUrl;
-                }
-
-                String tcUrl = rtmpUrl.Replace("rtmp://", "rtmpt://");
-                String app = "live";
-                String playPath = "ocko";
-                String swfUrl = "http://g.idnes.cz/swf/flv/player.swf?v=20110601";
-
-                String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = OckoTvUtil.baseUrl, Live = true }.ToString();
-
-                VideoInfo videoInfo = new VideoInfo()
-                {
-                    Title = (title == null) ? "Live" : title.InnerText,
-                    ImageUrl = (image == null) ? String.Empty : image.InnerText,
-                    VideoUrl = resultUrl
-                };
-                pageVideos.Add(videoInfo);
 
                 this.nextPageUrl = String.Empty;
             }
