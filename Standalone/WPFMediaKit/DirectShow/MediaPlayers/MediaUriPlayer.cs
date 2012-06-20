@@ -224,16 +224,21 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
                 hr = ((IFileSourceFilter)sourceFilter).Load(fileSource, null);
                 DsError.ThrowExceptionForHR(hr);
 
-                OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
-                if (filterState != null)
+                if (!fileSource.Contains("live=true") && !fileSource.Contains("RtmpLive=1"))
                 {
-                    while (!filterState.IsFilterReadyToConnectPins())
+                    OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
+                    if (filterState != null)
                     {
-                        long total = 0, current = 0;
-                        ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
-                        m_BufferedPercent = (float)current / (float)total * 100.0f;
-                        InvokeBufferedPercentChanged();
-                        System.Threading.Thread.Sleep(100);
+                        // wait max. 20 seconds for the filter to be ready - then try to connect anyway
+                        DateTime startTime = DateTime.Now;
+                        while (!filterState.IsFilterReadyToConnectPins() && ((DateTime.Now - startTime).TotalSeconds <= 20))
+                        {
+                            long total = 0, current = 0;
+                            ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
+                            m_BufferedPercent = (float)current / (float)total * 100.0f;
+                            InvokeBufferedPercentChanged();
+                            System.Threading.Thread.Sleep(50); // no need to do this more often than 20 times per second
+                        }
                     }
                 }
 
@@ -340,6 +345,8 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
              * this may be called from the GC */
             StopInternal();
 
+            CloseSource();
+
             /* Let's clean up the base 
              * class's stuff first */
             base.FreeResources();
@@ -372,6 +379,32 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
         {
             var handler = BufferedPercentChanged;
             if (handler != null) handler(m_BufferedPercent);
+        }
+
+        protected void CloseSource()
+        {
+            if (m_graph != null)
+            {
+                IBaseFilter sourceFilter = null;
+                try
+                {
+                    int result = m_graph.FindFilterByName(OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName, out sourceFilter);
+                    if (result == 0 && sourceFilter != null)
+                    {
+                        ((IAMOpenProgress)sourceFilter).AbortOperation();
+                        System.Threading.Thread.Sleep(100); // give it some time
+                        m_graph.RemoveFilter(sourceFilter); // remove the filter from the graph to prevent lockup later
+                    }
+                }
+                catch (Exception ex)
+                {
+                    
+                }
+                finally
+                {
+                    if (sourceFilter != null) Marshal.FinalReleaseComObject(sourceFilter);
+                }
+            }
         }
     }
 }

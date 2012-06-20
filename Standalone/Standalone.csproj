@@ -258,6 +258,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Images\Check.png" />
+    <Resource Include="Images\Speaker.png" />
+    <Resource Include="Images\Cross_24.png" />
     <Content Include="NLog.dll" />
     <Resource Include="Images\GlobalSites.png" />
     <Resource Include="Images\Add.png" />
