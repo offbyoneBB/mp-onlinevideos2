@@ -98,9 +98,19 @@ namespace Standalone
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is int) return (int)value > 0 ? Visibility.Visible : Visibility.Hidden;
-            if (value is bool) return (bool)value ? Visibility.Visible : Visibility.Hidden;
-            return Visibility.Hidden;
+            Visibility result = Visibility.Hidden;
+
+            if (value is int) result = (int)value > 0 ? Visibility.Visible : Visibility.Hidden;
+            else if (value is double) result = (double)value > 0 ? Visibility.Visible : Visibility.Hidden;
+            else if (value is bool) result = (bool)value ? Visibility.Visible : Visibility.Hidden;
+
+            // inverted logic
+            if (parameter != null)
+            {
+                result = result == Visibility.Hidden ? Visibility.Visible : Visibility.Hidden;
+            }
+
+            return result;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -297,7 +307,7 @@ namespace Standalone
             else if (percent < 1f) formatString = ".00";
             else if (percent < 10f) formatString = "0.0";
             else if (percent < 100f) formatString = "##";
-            return string.Format("{0}: {1} %", Translation.Instance.Buffered, percent.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
+            return string.Format("{0} {1} %", Translation.Instance.Buffered, percent.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

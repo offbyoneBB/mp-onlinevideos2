@@ -997,11 +997,20 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
             if (m_mediaControl != null)
             {
                 m_mediaControl.Stop();
+                // wait max. 10 seconds for the graph to transition to the stopped state
                 FilterState filterState;
-                m_mediaControl.GetState(0, out filterState);
-
-                while (filterState != FilterState.Stopped)
-                    m_mediaControl.GetState(0, out filterState);
+                DateTime startTime = DateTime.Now;
+                int hr = 0;
+                do
+                {
+                    Thread.Sleep(100);
+                    hr = m_mediaControl.GetState(100, out filterState); // check with timeout max. 10 times a second if the state changed
+                }
+                while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 10) && (filterState != FilterState.Stopped));
+                if (hr != 0) // S_OK
+                {
+                    OnlineVideos.Log.Info(string.Format("After IMediaControl.Stop - IMediaControl.GetState after 10 seconds: 0x{0} - '{1}'", hr.ToString("X8"), DsError.GetErrorText(hr)));
+                }
             }
         }
 

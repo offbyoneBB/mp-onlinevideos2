@@ -13,6 +13,19 @@
         <SolidColorBrush x:Key="BackgroundColor" Color="#FFE3F4FC"/>
         <SolidColorBrush x:Key="TransparentBackgroundColor" Color="#DDE3F4FC"/>
 
+        <!-- make images on buttons look grayed when the button is disabled -->
+        <Style TargetType="Button">
+            <Style.Resources>
+                <Style TargetType="Image">
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Style.Resources>
+        </Style>
+        
         <Storyboard x:Key="WobbleAnimation">
             <DoubleAnimation Storyboard.TargetName="frameScale" Storyboard.TargetProperty="ScaleX" To="1.4" 
                                                  Duration="0:0:0.15" />

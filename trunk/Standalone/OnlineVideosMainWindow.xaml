@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:Standalone" x:Name="mainWindow"
     Title="OnlineVideos" Height="620" Width="820" Loaded="Window_Loaded" Closed="Window_Closed" FocusManager.FocusedElement="{Binding ElementName=listViewMain}" Icon="OnlineVideos.ico">
     <Window.Resources>
-
+        
         <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
             <EventSetter Event="MouseRightButtonUp" Handler="HandleItemRightClicked" />
             <EventSetter Event="MouseLeftButtonUp" Handler="HandleItemClicked" />
@@ -34,6 +34,7 @@
         <CommandBinding Command="MediaCommands.Stop" CanExecute="Stop_CanExecute" Executed="Stop_Executed"/>
         <CommandBinding Command="NavigationCommands.Zoom" CanExecute="Stop_CanExecute" Executed="ToggleFullscreen"/>
         <CommandBinding Command="Help" Executed="HelpExecuted"/>
+        <CommandBinding Command="MediaCommands.MuteVolume" Executed="Mute_Executed"/>
     </Window.CommandBindings>
     
     <Window.InputBindings>
@@ -132,11 +133,31 @@
                         <TextBlock HorizontalAlignment="Right" Margin="0 0 0 5" Text="{Binding ElementName=mainWindow, Path=CurrentPlayListItem, Converter={StaticResource myPlayListPositionConverter}}"/>
                     </Grid>
                     <TextBlock Grid.Row="1" TextWrapping="Wrap" Margin="0 0 0 5" Text="{Binding ElementName=mainWindow, Path=CurrentPlayListItem.Title}"/>
-                    <WrapPanel Grid.Row="2">
+                    <DockPanel Grid.Row="2">
                         <Button Height="32" Width="45" Padding="2" Margin="0 0 5 0" Command="MediaCommands.TogglePlayPause" ToolTip="Play/Pause" Style="{StaticResource PlayButton}"/>
-                        <Button Height="32" Width="45" Padding="2" Command="MediaCommands.Stop" ToolTip="Stop" Style="{StaticResource StopButton}"/>
-                        <TextBlock VerticalAlignment="Center" Padding="5 0 0 0" Text="{Binding ElementName=mediaPlayer, Path=BufferedPercent, Converter={StaticResource myBufferPercentConverter}}"/>
-                    </WrapPanel>
+                        <Button Height="32" Width="45" Padding="2" Margin="0 0 5 0" Command="MediaCommands.Stop" ToolTip="Stop" Style="{StaticResource StopButton}"/>
+                        <Grid Height="32">
+                            <Button Command="MediaCommands.MuteVolume" Height="32" Width="32">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="2">
+                                                        <Border.Background>
+                                                            <ImageBrush ImageSource="Images\Speaker.png"/>
+                                                        </Border.Background>
+                                                        <Image Source="Images\Cross_24.png" Height="24"  Visibility="{Binding ElementName=mediaPlayer, Path=Volume, Converter={StaticResource ZeroVisibilityConverter}, ConverterParameter=inverted}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </Grid>
+                        <TextBlock TextWrapping="Wrap" FontSize="10" VerticalAlignment="Center" Padding="5 0 0 0" Text="{Binding ElementName=mediaPlayer, Path=BufferedPercent, Converter={StaticResource myBufferPercentConverter}}"/>
+                    </DockPanel>
                 </Grid>
             </Grid>
             <Border Grid.Column="1" BorderThickness="1 0 0 0" BorderBrush="Black" Padding="5">

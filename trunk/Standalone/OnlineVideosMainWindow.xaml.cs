@@ -18,7 +18,9 @@ namespace Standalone
     /// Interaktionslogik für OnlineVideosMainWindow.xaml
     /// </summary>
     public partial class OnlineVideosMainWindow : Window, INotifyPropertyChanged
-    {     
+    {
+        readonly string[] videoExtensions = new string[] { ".asf", ".asx", ".flv", ".m4v", ".mkv", ".mov", ".mp4", ".wmv" };
+
         public event PropertyChangedEventHandler PropertyChanged;
         SiteUtilBase _SelectedSite;
         public SiteUtilBase SelectedSite { get { return _SelectedSite; } set { _SelectedSite = value; PropertyChanged(this, new PropertyChangedEventArgs("SelectedSite")); } }
@@ -59,16 +61,7 @@ namespace Standalone
 			OnlineVideoSettings.Instance.DownloadDir = System.IO.Path.Combine(writeableBaseDir, "Downloads");
             if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DownloadDir)) System.IO.Directory.CreateDirectory(OnlineVideoSettings.Instance.DownloadDir);
 
-			#region Define default video extensions
-			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asf")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asf", false);
-			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asx")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asx", false);
-			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".flv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".flv", false);
-			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".m4v")) OnlineVideoSettings.Instance.VideoExtensions.Add(".m4v", false);
-			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mkv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mkv", false);
-			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mov")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mov", false);
-			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mp4")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mp4", false);
-			if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".wmv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".wmv", false);
-			#endregion
+			OnlineVideoSettings.Instance.AddSupportedVideoExtensions(videoExtensions);
 
 			TranslationLoader.LoadTranslations(System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages"));
 
@@ -227,9 +220,9 @@ namespace Standalone
         {
             if (Gui2UtilConnector.Instance.IsBusy) return; // don't do anything if currently working on a background task
             object boundObject = ((ListViewItem)sender).Content;
-            if (boundObject is VideoInfo)
+            if (boundObject is ViewModels.Video)
             {
-                VideoInfo video = boundObject as VideoInfo;
+                VideoInfo video = (boundObject as ViewModels.Video).Model;
                 ShowContextMenuForVideo(video);
             }
         }
@@ -1350,5 +1343,20 @@ namespace Standalone
 		{
 			Config.Instance.Save();
 		}
+
+        double volumeToRestore = 0.0d;
+        private void Mute_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (mediaPlayer.Volume > 0.0d)
+            {
+                volumeToRestore = mediaPlayer.Volume;
+                mediaPlayer.Volume = 0.0d;
+            }
+            else
+            {
+                mediaPlayer.Volume = volumeToRestore;
+                volumeToRestore = 0.0d;
+            }
+        }
     }
 }
