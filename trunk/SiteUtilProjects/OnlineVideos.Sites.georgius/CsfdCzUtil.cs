@@ -41,6 +41,7 @@ namespace OnlineVideos.Sites.georgius
         private static String videoUrlBlockStart = @"if (!readCookie('videoPlayer_' + ""videoPlayer1""))";
         private static String videoUrlBlockEnd = @"$(clip)";
         private static String videoUrlRegex = @"player.addClip\(""(?<videoUrl>[^""]+)";
+        private static String subtitleUrlRegex = @"""subtitles"":""(?<subtitleUrl>[^""]+)";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -352,6 +353,12 @@ namespace OnlineVideos.Sites.georgius
                     if (match.Success)
                     {
                         videoUrl = System.Web.HttpUtility.HtmlDecode(match.Groups["videoUrl"].Value).Replace(@"\/", "/");
+                    }
+
+                    match = Regex.Match(baseWebData, CsfdCzUtil.subtitleUrlRegex);
+                    if (match.Success)
+                    {
+                        video.SubtitleUrl = System.Web.HttpUtility.HtmlDecode(match.Groups["subtitleUrl"].Value).Replace(@"\/", "/");
                     }
                 }
             }
