@@ -665,7 +665,7 @@
       <Description>Funny videos from CollegeHumor.com.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[(?<=Browse\sVideos.*)(?<!>Cast.*)<li(?:\sclass="selected")?><a\shref="(?<url>[^"]*)">(?<title>(?!(?:Vid|Sketch\sC))[^<]*)</a></li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(<li><a\shref="(?<url>[^"]*)"\sclass="tab[^"]*">(?<title>[^<]*)</a></li>)|(<link\srel="(?<title>canonical)"\shref="(?<url>[^"]*)"\s/>.*?section_title)]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(<li><a\shref="(?<url>[^"]*)"\sclass="tab[^"]*">(?<title>[^<]*)</a></li>)|(<link\srel="(?<title>canonical)"\shref="(?<url>[^"]*)"\s*>.*?section_title)]]></item>
         <item key="videoListRegEx"><![CDATA[(?<=<div\sclass="listing".*)<a\shref="/video/(?<VideoUrl>[^/]+)/[^"]*"\stitle="(?<Title>[^"]+)"\sclass="context"\sdata-json="{\scontext[^<]*<img\ssrc="(?<ImageUrl>[^"]+)"[^>]*>\s*.+?<p>(?<Description>[^<]*)</p>]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www.collegehumor.com/moogaloop/video/{0}]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\sclass="next"\shref="(?<url>[^"]*)">Next</a>]]></item>
