@@ -57,8 +57,6 @@ namespace OnlineVideos.Sites.georgius
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-
-            this.Settings.Player = PlayerType.Internal;
         }
 
         public override int DiscoverDynamicCategories()
@@ -250,7 +248,7 @@ namespace OnlineVideos.Sites.georgius
                     Match match = Regex.Match(baseWebData, MixerCzUtil.videoUrlRegex);
                     while (match.Success)
                     {
-                        String url = String.Format(MixerCzUtil.videoUrlFormat, match.Groups["videoUrl"].Value);
+                        String url = new MPUrlSourceFilter.HttpUrl(SiteUtilBase.GetRedirectedUrl(String.Format(MixerCzUtil.videoUrlFormat, match.Groups["videoUrl"].Value))).ToString();
                         String quality = match.Groups["videoQuality"].Value;
 
                         video.PlaybackOptions.Add(quality, url);
