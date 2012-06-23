@@ -13,7 +13,7 @@ namespace OnlineVideos.Sites.georgius
 
         private static String baseUrl = "http://play.iprima.cz";
         private static String dynamicCategoryStart = "var topcat = [";
-        private static String dynamicCategoryEnd = @"];var channel =";
+        private static String dynamicCategoryEnd = @"</script>";
 
         private static String showRegex = @"{""name"":""(?<showTitle>[^""]*)"",""tid"":""(?<showUrl>[^""]*)""}";
         private static String showUrlFormat = @"videoarchiv_ajax/all/{0}?method=json&action=relevant&per_page=10&page={1}";
