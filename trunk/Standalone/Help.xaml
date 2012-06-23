@@ -24,6 +24,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TextBlock Text="OnlineVideos Core Version" Margin="0 0 10 0"/>
@@ -34,7 +36,7 @@
         <TextBlock Grid.Row="3" Text="Stop"/>
         <TextBlock Grid.Row="3" Grid.Column="1" Text="F12"/>
         <TextBlock Grid.Row="4" Text="Toogle Fullscreen"/>
-        <TextBlock Grid.Row="4" Grid.Column="1" Text="*"/>
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="* (Numpad)"/>
 		<TextBlock Grid.Row="5" Text="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='Search'}"/>
         <TextBlock Grid.Row="5" Grid.Column="1" Text="F3 / CTRL+F"/>
         <TextBlock Grid.Row="6" Text="Go Back"/>
@@ -43,7 +45,11 @@
         <TextBlock Grid.Row="7" Grid.Column="1" Text="ENTER / Mouse Left"/>
         <TextBlock Grid.Row="8" Text="Context Menu"/>
         <TextBlock Grid.Row="8" Grid.Column="1" Text="F9 / Mouse Right"/>
-        <TextBlock Grid.Row="9" Text="© offbyone 2012" VerticalAlignment="Bottom" FontStyle="Italic"/>
-        <Button IsCancel="True" Command="Close" Grid.Column="1" Grid.Row="9" Width="50" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="OK" Margin="0 5 0 0"/>
+        <TextBlock Grid.Row="9" Text="Mute Volume"/>
+        <TextBlock Grid.Row="9" Grid.Column="1" Text="÷ (Numpad)"/>
+        <TextBlock Grid.Row="10" Text="Volume Up/Down"/>
+        <TextBlock Grid.Row="10" Grid.Column="1" Text="+/- (Numpad)"/>
+        <TextBlock Grid.Row="11" Text="© offbyone 2012" VerticalAlignment="Bottom" FontStyle="Italic"/>
+        <Button Grid.Row="11" IsCancel="True" Command="Close" Grid.Column="1" Width="50" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="OK" Margin="0 5 0 0"/>
     </Grid>
 </Window>

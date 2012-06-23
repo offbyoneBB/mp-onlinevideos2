@@ -1354,9 +1354,24 @@ namespace Standalone
             }
             else
             {
+                if (volumeToRestore <= 0.0d) volumeToRestore = 0.05d;
                 mediaPlayer.Volume = volumeToRestore;
                 volumeToRestore = 0.0d;
             }
+        }
+
+        private void VolumeUp_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            double result = mediaPlayer.Volume + 0.05;
+            result = Math.Min(result, 1.0d);
+            if (result != mediaPlayer.Volume) mediaPlayer.Volume = result;
+        }
+
+        private void VolumeDown_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            double result = mediaPlayer.Volume - 0.05;
+            result = Math.Max(result, 0.0d);
+            if (result != mediaPlayer.Volume) mediaPlayer.Volume = result;
         }
     }
 }
