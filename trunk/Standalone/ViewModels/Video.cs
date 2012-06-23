@@ -51,6 +51,10 @@ namespace Standalone.ViewModels
 							ThumbnailImage = Model.ThumbnailImage;
 							PropertyChanged(this, new PropertyChangedEventArgs("ThumbnailImage"));
 							break;
+                        case "Length":
+                            Length = Model.Length;
+                            PropertyChanged(this, new PropertyChangedEventArgs("Length"));
+                            break;
 					}
 				}
 			}), System.Windows.Threading.DispatcherPriority.Input);
