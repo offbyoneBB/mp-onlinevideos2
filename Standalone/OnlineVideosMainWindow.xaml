@@ -35,6 +35,8 @@
         <CommandBinding Command="NavigationCommands.Zoom" CanExecute="Stop_CanExecute" Executed="ToggleFullscreen"/>
         <CommandBinding Command="Help" Executed="HelpExecuted"/>
         <CommandBinding Command="MediaCommands.MuteVolume" Executed="Mute_Executed"/>
+        <CommandBinding Command="MediaCommands.IncreaseVolume" Executed="VolumeUp_Executed"/>
+        <CommandBinding Command="MediaCommands.DecreaseVolume" Executed="VolumeDown_Executed"/>
     </Window.CommandBindings>
     
     <Window.InputBindings>
@@ -43,7 +45,10 @@
         <KeyBinding Key="F12" Command="MediaCommands.Stop"/>
         <KeyBinding Key="Multiply" Command="NavigationCommands.Zoom"/>
         <KeyBinding Key="F" Modifiers="CTRL" Command="Search"/>
-        <KeyBinding Key="F3" Modifiers="CTRL" Command="Search"/>
+        <KeyBinding Key="F3" Command="Search"/>
+        <KeyBinding Key="Divide" Command="MediaCommands.MuteVolume"/>
+        <KeyBinding Key="Add" Command="MediaCommands.IncreaseVolume"/>
+        <KeyBinding Key="Subtract" Command="MediaCommands.DecreaseVolume"/>
     </Window.InputBindings>
 
     <Grid Name="LayoutRoot">
@@ -137,24 +142,29 @@
                         <Button Height="32" Width="45" Padding="2" Margin="0 0 5 0" Command="MediaCommands.TogglePlayPause" ToolTip="Play/Pause" Style="{StaticResource PlayButton}"/>
                         <Button Height="32" Width="45" Padding="2" Margin="0 0 5 0" Command="MediaCommands.Stop" ToolTip="Stop" Style="{StaticResource StopButton}"/>
                         <Grid Height="32">
-                            <Button Command="MediaCommands.MuteVolume" Height="32" Width="32">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness="0.5" CornerRadius="2"/>
+                            <Button Command="MediaCommands.MuteVolume">
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="Button">
-                                                    <Border BorderBrush="Black" BorderThickness="0.5" CornerRadius="2">
-                                                        <Border.Background>
-                                                            <ImageBrush ImageSource="Images\Speaker.png"/>
-                                                        </Border.Background>
+                                                    <Grid>
+                                                        <Image Source="Images\Speaker.png"/>
                                                         <Image Source="Images\Cross_24.png" Height="24"  Visibility="{Binding ElementName=mediaPlayer, Path=Volume, Converter={StaticResource ZeroVisibilityConverter}, ConverterParameter=inverted}"/>
-                                                    </Border>
+                                                    </Grid>
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
                                     </Style>
                                 </Button.Style>
                             </Button>
+                            <Slider Margin="0 0 2 0" Grid.Column="1" Maximum="1" LargeChange="0.2" SmallChange="0.05" Orientation="Vertical" Value="{Binding ElementName=mediaPlayer, Path=Volume, Mode=TwoWay}">
+                            </Slider>
                         </Grid>
                         <TextBlock TextWrapping="Wrap" FontSize="10" VerticalAlignment="Center" Padding="5 0 0 0" Text="{Binding ElementName=mediaPlayer, Path=BufferedPercent, Converter={StaticResource myBufferPercentConverter}}"/>
                     </DockPanel>
