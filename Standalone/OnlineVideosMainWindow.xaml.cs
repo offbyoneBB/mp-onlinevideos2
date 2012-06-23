@@ -154,21 +154,17 @@ namespace Standalone
             }
             else
             {
-                if (detailsView.Visibility == System.Windows.Visibility.Hidden)
+                char c = Util.GetCharFromKey(e.Key);
+                if (char.IsLetterOrDigit(c))
                 {
-                    char c = Util.GetCharFromKey(e.Key);
-                    if (char.IsLetterOrDigit(c))
-                    {
-                        FilterItems(c);
-                        e.Handled = true;
-                    }
+                    FilterItems(c);
+                    e.Handled = true;
                 }
             }
         }
 
-        void FilterItems(char newChar)
+        internal void FilterItems(char newChar)
         {
-            var view = listViewMain.ItemsSource as System.Windows.Data.ListCollectionView;
             if (newChar == char.MinValue)
             {
                 CurrentFilter = CurrentFilter.Substring(0, CurrentFilter.Length - 1);
@@ -177,8 +173,19 @@ namespace Standalone
             {
                 CurrentFilter += newChar;
             }
-            view.Refresh();
-            SelectAndFocusItem();
+            if (listViewMain.Visibility == System.Windows.Visibility.Visible)
+            {
+                var view = (listViewMain.ItemsSource as System.Windows.Data.ListCollectionView);
+                if (view != null)
+                {
+                    view.Refresh();
+                    SelectAndFocusItem();
+                }
+            }
+            else
+            {
+                globalSitesView.RefreshList(null);
+            }
         }
 
         protected void HandleItemRightClicked(object sender, MouseButtonEventArgs e)
@@ -1306,7 +1313,6 @@ namespace Standalone
 
         private void SiteManager_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            CurrentFilter = "";
             (listViewMain.ItemsSource as System.Windows.Data.ListCollectionView).Refresh();
             if (listViewMain.Visibility == System.Windows.Visibility.Visible)
             {

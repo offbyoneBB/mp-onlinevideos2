@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Standalone"
              mc:Ignorable="d" Loaded="OnLoaded"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="400">
     <Grid>
         <ListView x:Name="lvSites" SelectionMode="Single" Background="Transparent" Foreground="Black" FontSize="13" local:GridViewSort.AutoSort="True" AlternationCount="2">
             <ListView.Resources>
