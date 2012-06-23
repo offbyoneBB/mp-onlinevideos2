@@ -60,9 +60,20 @@ namespace Standalone
             }
             else if (Visibility == System.Windows.Visibility.Visible)
             {
+                // deselect any site on the main view but remember the index
                 rememberedIndex = (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.SelectedIndex;
-                lvSites.ItemsSource = OnlineVideos.Sites.Updater.OnlineSites;
                 (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.SelectedIndex = -1;
+                lvSites.ItemsSource = new ListCollectionView(OnlineVideos.Sites.Updater.OnlineSites)
+                {
+                    Filter = new Predicate<object>(cat => (((OnlineVideos.OnlineVideosWebservice.Site)cat).Name ?? "").ToLower().Contains((App.Current.MainWindow as OnlineVideosMainWindow).CurrentFilter))
+                };
+                // focus the first item when this list becomes visible /use dispatcher to let WPF create the items first)
+                Dispatcher.BeginInvoke((Action)(()=>
+                {
+                    var itemToFocus = lvSites.ItemContainerGenerator.ContainerFromIndex(0) as ListViewItem;
+                    if (itemToFocus != null) 
+                        itemToFocus.Focus();
+                }), DispatcherPriority.Loaded);
             }
         }
 
@@ -80,6 +91,15 @@ namespace Standalone
 
                 e.Handled = true;
             }
+            else
+            {
+                char c = Util.GetCharFromKey(e.Key);
+                if (char.IsLetterOrDigit(c))
+                {
+                    (App.Current.MainWindow as OnlineVideosMainWindow).FilterItems(c);
+                    e.Handled = true;
+                }
+            }
         }
 
         private void AddSite(object sender, RoutedEventArgs e)
@@ -89,6 +109,7 @@ namespace Standalone
 			if (result != false)
 			{
                 RefreshList(site);
+                changedXml = true;
                 if (result == null) newDlls = true;
 			}
         }
@@ -108,17 +129,23 @@ namespace Standalone
                 OnlineVideoSettings.Instance.RemoveSiteAt(localSiteIndex);
                 OnlineVideoSettings.Instance.SaveSites();
                 RefreshList(site);
+                changedXml = true;
             }
         }
 
-        private void RefreshList(OnlineVideos.OnlineVideosWebservice.Site site)
+        internal void RefreshList(OnlineVideos.OnlineVideosWebservice.Site site)
         {
-            // refresh this list
-            lvSites.ItemsSource = null;
-            lvSites.ItemsSource = OnlineVideos.Sites.Updater.OnlineSites;
-            Dispatcher.BeginInvoke((Action)(() => { (lvSites.ItemContainerGenerator.ContainerFromItem(site) as ListViewItem).Focus(); }), DispatcherPriority.Input);
-            changedXml = true;
+            var view = lvSites.ItemsSource as ListCollectionView;
+            if (view != null) view.Refresh();
+            Dispatcher.BeginInvoke((Action<OnlineVideos.OnlineVideosWebservice.Site>)((siteToSelect) =>
+            {
+                ListViewItem itemToFocus = null;
+                if (siteToSelect != null)
+                    itemToFocus = lvSites.ItemContainerGenerator.ContainerFromItem(site) as ListViewItem;
+                else
+                    itemToFocus = lvSites.ItemContainerGenerator.ContainerFromIndex(0) as ListViewItem;
+                if (itemToFocus != null) itemToFocus.Focus();
+            }), DispatcherPriority.Input, site);
         }
-
     }
 }
