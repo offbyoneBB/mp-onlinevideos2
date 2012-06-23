@@ -520,6 +520,11 @@ namespace OnlineVideos.MediaPortal1.Player
                 return false;
             }
 
+            // if we are playing a local file set the cache file so refresh rate adaption can happen
+            Uri uri = new Uri(strFile);
+            string protocol = uri.Scheme.Substring(0, Math.Min(uri.Scheme.Length, 4));
+            if (protocol == "file") cacheFile = strFile;
+
             AdaptRefreshRateFromCacheFile();
 
 #if !MP11
