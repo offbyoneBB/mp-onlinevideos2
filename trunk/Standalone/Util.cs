@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
+using System.Globalization;
 
 namespace Standalone
 {
@@ -63,6 +64,25 @@ namespace Standalone
                     }
             }
             return ch;
+        }
+
+        public static string GetLocalizedLanguageDisplayName(string langCode)
+        {
+            string name = langCode;
+            try
+            {
+                name = name != "--" ? System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag(name).DisplayName : "Global";
+            }
+            catch
+            {
+                var temp = System.Globalization.CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
+                    ci => ci.IetfLanguageTag == name || ci.ThreeLetterISOLanguageName == name || ci.TwoLetterISOLanguageName == name || ci.ThreeLetterWindowsLanguageName == name);
+                if (temp != null)
+                {
+                    name = temp.DisplayName;
+                }
+            }
+            return name;
         }
     }
 }

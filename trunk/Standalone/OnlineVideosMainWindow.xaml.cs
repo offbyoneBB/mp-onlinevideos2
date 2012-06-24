@@ -1118,6 +1118,7 @@ namespace Standalone
                     return;
                 }
 
+                ImageDownloader.StopDownload = true;
 				if (SelectedCategory == null)
 				{
 					listViewMain.ItemsSource = ViewModels.SiteList.GetSitesView(this, SelectedSite.Settings.Name);

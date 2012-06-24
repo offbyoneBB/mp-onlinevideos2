@@ -9,9 +9,8 @@
     <Grid>
         <ListView x:Name="lvSites" SelectionMode="Single" Background="Transparent" Foreground="Black" FontSize="13" local:GridViewSort.AutoSort="True" AlternationCount="2">
             <ListView.Resources>
-                <local:LanguageCodeConverter x:Key="langCodeConverter"/>
-                <local:EmailToNameConverter x:Key="emailToNameConverter"/>
                 <local:SiteStateToBrushConverter x:Key="SiteStateToBrushConverter"/>
+                <local:SiteStateToImageConverter x:Key="SiteStateToImageConverter "/>
                 <local:SiteVisibilityConverter x:Key="SiteVisibilityConverter"/>
                 <Style x:Key="LeftAlignedHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -19,6 +18,7 @@
             </ListView.Resources>
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <EventSetter Event="KeyDown" Handler="HandleItemKeyDown" />
                     <Style.Triggers>
                         <!-- setting up triggers for alternate background colors -->
@@ -52,25 +52,25 @@
                     <GridViewColumn Header="State" local:GridViewSort.PropertyName="State">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Ellipse Width="16" Height="16" Fill="{Binding Path=State, Converter={StaticResource SiteStateToBrushConverter}}" ToolTip="{Binding Path=State}"/>
+                                <Image Width="24" Source="{Binding Path=State, Converter={StaticResource SiteStateToImageConverter}}" ToolTip="{Binding Path=State}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="Name" local:GridViewSort.PropertyName="Name">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Grid>
+                                <Grid Background="{Binding Path=State, Converter={StaticResource SiteStateToBrushConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="32"/>
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <Image Source="{Binding Path=., Converter={StaticResource ThumbnailConverter}}"/>
+                                    <Image Source="{Binding Path=ThumbnailImage, Converter={StaticResource ThumbnailConverter}}"/>
                                     <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Name}" Margin="5 0 0 0"/>
                                 </Grid>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Creator" DisplayMemberBinding="{Binding Path=Owner_FK, Converter={StaticResource emailToNameConverter}}" local:GridViewSort.PropertyName="Owner_FK"/>
+                    <GridViewColumn Header="Creator" DisplayMemberBinding="{Binding Path=Owner}" local:GridViewSort.PropertyName="Owner"/>
                     <GridViewColumn Header="Updated" DisplayMemberBinding="{Binding Path=LastUpdated, StringFormat={}{0:g}}" local:GridViewSort.PropertyName="LastUpdated"/>
                     <GridViewColumn Header="Adult" local:GridViewSort.PropertyName="IsAdult">
                         <GridViewColumn.CellTemplate>
@@ -87,8 +87,8 @@
                                         <ColumnDefinition Width="16"/>
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <Image VerticalAlignment="Center" Source="{Binding Path=Language, Converter={StaticResource LanguageConverter}}"/>
-                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Language, Converter={StaticResource langCodeConverter}}" Margin="5 0 0 0"/>
+                                    <Image VerticalAlignment="Center" Source="{Binding Path=Model.Language, Converter={StaticResource LanguageConverter}}"/>
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=Language}" Margin="5 0 0 0"/>
                                 </Grid>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

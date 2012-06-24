@@ -219,9 +219,9 @@ namespace Standalone
                 return null;
         }
 
-        public static void ApplySort(ICollectionView view, string propertyName, ListView listView, GridViewColumnHeader sortedColumnHeader)
+        public static void ApplySort(ICollectionView view, string propertyName, ListView listView, GridViewColumnHeader sortedColumnHeader, ListSortDirection? overrideSortDirection = null)
         {
-            ListSortDirection direction = ListSortDirection.Ascending;
+            ListSortDirection direction = overrideSortDirection ?? ListSortDirection.Ascending;
             if (view.SortDescriptions.Count > 0)
             {
                 SortDescription currentSort = view.SortDescriptions[0];

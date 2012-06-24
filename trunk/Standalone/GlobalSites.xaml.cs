@@ -39,6 +39,7 @@ namespace Standalone
 
         void VisibilityChanged(object sender, EventArgs e)
         {
+            ImageDownloader.StopDownload = true;
             if (Visibility == System.Windows.Visibility.Hidden)
             {
                 if (changedXml)
@@ -63,10 +64,10 @@ namespace Standalone
                 // deselect any site on the main view but remember the index
                 rememberedIndex = (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.SelectedIndex;
                 (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.SelectedIndex = -1;
-                lvSites.ItemsSource = new ListCollectionView(OnlineVideos.Sites.Updater.OnlineSites)
-                {
-                    Filter = new Predicate<object>(cat => (((OnlineVideos.OnlineVideosWebservice.Site)cat).Name ?? "").ToLower().Contains((App.Current.MainWindow as OnlineVideosMainWindow).CurrentFilter))
-                };
+                var sitesView = ViewModels.GlobalSiteList.GetSitesView(App.Current.MainWindow as OnlineVideosMainWindow);
+                lvSites.ItemsSource = sitesView;
+                ImageDownloader.GetImages<ViewModels.GlobalSite>(sitesView.SourceCollection as IList<ViewModels.GlobalSite>);
+                GridViewSort.ApplySort(lvSites.Items, "LastUpdated", lvSites, FindColumnHeader(lvSites, "LastUpdated"), ListSortDirection.Descending);
                 // focus the first item when this list becomes visible /use dispatcher to let WPF create the items first)
                 Dispatcher.BeginInvoke((Action)(()=>
                 {
@@ -82,12 +83,12 @@ namespace Standalone
             if (e.Key == Key.Enter)
             {
                 // add or remove
-                OnlineVideos.OnlineVideosWebservice.Site onlineSite = (sender as ListViewItem).DataContext as OnlineVideos.OnlineVideosWebservice.Site;
+                OnlineVideos.OnlineVideosWebservice.Site onlineSite = ((sender as FrameworkElement).DataContext as ViewModels.GlobalSite).Model;
                 SiteSettings localSite = OnlineVideoSettings.Instance.SiteSettingsList.FirstOrDefault(i => i.Name == onlineSite.Name);
                 if (localSite == null)
-                    AddSite(sender, new RoutedEventArgs());
+                    AddSite(sender, e);
                 else
-                    RemoveSite(sender, new RoutedEventArgs());
+                    RemoveSite(sender, e);
 
                 e.Handled = true;
             }
@@ -104,11 +105,11 @@ namespace Standalone
 
         private void AddSite(object sender, RoutedEventArgs e)
         {
-            OnlineVideos.OnlineVideosWebservice.Site site = (sender as FrameworkElement).DataContext as OnlineVideos.OnlineVideosWebservice.Site;
-			bool? result = OnlineVideos.Sites.Updater.UpdateSites(null, new List<OnlineVideos.OnlineVideosWebservice.Site> { site }, false, false);
+            var globalSite = (sender as FrameworkElement).DataContext as ViewModels.GlobalSite;
+            bool? result = OnlineVideos.Sites.Updater.UpdateSites(null, new List<OnlineVideos.OnlineVideosWebservice.Site> { globalSite.Model }, false, false);
 			if (result != false)
 			{
-                RefreshList(site);
+                RefreshList(globalSite);
                 changedXml = true;
                 if (result == null) newDlls = true;
 			}
@@ -116,10 +117,10 @@ namespace Standalone
 
         private void RemoveSite(object sender, RoutedEventArgs e)
         {
-            OnlineVideos.OnlineVideosWebservice.Site site = (sender as FrameworkElement).DataContext as OnlineVideos.OnlineVideosWebservice.Site;
+            var globalSite = (sender as FrameworkElement).DataContext as ViewModels.GlobalSite;
             int localSiteIndex = -1;
-            for (int i = 0; i < OnlineVideoSettings.Instance.SiteSettingsList.Count; i++) 
-                if (OnlineVideoSettings.Instance.SiteSettingsList[i].Name == site.Name) 
+            for (int i = 0; i < OnlineVideoSettings.Instance.SiteSettingsList.Count; i++)
+                if (OnlineVideoSettings.Instance.SiteSettingsList[i].Name == globalSite.Name) 
                 {
                     localSiteIndex = i;
                     break;
@@ -128,24 +129,59 @@ namespace Standalone
             {
                 OnlineVideoSettings.Instance.RemoveSiteAt(localSiteIndex);
                 OnlineVideoSettings.Instance.SaveSites();
-                RefreshList(site);
+                RefreshList(globalSite);
                 changedXml = true;
             }
         }
 
-        internal void RefreshList(OnlineVideos.OnlineVideosWebservice.Site site)
+        internal void RefreshList(ViewModels.GlobalSite globalSite)
         {
             var view = lvSites.ItemsSource as ListCollectionView;
             if (view != null) view.Refresh();
-            Dispatcher.BeginInvoke((Action<OnlineVideos.OnlineVideosWebservice.Site>)((siteToSelect) =>
+            Dispatcher.BeginInvoke((Action<ViewModels.GlobalSite>)((siteToSelect) =>
             {
                 ListViewItem itemToFocus = null;
                 if (siteToSelect != null)
-                    itemToFocus = lvSites.ItemContainerGenerator.ContainerFromItem(site) as ListViewItem;
+                    itemToFocus = lvSites.ItemContainerGenerator.ContainerFromItem(globalSite) as ListViewItem;
                 else
                     itemToFocus = lvSites.ItemContainerGenerator.ContainerFromIndex(0) as ListViewItem;
-                if (itemToFocus != null) itemToFocus.Focus();
-            }), DispatcherPriority.Input, site);
+                if (itemToFocus != null) 
+                    itemToFocus.Focus();
+            }), DispatcherPriority.Input, globalSite);
         }
+
+        #region helper methods
+        private GridViewColumnHeader FindColumnHeader(Visual root, string gridViewSortProperty)
+        {
+            List<Visual> elementList = new List<Visual>();
+            FindAllChildren(typeof(GridViewColumnHeader), root, elementList);
+            foreach (Visual element in elementList)
+            {
+                GridViewColumnHeader header = element as GridViewColumnHeader;
+                if (header.Column != null)
+                {
+                    if (header.Column.GetValue(GridViewSort.PropertyNameProperty) as string  == gridViewSortProperty)
+                        return header;
+                }
+            }
+            return null;
+        }
+
+        private void FindAllChildren(Type T, Visual root, List<Visual> elementList)
+        {
+            if (root == null)
+                return;
+            if (T.Equals(root.GetType()))
+            {
+                elementList.Add(root);
+                return;
+            }
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+            {
+                Visual child = VisualTreeHelper.GetChild(root, i) as Visual;
+                FindAllChildren(T, child, elementList);
+            }
+        }
+        #endregion
     }
 }

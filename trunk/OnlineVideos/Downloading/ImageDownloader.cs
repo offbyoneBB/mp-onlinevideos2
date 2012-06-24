@@ -38,7 +38,7 @@ namespace OnlineVideos
 		/// </summary>
 		/// <typeparam name="T">supported are <see cref="Category"/> and <see cref="VideoInfo"/></typeparam>
 		/// <param name="itemsWithThumbs"></param>
-        public static void GetImages<T>(IList<T> itemsWithThumbs)
+        public static void GetImages<T>(IList<T> itemsWithThumbs) where T : ISearchResultItem
         {
             StopDownload = false;
             // split the downloads in 5+ groups and do multithreaded downloading
@@ -68,17 +68,30 @@ namespace OnlineVideos
 		/// </summary>
 		/// <typeparam name="T">supported are <see cref="Category"/> and <see cref="VideoInfo"/></typeparam>
 		/// <param name="myItems"></param>
-		public static void DownloadImages<T>(List<T> myItems)
+        public static void DownloadImages<T>(List<T> myItems) where T : ISearchResultItem
 		{
 			foreach (T item in myItems)
 			{
 				if (StopDownload) break;
 
-				string thumb = item is Category ? (item as Category).Thumb : (item as VideoInfo).ImageUrl;
-				float? forcedAspect = item is VideoInfo ? (item as VideoInfo).ImageForcedAspectRatio : null;
-				if (string.IsNullOrEmpty(thumb)) continue;
-				string[] urls = thumb.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] urls = null;
+                float? forcedAspect = null;
 
+                if (item is Category || item is VideoInfo)
+                {
+                    string thumb = item is Category ? (item as Category).Thumb : (item as VideoInfo).ImageUrl;
+                    if (item is VideoInfo) forcedAspect = (item as VideoInfo).ImageForcedAspectRatio;
+                    if (string.IsNullOrEmpty(thumb)) continue;
+                    urls = thumb.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                }
+                else if (item.Other is OnlineVideos.OnlineVideosWebservice.Site)
+                {
+                    string siteName = (item.Other as OnlineVideos.OnlineVideosWebservice.Site).Name;
+                    string localSiteImage = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + siteName + ".png");
+                    string onlineSiteImage = "http://87.106.7.69/OnlineVideosWebService/Icons/" + siteName + ".png";
+                    urls = new string[] { localSiteImage, onlineSiteImage };
+                }
+                if (urls == null) continue;
 				foreach (string aFinalUrl in urls)
 				{
 					string imageLocation = string.Empty;
@@ -92,7 +105,7 @@ namespace OnlineVideos
 						}
 						else
 						{
-							string thumbFile = Utils.GetThumbFile(aFinalUrl);
+                            string thumbFile = (item is Category || item is VideoInfo) ? Utils.GetThumbFile(aFinalUrl) : urls[0];
 							if (System.IO.File.Exists(thumbFile)) imageLocation = thumbFile;
 							else if (DownloadAndCheckImage(aFinalUrl, thumbFile, forcedAspect)) imageLocation = thumbFile;
 						}
@@ -100,14 +113,13 @@ namespace OnlineVideos
 
 					if (imageLocation != string.Empty)
 					{
+                        item.ThumbnailImage = imageLocation;
 						if (item is Category)
 						{
-							(item as Category).ThumbnailImage = imageLocation;
 							(item as Category).NotifyPropertyChanged("ThumbnailImage");
 						}
-						else
-						{
-							(item as VideoInfo).ThumbnailImage = imageLocation;
+                        else if (item is VideoInfo)
+						{	
 							(item as VideoInfo).NotifyPropertyChanged("ThumbnailImage");
 						}
 						break;

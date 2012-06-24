@@ -25,11 +25,6 @@ namespace Standalone
 				try { if (System.IO.Path.IsPathRooted(value as string) && System.IO.File.Exists(value as string)) file = value as string; }
 				catch { }
 			}
-            else if (value is OnlineVideos.OnlineVideosWebservice.Site)
-            {
-                string image = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons/" + (value as OnlineVideos.OnlineVideosWebservice.Site).Name + ".png");
-                if (System.IO.File.Exists(image)) file = image;
-            }
             else
             {
                 SiteUtilBase site = value as SiteUtilBase;
@@ -180,34 +175,6 @@ namespace Standalone
         }
     }
 
-    [ValueConversion(typeof(string), typeof(string))]
-    public class LanguageCodeConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            string name = value as string;
-            try
-            {
-                name = name != "--" ? System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag(name).DisplayName : "Global";
-            }
-            catch
-            {
-                var temp = System.Globalization.CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
-                    ci => ci.IetfLanguageTag == name || ci.ThreeLetterISOLanguageName == name || ci.TwoLetterISOLanguageName == name || ci.ThreeLetterWindowsLanguageName == name);
-                if (temp != null)
-                {
-                    name = temp.DisplayName;
-                }
-            }
-            return name;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
 	[ValueConversion(typeof(Translation), typeof(string))]
 	public class TranslationConverter : IValueConverter
 	{
@@ -221,13 +188,17 @@ namespace Standalone
 		}
 	}
 
-    [ValueConversion(typeof(string), typeof(string))]
-    public class EmailToNameConverter : IValueConverter
+    [ValueConversion(typeof(OnlineVideos.OnlineVideosWebservice.SiteState), typeof(SolidColorBrush))]
+    public class SiteStateToBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            string email = value as string;
-            return email.Substring(0, email.IndexOf('@'));
+            switch ((OnlineVideos.OnlineVideosWebservice.SiteState)value)
+            {
+                case OnlineVideos.OnlineVideosWebservice.SiteState.Reported: return new SolidColorBrush(Color.FromArgb(80, 255, 240, 79));
+                case OnlineVideos.OnlineVideosWebservice.SiteState.Broken: return new SolidColorBrush(Color.FromArgb(60, 255, 38, 10));
+                default: return new SolidColorBrush(Colors.Transparent);
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -236,16 +207,19 @@ namespace Standalone
         }
     }
 
-    [ValueConversion(typeof(OnlineVideos.OnlineVideosWebservice.SiteState), typeof(SolidColorBrush))]
-    public class SiteStateToBrushConverter : IValueConverter
+    [ValueConversion(typeof(OnlineVideos.OnlineVideosWebservice.SiteState), typeof(ImageSource))]
+    public class SiteStateToImageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             switch ((OnlineVideos.OnlineVideosWebservice.SiteState)value)
             {
-                case OnlineVideos.OnlineVideosWebservice.SiteState.Reported: return new SolidColorBrush(Color.FromArgb(255, 255, 240, 79));
-                case OnlineVideos.OnlineVideosWebservice.SiteState.Broken: return new SolidColorBrush(Colors.Red);
-                default: return new SolidColorBrush(Colors.Green);
+                case OnlineVideos.OnlineVideosWebservice.SiteState.Reported:
+                    return new BitmapImage(new Uri("pack://application:,,,/Images/Warning.png"));
+                case OnlineVideos.OnlineVideosWebservice.SiteState.Broken:
+                    return new BitmapImage(new Uri("pack://application:,,,/Images/Stop.png"));
+                default:
+                    return new BitmapImage(new Uri("pack://application:,,,/Images/OK.png"));
             }
         }
 
@@ -261,7 +235,7 @@ namespace Standalone
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             ListViewItem lvItem  = (value as ListViewItem);
-            OnlineVideos.OnlineVideosWebservice.Site onlineSite = lvItem.DataContext as OnlineVideos.OnlineVideosWebservice.Site;
+            var onlineSite = (lvItem.DataContext as ViewModels.GlobalSite).Model;
             SiteSettings ss = OnlineVideoSettings.Instance.SiteSettingsList.FirstOrDefault(i => i.Name == onlineSite.Name);
             if ((parameter as string) == "Add")
             {
