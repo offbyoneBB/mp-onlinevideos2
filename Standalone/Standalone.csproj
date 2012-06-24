@@ -121,6 +121,7 @@
     <Compile Include="Converters.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="ViewModels\Category.cs" />
+    <Compile Include="ViewModels\GlobalSite.cs" />
     <Compile Include="ViewModels\Site.cs" />
     <Compile Include="ViewModels\Video.cs" />
     <Compile Include="WPFMediaKit\DirectShow\Controls\D3DRenderer.cs" />
@@ -260,6 +261,10 @@
     <Resource Include="Images\Check.png" />
     <Resource Include="Images\Speaker.png" />
     <Resource Include="Images\Cross_24.png" />
+    <Resource Include="Images\OK.png" />
+    <Resource Include="Images\Settings.png" />
+    <Resource Include="Images\Stop.png" />
+    <Resource Include="Images\Warning.png" />
     <Content Include="NLog.dll" />
     <Resource Include="Images\GlobalSites.png" />
     <Resource Include="Images\Add.png" />

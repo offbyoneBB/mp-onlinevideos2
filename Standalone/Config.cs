@@ -18,7 +18,10 @@ namespace Standalone
 			{
 				try
 				{
-					Instance = new DataContractSerializer(typeof(Config)).ReadObject(File.OpenRead(filePath)) as Config;
+                    using (var fs = File.OpenRead(filePath))
+                    {
+                        Instance = new DataContractSerializer(typeof(Config)).ReadObject(fs) as Config;
+                    }
 				}
 				catch (Exception ex)
 				{

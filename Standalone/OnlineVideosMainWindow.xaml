@@ -118,8 +118,8 @@
         <local:GlobalSites Grid.Row="1" x:Name="globalSitesView" Visibility="Hidden"/>
         <Grid Grid.Row="2" Height="120">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.5*"/>
-                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="410"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
