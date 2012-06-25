@@ -1826,6 +1826,11 @@ HRESULT CLAVSplitter::GetTotalLength(int64_t *totalLength)
   return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetTotalLength(totalLength);
 }
 
+HRESULT CLAVSplitter::GetAvailableLength(int64_t *availableLength)
+{
+  return (m_pInput == NULL) ? E_NOT_VALID_STATE : this->m_pInput->GetAvailableLength(availableLength);
+}
+
 // ISeeking interface
 
 unsigned int CLAVSplitter::GetSeekingCapabilities(void)

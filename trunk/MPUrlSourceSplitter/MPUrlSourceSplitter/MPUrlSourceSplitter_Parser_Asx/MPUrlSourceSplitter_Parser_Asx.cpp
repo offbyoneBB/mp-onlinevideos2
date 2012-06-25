@@ -90,27 +90,6 @@ HRESULT CMPUrlSourceSplitter_Parser_Asx::ClearSession(void)
   return S_OK;
 }
 
-char *SkipBlanks(char *str, unsigned int strlen)
-{
-    while(strlen > 0)
-    {
-      switch(*str)
-      {
-      case ' ':
-      case '\t':
-      case '\r':
-      case '\n':
-        --strlen;
-        ++str;
-        break;
-      default:
-        strlen = 0;
-      }
-    }
-
-    return str;
-} 
-
 ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *mediaPacket)
 {
   ParseResult result = ParseResult_NotKnown;
@@ -161,11 +140,11 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
                     hrefNode += 4;
                     unsigned int hrefLength = strlen(hrefNode);
                     // found href attribute in ref node
-                    hrefNode = SkipBlanks(hrefNode, hrefLength);
+                    hrefNode = SkipBlanksA(hrefNode, hrefLength);
                     if (strncmp(hrefNode, "=", 1) == 0)
                     {
                       hrefNode++;
-                      hrefNode = SkipBlanks(hrefNode, hrefLength);
+                      hrefNode = SkipBlanksA(hrefNode, hrefLength);
                       if (strncmp(hrefNode, "\"", 1) == 0)
                       {
                         // we are on the first ", find second "

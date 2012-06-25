@@ -36,8 +36,6 @@
 #define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSourceSplitter_Protocol_Http"
 #endif
 
-#define METHOD_COMPARE_RANGES_BUFFERS_NAME                              L"CompareRangesBuffers()"
-
 PIPlugin CreatePluginInstance(CParameterCollection *configuration)
 {
   return new CMPUrlSourceSplitter_Protocol_Http(configuration);
@@ -87,16 +85,9 @@ CMPUrlSourceSplitter_Protocol_Http::CMPUrlSourceSplitter_Protocol_Http(CParamete
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->internalExitRequest = false;
   this->wholeStreamDownloaded = false;
-  this->rangesSupported = RANGES_STATE_UNKNOWN;
   this->receivedData = NULL;
-  this->receivedDataFromStart = NULL;
-  this->receivedDataFromRange = NULL;
   this->mainCurlInstance = NULL;
-  this->rangesDetectionCurlInstance = NULL;
-  this->filledReceivedDataFromStart = false;
-  this->filledReceivedDataFromRange = false;
   this->supressData = false;
-  this->checkRanges = HTTP_CHECK_RANGES_DEFAULT;
   this->shouldExit = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
@@ -117,12 +108,6 @@ CMPUrlSourceSplitter_Protocol_Http::~CMPUrlSourceSplitter_Protocol_Http()
     this->mainCurlInstance = NULL;
   }
 
-  if (this->rangesDetectionCurlInstance != NULL)
-  {
-    delete this->rangesDetectionCurlInstance;
-    this->rangesDetectionCurlInstance = NULL;
-  }
-  
   delete this->configurationParameters;
 
   if (this->lockMutex != NULL)
@@ -362,8 +347,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(const CParameterC
     result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
   }
 
-  this->checkRanges = this->configurationParameters->GetValueBool(PARAMETER_NAME_HTTP_CHECK_RANGES, true, HTTP_CHECK_RANGES_DEFAULT);
-
   if (SUCCEEDED(result))
   {
     this->receivedData = new LinearBuffer();
@@ -371,38 +354,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(const CParameterC
 
     if (SUCCEEDED(result))
     {
-      result = (this->receivedData->InitializeBuffer(RANGES_SUPPORTED_BUFFER_SIZE)) ? result : E_FAIL;
-    }
-  }
-
-  if (SUCCEEDED(result))
-  {
-    if ((this->rangesSupported == RANGES_STATE_UNKNOWN) && (this->checkRanges))
-    {
-      // we don't know if ranges are supported
-      this->receivedDataFromStart = new LinearBuffer();
-      this->receivedDataFromRange = new LinearBuffer();
-
-      result = (this->receivedDataFromStart == NULL) ? E_POINTER : result;
-      result = (this->receivedDataFromRange == NULL) ? E_POINTER : result;
-
-      if (SUCCEEDED(result))
-      {
-        result = (this->receivedDataFromStart->InitializeBuffer(RANGES_SUPPORTED_BUFFER_SIZE)) ? result : E_FAIL;
-        result = (this->receivedDataFromRange->InitializeBuffer(RANGES_SUPPORTED_BUFFER_SIZE)) ? result : E_FAIL;
-      }
-
-      if (SUCCEEDED(result))
-      {
-        this->rangesDetectionCurlInstance = new CCurlInstance(this->logger, this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL), PROTOCOL_IMPLEMENTATION_NAME);
-        result = (this->rangesDetectionCurlInstance != NULL) ? S_OK : E_POINTER;
-      }
-
-      if (SUCCEEDED(result))
-      {
-        // set ranges supported state to pending request (this will store data)
-        this->rangesSupported = RANGES_STATE_PENDING_REQUEST;
-      }
+      result = (this->receivedData->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER)) ? result : E_FAIL;
     }
   }
 
@@ -488,52 +440,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StopReceivingData(void)
     this->mainCurlInstance = NULL;
   }
 
-  if (this->rangesDetectionCurlInstance != NULL)
-  {
-    delete this->rangesDetectionCurlInstance;
-    this->rangesDetectionCurlInstance = NULL;
-  }
-
   if (this->receivedData != NULL)
   {
     delete this->receivedData;
     this->receivedData = NULL;
-  }
-
-  if (this->receivedDataFromStart != NULL)
-  {
-    delete this->receivedDataFromStart;
-    this->receivedDataFromStart = NULL;
-  }
-
-  if (this->receivedDataFromRange != NULL)
-  {
-    delete this->receivedDataFromRange;
-    this->receivedDataFromRange = NULL;
-  }
-
-  this->filledReceivedDataFromStart = false;
-  this->filledReceivedDataFromRange = false;
-
-  // reset ranges supported state only if ranges are not sure
-  switch (this->rangesSupported)
-  {
-  case RANGES_STATE_UNKNOWN:
-    break;
-  case RANGES_STATE_NOT_SUPPORTED:
-    // do not reset ranges state
-    // StopReceivingData() is called when processing ranges request
-    break;
-  case RANGES_STATE_PENDING_REQUEST:
-    this->rangesSupported = RANGES_STATE_UNKNOWN;
-    break;
-  case RANGES_STATE_SUPPORTED:
-    // do not reset ranges state
-    // StopReceivingData() is called when processing ranges request
-    break;
-  default:
-    this->rangesSupported = RANGES_STATE_UNKNOWN;
-    break;
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
@@ -566,7 +476,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::QueryStreamAvailableLength(CStreamAv
   if (result == S_OK)
   {
     availableLength->SetQueryResult(S_OK);
-    availableLength->SetAvailableLength((this->rangesSupported == RANGES_STATE_SUPPORTED) ? this->streamLength : this->streamTime);
+    availableLength->SetAvailableLength(((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetRangesSupported())) ? this->streamLength : this->streamTime);
   }
 
   return result;
@@ -587,30 +497,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ClearSession(void)
   this->streamTime = 0;
   this->endStreamTime = 0;
   this->wholeStreamDownloaded = false;
-  this->rangesSupported = RANGES_STATE_UNKNOWN;
-  this->filledReceivedDataFromStart = false;
-  this->filledReceivedDataFromRange = false;
   this->receiveDataTimeout = HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
-  this->checkRanges = HTTP_CHECK_RANGES_DEFAULT;
   this->shouldExit = false;
 
   if (this->receivedData != NULL)
   {
     delete this->receivedData;
     this->receivedData = NULL;
-  }
-
-  if (this->receivedDataFromStart != NULL)
-  {
-    delete this->receivedDataFromStart;
-    this->receivedDataFromStart = NULL;
-  }
-
-  if (this->receivedDataFromRange != NULL)
-  {
-    delete this->receivedDataFromRange;
-    this->receivedDataFromRange = NULL;
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
@@ -621,7 +515,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ClearSession(void)
 
 unsigned int CMPUrlSourceSplitter_Protocol_Http::GetSeekingCapabilities(void)
 {
-  return (this->rangesSupported == RANGES_STATE_SUPPORTED) ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE;
+  return ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetRangesSupported())) ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE;
 }
 
 int64_t CMPUrlSourceSplitter_Protocol_Http::SeekToTime(int64_t time)
@@ -820,171 +714,11 @@ size_t CMPUrlSourceSplitter_Protocol_Http::CurlReceiveData(char *buffer, size_t 
         {
           caller->receivedData->AddToBuffer(buffer, bytesRead);
         }
-
-        if (caller->rangesSupported == RANGES_STATE_PENDING_REQUEST)
-        {
-          if ((caller->setLength) && (caller->streamLength > MINIMUM_TOTAL_LENGTH_FOR_CHECK_RANGES))
-          {
-            if (caller->rangesDetectionCurlInstance != NULL)
-            {
-              if (caller->rangesDetectionCurlInstance->GetCurlState() == CURL_STATE_CREATED)
-              {
-                // ranges detection wasn't initialized and started
-                caller->rangesDetectionCurlInstance->SetReceivedDataTimeout(caller->receiveDataTimeout);
-                caller->rangesDetectionCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Http::CurlRangesDetectionReceiveData, caller);
-                caller->rangesDetectionCurlInstance->SetStartStreamTime(caller->streamLength / 2);
-                caller->rangesDetectionCurlInstance->SetEndStreamTime(caller->streamLength / 2);
-                caller->rangesDetectionCurlInstance->SetReferer(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL));
-                caller->rangesDetectionCurlInstance->SetUserAgent(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
-                caller->rangesDetectionCurlInstance->SetCookie(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL));
-                caller->rangesDetectionCurlInstance->SetHttpVersion(caller->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
-                caller->rangesDetectionCurlInstance->SetIgnoreContentLength((caller->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-
-                if (caller->rangesDetectionCurlInstance->Initialize())
-                {
-                  caller->rangesDetectionCurlInstance->StartReceivingData();
-                }
-              }
-            }
-
-            if (caller->rangesSupported == RANGES_STATE_PENDING_REQUEST)
-            {
-              // there is pending request if ranges are supported or not          
-
-              if ((!caller->filledReceivedDataFromStart) && (caller->receivedDataFromStart->AddToBuffer(buffer, min(bytesRead, caller->receivedDataFromStart->GetBufferFreeSpace())) != bytesRead))
-              {
-                caller->filledReceivedDataFromStart = true;
-                // data wasn't added to buffer
-                // compare buffers and set ranges supported state
-
-                caller->CompareRangesBuffers();
-              }
-            }
-          }
-          else
-          {
-            caller->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
-          }
-        }
       }
     }
   }
 
   // if returned 0 (or lower value than bytesRead) it cause transfer interruption
   return ((caller->shouldExit) || (caller->internalExitRequest)) ? 0 : (bytesRead);
-}
-
-size_t CMPUrlSourceSplitter_Protocol_Http::CurlRangesDetectionReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata)
-{
-  CMPUrlSourceSplitter_Protocol_Http *caller = (CMPUrlSourceSplitter_Protocol_Http *)userdata;
-  CLockMutex lock(caller->lockMutex, INFINITE);
-  unsigned int bytesRead = size * nmemb;
-
-  if (!((caller->shouldExit) || (caller->internalExitRequest)))
-  {
-    long responseCode = 0;
-    CURLcode errorCode = caller->rangesDetectionCurlInstance->GetResponseCode(&responseCode);
-    if (errorCode == CURLE_OK)
-    {
-      if ((responseCode < 200) && (responseCode >= 400))
-      {
-        // response code 200 - 299 = OK
-        // response code 300 - 399 = redirect (OK)
-        caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: ranges detection error response code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-        // return error
-        bytesRead = 0;
-      }
-    }
-
-    if ((responseCode >= 200) && (responseCode < 400))
-    {
-      if (bytesRead != 0)
-      {
-        if (caller->rangesSupported == RANGES_STATE_PENDING_REQUEST)
-        {
-          // there is pending request if ranges are supported or not
-
-          if ((!caller->filledReceivedDataFromRange) && (caller->receivedDataFromRange->AddToBuffer(buffer, min(bytesRead, caller->receivedDataFromRange->GetBufferFreeSpace())) != bytesRead))
-          {
-            caller->filledReceivedDataFromRange = true;
-            // data wasn't added to buffer
-            // compare buffers and set ranges supported state
-
-            caller->CompareRangesBuffers();
-          }
-        }
-
-        if ((caller->rangesSupported == RANGES_STATE_NOT_SUPPORTED) || (caller->rangesSupported == RANGES_STATE_SUPPORTED))
-        {
-          // stop receiving data from ranges detection
-          bytesRead = 0;
-        }
-      }
-    }
-  }
-
-  // if returned 0 (or lower value than bytesRead) it cause transfer interruption
-  return ((caller->shouldExit) || (caller->internalExitRequest)) ? 0 : (bytesRead);
-}
-
-void CMPUrlSourceSplitter_Protocol_Http::CompareRangesBuffers()
-{
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME);
-
-  if (this->rangesSupported == RANGES_STATE_PENDING_REQUEST)
-  {
-    // there is pending request if ranges are supported or not
-
-    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received data from start: %u, received data from ranges: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, this->receivedDataFromStart->GetBufferOccupiedSpace(), this->receivedDataFromRange->GetBufferOccupiedSpace());
-
-    unsigned int size = min(this->receivedDataFromStart->GetBufferOccupiedSpace(), this->receivedDataFromRange->GetBufferOccupiedSpace());
-
-    if (size == this->receivedDataFromStart->GetBufferSize())
-    {
-      ALLOC_MEM_DEFINE_SET(bufferFromStart, char, size, 0);
-      ALLOC_MEM_DEFINE_SET(bufferFromRange, char, size, 0);
-
-      if ((bufferFromStart != NULL) && (bufferFromRange != NULL))
-      {
-        if (this->receivedDataFromStart->CopyFromBuffer(bufferFromStart, size, 0, 0) == size)
-        {
-          if (this->receivedDataFromRange->CopyFromBuffer(bufferFromRange, size, 0, 0) == size)
-          {
-            if (memcmp(bufferFromStart, bufferFromRange, size) != 0)
-            {
-              // buffers are not same => ranges are supported
-              this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, L"ranges are supported");
-              this->rangesSupported = RANGES_STATE_SUPPORTED;
-            }
-            else
-            {
-              this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, L"range buffers are same, ranges are not supported");
-              this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
-            }
-          }
-          else
-          {
-            this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, L"cannot copy data for comparing buffers, ranges are not supported");
-            this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
-          }
-        }
-        else
-        {
-          this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, L"cannot copy data for comparing buffers, ranges are not supported");
-          this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
-        }
-      }
-      else
-      {
-        this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, L"cannot allocate enough memory for comparing buffers, ranges are not supported");
-        this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
-      }
-
-      FREE_MEM(bufferFromStart);
-      FREE_MEM(bufferFromRange);
-    }
-  }
-
-  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME);
 }
 

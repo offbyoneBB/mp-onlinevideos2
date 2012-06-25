@@ -42,6 +42,7 @@ CCurlInstance::CCurlInstance(CLogger *logger, wchar_t *url, wchar_t *protocolNam
   this->version = HTTP_VERSION_DEFAULT;
   this->ignoreContentLength = HTTP_IGNORE_CONTENT_LENGTH_DEFAULT;
   this->closeWithoutWaiting = false;
+  this->rangesSupported = true;
 }
 
 
@@ -473,6 +474,64 @@ int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *dat
         {
           // we are just interested in headers comming in from peer
           caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: received HTTP header: '%s'", caller->protocolName, METHOD_CURL_DEBUG_CALLBACK, curlData);
+
+          // check for accept-ranges header
+          char *lowerBuffer = DuplicateA(tempData);
+          if (lowerBuffer != NULL)
+          {
+            size_t length = strlen(lowerBuffer);
+            if (length > 0)
+            {
+              _strlwr_s(lowerBuffer, length + 1);
+
+              if (length > 13)
+              {
+                // the length of received data should be at least 5 characters 'Accept-Ranges'
+
+                if (strncmp(lowerBuffer, "accept-ranges", 13) == 0)
+                {
+                  // Accept-Ranges header, try to parse
+
+                  char *startString = strstr(lowerBuffer, ":");
+                  if (startString != NULL)
+                  {
+                    char *endString1 = strstr(startString, "\n");
+                    char *endString2 = strstr(startString, "\r");
+
+                    char *endString = NULL;
+                    if ((endString1 != NULL) && (endString2 != NULL))
+                    {
+                      endString = (endString1 < endString2) ? endString1 : endString2;
+                    }
+                    else if (endString1 != NULL)
+                    {
+                      endString = endString1;
+                    }
+                    else if (endString2 != NULL)
+                    {
+                      endString = endString2;
+                    }
+
+                    if (endString != NULL)
+                    {
+                      char *first = startString + 1;
+                      size_t rangesStringLength = strlen(first);
+
+                      first = SkipBlanksA(first, rangesStringLength);
+                      if (first != NULL)
+                      {
+                        if (strncmp(first, "none", 4) == 0)
+                        {
+                          // ranges are not supported
+                          caller->rangesSupported = false;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
 
@@ -499,4 +558,9 @@ wchar_t *CCurlInstance::GetCurlVersion(void)
   char *curlVersion = curl_version();
 
   return ConvertToUnicodeA(curlVersion);
+}
+
+bool CCurlInstance::GetRangesSupported(void)
+{
+  return this->rangesSupported;
 }

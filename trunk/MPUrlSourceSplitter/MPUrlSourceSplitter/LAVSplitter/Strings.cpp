@@ -331,3 +331,45 @@ wchar_t *ReplaceStringW(const wchar_t *string, const wchar_t *searchString, cons
 
   return resultString;
 }
+
+char *SkipBlanksA(char *str, unsigned int strlen)
+{
+    while(strlen > 0)
+    {
+      switch(*str)
+      {
+      case ' ':
+      case '\t':
+      case '\r':
+      case '\n':
+        --strlen;
+        ++str;
+        break;
+      default:
+        strlen = 0;
+      }
+    }
+
+    return str;
+} 
+
+wchar_t *SkipBlanksW(wchar_t *str, unsigned int strlen)
+{
+    while(strlen > 0)
+    {
+      switch(*str)
+      {
+      case L' ':
+      case L'\t':
+      case L'\r':
+      case L'\n':
+        --strlen;
+        ++str;
+        break;
+      default:
+        strlen = 0;
+      }
+    }
+
+    return str;
+} 

@@ -263,10 +263,10 @@ int64_t CLAVInputPin::Seek(void *opaque,  int64_t offset, int whence)
 
   if (!resultSet)
   {
-    if (pin->m_llBufferPosition > available)
+    /*if (pin->m_llBufferPosition > available)
     {
       pin->m_llBufferPosition = available;
-    }
+    }*/
 
     result = pin->m_llBufferPosition;
     resultSet = true;
@@ -2211,8 +2211,22 @@ HRESULT CLAVInputPin::GetTotalLength(int64_t *totalLength)
 
   if (SUCCEEDED(result))
   {
-    int64_t available = 0;
-    result = this->Length(totalLength, &available);
+    int64_t availableLength = 0;
+    result = this->Length(totalLength, &availableLength);
+  }
+
+  return result;
+}
+
+HRESULT CLAVInputPin::GetAvailableLength(int64_t *availableLength)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, availableLength);
+
+  if (SUCCEEDED(result))
+  {
+    int64_t totalLength = 0;
+    result = this->Length(&totalLength, availableLength);
   }
 
   return result;

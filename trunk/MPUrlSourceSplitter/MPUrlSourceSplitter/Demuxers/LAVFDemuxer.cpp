@@ -1690,68 +1690,73 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
         found = true;
       }
     }
+  }
 
-    if (SUCCEEDED(result) && found)
+  if (SUCCEEDED(result) && found)
+  {
+    int index = -1;
+    st = this->m_avFormat->streams[videoStreamId];
+
+    ff_read_frame_flush(this->m_avFormat);
+    index = av_index_search_timestamp(st, seek_pts, flags);
+
+    if (index < 0)
     {
+      logger->Log(LOGGER_ERROR, L"%s: %s: index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, index);
+      result = -6;
+    }
+
+    if (this->m_bFlv)
+    {
+      // in case of FLV video we can be after seek time, but searching index can find index too back
       ff_read_frame_flush(this->m_avFormat);
-      index = av_index_search_timestamp(st, seek_pts, flags);
+      int index2 = av_index_search_timestamp(st, seek_pts, flags & (~AVSEEK_FLAG_BACKWARD));
 
-      if (index < 0)
+      if (index2 < 0)
       {
-        logger->Log(LOGGER_ERROR, L"%s: %s: index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, index);
-        result = -6;
+        logger->Log(LOGGER_WARNING, L"%s: %s: second index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, index2);
       }
-
-      if (this->m_bFlv)
+      else
       {
-        // in case of FLV video we can be after seek time, but searching index can find index too back
-        ff_read_frame_flush(this->m_avFormat);
-        int index2 = av_index_search_timestamp(st, seek_pts, flags & (~AVSEEK_FLAG_BACKWARD));
+        // we choose index which is closer to seek time
+        logger->Log(LOGGER_VERBOSE, L"%s: %s: first index: %d, second index: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, index, index2);
 
-        if (index2 < 0)
+        AVIndexEntry *ie1 = &st->index_entries[index];
+        AVIndexEntry *ie2 = &st->index_entries[index2];
+
+        int64_t diff1 = abs(seek_pts - ie1->timestamp);
+        int64_t diff2 = abs(seek_pts - ie2->timestamp);
+
+        if (diff2 < diff1)
         {
-          logger->Log(LOGGER_WARNING, L"%s: %s: second index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, index2);
+          // choose second index, it's closer to requested seek time
+          index = index2;
         }
-        else
+      }
+    }
+
+    if (SUCCEEDED(result))
+    {
+      ie = &st->index_entries[index];
+
+      logger->Log(LOGGER_VERBOSE, L"%s: %s: seek to position: %lld, time: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, ie->pos, ie->timestamp);
+
+      if (SUCCEEDED(result))
+      {
+        int64_t ret = avio_seek(this->m_avFormat->pb, ie->pos, SEEK_SET);
+        if (ret < 0)
         {
-          // we choose index which is closer to seek time
-          logger->Log(LOGGER_VERBOSE, L"%s: %s: first index: %d, second index: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, index, index2);
-
-          AVIndexEntry *ie1 = &st->index_entries[index];
-          AVIndexEntry *ie2 = &st->index_entries[index2];
-
-          int64_t diff1 = abs(seek_pts - ie1->timestamp);
-          int64_t diff2 = abs(seek_pts - ie2->timestamp);
-
-          if (diff2 < diff1)
-          {
-            // choose second index, it's closer to requested seek time
-            index = index2;
-          }
+          logger->Log(LOGGER_VERBOSE, L"%s: %s: seek to requested position %lld failed: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, ie->pos, ret);
+          result = -8;
         }
       }
 
       if (SUCCEEDED(result))
       {
-        ie = &st->index_entries[index];
-
-        logger->Log(LOGGER_VERBOSE, L"%s: %s: seek to position: %lld, time: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, ie->pos, ie->timestamp);
-
-        int64_t ret = avio_seek(this->m_avFormat->pb, ie->pos, SEEK_SET);
-        if (ret < 0)
-        {
-          logger->Log(LOGGER_VERBOSE, L"%s: %s: seek to requested position %lld failed: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, ie->pos, ret);
-          result = -7;
-        }
-
-        if (SUCCEEDED(result))
-        {
-          ff_update_cur_dts(this->m_avFormat, st, ie->timestamp);
-        }
+        ff_update_cur_dts(this->m_avFormat, st, ie->timestamp);
       }
     }
   }
-
 
   logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, result);
   return result;
@@ -1807,27 +1812,44 @@ STDMETHODIMP CLAVFDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
 
   bool found = false;
 
-  if (SUCCEEDED(result) && (!found))
+  if (SUCCEEDED(result))
   {
     st = this->m_avFormat->streams[videoStreamId];
-
-    int index = -1;
-
-    ff_read_frame_flush(this->m_avFormat);
-    index = av_index_search_timestamp(st, seek_pts, flags);
-
-    logger->Log(LOGGER_VERBOSE, L"%s: %s: index: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, index);
-
-    if ((index < 0) && (st->nb_index_entries) && (seek_pts < st->index_entries[0].timestamp))
+    if (st->nb_index_entries == 0)
     {
-      logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, L"failing");
+      // bad, we don't have index and we can't seek
+      logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, L"no index entries");
       result = -2;
     }
+  }
 
-    if (SUCCEEDED(result) && (index >= 0))
+  if (SUCCEEDED(result))
+  {
+    // get stream available length
+    int64_t availableLength = 0;
+    result = this->m_pFilter->GetAvailableLength(&availableLength);
+
+    // get index for seeking
+    int index = -1;
+    if (SUCCEEDED(result))
+    {
+      index = av_index_search_timestamp(st, seek_pts, flags);
+      logger->Log(LOGGER_VERBOSE, L"%s: %s: index: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, index);
+
+      if (index < 0)
+      {
+        // we have index entries and seek_pts (seek time) is lower than first timestamp in index entries
+        // (first timestamp should be start of video)
+        logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, L"failing, not found index");
+        result = -4;
+      }
+    }
+
+    if (SUCCEEDED(result))
     {
       ie = &st->index_entries[index];
       logger->Log(LOGGER_VERBOSE, L"%s: %s: timestamp: %lld, seek_pts: %lld", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, ie->timestamp, seek_pts);
+
       if (ie->timestamp >= seek_pts)
       {
         // we found index entry with higher timestamp than requested
@@ -1841,151 +1863,154 @@ STDMETHODIMP CLAVFDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
 
     if (SUCCEEDED(result) && (!found))
     {
-      // we have to seek in stream
-
-      // if index is on the end of index entries than probably we have to seek to unbuffered part
-      // (and we don't know right position)
-      // in another case we seek in bufferred part or at least we have right position where to seek
-      if ((index < 0) || (index == st->nb_index_entries - 1) || (this->m_bFlv))
+      if (ie != NULL)
       {
-        logger->Log(LOGGER_VERBOSE, L"%s: %s: index entries: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, st->nb_index_entries);
-        AVPacket avPacket;
+        logger->Log(LOGGER_VERBOSE, L"%s: %s: index timestamp: %lld, index position: %lld", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, ie->timestamp, ie->pos);
+      }
 
-        if ((st->nb_index_entries) && (index >= 0))
+      // if seek time is before end of indexes (end of timestamps)
+      if (!((index == (st->nb_index_entries - 1)) && (seek_pts > st->index_entries[index].timestamp)))
+      {
+        // if index position is before available length, just seek to requested position
+        if (ie->pos < availableLength)
         {
-          ie = &st->index_entries[index];
-
+          ff_read_frame_flush(this->m_avFormat);
           logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking to position: %lld", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, ie->pos);
           if (avio_seek(this->m_avFormat->pb, ie->pos, SEEK_SET) < 0)
           {
-            result = -3;
+            result = -6;
           }
 
           if (SUCCEEDED(result))
           {
             ff_update_cur_dts(this->m_avFormat, st, ie->timestamp);
           }
+
+          found = true;
         }
-        else
+      }
+
+      if (SUCCEEDED(result) && (!found))
+      {
+        AVPacket avPacket;
+        int nonkey = 0;
+
+        // read stream until we find requested time
+        while ((!found) && SUCCEEDED(result))
         {
-          logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking to position: %lld", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, m_avFormat->data_offset);
-          if (avio_seek(this->m_avFormat->pb, m_avFormat->data_offset, SEEK_SET) < 0)
+          int read_status = 0;
+          do
           {
-            result = -4;
+            read_status = av_read_frame(this->m_avFormat, &avPacket);
+          } while (read_status == AVERROR(EAGAIN));
+
+
+          if (read_status < 0)
+          {
+            // error occured
+            break;
           }
-        }
 
-        if (SUCCEEDED(result))
-        {
-          if (ie != NULL)
+          av_free_packet(&avPacket);
+
+          if ((videoStreamId == avPacket.stream_index) && (avPacket.dts > seek_pts))
           {
-            logger->Log(LOGGER_VERBOSE, L"%s: %s: index timestamp: %lld, index position: %lld", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, ie->timestamp, ie->pos);
-          }
-          int nonkey = 0;
-
-          // read stream until we find requested time
-          while ((!found) && SUCCEEDED(result))
-          {
-            int read_status = 0;
-            do
+            if (avPacket.flags & AV_PKT_FLAG_KEY)
             {
-              read_status = av_read_frame(this->m_avFormat, &avPacket);
-            } while (read_status == AVERROR(EAGAIN));
-
-                        
-            if (read_status < 0)
-            {
-              // error occured
+              logger->Log(LOGGER_VERBOSE, L"%s: %s: found keyframe with timestamp: %lld, position: %lld", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, avPacket.dts, avPacket.pos);
+              found = true;
               break;
             }
 
-            av_free_packet(&avPacket);
-
-            if ((videoStreamId == avPacket.stream_index) && (avPacket.dts > seek_pts))
+            if((nonkey++ > 1000) && (st->codec->codec_id != CODEC_ID_CDGRAPHICS))
             {
-              if (avPacket.flags & AV_PKT_FLAG_KEY)
-              {
-                logger->Log(LOGGER_VERBOSE, L"%s: %s: found keyframe with timestamp: %lld, position: %lld", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, avPacket.dts, avPacket.pos);
-                found = true;
-                break;
-              }
-
-              if((nonkey++ > 1000) && (st->codec->codec_id != CODEC_ID_CDGRAPHICS))
-              {
-                logger->Log(LOGGER_ERROR, L"%s: %s: failed as this stream seems to contain no keyframes after the target timestamp, %d non keyframes found", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, nonkey);
-                break;
-              }
+              logger->Log(LOGGER_ERROR, L"%s: %s: failed as this stream seems to contain no keyframes after the target timestamp, %d non keyframes found", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, nonkey);
+              break;
             }
           }
-        }
-      }
-      else
-      {
-        found = true;
-      }
-    }
-
-    if (SUCCEEDED(result) && found)
-    {
-      ff_read_frame_flush(this->m_avFormat);
-      index = av_index_search_timestamp(st, seek_pts, flags);
-
-      if (index < 0)
-      {
-        logger->Log(LOGGER_ERROR, L"%s: %s: index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, index);
-        result = -6;
-      }
-
-      if (this->m_bFlv)
-      {
-        // in case of FLV video we can be after seek time, but searching index can find index too back
-        ff_read_frame_flush(this->m_avFormat);
-        int index2 = av_index_search_timestamp(st, seek_pts, flags & (~AVSEEK_FLAG_BACKWARD));
-
-        if (index2 < 0)
-        {
-          logger->Log(LOGGER_WARNING, L"%s: %s: second index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, index2);
-        }
-        else
-        {
-          // we choose index which is closer to seek time
-          logger->Log(LOGGER_VERBOSE, L"%s: %s: first index: %d, second index: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, index, index2);
-
-          AVIndexEntry *ie1 = &st->index_entries[index];
-          AVIndexEntry *ie2 = &st->index_entries[index2];
-
-          int64_t diff1 = abs(seek_pts - ie1->timestamp);
-          int64_t diff2 = abs(seek_pts - ie2->timestamp);
-
-          if (diff2 < diff1)
-          {
-            // choose second index, it's closer to requested seek time
-            index = index2;
-          }
-        }
-      }
-
-      if (SUCCEEDED(result))
-      {
-        ie = &st->index_entries[index];
-
-        logger->Log(LOGGER_VERBOSE, L"%s: %s: seek to position: %lld, time: %lld", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, ie->pos, ie->timestamp);
-
-        int64_t ret = avio_seek(this->m_avFormat->pb, ie->pos, SEEK_SET);
-        if (ret < 0)
-        {
-          logger->Log(LOGGER_VERBOSE, L"%s: %s: seek to requested position %lld failed: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, ie->pos, ret);
-          result = -7;
-        }
-
-        if (SUCCEEDED(result))
-        {
-          ff_update_cur_dts(this->m_avFormat, st, ie->timestamp);
         }
       }
     }
   }
 
+  if (SUCCEEDED(result) && (found))
+  {
+    // if there is internal ffmpeg time seeking method, call it
+    int ret = 0;
+    if (this->m_avFormat->iformat->read_seek)
+    {
+      logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking by internal format time seeking method", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME);
+      ff_read_frame_flush(this->m_avFormat);
+      ret = m_avFormat->iformat->read_seek(this->m_avFormat, videoStreamId, seek_pts, flags);
+      logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking by internal format time seeking method result: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, ret);
+    } 
+  }
+
+  if (SUCCEEDED(result) && found)
+  {
+    int index = -1;
+    st = this->m_avFormat->streams[videoStreamId];
+
+    ff_read_frame_flush(this->m_avFormat);
+    index = av_index_search_timestamp(st, seek_pts, flags);
+
+    if (index < 0)
+    {
+      logger->Log(LOGGER_ERROR, L"%s: %s: index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, index);
+      result = -7;
+    }
+
+    if (this->m_bFlv)
+    {
+      // in case of FLV video we can be after seek time, but searching index can find index too back
+      ff_read_frame_flush(this->m_avFormat);
+      int index2 = av_index_search_timestamp(st, seek_pts, flags & (~AVSEEK_FLAG_BACKWARD));
+
+      if (index2 < 0)
+      {
+        logger->Log(LOGGER_WARNING, L"%s: %s: second index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, index2);
+      }
+      else
+      {
+        // we choose index which is closer to seek time
+        logger->Log(LOGGER_VERBOSE, L"%s: %s: first index: %d, second index: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, index, index2);
+
+        AVIndexEntry *ie1 = &st->index_entries[index];
+        AVIndexEntry *ie2 = &st->index_entries[index2];
+
+        int64_t diff1 = abs(seek_pts - ie1->timestamp);
+        int64_t diff2 = abs(seek_pts - ie2->timestamp);
+
+        if (diff2 < diff1)
+        {
+          // choose second index, it's closer to requested seek time
+          index = index2;
+        }
+      }
+    }
+
+    if (SUCCEEDED(result))
+    {
+      ie = &st->index_entries[index];
+
+      logger->Log(LOGGER_VERBOSE, L"%s: %s: seek to position: %lld, time: %lld", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, ie->pos, ie->timestamp);
+
+      if (SUCCEEDED(result))
+      {
+        int64_t ret = avio_seek(this->m_avFormat->pb, ie->pos, SEEK_SET);
+        if (ret < 0)
+        {
+          logger->Log(LOGGER_VERBOSE, L"%s: %s: seek to requested position %lld failed: %d", MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, ie->pos, ret);
+          result = -8;
+        }
+      }
+
+      if (SUCCEEDED(result))
+      {
+        ff_update_cur_dts(this->m_avFormat, st, ie->timestamp);
+      }
+    }
+  }
 
   logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SEEK_BY_SEQUENCE_READING_NAME, result);
   return result;
