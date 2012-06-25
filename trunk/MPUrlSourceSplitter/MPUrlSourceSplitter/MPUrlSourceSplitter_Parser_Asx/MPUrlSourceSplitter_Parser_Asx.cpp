@@ -128,7 +128,7 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
       if (lowerBuffer != NULL)
       {
         size_t length = strlen(lowerBuffer);
-        if (length>0)
+        if (length > 0)
         {
           _strlwr_s(lowerBuffer, length + 1);
 
@@ -241,7 +241,7 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
                 }
                 else if (ref1EndString1 != NULL)
                 {
-                  ref1EndString = ref1EndString2;
+                  ref1EndString = ref1EndString1;
                 }
                 else if (ref1EndString2 != NULL)
                 {
