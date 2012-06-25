@@ -39,6 +39,11 @@ struct IFilter : public ISeeking
   // @param totalLength : reference to total length variable
   // @return : S_OK if success, VFW_S_ESTIMATED if total length is not surely known, error code if error
   virtual HRESULT GetTotalLength(int64_t *totalLength) = 0;
+
+  // gets available length of stream in bytes
+  // @param availableLength : reference to available length variable
+  // @return : S_OK if success, error code if error
+  virtual HRESULT GetAvailableLength(int64_t *availableLength) = 0;
 };
 
 #endif

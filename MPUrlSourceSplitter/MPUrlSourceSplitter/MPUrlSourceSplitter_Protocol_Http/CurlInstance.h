@@ -158,6 +158,10 @@ public:
   // @return : libcurl version or NULL if error
   static wchar_t *GetCurlVersion(void);
 
+  // gets if ranges are supported
+  // @return : true if ranges are supported, false otherwise
+  bool GetRangesSupported(void);
+
 private:
   CURL *curl;
   CLogger *logger;
@@ -223,6 +227,9 @@ private:
   // @param size : size of the data pointed to
   // @param userptr : user defined pointer
   static int CurlDebugCallback(CURL *handle, curl_infotype type, char *data, size_t size, void *userptr);
+
+  // specifies if ranges are supported
+  bool rangesSupported;
 };
 
 #endif

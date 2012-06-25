@@ -143,4 +143,14 @@ MPURLSOURCESPLITTER_API wchar_t *ReplaceStringW(const wchar_t *string, const wch
 #define ReplaceString ReplaceStringW
 #endif
 
+MPURLSOURCESPLITTER_API char *SkipBlanksA(char *str, unsigned int strlen);
+MPURLSOURCESPLITTER_API wchar_t *SkipBlanksW(wchar_t *str, unsigned int strlen);
+
+#ifdef _MBCS
+#define SkipBlanks SkipBlanksA
+#else
+#define SkipBlanks SkipBlanksW
+#endif
+
+
 #endif

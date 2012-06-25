@@ -36,7 +36,6 @@
 // we should get data in twenty seconds
 #define HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT                   20000
 #define HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
-#define HTTP_CHECK_RANGES_DEFAULT                           true
 
 #define PROTOCOL_NAME                                       L"HTTP"
 
@@ -44,15 +43,6 @@
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"HTTP" };
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                  1 * 1024 * 1024
-#define MINIMUM_TOTAL_LENGTH_FOR_CHECK_RANGES               1 * 1024 * 1024
-
-// size of buffers used for comparison if ranges are supported or not
-#define RANGES_SUPPORTED_BUFFER_SIZE                        256 * 1024
-
-#define RANGES_STATE_UNKNOWN                                0
-#define RANGES_STATE_NOT_SUPPORTED                          1
-#define RANGES_STATE_PENDING_REQUEST                        2
-#define RANGES_STATE_SUPPORTED                              3
 
 #define PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT                  L"HttpReceiveDataTimeout"
 #define PARAMETER_NAME_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS      L"HttpOpenConnectionMaximumAttempts"
@@ -61,7 +51,6 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"HTTP" };
 #define PARAMETER_NAME_HTTP_COOKIE                                L"HttpCookie"
 #define PARAMETER_NAME_HTTP_VERSION                               L"HttpVersion"
 #define PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH                 L"HttpIgnoreContentLength"
-#define PARAMETER_NAME_HTTP_CHECK_RANGES                          L"HttpCheckRanges"
 
 // This class is exported from the CMPUrlSourceSplitter_Protocol_Http.dll
 class MPURLSOURCESPLITTER_PROTOCOL_HTTP_API CMPUrlSourceSplitter_Protocol_Http : public IProtocolPlugin
@@ -165,18 +154,8 @@ public:
 protected:
   CLogger *logger;
 
-  // holds received data from start
-  LinearBuffer *receivedDataFromStart;
-  // holds received data from specified reange
-  LinearBuffer *receivedDataFromRange;
   // holds received data for filter
   LinearBuffer *receivedData;
-  // holds supported ranges status
-  int rangesSupported;
-  // holds if received data from start buffer was filled
-  bool filledReceivedDataFromStart;
-  // holds if received data from range buffer was filled
-  bool filledReceivedDataFromRange;
 
   // source filter that created this instance
   IOutputStream *filter;
@@ -205,12 +184,9 @@ protected:
 
   // main instance of CURL
   CCurlInstance *mainCurlInstance;
-  // CURL instance for ranges detection
-  CCurlInstance *rangesDetectionCurlInstance;
 
   // callback function for receiving data from libcurl
   static size_t CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata);
-  static size_t CurlRangesDetectionReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata);
 
   // reference to variable that signalize if protocol is requested to exit
   bool shouldExit;
@@ -219,15 +195,8 @@ protected:
   // specifies if whole stream is downloaded
   bool wholeStreamDownloaded;
 
-  // compares ranges buffers and set ranges supported state
-  void CompareRangesBuffers(void);
-
   // specifies if filter requested supressing data
   bool supressData;
-
-  // specifies is protocol should check or not ranges
-  // default is HTTP_CHECK_RANGES_DEFAULT
-  bool checkRanges;
 };
 
 #endif
