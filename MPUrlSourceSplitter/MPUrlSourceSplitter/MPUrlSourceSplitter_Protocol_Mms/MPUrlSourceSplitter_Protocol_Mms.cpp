@@ -319,88 +319,100 @@ void CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit)
             this->mmsContext->ClearAsfHeader();
           }
 
-          MMSChunk *chunk = new MMSChunk();
-          if (chunk != NULL)
+          bool finish = false;
+          while ((!this->shouldExit) && (!finish))
           {
-            if (SUCCEEDED(this->GetMmsChunk(this->mmsContext, chunk)))
+            MMSChunk *chunk = new MMSChunk();
+            if (chunk != NULL)
             {
-              switch (chunk->GetChunkType())
+              if (SUCCEEDED(this->GetMmsChunk(this->mmsContext, chunk)))
               {
-              case CHUNK_TYPE_END:
+                switch (chunk->GetChunkType())
                 {
-                  this->mmsContext->SetChunkSequence(0);
-                  if (!this->streamEndedLogged)
+                case CHUNK_TYPE_END:
                   {
-                    this->logger->Log(LOGGER_INFO, L"%s: %s: stream ended", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-                    this->streamEndedLogged = true;
-                  }
-                }
-                break;
-              case CHUNK_TYPE_STREAM_CHANGE:
-                {
-                  this->receivingData = false;
-                  this->mmsContext->SetHeaderParsed(false);
-                  HRESULT result = this->GetMmsHeaderData(this->mmsContext, chunk);
-                  if (FAILED(result))
-                  {
-                    this->logger->Log(LOGGER_ERROR, L"%s: %s: get MMS header data failed with error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
-                    this->StopReceivingData();
-                  }
-                }
-                break;
-              case CHUNK_TYPE_DATA:
-                {
-                  // create media packet
-                  // set values of media packet
-                  unsigned int packetLength = this->mmsContext->GetAsfPacketLength();
-                  if (packetLength < chunk->GetChunkDataLength())
-                  {
-                    // error : ASF packet length is less than parsed chunk
-                    this->logger->Log(LOGGER_WARNING, L"%s: %s: parsed chunk is bigger than ASF packet length, chunk length: %d, ASF packet length: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, chunk->GetChunkDataLength(), packetLength);
-                  }
-                  else
-                  {
-                    // packet must be padded with zeros until packetLength
-                    CMediaPacket *mediaPacket = new CMediaPacket();
-                    mediaPacket->GetBuffer()->InitializeBuffer(packetLength, 0);
-                    mediaPacket->GetBuffer()->AddToBuffer(chunk->GetChunkData(), chunk->GetChunkDataLength());
-
-                    if (packetLength > chunk->GetChunkDataLength())
+                    this->mmsContext->SetChunkSequence(0);
+                    if (!this->streamEndedLogged)
                     {
-                      unsigned int paddingLength = packetLength - chunk->GetChunkDataLength();
-                      ALLOC_MEM_DEFINE_SET(paddingBuffer, char, paddingLength, 0);
-                      if (paddingBuffer != NULL)
-                      {
-                        mediaPacket->GetBuffer()->AddToBuffer(paddingBuffer, paddingLength);
-                      }
-                      else
-                      {
-                        this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot create padding buffer", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-                      }
-                      FREE_MEM(paddingBuffer);
+                      this->logger->Log(LOGGER_INFO, L"%s: %s: stream ended", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+                      this->streamEndedLogged = true;
                     }
-
-                    mediaPacket->SetStart(this->bytePosition);
-                    mediaPacket->SetEnd(this->bytePosition + packetLength - 1);
-
-                    HRESULT result = this->filter->PushMediaPacket(mediaPacket);
+                  }
+                  break;
+                case CHUNK_TYPE_STREAM_CHANGE:
+                  {
+                    this->receivingData = false;
+                    this->mmsContext->SetHeaderParsed(false);
+                    HRESULT result = this->GetMmsHeaderData(this->mmsContext, chunk);
                     if (FAILED(result))
                     {
-                      this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+                      this->logger->Log(LOGGER_ERROR, L"%s: %s: get MMS header data failed with error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+                      this->StopReceivingData();
                     }
-
-                    this->bytePosition += packetLength;
                   }
-                }
-                break;
-              default:
-                // ignore unknown packets
-                break;
-              }
-            }
+                  break;
+                case CHUNK_TYPE_DATA:
+                  {
+                    // create media packet
+                    // set values of media packet
+                    unsigned int packetLength = this->mmsContext->GetAsfPacketLength();
+                    if (packetLength < chunk->GetChunkDataLength())
+                    {
+                      // error : ASF packet length is less than parsed chunk
+                      this->logger->Log(LOGGER_WARNING, L"%s: %s: parsed chunk is bigger than ASF packet length, chunk length: %d, ASF packet length: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, chunk->GetChunkDataLength(), packetLength);
+                    }
+                    else
+                    {
+                      // packet must be padded with zeros until packetLength
+                      CMediaPacket *mediaPacket = new CMediaPacket();
+                      mediaPacket->GetBuffer()->InitializeBuffer(packetLength, 0);
+                      mediaPacket->GetBuffer()->AddToBuffer(chunk->GetChunkData(), chunk->GetChunkDataLength());
 
-            delete chunk;
-            chunk = NULL;
+                      if (packetLength > chunk->GetChunkDataLength())
+                      {
+                        unsigned int paddingLength = packetLength - chunk->GetChunkDataLength();
+                        ALLOC_MEM_DEFINE_SET(paddingBuffer, char, paddingLength, 0);
+                        if (paddingBuffer != NULL)
+                        {
+                          mediaPacket->GetBuffer()->AddToBuffer(paddingBuffer, paddingLength);
+                        }
+                        else
+                        {
+                          this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot create padding buffer", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+                        }
+                        FREE_MEM(paddingBuffer);
+                      }
+
+                      mediaPacket->SetStart(this->bytePosition);
+                      mediaPacket->SetEnd(this->bytePosition + packetLength - 1);
+
+                      HRESULT result = this->filter->PushMediaPacket(mediaPacket);
+                      if (FAILED(result))
+                      {
+                        this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+                      }
+
+                      this->bytePosition += packetLength;
+                    }
+                  }
+                  break;
+                default:
+                  // ignore unknown packets
+                  break;
+                }
+              }
+              else
+              {
+                finish = true;
+              }
+
+              delete chunk;
+              chunk = NULL;
+            }
+            else
+            {
+              finish = true;
+            }
           }
         }
 
@@ -544,12 +556,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
       result = this->mainCurlInstance->AppendToHeaders(L"Accept: */*") ? S_OK : E_FAIL;
       result = this->mainCurlInstance->AppendToHeaders(USERAGENT) ? result : E_FAIL;
       this->sequenceNumber = 1;
-      //wchar_t *pragma = FormatString(L"Pragma: no-cache,rate=1.000000,stream-time=0,stream-offset=0:0,request-context=%u,max-duration=0", this->sequenceNumber++);
-      
-      //unsigned int streamOffsetHigh = (unsigned int)(this->bytePosition >> 32);
-      //unsigned int streamOffsetLow = (unsigned int)(this->bytePosition & 0xFFFFFFFF);
-      //wchar_t *pragma = FormatString(L"Pragma: no-cache,rate=1.000000,stream-time=0,stream-offset=%u:%u,request-context=%u,max-duration=0", streamOffsetHigh, streamOffsetLow, this->sequenceNumber++);
-      //wchar_t *pragma = FormatString(L"Pragma: no-cache,rate=1.000000,stream-offset=%u:%u,request-context=%u,max-duration=0", streamOffsetHigh, streamOffsetLow, this->sequenceNumber++);
       wchar_t *pragma = FormatString(L"Pragma: no-cache,rate=1.000000,stream-time=%u,request-context=%u,max-duration=0", this->streamTime, this->sequenceNumber++);
       result = this->mainCurlInstance->AppendToHeaders(pragma) ? result : E_FAIL;
       FREE_MEM(pragma);
@@ -673,7 +679,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
         result = this->mainCurlInstance->AppendToHeaders(L"Accept: */*") ? S_OK : E_FAIL;
         result = this->mainCurlInstance->AppendToHeaders(USERAGENT) ? result : E_FAIL;
-        //wchar_t *pragma = FormatString(L"Pragma: no-cache,rate=1.000000,request-context=%u", this->sequenceNumber++);
         wchar_t *pragma = FormatString(L"Pragma: no-cache,rate=1.000000,request-context=%u,stream-time=%u", this->sequenceNumber++, this->streamTime);
         result = this->mainCurlInstance->AppendToHeaders(pragma) ? result : E_FAIL;
         FREE_MEM(pragma);
@@ -693,10 +698,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
         result = this->mainCurlInstance->AppendToHeaders(pragma) ? result : E_FAIL;
         FREE_MEM(pragma);
 
-        //pragma = FormatString(L"Pragma: no-cache,rate=1.000000,stream-time=%u", this->streamTime);
-        /*pragma = FormatString(L"Pragma: no-cache,rate=1.000000,stream-time=0");
-        result = this->mainCurlInstance->AppendToHeaders(pragma) ? result : E_FAIL;
-        FREE_MEM(pragma);*/
         result = this->mainCurlInstance->AppendToHeaders(L"Connection: Close") ? result : E_FAIL;
         
         if (SUCCEEDED(result))
@@ -925,7 +926,6 @@ int64_t CMPUrlSourceSplitter_Protocol_Mms::SeekToTime(int64_t time)
 
   // 1 second back
   this->streamTime = max(0, time - 1000);
-  //this->streamTime = max(0, time);
 
   // do not lock mutex, because we need to receive data in StartReceivingData() method
   // reopen connection
@@ -934,7 +934,6 @@ int64_t CMPUrlSourceSplitter_Protocol_Mms::SeekToTime(int64_t time)
   if (SUCCEEDED(this->StartReceivingData(NULL)))
   {
     result = max(0, time - 1000);
-    //result = max(0, time);
   }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
