@@ -344,8 +344,8 @@ namespace OnlineVideos.Sites
             {
                 category.ParentCategory.SubCategories.Add(new RssLink()
                 {
-                    Name = entry.Title.Text,
-                    Url = entry.Content.Src.Content,
+                    Name = entry is SubscriptionEntry ? ((SubscriptionEntry)entry).UserName : entry.Title.Text,
+                    Url = entry is SubscriptionEntry ? YouTubeQuery.CreateUserUri(((SubscriptionEntry)entry).UserName) : entry.Content.Src.Content,
                     ParentCategory = category.ParentCategory,
                     EstimatedVideoCount = (entry is PlaylistsEntry) ? (uint?)(entry as PlaylistsEntry).CountHint : null
                 });
@@ -404,25 +404,28 @@ namespace OnlineVideos.Sites
             hasNextPage = !string.IsNullOrEmpty(feed.NextChunk);
             foreach (YouTubeEntry entry in feed.Entries)
             {
-                VideoInfo video = new VideoInfo();
-                video.Other = new MyYouTubeEntry(entry);
-                video.Description = entry.Media.Description != null ? entry.Media.Description.Value : "";
-                // get the largest thumbnail
-                int maxHeight = 0; 
-                foreach (MediaThumbnail thumbnail in entry.Media.Thumbnails)
+                if (entry.Media != null)
                 {
-                    int height = int.Parse(thumbnail.Height);
-                    if (height > maxHeight)
+                    VideoInfo video = new VideoInfo();
+                    video.Other = new MyYouTubeEntry(entry);
+                    video.Description = entry.Media.Description != null ? entry.Media.Description.Value : "";
+                    // get the largest thumbnail
+                    int maxHeight = 0;
+                    foreach (MediaThumbnail thumbnail in entry.Media.Thumbnails)
                     {
-                        video.ImageUrl = thumbnail.Url;
-                        maxHeight = height;
+                        int height = int.Parse(thumbnail.Height);
+                        if (height > maxHeight)
+                        {
+                            video.ImageUrl = thumbnail.Url;
+                            maxHeight = height;
+                        }
                     }
+                    video.Length = entry.Media.Duration != null ? TimeSpan.FromSeconds(int.Parse(entry.Media.Duration.Seconds)).ToString() : "";
+                    video.Airdate = entry.Published.ToString("g", OnlineVideoSettings.Instance.Locale);
+                    video.Title = entry.Title.Text;
+                    video.VideoUrl = entry.Media.VideoId.Value;
+                    loRssItems.Add(video);
                 }
-                video.Length = entry.Media.Duration != null ? TimeSpan.FromSeconds(int.Parse(entry.Media.Duration.Seconds)).ToString() : "";
-                video.Airdate = entry.Published.ToString("g", OnlineVideoSettings.Instance.Locale);
-                video.Title = entry.Title.Text;
-                video.VideoUrl = entry.Media.VideoId.Value;
-                loRssItems.Add(video);
             }
             lastPerformedQuery = query;
 
@@ -577,6 +580,11 @@ namespace OnlineVideos.Sites
                 {
                     result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.DeletePlaylist, Other = (selectedCategory as RssLink).Url });
                 }
+                else if (selectedCategory != null && selectedCategory.ParentCategory != null && !(selectedCategory.ParentCategory is RssLink) && selectedCategory.ParentCategory.Name == string.Format("{0}'s {1}", accountname, Translation.Instance.Subscriptions))
+                {
+                    result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.UploadsBy + " [" + selectedCategory.Name + "]", Action = ContextMenuEntry.UIAction.Execute });
+                    result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.Playlists + " [" + selectedCategory.Name + "]", Action = ContextMenuEntry.UIAction.Execute });
+                }
             }
             return result;
         }
@@ -603,15 +611,15 @@ namespace OnlineVideos.Sites
                 }
                 else if (choice.DisplayText.StartsWith(Translation.Instance.UploadsBy))
                 {
-                    YouTubeEntry ytEntry = (selectedItem.Other as MyYouTubeEntry).YouTubeEntry;
-                    YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateUserUri(ytEntry.Uploader.Value)) { NumberToRetrieve = pageSize };
+                    string username = selectedItem == null ? selectedCategory.Name : (selectedItem.Other as MyYouTubeEntry).YouTubeEntry.Uploader.Value;
+                    YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateUserUri(username)) { NumberToRetrieve = pageSize };
                     result.ResultItems = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
-                    currentVideosTitle = Translation.Instance.UploadsBy + " [" + ytEntry.Uploader.Value + "]";
+                    currentVideosTitle = Translation.Instance.UploadsBy + " [" + username + "]";
                 }
                 else if (choice.DisplayText.StartsWith(Translation.Instance.Playlists))
                 {
-                    YouTubeEntry ytEntry = (selectedItem.Other as MyYouTubeEntry).YouTubeEntry;
-                    YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreatePlaylistsUri(ytEntry.Uploader.Value)) { NumberToRetrieve = pageSize };
+                    string username = selectedItem == null ? selectedCategory.Name : (selectedItem.Other as MyYouTubeEntry).YouTubeEntry.Uploader.Value;
+                    YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreatePlaylistsUri(username)) { NumberToRetrieve = pageSize };
                     YouTubeFeed feed = service.Query(query);
                     Category parentCategory = new Category() { SubCategories = new List<Category>() };
                     GetPlaylistEntriesAsCategories(parentCategory, feed);
