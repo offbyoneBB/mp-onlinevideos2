@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 #include "rtmp_sys.h"
 #include "log.h"
@@ -45,6 +46,7 @@ TLS_CTX RTMP_TLS_ctx;
 
 #define RTMP_SIG_SIZE 1536
 #define RTMP_LARGE_HEADER_SIZE 12
+#define HEX2BIN(a) (((a)&0x40)?((a)&0xf)+9:((a)&0xf))
 
 static const int packetSize[] = { 12, 8, 4, 1 };
 
@@ -97,6 +99,9 @@ static int SendFCSubscribe(RTMP *r, AVal *subscribepath);
 static int SendPlay(RTMP *r);
 static int SendBytesReceived(RTMP *r);
 static int SendUsherToken(RTMP *r, AVal *usherToken);
+static int SendCustomCommand(RTMP *r, AVal *Command, int queue);
+static int SendGetStreamLength(RTMP *r);
+static int strsplit(char *src, int srclen, char delim, char ***params);
 
 #if 0				/* unused */
 static int SendBGHasStream(RTMP *r, double dId, AVal *playpath);
@@ -259,6 +264,8 @@ RTMP_Init(RTMP *r)
   r->m_fVideoCodecs = 252.0;
   r->Link.timeout = 30;
   r->Link.swfAge = 30;
+  r->Link.CombineConnectPacket = TRUE;
+  r->Link.ConnectPacket = FALSE;
 }
 
 void
@@ -337,6 +344,7 @@ RTMP_SetupStream(RTMP *r,
 		 AVal *flashVer,
 		 AVal *subscribepath,
 		 AVal *usherToken,
+     AVal *WeebToken,
 		 int dStart,
 		 int dStop, int bLiveStream, long int timeout)
 {
@@ -359,6 +367,8 @@ RTMP_SetupStream(RTMP *r,
     RTMP_Log(r, RTMP_LOGDEBUG, "subscribepath : %s", subscribepath->av_val);
   if (usherToken && usherToken->av_val)
     RTMP_Log(r, RTMP_LOGDEBUG, "NetStream.Authenticate.UsherToken : %s", usherToken->av_val);
+  if (WeebToken && WeebToken->av_val)
+    RTMP_Log(r, RTMP_LOGDEBUG, "WeebToken: %s", WeebToken->av_val);
   if (flashVer && flashVer->av_val)
     RTMP_Log(r, RTMP_LOGDEBUG, "flashVer : %s", flashVer->av_val);
   if (dStart > 0)
@@ -426,6 +436,8 @@ RTMP_SetupStream(RTMP *r,
     r->Link.subscribepath = *subscribepath;
   if (usherToken && usherToken->av_len)
     r->Link.usherToken = *usherToken;
+  if (WeebToken && WeebToken->av_len)
+    r->Link.WeebToken = *WeebToken;
   r->Link.seekTime = dStart;
   r->Link.stopTime = dStop;
   if (bLiveStream)
@@ -484,13 +496,21 @@ static struct urlopt {
   { AVC("subscribe"), OFF(Link.subscribepath), OPT_STR, 0,
   	"Stream to subscribe to" },
   { AVC("jtv"), OFF(Link.usherToken),          OPT_STR, 0,
-	"Justin.tv authentication token" },
+	   "Justin.tv authentication token" },
+  { AVC("weeb"),      OFF(Link.WeebToken),     OPT_STR, 0,
+     "Weeb.tv authentication token" },
   { AVC("token"),     OFF(Link.token),	       OPT_STR, 0,
   	"Key for SecureToken response" },
   { AVC("swfVfy"),    OFF(Link.lFlags),        OPT_BOOL, RTMP_LF_SWFV,
   	"Perform SWF Verification" },
   { AVC("swfAge"),    OFF(Link.swfAge),        OPT_INT, 0,
   	"Number of days to use cached SWF hash" },
+#ifdef CRYPTO
+  { AVC("swfsize"),   OFF(Link.swfSize),       OPT_INT, 0,
+     "Size of the decompressed SWF file" },
+  { AVC("swfhash"),   OFF(Link.swfHash),       OPT_STR, 0,
+     "SHA256 hash of the decompressed SWF file" },
+#endif
   { AVC("start"),     OFF(Link.seekTime),      OPT_INT, 0,
   	"Stream start position in milliseconds" },
   { AVC("stop"),      OFF(Link.stopTime),      OPT_INT, 0,
@@ -758,9 +778,16 @@ int RTMP_SetupURL(RTMP *r, char *url)
     }
 
 #ifdef CRYPTO
-  if ((r->Link.lFlags & RTMP_LF_SWFV) && r->Link.swfUrl.av_len)
-    RTMP_HashSWF(r, r->Link.swfUrl.av_val, &r->Link.SWFSize,
-	  (unsigned char *)r->Link.SWFHash, r->Link.swfAge);
+  RTMP_Log(r, RTMP_LOGDEBUG, "Khalsa: %d %d %s", r->Link.swfSize, r->Link.swfHash.av_len, r->Link.swfHash.av_val);
+  if (r->Link.swfSize && r->Link.swfHash.av_len)
+    {
+      int i, j = 0;
+      for (i = 0; i < r->Link.swfHash.av_len; i += 2)
+        r->Link.SWFHash[j++] = (HEX2BIN(r->Link.swfHash.av_val[i]) << 4) | HEX2BIN(r->Link.swfHash.av_val[i + 1]);
+      r->Link.SWFSize = (uint32_t) r->Link.swfSize;
+    }
+  else if ((r->Link.lFlags & RTMP_LF_SWFV) && r->Link.swfUrl.av_len)
+    RTMP_HashSWF(r, r->Link.swfUrl.av_val, &r->Link.SWFSize, (unsigned char *) r->Link.SWFHash, r->Link.swfAge);
 #endif
 
   if (r->Link.port == 0)
@@ -1331,8 +1358,10 @@ ReadN(RTMP *r, char *buffer, int n)
 		  return 0;
 		}
 	    }
-	  if (r->m_resplen && !r->m_sb.sb_size)
-	    RTMPSockBuf_Fill(r, &r->m_sb);
+    if (r->m_resplen && (r->m_sb.sb_size < r->m_resplen))
+      if (RTMPSockBuf_Fill(r, &r->m_sb) < 0)
+        if (!r->m_sb.sb_timedout)
+          RTMP_Close(r);
           avail = r->m_sb.sb_size;
 	  if (avail > r->m_resplen)
 	    avail = r->m_resplen;
@@ -1359,8 +1388,7 @@ ReadN(RTMP *r, char *buffer, int n)
 	  r->m_sb.sb_size -= nRead;
 	  nBytes = nRead;
 	  r->m_nBytesIn += nRead;
-	  if (r->m_bSendCounter
-	      && r->m_nBytesIn > ( r->m_nBytesInSent + r->m_nClientBW / 10))
+	  if (r->m_bSendCounter && r->m_nBytesIn > (r->m_nBytesInSent + r->m_nClientBW / 10))
 	    if (!SendBytesReceived(r))
 	        return FALSE;
 	}
@@ -1409,6 +1437,16 @@ WriteN(RTMP *r, const char *buffer, int n)
       RC4_encrypt2(r->Link.rc4keyOut, n, buffer, ptr);
     }
 #endif
+
+    if (r->Link.ConnectPacket)
+    {
+      char *ConnectPacket = (char *)malloc(r->Link.HandshakeResponse.av_len + n);
+      memcpy(ConnectPacket, r->Link.HandshakeResponse.av_val, r->Link.HandshakeResponse.av_len);
+      memcpy(ConnectPacket + r->Link.HandshakeResponse.av_len, ptr, n);
+      ptr = ConnectPacket;
+      n += r->Link.HandshakeResponse.av_len;
+      r->Link.ConnectPacket = FALSE;
+    }
 
   while (n > 0)
     {
@@ -1474,6 +1512,9 @@ SendConnectPacket(RTMP *r, RTMPPacket *cp)
   RTMPPacket packet;
   char pbuf[4096], *pend = pbuf + sizeof(pbuf);
   char *enc;
+
+  if (r->Link.CombineConnectPacket)
+    r->Link.ConnectPacket = TRUE;
 
   if (cp)
     return RTMP_SendPacket(r, cp, TRUE);
@@ -2116,10 +2157,10 @@ SendPlay(RTMP *r)
     enc = AMF_EncodeNumber(r, enc, pend, -1000.0);
   else
     {
-      if (r->Link.seekTime > 0.0)
+       if (r->Link.seekTime > 0.0 || r->Link.stopTime)
 	enc = AMF_EncodeNumber(r, enc, pend, r->Link.seekTime);	/* resume from here */
-      else
-	enc = AMF_EncodeNumber(r, enc, pend, 0.0);	/*-2000.0);*/ /* recorded as default, -2000.0 is not reliable since that freezes the player if the stream is not found */
+      //else
+	//enc = AMF_EncodeNumber(r, enc, pend, 0.0);	/*-2000.0);*/ /* recorded as default, -2000.0 is not reliable since that freezes the player if the stream is not found */
     }
   if (!enc)
     return FALSE;
@@ -2235,7 +2276,7 @@ RTMP_SendCtrl(RTMP *r, short nType, unsigned int nObject, unsigned int nTime)
   int nSize;
   char *buf;
 
-  RTMP_Log(r, RTMP_LOGDEBUG, "sending ctrl. type: 0x%04x", (unsigned short)nType);
+  RTMP_Log(r, RTMP_LOGDEBUG, "sending ctrl, type: 0x%04x", (unsigned short)nType);
 
   packet.m_nChannel = 0x02;	/* control channel (ping) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
@@ -2325,6 +2366,7 @@ AV_clear(RTMP_METHOD *vals, int num)
   free(vals);
 }
 
+SAVC(onBWCheck);
 SAVC(onBWDone);
 SAVC(onFCSubscribe);
 SAVC(onFCUnsubscribe);
@@ -2338,20 +2380,20 @@ SAVC(onStatus);
 SAVC(playlist_ready);
 static const AVal av_NetStream_Failed = AVC("NetStream.Failed");
 static const AVal av_NetStream_Play_Failed = AVC("NetStream.Play.Failed");
-static const AVal av_NetStream_Play_StreamNotFound =
-AVC("NetStream.Play.StreamNotFound");
-static const AVal av_NetConnection_Connect_InvalidApp =
-AVC("NetConnection.Connect.InvalidApp");
+static const AVal av_NetStream_Play_StreamNotFound = AVC("NetStream.Play.StreamNotFound");
+static const AVal av_NetConnection_Connect_InvalidApp = AVC("NetConnection.Connect.InvalidApp");
 static const AVal av_NetStream_Play_Start = AVC("NetStream.Play.Start");
 static const AVal av_NetStream_Play_Complete = AVC("NetStream.Play.Complete");
 static const AVal av_NetStream_Play_Stop = AVC("NetStream.Play.Stop");
 static const AVal av_NetStream_Seek_Notify = AVC("NetStream.Seek.Notify");
 static const AVal av_NetStream_Pause_Notify = AVC("NetStream.Pause.Notify");
-static const AVal av_NetStream_Play_PublishNotify =
-AVC("NetStream.Play.PublishNotify");
-static const AVal av_NetStream_Play_UnpublishNotify =
-AVC("NetStream.Play.UnpublishNotify");
+static const AVal av_NetStream_Play_PublishNotify = AVC("NetStream.Play.PublishNotify");
+static const AVal av_NetStream_Play_UnpublishNotify = AVC("NetStream.Play.UnpublishNotify");
 static const AVal av_NetStream_Publish_Start = AVC("NetStream.Publish.Start");
+static const AVal av_verifyClient = AVC("verifyClient");
+static const AVal av_sendStatus = AVC("sendStatus");
+static const AVal av_getStreamLength = AVC("getStreamLength");
+static const AVal av_ReceiveCheckPublicStatus = AVC("ReceiveCheckPublicStatus");
 
 /* Returns 0 for OK/Failed/error, 1 for 'Stop or Complete' */
 static int
@@ -2361,6 +2403,11 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
   AVal method;
   double txn;
   int ret = 0, nRes;
+  char pbuf[256], *pend = pbuf + sizeof (pbuf), *enc, **params = NULL;
+  char *host = r->Link.hostname.av_len ? r->Link.hostname.av_val : "";
+  char *pageUrl = r->Link.pageUrl.av_len ? r->Link.pageUrl.av_val : "";
+  int param_count;
+  AVal av_Command, av_Response;
   if (body[0] != 0x02)		/* make sure it is a string method name we start with */
     {
       RTMP_Log(r, RTMP_LOGWARNING, "%s, Sanity failed. no string method in invoke packet",
@@ -2422,7 +2469,122 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
 	      RTMP_SendServerBW(r);
 	      RTMP_SendCtrl(r, 3, 0, 300);
 	    }
-	  RTMP_SendCreateStream(r);
+    if (strstr(host, "tv-stream.to") || strstr(pageUrl, "tv-stream.to"))
+    {
+      SAVC(requestAccess);
+      SAVC(getConnectionCount);
+
+      AVal av_auth = AVC("h§4jhH43d");
+      enc = pbuf;
+      enc = AMF_EncodeString(r, enc, pend, &av_requestAccess);
+      enc = AMF_EncodeNumber(r, enc, pend, 0);
+      *enc++ = AMF_NULL;
+      enc = AMF_EncodeString(r, enc, pend, &av_auth);
+      av_Command.av_val = pbuf;
+      av_Command.av_len = enc - pbuf;
+      SendCustomCommand(r, &av_Command, FALSE);
+
+      enc = pbuf;
+      enc = AMF_EncodeString(r, enc, pend, &av_getConnectionCount);
+      enc = AMF_EncodeNumber(r, enc, pend, 0);
+      *enc++ = AMF_NULL;
+      av_Command.av_val = pbuf;
+      av_Command.av_len = enc - pbuf;
+      SendCustomCommand(r, &av_Command, FALSE);
+
+      SendGetStreamLength(r);
+    }
+    else if (strstr(host, "jampo.com.ua") || strstr(pageUrl, "jampo.com.ua"))
+    {
+      SendGetStreamLength(r);
+    }
+    else if (strstr(host, "streamscene.cc") || strstr(pageUrl, "streamscene.cc")
+      || strstr(host, "tsboard.tv") || strstr(pageUrl, "teamstream.in"))
+    {
+      SAVC(r);
+      enc = pbuf;
+      enc = AMF_EncodeString(r, enc, pend, &av_r);
+      enc = AMF_EncodeNumber(r, enc, pend, 0);
+      *enc++ = AMF_NULL;
+      av_Command.av_val = pbuf;
+      av_Command.av_len = enc - pbuf;
+      SendCustomCommand(r, &av_Command, FALSE);
+
+      SendGetStreamLength(r);
+    }
+    else if (strstr(host, "chaturbate.com") || strstr(pageUrl, "chaturbate.com"))
+    {
+      AVal av_ModelName;
+      SAVC(CheckPublicStatus);
+
+      if (strlen(pageUrl) > 7)
+      {
+        strsplit(pageUrl + 7, FALSE, '/', &params);
+        av_ModelName.av_val = params[1];
+        av_ModelName.av_len = strlen(params[1]);
+
+        enc = pbuf;
+        enc = AMF_EncodeString(r, enc, pend, &av_CheckPublicStatus);
+        enc = AMF_EncodeNumber(r, enc, pend, 0);
+        *enc++ = AMF_NULL;
+        enc = AMF_EncodeString(r, enc, pend, &av_ModelName);
+        av_Command.av_val = pbuf;
+        av_Command.av_len = enc - pbuf;
+
+        SendCustomCommand(r, &av_Command, FALSE);
+      }
+      else
+      {
+        RTMP_Log(r, RTMP_LOGERROR, "you must specify the pageUrl");
+        RTMP_Close(r);
+      }
+    }
+    /* Weeb.tv specific authentication */
+    else if (r->Link.WeebToken.av_len)
+    {
+      AVal av_Token, av_Username, av_Password;
+      SAVC(determineAccess);
+
+      param_count = strsplit(r->Link.WeebToken.av_val, FALSE, ';', &params);
+      if (param_count >= 1)
+      {
+        av_Token.av_val = params[0];
+        av_Token.av_len = strlen(params[0]);
+      }
+      if (param_count >= 2)
+      {
+        av_Username.av_val = params[1];
+        av_Username.av_len = strlen(params[1]);
+      }
+      if (param_count >= 3)
+      {
+        av_Password.av_val = params[2];
+        av_Password.av_len = strlen(params[2]);
+      }
+
+      enc = pbuf;
+      enc = AMF_EncodeString(r, enc, pend, &av_determineAccess);
+      enc = AMF_EncodeNumber(r, enc, pend, 0);
+      *enc++ = AMF_NULL;
+      enc = AMF_EncodeString(r, enc, pend, &av_Token);
+      enc = AMF_EncodeString(r, enc, pend, &av_Username);
+      enc = AMF_EncodeString(r, enc, pend, &av_Password);
+      av_Command.av_val = pbuf;
+      av_Command.av_len = enc - pbuf;
+
+      RTMP_Log(r, RTMP_LOGDEBUG, "WeebToken: %s", r->Link.WeebToken.av_val);
+      SendCustomCommand(r, &av_Command, FALSE);
+    }
+    else
+      RTMP_SendCreateStream(r);
+      }
+      else if (AVMATCH(&methodInvoked, &av_getStreamLength))
+      {
+        RTMP_SendCreateStream(r);
+      }
+      else if (AVMATCH(&methodInvoked, &av_createStream))
+      {
+        r->m_stream_id = (int) AMFProp_GetNumber(r, AMF_GetProp(r, &obj, NULL, 3));
 
 	  if (!(r->Link.protocol & RTMP_FEATURE_WRITE))
 	    {
@@ -2432,12 +2594,12 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
 	      /* Send the FCSubscribe if live stream or if subscribepath is set */
 	      if (r->Link.subscribepath.av_len)
 	        SendFCSubscribe(r, &r->Link.subscribepath);
-	      else if (r->Link.lFlags & RTMP_LF_LIVE)
+	      else if ((r->Link.lFlags & RTMP_LF_LIVE) && (!r->Link.WeebToken.av_len))
 	        SendFCSubscribe(r, &r->Link.playpath);
 	    }
-	}
+	/*}
       else if (AVMATCH(&methodInvoked, &av_createStream))
-	{
+	{*/
 	  r->m_stream_id = (int)AMFProp_GetNumber(r, AMF_GetProp(r, &obj, NULL, 3));
 
 	  if (r->Link.protocol & RTMP_FEATURE_WRITE)
@@ -2477,7 +2639,7 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
     {
       SendPong(r, txn);
     }
-  else if (AVMATCH(&method, &av__onbwcheck))
+  else if (AVMATCH(&method, &av__onbwcheck) || AVMATCH(&method, &av_onBWCheck))
     {
       SendCheckBWResult(r, txn);
     }
@@ -2493,12 +2655,55 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
     }
   else if (AVMATCH(&method, &av__error))
     {
-      RTMP_Log(r, RTMP_LOGERROR, "rtmp server sent error");
+      double code = 0;
+      unsigned int parsedPort;
+      AMFObject obj2;
+      AMFObjectProperty p;
+      AVal redirect;
+      SAVC(ex);
+      SAVC(redirect);
+
+      AMFProp_GetObject(r, AMF_GetProp(r, &obj, NULL, 3), &obj2);
+      if (RTMP_FindFirstMatchingProperty(r, &obj2, &av_ex, &p))
+        {
+          AMFProp_GetObject(r, &p, &obj2);
+          if (RTMP_FindFirstMatchingProperty(r, &obj2, &av_code, &p))
+            code = AMFProp_GetNumber(r, &p);
+          if (code == 302 && RTMP_FindFirstMatchingProperty(r, &obj2, &av_redirect, &p))
+            {
+              char *url = NULL;
+              AMFProp_GetString(r, &p, &redirect);
+              r->Link.redirected = TRUE;
+
+              url = (char *)malloc(redirect.av_len + sizeof ("/playpath"));
+              strncpy(url, redirect.av_val, redirect.av_len);
+              url[redirect.av_len] = '\0';
+              r->Link.tcUrl.av_val = url;
+              r->Link.tcUrl.av_len = redirect.av_len;
+              strcat(url, "/playpath");
+              RTMP_ParseURL(r, url, &r->Link.protocol, &r->Link.hostname, &parsedPort, &r->Link.playpath0, &r->Link.app);
+              r->Link.port = parsedPort;
+            }
+        }
+      if (r->Link.redirected)
+        RTMP_Log(r, RTMP_LOGINFO, "rtmp server sent redirect");
+      else
+        RTMP_Log(r, RTMP_LOGERROR, "rtmp server sent error");
     }
   else if (AVMATCH(&method, &av_close))
     {
-      RTMP_Log(r, RTMP_LOGERROR, "rtmp server requested close");
-      RTMP_Close(r);
+        if (r->Link.redirected)
+        {
+          RTMP_Log(r, RTMP_LOGINFO, "trying to connect with redirected url");
+          RTMP_Close(r);
+          r->Link.redirected = FALSE;
+          RTMP_Connect(r, NULL);
+        }
+      else
+        {
+          RTMP_Log(r, RTMP_LOGERROR, "rtmp server requested close");
+          RTMP_Close(r);
+        }
     }
   else if (AVMATCH(&method, &av_onStatus))
     {
@@ -2581,6 +2786,74 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
 	      AV_erase(r->m_methodCalls, &r->m_numCalls, i, TRUE);
 	      break;
 	    }
+        }
+    }
+  else if (AVMATCH(&method, &av_verifyClient))
+    {
+      double VerificationNumber = AMFProp_GetNumber(r, AMF_GetProp(r, &obj, NULL, 3));
+      RTMP_Log(r, RTMP_LOGDEBUG, "VerificationNumber: %.2f", VerificationNumber);
+
+      enc = pbuf;
+      enc = AMF_EncodeString(r, enc, pend, &av__result);
+      enc = AMF_EncodeNumber(r, enc, pend, AMFProp_GetNumber(r, AMF_GetProp(r, &obj, NULL, 1)));
+      *enc++ = AMF_NULL;
+      enc = AMF_EncodeNumber(r, enc, pend, exp(atan(sqrt(VerificationNumber))) + 1);
+      av_Response.av_val = pbuf;
+      av_Response.av_len = enc - pbuf;
+
+      AMF_Decode(r, &obj, av_Response.av_val, av_Response.av_len, FALSE);
+      AMF_Dump(r, &obj);
+      SendCustomCommand(r, &av_Response, FALSE);
+    }
+  else if (AVMATCH(&method, &av_sendStatus))
+    {
+      if (r->Link.WeebToken.av_len)
+        {
+          AVal av_Authorized = AVC("User.hasAccess");
+          AVal av_TransferLimit = AVC("User.noPremium.limited");
+          AVal av_UserLimit = AVC("User.noPremium.tooManyUsers");
+          AVal av_TimeLeft = AVC("timeLeft");
+          AVal av_Status, av_ReconnectionTime;
+
+          AMFObject Status;
+          AMFProp_GetObject(r, AMF_GetProp(r, &obj, NULL, 3), &Status);
+          AMFProp_GetString(r, AMF_GetProp(r, &Status, &av_code, -1), &av_Status);
+          RTMP_Log(r, RTMP_LOGINFO, "%.*s", av_Status.av_len, av_Status.av_val);
+          if (AVMATCH(&av_Status, &av_Authorized))
+            {
+              RTMP_Log(r, RTMP_LOGINFO, "Weeb.tv authentication successful");
+              RTMP_SendCreateStream(r);
+            }
+          else if (AVMATCH(&av_Status, &av_UserLimit))
+            {
+              RTMP_Log(r, RTMP_LOGINFO, "No free slots available");
+              RTMP_Close(r);
+            }
+          else if (AVMATCH(&av_Status, &av_TransferLimit))
+            {
+              AMFProp_GetString(r, AMF_GetProp(r, &Status, &av_TimeLeft, -1), &av_ReconnectionTime);
+              RTMP_Log(r, RTMP_LOGINFO, "Viewing limit exceeded. try again in %.*s minutes.", av_ReconnectionTime.av_len, av_ReconnectionTime.av_val);
+              RTMP_Close(r);
+            }
+        }
+    }
+  else if (AVMATCH(&method, &av_ReceiveCheckPublicStatus))
+    {
+      AVal Status;
+      AMFProp_GetString(r, AMF_GetProp(r, &obj, NULL, 3), &Status);
+      strsplit(Status.av_val, Status.av_len, ',', &params);
+      if (strcmp(params[0], "0") == 0)
+        {
+          RTMP_Log(r, RTMP_LOGINFO, "Model status is %s", params[1]);
+          RTMP_Close(r);
+        }
+      else
+        {
+          AVal Playpath;
+          Playpath.av_val = params[1];
+          Playpath.av_len = strlen(params[1]);
+          RTMP_ParsePlaypath(r, &Playpath, &r->Link.playpath);
+          RTMP_SendCreateStream(r);
         }
     }
   else
@@ -2768,7 +3041,7 @@ HandleCtrl(RTMP *r, const RTMPPacket *packet)
   unsigned int tmp;
   if (packet->m_body && packet->m_nBodySize >= 2)
     nType = AMF_DecodeInt16(r, packet->m_body);
-  RTMP_Log(r, RTMP_LOGDEBUG, "%s, received ctrl. type: %d, len: %d", __FUNCTION__, nType,
+  RTMP_Log(r, RTMP_LOGDEBUG, "%s, received ctrl, type: %d, len: %d", __FUNCTION__, nType,
       packet->m_nBodySize);
   /*RTMP_LogHex(packet.m_body, packet.m_nBodySize); */
 
@@ -2876,9 +3149,9 @@ HandleCtrl(RTMP *r, const RTMPPacket *packet)
       RTMP_Log(r, RTMP_LOGDEBUG, "%s, SWFVerification ping received: ", __FUNCTION__);
       if (packet->m_nBodySize > 2 && packet->m_body[2] > 0x01)
 	{
-	  RTMP_Log(r, RTMP_LOGERROR,
-            "%s: SWFVerification Type %d request not supported! attempting to use SWFVerification Type 1! Patches welcome...",
-	    __FUNCTION__, packet->m_body[2]);
+    RTMP_Log(r, RTMP_LOGERROR,
+      "%s: SWFVerification Type %d request not supported, attempting to use SWFVerification Type 1! Patches welcome...",
+      __FUNCTION__, packet->m_body[2]);
 	}
 #ifdef CRYPTO
       /*RTMP_LogHex(packet.m_body, packet.m_nBodySize); */
@@ -3725,7 +3998,6 @@ HTTP_Post(RTMP *r, RTMPTCmd cmd, const char *buf, int len)
   char hbuf[512];
   int hlen = snprintf(hbuf, sizeof(hbuf), "POST /%s%s/%d HTTP/1.1\r\n"
     "Host: %.*s:%d\r\n"
-    "Accept: */*\r\n"
     "User-Agent: Shockwave Flash\n"
     "Connection: Keep-Alive\n"
     "Cache-Control: no-cache\r\n"
@@ -3746,6 +4018,7 @@ HTTP_read(RTMP *r, int fill)
 {
   char *ptr;
   int hlen;
+  int resplen;
 
   if (fill)
     RTMPSockBuf_Fill(r, &r->m_sb);
@@ -3765,6 +4038,14 @@ HTTP_read(RTMP *r, int fill)
   if (!ptr)
     return -1;
   ptr += 4;
+  resplen = r->m_sb.sb_size - (ptr - r->m_sb.sb_start);
+  if (hlen < 3584)
+    while (resplen < hlen)
+    {
+      if (RTMPSockBuf_Fill(r, &r->m_sb) == -1)
+        return -1;
+      resplen = r->m_sb.sb_size - (ptr - r->m_sb.sb_start);
+    }
   r->m_sb.sb_size -= ptr - r->m_sb.sb_start;
   r->m_sb.sb_start = ptr;
   r->m_unackd--;
@@ -4473,4 +4754,92 @@ RTMP_Write(RTMP *r, const char *buf, int size)
 	}
     }
   return size+s2;
+}
+
+static int
+SendCustomCommand(RTMP *r, AVal *Command, int queue)
+{
+  RTMPPacket packet;
+  char pbuf[512], *enc;
+
+  packet.m_nChannel = 0x03; /* control channel (invoke) */
+  packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
+  packet.m_packetType = RTMP_PACKET_TYPE_INVOKE;
+  packet.m_nTimeStamp = 0;
+  packet.m_nInfoField2 = 0;
+  packet.m_hasAbsTimestamp = 0;
+  packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
+
+  enc = packet.m_body;
+  if (Command->av_len)
+    {
+      memcpy(enc, Command->av_val, Command->av_len);
+      enc += Command->av_len;
+    }
+  else
+    return FALSE;
+  packet.m_nBodySize = enc - packet.m_body;
+
+  return RTMP_SendPacket(r, &packet, queue);
+}
+
+static int
+strsplit(char *src, int srclen, char delim, char ***params)
+{
+  char *sptr, *srcbeg, *srcend, *dstr;
+  char **param;
+  int count = 1, i = 0, len = 0;
+
+  if (src == NULL)
+    return 0;
+  if (!srclen)
+    srclen = strlen(src);
+  srcbeg = src;
+  srcend = srcbeg + srclen;
+  sptr = srcbeg;
+
+  /* count the delimiters */
+  while (sptr < srcend)
+    {
+      if (*sptr++ == delim)
+        count++;
+    }
+  sptr = srcbeg;
+  *params = (char **)calloc(count, sizeof (size_t));
+  param = *params;
+
+  for (i = 0; i < (count - 1); i++)
+    {
+      dstr = strchr(sptr, delim);
+      len = dstr - sptr;
+      param[i] = (char *)calloc(len + 1, sizeof (char));
+      strncpy(param[i], sptr, len);
+      sptr += len + 1;
+    }
+
+  /* copy the last string */
+  if (sptr <= srcend)
+    {
+      len = srclen - (sptr - srcbeg);
+      param[i] = (char *)calloc(len + 1, sizeof (char));
+      strncpy(param[i], sptr, len);
+    }
+  return count;
+}
+
+static int
+SendGetStreamLength(RTMP *r)
+{
+  char pbuf[256], *pend = pbuf + sizeof (pbuf), *enc;
+  AVal av_Command;
+
+  enc = pbuf;
+  enc = AMF_EncodeString(r, enc, pend, &av_getStreamLength);
+  enc = AMF_EncodeNumber(r, enc, pend, ++r->m_numInvokes);
+  *enc++ = AMF_NULL;
+  enc = AMF_EncodeString(r, enc, pend, &r->Link.playpath);
+  av_Command.av_val = pbuf;
+  av_Command.av_len = enc - pbuf;
+
+  return SendCustomCommand(r, &av_Command, TRUE);
 }
