@@ -610,6 +610,9 @@ AMFProp_Decode(RTMP *r, AMFObjectProperty *prop, const char *pBuffer, int nSize,
       return -1;
     }
 
+  if (*pBuffer == AMF_NULL)
+    bDecodeName = 0;
+
   if (bDecodeName && nSize < 4)
     {				/* at least name (length + at least 1 byte) and 1 byte of data */
       RTMP_Log(r, RTMP_LOGDEBUG,
@@ -801,8 +804,8 @@ AMFProp_Dump(RTMP *r, AMFObjectProperty *prop)
     }
   else
     {
-      name.av_val = "no-name.";
-      name.av_len = sizeof("no-name.") - 1;
+      name.av_val = "no-name";
+      name.av_len = sizeof("no-name") - 1;
     }
   if (name.av_len > 18)
     name.av_len = 18;

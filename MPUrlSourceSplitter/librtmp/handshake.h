@@ -84,6 +84,7 @@ typedef RC4_KEY *	RC4_handle;
 #define FP10
 
 #include "dh.h"
+#include "rtmpe10.h"
 
 static const uint8_t GenuineFMSKey[] = {
   0x47, 0x65, 0x6e, 0x75, 0x69, 0x6e, 0x65, 0x20, 0x41, 0x64, 0x6f, 0x62,
@@ -735,7 +736,7 @@ HandShake(RTMP * r, int FP9HandShake)
       if (encrypted)
 	{
 	  clientsig[4] = 128;
-	  clientsig[6] = 3;
+	  clientsig[6] = 7;
 	}
       else
         {
@@ -947,6 +948,14 @@ HandShake(RTMP * r, int FP9HandShake)
           for (i=0; i<SHA256_DIGEST_LENGTH; i+=8)
             rtmpe9_sig(sig+i, sig+i, dptr[i] % 15);
         }
+        else if (type == 10)
+        {
+	  uint8_t *dptr = digestResp;
+	  uint8_t *sig = signatureResp;
+	  /* encrypt signatureResp */
+		  rtmpe10_sig(sig, sig, dptr[0] % 15);
+		  rtmpe10_sig(sig + 16, sig + 16, dptr[0] % 15);
+        }
 #endif
       RTMP_Log(r, RTMP_LOGDEBUG, "%s: Client signature calculated:", __FUNCTION__);
       RTMP_LogHex(r, RTMP_LOGDEBUG, signatureResp, SHA256_DIGEST_LENGTH);
@@ -965,8 +974,18 @@ HandShake(RTMP * r, int FP9HandShake)
     __FUNCTION__);
   RTMP_LogHex(r, RTMP_LOGDEBUG, reply, RTMP_SIG_SIZE);
 #endif
-  if (!WriteN(r, (char *)reply, RTMP_SIG_SIZE))
-    return FALSE;
+  if (r->Link.CombineConnectPacket)
+  {
+    char *HandshakeResponse = (char *)malloc(RTMP_SIG_SIZE);
+    memcpy(HandshakeResponse, (char *) reply, RTMP_SIG_SIZE);
+    r->Link.HandshakeResponse.av_val = HandshakeResponse;
+    r->Link.HandshakeResponse.av_len = RTMP_SIG_SIZE;
+  }
+  else
+  {
+    if (!WriteN(r, (char *) reply, RTMP_SIG_SIZE))
+      return FALSE;
+  }
 
   /* 2nd part of handshake */
   if (ReadN(r, (char *)serversig, RTMP_SIG_SIZE) != RTMP_SIG_SIZE)
@@ -1019,6 +1038,14 @@ HandShake(RTMP * r, int FP9HandShake)
 	  /* encrypt signatureResp */
           for (i=0; i<SHA256_DIGEST_LENGTH; i+=8)
             rtmpe9_sig(sig+i, sig+i, dptr[i] % 15);
+        }
+        else if (type == 10)
+        {
+	  uint8_t *dptr = digest;
+	  uint8_t *sig = signature;
+	  /* encrypt signatureResp */
+		  rtmpe10_sig(sig, sig, dptr[0] % 15);
+		  rtmpe10_sig(sig + 16, sig + 16, dptr[0] % 15);
         }
 #endif
       RTMP_Log(r, RTMP_LOGDEBUG, "%s: Signature calculated:", __FUNCTION__);
@@ -1302,6 +1329,14 @@ SHandShake(RTMP * r)
           for (i=0; i<SHA256_DIGEST_LENGTH; i+=8)
             rtmpe9_sig(sig+i, sig+i, dptr[i] % 15);
         }
+        else if (type == 10)
+        {
+	  uint8_t *dptr = digestResp;
+	  uint8_t *sig = signatureResp;
+	  /* encrypt signatureResp */
+		  rtmpe10_sig(sig, sig, dptr[0] % 15);
+		  rtmpe10_sig(sig + 16, sig + 16, dptr[0] % 15);
+        }
 #endif
 
       /* some info output */
@@ -1365,6 +1400,14 @@ SHandShake(RTMP * r)
 	  /* encrypt signatureResp */
           for (i=0; i<SHA256_DIGEST_LENGTH; i+=8)
             rtmpe9_sig(sig+i, sig+i, dptr[i] % 15);
+        }
+        else if (type == 10)
+        {
+	  uint8_t *dptr = digest;
+	  uint8_t *sig = signature;
+	  /* encrypt signatureResp */
+		  rtmpe10_sig(sig, sig, dptr[0] % 15);
+		  rtmpe10_sig(sig + 16, sig + 16, dptr[0] % 15);
         }
 #endif
 
