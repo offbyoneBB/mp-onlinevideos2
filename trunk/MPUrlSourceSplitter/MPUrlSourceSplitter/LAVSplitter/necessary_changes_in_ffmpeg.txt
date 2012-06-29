@@ -96,3 +96,9 @@ if (st->first_dts == AV_NOPTS_VALUE &&
     break;
 
 must be disabled (comment it)
+
+--------------------------------------------
+Comment: in method estimate_timings() add another condition before calling estimate_timings_from_pts2() - exclude asf video file
+Code:
+
+(strcmp(ic->iformat->name, "asf") != 0)

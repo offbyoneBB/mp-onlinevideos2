@@ -284,6 +284,7 @@ void CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit)
     this->internalExitRequest = false;
   }
 
+  bool changingStream = false;
   if ((!this->supressData) && (!this->seekingActive))
   {
     if (this->IsConnected())
@@ -341,14 +342,15 @@ void CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit)
                   break;
                 case CHUNK_TYPE_STREAM_CHANGE:
                   {
-                    this->receivingData = false;
+                    /*this->receivingData = false;
                     this->mmsContext->SetHeaderParsed(false);
                     HRESULT result = this->GetMmsHeaderData(this->mmsContext, chunk);
                     if (FAILED(result))
                     {
                       this->logger->Log(LOGGER_ERROR, L"%s: %s: get MMS header data failed with error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
                       this->StopReceivingData();
-                    }
+                    }*/
+                    changingStream = true;
                   }
                   break;
                 case CHUNK_TYPE_DATA:
@@ -416,7 +418,7 @@ void CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit)
           }
         }
 
-        if (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA)
+        if ((changingStream) || (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
         {
           // all data received, we're not receiving data
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
@@ -450,6 +452,12 @@ void CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit)
               }
             }
           }
+        }
+
+        if (changingStream)
+        {
+          // stop receiving data, we are done with this video
+          this->StopReceivingData();
         }
       }
       else
