@@ -30,14 +30,10 @@ namespace OnlineVideos.MediaPortal1.Player
             if (PreparedPlayerType == PlayerType.Auto)
             {
 				Uri uri = new Uri(PreparedUrl);
-
-                if (uri.Scheme.StartsWith("rtmp") || uri.Scheme == "sop" || uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asf"))
+                // send all supported schemes to internal player
+                if (uri.Scheme.StartsWith("rtmp") || uri.Scheme.StartsWith("http") || uri.Scheme == "sop" || uri.Scheme == "mms")
                 {
                     PreparedPlayerType = PlayerType.Internal;
-                }
-                else if (uri.PathAndQuery.Contains(".asx"))
-                {
-                    PreparedPlayerType = PlayerType.WMP;
                 }
                 else
                 {
