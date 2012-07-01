@@ -1,9 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-#if !MP11
 using MediaPortal.Common.Utils;
-#endif
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
@@ -24,11 +22,9 @@ using MediaPortal.Common.Utils;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("09b42e26-4a7f-46a7-b0a9-adda8a5099b0")]
 
-#if !MP11
-[assembly: CompatibleVersion("1.1.6.27644")]
+[assembly: CompatibleVersion("1.2.100.0", "1.1.6.27644")]
 [assembly: UsesSubsystem("MP.SkinEngine")]
 [assembly: UsesSubsystem("MP.Players.Video")]
 [assembly: UsesSubsystem("MP.Input")]
 [assembly: UsesSubsystem("MP.Externals.SQLite")]
 [assembly: UsesSubsystem("MP.Config")]
-#endif

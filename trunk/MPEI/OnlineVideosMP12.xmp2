@@ -846,23 +846,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\kino.de.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{87235512-0f73-46a5-b02f-9b98551b2355}-kino.de.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\kino.de.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\spiegel.de.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{ed9e09f9-0858-4b56-9466-207579496452}-spiegel.de.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\spiegel.de.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\kino.de.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c2eed3ba-f89f-4fce-8506-aad3af7508e2}-kino.de.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\kino.de.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -940,20 +926,6 @@
               <LocalFileName>..\SiteImages\Banners\ThatGuyWithTheGlasses.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{ae94b9a3-a337-4428-9a16-ccfc41dde43e}-ThatGuyWithTheGlasses.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ThatGuyWithTheGlasses.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\MyVideo - Serien.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{e5e8e06d-85d7-4bff-8815-0affe5702343}-MyVideo - Serien.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MyVideo - Serien.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\MyVideo - Serien.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{927377aa-e387-4caa-9695-726f8d753b9b}-MyVideo - Serien.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MyVideo - Serien.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1070,13 +1042,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\MyVideo - Filme.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{388e81be-6516-4ca6-94ba-0e391f881905}-MyVideo - Filme.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MyVideo - Filme.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\SouthParkDE.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{15ac0a4a-582b-4061-bcdd-b0aad1293573}-SouthParkDE.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkDE.png</DestinationFilename>
@@ -1108,13 +1073,6 @@
               <LocalFileName>..\SiteImages\Banners\MSN Movies.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{21dd8111-dab2-4642-a391-7db7ad62a19e}-MSN Movies.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MSN Movies.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\MyVideo - Filme.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{5cd1db9c-fe6b-412c-a83a-5adb54502541}-MyVideo - Filme.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MyVideo - Filme.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1935,6 +1893,230 @@
               <ZipFileName>Installer{CopyFile}\{2cf95e69-2668-4131-812b-3164450292f2}-ytv.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ytv.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Apetit.tv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{78abf597-497d-464f-bc08-658f16204fb8}-Apetit.tv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Apetit.tv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Barrandov.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f0441dc9-6601-4990-9286-869b9559436a}-Barrandov.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Barrandov.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Cz Trailery.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{23ddecd3-cfbd-4fe0-b728-b718511f80c2}-Cz Trailery.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Cz Trailery.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Joj Plus.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2674ba2e-87d8-4450-8d7c-4cc1bde38ae6}-Joj Plus.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Joj Plus.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Joj.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{767dc4ef-8426-45d8-8f87-5b037051d467}-Joj.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Joj.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Markíza.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{8ccea428-13dc-450b-b6b8-54b2305a447b}-Mark_za.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Markíza.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Nova.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d90bb1aa-4581-4e75-bf88-5fc1e4d137af}-Nova.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Nova.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Pohádkař.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{cd531e20-3019-499d-b3a0-319c3b808e6b}-Poh_dka_.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Pohádkař.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Prima.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{df7984b7-44f3-42d8-b6e4-9ca1f2891302}-Prima.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Prima.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\RTL Nitro.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{69526683-6cbd-47a4-b07e-afe706d8ace4}-RTL Nitro.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTL Nitro.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Slovenská Televízia.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6ddf3588-dfdf-4182-832c-fa7f644c8737}-Slovensk_ Telev_zia.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Slovenská Televízia.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\stream.cz.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{bd142678-4f7d-4a23-8672-40ad4df68256}-stream.cz.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\stream.cz.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\VideaČesky.cz.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3aee91e3-7943-4ef5-8261-a2c316717689}-Videa_esky.cz.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\VideaČesky.cz.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Óčko.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{8ce9a945-d10d-48ab-87f8-76ad3bb20055}-__ko.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Óčko.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Česká Televize.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{866980c6-b002-4bd7-80ec-3bbe99be4fc4}-_esk_ Televize.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Česká Televize.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Čsfd.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{bdd5c715-5f8e-4890-97ee-4b84b6842bf7}-_sfd.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Čsfd.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Apetit.tv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{57f68944-faec-4c6a-9a57-78631964c4f3}-Apetit.tv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Apetit.tv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Barrandov.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b3e814d5-d699-4445-b0ea-dd8e8ca56315}-Barrandov.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Barrandov.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Cz Trailery.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f479691b-c6f4-4298-8b5a-c373dce71b82}-Cz Trailery.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Cz Trailery.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Joj Plus.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9803bad8-e54c-4b6d-b43e-9503f155ef1a}-Joj Plus.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Joj Plus.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Joj.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{173d9ac9-d5cf-4c26-8227-ac5ac0c05792}-Joj.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Joj.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Markíza.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b2d01b2e-625b-4b9c-9c8c-79ed743c6bec}-Mark_za.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Markíza.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Nova.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4b20c651-25cc-495c-a923-10a2e931729c}-Nova.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Nova.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Pohádkař.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2daf53cf-1e6a-41ef-b10b-a4027daf756a}-Poh_dka_.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Pohádkař.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Prima.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d85d657c-7fe0-4cfb-946f-11a6102d3b54}-Prima.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Prima.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\RTL Nitro.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{1a27e270-b2a5-4c21-a5c6-4dd4228c0042}-RTL Nitro.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL Nitro.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Slovenská Televízia.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{73bb73fe-6006-4a3a-8708-a4a06f9ce3cd}-Slovensk_ Telev_zia.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Slovenská Televízia.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\stream.cz.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0ee6acfd-a63d-416e-9196-5213af69e684}-stream.cz.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\stream.cz.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\VideaČesky.cz.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e1e94bb0-7d1f-4b35-aeb2-3cf610723dfc}-Videa_esky.cz.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\VideaČesky.cz.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Óčko.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9dd76315-c34f-4137-b2c7-bee07d0aa6bd}-__ko.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Óčko.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Česká Televize.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{dc53c530-bf65-4b78-9a86-2c2e69d30855}-_esk_ Televize.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Česká Televize.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Čsfd.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2bf9935e-0293-4593-aab2-fe9969ab3330}-_sfd.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Čsfd.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2555,13 +2737,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avfilter-mpurlsourcesplitter-2.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{6b6ba619-fca8-4cc2-902d-44733478932d}-avfilter-mpurlsourcesplitter-2.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSourceSplitter\avfilter-mpurlsourcesplitter-2.dll</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{20cfd7be-88ee-4d83-9557-ea08ea774a74}-avutil-mpurlsourcesplitter-51.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-51.dll</DestinationFilename>
@@ -2583,27 +2758,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Http.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{be8afb39-2ed6-4f3c-818d-f336c2880ab7}-MPUrlSourceSplitter_Http.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Http.dll</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Rtmp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{5bdc1267-e247-46da-be09-97dd07f26531}-MPUrlSourceSplitter_Rtmp.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Rtmp.dll</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\swscale-mpurlsourcesplitter-2.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9a924158-72fe-44ac-863d-e43acc60973e}-swscale-mpurlsourcesplitter-2.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSourceSplitter\swscale-mpurlsourcesplitter-2.dll</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{79dd2e31-33a7-47b7-9c65-d3df2f38d69c}-avcodec-mpurlsourcesplitter-54.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-54.dll</DestinationFilename>
@@ -2618,9 +2772,30 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Mms.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{eb08ee36-8c3f-4411-8960-bca86d6a3b78}-MPUrlSourceSplitter_Mms.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Mms.dll</DestinationFilename>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_Asx.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ae1ad172-1654-456e-b32a-6e1cc05ff550}-MPUrlSourceSplitter_Parser_Asx.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Asx.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{870f2ecf-63e4-41e9-9754-49e132dbaa4c}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mms.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3a602911-b00e-465b-a6ad-6db7170c8aa3}-MPUrlSourceSplitter_Protocol_Mms.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mms.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0a446649-f7b0-46e1-9660-ad77e8166b72}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -3046,7 +3221,7 @@ public class Script
           <Items>
             <CompatibleVersionItem>
               <MinRequiredVersion>1.1.6.27644</MinRequiredVersion>
-              <DesignedForVersion>1.1.6.27644</DesignedForVersion>
+              <DesignedForVersion>1.2.100.0</DesignedForVersion>
             </CompatibleVersionItem>
           </Items>
         </CompatibleVersion>
@@ -3967,23 +4142,9 @@ fixed: SiteManager now also shows sites that are only in local file, so user can
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\kino.de.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{87235512-0f73-46a5-b02f-9b98551b2355}-kino.de.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\kino.de.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\spiegel.de.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{ed9e09f9-0858-4b56-9466-207579496452}-spiegel.de.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\spiegel.de.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\kino.de.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c2eed3ba-f89f-4fce-8506-aad3af7508e2}-kino.de.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\kino.de.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4061,20 +4222,6 @@ fixed: SiteManager now also shows sites that are only in local file, so user can
         <LocalFileName>..\SiteImages\Banners\ThatGuyWithTheGlasses.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{ae94b9a3-a337-4428-9a16-ccfc41dde43e}-ThatGuyWithTheGlasses.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ThatGuyWithTheGlasses.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\MyVideo - Serien.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e5e8e06d-85d7-4bff-8815-0affe5702343}-MyVideo - Serien.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MyVideo - Serien.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\MyVideo - Serien.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{927377aa-e387-4caa-9695-726f8d753b9b}-MyVideo - Serien.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MyVideo - Serien.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4191,13 +4338,6 @@ fixed: SiteManager now also shows sites that are only in local file, so user can
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\MyVideo - Filme.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{388e81be-6516-4ca6-94ba-0e391f881905}-MyVideo - Filme.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MyVideo - Filme.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\SouthParkDE.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{15ac0a4a-582b-4061-bcdd-b0aad1293573}-SouthParkDE.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkDE.png</DestinationFilename>
@@ -4229,13 +4369,6 @@ fixed: SiteManager now also shows sites that are only in local file, so user can
         <LocalFileName>..\SiteImages\Banners\MSN Movies.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{21dd8111-dab2-4642-a391-7db7ad62a19e}-MSN Movies.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MSN Movies.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\MyVideo - Filme.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{5cd1db9c-fe6b-412c-a83a-5adb54502541}-MyVideo - Filme.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MyVideo - Filme.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5056,6 +5189,230 @@ fixed: SiteManager now also shows sites that are only in local file, so user can
         <ZipFileName>Installer{CopyFile}\{2cf95e69-2668-4131-812b-3164450292f2}-ytv.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ytv.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Apetit.tv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{78abf597-497d-464f-bc08-658f16204fb8}-Apetit.tv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Apetit.tv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Barrandov.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f0441dc9-6601-4990-9286-869b9559436a}-Barrandov.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Barrandov.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Cz Trailery.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{23ddecd3-cfbd-4fe0-b728-b718511f80c2}-Cz Trailery.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Cz Trailery.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Joj Plus.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2674ba2e-87d8-4450-8d7c-4cc1bde38ae6}-Joj Plus.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Joj Plus.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Joj.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{767dc4ef-8426-45d8-8f87-5b037051d467}-Joj.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Joj.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Markíza.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{8ccea428-13dc-450b-b6b8-54b2305a447b}-Mark_za.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Markíza.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Nova.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d90bb1aa-4581-4e75-bf88-5fc1e4d137af}-Nova.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Nova.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Pohádkař.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{cd531e20-3019-499d-b3a0-319c3b808e6b}-Poh_dka_.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Pohádkař.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Prima.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{df7984b7-44f3-42d8-b6e4-9ca1f2891302}-Prima.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Prima.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\RTL Nitro.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{69526683-6cbd-47a4-b07e-afe706d8ace4}-RTL Nitro.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTL Nitro.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Slovenská Televízia.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6ddf3588-dfdf-4182-832c-fa7f644c8737}-Slovensk_ Telev_zia.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Slovenská Televízia.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\stream.cz.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bd142678-4f7d-4a23-8672-40ad4df68256}-stream.cz.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\stream.cz.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\VideaČesky.cz.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3aee91e3-7943-4ef5-8261-a2c316717689}-Videa_esky.cz.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\VideaČesky.cz.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Óčko.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{8ce9a945-d10d-48ab-87f8-76ad3bb20055}-__ko.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Óčko.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Česká Televize.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{866980c6-b002-4bd7-80ec-3bbe99be4fc4}-_esk_ Televize.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Česká Televize.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Čsfd.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bdd5c715-5f8e-4890-97ee-4b84b6842bf7}-_sfd.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Čsfd.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Apetit.tv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{57f68944-faec-4c6a-9a57-78631964c4f3}-Apetit.tv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Apetit.tv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Barrandov.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b3e814d5-d699-4445-b0ea-dd8e8ca56315}-Barrandov.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Barrandov.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Cz Trailery.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f479691b-c6f4-4298-8b5a-c373dce71b82}-Cz Trailery.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Cz Trailery.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Joj Plus.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9803bad8-e54c-4b6d-b43e-9503f155ef1a}-Joj Plus.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Joj Plus.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Joj.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{173d9ac9-d5cf-4c26-8227-ac5ac0c05792}-Joj.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Joj.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Markíza.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b2d01b2e-625b-4b9c-9c8c-79ed743c6bec}-Mark_za.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Markíza.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Nova.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4b20c651-25cc-495c-a923-10a2e931729c}-Nova.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Nova.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Pohádkař.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2daf53cf-1e6a-41ef-b10b-a4027daf756a}-Poh_dka_.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Pohádkař.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Prima.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d85d657c-7fe0-4cfb-946f-11a6102d3b54}-Prima.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Prima.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\RTL Nitro.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{1a27e270-b2a5-4c21-a5c6-4dd4228c0042}-RTL Nitro.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL Nitro.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Slovenská Televízia.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{73bb73fe-6006-4a3a-8708-a4a06f9ce3cd}-Slovensk_ Telev_zia.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Slovenská Televízia.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\stream.cz.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0ee6acfd-a63d-416e-9196-5213af69e684}-stream.cz.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\stream.cz.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\VideaČesky.cz.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e1e94bb0-7d1f-4b35-aeb2-3cf610723dfc}-Videa_esky.cz.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\VideaČesky.cz.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Óčko.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9dd76315-c34f-4137-b2c7-bee07d0aa6bd}-__ko.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Óčko.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Česká Televize.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{dc53c530-bf65-4b78-9a86-2c2e69d30855}-_esk_ Televize.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Česká Televize.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Čsfd.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2bf9935e-0293-4593-aab2-fe9969ab3330}-_sfd.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Čsfd.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -5598,13 +5955,6 @@ fixed: SiteManager now also shows sites that are only in local file, so user can
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avfilter-mpurlsourcesplitter-2.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{6b6ba619-fca8-4cc2-902d-44733478932d}-avfilter-mpurlsourcesplitter-2.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSourceSplitter\avfilter-mpurlsourcesplitter-2.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{20cfd7be-88ee-4d83-9557-ea08ea774a74}-avutil-mpurlsourcesplitter-51.dll</ZipFileName>
         <DestinationFilename>%Base%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-51.dll</DestinationFilename>
@@ -5626,27 +5976,6 @@ fixed: SiteManager now also shows sites that are only in local file, so user can
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Http.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{be8afb39-2ed6-4f3c-818d-f336c2880ab7}-MPUrlSourceSplitter_Http.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Http.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Rtmp.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{5bdc1267-e247-46da-be09-97dd07f26531}-MPUrlSourceSplitter_Rtmp.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Rtmp.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\swscale-mpurlsourcesplitter-2.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9a924158-72fe-44ac-863d-e43acc60973e}-swscale-mpurlsourcesplitter-2.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSourceSplitter\swscale-mpurlsourcesplitter-2.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{79dd2e31-33a7-47b7-9c65-d3df2f38d69c}-avcodec-mpurlsourcesplitter-54.dll</ZipFileName>
         <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-54.dll</DestinationFilename>
@@ -5661,9 +5990,30 @@ fixed: SiteManager now also shows sites that are only in local file, so user can
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Mms.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{eb08ee36-8c3f-4411-8960-bca86d6a3b78}-MPUrlSourceSplitter_Mms.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Mms.dll</DestinationFilename>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_Asx.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ae1ad172-1654-456e-b32a-6e1cc05ff550}-MPUrlSourceSplitter_Parser_Asx.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Asx.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{870f2ecf-63e4-41e9-9754-49e132dbaa4c}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mms.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3a602911-b00e-465b-a6ad-6db7170c8aa3}-MPUrlSourceSplitter_Protocol_Mms.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mms.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0a446649-f7b0-46e1-9660-ad77e8166b72}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
