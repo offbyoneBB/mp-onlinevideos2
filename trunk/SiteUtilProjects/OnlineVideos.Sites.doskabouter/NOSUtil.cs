@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.IO;
 using System.Xml;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -64,6 +65,12 @@ namespace OnlineVideos.Sites
         {
             if (Specials.Live.Equals(video.Other))
                 return ParseASX(video.VideoUrl)[0];
+            if (Specials.LaatsteJournaal.Equals(video.Other))
+            {
+                string webData = GetWebData(video.VideoUrl);
+                JObject obj = JObject.Parse(webData);
+                return obj.Value<string>("videofile");
+            }
             return base.getUrl(video);
         }
 
@@ -87,7 +94,10 @@ namespace OnlineVideos.Sites
                                 {
                                     Match matchVideoUrl = Regex.Match(video.VideoUrl, @"http://nos\.nl/uitzendingen/(?<m0>\d+)-");
                                     if (matchVideoUrl.Success)
-                                        video.VideoUrl = String.Format(@"http://content.nos.nl/content/playlist/counters/?playlist=uitzending2/flv-web01/{0}.xml", matchVideoUrl.Groups["m0"].Value);
+                                    {
+                                        video.VideoUrl = String.Format(@"http://nos.nl/playlist/uitzending/mp4-web03/{0}.json", matchVideoUrl.Groups["m0"].Value);
+                                        video.Other = Specials.LaatsteJournaal;
+                                    }
                                 }
                             return res;
                         }
