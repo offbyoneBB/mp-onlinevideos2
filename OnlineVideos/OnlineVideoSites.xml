@@ -735,6 +735,7 @@
       <Configuration>
         <item key="thumbReplaceRegExPattern"><![CDATA[_\d{2,3}_\d{2,3}\.jpg]]></item>
         <item key="thumbReplaceString"><![CDATA[_406_228.jpg]]></item>
+        <item key="tvGuideFormatString"><![CDATA[Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Highlights" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vt297_406_228.jpg">http://feeds.bbc.co.uk/iplayer/highlights/tv/list</Category>
@@ -760,7 +761,7 @@
         <Category xsi:type="RssLink" name="BBC Two" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/b/b9/Bbctwo-logo2007.svg/200px-Bbctwo-logo2007.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_two/list</Category>
         <Category xsi:type="RssLink" name="BBC Three" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/f/f2/Logo_BBC_Three.svg/200px-Logo_BBC_Three.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_three/list</Category>
         <Category xsi:type="RssLink" name="BBC Four" thumb="http://upload.wikimedia.org/wikipedia/fr/d/d3/BBC_Four.png">http://feeds.bbc.co.uk/iplayer/bbc_four/list</Category>
-        <Category xsi:type="RssLink" name="BBC HD" thumb="http://www.bbc.co.uk/bbctrust/images/placeholders/tv_logos/bbc_hd.gif">http://feeds.bbc.co.uk/iplayer/bbc_hd/list</Category>
+        <Category xsi:type="RssLink" name="BBC HD" thumb="http://ichef.bbci.co.uk/corporate/images/width/live/p0/0n/sm/p00nsmgm.jpg/144">http://feeds.bbc.co.uk/iplayer/bbc_hd/list</Category>
         <Category xsi:type="RssLink" name="CBBC" thumb="http://news.bbc.co.uk/media/images/45416000/jpg/_45416982_cbbc_logo.jpg">http://feeds.bbc.co.uk/iplayer/cbbc/list</Category>
         <Category xsi:type="RssLink" name="CBeebies" thumb="http://www.bbc.co.uk/pressoffice/images/bank/logos/300cbeebies.jpg">http://feeds.bbc.co.uk/iplayer/cbeebies/list</Category>
         <Category xsi:type="RssLink" name="BBC Parliment" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/7/7c/BBC_Parliament.svg/200px-BBC_Parliament.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_parliament/list</Category>
@@ -768,13 +769,13 @@
         <Category xsi:type="RssLink" name="BBC Alba" thumb="http://upload.wikimedia.org/wikipedia/en/thumb/a/a5/BBC_Alba.svg/200px-BBC_Alba.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_alba/list</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
-            <Channel name="BBC One" thumb="http://www.gtsat.be/images/uk/bbc_one.png">bbc_one_live</Channel>
-            <Channel name="BBC Two" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/b/b9/Bbctwo-logo2007.svg/200px-Bbctwo-logo2007.svg.png">bbc_two_live</Channel>
-            <Channel name="BBC Three" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/f/f2/Logo_BBC_Three.svg/200px-Logo_BBC_Three.svg.png">bbc_three_live</Channel>
-            <Channel name="BBC Four" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/BBC_Four.svg/200px-BBC_Four.svg.png">bbc_four_live</Channel>
-            <Channel name="BBC News" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/BBC_News.svg/200px-BBC_News.svg.png">journalism_bbc_news_channel</Channel>
-            <Channel name="BBC Parliament" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/7/7c/BBC_Parliament.svg/200px-BBC_Parliament.svg.png">bbc_parliament_live</Channel>
-            <Channel name="BBC ALBA" thumb="http://upload.wikimedia.org/wikipedia/en/thumb/a/a5/BBC_Alba.svg/200px-BBC_Alba.svg.png">bbc_alba_live</Channel>
+            <Channel name="BBC One" thumb="http://www.gtsat.be/images/uk/bbc_one.png">bbc_one_live?guideid=92</Channel>
+            <Channel name="BBC Two" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/b/b9/Bbctwo-logo2007.svg/200px-Bbctwo-logo2007.svg.png">bbc_two_live?guideid=105</Channel>
+            <Channel name="BBC Three" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/f/f2/Logo_BBC_Three.svg/200px-Logo_BBC_Three.svg.png">bbc_three_live?guideid=45</Channel>
+            <Channel name="BBC Four" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/BBC_Four.svg/200px-BBC_Four.svg.png">bbc_four_live?guideid=47</Channel>
+            <Channel name="BBC News" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/BBC_News.svg/200px-BBC_News.svg.png">journalism_bbc_news_channel?guideid=48</Channel>
+            <Channel name="BBC Parliament" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/7/7c/BBC_Parliament.svg/200px-BBC_Parliament.svg.png">bbc_parliament_live?guideid=49</Channel>
+            <Channel name="BBC ALBA" thumb="http://upload.wikimedia.org/wikipedia/en/thumb/a/a5/BBC_Alba.svg/200px-BBC_Alba.svg.png">bbc_alba_live?guideid=2098</Channel>
           </Channels>
         </Category>
       </Categories>
@@ -1530,39 +1531,44 @@
     <Site name="4oD" util="Fourod" agecheck="false" enabled="true" lang="en">
       <Description>Catchup on all your favourite Channel 4 shows (only available in the UK).</Description>
       <Categories>
-        <Category xsi:type="RssLink" name="All Shows">http://www.channel4.com/programmes/tags/4od</Category>
-        <Category xsi:type="RssLink" name="Comedy">http://www.channel4.com/programmes/tags/comedy/4od</Category>
-        <Category xsi:type="RssLink" name="Documentaries">http://www.channel4.com/programmes/tags/documentaries/4od</Category>
-        <Category xsi:type="RssLink" name="Drama">http://www.channel4.com/programmes/tags/drama/4od</Category>
-        <Category xsi:type="RssLink" name="Entertainment">http://www.channel4.com/programmes/tags/entertainment/4od</Category>
-        <Category xsi:type="RssLink" name="Food">http://www.channel4.com/programmes/tags/food/4od</Category>
-        <Category xsi:type="RssLink" name="News, Current Affairs and Politics">http://www.channel4.com/programmes/tags/news-current-affairs-and-politics/4od</Category>
-        <Category xsi:type="RssLink" name="Animals">http://www.channel4.com/programmes/tags/animals/4od</Category>
-        <Category xsi:type="RssLink" name="Animation">http://www.channel4.com/programmes/tags/animation/4od</Category>
-        <Category xsi:type="RssLink" name="Art, Design and Literature">http://www.channel4.com/programmes/tags/art-design-and-literature/4od</Category>
-        <Category xsi:type="RssLink" name="Business and Money">http://www.channel4.com/programmes/tags/business-and-money/4od</Category>
-        <Category xsi:type="RssLink" name="Chat Shows">http://www.channel4.com/programmes/tags/chat-shows/4od</Category>
-        <Category xsi:type="RssLink" name="E4">http://www.channel4.com/programmes/tags/e4/4od</Category>
-        <Category xsi:type="RssLink" name="Education and Learning">http://www.channel4.com/programmes/tags/education-and-learning/4od</Category>
-        <Category xsi:type="RssLink" name="Family and Parenting">http://www.channel4.com/programmes/tags/family-and-parenting/4od</Category>
-        <Category xsi:type="RssLink" name="Fashion and Beauty">http://www.channel4.com/programmes/tags/fashion-and-beauty/4od</Category>
-        <Category xsi:type="RssLink" name="Health and Wellbeing">http://www.channel4.com/programmes/tags/health-and-wellbeing/4od</Category>
-        <Category xsi:type="RssLink" name="History">http://www.channel4.com/programmes/tags/history/4od</Category>
-        <Category xsi:type="RssLink" name="Homes and Gardens">http://www.channel4.com/programmes/tags/homes-and-gardens/4od</Category>
-        <Category xsi:type="RssLink" name="More4">http://www.channel4.com/programmes/tags/more4/4od</Category>
-        <Category xsi:type="RssLink" name="4Music">http://www.channel4.com/programmes/tags/music/4od</Category>
-        <Category xsi:type="RssLink" name="Quizzes and Gameshows">http://www.channel4.com/programmes/tags/quizzes-and-gameshows/4od</Category>
-        <Category xsi:type="RssLink" name="Reality Shows">http://www.channel4.com/programmes/tags/reality-shows/4od</Category>
-        <Category xsi:type="RssLink" name="Religion and Belief">http://www.channel4.com/programmes/tags/religion-and-belief/4od</Category>
-        <Category xsi:type="RssLink" name="Science, Nature and the Environment">http://www.channel4.com/programmes/tags/science-nature-and-the-environment/4od</Category>
-        <Category xsi:type="RssLink" name="Sex and Relationships">http://www.channel4.com/programmes/tags/sex-and-relationships/4od</Category>
-        <Category xsi:type="RssLink" name="Society and Culture">http://www.channel4.com/programmes/tags/society-and-culture/4od</Category>
-        <Category xsi:type="RssLink" name="Sports and Games">http://www.channel4.com/programmes/tags/sports-and-games/4od</Category>
-        <Category xsi:type="RssLink" name="US Shows">http://www.channel4.com/programmes/tags/us-shows/4od</Category>
+        <Category xsi:type="RssLink" name="Catchup">http://www.channel4.com/programmes/4od/catchup/</Category>
+        <Category xsi:type="RssLink" name="Collections">http://www.channel4.com/programmes/4od/collections</Category>
+        <Category xsi:type="RssLink" name="All Shows">http://www.channel4.com/programmes/tags/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Comedy">http://www.channel4.com/programmes/tags/comedy/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Documentaries">http://www.channel4.com/programmes/tags/documentaries/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Drama">http://www.channel4.com/programmes/tags/drama/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Entertainment">http://www.channel4.com/programmes/tags/entertainment/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Food">http://www.channel4.com/programmes/tags/food/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="News, Current Affairs and Politics">http://www.channel4.com/programmes/tags/news-current-affairs-and-politics/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Animals">http://www.channel4.com/programmes/tags/animals/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Animation">http://www.channel4.com/programmes/tags/animation/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Art, Design and Literature">http://www.channel4.com/programmes/tags/art-design-and-literature/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Business and Money">http://www.channel4.com/programmes/tags/business-and-money/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Chat Shows">http://www.channel4.com/programmes/tags/chat-shows/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="E4">http://www.channel4.com/programmes/tags/e4/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Education and Learning">http://www.channel4.com/programmes/tags/education-and-learning/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Family and Parenting">http://www.channel4.com/programmes/tags/family-and-parenting/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Fashion and Beauty">http://www.channel4.com/programmes/tags/fashion-and-beauty/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Health and Wellbeing">http://www.channel4.com/programmes/tags/health-and-wellbeing/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="History">http://www.channel4.com/programmes/tags/history/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Homes and Gardens">http://www.channel4.com/programmes/tags/homes-and-gardens/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="More4">http://www.channel4.com/programmes/tags/more4/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="4Music">http://www.channel4.com/programmes/tags/music/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Quizzes and Gameshows">http://www.channel4.com/programmes/tags/quizzes-and-gameshows/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Reality Shows">http://www.channel4.com/programmes/tags/reality-shows/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Religion and Belief">http://www.channel4.com/programmes/tags/religion-and-belief/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Science, Nature and the Environment">http://www.channel4.com/programmes/tags/science-nature-and-the-environment/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Sex and Relationships">http://www.channel4.com/programmes/tags/sex-and-relationships/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Society and Culture">http://www.channel4.com/programmes/tags/society-and-culture/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="Sports and Games">http://www.channel4.com/programmes/tags/sports-and-games/4od/title/brand-list/</Category>
+        <Category xsi:type="RssLink" name="US Shows">http://www.channel4.com/programmes/tags/us-shows/4od/title/brand-list/</Category>
       </Categories>
     </Site>
     <Site name="ITV Player" util="ITVPlayer" agecheck="false" enabled="true" lang="en">
       <Description>Catchup on all your favourite ITV shows (only available in the UK).</Description>
+      <Configuration>
+        <item key="tvGuideFormatString"><![CDATA[Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="A - Z" thumb="">http://www.itv.com/_data/xml/CatchUpData/CatchUp360/CatchUpMenu.xml</Category>
         <Category xsi:type="RssLink" name="ITV 1" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv1.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=ITV1</Category>
@@ -1570,6 +1576,14 @@
         <Category xsi:type="RssLink" name="ITV 3" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv3.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=ITV3</Category>
         <Category xsi:type="RssLink" name="ITV 4" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv4.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=ITV4</Category>
         <Category xsi:type="RssLink" name="CITV" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/citv.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=CITV</Category>
+        <Category xsi:type="Group" name="Live" thumb="http://www.itv.com/_devpacks/itvglobal/img/nav/itv-logo.png" desc="Live TV">
+          <Channels>
+            <Channel name="ITV1" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv1.jpg">sim1?guideid=26</Channel>
+            <Channel name="ITV2" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv2.jpg">sim2?guideid=185</Channel>
+            <Channel name="ITV3" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv3.jpg">sim3?guideid=1859</Channel>
+            <Channel name="ITV4" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv4.jpg">sim4?guideid=1961</Channel>
+          </Channels>
+        </Category>
       </Categories>
     </Site>
     <Site name="Demand 5" util="Demand5" agecheck="false" enabled="true" lang="en">

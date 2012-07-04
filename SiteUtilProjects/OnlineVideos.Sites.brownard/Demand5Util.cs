@@ -15,6 +15,12 @@ namespace OnlineVideos.Sites
     {
         const string BASE_URL = "http://www.channel5.com";
 
+        [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
+        string proxy = null;
+        [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a username, set it here.")]
+        string proxyUsername = null;
+        [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a password, set it here.")]
+        string proxyPassword = null;
         [Category("OnlineVideosConfiguration"), Description("HashValue")]
         protected string hashValue = ""; //"8e8e110bb9d7d95eb3c3e500a86a21024eccd983";
         [Category("OnlineVideosUserConfiguration"), Description("Select stream automatically?")]
@@ -264,7 +270,7 @@ namespace OnlineVideos.Sites
             return StreamComparer.GetBestPlaybackUrl(video.PlaybackOptions, StreamQualityPref, AutoSelectStream);
         }
 
-        private static AMF3Object GetResponse(string url, byte[] postData)
+        private AMF3Object GetResponse(string url, byte[] postData)
         {
             //Log.Debug("get webdata from {0}", url);
 
@@ -278,6 +284,10 @@ namespace OnlineVideos.Sites
             request.ContentLength = postData.Length;
             request.ProtocolVersion = HttpVersion.Version10;
             request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+
+            System.Net.WebProxy proxy = getProxy();
+            if (proxy != null)
+                request.Proxy = proxy;
 
             Stream requestStream = request.GetRequestStream();
             requestStream.Write(postData, 0, postData.Length);
@@ -298,6 +308,18 @@ namespace OnlineVideos.Sites
                 return obj;
             }
 
+        }
+
+        System.Net.WebProxy getProxy()
+        {
+            System.Net.WebProxy proxyObj = null;
+            if (!string.IsNullOrEmpty(proxy))
+            {
+                proxyObj = new System.Net.WebProxy(proxy);
+                if (!string.IsNullOrEmpty(proxyUsername) && !string.IsNullOrEmpty(proxyPassword))
+                    proxyObj.Credentials = new System.Net.NetworkCredential(proxyUsername, proxyPassword);
+            }
+            return proxyObj;
         }
 
     }    
