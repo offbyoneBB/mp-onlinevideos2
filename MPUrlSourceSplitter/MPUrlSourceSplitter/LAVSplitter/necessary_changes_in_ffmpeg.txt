@@ -98,7 +98,11 @@ if (st->first_dts == AV_NOPTS_VALUE &&
 must be disabled (comment it)
 
 --------------------------------------------
-Comment: in method estimate_timings() add another condition before calling estimate_timings_from_pts2() - exclude asf video file
+Comment: in method estimate_timings() block calling estimate_timings_from_pts2()
 Code:
 
-(strcmp(ic->iformat->name, "asf") != 0)
+/* else if (ic->iformat->read_timestamp &&
+        file_size && ic->pb->seekable) {
+         get accurate estimate from the PTSes 
+        estimate_timings_from_pts2(ic, old_offset);
+    } */
