@@ -20,6 +20,12 @@ namespace OnlineVideos.Sites
 
     public class ITVPlayerUtil : SiteUtilBase
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
+        string proxy = null;
+        [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a username, set it here.")]
+        string proxyUsername = null;
+        [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a password, set it here.")]
+        string proxyPassword = null;
         [Category("OnlineVideosUserConfiguration"), Description("Select stream automatically?")]
         protected bool AutoSelectStream = false;
         [Category("OnlineVideosUserConfiguration"), Description("Stream quality preference\r\n1 is low, 5 high")]
@@ -355,6 +361,10 @@ namespace OnlineVideos.Sites
             req.Accept = "text/xml";
             req.Method = "POST";
 
+            System.Net.WebProxy proxy = getProxy();
+            if (proxy != null)
+                req.Proxy = proxy;
+
             Stream stm = req.GetRequestStream();
             doc.Save(stm);
             stm.Close();
@@ -416,6 +426,18 @@ namespace OnlineVideos.Sites
         string cleanString(string s)
         {
             return s.Replace("&amp;", "&").Replace("&pound;", "£").Trim();
+        }
+
+        System.Net.WebProxy getProxy()
+        {
+            System.Net.WebProxy proxyObj = null;
+            if (!string.IsNullOrEmpty(proxy))
+            {
+                proxyObj = new System.Net.WebProxy(proxy);
+                if (!string.IsNullOrEmpty(proxyUsername) && !string.IsNullOrEmpty(proxyPassword))
+                    proxyObj.Credentials = new System.Net.NetworkCredential(proxyUsername, proxyPassword);
+            }
+            return proxyObj;
         }
 
         const string SOAP_TEMPLATE = @"<?xml version='1.0' encoding='utf-8'?>

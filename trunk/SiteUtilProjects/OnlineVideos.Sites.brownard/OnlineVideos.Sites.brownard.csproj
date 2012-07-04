@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="BBCiPlayerUtil.cs" />
     <Compile Include="LivetvruUtil.cs" />
+    <Compile Include="NaviXUtil.cs" />
     <Compile Include="Utils\AMF3.cs" />
     <Compile Include="Demand5Util.cs" />
     <Compile Include="FootballStreamingInfoUtil.cs" />
@@ -56,6 +57,14 @@
     <Compile Include="Utils\MyBlowFish.cs" />
     <Compile Include="ITVPlayerUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\NaviX\NaviXIfBlock.cs" />
+    <Compile Include="Utils\NaviX\NaviXMediaItem.cs" />
+    <Compile Include="Utils\NaviX\NaviXPlaylist.cs" />
+    <Compile Include="Utils\NaviX\NaviXProcessor.cs" />
+    <Compile Include="Utils\NaviX\NaviXRTMP.cs" />
+    <Compile Include="Utils\NaviX\NaviXStringEvaluator.cs" />
+    <Compile Include="Utils\NaviX\NaviXVars.cs" />
+    <Compile Include="Utils\NaviX\NaviXWebRequest.cs" />
     <Compile Include="Utils\StreamComparer.cs" />
     <Compile Include="Utils\TVGuideGrabber.cs" />
     <Compile Include="WiziwigUtil.cs" />
