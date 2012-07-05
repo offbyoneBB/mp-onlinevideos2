@@ -4,11 +4,28 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Net;
 using System.IO;
+using System.ComponentModel;
 
 namespace OnlineVideos.Sites
 {
     public class WatchSeriesUtil : DeferredResolveUtil
     {
+        /// <summary>
+        /// Defines the number of urls that are shown for each hoster. 
+        /// 
+        /// For example, if the limit is 5, only the top 5 entries will be shown
+        /// for each hoster (e.g. putlocker, megavideo,...).
+        /// </summary>
+        [Category("OnlineVideosUserConfiguration"), Description("Limit Number of Urls that are shown per hosters (0: show all).")]
+        new int limitUrlsPerHoster = 5;
+
+        /// <summary>
+        /// If false, all video urls that have no hoster utility yet will be hidden. If true, all urls will
+        /// be shown (unknown hosters will get a "ns" suffix)
+        /// </summary>
+        [Category("OnlineVideosUserConfiguration"), Description("Show hosters for which no provider exists.")]
+        new bool showUnknownHosters = false;
+
         private enum Depth { MainMenu = 0, Alfabet = 1, Series = 2, Seasons = 3, BareList = 4 };
         public CookieContainer cc = null;
         private string nextVideoListPageUrl = null;
@@ -17,6 +34,8 @@ namespace OnlineVideos.Sites
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
+            base.limitUrlsPerHoster = limitUrlsPerHoster;
+            base.showUnknownHosters = showUnknownHosters;
             //ReverseProxy.Instance.AddHandler(this);
 
         }
