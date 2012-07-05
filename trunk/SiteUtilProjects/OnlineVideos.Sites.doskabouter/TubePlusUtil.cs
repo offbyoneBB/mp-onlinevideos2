@@ -7,7 +7,7 @@ using System.IO;
 
 namespace OnlineVideos.Sites
 {
-    public class TubePlusUtil : GenericSiteUtil
+    public class TubePlusUtil : DeferredResolveUtil
     {
         [Category("OnlineVideosConfiguration"), Description("")]
         protected string genresRegEx;
@@ -230,11 +230,6 @@ namespace OnlineVideos.Sites
             return 0;
         }
 
-        public override VideoInfo CreateVideoInfo()
-        {
-            return new TubePlusVideoInfo();
-        }
-
         public override List<VideoInfo> getVideoList(Category category)
         {
             if (category.Other is List<VideoInfo>) //tvshows
@@ -243,26 +238,12 @@ namespace OnlineVideos.Sites
             return base.getVideoList(category);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string FormatHosterName(string name)
         {
-            string tmp = base.getUrl(video);
-            Dictionary<string, string> newPlaybackOptions = new Dictionary<string, string>();
-            if (video.PlaybackOptions == null)
-                newPlaybackOptions.Add("100%justone", tmp);
+            if (name.StartsWith("glink "))
+                return name.Substring(5) + " on google";
             else
-            {
-                foreach (KeyValuePair<string, string> kv in video.PlaybackOptions)
-                {
-                    string newName;
-                    if (kv.Key.StartsWith("glink "))
-                        newName = kv.Key.Substring(5) + " on google";
-                    else
-                        newName = kv.Key.Substring(4);
-                    newPlaybackOptions.Add(newName, kv.Value);
-                }
-            }
-            video.PlaybackOptions = newPlaybackOptions;
-            return WatchSeriesUtil.SortPlaybackOptions(video, baseUrl, tmp, 0, true);
+                return name.Substring(4);
         }
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
@@ -325,14 +306,6 @@ namespace OnlineVideos.Sites
             return HttpUtility.UrlEncode(query.Replace(' ', '_'));
         }
         #endregion
-
-        public class TubePlusVideoInfo : VideoInfo
-        {
-            public override string GetPlaybackOptionUrl(string url)
-            {
-                return GetVideoUrl(base.PlaybackOptions[url]);
-            }
-        }
 
     }
 }
