@@ -36,7 +36,7 @@ namespace OnlineVideos.Sites
 
                         string dataJson = GetWebData(finalDownloadUrl);
                         JObject o = JObject.Parse(dataJson);
-                        VideoUrl = o["url"].ToString();
+                        VideoUrl = o["url"].ToString().Replace("\"", "");
                         break;
                     }
                     return VideoUrl;
