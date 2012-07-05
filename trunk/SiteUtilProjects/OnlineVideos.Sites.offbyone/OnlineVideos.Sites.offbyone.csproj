@@ -66,7 +66,6 @@
   <ItemGroup>
     <Compile Include="DasErsteMediathekUtil.cs" />
     <Compile Include="FilmStartsUtil.cs" />
-    <Compile Include="GameTrailersUtil.cs" />
     <Compile Include="Google\GData\Client\abstractentry.cs">
       <SubType>Code</SubType>
     </Compile>
