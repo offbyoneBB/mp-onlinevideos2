@@ -1,0 +1,12 @@
+C:\Users\Rick\Desktop\mp-onlinevideos2\SiteUtilProjects\OnlineVideos.Sites.rick164\bin\Debug\OnlineVideos.Sites.rick164.dll
+C:\Users\Rick\Desktop\mp-onlinevideos2\SiteUtilProjects\OnlineVideos.Sites.rick164\bin\Debug\OnlineVideos.Sites.rick164.pdb
+C:\Users\Rick\Desktop\mp-onlinevideos2\SiteUtilProjects\OnlineVideos.Sites.rick164\bin\Debug\OnlineVideos.dll
+C:\Users\Rick\Desktop\mp-onlinevideos2\SiteUtilProjects\OnlineVideos.Sites.rick164\bin\Debug\OnlineVideos.pdb
+C:\Users\Rick\Desktop\mp-onlinevideos2\SiteUtilProjects\OnlineVideos.Sites.rick164\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Rick\Desktop\mp-onlinevideos2\SiteUtilProjects\OnlineVideos.Sites.rick164\obj\Debug\OnlineVideos.Sites.rick164.dll
+C:\Users\Rick\Desktop\mp-onlinevideos2\SiteUtilProjects\OnlineVideos.Sites.rick164\obj\Debug\OnlineVideos.Sites.rick164.pdb
+C:\Users\Rick\Documents\Visual Studio 2010\Projects\Mediaportal\Onlinevideos\OnlineVideos.Sites.rick164\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Rick\Documents\Visual Studio 2010\Projects\Mediaportal\Onlinevideos\OnlineVideos.Sites.rick164\obj\Debug\OnlineVideos.Sites.rick164.dll
+C:\Users\Rick\Documents\Visual Studio 2010\Projects\Mediaportal\Onlinevideos\OnlineVideos.Sites.rick164\obj\Debug\OnlineVideos.Sites.rick164.pdb
+C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll
+C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.rick164.pdb
