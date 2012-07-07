@@ -27,17 +27,24 @@ namespace OnlineVideos.Sites
             {
                 if (regEx_PlaylistUrl != null)
                 {
-                    Match m = regEx_PlaylistUrl.Match(data);
-                    while (m.Success)
+                    try
                     {
-                        string contentid = HttpUtility.HtmlDecode(m.Groups["contentid"].Value);
-                        string token = HttpUtility.HtmlDecode(m.Groups["token"].Value);
-                        finalDownloadUrl = baseDownloadUrl + contentid + "/" + token;
+                        Match m = regEx_PlaylistUrl.Match(data);
+                        while (m.Success)
+                        {
+                            string contentid = HttpUtility.HtmlDecode(m.Groups["contentid"].Value);
+                            string token = HttpUtility.HtmlDecode(m.Groups["token"].Value);
+                            finalDownloadUrl = baseDownloadUrl + contentid + "/" + token;
 
-                        string dataJson = GetWebData(finalDownloadUrl);
-                        JObject o = JObject.Parse(dataJson);
-                        VideoUrl = o["url"].ToString().Replace("\"", "");
-                        break;
+                            string dataJson = GetWebData(finalDownloadUrl);
+                            JObject o = JObject.Parse(dataJson);
+                            VideoUrl = o["url"].ToString().Replace("\"", "");
+                            break;
+                        }
+                    }
+                    catch (Exception eVideoUrlRetrieval)
+                    {
+                        Log.Debug("Error while retrieving Video Url: " + eVideoUrlRetrieval.ToString());
                     }
                     return VideoUrl;
                 }
@@ -79,49 +86,63 @@ namespace OnlineVideos.Sites
             {
                 if (regEx_VideoListTmp != null)
                 {
-                    Match m = regEx_VideoListTmp.Match(data);
-                    while (m.Success)
+                    try
                     {
-                        VideoInfo videoInfo = CreateVideoInfo();
-                        if (url.StartsWith(searchBase))
+                        Match m = regEx_VideoListTmp.Match(data);
+                        while (m.Success)
                         {
-                            videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+                            VideoInfo videoInfo = CreateVideoInfo();
+                            if (url.StartsWith(searchBase))
+                            {
+                                videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+                            }
+                            else
+                            {
+                                videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+                            }
+                            videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
+                            videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+                            videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Trim();
+                            videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
+                            videoInfo.Description = HttpUtility.HtmlDecode(m.Groups["Description"].Value);
+                            videoList.Add(videoInfo);
+                            m = m.NextMatch();
                         }
-                        else
-                        {
-                            videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m.Groups["Title"].Value);
-                        }
-                        videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
-                        videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                        videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Trim();
-                        videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
-                        videoInfo.Description = HttpUtility.HtmlDecode(m.Groups["Description"].Value);
-                        videoList.Add(videoInfo);
-                        m = m.NextMatch();
+                    }
+                    catch (Exception eVideoListRetrieval)
+                    {
+                        Log.Debug("Error while retrieving VideoList: " + eVideoListRetrieval.ToString());
                     }
                 }
                 if (regEx_NextPage != null)
                 {
-                    // check for next page link
-                    Match mNext = regEx_NextPage.Match(data);
-                    if (mNext.Success)
+                    try
                     {
-                        //Log.Debug("PAGE URL: " + mNext.Groups["url"].Value);
-                        //Log.Debug("VIDEO URL: "+ url);
-                        nextPageAvailable = true;
-                        nextPageUrl = mNext.Groups["url"].Value;
-                        if (!string.IsNullOrEmpty(nextPageRegExUrlFormatString)) nextPageUrl = string.Format(nextPageRegExUrlFormatString, nextPageUrl);
-                        nextPageUrl = ApplyUrlDecoding(nextPageUrl, nextPageRegExUrlDecoding);
-                        nextPageUrl = url + nextPageUrl.Replace("?currentPage=", "&currentPage="); 
+                        // check for next page link
+                        Match mNext = regEx_NextPage.Match(data);
+                        if (mNext.Success)
+                        {
+                            //Log.Debug("PAGE URL: " + mNext.Groups["url"].Value);
+                            //Log.Debug("VIDEO URL: "+ url);
+                            nextPageAvailable = true;
+                            nextPageUrl = mNext.Groups["url"].Value;
+                            if (!string.IsNullOrEmpty(nextPageRegExUrlFormatString)) nextPageUrl = string.Format(nextPageRegExUrlFormatString, nextPageUrl);
+                            nextPageUrl = ApplyUrlDecoding(nextPageUrl, nextPageRegExUrlDecoding);
+                            nextPageUrl = url + nextPageUrl.Replace("?currentPage=", "&currentPage=");
+                        }
+                        else
+                        {
+                            string page = HttpUtility.ParseQueryString(new Uri(url).Query)["currentPage"];
+                            nextPageAvailable = true;
+                            nextPageUrl = url.Replace("currentPage=" + page.ToString(), "currentPage=" + (int.Parse(page) + 1).ToString());
+                        }
+                        //Log.Debug("NEXTPAGE URL: " + nextPageUrl);
+                        nextPageUrl = nextPageUrl;
                     }
-                    else
+                    catch (Exception eNextPageRetrieval)
                     {
-                        string page = HttpUtility.ParseQueryString(new Uri(url).Query)["currentPage"];
-                        nextPageAvailable = true;
-                        nextPageUrl = url.Replace("currentPage=" + page.ToString(), "currentPage=" + (int.Parse(page) + 1).ToString());
+                        Log.Debug("Error while retrieving Next Page Url: " + eNextPageRetrieval.ToString());
                     }
-                    //Log.Debug("NEXTPAGE URL: " + nextPageUrl);
-                    nextPageUrl = nextPageUrl;
                 }
             }
             return videoList;
@@ -194,12 +215,18 @@ namespace OnlineVideos.Sites
             string data = GetWebData("http://www.gametrailers.com/search?keywords=");
             string promotionID = "";
             Match m = regEX_SearchURL.Match(data);
-
-            while (m.Success)
+            try
             {
-                 promotionID = m.Groups["id"].Value;
-                 //Log.Debug("PROMO=" + promotionID);
-                 break;
+                while (m.Success)
+                {
+                    promotionID = m.Groups["id"].Value;
+                    //Log.Debug("PROMO=" + promotionID);
+                    break;
+                }
+            }
+            catch (Exception eSearchUrlRetrieval)
+            {
+                Log.Debug("Error while retrieving SearchURL: " + eSearchUrlRetrieval.ToString());
             }
 
             // if an override Encoding was specified, we need to UrlEncode the search string with that encoding
@@ -207,7 +234,7 @@ namespace OnlineVideos.Sites
 
             searchUrl = "http://www.gametrailers.com/fragments/search/child/" + promotionID + "/?tabName=videos&platforms=&sortBy=most_recent&keywords=" + query;
 
-            return getVideoList(string.Format(searchUrl, query));
+            return getVideoList(searchUrl);
         }
     }
 }
