@@ -190,6 +190,7 @@ namespace SiteParser
 
         private void insertBbutton_Click(object sender, EventArgs e)
         {
+            checkBoxOnlySelected.Checked = false;
             string strToInsert = ((RegexPart)insertComboBox.SelectedItem).Value;
             int p = strToInsert.IndexOf(@"@@@@");
             if (p >= 0)
@@ -296,6 +297,7 @@ namespace SiteParser
 
         private void textToRegexButton_Click(object sender, EventArgs e)
         {
+            checkBoxOnlySelected.Checked = false;
             try
             {
                 LockWindowUpdate(regexRichText.Handle);

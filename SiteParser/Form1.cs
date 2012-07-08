@@ -370,7 +370,10 @@ namespace SiteParser
                     selected.Nodes.Clear();
                 List<VideoInfo> videos = generic.getVideoList(parentCat);
                 foreach (VideoInfo video in videos)
+                {
+                    video.CleanDescriptionAndTitle();
                     selected.Nodes.Add(video.Title).Tag = video;
+                }
                 selected.Text += ' ' + selected.Nodes.Count.ToString();
 
                 if (generic.HasNextPage)
