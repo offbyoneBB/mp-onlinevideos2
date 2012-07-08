@@ -38,13 +38,18 @@ namespace OnlineVideos.MediaPortal2
 
         #endregion
 
-        #region IBaseMediaProvider Member
+		#region IBaseResourceProvider Member
 
-		public IResourceAccessor CreateResourceAccessor(string path)
+		public bool TryCreateResourceAccessor(string path, out IResourceAccessor result)
         {
-            if (!IsResource(path))
-                throw new ArgumentException(string.Format("The resource described by path '{0}' doesn't exist", path));
-            return new RawUrlResourceAccessor(this, path);
+			result = null;
+			if (!IsResource(path))
+				return false;
+			else
+			{
+				result = new RawUrlResourceAccessor(this, path);
+				return true;
+			}
         }
 
         public ResourcePath ExpandResourcePathFromString(string pathStr)
