@@ -119,8 +119,8 @@
       <posY>446</posY>
       <width>122</width>
       <height>92</height>
-      <texture>Picture_cover.png</texture>
-      <visible>!Control.IsVisible(51)</visible>
+      <texture>Picturethumbframe.png</texture>
+      <visible>!videoplayer.usingoverlays + !player.hasmedia + !Control.IsVisible(51)</visible>
     </control>
     <control>
       <description>video preview window</description>
@@ -142,7 +142,7 @@
       <type>image</type>
       <posX>45</posX>
       <posY>447</posY>
-      <width>118</width>
+      <width>120</width>
       <height>89</height>
       <centered>yes</centered>
       <texture diffuse="Thumb_Mask.png">#selectedthumb</texture>
