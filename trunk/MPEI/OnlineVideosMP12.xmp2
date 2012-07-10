@@ -2154,7 +2154,7 @@
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.2.0.0\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.3.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -2232,6 +2232,13 @@
               <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{44c19a6b-28e0-4936-a000-edea70c11632}-OnlineVideos.Sites.rick164.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -3119,7 +3126,7 @@ public class Script
               <Params>
                 <Items>
                   <SectionParam Name="Extension package">
-                    <Value>LAV\LAVFilters0.50.5.0.mpe1</Value>
+                    <Value>LAV\LAVFilters0.51.0.0.mpe1</Value>
                     <ValueType>File</ValueType>
                     <Description>Location of the extension package</Description>
                   </SectionParam>
@@ -3246,30 +3253,23 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>1</Major>
-      <Minor>2</Minor>
+      <Minor>3</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>improved: context menu handling - more flexibility for utils (YouTube: rate and comment a video, manage playlists)
-improved: you can now add any category at any hierarchy level to favorites
-improved: SiteManager screen autorefreshes + removed unneccessary buttons
-improved: MPUrlSourceSplitter filter freezing on slow connections
-added: when going to SiteManager from inside a Site, preselect that Site in the list
-added: allow refresh rate adaption according to FPS and settings in MediaPortal
-added: press the INFO key (F9) when in videos view to show additional information (skin update required)
-added: event when a download finished for other plugins
-added: pressing HOME (H) goes to OnlineVideos root view
-added: include Extensions plugin mpe in the installer (optional install)
-added: dialog to create a RtmpUrl with parameters from the CreateEditSite dialog
-added: Allow reordering of Groups, RssLinks and Channels in Edit Site dialog
-added: methods OnPlaybackEnded and OnDownloadEnded to SiteUtilBase class
-added: remember Layout per Category and Site
-fixed: possible MP GUI freezing on stopping videos
-fixed: SiteManager now also shows sites that are only in local file, so user can delete them</VersionDescription>
+    <VersionDescription>fixed: SiteManager live filter for user crashes MP when you have local sites that have no online pendent
+fixed: playing a file from Downloaded Videos in MP1 did not use refresh rate adaption
+fixed: source filters rare freeze on seek, pause, stop and play
+fixed: source filter improved seeking and faster video starting
+added: source filter ASX stream parser and MMS protocol
+added: source filter librtmp (unofficial) 2.5
+added: source filter option for specifying cache folder
+added: support for png files for thumbs
+changed: plugin settings xml for MPEI GUI plugin now split into sections and uses minvalue/maxvalue feature</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.2.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2012-04-06T11:00:00</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.3.0.0.mpe1</OnlineLocation>
+    <ReleaseDate>2012-07-10T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -5432,7 +5432,7 @@ fixed: SiteManager now also shows sites that are only in local file, so user can
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.2.0.0\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.3.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -5510,6 +5510,13 @@ fixed: SiteManager now also shows sites that are only in local file, so user can
         <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{44c19a6b-28e0-4936-a000-edea70c11632}-OnlineVideos.Sites.rick164.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -6025,8 +6032,8 @@ fixed: SiteManager now also shows sites that are only in local file, so user can
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>LAV\LAVFilters0.50.5.0.mpe1</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{bf87ba97-6256-4de1-a678-87cf2759385a}-LAVFilters0.50.5.0.mpe1</ZipFileName>
+        <LocalFileName>LAV\LAVFilters0.51.0.0.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bf87ba97-6256-4de1-a678-87cf2759385a}-LAVFilters0.51.0.0.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
