@@ -49,7 +49,7 @@
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>no</renderUnfocusText>
           <textureMask>Picturethumbmask.png</textureMask>
-          <frameNoFocus>Picture_cover.png</frameNoFocus>
+          <frameNoFocus>Picturethumbframe.png</frameNoFocus>
           <frameFocus>OnlineVideos/Picture_cover_focused.png</frameFocus>          
           <showFrame>true</showFrame>
           <enableFocusZoom>no</enableFocusZoom>
