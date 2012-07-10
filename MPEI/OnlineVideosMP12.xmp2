@@ -2699,8 +2699,8 @@
       <GroupItem Name="TrailerButton">
         <ParentGroup>Skins</ParentGroup>
         <DisplayName>Trailer Button in MyVideos</DisplayName>
-        <DefaulChecked>true</DefaulChecked>
-        <Description>Add a "Trailer" button in MyVideos hidden menu (myvideo.xml and myvideoTitle.xml are overwritten)</Description>
+        <DefaulChecked>false</DefaulChecked>
+        <Description>ONLY FOR MP 1.2! - Add a "Trailer" button in MyVideos hidden menu (myvideo.xml and myvideoTitle.xml are overwritten)</Description>
         <Files>
           <Items>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
