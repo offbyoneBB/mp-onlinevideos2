@@ -3143,7 +3143,7 @@ public class Script
               <Params>
                 <Items>
                   <SectionParam Name="Extension package">
-                    <Value>Extensions.1.0.7.176.mpe1</Value>
+                    <Value>Extensions.1.0.8.180.mpe1</Value>
                     <ValueType>File</ValueType>
                     <Description>Location of the extension package</Description>
                   </SectionParam>
@@ -6039,8 +6039,8 @@ changed: plugin settings xml for MPEI GUI plugin now split into sections and use
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>Extensions.1.0.7.176.mpe1</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{32ccb45a-d734-46c5-9e83-38ecac610f60}-Extensions.1.0.7.176.mpe1</ZipFileName>
+        <LocalFileName>Extensions.1.0.8.180.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{32ccb45a-d734-46c5-9e83-38ecac610f60}-Extensions.1.0.8.180.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
