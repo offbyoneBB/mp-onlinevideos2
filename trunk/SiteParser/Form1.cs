@@ -204,7 +204,7 @@ namespace SiteParser
         {
             Form2 f2 = new Form2();
             categoryRegexTextbox.Text = f2.Execute(categoryRegexTextbox.Text, baseUrlTextbox.Text,
-                new string[] { "url", "title", "thumb", "description" });
+                new string[] { "url", "title", "thumb", "description" }, true);
         }
 
         private void GetCategoriesButton_Click(object sender, EventArgs e)
@@ -243,7 +243,7 @@ namespace SiteParser
             {
                 Form2 f2 = new Form2();
                 categoryNextPageRegexTextBox.Text = f2.Execute(categoryNextPageRegexTextBox.Text, baseUrl,
-                    new string[] { "url" });
+                    new string[] { "url" }, false);
             }
             else
                 MessageBox.Show("No BaseUrl specified");
@@ -273,7 +273,7 @@ namespace SiteParser
             {
                 Form2 f2 = new Form2();
                 subcategoryRegexTextBox.Text = f2.Execute(subcategoryRegexTextBox.Text, ((RssLink)parentCat).Url,
-                    new string[] { "url", "title", "thumb", "description" });
+                    new string[] { "url", "title", "thumb", "description" }, true);
             }
             else
                 MessageBox.Show("no valid category selected");
@@ -313,7 +313,7 @@ namespace SiteParser
             {
                 Form2 f2 = new Form2();
                 subcategoryNextPageRegexTextBox.Text = f2.Execute(subcategoryNextPageRegexTextBox.Text, ((RssLink)parentCat).Url,
-                    new string[] { "url" });
+                    new string[] { "url" }, false);
             }
             else
                 MessageBox.Show("no valid category selected");
@@ -346,7 +346,7 @@ namespace SiteParser
             {
                 Form2 f2 = new Form2();
                 videoListRegexTextBox.Text = f2.Execute(videoListRegexTextBox.Text, ((RssLink)parentCat).Url,
-                    new string[] { "Title", "VideoUrl", "ImageUrl", "Description", "Duration", "Airdate" });
+                    new string[] { "Title", "VideoUrl", "ImageUrl", "Description", "Duration", "Airdate" }, true);
             }
             else
                 MessageBox.Show("no valid category selected");
@@ -396,7 +396,7 @@ namespace SiteParser
             {
                 Form2 f2 = new Form2();
                 nextPageRegExTextBox.Text = f2.Execute(nextPageRegExTextBox.Text, ((RssLink)parentCat).Url,
-                    new string[] { "url" });
+                    new string[] { "url" }, false);
             }
             else
                 MessageBox.Show("no valid category selected");
@@ -412,7 +412,7 @@ namespace SiteParser
             {
                 Form2 f2 = new Form2();
                 videoUrlRegExTextBox.Text = f2.Execute(videoUrlRegExTextBox.Text, video.VideoUrl, null,
-                    new string[] { "m0", "m1", "m2" });
+                    new string[] { "m0", "m1", "m2" }, false);
             }
             else
                 MessageBox.Show("no valid video selected");
@@ -438,7 +438,7 @@ namespace SiteParser
             {
                 Form2 f2 = new Form2();
                 playlistUrlRegexTextBox.Text = f2.Execute(playlistUrlRegexTextBox.Text, videoUrlResultTextBox.Text,
-                    new string[] { "url" });
+                    new string[] { "url" }, false);
             }
         }
 
@@ -467,7 +467,7 @@ namespace SiteParser
 
                 Form2 f2 = new Form2();
                 fileUrlRegexTextBox.Text = f2.Execute(fileUrlRegexTextBox.Text, webData, playListUrlResultTextBox.Text,
-                    new string[] { "m0", "m1", "m2", "n0", "n1", "n2" });
+                    new string[] { "m0", "m1", "m2", "n0", "n1", "n2" }, false);
             }
         }
 
@@ -657,10 +657,10 @@ namespace SiteParser
             if (String.IsNullOrEmpty(baseUrlTextbox.Text))
             {
                 if (MessageBox.Show("Use html data from clipboard?", "No BaseUrl specified", MessageBoxButtons.OKCancel) == DialogResult.OK)
-                    f2.Execute(String.Empty, Clipboard.GetText(), null, names);
+                    f2.Execute(String.Empty, Clipboard.GetText(), null, names, true);
             }
             else
-                f2.Execute(String.Empty, baseUrlTextbox.Text, names);
+                f2.Execute(String.Empty, baseUrlTextbox.Text, names, true);
         }
         private void categoryToolStripMenuItem_Click(object sender, EventArgs e)
         {

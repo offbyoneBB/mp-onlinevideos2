@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System.Diagnostics;
 using System.Windows.Forms;
+using OnlineVideos;
 using OnlineVideos.Sites;
 
 namespace SiteParser
@@ -21,15 +22,17 @@ namespace SiteParser
         private string result;
         private string[] fields;
         private string testData;
+        bool cleanupValues = false;
 
-        public string Execute(string regexString, string url, string[] names)
+        public string Execute(string regexString, string url, string[] names, bool cleanupValues)
         {
             string webData = SiteUtilBase.GetWebData(url);
-            return Execute(regexString, webData, url, names);
+            return Execute(regexString, webData, url, names, cleanupValues);
         }
 
-        public string Execute(string regexString, string webData, string url, string[] names)
+        public string Execute(string regexString, string webData, string url, string[] names, bool cleanupValues)
         {
+            this.cleanupValues = cleanupValues;
             result = regexString;
             FillPageData(result, regexRichText);
             FillPageData(webData, richTextBox1);
@@ -272,7 +275,10 @@ namespace SiteParser
                     TreeNode node = treeView1.Nodes.Add(treeView1.Nodes.Count.ToString());
                     foreach (String field in fields)
                     {
-                        node.Nodes.Add(field + " " + m.Groups[field].Value);
+                        string val = m.Groups[field].Value;
+                        if (cleanupValues)
+                            val = Utils.PlainTextFromHtml(val);
+                        node.Nodes.Add(field + " " + val);
                         node.Expand();
                     }
                     m = m.NextMatch();
