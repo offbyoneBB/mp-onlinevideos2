@@ -55,11 +55,22 @@ namespace OnlineVideos.Sites
                 nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/emp/playlist");
                 id = doc.SelectSingleNode("//ns1:item[@kind='programme']/@identifier", nsmRequest).Value;
             }
-
+            
             doc = new XmlDocument();
             doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + id, null, null, proxyObj)); //uk only
             nsmRequest = new XmlNamespaceManager(doc.NameTable);
-            nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");			
+            nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
+
+            XmlNode captionNode = doc.SelectSingleNode("//ns1:media[@kind='captions']", nsmRequest);
+            if (captionNode != null)
+            {
+                XmlNode captionConnection = captionNode.SelectSingleNode("ns1:connection", nsmRequest);
+                if (captionConnection != null && captionConnection.Attributes["href"] != null)
+                {
+                    string sub = GetWebData(captionConnection.Attributes["href"].Value);
+                    video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(sub);
+                }
+            }
 
             SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
             foreach(XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
@@ -99,7 +110,7 @@ namespace OnlineVideos.Sites
                                 PlayPath = identifier,
 								SwfUrl = SWFPlayer,
 								SwfVerify = true,
-								Live = video.Other == "livestream"
+								Live = video.Other == "livestream" 
 							}.ToString();
                         }
                         else if (connectionElem.Attributes["kind"].Value == "level3")
