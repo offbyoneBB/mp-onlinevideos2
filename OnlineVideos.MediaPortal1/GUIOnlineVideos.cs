@@ -2372,12 +2372,12 @@ namespace OnlineVideos.MediaPortal1
             {
                 (factory.PreparedPlayer as OVSPLayer).GoFullscreen = goFullScreen;
 
-                if (!string.IsNullOrEmpty(playItem.Video.SubtitleUrl) && Utils.IsValidUri(playItem.Video.SubtitleUrl))
+                if (!string.IsNullOrEmpty(playItem.Video.SubtitleText) || !string.IsNullOrEmpty(playItem.Video.SubtitleUrl) && Utils.IsValidUri(playItem.Video.SubtitleUrl))
                 {
                     // download subtitle file before starting playback
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                     {
-                        string subs = Sites.SiteUtilBase.GetWebData(playItem.Video.SubtitleUrl);
+                        string subs = string.IsNullOrEmpty(playItem.Video.SubtitleText) ? Sites.SiteUtilBase.GetWebData(playItem.Video.SubtitleUrl) : playItem.Video.SubtitleText;
                         if (!string.IsNullOrEmpty(subs))
                         {
                             string subFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "OnlineVideoSubtitles.txt");
