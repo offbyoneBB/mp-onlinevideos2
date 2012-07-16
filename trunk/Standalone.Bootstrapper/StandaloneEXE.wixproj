@@ -54,7 +54,7 @@
     <None Include="dxwebsetup.exe" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="LAVFilters-0.50.5.exe" />
+    <None Include="LAVFilters-0.51.2.exe" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <!--
