@@ -3234,11 +3234,11 @@ public class Script
         </CompatibleVersion>
         <SubSystemsUsed>
           <Items>
-            <SubSystemItem Name="MP.Input" />
             <SubSystemItem Name="MP.SkinEngine" />
             <SubSystemItem Name="MP.Players.Video" />
-            <SubSystemItem Name="MP.Config" />
+            <SubSystemItem Name="MP.Input" />
             <SubSystemItem Name="MP.Externals.SQLite" />
+            <SubSystemItem Name="MP.Config" />
           </Items>
         </SubSystemsUsed>
       </PluginDependencyItem>
@@ -3262,14 +3262,15 @@ public class Script
 fixed: playing a file from Downloaded Videos in MP1 did not use refresh rate adaption
 fixed: source filters rare freeze on seek, pause, stop and play
 fixed: source filter improved seeking and faster video starting
+fixed: incompatibility with latest LAV filters
 added: source filter ASX stream parser and MMS protocol
-added: source filter librtmp (unofficial) 2.5
 added: source filter option for specifying cache folder
 added: support for png files for thumbs
+added: support for subtitles from text in addition to url
 changed: plugin settings xml for MPEI GUI plugin now split into sections and uses minvalue/maxvalue feature</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.3.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2012-07-10T11:00:00</ReleaseDate>
+    <ReleaseDate>2012-07-17T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
