@@ -88,6 +88,7 @@ public:
 
   STDMETHODIMP_(DWORD) GetStreamFlags(DWORD dwStream);
   STDMETHODIMP_(int) GetPixelFormat(DWORD dwStream);
+  STDMETHODIMP_(int) GetHasBFrames(DWORD dwStream);
 
   // IAMExtendedSeeking
   STDMETHODIMP get_ExSeekCapabilities(long* pExCapabilities);
@@ -162,6 +163,7 @@ private:
   BOOL m_bOgg;
   BOOL m_bAVI;
   BOOL m_bMPEGTS;
+  BOOL m_bMPEGPS;
   BOOL m_bEVO;
   BOOL m_bRM;
   BOOL m_bVC1Correction;

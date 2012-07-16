@@ -91,9 +91,13 @@ typedef struct CSubtitleSelector {
   std::string audioLanguage;
   std::string subtitleLanguage;
 
-#define SUBTITLE_FLAG_DEFAULT 0x1
-#define SUBTITLE_FLAG_FORCED  0x2
-#define SUBTITLE_FLAG_PGS     0x4
+#define SUBTITLE_FLAG_DEFAULT  0x0001
+#define SUBTITLE_FLAG_FORCED   0x0002
+#define SUBTITLE_FLAG_NORMAL   0x0004
+#define SUBTITLE_FLAG_IMPAIRED 0x0008
+
+// Values above 0xFF are special
+#define SUBTITLE_FLAG_PGS      0x8000
   DWORD dwFlags;
 } CSubtitleSelector;
 
@@ -150,6 +154,7 @@ public:
 
   virtual STDMETHODIMP_(DWORD) GetStreamFlags(DWORD dwStream) { return 0; }
   virtual STDMETHODIMP_(int) GetPixelFormat(DWORD dwStream) { return PIX_FMT_NONE; }
+  virtual STDMETHODIMP_(int) GetHasBFrames(DWORD dwStream) { return -1; }
 
 public:
   class CStreamList : public std::deque<stream>
