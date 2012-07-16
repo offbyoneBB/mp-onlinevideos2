@@ -20,7 +20,7 @@ namespace OnlineVideos.Sites.georgius
         private static String dynamicCategoryStart = @"<div class=""j-filter-item"">";
         private static String showStart = @"<div class=""j-filter-item"">";
         private static String showUrlRegex = @"<li class=""trailer""><a href=""(?<showUrl>[^""]+)""";
-        private static String showTitleRegex = @"(<strong><a href=""[^""]+"" >(?<showTitle>[^<]+))|(<strong><a href=""[^""]+"" target=""_blank"">(?<showTitle>[^<]+))";
+        private static String showTitleRegex = @"(<strong><a href=""[^""]+"" >(?<showTitle>[^<]+))|(<strong><a href=""[^""]+"" title=""[^""]+"" target=""_blank"">(?<showTitle>[^<]+))|(<strong><a href=""[^""]+"" target=""_blank"">(?<showTitle>[^<]+))|(<strong><a href=""[^""]+"" title=""[^""]+"" >(?<showTitle>[^<]+))";
 
         private static List<ShowEpisodesRegex> showsAndEpisodes = new List<ShowEpisodesRegex>()
         {            
@@ -68,7 +68,7 @@ namespace OnlineVideos.Sites.georgius
                  ShowEpisodesBlockEndRegex = @"<script type=""text/javascript""",
                  ShowEpisodeStartRegex = @"<tr>",
                  ShowEpisodeEndRegex = @"</tr>",
-                 ShowEpisodeUrlAndTitleRegex = @"<a href=""(?<showEpisodeUrl>[^""]+)"">(?<showEpisodeTitle>[^<]+)",
+                 ShowEpisodeUrlAndTitleRegex = @"<a title=""[^""]+"" href=""(?<showEpisodeUrl>[^""]+)"">(?<showEpisodeTitle>[^<]+)",
                  ShowEpisodesNextPageRegex = @"<a title=""Nasledujúce"" href=""(?<nextPageUrl>[^""]+)""",
                  ShowEpisodeDescriptionRegex = @"<td><b>(?<showEpisodeDescription>[^<]*)",
                  SkipFirstPage = false
@@ -358,6 +358,7 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
+            video.VideoUrl = video.VideoUrl.Replace("www.mamaozenma.sk", "mamaozenma.joj.sk");
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
 
             Match pageId = Regex.Match(baseWebData, JojUtil.pageIdRegex);

@@ -24,10 +24,10 @@ namespace OnlineVideos.Sites.georgius
         private static String showStart = @"<div class='poster'>";
         private static String showEnd = @"</div>";
 
-		private static String showUrlTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>";
+		    private static String showUrlTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>";
         private static String showThumbRegex = @"<img src='(?<showThumbUrl>[^']*)";
 
-        private static String showEpisodesStart = @"<div class=""productsList"">";
+        private static String showEpisodesStart = @"<div class=""productsList";
 
         private static String showEpisodeBlockStart = @"<div class='section_item'>";
         private static String showEpisodeBlockEnd = @"<div class='clearer'>";
