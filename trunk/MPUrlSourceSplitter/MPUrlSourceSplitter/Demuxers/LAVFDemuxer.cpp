@@ -118,6 +118,7 @@ CLAVFDemuxer::CLAVFDemuxer(CCritSec *pLock, ILAVFSettingsInternal *settings, IFi
   , m_bOgg(FALSE)
   , m_bAVI(FALSE)
   , m_bMPEGTS(FALSE)
+  , m_bMPEGPS(FALSE)
   , m_bEVO(FALSE)
   , m_bRM(FALSE)
   , m_bBluRay(FALSE)
@@ -247,7 +248,7 @@ STDMETHODIMP CLAVFDemuxer::OpenInputStream(AVIOContext *byteContext, LPCOLESTR p
     DbgLog((LOG_ERROR, 0, TEXT("::OpenInputStream(): avformat_open_input failed (%d)"), ret));
     goto done;
   }
-  DbgLog((LOG_TRACE, 10, TEXT("::OpenInputStream(): avformat_open_input opened file of type '%S' (took %d seconds)"), m_avFormat->iformat->name, time(NULL) - m_timeOpening));
+  DbgLog((LOG_TRACE, 10, TEXT("::OpenInputStream(): avformat_open_input opened file of type '%S' (took %I64d seconds)"), m_avFormat->iformat->name, time(NULL) - m_timeOpening));
   m_timeOpening = 0;
 
   CHECK_HR(hr = InitAVFormat(pszFileName));
@@ -378,6 +379,7 @@ STDMETHODIMP CLAVFDemuxer::InitAVFormat(LPCOLESTR pszFileName)
   m_bOgg = (_strnicmp(m_pszInputFormat, "ogg", 3) == 0);
   m_bAVI = (_strnicmp(m_pszInputFormat, "avi", 3) == 0);
   m_bMPEGTS = (_strnicmp(m_pszInputFormat, "mpegts", 6) == 0);
+  m_bMPEGPS = (_stricmp(m_pszInputFormat, "mpeg") == 0);
   m_bEVO = ((extension ? _wcsicmp(extension, L".evo") == 0 : TRUE) && _stricmp(m_pszInputFormat, "mpeg") == 0);
   m_bRM = (_stricmp(m_pszInputFormat, "rm") == 0);
 
@@ -670,7 +672,7 @@ STDMETHODIMP CLAVFDemuxer::GetNextPacket(Packet **ppPacket)
 
     pPacket->StreamId = (DWORD)pkt.stream_index;
 
-    if (m_bMPEGTS && !m_bBluRay) {
+    if ((m_bMPEGTS && !m_bBluRay) || m_bMPEGPS) {
       int64_t start_time = av_rescale_q(m_avFormat->start_time, AV_RATIONAL_TIMEBASE, stream->time_base);
       const int64_t pts_diff = pkt.pts - start_time;
       const int64_t dts_diff = pkt.dts - start_time;
@@ -736,6 +738,9 @@ STDMETHODIMP CLAVFDemuxer::GetNextPacket(Packet **ppPacket)
     if (pkt.flags & AV_PKT_FLAG_CORRUPT)
       DbgLog((LOG_TRACE, 10, L"::GetNextPacket() - Signaling Discontinuinty because of corrupt package"));
 #endif
+
+    if (pPacket->rtStart != AV_NOPTS_VALUE)
+      m_rtCurrent = pPacket->rtStart;
 
     av_free_packet(&pkt);
   }
@@ -1739,10 +1744,9 @@ STDMETHODIMP CLAVFDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
     {
       ie = &st->index_entries[index];
 
-      logger->Log(LOGGER_VERBOSE, L"%s: %s: seek to position: %lld, time: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, ie->pos, ie->timestamp);
-
-      if (SUCCEEDED(result))
+      if (SUCCEEDED(result) && (!this->m_bMatroska))
       {
+        logger->Log(LOGGER_VERBOSE, L"%s: %s: seek to position: %lld, time: %lld", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, ie->pos, ie->timestamp);
         int64_t ret = avio_seek(this->m_avFormat->pb, ie->pos, SEEK_SET);
         if (ret < 0)
         {
@@ -2027,6 +2031,8 @@ STDMETHODIMP CLAVFDemuxer::SeekByte(int64_t pos, int flags)
     init_parser(m_avFormat, m_avFormat->streams[i]);
     UpdateParserFlags(m_avFormat->streams[i]);
   }
+
+  m_bVC1SeenTimestamp = FALSE;
 
   return S_OK;
 }
@@ -2476,7 +2482,7 @@ STDMETHODIMP CLAVFDemuxer::CreateStreams()
 
       if (st->start_time != AV_NOPTS_VALUE) {
         st_start_time = av_rescale_q(st->start_time, st->time_base, AV_RATIONAL_TIMEBASE);
-        if (start_time != INT64_MAX && m_bMPEGTS && st->pts_wrap_bits < 60) {
+        if (start_time != INT64_MAX && (m_bMPEGTS || m_bMPEGPS) && st->pts_wrap_bits < 60) {
           int64_t start = av_rescale_q(start_time, AV_RATIONAL_TIMEBASE, st->time_base);
           if (start < (3LL << (st->pts_wrap_bits - 3)) && st->start_time > (3LL << (st->pts_wrap_bits - 2))) {
             start_time = av_rescale_q(start + (1LL << st->pts_wrap_bits), st->time_base, AV_RATIONAL_TIMEBASE);
@@ -2746,6 +2752,9 @@ const CBaseDemuxer::stream *CLAVFDemuxer::SelectAudioStream(std::list<std::strin
     }
   }
 
+  BOOL bImpaired = m_pSettings->GetUseAudioForHearingVisuallyImpaired();
+#define DISPO_IMPAIRED (AV_DISPOSITION_HEARING_IMPAIRED|AV_DISPOSITION_VISUAL_IMPAIRED)
+
   if (!best && !checkedStreams.empty()) {
     // If only one stream is left, just use that one
     if (checkedStreams.size() == 1) {
@@ -2763,6 +2772,12 @@ const CBaseDemuxer::stream *CLAVFDemuxer::SelectAudioStream(std::list<std::strin
         if (m_bRM && (check_nb_f > 0 && best_nb_f <= 0)) {
           best = *sit;
         } else if (!m_bRM || check_nb_f > 0) {
+           if (!(old_stream->disposition & DISPO_IMPAIRED) != !(new_stream->disposition & DISPO_IMPAIRED)) {
+            if ((bImpaired && !(old_stream->disposition & DISPO_IMPAIRED)) || (!bImpaired && !(new_stream->disposition & DISPO_IMPAIRED))) {
+              best = *sit;
+            }
+            continue;
+          }
           // First, check number of channels
           int old_num_chans = old_stream->codec->channels;
           int new_num_chans = new_stream->codec->channels;
@@ -2824,7 +2839,10 @@ const CBaseDemuxer::stream *CLAVFDemuxer::SelectSubtitleStream(std::list<CSubtit
       if (it->dwFlags == 0
         || ((it->dwFlags & SUBTITLE_FLAG_DEFAULT) && (m_avFormat->streams[sit->pid]->disposition & AV_DISPOSITION_DEFAULT))
         || ((it->dwFlags & SUBTITLE_FLAG_FORCED) && (m_avFormat->streams[sit->pid]->disposition & AV_DISPOSITION_FORCED))
-        || ((it->dwFlags & SUBTITLE_FLAG_PGS) && (m_avFormat->streams[sit->pid]->codec->codec_id == CODEC_ID_HDMV_PGS_SUBTITLE))) {
+        || ((it->dwFlags & SUBTITLE_FLAG_IMPAIRED) && (m_avFormat->streams[sit->pid]->disposition & (AV_DISPOSITION_HEARING_IMPAIRED|AV_DISPOSITION_VISUAL_IMPAIRED)))
+        || ((it->dwFlags & SUBTITLE_FLAG_PGS) && (m_avFormat->streams[sit->pid]->codec->codec_id == CODEC_ID_HDMV_PGS_SUBTITLE))
+        || ((it->dwFlags & SUBTITLE_FLAG_NORMAL)
+         && !(m_avFormat->streams[sit->pid]->disposition & (AV_DISPOSITION_DEFAULT|AV_DISPOSITION_FORCED|AV_DISPOSITION_HEARING_IMPAIRED|AV_DISPOSITION_VISUAL_IMPAIRED)))) {
         std::string streamLanguage = sit->language;
         if (does_language_match(it->subtitleLanguage, streamLanguage))
           checkedStreams.push_back(&*sit);
@@ -2863,4 +2881,12 @@ STDMETHODIMP_(int) CLAVFDemuxer::GetPixelFormat(DWORD dwStream)
     return PIX_FMT_NONE;
 
   return m_avFormat->streams[dwStream]->codec->pix_fmt;
+}
+
+STDMETHODIMP_(int) CLAVFDemuxer::GetHasBFrames(DWORD dwStream)
+{
+  if (!m_avFormat || dwStream >= m_avFormat->nb_streams)
+    return -1;
+
+  return m_avFormat->streams[dwStream]->codec->has_b_frames;
 }

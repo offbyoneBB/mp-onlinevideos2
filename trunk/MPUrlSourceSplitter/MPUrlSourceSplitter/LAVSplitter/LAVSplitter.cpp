@@ -347,6 +347,7 @@ STDMETHODIMP CLAVSplitter::LoadDefaults()
   m_settings.videoParsing     = TRUE;
 
   m_settings.StreamSwitchRemoveAudio = FALSE;
+  m_settings.ImpairedAudio    = FALSE;
 
   std::set<FormatInfo>::iterator it;
   for (it = m_InputFormats.begin(); it != m_InputFormats.end(); ++it) {
@@ -687,6 +688,7 @@ STDMETHODIMP CLAVSplitter::InitDemuxer()
   this->m_pInput->SetStop(this->m_pInput->GetNewStop());
 
   m_bMPEGTS = strcmp(m_pDemuxer->GetContainerFormat(), "mpegts") == 0;
+  m_bMPEGPS = strcmp(m_pDemuxer->GetContainerFormat(), "mpeg") == 0;
 
   const CBaseDemuxer::stream *videoStream = m_pDemuxer->SelectVideoStream();
   if (videoStream) {
@@ -940,12 +942,12 @@ HRESULT CLAVSplitter::DeliverPacket(Packet *pPacket)
 
     // Filter PTS values
     // This will try to compensate for timestamp discontinuities in the stream
-    if (m_bMPEGTS) {
+    if (m_bMPEGTS || m_bMPEGPS) {
       if (pPin->m_rtPrev != Packet::INVALID_TIME && !pPin->IsSubtitlePin()) {
         REFERENCE_TIME rt = pPacket->rtStart + m_rtOffset;
         if(_abs64(rt - pPin->m_rtPrev) > MAX_PTS_SHIFT) {
           m_rtOffset += pPin->m_rtPrev - rt;
-          DbgLog((LOG_TRACE, 10, L"::DeliverPacket(): MPEG-TS discontinuity detected, adjusting offset to %I64d", m_rtOffset));
+          DbgLog((LOG_TRACE, 10, L"::DeliverPacket(): MPEG-TS/PS discontinuity detected, adjusting offset to %I64d", m_rtOffset));
         }
       }
       pPacket->rtStart += m_rtOffset;
@@ -1517,7 +1519,7 @@ std::list<CSubtitleSelector> CLAVSplitter::GetSubtitleSelectors()
         if (m_settings.subtitleMode == LAVSubtitleMode_Default)
           tokenList.push_back(token + "|d");
       } else
-        tokenList.push_back(token);
+          tokenList.push_back(token + "|!h");
     }
 
     // Add fallbacks (forced/default)
@@ -1538,7 +1540,7 @@ std::list<CSubtitleSelector> CLAVSplitter::GetSubtitleSelectors()
   // Add the "off" termination element
   tokenList.push_back("*:off");
 
-  std::tr1::regex advRegex("(?:(\\*|[[:alpha:]]+):)?(\\*|[[:alpha:]]+)(?:\\|([fd]+))?");
+  std::tr1::regex advRegex("(?:(\\*|[[:alpha:]]+):)?(\\*|[[:alpha:]]+)(?:\\|(!?)([fdnh]+))?");
   std::list<std::string>::iterator it;
   for (it = tokenList.begin(); it != tokenList.end(); it++) {
     std::tr1::cmatch res;
@@ -1548,16 +1550,27 @@ std::list<CSubtitleSelector> CLAVSplitter::GetSubtitleSelectors()
       selector.audioLanguage = res[1].str().empty() ? "*" : ProbeForISO6392(res[1].str().c_str());
       selector.subtitleLanguage = ProbeForISO6392(res[2].str().c_str());
       selector.dwFlags = 0;
+
       // Parse flags
-      std::string flags = res[3];
+      std::string flags = res[4];
       if (flags.length() > 0) {
         if (flags.find('d') != flags.npos)
           selector.dwFlags |= SUBTITLE_FLAG_DEFAULT;
         if (flags.find('f') != flags.npos)
           selector.dwFlags |= SUBTITLE_FLAG_FORCED;
+        if (flags.find('n') != flags.npos)
+          selector.dwFlags |= SUBTITLE_FLAG_NORMAL;
+        if (flags.find('h') != flags.npos)
+          selector.dwFlags |= SUBTITLE_FLAG_IMPAIRED;
+
+        // Check for flag negation
+        std::string not = res[3];
+        if (not.length() == 1 && not == "!") {
+          selector.dwFlags = (~selector.dwFlags) & 0xFF;
+        }
       }
       selectorList.push_back(selector);
-      DbgLog((LOG_TRACE, 10, L"::GetSubtitleSelectors(): Parsed selector \"%S\" to: %S -> %S (flags: %d)", it->c_str(), selector.audioLanguage.c_str(), selector.subtitleLanguage.c_str(), selector.dwFlags));
+      DbgLog((LOG_TRACE, 10, L"::GetSubtitleSelectors(): Parsed selector \"%S\" to: %S -> %S (flags: 0x%x)", it->c_str(), selector.audioLanguage.c_str(), selector.subtitleLanguage.c_str(), selector.dwFlags));
     } else {
       DbgLog((LOG_ERROR, 10, L"::GetSubtitleSelectors(): Selector string \"%S\" could not be parsed", it->c_str()));
     }
@@ -1759,6 +1772,17 @@ STDMETHODIMP CLAVSplitter::SetAdvancedSubtitleConfig(WCHAR *pAdvancedConfig)
 {
   m_settings.subtitleAdvanced = std::wstring(pAdvancedConfig);
   return SaveSettings();
+}
+
+STDMETHODIMP CLAVSplitter::SetUseAudioForHearingVisuallyImpaired(BOOL bEnabled)
+{
+  m_settings.ImpairedAudio = bEnabled;
+  return SaveSettings();
+}
+
+STDMETHODIMP_(BOOL) CLAVSplitter::GetUseAudioForHearingVisuallyImpaired()
+{
+  return m_settings.ImpairedAudio;
 }
 
 STDMETHODIMP_(std::set<FormatInfo>&) CLAVSplitter::GetInputFormats()

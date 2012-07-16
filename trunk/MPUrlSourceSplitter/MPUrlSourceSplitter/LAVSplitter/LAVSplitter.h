@@ -20,6 +20,8 @@
  *  Contributions by Ti-BEN from the XBMC DSPlayer Project, also under GPLv2
  */
 
+// LAV Filters Git HEAD ffaba0941929a3ffa2cab672d79ef27d689ab420
+
 #pragma once
 
 #ifndef __LAVSPLITTER_DEFINED
@@ -156,6 +158,8 @@ public:
   STDMETHODIMP_(BOOL) GetStreamSwitchRemoveAudio();
   STDMETHODIMP GetAdvancedSubtitleConfig(WCHAR **ppAdvancedConfig);
   STDMETHODIMP SetAdvancedSubtitleConfig(WCHAR *pAdvancedConfig);
+  STDMETHODIMP SetUseAudioForHearingVisuallyImpaired(BOOL bEnabled);
+  STDMETHODIMP_(BOOL) GetUseAudioForHearingVisuallyImpaired();
 
   // ILAVSplitterSettingsInternal
   STDMETHODIMP_(const char*) GetInputFormat() { if (m_pDemuxer) return m_pDemuxer->GetContainerFormat(); return NULL; }
@@ -164,6 +168,7 @@ public:
 
   STDMETHODIMP_(DWORD) GetStreamFlags(DWORD dwStream) { if (m_pDemuxer) return m_pDemuxer->GetStreamFlags(dwStream); return 0; }
   STDMETHODIMP_(int) GetPixelFormat(DWORD dwStream) { if (m_pDemuxer) return m_pDemuxer->GetPixelFormat(dwStream); return PIX_FMT_NONE; }
+  STDMETHODIMP_(int) GetHasBFrames(DWORD dwStream){ if (m_pDemuxer) return m_pDemuxer->GetHasBFrames(dwStream); return -1; }
 
   // IDownload interface
   STDMETHODIMP Download(LPCOLESTR uri, LPCOLESTR fileName);
@@ -282,6 +287,7 @@ private:
   REFERENCE_TIME m_rtOffset;
 
   BOOL m_bMPEGTS;
+  BOOL m_bMPEGPS;
 
   // flushing
   bool m_fFlushing;
@@ -302,6 +308,7 @@ private:
     BOOL videoParsing;
 
     BOOL StreamSwitchRemoveAudio;
+    BOOL ImpairedAudio;
 
     std::map<std::string, BOOL> formats;
   } m_settings;
