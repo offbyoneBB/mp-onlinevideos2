@@ -38,7 +38,7 @@ namespace OnlineVideos.Sites.georgius
 
         private static String showEpisodeUrlAndTitleRegex = @"<option value=""(?<showUrl>[^""]+)"">(?<showTitle>[^<]+)";
 
-        private static String videoUrlBlockStart = @"Vyber video:";
+        private static String videoUrlBlockStart = @"!readCookie";
         private static String videoUrlBlockEnd = @"$(clip)";
         private static String videoUrlRegex = @"player.addClip\(""(?<videoUrl>[^""]+)";
         private static String subtitleUrlRegex = @"""subtitles"":""(?<subtitleUrl>[^""]+)";

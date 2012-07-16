@@ -20,12 +20,12 @@ namespace OnlineVideos.Sites.georgius
         private static String dynamicCategoryStart = @"<div class=""j-filter-item"">";
         private static String showStart = @"<div class=""j-filter-item"">";
         private static String showUrlRegex = @"<li class=""trailer""><a href=""(?<showUrl>[^""]+)""";
-        private static String showTitleRegex = @"<strong><a href=""[^""]+"" >(?<showTitle>[^<]+)";
+        private static String showTitleRegex = @"<strong><a href=""[^""]+"" title=""[^""]+"" >(?<showTitle>[^<]+)";
 
         private static String showEpisodesStart = @"<div class=""b b-table";
         private static String showEpisodeStart = @"<tr>";
         private static String showEpisodeDateRegex = @"<td><b>(?<showEpisodeDate>[^<]*)";
-        private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showEpisodeUrl>[^""]+)"">(?<showEpisodeTitle>[^<]+)";
+        private static String showEpisodeUrlAndTitleRegex = @"<a title=""[^""]+"" href=""(?<showEpisodeUrl>[^""]+)"">(?<showEpisodeTitle>[^<]+)";
 
         private static String showEpisodeNextPageRegex = @"<a title=""Nasledujúce"" href=""(?<nextPageUrl>[^""]+)""";
 
