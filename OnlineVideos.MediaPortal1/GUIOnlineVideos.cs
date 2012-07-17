@@ -2405,7 +2405,10 @@ namespace OnlineVideos.MediaPortal1
             g_Player.Factory = factory;
             try
             {
-                g_Player.Play(lsUrl, g_Player.MediaType.Video);
+				if (factory.PreparedPlayer is OnlineVideosPlayer)
+					g_Player.Play("http://localhost/OnlineVideo.mp4", g_Player.MediaType.Video); // hack to get around the MP 1.3 Alpha bug with non http URLs
+				else
+					g_Player.Play(lsUrl, g_Player.MediaType.Video);
             }
             catch (Exception ex) // since many plugins attach to the g_Player.PlayBackStarted event, this might throw unexpected errors
             {

@@ -75,9 +75,10 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public IPlayer Create(string filename, g_Player.MediaType type)
         {
-            if (filename != PreparedUrl)
+			// hack to get around the MP 1.3 Alpha bug with non http URLs
+            /*if (filename != PreparedUrl)
                 throw new OnlineVideosException("Cannot play a different url than this PlayerFactory was created with!");
-            else
+            else*/
                 return PreparedPlayer;
         }              
     }

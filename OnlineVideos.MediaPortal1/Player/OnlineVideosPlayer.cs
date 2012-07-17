@@ -505,12 +505,12 @@ namespace OnlineVideos.MediaPortal1.Player
             m_bVisible = false;
             m_iVolume = 100;
             m_state = PlayState.Init;
-            m_strCurrentFile = strFile;
+			if (strFile != "http://localhost/OnlineVideo.mp4") m_strCurrentFile = strFile; // hack to get around the MP 1.3 Alpha bug with non http URLs
             m_bFullScreen = true;
             m_ar = GUIGraphicsContext.ARType;
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
             _updateNeeded = true;
-            Log.Instance.Info("OnlineVideosPlayer: Play '{0}'", strFile);
+			Log.Instance.Info("OnlineVideosPlayer: Play '{0}'", m_strCurrentFile);
 
             m_bStarted = false;
             if (!GetInterfaces())
@@ -521,9 +521,9 @@ namespace OnlineVideos.MediaPortal1.Player
             }
 
             // if we are playing a local file set the cache file so refresh rate adaption can happen
-            Uri uri = new Uri(strFile);
+			Uri uri = new Uri(m_strCurrentFile);
             string protocol = uri.Scheme.Substring(0, Math.Min(uri.Scheme.Length, 4));
-            if (protocol == "file") cacheFile = strFile;
+			if (protocol == "file") cacheFile = m_strCurrentFile;
 
             AdaptRefreshRateFromCacheFile();
 
