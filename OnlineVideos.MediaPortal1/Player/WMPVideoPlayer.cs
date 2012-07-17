@@ -81,7 +81,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     if (wmpCtrl.playState.Equals(WMPPlayState.wmppsReady))
                     {
                         GUIWaitCursor.Hide(); // hide the wait cursor
-                        Log.Instance.Info("WMPVideoPlayer: error encountered while trying to play {0}", CurrentFile);
+                        Log.Instance.Info("WMPVideoPlayer: error encountered while trying to play {0}", currentFile);
                         bufferCompleted = true;
                         PlaybackEnded();
                     }
@@ -319,10 +319,10 @@ namespace OnlineVideos.MediaPortal1.Player
             get { return playState == PlayState.Ended; }
         }
 
-        public override string CurrentFile
-        {
-            get { return currentFile; }
-        }
+		public override string CurrentFile // hack to get around the MP 1.3 Alpha bug with non http URLs
+		{
+			get { return "http://localhost/OnlineVideo.mp4"; }
+		}
 
         public override bool HasVideo
         {
@@ -425,6 +425,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public bool GoFullscreen { get; set; }
         public string SubtitleFile { get; set; }
+		public string PlaybackUrl { get { return currentFile; } }
 
         #endregion
     }

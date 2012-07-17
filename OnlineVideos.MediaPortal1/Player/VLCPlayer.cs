@@ -247,10 +247,10 @@ namespace OnlineVideos.MediaPortal1.Player
             SeekAbsolute(dPercent);
         }
 
-        public override string CurrentFile
-        {
-            get { return url; }
-        }
+		public override string CurrentFile // hack to get around the MP 1.3 Alpha bug with non http URLs
+		{
+			get { return "http://localhost/OnlineVideo.mp4"; }
+		}
 
         public override bool HasVideo
         {
@@ -279,6 +279,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public bool GoFullscreen { get; set; }
         public string SubtitleFile { get; set; }
+		public string PlaybackUrl { get { return url; } }
 
         #endregion
 

@@ -144,6 +144,11 @@ namespace OnlineVideos.MediaPortal1.Player
             m_strCurrentFile = url;
         }
 
+		public override string CurrentFile // hack to get around the MP 1.3 Alpha bug with non http URLs
+		{
+			get { return "http://localhost/OnlineVideo.mp4"; }
+		}
+
         protected override bool GetInterfaces()
         {
             if (graphBuilder != null) // graph was already started and playback file buffered
@@ -163,7 +168,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
-                    if (graphBuilder != null && GetSourceFilterName(CurrentFile) == MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName) // only when progress reporting is possible
+					if (graphBuilder != null && GetSourceFilterName(m_strCurrentFile) == MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName) // only when progress reporting is possible
                     {
                         IBaseFilter sourceFilter = null;
                         try
@@ -230,7 +235,7 @@ namespace OnlineVideos.MediaPortal1.Player
         /// <returns>true, if the url can be buffered (a graph was started), false if it can't be and null if an error occured building the graph</returns>
         public bool? PrepareGraph()
         {
-            string sourceFilterName = GetSourceFilterName(CurrentFile);
+			string sourceFilterName = GetSourceFilterName(m_strCurrentFile);
 
             if (!string.IsNullOrEmpty(sourceFilterName))
             {
@@ -295,7 +300,7 @@ namespace OnlineVideos.MediaPortal1.Player
             IBaseFilter sourceFilter = null;
             try
             {
-                string sourceFilterName = GetSourceFilterName(CurrentFile);
+				string sourceFilterName = GetSourceFilterName(m_strCurrentFile);
 
                 int result = graphBuilder.FindFilterByName(sourceFilterName, out sourceFilter);
                 if (result != 0)
@@ -306,7 +311,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     return false;
                 }
 
-                result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
+				result = ((IFileSourceFilter)sourceFilter).Load(m_strCurrentFile, null);
 
                 if (result != 0)
                 {
@@ -318,7 +323,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
 
-                if (sourceFilter is IAMOpenProgress && !CurrentFile.Contains("live=true") && !CurrentFile.Contains("RtmpLive=1"))
+				if (sourceFilter is IAMOpenProgress && !m_strCurrentFile.Contains("live=true") && !m_strCurrentFile.Contains("RtmpLive=1"))
                 {
                     // buffer before starting playback
                     bool filterConnected = false;
@@ -466,7 +471,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 if (Log.Instance.LogLevel < log4net.Core.Level.Debug)
                 {
-                    string sourceFilterName = GetSourceFilterName(CurrentFile);
+					string sourceFilterName = GetSourceFilterName(m_strCurrentFile);
                     if (!string.IsNullOrEmpty(sourceFilterName))
                     {
                         IBaseFilter sourceFilter;
@@ -625,7 +630,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
             if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
-            msg.Label = strFile;
+            msg.Label = CurrentFile;
             GUIWindowManager.SendThreadMessage(msg);
             m_state = PlayState.Playing;
             m_iPositionX = GUIGraphicsContext.VideoWindow.X;
@@ -660,6 +665,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public bool GoFullscreen { get; set; }
         public string SubtitleFile { get; set; }
+		public string PlaybackUrl { get { return m_strCurrentFile; } }
 
         #endregion
 
