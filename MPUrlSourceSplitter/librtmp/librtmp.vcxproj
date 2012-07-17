@@ -22,7 +22,6 @@
     <ClInclude Include="http.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="rtmp.h" />
-    <ClInclude Include="rtmpe10.h" />
     <ClInclude Include="rtmp_sys.h" />
   </ItemGroup>
   <ItemGroup>
@@ -31,7 +30,6 @@
     <ClCompile Include="log.c" />
     <ClCompile Include="parseurl.c" />
     <ClCompile Include="rtmp.c" />
-    <ClCompile Include="rtmpe10.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BDA0CC2F-E51F-4CD0-AE70-D6073C120026}</ProjectGuid>

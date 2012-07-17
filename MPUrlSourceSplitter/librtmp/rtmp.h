@@ -151,14 +151,12 @@ extern "C"
     AVal playpath;	/* passed in explicitly */
     AVal tcUrl;
     AVal swfUrl;
-    AVal swfHash;
     AVal pageUrl;
     AVal app;
     AVal auth;
     AVal flashVer;
     AVal subscribepath;
     AVal usherToken;
-    AVal WeebToken;
     AVal token;
     AMFObject extras;
     int edepth;
@@ -175,15 +173,9 @@ extern "C"
     int lFlags;
 
     int swfAge;
-    int swfSize;
 
     int protocol;
-    int ConnectPacket;
-    int CombineConnectPacket;
-    int redirected;
     int timeout;		/* connection timeout in seconds */
-    AVal Extras;
-    AVal HandshakeResponse;
 
     unsigned short socksport;
     unsigned short port;
@@ -312,7 +304,6 @@ extern "C"
 			AVal *flashVer,
 			AVal *subscribepath,
 			AVal *usherToken,
-      AVal *WeebToken,
 			int dStart,
 			int dStop, int bLiveStream, long int timeout);
 
