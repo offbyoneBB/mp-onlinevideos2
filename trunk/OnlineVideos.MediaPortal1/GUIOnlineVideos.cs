@@ -3219,7 +3219,7 @@ namespace OnlineVideos.MediaPortal1
 
                     System.Threading.Thread.Sleep(2000);
 
-                    string quality = video.PlaybackOptions != null ? video.PlaybackOptions.FirstOrDefault(po => po.Value == g_Player.CurrentFile).Key : null;
+                    string quality = video.PlaybackOptions != null ? video.PlaybackOptions.FirstOrDefault(po => po.Value == (g_Player.Player as OVSPLayer).PlaybackUrl).Key : null;
 
                     string titleToShow = "";
                     if (!string.IsNullOrEmpty(alternativeTitle))
