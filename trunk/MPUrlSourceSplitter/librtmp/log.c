@@ -52,7 +52,7 @@ static const char *levels[] = {
 //	vsnprintf(str, MAX_PRINT_LEN-1, format, vl);
 //
 //	/* Filter out 'no-name' */
-//  if (RTMP_debuglevel < RTMP_LOGDEBUG && strstr(str, "no-name") != NULL)
+//	if ( RTMP_debuglevel<RTMP_LOGALL && strstr(str, "no-name" ) != NULL )
 //		return;
 //
 //	if ( !fmsg ) fmsg = stderr;

@@ -262,8 +262,3 @@ Comment: in HandleCtrl() method replace 'else if (r->Link.SWFSize)'
 Code:
 
 /*else*/ if (r->Link.SWFSize)
-
---------------------------------------------
-
-Comment: after applying all above changes, download latest sources from https://github.com/K-S-V/Scripts/downloads and apply all differencies
-Code:

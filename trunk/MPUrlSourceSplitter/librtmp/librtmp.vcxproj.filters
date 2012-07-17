@@ -45,9 +45,6 @@
     <ClInclude Include="dhgroups.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="rtmpe10.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="amf.c">
@@ -63,9 +60,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rtmp.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rtmpe10.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
