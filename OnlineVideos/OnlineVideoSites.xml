@@ -618,6 +618,23 @@
     </Site>
     <Site name="Sesamestreet" util="SesameStreet" agecheck="false" enabled="true" lang="en">
       <Description>Sesamestreet videos</Description>
+      <Configuration>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]+)".*?span>(?<title>[^<]+)<]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="thumb-image">.*?<img\ssrc="(?<ImageUrl>[^"]+)".*?a\shref="(?<VideoUrl>[^"]+)".*?<span>(?<Title>[^<]+)<.*?class="description">(?<Description>[^<]+)<]]></item>
+        <item key="videoUrlRegEx"><![CDATA[http://www\.sesamestreet\.org/video_player/-/pgpv/videoplayer/0/(?<m0>[^/]*)/]]></item>
+        <item key="videoUrlFormatString"><![CDATA[http://www.sesamestreet.org/{0}]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\sclass="button\smore"\shref="(?<url>[^"]*)">\s<span>More</span>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.sesamestreet.org]]></item>
+        <item key="searchUrl"><![CDATA[http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-2&p_p_col_count=1&_browsegpv_WAR_browsegpvportlet_cmd=search&_browsegpv_WAR_browsegpvportlet_assetType=VIDEO&_browsegpv_WAR_browsegpvportlet_keywords={0}&_browsegpv_WAR_browsegpvportlet_sortType=asc&_browsegpv_WAR_browsegpvportlet_field=&_browsegpv_WAR_browsegpvportlet_viewType=tiled&_browsegpv_WAR_browsegpvportlet_subject=&_browsegpv_WAR_browsegpvportlet_theme=&_browsegpv_WAR_browsegpvportlet_character=&_browsegpv_WAR_browsegpvportlet_muppetURL=]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="All">http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&amp;p_p_lifecycle=0&amp;p_p_state=normal&amp;p_p_mode=view&amp;p_p_col_id=column-2&amp;p_p_col_count=1&amp;_browsegpv_WAR_browsegpvportlet_cmd=search&amp;_browsegpv_WAR_browsegpvportlet_assetType=VIDEO&amp;_browsegpv_WAR_browsegpvportlet_keywords=&amp;_browsegpv_WAR_browsegpvportlet_sortType=asc&amp;_browsegpv_WAR_browsegpvportlet_field=title&amp;_browsegpv_WAR_browsegpvportlet_viewType=tiled&amp;_browsegpv_WAR_browsegpvportlet_subject=&amp;_browsegpv_WAR_browsegpvportlet_theme=&amp;_browsegpv_WAR_browsegpvportlet_character=&amp;_browsegpv_WAR_browsegpvportlet_muppetURL=</Category>
+        <Category xsi:type="RssLink" name="By Subject" thumb="http://www.sesamestreet.org/sesamestreet-theme/images/custom/rounded-container/browse_by_subject_bg.png">http://www.sesamestreet.org/browsevideosbysubject</Category>
+        <Category xsi:type="RssLink" name="By Theme" thumb="http://www.sesamestreet.org/sesamestreet-theme/images/custom/rounded-container/browse_by_theme_bg.png">http://www.sesamestreet.org/browsevideosbytheme</Category>
+        <Category xsi:type="RssLink" name="By Character" thumb="http://www.sesamestreet.org/sesamestreet-theme/images/custom/rounded-container/browse_by_characters_bg.png">http://www.sesamestreet.org/browsevideosbycharacter</Category>
+        <Category xsi:type="RssLink" name="Songs">http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&amp;p_p_lifecycle=1&amp;p_p_state=normal&amp;p_p_mode=view&amp;p_p_col_id=column-2&amp;p_p_col_count=1&amp;_browsegpv_WAR_browsegpvportlet_assetType=SONG</Category>
+        <Category xsi:type="RssLink" name="Classic clips">http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&amp;p_p_lifecycle=1&amp;p_p_state=normal&amp;p_p_mode=view&amp;p_p_col_id=column-2&amp;p_p_col_count=1&amp;_browsegpv_WAR_browsegpvportlet_assetType=CLASSIC</Category>
+      </Categories>
     </Site>
     <Site name="ThatGuyWithTheGlasses" util="ThatGuyWithTheGlasses" agecheck="false" enabled="true" lang="en">
       <Description>That guy with the glasses</Description>
