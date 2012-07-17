@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Net;
 using System.IO;
 using OnlineVideos.Sites.brownardPRIVATE;
+using System.Xml;
 
 namespace OnlineVideos.Sites
 {
@@ -26,6 +27,8 @@ namespace OnlineVideos.Sites
         string proxyUsername = null;
         [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a password, set it here.")]
         string proxyPassword = null;
+        [Category("OnlineVideosUserConfiguration"), Description("Whether to download subtitles")]
+        protected bool RetrieveSubtitles = false;
         [Category("OnlineVideosUserConfiguration"), Description("Select stream automatically?")]
         protected bool AutoSelectStream = false;
         [Category("OnlineVideosUserConfiguration"), Description("Stream quality preference\r\n1 is low, 5 high")]
@@ -309,26 +312,37 @@ namespace OnlineVideos.Sites
             else if (video.VideoUrl.StartsWith("sim"))
                 return getLiveUrl(video);
 
-            string xml = getPlaylist(video.VideoUrl);
-            
-            string res = new Regex("<ClosedCaptioningURIs.+", RegexOptions.Singleline).Match(xml).Groups[0].Value;
-            string rtmpUrl = new Regex("(rtmp[^\"]+)").Match(res).Groups[1].Value.Replace("&amp;", "&");
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(getPlaylist(video.VideoUrl));
+            XmlNode videoEntry = doc.SelectSingleNode("//VideoEntries/Video");
+            if (videoEntry == null)
+                return "";
 
-            string[] streams = res.Split(new string[] { "<MediaFile delivery=" }, StringSplitOptions.RemoveEmptyEntries);
+            XmlNode node;
+            if (RetrieveSubtitles)
+            {
+                node = videoEntry.SelectSingleNode("./ClosedCaptioningURIs");
+                //if (node != null && OnlineVideos.Utils.IsValidUri(node.InnerText))
+                    //video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(GetWebData(node.InnerText));
+            }
+            node = videoEntry.SelectSingleNode("./MediaFiles");
+            if(node == null || node.Attributes["base"] == null)
+                return "";
+            string rtmpUrl = node.Attributes["base"].Value;
 
             SortedList<string, string> options = new SortedList<string, string>(new StreamComparer());
-            for (int x = 1; x < streams.Length; x++ )
+            foreach (XmlNode mediaFile in node.SelectNodes("./MediaFile"))
             {
-                string stream = streams[x];
-                if (!stream.StartsWith("\"Streaming"))
+                if (mediaFile.Attributes["delivery"] == null || mediaFile.Attributes["delivery"].Value != "Streaming")
                     continue;
-                Match match = new Regex(@"bitrate=""([^""]+)"" base=""([^""]*)""").Match(stream);
-                string title = match.Groups[1].Value; int br;
-                if (int.TryParse(title, out br))
-                    title = string.Format("{0} kbps", br / 1000);
-
-                string playPath = new Regex("<URL><![[]CDATA[[]([^]]+)").Match(stream).Groups[1].Value;
-
+                string title = ""; int br;
+                if (mediaFile.Attributes["bitrate"] != null)
+                {
+                    title = mediaFile.Attributes["bitrate"].Value;
+                    if (int.TryParse(title, out br))
+                        title = string.Format("{0} kbps", br / 1000);
+                }
+                string playPath = mediaFile.InnerText;
                 string url = new MPUrlSourceFilter.RtmpUrl(rtmpUrl)
                 {
                     PlayPath = playPath,
@@ -347,7 +361,7 @@ namespace OnlineVideos.Sites
 
             return StreamComparer.GetBestPlaybackUrl(video.PlaybackOptions, StreamQualityPref, AutoSelectStream);
         }
-        
+
         string getPlaylist(string id)
         {
             System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
@@ -365,18 +379,17 @@ namespace OnlineVideos.Sites
             if (proxy != null)
                 req.Proxy = proxy;
 
-            Stream stm = req.GetRequestStream();
-            doc.Save(stm);
-            stm.Close();
+            Stream stm;
+            using (stm = req.GetRequestStream())
+                doc.Save(stm);
 
-            WebResponse resp = req.GetResponse();
-            stm = resp.GetResponseStream();
-            StreamReader r = new StreamReader(stm);
-
-            string ret = r.ReadToEnd();
-            r.Close();
-
-            return ret;
+            using (stm = req.GetResponse().GetResponseStream())
+            using (StreamReader r = new StreamReader(stm))
+            {
+                string ret = r.ReadToEnd();
+                Log.Debug("ITV Response:\r\n\t {0}", ret);
+                return ret;
+            }
         }
 
         #region Search

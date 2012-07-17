@@ -14,7 +14,9 @@ namespace OnlineVideos.Sites
 		[Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a username, set it here.")]
 		string proxyUsername = null;
 		[Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a password, set it here.")]
-		string proxyPassword = null;
+        string proxyPassword = null;
+        [Category("OnlineVideosUserConfiguration"), Description("Whether to download subtitles")]
+        protected bool RetrieveSubtitles = false;
         [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
         string searchUrl = "http://feeds.bbc.co.uk/iplayer/search/tv/?q={0}";
         [Category("OnlineVideosUserConfiguration"), Description("Group similar items from the rss feeds into subcategories.")]
@@ -61,14 +63,17 @@ namespace OnlineVideos.Sites
             nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
-            XmlNode captionNode = doc.SelectSingleNode("//ns1:media[@kind='captions']", nsmRequest);
-            if (captionNode != null)
+            if (RetrieveSubtitles)
             {
-                XmlNode captionConnection = captionNode.SelectSingleNode("ns1:connection", nsmRequest);
-                if (captionConnection != null && captionConnection.Attributes["href"] != null)
+                XmlNode captionNode = doc.SelectSingleNode("//ns1:media[@kind='captions']", nsmRequest);
+                if (captionNode != null)
                 {
-                    string sub = GetWebData(captionConnection.Attributes["href"].Value);
-                    video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(sub);
+                    XmlNode captionConnection = captionNode.SelectSingleNode("ns1:connection", nsmRequest);
+                    if (captionConnection != null && captionConnection.Attributes["href"] != null)
+                    {
+                        string sub = GetWebData(captionConnection.Attributes["href"].Value);
+                        //video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(sub);
+                    }
                 }
             }
 
