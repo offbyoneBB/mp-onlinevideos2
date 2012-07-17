@@ -8,82 +8,26 @@ using System.Web;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Drawing;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
-    public class SesameStreetUtil : SiteUtilBase
+    public class SesameStreetUtil : GenericSiteUtil
     {
-        private string baseUrl = "http://www.sesamestreet.org";
-
-        private string subCategoryRegex = @"<a\shref=""(?<url>[^""]+)"".*?span>(?<title>[^<]+)<";
-        private string videoListRegex = @"<div\sclass=""thumb-image"">.*?<img\ssrc=""(?<thumb>[^""]+)"".*?a\shref=""(?<url>[^""]+)"".*?<span>(?<title>[^<]+)<.*?class=""description"">(?<descr>[^<]+)<";
-        private string urlRegex = @",file:""(?<url>[^""]+)""";
-        private int pageNr = 1;
-        private bool hasNextPage = false;
-        private string firstPageUrl;
-
-        public SesameStreetUtil()
-        {
-        }
-
-        private Regex regEx_SubCategory;
-        private Regex regEx_VideoList;
-        private Regex regEx_GetUrl;
-
-        public override void Initialize(SiteSettings siteSettings)
-        {
-            base.Initialize(siteSettings);
-
-            regEx_SubCategory = new Regex(subCategoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
-            regEx_GetUrl = new Regex(urlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
-            regEx_VideoList = new Regex(videoListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
-        }
 
         public override int DiscoverDynamicCategories()
         {
-            Settings.Categories.Clear();
-
-            RssLink cat = new RssLink();
-            cat.Name = "All";
-            cat.Url = @"http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-2&p_p_col_count=1&_browsegpv_WAR_browsegpvportlet_cmd=search&_browsegpv_WAR_browsegpvportlet_assetType=VIDEO&_browsegpv_WAR_browsegpvportlet_keywords=&_browsegpv_WAR_browsegpvportlet_sortType=asc&_browsegpv_WAR_browsegpvportlet_field=title&_browsegpv_WAR_browsegpvportlet_viewType=tiled&_browsegpv_WAR_browsegpvportlet_subject=&_browsegpv_WAR_browsegpvportlet_theme=&_browsegpv_WAR_browsegpvportlet_character=&_browsegpv_WAR_browsegpvportlet_muppetURL=";
-            cat.HasSubCategories = false;
-            Settings.Categories.Add(cat);
-
-            cat = new RssLink();
-            cat.Name = "By Subject";
-            cat.Url = @"http://www.sesamestreet.org/browsevideosbysubject";
-            cat.Other = @"http://www.sesamestreet.org/sesamestreet-theme/images/custom/rounded-container/browse_by_subject_bg.png";
-            cat.HasSubCategories = true;
-            Settings.Categories.Add(cat);
-
-            cat = new RssLink();
-            cat.Name = "By Theme";
-            cat.Url = @"http://www.sesamestreet.org/browsevideosbytheme";
-            cat.Other = @"http://www.sesamestreet.org/sesamestreet-theme/images/custom/rounded-container/browse_by_theme_bg.png";
-            cat.HasSubCategories = true;
-            Settings.Categories.Add(cat);
-
-            cat = new RssLink();
-            cat.Name = "By Character";
-            cat.Url = @"http://www.sesamestreet.org/browsevideosbycharacter";
-            cat.Other = @"http://www.sesamestreet.org/sesamestreet-theme/images/custom/rounded-container/browse_by_characters_bg.png";
-            cat.HasSubCategories = true;
-            Settings.Categories.Add(cat);
-
-            cat = new RssLink();
-            cat.Name = "Songs";
-            cat.Url = @"http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&p_p_lifecycle=1&p_p_state=normal&p_p_mode=view&p_p_col_id=column-2&p_p_col_count=1&_browsegpv_WAR_browsegpvportlet_assetType=SONG";
-            cat.HasSubCategories = false;
-            Settings.Categories.Add(cat);
-
-            cat = new RssLink();
-            cat.Name = "Classic clips";
-            cat.Url = @"http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&p_p_lifecycle=1&p_p_state=normal&p_p_mode=view&p_p_col_id=column-2&p_p_col_count=1&_browsegpv_WAR_browsegpvportlet_assetType=CLASSIC";
-            cat.HasSubCategories = false;
-            Settings.Categories.Add(cat);
-
-            Settings.DynamicCategoriesDiscovered = true;
-            return Settings.Categories.Count;
+            int res = base.DiscoverDynamicCategories();
+            foreach (RssLink cat in Settings.Categories)
+            {
+                cat.HasSubCategories = cat.Url.IndexOf('?') == -1;
+                if (!String.IsNullOrEmpty(cat.Thumb))
+                {
+                    cat.Other = cat.Thumb;
+                    cat.Thumb = null;
+                }
+            }
+            return res;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
@@ -99,7 +43,7 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(webData))
             {
                 List<string> names = new List<string>();
-                Match m = regEx_SubCategory.Match(webData);
+                Match m = regEx_dynamicSubCategories.Match(webData);
                 while (m.Success)
                 {
                     RssLink cat = new RssLink();
@@ -125,7 +69,7 @@ namespace OnlineVideos.Sites
                     {
                         Bitmap png = null;
 
-                        string bareFinalUrl = System.IO.Path.ChangeExtension(pngName, String.Empty);                        
+                        string bareFinalUrl = System.IO.Path.ChangeExtension(pngName, String.Empty);
                         for (int i = 0; i < nWithImage; i++)
                         {
                             string finalUrl = bareFinalUrl + '_' + i.ToString() + ".PNG";
@@ -165,81 +109,29 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
-            string data = GetWebData(video.VideoUrl);
-            data = baseUrl + GetSubString(data, @"""configUrl"",escape(""", @"""");
+            string vidUrl = base.getUrl(video);
+            string videoId = vidUrl.Split('/')[3];
 
-            string uid = GetSubString(data, "&uid=", "&");
+            string postData = String.Format(@"uid={0}&type=video&capabilities=%7B%22isIE%22%3Atrue%2C%22isFirefox%22%3Afalse%2C%22isChrome%22%3Afalse%2C%22isWebKit%22%3Afalse%2C%22isMobile%22%3Afalse%2C%22isTablet%22%3Afalse%2C%22isHandset%22%3Afalse%2C%22isIOS%22%3Afalse%2C%22isIOSHandset%22%3Afalse%2C%22isIOSTablet%22%3Afalse%2C%22isAndroid%22%3Afalse%2C%22isAndroidTablet%22%3Afalse%2C%22isAndroidHandset%22%3Afalse%2C%22isKindle%22%3Afalse%2C%22hasCanvasSupport%22%3Afalse%2C%22hasTouchSupport%22%3Afalse%2C%22hasFlashSupport%22%3Atrue%2C%22hasVideoSupport%22%3Afalse%7D&context=%7B%22userId%22%3A%2210097%22%2C%22groupId%22%3A%2210171%22%2C%22privateLayout%22%3Afalse%2C%22layoutId%22%3A%221368%22%7D&serviceClassName=org.sesameworkshop.service.UmpServiceUtil&serviceMethodName=getMediaItem&serviceParameters=%5B%22uid%22%2C%22type%22%2C%22capabilities%22%2C%22context%22%5D&doAsUserId=",
+                videoId);
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load(data);
-            XmlNodeList nl = doc.SelectNodes(@"//itemList/video/myStreetUrl");
-            foreach (XmlNode nd in nl)
+            string data = GetWebDataFromPost(@"http://www.sesamestreet.org/c/portal/json_service", postData, referer: vidUrl);
+
+            JObject contentData = (JObject)JObject.Parse(data);
+            string url = null;
+            JArray items = contentData["content"]["source"] as JArray;
+            if (items != null)
             {
-                if (nd.InnerText.Contains(uid))
+                video.PlaybackOptions = new Dictionary<string, string>();
+                foreach (JToken item in items)
                 {
-                    string url = nd.ParentNode.SelectSingleNode("filename").InnerText;
-                    if (url.StartsWith("rtmp")) return url;
-                    //return url;
+                    url = item.Value<string>("fileName");
+                    int bitRate = item.Value<int>("bitRate");
+                    bitRate = Convert.ToInt32(bitRate / 1024);
+                    video.PlaybackOptions.Add(bitRate.ToString() + 'K', url);
                 }
             }
-            return null;
-        }
-
-        public override List<VideoInfo> getVideoList(Category category)
-        {
-            firstPageUrl = ((RssLink)category).Url;
-            pageNr = 1;
-            return getPagedVideoList(firstPageUrl);
-        }
-
-        public override List<VideoInfo> getNextPageVideos()
-        {
-            pageNr++;
-            return getPagedVideoList(firstPageUrl);
-        }
-
-        private List<VideoInfo> getPagedVideoList(string url)
-        {
-            if (pageNr > 1)
-                url = url + "&_browsegpv_WAR_browsegpvportlet_pageNumber=" + pageNr.ToString();
-            string webData = GetWebData(url);
-            hasNextPage = webData.Contains(@"<span>More</span>");
-            webData = GetSubString(webData, "tile-content-display", "footer");
-            List<VideoInfo> videos = new List<VideoInfo>();
-
-            if (!string.IsNullOrEmpty(webData))
-            {
-                Match m = regEx_VideoList.Match(webData);
-                while (m.Success)
-                {
-                    VideoInfo video = new VideoInfo();
-
-                    video.Title = HttpUtility.HtmlDecode(m.Groups["title"].Value);
-                    video.VideoUrl = m.Groups["url"].Value;
-                    video.ImageUrl = baseUrl + m.Groups["thumb"].Value;
-                    video.Description = HttpUtility.HtmlDecode(m.Groups["descr"].Value);
-                    videos.Add(video);
-                    m = m.NextMatch();
-                }
-            }
-            return videos;
-        }
-
-        public override bool HasNextPage
-        {
-            get { return hasNextPage; }
-        }
-
-        public override bool CanSearch
-        {
-            get { return true; }
-        }
-
-        public override List<VideoInfo> Search(string query)
-        {
-            string searchUrl = @"http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-2&p_p_col_count=1&_browsegpv_WAR_browsegpvportlet_cmd=search&_browsegpv_WAR_browsegpvportlet_assetType=VIDEO&_browsegpv_WAR_browsegpvportlet_keywords={0}&_browsegpv_WAR_browsegpvportlet_sortType=asc&_browsegpv_WAR_browsegpvportlet_field=&_browsegpv_WAR_browsegpvportlet_viewType=tiled&_browsegpv_WAR_browsegpvportlet_subject=&_browsegpv_WAR_browsegpvportlet_theme=&_browsegpv_WAR_browsegpvportlet_character=&_browsegpv_WAR_browsegpvportlet_muppetURL=";
-            firstPageUrl = String.Format(searchUrl, query);
-            return getPagedVideoList(firstPageUrl);
+            return url;
         }
 
         private string GetSubString(string s, string start, string until)
