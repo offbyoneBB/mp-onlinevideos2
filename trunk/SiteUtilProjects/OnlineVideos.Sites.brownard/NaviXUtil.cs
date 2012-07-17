@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using OnlineVideos.Sites.Utils.NaviX;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
     public class NaviXUtil : SiteUtilBase
     {
-        Dictionary<string, string> searchableCats = null;
-
-        
+        Dictionary<string, string> searchableCats = null;        
         DateTime lastUpdate = DateTime.MinValue;
         public override int DiscoverDynamicCategories()
         {
@@ -40,26 +39,18 @@ namespace OnlineVideos.Sites
             string plUrl = (parentCategory as RssLink).Url;
             searchableCats = new Dictionary<string, string>();
             parentCategory.SubCategories = new List<Category>();
-
-            bool isSort = false;
-            if (parentCategory.ParentCategory != null)
-            {
-                NaviXMediaItem parentItem = parentCategory.ParentCategory.Other as NaviXMediaItem;
-                isSort = parentItem != null && parentItem.Type == "sort";
-            }
-
-            List<Category> subCats = getCats(plUrl, parentCategory, isSort);
-            foreach (Category subCat in subCats)
-            {
-                NaviXMediaItem subcatItem = subCat.Other as NaviXMediaItem;
-                if (subcatItem.Type == "search")
-                    searchableCats[subCat.Name] = subcatItem.URL;
-                parentCategory.SubCategories.Add(subCat);
-            }
+            parentCategory.SubCategories.AddRange(getCats(plUrl, parentCategory));
             if (parentCategory.SubCategories.Count > 0)
                 parentCategory.SubCategoriesDiscovered = true;
 
             return parentCategory.SubCategories.Count;
+        }
+
+        public override int DiscoverNextPageCategories(NextPageCategory category)
+        {
+            category.ParentCategory.SubCategories.Remove(category);
+            category.ParentCategory.SubCategories.AddRange(getCats((category as RssLink).Url, category.ParentCategory));
+            return category.ParentCategory.SubCategories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -77,14 +68,14 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             NaviXMediaItem item = video.Other as NaviXMediaItem;
+            if (item == null)
+                return video.VideoUrl;
             string urlStr;
             if (item.Type == "video" && !string.IsNullOrEmpty(item.Processor))
             {
                 NaviXProcessor proc = new NaviXProcessor(item);
-                if (proc.ReturnCode == 0)
-                {
+                if (proc.Process())
                     urlStr = proc.Data;
-                }
                 else
                     return "";
             }
@@ -93,7 +84,7 @@ namespace OnlineVideos.Sites
             
             if (urlStr.ToLower().StartsWith("rtmp"))
             {
-                MPUrlSourceFilter.RtmpUrl url = NaviXRTMP.GetRTMPUrl(urlStr);
+                MPUrlSourceFilter.RtmpUrl url = getRTMPUrl(urlStr);
                 return url.ToString();
             }
 
@@ -102,7 +93,6 @@ namespace OnlineVideos.Sites
             else
                 Settings.Player = PlayerType.Auto;
             return urlStr;
-            //return new MPUrlSourceFilter.HttpUrl(urlStr) { UserAgent = OnlineVideoSettings.Instance.UserAgent }.ToString();
         }
 
         public override bool CanSearch
@@ -124,9 +114,9 @@ namespace OnlineVideos.Sites
         public override Dictionary<string, string> GetSearchableCategories()
         {
             return searchableCats;
-        } 
+        }
 
-        List<Category> getCats(string playlistUrl, Category parentCategory = null, bool isSort = false)
+        List<Category> getCats(string playlistUrl, Category parentCategory = null)
         {
             List<Category> cats = new List<Category>();
             NaviXPlaylist pl = new NaviXPlaylist(playlistUrl);
@@ -136,25 +126,70 @@ namespace OnlineVideos.Sites
                 {
                     if (string.IsNullOrEmpty(item.Type))
                         continue;
-                    RssLink cat = new RssLink();
+                    RssLink cat;
+                    if (System.Text.RegularExpressions.Regex.IsMatch(item.URL, @"[?&]page=\d+"))
+                        cat = new NextPageCategory();
+                    else
+                        cat = new RssLink();
                     cat.Name = System.Text.RegularExpressions.Regex.Replace(item.Name, @"\[/?COLOR[^\]]*\]", "");
-                    cat.Description = item.Description;
+                    if (!string.IsNullOrEmpty(item.InfoTag))
+                        cat.Name += string.Format(" ({0})", item.InfoTag);
+                    cat.Description = string.IsNullOrEmpty(item.Description) ? pl.Description : item.Description;
                     cat.Url = item.URL;
-                    cat.Thumb = item.Thumb != null ? item.Thumb : item.Icon;
+                    if (!string.IsNullOrEmpty(item.Thumb))
+                        cat.Thumb = item.Thumb;
+                    else if (!string.IsNullOrEmpty(item.Icon))
+                        cat.Thumb = item.Icon;
+                    else
+                        cat.Thumb = pl.Logo;
                     cat.Other = item;
                     cat.HasSubCategories = item.Type == "playlist" || item.Type == "search";
-                    if (new Uri(item.URL).AbsolutePath == new Uri(playlistUrl).AbsolutePath)
-                        item.Type = "sort";
-
-                    if (isSort && parentCategory != null && parentCategory.ParentCategory != null)
-                        cat.ParentCategory = parentCategory.ParentCategory.ParentCategory; //skip all sort categories on back
-                    else
-                        cat.ParentCategory = parentCategory;
-
+                    cat.ParentCategory = parentCategory;
                     cats.Add(cat);
+                    if (item.Type == "search" && searchableCats != null)
+                        searchableCats[cat.Name] = cat.Url;
                 }
             }
             return cats;
+        }
+
+        MPUrlSourceFilter.RtmpUrl getRTMPUrl(string naviXRTMPUrl)
+        {
+            MatchCollection matches = new Regex(@"\s+(tcUrl|app|playpath|swfUrl|pageUrl|swfVfy|live)\s*=\s*([^\s]*)").Matches(naviXRTMPUrl);
+            if (matches.Count < 1)
+                return new MPUrlSourceFilter.RtmpUrl(naviXRTMPUrl);
+
+            MPUrlSourceFilter.RtmpUrl url = new MPUrlSourceFilter.RtmpUrl(naviXRTMPUrl.Substring(0, matches[0].Index));
+            foreach (Match m in matches)
+            {
+                string val = m.Groups[2].Value;
+                switch (m.Groups[1].Value)
+                {
+                    case "tcUrl":
+                        url.TcUrl = val;
+                        break;
+                    case "app":
+                        url.App = val;
+                        break;
+                    case "playpath":
+                        url.PlayPath = val;
+                        break;
+                    case "swfUrl":
+                        url.SwfUrl = val;
+                        break;
+                    case "pageUrl":
+                        url.PageUrl = val;
+                        break;
+                    case "swfVfy":
+                        url.SwfUrl = val;
+                        break;
+                    case "live":
+                        if (val == "1" || val.ToLower() == "true")
+                            url.Live = true;
+                        break;
+                }
+            }
+            return url;
         }
     }
 }

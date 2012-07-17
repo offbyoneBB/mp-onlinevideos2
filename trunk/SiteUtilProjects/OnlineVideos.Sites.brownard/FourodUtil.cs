@@ -16,6 +16,8 @@ namespace OnlineVideos.Sites
         string proxyUsername = null;
         [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a password, set it here.")]
         string proxyPassword = null;
+        [Category("OnlineVideosUserConfiguration"), Description("Whether to download subtitles")]
+        protected bool RetrieveSubtitles = false;
         [Category("OnlineVideosConfiguration"), Description("Url of the 4od swf object")]
         string swfObjectUrl = "http://www.channel4.com/static/programmes/asset/flash/swf/4odplayer-11.21.2.swf";
 
@@ -110,6 +112,12 @@ namespace OnlineVideos.Sites
             string url = string.Format("http://ais.channel4.com/asset/{0}", epId);
 
             string xml = GetWebData(url, null, null, getProxy());
+            if (RetrieveSubtitles)
+            {
+                Match subtitle = new Regex("<subtitlesFileUri>(.*?)</subtitlesFileUri>").Match(xml);
+                //if (subtitle.Success)
+                    //video.SubtitleText = Utils.SubtitleReader.SAMI2SRT(GetWebData("http://ais.channel4.com" + subtitle.Groups[1].Value));
+            }
             string uriData = new Regex("<uriData>(.*?)</uriData>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
 
             string streamUri = new Regex("<streamUri>(.*?)</streamUri>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;

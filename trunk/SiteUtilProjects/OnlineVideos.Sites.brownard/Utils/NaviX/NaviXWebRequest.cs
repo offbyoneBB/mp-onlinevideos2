@@ -29,6 +29,10 @@ namespace OnlineVideos.Sites.Utils.NaviX
         {
             if (string.IsNullOrEmpty(RequestUrl))
                 return false;
+
+            responseHeaders = new Dictionary<string, string>();
+            responseCookies = new Dictionary<string, string>();
+
             try
             {
                 Uri uri = new Uri(RequestUrl);
@@ -92,13 +96,11 @@ namespace OnlineVideos.Sites.Utils.NaviX
                     else
                         responseStream = res.GetResponseStream();
 
-                    headers = new Dictionary<string, string>();
                     foreach (string s in res.Headers.AllKeys)
-                        headers[s] = res.Headers[s];
+                        responseHeaders[s] = res.Headers[s];
 
-                    cookies = new Dictionary<string, string>();
                     foreach (Cookie cookie in res.Cookies)
-                        cookies[cookie.Name] = cookie.Value;
+                        responseCookies[cookie.Name] = cookie.Value;
 
                     Encoding responseEncoding = Encoding.UTF8;
                     if (!String.IsNullOrEmpty(res.CharacterSet.Trim()))
@@ -117,16 +119,16 @@ namespace OnlineVideos.Sites.Utils.NaviX
             }
         }
 
-        Dictionary<string, string> headers = null;
-        public Dictionary<string, string> Headers 
+        Dictionary<string, string> responseHeaders = null;
+        public Dictionary<string, string> ResponseHeaders 
         { 
-            get { return headers; } 
+            get { return responseHeaders; } 
         }
 
-        Dictionary<string, string> cookies = null;
-        public Dictionary<string, string> Cookies 
+        Dictionary<string, string> responseCookies = null;
+        public Dictionary<string, string> ResponseCookies 
         { 
-            get { return cookies; } 
+            get { return responseCookies; } 
         }
 
         string content = null;

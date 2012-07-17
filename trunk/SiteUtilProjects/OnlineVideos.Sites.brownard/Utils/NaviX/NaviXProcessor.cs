@@ -14,6 +14,8 @@ namespace OnlineVideos.Sites.Utils.NaviX
         int returnCode = 1;
         public int ReturnCode { get { return returnCode; } }
         public string Data { get; protected set; }
+        string procTxt = null;
+        NaviXMediaItem mediaItem = null;
 
         Regex multiIfTest = null;
         Regex conditionExtract = null;
@@ -22,8 +24,8 @@ namespace OnlineVideos.Sites.Utils.NaviX
         public NaviXProcessor(NaviXMediaItem item)
         {
             string url = string.Format("{0}?url={1}", item.Processor, HttpUtility.UrlEncode(item.URL));
-            string txt = getProcessor(url, item.Version.ToString());
-            process(txt, item);
+            procTxt = getProcessor(url, item.Version.ToString());
+            mediaItem = item;
         }
 
         string getProcessor(string url, string itemVersion)
@@ -36,12 +38,15 @@ namespace OnlineVideos.Sites.Utils.NaviX
             return OnlineVideos.Sites.SiteUtilBase.GetWebData(url, cc);
         }
 
-        void process(string procTxt, NaviXMediaItem mediaItem)
+        public bool Process()
         {
+            if(mediaItem == null || string.IsNullOrEmpty(procTxt))
+                return false;
+
             if (!procTxt.StartsWith("v2"))
             {
                 //TODO handle v1
-                return;
+                return false;
             }
             //Remove version line
             procTxt = procTxt.Substring(2);
@@ -59,6 +64,13 @@ namespace OnlineVideos.Sites.Utils.NaviX
             NaviXVars vars = new NaviXVars();
             //Stores any assigned 's_headers' to use for the next scrape
             Dictionary<string, string> headers = new Dictionary<string, string>();
+            logDebug("nookies: ");
+            foreach(NaviXNookie nookie in NaviXNookie.GetNookies(mediaItem.Processor))
+            {
+                string key = "nookies." + nookie.Name;
+                vars[key] = nookie.Value;
+                logDebug("{0}: {1}", key, nookie.Value);
+            }
 
             int phase = 0;
             bool phase1Complete = false;
@@ -92,7 +104,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                 if (procTxt == instPrev)
                 {
                     logError("endless loop detected");
-                    return;
+                    return false;
                 }
                 //keep reference to current text
                 instPrev = procTxt;
@@ -102,8 +114,8 @@ namespace OnlineVideos.Sites.Utils.NaviX
                 string[] lines = procTxt.Split("\r\n".ToCharArray());
                 if (lines.Length < 1)
                 {
-                    logError("processor has no content");
-                    return; //no content
+                    logError("processor has no content"); //no content
+                    return false;
                 }
 
                 //loop through each line and process commands
@@ -148,13 +160,13 @@ namespace OnlineVideos.Sites.Utils.NaviX
                     if (line == "scrape")
                     {
                         scrape++;
-                        logInfo("scrape {0}", scrape);
-
+                        logDebug("Scrape {0}:", scrape);
+                        logDebug("\t scrape action: {0}", vars["s_action"]);
                         //check if we have a url
                         if (string.IsNullOrEmpty(vars["s_url"]))
                         {
                             logError("no scrape URL defined");
-                            return;
+                            return false;
                         }
                         //setup web request
                         NaviXWebRequest webData = new NaviXWebRequest(vars["s_url"])
@@ -166,6 +178,13 @@ namespace OnlineVideos.Sites.Utils.NaviX
                             PostData = vars["s_postdata"],
                             RequestHeaders = headers
                         };
+                        logDebug("\t url: {0}", vars["s_url"]);
+                        logDebug("\t referer: {0}", vars["s_referer"]);
+                        logDebug("\t cookies: {0}", vars["s_cookie"]);
+                        logDebug("\t method: {0}", vars["s_method"]);
+                        logDebug("\t useragent: {0}", vars["s_agent"]);
+                        logDebug("\t post data: {0}", vars["s_postdata"]);
+
                         //retrieve request
                         webData.GetWebData();
                         //store response text
@@ -177,27 +196,28 @@ namespace OnlineVideos.Sites.Utils.NaviX
                             vars["v1"] = webData.GetURL;
 
                         //Copy response headers
-                        logDebug("scrape headers");
-                        foreach (string key in webData.Headers.Keys)
+                        logDebug("Scrape {0} headers", scrape);
+                        foreach (string key in webData.ResponseHeaders.Keys)
                         {
                             string hkey = "headers." + key;
-                            logDebug("\t {0}: {1}", hkey, webData.Headers[key]);
-                            vars[hkey] = webData.Headers[key];
+                            logDebug("\t {0}: {1}", hkey, webData.ResponseHeaders[key]);
+                            vars[hkey] = webData.ResponseHeaders[key];
                         }
 
                         //Copy response cookies
-                        logDebug("scrape cookies");
-                        foreach (string key in webData.Cookies.Keys)
+                        logDebug("Scrape {0} cookies", scrape);
+                        foreach (string key in webData.ResponseCookies.Keys)
                         {
                             string ckey = "cookies." + key;
-                            logDebug("\t {0}: {1}", ckey, webData.Cookies[key]);
-                            vars[ckey] = webData.Cookies[key];
+                            logDebug("\t {0}: {1}", ckey, webData.ResponseCookies[key]);
+                            vars[ckey] = webData.ResponseCookies[key];
                         }
 
                         //if we're set to read and we have a response and a regex pattern
                         if (vars["s_action"] == "read" && !string.IsNullOrEmpty(vars["regex"]) && !string.IsNullOrEmpty(vars["htmRaw"]))
                         {
                             //create regex
+                            logDebug("Scrape {0} regex: {1}", scrape, vars["regex"]);
                             Regex reg;
                             try
                             {
@@ -205,8 +225,8 @@ namespace OnlineVideos.Sites.Utils.NaviX
                             }
                             catch (Exception ex)
                             {
-                                logError("error creating regex with pattern {0} - {1}", vars["regex"], ex.Message);
-                                return;
+                                logError("error creating regex with pattern " + vars["regex"] + " - " + ex.Message);
+                                return false;
                             }
                             //create regex vars
                             vars["nomatch"] = "";
@@ -221,7 +241,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                             Match m = reg.Match(vars["htmRaw"]);
                             if (m.Success)
                             {
-                                logDebug("scrape {0}:", scrape);
+                                logDebug("Scrape {0} regex:", scrape);
                                 for (int i = 1; i < m.Groups.Count; i++)
                                 {
                                     //create vars for each match group, v1,v2,v3 etc
@@ -236,7 +256,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                             }
                             else //no match
                             {
-                                logDebug("scrape {0}: no match", scrape);
+                                logDebug("Scrape {0} regex: no match", scrape);
                                 vars["nomatch"] = "1";
                                 rep["nomatch"] = "1";
                             }
@@ -253,7 +273,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                         break;
                     }
 
-                    //report command - reload processor with with specified key/values
+                    //report command - reload processor with specified key/values
                     else if (line == "report")
                     {
                         rep["phase"] = phase.ToString();
@@ -287,7 +307,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                         if (!m.Success)
                         {
                             logError("syntax error: {0}", line);
-                            return;
+                            return false;
                         }
                         //command or variable being assigned
                         string subj = m.Groups[1].Value;
@@ -300,7 +320,10 @@ namespace OnlineVideos.Sites.Utils.NaviX
                             bool? ifEval = null;
                             //if start of elseif and previous if was satisfied, skip to next endif
                             if (ifStack.Count > 0 && subj == "elseif" && ifStack.Peek().IfSatisified)
+                            {
                                 ifStack.Peek().IfEnd = true;
+                                continue;
+                            }
                             else
                             {
                                 //start of new if block
@@ -318,7 +341,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                                 if (ifEval == null)
                                 {
                                     logError("error evaluating if statement: {0}", line);
-                                    return;
+                                    return false;
                                 }
                             }
 
@@ -333,7 +356,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                             else
                                 ifStack.Peek().IfNext = true;
 
-                            logDebug("{0} => {1}", subj, ifEval == true);
+                            logDebug("{0} ({1}) => {2}", subj, arg, ifEval == true);
                             continue;
                         }
 
@@ -359,7 +382,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                                 {
                                     tReport = "nookie";
                                     //TODO
-                                    nookiesSet(mediaItem.Processor, dpKey, val, vars["nookie_expires"]);
+                                    NaviXNookie.AddNookie(mediaItem.Processor, dpKey, val, vars["nookie_expires"]);
                                     vars[subj] = val;
                                 }
                                 else if (dpType == "s_headers")
@@ -382,13 +405,9 @@ namespace OnlineVideos.Sites.Utils.NaviX
                             { }
                             else if (subj == "error")
                             {
-                                string errorStr;
-                                if (arg.StartsWith("'"))
-                                    errorStr = arg.Substring(1);
-                                else
-                                    errorStr = vars[arg];
+                                string errorStr = getValue(arg, vars);
                                 logError(errorStr);
-                                return;
+                                return false;
                             }
                             else if (subj == "report_val")
                             {
@@ -396,7 +415,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                                 if (!m.Success)
                                 {
                                     logError("syntax error: {0}", line);
-                                    return;
+                                    return false;
                                 }
                                 string ke = m.Groups[1].Value;
                                 string va = m.Groups[3].Value;
@@ -417,16 +436,18 @@ namespace OnlineVideos.Sites.Utils.NaviX
                                 if (!m.Success)
                                 {
                                     logError("syntax error: {0}", line);
-                                    return;
+                                    return false;
                                 }
                                 string ke = m.Groups[1].Value;
                                 string va = m.Groups[3].Value;
                                 string oldTmp = vars[ke];
-                                vars[ke] = vars[ke] + getValue(va, vars);
-                                logDebug("concat: old={0}\n new={1}", oldTmp, vars[ke]);
+                                string concatVal = getValue(va, vars);
+                                vars[ke] = oldTmp + concatVal;
+                                logDebug("concat: {0} + {1} = {2}", oldTmp, concatVal, vars[ke]);
                             }
                             else if (subj == "match")
                             {
+                                logDebug("regex:\r\n\t pattern: " + vars["regex"] + "\r\n\t source: " + vars[arg]);
                                 vars["nomatch"] = "";
                                 rep["nomatch"] = "";
                                 for (int i = 1; i < 12; i++)
@@ -442,23 +463,25 @@ namespace OnlineVideos.Sites.Utils.NaviX
                                     m = reg.Match(vars[arg]);
                                 }
                                 catch
-                                { vars["nomatch"] = "1"; }
+                                {
+                                    logError("error creating regex: " + vars["regex"]);
+                                    vars["nomatch"] = "1"; 
+                                }
                                 if (m != null && m.Success)
                                 {
-                                    logDebug("match {0}:", arg);
                                     for (int i = 1; i < m.Groups.Count; i++)
                                     {
                                         string val = m.Groups[i].Value;
                                         if (val == null)
                                             val = "";
                                         string key = "v" + i.ToString();
-                                        logDebug("\n {0}={1}", key, val);
+                                        logDebug("regex: {0}={1}", key, val);
                                         vars[key] = val;
                                     }
                                 }
                                 else
                                 {
-                                    logDebug("match: no match\n regex: {0}\n search: {1}", vars["regex"], vars[arg]);
+                                    logDebug("regex: no match");
                                     vars["nomatch"] = "1";
                                 }
                             }
@@ -468,37 +491,42 @@ namespace OnlineVideos.Sites.Utils.NaviX
                                 if (!m.Success)
                                 {
                                     logError("syntax error: {0}", line);
-                                    return;
+                                    return false;
                                 }
                                 string ke = m.Groups[1].Value;
-                                string va = m.Groups[3].Value;
-                                if (va.StartsWith("'"))
-                                    va = va.Substring(1);
-                                else
-                                    va = vars[va];
+                                string va = getValue(m.Groups[3].Value, vars);
                                 string oldTmp = vars[ke];
-                                vars[ke] = Regex.Replace(vars[ke], vars["regex"], va);
-                                logDebug("replace {0}:\n old={1}\n new={2}", ke, oldTmp, vars[ke]);
+                                logDebug("replace:\r\n\t source: " + oldTmp + "\r\n\t pattern: " + vars["regex"] + "\r\n\t replacement: " + va);                                
+                                try
+                                {
+                                    string result = new Regex(vars["regex"]).Replace(oldTmp, va);
+                                    vars[ke] = result;
+                                    logDebug("replace: result: {0}", result);
+                                }
+                                catch
+                                {
+                                    logError("replace: error creating regex: {0}", vars["regex"]);
+                                }
                             }
                             else if (subj == "unescape")
                             {
                                 string oldTmp = vars[arg];
                                 vars[arg] = HttpUtility.UrlDecode(vars[arg]);
-                                logDebug("unescape:\n old={0}\n new={1}", oldTmp, vars[arg]);
+                                logDebug("unescape: {0}:\r\n\t new: {1}", oldTmp, vars[arg]);
                             }
                             else if (subj == "escape")
                             {
                                 string oldTmp = vars[arg];
                                 vars[arg] = HttpUtility.UrlEncode(vars[arg]);
-                                logDebug("escape:\n old={0}\n new={1}", oldTmp, vars[arg]);
+                                logDebug("escape: {0}:\r\n\t new: {1}", oldTmp, vars[arg]);
                             }
                             else if (subj == "debug")
                             {
                                 string info;
                                 if (vars[arg] != null)
-                                    info = ":\n " + vars[arg];
+                                    info = ":  " + vars[arg];
                                 else
-                                    info = " - does not exist";
+                                    info = ": does not exist";
                                 logDebug("debug: {0}{1}", arg, info);
                             }
                             else if (subj == "print")
@@ -507,20 +535,17 @@ namespace OnlineVideos.Sites.Utils.NaviX
                                 if (arg.StartsWith("'"))
                                     info = arg.Substring(1);
                                 else
-                                    info = string.Format("{0}:\n {1}", arg, vars[arg]);
+                                    info = string.Format("{0}: {1}", arg, vars[arg]);
                                 logInfo("info: {0}", info);
                             }
                             else if (subj == "countdown")
                             {
-                                string secsStr;
-                                if (arg.StartsWith("'"))
-                                    secsStr = arg.Substring(1);
-                                else
-                                    secsStr = vars[arg];
+                                string secsStr = getValue(arg, vars);
                                 int secs;
                                 if (int.TryParse(secsStr, out secs))
                                 {
-                                    logDebug("countdown: {0} seconds *****NOT SUPPORTED*****", secs);
+                                    logError("countdown: {0} seconds *****NOT SUPPORTED - Ignoring*****", secs);
+
                                     //System.Threading.Thread.Sleep(secs * 1000);
                                 }
                                 else
@@ -536,14 +561,13 @@ namespace OnlineVideos.Sites.Utils.NaviX
                                 else
                                     plUrl = vars[arg];
                                 logInfo("redirecting to playlist {0} *****NOT SUPPORTED*****", plUrl);
-                                returnCode = 2;
                                 Data = plUrl;
-                                return;
+                                return false;
                             }
                             else
                             {
                                 logError("unrecognised method {0}", subj);
-                                return;
+                                return false;
                             }
                         }
                     }
@@ -580,18 +604,12 @@ namespace OnlineVideos.Sites.Utils.NaviX
             }
             mediaItem.Processor = "";
             Data = mediaItem.URL;
-            returnCode = 0;
             logInfo("complete: final url {0}", mediaItem.URL);
-        }
-
-        private void nookiesSet(string p, string dpKey, string val, string p_2)
-        {
-            
+            return true;
         }
 
         private bool? evaluateIfBlock(string arg, NaviXVars vars)
         {
-            Log.Debug("evaluating if block ({0})", arg);
             Match m = multiIfTest.Match(arg);
             if (!m.Success)
                 return conditionEval(arg, vars);
@@ -642,13 +660,11 @@ namespace OnlineVideos.Sites.Utils.NaviX
                     oper = "==";
 
                 string rside = getValue(rraw, vars);
-                Log.Debug("evaluating if statement\n '{0}' {1} '{2}'", vars[lKey], oper, rside);
                 result = NaviXStringEvaluator.Eval(vars[lKey], rside, oper);
             }
             else
                 result = !string.IsNullOrEmpty(vars[arg]);
 
-            Log.Debug("result - {0}", result);
             return result;
         }
 
@@ -666,7 +682,9 @@ namespace OnlineVideos.Sites.Utils.NaviX
         }
         void logDebug(string format, params object[] args)
         {
+#if DEBUG
             Log.Debug("NaviX: Processor: " + getLogTxt(format, args));
+#endif
         }
         void logError(string format, params object[] args)
         {
@@ -682,7 +700,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
             }
             catch (Exception ex)
             {
-                Log.Warn("NaviX: Processor: error creating log text - {0} \n{1}", ex.Message, ex.StackTrace);
+                //Log.Warn("NaviX: Processor: error creating log text - {0} \n{1}", ex.Message, ex.StackTrace);
                 return format;
             }
         }

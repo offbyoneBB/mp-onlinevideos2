@@ -59,9 +59,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\NaviX\NaviXIfBlock.cs" />
     <Compile Include="Utils\NaviX\NaviXMediaItem.cs" />
+    <Compile Include="Utils\NaviX\NaviXNookie.cs" />
     <Compile Include="Utils\NaviX\NaviXPlaylist.cs" />
     <Compile Include="Utils\NaviX\NaviXProcessor.cs" />
-    <Compile Include="Utils\NaviX\NaviXRTMP.cs" />
     <Compile Include="Utils\NaviX\NaviXStringEvaluator.cs" />
     <Compile Include="Utils\NaviX\NaviXVars.cs" />
     <Compile Include="Utils\NaviX\NaviXWebRequest.cs" />
