@@ -96,15 +96,22 @@ namespace OnlineVideos.Sites
                             {
                                 videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                             }
-                            else
+                            else if (m.Groups["gameName"].Value != "" || m.Groups["gameName"].Value != null)
                             {
                                 videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                             }
+                            else
+                            {
+                                videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+                            }
+
                             videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                             videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                             videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Trim();
                             videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
-                            videoInfo.Description = HttpUtility.HtmlDecode(m.Groups["Description"].Value);
+
+                            //Added Title to description to avoid not being able to read long titles (unless you wait for scrolling to occur)
+                            videoInfo.Description = HttpUtility.HtmlDecode(m.Groups["Title"].Value) + Environment.NewLine + HttpUtility.HtmlDecode(m.Groups["Description"].Value);
                             videoList.Add(videoInfo);
                             m = m.NextMatch();
                         }
@@ -226,7 +233,7 @@ namespace OnlineVideos.Sites
             }
             catch (Exception eSearchUrlRetrieval)
             {
-                Log.Debug("Error while retrieving SearchURL: " + eSearchUrlRetrieval.ToString());
+                Log.Debug("Error while retrieving Search URL: " + eSearchUrlRetrieval.ToString());
             }
 
             // if an override Encoding was specified, we need to UrlEncode the search string with that encoding
