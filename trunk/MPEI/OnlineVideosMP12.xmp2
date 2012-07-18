@@ -3270,7 +3270,7 @@ added: support for subtitles from text in addition to url
 changed: plugin settings xml for MPEI GUI plugin now split into sections and uses minvalue/maxvalue feature</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.3.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2012-07-17T11:00:00</ReleaseDate>
+    <ReleaseDate>2012-07-18T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
