@@ -5,6 +5,8 @@ using System.Text;
 using OnlineVideos.Sites.Utils.NaviX;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using OnlineVideos.Sites.Utils;
+using System.Xml;
 
 namespace OnlineVideos.Sites
 {
@@ -20,7 +22,7 @@ namespace OnlineVideos.Sites
                     if (cat is RssLink)
                     {
                         cat.HasSubCategories = true;
-                        cat.SubCategoriesDiscovered = false;
+                        cat.Other = null;
                     }
                 lastUpdate = DateTime.Now;
             }
@@ -29,39 +31,74 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            NaviXMediaItem naviXItem = parentCategory.Other as NaviXMediaItem;
-            if (naviXItem != null)
+            SubCatHolder holder = parentCategory.Other as SubCatHolder;
+            if (holder != null)
             {
-                if (naviXItem.Type == "search")
-                    throw new OnlineVideosException("To search specify search category and use OnlineVideos search feature");
+                if (holder.SubCategories != null && holder.SubCategories.Count > 0)
+                {
+                    parentCategory.SubCategories = holder.SubCategories;
+                    searchableCats = holder.SearchableCategories;
+                    return holder.SubCategories.Count;
+                }
+                NaviXMediaItem naviXItem = holder.Other as NaviXMediaItem;
+                if (naviXItem != null)
+                {
+                    if (naviXItem.Type == "search")
+                        throw new OnlineVideosException("To search specify search category and use OnlineVideos search feature");
+                }
             }
-
             string plUrl = (parentCategory as RssLink).Url;
-            searchableCats = new Dictionary<string, string>();
-            parentCategory.SubCategories = new List<Category>();
-            parentCategory.SubCategories.AddRange(getCats(plUrl, parentCategory));
-            if (parentCategory.SubCategories.Count > 0)
-                parentCategory.SubCategoriesDiscovered = true;
-
-            return parentCategory.SubCategories.Count;
+            holder = getCats(plUrl, parentCategory);
+            parentCategory.SubCategories = holder.SubCategories;
+            searchableCats = holder.SearchableCategories;
+            parentCategory.Other = holder;
+            return holder.SubCategories.Count;
         }
 
         public override int DiscoverNextPageCategories(NextPageCategory category)
         {
-            category.ParentCategory.SubCategories.Remove(category);
-            category.ParentCategory.SubCategories.AddRange(getCats((category as RssLink).Url, category.ParentCategory));
-            return category.ParentCategory.SubCategories.Count;
+            SubCatHolder holder = category.ParentCategory.Other as SubCatHolder;
+            if (holder == null)
+                return category.ParentCategory.SubCategories.Count;
+
+            holder.SubCategories.Remove(category);
+            holder.SubCategories.AddRange(getCats((category as RssLink).Url, category.ParentCategory).SubCategories);
+            category.ParentCategory.SubCategories = holder.SubCategories;
+            return holder.SubCategories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
             List<VideoInfo> vids = new List<VideoInfo>();
-            VideoInfo vid = new VideoInfo();
-            vid.Title = category.Name;
-            vid.Description = category.Description;
-            vid.ImageUrl = category.Thumb;
-            vid.Other = category.Other;
-            vids.Add(vid);
+            NaviXMediaItem item = category.Other as NaviXMediaItem;
+            if (item == null)
+                return vids;
+            if (item.Type == "video")
+            {
+                VideoInfo vid = new VideoInfo();
+                vid.Title = category.Name;
+                vid.Description = category.Description;
+                vid.ImageUrl = category.Thumb;
+                vid.Airdate = item.Date;
+                vid.Other = item;
+                vids.Add(vid);
+            }
+            else if (item.Type.StartsWith("rss"))
+            {
+                string url = item.URL;
+                if (url.StartsWith("rss://"))
+                    url = "http://" + url.Substring(6);
+                RssToolkit.Rss.RssDocument doc = GetWebData<RssToolkit.Rss.RssDocument>(url);
+                if (doc != null)
+                {
+                    foreach (RssToolkit.Rss.RssItem rssItem in doc.Channel.Items)
+                    {
+                        VideoInfo vid = VideoInfo.FromRssItem(rssItem, true, new Predicate<string>(isPossibleVideo));
+                        if (vid != null)
+                            vids.Add(vid);
+                    }
+                }
+            }
             return vids;
         }
 
@@ -106,7 +143,7 @@ namespace OnlineVideos.Sites
         public override List<ISearchResultItem> DoSearch(string query, string category)
         {
             List<ISearchResultItem> results = new List<ISearchResultItem>();
-            foreach (Category cat in getCats(category + query))
+            foreach (Category cat in getCats(category + query).SubCategories)
                 results.Add(cat);
             return results;
         }
@@ -116,9 +153,13 @@ namespace OnlineVideos.Sites
             return searchableCats;
         }
 
-        List<Category> getCats(string playlistUrl, Category parentCategory = null)
+
+
+        SubCatHolder getCats(string playlistUrl, Category parentCategory = null)
         {
-            List<Category> cats = new List<Category>();
+            SubCatHolder holder = new SubCatHolder();
+            holder.SubCategories = new List<Category>();
+            holder.SearchableCategories = new Dictionary<string, string>();
             NaviXPlaylist pl = new NaviXPlaylist(playlistUrl);
             if (pl.Ready)
             {
@@ -142,20 +183,20 @@ namespace OnlineVideos.Sites
                         cat.Thumb = item.Icon;
                     else
                         cat.Thumb = pl.Logo;
-                    cat.Other = item;
                     cat.HasSubCategories = item.Type == "playlist" || item.Type == "search";
                     cat.ParentCategory = parentCategory;
-                    cats.Add(cat);
+                    cat.Other = item;
+                    holder.SubCategories.Add(cat);
                     if (item.Type == "search" && searchableCats != null)
-                        searchableCats[cat.Name] = cat.Url;
+                        holder.SearchableCategories[cat.Name] = cat.Url;
                 }
             }
-            return cats;
+            return holder;
         }
 
         MPUrlSourceFilter.RtmpUrl getRTMPUrl(string naviXRTMPUrl)
         {
-            MatchCollection matches = new Regex(@"\s+(tcUrl|app|playpath|swfUrl|pageUrl|swfVfy|live)\s*=\s*([^\s]*)").Matches(naviXRTMPUrl);
+            MatchCollection matches = new Regex(@"\s+(tcUrl|app|playpath|swfUrl|pageUrl|swfVfy|live|timeout)\s*=\s*([^\s]*)", RegexOptions.IgnoreCase).Matches(naviXRTMPUrl);
             if (matches.Count < 1)
                 return new MPUrlSourceFilter.RtmpUrl(naviXRTMPUrl);
 
@@ -163,9 +204,9 @@ namespace OnlineVideos.Sites
             foreach (Match m in matches)
             {
                 string val = m.Groups[2].Value;
-                switch (m.Groups[1].Value)
+                switch (m.Groups[1].Value.ToLower())
                 {
-                    case "tcUrl":
+                    case "tcurl":
                         url.TcUrl = val;
                         break;
                     case "app":
@@ -174,14 +215,15 @@ namespace OnlineVideos.Sites
                     case "playpath":
                         url.PlayPath = val;
                         break;
-                    case "swfUrl":
+                    case "swfurl":
                         url.SwfUrl = val;
                         break;
-                    case "pageUrl":
+                    case "pageurl":
                         url.PageUrl = val;
                         break;
-                    case "swfVfy":
-                        url.SwfUrl = val;
+                    case "swfvfy":
+                        if (val == "1" || val.ToLower() == "true")
+                            url.SwfVerify = true;
                         break;
                     case "live":
                         if (val == "1" || val.ToLower() == "true")
