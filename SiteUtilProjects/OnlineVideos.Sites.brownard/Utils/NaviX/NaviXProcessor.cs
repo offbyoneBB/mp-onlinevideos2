@@ -682,9 +682,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
         }
         void logDebug(string format, params object[] args)
         {
-#if DEBUG
             Log.Debug("NaviX: Processor: " + getLogTxt(format, args));
-#endif
         }
         void logError(string format, params object[] args)
         {

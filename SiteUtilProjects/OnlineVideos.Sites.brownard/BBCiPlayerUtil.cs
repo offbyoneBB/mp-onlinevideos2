@@ -72,7 +72,7 @@ namespace OnlineVideos.Sites
                     if (captionConnection != null && captionConnection.Attributes["href"] != null)
                     {
                         string sub = GetWebData(captionConnection.Attributes["href"].Value);
-                        //video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(sub);
+                        video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(sub);
                     }
                 }
             }

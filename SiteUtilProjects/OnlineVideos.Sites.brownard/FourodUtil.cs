@@ -115,8 +115,8 @@ namespace OnlineVideos.Sites
             if (RetrieveSubtitles)
             {
                 Match subtitle = new Regex("<subtitlesFileUri>(.*?)</subtitlesFileUri>").Match(xml);
-                //if (subtitle.Success)
-                    //video.SubtitleText = Utils.SubtitleReader.SAMI2SRT(GetWebData("http://ais.channel4.com" + subtitle.Groups[1].Value));
+                if (subtitle.Success)
+                    video.SubtitleText = Utils.SubtitleReader.SAMI2SRT(GetWebData("http://ais.channel4.com" + subtitle.Groups[1].Value));
             }
             string uriData = new Regex("<uriData>(.*?)</uriData>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
 

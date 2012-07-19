@@ -322,8 +322,8 @@ namespace OnlineVideos.Sites
             if (RetrieveSubtitles)
             {
                 node = videoEntry.SelectSingleNode("./ClosedCaptioningURIs");
-                //if (node != null && OnlineVideos.Utils.IsValidUri(node.InnerText))
-                    //video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(GetWebData(node.InnerText));
+                if (node != null && OnlineVideos.Utils.IsValidUri(node.InnerText))
+                    video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(GetWebData(node.InnerText));
             }
             node = videoEntry.SelectSingleNode("./MediaFiles");
             if(node == null || node.Attributes["base"] == null)
