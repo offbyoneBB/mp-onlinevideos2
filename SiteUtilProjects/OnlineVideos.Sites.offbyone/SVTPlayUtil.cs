@@ -40,19 +40,23 @@ namespace OnlineVideos.Sites
                 }
                 else
                 {
-                    var lastPageNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@class = 'playPagerArea']").SelectNodes(".//ul[@class = 'playLargePager']").LastOrDefault();
-                    if (lastPageNode != null)
-                    {
-                        int maxPages = lastPageNode.GetAttributeValue("data-lastpage", 0);
-                        if (maxPages > 1)
-                        {
-                            currentVideosMaxPages = maxPages;
-                            nextPageUrl = HttpUtility.HtmlDecode(lastPageNode.GetAttributeValue("data-baseurl", "")) + "page=2";
-                            if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute)) nextPageUrl = new Uri(new Uri(url), nextPageUrl).AbsoluteUri;
-                            HasNextPage = true;
-                        }
-                    }
-                    return VideosForCurrentCategory(htmlDoc.DocumentNode.SelectSingleNode("//div[@class = 'playPagerSections playJsFadeIn']"), url);
+					var containerDiv = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class, 'playBoxBody') and contains(@class, 'svtTab-Active')]");
+					if (containerDiv != null)
+					{
+						var lastPageNode = containerDiv.SelectSingleNode(".//div[@class = 'playPagerArea']").SelectNodes(".//ul[@class = 'playLargePager']").LastOrDefault();
+						if (lastPageNode != null)
+						{
+							int maxPages = lastPageNode.GetAttributeValue("data-lastpage", 0);
+							if (maxPages > 1)
+							{
+								currentVideosMaxPages = maxPages;
+								nextPageUrl = HttpUtility.HtmlDecode(lastPageNode.GetAttributeValue("data-baseurl", "")) + "page=2";
+								if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute)) nextPageUrl = new Uri(new Uri(url), nextPageUrl).AbsoluteUri;
+								HasNextPage = true;
+							}
+						}
+						return VideosForCurrentCategory(containerDiv.SelectSingleNode(".//div[@class = 'playPagerSections playJsFadeIn']"), url);
+					}
                 }
             }
 
@@ -182,6 +186,10 @@ namespace OnlineVideos.Sites
 
                                         cat.Name = HttpUtility.HtmlDecode(a.InnerText.Trim().Replace('\n', ' '));
 
+										cat.SubCategories = new List<Category>() { new RssLink() { Name = "Hela program", ParentCategory = cat, Url = cat.Url + "?pr=1" }, new RssLink() { Name = "Klipp", ParentCategory = cat, Url = cat.Url + "?kl=1" } };
+										cat.HasSubCategories = true;
+										cat.SubCategoriesDiscovered = true;
+
                                         letterCategory.SubCategories.Add(cat);
                                         cat.ParentCategory = letterCategory;
                                     }
@@ -284,6 +292,10 @@ namespace OnlineVideos.Sites
 
                         cat.Thumb = article.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
                         if (!string.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(categoryUrl), cat.Thumb).AbsoluteUri;
+
+						cat.SubCategories = new List<Category>() { new RssLink() { Name = "Hela program", ParentCategory = cat, Url = cat.Url + "?pr=1" }, new RssLink() { Name = "Klipp", ParentCategory = cat, Url = cat.Url + "?kl=1" } };
+						cat.HasSubCategories = true;
+						cat.SubCategoriesDiscovered = true;
 
                         cat.ParentCategory = parentCategory;
                         parentCategory.SubCategories.Add(cat);
