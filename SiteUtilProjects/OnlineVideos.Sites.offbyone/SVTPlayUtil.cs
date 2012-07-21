@@ -12,6 +12,9 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Preferred Kbps"), Description("Chose your desired bitrate that will be preselected.")]
         protected int preferredKbps = 1400;
 
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Split by Letter"), Description("Chose if you want a flat list of all shows or split by the first letter.")]
+		protected bool splitByLetter = true;
+
         protected int currentVideosMaxPages = 0;
         protected string nextPageUrl = "";
 
@@ -190,12 +193,23 @@ namespace OnlineVideos.Sites
 										cat.HasSubCategories = true;
 										cat.SubCategoriesDiscovered = true;
 
-                                        letterCategory.SubCategories.Add(cat);
-                                        cat.ParentCategory = letterCategory;
+										if (splitByLetter)
+										{
+											letterCategory.SubCategories.Add(cat);
+											cat.ParentCategory = letterCategory;
+										}
+										else
+										{
+											parentCategory.SubCategories.Add(cat);
+											cat.ParentCategory = parentCategory;
+										}
                                     }
                                 }
-                                letterCategory.EstimatedVideoCount = (uint)letterCategory.SubCategories.Count;
-                                parentCategory.SubCategories.Add(letterCategory);
+								if (splitByLetter)
+								{
+									letterCategory.EstimatedVideoCount = (uint)letterCategory.SubCategories.Count;
+									parentCategory.SubCategories.Add(letterCategory);
+								}
                             }
                         }
                     }
