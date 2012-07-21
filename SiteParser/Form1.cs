@@ -474,32 +474,46 @@ namespace SiteParser
         private void getFileUrlButton_Click(object sender, EventArgs e)
         {
             GuiToUtil(generic);
-            if (String.IsNullOrEmpty(playListUrlResultTextBox.Text))
-                MessageBox.Show("PlaylistUrlResult is empty");
-            else
+            if (CheckFileUrlRegex())
             {
-                Dictionary<string, string> playList;
-                if (!String.IsNullOrEmpty(GetRegex(generic, "regEx_FileUrl")))
-                    playList = generic.GetPlaybackOptions(playListUrlResultTextBox.Text);
+
+                if (String.IsNullOrEmpty(playListUrlResultTextBox.Text))
+                    MessageBox.Show("PlaylistUrlResult is empty");
                 else
                 {
-                    playList = new Dictionary<string, string>();
-                    playList.Add("url", playListUrlResultTextBox.Text);
-                }
-                ResultUrlComboBox.Items.Clear();
-
-                if (playList != null)
-                    foreach (KeyValuePair<string, string> entry in playList)
+                    Dictionary<string, string> playList;
+                    if (!String.IsNullOrEmpty(GetRegex(generic, "regEx_FileUrl")))
+                        playList = generic.GetPlaybackOptions(playListUrlResultTextBox.Text);
+                    else
                     {
-                        PlaybackOption po = new PlaybackOption(entry);
-                        if ((bool)GetProperty(generic, "getRedirectedFileUrl"))
-                            po.Url = SiteUtilBase.GetRedirectedUrl(po.Url);
-                        ResultUrlComboBox.Items.Add(po);
+                        playList = new Dictionary<string, string>();
+                        playList.Add("url", playListUrlResultTextBox.Text);
                     }
+                    ResultUrlComboBox.Items.Clear();
 
-                if (ResultUrlComboBox.Items.Count > 0)
-                    ResultUrlComboBox.SelectedIndex = 0;
+                    if (playList != null)
+                        foreach (KeyValuePair<string, string> entry in playList)
+                        {
+                            PlaybackOption po = new PlaybackOption(entry);
+                            if ((bool)GetProperty(generic, "getRedirectedFileUrl"))
+                                po.Url = SiteUtilBase.GetRedirectedUrl(po.Url);
+                            ResultUrlComboBox.Items.Add(po);
+                        }
+
+                    if (ResultUrlComboBox.Items.Count > 0)
+                        ResultUrlComboBox.SelectedIndex = 0;
+                }
             }
+        }
+
+        private bool CheckFileUrlRegex()
+        {
+            if (String.IsNullOrEmpty(GetRegex(generic, "regEx_FileUrl")) && !String.IsNullOrEmpty(GetRegex(generic, "regEx_PlaylistUrl")))
+            {
+                MessageBox.Show("FileUrlRegex must be filled if PlaylistUrlRegex is used");
+                return false;
+            }
+            return true;
         }
 
         private void btnPlay_Click(object sender, EventArgs e)
