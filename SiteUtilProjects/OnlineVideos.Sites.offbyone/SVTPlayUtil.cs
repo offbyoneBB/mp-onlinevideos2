@@ -113,9 +113,11 @@ namespace OnlineVideos.Sites
 
                     playTime = Regex.Replace(playTime, @"\s+", "", RegexOptions.Multiline);
 
+					bool live = article.Descendants("img").Where(img => img.GetAttributeValue("class", "") == "playBroadcastLiveIcon").Any();
+
                     var h5Node = article.Element("h5");
                     string playBroadcastTitle = article.Elements("div").Where(div => div.GetAttributeValue("class", "") == "playBroadcastTitle").Select(div => div.InnerText).FirstOrDefault();
-                    video.Title = string.Format("{0} - {1} - {2}", playTime, tag, h5Node != null ? h5Node.InnerText : playBroadcastTitle);
+                    video.Title = string.Format("{0} - {1}{3} - {2}", playTime, tag, h5Node != null ? h5Node.InnerText : playBroadcastTitle, live ? " LIVE" : "");
 
                     videoList.Add(video);
                 }
@@ -333,10 +335,16 @@ namespace OnlineVideos.Sites
             foreach (var option in sortedPlaybackOptions)
             {
                 string url = (string)option["url"];
-                if (url.StartsWith("rtmp")) 
-                    url = url.Replace("_definst_", "?slist=");
-                else if (url.StartsWith("http://geoip.api"))
-                    url = HttpUtility.ParseQueryString(new Uri(url).Query)["vurl"];
+				if (url.StartsWith("rtmp"))
+				{
+					url = url.Replace("_definst_", "?slist=");
+					if (video.VideoUrl.Contains("/live"))
+					{
+						url = new MPUrlSourceFilter.RtmpUrl(url) { Live = true }.ToString();
+					}
+				}
+				else if (url.StartsWith("http://geoip.api"))
+					url = HttpUtility.ParseQueryString(new Uri(url).Query)["vurl"];
 
                 if ((int)option["bitrate"] <= preferredKbps) bestMatchUrl = url;
 
