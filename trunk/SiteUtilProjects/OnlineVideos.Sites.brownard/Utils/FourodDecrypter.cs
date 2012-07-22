@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
 
 namespace OnlineVideos.Sites
 {
@@ -16,27 +18,117 @@ namespace OnlineVideos.Sites
         {
             //get bytes from token
             byte[] encryptedBytes = decodeToByteArray(token);
-
             //get bytes from decrypt key
             string key = "STINGMIMI";
             byte[] keyBytes = StringToByteArray(key);
 
-            //init decrypter with key bytes
-            MyBlowFish bf = new MyBlowFish(keyBytes);
+            BlowfishEngine bf = new BlowfishEngine();
+            bf.Init(false, new KeyParameter(keyBytes));
+            byte[] decryptedBytes = decrypt(encryptedBytes, bf);
+            return Encoding.ASCII.GetString(decryptedBytes);
+        }
 
-            //decrypt token bytes
-            uint[] decryptedBytes = bf.Decrypt(encryptedBytes);
+        byte[] decrypt(byte[] byteArray, BlowfishEngine bf)
+        {
+            int blockSize = 8;
+            List<byte> decrypted = new List<byte>();
+            for (int i = 0; i < byteArray.Length; i = i + blockSize)
+            {
+                byte[] blockBytes = new byte[blockSize];
+                byte[] outBytes = new byte[blockSize];
+                for (int j = 0; j < blockSize; j++)
+                {
+                    blockBytes[j] = byteArray[i + j];
+                }
+                bf.ProcessBlock(blockBytes, 0, outBytes, 0);
+                decrypted.AddRange(outBytes);
+            }
+            unpad(decrypted);
+            return decrypted.ToArray();
+        }
 
-            //convert decrypted bytes back to string
-            string s = "";
-            foreach (uint c in decryptedBytes)
-                s += (char)c;
+        void unpad(List<byte> decrypted)
+        {
+            uint c = decrypted[decrypted.Count - 1];
+            for (uint i = c; i > 0; i--)
+                decrypted.RemoveAt(decrypted.Count - 1);
+        }
 
-            return s;
+        //decodes token to bytes and removes any padding
+        byte[] decodeToByteArray(string s)
+        {
+            s = s.Trim();
+
+            int quad_pos = 0;
+            int leftbits = 0;
+            int leftchar = 0;
+            List<byte> res = new List<byte>();
+            for (int i = 0; i < s.Length; i++)
+            {
+                char c = s[i];
+
+                if (c > '\x7f' || c == '\n' || c == '\r' || c == ' ')
+                    continue;
+
+                if (c == '=')
+                {
+                    if (quad_pos < 2 || (quad_pos == 2 && next_valid_char(s, i) != '='))
+                        continue;
+                    else
+                    {
+                        leftbits = 0;
+                        break;
+                    }
+                }
+
+                int next_c;
+                if (table_a2b_base64.ContainsKey(c))
+                    next_c = table_a2b_base64[c];
+                else
+                    continue;
+
+                quad_pos = (quad_pos + 1) & 0x03;
+                leftchar = (leftchar << 6) | next_c;
+                leftbits += 6;
+                if (leftbits >= 8)
+                {
+                    leftbits -= 8;
+                    res.Add((byte)(leftchar >> leftbits & 0xff));
+                    leftchar &= ((1 << leftbits) - 1);
+                }
+            }
+
+            if (leftbits != 0)
+                throw new Exception("Incorrect padding");
+
+            return res.ToArray();
+        }
+
+        private char next_valid_char(string s, int pos)
+        {
+            for (int i = pos; i < s.Length; i++)
+            {
+                char c = s[i];
+                if (c < '\x7f')
+                {
+                    if (table_a2b_base64.ContainsKey(c))
+                        return c;
+                }
+            }
+            return '=';
+        }
+
+        byte[] StringToByteArray(string s)
+        {
+            List<byte> b = new List<byte>();
+            foreach (char c in s)
+            {
+                b.Add((byte)c);
+            }
+            return b.ToArray();
         }
 
         Dictionary<char, int> table_a2b_base64 = new Dictionary<char, int>();
-
         void initTable()
         {
             table_a2b_base64.Add('A', 0);
@@ -104,81 +196,6 @@ namespace OnlineVideos.Sites
             table_a2b_base64.Add('+', 62);
             table_a2b_base64.Add('/', 63);
             table_a2b_base64.Add('=', 0);
-        }
-
-        //decodes token to bytes and removes any padding
-        byte[] decodeToByteArray(string s)
-        {
-            s = s.Trim();
-
-            int quad_pos = 0;
-            int leftbits = 0;
-            int leftchar = 0;
-            List<byte> res = new List<byte>();
-            for (int i = 0; i < s.Length; i++)
-            {
-                char c = s[i];
-
-                if (c > '\x7f' || c == '\n' || c == '\r' || c == ' ')
-                    continue;
-
-                if (c == '=')
-                {
-                    if (quad_pos < 2 || (quad_pos == 2 && next_valid_char(s, i) != '='))
-                        continue;
-                    else
-                    {
-                        leftbits = 0;
-                        break;
-                    }
-                }
-
-                int next_c;
-                if (table_a2b_base64.ContainsKey(c))
-                    next_c = table_a2b_base64[c];
-                else
-                    continue;
-
-                quad_pos = (quad_pos + 1) & 0x03;
-                leftchar = (leftchar << 6) | next_c;
-                leftbits += 6;
-                if (leftbits >= 8)
-                {
-                    leftbits -= 8;
-                    res.Add((byte)(leftchar >> leftbits & 0xff));
-                    leftchar &= ((1 << leftbits) - 1);
-                }
-            }
-
-            if (leftbits != 0)
-                throw new Exception("Incorrect padding");
-
-            return res.ToArray();
-        }
-
-        private char next_valid_char(string s, int pos)
-        {
-            for (int i = pos; i < s.Length; i++)
-            {
-                char c = s[i];
-                if (c < '\x7f')
-                {
-                    if (table_a2b_base64.ContainsKey(c))
-                        return c;
-                }
-            }
-
-            return '=';
-        }
-
-        byte[] StringToByteArray(string s)
-        {
-            List<byte> b = new List<byte>();
-            foreach (char c in s)
-            {
-                b.Add((byte)c);
-            }
-            return b.ToArray();
         }
     }
 }

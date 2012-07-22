@@ -150,10 +150,10 @@ namespace OnlineVideos.Sites
 
         public override Dictionary<string, string> GetSearchableCategories()
         {
+            if (searchableCats == null)
+                searchableCats = new Dictionary<string, string>();
             return searchableCats;
         }
-
-
 
         SubCatHolder getCats(string playlistUrl, Category parentCategory = null)
         {

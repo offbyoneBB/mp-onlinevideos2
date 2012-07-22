@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
-using OnlineVideos.AMF3;
 using System.Net;
 using System.Linq;
 using System.IO;
 using System.Web;
-using OnlineVideos.Sites.brownardPRIVATE;
+using OnlineVideos.AMF;
 
 namespace OnlineVideos.Sites
 {
@@ -190,28 +189,25 @@ namespace OnlineVideos.Sites
             if (!m.Success)
                 return String.Empty;
 
-            AMF3Array renditions = GetResultsFromViewerExperienceRequest(m, video);
-
+            AMFArray renditions = GetResultsFromViewerExperienceRequest(m, video);
             return FillPlaybackOptions(video, renditions);
         }
 
-        private AMF3Array GetResultsFromViewerExperienceRequest(Match m, VideoInfo video)
+        private AMFArray GetResultsFromViewerExperienceRequest(Match m, VideoInfo video)
         {
-            AMF3Object contentOverride = new AMF3Object("com.brightcove.experience.ContentOverride");
+            OnlineVideos.AMF.AMFObject contentOverride = new AMFObject("com.brightcove.experience.ContentOverride");
             contentOverride.Add("contentId", double.NaN);
             contentOverride.Add("target", "videoPlayer");
-
             contentOverride.Add("contentRefId", m.Groups[2].Value);
-
             contentOverride.Add("featuredRefId", null);
             contentOverride.Add("contentRefIds", null);
             contentOverride.Add("featuredId", double.NaN);
             contentOverride.Add("contentIds", null);
             contentOverride.Add("contentType", 0);
-            AMF3Array array = new AMF3Array();
+            AMFArray array = new AMFArray();
             array.Add(contentOverride);
 
-            AMF3Object ViewerExperienceRequest = new AMF3Object("com.brightcove.experience.ViewerExperienceRequest");
+            AMFObject ViewerExperienceRequest = new AMFObject("com.brightcove.experience.ViewerExperienceRequest");
             ViewerExperienceRequest.Add("TTLToken", String.Empty);
             ViewerExperienceRequest.Add("playerKey", String.Empty);
             ViewerExperienceRequest.Add("deliveryType", double.NaN);
@@ -220,23 +216,23 @@ namespace OnlineVideos.Sites
 
             ViewerExperienceRequest.Add("experienceId", (double)Int64.Parse(m.Groups[1].Value));
 
-            AMF3Serializer ser = new AMF3Serializer();
+            AMFSerializer ser = new AMFSerializer();
             byte[] data = ser.Serialize(ViewerExperienceRequest, hashValue);
 
             string requestUrl = "http://c.brightcove.com/services/messagebroker/amf?playerid=" + m.Groups[1].Value;
 
-            AMF3Object response = GetResponse(requestUrl, data);
+            AMFObject response = GetResponse(requestUrl, data);
 
             return response.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
         }
 
-        private string FillPlaybackOptions(VideoInfo video, AMF3Array renditions)
+        private string FillPlaybackOptions(VideoInfo video, AMFArray renditions)
         {
             SortedList<string, string> options = new SortedList<string, string>(new StreamComparer());
 
             for (int i = 0; i < renditions.Count; i++)
             {
-                AMF3Object rendition = renditions.GetObject(i);
+                AMFObject rendition = renditions.GetObject(i);
                 int encodingRate = rendition.GetIntProperty("encodingRate");
                 string nm = String.Format("{0}x{1} | {2} kbps",
                     rendition.GetIntProperty("frameWidth"), rendition.GetIntProperty("frameHeight"),
@@ -270,7 +266,7 @@ namespace OnlineVideos.Sites
             return StreamComparer.GetBestPlaybackUrl(video.PlaybackOptions, StreamQualityPref, AutoSelectStream);
         }
 
-        private AMF3Object GetResponse(string url, byte[] postData)
+        private AMFObject GetResponse(string url, byte[] postData)
         {
             //Log.Debug("get webdata from {0}", url);
 
@@ -303,8 +299,8 @@ namespace OnlineVideos.Sites
                     responseStream = response.GetResponseStream();
 
 
-                AMF3Deserializer des = new AMF3Deserializer(responseStream);
-                AMF3Object obj = des.Deserialize();
+                AMFDeserializer des = new AMFDeserializer(responseStream);
+                AMFObject obj = des.Deserialize();
                 return obj;
             }
 
