@@ -85,9 +85,10 @@ namespace OnlineVideos.Sites
 					{
 						parentCategory.SubCategories.Add(new RssLink() 
 						{ 
-							Name = m3.Groups["title"].Value, 
+							Name = HttpUtility.HtmlDecode(m3.Groups["title"].Value), 
 							ParentCategory = parentCategory, 
-							Url = (parentCategory as RssLink).Url 
+							Url = (parentCategory as RssLink).Url,
+							Other = m3.Groups["title"].Value
 						});
 						m3 = m3.NextMatch();
 					}
@@ -113,7 +114,7 @@ namespace OnlineVideos.Sites
 			{
 				currentStart = 0;
 				data = GetWebData((category.ParentCategory as RssLink).Url);
-				data = Regex.Match(data, string.Format(tv4VideolistDividingRegEx, category.Name.Replace(" ", "\\s")), RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture).Groups["data"].Value;
+				data = Regex.Match(data, string.Format(tv4VideolistDividingRegEx, ((string)category.Other).Replace(" ", "\\s")), RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture).Groups["data"].Value;
 			}
 			else
 			{
