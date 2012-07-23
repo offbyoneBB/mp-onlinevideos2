@@ -32,6 +32,8 @@ namespace OnlineVideos.Sites.georgius
         private static String showEpisodeThumbUrlRegex = @"src=""(?<showThumbUrl>[^""]+)""";
         private static String showEpisodeUrlAndTitleRegex = @"(<a class=""itemSetPaging"" rel=""[^""]+"" href=""(?<showUrl>[^""]+)"">(?<showTitle>[^<]+)</a>)|(<a href=""(?<showUrl>[^""]+)"">(?<showTitle>[^<]+)</a>)";
         private static String showEpisodeNextPageRegex = @"<a title=""[^""]+"" rel=""[^""]*"" class=""detailProgrammePaging next"" href=""(?<url>[^""]+)"">";
+        private static String showEpisodeDescriptionStart = @"</h3>";
+        private static String showEpisodeDescriptionEnd = @"<p class=""itemRating";
 
         private static String liveNextProgramm = @"<p class=""next"">";
 
@@ -139,6 +141,7 @@ namespace OnlineVideos.Sites.georgius
                             String showTitle = String.Empty;
                             String showThumbUrl = String.Empty;
                             String showUrl = String.Empty;
+                            String showDescription = String.Empty;
 
                             if (this.currentCategory.Name == "Živě")
                             {
@@ -179,6 +182,16 @@ namespace OnlineVideos.Sites.georgius
                                     showTitle = showEpisodeUrlAndTitle.Groups["showTitle"].Value.Trim();
                                     baseWebData = baseWebData.Substring(showEpisodeUrlAndTitle.Index + showEpisodeUrlAndTitle.Length);
                                 }
+
+                                int startIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodeDescriptionStart);
+                                if (startIndex >= 0)
+                                {
+                                    int endIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodeDescriptionEnd, startIndex);
+                                    if (endIndex >= 0)
+                                    {
+                                        showDescription = baseWebData.Substring(startIndex + CeskaTelevizeUtil.showEpisodeDescriptionStart.Length, endIndex - startIndex - CeskaTelevizeUtil.showEpisodeDescriptionStart.Length).Trim().Replace('\t', ' ').Replace("</p>", "\n").Trim();
+                                    }
+                                }
                             }
 
                             if (String.IsNullOrEmpty(showTitle) || String.IsNullOrEmpty(showUrl) || String.IsNullOrEmpty(showThumbUrl))
@@ -190,7 +203,8 @@ namespace OnlineVideos.Sites.georgius
                             {
                                 ImageUrl = showThumbUrl,
                                 Title = showTitle,
-                                VideoUrl = showUrl
+                                VideoUrl = showUrl,
+                                Description = showDescription
                             };
 
                             pageVideos.Add(videoInfo);
