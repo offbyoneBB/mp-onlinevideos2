@@ -23,7 +23,7 @@
 #ifndef __VERSIONINFO_DEMUXERS_DEFINED
 #define __VERSIONINFO_DEMUXERS_DEFINED
 
-#define VERSION_INFO_DEMUXERS                                               L"1.2.$WCREV$"
+#define VERSION_INFO_DEMUXERS                                               L"$WCREV$"
 #define COMPILE_INFO_DEMUXERS                                               L"$WCNOWUTC$"
 
 #endif 

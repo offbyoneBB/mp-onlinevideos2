@@ -25,7 +25,7 @@
 
 #include "MPUrlSourceSplitterExports.h"
  
-#define VERSION_INFO_MPURLSOURCESPLITTER                                    L"1.2.$WCREV$"
+#define VERSION_INFO_MPURLSOURCESPLITTER                                    L"$WCREV$"
 #define COMPILE_INFO_MPURLSOURCESPLITTER                                    L"$WCNOWUTC$"
 
 // gets version info
