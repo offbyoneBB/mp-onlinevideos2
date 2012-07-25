@@ -72,7 +72,7 @@ public:
   HRESULT GetDecodeResult(void);
 
   // gets decoded value
-  // @return : decoded value of NULL if error
+  // @return : decoded value or NULL if error
   const unsigned char *GetDecodedValue(void);
 
   // gets decoded value length

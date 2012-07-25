@@ -24,6 +24,10 @@
 
 #include <stdio.h>
 
+extern "C" char *curl_easy_escape(void *handle, const char *string, int inlength);
+extern "C" char *curl_easy_unescape(void *handle, const char *string, int length, int *olen);
+extern "C" void curl_free(void *p);
+
 char *ConvertGuidToStringA(const GUID guid)
 {
   char *result = NULL;
@@ -372,4 +376,62 @@ wchar_t *SkipBlanksW(wchar_t *str, unsigned int strlen)
     }
 
     return str;
-} 
+}
+
+char *EscapeA(char *input)
+{
+  char *result = NULL;
+
+  char *escapedCurlValue = curl_easy_escape(NULL, input, 0);
+  result = DuplicateA(escapedCurlValue);
+
+  // free CURL return value
+  curl_free(escapedCurlValue);
+
+  return result;
+}
+
+wchar_t *EscapeW(wchar_t *input)
+{
+  wchar_t *result = NULL;
+
+  char *curlValue = ConvertToMultiByte(input);
+  if (curlValue != NULL)
+  {
+    char *escapedCurlValue = EscapeA(curlValue);
+    result = ConvertToUnicodeA(escapedCurlValue);
+    FREE_MEM(escapedCurlValue);
+  }
+  FREE_MEM(curlValue);
+
+  return result;
+}
+
+char *UnescapeA(char *input)
+{
+  char *result = NULL;
+
+  char *unescapedCurlValue = curl_easy_unescape(NULL, input, 0, NULL);
+  result = DuplicateA(unescapedCurlValue);
+
+  // free CURL return value
+  curl_free(unescapedCurlValue);
+
+  return result;
+}
+
+wchar_t *UnescapeW(wchar_t *input)
+{
+  wchar_t *result = NULL;
+
+  char *curlValue = ConvertToMultiByte(input);
+  if (curlValue != NULL)
+  {
+    char *unescapedCurlValue = UnescapeA(curlValue);
+    result = ConvertToUnicodeA(unescapedCurlValue);
+    FREE_MEM(unescapedCurlValue);
+  }
+  FREE_MEM(curlValue);
+
+  return result;
+}

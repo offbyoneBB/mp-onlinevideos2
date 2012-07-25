@@ -294,7 +294,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ws2_32.lib;wldap32.lib;libssh2d.lib;libeay32.lib;ssleay32.lib;librtmpd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;wldap32.lib;libssh2d.lib;libeay32.lib;ssleay32.lib;librtmpd.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>
       </ImportLibrary>
     </Link>
@@ -327,7 +327,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>
       </ImportLibrary>
-      <AdditionalDependencies>ws2_32.lib;wldap32.lib;libssh2.lib;libeay32.lib;ssleay32.lib;librtmp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;wldap32.lib;libssh2.lib;libeay32.lib;ssleay32.lib;librtmp.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <PreventDllBinding>
       </PreventDllBinding>

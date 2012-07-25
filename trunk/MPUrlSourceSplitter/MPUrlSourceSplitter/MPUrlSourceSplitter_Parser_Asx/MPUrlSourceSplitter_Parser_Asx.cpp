@@ -268,58 +268,6 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
                       FREE_MEM(url);
                     }
                   }
-              //    char *hrefNode = strstr(entryStartString, "href");
-              //    if (hrefNode != NULL)
-              //    {
-              //      hrefNode += 4;
-              //      unsigned int hrefLength = strlen(hrefNode);
-              //      // found href attribute in ref node
-              //      hrefNode = SkipBlanks(hrefNode, hrefLength);
-              //      if (strncmp(hrefNode, "=", 1) == 0)
-              //      {
-              //        hrefNode++;
-              //        hrefNode = SkipBlanks(hrefNode, hrefLength);
-              //        if (strncmp(hrefNode, "\"", 1) == 0)
-              //        {
-              //          // we are on the first ", find second "
-              //          char *first = hrefNode + 1;
-              //          char *last = strstr(first, "\"");
-              //          if ((first != NULL) && (last != NULL))
-              //          {
-              //            unsigned int firstIndex = first - lowerBuffer;
-              //            unsigned int lastIndex = last - lowerBuffer;
-
-              //            if (lastIndex > firstIndex)
-              //            {
-              //              unsigned int urlLength = lastIndex - firstIndex + 1;
-              //              ALLOC_MEM_DEFINE_SET(url, char, urlLength, 0);
-              //              if (url != NULL)
-              //              {
-              //                memcpy(url, buffer + firstIndex, urlLength - 1);
-
-              //                wchar_t *w_url = ConvertToUnicodeA(url);
-              //                if (w_url != NULL)
-              //                {
-              //                  this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, w_url);
-
-              //                  CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, w_url);
-              //                  if (urlParameter != NULL)
-              //                  {
-              //                    bool invariant = true;
-              //                    this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
-              //                    this->connectionParameters->Add(urlParameter);
-
-              //                    result = ParseResult_Known;
-              //                  }
-              //                }
-              //                FREE_MEM(w_url);
-              //              }
-              //              FREE_MEM(url);
-              //            }
-              //          }
-              //        }
-              //      }
-              //    }
                 }
               }
             }

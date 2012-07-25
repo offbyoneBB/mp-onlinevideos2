@@ -38,6 +38,12 @@ public:
   // @return : true if bootstrap info exists, false otherwise
   bool Contains(wchar_t *name, bool invariant);
 
+  // gets bootstrap info from collection with specified ID
+  // @param id : the id of bootstrap info to find
+  // @param invariant : specifies if bootstrap info ID shoud be find with invariant casing
+  // @return : the reference to bootstrap info or NULL if not find
+  CBootstrapInfo *GetBootstrapInfo(const wchar_t *id, bool invariant);
+
 protected:
 
   // compare two item keys

@@ -64,3 +64,8 @@ bool CBootstrapInfoCollection::Contains(wchar_t *name, bool invariant)
 {
   return __super::Contains(name, (void *)&invariant);
 }
+
+CBootstrapInfo *CBootstrapInfoCollection::GetBootstrapInfo(const wchar_t *id, bool invariant)
+{
+  return this->GetItem((wchar_t *)id, (void *)&invariant);
+}
