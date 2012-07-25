@@ -103,12 +103,19 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <None Include="VersionInfo.h.template" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BootstrapInfo.h" />
+    <ClInclude Include="BootstrapInfoCollection.h" />
+    <ClInclude Include="Media.h" />
+    <ClInclude Include="MediaCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Parser_F4M.h" />
     <ClInclude Include="MPUrlSourceSplitter_Parser_F4M_Exports.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BootstrapInfo.cpp" />
+    <ClCompile Include="BootstrapInfoCollection.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -117,11 +124,14 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Media.cpp" />
+    <ClCompile Include="MediaCollection.cpp" />
     <ClCompile Include="MPUrlSourceSplitter_Parser_F4M.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="tinyxml2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

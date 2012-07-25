@@ -18,6 +18,8 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#pragma once
+
 #ifndef __MPURLSOURCESPLITTER_PARSER_ASX_DEFINED
 #define __MPURLSOURCESPLITTER_PARSER_ASX_DEFINED
 
