@@ -23,6 +23,10 @@
 #include "MPUrlSourceSplitter_Parser_F4M.h"
 #include "VersionInfo.h"
 #include "..\LAVSplitter\VersionInfo.h"
+#include "BootstrapInfoCollection.h"
+#include "MediaCollection.h"
+
+#include "tinyxml2.h"
 
 // parser implementation name
 #ifdef _DEBUG
@@ -30,6 +34,19 @@
 #else
 #define PARSER_IMPLEMENTATION_NAME                                      L"MPUrlSourceSplitter_Parser_F4M"
 #endif
+
+unsigned int GetValueUnsignedInt(wchar_t *input, unsigned int defaultValue)
+{
+  wchar_t *end = NULL;
+  long valueLong = wcstol((input == NULL) ? L"" : input, &end, 10);
+  if ((valueLong == 0) && (input == end))
+  {
+    // error while converting
+    valueLong = defaultValue;
+  }
+
+  return (unsigned int)valueLong;
+}
 
 PIPlugin CreatePluginInstance(CParameterCollection *configuration)
 {
@@ -103,297 +120,166 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
     {
       mediaPacket->GetBuffer()->CopyFromBuffer(buffer, length - 1, 0, 0);
 
-      char *lowerBuffer = DuplicateA(buffer);
-      if (lowerBuffer != NULL)
+      XMLDocument *document = new XMLDocument();
+
+      if (document != NULL)
       {
-        size_t length = strlen(lowerBuffer);
-        if (length > 0)
+        // parse received data, if no error, continue in parsing
+        if (document->Parse(buffer) == XML_NO_ERROR)
         {
-          _strlwr_s(lowerBuffer, length + 1);
-
-          if (length > F4M_ELEMENT_MANIFEST_LENGTH)
+          XMLElement *manifest = document->FirstChildElement(F4M_ELEMENT_MANIFEST);
+          if (manifest != NULL)
           {
-            // the length of received data should be at least F4M_ELEMENT_MANIFEST_LENGTH characters
-
-            char *manifest = strstr(lowerBuffer, F4M_ELEMENT_MANIFEST);
-            if (manifest != NULL)
+            // manifest element is in XML document, check xmlns attribute
+            const char *xmlnsValue = manifest->Attribute(F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS);
+            if (xmlnsValue != NULL)
             {
-              // possible F4M file
-              // try to parse
-
-              bool isF4M = false;
-              char *xmlns = strstr(manifest, F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS);
-              if (xmlns != NULL)
+              if (strcmp(xmlnsValue, F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS_VALUE) == 0)
               {
-                // check xmlns value
-                char *firstQuote = strstr(xmlns, "\"");
-                if (firstQuote != NULL)
+                // correct F4M file, continue in parsing
+
+                this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"F4M manifest");
+                wchar_t *asxBuffer = ConvertToUnicodeA(buffer);
+                if (asxBuffer != NULL)
                 {
-                  if (strlen(firstQuote) > (F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS_VALUE_LENGTH + 1))
+                  this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, asxBuffer);
+                }
+                FREE_MEM(asxBuffer);
+
+                // parse bootstrap info
+                // bootstrap info should have information about segments, fragments and seeking information
+
+                CBootstrapInfoCollection *bootstrapInfoCollection = new CBootstrapInfoCollection();
+                CMediaCollection *mediaCollection = new CMediaCollection();
+
+                if ((bootstrapInfoCollection != NULL) && (mediaCollection != NULL))
+                {
+                  XMLElement *child = manifest->FirstChildElement();
+                  if (child != NULL)
                   {
-                    if (strncmp(firstQuote + 1, F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS_VALUE, F4M_ELEMENT_MANIFEST_ATTRIBUTE_XMLNS_VALUE_LENGTH) == 0)
+                    do
                     {
-                      // sure F4M file
-                      isF4M = true;
+                      // bootstrap info
+                      if (strcmp(child->Name(), F4M_ELEMENT_BOOTSTRAPINFO) == 0)
+                      {
+                        // we found bootstrap info, insert it into collection
+                        wchar_t *id = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_ID));
+                        wchar_t *profile = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE));
+                        wchar_t *url = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_URL));
+                        wchar_t *value = ConvertToUnicodeA(child->Value());
+
+                        // bootstrap info profile have to be 'named' (F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMED)
+                        if ((profile != NULL) && (strcmp(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE), F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMED) == 0))
+                        {
+                          CBootstrapInfo *bootstrapInfo = new CBootstrapInfo(id, profile, url, value);
+                          if (bootstrapInfo != NULL)
+                          {
+                            if (bootstrapInfo->IsValid())
+                            {
+                              bootstrapInfoCollection->Add(bootstrapInfo);
+                            }
+                            else
+                            {
+                              this->logger->Log(LOGGER_WARNING, L"%s: %s: bootstrap info is not valid, id: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, bootstrapInfo->GetId());
+                              delete bootstrapInfo;
+                              bootstrapInfo = NULL;
+                            }
+                          }
+                        }
+                        else
+                        {
+                          this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"bootstrap info profile is not 'named'");
+                        }
+
+                        FREE_MEM(id);
+                        FREE_MEM(profile);
+                        FREE_MEM(url);
+                        FREE_MEM(value);
+                      }
+
+                      if (strcmp(child->Name(), F4M_ELEMENT_MEDIA) == 0)
+                      {
+                        // we found piece of media, insert it into collection
+                        wchar_t *url = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_URL));
+                        wchar_t *bitrate = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_BITRATE));
+                        wchar_t *width = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_WIDTH));
+                        wchar_t *height = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_HEIGHT));
+                        wchar_t *drmAdditionalHeaderId = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_DRMADDITTIONALHEADERID));
+                        wchar_t *bootstrapInfoId = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_BOOTSTRAPINFOID));
+                        wchar_t *dvrInfoId = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_DVRINFOID));
+                        wchar_t *groupspec = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_GROUPSPEC));
+                        wchar_t *multicastStreamName = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_MULTICASTSTREAMNAME));
+
+                        unsigned int bitrateValue = GetValueUnsignedInt(bitrate, UINT_MAX);
+                        unsigned int widthValue = GetValueUnsignedInt(width, UINT_MAX);
+                        unsigned int heightValue = GetValueUnsignedInt(height, UINT_MAX);
+                        
+                        // we should have url and bootstrapInfoId
+                        // we exclude piece of media with drmAdditionalHeaderId
+                        if ((url != NULL) && (bootstrapInfoId != NULL) && (drmAdditionalHeaderId == NULL))
+                        {
+                          CMedia *media = new CMedia(url, bitrateValue, widthValue, heightValue, drmAdditionalHeaderId, bootstrapInfoId, dvrInfoId, groupspec, multicastStreamName);
+                          if (media != NULL)
+                          {
+                            mediaCollection->Add(media);
+                          }
+                        }
+                        else
+                        {
+                          this->logger->Log(LOGGER_WARNING, L"%s: %s: piece of media doesn't have url ('%s'), bootstrap info ID ('%s') or has DRM additional header ID ('%s')", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, url, bootstrapInfoId, drmAdditionalHeaderId);
+                        }
+
+                        FREE_MEM(url);
+                        FREE_MEM(bitrate);
+                        FREE_MEM(width);
+                        FREE_MEM(height);
+                        FREE_MEM(drmAdditionalHeaderId);
+                        FREE_MEM(bootstrapInfoId);
+                        FREE_MEM(dvrInfoId);
+                        FREE_MEM(groupspec);
+                        FREE_MEM(multicastStreamName);
+                      }
                     }
+                    while ((child = child->NextSiblingElement()) != NULL);
+                  }
+
+                  bool continueParsing = true;
+                  if (bootstrapInfoCollection->Count() == 0)
+                  {
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"no bootstrap info profile");
+                    continueParsing = false;
+                  }
+
+                  if (mediaCollection->Count() == 0)
+                  {
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"no piece of media");
+                    continueParsing = false;
                   }
                 }
-              }
 
-              if (isF4M)
-              {
-                this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"F4M manifest");
-                wchar_t *f4mBuffer = ConvertToUnicodeA(buffer);
-                if (f4mBuffer != NULL)
+                if (bootstrapInfoCollection != NULL)
                 {
-                  this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, f4mBuffer);
+                  delete bootstrapInfoCollection;
+                  bootstrapInfoCollection = NULL;
                 }
-                FREE_MEM(f4mBuffer);
+
+                if (mediaCollection != NULL)
+                {
+                  delete mediaCollection;
+                  mediaCollection = NULL;
+                }
               }
             }
           }
         }
+
+        // remove document
+        delete document;
+        document = NULL;
       }
-      FREE_MEM(lowerBuffer);
     }
     FREE_MEM(buffer);
   }
-
-  //if (mediaPacket != NULL)
-  //{
-  //  unsigned int length = mediaPacket->GetBuffer()->GetBufferOccupiedSpace() + 1;
-  //  ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
-  //  if ((buffer != NULL) && (length > 1))
-  //  {
-  //    mediaPacket->GetBuffer()->CopyFromBuffer(buffer, length - 1, 0, 0);
-
-  //    char *lowerBuffer = DuplicateA(buffer);
-  //    if (lowerBuffer != NULL)
-  //    {
-  //      size_t length = strlen(lowerBuffer);
-  //      if (length > 0)
-  //      {
-  //        _strlwr_s(lowerBuffer, length + 1);
-
-  //        if (length > 4)
-  //        {
-  //          // the length of received data should be at least 5 characters '<asx '
-
-  //          if (strncmp(lowerBuffer, "<asx ", 5) == 0)
-  //          {
-  //            // possible ASX file
-  //            // try to parse
-
-  //            this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"ASX stream");
-  //            wchar_t *asxBuffer = ConvertToUnicodeA(buffer);
-  //            if (asxBuffer != NULL)
-  //            {
-  //              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, asxBuffer);
-  //            }
-  //            FREE_MEM(asxBuffer);
-
-  //            char *entryStartString = strstr(lowerBuffer, "<entry");
-  //            if (entryStartString != NULL)
-  //            {
-  //              char *entryEndString = strstr(entryStartString, "</entry>");
-  //              if (entryEndString != NULL)
-  //              {
-  //                char *hrefNode = strstr(entryStartString, "href");
-  //                if (hrefNode != NULL)
-  //                {
-  //                  hrefNode += 4;
-  //                  unsigned int hrefLength = strlen(hrefNode);
-  //                  // found href attribute in ref node
-  //                  hrefNode = SkipBlanksA(hrefNode, hrefLength);
-  //                  if (strncmp(hrefNode, "=", 1) == 0)
-  //                  {
-  //                    hrefNode++;
-  //                    hrefNode = SkipBlanksA(hrefNode, hrefLength);
-  //                    if (strncmp(hrefNode, "\"", 1) == 0)
-  //                    {
-  //                      // we are on the first ", find second "
-  //                      char *first = hrefNode + 1;
-  //                      char *last = strstr(first, "\"");
-  //                      if ((first != NULL) && (last != NULL))
-  //                      {
-  //                        unsigned int firstIndex = first - lowerBuffer;
-  //                        unsigned int lastIndex = last - lowerBuffer;
-
-  //                        if (lastIndex > firstIndex)
-  //                        {
-  //                          unsigned int urlLength = lastIndex - firstIndex + 1;
-  //                          ALLOC_MEM_DEFINE_SET(url, char, urlLength, 0);
-  //                          if (url != NULL)
-  //                          {
-  //                            memcpy(url, buffer + firstIndex, urlLength - 1);
-
-  //                            wchar_t *w_url = ConvertToUnicodeA(url);
-  //                            if (w_url != NULL)
-  //                            {
-  //                              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, w_url);
-
-  //                              CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, w_url);
-  //                              if (urlParameter != NULL)
-  //                              {
-  //                                bool invariant = true;
-  //                                this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
-  //                                this->connectionParameters->Add(urlParameter);
-
-  //                                result = ParseResult_Known;
-  //                              }
-  //                            }
-  //                            FREE_MEM(w_url);
-  //                          }
-  //                          FREE_MEM(url);
-  //                        }
-  //                      }
-  //                    }
-  //                  }
-  //                }
-  //              }
-  //            }
-  //          }
-  //        }
-
-  //        if ((result == ParseResult_NotKnown) && (length > 11))
-  //        {
-  //          // the length of received data should be at least 11 characters '[Reference]'
-  //          if (strncmp(lowerBuffer, "[reference]", 11) == 0)
-  //          {
-  //            // possible special ASX file
-  //            // try to parse
-
-  //            this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"special ASX stream");
-  //            wchar_t *asxBuffer = ConvertToUnicodeA(buffer);
-  //            if (asxBuffer != NULL)
-  //            {
-  //              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, asxBuffer);
-  //            }
-  //            FREE_MEM(asxBuffer);
-
-  //            char *ref1StartString = strstr(lowerBuffer, "ref1=");
-  //            if (ref1StartString != NULL)
-  //            {
-  //              char *ref1EndString1 = strstr(ref1StartString, "\n");
-  //              char *ref1EndString2 = strstr(ref1StartString, "\r");
-
-  //              char *ref1EndString = NULL;
-  //              if ((ref1EndString1 != NULL) && (ref1EndString2 != NULL))
-  //              {
-  //                ref1EndString = (ref1EndString1 < ref1EndString2) ? ref1EndString1 : ref1EndString2;
-  //              }
-  //              else if (ref1EndString1 != NULL)
-  //              {
-  //                ref1EndString = ref1EndString1;
-  //              }
-  //              else if (ref1EndString2 != NULL)
-  //              {
-  //                ref1EndString = ref1EndString2;
-  //              }
-
-  //              if (ref1EndString != NULL)
-  //              {
-  //                char *first = ref1StartString + 5;
-  //                if (first != NULL)
-  //                {
-  //                  unsigned int firstIndex = first - lowerBuffer;
-  //                  unsigned int lastIndex = ref1EndString - lowerBuffer;
-
-  //                  if (lastIndex > firstIndex)
-  //                  {
-  //                    unsigned int urlLength = lastIndex - firstIndex + 1;
-  //                    ALLOC_MEM_DEFINE_SET(url, char, urlLength, 0);
-  //                    if (url != NULL)
-  //                    {
-  //                      memcpy(url, buffer + firstIndex, urlLength - 1);
-
-  //                      wchar_t *w_url = ConvertToUnicodeA(url);
-  //                      if (w_url != NULL)
-  //                      {
-  //                        wchar_t *replacedUrl = ReplaceString(w_url, L"http://", L"mms://");
-  //                        if (replacedUrl != NULL)
-  //                        {
-  //                          this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, replacedUrl);
-
-  //                          CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, replacedUrl);
-  //                          if (urlParameter != NULL)
-  //                          {
-  //                            bool invariant = true;
-  //                            this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
-  //                            this->connectionParameters->Add(urlParameter);
-
-  //                            result = ParseResult_Known;
-  //                          }
-  //                        }
-  //                        FREE_MEM(replacedUrl);
-  //                      }
-  //                      FREE_MEM(w_url);
-  //                    }
-  //                    FREE_MEM(url);
-  //                  }
-  //                }
-  //            //    char *hrefNode = strstr(entryStartString, "href");
-  //            //    if (hrefNode != NULL)
-  //            //    {
-  //            //      hrefNode += 4;
-  //            //      unsigned int hrefLength = strlen(hrefNode);
-  //            //      // found href attribute in ref node
-  //            //      hrefNode = SkipBlanks(hrefNode, hrefLength);
-  //            //      if (strncmp(hrefNode, "=", 1) == 0)
-  //            //      {
-  //            //        hrefNode++;
-  //            //        hrefNode = SkipBlanks(hrefNode, hrefLength);
-  //            //        if (strncmp(hrefNode, "\"", 1) == 0)
-  //            //        {
-  //            //          // we are on the first ", find second "
-  //            //          char *first = hrefNode + 1;
-  //            //          char *last = strstr(first, "\"");
-  //            //          if ((first != NULL) && (last != NULL))
-  //            //          {
-  //            //            unsigned int firstIndex = first - lowerBuffer;
-  //            //            unsigned int lastIndex = last - lowerBuffer;
-
-  //            //            if (lastIndex > firstIndex)
-  //            //            {
-  //            //              unsigned int urlLength = lastIndex - firstIndex + 1;
-  //            //              ALLOC_MEM_DEFINE_SET(url, char, urlLength, 0);
-  //            //              if (url != NULL)
-  //            //              {
-  //            //                memcpy(url, buffer + firstIndex, urlLength - 1);
-
-  //            //                wchar_t *w_url = ConvertToUnicodeA(url);
-  //            //                if (w_url != NULL)
-  //            //                {
-  //            //                  this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, w_url);
-
-  //            //                  CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, w_url);
-  //            //                  if (urlParameter != NULL)
-  //            //                  {
-  //            //                    bool invariant = true;
-  //            //                    this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
-  //            //                    this->connectionParameters->Add(urlParameter);
-
-  //            //                    result = ParseResult_Known;
-  //            //                  }
-  //            //                }
-  //            //                FREE_MEM(w_url);
-  //            //              }
-  //            //              FREE_MEM(url);
-  //            //            }
-  //            //          }
-  //            //        }
-  //            //      }
-  //            //    }
-  //              }
-  //            }
-  //          }
-  //        }
-  //      }
-  //    }
-  //    FREE_MEM(lowerBuffer);
-  //  }
-  //  FREE_MEM(buffer);
-  //}
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, result);
   return result;
