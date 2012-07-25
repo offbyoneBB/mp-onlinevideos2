@@ -154,6 +154,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
                 if ((bootstrapInfoCollection != NULL) && (mediaCollection != NULL))
                 {
+                  bool continueParsing = true;
                   XMLElement *child = manifest->FirstChildElement();
                   if (child != NULL)
                   {
@@ -166,7 +167,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                         wchar_t *id = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_ID));
                         wchar_t *profile = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE));
                         wchar_t *url = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_URL));
-                        wchar_t *value = ConvertToUnicodeA(child->Value());
+                        wchar_t *value = ConvertToUnicodeA(child->GetText());
 
                         // bootstrap info profile have to be 'named' (F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMED)
                         if ((profile != NULL) && (strcmp(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE), F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMED) == 0))
@@ -197,6 +198,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                         FREE_MEM(value);
                       }
 
+                      // piece of media
                       if (strcmp(child->Name(), F4M_ELEMENT_MEDIA) == 0)
                       {
                         // we found piece of media, insert it into collection
@@ -209,6 +211,13 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                         wchar_t *dvrInfoId = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_DVRINFOID));
                         wchar_t *groupspec = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_GROUPSPEC));
                         wchar_t *multicastStreamName = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_MULTICASTSTREAMNAME));
+                        wchar_t *metadataValue = NULL;
+
+                        XMLElement *metadata = child->FirstChildElement(F4M_ELEMENT_MEDIA_ELEMENT_METADATA);
+                        if (metadata != NULL)
+                        {
+                          metadataValue = ConvertToUnicodeA(metadata->GetText());
+                        }
 
                         unsigned int bitrateValue = GetValueUnsignedInt(bitrate, UINT_MAX);
                         unsigned int widthValue = GetValueUnsignedInt(width, UINT_MAX);
@@ -218,7 +227,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                         // we exclude piece of media with drmAdditionalHeaderId
                         if ((url != NULL) && (bootstrapInfoId != NULL) && (drmAdditionalHeaderId == NULL))
                         {
-                          CMedia *media = new CMedia(url, bitrateValue, widthValue, heightValue, drmAdditionalHeaderId, bootstrapInfoId, dvrInfoId, groupspec, multicastStreamName);
+                          CMedia *media = new CMedia(url, bitrateValue, widthValue, heightValue, drmAdditionalHeaderId, bootstrapInfoId, dvrInfoId, groupspec, multicastStreamName, metadataValue);
                           if (media != NULL)
                           {
                             mediaCollection->Add(media);
@@ -238,22 +247,101 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                         FREE_MEM(dvrInfoId);
                         FREE_MEM(groupspec);
                         FREE_MEM(multicastStreamName);
+                        FREE_MEM(metadataValue);
+                      }
+
+                      // delivery type
+                      if (strcmp(child->Name(), F4M_ELEMENT_DELIVERYTYPE) == 0)
+                      {
+                        if (strcmp(child->GetText(), F4M_ELEMENT_DELIVERYTYPE_VALUE_STREAMING) != 0)
+                        {
+                          // it's not HTTP streaming
+                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"delivery type is not 'streaming'");
+                          continueParsing = false;
+                        }
                       }
                     }
-                    while ((child = child->NextSiblingElement()) != NULL);
+                    while (continueParsing && ((child = child->NextSiblingElement()) != NULL));
                   }
 
-                  bool continueParsing = true;
-                  if (bootstrapInfoCollection->Count() == 0)
+                  if (continueParsing && (bootstrapInfoCollection->Count() == 0))
                   {
                     this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"no bootstrap info profile");
                     continueParsing = false;
                   }
 
-                  if (mediaCollection->Count() == 0)
+                  if (continueParsing)
+                  {
+                    unsigned int i = 0;
+                    while (i < mediaCollection->Count())
+                    {
+                      CMedia *media = mediaCollection->GetItem(i);
+                      if (!bootstrapInfoCollection->Contains((wchar_t *)media->GetBootstrapInfoId(), false))
+                      {
+                        this->logger->Log(LOGGER_ERROR, L"%s: %s: no bootstrap info '%s' for media '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, media->GetBootstrapInfoId(), media->GetUrl());
+                        mediaCollection->Remove(i);
+                      }
+                      else
+                      {
+                        i++;
+                      }
+                    }
+                  }
+
+                  if (continueParsing && (mediaCollection->Count() == 0))
                   {
                     this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"no piece of media");
                     continueParsing = false;
+                  }
+
+                  if (continueParsing)
+                  {
+                    // at least one media with bootstrap info and without DRM
+                    // find media with highest bitrate
+
+                    unsigned int bitrate = 0;
+                    unsigned int i = 0;
+                    CMedia *mediaWithHighestBitstream = NULL;
+
+                    for (unsigned int i = 0; i < mediaCollection->Count(); i++)
+                    {
+                      CMedia *media = mediaCollection->GetItem(i);
+                      if (media->GetBitrate() > bitrate)
+                      {
+                        mediaWithHighestBitstream = media;
+                        bitrate = media->GetBitrate();
+                      }
+                    }
+
+                    if (mediaWithHighestBitstream != NULL)
+                    {
+                      wchar_t *originalUrl = Duplicate(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+
+                      // add media into connection parameters
+
+                      // add bootstrap info into connection parameters
+                      CBootstrapInfo *bootstrapInfo = bootstrapInfoCollection->GetBootstrapInfo(mediaWithHighestBitstream->GetBootstrapInfoId(), false);
+                      if (bootstrapInfo != NULL)
+                      {
+                        CParameter *bootstrapInfoParameter = new CParameter(L"AfhsBootstrapInfo", bootstrapInfo->GetValue());
+                        this->connectionParameters->Add(bootstrapInfoParameter);
+                      }
+
+                      CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, L"afhs://test");
+                      if (urlParameter != NULL)
+                      {
+                        bool invariant = true;
+                        this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
+                        this->connectionParameters->Add(urlParameter);
+
+                        result = ParseResult_Known;
+                      }
+                    }
+                    else
+                    {
+                      // this should not happen, just for sure
+                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"no piece of media with highest bitrate");
+                    }
                   }
                 }
 

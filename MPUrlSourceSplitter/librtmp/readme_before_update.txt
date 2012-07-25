@@ -57,6 +57,14 @@ void RTMP_LogHexString(struct RTMP *r, int level, const uint8_t *data, unsigned 
 
 --------------------------------------------
 
+File: \rtmp_sys.h
+Comment: comment code
+Code:
+
+//#define EWOULDBLOCK	WSAETIMEDOUT	/* we don't use nonblocking, but we do use timeouts */
+
+--------------------------------------------
+
 File: \rtmp.h
 Comment: include 'log.h'
 Code:
@@ -192,6 +200,14 @@ if ( !data )
 File: \rtmp.c
 Comment: all methods must have first parameter 'RTMP *r'
 Code:
+
+--------------------------------------------
+
+Comment: add after '#include "log.h"'
+Code: 
+
+#undef EWOULDBLOCK
+#define EWOULDBLOCK	WSAETIMEDOUT	/* we don't use nonblocking, but we do use timeouts */
 
 --------------------------------------------
 

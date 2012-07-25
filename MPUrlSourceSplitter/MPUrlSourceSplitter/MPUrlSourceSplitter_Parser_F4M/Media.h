@@ -32,7 +32,7 @@ public:
   // create instance of CBootstrapInfo class
   CMedia(wchar_t *url, unsigned int bitrate, unsigned int width, unsigned int height,
     wchar_t *drmAdditionalHeaderId, wchar_t *bootstrapInfoId, wchar_t *dvrInfoId,
-    wchar_t *groupspec, wchar_t *multicastStreamName);
+    wchar_t *groupspec, wchar_t *multicastStreamName, wchar_t *metadata);
 
   // destructor
   ~CMedia(void);
@@ -40,6 +40,54 @@ public:
   // gets url associated with piece of media
   // @return : the url or NULL if error
   const wchar_t *GetUrl(void);
+
+  // gets media bitrate
+  // @return : media bitrate or UINT_MAX if not specified
+  unsigned int GetBitrate(void);
+
+  // gets media width
+  // @return : media width or UINT_MAX if not specified
+  unsigned int GetWidth(void);
+
+  // gets media height
+  // @return : media height or UINT_MAX if not specified
+  unsigned int GetHeight(void);
+
+  // gets DRM additional header ID
+  // @return : the DRM additional header ID or NULL if not specified
+  const wchar_t *GetDrmAdditionalHeaderId(void);
+
+  // gets bootstrap info ID
+  // @return : the bootstrap info ID or NULL if not specified
+  const wchar_t *GetBootstrapInfoId(void);
+
+  // gets media dvr info ID
+  // @return : the dvr info ID or NULL if not specified
+  const wchar_t *GetDvrInfoId(void);
+
+  // gets media group specifier for multicast media
+  // @return : the media group specifier for multicast media or NULL if not specified
+  const wchar_t *GetGroupspec(void);
+
+  // gets stream name for multicast media
+  // @return : the stream name for multicast media or NULL if not specified
+  const wchar_t *GetMulticastStreamName(void);
+
+  // gets media BASE64 encoded metadata
+  // @return : media BASE64 encoded metadata or NULL if not specified
+  const wchar_t *GetMetadata(void);
+
+  // gets decoding result of BASE64 encoded metadata
+  // @return : E_NOT_VALID_STATE if metadata is NULL or result from base64_decode() method
+  HRESULT GetDecodeResult(void);
+
+  // gets decoded metadata
+  // @return : decoded metadata or NULL if error
+  const unsigned char *GetDecodedMetadata(void);
+
+  // gets decoded metadata length
+  // @return : decoded metadata length, UINT_MAX if error
+  unsigned int GetDecodedMetadataLength(void);
 
 private:
   // stores media url
@@ -60,6 +108,15 @@ private:
   wchar_t *groupspec;
   // stores stream name for multicast media
   wchar_t *multicastStreamName;
+  // stores BASE64 encoded metadata
+  wchar_t *metadata;
+
+  // stores result of BASE64 decoding
+  HRESULT decodeResult;
+  // stores decoded metadata
+  unsigned char *decodedMetadata;
+  // stores length of decoded metadata
+  unsigned int decodedLength;
 };
 
 #endif

@@ -152,5 +152,22 @@ MPURLSOURCESPLITTER_API wchar_t *SkipBlanksW(wchar_t *str, unsigned int strlen);
 #define SkipBlanks SkipBlanksW
 #endif
 
+MPURLSOURCESPLITTER_API char *EscapeA(char *input);
+MPURLSOURCESPLITTER_API wchar_t *EscapeW(wchar_t *input);
+
+#ifdef _MBCS
+#define Escape EscapeA
+#else
+#define Escape EscapeW
+#endif
+
+MPURLSOURCESPLITTER_API char *UnescapeA(char *input);
+MPURLSOURCESPLITTER_API wchar_t *UnescapeW(wchar_t *input);
+
+#ifdef _MBCS
+#define Unescape UnescapeA
+#else
+#define Unescape UnescapeW
+#endif
 
 #endif

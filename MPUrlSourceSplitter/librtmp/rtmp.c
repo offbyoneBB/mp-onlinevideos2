@@ -31,6 +31,9 @@
 #include "rtmp_sys.h"
 #include "log.h"
 
+#undef EWOULDBLOCK
+#define EWOULDBLOCK	WSAETIMEDOUT	/* we don't use nonblocking, but we do use timeouts */
+
 #ifdef CRYPTO
 #ifdef USE_POLARSSL
 #include <polarssl/havege.h>

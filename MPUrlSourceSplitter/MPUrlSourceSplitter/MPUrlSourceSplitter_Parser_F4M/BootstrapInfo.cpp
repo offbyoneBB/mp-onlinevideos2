@@ -23,7 +23,6 @@
 #include "BootstrapInfo.h"
 
 #include "base64.h"
-#include "Utilities.h"
 
 CBootstrapInfo::CBootstrapInfo(wchar_t *id, wchar_t *profile, wchar_t *url, wchar_t *value)
 {
