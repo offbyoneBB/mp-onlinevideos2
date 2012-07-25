@@ -518,16 +518,16 @@ namespace OnlineVideos.MediaPortal1
                                     }
                                     break;
                                 case "DownloadConcurrent":
-                                    SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) });
+                                    SaveVideo_Step1(DownloadList.Create(DownloadInfo.Create(aVideo, selectedCategory, selectedSite)));
                                     break;
                                 case "DownloadQueued":
-                                    SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) }, true);
+                                    SaveVideo_Step1(DownloadList.Create(DownloadInfo.Create(aVideo, selectedCategory, selectedSite)), true);
                                     break;
                                 case "UserdefinedDownload":
                                     var dlInfo = DownloadInfo.Create(aVideo, selectedCategory, selectedSite);
                                     dlInfo.OverrideFolder = loadParamInfo.DownloadDir;
                                     dlInfo.OverrideFileName = loadParamInfo.DownloadFilename;
-                                    SaveVideo_Step1(new DownloadList() { CurrentItem = dlInfo });
+                                    SaveVideo_Step1(DownloadList.Create(dlInfo));
                                     break;
                                 case "Filter":
                                     if (GetUserInputString(ref videosVKfilter, false)) SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
@@ -624,7 +624,7 @@ namespace OnlineVideos.MediaPortal1
                             {
                                 VideoInfo aVideo = selectedItem.Item as VideoInfo;
                                 if (aVideo != null && !(SelectedSite is IChoice && aVideo.HasDetails))
-                                    SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) });
+                                    SaveVideo_Step1(DownloadList.Create(DownloadInfo.Create(aVideo, selectedCategory, selectedSite)));
                             }
                         }
                         else if (CurrentState == State.details)
@@ -634,7 +634,7 @@ namespace OnlineVideos.MediaPortal1
                             {
                                 VideoInfo aVideo = selectedItem.Item as VideoInfo;
                                 if (aVideo != null)
-                                    SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) });
+                                    SaveVideo_Step1(DownloadList.Create(DownloadInfo.Create(aVideo, selectedCategory, selectedSite)));
                             }
                         }
                         break;
