@@ -44,6 +44,9 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"AFHS" };
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                  1 * 1024 * 1024
 
+#define FLV_FILE_HEADER_LENGTH                              9
+unsigned char FLV_FILE_HEADER[FLV_FILE_HEADER_LENGTH] =     { 0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09 };
+
 // This class is exported from the CMPUrlSourceSplitter_Protocol_Afhs.dll
 class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CMPUrlSourceSplitter_Protocol_Afhs : public IProtocolPlugin
 {
@@ -146,9 +149,6 @@ public:
 protected:
   CLogger *logger;
 
-  // holds received data for filter
-  LinearBuffer *receivedData;
-
   // source filter that created this instance
   IOutputStream *filter;
 
@@ -167,9 +167,12 @@ protected:
   // holds if length of stream was set
   bool setLength;
 
-  // stream time and end stream time
+  // stream time
   int64_t streamTime;
-  int64_t endStreamTime;
+
+  // specifies position in buffer
+  // it is always reset on seek
+  int64_t bytePosition;
 
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
@@ -182,13 +185,21 @@ protected:
 
   // reference to variable that signalize if protocol is requested to exit
   bool shouldExit;
-  // internal variable for requests to interrupt transfers
-  bool internalExitRequest;
   // specifies if whole stream is downloaded
   bool wholeStreamDownloaded;
-
+  // specifies if seeking (cleared when first data arrive)
+  bool seekingActive;
   // specifies if filter requested supressing data
   bool supressData;
+
+  // buffer for processing data before are send to filter
+  LinearBuffer *bufferForProcessing;
+
+  // holds first FLV packet timestamp for correction of video packet timestamps
+  int firstTimestamp;
+
+  // holds first video FLV packet timestamp for correction of video packet timestamps
+  int firstVideoTimestamp;
 };
 
 #endif

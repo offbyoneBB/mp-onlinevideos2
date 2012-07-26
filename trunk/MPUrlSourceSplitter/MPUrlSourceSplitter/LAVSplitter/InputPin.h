@@ -319,6 +319,9 @@ private:
   // @return : S_OK if successful
   HRESULT DestroyDemuxerWorker(void);
 
+  // stores if demuxer worker finished its operation
+  bool demuxerWorkerFinished;
+
   friend class CLAVSplitter;
   STDMETHODIMP SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
 

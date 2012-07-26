@@ -435,3 +435,39 @@ wchar_t *UnescapeW(wchar_t *input)
 
   return result;
 }
+
+wchar_t *ConvertUtf8ToUnicode(char *utf8String)
+{
+  wchar_t *result = NULL;
+
+  int length = MultiByteToWideChar(CP_UTF8, 0, utf8String, -1, NULL, 0); // including null character
+  result = ALLOC_MEM_SET(result, wchar_t, length, 0);
+  if (result != NULL)
+  {
+    if (MultiByteToWideChar(CP_UTF8, 0, utf8String, -1, result, length) != 0)
+    {
+      // error occured
+      FREE_MEM(result);
+    }
+  }
+
+  return result;
+}
+
+char *ConvertUnicodeToUtf8(wchar_t *unicodeString)
+{
+  char *result = NULL;
+
+  int length = WideCharToMultiByte(CP_UTF8, 0, unicodeString, -1, NULL, 0, NULL, NULL); // including null character
+  result = ALLOC_MEM_SET(result, char, length, 0);
+  if (result != NULL)
+  {
+    if (WideCharToMultiByte(CP_UTF8, 0, unicodeString, -1, result, length, NULL, NULL) != 0)
+    {
+      // error occured
+      FREE_MEM(result);
+    }
+  }
+
+  return result;
+}

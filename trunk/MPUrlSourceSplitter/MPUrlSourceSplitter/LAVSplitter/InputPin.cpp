@@ -1887,6 +1887,7 @@ int64_t CLAVInputPin::SeekToPosition(int64_t start, int64_t end)
 HRESULT CLAVInputPin::CreateDemuxerWorker(void)
 {
   HRESULT result = S_OK;
+  this->demuxerWorkerFinished = false;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_WORKER_NAME);
 
   this->demuxerWorkerShouldExit = false;
@@ -1904,6 +1905,7 @@ HRESULT CLAVInputPin::CreateDemuxerWorker(void)
     // thread not created
     result = HRESULT_FROM_WIN32(GetLastError());
     this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", MODULE_NAME, METHOD_CREATE_DEMUXER_WORKER_NAME, result);
+    this->demuxerWorkerFinished = true;
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_WORKER_NAME, result);
@@ -1930,6 +1932,7 @@ HRESULT CLAVInputPin::DestroyDemuxerWorker(void)
 
   this->hCreateDemuxerWorkerThread = NULL;
   this->demuxerWorkerShouldExit = false;
+  this->demuxerWorkerFinished = true;
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DESTROY_DEMUXER_WORKER_NAME, result);
   return result;
@@ -1940,7 +1943,7 @@ DWORD WINAPI CLAVInputPin::DemuxerWorker(LPVOID lpParam)
   CLAVInputPin *caller = (CLAVInputPin *)lpParam;
   caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DEMUXER_WORKER_NAME);
 
-  while ((!caller->demuxerWorkerShouldExit) && (!caller->createdDemuxer))
+  while ((!caller->demuxerWorkerShouldExit) && (!caller->createdDemuxer) && (!caller->allDataReceived))
   {
     if (!caller->createdDemuxer)
     {
@@ -1961,6 +1964,7 @@ DWORD WINAPI CLAVInputPin::DemuxerWorker(LPVOID lpParam)
   }
 
   caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DEMUXER_WORKER_NAME);
+  caller->demuxerWorkerFinished = true;
   return S_OK;
 }
 
