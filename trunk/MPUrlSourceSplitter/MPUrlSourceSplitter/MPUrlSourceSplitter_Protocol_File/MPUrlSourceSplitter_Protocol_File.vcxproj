@@ -104,6 +104,7 @@
   <ItemGroup>
     <ClInclude Include="MPUrlSourceSplitter_Protocol_File.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_File_Exports.h" />
+    <ClInclude Include="MPUrlSourceSplitter_Protocol_File_Parameters.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

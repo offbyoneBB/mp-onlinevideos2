@@ -25,6 +25,7 @@
 #include "LockMutex.h"
 #include "VersionInfo.h"
 #include "..\LAVSplitter\VersionInfo.h"
+#include "MPUrlSourceSplitter_Protocol_Mms_Parameters.h"
 
 #include <WinInet.h>
 #include <stdio.h>

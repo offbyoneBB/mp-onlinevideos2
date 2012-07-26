@@ -44,14 +44,6 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"HTTP" };
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                  1 * 1024 * 1024
 
-#define PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT                  L"HttpReceiveDataTimeout"
-#define PARAMETER_NAME_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS      L"HttpOpenConnectionMaximumAttempts"
-#define PARAMETER_NAME_HTTP_REFERER                               L"HttpReferer"
-#define PARAMETER_NAME_HTTP_USER_AGENT                            L"HttpUserAgent"
-#define PARAMETER_NAME_HTTP_COOKIE                                L"HttpCookie"
-#define PARAMETER_NAME_HTTP_VERSION                               L"HttpVersion"
-#define PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH                 L"HttpIgnoreContentLength"
-
 // This class is exported from the CMPUrlSourceSplitter_Protocol_Http.dll
 class MPURLSOURCESPLITTER_PROTOCOL_HTTP_API CMPUrlSourceSplitter_Protocol_Http : public IProtocolPlugin
 {

@@ -106,6 +106,7 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="MMSStreamCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Mms.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Mms_Exports.h" />
+    <ClInclude Include="MPUrlSourceSplitter_Protocol_Mms_Parameters.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
