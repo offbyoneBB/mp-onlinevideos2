@@ -39,9 +39,6 @@
 #define TOTAL_SUPPORTED_PROTOCOLS                                 1
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"FILE" };
 
-#define PARAMETER_NAME_FILE_RECEIVE_DATA_TIMEOUT                  L"FileReceiveDataTimeout"
-#define PARAMETER_NAME_FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS      L"FileOpenConnectionMaximumAttempts"
-
 // This class is exported from the CMPUrlSourceSplitter_Protocol_File.dll
 class MPURLSOURCESPLITTER_PROTOCOL_FILE_API CMPUrlSourceSplitter_Protocol_File : public IProtocolPlugin
 {

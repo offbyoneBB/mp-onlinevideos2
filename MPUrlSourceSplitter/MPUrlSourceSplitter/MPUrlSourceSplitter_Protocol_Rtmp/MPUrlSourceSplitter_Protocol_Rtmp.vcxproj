@@ -109,6 +109,7 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="FlvPacket.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtmp.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtmp_Exports.h" />
+    <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtmp_Parameters.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

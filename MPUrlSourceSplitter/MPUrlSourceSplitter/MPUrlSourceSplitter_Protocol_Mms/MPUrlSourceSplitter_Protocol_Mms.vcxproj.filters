@@ -45,6 +45,9 @@
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Mms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MPUrlSourceSplitter_Protocol_Mms_Parameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

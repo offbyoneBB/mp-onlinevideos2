@@ -25,6 +25,7 @@
 #include "LockMutex.h"
 #include "VersionInfo.h"
 #include "..\LAVSplitter\VersionInfo.h"
+#include "MPUrlSourceSplitter_Protocol_File_Parameters.h"
 
 // protocol implementation name
 #ifdef _DEBUG

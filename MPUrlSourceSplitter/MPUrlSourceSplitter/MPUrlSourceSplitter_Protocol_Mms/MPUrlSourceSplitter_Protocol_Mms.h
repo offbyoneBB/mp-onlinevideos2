@@ -57,17 +57,8 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"MMS" };
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                        1 * 1024 * 1024
 
-#define PARAMETER_NAME_MMS_RECEIVE_DATA_TIMEOUT                   L"MmsReceiveDataTimeout"
-#define PARAMETER_NAME_MMS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS       L"MmsOpenConnectionMaximumAttempts"
-#define PARAMETER_NAME_MMS_REFERER                                L"MmsReferer"
-#define PARAMETER_NAME_MMS_USER_AGENT                             L"MmsUserAgent"
-#define PARAMETER_NAME_MMS_COOKIE                                 L"MmsCookie"
-#define PARAMETER_NAME_MMS_VERSION                                L"MmsVersion"
-#define PARAMETER_NAME_MMS_IGNORE_CONTENT_LENGTH                  L"MmsIgnoreContentLength"
-
 #define CHUNK_HEADER_LENGTH                                       4   // 2bytes chunk type and 2bytes chunk length
 #define EXT_HEADER_LENGTH                                         8   // 4bytes sequence, 2bytes useless and 2bytes chunk length
-
 
 // This class is exported from the CMPUrlSourceSplitter_Protocol_Mms.dll
 class MPURLSOURCESPLITTER_PROTOCOL_MMS_API CMPUrlSourceSplitter_Protocol_Mms : public IProtocolPlugin
