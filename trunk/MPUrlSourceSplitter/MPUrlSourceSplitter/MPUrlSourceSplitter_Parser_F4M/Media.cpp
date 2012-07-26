@@ -101,6 +101,11 @@ const wchar_t *CMedia::GetMulticastStreamName(void)
   return this->multicastStreamName;
 }
 
+const wchar_t *CMedia::GetMetadata(void)
+{
+  return this->metadata;
+}
+
 HRESULT CMedia::GetDecodeResult(void)
 {
   HRESULT result = this->decodeResult;

@@ -25,6 +25,7 @@
 #include "..\LAVSplitter\VersionInfo.h"
 #include "BootstrapInfoCollection.h"
 #include "MediaCollection.h"
+#include "MPUrlSourceSplitter_Protocol_Afhs_Parameters.h"
 
 #include "tinyxml2.h"
 
@@ -315,26 +316,74 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
                     if (mediaWithHighestBitstream != NULL)
                     {
-                      wchar_t *originalUrl = Duplicate(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+                      wchar_t *manifestUrl = Duplicate(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+                      if (manifestUrl != NULL)
+                      {
+                        CParameter *manifestUrlParameter = new CParameter(PARAMETER_NAME_AFHS_MANIFEST_URL, manifestUrl);
+                        continueParsing &= this->connectionParameters->Add(manifestUrlParameter);
+                      }
+                      else
+                      {
+                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot get manifest url");
+                        continueParsing = false;
+                      }
+                      FREE_MEM(manifestUrl);
 
-                      // add media into connection parameters
+                      // add media url into connection parameters
+                      CParameter *mediaUrlParameter = new CParameter(PARAMETER_NAME_AFHS_MEDIA_URL, mediaWithHighestBitstream->GetUrl());
+                      continueParsing &= this->connectionParameters->Add(mediaUrlParameter);
+
+                      // add media metadata into connection parameters
+                      CParameter *mediaMetadataParameter = new CParameter(PARAMETER_NAME_AFHS_MEDIA_METADATA, mediaWithHighestBitstream->GetMetadata());
+                      continueParsing &= this->connectionParameters->Add(mediaMetadataParameter);
 
                       // add bootstrap info into connection parameters
                       CBootstrapInfo *bootstrapInfo = bootstrapInfoCollection->GetBootstrapInfo(mediaWithHighestBitstream->GetBootstrapInfoId(), false);
                       if (bootstrapInfo != NULL)
                       {
-                        CParameter *bootstrapInfoParameter = new CParameter(L"AfhsBootstrapInfo", bootstrapInfo->GetValue());
-                        this->connectionParameters->Add(bootstrapInfoParameter);
+                        CParameter *bootstrapInfoParameter = new CParameter(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, bootstrapInfo->GetValue());
+                        continueParsing &= this->connectionParameters->Add(bootstrapInfoParameter);
+                      }
+                      else
+                      {
+                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create bootstrap info parameter");
+                        continueParsing = false;
                       }
 
-                      CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, L"afhs://test");
-                      if (urlParameter != NULL)
+                      if (continueParsing)
                       {
-                        bool invariant = true;
-                        this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
-                        this->connectionParameters->Add(urlParameter);
+                        wchar_t *replacedUrl = ReplaceString(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL), L"http://", L"afhs://");
+                        if (replacedUrl != NULL)
+                        {
+                          if (wcsstr(replacedUrl, L"afhs://") != NULL)
+                          {
+                            CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, replacedUrl);
+                            if (urlParameter != NULL)
+                            {
+                              bool invariant = true;
+                              this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
+                              continueParsing &= this->connectionParameters->Add(urlParameter);
 
-                        result = ParseResult_Known;
+                              if (continueParsing)
+                              {
+                                result = ParseResult_Known;
+                              }
+                            }
+                            else
+                            {
+                              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create new URL parameter");
+                            }
+                          }
+                          else
+                          {
+                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"only HTTP protocol supported as manifest url");
+                          }
+                        }
+                        else
+                        {
+                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot specify AFHS protocol");
+                        }
+                        FREE_MEM(replacedUrl);
                       }
                     }
                     else
