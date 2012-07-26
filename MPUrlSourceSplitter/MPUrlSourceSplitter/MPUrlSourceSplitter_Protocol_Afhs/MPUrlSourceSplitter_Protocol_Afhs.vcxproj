@@ -103,6 +103,12 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <None Include="VersionInfo.h.template" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BootstrapInfoBox.h" />
+    <ClInclude Include="BootstrapInfoQualityEntry.h" />
+    <ClInclude Include="BootstrapInfoQualityEntryCollection.h" />
+    <ClInclude Include="BootstrapInfoServerEntry.h" />
+    <ClInclude Include="BootstrapInfoServerEntryCollection.h" />
+    <ClInclude Include="Box.h" />
     <ClInclude Include="CurlInstance.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Exports.h" />
@@ -111,6 +117,12 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BootstrapInfoBox.cpp" />
+    <ClCompile Include="BootstrapInfoQualityEntry.cpp" />
+    <ClCompile Include="BootstrapInfoQualityEntryCollection.cpp" />
+    <ClCompile Include="BootstrapInfoServerEntry.cpp" />
+    <ClCompile Include="BootstrapInfoServerEntryCollection.cpp" />
+    <ClCompile Include="Box.cpp" />
     <ClCompile Include="CurlInstance.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>

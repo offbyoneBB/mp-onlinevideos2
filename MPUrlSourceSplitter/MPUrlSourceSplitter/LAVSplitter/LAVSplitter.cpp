@@ -1888,6 +1888,13 @@ HRESULT CLAVSplitter::IsFilterReadyToConnectPins(bool *ready)
 
   *ready = ((this->GetPinCount() != 0) && (this->m_pInput->storeFilePath != NULL));
 
+  if ((!(*ready)) && this->m_pInput->allDataReceived && (!this->m_pInput->createdDemuxer) && (this->m_pInput->demuxerWorkerFinished))
+  {
+    // if demuxer is not created, all data are received and demuxer worker finished its work
+    // it throws exception in OV and immediately stops buffering and playback
+    return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+  }
+
   return S_OK;
 }
 

@@ -170,4 +170,7 @@ MPURLSOURCESPLITTER_API wchar_t *UnescapeW(wchar_t *input);
 #define Unescape UnescapeW
 #endif
 
+MPURLSOURCESPLITTER_API wchar_t *ConvertUtf8ToUnicode(char *utf8String);
+MPURLSOURCESPLITTER_API char *ConvertUnicodeToUtf8(wchar_t *unicodeString);
+
 #endif
