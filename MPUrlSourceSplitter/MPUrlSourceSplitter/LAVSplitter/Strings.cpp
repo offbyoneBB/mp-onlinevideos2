@@ -336,46 +336,92 @@ wchar_t *ReplaceStringW(const wchar_t *string, const wchar_t *searchString, cons
   return resultString;
 }
 
-char *SkipBlanksA(char *str, unsigned int strlen)
+bool IsBlankA(char *input)
 {
-    while(strlen > 0)
-    {
-      switch(*str)
-      {
-      case ' ':
-      case '\t':
-      case '\r':
-      case '\n':
-        --strlen;
-        ++str;
-        break;
-      default:
-        strlen = 0;
-      }
-    }
+  if (input == NULL)
+  {
+    return false;
+  }
 
-    return str;
+  switch(*input)
+  {
+  case ' ':
+  case '\t':
+  case '\r':
+  case '\n':
+    return true;
+  default:
+    return false;
+  }
+}
+
+bool IsBlankW(wchar_t *input)
+{
+  if (input == NULL)
+  {
+    return false;
+  }
+
+  switch(*input)
+  {
+  case L' ':
+  case L'\t':
+  case L'\r':
+  case L'\n':
+    return true;
+  default:
+    return false;
+  }
+}
+
+char *SkipBlanksA(char *str)
+{
+  if (str == NULL)
+  {
+    return NULL;
+  }
+
+  unsigned int length = strlen(str);
+
+  while(length > 0)
+  {
+    if (IsBlankA(str))
+    {
+      --length;
+      ++str;
+    }
+    else
+    {
+      length = 0;
+    }
+  }
+
+  return str;
 } 
 
-wchar_t *SkipBlanksW(wchar_t *str, unsigned int strlen)
+wchar_t *SkipBlanksW(wchar_t *str)
 {
-    while(strlen > 0)
-    {
-      switch(*str)
-      {
-      case L' ':
-      case L'\t':
-      case L'\r':
-      case L'\n':
-        --strlen;
-        ++str;
-        break;
-      default:
-        strlen = 0;
-      }
-    }
+  if (str == NULL)
+  {
+    return NULL;
+  }
 
-    return str;
+  unsigned int length = wcslen(str);
+
+  while(length > 0)
+  {
+    if (IsBlankW(str))
+    {
+      --length;
+      ++str;
+    }
+    else
+    {
+      length = 0;
+    }
+  }
+
+  return str;
 }
 
 char *EscapeA(char *input)
@@ -467,6 +513,82 @@ char *ConvertUnicodeToUtf8(wchar_t *unicodeString)
       // error occured
       FREE_MEM(result);
     }
+  }
+
+  return result;
+}
+
+char *TrimLeftA(char *input)
+{
+  return DuplicateA(SkipBlanksA(input));
+}
+
+wchar_t *TrimLeftW(wchar_t *input)
+{
+  return DuplicateW(SkipBlanksW(input));
+}
+
+char *TrimRightA(char *input)
+{
+  char *reversed = ReverseA(input);
+  char *trimmed = TrimLeftA(reversed);
+  char *result = ReverseA(trimmed);
+
+  FREE_MEM(reversed);
+  FREE_MEM(trimmed);
+
+  return result;
+}
+
+wchar_t *TrimRightW(wchar_t *input)
+{
+  wchar_t *reversed = ReverseW(input);
+  wchar_t *trimmed = TrimLeftW(reversed);
+  wchar_t *result = ReverseW(trimmed);
+
+  FREE_MEM(reversed);
+  FREE_MEM(trimmed);
+
+  return result;
+}
+
+char *TrimA(char *input)
+{
+  char *trimmed = TrimLeftA(input);
+  char *result = TrimRightA(trimmed);
+  FREE_MEM(trimmed);
+
+  return result;
+}
+
+wchar_t *TrimW(wchar_t *input)
+{
+  wchar_t *trimmed = TrimLeftW(input);
+  wchar_t *result = TrimRightW(trimmed);
+  FREE_MEM(trimmed);
+
+  return result;
+}
+
+char *ReverseA(char *input)
+{
+  char *result = DuplicateA(input);
+  
+  if (input != NULL)
+  {
+    _strrev(result);
+  }
+
+  return result;
+}
+
+wchar_t *ReverseW(wchar_t *input)
+{
+  wchar_t *result = DuplicateW(input);
+  
+  if (input != NULL)
+  {
+    _wcsrev(result);
   }
 
   return result;

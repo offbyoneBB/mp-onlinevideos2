@@ -290,7 +290,9 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                           wchar_t *id = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_ID));
                           wchar_t *profile = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE));
                           wchar_t *url = ConvertToUnicodeA(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_URL));
-                          wchar_t *value = ConvertToUnicodeA(child->GetText());
+                          wchar_t *convertedValue = ConvertToUnicodeA(child->GetText());
+                          wchar_t *value = Trim(convertedValue);
+                          FREE_MEM(convertedValue);
 
                           // bootstrap info profile have to be 'named' (F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMED)
                           if ((profile != NULL) && (strcmp(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE), F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMED) == 0))
@@ -339,7 +341,9 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                           XMLElement *metadata = child->FirstChildElement(F4M_ELEMENT_MEDIA_ELEMENT_METADATA);
                           if (metadata != NULL)
                           {
-                            metadataValue = ConvertToUnicodeA(metadata->GetText());
+                            wchar_t *convertedMetadata = ConvertToUnicodeA(metadata->GetText());
+                            metadataValue = Trim(convertedMetadata);
+                            FREE_MEM(convertedMetadata);
                           }
 
                           unsigned int bitrateValue = GetValueUnsignedInt(bitrate, UINT_MAX);
@@ -472,24 +476,32 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                           }
                         }
 
+                        if ((mediaWithHighestBitstream == NULL) && (mediaCollection->Count() != 0))
+                        {
+                          // if no piece of media chosen, then choose first media (if possible)
+                          mediaWithHighestBitstream = mediaCollection->GetItem(0);
+                          mediaWithHighestBitstreamIndex = 0;
+                        }
+
                         if (mediaWithHighestBitstream != NULL)
                         {
-                          // create absolute media base URL from base URL and media URL
-                          wchar_t *mediaBaseUrl = FormatAbsoluteBaseUrl(baseUrl, (wchar_t *)mediaWithHighestBitstream->GetUrl());
-                          continueParsing &= (mediaBaseUrl != NULL);
+                          continueParsing &= (mediaWithHighestBitstream->GetUrl() != NULL);
 
                           if (continueParsing)
                           {
                             // add media url into connection parameters
-                            CParameter *mediaUrlParameter = new CParameter(PARAMETER_NAME_AFHS_MEDIA_BASE_URL, mediaBaseUrl);
+                            CParameter *mediaUrlParameter = new CParameter(PARAMETER_NAME_AFHS_MEDIA_PART_URL, mediaWithHighestBitstream->GetUrl());
                             continueParsing &= this->connectionParameters->Add(mediaUrlParameter);
                           }
 
                           if (continueParsing)
                           {
-                            // add media metadata into connection parameters
-                            CParameter *mediaMetadataParameter = new CParameter(PARAMETER_NAME_AFHS_MEDIA_METADATA, mediaWithHighestBitstream->GetMetadata());
-                            continueParsing &= this->connectionParameters->Add(mediaMetadataParameter);
+                            if (mediaWithHighestBitstream->GetMetadata() != NULL)
+                            {
+                              // add media metadata into connection parameters
+                              CParameter *mediaMetadataParameter = new CParameter(PARAMETER_NAME_AFHS_MEDIA_METADATA, mediaWithHighestBitstream->GetMetadata());
+                              continueParsing &= this->connectionParameters->Add(mediaMetadataParameter);
+                            }
                           }
 
                           if (continueParsing)
@@ -510,7 +522,14 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
                           if (continueParsing)
                           {
-                            wchar_t *replacedUrl = ReplaceString(mediaBaseUrl, L"http://", L"afhs://");
+                            // add base URL into connection parameters
+                            CParameter *baseUrlParameter = new CParameter(PARAMETER_NAME_AFHS_BASE_URL, baseUrl);
+                            continueParsing &= this->connectionParameters->Add(baseUrlParameter);
+                          }
+
+                          if (continueParsing)
+                          {
+                            wchar_t *replacedUrl = ReplaceString(baseUrl, L"http://", L"afhs://");
                             if (replacedUrl != NULL)
                             {
                               if (wcsstr(replacedUrl, L"afhs://") != NULL)
@@ -535,7 +554,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                               }
                               else
                               {
-                                this->logger->Log(LOGGER_ERROR, L"%s: %s: only HTTP protocol supported in media base URL: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, mediaBaseUrl);
+                                this->logger->Log(LOGGER_ERROR, L"%s: %s: only HTTP protocol supported in base URL: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, baseUrl);
                                 continueParsing = false;
                               }
                             }
@@ -546,8 +565,6 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                             }
                             FREE_MEM(replacedUrl);
                           }
-
-                          FREE_MEM(mediaBaseUrl);
                         }
                         else
                         {
@@ -563,7 +580,8 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
                           // remove all AFHS parameters from connectio parameters
                           bool invariant = true;
-                          this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_BASE_URL, (void *)&invariant);
+                          this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BASE_URL, (void *)&invariant);
+                          this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_PART_URL, (void *)&invariant);
                           this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_METADATA, (void *)&invariant);
                           this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, (void *)&invariant);
                         }

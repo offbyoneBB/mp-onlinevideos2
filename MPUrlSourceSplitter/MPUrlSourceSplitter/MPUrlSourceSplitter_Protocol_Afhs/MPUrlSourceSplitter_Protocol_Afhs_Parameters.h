@@ -32,7 +32,8 @@
 #define PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH                 L"AfhsIgnoreContentLength"
 
 #define PARAMETER_NAME_AFHS_BOOTSTRAP_INFO                        L"AfhsBootstrapInfo"
-#define PARAMETER_NAME_AFHS_MEDIA_BASE_URL                        L"AfhsMediaBaseUrl"
+#define PARAMETER_NAME_AFHS_BASE_URL                              L"AfhsBaseUrl"
+#define PARAMETER_NAME_AFHS_MEDIA_PART_URL                        L"AfhsMediaPartUrl"
 #define PARAMETER_NAME_AFHS_MEDIA_METADATA                        L"AfhsMediaMetadata"
 
 #endif

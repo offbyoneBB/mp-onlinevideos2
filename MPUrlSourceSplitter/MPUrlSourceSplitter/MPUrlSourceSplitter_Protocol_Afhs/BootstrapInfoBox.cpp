@@ -366,8 +366,8 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(wchar_t *indent)
       CBootstrapInfoServerEntry *bootstrapInfoServerEntry = this->serverEntryTable->GetItem(i);
       wchar_t *tempServerEntry = FormatString(
         L"%s%s%s'%s'",
-        (i == 0) ? L"" : L"\n",
         (i == 0) ? L"" : serverEntry,
+        (i == 0) ? L"" : L"\n",
         tempIndent,
         bootstrapInfoServerEntry->GetServerEntry()
         );
@@ -383,8 +383,8 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(wchar_t *indent)
       CBootstrapInfoQualityEntry *bootstrapInfoQualityEntry = this->qualityEntryTable->GetItem(i);
       wchar_t *tempQualityEntry = FormatString(
         L"%s%s%s'%s'",
-        (i == 0) ? L"" : L"\n",
         (i == 0) ? L"" : qualityEntry,
+        (i == 0) ? L"" : L"\n",
         tempIndent,
         bootstrapInfoQualityEntry->GetQualityEntry()
         );
@@ -400,8 +400,8 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(wchar_t *indent)
       CSegmentRunTableBox *bootstrapInfoSegmentRunTableBox = this->segmentRunTable->GetItem(i);
       wchar_t *tempSegmentRunEntry = FormatString(
         L"%s%s%s--- segment run table box %d start ---\n%s\n%s--- segment run table box %d end ---",
-        (i == 0) ? L"" : L"\n",
         (i == 0) ? L"" : segmentRunEntry,
+        (i == 0) ? L"" : L"\n",
         tempIndent, i + 1,
         bootstrapInfoSegmentRunTableBox->GetParsedHumanReadable(tempIndent),
         tempIndent, i + 1);
@@ -416,8 +416,8 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(wchar_t *indent)
       CFragmentRunTableBox *bootstrapInfoFragmentRunTableBox = this->fragmentRunTable->GetItem(i);
       wchar_t *tempFragmentRunEntry = FormatString(
         L"%s%s%s--- fragment run table box %d start ---\n%s\n%s--- fragment run table box %d end ---",
-        (i == 0) ? L"" : L"\n",
         (i == 0) ? L"" : fragmentRunEntry,
+        (i == 0) ? L"" : L"\n",
         tempIndent, i + 1,
         bootstrapInfoFragmentRunTableBox->GetParsedHumanReadable(tempIndent),
         tempIndent, i + 1);
@@ -447,8 +447,8 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(wchar_t *indent)
       L"%sMetadata: '%s'\n" \
       L"%sSegment run table count: %d\n" \
       L"%s%s" \
-      L"%sFragment run table count: %d\n" \
-      L"%s",
+      L"%sFragment run table count: %d" \
+      L"%s%s",
       
       previousResult,
       indent, this->version,
@@ -470,7 +470,7 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(wchar_t *indent)
       indent, this->segmentRunTable->Count(),
       (segmentRunEntry == NULL) ? L"" : segmentRunEntry, (segmentRunEntry == NULL) ? L"" : L"\n",
       indent, this->fragmentRunTable->Count(),
-      (fragmentRunEntry == NULL) ? L"" : fragmentRunEntry
+      (fragmentRunEntry == NULL) ? L"" : L"\n", (fragmentRunEntry == NULL) ? L"" : fragmentRunEntry
 
       );
 
