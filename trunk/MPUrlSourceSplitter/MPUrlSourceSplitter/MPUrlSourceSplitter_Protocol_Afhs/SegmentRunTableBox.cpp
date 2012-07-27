@@ -123,7 +123,9 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
 
         for(unsigned int i = 0; continueParsing && (i < segmentRunEntryCount); i++)
         {
-          continueParsing &= ((position + 8 ) < length);
+          // need to read 8 bytes
+          // but this segment can be last in buffer
+          continueParsing &= ((position + 7 ) < length);
 
           if (continueParsing)
           {
@@ -136,8 +138,6 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
             CSegmentRunEntry *segment = new CSegmentRunEntry(firstSegment, fragmentsPerSegment);
             continueParsing &= this->segmentRunEntryTable->Add(segment);
           }
-
-          continueParsing &= (position < length);
         }
       }
 
@@ -159,7 +159,7 @@ wchar_t *CSegmentRunTableBox::GetParsedHumanReadable(wchar_t *indent)
   wchar_t *result = NULL;
   wchar_t *previousResult = __super::GetParsedHumanReadable(indent);
 
-  if (previousResult != NULL)
+  if ((previousResult != NULL) && (this->IsParsed()))
   {
     // prepare quality segment url modifier collection
     wchar_t *qualitySegmentUrlModifier = NULL;
@@ -169,8 +169,8 @@ wchar_t *CSegmentRunTableBox::GetParsedHumanReadable(wchar_t *indent)
       CQualitySegmentUrlModifier *qualitySegmentUrlModifierEntry = this->qualitySegmentUrlModifiers->GetItem(i);
       wchar_t *tempqualitySegmentUrlModifierEntry = FormatString(
         L"%s%s%s'%s'",
-        (i == 0) ? L"" : L"\n",
         (i == 0) ? L"" : qualitySegmentUrlModifier,
+        (i == 0) ? L"" : L"\n",
         tempIndent,
         qualitySegmentUrlModifierEntry->GetQualitySegmentUrlModifier()
         );
@@ -186,8 +186,8 @@ wchar_t *CSegmentRunTableBox::GetParsedHumanReadable(wchar_t *indent)
       CSegmentRunEntry *segmentRunEntryEntry = this->segmentRunEntryTable->GetItem(i);
       wchar_t *tempSegmentRunEntry = FormatString(
         L"%s%s%sFirst segment: %d, fragments per segment: %d",
-        (i == 0) ? L"" : L"\n",
         (i == 0) ? L"" : segmentRunEntry,
+        (i == 0) ? L"" : L"\n",
         tempIndent,
         segmentRunEntryEntry->GetFirstSegment(),
         segmentRunEntryEntry->GetFragmentsPerSegment()

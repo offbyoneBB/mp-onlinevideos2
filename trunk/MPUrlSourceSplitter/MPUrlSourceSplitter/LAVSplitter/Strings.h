@@ -143,8 +143,8 @@ MPURLSOURCESPLITTER_API wchar_t *ReplaceStringW(const wchar_t *string, const wch
 #define ReplaceString ReplaceStringW
 #endif
 
-MPURLSOURCESPLITTER_API char *SkipBlanksA(char *str, unsigned int strlen);
-MPURLSOURCESPLITTER_API wchar_t *SkipBlanksW(wchar_t *str, unsigned int strlen);
+MPURLSOURCESPLITTER_API char *SkipBlanksA(char *str);
+MPURLSOURCESPLITTER_API wchar_t *SkipBlanksW(wchar_t *str);
 
 #ifdef _MBCS
 #define SkipBlanks SkipBlanksA
@@ -172,5 +172,51 @@ MPURLSOURCESPLITTER_API wchar_t *UnescapeW(wchar_t *input);
 
 MPURLSOURCESPLITTER_API wchar_t *ConvertUtf8ToUnicode(char *utf8String);
 MPURLSOURCESPLITTER_API char *ConvertUnicodeToUtf8(wchar_t *unicodeString);
+
+MPURLSOURCESPLITTER_API bool IsBlankA(char *input);
+MPURLSOURCESPLITTER_API bool IsBlankW(wchar_t *input);
+
+#ifdef _MBCS
+#define IsBlank IsBlankA
+#else
+#define IsBlank IsBlankW
+#endif
+
+MPURLSOURCESPLITTER_API char *TrimLeftA(char *input);
+MPURLSOURCESPLITTER_API wchar_t *TrimLeftW(wchar_t *input);
+
+#ifdef _MBCS
+#define TrimLeft TrimLeftA
+#else
+#define TrimLeft TrimLeftA
+#endif
+
+MPURLSOURCESPLITTER_API char *TrimRightA(char *input);
+MPURLSOURCESPLITTER_API wchar_t *TrimRightW(wchar_t *input);
+
+#ifdef _MBCS
+#define TrimRight TrimRightA
+#else
+#define TrimRight TrimRightW
+#endif
+
+MPURLSOURCESPLITTER_API char *TrimA(char *input);
+MPURLSOURCESPLITTER_API wchar_t *TrimW(wchar_t *input);
+
+#ifdef _MBCS
+#define Trim TrimA
+#else
+#define Trim TrimW
+#endif
+
+
+MPURLSOURCESPLITTER_API char *ReverseA(char *input);
+MPURLSOURCESPLITTER_API wchar_t *ReverseW(wchar_t *input);
+
+#ifdef _MBCS
+#define Reverse ReverseA
+#else
+#define Reverse ReverseW
+#endif
 
 #endif

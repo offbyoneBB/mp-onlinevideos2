@@ -138,13 +138,12 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
                   if (hrefNode != NULL)
                   {
                     hrefNode += 4;
-                    unsigned int hrefLength = strlen(hrefNode);
                     // found href attribute in ref node
-                    hrefNode = SkipBlanksA(hrefNode, hrefLength);
+                    hrefNode = SkipBlanksA(hrefNode);
                     if (strncmp(hrefNode, "=", 1) == 0)
                     {
                       hrefNode++;
-                      hrefNode = SkipBlanksA(hrefNode, hrefLength);
+                      hrefNode = SkipBlanksA(hrefNode);
                       if (strncmp(hrefNode, "\"", 1) == 0)
                       {
                         // we are on the first ", find second "

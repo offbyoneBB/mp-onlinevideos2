@@ -538,7 +538,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
       if (SUCCEEDED(result))
       {
-        result = (bootstrapInfoBox->Parse(bootstrapInfo, bootstrapInfoLength)) ? result : E_FAIL;
+        result = (bootstrapInfoBox->Parse(bootstrapInfo, bootstrapInfoLength)) ? result : HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
 
         if (SUCCEEDED(result))
         {

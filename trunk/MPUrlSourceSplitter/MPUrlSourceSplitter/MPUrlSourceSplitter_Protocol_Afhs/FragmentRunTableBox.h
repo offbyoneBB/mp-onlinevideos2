@@ -25,6 +25,9 @@
 
 #include "box.h"
 
+#include "QualitySegmentUrlModifierCollection.h"
+#include "FragmentRunEntryCollection.h"
+
 #define FRAGMENT_RUN_TABLE_BOX_TYPE                                           L"afrt"
 
 class CFragmentRunTableBox :
@@ -51,6 +54,10 @@ public:
 protected:
   unsigned int version;
   unsigned int flags;
+  unsigned int timeScale;
+
+  CQualitySegmentUrlModifierCollection *qualitySegmentUrlModifiers;
+  CFragmentRunEntryCollection *fragmentRunEntryTable;
 };
 
 #endif
