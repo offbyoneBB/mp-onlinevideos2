@@ -20,30 +20,22 @@
 
 #pragma once
 
-#ifndef __BOOTSTRAP_INFO_BOX_DEFINED
-#define __BOOTSTRAP_INFO_BOX_DEFINED
+#ifndef __FRAGMENT_RUN_TABLE_BOX_DEFINED
+#define __SEGMENT_RUN_TABLE_BOX_DEFINED
 
 #include "box.h"
 
-#include "BootstrapInfoServerEntryCollection.h"
-#include "BootstrapInfoQualityEntryCollection.h"
-#include "SegmentRunTableBoxCollection.h"
-#include "FragmentRunTableBoxCollection.h"
+#define FRAGMENT_RUN_TABLE_BOX_TYPE                                           L"afrt"
 
-#define BOOTSTRAP_INFO_BOX_TYPE                                               L"abst"
-
-#define PROFILE_NAMED_ACCESS                                                  0
-#define PROFILE_RANGE_ACCESS                                                  1
-
-class CBootstrapInfoBox :
+class CFragmentRunTableBox :
   public CBox
 {
 public:
-  // initializes a new instance of CBootstrapInfoBox class
-  CBootstrapInfoBox(void);
+  // initializes a new instance of CFragmentRunTableBox class
+  CFragmentRunTableBox(void);
 
   // destructor
-  virtual ~CBootstrapInfoBox(void);
+  virtual ~CFragmentRunTableBox(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing
@@ -57,38 +49,8 @@ public:
   virtual wchar_t *GetParsedHumanReadable(wchar_t *indent);
 
 protected:
-
   unsigned int version;
-
   unsigned int flags;
-
-  unsigned int bootstrapInfoVersion;
-
-  unsigned int profile;
-
-  bool live;
-
-  bool update;
-
-  unsigned int timeScale;
-
-  uint64_t currentMediaTime;
-
-  uint64_t smpteTimeCodeOffset;
-
-  wchar_t *movieIdentifier;
-
-  CBootstrapInfoServerEntryCollection *serverEntryTable;
-
-  CBootstrapInfoQualityEntryCollection *qualityEntryTable;
-
-  wchar_t *drmData;
-
-  wchar_t *metaData;
-
-  CSegmentRunTableBoxCollection *segmentRunTable;
-
-  CFragmentRunTableBoxCollection *fragmentRunTable;
 };
 
 #endif

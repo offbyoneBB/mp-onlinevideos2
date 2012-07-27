@@ -542,6 +542,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
         if (SUCCEEDED(result))
         {
+          wchar_t *parsedBootstrapInfoBox = bootstrapInfoBox->GetParsedHumanReadable(L"");
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: parsed bootstrap info:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, parsedBootstrapInfoBox);
+          FREE_MEM(parsedBootstrapInfoBox);
+
+          // !! temporary, remove when finished !!
           result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
         }
         else
