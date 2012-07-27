@@ -110,9 +110,17 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="BootstrapInfoServerEntryCollection.h" />
     <ClInclude Include="Box.h" />
     <ClInclude Include="CurlInstance.h" />
+    <ClInclude Include="FragmentRunTableBox.h" />
+    <ClInclude Include="FragmentRunTableBoxCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Exports.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Parameters.h" />
+    <ClInclude Include="QualitySegmentUrlModifier.h" />
+    <ClInclude Include="QualitySegmentUrlModifierCollection.h" />
+    <ClInclude Include="SegmentRunEntry.h" />
+    <ClInclude Include="SegmentRunEntryCollection.h" />
+    <ClInclude Include="SegmentRunTableBox.h" />
+    <ClInclude Include="SegmentRunTableBoxCollection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -132,7 +140,15 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FragmentRunTableBox.cpp" />
+    <ClCompile Include="FragmentRunTableBoxCollection.cpp" />
     <ClCompile Include="MPUrlSourceSplitter_Protocol_Afhs.cpp" />
+    <ClCompile Include="QualitySegmentUrlModifier.cpp" />
+    <ClCompile Include="QualitySegmentUrlModifierCollection.cpp" />
+    <ClCompile Include="SegmentRunEntry.cpp" />
+    <ClCompile Include="SegmentRunEntryCollection.cpp" />
+    <ClCompile Include="SegmentRunTableBox.cpp" />
+    <ClCompile Include="SegmentRunTableBoxCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -442,7 +442,7 @@ wchar_t *ConvertUtf8ToUnicode(char *utf8String)
 
   int length = MultiByteToWideChar(CP_UTF8, 0, utf8String, -1, NULL, 0); // including null character
   result = ALLOC_MEM_SET(result, wchar_t, length, 0);
-  if (result != NULL)
+  if ((result != NULL) && (length > 1))
   {
     if (MultiByteToWideChar(CP_UTF8, 0, utf8String, -1, result, length) != 0)
     {
@@ -460,7 +460,7 @@ char *ConvertUnicodeToUtf8(wchar_t *unicodeString)
 
   int length = WideCharToMultiByte(CP_UTF8, 0, unicodeString, -1, NULL, 0, NULL, NULL); // including null character
   result = ALLOC_MEM_SET(result, char, length, 0);
-  if (result != NULL)
+  if ((result != NULL) && (length > 1))
   {
     if (WideCharToMultiByte(CP_UTF8, 0, unicodeString, -1, result, length, NULL, NULL) != 0)
     {
