@@ -23,14 +23,7 @@
 #ifndef __VERSIONINFO_MPURLSOURCESPLITTER_DEFINED
 #define __VERSIONINFO_MPURLSOURCESPLITTER_DEFINED
 
-#include "MPUrlSourceSplitterExports.h"
- 
 #define VERSION_INFO_MPURLSOURCESPLITTER                                    L"$WCREV$"
 #define COMPILE_INFO_MPURLSOURCESPLITTER                                    L"$WCNOWUTC$"
-
-// gets version info
-// caller is responsible for freeing memory
-// @return : version info string or NULL if error
-MPURLSOURCESPLITTER_API wchar_t *GetVersionInfo(const wchar_t *version, const wchar_t *compile);
  
 #endif 

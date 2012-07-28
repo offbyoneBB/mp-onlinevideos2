@@ -27,8 +27,10 @@
 #include "LinearBuffer.h"
 #include "MMSStreamCollection.h"
 
-#define HEADER_BUFFER_SIZE                                        64 * 1024
-#define MMS_MAX_STREAMS                                           256
+#include <stdint.h>
+
+#define HEADER_BUFFER_SIZE                                                    64 * 1024
+#define MMS_MAX_STREAMS                                                       256
 
 typedef uint8_t ASF_GUID[16];
 

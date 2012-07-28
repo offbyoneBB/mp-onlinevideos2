@@ -22,7 +22,6 @@
 
 #include "MPUrlSourceSplitter_Parser_F4M.h"
 #include "VersionInfo.h"
-#include "..\LAVSplitter\VersionInfo.h"
 #include "BootstrapInfoCollection.h"
 #include "MediaCollection.h"
 #include "MPUrlSourceSplitter_Protocol_Afhs_Parameters.h"

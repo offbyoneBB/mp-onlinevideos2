@@ -25,7 +25,6 @@
 #include "Utilities.h"
 #include "LockMutex.h"
 #include "VersionInfo.h"
-#include "..\LAVSplitter\VersionInfo.h"
 
 #include "base64.h"
 
