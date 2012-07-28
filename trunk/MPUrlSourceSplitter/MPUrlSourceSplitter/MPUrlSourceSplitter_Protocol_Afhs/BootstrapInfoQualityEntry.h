@@ -23,7 +23,9 @@
 #ifndef __BOOTSTRAP_INFO_QUALITY_ENTRY_DEFINED
 #define __BOOTSTRAP_INFO_QUALITY_ENTRY_DEFINED
 
-class CBootstrapInfoQualityEntry
+#include "MPUrlSourceSplitter_Protocol_Afhs_Exports.h"
+
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CBootstrapInfoQualityEntry
 {
 public:
   // initializes a new instance of CBootstrapInfoQualityEntry class

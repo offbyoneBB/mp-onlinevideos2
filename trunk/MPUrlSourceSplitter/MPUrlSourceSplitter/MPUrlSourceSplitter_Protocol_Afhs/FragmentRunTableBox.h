@@ -30,7 +30,7 @@
 
 #define FRAGMENT_RUN_TABLE_BOX_TYPE                                           L"afrt"
 
-class CFragmentRunTableBox :
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CFragmentRunTableBox :
   public CBox
 {
 public:

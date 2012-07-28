@@ -95,6 +95,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->supressData = false;
   this->bufferForProcessing = NULL;
   this->shouldExit = false;
+  this->bootstrapInfoBox = new CBootstrapInfoBox();
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -126,6 +127,12 @@ CMPUrlSourceSplitter_Protocol_Afhs::~CMPUrlSourceSplitter_Protocol_Afhs()
   {
     CloseHandle(this->lockMutex);
     this->lockMutex = NULL;
+  }
+
+  if (this->bootstrapInfoBox != NULL)
+  {
+    delete this->bootstrapInfoBox;
+    this->bootstrapInfoBox = NULL;
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);

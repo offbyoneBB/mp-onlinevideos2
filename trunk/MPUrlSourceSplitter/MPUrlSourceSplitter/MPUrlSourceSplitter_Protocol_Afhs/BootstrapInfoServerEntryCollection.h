@@ -26,7 +26,7 @@
 #include "Collection.h"
 #include "BootstrapInfoServerEntry.h"
 
-class CBootstrapInfoServerEntryCollection : public CCollection<CBootstrapInfoServerEntry, wchar_t *>
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CBootstrapInfoServerEntryCollection : public CCollection<CBootstrapInfoServerEntry, wchar_t *>
 {
 public:
   CBootstrapInfoServerEntryCollection(void);

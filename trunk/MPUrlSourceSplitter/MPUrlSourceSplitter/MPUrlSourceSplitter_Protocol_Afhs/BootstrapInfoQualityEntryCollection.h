@@ -26,7 +26,7 @@
 #include "Collection.h"
 #include "BootstrapInfoQualityEntry.h"
 
-class CBootstrapInfoQualityEntryCollection : public CCollection<CBootstrapInfoQualityEntry, wchar_t *>
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CBootstrapInfoQualityEntryCollection : public CCollection<CBootstrapInfoQualityEntry, wchar_t *>
 {
 public:
   CBootstrapInfoQualityEntryCollection(void);

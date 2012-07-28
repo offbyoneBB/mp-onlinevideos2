@@ -61,6 +61,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Protoco
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Parser_F4M", "MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M\MPUrlSourceSplitter_Parser_F4M.vcxproj", "{E0603B2F-1F50-48F3-9FEA-7A43E96DA390}"
 	ProjectSection(ProjectDependencies) = postProject
+		{FFFC4A1F-C818-4BC9-96D7-4B66F4C863EA} = {FFFC4A1F-C818-4BC9-96D7-4B66F4C863EA}
 		{F475F86F-3F7F-4B1D-82A6-078339F599FD} = {F475F86F-3F7F-4B1D-82A6-078339F599FD}
 	EndProjectSection
 EndProject

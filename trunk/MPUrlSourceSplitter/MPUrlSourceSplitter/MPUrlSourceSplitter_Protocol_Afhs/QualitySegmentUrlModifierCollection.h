@@ -26,7 +26,7 @@
 #include "Collection.h"
 #include "QualitySegmentUrlModifier.h"
 
-class CQualitySegmentUrlModifierCollection : public CCollection<CQualitySegmentUrlModifier, wchar_t *>
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CQualitySegmentUrlModifierCollection : public CCollection<CQualitySegmentUrlModifier, wchar_t *>
 {
 public:
   CQualitySegmentUrlModifierCollection(void);

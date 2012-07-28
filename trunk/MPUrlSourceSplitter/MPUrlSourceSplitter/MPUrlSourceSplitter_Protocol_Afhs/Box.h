@@ -23,6 +23,8 @@
 #ifndef __BOX_DEFINED
 #define __BOX_DEFINED
 
+#include "MPUrlSourceSplitter_Protocol_Afhs_Exports.h"
+
 #define BOX_HEADER_LENGTH                                   8
 #define BOX_HEADER_LENGTH_SIZE64                            16
 
@@ -65,7 +67,7 @@
 #endif
 
 
-class CBox
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CBox
 {
 public:
   // initializes a new instance of CBox class

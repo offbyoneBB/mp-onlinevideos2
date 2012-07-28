@@ -23,7 +23,9 @@
 #ifndef __BOOTSTRAP_INFO_SERVER_ENTRY_DEFINED
 #define __BOOTSTRAP_INFO_SERVER_ENTRY_DEFINED
 
-class CBootstrapInfoServerEntry
+#include "MPUrlSourceSplitter_Protocol_Afhs_Exports.h"
+
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CBootstrapInfoServerEntry
 {
 public:
   // initializes a new instance of CBootstrapInfoServerEntry class

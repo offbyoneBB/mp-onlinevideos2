@@ -23,6 +23,8 @@
 #ifndef __FRAGMENT_RUN_ENTRY_DEFINED
 #define __FRAGMENT_RUN_ENTRY_DEFINED
 
+#include "MPUrlSourceSplitter_Protocol_Afhs_Exports.h"
+
 #define DISCONTINUITY_INDICATOR_END_OF_PRESENTATION                           0
 #define DISCONTINUITY_INDICATOR_FRAGMENT_NUMBERING                            1
 #define DISCONTINUITY_INDICATOR_TIMESTAMPS                                    2
@@ -30,7 +32,7 @@
 
 #define DISCONTINUITY_INDICATOR_NOT_AVAILABLE                                 UINT_MAX
 
-class CFragmentRunEntry
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CFragmentRunEntry
 {
 public:
   // initializes a new instance of CFragmentRunEntry class

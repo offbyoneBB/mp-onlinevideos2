@@ -26,6 +26,7 @@
 #include "BootstrapInfoCollection.h"
 #include "MediaCollection.h"
 #include "MPUrlSourceSplitter_Protocol_Afhs_Parameters.h"
+#include "BootstrapInfoBox.h"
 
 #include "tinyxml2.h"
 
@@ -491,7 +492,28 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                           {
                             // add media url into connection parameters
                             CParameter *mediaUrlParameter = new CParameter(PARAMETER_NAME_AFHS_MEDIA_PART_URL, mediaWithHighestBitstream->GetUrl());
-                            continueParsing &= this->connectionParameters->Add(mediaUrlParameter);
+                            continueParsing &= (mediaUrlParameter != NULL);
+
+                            if (continueParsing)
+                            {
+                              continueParsing &= this->connectionParameters->Add(mediaUrlParameter);
+
+                              if (!continueParsing)
+                              {
+                                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add media URL parameter into connection parameters");
+                              }
+                            }
+                            else
+                            {
+                              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create media URL parameter");
+                            }
+
+                            if ((!continueParsing) && (mediaUrlParameter != NULL))
+                            {
+                              // cleanup, cannot add media URL parameter into connection parameters
+                              delete mediaUrlParameter;
+                              mediaUrlParameter = NULL;
+                            }
                           }
 
                           if (continueParsing)
@@ -500,7 +522,28 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                             {
                               // add media metadata into connection parameters
                               CParameter *mediaMetadataParameter = new CParameter(PARAMETER_NAME_AFHS_MEDIA_METADATA, mediaWithHighestBitstream->GetMetadata());
-                              continueParsing &= this->connectionParameters->Add(mediaMetadataParameter);
+                              continueParsing &= (mediaMetadataParameter != NULL);
+
+                              if (continueParsing)
+                              {
+                                continueParsing &= this->connectionParameters->Add(mediaMetadataParameter);
+
+                                if (!continueParsing)
+                                {
+                                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add media metadata parameter into connection parameters");
+                                }
+                              }
+                              else
+                              {
+                                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create media metadata parameter");
+                              }
+
+                              if ((!continueParsing) && (mediaMetadataParameter != NULL))
+                              {
+                                // cleanup, cannot add media metadata parameter into connection parameters
+                                delete mediaMetadataParameter;
+                                mediaMetadataParameter = NULL;
+                              }
                             }
                           }
 
@@ -510,12 +553,70 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                             CBootstrapInfo *bootstrapInfo = bootstrapInfoCollection->GetBootstrapInfo(mediaWithHighestBitstream->GetBootstrapInfoId(), false);
                             if (bootstrapInfo != NULL)
                             {
-                              CParameter *bootstrapInfoParameter = new CParameter(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, bootstrapInfo->GetValue());
-                              continueParsing &= this->connectionParameters->Add(bootstrapInfoParameter);
+                              // but before adding, decode bootstrap info (just for sure if it is valid)
+                              HRESULT decodeResult = bootstrapInfo->GetDecodeResult();
+                              continueParsing &= SUCCEEDED(decodeResult);
+
+                              if (continueParsing)
+                              {
+                                CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox();
+                                continueParsing &= (bootstrapInfoBox != NULL);
+
+                                if (continueParsing)
+                                {
+                                  continueParsing &= bootstrapInfoBox->Parse(bootstrapInfo->GetDecodedValue(), bootstrapInfo->GetDecodedValueLength());
+
+                                  if (continueParsing)
+                                  {
+                                    // create and add connection parameter
+                                    CParameter *bootstrapInfoParameter = new CParameter(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, bootstrapInfo->GetValue());
+                                    continueParsing &= (bootstrapInfoParameter != NULL);
+
+                                    if (continueParsing)
+                                    {
+                                      continueParsing &= this->connectionParameters->Add(bootstrapInfoParameter);
+
+                                      if (!continueParsing)
+                                      {
+                                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add bootstrap info parameter into connection parameters");
+                                      }
+                                    }
+                                    else
+                                    {
+                                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create bootstrap info parameter");
+                                    }
+
+                                    if ((!continueParsing) && (bootstrapInfoParameter != NULL))
+                                    {
+                                      // cleanup, cannot add bootstrap info parameter into connection parameters
+                                      delete bootstrapInfoParameter;
+                                      bootstrapInfoParameter = NULL;
+                                    }
+                                  }
+                                  else
+                                  {
+                                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot parse bootstrap info box");
+                                  }
+                                }
+                                else
+                                {
+                                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"not enough memory for bootstrap info box");
+                                }
+
+                                if (bootstrapInfoBox != NULL)
+                                {
+                                  delete bootstrapInfoBox;
+                                  bootstrapInfoBox = NULL;
+                                }
+                              }
+                              else
+                              {
+                                this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot decode bootstrap info BASE64 value, reason: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, decodeResult);
+                              }
                             }
                             else
                             {
-                              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create bootstrap info parameter");
+                              this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot find bootstrap info '%s' for media '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, mediaWithHighestBitstream->GetBootstrapInfoId(), mediaWithHighestBitstream->GetUrl());
                               continueParsing = false;
                             }
                           }
@@ -524,7 +625,28 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                           {
                             // add base URL into connection parameters
                             CParameter *baseUrlParameter = new CParameter(PARAMETER_NAME_AFHS_BASE_URL, baseUrl);
-                            continueParsing &= this->connectionParameters->Add(baseUrlParameter);
+                            continueParsing &= (baseUrlParameter != NULL);
+
+                            if (continueParsing)
+                            {
+                              continueParsing &= this->connectionParameters->Add(baseUrlParameter);
+
+                              if (!continueParsing)
+                              {
+                                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add base URL parameter into connection parameters");
+                              }
+                            }
+                            else
+                            {
+                              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create base URL parameter");
+                            }
+
+                            if ((!continueParsing) && (baseUrlParameter != NULL))
+                            {
+                              // cleanup, cannot add base URL parameter into connection parameters
+                              delete baseUrlParameter;
+                              baseUrlParameter = NULL;
+                            }
                           }
 
                           if (continueParsing)
@@ -544,6 +666,10 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                                   if (continueParsing)
                                   {
                                     result = ParseResult_Known;
+                                  }
+                                  else
+                                  {
+                                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add new URL parameter into connection parameters");
                                   }
                                 }
                                 else
