@@ -44,6 +44,12 @@
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Parameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SegmentFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SegmentFragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -56,6 +62,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CurlInstance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SegmentFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SegmentFragmentCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

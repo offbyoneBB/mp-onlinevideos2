@@ -29,24 +29,25 @@
 #include "LinearBuffer.h"
 #include "CurlInstance.h"
 #include "BootstrapInfoBox.h"
+#include "SegmentFragmentCollection.h"
 
 #include <curl/curl.h>
 
 #include <WinSock2.h>
 
 // we should get data in twenty seconds
-#define AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT                   20000
-#define AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
+#define AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
+#define AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT                         3
 
-#define PROTOCOL_NAME                                       L"AFHS"
+#define PROTOCOL_NAME                                                         L"AFHS"
 
-#define TOTAL_SUPPORTED_PROTOCOLS                           1
+#define TOTAL_SUPPORTED_PROTOCOLS                                             1
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"AFHS" };
 
-#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                  1 * 1024 * 1024
+#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 
-#define FLV_FILE_HEADER_LENGTH                              9
-unsigned char FLV_FILE_HEADER[FLV_FILE_HEADER_LENGTH] =     { 0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09 };
+#define FLV_FILE_HEADER_LENGTH                                                9
+unsigned char FLV_FILE_HEADER[FLV_FILE_HEADER_LENGTH] =                       { 0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09 };
 
 // This class is exported from the CMPUrlSourceSplitter_Protocol_Afhs.dll
 class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CMPUrlSourceSplitter_Protocol_Afhs : public IProtocolPlugin
@@ -204,6 +205,8 @@ protected:
 
   // holds bootstrap info box - segments, fragments, duration, seek information
   CBootstrapInfoBox *bootstrapInfoBox;
+  // holds collection of segments, fragments and urls
+  CSegmentFragmentCollection *segmentsFragments;
 };
 
 #endif

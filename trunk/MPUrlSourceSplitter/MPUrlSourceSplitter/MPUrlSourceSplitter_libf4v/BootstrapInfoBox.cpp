@@ -48,22 +48,10 @@ CBootstrapInfoBox::~CBootstrapInfoBox(void)
   FREE_MEM(this->movieIdentifier);
   FREE_MEM(this->drmData);
   FREE_MEM(this->metaData);
-  if (this->serverEntryTable != NULL)
-  {
-    delete this->serverEntryTable;
-  }
-  if (this->qualityEntryTable != NULL)
-  {
-    delete this->qualityEntryTable;
-  }
-  if (this->segmentRunTable != NULL)
-  {
-    delete this->segmentRunTable;
-  }
-  if (this->fragmentRunTable != NULL)
-  {
-    delete this->fragmentRunTable;
-  }
+  FREE_MEM_CLASS(this->serverEntryTable);
+  FREE_MEM_CLASS(this->qualityEntryTable);
+  FREE_MEM_CLASS(this->segmentRunTable);
+  FREE_MEM_CLASS(this->fragmentRunTable);
 }
 
 bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
@@ -483,4 +471,19 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(wchar_t *indent)
   FREE_MEM(previousResult);
 
   return result;
+}
+
+const wchar_t *CBootstrapInfoBox::GetMovieIdentifier(void)
+{
+  return this->movieIdentifier;
+}
+
+CBootstrapInfoQualityEntryCollection *CBootstrapInfoBox::GetQualityEntryTable(void)
+{
+  return this->qualityEntryTable;
+}
+
+CSegmentRunTableBoxCollection *CBootstrapInfoBox::GetSegmentRunTable(void)
+{
+  return this->segmentRunTable;
 }

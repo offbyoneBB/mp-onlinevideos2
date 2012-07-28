@@ -34,14 +34,8 @@ CFragmentRunTableBox::CFragmentRunTableBox(void)
 
 CFragmentRunTableBox::~CFragmentRunTableBox(void)
 {
-  if (this->qualitySegmentUrlModifiers != NULL)
-  {
-    delete this->qualitySegmentUrlModifiers;
-  }
-  if (this->fragmentRunEntryTable != NULL)
-  {
-    delete this->fragmentRunEntryTable;
-  }
+  FREE_MEM_CLASS(this->qualitySegmentUrlModifiers);
+  FREE_MEM_CLASS(this->fragmentRunEntryTable);
 }
 
 bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length)

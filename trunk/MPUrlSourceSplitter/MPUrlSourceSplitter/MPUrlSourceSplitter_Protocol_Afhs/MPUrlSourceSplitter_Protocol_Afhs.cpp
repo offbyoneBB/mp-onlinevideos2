@@ -25,6 +25,7 @@
 #include "Utilities.h"
 #include "LockMutex.h"
 #include "VersionInfo.h"
+#include "formatUrl.h"
 
 #include "base64.h"
 
@@ -36,9 +37,9 @@
 
 // protocol implementation name
 #ifdef _DEBUG
-#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSourceSplitter_Protocol_Afhsd"
+#define PROTOCOL_IMPLEMENTATION_NAME                                          L"MPUrlSourceSplitter_Protocol_Afhsd"
 #else
-#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSourceSplitter_Protocol_Afhs"
+#define PROTOCOL_IMPLEMENTATION_NAME                                          L"MPUrlSourceSplitter_Protocol_Afhs"
 #endif
 
 PIPlugin CreatePluginInstance(CParameterCollection *configuration)
@@ -94,7 +95,8 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->supressData = false;
   this->bufferForProcessing = NULL;
   this->shouldExit = false;
-  this->bootstrapInfoBox = new CBootstrapInfoBox();
+  this->bootstrapInfoBox = NULL;
+  this->segmentsFragments = NULL;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -114,13 +116,8 @@ CMPUrlSourceSplitter_Protocol_Afhs::~CMPUrlSourceSplitter_Protocol_Afhs()
     this->mainCurlInstance = NULL;
   }
 
-  if (this->bufferForProcessing != NULL)
-  {
-    delete this->bufferForProcessing;
-    this->bufferForProcessing = NULL;
-  }
-
-  delete this->configurationParameters;
+  FREE_MEM_CLASS(this->bufferForProcessing);
+  FREE_MEM_CLASS(this->configurationParameters);
 
   if (this->lockMutex != NULL)
   {
@@ -128,11 +125,8 @@ CMPUrlSourceSplitter_Protocol_Afhs::~CMPUrlSourceSplitter_Protocol_Afhs()
     this->lockMutex = NULL;
   }
 
-  if (this->bootstrapInfoBox != NULL)
-  {
-    delete this->bootstrapInfoBox;
-    this->bootstrapInfoBox = NULL;
-  }
+  FREE_MEM_CLASS(this->bootstrapInfoBox);
+  FREE_MEM_CLASS(this->segmentsFragments);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
 
@@ -539,35 +533,182 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
     if (SUCCEEDED(result))
     {
-      CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox();
-      CHECK_POINTER_HRESULT(result, bootstrapInfoBox, result, E_OUTOFMEMORY);
+      FREE_MEM_CLASS(this->bootstrapInfoBox);
+      this->bootstrapInfoBox = new CBootstrapInfoBox();
+      CHECK_POINTER_HRESULT(result, this->bootstrapInfoBox, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))
       {
-        result = (bootstrapInfoBox->Parse(bootstrapInfo, bootstrapInfoLength)) ? result : HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+        result = (this->bootstrapInfoBox->Parse(bootstrapInfo, bootstrapInfoLength)) ? result : HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
 
         if (SUCCEEDED(result))
         {
-          wchar_t *parsedBootstrapInfoBox = bootstrapInfoBox->GetParsedHumanReadable(L"");
+          wchar_t *parsedBootstrapInfoBox = this->bootstrapInfoBox->GetParsedHumanReadable(L"");
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: parsed bootstrap info:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, parsedBootstrapInfoBox);
           FREE_MEM(parsedBootstrapInfoBox);
-
-          // !! temporary, remove when finished !!
-          result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
         }
         else
         {
           this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot parse bootstrap info box");
         }
-
-        delete bootstrapInfoBox;
-        bootstrapInfoBox = NULL;
       }
     }
     else
     {
       this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot decode bootstrap info");
     }
+  }
+
+  if (SUCCEEDED(result))
+  {
+    // we have bootstrap info box successfully parsed
+    // now choose from bootstrap info -> QualityEntryTable highest quality (if exists)
+    wchar_t *quality = NULL;
+    if (this->bootstrapInfoBox->GetQualityEntryTable()->Count() != 0)
+    {
+      CBootstrapInfoQualityEntry *bootstrapInfoQualityEntry = this->bootstrapInfoBox->GetQualityEntryTable()->GetItem(0);
+      quality = Duplicate(bootstrapInfoQualityEntry->GetQualityEntry());
+    }
+
+    // from segment run table choose segment with specifed quality (if exists) or segment with QualityEntryCount equal to zero
+    CSegmentRunEntryCollection *segmentRunEntryTable = NULL;
+    for (unsigned int i = 0; i < this->bootstrapInfoBox->GetSegmentRunTable()->Count(); i++)
+    {
+      CSegmentRunTableBox *segmentRunTableBox = this->bootstrapInfoBox->GetSegmentRunTable()->GetItem(i);
+
+      if (quality != NULL)
+      {
+        if (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(quality, false))
+        {
+          segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
+        }
+      }
+      else
+      {
+        if (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0)
+        {
+          segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
+        }
+      }
+    }
+
+    if (segmentRunEntryTable == NULL)
+    {
+      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot find any segment run table");
+      result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+    }
+
+    if (SUCCEEDED(result))
+    {
+      wchar_t *movieIdentifierUrl = FormatAbsoluteUrl(L"http://BASEURL", (wchar_t *)this->bootstrapInfoBox->GetMovieIdentifier());
+      CHECK_POINTER_HRESULT(result, movieIdentifierUrl, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(movieIdentifierUrl))
+      {
+        wchar_t *qualityUrl = FormatAbsoluteUrl(movieIdentifierUrl, (quality == NULL) ? L"" : quality);
+        CHECK_POINTER_HRESULT(result, qualityUrl, result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
+        {
+          // convert segment run entry table to simplier collection
+          FREE_MEM_CLASS(this->segmentsFragments);
+          this->segmentsFragments = new CSegmentFragmentCollection();
+          CHECK_POINTER_HRESULT(result, this->segmentsFragments, result, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(result))
+          {
+            unsigned int lastFragment = 1;
+            //unsigned int lastSegment = segmentRunEntryTable->GetItem(0)->GetFirstSegment();
+
+            for (unsigned int i = 0; i < (segmentRunEntryTable->Count() - 1); i++)
+            {
+              CSegmentRunEntry *segmentRunEntry = segmentRunEntryTable->GetItem(i);
+              CSegmentRunEntry *segmentRunEntryNext = segmentRunEntryTable->GetItem(i + 1);
+
+              for (unsigned int j = segmentRunEntry->GetFirstSegment(); j < segmentRunEntryNext->GetFirstSegment(); j++)
+              {
+                for (unsigned int k = 0; k < segmentRunEntry->GetFragmentsPerSegment(); k++)
+                {
+                  wchar_t *segmentFragmentPartUrl = FormatString(L"Seg%d-Frag%d", segmentRunEntry->GetFirstSegment() + j, lastFragment++);
+                  CHECK_POINTER_HRESULT(result, segmentFragmentPartUrl, result, E_OUTOFMEMORY);
+
+                  if (SUCCEEDED(result))
+                  {
+                    wchar_t *url = FormatAbsoluteUrl(qualityUrl, segmentFragmentPartUrl);
+                    CHECK_POINTER_HRESULT(result, url, result, E_OUTOFMEMORY);
+
+                    if (SUCCEEDED(result))
+                    {
+                      CSegmentFragment *segmentFragment = new CSegmentFragment(segmentRunEntry->GetFirstSegment() + j, lastFragment, url);
+                      CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
+
+                      if (SUCCEEDED(result))
+                      {
+                        result = (this->segmentsFragments->Add(segmentFragment)) ? result : E_FAIL;
+                      }
+
+                      if (FAILED(result))
+                      {
+                        FREE_MEM_CLASS(segmentFragment);
+                      }
+                    }
+                    FREE_MEM(url);
+                  }
+                  FREE_MEM(segmentFragmentPartUrl);
+                }
+              }
+            }
+
+            // do same for last segment run entry
+            CSegmentRunEntry *segmentRunEntry = segmentRunEntryTable->GetItem(segmentRunEntryTable->Count() - 1);
+            for (unsigned int i = 0; i < segmentRunEntry->GetFragmentsPerSegment(); i++)
+            {
+              wchar_t *segmentFragmentPartUrl = FormatString(L"Seg%d-Frag%d", segmentRunEntry->GetFirstSegment(), lastFragment++);
+              CHECK_POINTER_HRESULT(result, segmentFragmentPartUrl, result, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(result))
+              {
+                wchar_t *url = FormatAbsoluteUrl(qualityUrl, segmentFragmentPartUrl);
+                CHECK_POINTER_HRESULT(result, url, result, E_OUTOFMEMORY);
+
+                if (SUCCEEDED(result))
+                {
+                  CSegmentFragment *segmentFragment = new CSegmentFragment(segmentRunEntry->GetFirstSegment(), lastFragment, url);
+                  CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
+
+                  if (SUCCEEDED(result))
+                  {
+                    result = (this->segmentsFragments->Add(segmentFragment)) ? result : E_FAIL;
+                  }
+
+                  if (FAILED(result))
+                  {
+                    FREE_MEM_CLASS(segmentFragment);
+                  }
+                }
+                FREE_MEM(url);
+              }
+              FREE_MEM(segmentFragmentPartUrl);
+            }
+          }
+        }
+        FREE_MEM(qualityUrl);
+      }
+      FREE_MEM(movieIdentifierUrl);
+    }
+
+    FREE_MEM(quality);
+
+    if (SUCCEEDED(result))
+    {
+      for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
+      {
+        CSegmentFragment *segmentFragment = this->segmentsFragments->GetItem(i);
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: segment %d, fragment %d, url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, segmentFragment->GetSegment(), segmentFragment->GetFragment(), segmentFragment->GetUrl());
+      }
+    }
+
+    result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
   }
 
   //if (SUCCEEDED(result))
@@ -768,11 +909,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StopReceivingData(void)
     this->mainCurlInstance = NULL;
   }
 
-  if (this->bufferForProcessing != NULL)
-  {
-    delete this->bufferForProcessing;
-    this->bufferForProcessing = NULL;
-  }
+  FREE_MEM_CLASS(this->bufferForProcessing);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
@@ -831,11 +968,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
     this->StopReceivingData();
   }
 
-  if (this->bufferForProcessing != NULL)
-  {
-    delete this->bufferForProcessing;
-    this->bufferForProcessing = NULL;
-  }
+  FREE_MEM_CLASS(this->bufferForProcessing);
  
   this->streamLength = 0;
   this->setLength = false;
@@ -845,6 +978,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   this->openConnetionMaximumAttempts = AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->bytePosition = 0;
   this->shouldExit = false;
+  FREE_MEM_CLASS(this->bootstrapInfoBox);
+  FREE_MEM_CLASS(this->segmentsFragments);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;

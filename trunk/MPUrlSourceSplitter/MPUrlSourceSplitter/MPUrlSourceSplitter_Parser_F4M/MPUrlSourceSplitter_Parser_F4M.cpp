@@ -26,14 +26,15 @@
 #include "MediaCollection.h"
 #include "MPUrlSourceSplitter_Protocol_Afhs_Parameters.h"
 #include "BootstrapInfoBox.h"
+#include "formatUrl.h"
 
 #include "tinyxml2.h"
 
 // parser implementation name
 #ifdef _DEBUG
-#define PARSER_IMPLEMENTATION_NAME                                      L"MPUrlSourceSplitter_Parser_F4Md"
+#define PARSER_IMPLEMENTATION_NAME                                            L"MPUrlSourceSplitter_Parser_F4Md"
 #else
-#define PARSER_IMPLEMENTATION_NAME                                      L"MPUrlSourceSplitter_Parser_F4M"
+#define PARSER_IMPLEMENTATION_NAME                                            L"MPUrlSourceSplitter_Parser_F4M"
 #endif
 
 unsigned int GetValueUnsignedInt(wchar_t *input, unsigned int defaultValue)
@@ -47,123 +48,6 @@ unsigned int GetValueUnsignedInt(wchar_t *input, unsigned int defaultValue)
   }
 
   return (unsigned int)valueLong;
-}
-
-// gets base URL without last '/'
-// @param url : URL to get base url
-// @return : base URL or NULL if error
-wchar_t *GetBaseUrl(wchar_t *url)
-{
-  wchar_t *result = NULL;
-
-  ALLOC_MEM_DEFINE_SET(urlComponents, URL_COMPONENTS, 1, 0);
-  if ((urlComponents != NULL) && (url != NULL))
-  {
-    ZeroURL(urlComponents);
-    urlComponents->dwStructSize = sizeof(URL_COMPONENTS);
-
-    if (InternetCrackUrl(url, 0, 0, urlComponents))
-    {
-      // if URL path is not specified, than whole URL is base URL
-      if (urlComponents->dwUrlPathLength != 0)
-      {
-        // find last '/'
-        // before it is base URL
-        const TCHAR *last = wcsrchr(url, L'/');
-        unsigned int length = (last - url);
-
-        result = ALLOC_MEM_SET(result, wchar_t, (length + 1), 0);
-        if (result != NULL)
-        {
-          wcsncpy_s(result, length + 1, url, length);
-        }
-      }
-    }
-  }
-  FREE_MEM(urlComponents);
-
-  return result;
-}
-
-// tests if URL is absolute
-// @param url : URL to test
-// @return : true if URL is absolute, false otherwise or if error
-bool IsAbsoluteUrl(wchar_t *url)
-{
-  bool result = false;
-
-  ALLOC_MEM_DEFINE_SET(urlComponents, URL_COMPONENTS, 1, 0);
-  if ((urlComponents != NULL) && (url != NULL))
-  {
-    ZeroURL(urlComponents);
-    urlComponents->dwStructSize = sizeof(URL_COMPONENTS);
-
-    if (InternetCrackUrl(url, 0, 0, urlComponents))
-    {
-      result = true;
-    }
-  }
-  FREE_MEM(urlComponents);
-
-  return result;
-}
-
-// gets absolute URL combined from base URL and relative URL
-// if relative URL is absolute, then duplicate of relative URL is returned
-// @param baseUrl : base URL for combining, URL have to be without last '/'
-// @param relativeUrl : relative URL for combinig
-// @return : absolute URL or NULL if error
-wchar_t *FormatAbsoluteUrl(wchar_t *baseUrl, wchar_t *relativeUrl)
-{
-  wchar_t *result = NULL;
-
-  if ((baseUrl != NULL) && (relativeUrl != NULL))
-  {
-    if (IsAbsoluteUrl(relativeUrl))
-    {
-      result = Duplicate(relativeUrl);
-    }
-    else
-    {
-      // URL is concatenation of base URL and relative URL
-      unsigned int baseUrlLength = wcslen(baseUrl);
-      unsigned int relativeUrlLength = wcslen(relativeUrl);
-      // we need one extra character for '/' between base URL and relative URL
-      unsigned int length = baseUrlLength + relativeUrlLength + 1;
-
-      if (wcsncmp(relativeUrl, L"/", 1) == 0)
-      {
-        // the first character is '/'
-        length--;
-        relativeUrl++;
-      }
-
-      result = ALLOC_MEM_SET(result, wchar_t, (length + 1), 0);
-      if (result != NULL)
-      {
-        wcscat_s(result, length + 1, baseUrl);
-        wcscat_s(result, length + 1, L"/");
-        wcscat_s(result, length + 1, relativeUrl);
-      }
-    }
-  }
-
-  return result;
-}
-
-// gets absolute base URL combined from base URL and relative URL
-// @param baseUrl : base URL for combining, URL have to be without last '/'
-// @param relativeUrl : relative URL for combinig, URL have to be without start '/'
-// @return : absolute base URL or NULL if error
-wchar_t *FormatAbsoluteBaseUrl(wchar_t *baseUrl, wchar_t *relativeUrl)
-{
-  wchar_t *result = NULL;
-  wchar_t *absoluteUrl = FormatAbsoluteUrl(baseUrl, relativeUrl);
-
-  result = GetBaseUrl(absoluteUrl);
-  FREE_MEM(absoluteUrl);
-
-  return result;
 }
 
 PIPlugin CreatePluginInstance(CParameterCollection *configuration)

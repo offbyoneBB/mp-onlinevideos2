@@ -20,18 +20,18 @@
 
 #include "StdAfx.h"
 
-#include "QualitySegmentUrlModifierCollection.h"
+#include "SegmentFragmentCollection.h"
 
-CQualitySegmentUrlModifierCollection::CQualitySegmentUrlModifierCollection(void)
+CSegmentFragmentCollection::CSegmentFragmentCollection(void)
   : CCollection(CCollection::Delete)
 {
 }
 
-CQualitySegmentUrlModifierCollection::~CQualitySegmentUrlModifierCollection(void)
+CSegmentFragmentCollection::~CSegmentFragmentCollection(void)
 {
 }
 
-int CQualitySegmentUrlModifierCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
+int CSegmentFragmentCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,22 +45,17 @@ int CQualitySegmentUrlModifierCollection::CompareItemKeys(wchar_t *firstKey, wch
   }
 }
 
-wchar_t *CQualitySegmentUrlModifierCollection::GetKey(CQualitySegmentUrlModifier *item)
+wchar_t *CSegmentFragmentCollection::GetKey(CSegmentFragment *item)
 {
-  return Duplicate(item->GetQualitySegmentUrlModifier());
+  return Duplicate(item->GetUrl());
 }
 
-void CQualitySegmentUrlModifierCollection::FreeKey(wchar_t *key)
+void CSegmentFragmentCollection::FreeKey(wchar_t *key)
 {
   FREE_MEM(key);
 }
 
-CQualitySegmentUrlModifier *CQualitySegmentUrlModifierCollection::Clone(CQualitySegmentUrlModifier *item)
+CSegmentFragment *CSegmentFragmentCollection::Clone(CSegmentFragment *item)
 {
   return NULL;
-}
-
-bool CQualitySegmentUrlModifierCollection::Contains(wchar_t *name, bool invariant)
-{
-  return __super::Contains(name, (void *)&invariant);
 }

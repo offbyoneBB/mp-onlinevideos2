@@ -20,23 +20,17 @@
 
 #pragma once
 
-#ifndef __QUALITY_SEGMENT_URL_MODIFIER_COLLECTION_DEFINED
-#define __QUALITY_SEGMENT_URL_MODIFIER_COLLECTION_DEFINED
+#ifndef __SEGMENT_FRAGMENT_COLLECTION_DEFINED
+#define __SEGMENT_FRAGMENT_COLLECTION_DEFINED
 
 #include "Collection.h"
-#include "QualitySegmentUrlModifier.h"
+#include "SegmentFragment.h"
 
-class CQualitySegmentUrlModifierCollection : public CCollection<CQualitySegmentUrlModifier, wchar_t *>
+class CSegmentFragmentCollection : public CCollection<CSegmentFragment, wchar_t *>
 {
 public:
-  CQualitySegmentUrlModifierCollection(void);
-  ~CQualitySegmentUrlModifierCollection(void);
-
-  // test if quality segment url modifier exists in collection
-  // @param name : the quality segment url modifier to find
-  // @param invariant : specifies if quality segment url modifier shoud be find with invariant casing
-  // @return : true if quality segment url modifier exists, false otherwise
-  bool Contains(wchar_t *name, bool invariant);
+  CSegmentFragmentCollection(void);
+  ~CSegmentFragmentCollection(void);
 
 protected:
 
@@ -51,7 +45,7 @@ protected:
   // caller is responsible of deleting item key using FreeKey() method
   // @param item : the item to get key
   // @return : the key of item
-  wchar_t *GetKey(CQualitySegmentUrlModifier *item);
+  wchar_t *GetKey(CSegmentFragment *item);
 
   // frees item key
   // @param key : the item to free
@@ -60,7 +54,7 @@ protected:
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CQualitySegmentUrlModifier *Clone(CQualitySegmentUrlModifier *item);
+  CSegmentFragment *Clone(CSegmentFragment *item);
 };
 
 #endif

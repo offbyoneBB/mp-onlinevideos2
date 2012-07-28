@@ -33,14 +33,8 @@ CSegmentRunTableBox::CSegmentRunTableBox(void)
 
 CSegmentRunTableBox::~CSegmentRunTableBox(void)
 {
-  if (this->segmentRunEntryTable != NULL)
-  {
-    delete this->segmentRunEntryTable;
-  }
-  if (this->qualitySegmentUrlModifiers != NULL)
-  {
-    delete this->qualitySegmentUrlModifiers;
-  }
+  FREE_MEM_CLASS(this->segmentRunEntryTable);
+  FREE_MEM_CLASS(this->qualitySegmentUrlModifiers);
 }
 
 bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length)
@@ -225,4 +219,14 @@ wchar_t *CSegmentRunTableBox::GetParsedHumanReadable(wchar_t *indent)
   FREE_MEM(previousResult);
 
   return result;
+}
+
+CQualitySegmentUrlModifierCollection *CSegmentRunTableBox::GetQualitySegmentUrlModifiers(void)
+{
+  return this->qualitySegmentUrlModifiers;
+}
+
+CSegmentRunEntryCollection *CSegmentRunTableBox::GetSegmentRunEntryTable(void)
+{
+  return this->segmentRunEntryTable;
 }
