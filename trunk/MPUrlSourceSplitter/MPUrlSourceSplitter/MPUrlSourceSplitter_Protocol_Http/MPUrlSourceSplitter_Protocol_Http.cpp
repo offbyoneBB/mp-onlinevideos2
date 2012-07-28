@@ -24,7 +24,6 @@
 #include "Utilities.h"
 #include "LockMutex.h"
 #include "VersionInfo.h"
-#include "..\LAVSplitter\VersionInfo.h"
 #include "MPUrlSourceSplitter_Protocol_Http_Parameters.h"
 
 #include <WinInet.h>
@@ -363,8 +362,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(const CParameterC
   {
     this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
     this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Http::CurlReceiveData, this);
-    this->mainCurlInstance->SetStartStreamTime(this->streamTime);
-    this->mainCurlInstance->SetEndStreamTime(this->endStreamTime);
     this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL));
     this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
     this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL));

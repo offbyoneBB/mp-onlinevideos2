@@ -35,6 +35,9 @@
 #define METHOD_APPEND_PLUGIN_IMPLEMENTATION_NAME                              L"AppendPluginImplementation()"
 #define METHOD_REMOVE_PLUGIN_IMPLEMENTATION_NAME                              L"RemovePluginImplementation()"
 
+// maximum count of plugins
+#define MAX_PLUGINS_DEFAULT                                                   256
+
 struct PluginImplementation
 {
   wchar_t *name;

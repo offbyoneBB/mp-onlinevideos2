@@ -22,7 +22,6 @@
 
 #include "MPUrlSourceSplitter_Parser_Asx.h"
 #include "VersionInfo.h"
-#include "..\LAVSplitter\VersionInfo.h"
 
 // parser implementation name
 #ifdef _DEBUG

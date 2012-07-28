@@ -1918,8 +1918,3 @@ HRESULT CLAVSplitter::GetCacheFileName(wchar_t **path)
 
 	return S_OK;
 }
-
-wchar_t *GetVersionInfo(const wchar_t *version, const wchar_t *compile)
-{
-  return FormatString(L"Version: %s Build date: %s", version, compile);
-}

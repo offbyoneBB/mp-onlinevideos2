@@ -23,7 +23,7 @@
 #include "LAVFStreamInfo.h"
 #include "ILAVPinInfo.h"
 #include "VersionInfo.h"
-#include "..\LAVSplitter\VersionInfo.h"
+#include "Utilities.h"
 
 #include "LAVSplitterSettingsInternal.h"
 

@@ -20,8 +20,8 @@
 
 #pragma once
 
-#ifndef __PARSERHOSTER_DEFINED
-#define __PARSERHOSTER_DEFINED
+#ifndef __PARSER_HOSTER_DEFINED
+#define __PARSER_HOSTER_DEFINED
 
 #include "OutputStreamHoster.h"
 #include "IParserPlugin.h"
@@ -40,9 +40,6 @@
 #define METHOD_RECEIVE_DATA_WORKER_NAME                                       L"ReceiveDataWorker()"
 #define METHOD_CREATE_RECEIVE_DATA_WORKER_NAME                                L"CreateReceiveDataWorker()"
 #define METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME                               L"DestroyReceiveDataWorker()"
-
-#define METHOD_START_RECEIVING_DATA_NAME                                      L"StartReceivingData()"
-#define METHOD_STOP_RECEIVING_DATA_NAME                                       L"StopReceivingData()"
 
 struct ParserImplementation : public PluginImplementation
 {

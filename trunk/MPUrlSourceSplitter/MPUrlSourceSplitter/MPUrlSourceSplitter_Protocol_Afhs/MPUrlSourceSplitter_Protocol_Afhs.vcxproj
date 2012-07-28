@@ -79,7 +79,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PROTOCOL_AFHS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(DSHOW_BASE);..\LAVSplitter;..\..\libcurl\include;..\..\libcurl\include\curl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DSHOW_BASE);..\..\libcurl\include;..\..\libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -87,7 +87,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>mpurlsourcesplitter.lib;wininet.lib;urlmon.lib;Ws2_32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libf4v.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>mpurlsourcesplitter_protocol_Afhs.def</ModuleDefinitionFile>
     </Link>
     <PreBuildEvent>
@@ -103,36 +103,14 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <None Include="VersionInfo.h.template" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BootstrapInfoBox.h" />
-    <ClInclude Include="BootstrapInfoQualityEntry.h" />
-    <ClInclude Include="BootstrapInfoQualityEntryCollection.h" />
-    <ClInclude Include="BootstrapInfoServerEntry.h" />
-    <ClInclude Include="BootstrapInfoServerEntryCollection.h" />
-    <ClInclude Include="Box.h" />
     <ClInclude Include="CurlInstance.h" />
-    <ClInclude Include="FragmentRunEntry.h" />
-    <ClInclude Include="FragmentRunEntryCollection.h" />
-    <ClInclude Include="FragmentRunTableBox.h" />
-    <ClInclude Include="FragmentRunTableBoxCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Exports.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Parameters.h" />
-    <ClInclude Include="QualitySegmentUrlModifier.h" />
-    <ClInclude Include="QualitySegmentUrlModifierCollection.h" />
-    <ClInclude Include="SegmentRunEntry.h" />
-    <ClInclude Include="SegmentRunEntryCollection.h" />
-    <ClInclude Include="SegmentRunTableBox.h" />
-    <ClInclude Include="SegmentRunTableBoxCollection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BootstrapInfoBox.cpp" />
-    <ClCompile Include="BootstrapInfoQualityEntry.cpp" />
-    <ClCompile Include="BootstrapInfoQualityEntryCollection.cpp" />
-    <ClCompile Include="BootstrapInfoServerEntry.cpp" />
-    <ClCompile Include="BootstrapInfoServerEntryCollection.cpp" />
-    <ClCompile Include="Box.cpp" />
     <ClCompile Include="CurlInstance.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
@@ -142,17 +120,7 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="FragmentRunEntry.cpp" />
-    <ClCompile Include="FragmentRunEntryCollection.cpp" />
-    <ClCompile Include="FragmentRunTableBox.cpp" />
-    <ClCompile Include="FragmentRunTableBoxCollection.cpp" />
     <ClCompile Include="MPUrlSourceSplitter_Protocol_Afhs.cpp" />
-    <ClCompile Include="QualitySegmentUrlModifier.cpp" />
-    <ClCompile Include="QualitySegmentUrlModifierCollection.cpp" />
-    <ClCompile Include="SegmentRunEntry.cpp" />
-    <ClCompile Include="SegmentRunEntryCollection.cpp" />
-    <ClCompile Include="SegmentRunTableBox.cpp" />
-    <ClCompile Include="SegmentRunTableBoxCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

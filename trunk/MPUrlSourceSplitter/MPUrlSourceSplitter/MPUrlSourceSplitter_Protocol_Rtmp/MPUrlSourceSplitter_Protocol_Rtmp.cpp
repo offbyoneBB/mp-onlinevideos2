@@ -25,7 +25,6 @@
 #include "LockMutex.h"
 #include "FlvPacket.h"
 #include "VersionInfo.h"
-#include "..\LAVSplitter\VersionInfo.h"
 #include "MPUrlSourceSplitter_Protocol_Rtmp_Parameters.h"
 
 #include <WinInet.h>

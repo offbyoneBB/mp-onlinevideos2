@@ -22,6 +22,8 @@
 
 #include "CurlInstance.h"
 #include "Logger.h"
+#include "ISimpleProtocol.h"
+
 #include <librtmp/log.h>
 
 CCurlInstance::CCurlInstance(CLogger *logger, wchar_t *url, wchar_t *protocolName)

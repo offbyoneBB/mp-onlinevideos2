@@ -28,25 +28,27 @@
 
 #include <curl/curl.h>
 
-#define HTTP_VERSION_NONE                                   0
-#define HTTP_VERSION_FORCE_HTTP10                           1
-#define HTTP_VERSION_FORCE_HTTP11                           2
+#include <DShow.h>
 
-#define HTTP_VERSION_DEFAULT                                HTTP_VERSION_NONE
-#define HTTP_IGNORE_CONTENT_LENGTH_DEFAULT                  false
+#define HTTP_VERSION_NONE                                                     0
+#define HTTP_VERSION_FORCE_HTTP10                                             1
+#define HTTP_VERSION_FORCE_HTTP11                                             2
 
-#define METHOD_CREATE_CURL_WORKER_NAME                      L"CreateCurlWorker()"
-#define METHOD_DESTROY_CURL_WORKER_NAME                     L"DestroyCurlWorker()"
-#define METHOD_CURL_WORKER_NAME                             L"CurlWorker()"
-#define METHOD_CURL_DEBUG_CALLBACK                          L"CurlDebugCallback()"
+#define HTTP_VERSION_DEFAULT                                                  HTTP_VERSION_NONE
+#define HTTP_IGNORE_CONTENT_LENGTH_DEFAULT                                    false
 
-#define METHOD_CURL_ERROR_MESSAGE                           L"%s: %s: %s: %s"
+#define METHOD_CREATE_CURL_WORKER_NAME                                        L"CreateCurlWorker()"
+#define METHOD_DESTROY_CURL_WORKER_NAME                                       L"DestroyCurlWorker()"
+#define METHOD_CURL_WORKER_NAME                                               L"CurlWorker()"
+#define METHOD_CURL_DEBUG_CALLBACK                                            L"CurlDebugCallback()"
 
-#define CURL_STATE_NONE                                     0
-#define CURL_STATE_CREATED                                  1
-#define CURL_STATE_INITIALIZED                              2
-#define CURL_STATE_RECEIVING_DATA                           3
-#define CURL_STATE_RECEIVED_ALL_DATA                        4
+#define METHOD_CURL_ERROR_MESSAGE                                             L"%s: %s: %s: %s"
+
+#define CURL_STATE_NONE                                                       0
+#define CURL_STATE_CREATED                                                    1
+#define CURL_STATE_INITIALIZED                                                2
+#define CURL_STATE_RECEIVING_DATA                                             3
+#define CURL_STATE_RECEIVED_ALL_DATA                                          4
 
 class MPURLSOURCESPLITTER_PROTOCOL_MMS_API CCurlInstance
 {
