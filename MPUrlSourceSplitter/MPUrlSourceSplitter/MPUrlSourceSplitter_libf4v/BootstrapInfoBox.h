@@ -56,6 +56,18 @@ public:
   // @return : box data in human readable format or NULL if error
   virtual wchar_t *GetParsedHumanReadable(wchar_t *indent);
 
+  // gets movie identifier
+  // @return : movie identifier
+  virtual const wchar_t *GetMovieIdentifier(void);
+
+  // gets quality entry table
+  // @return : quality entry table
+  virtual CBootstrapInfoQualityEntryCollection *GetQualityEntryTable(void);
+
+  // gets segment run table
+  // @return : segment run table
+  virtual CSegmentRunTableBoxCollection *GetSegmentRunTable(void);
+
 protected:
 
   unsigned int version;

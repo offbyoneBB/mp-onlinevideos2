@@ -18,21 +18,11 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently, but
-// are changed infrequently
-//
+// stdafx.cpp : source file that includes just the standard includes
+// MPUrlSource_File.pch will be the pre-compiled header
+// stdafx.obj will contain the pre-compiled type information
 
-#pragma once
+#include "stdafx.h"
 
-#include "targetver.h"
-
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-#include <windows.h>
-
-
-
-// TODO: reference additional headers your program requires here
-#include "Memory.h"
-#include "Strings.h"
+// TODO: reference any additional headers you need in STDAFX.H
+// and not in this file

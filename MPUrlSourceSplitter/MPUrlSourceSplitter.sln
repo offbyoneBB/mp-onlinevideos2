@@ -99,6 +99,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Parser_
 		{74B75089-FBAC-403A-B356-8AEB6FB6A012} = {74B75089-FBAC-403A-B356-8AEB6FB6A012}
 		{EC437A98-5FDF-44A7-8A74-9B4D0912E7F6} = {EC437A98-5FDF-44A7-8A74-9B4D0912E7F6}
 		{D40521AC-7E65-49FA-BAA8-58570A86C05A} = {D40521AC-7E65-49FA-BAA8-58570A86C05A}
+		{4AD319E2-38AC-4284-A304-6F2A7FE1364F} = {4AD319E2-38AC-4284-A304-6F2A7FE1364F}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Protocol_Afhs", "MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs\MPUrlSourceSplitter_Protocol_Afhs.vcxproj", "{FFFC4A1F-C818-4BC9-96D7-4B66F4C863EA}"
@@ -131,6 +132,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Interfaces", "MPUrlSourceSplitter\MPUrlSourceSplitter_Interfaces\MPUrlSourceSplitter_Interfaces.vcxproj", "{D40521AC-7E65-49FA-BAA8-58570A86C05A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libshared", "MPUrlSourceSplitter\MPUrlSourceSplitter_libshared\MPUrlSourceSplitter_libshared.vcxproj", "{EC437A98-5FDF-44A7-8A74-9B4D0912E7F6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libtinyxml2", "MPUrlSourceSplitter\MPUrlSourceSplitter_libtinyxml2\MPUrlSourceSplitter_libtinyxml2.vcxproj", "{4AD319E2-38AC-4284-A304-6F2A7FE1364F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -222,6 +225,10 @@ Global
 		{EC437A98-5FDF-44A7-8A74-9B4D0912E7F6}.Debug|Win32.Build.0 = Debug|Win32
 		{EC437A98-5FDF-44A7-8A74-9B4D0912E7F6}.Release|Win32.ActiveCfg = Release|Win32
 		{EC437A98-5FDF-44A7-8A74-9B4D0912E7F6}.Release|Win32.Build.0 = Release|Win32
+		{4AD319E2-38AC-4284-A304-6F2A7FE1364F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4AD319E2-38AC-4284-A304-6F2A7FE1364F}.Debug|Win32.Build.0 = Debug|Win32
+		{4AD319E2-38AC-4284-A304-6F2A7FE1364F}.Release|Win32.ActiveCfg = Release|Win32
+		{4AD319E2-38AC-4284-A304-6F2A7FE1364F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

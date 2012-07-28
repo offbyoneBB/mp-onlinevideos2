@@ -51,6 +51,14 @@ public:
   // @return : box data in human readable format or NULL if error
   virtual wchar_t *GetParsedHumanReadable(wchar_t *indent);
 
+  // gets quality segment url modifiers table
+  // @return : quality segment url modifiers table
+  virtual CQualitySegmentUrlModifierCollection *GetQualitySegmentUrlModifiers(void);
+
+  // gets segment run entry table
+  // @return : segment run entry table
+  virtual CSegmentRunEntryCollection *GetSegmentRunEntryTable(void);
+
 protected:
   unsigned int version;
   unsigned int flags;

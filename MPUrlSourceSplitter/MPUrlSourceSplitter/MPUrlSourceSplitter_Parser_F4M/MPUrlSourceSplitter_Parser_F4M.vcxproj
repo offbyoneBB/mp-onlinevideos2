@@ -79,7 +79,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PARSER_F4M_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(DSHOW_BASE);..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_Protocol_Afhs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DSHOW_BASE);..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libtinyxml2;..\MPUrlSourceSplitter_Protocol_Afhs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -89,7 +89,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>mpurlsourcesplitter_parser_f4m.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libf4v.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libtinyxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>subwcrev "$(ProjectDir)." "$(ProjectDir)VersionInfo.h.template" "$(ProjectDir)VersionInfo.h"</Command>
@@ -112,7 +112,6 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="MPUrlSourceSplitter_Parser_F4M_Exports.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BootstrapInfo.cpp" />
@@ -132,7 +131,6 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="tinyxml2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
