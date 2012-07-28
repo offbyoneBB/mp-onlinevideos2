@@ -35,7 +35,7 @@
 #define PROFILE_NAMED_ACCESS                                                  0
 #define PROFILE_RANGE_ACCESS                                                  1
 
-class CBootstrapInfoBox :
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CBootstrapInfoBox :
   public CBox
 {
 public:

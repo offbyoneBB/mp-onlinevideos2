@@ -26,7 +26,7 @@
 #include "Collection.h"
 #include "FragmentRunTableBox.h"
 
-class CFragmentRunTableBoxCollection : public CCollection<CFragmentRunTableBox, wchar_t *>
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CFragmentRunTableBoxCollection : public CCollection<CFragmentRunTableBox, wchar_t *>
 {
 public:
   CFragmentRunTableBoxCollection(void);

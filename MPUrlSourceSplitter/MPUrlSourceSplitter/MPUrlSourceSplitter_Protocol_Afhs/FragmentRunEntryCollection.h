@@ -26,7 +26,7 @@
 #include "Collection.h"
 #include "FragmentRunEntry.h"
 
-class CFragmentRunEntryCollection : public CCollection<CFragmentRunEntry, wchar_t *>
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CFragmentRunEntryCollection : public CCollection<CFragmentRunEntry, wchar_t *>
 {
 public:
   CFragmentRunEntryCollection(void);

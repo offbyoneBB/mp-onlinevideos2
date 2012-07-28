@@ -26,7 +26,7 @@
 #include "Collection.h"
 #include "SegmentRunEntry.h"
 
-class CSegmentRunEntryCollection : public CCollection<CSegmentRunEntry, wchar_t *>
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CSegmentRunEntryCollection : public CCollection<CSegmentRunEntry, wchar_t *>
 {
 public:
   CSegmentRunEntryCollection(void);

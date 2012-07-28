@@ -28,6 +28,7 @@
 #include "IProtocolPlugin.h"
 #include "LinearBuffer.h"
 #include "CurlInstance.h"
+#include "BootstrapInfoBox.h"
 
 #include <curl/curl.h>
 
@@ -200,6 +201,9 @@ protected:
 
   // holds first video FLV packet timestamp for correction of video packet timestamps
   int firstVideoTimestamp;
+
+  // holds bootstrap info box - segments, fragments, duration, seek information
+  CBootstrapInfoBox *bootstrapInfoBox;
 };
 
 #endif

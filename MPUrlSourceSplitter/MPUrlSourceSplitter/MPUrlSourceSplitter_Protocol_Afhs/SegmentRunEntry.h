@@ -23,7 +23,9 @@
 #ifndef __SEGMENT_RUN_ENTRY_DEFINED
 #define __SEGMENT_RUN_ENTRY_DEFINED
 
-class CSegmentRunEntry
+#include "MPUrlSourceSplitter_Protocol_Afhs_Exports.h"
+
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CSegmentRunEntry
 {
 public:
   // initializes a new instance of CSegmentRunEntry class

@@ -30,7 +30,7 @@
 
 #define SEGMENT_RUN_TABLE_BOX_TYPE                                            L"asrt"
 
-class CSegmentRunTableBox :
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CSegmentRunTableBox :
   public CBox
 {
 public:

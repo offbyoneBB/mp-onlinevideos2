@@ -26,7 +26,7 @@
 #include "Collection.h"
 #include "SegmentRunTableBox.h"
 
-class CSegmentRunTableBoxCollection : public CCollection<CSegmentRunTableBox, wchar_t *>
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CSegmentRunTableBoxCollection : public CCollection<CSegmentRunTableBox, wchar_t *>
 {
 public:
   CSegmentRunTableBoxCollection(void);

@@ -23,7 +23,9 @@
 #ifndef __QUALITY_SEGMENT_URL_MODIFIER_DEFINED
 #define __QUALITY_SEGMENT_URL_MODIFIER_DEFINED
 
-class CQualitySegmentUrlModifier
+#include "MPUrlSourceSplitter_Protocol_Afhs_Exports.h"
+
+class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CQualitySegmentUrlModifier
 {
 public:
   // initializes a new instance of CQualitySegmentUrlModifier class
