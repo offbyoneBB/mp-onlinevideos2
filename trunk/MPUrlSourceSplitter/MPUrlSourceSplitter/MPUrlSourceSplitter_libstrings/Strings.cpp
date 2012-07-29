@@ -170,6 +170,33 @@ bool IsNullOrEmptyW(const wchar_t *string)
   return result;
 }
 
+bool IsNullOrEmptyOrWhitespaceA(const char *string)
+{
+  bool result = IsNullOrEmptyA(string);
+
+  if (!result)
+  {
+    const char *temp = SkipBlanksA(string);
+    result = (strlen(temp) == 0);
+  }
+
+  return result;
+}
+
+bool IsNullOrEmptyOrWhitespaceW(const wchar_t *string)
+{
+  bool result = IsNullOrEmptyW(string);
+
+  if (!result)
+  {
+    const wchar_t *temp = SkipBlanksW(string);
+    result = (wcslen(temp) == 0);
+  }
+
+  return result;
+}
+
+
 char *FormatStringA(const char *format, ...)
 {
   va_list ap;
@@ -332,7 +359,7 @@ wchar_t *ReplaceStringW(const wchar_t *string, const wchar_t *searchString, cons
   return resultString;
 }
 
-bool IsBlankA(char *input)
+bool IsBlankA(const char *input)
 {
   if (input == NULL)
   {
@@ -351,7 +378,7 @@ bool IsBlankA(char *input)
   }
 }
 
-bool IsBlankW(wchar_t *input)
+bool IsBlankW(const wchar_t *input)
 {
   if (input == NULL)
   {
@@ -370,7 +397,7 @@ bool IsBlankW(wchar_t *input)
   }
 }
 
-char *SkipBlanksA(char *str)
+const char *SkipBlanksA(const char *str)
 {
   if (str == NULL)
   {
@@ -395,7 +422,7 @@ char *SkipBlanksA(char *str)
   return str;
 } 
 
-wchar_t *SkipBlanksW(wchar_t *str)
+const wchar_t *SkipBlanksW(const wchar_t *str)
 {
   if (str == NULL)
   {
@@ -467,7 +494,7 @@ static bool IsUnreservedW(wchar_t in)
 }
 
 
-char *EscapeA(char *input)
+char *EscapeA(const char *input)
 {
   char *result = NULL;
   
@@ -518,7 +545,7 @@ char *EscapeA(char *input)
   return result;
 }
 
-wchar_t *EscapeW(wchar_t *input)
+wchar_t *EscapeW(const wchar_t *input)
 {
   wchar_t *result = NULL;
   
@@ -569,7 +596,7 @@ wchar_t *EscapeW(wchar_t *input)
   return result;
 }
 
-char *UnescapeA(char *input)
+char *UnescapeA(const char *input)
 {
   char *result = NULL;
 
@@ -615,7 +642,7 @@ char *UnescapeA(char *input)
   return result;
 }
 
-wchar_t *UnescapeW(wchar_t *input)
+wchar_t *UnescapeW(const wchar_t *input)
 {
   wchar_t *result = NULL;
 
@@ -661,7 +688,7 @@ wchar_t *UnescapeW(wchar_t *input)
   return result;
 }
 
-wchar_t *ConvertUtf8ToUnicode(char *utf8String)
+wchar_t *ConvertUtf8ToUnicode(const char *utf8String)
 {
   wchar_t *result = NULL;
 
@@ -679,7 +706,7 @@ wchar_t *ConvertUtf8ToUnicode(char *utf8String)
   return result;
 }
 
-char *ConvertUnicodeToUtf8(wchar_t *unicodeString)
+char *ConvertUnicodeToUtf8(const wchar_t *unicodeString)
 {
   char *result = NULL;
 
@@ -697,17 +724,17 @@ char *ConvertUnicodeToUtf8(wchar_t *unicodeString)
   return result;
 }
 
-char *TrimLeftA(char *input)
+char *TrimLeftA(const char *input)
 {
   return DuplicateA(SkipBlanksA(input));
 }
 
-wchar_t *TrimLeftW(wchar_t *input)
+wchar_t *TrimLeftW(const wchar_t *input)
 {
   return DuplicateW(SkipBlanksW(input));
 }
 
-char *TrimRightA(char *input)
+char *TrimRightA(const char *input)
 {
   char *reversed = ReverseA(input);
   char *trimmed = TrimLeftA(reversed);
@@ -719,7 +746,7 @@ char *TrimRightA(char *input)
   return result;
 }
 
-wchar_t *TrimRightW(wchar_t *input)
+wchar_t *TrimRightW(const wchar_t *input)
 {
   wchar_t *reversed = ReverseW(input);
   wchar_t *trimmed = TrimLeftW(reversed);
@@ -731,7 +758,7 @@ wchar_t *TrimRightW(wchar_t *input)
   return result;
 }
 
-char *TrimA(char *input)
+char *TrimA(const char *input)
 {
   char *trimmed = TrimLeftA(input);
   char *result = TrimRightA(trimmed);
@@ -740,7 +767,7 @@ char *TrimA(char *input)
   return result;
 }
 
-wchar_t *TrimW(wchar_t *input)
+wchar_t *TrimW(const wchar_t *input)
 {
   wchar_t *trimmed = TrimLeftW(input);
   wchar_t *result = TrimRightW(trimmed);
@@ -749,7 +776,7 @@ wchar_t *TrimW(wchar_t *input)
   return result;
 }
 
-char *ReverseA(char *input)
+char *ReverseA(const char *input)
 {
   char *result = DuplicateA(input);
   
@@ -761,13 +788,39 @@ char *ReverseA(char *input)
   return result;
 }
 
-wchar_t *ReverseW(wchar_t *input)
+wchar_t *ReverseW(const wchar_t *input)
 {
   wchar_t *result = DuplicateW(input);
   
   if (input != NULL)
   {
     _wcsrev(result);
+  }
+
+  return result;
+}
+
+bool EndsWithA(const char *string, const char c)
+{
+  bool result = false;
+
+  if (!IsNullOrEmptyA(string))
+  {
+    unsigned int length = strlen(string);
+    result = (string[length - 1] == c);
+  }
+
+  return result;
+}
+
+bool EndsWithW(const wchar_t *string, const wchar_t c)
+{
+  bool result = false;
+
+  if (!IsNullOrEmptyW(string))
+  {
+    unsigned int length = wcslen(string);
+    result = (string[length - 1] == c);
   }
 
   return result;

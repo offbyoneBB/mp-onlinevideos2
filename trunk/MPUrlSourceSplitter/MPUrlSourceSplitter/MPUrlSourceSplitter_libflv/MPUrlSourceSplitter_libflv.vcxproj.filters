@@ -13,17 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Version Info">
-      <UniqueIdentifier>{15cd20af-27b7-4811-8232-f52f3464db76}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="VersionInfo.h.template">
-      <Filter>Version Info</Filter>
-    </None>
-    <None Include="mpurlsourcesplitter_protocol_Rtmp.def">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -32,16 +21,7 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CurlInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtmp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtmp_Exports.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtmp_Parameters.h">
+    <ClInclude Include="FlvPacket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -49,13 +29,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CurlInstance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MPUrlSourceSplitter_Protocol_Rtmp.cpp">
+    <ClCompile Include="FlvPacket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

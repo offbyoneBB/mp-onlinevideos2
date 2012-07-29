@@ -30,7 +30,7 @@ extern void ZeroURL(URL_COMPONENTS *url);
 // gets base URL without last '/'
 // @param url : URL to get base url
 // @return : base URL or NULL if error
-wchar_t *GetBaseUrl(wchar_t *url)
+wchar_t *GetBaseUrl(const wchar_t *url)
 {
   wchar_t *result = NULL;
 
@@ -66,7 +66,7 @@ wchar_t *GetBaseUrl(wchar_t *url)
 // tests if URL is absolute
 // @param url : URL to test
 // @return : true if URL is absolute, false otherwise or if error
-bool IsAbsoluteUrl(wchar_t *url)
+bool IsAbsoluteUrl(const wchar_t *url)
 {
   bool result = false;
 
@@ -91,13 +91,17 @@ bool IsAbsoluteUrl(wchar_t *url)
 // @param baseUrl : base URL for combining, URL have to be without last '/'
 // @param relativeUrl : relative URL for combinig
 // @return : absolute URL or NULL if error
-wchar_t *FormatAbsoluteUrl(wchar_t *baseUrl, wchar_t *relativeUrl)
+wchar_t *FormatAbsoluteUrl(const wchar_t *baseUrl, const wchar_t *relativeUrl)
 {
   wchar_t *result = NULL;
 
   if ((baseUrl != NULL) && (relativeUrl != NULL))
   {
-    if (IsAbsoluteUrl(relativeUrl))
+    if (IsNullOrEmptyOrWhitespaceW(relativeUrl))
+    {
+      result = DuplicateW(baseUrl);
+    }
+    else if (IsAbsoluteUrl(relativeUrl))
     {
       result = DuplicateW(relativeUrl);
     }
@@ -133,7 +137,7 @@ wchar_t *FormatAbsoluteUrl(wchar_t *baseUrl, wchar_t *relativeUrl)
 // @param baseUrl : base URL for combining, URL have to be without last '/'
 // @param relativeUrl : relative URL for combinig, URL have to be without start '/'
 // @return : absolute base URL or NULL if error
-wchar_t *FormatAbsoluteBaseUrl(wchar_t *baseUrl, wchar_t *relativeUrl)
+wchar_t *FormatAbsoluteBaseUrl(const wchar_t *baseUrl, const wchar_t *relativeUrl)
 {
   wchar_t *result = NULL;
   wchar_t *absoluteUrl = FormatAbsoluteUrl(baseUrl, relativeUrl);

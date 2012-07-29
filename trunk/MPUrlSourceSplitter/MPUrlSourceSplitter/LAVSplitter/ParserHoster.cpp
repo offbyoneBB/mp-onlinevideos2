@@ -39,7 +39,7 @@ CParserHoster::CParserHoster(CLogger *logger, CParameterCollection *configuratio
   }
 
   this->receiveDataWorkerShouldExit = false;
-  this->knownPlugin = NULL;
+  this->parsingPlugin = NULL;
   this->parseMediaPackets = true;
   this->setTotalLengthCalled = false;
   this->endOfStreamReachedCalled = false;
@@ -139,24 +139,34 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
   if ((this->parseMediaPackets) && (this->pluginImplementationsCount != 0))
   {
     bool pendingPlugin = false;
+    bool pendingPluginsBeforeParsing = false;
 
-    if (this->knownPlugin != NULL)
+    for (unsigned int i = 0; i < this->pluginImplementationsCount; i++)
+    {
+      ParserImplementation *implementation = (ParserImplementation *)this->GetPluginImplementation(i);
+      if (implementation->result == ParseResult_Pending)
+      {
+        pendingPluginsBeforeParsing = true;
+        break;
+      }
+    }
+
+    if (this->parsingPlugin != NULL)
     {
       // is there is plugin which returned ParseResult::Known result
-      this->knownPlugin->ParseMediaPacket(mediaPacket);
+      this->parsingPlugin->ParseMediaPacket(mediaPacket);
       result = S_OK;
     }
     else 
     {
       // send received media packet to parsers
-      for (unsigned int i = 0; (i < this->pluginImplementationsCount) && (this->knownPlugin == NULL); i++)
+      for (unsigned int i = 0; (i < this->pluginImplementationsCount) && (this->parsingPlugin == NULL); i++)
       {
         ParserImplementation *implementation = (ParserImplementation *)this->GetPluginImplementation(i);
         IParserPlugin *plugin = (IParserPlugin *)implementation->pImplementation;
 
         if ((implementation->result == ParseResult_Unspecified) ||
-          (implementation->result == ParseResult_Pending) ||
-          (implementation->result == ParseResult_Known))
+            (implementation->result == ParseResult_Pending))
         {
           // parse data only in case when parser can process data
           // if parser returned ParseResult::NotKnown result than parser surely 
@@ -179,7 +189,7 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
             break;
           case ParseResult_Known:
             this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, implementation->name);
-            this->knownPlugin = plugin;
+            this->parsingPlugin = plugin;
             break;
           default:
             this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' return unknown result", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, implementation->name);
@@ -189,7 +199,7 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
       }
     }
 
-    if ((!pendingPlugin) && (this->knownPlugin == NULL))
+    if ((!pendingPlugin) && (this->parsingPlugin == NULL))
     {
       // all parsers don't recognize any pattern in stream
       // do not parse media packets, just send them directly to filter
@@ -197,17 +207,51 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
 
       this->status = STATUS_RECEIVING_DATA;
 
-      if (this->outputStream != NULL)
+      if (pendingPluginsBeforeParsing)
+      {
+        // we need to resend any store media packets
+        CMediaPacketCollection *mediaPacketsToResend = NULL;
+        unsigned int mediaPacketsToResendCount = 0;
+        for (unsigned int i = 0; i < this->pluginImplementationsCount; i++)
+        {
+          ParserImplementation *implementation = (ParserImplementation *)this->GetPluginImplementation(i);
+          IParserPlugin *plugin = (IParserPlugin *)implementation->pImplementation;
+
+          CMediaPacketCollection *mediaPackets = plugin->GetStoredMediaPackets();
+          if (mediaPackets != NULL)
+          {
+            if (mediaPackets->Count() > mediaPacketsToResendCount)
+            {
+              mediaPacketsToResendCount = mediaPackets->Count();
+              mediaPacketsToResend = mediaPackets;
+            }
+          }
+        }
+
+        if ((mediaPacketsToResend != NULL) && (this->outputStream != NULL))
+        {
+          for (unsigned int i = 0; i < mediaPacketsToResend->Count(); i++)
+          {
+            CMediaPacket *mediaPacketToResend = mediaPacketsToResend->GetItem(i);
+            result = this->outputStream->PushMediaPacket(mediaPacketToResend);
+            if (FAILED(result))
+            {
+              this->logger->Log(LOGGER_WARNING, L"%s: %s: resending media packet failed: 0x%08X, start: %lld, end: %lld", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, result, mediaPacketToResend->GetStart(), mediaPacketToResend->GetEnd());
+            }
+          }
+        }
+      }
+      else if (this->outputStream != NULL)
       {
         result = this->outputStream->PushMediaPacket(mediaPacket);
       }
     }
-    else if (this->knownPlugin != NULL)
+    else if (this->parsingPlugin != NULL)
     {
       // there is plugin, which recognize pattern in stream
 
-      Action action = this->knownPlugin->GetAction();
-      wchar_t *name = this->knownPlugin->GetName();
+      Action action = this->parsingPlugin->GetAction();
+      wchar_t *name = this->parsingPlugin->GetName();
 
       switch (action)
       {
@@ -383,7 +427,7 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
             if (this->status == STATUS_NEW_URL_SPECIFIED)
             {
               // known plugin will be cleared in StopReceivingData()
-              IParserPlugin *plugin = this->knownPlugin;
+              IParserPlugin *plugin = this->parsingPlugin;
               this->StopReceivingData();
               urlConnection->Clear();
               retval = plugin->GetConnectionParameters(urlConnection);
@@ -428,7 +472,7 @@ HRESULT CParserHoster::StopReceivingData(void)
 
   // stop receiving data
   this->protocolHoster->StopReceivingData();
-  this->knownPlugin = NULL;
+  this->parsingPlugin = NULL;
   this->parseMediaPackets = true;
 
   for (unsigned int i = 0; i < this->pluginImplementationsCount; i++)

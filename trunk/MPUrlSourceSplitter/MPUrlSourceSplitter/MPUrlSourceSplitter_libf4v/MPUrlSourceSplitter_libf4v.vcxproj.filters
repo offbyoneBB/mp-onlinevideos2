@@ -69,6 +69,9 @@
     <ClInclude Include="SegmentRunTableBoxCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MediaDataBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -120,6 +123,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SegmentRunTableBoxCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaDataBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

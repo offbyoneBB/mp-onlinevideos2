@@ -233,3 +233,13 @@ wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(wchar_t *indent)
 
   return result;
 }
+
+CQualitySegmentUrlModifierCollection *CFragmentRunTableBox::GetQualitySegmentUrlModifiers(void)
+{
+  return this->qualitySegmentUrlModifiers;
+}
+
+CFragmentRunEntryCollection *CFragmentRunTableBox::GetFragmentRunEntryTable(void)
+{
+  return this->fragmentRunEntryTable;
+}

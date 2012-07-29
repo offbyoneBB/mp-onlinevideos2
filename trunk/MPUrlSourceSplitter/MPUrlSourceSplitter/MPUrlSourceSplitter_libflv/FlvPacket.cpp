@@ -19,6 +19,7 @@
 */
 
 #include "StdAfx.h"
+
 #include "FlvPacket.h"
 
 FlvPacket::FlvPacket(void)

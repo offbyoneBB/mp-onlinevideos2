@@ -28,8 +28,6 @@
 
 #include <curl/curl.h>
 
-#include <DShow.h>
-
 #define HTTP_VERSION_NONE                                                     0
 #define HTTP_VERSION_FORCE_HTTP10                                             1
 #define HTTP_VERSION_FORCE_HTTP11                                             2
@@ -57,7 +55,7 @@ public:
   // @param logger : logger for logging purposes
   // @param url : the url to open
   // @param protocolName : the protocol name instantiating
-  CCurlInstance(CLogger *logger, wchar_t *url, wchar_t *protocolName);
+  CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName);
   ~CCurlInstance(void);
 
   // gets CURL handle
@@ -97,22 +95,6 @@ public:
   // @param writeCallback : callback method for writing data received by CURL
   // @param writeData : user specified data supplied to write callback method
   void SetWriteCallback(curl_write_callback writeCallback, void *writeData);
-
-  // gets start stream time
-  // @return : start stream time
-  REFERENCE_TIME GetStartStreamTime(void);
-
-  // sets start stream time
-  // @param startStreamTime : the start stream time to set
-  void SetStartStreamTime(REFERENCE_TIME startStreamTime);
-
-  // gets end stream time
-  // @return : end stream time
-  REFERENCE_TIME GetEndStreamTime(void);
-
-  // sets end stream time
-  // @param endStreamTime : the end stream time to set
-  void SetEndStreamTime(REFERENCE_TIME endStreamTime);
 
   // starts receiving data
   // @return : true if successful, false otherwise
@@ -160,9 +142,9 @@ public:
   // @return : libcurl version or NULL if error
   static wchar_t *GetCurlVersion(void);
 
-  // gets if ranges are supported
-  // @return : true if ranges are supported, false otherwise
-  bool GetRangesSupported(void);
+  // gets url
+  // @return : url
+  const wchar_t *GetUrl(void);
 
 private:
   CURL *curl;
@@ -173,10 +155,6 @@ private:
   DWORD dwCurlWorkerThreadId;
   CURLcode curlWorkerErrorCode;
   static DWORD WINAPI CurlWorker(LPVOID lpParam);
-
-  // start stream time and end stream time
-  REFERENCE_TIME startStreamTime;
-  REFERENCE_TIME endStreamTime;
 
   // the stream url
   wchar_t *url;
@@ -229,9 +207,6 @@ private:
   // @param size : size of the data pointed to
   // @param userptr : user defined pointer
   static int CurlDebugCallback(CURL *handle, curl_infotype type, char *data, size_t size, void *userptr);
-
-  // specifies if ranges are supported
-  bool rangesSupported;
 };
 
 #endif

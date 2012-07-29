@@ -26,24 +26,24 @@
 // gets base URL without last '/'
 // @param url : URL to get base url
 // @return : base URL or NULL if error
-wchar_t *GetBaseUrl(wchar_t *url);
+wchar_t *GetBaseUrl(const wchar_t *url);
 
 // tests if URL is absolute
 // @param url : URL to test
 // @return : true if URL is absolute, false otherwise or if error
-bool IsAbsoluteUrl(wchar_t *url);
+bool IsAbsoluteUrl(const wchar_t *url);
 
 // gets absolute URL combined from base URL and relative URL
 // if relative URL is absolute, then duplicate of relative URL is returned
 // @param baseUrl : base URL for combining, URL have to be without last '/'
 // @param relativeUrl : relative URL for combinig
 // @return : absolute URL or NULL if error
-wchar_t *FormatAbsoluteUrl(wchar_t *baseUrl, wchar_t *relativeUrl);
+wchar_t *FormatAbsoluteUrl(const wchar_t *baseUrl, const wchar_t *relativeUrl);
 
 // gets absolute base URL combined from base URL and relative URL
 // @param baseUrl : base URL for combining, URL have to be without last '/'
 // @param relativeUrl : relative URL for combinig, URL have to be without start '/'
 // @return : absolute base URL or NULL if error
-wchar_t *FormatAbsoluteBaseUrl(wchar_t *baseUrl, wchar_t *relativeUrl);
+wchar_t *FormatAbsoluteBaseUrl(const wchar_t *baseUrl, const wchar_t *relativeUrl);
 
 #endif

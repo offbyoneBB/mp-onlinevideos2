@@ -517,7 +517,7 @@ int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *dat
                     {
                       char *first = startString + 1;
 
-                      first = SkipBlanksA(first);
+                      first = (char *)SkipBlanksA(first);
                       if (first != NULL)
                       {
                         if (strncmp(first, "none", 4) == 0)

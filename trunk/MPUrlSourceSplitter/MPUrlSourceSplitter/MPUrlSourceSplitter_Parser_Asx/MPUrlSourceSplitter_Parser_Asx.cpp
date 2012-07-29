@@ -138,11 +138,11 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
                   {
                     hrefNode += 4;
                     // found href attribute in ref node
-                    hrefNode = SkipBlanksA(hrefNode);
+                    hrefNode = (char *)SkipBlanksA(hrefNode);
                     if (strncmp(hrefNode, "=", 1) == 0)
                     {
                       hrefNode++;
-                      hrefNode = SkipBlanksA(hrefNode);
+                      hrefNode = (char *)SkipBlanksA(hrefNode);
                       if (strncmp(hrefNode, "\"", 1) == 0)
                       {
                         // we are on the first ", find second "
@@ -305,6 +305,11 @@ HRESULT CMPUrlSourceSplitter_Parser_Asx::GetConnectionParameters(CParameterColle
   }
 
   return result;
+}
+
+CMediaPacketCollection *CMPUrlSourceSplitter_Parser_Asx::GetStoredMediaPackets(void)
+{
+  return NULL;
 }
 
 // IPlugin interface

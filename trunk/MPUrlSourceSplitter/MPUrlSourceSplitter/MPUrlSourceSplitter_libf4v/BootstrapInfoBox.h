@@ -56,17 +56,74 @@ public:
   // @return : box data in human readable format or NULL if error
   virtual wchar_t *GetParsedHumanReadable(wchar_t *indent);
 
+  // gets version
+  // @return : version
+  virtual unsigned int GetVersion(void);
+
+  // gets flags
+  // @return : flags
+  virtual unsigned int GetFlags(void);
+
+  // gets the version number of the bootstrap information
+  // when IsUpdate field is true, bootstrapinfo version indicates the version number that is being updated
+  // @return : the version number of the bootstrap information
+  virtual unsigned int GetBootstrapInfoVersion(void);
+
+  // gets profile
+  // @return : profile value (PROFILE_NAMED_ACCESS or PROFILE_RANGE_ACCESS)
+  virtual unsigned int GetProfile(void);
+
+  // gets if the media presentation is live or not
+  // @return : true if the media presentation is live, false otherwise
+  virtual bool IsLive(void);
+
+  // gets if bootstrap info box is an update to previous bootstrap info box or not
+  // @return : true if this table is an update, false otherwise
+  virtual bool IsUpdate(void);
+
+  // gets the number of time units per second
+  // @return : the number of time units per second
+  virtual unsigned int GetTimeScale(void);
+
+  // gets the timestamp in TimeScale units of the latest available fragment in the media presentation
+  // return : the timestamp in TimeScale units
+  virtual uint64_t GetCurrentMediaTime(void);
+
+  // the offset of the CurrentMediaTime from the SMPTE time code, converted to milliseconds
+  // this offset is not in TimeScale units
+  // this field is zero when not used
+  // the server uses the SMPTE time code modulo 24 hours to make the offset positive
+  // @return : the offset of the CurrentMediaTime from the SMPTE time code
+  virtual uint64_t GetSmpteTimeCodeOffset(void);
+
   // gets movie identifier
   // @return : movie identifier
   virtual const wchar_t *GetMovieIdentifier(void);
+
+  // gets server entry table (server URLs in descending order of preference)
+  // @return : server entry table
+  virtual CBootstrapInfoServerEntryCollection *GetServerEntryTable(void);
 
   // gets quality entry table
   // @return : quality entry table
   virtual CBootstrapInfoQualityEntryCollection *GetQualityEntryTable(void);
 
+  // gets string holding Digital Rights Management metadata
+  // encrypted files use this metadata to get the necessary keys and licenses for decryption and playback
+  // @return : string holding Digital Rights Management metadata
+  virtual const wchar_t *GetDrmData(void);
+
+  // gets string that holds metadata
+  // @return : string that holds metadata
+  virtual const wchar_t *GetMetaData(void);
+
   // gets segment run table
   // @return : segment run table
   virtual CSegmentRunTableBoxCollection *GetSegmentRunTable(void);
+
+  // gets fragment run table
+  // @return : fragment run table
+  virtual CFragmentRunTableBoxCollection *GetFragmentRunTable(void);
 
 protected:
 

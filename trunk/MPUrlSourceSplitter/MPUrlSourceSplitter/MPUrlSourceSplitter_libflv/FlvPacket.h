@@ -23,34 +23,33 @@
 #ifndef __FLV_PACKET_DEFINED
 #define __FLV_PACKET_DEFINED
 
-#include "MPUrlSourceSplitter_Protocol_Rtmp_Exports.h"
 #include "LinearBuffer.h"
 
-#define FLV_PACKET_NONE                                               0x00
-#define FLV_PACKET_AUDIO                                              0x08
-#define FLV_PACKET_VIDEO                                              0x09
-#define FLV_PACKET_META                                               0x12
-#define FLV_PACKET_HEADER                                             0xFF
+#define FLV_PACKET_NONE                                                       0x00
+#define FLV_PACKET_AUDIO                                                      0x08
+#define FLV_PACKET_VIDEO                                                      0x09
+#define FLV_PACKET_META                                                       0x12
+#define FLV_PACKET_HEADER                                                     0xFF
 
-#define FLV_VIDEO_CODECID_MASK                                        0x0F
-#define FLV_VIDEO_FRAMETYPE_MASK                                      0xF0
+#define FLV_VIDEO_CODECID_MASK                                                0x0F
+#define FLV_VIDEO_FRAMETYPE_MASK                                              0xF0
 
-#define FLV_VIDEO_FRAMETYPE_OFFSET                                    4
+#define FLV_VIDEO_FRAMETYPE_OFFSET                                            4
 
-#define FLV_FRAME_KEY                                                 1 << FLV_VIDEO_FRAMETYPE_OFFSET
-#define FLV_FRAME_INTER                                               2 << FLV_VIDEO_FRAMETYPE_OFFSET
-#define FLV_FRAME_DISP_INTER                                          3 << FLV_VIDEO_FRAMETYPE_OFFSET
+#define FLV_FRAME_KEY                                                         1 << FLV_VIDEO_FRAMETYPE_OFFSET
+#define FLV_FRAME_INTER                                                       2 << FLV_VIDEO_FRAMETYPE_OFFSET
+#define FLV_FRAME_DISP_INTER                                                  3 << FLV_VIDEO_FRAMETYPE_OFFSET
 
-#define FLV_CODECID_H263                                              2
-#define FLV_CODECID_SCREEN                                            3
-#define FLV_CODECID_VP6                                               4
-#define FLV_CODECID_VP6A                                              5
-#define FLV_CODECID_SCREEN2                                           6
-#define FLV_CODECID_H264                                              7
-#define FLV_CODECID_REALH263                                          8
-#define FLV_CODECID_MPEG4                                             9
+#define FLV_CODECID_H263                                                      2
+#define FLV_CODECID_SCREEN                                                    3
+#define FLV_CODECID_VP6                                                       4
+#define FLV_CODECID_VP6A                                                      5
+#define FLV_CODECID_SCREEN2                                                   6
+#define FLV_CODECID_H264                                                      7
+#define FLV_CODECID_REALH263                                                  8
+#define FLV_CODECID_MPEG4                                                     9
 
-class MPURLSOURCESPLITTER_PROTOCOL_RTMP_API FlvPacket
+class FlvPacket
 {
 public:
   // initializes a new instance of FlvPacket class

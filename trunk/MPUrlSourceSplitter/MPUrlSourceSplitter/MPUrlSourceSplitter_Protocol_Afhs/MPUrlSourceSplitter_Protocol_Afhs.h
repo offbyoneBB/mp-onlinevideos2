@@ -46,8 +46,8 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"AFHS" };
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 
-#define FLV_FILE_HEADER_LENGTH                                                9
-unsigned char FLV_FILE_HEADER[FLV_FILE_HEADER_LENGTH] =                       { 0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09 };
+#define FLV_FILE_HEADER_LENGTH                                                13
+unsigned char FLV_FILE_HEADER[FLV_FILE_HEADER_LENGTH] =                       { 0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x00 };
 
 // This class is exported from the CMPUrlSourceSplitter_Protocol_Afhs.dll
 class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CMPUrlSourceSplitter_Protocol_Afhs : public IProtocolPlugin
@@ -194,6 +194,9 @@ protected:
   // specifies if filter requested supressing data
   bool supressData;
 
+  // buffer for processing box data before are send to further processing
+  LinearBuffer *bufferForBoxProcessing;
+
   // buffer for processing data before are send to filter
   LinearBuffer *bufferForProcessing;
 
@@ -207,6 +210,8 @@ protected:
   CBootstrapInfoBox *bootstrapInfoBox;
   // holds collection of segments, fragments and urls
   CSegmentFragmentCollection *segmentsFragments;
+  // holds last segment and fragment index from segmentsFragments
+  unsigned int lastSegmentFragment;
 };
 
 #endif
