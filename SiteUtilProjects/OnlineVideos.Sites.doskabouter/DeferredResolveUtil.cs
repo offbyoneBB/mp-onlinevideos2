@@ -34,6 +34,16 @@ namespace OnlineVideos.Sites
         }
 
         /// <summary>
+        /// Formats the url to the appropriate value
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public virtual string FormatHosterUrl(string name)
+        {
+            return name;
+        }
+
+        /// <summary>
         /// Sorts and filters all video links (hosters) for a given video
         /// </summary>
         /// <param name="video">The video that is handled</param>
@@ -46,11 +56,11 @@ namespace OnlineVideos.Sites
         {
             List<PlaybackElement> lst = new List<PlaybackElement>();
             if (video.PlaybackOptions == null) // just one
-                lst.Add(new PlaybackElement("100%justone", tmp));
+                lst.Add(new PlaybackElement("100%justone", FormatHosterUrl(tmp)));
             else
                 foreach (string name in video.PlaybackOptions.Keys)
                 {
-                    PlaybackElement element = new PlaybackElement(FormatHosterName(name), video.PlaybackOptions[name]);
+                    PlaybackElement element = new PlaybackElement(FormatHosterName(name), FormatHosterUrl(video.PlaybackOptions[name]));
                     element.status = "ns";
                     if (element.server.Equals("videoclipuri") ||
                         HosterFactory.ContainsName(element.server.ToLower().Replace("google", "googlevideo")))
