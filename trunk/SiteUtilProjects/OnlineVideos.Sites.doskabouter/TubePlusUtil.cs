@@ -246,6 +246,21 @@ namespace OnlineVideos.Sites
                 return name.Substring(4);
         }
 
+        public override string FormatHosterUrl(string name)
+        {
+
+            // on tubeplus it's always http://<hoster>/<id>
+            //source for conversion: http://www.tubeplus.me/resources/js/player2.js 
+            // doesn't really work, putlocker&sockshare needs file instead of embed, and gorillavid needs nothing
+            string[] parts = name.Split('/');
+            string id = parts[parts.Length - 1];
+            string hoster = parts[parts.Length - 2].ToLowerInvariant();
+
+            if (hoster == "youtube") return "http://youtube.com/v/" + id;
+            if (hoster == "putlocker.com" || hoster == "sockshare.com") return "http://www.putlocker.com/file/" + id;
+            return name;
+        }
+
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
             if (string.IsNullOrEmpty(url)) // called for adding to favorites
