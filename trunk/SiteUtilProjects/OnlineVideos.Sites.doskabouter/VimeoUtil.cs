@@ -22,18 +22,7 @@ namespace OnlineVideos.Sites
 
         public override void Initialize(SiteSettings siteSettings)
         {
-
             resolveHoster = HosterResolving.FromUrl;
-
-            // for dynamic categories
-            baseUrl = @"http://vimeo.com/ajax/user/home_explore";
-            dynamicCategoriesRegEx = @"<div\sclass=""thumbnail""><a\shref=""(?<url>[^""]*)"">\s<img\ssrc=""(?<thumb>[^""]*)""[^>]*>\s*</a></div>\s*<div\sclass=""digest"">\s*<h3><a[^>]*>(?<title>[^<]*)</a></h3>";
-            dynamicSubCategoriesRegEx = @"<li><a\shref=""(?<url>/categories/[^""]*)"">(?<title>[^<]*)</a></li>";
-            dynamicSubCategoryUrlFormatString = @"{0}/videos/sort:newest/format:detail";
-            videoListRegEx = @"<div\sclass=""thumbnail_box"">\s*<a\sclass=""thumbnail""\shref=""(?<VideoUrl>[^""]*)""[^>]*>\s*<img\ssrc=""(?<ImageUrl>[^""]*)""[^>]*>\s*</a>\s*</div>\s*<div\sclass=""detail"">\s*<div\sclass=""title"">\s*<a[^>]*>(?<Title>[^<]*)</a>\s*</div>\s*<div\sclass=""date"">(?<Airdate>[^<]*)<span\sclass=""stats"">\s*<span\sclass=""plays"">[^<]*</span>\s*<span\sclass=""likes"">[^<]*</span>\s*<span\sclass=""comments"">[^<]*</span>\s*</span>\s*</div>\s*<div\sclass=""description"">(?<Description>[^<]*)<";
-            nextPageRegEx = @"<li\sclass=""arrow""><a\shref=""(?<url>[^""]*)""><img\ssrc=""http://a\.vimeocdn\.com/images/page_arrow_next_on\.gif""\salt=""next""\s/>";
-            nextPageRegExUrlFormatString = @"{0}/format:detail";
-
             base.Initialize(siteSettings);
         }
 
@@ -41,18 +30,69 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            int res = 0;
-            if (useDynamicCategories)
-                res = base.DiscoverDynamicCategories();
-            Settings.DynamicCategoriesDiscovered = true;
-            foreach (Category cat in Settings.Categories)
+
+            if (!useDynamicCategories)
             {
-                Match m = Regex.Match(((RssLink)cat).Url, @"http://vimeo.com/user[^/]*/(?<kind>[^/]*)");
-                if (m.Success)
-                    cat.HasSubCategories = "channels".Equals(m.Groups["kind"].Value) ||
-                        "groups".Equals(m.Groups["kind"].Value) || "albums".Equals(m.Groups["kind"].Value);
+                Settings.DynamicCategoriesDiscovered = true;
+
+                foreach (Category cat in Settings.Categories)
+                {
+                    Match m = Regex.Match(((RssLink)cat).Url, @"http://vimeo.com/user[^/]*/(?<kind>[^/]*)");
+                    if (m.Success)
+                        cat.HasSubCategories = "channels".Equals(m.Groups["kind"].Value) ||
+                            "groups".Equals(m.Groups["kind"].Value) || "albums".Equals(m.Groups["kind"].Value);
+                }
+                return 0;
             }
-            return res;
+
+
+            if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
+            string url = StandardAdvancedApiUrl + "?method=vimeo.categories.getall&page=0&per_page=50";
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(AuthBase.BuildOAuthApiRequestUrl(url));
+
+            Settings.DynamicCategoriesDiscovered = true;
+
+            foreach (XmlNode categNode in xmlDoc.SelectNodes(@"//rsp/categories/category"))
+            {
+                RssLink cat = new RssLink();
+                XmlNode nd = categNode.SelectSingleNode("name");
+                if (nd != null)
+                    cat.Name = nd.InnerText;
+                else
+                    cat.Name = categNode.SelectSingleNode("title").InnerText;
+
+                cat.Url = categNode.SelectSingleNode("url").InnerText;
+                cat.Other = categNode.Attributes["word"].Value;
+                AddSubcats(cat, categNode);
+                Settings.Categories.Add(cat);
+            };
+
+            return Settings.Categories.Count;
+        }
+
+        private void AddSubcats(Category parentCat, XmlNode categNode)
+        {
+            parentCat.HasSubCategories = true;
+            parentCat.SubCategories = new List<Category>();
+            foreach (XmlNode subCategNode in categNode.SelectNodes(@"subcategories/subcategory"))
+            {
+                RssLink cat = new RssLink();
+                cat.Name = subCategNode.Attributes["name"].Value;
+                cat.Url = subCategNode.Attributes["url"].Value;
+                cat.Other = subCategNode.Attributes["word"].Value;
+                cat.ParentCategory = parentCat;
+                parentCat.SubCategories.Add(cat);
+            };
+            RssLink videosCat = new RssLink()
+            {
+                Name = "Videos",
+                Url = categNode.SelectSingleNode("url").InnerText,
+                Other = categNode.Attributes["word"].Value,
+                ParentCategory = parentCat
+            };
+            parentCat.SubCategories.Add(videosCat);
+            parentCat.SubCategoriesDiscovered = true;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
@@ -72,6 +112,14 @@ namespace OnlineVideos.Sites
         {
             currentVideoListUrl = null;
             string url = ((RssLink)category).Url;
+            string key = category.Other as string;
+            if (!String.IsNullOrEmpty(key))
+            {
+                currentVideoListUrl = String.Format("{0}?method=vimeo.categories.getRelatedVideos&category={1}&per_page={2}&full_response=1&page=",
+                    StandardAdvancedApiUrl, key, pageSize);
+                pageNr = 1;
+                return videoListFromVimeo(currentVideoListUrl + pageNr.ToString());
+            }
             if (url.ToLowerInvariant().StartsWith(@"http://vimeo.com/categories/"))
                 return base.getVideoList(category);
             else
@@ -148,7 +196,7 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             video.PlaybackOptions = null;
-            string res=base.getUrl(video);
+            string res = base.getUrl(video);
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
                 return video.PlaybackOptions.First().Value;
             else
