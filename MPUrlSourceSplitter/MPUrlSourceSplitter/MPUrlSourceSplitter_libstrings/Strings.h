@@ -115,6 +115,22 @@ bool IsNullOrEmptyW(const wchar_t *string);
 #define IsNullOrEmpty IsNullOrEmptyW
 #endif
 
+// tests if mutli byte string is null or empty or consists of only white-space characters
+// @param string : string to test
+// @return : true if null or empty or consists of only white-space characters, otherwise false
+bool IsNullOrEmptyOrWhitespaceA(const char *string);
+
+// tests if Unicode string is null or empty or consists of only white-space characters
+// @param string : string to test
+// @return : true if null or empty or consists of only white-space characters, otherwise false
+bool IsNullOrEmptyOrWhitespaceW(const wchar_t *string);
+
+#ifdef _MBCS
+#define IsNullOrEmptyOrWhitespace IsNullOrEmptyOrWhitespaceA
+#else
+#define IsNullOrEmptyOrWhitespace IsNullOrEmptyOrWhitespaceW
+#endif
+
 // formats string using format string and parameters
 // @param format : format string
 // @return : result string or NULL if error
@@ -141,8 +157,8 @@ wchar_t *ReplaceStringW(const wchar_t *string, const wchar_t *searchString, cons
 #define ReplaceString ReplaceStringW
 #endif
 
-char *SkipBlanksA(char *str);
-wchar_t *SkipBlanksW(wchar_t *str);
+const char *SkipBlanksA(const char *str);
+const wchar_t *SkipBlanksW(const wchar_t *str);
 
 #ifdef _MBCS
 #define SkipBlanks SkipBlanksA
@@ -150,8 +166,8 @@ wchar_t *SkipBlanksW(wchar_t *str);
 #define SkipBlanks SkipBlanksW
 #endif
 
-char *EscapeA(char *input);
-wchar_t *EscapeW(wchar_t *input);
+char *EscapeA(const char *input);
+wchar_t *EscapeW(const wchar_t *input);
 
 #ifdef _MBCS
 #define Escape EscapeA
@@ -159,8 +175,8 @@ wchar_t *EscapeW(wchar_t *input);
 #define Escape EscapeW
 #endif
 
-char *UnescapeA(char *input);
-wchar_t *UnescapeW(wchar_t *input);
+char *UnescapeA(const char *input);
+wchar_t *UnescapeW(const wchar_t *input);
 
 #ifdef _MBCS
 #define Unescape UnescapeA
@@ -168,11 +184,11 @@ wchar_t *UnescapeW(wchar_t *input);
 #define Unescape UnescapeW
 #endif
 
-wchar_t *ConvertUtf8ToUnicode(char *utf8String);
-char *ConvertUnicodeToUtf8(wchar_t *unicodeString);
+wchar_t *ConvertUtf8ToUnicode(const char *utf8String);
+char *ConvertUnicodeToUtf8(const wchar_t *unicodeString);
 
-bool IsBlankA(char *input);
-bool IsBlankW(wchar_t *input);
+bool IsBlankA(const char *input);
+bool IsBlankW(const wchar_t *input);
 
 #ifdef _MBCS
 #define IsBlank IsBlankA
@@ -180,8 +196,8 @@ bool IsBlankW(wchar_t *input);
 #define IsBlank IsBlankW
 #endif
 
-char *TrimLeftA(char *input);
-wchar_t *TrimLeftW(wchar_t *input);
+char *TrimLeftA(const char *input);
+wchar_t *TrimLeftW(const wchar_t *input);
 
 #ifdef _MBCS
 #define TrimLeft TrimLeftA
@@ -189,8 +205,8 @@ wchar_t *TrimLeftW(wchar_t *input);
 #define TrimLeft TrimLeftA
 #endif
 
-char *TrimRightA(char *input);
-wchar_t *TrimRightW(wchar_t *input);
+char *TrimRightA(const char *input);
+wchar_t *TrimRightW(const wchar_t *input);
 
 #ifdef _MBCS
 #define TrimRight TrimRightA
@@ -198,8 +214,8 @@ wchar_t *TrimRightW(wchar_t *input);
 #define TrimRight TrimRightW
 #endif
 
-char *TrimA(char *input);
-wchar_t *TrimW(wchar_t *input);
+char *TrimA(const char *input);
+wchar_t *TrimW(const wchar_t *input);
 
 #ifdef _MBCS
 #define Trim TrimA
@@ -208,13 +224,22 @@ wchar_t *TrimW(wchar_t *input);
 #endif
 
 
-char *ReverseA(char *input);
-wchar_t *ReverseW(wchar_t *input);
+char *ReverseA(const char *input);
+wchar_t *ReverseW(const wchar_t *input);
 
 #ifdef _MBCS
 #define Reverse ReverseA
 #else
 #define Reverse ReverseW
+#endif
+
+bool EndsWithA(const char *string, const char c);
+bool EndsWithW(const wchar_t *string, const wchar_t c);
+
+#ifdef _MBCS
+#define EndsWith EndsWithA
+#else
+#define EndsWith EndsWithW
 #endif
 
 #endif

@@ -23,6 +23,8 @@
 #ifndef __SEGMENT_FRAGMENT_DEFINED
 #define __SEGMENT_FRAGMENT_DEFINED
 
+#include <stdint.h>
+
 class CSegmentFragment
 {
 public:
@@ -30,7 +32,7 @@ public:
   // @param segment : segment ID
   // @param fragment : fragment ID
   // @param url : common url for segment and fragment
-  CSegmentFragment(unsigned int segment, unsigned int fragment, const wchar_t *url);
+  CSegmentFragment(unsigned int segment, unsigned int fragment, const wchar_t *url, uint64_t fragmentTimestamp);
 
   // destructor
   ~CSegmentFragment(void);
@@ -47,6 +49,10 @@ public:
   // @return : segment and fragment url or NULL if error
   const wchar_t *GetUrl(void);
 
+  // gets fragment timestamp
+  // @return : fragment timestamp
+  uint64_t GetFragmentTimestamp(void);
+
 private:
   // stores segment ID
   unsigned int segment;
@@ -54,6 +60,8 @@ private:
   unsigned int fragment;
   // stores common url for segment and fragment
   wchar_t *url;
+  // stores fragment timestamp
+  uint64_t fragmentTimestamp;
 };
 
 #endif

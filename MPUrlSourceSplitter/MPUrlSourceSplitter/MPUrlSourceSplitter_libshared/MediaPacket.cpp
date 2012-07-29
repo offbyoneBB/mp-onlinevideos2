@@ -53,7 +53,7 @@ CMediaPacket *CMediaPacket::Clone(void)
   clone->storeFilePosition = this->storeFilePosition;
 
   // because in clone is created linear buffer we need to delete clone buffer
-  delete clone->buffer;
+  FREE_MEM_CLASS(clone->buffer);
 
   if (!this->IsStoredToFile())
   {
@@ -64,8 +64,7 @@ CMediaPacket *CMediaPacket::Clone(void)
     if (clone->buffer == NULL)
     {
       // error occured while cloning current instance
-      delete clone;
-      clone = NULL;
+      FREE_MEM_CLASS(clone);
     }
   }
 

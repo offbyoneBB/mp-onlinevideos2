@@ -164,6 +164,10 @@ public:
   // @return : S_OK if successful
   HRESULT GetConnectionParameters(CParameterCollection *parameters);
 
+  // gets stored media packets (in case that parser plugin returned ParseResult_Pending)
+  // @return : stored media packets collection
+  CMediaPacketCollection *GetStoredMediaPackets(void);
+
   // IPlugin interface
 
   // return reference to null-terminated string which represents plugin name
@@ -186,6 +190,9 @@ protected:
 
   // holds connection parameters
   CParameterCollection *connectionParameters;
+
+  // holds stored media packets
+  CMediaPacketCollection *storedMediaPackets;
 };
 
 #endif

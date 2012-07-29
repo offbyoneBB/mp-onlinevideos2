@@ -24,11 +24,10 @@
 #define __PARSERPLUGININTERFACE_DEFINED
 
 #include "IPlugin.h"
-#include "MediaPacket.h"
+#include "MediaPacketCollection.h"
 
 #define METHOD_PARSE_MEDIA_PACKET_NAME                                            L"ParseMediaPacket()"
 #define METHOD_CLEAR_SESSION_NAME                                                 L"ClearSession()"
-
 
 struct ParserPluginConfiguration : public PluginConfiguration
 {
@@ -74,6 +73,10 @@ struct IParserPlugin : public IPlugin
   // @param parameters : the collection of url and connection parameters to fill
   // @return : S_OK if successful
   virtual HRESULT GetConnectionParameters(CParameterCollection *parameters) = 0;
+
+  // gets stored media packets (in case that parser plugin returned ParseResult_Pending)
+  // @return : stored media packets collection
+  virtual CMediaPacketCollection *GetStoredMediaPackets(void) = 0;
 };
 
 typedef IParserPlugin* PIParserPlugin;

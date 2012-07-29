@@ -70,6 +70,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Protocol_Rtmp", "MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp\MPUrlSourceSplitter_Protocol_Rtmp.vcxproj", "{A96533F6-8B52-45A2-864C-FB2239CFEAD5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4AF71A22-6666-4297-A46C-E472F84C8134} = {4AF71A22-6666-4297-A46C-E472F84C8134}
+		{8AC5A628-2FE1-4501-A7F6-A0D4066282B6} = {8AC5A628-2FE1-4501-A7F6-A0D4066282B6}
 		{BDA0CC2F-E51F-4CD0-AE70-D6073C120026} = {BDA0CC2F-E51F-4CD0-AE70-D6073C120026}
 		{36308E3F-8693-43FC-9F53-988E6C1A830C} = {36308E3F-8693-43FC-9F53-988E6C1A830C}
 		{759BBA46-35B0-4AA4-9358-E3E65818BF6D} = {759BBA46-35B0-4AA4-9358-E3E65818BF6D}
@@ -105,6 +106,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Protocol_Afhs", "MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs\MPUrlSourceSplitter_Protocol_Afhs.vcxproj", "{FFFC4A1F-C818-4BC9-96D7-4B66F4C863EA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4AF71A22-6666-4297-A46C-E472F84C8134} = {4AF71A22-6666-4297-A46C-E472F84C8134}
+		{8AC5A628-2FE1-4501-A7F6-A0D4066282B6} = {8AC5A628-2FE1-4501-A7F6-A0D4066282B6}
 		{36308E3F-8693-43FC-9F53-988E6C1A830C} = {36308E3F-8693-43FC-9F53-988E6C1A830C}
 		{759BBA46-35B0-4AA4-9358-E3E65818BF6D} = {759BBA46-35B0-4AA4-9358-E3E65818BF6D}
 		{B25D4555-F218-410A-A37E-176A17996325} = {B25D4555-F218-410A-A37E-176A17996325}
@@ -134,6 +136,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libshared", "MPUrlSourceSplitter\MPUrlSourceSplitter_libshared\MPUrlSourceSplitter_libshared.vcxproj", "{EC437A98-5FDF-44A7-8A74-9B4D0912E7F6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libtinyxml2", "MPUrlSourceSplitter\MPUrlSourceSplitter_libtinyxml2\MPUrlSourceSplitter_libtinyxml2.vcxproj", "{4AD319E2-38AC-4284-A304-6F2A7FE1364F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libflv", "MPUrlSourceSplitter\MPUrlSourceSplitter_libflv\MPUrlSourceSplitter_libflv.vcxproj", "{8AC5A628-2FE1-4501-A7F6-A0D4066282B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -229,6 +233,10 @@ Global
 		{4AD319E2-38AC-4284-A304-6F2A7FE1364F}.Debug|Win32.Build.0 = Debug|Win32
 		{4AD319E2-38AC-4284-A304-6F2A7FE1364F}.Release|Win32.ActiveCfg = Release|Win32
 		{4AD319E2-38AC-4284-A304-6F2A7FE1364F}.Release|Win32.Build.0 = Release|Win32
+		{8AC5A628-2FE1-4501-A7F6-A0D4066282B6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8AC5A628-2FE1-4501-A7F6-A0D4066282B6}.Debug|Win32.Build.0 = Debug|Win32
+		{8AC5A628-2FE1-4501-A7F6-A0D4066282B6}.Release|Win32.ActiveCfg = Release|Win32
+		{8AC5A628-2FE1-4501-A7F6-A0D4066282B6}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -24,7 +24,7 @@
 #include "Logger.h"
 #include "ISimpleProtocol.h"
 
-CCurlInstance::CCurlInstance(CLogger *logger, wchar_t *url, wchar_t *protocolName)
+CCurlInstance::CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName)
 {
   this->logger = logger;
   this->url = Duplicate(url);
@@ -43,7 +43,6 @@ CCurlInstance::CCurlInstance(CLogger *logger, wchar_t *url, wchar_t *protocolNam
   this->version = HTTP_VERSION_DEFAULT;
   this->ignoreContentLength = HTTP_IGNORE_CONTENT_LENGTH_DEFAULT;
   this->closeWithoutWaiting = false;
-  this->rangesSupported = true;
 }
 
 
@@ -248,21 +247,6 @@ bool CCurlInstance::Initialize(void)
         result = false;
       }
     }
-
-    if (errorCode == CURLE_OK)
-    {
-      wchar_t *range = FormatString((this->endStreamTime <= this->startStreamTime) ? L"%llu-" : L"%llu-%llu", this->startStreamTime, this->endStreamTime);
-      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: requesting range: %s", this->protocolName, METHOD_START_RECEIVING_DATA_NAME, range);
-      char *curlRange = ConvertToMultiByte(range);
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_RANGE, curlRange);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting range", errorCode);
-        result = false;
-      }
-      FREE_MEM(curlRange);
-      FREE_MEM(range);
-    }
   }
 
   if (result)
@@ -379,26 +363,6 @@ void CCurlInstance::SetWriteCallback(curl_write_callback writeCallback, void *wr
   this->writeData = writeData;
 }
 
-REFERENCE_TIME CCurlInstance::GetStartStreamTime(void)
-{
-  return this->startStreamTime;
-}
-
-void CCurlInstance::SetStartStreamTime(REFERENCE_TIME startStreamTime)
-{
-  this->startStreamTime = startStreamTime;
-}
-
-REFERENCE_TIME CCurlInstance::GetEndStreamTime(void)
-{
-  return this->endStreamTime;
-}
-
-void CCurlInstance::SetEndStreamTime(REFERENCE_TIME endStreamTime)
-{
-  this->endStreamTime = endStreamTime;
-}
-
 bool CCurlInstance::StartReceivingData(void)
 {
   return (this->CreateCurlWorker() == S_OK);
@@ -475,63 +439,6 @@ int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *dat
         {
           // we are just interested in headers comming in from peer
           caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: received HTTP header: '%s'", caller->protocolName, METHOD_CURL_DEBUG_CALLBACK, curlData);
-
-          // check for accept-ranges header
-          char *lowerBuffer = DuplicateA(tempData);
-          if (lowerBuffer != NULL)
-          {
-            size_t length = strlen(lowerBuffer);
-            if (length > 0)
-            {
-              _strlwr_s(lowerBuffer, length + 1);
-
-              if (length > 13)
-              {
-                // the length of received data should be at least 5 characters 'Accept-Ranges'
-
-                if (strncmp(lowerBuffer, "accept-ranges", 13) == 0)
-                {
-                  // Accept-Ranges header, try to parse
-
-                  char *startString = strstr(lowerBuffer, ":");
-                  if (startString != NULL)
-                  {
-                    char *endString1 = strstr(startString, "\n");
-                    char *endString2 = strstr(startString, "\r");
-
-                    char *endString = NULL;
-                    if ((endString1 != NULL) && (endString2 != NULL))
-                    {
-                      endString = (endString1 < endString2) ? endString1 : endString2;
-                    }
-                    else if (endString1 != NULL)
-                    {
-                      endString = endString1;
-                    }
-                    else if (endString2 != NULL)
-                    {
-                      endString = endString2;
-                    }
-
-                    if (endString != NULL)
-                    {
-                      char *first = startString + 1;
-
-                      first = SkipBlanksA(first);
-                      if (first != NULL)
-                      {
-                        if (strncmp(first, "none", 4) == 0)
-                        {
-                          // ranges are not supported
-                          caller->rangesSupported = false;
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
         }
       }
 
@@ -560,7 +467,7 @@ wchar_t *CCurlInstance::GetCurlVersion(void)
   return ConvertToUnicodeA(curlVersion);
 }
 
-bool CCurlInstance::GetRangesSupported(void)
+const wchar_t *CCurlInstance::GetUrl(void)
 {
-  return this->rangesSupported;
+  return this->url;
 }

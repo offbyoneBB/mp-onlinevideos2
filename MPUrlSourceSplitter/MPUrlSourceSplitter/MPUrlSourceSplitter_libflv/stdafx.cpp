@@ -18,39 +18,11 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "StdAfx.h"
+// stdafx.cpp : source file that includes just the standard includes
+// MPUrlSource_File.pch will be the pre-compiled header
+// stdafx.obj will contain the pre-compiled type information
 
-#include "SegmentFragment.h"
+#include "stdafx.h"
 
-CSegmentFragment::CSegmentFragment(unsigned int segment, unsigned int fragment, const wchar_t *url, uint64_t fragmentTimestamp)
-{
-  this->segment = segment;
-  this->fragment = fragment;
-  this->url = Duplicate(url);
-  this->fragmentTimestamp = fragmentTimestamp;
-}
-
-CSegmentFragment::~CSegmentFragment(void)
-{
-  FREE_MEM(this->url);
-}
-
-unsigned int CSegmentFragment::GetSegment(void)
-{
-  return this->segment;
-}
-
-unsigned int CSegmentFragment::GetFragment(void)
-{
-  return this->fragment;
-}
-
-const wchar_t *CSegmentFragment::GetUrl(void)
-{
-  return this->url;
-}
-
-uint64_t CSegmentFragment::GetFragmentTimestamp(void)
-{
-  return this->fragmentTimestamp;
-}
+// TODO: reference any additional headers you need in STDAFX.H
+// and not in this file

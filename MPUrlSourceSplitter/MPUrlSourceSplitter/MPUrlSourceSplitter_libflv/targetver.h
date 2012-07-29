@@ -18,39 +18,11 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "StdAfx.h"
+#pragma once
 
-#include "SegmentFragment.h"
+// Including SDKDDKVer.h defines the highest available Windows platform.
 
-CSegmentFragment::CSegmentFragment(unsigned int segment, unsigned int fragment, const wchar_t *url, uint64_t fragmentTimestamp)
-{
-  this->segment = segment;
-  this->fragment = fragment;
-  this->url = Duplicate(url);
-  this->fragmentTimestamp = fragmentTimestamp;
-}
+// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
+// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
 
-CSegmentFragment::~CSegmentFragment(void)
-{
-  FREE_MEM(this->url);
-}
-
-unsigned int CSegmentFragment::GetSegment(void)
-{
-  return this->segment;
-}
-
-unsigned int CSegmentFragment::GetFragment(void)
-{
-  return this->fragment;
-}
-
-const wchar_t *CSegmentFragment::GetUrl(void)
-{
-  return this->url;
-}
-
-uint64_t CSegmentFragment::GetFragmentTimestamp(void)
-{
-  return this->fragmentTimestamp;
-}
+#include <SDKDDKVer.h>

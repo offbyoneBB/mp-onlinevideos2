@@ -169,7 +169,7 @@ protected:
   IParserOutputStream *parserOutputStream;
 
   // reference to parser plugin which return ParseResult::Known result
-  IParserPlugin *knownPlugin;
+  IParserPlugin *parsingPlugin;
 
   // specifies if hoster have to parse media packets
   bool parseMediaPackets;

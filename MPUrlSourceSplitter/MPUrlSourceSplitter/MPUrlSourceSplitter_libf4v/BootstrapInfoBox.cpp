@@ -95,7 +95,6 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
     {
       // incorect box type
       this->parsed = false;
-      result = false;
     }
     else
     {
@@ -473,9 +472,59 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(wchar_t *indent)
   return result;
 }
 
+unsigned int CBootstrapInfoBox::GetVersion(void)
+{
+  return this->version;
+}
+
+unsigned int CBootstrapInfoBox::GetFlags(void)
+{
+  return this->flags;
+}
+
+unsigned int CBootstrapInfoBox::GetBootstrapInfoVersion(void)
+{
+  return this->bootstrapInfoVersion;
+}
+
+unsigned int CBootstrapInfoBox::GetProfile(void)
+{
+  return this->profile;
+}
+
+bool CBootstrapInfoBox::IsLive(void)
+{
+  return this->live;
+}
+
+bool CBootstrapInfoBox::IsUpdate(void)
+{
+  return this->update;
+}
+
+unsigned int CBootstrapInfoBox::GetTimeScale(void)
+{
+  return this->timeScale;
+}
+
+uint64_t CBootstrapInfoBox::GetCurrentMediaTime(void)
+{
+  return this->currentMediaTime;
+}
+
+uint64_t CBootstrapInfoBox::GetSmpteTimeCodeOffset(void)
+{
+  return this->smpteTimeCodeOffset;
+}
+
 const wchar_t *CBootstrapInfoBox::GetMovieIdentifier(void)
 {
   return this->movieIdentifier;
+}
+
+CBootstrapInfoServerEntryCollection *CBootstrapInfoBox::GetServerEntryTable(void)
+{
+  return this->serverEntryTable;
 }
 
 CBootstrapInfoQualityEntryCollection *CBootstrapInfoBox::GetQualityEntryTable(void)
@@ -483,7 +532,22 @@ CBootstrapInfoQualityEntryCollection *CBootstrapInfoBox::GetQualityEntryTable(vo
   return this->qualityEntryTable;
 }
 
+const wchar_t *CBootstrapInfoBox::GetDrmData(void)
+{
+  return this->drmData;
+}
+
+const wchar_t *CBootstrapInfoBox::GetMetaData(void)
+{
+  return this->metaData;
+}
+
 CSegmentRunTableBoxCollection *CBootstrapInfoBox::GetSegmentRunTable(void)
 {
   return this->segmentRunTable;
+}
+
+CFragmentRunTableBoxCollection *CBootstrapInfoBox::GetFragmentRunTable(void)
+{
+  return this->fragmentRunTable;
 }
