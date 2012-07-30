@@ -123,6 +123,8 @@ namespace OnlineVideos.Sites
             
             // no videos found could mean that we are possibly on a category that only has a single video,
             // so create a category with a single video (use a separate regular expression to find info)
+            //
+            // For example, "1 jour 24 heures 34 millions de vies" in "Films et documentaires"
             if (videoList.Count == 0)
             {
                 Log.Debug("No videos found, attempting to find single video");
