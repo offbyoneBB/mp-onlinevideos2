@@ -64,6 +64,8 @@ namespace OnlineVideos.Hoster
                 }
             }
 
+            if (!String.IsNullOrEmpty(dlLink))
+                dlLink = HttpUtility.HtmlDecode(dlLink).Trim('\'');
             if (new System.Uri(dlLink).IsAbsoluteUri) return dlLink;
             else return new Uri(new Uri(string.Format("{0}{1}", "http://www.", getHosterUrl())), dlLink).AbsoluteUri;
         }
