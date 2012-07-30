@@ -31,7 +31,7 @@ CBootstrapInfoServerEntryCollection::~CBootstrapInfoServerEntryCollection(void)
 {
 }
 
-int CBootstrapInfoServerEntryCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
+int CBootstrapInfoServerEntryCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,14 +45,9 @@ int CBootstrapInfoServerEntryCollection::CompareItemKeys(wchar_t *firstKey, wcha
   }
 }
 
-wchar_t *CBootstrapInfoServerEntryCollection::GetKey(CBootstrapInfoServerEntry *item)
+const wchar_t *CBootstrapInfoServerEntryCollection::GetKey(CBootstrapInfoServerEntry *item)
 {
-  return Duplicate(item->GetServerEntry());
-}
-
-void CBootstrapInfoServerEntryCollection::FreeKey(wchar_t *key)
-{
-  FREE_MEM(key);
+  return item->GetServerEntry();
 }
 
 CBootstrapInfoServerEntry *CBootstrapInfoServerEntryCollection::Clone(CBootstrapInfoServerEntry *item)

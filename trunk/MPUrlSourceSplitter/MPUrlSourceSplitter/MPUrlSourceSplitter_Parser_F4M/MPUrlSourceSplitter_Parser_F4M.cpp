@@ -25,6 +25,7 @@
 #include "BootstrapInfoCollection.h"
 #include "MediaCollection.h"
 #include "MPUrlSourceSplitter_Protocol_Afhs_Parameters.h"
+#include "MPUrlSourceSplitter_Protocol_Http_Parameters.h"
 #include "BootstrapInfoBox.h"
 #include "formatUrl.h"
 
@@ -130,7 +131,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
       }
       length++;
 
-      ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
+      ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
       if ((buffer != NULL) && (length > 1))
       {
         unsigned int bufferPosition = 0;
@@ -147,7 +148,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
         if (document != NULL)
         {
           // parse received data, if no error, continue in parsing
-          int parseError = document->Parse(buffer);
+          int parseError = document->Parse((char *)buffer);
           if (parseError == XML_NO_ERROR)
           {
             XMLElement *manifest = document->FirstChildElement(F4M_ELEMENT_MANIFEST);
@@ -162,7 +163,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                   // correct F4M file, continue in parsing
 
                   this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"F4M manifest");
-                  wchar_t *f4mBuffer = ConvertToUnicodeA(buffer);
+                  wchar_t *f4mBuffer = ConvertToUnicodeA((char *)buffer);
                   if (f4mBuffer != NULL)
                   {
                     this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, f4mBuffer);
@@ -608,6 +609,14 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                             this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_PART_URL, (void *)&invariant);
                             this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_METADATA, (void *)&invariant);
                             this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, (void *)&invariant);
+
+                            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_COOKIE, (void *)&invariant);
+                            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, (void *)&invariant);
+                            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, (void *)&invariant);
+                            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT, (void *)&invariant);
+                            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_REFERER, (void *)&invariant);
+                            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_USER_AGENT, (void *)&invariant);
+                            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_VERSION, (void *)&invariant);
                           }
                           else
                           {
@@ -667,6 +676,14 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
   return result;
 }
 
+void CopyConnectionParameter(CParameterCollection *parameters, const wchar_t *parameterName, bool invariant, const wchar_t *newParameterName)
+{
+  if (parameters->Contains((wchar_t *)parameterName, invariant))
+  {
+
+  }
+}
+
 HRESULT CMPUrlSourceSplitter_Parser_F4M::SetConnectionParameters(const CParameterCollection *parameters)
 {
   if (parameters != NULL)
@@ -700,9 +717,9 @@ CMediaPacketCollection *CMPUrlSourceSplitter_Parser_F4M::GetStoredMediaPackets(v
 
 // IPlugin interface
 
-wchar_t *CMPUrlSourceSplitter_Parser_F4M::GetName(void)
+const wchar_t *CMPUrlSourceSplitter_Parser_F4M::GetName(void)
 {
-  return Duplicate(PARSER_NAME);
+  return PARSER_NAME;
 }
 
 GUID CMPUrlSourceSplitter_Parser_F4M::GetInstanceId(void)

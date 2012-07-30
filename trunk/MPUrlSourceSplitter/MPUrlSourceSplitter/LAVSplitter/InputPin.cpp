@@ -1220,7 +1220,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
 
                   // copy data from media packet to request buffer
                   caller->logger->Log(LOGGER_DATA, L"%s: %s: copy data from media packet '%u' to async request '%u', start: %u, data length: %u, request buffer position: %u, request buffer length: %lu", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, packetIndex, request->GetRequestId(), mediaPacketDataStart, mediaPacketDataLength, foundDataLength, request->GetBufferLength());
-                  char *requestBuffer = (char *)request->GetBuffer() + foundDataLength;
+                  unsigned char *requestBuffer = request->GetBuffer() + foundDataLength;
                   if (mediaPacket->IsStoredToFile())
                   {
                     // if media packet is stored to file
@@ -1558,7 +1558,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                     int64_t mediaPacketEndPosition = mediaPacket->GetEnd();
                     unsigned int length = (unsigned int)(mediaPacketEndPosition + 1 - mediaPacketStartPosition);
 
-                    ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
+                    ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
                     if (mediaPacket->GetBuffer()->CopyFromBuffer(buffer, length, 0, 0) == length)
                     {
                       DWORD written = 0;
@@ -1627,7 +1627,7 @@ wchar_t *CLAVInputPin::GetStoreFilePath(void)
   if ((guid != NULL) && (folder != NULL))
   {
     // check if we have path in configuration
-    wchar_t *cacheFolder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
+    const wchar_t *cacheFolder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
     if (cacheFolder == NULL)
     {
       // get new folder in local app data
@@ -1948,7 +1948,7 @@ DWORD WINAPI CLAVInputPin::DemuxerWorker(LPVOID lpParam)
     if (!caller->createdDemuxer)
     {
       caller->m_llBufferPosition = 0;
-      wchar_t *url = caller->configuration->GetValue(PARAMETER_NAME_URL, true, NULL);
+      const wchar_t *url = caller->configuration->GetValue(PARAMETER_NAME_URL, true, NULL);
       if (SUCCEEDED(caller->filter->CreateDemuxer(url)))
       {
         caller->createdDemuxer = true;

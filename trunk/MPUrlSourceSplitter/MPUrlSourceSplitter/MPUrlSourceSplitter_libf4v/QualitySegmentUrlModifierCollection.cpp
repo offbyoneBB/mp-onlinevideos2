@@ -31,7 +31,7 @@ CQualitySegmentUrlModifierCollection::~CQualitySegmentUrlModifierCollection(void
 {
 }
 
-int CQualitySegmentUrlModifierCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
+int CQualitySegmentUrlModifierCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,14 +45,9 @@ int CQualitySegmentUrlModifierCollection::CompareItemKeys(wchar_t *firstKey, wch
   }
 }
 
-wchar_t *CQualitySegmentUrlModifierCollection::GetKey(CQualitySegmentUrlModifier *item)
+const wchar_t *CQualitySegmentUrlModifierCollection::GetKey(CQualitySegmentUrlModifier *item)
 {
-  return Duplicate(item->GetQualitySegmentUrlModifier());
-}
-
-void CQualitySegmentUrlModifierCollection::FreeKey(wchar_t *key)
-{
-  FREE_MEM(key);
+  return item->GetQualitySegmentUrlModifier();
 }
 
 CQualitySegmentUrlModifier *CQualitySegmentUrlModifierCollection::Clone(CQualitySegmentUrlModifier *item)
@@ -60,7 +55,7 @@ CQualitySegmentUrlModifier *CQualitySegmentUrlModifierCollection::Clone(CQuality
   return NULL;
 }
 
-bool CQualitySegmentUrlModifierCollection::Contains(wchar_t *name, bool invariant)
+bool CQualitySegmentUrlModifierCollection::Contains(const wchar_t *name, bool invariant)
 {
   return __super::Contains(name, (void *)&invariant);
 }

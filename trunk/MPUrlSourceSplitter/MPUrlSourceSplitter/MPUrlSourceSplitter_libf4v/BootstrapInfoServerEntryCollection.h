@@ -26,7 +26,7 @@
 #include "Collection.h"
 #include "BootstrapInfoServerEntry.h"
 
-class CBootstrapInfoServerEntryCollection : public CCollection<CBootstrapInfoServerEntry, wchar_t *>
+class CBootstrapInfoServerEntryCollection : public CCollection<CBootstrapInfoServerEntry, const wchar_t *>
 {
 public:
   CBootstrapInfoServerEntryCollection(void);
@@ -39,17 +39,12 @@ protected:
   // @param secondKey : the second item key to compare
   // @param context : the reference to user defined context
   // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context);
+  int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
 
   // gets key for item
-  // caller is responsible of deleting item key using FreeKey() method
   // @param item : the item to get key
   // @return : the key of item
-  wchar_t *GetKey(CBootstrapInfoServerEntry *item);
-
-  // frees item key
-  // @param key : the item to free
-  void FreeKey(wchar_t *key);
+  const wchar_t *GetKey(CBootstrapInfoServerEntry *item);
 
   // clones specified item
   // @param item : the item to clone

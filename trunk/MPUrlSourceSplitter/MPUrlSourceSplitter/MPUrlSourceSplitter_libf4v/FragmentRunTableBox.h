@@ -49,7 +49,19 @@ public:
   // gets box data in human readable format
   // @param indent : string to insert before each line
   // @return : box data in human readable format or NULL if error
-  virtual wchar_t *GetParsedHumanReadable(wchar_t *indent);
+  virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
+
+  // gets version of fragment run table box
+  // @return : version of fragment run table box
+  virtual unsigned int GetVersion(void);
+
+  // gets flags of fragment run table box
+  // @return : flags of fragment run table box
+  virtual unsigned int GetFlags(void);
+
+  // gets the number of time units per second
+  // @return : the number of time units per second
+  virtual unsigned int GetTimeScale(void);
 
   // gets quality segment url modifiers table
   // @return : quality segment url modifiers table

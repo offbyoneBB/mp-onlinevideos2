@@ -137,7 +137,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::ParseUrl(const CParameterCollection 
     FREE_MEM(protocolConfiguration);
   }
 
-  wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
+  const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
   if (SUCCEEDED(result))
   {
     result = (url == NULL) ? E_OUTOFMEMORY : S_OK;
@@ -314,7 +314,7 @@ void CMPUrlSourceSplitter_Protocol_File::ReceiveData(bool *shouldExit)
         {
           unsigned int bytesToRead = DEFAULT_BUFFER_SIZE; // 32 kB
 
-          ALLOC_MEM_DEFINE_SET(receiveBuffer, char, bytesToRead, 0);    
+          ALLOC_MEM_DEFINE_SET(receiveBuffer, unsigned char, bytesToRead, 0);    
           unsigned int bytesRead = fread_s(receiveBuffer, bytesToRead, sizeof(char), bytesToRead, this->fileStream);
           if (bytesRead != 0)
           {
@@ -533,9 +533,9 @@ void CMPUrlSourceSplitter_Protocol_File::SetSupressData(bool supressData)
 
 // IPlugin interface
 
-wchar_t *CMPUrlSourceSplitter_Protocol_File::GetName(void)
+const wchar_t *CMPUrlSourceSplitter_Protocol_File::GetName(void)
 {
-  return Duplicate(PROTOCOL_NAME);
+  return PROTOCOL_NAME;
 }
 
 GUID CMPUrlSourceSplitter_Protocol_File::GetInstanceId(void)

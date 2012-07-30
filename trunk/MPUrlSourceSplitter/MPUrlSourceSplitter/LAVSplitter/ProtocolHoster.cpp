@@ -226,7 +226,7 @@ void CProtocolHoster::SetSupressData(bool supressData)
 
 // IPlugin interface implementation
 
-wchar_t *CProtocolHoster::GetName(void)
+const wchar_t *CProtocolHoster::GetName(void)
 {
   return (this->activeProtocol != NULL) ? this->activeProtocol->GetName() : NULL;
 }

@@ -206,7 +206,13 @@ public:
 
   // gets ASF header
   // @return : reference to ASF header (can be NULL if not initialized)
-  char *GetAsfHeader(void);
+  const unsigned char *GetAsfHeader(void);
+
+  // sets ASF header
+  // @param asfHeader : ASF header to set
+  // @param length : the length of ASF header
+  // @return : true if successful, false otherwise
+  bool SetAsfHeader(const unsigned char *asfHeader, unsigned int length);
 
   // gets ASF header length
   // @return : ASF header length
@@ -242,7 +248,7 @@ protected:
   unsigned int timeout;
 
   // holds ASF header
-  char *asfHeader;
+  unsigned char *asfHeader;
 
   // holds ASF header length
   unsigned int asfHeaderLength;

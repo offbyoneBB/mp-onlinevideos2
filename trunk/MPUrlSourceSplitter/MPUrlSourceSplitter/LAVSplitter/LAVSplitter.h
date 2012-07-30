@@ -210,7 +210,7 @@ public:
 
   // creates demuxer after loading some data from stream
   // this method should be called by input pin while not returned S_OK
-  STDMETHODIMP CreateDemuxer(wchar_t *pszFileName);
+  STDMETHODIMP CreateDemuxer(const wchar_t *pszFileName);
   CBaseDemuxer *GetDemuxer(void);
 
   // IFilter interface

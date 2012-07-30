@@ -59,7 +59,13 @@ public:
   // @param source : the reference to source to copy data
   // @param length : the length of data to copy
   // @return : count of added data
-  unsigned int AddToBuffer(char* source, unsigned int length);
+  unsigned int AddToBuffer(const unsigned char *source, unsigned int length);
+
+  // add data from source to buffer and resize buffer if necessary to fit added data
+  // @param source : the reference to source to copy data
+  // @param length : the length of data to copy
+  // @return : count of added data
+  unsigned int AddToBufferWithResize(const unsigned char *source, unsigned int length);
 
   // remove from buffer
   // @param length : the length of data to remove from buffer
@@ -74,7 +80,7 @@ public:
   // @param length : the length of data to copy
   // @param packetSize : the packet size (if specified, data are copied by blocks)
   // @return : length of copied data
-  unsigned int CopyFromBuffer(char* destination, unsigned int length, unsigned int packetSize);
+  unsigned int CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize);
 
   // copy data from internal buffer to destination starting from start, data are copied by packets if specified packetSize
   // @param destination : the reference to destination buffer to copy data
@@ -82,7 +88,7 @@ public:
   // @param packetSize : the packet size (if specified, data are copied by blocks)
   // @param start : the position from where copying start
   // @return : length of copied data
-  unsigned int CopyFromBuffer(char* destination, unsigned int length, unsigned int packetSize, unsigned int start);
+  unsigned int CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize, unsigned int start);
 
   // initialize buffer to specified size
   // @param size : required size of buffer
@@ -112,25 +118,15 @@ public:
   // @return : true if successful, false otherwise
   bool ResizeBuffer(unsigned int size);
 
-  //// safely resize buffer to new size
-  //// @param lockMutex : mutex to lock access to buffer
-  //// @param size : new size of buffer
-  //// @param logMessage : specifies if log message have to be generated to log file
-  //// @param logger : logger for logging purposes
-  //// @param protocolName : name of protocol calling SafeResizeBuffer()
-  //// @param functionName : name of function calling SafeResizeBuffer()
-  //// @return : true if successful, false otherwise
-  //bool SafeResizeBuffer(HANDLE lockMutex, unsigned int size, bool logMessage, CLogger *logger, const wchar_t *protocolName, const wchar_t *functionName);
-
 private:
   // internal buffer
-  char* buffer;
+  unsigned char *buffer;
 
   // specifies where data starts
-  char* dataStart;
+  unsigned char *dataStart;
 
   // specifies where data ends
-  char* dataEnd;
+  unsigned char *dataEnd;
 
   // internal buffer size
   unsigned int bufferSize;

@@ -251,7 +251,7 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
       // there is plugin, which recognize pattern in stream
 
       Action action = this->parsingPlugin->GetAction();
-      wchar_t *name = this->parsingPlugin->GetName();
+      const wchar_t *name = this->parsingPlugin->GetName();
 
       switch (action)
       {
@@ -269,8 +269,6 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
         result = E_FAIL;
         break;
       }
-
-      FREE_MEM(name);
     }
     else
     {
@@ -375,7 +373,7 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
 
           // get receive data timeout for active protocol
           timeout = this->protocolHoster->GetReceiveDataTimeout();
-          wchar_t *protocolName = this->protocolHoster->GetName();
+          const wchar_t *protocolName = this->protocolHoster->GetName();
           if (protocolName != NULL)
           {
             this->logger->Log(LOGGER_INFO, L"%s: %s: active protocol '%s' timeout: %d (ms)", this->moduleName, METHOD_START_RECEIVING_DATA_NAME, protocolName, timeout);
@@ -385,7 +383,6 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
             this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, this->moduleName, METHOD_START_RECEIVING_DATA_NAME, L"no active protocol");
             retval = E_NOT_VALID_STATE;
           }
-          FREE_MEM(protocolName);
 
           if (SUCCEEDED(retval))
           {

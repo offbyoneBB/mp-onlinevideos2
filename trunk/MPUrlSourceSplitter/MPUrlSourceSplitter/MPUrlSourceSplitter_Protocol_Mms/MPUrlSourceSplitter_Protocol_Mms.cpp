@@ -189,7 +189,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ParseUrl(const CParameterCollection *
     FREE_MEM(protocolConfiguration);
   }
 
-  wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
+  const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
   if (SUCCEEDED(result))
   {
     result = (url == NULL) ? E_OUTOFMEMORY : S_OK;
@@ -373,7 +373,7 @@ void CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit)
                       if (packetLength > chunk->GetChunkDataLength())
                       {
                         unsigned int paddingLength = packetLength - chunk->GetChunkDataLength();
-                        ALLOC_MEM_DEFINE_SET(paddingBuffer, char, paddingLength, 0);
+                        ALLOC_MEM_DEFINE_SET(paddingBuffer, unsigned char, paddingLength, 0);
                         if (paddingBuffer != NULL)
                         {
                           mediaPacket->GetBuffer()->AddToBuffer(paddingBuffer, paddingLength);
@@ -966,9 +966,9 @@ void CMPUrlSourceSplitter_Protocol_Mms::SetSupressData(bool supressData)
 
 // IPlugin interface
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Mms::GetName(void)
+const wchar_t *CMPUrlSourceSplitter_Protocol_Mms::GetName(void)
 {
-  return Duplicate(PROTOCOL_NAME);
+  return PROTOCOL_NAME;
 }
 
 GUID CMPUrlSourceSplitter_Protocol_Mms::GetInstanceId(void)
@@ -1098,7 +1098,7 @@ size_t CMPUrlSourceSplitter_Protocol_Mms::CurlReceiveData(char *buffer, size_t s
 
         if (bytesRead != 0)
         {
-          caller->mmsContext->GetBuffer()->AddToBuffer(buffer, bytesRead);
+          caller->mmsContext->GetBuffer()->AddToBuffer((unsigned char *)buffer, bytesRead);
         }
       }
     }
@@ -1125,8 +1125,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsChunk(MMSContext *mmsContext, M
 
   if (SUCCEEDED(result))
   {
-    ALLOC_MEM_DEFINE_SET(chunkHeader, char, CHUNK_HEADER_LENGTH, 0);
-    ALLOC_MEM_DEFINE_SET(extHeader, char, EXT_HEADER_LENGTH, 0);
+    ALLOC_MEM_DEFINE_SET(chunkHeader, unsigned char, CHUNK_HEADER_LENGTH, 0);
+    ALLOC_MEM_DEFINE_SET(extHeader, unsigned char, EXT_HEADER_LENGTH, 0);
 
     CHECK_POINTER_HRESULT(result, chunkHeader, S_OK, E_OUTOFMEMORY);
     CHECK_POINTER_HRESULT(result, extHeader, S_OK, E_OUTOFMEMORY);
@@ -1170,14 +1170,31 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsChunk(MMSContext *mmsContext, M
         mmsContext->GetBuffer()->CopyFromBuffer(extHeader, extHeaderLength, 0, CHUNK_HEADER_LENGTH);
 
         mmsChunk->SetChunkType(chunkType);
-        result = mmsChunk->SetChunkDataLength(chunkDataLength - extHeaderLength) ? S_OK : E_OUTOFMEMORY;
-        result = mmsChunk->SetExtraHeaderLength(extHeaderLength) ? result : E_OUTOFMEMORY;
+        if (SUCCEEDED(result))
+        {
+          ALLOC_MEM_DEFINE_SET(temp, unsigned char, (chunkDataLength - extHeaderLength), 0);
+          CHECK_POINTER(result, temp, result, E_OUTOFMEMORY);
+          if (SUCCEEDED(result))
+          {
+            mmsContext->GetBuffer()->CopyFromBuffer(temp, chunkDataLength - extHeaderLength, 0, CHUNK_HEADER_LENGTH + extHeaderLength);
+            result = mmsChunk->SetChunkData(temp, chunkDataLength - extHeaderLength) ? result : E_OUTOFMEMORY;
+          }
+          FREE_MEM(temp);
+        }
+        if (SUCCEEDED(result))
+        {
+          ALLOC_MEM_DEFINE_SET(temp, unsigned char, extHeaderLength, 0);
+          CHECK_POINTER(result, temp, result, E_OUTOFMEMORY);
+          if (SUCCEEDED(result))
+          {
+            mmsContext->GetBuffer()->CopyFromBuffer(temp, extHeaderLength, 0, CHUNK_HEADER_LENGTH);
+            result = mmsChunk->SetExtraHeaderData(temp, extHeaderLength) ? result : E_OUTOFMEMORY;
+          }
+          FREE_MEM(temp);
+        }
 
         if (SUCCEEDED(result))
         {
-          mmsContext->GetBuffer()->CopyFromBuffer(mmsChunk->GetChunkData(), mmsChunk->GetChunkDataLength(), 0, CHUNK_HEADER_LENGTH + extHeaderLength);
-          mmsContext->GetBuffer()->CopyFromBuffer(mmsChunk->GetExtraHeaderData(), extHeaderLength, 0, CHUNK_HEADER_LENGTH);
-
           if ((chunkType == CHUNK_TYPE_END) || (chunkType == CHUNK_TYPE_DATA))
           {
             mmsContext->SetChunkSequence(AV_RL32(extHeader));
@@ -1218,8 +1235,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ParseMmsAsfHeader(MMSContext *mmsCont
     return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
   }
 
-  char *start = mmsChunk->GetChunkData();
-  char *end = mmsChunk->GetChunkData() + mmsChunk->GetChunkDataLength();
+  const unsigned char *start = mmsChunk->GetChunkData();
+  const unsigned char *end = mmsChunk->GetChunkData() + mmsChunk->GetChunkDataLength();
 
   start += sizeof(ASF_GUID) + 14;
   int flags;
@@ -1401,13 +1418,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsHeaderData(MMSContext *mmsConte
               {
                 this->logger->Log(LOGGER_VERBOSE, L"%s: %s: ASF header successfully parsed", PROTOCOL_IMPLEMENTATION_NAME, METHOD_GET_MMS_HEADER_DATA_NAME);
                 mmsContext->SetHeaderParsed(true);
-                if (!mmsContext->InitializeAsfHeader(tempMmsChunk->GetChunkDataLength()))
+                if (!mmsContext->SetAsfHeader(tempMmsChunk->GetChunkData(), tempMmsChunk->GetChunkDataLength()))
                 {
                   result = E_OUTOFMEMORY;
-                }
-                if (SUCCEEDED(result))
-                {
-                  memcpy(mmsContext->GetAsfHeader(), tempMmsChunk->GetChunkData(), tempMmsChunk->GetChunkDataLength());
                 }
                 finish = true;
               }

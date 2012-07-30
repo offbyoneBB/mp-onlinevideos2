@@ -31,7 +31,7 @@ CBootstrapInfoCollection::~CBootstrapInfoCollection(void)
 {
 }
 
-int CBootstrapInfoCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
+int CBootstrapInfoCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,14 +45,9 @@ int CBootstrapInfoCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *second
   }
 }
 
-wchar_t *CBootstrapInfoCollection::GetKey(CBootstrapInfo *item)
+const wchar_t *CBootstrapInfoCollection::GetKey(CBootstrapInfo *item)
 {
-  return Duplicate(item->GetId());
-}
-
-void CBootstrapInfoCollection::FreeKey(wchar_t *key)
-{
-  FREE_MEM(key);
+  return item->GetId();
 }
 
 CBootstrapInfo *CBootstrapInfoCollection::Clone(CBootstrapInfo *item)
@@ -60,12 +55,12 @@ CBootstrapInfo *CBootstrapInfoCollection::Clone(CBootstrapInfo *item)
   return NULL;
 }
 
-bool CBootstrapInfoCollection::Contains(wchar_t *name, bool invariant)
+bool CBootstrapInfoCollection::Contains(const wchar_t *name, bool invariant)
 {
   return __super::Contains(name, (void *)&invariant);
 }
 
 CBootstrapInfo *CBootstrapInfoCollection::GetBootstrapInfo(const wchar_t *id, bool invariant)
 {
-  return this->GetItem((wchar_t *)id, (void *)&invariant);
+  return this->GetItem(id, (void *)&invariant);
 }

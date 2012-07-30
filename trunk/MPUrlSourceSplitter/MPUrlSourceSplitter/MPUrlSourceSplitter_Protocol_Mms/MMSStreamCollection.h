@@ -41,14 +41,9 @@ protected:
   int CompareItemKeys(int firstKey, int secondKey, void *context);
 
   // gets key for item
-  // caller is responsible of deleting item key using FreeKey() method
   // @param item : the item to get key
   // @return : the key of item
   int GetKey(MMSStream *item);
-
-  // frees item key
-  // @param key : the item to free
-  void FreeKey(int key);
 
   // clones specified item
   // @param item : the item to clone

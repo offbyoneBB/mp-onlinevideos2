@@ -43,18 +43,8 @@ MMSContext::MMSContext()
 
 MMSContext::~MMSContext()
 {
-  if (this->buffer != NULL)
-  {
-    delete this->buffer;
-    this->buffer = NULL;
-  }
-
-  if (this->streams != NULL)
-  {
-    delete this->streams;
-    this->streams = NULL;
-  }
-
+  FREE_MEM_CLASS(this->buffer);
+  FREE_MEM_CLASS(this->streams);
   FREE_MEM(this->asfHeader);
 }
 
@@ -107,7 +97,7 @@ void MMSContext::SetTimeout(unsigned int timeout)
  {
    bool result = false;
 
-   char *header = ALLOC_MEM_SET(header, char, asfHeaderLength, 0);
+   unsigned char *header = ALLOC_MEM_SET(header, unsigned char, asfHeaderLength, 0);
    if (header != NULL)
    {
      FREE_MEM(this->asfHeader);
@@ -119,9 +109,22 @@ void MMSContext::SetTimeout(unsigned int timeout)
    return result;
  }
 
- char *MMSContext::GetAsfHeader(void)
+ const unsigned char *MMSContext::GetAsfHeader(void)
  {
    return this->asfHeader;
+ }
+
+ bool MMSContext::SetAsfHeader(const unsigned char *asfHeader, unsigned int length)
+ {
+   bool result = false;
+   this->ClearAsfHeader();
+
+   if (this->InitializeAsfHeader(length))
+   {
+     memcpy(this->asfHeader, asfHeader, length);
+   }
+
+   return result;
  }
 
  unsigned int MMSContext::GetAsfHeaderLength(void)

@@ -22,106 +22,170 @@
 
 #include "FlvPacket.h"
 
-FlvPacket::FlvPacket(void)
+CFlvPacket::CFlvPacket(void)
 {
   this->packet = NULL;
   this->size = 0;
   this->type = FLV_PACKET_NONE;
 }
 
-FlvPacket::~FlvPacket(void)
+CFlvPacket::~CFlvPacket(void)
 {
   FREE_MEM(this->packet);
 }
 
-bool FlvPacket::IsValid(void)
+bool CFlvPacket::IsValid(void)
 {
   return ((this->packet != NULL) && (this->size != 0) && (this->type != FLV_PACKET_NONE));
 }
 
-char *FlvPacket::GetData(void)
+const unsigned char *CFlvPacket::GetData(void)
 {
   return this->packet;
 }
 
-unsigned int FlvPacket::GetSize(void)
+unsigned int CFlvPacket::GetSize(void)
 {
   return this->size;
 }
 
-unsigned int FlvPacket::GetType(void)
+unsigned int CFlvPacket::GetType(void)
 {
   return this->type;
 }
 
-bool FlvPacket::ParsePacket(LinearBuffer *buffer)
+bool CFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
 {
   bool result = false;
+  this->Clear();
 
-  if ((buffer != NULL) && (buffer->GetBufferOccupiedSpace() >= 13))
+  if ((buffer != NULL) && (length >= 13))
   {
     // at least size for FLV header
-    this->packet = ALLOC_MEM_SET(this->packet, char, 13, 0);
+    this->packet = ALLOC_MEM_SET(this->packet, unsigned char, 13, 0);
     if (this->packet != NULL)
     {
-      if (buffer->CopyFromBuffer(this->packet, 13, 0, 0) == 13)
+      memcpy(this->packet, buffer, 13);
+
+      // copied 13 bytes, check first 3 bytes
+      if (strncmp("FLV", (char *)this->packet, 3) == 0)
       {
-        // copied 13 bytes, check first 3 bytes
-        if (strncmp("FLV", this->packet, 3) == 0)
-        {
-          this->size = 13;
-          this->type = FLV_PACKET_HEADER;
-          result = true;
-        }
-        else
-        {
-          // we got first 13 bytes to analyze
-          this->type = (*this->packet);
+        this->size = 13;
+        this->type = FLV_PACKET_HEADER;
+        result = true;
+      }
+      else
+      {
+        // we got first 13 bytes to analyze
+        this->type = (*this->packet);
 
-          this->size = ((unsigned char)this->packet[1]) << 8;
-          this->size += ((unsigned char)this->packet[2]);
-          this->size <<= 8;
-          this->size += ((unsigned char)this->packet[3]) + 0x0F;
+        this->size = ((unsigned char)this->packet[1]) << 8;
+        this->size += ((unsigned char)this->packet[2]);
+        this->size <<= 8;
+        this->size += ((unsigned char)this->packet[3]) + 0x0F;
 
-          if (buffer->GetBufferOccupiedSpace() >= this->size)
+        if (length >= this->size)
+        {
+          FREE_MEM(this->packet);
+          this->packet = ALLOC_MEM_SET(this->packet, unsigned char, this->size, 0);
+          if (this->packet != NULL)
           {
-            FREE_MEM(this->packet);
-            this->packet = ALLOC_MEM_SET(this->packet, char, this->size, 0);
-            if (this->packet != NULL)
-            {
-              if (buffer->CopyFromBuffer(this->packet, this->size, 0, 0) == this->size)
-              {
-                unsigned int checkSize = ((unsigned char)this->packet[this->size - 4]) << 8;
-                checkSize += ((unsigned char)this->packet[this->size - 3]);
-                checkSize <<= 8;
-                checkSize += ((unsigned char)this->packet[this->size - 2]);
-                checkSize <<= 8;
-                checkSize += ((unsigned char)this->packet[this->size - 1]) + 4;
+            memcpy(this->packet, buffer, this->size);
 
-                if (this->size == checkSize)
-                {
-                  // FLV packet has correct size
-                  result = true;
-                }
-              }
+            unsigned int checkSize = ((unsigned char)this->packet[this->size - 4]) << 8;
+            checkSize += ((unsigned char)this->packet[this->size - 3]);
+            checkSize <<= 8;
+            checkSize += ((unsigned char)this->packet[this->size - 2]);
+            checkSize <<= 8;
+            checkSize += ((unsigned char)this->packet[this->size - 1]) + 4;
+
+            if (this->size == checkSize)
+            {
+              // FLV packet has correct size
+              result = true;
             }
           }
         }
       }
     }
+  }
 
-    if (!result)
-    {
-      FREE_MEM(this->packet);
-      this->type = FLV_PACKET_NONE;
-      this->size = 0;
-    }
+  if (!result)
+  {
+    this->Clear();
   }
 
   return result;
 }
 
-unsigned int FlvPacket::GetTimestamp(void)
+bool CFlvPacket::ParsePacket(LinearBuffer *buffer)
+{
+  bool result = false;
+  this->Clear();
+
+  if ((buffer != NULL) && (buffer->GetBufferOccupiedSpace() >= 13))
+  {
+    // at least size for FLV header
+    ALLOC_MEM_DEFINE_SET(buf, unsigned char, buffer->GetBufferOccupiedSpace(), 0);
+    if (buf != NULL)
+    {
+      buffer->CopyFromBuffer(buf, buffer->GetBufferOccupiedSpace(), 0, 0);
+      result = this->ParsePacket(buf, buffer->GetBufferOccupiedSpace());
+    }
+    FREE_MEM(buf);
+  }
+
+  if (!result)
+  {
+    this->Clear();
+  }
+
+  return result;
+}
+
+bool CFlvPacket::CreatePacket(unsigned int packetType, const unsigned char *buffer, unsigned int length, unsigned int timestamp)
+{
+  bool result = false;
+  this->Clear();
+
+  if ((buffer != NULL) && ((packetType == FLV_PACKET_AUDIO) || (packetType == FLV_PACKET_VIDEO) || (packetType == FLV_PACKET_META)))
+  {
+    this->type = packetType;
+    this->size = length + 0x0F;
+    this->packet = ALLOC_MEM_SET(this->packet, unsigned char, this->size, 0);
+    result = (this->packet != NULL);
+
+    if (result)
+    {
+      this->packet[0] = (unsigned char)packetType;
+      
+      this->packet[1] = (unsigned char)((length & 0x00FF0000) >> 16);
+      this->packet[2] = (unsigned char)((length & 0x00000FF0) >> 8);
+      this->packet[3] = (unsigned char)(length & 0x000000FF);
+
+      this->packet[4] = (unsigned char)((timestamp & 0x00FF0000) >> 16);
+      this->packet[5] = (unsigned char)((timestamp & 0x00000FF0) >> 8);
+      this->packet[6] = (unsigned char)(timestamp & 0x000000FF);
+
+      memcpy(this->packet + 11, buffer, length);
+
+      unsigned int checkSize = this->size - 0x04;
+      this->packet[this->size - 4] = (unsigned char)((checkSize & 0xFF000000) >> 24);
+      this->packet[this->size - 3] = (unsigned char)((checkSize & 0x00FF0000) >> 16);
+      this->packet[this->size - 2] = (unsigned char)((checkSize & 0x0000FF00) >> 8);
+      this->packet[this->size - 1] = (unsigned char)((checkSize & 0x000000FF));
+    }
+  }
+
+  if (!result)
+  {
+    this->Clear();
+  }
+
+  return result;
+}
+
+unsigned int CFlvPacket::GetTimestamp(void)
 {
   unsigned int result = 0;
 
@@ -136,7 +200,7 @@ unsigned int FlvPacket::GetTimestamp(void)
   return result;
 }
 
-void FlvPacket::SetTimestamp(unsigned int timestamp)
+void CFlvPacket::SetTimestamp(unsigned int timestamp)
 {
   if (this->IsValid() && (this->type != FLV_PACKET_HEADER))
   {
@@ -148,8 +212,7 @@ void FlvPacket::SetTimestamp(unsigned int timestamp)
   }
 }
 
-
-unsigned int FlvPacket::GetCodecId(void)
+unsigned int CFlvPacket::GetCodecId(void)
 {
   unsigned int codecId = UINT_MAX;
 
@@ -161,7 +224,7 @@ unsigned int FlvPacket::GetCodecId(void)
   return codecId;
 }
 
-unsigned int FlvPacket::GetFrameType(void)
+unsigned int CFlvPacket::GetFrameType(void)
 {
   unsigned int frameType = UINT_MAX;
 
@@ -173,7 +236,7 @@ unsigned int FlvPacket::GetFrameType(void)
   return frameType;
 }
 
-void FlvPacket::SetCodecId(unsigned int codecId)
+void CFlvPacket::SetCodecId(unsigned int codecId)
 {
   if (this->IsValid() && (this->type == FLV_PACKET_VIDEO))
   {
@@ -181,7 +244,7 @@ void FlvPacket::SetCodecId(unsigned int codecId)
   }
 }
 
-void FlvPacket::SetFrameType(unsigned int frameType)
+void CFlvPacket::SetFrameType(unsigned int frameType)
 {
   if (this->IsValid() && (this->type == FLV_PACKET_VIDEO))
   {
@@ -189,7 +252,7 @@ void FlvPacket::SetFrameType(unsigned int frameType)
   }
 }
 
-void FlvPacket::Clear(void)
+void CFlvPacket::Clear(void)
 {
   FREE_MEM(this->packet);
   this->size = 0;

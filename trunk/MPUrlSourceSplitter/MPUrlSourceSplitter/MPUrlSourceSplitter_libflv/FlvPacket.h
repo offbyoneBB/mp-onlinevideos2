@@ -49,14 +49,14 @@
 #define FLV_CODECID_REALH263                                                  8
 #define FLV_CODECID_MPEG4                                                     9
 
-class FlvPacket
+class CFlvPacket
 {
 public:
-  // initializes a new instance of FlvPacket class
-  FlvPacket(void);
-  ~FlvPacket(void);
+  // initializes a new instance of CFlvPacket class
+  CFlvPacket(void);
+  ~CFlvPacket(void);
 
-  // tests if current instance of FlvPacket is valid
+  // tests if current instance of CFlvPacket is valid
   // @return : true if valid, false otherwise
   bool IsValid();
 
@@ -70,12 +70,26 @@ public:
 
   // gets FLV packet data
   // @return : FLV packet data
-  char *GetData(void);
+  const unsigned char *GetData(void);
 
   // parses buffer for FLV packet
   // @param buffer : linear buffer to parse
   // @return : true if FLV packet found, false otherwise
   bool ParsePacket(LinearBuffer *buffer);
+
+  // parses buffer for FLV packet
+  // @param buffer : buffer to parse
+  // @param length : length of buffer
+  // @return : true if FLV packet found, false otherwise
+  bool ParsePacket(const unsigned char *buffer, unsigned int length);
+
+  // creates FLV packet and fill it with data from buffer
+  // @param packetType : type of FLV packet (FLV_PACKET_AUDIO, FLV_PACKET_VIDEO, FLV_PACKET_META)
+  // @param buffer : data to fill FLV packet
+  // @param length : the length of data buffer
+  // @param timestamp : the timestamp of FLV packet
+  // @return : true if FLV packet successfully created, false otherwise
+  bool CreatePacket(unsigned int packetType, const unsigned char *buffer, unsigned int length, unsigned int timestamp);
 
   // gets FLV packet timestamp
   unsigned int GetTimestamp(void);
@@ -110,7 +124,7 @@ protected:
   unsigned int size;
 
   // holds FLV packet data
-  char *packet;
+  unsigned char *packet;
 };
 
 #endif

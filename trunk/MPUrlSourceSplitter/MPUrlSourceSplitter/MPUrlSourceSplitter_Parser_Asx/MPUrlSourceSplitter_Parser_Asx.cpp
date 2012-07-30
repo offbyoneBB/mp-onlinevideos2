@@ -97,12 +97,12 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
   if (mediaPacket != NULL)
   {
     unsigned int length = mediaPacket->GetBuffer()->GetBufferOccupiedSpace() + 1;
-    ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
+    ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
     if ((buffer != NULL) && (length > 1))
     {
       mediaPacket->GetBuffer()->CopyFromBuffer(buffer, length - 1, 0, 0);
 
-      char *lowerBuffer = DuplicateA(buffer);
+      char *lowerBuffer = DuplicateA((char *)buffer);
       if (lowerBuffer != NULL)
       {
         size_t length = strlen(lowerBuffer);
@@ -120,7 +120,7 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
               // try to parse
 
               this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"ASX stream");
-              wchar_t *asxBuffer = ConvertToUnicodeA(buffer);
+              wchar_t *asxBuffer = ConvertToUnicodeA((char *)buffer);
               if (asxBuffer != NULL)
               {
                 this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, asxBuffer);
@@ -198,7 +198,7 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
               // try to parse
 
               this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"special ASX stream");
-              wchar_t *asxBuffer = ConvertToUnicodeA(buffer);
+              wchar_t *asxBuffer = ConvertToUnicodeA((char *)buffer);
               if (asxBuffer != NULL)
               {
                 this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, asxBuffer);
@@ -314,9 +314,9 @@ CMediaPacketCollection *CMPUrlSourceSplitter_Parser_Asx::GetStoredMediaPackets(v
 
 // IPlugin interface
 
-wchar_t *CMPUrlSourceSplitter_Parser_Asx::GetName(void)
+const wchar_t *CMPUrlSourceSplitter_Parser_Asx::GetName(void)
 {
-  return Duplicate(PARSER_NAME);
+  return PARSER_NAME;
 }
 
 GUID CMPUrlSourceSplitter_Parser_Asx::GetInstanceId(void)

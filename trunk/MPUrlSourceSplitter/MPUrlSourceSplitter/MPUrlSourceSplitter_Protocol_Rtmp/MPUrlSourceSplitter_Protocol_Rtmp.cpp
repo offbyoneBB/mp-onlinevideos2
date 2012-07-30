@@ -161,7 +161,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ParseUrl(const CParameterCollection 
     FREE_MEM(protocolConfiguration);
   }
 
-  wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
+  const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
   if (SUCCEEDED(result))
   {
     result = (url == NULL) ? E_OUTOFMEMORY : S_OK;
@@ -244,7 +244,7 @@ void CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit)
     {
       if ((!this->supressData) && (this->bufferForProcessing != NULL))
       {
-        FlvPacket *flvPacket = new FlvPacket();
+        CFlvPacket *flvPacket = new CFlvPacket();
         if (flvPacket != NULL)
         {
           while (flvPacket->ParsePacket(this->bufferForProcessing))
@@ -633,9 +633,9 @@ void CMPUrlSourceSplitter_Protocol_Rtmp::SetSupressData(bool supressData)
 
 // IPlugin interface
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Rtmp::GetName(void)
+const wchar_t *CMPUrlSourceSplitter_Protocol_Rtmp::GetName(void)
 {
-  return Duplicate(PROTOCOL_NAME);
+  return PROTOCOL_NAME;
 }
 
 GUID CMPUrlSourceSplitter_Protocol_Rtmp::GetInstanceId(void)
@@ -772,7 +772,7 @@ size_t CMPUrlSourceSplitter_Protocol_Rtmp::CurlReceiveData(char *buffer, size_t 
 
         if (freeSpace >= bytesRead)
         {
-          caller->bufferForProcessing->AddToBuffer(buffer, bytesRead);
+          caller->bufferForProcessing->AddToBuffer((unsigned char *)buffer, bytesRead);
         }
       }
     }

@@ -604,7 +604,7 @@ CLAVOutputPin *CLAVSplitter::GetOutputPin(DWORD streamId, BOOL bActiveOnly)
   return NULL;
 }
 
-STDMETHODIMP CLAVSplitter::CreateDemuxer(wchar_t *pszFileName)
+STDMETHODIMP CLAVSplitter::CreateDemuxer(const wchar_t *pszFileName)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_NAME);
   HRESULT result = S_OK;

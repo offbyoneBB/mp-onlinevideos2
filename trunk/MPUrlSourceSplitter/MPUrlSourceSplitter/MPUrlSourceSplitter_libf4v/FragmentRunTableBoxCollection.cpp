@@ -31,7 +31,7 @@ CFragmentRunTableBoxCollection::~CFragmentRunTableBoxCollection(void)
 {
 }
 
-int CFragmentRunTableBoxCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
+int CFragmentRunTableBoxCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,14 +45,9 @@ int CFragmentRunTableBoxCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *
   }
 }
 
-wchar_t *CFragmentRunTableBoxCollection::GetKey(CFragmentRunTableBox *item)
+const wchar_t *CFragmentRunTableBoxCollection::GetKey(CFragmentRunTableBox *item)
 {
-  return Duplicate(L"");
-}
-
-void CFragmentRunTableBoxCollection::FreeKey(wchar_t *key)
-{
-  FREE_MEM(key);
+  return L"";
 }
 
 CFragmentRunTableBox *CFragmentRunTableBoxCollection::Clone(CFragmentRunTableBox *item)

@@ -81,14 +81,9 @@ protected:
   int CompareItemKeys(int64_t firstKey, int64_t secondKey, void *context);
 
   // gets key for item
-  // caller is responsible of deleting item key using FreeKey() method
   // @param item : the item to get key
   // @return : the key of item
   int64_t GetKey(CMediaPacket *item);
-
-  // frees item key
-  // @param key : the item to free
-  void FreeKey(int64_t key);
 
   // clones specified item
   // @param item : the item to clone

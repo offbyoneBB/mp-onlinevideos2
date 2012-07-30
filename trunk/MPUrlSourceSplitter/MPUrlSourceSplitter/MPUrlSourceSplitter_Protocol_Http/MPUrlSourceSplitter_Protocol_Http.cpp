@@ -154,7 +154,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ParseUrl(const CParameterCollection 
     FREE_MEM(protocolConfiguration);
   }
 
-  wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
+  const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
   if (SUCCEEDED(result))
   {
     result = (url == NULL) ? E_OUTOFMEMORY : S_OK;
@@ -257,7 +257,7 @@ void CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit)
       unsigned int bufferOccupiedSpace = this->receivedData->GetBufferOccupiedSpace();
       if (bufferOccupiedSpace > 0)
       {
-        ALLOC_MEM_DEFINE_SET(buffer, char, bufferOccupiedSpace, 0);
+        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferOccupiedSpace, 0);
         if (buffer != NULL)
         {
           this->receivedData->CopyFromBuffer(buffer, bufferOccupiedSpace, 0, 0);
@@ -575,9 +575,9 @@ void CMPUrlSourceSplitter_Protocol_Http::SetSupressData(bool supressData)
 
 // IPlugin interface
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Http::GetName(void)
+const wchar_t *CMPUrlSourceSplitter_Protocol_Http::GetName(void)
 {
-  return Duplicate(PROTOCOL_NAME);
+  return PROTOCOL_NAME;
 }
 
 GUID CMPUrlSourceSplitter_Protocol_Http::GetInstanceId(void)
@@ -710,7 +710,7 @@ size_t CMPUrlSourceSplitter_Protocol_Http::CurlReceiveData(char *buffer, size_t 
 
         if (bytesRead != 0)
         {
-          caller->receivedData->AddToBuffer(buffer, bytesRead);
+          caller->receivedData->AddToBuffer((unsigned char *)buffer, bytesRead);
         }
       }
     }

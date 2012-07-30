@@ -164,7 +164,7 @@ HRESULT CBox::GetString(const unsigned char *buffer, unsigned int length, unsign
   return result;
 }
 
-wchar_t *CBox::GetParsedHumanReadable(wchar_t *indent)
+wchar_t *CBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;
 

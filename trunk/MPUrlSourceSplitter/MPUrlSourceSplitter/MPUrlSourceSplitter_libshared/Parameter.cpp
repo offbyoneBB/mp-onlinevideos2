@@ -63,7 +63,7 @@ bool CParameter::IsValid(void)
   return ((this->name != NULL) && (this->value != NULL));
 }
 
-TCHAR *CParameter::GetName(void)
+const wchar_t *CParameter::GetName(void)
 {
   return this->name;
 }
@@ -73,7 +73,7 @@ unsigned int CParameter::GetNameLength(void)
   return (this->name == NULL) ? UINT_MAX : wcslen(this->name);
 }
 
-TCHAR *CParameter::GetValue(void)
+const wchar_t *CParameter::GetValue(void)
 {
   return this->value;
 }
