@@ -31,7 +31,7 @@ CSegmentFragmentCollection::~CSegmentFragmentCollection(void)
 {
 }
 
-int CSegmentFragmentCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
+int CSegmentFragmentCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,14 +45,9 @@ int CSegmentFragmentCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *seco
   }
 }
 
-wchar_t *CSegmentFragmentCollection::GetKey(CSegmentFragment *item)
+const wchar_t *CSegmentFragmentCollection::GetKey(CSegmentFragment *item)
 {
-  return Duplicate(item->GetUrl());
-}
-
-void CSegmentFragmentCollection::FreeKey(wchar_t *key)
-{
-  FREE_MEM(key);
+  return item->GetUrl();
 }
 
 CSegmentFragment *CSegmentFragmentCollection::Clone(CSegmentFragment *item)

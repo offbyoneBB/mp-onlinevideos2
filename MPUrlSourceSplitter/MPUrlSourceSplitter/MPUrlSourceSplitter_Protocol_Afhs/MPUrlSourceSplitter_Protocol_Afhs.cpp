@@ -172,7 +172,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ParseUrl(const CParameterCollection 
     FREE_MEM(protocolConfiguration);
   }
 
-  wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
+  const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL);
   if (SUCCEEDED(result))
   {
     result = (url == NULL) ? E_OUTOFMEMORY : S_OK;
@@ -253,6 +253,26 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
   {
     if (!this->wholeStreamDownloaded)
     {
+      if ((!this->setLength) && (this->bytePosition != 0))
+      {
+        // adjust total length if not already set
+        if (this->streamLength == 0)
+        {
+          // error occured or stream duration is not set
+          // just make guess
+          this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+          this->filter->SetTotalLength(this->streamLength, true);
+        }
+        else if ((this->bytePosition > (this->streamLength * 3 / 4)))
+        {
+          // it is time to adjust stream length, we are approaching to end but still we don't know total length
+          this->streamLength = this->bytePosition * 2;
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+          this->filter->SetTotalLength(this->streamLength, true);
+        }
+      }
+
       if ((!this->supressData) && (this->bufferForBoxProcessing != NULL))
       {
         bool continueProcessing = false;
@@ -266,11 +286,11 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
             unsigned int length = this->bufferForBoxProcessing->GetBufferOccupiedSpace();
             if (length > 0)
             {
-              ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
+              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
               if (buffer != NULL)
               {
                 this->bufferForBoxProcessing->CopyFromBuffer(buffer, length, 0, 0);
-                if (box->Parse((unsigned char *)buffer, length))
+                if (box->Parse(buffer, length))
                 {
                   unsigned int boxSize = (unsigned int)box->GetSize();
                   if (length >= boxSize)
@@ -280,7 +300,7 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
                       CMediaDataBox *mediaBox = new CMediaDataBox();
                       if (mediaBox != NULL)
                       {
-                        if (mediaBox->Parse((unsigned char *)buffer, length))
+                        if (mediaBox->Parse(buffer, length))
                         {
                           unsigned int payloadSize = (unsigned int)mediaBox->GetPayloadSize();
                           if (this->bufferForProcessing->GetBufferFreeSpace() < payloadSize)
@@ -288,14 +308,14 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
                             // we need to increase free buffer space to copy playload data
                             if (this->bufferForProcessing->ResizeBuffer(this->bufferForProcessing->GetBufferSize() + payloadSize))
                             {
-                              this->bufferForProcessing->AddToBuffer((char *)mediaBox->GetPayload(), payloadSize);
+                              this->bufferForProcessing->AddToBuffer(mediaBox->GetPayload(), payloadSize);
                               this->bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
                               continueProcessing = true;
                             }
                           }
                           else
                           {
-                            this->bufferForProcessing->AddToBuffer((char *)mediaBox->GetPayload(), payloadSize);
+                            this->bufferForProcessing->AddToBuffer(mediaBox->GetPayload(), payloadSize);
                             this->bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
                             continueProcessing = true;
                           }
@@ -320,7 +340,7 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
 
       if ((!this->supressData) && (this->bufferForProcessing != NULL))
       {
-        FlvPacket *flvPacket = new FlvPacket();
+        CFlvPacket *flvPacket = new CFlvPacket();
         if (flvPacket != NULL)
         {
           while (flvPacket->ParsePacket(this->bufferForProcessing))
@@ -600,6 +620,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
       // from fragment run table choose fragment with specifed quality (if exists) or fragment with QualityEntryCount equal to zero
       CFragmentRunEntryCollection *fragmentRunEntryTableTemp = NULL;
+      unsigned int timeScale = 0;
       for (unsigned int i = 0; i < this->bootstrapInfoBox->GetFragmentRunTable()->Count(); i++)
       {
         CFragmentRunTableBox *fragmentRunTableBox = this->bootstrapInfoBox->GetFragmentRunTable()->GetItem(i);
@@ -609,6 +630,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
           if (fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(quality, false))
           {
             fragmentRunEntryTableTemp = fragmentRunTableBox->GetFragmentRunEntryTable();
+            timeScale = fragmentRunTableBox->GetTimeScale();
           }
         }
         else
@@ -616,6 +638,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
           if (fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0)
           {
             fragmentRunEntryTableTemp = fragmentRunTableBox->GetFragmentRunEntryTable();
+            timeScale = fragmentRunTableBox->GetTimeScale();
           }
         }
       }
@@ -761,7 +784,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
                               timestamp += (lastFragment - fragmentRunEntryTable->Count() + 1) * fragmentRunEntryTable->GetItem(fragmentRunEntryTable->Count() - 1)->GetFragmentDuration();
                             }
 
-                            CSegmentFragment *segmentFragment = new CSegmentFragment(j, lastFragment++, url, timestamp);
+                            CSegmentFragment *segmentFragment = new CSegmentFragment(j, lastFragment++, url, timestamp * 1000 / timeScale);
                             CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
 
                             if (SUCCEEDED(result))
@@ -825,9 +848,56 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
     {
       result = (this->bufferForProcessing->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER)) ? result : E_FAIL;
 
-      if (SUCCEEDED(result))
+      if ((SUCCEEDED(result)) && (!this->seekingActive))
       {
-        this->bufferForProcessing->AddToBuffer((char *)FLV_FILE_HEADER, FLV_FILE_HEADER_LENGTH);
+        this->bufferForProcessing->AddToBuffer(FLV_FILE_HEADER, FLV_FILE_HEADER_LENGTH);
+
+        char *mediaMetadataBase64Encoded = ConvertToMultiByteW(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_MEDIA_METADATA, true, NULL));
+        if (mediaMetadataBase64Encoded != NULL)
+        {
+          // metadata can be in connection parameters, but it is optional
+          // metadata is BASE64 encoded
+          unsigned char *metadata = NULL;
+          unsigned int metadataLength = 0;
+          result = base64_decode(mediaMetadataBase64Encoded, &metadata, &metadataLength);
+
+          if (SUCCEEDED(result))
+          {
+            // create FLV packet from metadata and add its content to buffer for processing
+            CFlvPacket *metadataFlvPacket = new CFlvPacket();
+            CHECK_POINTER_HRESULT(result, metadataFlvPacket, result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
+            {
+              result = metadataFlvPacket->CreatePacket(FLV_PACKET_META, metadata, metadataLength, 0) ? result : E_FAIL;
+
+              if (SUCCEEDED(result))
+              {
+                result = (this->bufferForProcessing->AddToBufferWithResize(metadataFlvPacket->GetData(), metadataFlvPacket->GetSize()) == metadataFlvPacket->GetSize()) ? result : E_FAIL;
+
+                if (FAILED(result))
+                {
+                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot add FLV metadata packet to buffer");
+                }
+              }
+              else
+              {
+                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot create FLV metadata packet");
+              }
+            }
+            else
+            {
+              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for FLV metadata packet");
+            }
+            FREE_MEM_CLASS(metadataFlvPacket);
+          }
+          else
+          {
+            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot decode metadata");
+          }
+          FREE_MEM(metadata);
+        }
+        FREE_MEM(mediaMetadataBase64Encoded);
       }
     }
   }
@@ -1001,35 +1071,59 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
 
 unsigned int CMPUrlSourceSplitter_Protocol_Afhs::GetSeekingCapabilities(void)
 {
-  return SEEKING_METHOD_NONE;
+  return SEEKING_METHOD_TIME;
 }
 
 int64_t CMPUrlSourceSplitter_Protocol_Afhs::SeekToTime(int64_t time)
 {
+  CLockMutex lock(this->lockMutex, INFINITE);
+
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME);
-  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, time);
+  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, time);
 
   int64_t result = -1;
 
-  //this->seekingActive = true;
+  this->seekingActive = true;
 
-  //// close connection
-  //this->StopReceivingData();
+  // close connection
+  this->StopReceivingData();
 
-  //// RTMP protocol can seek to ms
-  //// time is in ms
+  // AFHS protocol can seek to ms
+  // time is in ms
 
-  //// 1 second back
-  //this->streamTime = max(0, time - 1000);
+  this->lastSegmentFragment = 0;
+  // find segment and fragment to download
+  if (this->segmentsFragments != NULL)
+  {
+    for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
+    {
+      CSegmentFragment *segFrag = this->segmentsFragments->GetItem(i);
 
-  //// reopen connection
-  //// StartReceivingData() reset wholeStreamDownloaded
-  //this->StartReceivingData(NULL);
+      if (segFrag->GetFragmentTimestamp() <= (uint64_t)time)
+      {
+        this->lastSegmentFragment = i;
+        result = segFrag->GetFragmentTimestamp();
+      }
+    }
+  }
 
-  //if (this->IsConnected())
-  //{
-  //  result = max(0, time - 1000);
-  //}
+  // in this->lastSegmentFragment is id of segment and fragment to download
+  CSegmentFragment *segFrag = this->segmentsFragments->GetItem(this->lastSegmentFragment);
+  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: segment %d, fragment %d, url '%s', timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
+    segFrag->GetSegment(), segFrag->GetFragment(), segFrag->GetUrl(), segFrag->GetFragmentTimestamp());
+
+  // reopen connection
+  // StartReceivingData() reset wholeStreamDownloaded
+  this->StartReceivingData(NULL);
+
+  if (!this->IsConnected())
+  {
+    result = -1;
+  }
+  else
+  {
+    this->streamTime = result;
+  }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
   return result;
@@ -1053,9 +1147,9 @@ void CMPUrlSourceSplitter_Protocol_Afhs::SetSupressData(bool supressData)
 
 // IPlugin interface
 
-wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetName(void)
+const wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetName(void)
 {
-  return Duplicate(PROTOCOL_NAME);
+  return PROTOCOL_NAME;
 }
 
 GUID CMPUrlSourceSplitter_Protocol_Afhs::GetInstanceId(void)
@@ -1130,7 +1224,7 @@ size_t CMPUrlSourceSplitter_Protocol_Afhs::CurlReceiveData(char *buffer, size_t 
 
         if (freeSpace >= bytesRead)
         {
-          caller->bufferForBoxProcessing->AddToBuffer(buffer, bytesRead);
+          caller->bufferForBoxProcessing->AddToBuffer((unsigned char *)buffer, bytesRead);
         }
       }
     }

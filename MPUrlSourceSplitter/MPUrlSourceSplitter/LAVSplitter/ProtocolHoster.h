@@ -115,7 +115,7 @@ public:
 
   // returns reference to null-terminated string which represents active protocol plugin name
   // @return : reference to null-terminated string
-  wchar_t *GetName(void);
+  const wchar_t *GetName(void);
 
   // get plugin instance ID
   // @return : always GUID_NULL
@@ -126,27 +126,7 @@ public:
   // @return : always E_NOTIMPL
   HRESULT Initialize(PluginConfiguration *configuration);
 
-  //// IOutputStream interface implementation
-
-  //// sets total length of stream to output pin
-  //// @param total : total length of stream in bytes
-  //// @param estimate : specifies if length is estimate
-  //// @return : S_OK if successful
-  //HRESULT SetTotalLength(int64_t total, bool estimate);
-
-  //// pushes media packet to output pin
-  //// @param mediaPacket : reference to media packet to push to output pin
-  //// @return : S_OK if successful
-  //HRESULT PushMediaPacket(CMediaPacket *mediaPacket);
-
-  //// notifies output stream that end of stream was reached
-  //// this method can be called only when protocol support SEEKING_METHOD_POSITION
-  //// @param streamPosition : the last valid stream position
-  //// @return : S_OK if successful
-  //HRESULT EndOfStreamReached(int64_t streamPosition);
-
   // other methods
-
  
   // gets active protocol
   // @return : active protocol or NULL if none

@@ -41,10 +41,9 @@ struct IPlugin
 {
 public:
   // return reference to null-terminated string which represents plugin name
-  // function have to allocate enough memory for plugin name string
   // errors should be logged to log file and returned NULL
   // @return : reference to null-terminated string
-  virtual wchar_t *GetName(void) = 0;
+  virtual const wchar_t *GetName(void) = 0;
 
   // get plugin instance ID
   // @return : GUID, which represents instance identifier or GUID_NULL if error

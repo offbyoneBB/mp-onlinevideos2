@@ -31,7 +31,7 @@ CMediaCollection::~CMediaCollection(void)
 {
 }
 
-int CMediaCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
+int CMediaCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,22 +45,12 @@ int CMediaCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, voi
   }
 }
 
-wchar_t *CMediaCollection::GetKey(CMedia *item)
+const wchar_t *CMediaCollection::GetKey(CMedia *item)
 {
-  return Duplicate(item->GetUrl());
-}
-
-void CMediaCollection::FreeKey(wchar_t *key)
-{
-  FREE_MEM(key);
+  return item->GetUrl();
 }
 
 CMedia *CMediaCollection::Clone(CMedia *item)
 {
   return NULL;
 }
-
-//bool CMediaCollection::Contains(wchar_t *name, bool invariant)
-//{
-//  return __super::Contains(name, (void *)&invariant);
-//}

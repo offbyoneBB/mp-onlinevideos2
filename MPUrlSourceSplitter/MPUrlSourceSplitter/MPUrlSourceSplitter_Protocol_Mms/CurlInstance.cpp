@@ -24,7 +24,7 @@
 #include "Logger.h"
 #include "ISimpleProtocol.h"
 
-CCurlInstance::CCurlInstance(CLogger *logger, wchar_t *url, wchar_t *protocolName)
+CCurlInstance::CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName)
 {
   this->logger = logger;
   this->url = Duplicate(url);

@@ -112,7 +112,7 @@ public:
   // gets box data in human readable format
   // @param indent : string to insert before each line
   // @return : box data in human readable format or NULL if error
-  virtual wchar_t *GetParsedHumanReadable(wchar_t *indent);
+  virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
 protected:
   // stores the length of buffer

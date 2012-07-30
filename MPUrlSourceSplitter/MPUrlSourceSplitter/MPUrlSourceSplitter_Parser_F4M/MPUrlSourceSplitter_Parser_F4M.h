@@ -174,7 +174,7 @@ public:
   // function have to allocate enough memory for plugin name string
   // errors should be logged to log file and returned NULL
   // @return : reference to null-terminated string
-  wchar_t *GetName(void);
+  const wchar_t *GetName(void);
 
   // get plugin instance ID
   // @return : GUID, which represents instance identifier or GUID_NULL if error

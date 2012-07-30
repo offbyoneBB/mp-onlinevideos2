@@ -159,7 +159,7 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
   return result;
 }
 
-wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(wchar_t *indent)
+wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;
   wchar_t *previousResult = __super::GetParsedHumanReadable(indent);
@@ -232,6 +232,21 @@ wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(wchar_t *indent)
   FREE_MEM(previousResult);
 
   return result;
+}
+
+unsigned int CFragmentRunTableBox::GetVersion(void)
+{
+  return this->version;
+}
+
+unsigned int CFragmentRunTableBox::GetFlags(void)
+{
+  return this->flags;
+}
+
+unsigned int CFragmentRunTableBox::GetTimeScale(void)
+{
+  return this->timeScale;
 }
 
 CQualitySegmentUrlModifierCollection *CFragmentRunTableBox::GetQualitySegmentUrlModifiers(void)

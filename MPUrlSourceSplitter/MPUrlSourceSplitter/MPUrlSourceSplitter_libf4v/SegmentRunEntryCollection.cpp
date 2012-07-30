@@ -31,7 +31,7 @@ CSegmentRunEntryCollection::~CSegmentRunEntryCollection(void)
 {
 }
 
-int CSegmentRunEntryCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
+int CSegmentRunEntryCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,14 +45,9 @@ int CSegmentRunEntryCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *seco
   }
 }
 
-wchar_t *CSegmentRunEntryCollection::GetKey(CSegmentRunEntry *item)
+const wchar_t *CSegmentRunEntryCollection::GetKey(CSegmentRunEntry *item)
 {
-  return Duplicate(L"");
-}
-
-void CSegmentRunEntryCollection::FreeKey(wchar_t *key)
-{
-  FREE_MEM(key);
+  return L"";
 }
 
 CSegmentRunEntry *CSegmentRunEntryCollection::Clone(CSegmentRunEntry *item)

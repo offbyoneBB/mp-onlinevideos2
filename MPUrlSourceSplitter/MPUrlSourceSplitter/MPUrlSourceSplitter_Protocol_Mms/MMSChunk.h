@@ -54,21 +54,21 @@ public:
   // @return : true if instance is clear, false otherwise
   bool IsCleared(void);
 
-  bool SetChunkDataLength(unsigned int chunkDataLength);
-
   unsigned int GetChunkDataLength(void);
 
-  bool SetExtraHeaderLength(unsigned int extraHeaderLength);
-
-  unsigned int GetExtraHeaderLength(void);
+  unsigned int GetExtraHeaderDataLength(void);
 
   void SetChunkType(unsigned int headerType);
 
   unsigned int GetChunkType(void);
 
-  char *GetChunkData(void);
+  const unsigned char *GetChunkData(void);
 
-  char *GetExtraHeaderData(void);
+  const unsigned char *GetExtraHeaderData(void);
+
+  bool SetChunkData(const unsigned char *chunkData, unsigned int length);
+
+  bool SetExtraHeaderData(const unsigned char *extraHeaderData, unsigned int length);
 
 protected:
 
@@ -78,9 +78,13 @@ protected:
 
   unsigned int extraHeaderLength;
 
-  char *chunkData;
+  unsigned char *chunkData;
 
-  char *extraHeaderData;
+  unsigned char *extraHeaderData;
+
+  bool SetChunkDataLength(unsigned int chunkDataLength);
+
+  bool SetExtraHeaderDataLength(unsigned int extraHeaderDataLength);
 };
 
 #endif

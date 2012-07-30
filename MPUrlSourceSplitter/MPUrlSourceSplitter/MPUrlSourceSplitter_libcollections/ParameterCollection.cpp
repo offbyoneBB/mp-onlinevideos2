@@ -31,7 +31,7 @@ CParameterCollection::~CParameterCollection(void)
 {
 }
 
-int CParameterCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
+int CParameterCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,19 +45,14 @@ int CParameterCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey,
   }
 }
 
-bool CParameterCollection::Contains(wchar_t *name, bool invariant)
+bool CParameterCollection::Contains(const wchar_t *name, bool invariant)
 {
   return __super::Contains(name, (void *)&invariant);
 }
 
-wchar_t *CParameterCollection::GetKey(CParameter *item)
+const wchar_t *CParameterCollection::GetKey(CParameter *item)
 {
-  return Duplicate(item->GetName());
-}
-
-void CParameterCollection::FreeKey(wchar_t *key)
-{
-  FREE_MEM(key);
+  return item->GetName();
 }
 
 PCParameter CParameterCollection::GetParameter(unsigned int index)
@@ -65,7 +60,7 @@ PCParameter CParameterCollection::GetParameter(unsigned int index)
   return __super::GetItem(index);
 }
 
-PCParameter CParameterCollection::GetParameter(wchar_t *name, bool invariant)
+PCParameter CParameterCollection::GetParameter(const wchar_t *name, bool invariant)
 {
   return this->GetItem(name, (void *)&invariant);
 }
@@ -95,7 +90,7 @@ void CParameterCollection::LogCollection(CLogger *logger, unsigned int loggerLev
   }
 }
 
-wchar_t *CParameterCollection::GetValue(wchar_t *name, bool invariant, wchar_t *defaultValue)
+const wchar_t *CParameterCollection::GetValue(const wchar_t *name, bool invariant, const wchar_t *defaultValue)
 {
   PCParameter parameter = this->GetParameter(name, invariant);
   if (parameter != NULL)
@@ -108,9 +103,9 @@ wchar_t *CParameterCollection::GetValue(wchar_t *name, bool invariant, wchar_t *
   }
 }
 
-long CParameterCollection::GetValueLong(wchar_t *name, bool invariant, long defaultValue)
+long CParameterCollection::GetValueLong(const wchar_t *name, bool invariant, long defaultValue)
 {
-  wchar_t *value = this->GetValue(name, invariant, L"");
+  const wchar_t *value = this->GetValue(name, invariant, L"");
   wchar_t *end = NULL;
   long valueLong = wcstol(value, &end, 10);
   if ((valueLong == 0) && (value == end))
@@ -122,9 +117,9 @@ long CParameterCollection::GetValueLong(wchar_t *name, bool invariant, long defa
   return valueLong;
 }
 
-long CParameterCollection::GetValueUnsignedInt(wchar_t *name, bool invariant, unsigned int defaultValue)
+long CParameterCollection::GetValueUnsignedInt(const wchar_t *name, bool invariant, unsigned int defaultValue)
 {
-  wchar_t *value = this->GetValue(name, invariant, L"");
+  const wchar_t *value = this->GetValue(name, invariant, L"");
   wchar_t *end = NULL;
   long valueLong = wcstol(value, &end, 10);
   if ((valueLong == 0) && (value == end))
@@ -136,9 +131,9 @@ long CParameterCollection::GetValueUnsignedInt(wchar_t *name, bool invariant, un
   return (unsigned int)valueLong;
 }
 
-int64_t CParameterCollection::GetValueInt64(wchar_t *name, bool invariant, int64_t defaultValue)
+int64_t CParameterCollection::GetValueInt64(const wchar_t *name, bool invariant, int64_t defaultValue)
 {
-  wchar_t *value = this->GetValue(name, invariant, L"");
+  const wchar_t *value = this->GetValue(name, invariant, L"");
   wchar_t *end = NULL;
   int64_t valueLong = _wcstoi64(value, &end, 10);
   if ((valueLong == 0) && (value == end))
@@ -150,7 +145,7 @@ int64_t CParameterCollection::GetValueInt64(wchar_t *name, bool invariant, int64
   return (unsigned int)valueLong;
 }
 
-bool CParameterCollection::GetValueBool(wchar_t *name, bool invariant, bool defaultValue)
+bool CParameterCollection::GetValueBool(const wchar_t *name, bool invariant, bool defaultValue)
 {
   switch (this->GetValueLong(name, invariant, -1))
   {

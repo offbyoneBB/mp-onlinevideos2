@@ -69,7 +69,7 @@ bool LinearBuffer::InitializeBuffer(unsigned int size)
   // remove current buffer (if any)
   this->DeleteBuffer();
 
-  this->buffer = ALLOC_MEM(char, size);
+  this->buffer = ALLOC_MEM(unsigned char, size);
 
   if (this->buffer != NULL)
   {
@@ -161,7 +161,7 @@ void LinearBuffer::RemoveFromBufferAndMove(unsigned int length)
   }
 }
 
-unsigned int LinearBuffer::AddToBuffer(char* source, unsigned int length)
+unsigned int LinearBuffer::AddToBuffer(const unsigned char *source, unsigned int length)
 {
   unsigned int returnValue = 0;
   if ((length > 0) && (length <= this->GetBufferFreeSpace()))
@@ -174,12 +174,31 @@ unsigned int LinearBuffer::AddToBuffer(char* source, unsigned int length)
   return returnValue;
 }
 
-unsigned int LinearBuffer::CopyFromBuffer(char* destination, unsigned int length, unsigned int packetSize)
+unsigned int LinearBuffer::AddToBufferWithResize(const unsigned char *source, unsigned int length)
+{
+  unsigned int returnValue = 0;
+
+  if (this->GetBufferFreeSpace() < length)
+  {
+    if (this->ResizeBuffer(this->GetBufferSize() + length - this->GetBufferFreeSpace()))
+    {
+      returnValue = this->AddToBuffer(source, length);
+    }
+  }
+  else
+  {
+    returnValue = this->AddToBuffer(source, length);
+  }
+
+  return returnValue;
+}
+
+unsigned int LinearBuffer::CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize)
 {
   return this->CopyFromBuffer(destination, length, packetSize, 0);
 }
 
-unsigned int LinearBuffer::CopyFromBuffer(char* destination, unsigned int length, unsigned int packetSize, unsigned int start)
+unsigned int LinearBuffer::CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize, unsigned int start)
 {
   int copiedBytes = 0;
 
@@ -231,7 +250,7 @@ bool LinearBuffer::ResizeBuffer(unsigned int size)
   {
     // requested buffer size is bigger than current occupied space
     // create new buffer
-    char *tempBuffer = ALLOC_MEM(char, size);
+    unsigned char *tempBuffer = ALLOC_MEM(unsigned char, size);
     result = (tempBuffer != NULL);
 
     if (result)
@@ -251,22 +270,3 @@ bool LinearBuffer::ResizeBuffer(unsigned int size)
 
   return result;
 }
-
-//bool LinearBuffer::SafeResizeBuffer(HANDLE lockMutex, unsigned int size, bool logMessage, CLogger *logger, const wchar_t *protocolName, const wchar_t *functionName)
-//{
-//  bool result = false;
-//  if ((lockMutex != NULL) && (size != this->bufferSize) &&
-//      ((logMessage && (logger != NULL)) || (!logMessage)))
-//  {
-//    WaitForSingleObject(lockMutex, INFINITE);
-//    result = this->ResizeBuffer(size);
-//
-//    if (result && logMessage)
-//    {
-//      logger->Log(LOGGER_WARNING, L"%s: %s: resized buffer, buffer size: %u, free buffer size: %u, occupied buffer size: %u", protocolName, functionName, this->bufferSize, this->GetBufferFreeSpace(), this->GetBufferOccupiedSpace());
-//    }
-//    ReleaseMutex(lockMutex);
-//  }
-//
-//  return result;
-//}

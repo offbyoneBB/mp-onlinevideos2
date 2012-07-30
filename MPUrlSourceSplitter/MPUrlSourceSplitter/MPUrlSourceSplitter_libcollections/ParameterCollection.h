@@ -39,7 +39,7 @@
 
 class CLogger;
 
-class CParameterCollection : public CCollection<CParameter, wchar_t *>
+class CParameterCollection : public CCollection<CParameter, const wchar_t *>
 {
 public:
   CParameterCollection(void);
@@ -49,7 +49,7 @@ public:
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @return : true if parameter exists, false otherwise
-  bool Contains(wchar_t *name, bool invariant);
+  bool Contains(const wchar_t *name, bool invariant);
 
   // get the parameter from collection with specified index
   // @param index : the index of parameter to find
@@ -60,42 +60,42 @@ public:
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @return : the reference to parameter or NULL if not find
-  PCParameter GetParameter(wchar_t *name, bool invariant);
+  PCParameter GetParameter(const wchar_t *name, bool invariant);
 
   // get the string value of parameter with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param defaultValue : the default value to return
   // @return : the value of parameter or default value if not found
-  wchar_t *GetValue(wchar_t *name, bool invariant, wchar_t *defaultValue);
+  const wchar_t *GetValue(const wchar_t *name, bool invariant, const wchar_t *defaultValue);
 
   // get the integer value of parameter with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param defaultValue : the default value to return
   // @return : the value of parameter or default value if not found
-  long GetValueLong(wchar_t *name, bool invariant, long defaultValue);
+  long GetValueLong(const wchar_t *name, bool invariant, long defaultValue);
 
   // get the unsigned integer value of parameter with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param defaultValue : the default value to return
   // @return : the value of parameter or default value if not found
-  long GetValueUnsignedInt(wchar_t *name, bool invariant, unsigned int defaultValue);
+  long GetValueUnsignedInt(const wchar_t *name, bool invariant, unsigned int defaultValue);
 
   // get 64-bit integer value of parameter with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param defaultValue : the default value to return
   // @return : the value of parameter or default value if not found
-  int64_t GetValueInt64(wchar_t *name, bool invariant, int64_t defaultValue);
+  int64_t GetValueInt64(const wchar_t *name, bool invariant, int64_t defaultValue);
 
   // get the boolean value of parameter with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @param defaultValue : the default value to return
   // @return : the value of parameter or default value if not found
-  bool GetValueBool(wchar_t *name, bool invariant, bool defaultValue);
+  bool GetValueBool(const wchar_t *name, bool invariant, bool defaultValue);
 
   // log all parameters to log file
   // @param logger : the logger
@@ -110,21 +110,17 @@ protected:
   // @param secondKey : the second item key to compare
   // @param context : the reference to user defined context
   // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context);
+  int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
 
   // gets key for item
   // @param item : the item to get key
   // @return : the key of item
-  wchar_t *GetKey(CParameter *item);
+  const wchar_t *GetKey(CParameter *item);
 
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
   CParameter *Clone(CParameter *item);
-
-  // frees item key
-  // @param key : the item to free
-  void FreeKey(wchar_t *key);
 };
 
 #endif

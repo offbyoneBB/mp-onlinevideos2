@@ -236,7 +236,7 @@ bool CHoster::AppendPluginImplementation(HINSTANCE hLibrary, DESTROYPLUGININSTAN
     implementation->hLibrary = hLibrary;
     implementation->destroyPluginInstance = destroyPluginInstance;
     implementation->pImplementation = plugin;
-    implementation->name = plugin->GetName();
+    implementation->name = Duplicate(plugin->GetName());
 
     if (implementation->name != NULL)
     {

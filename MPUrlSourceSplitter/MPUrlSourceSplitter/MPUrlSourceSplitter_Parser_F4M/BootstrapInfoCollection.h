@@ -26,7 +26,7 @@
 #include "Collection.h"
 #include "BootstrapInfo.h"
 
-class CBootstrapInfoCollection : public CCollection<CBootstrapInfo, wchar_t *>
+class CBootstrapInfoCollection : public CCollection<CBootstrapInfo, const wchar_t *>
 {
 public:
   CBootstrapInfoCollection(void);
@@ -36,7 +36,7 @@ public:
   // @param name : the ID of bootstrap info to find
   // @param invariant : specifies if ID shoud be find with invariant casing
   // @return : true if bootstrap info exists, false otherwise
-  bool Contains(wchar_t *name, bool invariant);
+  bool Contains(const wchar_t *name, bool invariant);
 
   // gets bootstrap info from collection with specified ID
   // @param id : the id of bootstrap info to find
@@ -51,17 +51,12 @@ protected:
   // @param secondKey : the second item key to compare
   // @param context : the reference to user defined context
   // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context);
+  int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
 
   // gets key for item
-  // caller is responsible of deleting item key using FreeKey() method
   // @param item : the item to get key
   // @return : the key of item
-  wchar_t *GetKey(CBootstrapInfo *item);
-
-  // frees item key
-  // @param key : the item to free
-  void FreeKey(wchar_t *key);
+  const wchar_t *GetKey(CBootstrapInfo *item);
 
   // clones specified item
   // @param item : the item to clone

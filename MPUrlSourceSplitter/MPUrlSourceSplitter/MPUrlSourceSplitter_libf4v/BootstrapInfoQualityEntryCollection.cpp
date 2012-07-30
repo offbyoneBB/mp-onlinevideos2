@@ -31,7 +31,7 @@ CBootstrapInfoQualityEntryCollection::~CBootstrapInfoQualityEntryCollection(void
 {
 }
 
-int CBootstrapInfoQualityEntryCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
+int CBootstrapInfoQualityEntryCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,14 +45,9 @@ int CBootstrapInfoQualityEntryCollection::CompareItemKeys(wchar_t *firstKey, wch
   }
 }
 
-wchar_t *CBootstrapInfoQualityEntryCollection::GetKey(CBootstrapInfoQualityEntry *item)
+const wchar_t *CBootstrapInfoQualityEntryCollection::GetKey(CBootstrapInfoQualityEntry *item)
 {
-  return Duplicate(item->GetQualityEntry());
-}
-
-void CBootstrapInfoQualityEntryCollection::FreeKey(wchar_t *key)
-{
-  FREE_MEM(key);
+  return item->GetQualityEntry();
 }
 
 CBootstrapInfoQualityEntry *CBootstrapInfoQualityEntryCollection::Clone(CBootstrapInfoQualityEntry *item)

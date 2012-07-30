@@ -43,7 +43,7 @@ MMSChunk::MMSChunk(MMSChunk *mmsChunk)
     bool result = true;
 
     result &= this->SetChunkDataLength(mmsChunk->GetChunkDataLength());
-    result &= this->SetExtraHeaderLength(mmsChunk->GetExtraHeaderLength());
+    result &= this->SetExtraHeaderDataLength(mmsChunk->GetExtraHeaderDataLength());
 
     if (result)
     {
@@ -75,7 +75,7 @@ void MMSChunk::Clear(void)
 bool MMSChunk::SetChunkDataLength(unsigned int chunkDataLength)
 {
   FREE_MEM(this->chunkData);
-  this->chunkData = ALLOC_MEM_SET(this->chunkData, char, chunkDataLength, 0);
+  this->chunkData = ALLOC_MEM_SET(this->chunkData, unsigned char, chunkDataLength, 0);
   if (this->chunkData != NULL)
   {
     this->chunkDataLength = chunkDataLength;
@@ -91,10 +91,10 @@ unsigned int MMSChunk::GetChunkDataLength(void)
   return this->chunkDataLength;
 }
 
-bool MMSChunk::SetExtraHeaderLength(unsigned int extraHeaderLength)
+bool MMSChunk::SetExtraHeaderDataLength(unsigned int extraHeaderLength)
 {
   FREE_MEM(this->extraHeaderData);
-  this->extraHeaderData = ALLOC_MEM_SET(this->extraHeaderData, char, extraHeaderLength, 0);
+  this->extraHeaderData = ALLOC_MEM_SET(this->extraHeaderData, unsigned char, extraHeaderLength, 0);
   if (this->extraHeaderData != NULL)
   {
     this->extraHeaderLength = extraHeaderLength;
@@ -105,7 +105,7 @@ bool MMSChunk::SetExtraHeaderLength(unsigned int extraHeaderLength)
   return false;
 }
 
-unsigned int MMSChunk::GetExtraHeaderLength(void)
+unsigned int MMSChunk::GetExtraHeaderDataLength(void)
 {
   return this->extraHeaderLength;
 }
@@ -120,12 +120,12 @@ unsigned int MMSChunk::GetChunkType(void)
   return this->chunkType;
 }
 
-char *MMSChunk::GetChunkData(void)
+const unsigned char *MMSChunk::GetChunkData(void)
 {
   return this->chunkData;
 }
 
-char *MMSChunk::GetExtraHeaderData(void)
+const unsigned char *MMSChunk::GetExtraHeaderData(void)
 {
   return this->extraHeaderData;
 }
@@ -133,4 +133,28 @@ char *MMSChunk::GetExtraHeaderData(void)
 bool MMSChunk::IsCleared(void)
 {
   return ((this->chunkData == NULL) && (this->extraHeaderData == NULL) && (this->chunkDataLength == 0) && (this->extraHeaderLength == 0) && (this->chunkType == 0));
+}
+
+bool MMSChunk::SetChunkData(const unsigned char *chunkData, unsigned int length)
+{
+  bool result = this->SetChunkDataLength(length);
+
+  if (result)
+  {
+    memcpy(this->chunkData, chunkData, length);
+  }
+
+  return result;
+}
+
+bool MMSChunk::SetExtraHeaderData(const unsigned char *extraHeaderData, unsigned int length)
+{
+  bool result = this->SetExtraHeaderDataLength(length);
+
+  if (result)
+  {
+    memcpy(this->extraHeaderData, extraHeaderData, length);
+  }
+
+  return result;
 }

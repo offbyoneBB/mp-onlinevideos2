@@ -202,11 +202,6 @@ int64_t CMediaPacketCollection::GetKey(CMediaPacket *item)
   return item->GetStart();
 }
 
-void CMediaPacketCollection::FreeKey(int64_t key)
-{
-  // no need for deleting key (not reference type)
-}
-
 CMediaPacket *CMediaPacketCollection::Clone(CMediaPacket *item)
 {
   // not implemented media packet cloning

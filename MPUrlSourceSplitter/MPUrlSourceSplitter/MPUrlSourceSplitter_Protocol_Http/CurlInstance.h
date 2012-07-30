@@ -57,7 +57,7 @@ public:
   // @param logger : logger for logging purposes
   // @param url : the url to open
   // @param protocolName : the protocol name instantiating
-  CCurlInstance(CLogger *logger, wchar_t *url, wchar_t *protocolName);
+  CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName);
   ~CCurlInstance(void);
 
   // gets CURL handle

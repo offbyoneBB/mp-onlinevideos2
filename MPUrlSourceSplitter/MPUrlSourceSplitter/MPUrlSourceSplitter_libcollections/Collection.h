@@ -120,14 +120,9 @@ protected:
   virtual int CompareItemKeys(TItemKey firstKey, TItemKey secondKey, void *context) = 0;
 
   // gets key for item
-  // caller is responsible of deleting item key using FreeKey() method
   // @param item : the item to get key
   // @return : the key of item
   virtual TItemKey GetKey(TItem *item) = 0;
-
-  // frees item key
-  // @param key : the item to free
-  virtual void FreeKey(TItemKey key) = 0;
 
   // clones specified item
   // @param item : the item to clone
@@ -275,9 +270,6 @@ template <class TItem, class TItemKey> int CCollection<TItem, TItemKey>::Compare
 
   int result = this->CompareItemKeys(firstItemKey, secondItemKey, context);
 
-  this->FreeKey(firstItemKey);
-  this->FreeKey(secondItemKey);
-
   return result;
 }
 
@@ -295,8 +287,6 @@ template <class TItem, class TItemKey> unsigned int CCollection<TItem, TItemKey>
       result = i;
       break;
     }
-
-    this->FreeKey(itemKey);
   }
 
   return result;

@@ -52,11 +52,6 @@ int MMSStreamCollection::GetKey(MMSStream *item)
   return item->GetId();
 }
 
-void MMSStreamCollection::FreeKey(int key)
-{
-  // no need for deleting key (not reference type)
-}
-
 MMSStream *MMSStreamCollection::Clone(MMSStream *item)
 {
   // not implemented media packet cloning

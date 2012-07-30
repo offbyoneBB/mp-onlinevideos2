@@ -148,7 +148,7 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
   return result;
 }
 
-wchar_t *CSegmentRunTableBox::GetParsedHumanReadable(wchar_t *indent)
+wchar_t *CSegmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;
   wchar_t *previousResult = __super::GetParsedHumanReadable(indent);

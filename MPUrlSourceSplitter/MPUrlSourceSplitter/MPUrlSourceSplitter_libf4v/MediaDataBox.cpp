@@ -78,7 +78,7 @@ bool CMediaDataBox::Parse(const unsigned char *buffer, unsigned int length)
   return result;
 }
 
-wchar_t *CMediaDataBox::GetParsedHumanReadable(wchar_t *indent)
+wchar_t *CMediaDataBox::GetParsedHumanReadable(const wchar_t *indent)
 {
   wchar_t *result = NULL;
   wchar_t *previousResult = __super::GetParsedHumanReadable(indent);

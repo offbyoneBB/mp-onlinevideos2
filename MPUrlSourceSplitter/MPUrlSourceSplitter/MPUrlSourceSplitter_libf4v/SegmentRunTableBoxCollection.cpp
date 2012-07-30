@@ -31,7 +31,7 @@ CSegmentRunTableBoxCollection::~CSegmentRunTableBoxCollection(void)
 {
 }
 
-int CSegmentRunTableBoxCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *secondKey, void *context)
+int CSegmentRunTableBoxCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,14 +45,9 @@ int CSegmentRunTableBoxCollection::CompareItemKeys(wchar_t *firstKey, wchar_t *s
   }
 }
 
-wchar_t *CSegmentRunTableBoxCollection::GetKey(CSegmentRunTableBox *item)
+const wchar_t *CSegmentRunTableBoxCollection::GetKey(CSegmentRunTableBox *item)
 {
-  return Duplicate(L"");
-}
-
-void CSegmentRunTableBoxCollection::FreeKey(wchar_t *key)
-{
-  FREE_MEM(key);
+  return L"";
 }
 
 CSegmentRunTableBox *CSegmentRunTableBoxCollection::Clone(CSegmentRunTableBox *item)

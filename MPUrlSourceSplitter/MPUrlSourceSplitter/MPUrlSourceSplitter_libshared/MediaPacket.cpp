@@ -74,7 +74,7 @@ CMediaPacket *CMediaPacket::Clone(void)
 CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(int64_t start, int64_t end)
 {
   CMediaPacket *mediaPacket = new CMediaPacket();
-  char *buffer = NULL;
+  unsigned char *buffer = NULL;
   bool success = ((start >= this->start) && (end >= start) && (this->GetBuffer() != NULL));
 
   if (success)
@@ -93,7 +93,7 @@ CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(int64_t start, int64_
     if (success)
     {
       // create temporary buffer and copy data from unprocessed media packet
-      buffer = ALLOC_MEM_SET(buffer, char, length, 0);
+      buffer = ALLOC_MEM_SET(buffer, unsigned char, length, 0);
       success = (buffer != NULL);
     }
 
@@ -114,8 +114,7 @@ CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(int64_t start, int64_
 
   if (!success)
   {
-    delete mediaPacket;
-    mediaPacket = NULL;
+    FREE_MEM_CLASS(mediaPacket);
   }
 
   return mediaPacket;
