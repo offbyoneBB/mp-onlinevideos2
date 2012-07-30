@@ -5,46 +5,122 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 
+using Newtonsoft.Json.Linq;
+
 namespace OnlineVideos.Sites
 {
     public class TouTvUtil : GenericSiteUtil
     {
+        private static Regex subcaretoryRegex = new Regex(@"<div\sclass=""repertoire_groupeNivTitre"">\s+<a\sdata-stats-action=""Emission""\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a>\s+</div>\s+<div\sclass=""repertoire_btnPlus""\sstyle=""[^""]*"">\s+<!--Bulle-->\s+<div\sclass=""repertoire_wrapperDetailsEmission"">\s+<span\sclass=""repertoire_flecheBullePlusDetails""></span>\s+<div\sclass=""repertoire_detailsEmission"">\s+<p><strong>DURÉE\s:</strong>\s[^<]*</p>\s+(?<season>(<p><strong>SAISON[^:]*:</strong>\s[^<]*</p>\s+)+)<p><strong>PAYS\s:</strong>[^<]*</p>\s+</div>\s+</div>\s+<!--/Bulle-->\s+</div>\s+<div\sclass=""repertoire_groupeNivGenre"">\s+<a\sdata-stats-action=""Emission""\shref=""[^""]*"">(?<category>[^<]*)</a>\s+</div>",
+                                                          RegexOptions.Compiled);
+        private static Regex seasonRegex = new Regex(@"SAISON",
+                                                     RegexOptions.Compiled);
+        private static Regex episodeListRegex = new Regex(@"data-initialdata=""(?<episodeListInitialData>[^""]*)"">",
+                                                        RegexOptions.Compiled);
+        private static Regex jsonOpenRegex = new Regex(@"^\[",
+                                                       RegexOptions.Compiled);
+        private static Regex jsonCloseRegex = new Regex(@"\]$",
+                                                        RegexOptions.Compiled);
         private static Regex rtmpUrlRegex = new Regex(@"^(?<host>rtmp.*?)(\{break\}|\<break\>)(?<playPath>.*?)$",
             RegexOptions.Compiled);
         private static Regex singleVideoCategoryRegex = new Regex(@"<h1\sclass=""emission"">(?<Title>[^<]*)</h1>\s*<span\sclass=""clear""></span>\s*<p\sid=""MainContent_ctl00_PAnneeLabel""\sclass=""saison"">[^<]*</p>\s*<span\sclass=""clear""></span>\s*<p\sitemprop=""description""><br\s/>(?<Description>[^<]*)</p>\s*<br\s/>\s*<div\sclass=""specs"">\s*<p\sid=""MainContent_ctl00_PDateEpisode""><small>Date\sde\sdiffusion\s:</small>\s<strong>(?<Airdate>[^<]*)</strong></p>",
             RegexOptions.Compiled);
+        
+        private static string baseUrlPrefix = @"http://www.tou.tv";
 
+        public override int DiscoverDynamicCategories()
+        {
+            Settings.Categories.Clear();
+
+            string webData = GetWebData(baseUrl);
+
+            if (!string.IsNullOrEmpty(webData))
+            {
+                foreach (Match m in regEx_dynamicCategories.Matches(webData))
+                {
+                    RssLink cat = new RssLink();
+
+                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+                    cat.Url = baseUrl;
+                    cat.HasSubCategories = true;
+
+                    Settings.Categories.Add(cat);
+                }
+            }
+
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            parentCategory.SubCategories = new List<Category>();
+
+            RssLink parentRssLink = (RssLink) parentCategory;
+            string webData = GetWebData(parentRssLink.Url);
+            
+            string encodedName = HttpUtility.HtmlEncode(parentCategory.Name);
+            
+            if (!string.IsNullOrEmpty(webData))
+            {
+                foreach (Match m in subcaretoryRegex.Matches(webData))
+                {
+                    if (m.Groups["category"].Value.Equals(encodedName))
+                    {
+                        RssLink cat = new RssLink();
+    
+                        cat.ParentCategory = parentCategory;
+                        cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+                        string season = HttpUtility.HtmlDecode(m.Groups["season"].Value);
+                        cat.HasSubCategories = seasonRegex.Matches(season).Count != 1;
+
+                        cat.Url = string.Format(@"{0}{1}", baseUrlPrefix, m.Groups["url"].Value);
+    
+                        parentCategory.SubCategories.Add(cat);
+                    }
+                }
+            }
+            
+            parentCategory.SubCategoriesDiscovered = true;
+            return parentCategory.SubCategories.Count;
+        }
+        
         protected override List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
             if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
             if (data.Length > 0)
             {
-                if (regEx_VideoList != null)
+                Match episodeListMatch = episodeListRegex.Match(data);
+                if (episodeListMatch.Success)
                 {
-                    Match m = regEx_VideoList.Match(data);
-                    while (m.Success)
+                    Log.Debug(@"InitialData: {0}", episodeListMatch.Groups["episodeListInitialData"].Value);
+                    string json = HttpUtility.HtmlDecode(episodeListMatch.Groups["episodeListInitialData"].Value);
+                    if (json != null)
                     {
-                        VideoInfo videoInfo = CreateVideoInfo();
-                        videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
-                        // get, format and if needed absolutify the video url
-                        videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
-                        if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
-                        videoInfo.VideoUrl = ApplyUrlDecoding(videoInfo.VideoUrl, videoListUrlDecoding);
-                        if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;                        
-                        // get, format and if needed absolutify the thumb url
-                        videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                        if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.ImageUrl = string.Format(videoThumbFormatString, videoInfo.ImageUrl);
-                        if (!string.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
-                        videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
-                        videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
-                        videoInfo.Description = m.Groups["Description"].Value;
-                        videoList.Add(videoInfo);
-                        m = m.NextMatch();
+                        // replace opening and closing brackets [] with empty 
+                        json = jsonOpenRegex.Replace(json, "");
+                        json = jsonCloseRegex.Replace(json, "");
+                        Log.Debug(@"JSON after brackets removed: {0}", json);
+                        JToken episodeListInitialData = JToken.Parse(json);
+
+                        JArray episodes = episodeListInitialData["EpisodeVignetteList"] as JArray;
+                        foreach (JToken episode in episodes) {
+                            VideoInfo videoInfo = CreateVideoInfo();
+                            videoInfo.Title = episode.Value<string>("DetailsViewSaison");
+                            videoInfo.ImageUrl = episode.Value<string>("DetailsViewImageUrlL");
+                            videoInfo.Length = episode.Value<string>("DetailsViewDureeEpisode");
+                            videoInfo.Airdate = episode.Value<string>("DetailsViewDateEpisode");
+                            videoInfo.Description = episode.Value<string>("DetailsFullDescription");
+                            videoInfo.VideoUrl = new Uri(new Uri(baseUrlPrefix), episode.Value<string>("DetailsViewUrl")).AbsoluteUri;
+                            videoList.Add(videoInfo);
+                        }
                     }
                 }
-                
-                // no videos found could mean that we are on a category that only has a single video,
+            }
+            
+        /*
+                // no videos found could mean that we are possibly on a category that only has a single video,
                 // so create a category with a single video (use a separate regular expression to find info)
                 if (videoList.Count == 0)
                 {
@@ -61,8 +137,8 @@ namespace OnlineVideos.Sites
                     }
                     videoList.Add(videoInfo);
                 }
-            }
-            
+        */
+
             return videoList;
         }
         
