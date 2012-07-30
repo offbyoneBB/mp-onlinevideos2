@@ -23,8 +23,10 @@ namespace OnlineVideos.Sites
                                                         RegexOptions.Compiled);
         private static Regex rtmpUrlRegex = new Regex(@"^(?<host>rtmp.*?)(\{break\}|\<break\>)(?<playPath>.*?)$",
             RegexOptions.Compiled);
-        private static Regex singleVideoCategoryRegex = new Regex(@"<h1\sclass=""emission"">(?<Title>[^<]*)</h1>\s*<span\sclass=""clear""></span>\s*<p\sid=""MainContent_ctl00_PAnneeLabel""\sclass=""saison"">[^<]*</p>\s*<span\sclass=""clear""></span>\s*<p\sitemprop=""description""><br\s/>(?<Description>[^<]*)</p>\s*<br\s/>\s*<div\sclass=""specs"">\s*<p\sid=""MainContent_ctl00_PDateEpisode""><small>Date\sde\sdiffusion\s:</small>\s<strong>(?<Airdate>[^<]*)</strong></p>",
+        private static Regex singleVideoCategoryRegex = new Regex(@"<div\sclass=""emissionEpisode_containerContenuPub\s+clearfix"">\s+<div\sclass=""emissionEpisode_contenuEpisode"">\s+<div\sclass=""clearfix"">\s+<h1>(?<Title>[^<]*)</h1>\s+</div>\s+<span\sclass=""emissionEpisode_degrade""></span>\s+<div\sclass=""emissionEpisode_containerTxt"">\s+<div\sclass=""emissionEpisode_titreSaisonEpisode"">\s+<h2>[^<]*</h2>\s+<span\sclass=""codeAge\semissionEpisode_ageTitreEmission"">[^<]*</span>\s+</div>\s+<br\sclass=""clear""\s/>\s+<p>(?<Description>[^<]*)</p>\s+</div>\s+<div\sclass=""emissionEpisode_plusInfoToggle"">\s+<p\sID=""PDateEpisode""><small>Date\sde\sdiffusion\s:</small>\s<strong>(?<Airdate>[^<]*)</strong></p>",
             RegexOptions.Compiled);
+        private static Regex singleVideoCategoryImageUrlRegex = new Regex(@"<meta\scontent=""(?<ImageUrl>[^""]*)""\sproperty=""og:image""",
+                                                                          RegexOptions.Compiled);
         
         private static string baseUrlPrefix = @"http://www.tou.tv";
 
@@ -119,25 +121,29 @@ namespace OnlineVideos.Sites
                 }
             }
             
-        /*
-                // no videos found could mean that we are possibly on a category that only has a single video,
-                // so create a category with a single video (use a separate regular expression to find info)
-                if (videoList.Count == 0)
+            // no videos found could mean that we are possibly on a category that only has a single video,
+            // so create a category with a single video (use a separate regular expression to find info)
+            if (videoList.Count == 0)
+            {
+                Log.Debug("No videos found, attempting to find single video");
+            
+                VideoInfo videoInfo = CreateVideoInfo();
+                videoInfo.VideoUrl = url;
+                Match m = singleVideoCategoryRegex.Match(data);
+                if (m.Success)
                 {
-                    Log.Debug("No videos found, attempting to find single video");
-                
-                    VideoInfo videoInfo = CreateVideoInfo();
-                    videoInfo.VideoUrl = url;
-                    Match m = singleVideoCategoryRegex.Match(data);
-                    if (m.Success)
+                    videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+                    videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
+                    videoInfo.Description = m.Groups["Description"].Value;
+                    
+                    Match imageMatch = singleVideoCategoryImageUrlRegex.Match(data);
+                    if (imageMatch.Success)
                     {
-                        videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
-                        videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
-                        videoInfo.Description = m.Groups["Description"].Value;
+                        videoInfo.ImageUrl = imageMatch.Groups["ImageUrl"].Value;
                     }
                     videoList.Add(videoInfo);
                 }
-        */
+            }
 
             return videoList;
         }
