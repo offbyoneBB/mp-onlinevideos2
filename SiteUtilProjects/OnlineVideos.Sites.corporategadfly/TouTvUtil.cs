@@ -29,6 +29,7 @@ namespace OnlineVideos.Sites
                                                                           RegexOptions.Compiled);
         
         private static string baseUrlPrefix = @"http://www.tou.tv";
+        private static string seasonListUrl = baseUrlPrefix + @"/Emisode/GetVignetteSeason?emissionId={0}&season={1}";
 
         public override int DiscoverDynamicCategories()
         {
@@ -79,6 +80,43 @@ namespace OnlineVideos.Sites
                         cat.Url = string.Format(@"{0}{1}", baseUrlPrefix, m.Groups["url"].Value);
     
                         parentCategory.SubCategories.Add(cat);
+                    }
+                }
+            }
+            
+            // no categories found could possibly mean that we are dealing with
+            // a category which has multiple seasons and multiple episodes
+            //
+            // For example, "Les arnaqueurs" in "Séries et téléromans"
+            if (parentCategory.SubCategories.Count == 0 )
+            {
+                Match episodeListMatch = episodeListRegex.Match(webData);
+                if (episodeListMatch.Success)
+                {
+                    string json = HttpUtility.HtmlDecode(episodeListMatch.Groups["episodeListInitialData"].Value);
+                    if (json != null)
+                    {
+                        // replace opening and closing brackets [] with empty
+                        json = jsonOpenRegex.Replace(json, "");
+                        json = jsonCloseRegex.Replace(json, "");
+                        
+                        JToken episodeListInitialData = JToken.Parse(json);
+                        
+                        string seriesId = episodeListInitialData.Value<string>("EmissionId");
+                        JArray seasons = episodeListInitialData["SeasonList"] as JArray;
+                        
+                        foreach (int season in seasons)
+                        {
+                            Log.Debug(@"Season: {0}", season);
+                            
+                            RssLink cat = new RssLink();
+                            cat.ParentCategory = parentCategory;
+                            cat.Name = string.Format(@"Saison {0}", season);
+                            cat.HasSubCategories = false;
+                            cat.Url = string.Format(seasonListUrl, seriesId, season);
+                            
+                            parentCategory.SubCategories.Add(cat);
+                        }
                     }
                 }
             }
@@ -147,6 +185,35 @@ namespace OnlineVideos.Sites
                 }
             }
 
+            // no videos found could mean that we are possibly on a category with multiple
+            // seasons and multiple episodes. use JSON to find the episodes
+            //
+            // For example, "Les arnaqueurs" in "Séries et téléromans"
+            if (videoList.Count == 0)
+            {
+                Log.Debug(@"No videos found, attempting JSON parsing for {0}", url);
+                
+                // replace opening and closing brackets [] with empty
+                string json = jsonOpenRegex.Replace(data, "");
+                json = jsonCloseRegex.Replace(json, "");
+                
+                // treat contents as JSON
+                JToken episodeListInitialData = JToken.Parse(json);
+
+                JArray episodes = episodeListInitialData["EpisodeVignetteList"] as JArray;
+                
+                foreach (JToken episode in episodes) {
+                    VideoInfo videoInfo = CreateVideoInfo();
+                    videoInfo.Title = episode.Value<string>("DetailsViewSaison");
+                    videoInfo.ImageUrl = episode.Value<string>("DetailsViewImageUrlL");
+                    videoInfo.Length = episode.Value<string>("DetailsViewDureeEpisode");
+                    videoInfo.Airdate = episode.Value<string>("DetailsViewDateEpisode");
+                    videoInfo.Description = episode.Value<string>("DetailsFullDescription");
+                    videoInfo.VideoUrl = new Uri(new Uri(baseUrlPrefix), episode.Value<string>("DetailsViewUrl")).AbsoluteUri;
+                    videoList.Add(videoInfo);
+                }
+            }
+            
             return videoList;
         }
         
