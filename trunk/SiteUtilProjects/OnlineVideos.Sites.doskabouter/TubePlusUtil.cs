@@ -257,7 +257,8 @@ namespace OnlineVideos.Sites
             string hoster = parts[parts.Length - 2].ToLowerInvariant();
 
             if (hoster == "youtube") return "http://youtube.com/v/" + id;
-            if (hoster == "putlocker.com" || hoster == "sockshare.com") return "http://www.putlocker.com/file/" + id;
+            if (hoster == "putlocker.com" || hoster == "sockshare.com")
+                return String.Format(@"http://www.{0}/file/{1}", hoster, id);
             return name;
         }
 
