@@ -24,7 +24,7 @@
 
 CMediaPacket::CMediaPacket(void)
 {
-  this->buffer = new LinearBuffer();
+  this->buffer = new CLinearBuffer();
   this->buffer->DeleteBuffer();
 
   this->start = 0;
@@ -40,7 +40,7 @@ CMediaPacket::~CMediaPacket(void)
   }
 }
 
-LinearBuffer *CMediaPacket::GetBuffer()
+CLinearBuffer *CMediaPacket::GetBuffer()
 {
   return this->buffer;
 }
@@ -161,7 +161,7 @@ void CMediaPacket::SetStoredToFile(LONGLONG position)
   {
     if (this->buffer == NULL)
     {
-      this->buffer = new LinearBuffer();
+      this->buffer = new CLinearBuffer();
       this->buffer->DeleteBuffer();
     }
   }

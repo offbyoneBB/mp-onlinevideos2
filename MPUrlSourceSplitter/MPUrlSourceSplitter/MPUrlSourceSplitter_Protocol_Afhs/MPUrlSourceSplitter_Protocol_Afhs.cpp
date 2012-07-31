@@ -96,7 +96,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->bytePosition = 0;
   this->seekingActive = false;
   this->supressData = false;
-  this->bufferForBoxProcessing = NULL;
+  this->bufferForBoxProcessingCollection = NULL;
   this->bufferForProcessing = NULL;
   this->shouldExit = false;
   this->bootstrapInfoBox = NULL;
@@ -121,7 +121,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::~CMPUrlSourceSplitter_Protocol_Afhs()
     this->mainCurlInstance = NULL;
   }
 
-  FREE_MEM_CLASS(this->bufferForBoxProcessing);
+  FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
   FREE_MEM_CLASS(this->bufferForProcessing);
   FREE_MEM_CLASS(this->configurationParameters);
 
@@ -273,69 +273,144 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
         }
       }
 
-      if ((!this->supressData) && (this->bufferForBoxProcessing != NULL))
+      //if ((!this->supressData) && (this->bufferForBoxProcessing != NULL))
+      //{
+      //  bool continueProcessing = false;
+
+      //  do
+      //  {
+      //    continueProcessing = false;
+      //    CBox *box = new CBox();
+      //    if ((box != NULL) && (this->bufferForBoxProcessing != NULL))
+      //    {
+      //      unsigned int length = this->bufferForBoxProcessing->GetBufferOccupiedSpace();
+      //      if (length > 0)
+      //      {
+      //        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+      //        if (buffer != NULL)
+      //        {
+      //          this->bufferForBoxProcessing->CopyFromBuffer(buffer, length, 0, 0);
+      //          if (box->Parse(buffer, length))
+      //          {
+      //            unsigned int boxSize = (unsigned int)box->GetSize();
+      //            if (length >= boxSize)
+      //            {
+      //              if (wcscmp(box->GetType(), MEDIA_DATA_BOX_TYPE) == 0)
+      //              {
+      //                CMediaDataBox *mediaBox = new CMediaDataBox();
+      //                if (mediaBox != NULL)
+      //                {
+      //                  if (mediaBox->Parse(buffer, length))
+      //                  {
+      //                    unsigned int payloadSize = (unsigned int)mediaBox->GetPayloadSize();
+      //                    if (this->bufferForProcessing->GetBufferFreeSpace() < payloadSize)
+      //                    {
+      //                      // we need to increase free buffer space to copy playload data
+      //                      if (this->bufferForProcessing->ResizeBuffer(this->bufferForProcessing->GetBufferSize() + payloadSize))
+      //                      {
+      //                        this->bufferForProcessing->AddToBuffer(mediaBox->GetPayload(), payloadSize);
+      //                        this->bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
+      //                        continueProcessing = true;
+      //                      }
+      //                    }
+      //                    else
+      //                    {
+      //                      this->bufferForProcessing->AddToBuffer(mediaBox->GetPayload(), payloadSize);
+      //                      this->bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
+      //                      continueProcessing = true;
+      //                    }
+      //                  }
+      //                }
+      //                FREE_MEM_CLASS(mediaBox);
+      //              }
+      //              else
+      //              {
+      //                this->bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
+      //                continueProcessing = true;
+      //              }
+      //            }
+      //          }
+      //        }
+      //        FREE_MEM(buffer);
+      //      }
+      //    }
+      //    FREE_MEM_CLASS(box);
+      //  } while (continueProcessing);
+      //}
+
+      if ((!this->supressData) && (this->bufferForBoxProcessingCollection != NULL))
       {
         bool continueProcessing = false;
 
-        do
+        while (this->bufferForBoxProcessingCollection->Count() > 1)
         {
-          continueProcessing = false;
-          CBox *box = new CBox();
-          if ((box != NULL) && (this->bufferForBoxProcessing != NULL))
+          CLinearBuffer *bufferForBoxProcessing = this->bufferForBoxProcessingCollection->GetItem(0);
+          do
           {
-            unsigned int length = this->bufferForBoxProcessing->GetBufferOccupiedSpace();
-            if (length > 0)
+            continueProcessing = false;
+            CBox *box = new CBox();
+            if (box != NULL)
             {
-              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-              if (buffer != NULL)
+              unsigned int length = bufferForBoxProcessing->GetBufferOccupiedSpace();
+              if (length > 0)
               {
-                this->bufferForBoxProcessing->CopyFromBuffer(buffer, length, 0, 0);
-                if (box->Parse(buffer, length))
+                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+                if (buffer != NULL)
                 {
-                  unsigned int boxSize = (unsigned int)box->GetSize();
-                  if (length >= boxSize)
+                  bufferForBoxProcessing->CopyFromBuffer(buffer, length, 0, 0);
+                  if (box->Parse(buffer, length))
                   {
-                    if (wcscmp(box->GetType(), MEDIA_DATA_BOX_TYPE) == 0)
+                    unsigned int boxSize = (unsigned int)box->GetSize();
+                    if (length >= boxSize)
                     {
-                      CMediaDataBox *mediaBox = new CMediaDataBox();
-                      if (mediaBox != NULL)
+                      if (wcscmp(box->GetType(), MEDIA_DATA_BOX_TYPE) == 0)
                       {
-                        if (mediaBox->Parse(buffer, length))
+                        CMediaDataBox *mediaBox = new CMediaDataBox();
+                        if (mediaBox != NULL)
                         {
-                          unsigned int payloadSize = (unsigned int)mediaBox->GetPayloadSize();
-                          if (this->bufferForProcessing->GetBufferFreeSpace() < payloadSize)
+                          if (mediaBox->Parse(buffer, length))
                           {
-                            // we need to increase free buffer space to copy playload data
-                            if (this->bufferForProcessing->ResizeBuffer(this->bufferForProcessing->GetBufferSize() + payloadSize))
+                            unsigned int payloadSize = (unsigned int)mediaBox->GetPayloadSize();
+                            if (this->bufferForProcessing->GetBufferFreeSpace() < payloadSize)
+                            {
+                              // we need to increase free buffer space to copy playload data
+                              if (this->bufferForProcessing->ResizeBuffer(this->bufferForProcessing->GetBufferSize() + payloadSize))
+                              {
+                                this->bufferForProcessing->AddToBuffer(mediaBox->GetPayload(), payloadSize);
+                                bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
+                                continueProcessing = true;
+                              }
+                            }
+                            else
                             {
                               this->bufferForProcessing->AddToBuffer(mediaBox->GetPayload(), payloadSize);
-                              this->bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
+                              bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
                               continueProcessing = true;
                             }
                           }
-                          else
-                          {
-                            this->bufferForProcessing->AddToBuffer(mediaBox->GetPayload(), payloadSize);
-                            this->bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
-                            continueProcessing = true;
-                          }
                         }
+                        FREE_MEM_CLASS(mediaBox);
                       }
-                      FREE_MEM_CLASS(mediaBox);
-                    }
-                    else
-                    {
-                      this->bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
-                      continueProcessing = true;
+                      else
+                      {
+                        bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
+                        continueProcessing = true;
+                      }
                     }
                   }
                 }
+                FREE_MEM(buffer);
               }
-              FREE_MEM(buffer);
             }
+            FREE_MEM_CLASS(box);
+          } while (continueProcessing);
+
+          if (bufferForBoxProcessing->GetBufferOccupiedSpace() == 0)
+          {
+            // all data are processed, remove buffer from collection
+            this->bufferForBoxProcessingCollection->Remove(0);
           }
-          FREE_MEM_CLASS(box);
-        } while (continueProcessing);
+        }
       }
 
       if ((!this->supressData) && (this->bufferForProcessing != NULL))
@@ -416,31 +491,48 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
         if (this->lastSegmentFragment < (this->segmentsFragments->Count() - 1))
         {
           this->lastSegmentFragment++;
-
-          // we need to download for another url
-          FREE_MEM_CLASS(this->mainCurlInstance);
           HRESULT result = S_OK;
-          this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->segmentsFragments->GetItem(this->lastSegmentFragment)->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
-          CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
+
+          CLinearBuffer *buffer = new CLinearBuffer();
+          CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
 
           if (SUCCEEDED(result))
           {
-            this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-            this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Afhs::CurlReceiveData, this);
-            this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
-            this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
-            this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
-            this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-            this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+            buffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+            result = (this->bufferForBoxProcessingCollection->Add(buffer)) ? result : E_OUTOFMEMORY;
+          }
 
-            result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+          if (FAILED(result))
+          {
+            FREE_MEM_CLASS(buffer);
+          }
+
+          if (SUCCEEDED(result))
+          {
+            // we need to download for another url
+            FREE_MEM_CLASS(this->mainCurlInstance);
+            this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->segmentsFragments->GetItem(this->lastSegmentFragment)->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+            CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
 
             if (SUCCEEDED(result))
             {
-              // all parameters set
-              // start receiving data
+              this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+              this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Afhs::CurlReceiveData, this);
+              this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
+              this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
+              this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
+              this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
+              this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
 
-              result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+              result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+
+              if (SUCCEEDED(result))
+              {
+                // all parameters set
+                // start receiving data
+
+                result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+              }
             }
           }
         }
@@ -562,32 +654,39 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
     if (SUCCEEDED(result))
     {
       // we have bootstrap info box successfully parsed
-      // now choose from bootstrap info -> QualityEntryTable highest quality (if exists)
+      // now choose from bootstrap info -> QualityEntryTable highest quality (if exists) with segment run
       wchar_t *quality = NULL;
-      if (this->bootstrapInfoBox->GetQualityEntryTable()->Count() != 0)
-      {
-        CBootstrapInfoQualityEntry *bootstrapInfoQualityEntry = this->bootstrapInfoBox->GetQualityEntryTable()->GetItem(0);
-        quality = Duplicate(bootstrapInfoQualityEntry->GetQualityEntry());
-      }
-
-      // from segment run table choose segment with specifed quality (if exists) or segment with QualityEntryCount equal to zero
       CSegmentRunEntryCollection *segmentRunEntryTable = NULL;
-      for (unsigned int i = 0; i < this->bootstrapInfoBox->GetSegmentRunTable()->Count(); i++)
-      {
-        CSegmentRunTableBox *segmentRunTableBox = this->bootstrapInfoBox->GetSegmentRunTable()->GetItem(i);
 
-        if (quality != NULL)
+      for (unsigned int i = 0; ((i <= this->bootstrapInfoBox->GetQualityEntryTable()->Count()) && (segmentRunEntryTable == NULL)); i++)
+      {
+        FREE_MEM(quality);
+
+        // choose quality only for valid indexes, in another case is quality NULL
+        if (i != this->bootstrapInfoBox->GetQualityEntryTable()->Count())
         {
-          if (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(quality, false))
-          {
-            segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
-          }
+          CBootstrapInfoQualityEntry *bootstrapInfoQualityEntry = this->bootstrapInfoBox->GetQualityEntryTable()->GetItem(0);
+          quality = Duplicate(bootstrapInfoQualityEntry->GetQualityEntry());
         }
-        else
+
+        // from segment run table choose segment with specifed quality (if exists) or segment with QualityEntryCount equal to zero
+        for (unsigned int i = 0; i < this->bootstrapInfoBox->GetSegmentRunTable()->Count(); i++)
         {
-          if (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0)
+          CSegmentRunTableBox *segmentRunTableBox = this->bootstrapInfoBox->GetSegmentRunTable()->GetItem(i);
+
+          if (quality != NULL)
           {
-            segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
+            if (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(quality, false))
+            {
+              segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
+            }
+          }
+          else
+          {
+            if ((segmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0) || (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(L"", false)))
+            {
+              segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
+            }
           }
         }
       }
@@ -624,7 +723,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
         }
         else
         {
-          if (fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0)
+          if ((fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0) || (fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(L"", false)))
           {
             fragmentRunEntryTableTemp = fragmentRunTableBox->GetFragmentRunEntryTable();
             timeScale = fragmentRunTableBox->GetTimeScale();
@@ -732,12 +831,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
             if (SUCCEEDED(result))
             {
-              wchar_t *movieIdentifierUrl = FormatAbsoluteUrl(baseUrl, this->bootstrapInfoBox->GetMovieIdentifier());
-              CHECK_POINTER_HRESULT(result, movieIdentifierUrl, result, E_OUTOFMEMORY);
+              //wchar_t *movieIdentifierUrl = FormatAbsoluteUrl(baseUrl, this->bootstrapInfoBox->GetMovieIdentifier());
+              //CHECK_POINTER_HRESULT(result, movieIdentifierUrl, result, E_OUTOFMEMORY);
 
-              if (SUCCEEDED(movieIdentifierUrl))
+              if (SUCCEEDED(result))
               {
-                wchar_t *qualityUrl = FormatString(L"%s%s", movieIdentifierUrl, (quality == NULL) ? L"" : quality);
+                //wchar_t *qualityUrl = FormatString(L"%s%s", movieIdentifierUrl, (quality == NULL) ? L"" : quality);
+                wchar_t *qualityUrl = FormatAbsoluteUrl(baseUrl, (quality == NULL) ? L"" : quality);
                 CHECK_POINTER_HRESULT(result, qualityUrl, result, E_OUTOFMEMORY);
 
                 if (SUCCEEDED(result))
@@ -749,7 +849,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
                   if (SUCCEEDED(result))
                   {
-                    unsigned int lastFragment = 1;
+                    unsigned int fragmentRunEntryTableIndex  = 0;
 
                     for (unsigned int i = 0; i < segmentRunEntryTable->Count(); i++)
                     {
@@ -758,22 +858,25 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
                       for (unsigned int j = segmentRunEntry->GetFirstSegment(); j < lastSegment; j++)
                       {
-                        for (unsigned int k = 0; k < segmentRunEntry->GetFragmentsPerSegment(); k++)
+                        for (unsigned int k = 0; k < ((segmentRunEntry->GetFragmentsPerSegment() == UINT_MAX) ? fragmentRunEntryTable->Count() : segmentRunEntry->GetFragmentsPerSegment()); k++)
                         {
-                          wchar_t *url = FormatString(L"%sSeg%d-Frag%d", qualityUrl, j, lastFragment);
+                          // choose fragment and get its timestamp
+                          uint64_t timestamp = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragmentTimestamp();
+                          uint64_t firstFragment = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragment();
+
+                          if (fragmentRunEntryTableIndex > fragmentRunEntryTable->Count())
+                          {
+                            // adjust fragment timestamp
+                            timestamp += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count()) * fragmentRunEntryTable->GetItem(fragmentRunEntryTable->Count() - 1)->GetFragmentDuration();
+                            firstFragment += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count());
+                          }
+                          fragmentRunEntryTableIndex++;
+                          wchar_t *url = FormatString(L"%sSeg%d-Frag%d", qualityUrl, j, firstFragment);
                           CHECK_POINTER_HRESULT(result, url, result, E_OUTOFMEMORY);
 
                           if (SUCCEEDED(result))
                           {
-                            // choose fragment and get its timestamp
-                            uint64_t timestamp = fragmentRunEntryTable->GetItem(min(lastFragment - 1, fragmentRunEntryTable->Count() - 1))->GetFirstFragmentTimestamp();
-                            if (lastFragment >= fragmentRunEntryTable->Count())
-                            {
-                              // adjust fragment timestamp
-                              timestamp += (lastFragment - fragmentRunEntryTable->Count() + 1) * fragmentRunEntryTable->GetItem(fragmentRunEntryTable->Count() - 1)->GetFragmentDuration();
-                            }
-
-                            CSegmentFragment *segmentFragment = new CSegmentFragment(j, lastFragment++, url, timestamp * 1000 / timeScale);
+                            CSegmentFragment *segmentFragment = new CSegmentFragment(j, firstFragment, url, timestamp * 1000 / timeScale);
                             CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
 
                             if (SUCCEEDED(result))
@@ -794,7 +897,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
                 }
                 FREE_MEM(qualityUrl);
               }
-              FREE_MEM(movieIdentifierUrl);
+              //FREE_MEM(movieIdentifierUrl);
             }
             FREE_MEM(baseUrl);
           }
@@ -805,6 +908,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
       FREE_MEM(quality);
       FREE_MEM_CLASS(fragmentRunEntryTable);
+
+      result = (this->segmentsFragments->Count() > 0) ? result : E_FAIL;
 
       if (SUCCEEDED(result))
       {
@@ -817,20 +922,46 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
     }
   }
 
-  if (SUCCEEDED(result))
+  /*if (SUCCEEDED(result))
   {
-    this->bufferForBoxProcessing = new LinearBuffer();
+    this->bufferForBoxProcessing = new CLinearBuffer();
     CHECK_POINTER_HRESULT(result, this->bufferForBoxProcessing, result, E_OUTOFMEMORY);
 
     if (SUCCEEDED(result))
     {
       result = (this->bufferForBoxProcessing->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER)) ? result : E_FAIL;
     }
+  }*/
+
+  if (SUCCEEDED(result))
+  {
+    if (this->bufferForBoxProcessingCollection == NULL)
+    {
+      this->bufferForBoxProcessingCollection = new CLinearBufferCollection();
+    }
+    CHECK_POINTER_HRESULT(result, this->bufferForBoxProcessingCollection, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      CLinearBuffer *buffer = new CLinearBuffer();
+      CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
+      {
+        buffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+        result = (this->bufferForBoxProcessingCollection->Add(buffer)) ? result : E_OUTOFMEMORY;
+      }
+
+      if (FAILED(result))
+      {
+        FREE_MEM_CLASS(buffer);
+      }
+    }
   }
 
   if (SUCCEEDED(result))
   {
-    this->bufferForProcessing = new LinearBuffer();
+    this->bufferForProcessing = new CLinearBuffer();
     CHECK_POINTER_HRESULT(result, this->bufferForProcessing, result, E_OUTOFMEMORY);
 
     if (SUCCEEDED(result))
@@ -852,33 +983,34 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
           if (SUCCEEDED(result))
           {
-            // create FLV packet from metadata and add its content to buffer for processing
-            CFlvPacket *metadataFlvPacket = new CFlvPacket();
-            CHECK_POINTER_HRESULT(result, metadataFlvPacket, result, E_OUTOFMEMORY);
+            //// create FLV packet from metadata and add its content to buffer for processing
+            //CFlvPacket *metadataFlvPacket = new CFlvPacket();
+            //CHECK_POINTER_HRESULT(result, metadataFlvPacket, result, E_OUTOFMEMORY);
 
-            if (SUCCEEDED(result))
-            {
-              result = metadataFlvPacket->CreatePacket(FLV_PACKET_META, metadata, metadataLength, 0) ? result : E_FAIL;
+            //if (SUCCEEDED(result))
+            //{
+            //  //result = metadataFlvPacket->CreatePacket(FLV_PACKET_META, metadata, metadataLength, 0) ? result : E_FAIL;
+            //  result = metadataFlvPacket->CreatePacket(FLV_PACKET_META, metadata, metadataLength, this->segmentsFragments->GetItem(0)->GetFragmentTimestamp()) ? result : E_FAIL;
 
-              if (SUCCEEDED(result))
-              {
-                result = (this->bufferForProcessing->AddToBufferWithResize(metadataFlvPacket->GetData(), metadataFlvPacket->GetSize()) == metadataFlvPacket->GetSize()) ? result : E_FAIL;
+            //  if (SUCCEEDED(result))
+            //  {
+            //    result = (this->bufferForProcessing->AddToBufferWithResize(metadataFlvPacket->GetData(), metadataFlvPacket->GetSize()) == metadataFlvPacket->GetSize()) ? result : E_FAIL;
 
-                if (FAILED(result))
-                {
-                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot add FLV metadata packet to buffer");
-                }
-              }
-              else
-              {
-                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot create FLV metadata packet");
-              }
-            }
-            else
-            {
-              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for FLV metadata packet");
-            }
-            FREE_MEM_CLASS(metadataFlvPacket);
+            //    if (FAILED(result))
+            //    {
+            //      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot add FLV metadata packet to buffer");
+            //    }
+            //  }
+            //  else
+            //  {
+            //    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot create FLV metadata packet");
+            //  }
+            //}
+            //else
+            //{
+            //  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for FLV metadata packet");
+            //}
+            //FREE_MEM_CLASS(metadataFlvPacket);
           }
           else
           {
@@ -977,7 +1109,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StopReceivingData(void)
     FREE_MEM_CLASS(this->mainCurlInstance);
   }
 
-  FREE_MEM_CLASS(this->bufferForBoxProcessing);
+  FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
   FREE_MEM_CLASS(this->bufferForProcessing);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
@@ -1037,7 +1169,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
     this->StopReceivingData();
   }
 
-  FREE_MEM_CLASS(this->bufferForBoxProcessing);
+  FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
   FREE_MEM_CLASS(this->bufferForProcessing);
  
   this->streamLength = 0;
@@ -1194,7 +1326,7 @@ size_t CMPUrlSourceSplitter_Protocol_Afhs::CurlReceiveData(char *buffer, size_t 
   {
     if (bytesRead != 0)
     {
-      if (caller->bufferForBoxProcessing != NULL)
+      /*if (caller->bufferForBoxProcessing != NULL)
       {
         unsigned int bufferSize = caller->bufferForBoxProcessing->GetBufferSize();
         unsigned int freeSpace = caller->bufferForBoxProcessing->GetBufferFreeSpace();
@@ -1214,6 +1346,44 @@ size_t CMPUrlSourceSplitter_Protocol_Afhs::CurlReceiveData(char *buffer, size_t 
         if (freeSpace >= bytesRead)
         {
           caller->bufferForBoxProcessing->AddToBuffer((unsigned char *)buffer, bytesRead);
+
+          FILE *stream = fopen("D:\\received.dat", "ab");
+          if (stream != NULL)
+          {
+            fwrite(buffer, sizeof(char), bytesRead, stream);
+            fclose(stream);
+          }
+        }
+      }*/
+
+      if (caller->bufferForBoxProcessingCollection != NULL)
+      {
+        CLinearBuffer *linearBuffer = caller->bufferForBoxProcessingCollection->GetItem(caller->bufferForBoxProcessingCollection->Count() - 1);
+        if (linearBuffer != NULL)
+        {
+          unsigned int bufferSize = linearBuffer->GetBufferSize();
+          unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
+
+          if (freeSpace < bytesRead)
+          {
+            unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
+            caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
+            if (!linearBuffer->ResizeBuffer(bufferNewSize))
+            {
+              caller->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+            }
+
+            freeSpace = linearBuffer->GetBufferFreeSpace();
+          }
+
+          if (freeSpace >= bytesRead)
+          {
+            linearBuffer->AddToBuffer((unsigned char *)buffer, bytesRead);
+          }
+        }
+        else
+        {
+          bytesRead = 0;
         }
       }
     }

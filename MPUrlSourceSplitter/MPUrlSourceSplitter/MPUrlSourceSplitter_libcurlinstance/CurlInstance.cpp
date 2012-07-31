@@ -40,7 +40,7 @@ CCurlInstance::CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t 
   this->curlErrorMessage = NULL;
 
   this->SetWriteCallback(CCurlInstance::CurlReceiveDataCallback, this);
-  this->receivedDataBuffer = new LinearBuffer();
+  this->receivedDataBuffer = new CLinearBuffer();
 }
 
 CCurlInstance::~CCurlInstance(void)
@@ -362,7 +362,7 @@ const wchar_t *CCurlInstance::GetUrl(void)
   return this->url;
 }
 
-LinearBuffer *CCurlInstance::GetReceiveDataBuffer(void)
+CLinearBuffer *CCurlInstance::GetReceiveDataBuffer(void)
 {
   return this->receivedDataBuffer;
 }

@@ -26,7 +26,7 @@
 #include "MPUrlSourceSplitter_Protocol_Afhs_Exports.h"
 #include "Logger.h"
 #include "IProtocolPlugin.h"
-#include "LinearBuffer.h"
+#include "LinearBufferCollection.h"
 #include "HttpCurlInstance.h"
 #include "BootstrapInfoBox.h"
 #include "SegmentFragmentCollection.h"
@@ -34,8 +34,6 @@
 #include <curl/curl.h>
 
 #include <WinSock2.h>
-
-
 
 #define PROTOCOL_NAME                                                         L"AFHS"
 
@@ -193,10 +191,11 @@ protected:
   bool supressData;
 
   // buffer for processing box data before are send to further processing
-  LinearBuffer *bufferForBoxProcessing;
+  //CLinearBuffer *bufferForBoxProcessing;
+  CLinearBufferCollection *bufferForBoxProcessingCollection;
 
   // buffer for processing data before are send to filter
-  LinearBuffer *bufferForProcessing;
+  CLinearBuffer *bufferForProcessing;
 
   // holds first FLV packet timestamp for correction of video packet timestamps
   int firstTimestamp;

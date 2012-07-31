@@ -1321,7 +1321,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                     // finish request
                     caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u' complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_FALSE);
                     request->SetBufferLength(foundDataLength);
-                    request->Complete(S_FALSE);
+                    request->Complete(S_OK);
                   }
                 }
                 else if (foundDataLength == request->GetBufferLength())

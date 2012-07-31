@@ -24,7 +24,7 @@
 
 MMSContext::MMSContext()
 {
-  this->buffer = new LinearBuffer();
+  this->buffer = new CLinearBuffer();
   this->streams = new MMSStreamCollection();
   this->headerParsed = false;
   this->requestSequenceNumber = 1;
@@ -48,7 +48,7 @@ MMSContext::~MMSContext()
   FREE_MEM(this->asfHeader);
 }
 
-LinearBuffer *MMSContext::GetBuffer(void)
+CLinearBuffer *MMSContext::GetBuffer(void)
 {
   return this->buffer;
 }

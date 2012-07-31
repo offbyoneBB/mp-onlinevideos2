@@ -412,15 +412,15 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(const wchar_t *indent)
 
     // prepare finally human readable representation
     result = FormatString(L"%s\n" \
-      L"%sVersion: %d\n" \
+      L"%sVersion: %u\n" \
       L"%sFlags: 0x%06X\n" \
-      L"%sBootstrap info version: %d\n" \
-      L"%sProfile: %d\n" \
+      L"%sBootstrap info version: %u\n" \
+      L"%sProfile: %u\n" \
       L"%sLive: %s\n" \
       L"%sUpdate: %s\n" \
-      L"%sTime scale: %d\n" \
-      L"%sCurrent media time: %lld\n" \
-      L"%sSMPTE time code offset: %lld\n" \
+      L"%sTime scale: %u\n" \
+      L"%sCurrent media time: %llu\n" \
+      L"%sSMPTE time code offset: %llu\n" \
       L"%sMovie identifier: '%s'\n" \
       L"%sServer entry count: %d\n" \
       L"%s%s" \
