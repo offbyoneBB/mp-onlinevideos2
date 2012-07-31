@@ -1240,8 +1240,8 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                       LONG distanceToMoveLow = (LONG)(mediaPacket->GetStoreFilePosition() + mediaPacketDataStart);
                       LONG distanceToMoveHigh = (LONG)((mediaPacket->GetStoreFilePosition() + mediaPacketDataStart) >> 32);
                       LONG distanceToMoveHighResult = distanceToMoveHigh;
-                      DWORD result = SetFilePointer(hTempFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
-                      if (result == INVALID_SET_FILE_POINTER)
+                      DWORD setFileResult = SetFilePointer(hTempFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
+                      if (setFileResult == INVALID_SET_FILE_POINTER)
                       {
                         DWORD lastError = GetLastError();
                         if (lastError != NO_ERROR)
@@ -1319,10 +1319,9 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   {
                     // we are not receiving more data
                     // finish request
-                    caller->logger->Log(LOGGER_DATA, L"%s: %s: request '%u' complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_FALSE);
+                    caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u' complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_FALSE);
                     request->SetBufferLength(foundDataLength);
-                    // filters doesn't understand S_FALSE return code, so return S_OK
-                    request->Complete(S_OK);
+                    request->Complete(S_FALSE);
                   }
                 }
                 else if (foundDataLength == request->GetBufferLength())
@@ -1359,6 +1358,16 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                 caller->logger->Log(LOGGER_WARNING, L"%s: %s: failed to get current stream position: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, queryStreamProgressResult);
                 currentStreamPosition = -1;
               }
+            }
+          }
+
+          if ((packetIndex == UINT_MAX) && ((request->GetState() == CAsyncRequest::Waiting) || (request->GetState() == CAsyncRequest::WaitingIgnoreTimeout)))
+          {
+            if (caller->allDataReceived)
+            {
+              // if all data received then no more will come and we can fail
+              caller->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u' no more data available", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId());
+              request->Complete(E_FAIL);
             }
           }
 
@@ -2262,7 +2271,6 @@ int64_t CLAVInputPin::SeekToTime(int64_t time)
     this->parserHoster->SetSupressData(true);
     result = this->parserHoster->SeekToTime(time);
 
-    if (result >= 0)
     {
       // lock access to media packets
       CLockMutex mediaPacketLock(this->mediaPacketMutex, INFINITE);
@@ -2276,6 +2284,11 @@ int64_t CLAVInputPin::SeekToTime(int64_t time)
       }
       this->m_llBufferPosition = 0;
     }
+
+    // if correctly seeked than reset flag that all data are received
+    // in another case we don't received any other data
+    this->allDataReceived = (result < 0);
+
     // now we are ready to receive data
     // notify protocol that we can receive data
     this->parserHoster->SetSupressData(false);

@@ -229,3 +229,7 @@ wchar_t *CLogger::GetLogMessage(unsigned int level, const wchar_t *format, va_li
   return logRow;
 }
 
+void CLogger::SetAllowedLogVerbosity(unsigned int allowedLogVerbosity)
+{
+  this->allowedLogVerbosity = allowedLogVerbosity;
+}

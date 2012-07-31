@@ -162,3 +162,29 @@ CParameter *CParameterCollection::Clone(CParameter *item)
 {
   return item->Clone();
 }
+
+bool CParameterCollection::CopyParameter(const wchar_t *parameterName, bool invariant, const wchar_t *newParameterName)
+{
+  bool continueAdding = false;
+
+  if ((parameterName != NULL) && (newParameterName != NULL))
+  {
+    continueAdding = true;
+    if (this->Contains(parameterName, invariant))
+    {
+      CParameter *newParameter = new CParameter(newParameterName, this->GetValue(parameterName, invariant, L""));
+      continueAdding &= (newParameter != NULL);
+      if (continueAdding)
+      {
+        continueAdding = this->Add(newParameter);
+      }
+
+      if (!continueAdding)
+      {
+        FREE_MEM_CLASS(newParameter);
+      }
+    }
+  }
+
+  return continueAdding;
+}

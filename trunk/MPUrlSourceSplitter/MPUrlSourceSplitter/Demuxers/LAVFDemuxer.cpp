@@ -905,7 +905,7 @@ STDMETHODIMP CLAVFDemuxer::Seek(REFERENCE_TIME rTime)
   m_bVC1SeenTimestamp = FALSE;
   logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_SEEK_NAME);
 
-  return S_OK;
+  return (seeked) ? S_OK : E_FAIL;
 }
 
 STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
@@ -995,6 +995,8 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
       }
       logger->Log(LOGGER_VERBOSE, L"%s: %s: seeked to time: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, seekedTime);
     }
+
+    ff_read_frame_flush(this->m_avFormat);
 
     if (SUCCEEDED(result) && (!found))
     {

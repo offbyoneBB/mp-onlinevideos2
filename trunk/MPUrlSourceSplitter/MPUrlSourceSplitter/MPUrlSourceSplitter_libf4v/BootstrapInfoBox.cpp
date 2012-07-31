@@ -173,8 +173,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
             if ((!continueParsing) && (bootstrapInfoServerEntry != NULL))
             {
               // cleanup
-              delete bootstrapInfoServerEntry;
-              bootstrapInfoServerEntry = NULL;
+              FREE_MEM_CLASS(bootstrapInfoServerEntry);
             }
           }
 
@@ -214,8 +213,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
             if ((!continueParsing) && (bootstrapInfoQualityEntry != NULL))
             {
               // cleanup
-              delete bootstrapInfoQualityEntry;
-              bootstrapInfoQualityEntry = NULL;
+              FREE_MEM_CLASS(bootstrapInfoQualityEntry);
             }
           }
 
@@ -282,8 +280,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
           if ((!continueParsing) && (segmentRunTableBox != NULL))
           {
             // cleanup
-            delete segmentRunTableBox;
-            segmentRunTableBox = NULL;
+            FREE_MEM_CLASS(segmentRunTableBox);
           }
         }
       }
@@ -319,8 +316,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
           if ((!continueParsing) && (fragmentRunTableBox != NULL))
           {
             // cleanup
-            delete fragmentRunTableBox;
-            fragmentRunTableBox = NULL;
+            FREE_MEM_CLASS(fragmentRunTableBox);
           }
         }
       }

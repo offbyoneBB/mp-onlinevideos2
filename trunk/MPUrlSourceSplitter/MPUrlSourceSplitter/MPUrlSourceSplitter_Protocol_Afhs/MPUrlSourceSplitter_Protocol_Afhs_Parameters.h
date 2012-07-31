@@ -23,17 +23,21 @@
 #ifndef __MPURLSOURCESPLITTER_PROTOCOL_AFHS_PARAMETERS_DEFINED
 #define __MPURLSOURCESPLITTER_PROTOCOL_AFHS_PARAMETERS_DEFINED
 
-#define PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT                  L"AfhsReceiveDataTimeout"
-#define PARAMETER_NAME_AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS      L"AfhsOpenConnectionMaximumAttempts"
-#define PARAMETER_NAME_AFHS_REFERER                               L"AfhsReferer"
-#define PARAMETER_NAME_AFHS_USER_AGENT                            L"AfhsUserAgent"
-#define PARAMETER_NAME_AFHS_COOKIE                                L"AfhsCookie"
-#define PARAMETER_NAME_AFHS_VERSION                               L"AfhsVersion"
-#define PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH                 L"AfhsIgnoreContentLength"
+#define PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT                              L"AfhsReceiveDataTimeout"
+#define PARAMETER_NAME_AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS                  L"AfhsOpenConnectionMaximumAttempts"
+#define PARAMETER_NAME_AFHS_REFERER                                           L"AfhsReferer"
+#define PARAMETER_NAME_AFHS_USER_AGENT                                        L"AfhsUserAgent"
+#define PARAMETER_NAME_AFHS_COOKIE                                            L"AfhsCookie"
+#define PARAMETER_NAME_AFHS_VERSION                                           L"AfhsVersion"
+#define PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH                             L"AfhsIgnoreContentLength"
 
-#define PARAMETER_NAME_AFHS_BOOTSTRAP_INFO                        L"AfhsBootstrapInfo"
-#define PARAMETER_NAME_AFHS_BASE_URL                              L"AfhsBaseUrl"
-#define PARAMETER_NAME_AFHS_MEDIA_PART_URL                        L"AfhsMediaPartUrl"
-#define PARAMETER_NAME_AFHS_MEDIA_METADATA                        L"AfhsMediaMetadata"
+#define PARAMETER_NAME_AFHS_BOOTSTRAP_INFO                                    L"AfhsBootstrapInfo"
+#define PARAMETER_NAME_AFHS_BASE_URL                                          L"AfhsBaseUrl"
+#define PARAMETER_NAME_AFHS_MEDIA_PART_URL                                    L"AfhsMediaPartUrl"
+#define PARAMETER_NAME_AFHS_MEDIA_METADATA                                    L"AfhsMediaMetadata"
+
+// we should get data in twenty seconds
+#define AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
+#define AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT                         3
 
 #endif

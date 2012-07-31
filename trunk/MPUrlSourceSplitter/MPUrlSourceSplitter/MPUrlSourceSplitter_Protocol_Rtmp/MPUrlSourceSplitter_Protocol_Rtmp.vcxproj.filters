@@ -32,9 +32,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CurlInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtmp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -42,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Rtmp_Parameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtmpCurlInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -52,10 +52,10 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CurlInstance.cpp">
+    <ClCompile Include="MPUrlSourceSplitter_Protocol_Rtmp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MPUrlSourceSplitter_Protocol_Rtmp.cpp">
+    <ClCompile Include="RtmpCurlInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

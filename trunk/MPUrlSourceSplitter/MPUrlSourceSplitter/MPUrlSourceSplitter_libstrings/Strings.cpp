@@ -693,10 +693,11 @@ wchar_t *ConvertUtf8ToUnicode(const char *utf8String)
   wchar_t *result = NULL;
 
   int length = MultiByteToWideChar(CP_UTF8, 0, utf8String, -1, NULL, 0); // including null character
+
   result = ALLOC_MEM_SET(result, wchar_t, length, 0);
   if ((result != NULL) && (length > 1))
   {
-    if (MultiByteToWideChar(CP_UTF8, 0, utf8String, -1, result, length) != 0)
+    if (MultiByteToWideChar(CP_UTF8, 0, utf8String, -1, result, length) == 0)
     {
       // error occured
       FREE_MEM(result);
@@ -714,7 +715,7 @@ char *ConvertUnicodeToUtf8(const wchar_t *unicodeString)
   result = ALLOC_MEM_SET(result, char, length, 0);
   if ((result != NULL) && (length > 1))
   {
-    if (WideCharToMultiByte(CP_UTF8, 0, unicodeString, -1, result, length, NULL, NULL) != 0)
+    if (WideCharToMultiByte(CP_UTF8, 0, unicodeString, -1, result, length, NULL, NULL) == 0)
     {
       // error occured
       FREE_MEM(result);

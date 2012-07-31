@@ -104,6 +104,13 @@ public:
   // @param functionName : name of function calling LogCollection()
   void LogCollection(CLogger *logger, unsigned int loggerLevel, const wchar_t *protocolName, const wchar_t *functionName);
 
+  // copies parameter in collection
+  // @param parameterName : the name of parameter to copy
+  // @param invariant : specifies if parameter name shoud be find with invariant casing
+  // @param newParameterName : the name of new parameter to create
+  // @return : true if parameter created, false otherwise
+  bool CopyParameter(const wchar_t *parameterName, bool invariant, const wchar_t *newParameterName);
+
 protected:
   // compare two item keys
   // @param firstKey : the first item key to compare

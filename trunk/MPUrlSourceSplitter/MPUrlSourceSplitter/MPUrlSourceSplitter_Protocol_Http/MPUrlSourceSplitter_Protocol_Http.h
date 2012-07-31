@@ -27,22 +27,16 @@
 #include "Logger.h"
 #include "IProtocolPlugin.h"
 #include "LinearBuffer.h"
-#include "CurlInstance.h"
-
-#include <curl/curl.h>
+#include "HttpCurlInstance.h"
 
 #include <WinSock2.h>
 
-// we should get data in twenty seconds
-#define HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT                   20000
-#define HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
+#define PROTOCOL_NAME                                                         L"HTTP"
 
-#define PROTOCOL_NAME                                       L"HTTP"
+#define TOTAL_SUPPORTED_PROTOCOLS                                             1
+wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"HTTP" };
 
-#define TOTAL_SUPPORTED_PROTOCOLS                           1
-wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"HTTP" };
-
-#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                  1 * 1024 * 1024
+#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 
 // This class is exported from the CMPUrlSourceSplitter_Protocol_Http.dll
 class MPURLSOURCESPLITTER_PROTOCOL_HTTP_API CMPUrlSourceSplitter_Protocol_Http : public IProtocolPlugin
@@ -175,7 +169,7 @@ protected:
   HANDLE lockMutex;
 
   // main instance of CURL
-  CCurlInstance *mainCurlInstance;
+  CHttpCurlInstance *mainCurlInstance;
 
   // callback function for receiving data from libcurl
   static size_t CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata);

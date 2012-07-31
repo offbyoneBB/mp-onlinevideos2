@@ -26,11 +26,9 @@
 #include "MPUrlSourceSplitter_Protocol_Mms_Exports.h"
 #include "Logger.h"
 #include "IProtocolPlugin.h"
-#include "CurlInstance.h"
+#include "MmsCurlInstance.h"
 #include "MMSContext.h"
 #include "MMSChunk.h"
-
-#include <curl/curl.h>
 
 #include <WinSock2.h>
 
@@ -38,7 +36,6 @@
 #define USERAGENT                                                 L"User-Agent: NSPlayer/7.10.0.3059"
 // see Ref 2.2.1.4.33
 // the guid value can be changed to any valid value.
-//#define CLIENTGUID                                                L"Pragma: xClientGUID={0xbabac001-0xc1e6-0x23f8-0x9c450f8684b3f6b5}"
 #define CLIENTGUID_FORMAT                                         L"Pragma: xClientGUID=%s"
 
 
@@ -194,7 +191,7 @@ protected:
   HANDLE lockMutex;
 
   // main instance of CURL
-  CCurlInstance *mainCurlInstance;
+  CMmsCurlInstance *mainCurlInstance;
 
   // callback function for receiving data from libcurl
   static size_t CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata);

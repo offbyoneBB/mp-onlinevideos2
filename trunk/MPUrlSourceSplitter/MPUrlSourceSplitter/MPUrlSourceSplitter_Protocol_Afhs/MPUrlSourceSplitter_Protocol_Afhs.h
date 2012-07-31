@@ -27,7 +27,7 @@
 #include "Logger.h"
 #include "IProtocolPlugin.h"
 #include "LinearBuffer.h"
-#include "CurlInstance.h"
+#include "HttpCurlInstance.h"
 #include "BootstrapInfoBox.h"
 #include "SegmentFragmentCollection.h"
 
@@ -35,9 +35,7 @@
 
 #include <WinSock2.h>
 
-// we should get data in twenty seconds
-#define AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
-#define AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT                         3
+
 
 #define PROTOCOL_NAME                                                         L"AFHS"
 
@@ -180,7 +178,7 @@ protected:
   HANDLE lockMutex;
 
   // main instance of CURL
-  CCurlInstance *mainCurlInstance;
+  CHttpCurlInstance *mainCurlInstance;
 
   // callback function for receiving data from libcurl
   static size_t CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata);

@@ -20,51 +20,13 @@
 
 #pragma once
 
-#ifndef __CURLINSTANCE_RTMP_DEFINED
-#define __CURLINSTANCE_RTMP_DEFINED
+#ifndef __RTMP_CURL_INSTANCE_DEFINED
+#define __RTMP_CURL_INSTANCE_DEFINED
 
-#include "MPUrlSourceSplitter_Protocol_Rtmp_Exports.h"
-#include "Logger.h"
+#include "MPUrlSourceSplitter_Protocol_Rtmp_Parameters.h"
+#include "CurlInstance.h"
 
-#include <curl/curl.h>
 #include <librtmp/rtmp.h>
-
-#define METHOD_CREATE_CURL_WORKER_NAME                      L"CreateCurlWorker()"
-#define METHOD_DESTROY_CURL_WORKER_NAME                     L"DestroyCurlWorker()"
-#define METHOD_CURL_WORKER_NAME                             L"CurlWorker()"
-
-#define METHOD_CURL_ERROR_MESSAGE                           L"%s: %s: %s: %s"
-
-#define CURL_STATE_NONE                                     0
-#define CURL_STATE_CREATED                                  1
-#define CURL_STATE_INITIALIZED                              2
-#define CURL_STATE_RECEIVING_DATA                           3
-#define CURL_STATE_RECEIVED_ALL_DATA                        4
-
-// we should get data in twenty seconds
-#define RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT                   20000
-#define RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
-
-// define default values for RTMP protocol
-
-#define RTMP_APP_DEFAULT                                    NULL
-#define RTMP_TC_URL_DEFAULT                                 NULL
-#define RTMP_PAGE_URL_DEFAULT                               NULL
-#define RTMP_SWF_URL_DEFAULT                                NULL
-#define RTMP_FLASH_VER_DEFAULT                              NULL
-#define RTMP_AUTH_DEFAULT                                   NULL
-#define RTMP_ARBITRARY_DATA_DEFAULT                         NULL
-#define RTMP_PLAY_PATH_DEFAULT                              NULL
-#define RTMP_PLAYLIST_DEFAULT                               false
-#define RTMP_LIVE_DEFAULT                                   false
-#define RTMP_SUBSCRIBE_DEFAULT                              NULL
-#define RTMP_START_DEFAULT                                  INT64_MAX
-#define RTMP_STOP_DEFAULT                                   INT64_MAX
-#define RTMP_BUFFER_DEFAULT                                 30000
-#define RTMP_TOKEN_DEFAULT                                  NULL
-#define RTMP_JTV_DEFAULT                                    NULL
-#define RTMP_SWF_VERIFY_DEFAULT                             false
-#define RTMP_SWF_AGE_DEFAULT                                0
 
 // define tokens for librtmp
 
@@ -101,69 +63,22 @@
 // The escape encoding uses a backslash followed by two hexadecimal digits representing the ASCII value of the character.
 // E.g., spaces must be escaped as \20 and backslashes must be escaped as \5c.
 
-class MPURLSOURCESPLITTER_PROTOCOL_RTMP_API CCurlInstance
+class CRtmpCurlInstance :
+  public CCurlInstance
 {
 public:
-  // initializes a new instance of CCurlInstance class
+  // initializes a new instance of CRtmpCurlInstance class
   // @param logger : logger for logging purposes
   // @param url : the url to open
   // @param protocolName : the protocol name instantiating
-  CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName);
-  ~CCurlInstance(void);
+  CRtmpCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName);
 
-  // gets CURL handle
-  // @return : CURL handle
-  CURL *GetCurlHandle(void);
-
-  // gets CURL error code
-  // @return : CURL error code
-  CURLcode GetErrorCode(void);
-
-  // gets human readable error message
-  // @param errorCode : the error code returned by libcurl
-  // @return : human readable error message or NULL if error
-  wchar_t *GetCurlErrorMessage(CURLcode errorCode);
-
-  // report libcurl error into log file
-  // @param logLevel : the verbosity level of logged message
-  // @param protocolName : name of protocol calling ReportCurlErrorMessage()
-  // @param functionName : name of function calling ReportCurlErrorMessage()
-  // @param message : optional message to log (can be NULL)
-  // @param errorCode : the error code returned by libcurl
-  void ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLcode errorCode);
+  // destructor
+  virtual ~CRtmpCurlInstance(void);
 
   // initializes CURL instance
   // @return : true if successful, false otherwise
-  bool Initialize(void);
-
-  // gets receive data timeout
-  // @return : receive data timeout or UINT_MAX if not specified
-  unsigned int GetReceiveDataTimeout(void);
-
-  // sets receive data timeout
-  // @param timeout : receive data timeout (UINT_MAX if not specified)
-  void SetReceivedDataTimeout(unsigned int timeout);
-
-  // sets write callback for CURL
-  // @param writeCallback : callback method for writing data received by CURL
-  // @param writeData : user specified data supplied to write callback method
-  void SetWriteCallback(curl_write_callback writeCallback, void *writeData);
-
-  // starts receiving data
-  // @return : true if successful, false otherwise
-  bool StartReceivingData(void);
-
-  // gets CURL state
-  // @return : one of CURL_STATE values
-  unsigned int GetCurlState(void);
-
-  // gets if connection be closed without waiting
-  // @return : true if connection be closed without waiting, false otherwise
-  bool GetCloseWithoutWaiting(void);
-
-  // sets if connection be closed without waiting
-  // @param closeWithoutWaiting : true if connection be closed without waiting, false otherwise
-  void SetCloseWithoutWaiting(bool closeWithoutWaiting);
+  virtual bool Initialize(void);
 
   // RTMP protocol specific variables setters
   void SetRtmpApp(const wchar_t *rtmpApp);
@@ -185,23 +100,11 @@ public:
   void SetRtmpSwfVerify(bool rtmpSwfVerify);
   void SetRtmpSwfAge(unsigned int rtmpSwfAge);
 
-  // gets libcurl version
-  // caller is responsible for freeing memory
-  // @return : libcurl version or NULL if error
-  static wchar_t *GetCurlVersion(void);
-
-private:
-  CURL *curl;
-  CLogger *logger;
-
-  // libcurl worker thread
-  HANDLE hCurlWorkerThread;
-  DWORD dwCurlWorkerThreadId;
-  CURLcode curlWorkerErrorCode;
-  static DWORD WINAPI CurlWorker(LPVOID lpParam);
-
-  // the stream url
-  wchar_t *url;
+protected:
+  // called when CURL debug message arives
+  // @param type : CURL message type
+  // @param data : received CURL message data
+  virtual void CurlDebug(curl_infotype type, const wchar_t *data);
 
   // RTMP protocol specific variables
 
@@ -288,34 +191,8 @@ private:
   // the default value is RTMP_SWF_AGE_DEFAULT
   unsigned int rtmpSwfAge;
 
-  // the protocol implementation name (for logging purposes)
-  wchar_t *protocolName;
-
-  // creates libcurl worker
-  // @return : S_OK if successful
-  HRESULT CreateCurlWorker(void);
-
-  // destroys libcurl worker
-  // @return : S_OK if successful
-  HRESULT DestroyCurlWorker(void);
-
-  // write callback for CURL
-  curl_write_callback writeCallback;
-
-  // our write callback
-  static size_t CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata);
-
   // logging callback from librtmp
   static void RtmpLogCallback(struct RTMP *r, int level, const char *format, va_list vl);
-
-  // user specified data supplied to write callback
-  void *writeData;
-
-  // holds internal state
-  unsigned int state;
-
-  // specifies if current connection have to be closed without waiting
-  bool closeWithoutWaiting;
 
   // encodes string to be used by librtmp
   // @return : encoded string (null terminated) or NULL if error

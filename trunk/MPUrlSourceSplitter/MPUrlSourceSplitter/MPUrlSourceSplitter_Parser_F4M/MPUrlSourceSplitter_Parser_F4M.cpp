@@ -255,9 +255,9 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                             unsigned int widthValue = GetValueUnsignedInt(width, UINT_MAX);
                             unsigned int heightValue = GetValueUnsignedInt(height, UINT_MAX);
 
-                            // we should have url and bootstrapInfoId
+                            // we should have url
                             // we exclude piece of media with drmAdditionalHeaderId
-                            if ((url != NULL) && (bootstrapInfoId != NULL) && (drmAdditionalHeaderId == NULL))
+                            if ((url != NULL) && (drmAdditionalHeaderId == NULL))
                             {
                               CMedia *media = new CMedia(url, bitrateValue, widthValue, heightValue, drmAdditionalHeaderId, bootstrapInfoId, dvrInfoId, groupspec, multicastStreamName, metadataValue);
                               if (media != NULL)
@@ -267,7 +267,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                             }
                             else
                             {
-                              this->logger->Log(LOGGER_WARNING, L"%s: %s: piece of media doesn't have url ('%s'), bootstrap info ID ('%s') or has DRM additional header ID ('%s')", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, url, bootstrapInfoId, drmAdditionalHeaderId);
+                              this->logger->Log(LOGGER_WARNING, L"%s: %s: piece of media doesn't have url ('%s') or has DRM additional header ID ('%s')", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, url, drmAdditionalHeaderId);
                             }
 
                             FREE_MEM(url);
@@ -339,7 +339,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                         while (i < mediaCollection->Count())
                         {
                           CMedia *media = mediaCollection->GetItem(i);
-                          if (!bootstrapInfoCollection->Contains((wchar_t *)media->GetBootstrapInfoId(), false))
+                          if (!bootstrapInfoCollection->Contains(media->GetBootstrapInfoId(), false))
                           {
                             this->logger->Log(LOGGER_ERROR, L"%s: %s: no bootstrap info '%s' for media '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, media->GetBootstrapInfoId(), media->GetUrl());
                             mediaCollection->Remove(i);
@@ -455,63 +455,90 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                               CBootstrapInfo *bootstrapInfo = bootstrapInfoCollection->GetBootstrapInfo(mediaWithHighestBitstream->GetBootstrapInfoId(), false);
                               if (bootstrapInfo != NULL)
                               {
-                                // but before adding, decode bootstrap info (just for sure if it is valid)
-                                HRESULT decodeResult = bootstrapInfo->GetDecodeResult();
-                                continueParsing &= SUCCEEDED(decodeResult);
+                                continueParsing &= (bootstrapInfo->GetValue() != NULL);
+
+                                if ((!continueParsing) && (bootstrapInfo->GetUrl() != NULL))
+                                {
+                                  this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info doesn't have value but has url, we need to download bootstrap info from '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, bootstrapInfo->GetUrl());
+
+                                  continueParsing = bootstrapInfo->SetBaseUrl(baseUrl);
+                                  HRESULT downloadResult = bootstrapInfo->DownloadBootstrapInfo(
+                                    this->logger,
+                                    PARSER_IMPLEMENTATION_NAME,
+                                    this->connectionParameters->GetValueLong(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT),
+                                    this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL),
+                                    this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL),
+                                    this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL)
+                                    );
+
+                                  this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info download result: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, downloadResult);
+                                  if (SUCCEEDED(result))
+                                  {
+                                    this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info BASE64 encoded value: '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, bootstrapInfo->GetValue());
+                                  }
+                                  continueParsing &= SUCCEEDED(downloadResult);
+                                }
 
                                 if (continueParsing)
                                 {
-                                  CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox();
-                                  continueParsing &= (bootstrapInfoBox != NULL);
+                                  // but before adding, decode bootstrap info (just for sure if it is valid)
+                                  HRESULT decodeResult = bootstrapInfo->GetDecodeResult();
+                                  continueParsing &= SUCCEEDED(decodeResult);
 
                                   if (continueParsing)
                                   {
-                                    continueParsing &= bootstrapInfoBox->Parse(bootstrapInfo->GetDecodedValue(), bootstrapInfo->GetDecodedValueLength());
+                                    CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox();
+                                    continueParsing &= (bootstrapInfoBox != NULL);
 
                                     if (continueParsing)
                                     {
-                                      // create and add connection parameter
-                                      CParameter *bootstrapInfoParameter = new CParameter(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, bootstrapInfo->GetValue());
-                                      continueParsing &= (bootstrapInfoParameter != NULL);
+                                      continueParsing &= bootstrapInfoBox->Parse(bootstrapInfo->GetDecodedValue(), bootstrapInfo->GetDecodedValueLength());
 
                                       if (continueParsing)
                                       {
-                                        continueParsing &= this->connectionParameters->Add(bootstrapInfoParameter);
+                                        // create and add connection parameter
+                                        CParameter *bootstrapInfoParameter = new CParameter(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, bootstrapInfo->GetValue());
+                                        continueParsing &= (bootstrapInfoParameter != NULL);
 
-                                        if (!continueParsing)
+                                        if (continueParsing)
                                         {
-                                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add bootstrap info parameter into connection parameters");
+                                          continueParsing &= this->connectionParameters->Add(bootstrapInfoParameter);
+
+                                          if (!continueParsing)
+                                          {
+                                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add bootstrap info parameter into connection parameters");
+                                          }
+                                        }
+                                        else
+                                        {
+                                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create bootstrap info parameter");
+                                        }
+
+                                        if ((!continueParsing) && (bootstrapInfoParameter != NULL))
+                                        {
+                                          // cleanup, cannot add bootstrap info parameter into connection parameters
+                                          FREE_MEM_CLASS(bootstrapInfoParameter);
                                         }
                                       }
                                       else
                                       {
-                                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create bootstrap info parameter");
-                                      }
-
-                                      if ((!continueParsing) && (bootstrapInfoParameter != NULL))
-                                      {
-                                        // cleanup, cannot add bootstrap info parameter into connection parameters
-                                        FREE_MEM_CLASS(bootstrapInfoParameter);
+                                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot parse bootstrap info box");
                                       }
                                     }
                                     else
                                     {
-                                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot parse bootstrap info box");
+                                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"not enough memory for bootstrap info box");
+                                    }
+
+                                    if (bootstrapInfoBox != NULL)
+                                    {
+                                      FREE_MEM_CLASS(bootstrapInfoBox);
                                     }
                                   }
                                   else
                                   {
-                                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"not enough memory for bootstrap info box");
+                                    this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot decode bootstrap info BASE64 value, reason: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, decodeResult);
                                   }
-
-                                  if (bootstrapInfoBox != NULL)
-                                  {
-                                    FREE_MEM_CLASS(bootstrapInfoBox);
-                                  }
-                                }
-                                else
-                                {
-                                  this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot decode bootstrap info BASE64 value, reason: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, decodeResult);
                                 }
                               }
                               else
@@ -561,6 +588,14 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                                     bool invariant = true;
                                     this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
                                     continueParsing &= this->connectionParameters->Add(urlParameter);
+
+                                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_COOKIE, true, PARAMETER_NAME_AFHS_COOKIE);
+                                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH);
+                                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, PARAMETER_NAME_AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS);
+                                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT);
+                                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_REFERER, true, PARAMETER_NAME_AFHS_REFERER);
+                                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_USER_AGENT, true, PARAMETER_NAME_AFHS_USER_AGENT);
+                                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_VERSION, true, PARAMETER_NAME_AFHS_VERSION);
 
                                     if (continueParsing)
                                     {
@@ -674,14 +709,6 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, result);
   return result;
-}
-
-void CopyConnectionParameter(CParameterCollection *parameters, const wchar_t *parameterName, bool invariant, const wchar_t *newParameterName)
-{
-  if (parameters->Contains((wchar_t *)parameterName, invariant))
-  {
-
-  }
 }
 
 HRESULT CMPUrlSourceSplitter_Parser_F4M::SetConnectionParameters(const CParameterCollection *parameters)

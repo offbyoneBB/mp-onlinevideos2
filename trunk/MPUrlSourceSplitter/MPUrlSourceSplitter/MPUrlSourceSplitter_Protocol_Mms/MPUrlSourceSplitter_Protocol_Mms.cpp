@@ -423,34 +423,24 @@ void CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit)
           // all data received, we're not receiving data
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
 
-          // only in case that we started video and received some data
-          // in other case close and open connection again
-          if ((this->bytePosition != 0) && (this->streamTime == 0))
+          // whole stream downloaded
+          this->wholeStreamDownloaded = true;
+          FREE_MEM_CLASS(this->mainCurlInstance);
+
+          if (!this->seekingActive)
           {
-            // whole stream downloaded
-            this->wholeStreamDownloaded = true;
-
-            if (!this->seekingActive)
+            // we are not seeking, so we can set total length
+            if (!this->setLength)
             {
-              // we are not seeking, so we can set total length
-              if ((!this->setLength) && (this->lengthCanBeSet))
-              {
-                this->streamLength = this->bytePosition;
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                this->filter->SetTotalLength(this->streamLength, false);
-                this->setLength = true;
-              }
-
-              if (this->streamTime == 0)
-              {
-                // if stream time is zero than we receive data from beginning
-                // in that case we call EndOfStreamReached() method (required for ending download)
-
-                // notify filter the we reached end of stream
-                // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-                this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
-              }
+              this->streamLength = this->bytePosition;
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+              this->filter->SetTotalLength(this->streamLength, false);
+              this->setLength = true;
             }
+
+            // notify filter the we reached end of stream
+            // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+            this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
           }
         }
 
@@ -546,7 +536,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
     if (SUCCEEDED(result))
     {
-      this->mainCurlInstance = new CCurlInstance(this->logger, url, PROTOCOL_IMPLEMENTATION_NAME);
+      this->mainCurlInstance = new CMmsCurlInstance(this->logger, url, PROTOCOL_IMPLEMENTATION_NAME);
       result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
     }
 
@@ -554,7 +544,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
     {
       this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
       this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Mms::CurlReceiveData, this);
-      this->mainCurlInstance->SetStartStreamTime(this->streamTime);
       this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_REFERER, true, NULL));
       this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_USER_AGENT, true, NULL));
       this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_COOKIE, true, NULL));
@@ -670,7 +659,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
       if (SUCCEEDED(result))
       {
-        this->mainCurlInstance = new CCurlInstance(this->logger, url, PROTOCOL_IMPLEMENTATION_NAME);
+        this->mainCurlInstance = new CMmsCurlInstance(this->logger, url, PROTOCOL_IMPLEMENTATION_NAME);
         result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
       }
 
@@ -678,7 +667,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
       {
         this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
         this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Mms::CurlReceiveData, this);
-        this->mainCurlInstance->SetStartStreamTime(this->streamTime);
         this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_REFERER, true, NULL));
         this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_USER_AGENT, true, NULL));
         this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_COOKIE, true, NULL));
@@ -1467,3 +1455,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsHeaderData(MMSContext *mmsConte
   this->logger->Log(LOGGER_INFO, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_GET_MMS_HEADER_DATA_NAME, result);
   return result;
 }
+
+//if (type == CURLINFO_HEADER_OUT)
+//        {
+//          // we are just interested in headers comming in from peer
+//          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: sent HTTP header: '%s'", caller->protocolName, METHOD_CURL_DEBUG_CALLBACK, curlData);
+//        }
