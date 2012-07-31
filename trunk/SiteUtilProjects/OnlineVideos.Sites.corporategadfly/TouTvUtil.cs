@@ -189,7 +189,7 @@ namespace OnlineVideos.Sites
             // seasons and multiple episodes. use JSON to find the episodes
             //
             // For example, "Les arnaqueurs" in "Séries et téléromans"
-            if (videoList.Count == 0)
+            if (videoList.Count == 0 && data.StartsWith("[{"))
             {
                 Log.Debug(@"No videos found, attempting JSON parsing for {0}", url);
                 
