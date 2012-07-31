@@ -141,7 +141,7 @@ protected:
   CLogger *logger;
 
   // holds received data for filter
-  LinearBuffer *receivedData;
+  CLinearBuffer *receivedData;
 
   // source filter that created this instance
   IOutputStream *filter;

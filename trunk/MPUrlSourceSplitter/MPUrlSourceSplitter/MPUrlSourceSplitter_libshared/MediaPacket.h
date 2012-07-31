@@ -37,7 +37,7 @@ public:
 
   // gets linear buffer
   // @return : linear buffer or NULL if error or media packet is stored to file
-  LinearBuffer *GetBuffer();
+  CLinearBuffer *GetBuffer();
 
   // gets the stream position where this packet starts
   // @return : the stream position where this packet starts
@@ -81,7 +81,7 @@ public:
 
 protected:
   // internal linear buffer for media data
-  LinearBuffer *buffer;
+  CLinearBuffer *buffer;
 
   // start sample - byte position
   int64_t start;

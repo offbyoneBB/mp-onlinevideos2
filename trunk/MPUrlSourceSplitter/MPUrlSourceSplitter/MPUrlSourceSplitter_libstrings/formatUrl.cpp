@@ -111,19 +111,24 @@ wchar_t *FormatAbsoluteUrl(const wchar_t *baseUrl, const wchar_t *relativeUrl)
       unsigned int baseUrlLength = wcslen(baseUrl);
       unsigned int relativeUrlLength = wcslen(relativeUrl);
       // we need one extra character for '/' between base URL and relative URL
-      unsigned int length = baseUrlLength + relativeUrlLength + 1;
 
+      if (EndsWith(baseUrl, L'/'))
+      {
+        baseUrlLength--;
+      }
       if (wcsncmp(relativeUrl, L"/", 1) == 0)
       {
         // the first character is '/'
-        length--;
+        relativeUrlLength--;
         relativeUrl++;
       }
+
+      unsigned int length = baseUrlLength + relativeUrlLength + 1;
 
       result = ALLOC_MEM_SET(result, wchar_t, (length + 1), 0);
       if (result != NULL)
       {
-        wcscat_s(result, length + 1, baseUrl);
+        wcsncpy_s(result, length + 1, baseUrl, baseUrlLength);
         wcscat_s(result, length + 1, L"/");
         wcscat_s(result, length + 1, relativeUrl);
       }

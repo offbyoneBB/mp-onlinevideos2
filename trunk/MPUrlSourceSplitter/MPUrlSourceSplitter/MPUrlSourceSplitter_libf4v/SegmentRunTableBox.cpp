@@ -99,7 +99,17 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
 
             // create quality segment url modifier item in quality segment url modifier collection
             CQualitySegmentUrlModifier *qualitySegmentUrlModifierEntry = new CQualitySegmentUrlModifier(qualitySegmentUrlModifier);
-            continueParsing &= this->qualitySegmentUrlModifiers->Add(qualitySegmentUrlModifierEntry);
+            continueParsing &= (qualitySegmentUrlModifierEntry != NULL);
+
+            if (continueParsing)
+            {
+              continueParsing &= this->qualitySegmentUrlModifiers->Add(qualitySegmentUrlModifierEntry);
+            }
+
+            if (!continueParsing)
+            {
+              FREE_MEM_CLASS(qualitySegmentUrlModifierEntry);
+            }
           }
 
           FREE_MEM(qualitySegmentUrlModifier);
@@ -130,7 +140,17 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
             position += 4;
 
             CSegmentRunEntry *segment = new CSegmentRunEntry(firstSegment, fragmentsPerSegment);
-            continueParsing &= this->segmentRunEntryTable->Add(segment);
+            continueParsing &= (segment != NULL);
+
+            if (continueParsing)
+            {
+              continueParsing &= this->segmentRunEntryTable->Add(segment);
+            }
+
+            if (!continueParsing)
+            {
+              FREE_MEM_CLASS(segment);
+            }
           }
         }
       }
@@ -179,7 +199,7 @@ wchar_t *CSegmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
     {
       CSegmentRunEntry *segmentRunEntryEntry = this->segmentRunEntryTable->GetItem(i);
       wchar_t *tempSegmentRunEntry = FormatString(
-        L"%s%s%sFirst segment: %d, fragments per segment: %d",
+        L"%s%s%sFirst segment: %u, fragments per segment: %u",
         (i == 0) ? L"" : segmentRunEntry,
         (i == 0) ? L"" : L"\n",
         tempIndent,
@@ -195,7 +215,7 @@ wchar_t *CSegmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
     // prepare finally human readable representation
     result = FormatString( \
       L"%s\n" \
-      L"%sVersion: %d\n" \
+      L"%sVersion: %u\n" \
       L"%sFlags: 0x%06X\n" \
       L"%sQuality entry count: %d\n" \
       L"%s%s" \

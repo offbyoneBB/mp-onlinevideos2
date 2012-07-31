@@ -126,7 +126,7 @@ public:
 
   // gets receive data buffer
   // @return : receive data buffer or NULL if error
-  LinearBuffer *GetReceiveDataBuffer(void);
+  CLinearBuffer *GetReceiveDataBuffer(void);
 
 protected:
   CURL *curl;
@@ -171,7 +171,7 @@ protected:
   bool closeWithoutWaiting;
 
   // holds received data
-  LinearBuffer *receivedDataBuffer;
+  CLinearBuffer *receivedDataBuffer;
 
   // callback function for receiving data from libcurl
   // its default write callback when not specified other callback

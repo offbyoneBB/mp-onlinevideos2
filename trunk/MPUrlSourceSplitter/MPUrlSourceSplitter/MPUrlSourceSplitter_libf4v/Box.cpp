@@ -94,7 +94,7 @@ bool CBox::Parse(const unsigned char *buffer, unsigned int length)
 
     // set length of box
     // if size == 0 then box is the last one in and its contents extend to the end of the file
-    this->length = size;
+    this->length = (size == 0) ? length : size;
 
     // read box type
     unsigned char *type = ALLOC_MEM_SET(type, unsigned char, 5, 0);
@@ -170,7 +170,7 @@ wchar_t *CBox::GetParsedHumanReadable(const wchar_t *indent)
 
   if (this->IsBox())
   {
-    result = FormatString(L"%sType: '%s'\n%sSize: %lld\n%sExtended header: %s", indent, this->type, indent, this->length, indent, this->HasExtendedHeader() ? L"true" : L"false");
+    result = FormatString(L"%sType: '%s'\n%sSize: %llu\n%sExtended header: %s", indent, this->type, indent, this->length, indent, this->HasExtendedHeader() ? L"true" : L"false");
   }
 
   return result;

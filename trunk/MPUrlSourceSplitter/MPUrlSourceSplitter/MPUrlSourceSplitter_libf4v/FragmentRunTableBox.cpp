@@ -95,7 +95,17 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
 
             // create quality segment url modifier item in quality segment url modifier collection
             CQualitySegmentUrlModifier *qualitySegmentUrlModifierEntry = new CQualitySegmentUrlModifier(qualitySegmentUrlModifier);
-            continueParsing &= this->qualitySegmentUrlModifiers->Add(qualitySegmentUrlModifierEntry);
+            continueParsing &= (qualitySegmentUrlModifierEntry != NULL);
+
+            if (continueParsing)
+            {
+              continueParsing &= this->qualitySegmentUrlModifiers->Add(qualitySegmentUrlModifierEntry);
+            }
+
+            if (!continueParsing)
+            {
+              FREE_MEM_CLASS(qualitySegmentUrlModifierEntry);
+            }
           }
 
           FREE_MEM(qualitySegmentUrlModifier);
@@ -141,7 +151,17 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
             }
 
             CFragmentRunEntry *fragment = new CFragmentRunEntry(firstFragment, firstFragmentTimestamp, fragmentDuration, discontinuityIndicator);
-            continueParsing &= this->fragmentRunEntryTable->Add(fragment);
+            continueParsing &= (fragment != NULL);
+
+            if (continueParsing)
+            {
+              continueParsing &= this->fragmentRunEntryTable->Add(fragment);
+            }
+
+            if (!continueParsing)
+            {
+              FREE_MEM_CLASS(fragment);
+            }
           }
         }
       }
@@ -191,7 +211,7 @@ wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
       CFragmentRunEntry *fragmentRunEntryEntry = this->fragmentRunEntryTable->GetItem(i);
 
       wchar_t *tempFragmentRunEntry = FormatString(
-        L"%s%s%sFirst fragment: %d, first fragment timestamp: %lld, fragment duration: %d, discontinuity indicator: %d",
+        L"%s%s%sFirst fragment: %u, first fragment timestamp: %llu, fragment duration: %u, discontinuity indicator: %u",
         (i == 0) ? L"" : fragmentRunEntry,
         (i == 0) ? L"" : L"\n",
         tempIndent,
@@ -209,9 +229,9 @@ wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
     // prepare finally human readable representation
     result = FormatString( \
       L"%s\n" \
-      L"%sVersion: %d\n" \
+      L"%sVersion: %u\n" \
       L"%sFlags: 0x%06X\n"  \
-      L"%sTime scale: %d\n" \
+      L"%sTime scale: %u\n" \
       L"%sQuality entry count: %d\n" \
       L"%s%s" \
       L"%sFragment run entry count: %d" \

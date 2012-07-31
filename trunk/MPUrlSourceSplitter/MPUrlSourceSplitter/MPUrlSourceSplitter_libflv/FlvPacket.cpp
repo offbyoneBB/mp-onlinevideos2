@@ -118,7 +118,7 @@ bool CFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
   return result;
 }
 
-bool CFlvPacket::ParsePacket(LinearBuffer *buffer)
+bool CFlvPacket::ParsePacket(CLinearBuffer *buffer)
 {
   bool result = false;
   this->Clear();
@@ -191,10 +191,17 @@ unsigned int CFlvPacket::GetTimestamp(void)
 
   if (this->IsValid() && (this->type != FLV_PACKET_HEADER))
   {
-    result = ((unsigned char)this->packet[4]) << 8;
+    result = ((unsigned char)this->packet[7]) << 8;
+    result += ((unsigned char)this->packet[4]);
+    result <<= 8;
     result += ((unsigned char)this->packet[5]);
     result <<= 8;
     result += ((unsigned char)this->packet[6]);
+
+    /*result = ((unsigned char)this->packet[4]) << 8;
+    result += ((unsigned char)this->packet[5]);
+    result <<= 8;
+    result += ((unsigned char)this->packet[6]);*/
   }
 
   return result;
@@ -209,6 +216,14 @@ void CFlvPacket::SetTimestamp(unsigned int timestamp)
     this->packet[5] = (unsigned char)(timestamp & 0xFF);
     timestamp >>= 8;
     this->packet[4] = (unsigned char)(timestamp & 0xFF);
+    timestamp >>= 8;
+    this->packet[7] = (unsigned char)(timestamp & 0xFF);
+
+    /*this->packet[6] = (unsigned char)(timestamp & 0xFF);
+    timestamp >>= 8;
+    this->packet[5] = (unsigned char)(timestamp & 0xFF);
+    timestamp >>= 8;
+    this->packet[4] = (unsigned char)(timestamp & 0xFF);*/
   }
 }
 

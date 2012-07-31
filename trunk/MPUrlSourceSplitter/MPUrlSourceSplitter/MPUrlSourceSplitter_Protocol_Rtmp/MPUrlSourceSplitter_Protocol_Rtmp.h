@@ -189,7 +189,7 @@ protected:
   bool supressData;
 
   // buffer for processing data before are send to filter
-  LinearBuffer *bufferForProcessing;
+  CLinearBuffer *bufferForProcessing;
 
   // holds first FLV packet timestamp for correction of video packet timestamps
   int firstTimestamp;

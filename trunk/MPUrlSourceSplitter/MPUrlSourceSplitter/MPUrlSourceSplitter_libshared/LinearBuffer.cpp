@@ -22,13 +22,13 @@
 
 #include "LinearBuffer.h"
 
-LinearBuffer::LinearBuffer(void)
+CLinearBuffer::CLinearBuffer(void)
 {
   this->buffer = NULL;
   this->DeleteBuffer();
 }
 
-LinearBuffer::LinearBuffer(unsigned int size)
+CLinearBuffer::CLinearBuffer(unsigned int size)
 {
   this->buffer = NULL;
   this->DeleteBuffer();
@@ -37,14 +37,14 @@ LinearBuffer::LinearBuffer(unsigned int size)
   this->InitializeBuffer(size);
 }
 
-LinearBuffer::~LinearBuffer(void)
+CLinearBuffer::~CLinearBuffer(void)
 {
   this->DeleteBuffer();
 }
 
-LinearBuffer *LinearBuffer::Clone(void)
+CLinearBuffer *CLinearBuffer::Clone(void)
 {
-  LinearBuffer *clone = new LinearBuffer();
+  CLinearBuffer *clone = new CLinearBuffer();
   bool success = false;
 
   success = clone->InitializeBuffer(this->GetBufferSize());
@@ -64,7 +64,7 @@ LinearBuffer *LinearBuffer::Clone(void)
   return clone;
 }
 
-bool LinearBuffer::InitializeBuffer(unsigned int size)
+bool CLinearBuffer::InitializeBuffer(unsigned int size)
 {
   // remove current buffer (if any)
   this->DeleteBuffer();
@@ -80,7 +80,7 @@ bool LinearBuffer::InitializeBuffer(unsigned int size)
   return (this->buffer != NULL);
 }
 
-bool LinearBuffer::InitializeBuffer(unsigned int size, char value)
+bool CLinearBuffer::InitializeBuffer(unsigned int size, char value)
 {
   bool result = this->InitializeBuffer(size);
   if (result)
@@ -90,35 +90,35 @@ bool LinearBuffer::InitializeBuffer(unsigned int size, char value)
   return result;
 }
 
-void LinearBuffer::ClearBuffer(void)
+void CLinearBuffer::ClearBuffer(void)
 {
   this->dataStart = this->buffer;
   this->dataEnd = this->buffer;
 }
 
-void LinearBuffer::DeleteBuffer(void)
+void CLinearBuffer::DeleteBuffer(void)
 {
   FREE_MEM(this->buffer);
   this->bufferSize = 0;
   this->ClearBuffer();
 }
 
-unsigned int LinearBuffer::GetBufferSize()
+unsigned int CLinearBuffer::GetBufferSize()
 {
   return this->bufferSize;
 }
 
-unsigned int LinearBuffer::GetBufferFreeSpace()
+unsigned int CLinearBuffer::GetBufferFreeSpace()
 {
   return ((long)this->bufferSize - (long)this->dataEnd + (long)this->buffer);
 }
 
-unsigned int LinearBuffer::GetBufferOccupiedSpace(void)
+unsigned int CLinearBuffer::GetBufferOccupiedSpace(void)
 {
   return ((long)this->dataEnd - (long)this->dataStart);
 }
 
-void LinearBuffer::RemoveFromBuffer(unsigned int length)
+void CLinearBuffer::RemoveFromBuffer(unsigned int length)
 {
   // the length to remove from buffer cannot be greater than occupied space
   length = min(length, this->GetBufferOccupiedSpace());
@@ -137,7 +137,7 @@ void LinearBuffer::RemoveFromBuffer(unsigned int length)
   }
 }
 
-void LinearBuffer::RemoveFromBufferAndMove(unsigned int length)
+void CLinearBuffer::RemoveFromBufferAndMove(unsigned int length)
 {
   // the length to remove from buffer cannot be greater than occupied space
   length = min(length, this->GetBufferOccupiedSpace());
@@ -161,7 +161,7 @@ void LinearBuffer::RemoveFromBufferAndMove(unsigned int length)
   }
 }
 
-unsigned int LinearBuffer::AddToBuffer(const unsigned char *source, unsigned int length)
+unsigned int CLinearBuffer::AddToBuffer(const unsigned char *source, unsigned int length)
 {
   unsigned int returnValue = 0;
   if ((length > 0) && (length <= this->GetBufferFreeSpace()))
@@ -174,7 +174,7 @@ unsigned int LinearBuffer::AddToBuffer(const unsigned char *source, unsigned int
   return returnValue;
 }
 
-unsigned int LinearBuffer::AddToBufferWithResize(const unsigned char *source, unsigned int length)
+unsigned int CLinearBuffer::AddToBufferWithResize(const unsigned char *source, unsigned int length)
 {
   unsigned int returnValue = 0;
 
@@ -193,12 +193,12 @@ unsigned int LinearBuffer::AddToBufferWithResize(const unsigned char *source, un
   return returnValue;
 }
 
-unsigned int LinearBuffer::CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize)
+unsigned int CLinearBuffer::CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize)
 {
   return this->CopyFromBuffer(destination, length, packetSize, 0);
 }
 
-unsigned int LinearBuffer::CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize, unsigned int start)
+unsigned int CLinearBuffer::CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize, unsigned int start)
 {
   int copiedBytes = 0;
 
@@ -225,7 +225,7 @@ unsigned int LinearBuffer::CopyFromBuffer(unsigned char *destination, unsigned i
   return copiedBytes;
 }
 
-unsigned int LinearBuffer::GetFirstPosition(unsigned int start, char c)
+unsigned int CLinearBuffer::GetFirstPosition(unsigned int start, char c)
 {
   unsigned int result = UINT_MAX;
 
@@ -241,7 +241,7 @@ unsigned int LinearBuffer::GetFirstPosition(unsigned int start, char c)
   return result;
 }
 
-bool LinearBuffer::ResizeBuffer(unsigned int size)
+bool CLinearBuffer::ResizeBuffer(unsigned int size)
 {
   unsigned int occupiedSize = this->GetBufferOccupiedSpace();
   bool result = (size >= occupiedSize);

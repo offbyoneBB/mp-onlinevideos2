@@ -27,21 +27,21 @@
 
 // represents linear buffer
 // this class is not thread safe !!!
-class LinearBuffer
+class CLinearBuffer
 {
 public:
   // create linear buffer
-  LinearBuffer(void);
+  CLinearBuffer(void);
 
   // create linear buffer with specified size
-  LinearBuffer(unsigned int size);
+  CLinearBuffer(unsigned int size);
 
   // destructor
-  ~LinearBuffer(void);
+  ~CLinearBuffer(void);
 
   // deeply clones current instance of linear buffer
   // @return : deep clone of current instance or NULL if error
-  LinearBuffer *Clone(void);
+  CLinearBuffer *Clone(void);
 
   // get free space in buffer
   // @return : free space in buffer

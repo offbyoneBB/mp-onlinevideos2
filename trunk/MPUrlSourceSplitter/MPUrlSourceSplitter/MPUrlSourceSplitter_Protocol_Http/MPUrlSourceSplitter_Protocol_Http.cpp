@@ -349,7 +349,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(const CParameterC
 
   if (SUCCEEDED(result))
   {
-    this->receivedData = new LinearBuffer();
+    this->receivedData = new CLinearBuffer();
     result = (this->receivedData == NULL) ? E_POINTER : result;
 
     if (SUCCEEDED(result))

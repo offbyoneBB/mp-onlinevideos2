@@ -162,7 +162,7 @@ public:
 
   // gets linear buffer
   // @return : reference to linear buffer or NULL if error
-  LinearBuffer *GetBuffer(void);
+  CLinearBuffer *GetBuffer(void);
 
   // gets MMS stream collection
   // @return : reference to MMS stream collection or NULL if error
@@ -228,7 +228,7 @@ public:
 
 protected:
   // buffer for ASF header
-  LinearBuffer *buffer;
+  CLinearBuffer *buffer;
 
   // specifies if ASF header is parsed
   bool headerParsed;

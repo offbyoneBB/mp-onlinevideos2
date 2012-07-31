@@ -397,7 +397,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StartReceivingData(const CParameterC
 
   if (SUCCEEDED(result) && (this->bufferForProcessing == NULL))
   {
-    this->bufferForProcessing = new LinearBuffer();
+    this->bufferForProcessing = new CLinearBuffer();
     result = (this->bufferForProcessing != NULL) ? S_OK : E_OUTOFMEMORY;
 
     if (SUCCEEDED(result))

@@ -75,7 +75,7 @@ public:
   // parses buffer for FLV packet
   // @param buffer : linear buffer to parse
   // @return : true if FLV packet found, false otherwise
-  bool ParsePacket(LinearBuffer *buffer);
+  bool ParsePacket(CLinearBuffer *buffer);
 
   // parses buffer for FLV packet
   // @param buffer : buffer to parse
