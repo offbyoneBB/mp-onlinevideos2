@@ -122,6 +122,7 @@ void MMSContext::SetTimeout(unsigned int timeout)
    if (this->InitializeAsfHeader(length))
    {
      memcpy(this->asfHeader, asfHeader, length);
+     result = true;
    }
 
    return result;

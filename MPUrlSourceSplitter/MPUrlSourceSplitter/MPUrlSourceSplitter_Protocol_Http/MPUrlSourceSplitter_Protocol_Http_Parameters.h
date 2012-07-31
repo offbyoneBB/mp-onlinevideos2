@@ -31,4 +31,8 @@
 #define PARAMETER_NAME_HTTP_VERSION                               L"HttpVersion"
 #define PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH                 L"HttpIgnoreContentLength"
 
+// we should get data in twenty seconds
+#define HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT                         20000
+#define HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT             3
+
 #endif

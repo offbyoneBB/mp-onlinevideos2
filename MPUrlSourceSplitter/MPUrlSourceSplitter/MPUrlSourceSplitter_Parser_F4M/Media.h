@@ -30,9 +30,9 @@ class MPURLSOURCESPLITTER_PARSER_F4M_API CMedia
 public:
   // constructor
   // create instance of CBootstrapInfo class
-  CMedia(wchar_t *url, unsigned int bitrate, unsigned int width, unsigned int height,
-    wchar_t *drmAdditionalHeaderId, wchar_t *bootstrapInfoId, wchar_t *dvrInfoId,
-    wchar_t *groupspec, wchar_t *multicastStreamName, wchar_t *metadata);
+  CMedia(const wchar_t *url, unsigned int bitrate, unsigned int width, unsigned int height,
+    const wchar_t *drmAdditionalHeaderId, const wchar_t *bootstrapInfoId, const wchar_t *dvrInfoId,
+    const wchar_t *groupspec, const wchar_t *multicastStreamName, const wchar_t *metadata);
 
   // destructor
   ~CMedia(void);

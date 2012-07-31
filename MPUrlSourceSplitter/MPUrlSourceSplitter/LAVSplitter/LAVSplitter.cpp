@@ -669,7 +669,7 @@ STDMETHODIMP CLAVSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
 // Get the currently loaded file
 STDMETHODIMP CLAVSplitter::GetCurFile(LPOLESTR *ppszFileName, AM_MEDIA_TYPE *pmt)
 {
-  return (m_pInput == NULL) ? E_NOT_VALID_STATE : m_pInput->GetCurFile(ppszFileName, pmt);
+  return (this->m_pInput == NULL) ? E_NOT_VALID_STATE : m_pInput->GetCurFile(ppszFileName, pmt);
 }
 
 STDMETHODIMP CLAVSplitter::InitDemuxer()
@@ -905,16 +905,12 @@ HRESULT CLAVSplitter::DemuxNextPacket()
 
 HRESULT CLAVSplitter::DeliverPacket(Packet *pPacket)
 {
-  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, L"DeliverPacket()");
-
   HRESULT hr = S_FALSE;
 
   if (pPacket->dwFlags & LAV_PACKET_FORCED_SUBTITLE)
     pPacket->StreamId = FORCED_SUBTITLE_PID;
 
   CLAVOutputPin* pPin = GetOutputPin(pPacket->StreamId, TRUE);
-
-  this->logger->Log(LOGGER_DATA, METHOD_MESSAGE_FORMAT, MODULE_NAME, L"DeliverPacket()", L"after GetOutputPin()");
 
   if(!pPin || !pPin->IsConnected()) {
     delete pPacket;
@@ -1164,6 +1160,7 @@ STDMETHODIMP CLAVSplitter::SetPositionsInternal(void *caller, LONGLONG* pCurrent
 
   if (result == S_FALSE)
   {
+    result = S_OK;
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: performing seek to %I64d", MODULE_NAME, METHOD_SET_POSITIONS_INTERNAL_NAME, this->m_pInput->GetNewStart());
 
     if (ThreadExists())

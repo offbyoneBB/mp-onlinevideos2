@@ -25,6 +25,8 @@
 
 #include "MPUrlSourceSplitter_Parser_F4M_Exports.h"
 
+#include "Logger.h"
+
 class MPURLSOURCESPLITTER_PARSER_F4M_API CBootstrapInfo
 {
 public:
@@ -34,7 +36,7 @@ public:
   // @param profile : the profile name of bootstrap info
   // @param url : the URL of bootstrap info (have to be NULL if value specified)
   // @param value : the BASE64 encoded value (have to be NULL if url specified)
-  CBootstrapInfo(wchar_t *id, wchar_t *profile, wchar_t *url, wchar_t *value);
+  CBootstrapInfo(const wchar_t *id, const wchar_t *profile, const wchar_t *url, const wchar_t *value);
 
   // destructor
   ~CBootstrapInfo(void);
@@ -79,6 +81,25 @@ public:
   // @return : decoded value length, UINT_MAX if error
   unsigned int GetDecodedValueLength(void);
 
+  // sets bootstrap info base URL
+  // @param baseUrl : bootstrap info base URL to set
+  // @return : true if set, false otherwise
+  bool SetBaseUrl(const wchar_t *baseUrl);
+
+  // gets bootstrap info base URL
+  // @return : bootstrap info base URL
+  const wchar_t *GetBaseUrl(void);
+
+  // downloads bootstrap info
+  // @param : logger for logging purposes
+  // @param protocolName : the protocol name instantiating
+  // @param receivedDataTimeout : timeout (ms) for HTTP request
+  // @param referer : referer for HTTP request
+  // @param userAgent : user agent for HTTP request
+  // @param cookie : cookie for HTTP request
+  // @return : S_OK if successfully downloaded, error code otherwise
+  HRESULT DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int receiveDataTimeout, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie);
+
 private:
   // stores bootstrap info ID
   wchar_t *id;
@@ -94,7 +115,8 @@ private:
   unsigned char *decodedValue;
   // stores length of decoded value
   unsigned int decodedLength;
+  // stores base url for bootstrap info
+  wchar_t *baseUrl;
 };
 
 #endif
-

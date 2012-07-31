@@ -23,16 +23,16 @@
 #include "Media.h"
 #include "base64.h"
 
-CMedia::CMedia(wchar_t *url, unsigned int bitrate, unsigned int width, unsigned int height,
-    wchar_t *drmAdditionalHeaderId, wchar_t *bootstrapInfoId, wchar_t *dvrInfoId,
-    wchar_t *groupspec, wchar_t *multicastStreamName, wchar_t *metadata)
+CMedia::CMedia(const wchar_t *url, unsigned int bitrate, unsigned int width, unsigned int height,
+    const wchar_t *drmAdditionalHeaderId, const wchar_t *bootstrapInfoId, const wchar_t *dvrInfoId,
+    const wchar_t *groupspec, const wchar_t *multicastStreamName, const wchar_t *metadata)
 {
   this->url = Duplicate(url);
   this->bitrate = bitrate;
   this->width = width;
   this->height = height;
   this->drmAdditionalHeaderId = Duplicate(drmAdditionalHeaderId);
-  this->bootstrapInfoId = Duplicate(bootstrapInfoId);
+  this->bootstrapInfoId = Duplicate((bootstrapInfoId == NULL) ? L"" : bootstrapInfoId);
   this->dvrInfoId = Duplicate(dvrInfoId);
   this->groupspec = Duplicate(groupspec);
   this->multicastStreamName = Duplicate(multicastStreamName);

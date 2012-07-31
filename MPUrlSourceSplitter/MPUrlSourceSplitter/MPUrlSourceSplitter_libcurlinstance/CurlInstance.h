@@ -20,25 +20,21 @@
 
 #pragma once
 
-#ifndef __CURLINSTANCE_AFHS_DEFINED
-#define __CURLINSTANCE_AFHS_DEFINED
+#ifndef __CURL_INSTANCE_DEFINED
+#define __CURL_INSTANCE_DEFINED
 
-#include "MPUrlSourceSplitter_Protocol_Afhs_Exports.h"
 #include "Logger.h"
+#include "LinearBuffer.h"
 
 #include <curl/curl.h>
-
-#define HTTP_VERSION_NONE                                                     0
-#define HTTP_VERSION_FORCE_HTTP10                                             1
-#define HTTP_VERSION_FORCE_HTTP11                                             2
-
-#define HTTP_VERSION_DEFAULT                                                  HTTP_VERSION_NONE
-#define HTTP_IGNORE_CONTENT_LENGTH_DEFAULT                                    false
 
 #define METHOD_CREATE_CURL_WORKER_NAME                                        L"CreateCurlWorker()"
 #define METHOD_DESTROY_CURL_WORKER_NAME                                       L"DestroyCurlWorker()"
 #define METHOD_CURL_WORKER_NAME                                               L"CurlWorker()"
 #define METHOD_CURL_DEBUG_CALLBACK                                            L"CurlDebugCallback()"
+#define METHOD_INITIALIZE_NAME                                                L"Initialize()"
+#define METHOD_CURL_DEBUG_NAME                                                L"CurlDebug()"
+#define METHOD_CURL_RECEIVE_DATA_NAME                                         L"CurlReceiveData()"
 
 #define METHOD_CURL_ERROR_MESSAGE                                             L"%s: %s: %s: %s"
 
@@ -48,7 +44,7 @@
 #define CURL_STATE_RECEIVING_DATA                                             3
 #define CURL_STATE_RECEIVED_ALL_DATA                                          4
 
-class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CCurlInstance
+class CCurlInstance
 {
 public:
   // initializes a new instance of CCurlInstance class
@@ -56,20 +52,22 @@ public:
   // @param url : the url to open
   // @param protocolName : the protocol name instantiating
   CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName);
-  ~CCurlInstance(void);
+
+  // destructor
+  virtual ~CCurlInstance(void);
 
   // gets CURL handle
   // @return : CURL handle
-  CURL *GetCurlHandle(void);
+  virtual CURL *GetCurlHandle(void);
 
   // gets CURL error code
   // @return : CURL error code
-  CURLcode GetErrorCode(void);
+  virtual CURLcode GetErrorCode(void);
 
   // gets human readable error message
   // @param errorCode : the error code returned by libcurl
   // @return : human readable error message or NULL if error
-  wchar_t *GetCurlErrorMessage(CURLcode errorCode);
+  const wchar_t *GetCurlErrorMessage(CURLcode errorCode);
 
   // report libcurl error into log file
   // @param logLevel : the verbosity level of logged message
@@ -77,65 +75,45 @@ public:
   // @param functionName : name of function calling ReportCurlErrorMessage()
   // @param message : optional message to log (can be NULL)
   // @param errorCode : the error code returned by libcurl
-  void ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLcode errorCode);
+  virtual void ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLcode errorCode);
 
   // initializes CURL instance
   // @return : true if successful, false otherwise
-  bool Initialize(void);
+  virtual bool Initialize(void);
 
   // gets receive data timeout
   // @return : receive data timeout or UINT_MAX if not specified
-  unsigned int GetReceiveDataTimeout(void);
+  virtual unsigned int GetReceiveDataTimeout(void);
 
   // sets receive data timeout
   // @param timeout : receive data timeout (UINT_MAX if not specified)
-  void SetReceivedDataTimeout(unsigned int timeout);
+  virtual void SetReceivedDataTimeout(unsigned int timeout);
 
   // sets write callback for CURL
   // @param writeCallback : callback method for writing data received by CURL
   // @param writeData : user specified data supplied to write callback method
-  void SetWriteCallback(curl_write_callback writeCallback, void *writeData);
+  virtual void SetWriteCallback(curl_write_callback writeCallback, void *writeData);
 
   // starts receiving data
   // @return : true if successful, false otherwise
-  bool StartReceivingData(void);
+  virtual bool StartReceivingData(void);
 
   // gets response code
   // @param : reference to variable which holds response code
   // @return : CURLE_OK if successful, other means error
-  CURLcode GetResponseCode(long *responseCode);
+  virtual CURLcode GetResponseCode(long *responseCode);
 
   // gets if connection be closed without waiting
   // @return : true if connection be closed without waiting, false otherwise
-  bool GetCloseWithoutWaiting(void);
+  virtual bool GetCloseWithoutWaiting(void);
 
   // gets CURL state
   // @return : one of CURL_STATE values
-  unsigned int GetCurlState(void);
-
-  // sets referer
-  // @param referer : the referer to set
-  void SetReferer(const wchar_t *referer);
-
-  // sets user agent
-  // @param user agent : the user agent to set
-  void SetUserAgent(const wchar_t *userAgent);
-
-  // sets cookie
-  // @param cookie : the cookie to set
-  void SetCookie(const wchar_t *cookie);
-
-  // sets HTTP version
-  // @param version : the HTTP version to set
-  void SetHttpVersion(int version);
-
-  // sets ignore content length
-  // @param ignoreContentLength : the ignore content length to set
-  void SetIgnoreContentLength(bool ignoreContentLength);
+  virtual unsigned int GetCurlState(void);
 
   // sets if connection be closed without waiting
   // @param closeWithoutWaiting : true if connection be closed without waiting, false otherwise
-  void SetCloseWithoutWaiting(bool closeWithoutWaiting);
+  virtual void SetCloseWithoutWaiting(bool closeWithoutWaiting);
 
   // gets libcurl version
   // caller is responsible for freeing memory
@@ -144,9 +122,13 @@ public:
 
   // gets url
   // @return : url
-  const wchar_t *GetUrl(void);
+  virtual const wchar_t *GetUrl(void);
 
-private:
+  // gets receive data buffer
+  // @return : receive data buffer or NULL if error
+  LinearBuffer *GetReceiveDataBuffer(void);
+
+protected:
   CURL *curl;
   CLogger *logger;
 
@@ -162,20 +144,8 @@ private:
   // the protocol implementation name (for logging purposes)
   wchar_t *protocolName;
 
-  // referer header in HTTP request
-  wchar_t *referer;
-
-  // user agent header in HTTP request
-  wchar_t *userAgent;
-
-  // cookie header in HTTP request
-  wchar_t *cookie;
-
-  // the HTTP protocol version
-  int version;
-
-  // specifies if CURL have to ignore content length
-  bool ignoreContentLength;
+  // holds CURL error message
+  wchar_t *curlErrorMessage;
 
   // creates libcurl worker
   // @return : S_OK if successful
@@ -200,6 +170,13 @@ private:
   // specifies if current connection have to be closed without waiting
   bool closeWithoutWaiting;
 
+  // holds received data
+  LinearBuffer *receivedDataBuffer;
+
+  // callback function for receiving data from libcurl
+  // its default write callback when not specified other callback
+  static size_t CurlReceiveDataCallback(char *buffer, size_t size, size_t nmemb, void *userdata);
+
   // debug callback of libcurl
   // @param handle : the handle / transfer this concerns
   // @param type : what kind of data
@@ -207,6 +184,17 @@ private:
   // @param size : size of the data pointed to
   // @param userptr : user defined pointer
   static int CurlDebugCallback(CURL *handle, curl_infotype type, char *data, size_t size, void *userptr);
+
+  // called when CURL debug message arives
+  // @param type : CURL message type
+  // @param data : received CURL message data
+  virtual void CurlDebug(curl_infotype type, const wchar_t *data);
+
+  // process received data
+  // @param buffer : buffer with received data
+  // @param length : the length of buffer
+  // @return : the length of processed data (lower value than length means error)
+  virtual size_t CurlReceiveData(const unsigned char *buffer, size_t length);
 };
 
 #endif

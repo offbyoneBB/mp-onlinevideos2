@@ -27,19 +27,17 @@
 #include "Logger.h"
 #include "IProtocolPlugin.h"
 #include "LinearBuffer.h"
-#include "CurlInstance.h"
-
-#include <curl/curl.h>
+#include "RtmpCurlInstance.h"
 
 #include <WinSock2.h>
 
-#define PROTOCOL_NAME                                             L"RTMP"
+#define PROTOCOL_NAME                                                         L"RTMP"
 
-#define TOTAL_SUPPORTED_PROTOCOLS                                 6
-wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"RTMP", L"RTMPT", L"RTMPE", L"RTMPTE", L"RTMPS", L"RTMPTS" };
+#define TOTAL_SUPPORTED_PROTOCOLS                                             6
+wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"RTMP", L"RTMPT", L"RTMPE", L"RTMPTE", L"RTMPS", L"RTMPTS" };
 
-#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                        1 * 1024 * 1024
-#define BUFFER_FOR_PROCESSING_SIZE_DEFAULT                        256 * 1024
+#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
+#define BUFFER_FOR_PROCESSING_SIZE_DEFAULT                                    256 * 1024
 
 // This class is exported from the CMPUrlSourceSplitter_Protocol_Rtmp.dll
 class MPURLSOURCESPLITTER_PROTOCOL_RTMP_API CMPUrlSourceSplitter_Protocol_Rtmp : public IProtocolPlugin
@@ -176,7 +174,7 @@ protected:
   HANDLE lockMutex;
 
   // main instance of CURL
-  CCurlInstance *mainCurlInstance;
+  CRtmpCurlInstance *mainCurlInstance;
 
   // callback function for receiving data from libcurl
   static size_t CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata);

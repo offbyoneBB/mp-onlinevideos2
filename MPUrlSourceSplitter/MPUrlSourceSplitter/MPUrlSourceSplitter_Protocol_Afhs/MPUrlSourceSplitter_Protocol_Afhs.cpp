@@ -408,74 +408,63 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
         }
       }
 
-      if (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA)
+      if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
       {
         // all data received, we're not receiving data
         this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
         
-        if (this->lastSegmentFragment < this->segmentsFragments->Count())
+        if (this->lastSegmentFragment < (this->segmentsFragments->Count() - 1))
         {
           this->lastSegmentFragment++;
-          if (this->lastSegmentFragment < this->segmentsFragments->Count())
+
+          // we need to download for another url
+          FREE_MEM_CLASS(this->mainCurlInstance);
+          HRESULT result = S_OK;
+          this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->segmentsFragments->GetItem(this->lastSegmentFragment)->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+          CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
+
+          if (SUCCEEDED(result))
           {
-            // we need to download for another url
-            FREE_MEM_CLASS(this->mainCurlInstance);
-            HRESULT result = S_OK;
-            this->mainCurlInstance = new CCurlInstance(this->logger, this->segmentsFragments->GetItem(this->lastSegmentFragment)->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
-            CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
+            this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+            this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Afhs::CurlReceiveData, this);
+            this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
+            this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
+            this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
+            this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
+            this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
+            result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
 
             if (SUCCEEDED(result))
             {
-              this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-              this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Afhs::CurlReceiveData, this);
-              this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
-              this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
-              this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
-              this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-              this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+              // all parameters set
+              // start receiving data
 
-              result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
-
-              if (SUCCEEDED(result))
-              {
-                // all parameters set
-                // start receiving data
-
-                result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
-              }
+              result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
             }
           }
         }
         else
         {
-          // only in case that we started video and received some data
-          // in other case close and open connection again
-          if ((this->bytePosition != 0) && (this->streamTime == 0))
+          // we are on last segment and fragment, we received all data
+          // whole stream downloaded
+          this->wholeStreamDownloaded = true;
+          FREE_MEM_CLASS(this->mainCurlInstance);
+
+          if (!this->seekingActive)
           {
-            // whole stream downloaded
-            this->wholeStreamDownloaded = true;
-
-            if (!this->seekingActive)
+            // we are not seeking, so we can set total length
+            if (!this->setLength)
             {
-              // we are not seeking, so we can set total length
-              if (!this->setLength)
-              {
-                this->streamLength = this->bytePosition;
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                this->filter->SetTotalLength(this->streamLength, false);
-                this->setLength = true;
-              }
-
-              if (this->streamTime == 0)
-              {
-                // if stream time is zero than we receive data from beginning
-                // in that case we call EndOfStreamReached() method (required for ending download)
-
-                // notify filter the we reached end of stream
-                // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-                this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
-              }
+              this->streamLength = this->bytePosition;
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+              this->filter->SetTotalLength(this->streamLength, false);
+              this->setLength = true;
             }
+
+            // notify filter the we reached end of stream
+            // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+            this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
           }
         }
       }
@@ -904,7 +893,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
   if (SUCCEEDED(result))
   {
-    this->mainCurlInstance = new CCurlInstance(this->logger, this->segmentsFragments->GetItem(this->lastSegmentFragment)->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->segmentsFragments->GetItem(this->lastSegmentFragment)->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
     CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
   }
 

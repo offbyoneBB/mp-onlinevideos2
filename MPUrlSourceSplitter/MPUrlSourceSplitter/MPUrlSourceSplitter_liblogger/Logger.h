@@ -76,6 +76,10 @@ public:
 
   void SetParameters(CParameterCollection *configuration);
 
+  // sets allowed log verbosity
+  // @param allowedLogVerbosity : allowed log verbosity level to set
+  void SetAllowedLogVerbosity(unsigned int allowedLogVerbosity);
+
 protected:
   HANDLE mutex;
 

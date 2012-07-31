@@ -22,7 +22,6 @@
 
 #include "CurlInstance.h"
 #include "Logger.h"
-#include "ISimpleProtocol.h"
 
 CCurlInstance::CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName)
 {
@@ -37,13 +36,11 @@ CCurlInstance::CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t 
   this->writeCallback = NULL;
   this->writeData = NULL;
   this->state = CURL_STATE_CREATED;
-  this->referer = NULL;
-  this->cookie = NULL;
-  this->userAgent = NULL;
-  this->version = HTTP_VERSION_DEFAULT;
-  this->ignoreContentLength = HTTP_IGNORE_CONTENT_LENGTH_DEFAULT;
   this->closeWithoutWaiting = false;
-  this->mmsHeaders = NULL;
+  this->curlErrorMessage = NULL;
+
+  this->SetWriteCallback(CCurlInstance::CurlReceiveDataCallback, this);
+  this->receivedDataBuffer = new LinearBuffer();
 }
 
 CCurlInstance::~CCurlInstance(void)
@@ -58,9 +55,8 @@ CCurlInstance::~CCurlInstance(void)
 
   FREE_MEM(this->url);
   FREE_MEM(this->protocolName);
-  FREE_MEM(this->referer);
-  FREE_MEM(this->cookie);
-  FREE_MEM(this->userAgent);
+  FREE_MEM(this->curlErrorMessage);
+  FREE_MEM_CLASS(this->receivedDataBuffer);
 }
 
 CURL *CCurlInstance::GetCurlHandle(void)
@@ -75,7 +71,7 @@ CURLcode CCurlInstance::GetErrorCode(void)
 
 bool CCurlInstance::Initialize(void)
 {
-  bool result = (this->logger != NULL) && (this->url != NULL) && (this->protocolName != NULL);
+  bool result = (this->logger != NULL) && (this->url != NULL) && (this->protocolName != NULL) && (this->receivedDataBuffer != NULL);
 
   if (result)
   {
@@ -85,20 +81,13 @@ bool CCurlInstance::Initialize(void)
     CURLcode errorCode = CURLE_OK;
     if (this->receiveDataTimeout != UINT_MAX)
     {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(this->receiveDataTimeout / 2000));
+      errorCode = curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(this->receiveDataTimeout / 1000));
       if (errorCode != CURLE_OK)
       {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting connection timeout", errorCode);
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting connection timeout", errorCode);
         result = false;
       }
     }
-
-    errorCode = curl_easy_setopt(this->curl, CURLOPT_FOLLOWLOCATION, 1L);
-    if (errorCode != CURLE_OK)
-    {
-      this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting follow location", errorCode);
-      result = false;
-    } 
 
     if (errorCode == CURLE_OK)
     {
@@ -106,7 +95,7 @@ bool CCurlInstance::Initialize(void)
       errorCode = curl_easy_setopt(this->curl, CURLOPT_URL, curlUrl);
       if (errorCode != CURLE_OK)
       {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting url", errorCode);
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting url", errorCode);
         result = false;
       }
       FREE_MEM(curlUrl);
@@ -117,7 +106,7 @@ bool CCurlInstance::Initialize(void)
       errorCode = curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, this->writeCallback);
       if (errorCode != CURLE_OK)
       {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting write callback", errorCode);
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting write callback", errorCode);
         result = false;
       }
     }
@@ -127,7 +116,7 @@ bool CCurlInstance::Initialize(void)
       errorCode = curl_easy_setopt(this->curl, CURLOPT_WRITEDATA, this->writeData);
       if (errorCode != CURLE_OK)
       {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting write callback data", errorCode);
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting write callback data", errorCode);
         result = false;
       }
     }
@@ -137,7 +126,7 @@ bool CCurlInstance::Initialize(void)
       errorCode = curl_easy_setopt(this->curl, CURLOPT_DEBUGFUNCTION, CCurlInstance::CurlDebugCallback);
       if (errorCode != CURLE_OK)
       {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting debug callback", errorCode);
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting debug callback", errorCode);
         result = false;
       }
     }
@@ -147,7 +136,7 @@ bool CCurlInstance::Initialize(void)
       errorCode = curl_easy_setopt(this->curl, CURLOPT_DEBUGDATA, this);
       if (errorCode != CURLE_OK)
       {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting debug callback data", errorCode);
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting debug callback data", errorCode);
         result = false;
       }
     }
@@ -157,134 +146,28 @@ bool CCurlInstance::Initialize(void)
       errorCode = curl_easy_setopt(this->curl, CURLOPT_VERBOSE, 1L);
       if (errorCode != CURLE_OK)
       {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting verbose level", errorCode);
-        result = false;
-      }
-    }
-
-    if (errorCode == CURLE_OK)
-    {
-      if (!IsNullOrEmpty(this->referer))
-      {
-        char *curlReferer = ConvertToMultiByte(this->referer);
-        errorCode = curl_easy_setopt(this->curl, CURLOPT_REFERER, curlReferer);
-        if (errorCode != CURLE_OK)
-        {
-          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting referer", errorCode);
-          result = false;
-        }
-        FREE_MEM(curlReferer);
-      }
-    }
-
-    if (errorCode == CURLE_OK)
-    {
-      if (!IsNullOrEmpty(this->cookie))
-      {
-        char *curlCookie = ConvertToMultiByte(this->cookie);
-        errorCode = curl_easy_setopt(this->curl, CURLOPT_COOKIE, curlCookie);
-        if (errorCode != CURLE_OK)
-        {
-          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting cookie", errorCode);
-          result = false;
-        }
-        FREE_MEM(curlCookie);
-      }
-    }
-
-    if (errorCode == CURLE_OK)
-    {
-      if (!IsNullOrEmpty(this->userAgent))
-      {
-        char *curlUserAgent = ConvertToMultiByte(this->userAgent);
-        errorCode = curl_easy_setopt(this->curl, CURLOPT_USERAGENT, curlUserAgent);
-        if (errorCode != CURLE_OK)
-        {
-          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting user agent", errorCode);
-          result = false;
-        }
-        FREE_MEM(curlUserAgent);
-      }
-    }
-
-    if (errorCode == CURLE_OK)
-    {
-      switch (this->version)
-      {
-      case HTTP_VERSION_NONE:
-        {
-          long version = CURL_HTTP_VERSION_NONE;
-          errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version);
-        }
-        break;
-      case HTTP_VERSION_FORCE_HTTP10:
-        {
-          long version = CURL_HTTP_VERSION_1_0;
-          errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version);
-        }
-        break;
-      case HTTP_VERSION_FORCE_HTTP11:
-        {
-          long version = CURL_HTTP_VERSION_1_1;
-          errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version);
-        }
-        break;
-      }
-
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting HTTP version", errorCode);
-        result = false;
-      }
-    }
-
-    if (errorCode == CURLE_OK)
-    {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_IGNORE_CONTENT_LENGTH, this->ignoreContentLength ? 1L : 0L);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting ignore content length", errorCode);
-        result = false;
-      }
-    }
-
-    if (errorCode == CURLE_OK)
-    {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTPHEADER, this->mmsHeaders);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_START_RECEIVING_DATA_NAME, L"error while setting MMS headers", errorCode);
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting verbose level", errorCode);
         result = false;
       }
     }
   }
 
-  if (result)
-  {
-    this->state = CURL_STATE_INITIALIZED;
-  }
-
+  this->state = (result) ? CURL_STATE_INITIALIZED : CURL_STATE_CREATED;
   return result;
 }
 
-wchar_t *CCurlInstance::GetCurlErrorMessage(CURLcode errorCode)
+const wchar_t *CCurlInstance::GetCurlErrorMessage(CURLcode errorCode)
 {
+  FREE_MEM(this->curlErrorMessage);
   const char *error = curl_easy_strerror(errorCode);
-  wchar_t *result = NULL;
-  result = ConvertToUnicodeA(error);
+  this->curlErrorMessage = ConvertToUnicodeA(error);
 
-  // there is no need to free error message
-
-  return result;
+  return this->curlErrorMessage;
 }
 
 void CCurlInstance::ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLcode errorCode)
 {
-  wchar_t *curlError = this->GetCurlErrorMessage(errorCode);
-
-  this->logger->Log(logLevel, METHOD_CURL_ERROR_MESSAGE, protocolName, functionName, (message == NULL) ? L"libcurl error" : message, curlError);
-
-  FREE_MEM(curlError);
+  this->logger->Log(logLevel, METHOD_CURL_ERROR_MESSAGE, protocolName, functionName, (message == NULL) ? L"libcurl error" : message, this->GetCurlErrorMessage(errorCode));
 }
 
 HRESULT CCurlInstance::CreateCurlWorker(void)
@@ -373,26 +256,6 @@ void CCurlInstance::SetWriteCallback(curl_write_callback writeCallback, void *wr
   this->writeData = writeData;
 }
 
-REFERENCE_TIME CCurlInstance::GetStartStreamTime(void)
-{
-  return this->startStreamTime;
-}
-
-void CCurlInstance::SetStartStreamTime(REFERENCE_TIME startStreamTime)
-{
-  this->startStreamTime = startStreamTime;
-}
-
-REFERENCE_TIME CCurlInstance::GetEndStreamTime(void)
-{
-  return this->endStreamTime;
-}
-
-void CCurlInstance::SetEndStreamTime(REFERENCE_TIME endStreamTime)
-{
-  this->endStreamTime = endStreamTime;
-}
-
 bool CCurlInstance::StartReceivingData(void)
 {
   return (this->CreateCurlWorker() == S_OK);
@@ -408,41 +271,39 @@ unsigned int CCurlInstance::GetCurlState(void)
   return this->state;
 }
 
-void CCurlInstance::SetReferer(const wchar_t *referer)
+size_t CCurlInstance::CurlReceiveDataCallback(char *buffer, size_t size, size_t nmemb, void *userdata)
 {
-  FREE_MEM(this->referer);
-  this->referer = Duplicate(referer);
+  CCurlInstance *caller = (CCurlInstance *)userdata;
+
+  return caller->CurlReceiveData((unsigned char *)buffer, (size_t)(size * nmemb));
 }
 
-void CCurlInstance::SetUserAgent(const wchar_t *userAgent)
+size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length)
 {
-  FREE_MEM(this->userAgent);
-  this->userAgent = Duplicate(userAgent);
-}
-
-void CCurlInstance::SetCookie(const wchar_t *cookie)
-{
-  FREE_MEM(this->cookie);
-  this->cookie = Duplicate(cookie);
-}
-
-void CCurlInstance::SetHttpVersion(int version)
-{
-  switch (version)
+  if (length != 0)
   {
-  case HTTP_VERSION_NONE:
-  case HTTP_VERSION_FORCE_HTTP10:
-  case HTTP_VERSION_FORCE_HTTP11:
-    this->version = version;
-    break;
-  default:
-    break;
-  }
-}
+    unsigned int bufferSize = this->receivedDataBuffer->GetBufferSize();
+    unsigned int freeSpace = this->receivedDataBuffer->GetBufferFreeSpace();
+    unsigned int newBufferSize = max(bufferSize * 2, bufferSize + length);
 
-void CCurlInstance::SetIgnoreContentLength(bool ignoreContentLength)
-{
-  this->ignoreContentLength = ignoreContentLength;
+    if (freeSpace < length)
+    {
+      this->logger->Log(LOGGER_INFO, L"%s: %s: not enough free space in buffer for received data, buffer size: %d, free size: %d, received data: %d, new buffer size: %d", this->protocolName, METHOD_CURL_RECEIVE_DATA_NAME, bufferSize, freeSpace, length, newBufferSize);
+      if (!this->receivedDataBuffer->ResizeBuffer(newBufferSize))
+      {
+        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_RECEIVE_DATA_NAME, L"resizing of buffer unsuccessful");
+        // it indicates error
+        length = 0;
+      }
+    }
+
+    if (length != 0)
+    {
+      this->receivedDataBuffer->AddToBuffer(buffer, length);
+    }
+  }
+
+  return length;
 }
 
 int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *data, size_t size, void *userptr)
@@ -464,18 +325,7 @@ int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *dat
       if (curlData != NULL)
       {
         // we have converted and null terminated data
-
-        if (type == CURLINFO_HEADER_IN)
-        {
-          // we are just interested in headers comming in from peer
-          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: received HTTP header: '%s'", caller->protocolName, METHOD_CURL_DEBUG_CALLBACK, curlData);
-        }
-
-        if (type == CURLINFO_HEADER_OUT)
-        {
-          // we are just interested in headers comming in from peer
-          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: sent HTTP header: '%s'", caller->protocolName, METHOD_CURL_DEBUG_CALLBACK, curlData);
-        }
+        caller->CurlDebug(type, curlData);
       }
 
       FREE_MEM(curlData);
@@ -496,31 +346,23 @@ void CCurlInstance::SetCloseWithoutWaiting(bool closeWithoutWaiting)
   this->closeWithoutWaiting = closeWithoutWaiting;
 }
 
-bool CCurlInstance::AppendToHeaders(wchar_t *header)
-{
-  bool result = false;
-  char *curlHeader = ConvertToMultiByteW(header);
-  if (curlHeader != NULL)
-  {
-    this->mmsHeaders = curl_slist_append(this->mmsHeaders, curlHeader);
-    if (this->mmsHeaders != NULL)
-    {
-      result = true;
-    }
-  }
-  FREE_MEM(curlHeader);
-  return result;
-}
-
-void CCurlInstance::ClearHeaders(void)
-{
-  curl_slist_free_all(this->mmsHeaders);
-  this->mmsHeaders = NULL;
-}
-
 wchar_t *CCurlInstance::GetCurlVersion(void)
 {
   char *curlVersion = curl_version();
 
   return ConvertToUnicodeA(curlVersion);
+}
+
+void CCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
+{
+}
+
+const wchar_t *CCurlInstance::GetUrl(void)
+{
+  return this->url;
+}
+
+LinearBuffer *CCurlInstance::GetReceiveDataBuffer(void)
+{
+  return this->receivedDataBuffer;
 }
