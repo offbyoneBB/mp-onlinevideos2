@@ -216,7 +216,8 @@ namespace OnlineVideos.MPUrlSourceFilter
             // return current URI and formatted connection string
             // MediaPortal Url Source Splitter will ignore first part
             // first part is there, because OnlineVideos cannot work with not valid URIs
-            return this.Uri.ToString() + SimpleUrl.ParameterSeparator + parameters.FilterParameters;
+
+            return this.Uri.Scheme + "://" + this.Uri.Host + SimpleUrl.ParameterSeparator + parameters.FilterParameters;
         }
 
         #endregion
