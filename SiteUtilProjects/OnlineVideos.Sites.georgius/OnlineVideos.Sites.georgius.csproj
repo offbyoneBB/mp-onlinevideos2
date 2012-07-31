@@ -67,7 +67,7 @@
     <Compile Include="ShowEpisodesRegex.cs" />
     <Compile Include="SlovenskaTeleviziaUtil.cs" />
     <Compile Include="StreamCzUtil.cs" />
-    <None Include="TA3Util.cs" />
+    <Compile Include="TA3Util.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="VideaCeskyCzUtil.cs" />
   </ItemGroup>

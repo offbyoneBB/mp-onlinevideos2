@@ -12,7 +12,7 @@ namespace OnlineVideos.Sites.georgius
         #region Private fields
 
         private static String baseUrl = "http://www.ta3.com/archiv.html";
-        //private static String baseWebPageUrl = "http://www.ta3.com/sk/archiv?den=&mesiac=&rok=";
+        private static String baseLiveUrl = "http://www.ta3.com/live.html";
 
         private static String dynamicCategoryStart = @"<div class=""archive"">";
         private static String dynamicCategoryEnd = @"<div class=""inside archive-filter"">";
@@ -27,13 +27,20 @@ namespace OnlineVideos.Sites.georgius
         private static String showEpisodeNextPageStart = @"<li class=""next"">";
         private static String showEpisodeNextPageRegex = @"<a href=""(?<url>[^""]*)"">";
 
-        private static String showEpisodeStartRegex = @"<div id=""mainMiddleCont"">";
-        private static String showEpisodeEndRegex = @"</object>";
+        private static String videoIdStart = @"arrTa3VideoPlayer.push";
+        private static String videoIdEnd = @"));";
+        private static String videoIdAndTypeRegex = @"(?<videoId>[0-9A-Z]{8}\-[0-9A-Z]{4}\-[0-9A-Z]{4}\-[0-9A-Z]{4}\-[0-9A-Z]{12})""\,[\s]*""(?<videoType>[0-9]*)";
 
-        private static String showEpisodeUrlRegex = @"<param name=""url"" value=""(?<showEpisodeUrl>[^""]*)"" />";
+        private static String playerOfflineUrl = @"http://embed.livebox.cz/ta3/player-offline.js";
+        private static String playerOnlineUrl = @"http://embed.livebox.cz/ta3/player-live.js";
 
-        // the number of show episodes per page
-        private static int pageSize = 28;
+        // zero index is default (undefined)
+        private static String[] videoType = { @"Videoteka/mp4:", @"Videoteka/mp4:", @"VideotekaEncoder/mp4:" };
+
+        private static String videoUrlPrefixRegex = @"prefix:[\s]*'(?<prefix>[^']+)";
+        private static String videoUrlPostfixRegex = @"postfix:[\s]*'(?<postfix>[^']+)";
+
+        private static String videoIdLiveRegex = @"videoID0:[\s]*'(?<videoId>[^']+)";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -90,6 +97,16 @@ namespace OnlineVideos.Sites.georgius
                     dynamicCategoriesCount++;
                     match = match.NextMatch();
                 }
+
+                this.Settings.Categories.Add(
+                        new RssLink()
+                        {
+                            Name = "Live",
+                            HasSubCategories = false,
+                            Url = TA3Util.baseLiveUrl
+                        });
+
+                dynamicCategoriesCount++;
             }
 
             this.Settings.DynamicCategoriesDiscovered = true;
@@ -102,77 +119,92 @@ namespace OnlineVideos.Sites.georgius
 
             if (!String.IsNullOrEmpty(pageUrl))
             {
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl);
-                String shows = String.Empty;
-
-                int index = baseWebData.IndexOf(TA3Util.showsStart);
-                if (index > 0)
+                if (pageUrl == TA3Util.baseLiveUrl)
                 {
-                    int endIndex = baseWebData.IndexOf(TA3Util.showsEnd, index);
-                    shows = (endIndex == (-1)) ? baseWebData.Substring(index) : baseWebData.Substring(index, endIndex - index);                    
-                }
-
-                while (true)
-                {
-                    Match showEpisodeBlockStart = Regex.Match(shows, TA3Util.showBlockStartRegex);
-                    if (showEpisodeBlockStart.Success)
+                    this.nextPageUrl = String.Empty;
+                    VideoInfo videoInfo = new VideoInfo()
                     {
-                        shows = shows.Substring(showEpisodeBlockStart.Index + showEpisodeBlockStart.Length);
+                        Title = "Live",
+                        VideoUrl = pageUrl
+                    };
 
-                        String showTitle = String.Empty;
-                        String showThumbUrl = String.Empty;
-                        String showUrl = String.Empty;
-                        String showLength = String.Empty;
-                        String showDescription = String.Empty;
+                    pageVideos.Add(videoInfo);
 
-                        Match showEpisodeUrlAndTitle = Regex.Match(shows, TA3Util.showUrlAndTitleRegex);
-                        if (showEpisodeUrlAndTitle.Success)
-                        {
-                            showUrl = showEpisodeUrlAndTitle.Groups["showUrl"].Value;
-                            showTitle = HttpUtility.HtmlDecode(showEpisodeUrlAndTitle.Groups["showTitle"].Value);
-                            shows = shows.Substring(showEpisodeUrlAndTitle.Index + showEpisodeUrlAndTitle.Length);
-                        }
-
-                        if (!(showEpisodeUrlAndTitle.Success))
-                        {
-                            break;
-                        }
-
-                        VideoInfo videoInfo = new VideoInfo()
-                        {
-                            Description = showDescription,
-                            ImageUrl = showThumbUrl,
-                            Length = showLength,
-                            Title = showTitle,
-                            VideoUrl = showUrl
-                        };
-
-                        pageVideos.Add(videoInfo);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                index = baseWebData.IndexOf(TA3Util.showEpisodeNextPageStart);
-
-                if (index > 0)
-                {
-                    baseWebData = baseWebData.Substring(index);
-                    Match nextPageMatch = Regex.Match(baseWebData, TA3Util.showEpisodeNextPageRegex);
-                    this.nextPageUrl = (nextPageMatch.Success) ? nextPageMatch.Groups["url"].Value : String.Empty;
                 }
                 else
                 {
-                    this.nextPageUrl = String.Empty;
+                    String baseWebData = SiteUtilBase.GetWebData(pageUrl);
+                    String shows = String.Empty;
+
+                    int index = baseWebData.IndexOf(TA3Util.showsStart);
+                    if (index > 0)
+                    {
+                        int endIndex = baseWebData.IndexOf(TA3Util.showsEnd, index);
+                        shows = (endIndex == (-1)) ? baseWebData.Substring(index) : baseWebData.Substring(index, endIndex - index);
+                    }
+
+                    while (true)
+                    {
+                        Match showEpisodeBlockStart = Regex.Match(shows, TA3Util.showBlockStartRegex);
+                        if (showEpisodeBlockStart.Success)
+                        {
+                            shows = shows.Substring(showEpisodeBlockStart.Index + showEpisodeBlockStart.Length);
+
+                            String showTitle = String.Empty;
+                            String showThumbUrl = String.Empty;
+                            String showUrl = String.Empty;
+                            String showLength = String.Empty;
+                            String showDescription = String.Empty;
+
+                            Match showEpisodeUrlAndTitle = Regex.Match(shows, TA3Util.showUrlAndTitleRegex);
+                            if (showEpisodeUrlAndTitle.Success)
+                            {
+                                showUrl = showEpisodeUrlAndTitle.Groups["showUrl"].Value;
+                                showTitle = HttpUtility.HtmlDecode(showEpisodeUrlAndTitle.Groups["showTitle"].Value);
+                                shows = shows.Substring(showEpisodeUrlAndTitle.Index + showEpisodeUrlAndTitle.Length);
+                            }
+
+                            if (!(showEpisodeUrlAndTitle.Success))
+                            {
+                                break;
+                            }
+
+                            VideoInfo videoInfo = new VideoInfo()
+                            {
+                                Description = showDescription,
+                                ImageUrl = showThumbUrl,
+                                Length = showLength,
+                                Title = showTitle,
+                                VideoUrl = showUrl
+                            };
+
+                            pageVideos.Add(videoInfo);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    index = baseWebData.IndexOf(TA3Util.showEpisodeNextPageStart);
+
+                    if (index > 0)
+                    {
+                        baseWebData = baseWebData.Substring(index);
+                        Match nextPageMatch = Regex.Match(baseWebData, TA3Util.showEpisodeNextPageRegex);
+                        this.nextPageUrl = (nextPageMatch.Success) ? nextPageMatch.Groups["url"].Value : String.Empty;
+                    }
+                    else
+                    {
+                        this.nextPageUrl = String.Empty;
+                    }
                 }
             }
 
             return pageVideos;
         }
 
-        private List<VideoInfo> GetVideoList(Category category, int videoCount)
+        private List<VideoInfo> GetVideoList(Category category)
         {
             hasNextPage = false;
             String baseWebData = String.Empty;
@@ -187,41 +219,17 @@ namespace OnlineVideos.Sites.georgius
             }
 
             this.currentCategory = parentCategory;
-            int addedVideos = 0;
 
-            while (true)
+            this.loadedEpisodes.AddRange(this.GetPageVideos(this.nextPageUrl));
+            while (this.currentStartIndex < this.loadedEpisodes.Count)
             {
-                while (((this.currentStartIndex + addedVideos) < this.loadedEpisodes.Count()) && (addedVideos < videoCount))
-                {
-                    videoList.Add(this.loadedEpisodes[this.currentStartIndex + addedVideos]);
-                    addedVideos++;
-                }
-
-                if (addedVideos < videoCount)
-                {
-                    List<VideoInfo> loadedVideos = this.GetPageVideos(this.nextPageUrl);
-
-                    if (loadedVideos.Count == 0)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        this.loadedEpisodes.AddRange(loadedVideos);
-                    }
-                }
-                else
-                {
-                    break;
-                }
+                videoList.Add(this.loadedEpisodes[this.currentStartIndex++]);
             }
 
-            if (((this.currentStartIndex + addedVideos) < this.loadedEpisodes.Count()) || (!String.IsNullOrEmpty(this.nextPageUrl)))
+            if (!String.IsNullOrEmpty(this.nextPageUrl))
             {
                 hasNextPage = true;
             }
-
-            this.currentStartIndex += addedVideos;
 
             return videoList;
         }
@@ -229,12 +237,12 @@ namespace OnlineVideos.Sites.georgius
         public override List<VideoInfo> getVideoList(Category category)
         {
             this.currentStartIndex = 0;
-            return this.GetVideoList(category, TA3Util.pageSize - 2);
+            return this.GetVideoList(category);
         }
 
         public override List<VideoInfo> getNextPageVideos()
         {
-            return this.GetVideoList(this.currentCategory, TA3Util.pageSize);
+            return this.GetVideoList(this.currentCategory);
         }
 
         public override bool HasNextPage
@@ -251,25 +259,79 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
-            String showEpisodeWebBaseData = SiteUtilBase.GetWebData(video.VideoUrl);
+            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl);
+
             String showUrl = String.Empty;
-            Match showEpisodeStart = Regex.Match(showEpisodeWebBaseData, TA3Util.showEpisodeStartRegex);
-            if (showEpisodeStart.Success)
+
+            if (video.VideoUrl != TA3Util.baseLiveUrl)
             {
-                showEpisodeWebBaseData = showEpisodeWebBaseData.Substring(showEpisodeStart.Index);
+                String playerOfflineWebData = SiteUtilBase.GetWebData(TA3Util.playerOfflineUrl, null, video.VideoUrl);
 
-                String showData = showEpisodeWebBaseData;
-                Match showEpisodeEnd = Regex.Match(showEpisodeWebBaseData, TA3Util.showEpisodeEndRegex);
-                if (showEpisodeEnd.Success)
+                int startIndex = baseWebData.IndexOf(TA3Util.videoIdStart);
+                if (startIndex >= 0)
                 {
-                    showData = showData.Substring(0, showEpisodeEnd.Index);
+                    int endIndex = baseWebData.IndexOf(TA3Util.videoIdEnd, startIndex);
+                    if (endIndex >= 0)
+                    {
+                        String videoId = String.Empty;
+                        int videoType = 0;
+                        String prefix = String.Empty;
+                        String postfix = String.Empty;
+
+                        String videoIdAndType = baseWebData.Substring(startIndex, endIndex - startIndex);
+                        Match match = Regex.Match(videoIdAndType, TA3Util.videoIdAndTypeRegex);
+                        if (match.Success)
+                        {
+                            videoId = match.Groups["videoId"].Value;
+                            if (!String.IsNullOrEmpty(match.Groups["videoType"].Value))
+                            {
+                                videoType = int.Parse(match.Groups["videoType"].Value) + 1;
+                            }
+                        }
+
+                        match = Regex.Match(playerOfflineWebData, TA3Util.videoUrlPrefixRegex);
+                        if (match.Success)
+                        {
+                            prefix = match.Groups["prefix"].Value;
+                        }
+
+                        match = Regex.Match(playerOfflineWebData, TA3Util.videoUrlPostfixRegex);
+                        if (match.Success)
+                        {
+                            postfix = match.Groups["postfix"].Value;
+                        }
+
+                        showUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(String.Format("{0}{1}{2}_ta3d.mp4{3}", prefix, TA3Util.videoType[videoType], videoId, postfix)) { Referer = "http://embed.livebox.cz/ta3/player.swf?nocache=1343671458639" }.ToString();
+                    }
+                }
+            }
+            else
+            {
+                String playerOnlineWebData = SiteUtilBase.GetWebData(TA3Util.playerOnlineUrl, null, video.VideoUrl);
+
+                String videoId = String.Empty;
+                String prefix = String.Empty;
+                String postfix = String.Empty;
+
+                Match match = Regex.Match(playerOnlineWebData, TA3Util.videoIdLiveRegex);
+                if (match.Success)
+                {
+                    videoId = match.Groups["videoId"].Value;
                 }
 
-                Match showEpisodeUrl = Regex.Match(showData, TA3Util.showEpisodeUrlRegex);
-                if (showEpisodeUrl.Success)
+                match = Regex.Match(playerOnlineWebData, TA3Util.videoUrlPrefixRegex);
+                if (match.Success)
                 {
-                    showUrl = String.Format("{0}{1}", TA3Util.baseUrl, showEpisodeUrl.Groups["showEpisodeUrl"].Value);
+                    prefix = match.Groups["prefix"].Value;
                 }
+
+                match = Regex.Match(playerOnlineWebData, TA3Util.videoUrlPostfixRegex);
+                if (match.Success)
+                {
+                    postfix = match.Groups["postfix"].Value;
+                }
+
+                showUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(String.Format("{0}{1}{2}", prefix, videoId, postfix)) { Referer = "http://embed.livebox.cz/ta3/player.swf?nocache=1343671458639" }.ToString();
             }
 
             return showUrl;
