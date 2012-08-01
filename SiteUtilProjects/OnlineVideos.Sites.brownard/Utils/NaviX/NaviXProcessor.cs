@@ -186,7 +186,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                         logDebug("\t post data: {0}", vars["s_postdata"]);
 
                         //retrieve request
-                        webData.GetWebData();
+                        webData.GetWebData(vars["s_action"]);
                         //store response text
                         vars["htmRaw"] = webData.Content;
                         //get final url of request

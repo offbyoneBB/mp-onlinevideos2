@@ -8,24 +8,12 @@ namespace OnlineVideos.Sites.Utils.NaviX
 {
     class NaviXWebRequest
     {
-        public NaviXWebRequest(string url, string referer = null, string cookies = null, string method = "get", string agent = null, string postData = "", Dictionary<string, string> headers = null)
+        public NaviXWebRequest(string url)
         {
             this.RequestUrl = url;
-            if (!string.IsNullOrEmpty(referer))
-                Referer = referer;
-            if (!string.IsNullOrEmpty(cookies))
-                RequestCookies = cookies;
-            if (!string.IsNullOrEmpty(method))
-                Method = method;
-            if (!string.IsNullOrEmpty(agent))
-                UserAgent = agent;
-            if (!string.IsNullOrEmpty(postData))
-                PostData = postData;
-            if (headers != null)
-                RequestHeaders = headers;
         }
 
-        public bool GetWebData()
+        public bool GetWebData(string action)
         {
             if (string.IsNullOrEmpty(RequestUrl))
                 return false;
@@ -62,7 +50,9 @@ namespace OnlineVideos.Sites.Utils.NaviX
                     foreach (string header in RequestHeaders.Keys)
                         req.Headers[header] = RequestHeaders[header];
 
-                if (Method != null && Method.ToLower() == "post")
+                if (action.ToLower() == "headers")
+                    req.Method = "HEAD";
+                else if (Method != null && Method.ToLower() == "post")
                 {
                     req.Method = "POST";
                     req.ContentType = "application/x-www-form-urlencoded";
