@@ -45,6 +45,9 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"AFHS" };
 #define FLV_FILE_HEADER_LENGTH                                                13
 unsigned char FLV_FILE_HEADER[FLV_FILE_HEADER_LENGTH] =                       { 0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x00 };
 
+// defines delay between two bootstrap info requests
+#define LAST_REQUEST_BOOTSTRAP_INFO_DELAY                                     5000
+
 // This class is exported from the CMPUrlSourceSplitter_Protocol_Afhs.dll
 class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CMPUrlSourceSplitter_Protocol_Afhs : public IProtocolPlugin
 {
@@ -206,10 +209,27 @@ protected:
   CBootstrapInfoBox *bootstrapInfoBox;
   // holds collection of segments, fragments and urls
   CSegmentFragmentCollection *segmentsFragments;
-  // holds last segment and fragment index from segmentsFragments
-  unsigned int lastSegmentFragment;
   // specifies if working with live stream
   bool live;
+  // holds last bootstrap info request time for live streaming
+  DWORD lastBootstrapInfoRequestTime;
+
+  // removes all downloaded segment and fragment
+  // the last one segment and fragment (even downloaded) still preserve
+  void RemoveAllDownloadedSegmentFragment(void);
+
+  // gets first not downloaded segment and fragment
+  // @return : first not downloaded segment and fragment or NULL if not exists
+  CSegmentFragment *GetFirstNotDownloadedSegmentFragment(void);
+
+  // gets segment and fragment collection created from bootstrap info box
+  // @param logger : the logger for logging purposes
+  // @param methodName : the name of method calling GetSegmentsFragmentsFromBootstrapInfoBox()
+  // @param configurationParameters : the configuration parameters
+  // @param bootstrapInfoBox : bootstrap info box to create segment and fragment collection
+  // @param logCollection : specifies if result collection should be logged
+  // @return : segment and fragment collection created from bootstrap info box or NULL if error
+  CSegmentFragmentCollection *GetSegmentsFragmentsFromBootstrapInfoBox(CLogger *logger, const wchar_t *methodName, CParameterCollection *configurationParameters, CBootstrapInfoBox *bootstrapInfoBox, bool logCollection);
 };
 
 #endif

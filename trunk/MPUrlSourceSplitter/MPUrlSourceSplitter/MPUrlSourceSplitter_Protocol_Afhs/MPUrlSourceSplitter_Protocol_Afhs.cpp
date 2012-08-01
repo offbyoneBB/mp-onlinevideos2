@@ -103,8 +103,8 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->shouldExit = false;
   this->bootstrapInfoBox = NULL;
   this->segmentsFragments = NULL;
-  this->lastSegmentFragment = 0;
   this->live = false;
+  this->lastBootstrapInfoRequestTime = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -432,11 +432,17 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
       if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
       {
         // all data received, we're not receiving data
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
-        
-        if (this->lastSegmentFragment < (this->segmentsFragments->Count() - 1))
+        if (!this->segmentsFragments->GetSegmentFragment(this->mainCurlInstance->GetUrl(), true)->GetDownloaded())
         {
-          this->lastSegmentFragment++;
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
+          this->segmentsFragments->GetSegmentFragment(this->mainCurlInstance->GetUrl(), true)->SetDownloaded(true);
+        }
+
+        
+        CSegmentFragment *segmentFragmentToDownload = this->GetFirstNotDownloadedSegmentFragment();
+        if (segmentFragmentToDownload != NULL)
+        {
+          FREE_MEM_CLASS(this->mainCurlInstance);
           HRESULT result = S_OK;
 
           CLinearBuffer *buffer = new CLinearBuffer();
@@ -456,8 +462,7 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
           if (SUCCEEDED(result))
           {
             // we need to download for another url
-            FREE_MEM_CLASS(this->mainCurlInstance);
-            this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->segmentsFragments->GetItem(this->lastSegmentFragment)->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+            this->mainCurlInstance = new CHttpCurlInstance(this->logger, segmentFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
             CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
 
             if (SUCCEEDED(result))
@@ -486,50 +491,54 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
         {
           // we are on last segment and fragment, we received all data
           // in case of live stream we need to download again manifest and parse bootstrap info for new information about stream
-
-          if (this->live)
+          if ((this->live) && (GetTickCount() > (this->lastBootstrapInfoRequestTime + LAST_REQUEST_BOOTSTRAP_INFO_DELAY)))
           {
-            const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_MANIFEST_URL, true, NULL);
+            // request for next bootstrap info repeat after five seconds
+            this->lastBootstrapInfoRequestTime = GetTickCount();
+            this->RemoveAllDownloadedSegmentFragment();
+
+
+            const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, true, NULL);
             if (url != NULL)
             {
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: live streaming, requesting new manifest, url: '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, url);
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: live streaming, requesting bootstrap info, url: '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, url);
 
-              CHttpCurlInstance *manifestCurlInstance = new CHttpCurlInstance(this->logger, url, PROTOCOL_IMPLEMENTATION_NAME);
-              manifestCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-              manifestCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
-              manifestCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
-              manifestCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
-              manifestCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-              manifestCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+              CHttpCurlInstance *bootstrapInfoCurlInstance = new CHttpCurlInstance(this->logger, url, PROTOCOL_IMPLEMENTATION_NAME);
+              bootstrapInfoCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+              bootstrapInfoCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
+              bootstrapInfoCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
+              bootstrapInfoCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
+              bootstrapInfoCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
+              bootstrapInfoCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
 
-              if (manifestCurlInstance->Initialize())
+              if (bootstrapInfoCurlInstance->Initialize())
               {
-                if (mainCurlInstance->StartReceivingData())
+                if (bootstrapInfoCurlInstance->StartReceivingData())
                 {
-                  bool continueWithManifest = true;
+                  bool continueWithBootstrapInfo = true;
                   long responseCode = 0;
                   while (responseCode == 0)
                   {
-                    CURLcode errorCode = manifestCurlInstance->GetResponseCode(&responseCode);
+                    CURLcode errorCode = bootstrapInfoCurlInstance->GetResponseCode(&responseCode);
                     if (errorCode == CURLE_OK)
                     {
                       if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
                       {
                         // response code 200 - 299 = OK
                         // response code 300 - 399 = redirect (OK)
-                        continueWithManifest = false;
+                        continueWithBootstrapInfo = false;
                       }
                     }
                     else
                     {
-                      continueWithManifest = false;
+                      continueWithBootstrapInfo = false;
                       break;
                     }
 
-                    if ((responseCode == 0) && (manifestCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+                    if ((responseCode == 0) && (bootstrapInfoCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
                     {
                       // we received data too fast
-                      continueWithManifest = false;
+                      continueWithBootstrapInfo = false;
                       break;
                     }
 
@@ -537,108 +546,148 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
                     Sleep(1);
                   }
 
-                  if (continueWithManifest)
+                  if (continueWithBootstrapInfo)
                   {
                     // wait until all data are received
-                    while (manifestCurlInstance->GetCurlState() != CURL_STATE_RECEIVED_ALL_DATA)
+                    while (bootstrapInfoCurlInstance->GetCurlState() != CURL_STATE_RECEIVED_ALL_DATA)
                     {
                       // sleep some time
                       Sleep(10);
                     }
 
-                    continueWithManifest &= (manifestCurlInstance->GetErrorCode() == CURLE_OK);
+                    continueWithBootstrapInfo &= (bootstrapInfoCurlInstance->GetErrorCode() == CURLE_OK);
                   }
 
-                  if (continueWithManifest)
+                  if (continueWithBootstrapInfo)
                   {
-                    unsigned int length = manifestCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace() + 1;
-                    continueWithManifest &= (length > 1);
+                    unsigned int length = bootstrapInfoCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+                    continueWithBootstrapInfo &= (length > 1);
 
-                    if (continueWithManifest)
+                    if (continueWithBootstrapInfo)
                     {
                       ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                      continueWithManifest &= (buffer != NULL);
-                      if (continueWithManifest)
+                      continueWithBootstrapInfo &= (buffer != NULL);
+
+                      if (continueWithBootstrapInfo)
                       {
-                        manifestCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, length - 1, 0, 0);
+                        bootstrapInfoCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, length, 0, 0);
 
-                        this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"new manifest data");
-                        wchar_t *f4mBuffer = ConvertUtf8ToUnicode((char *)buffer);
-                        if (f4mBuffer != NULL)
+                        CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox();
+                        continueWithBootstrapInfo &= (bootstrapInfoBox != NULL);
+
+                        if (continueWithBootstrapInfo)
                         {
-                          this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, f4mBuffer);
-                        }
-                        FREE_MEM(f4mBuffer);
-
-                        CF4MManifest *f4mManifest = new CF4MManifest();
-                        continueWithManifest &= (f4mManifest != NULL);
-
-                        if (continueWithManifest)
-                        {
-                          if (f4mManifest->Parse((char *)buffer))
+                          if (bootstrapInfoBox->Parse(buffer, length))
                           {
+                            //this->logger->Log(LOGGER_VERBOSE, L"%s: %s: new bootstrap info box:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bootstrapInfoBox->GetParsedHumanReadable(L""));
 
+                            CSegmentFragmentCollection *segmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(
+                              this->logger,
+                              METHOD_RECEIVE_DATA_NAME,
+                              this->configurationParameters,
+                              bootstrapInfoBox,
+                              false);
+                            continueWithBootstrapInfo &= (segmentsFragments != NULL);
+
+                            if (continueWithBootstrapInfo)
+                            {
+                              CSegmentFragment *lastSegmentFragment = this->segmentsFragments->GetItem(this->segmentsFragments->Count() - 1);
+
+                              for (unsigned int i = 0; i < segmentsFragments->Count(); i++)
+                              {
+                                CSegmentFragment *parsedSegmentFragment = segmentsFragments->GetItem(i);
+                                if (parsedSegmentFragment->GetFragment() > lastSegmentFragment->GetFragment())
+                                {
+                                  // new segment fragment, add it to be downloaded
+                                  CSegmentFragment *clone = parsedSegmentFragment->Clone();
+                                  continueWithBootstrapInfo &= (clone != NULL);
+
+                                  if (continueWithBootstrapInfo)
+                                  {
+                                    continueWithBootstrapInfo &= this->segmentsFragments->Add(clone);
+                                    if (continueWithBootstrapInfo)
+                                    {
+                                      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: added new segment and fragment, segment %d, fragment %d, url '%s', timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, clone->GetSegment(), clone->GetFragment(), clone->GetUrl(), clone->GetFragmentTimestamp());
+                                    }
+                                  }
+
+                                  if (!continueWithBootstrapInfo)
+                                  {
+                                    FREE_MEM_CLASS(clone);
+                                  }
+                                }
+                              }
+                            }
+                            else
+                            {
+                              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot create segments and fragments to download");
+                            }
+
+                            FREE_MEM_CLASS(segmentsFragments);
                           }
                           else
                           {
-                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot parse new manifest");
+                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot parse new bootstrap info box");
                           }
                         }
                         else
                         {
-                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for new manifest");
+                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for new bootstrap info box");
                         }
 
-                        FREE_MEM_CLASS(f4mManifest);
+                        FREE_MEM_CLASS(bootstrapInfoBox);
                       }
                       else
                       {
-                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for new manifest data");
+                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for new bootstrap info data");
                       }
 
                       FREE_MEM(buffer);
                     }
                     else
                     {
-                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"too short data downloaded for new manifest");
+                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"too short data downloaded for new bootstrap info");
                     }
                   }
                   else
                   {
-                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error occured while receiving data of new manifest");
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error occured while receiving data of new bootstrap info");
                   }
                 }
                 else
                 {
-                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot start receiving data of new manifest");
+                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot start receiving data of new bootstrap info");
                 }
               }
               else
               {
-                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot initialize new manifest download");
+                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot initialize new bootstrap info download");
               }
-              FREE_MEM_CLASS(manifestCurlInstance);
+              FREE_MEM_CLASS(bootstrapInfoCurlInstance);
             }
           }
 
-          // whole stream downloaded
-          this->wholeStreamDownloaded = true;
-          FREE_MEM_CLASS(this->mainCurlInstance);
-
-          if (!this->seekingActive)
+          if (!this->live)
           {
-            // we are not seeking, so we can set total length
-            if (!this->setLength)
-            {
-              this->streamLength = this->bytePosition;
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-              this->filter->SetTotalLength(this->streamLength, false);
-              this->setLength = true;
-            }
+            // whole stream downloaded
+            this->wholeStreamDownloaded = true;
+            FREE_MEM_CLASS(this->mainCurlInstance);
 
-            // notify filter the we reached end of stream
-            // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-            this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
+            if (!this->seekingActive)
+            {
+              // we are not seeking, so we can set total length
+              if (!this->setLength)
+              {
+                this->streamLength = this->bytePosition;
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+                this->filter->SetTotalLength(this->streamLength, false);
+                this->setLength = true;
+              }
+
+              // notify filter the we reached end of stream
+              // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+              this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
+            }
           }
         }
       }
@@ -718,18 +767,18 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
           if (SUCCEEDED(result))
           {
             wchar_t *parsedBootstrapInfoBox = this->bootstrapInfoBox->GetParsedHumanReadable(L"");
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: parsed bootstrap info:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, parsedBootstrapInfoBox);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: parsed bootstrap info:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, parsedBootstrapInfoBox);
             FREE_MEM(parsedBootstrapInfoBox);
           }
           else
           {
-            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot parse bootstrap info box");
+            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, L"cannot parse bootstrap info box");
           }
         }
       }
       else
       {
-        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot decode bootstrap info");
+        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, L"cannot decode bootstrap info");
       }
     }
 
@@ -738,271 +787,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
       // we have bootstrap info box successfully parsed
       this->live = this->bootstrapInfoBox->IsLive();
 
-      // now choose from bootstrap info -> QualityEntryTable highest quality (if exists) with segment run
-      wchar_t *quality = NULL;
-      CSegmentRunEntryCollection *segmentRunEntryTable = NULL;
-
-      for (unsigned int i = 0; ((i <= this->bootstrapInfoBox->GetQualityEntryTable()->Count()) && (segmentRunEntryTable == NULL)); i++)
-      {
-        FREE_MEM(quality);
-
-        // choose quality only for valid indexes, in another case is quality NULL
-        if (i != this->bootstrapInfoBox->GetQualityEntryTable()->Count())
-        {
-          CBootstrapInfoQualityEntry *bootstrapInfoQualityEntry = this->bootstrapInfoBox->GetQualityEntryTable()->GetItem(0);
-          quality = Duplicate(bootstrapInfoQualityEntry->GetQualityEntry());
-        }
-
-        // from segment run table choose segment with specifed quality (if exists) or segment with QualityEntryCount equal to zero
-        for (unsigned int i = 0; i < this->bootstrapInfoBox->GetSegmentRunTable()->Count(); i++)
-        {
-          CSegmentRunTableBox *segmentRunTableBox = this->bootstrapInfoBox->GetSegmentRunTable()->GetItem(i);
-
-          if (quality != NULL)
-          {
-            if (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(quality, false))
-            {
-              segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
-            }
-          }
-          else
-          {
-            if ((segmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0) || (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(L"", false)))
-            {
-              segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
-            }
-          }
-        }
-      }
-
-      if (segmentRunEntryTable == NULL)
-      {
-        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot find any segment run table");
-        result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
-      }
-
-      if (SUCCEEDED(result))
-      {
-        if (segmentRunEntryTable->Count() == 0)
-        {
-          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot find any segment run entry");
-          result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
-        }
-      }
-
-      // from fragment run table choose fragment with specifed quality (if exists) or fragment with QualityEntryCount equal to zero
-      CFragmentRunEntryCollection *fragmentRunEntryTableTemp = NULL;
-      unsigned int timeScale = 0;
-      for (unsigned int i = 0; i < this->bootstrapInfoBox->GetFragmentRunTable()->Count(); i++)
-      {
-        CFragmentRunTableBox *fragmentRunTableBox = this->bootstrapInfoBox->GetFragmentRunTable()->GetItem(i);
-
-        if (quality != NULL)
-        {
-          if (fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(quality, false))
-          {
-            fragmentRunEntryTableTemp = fragmentRunTableBox->GetFragmentRunEntryTable();
-            timeScale = fragmentRunTableBox->GetTimeScale();
-          }
-        }
-        else
-        {
-          if ((fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0) || (fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(L"", false)))
-          {
-            fragmentRunEntryTableTemp = fragmentRunTableBox->GetFragmentRunEntryTable();
-            timeScale = fragmentRunTableBox->GetTimeScale();
-          }
-        }
-      }
-
-      if (fragmentRunEntryTableTemp == NULL)
-      {
-        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot find any fragment run table");
-        result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
-      }
-
-      CFragmentRunEntryCollection *fragmentRunEntryTable = new CFragmentRunEntryCollection();
-      CHECK_POINTER_HRESULT(result, fragmentRunEntryTable, result, E_OUTOFMEMORY);
-
-      if (SUCCEEDED(result))
-      {
-        // convert temporary fragment run table to simplier collection
-        for (unsigned int i = 0; i < fragmentRunEntryTableTemp->Count(); i++)
-        {
-          CFragmentRunEntry *fragmentRunEntryTemp = fragmentRunEntryTableTemp->GetItem(i);
-          unsigned int nextItemIndex = i + 1;
-          CFragmentRunEntry *fragmentRunEntryTempNext = NULL;
-
-          for (unsigned int j = nextItemIndex; j < fragmentRunEntryTableTemp->Count(); j++)
-          {
-            CFragmentRunEntry *temp = fragmentRunEntryTableTemp->GetItem(nextItemIndex);
-            if (temp->GetFirstFragment() != 0)
-            {
-              fragmentRunEntryTempNext = temp;
-              break;
-            }
-            else
-            {
-              nextItemIndex++;
-            }
-          }
-
-          if (((fragmentRunEntryTemp->GetFirstFragmentTimestamp() == 0) && (i == 0)) ||
-            (fragmentRunEntryTemp->GetFirstFragmentTimestamp() != 0))
-          {
-            uint64_t fragmentTimestamp = fragmentRunEntryTemp->GetFirstFragmentTimestamp();
-            unsigned int lastFragment = (fragmentRunEntryTempNext == NULL) ? (fragmentRunEntryTemp->GetFirstFragment() + 1) : fragmentRunEntryTempNext->GetFirstFragment();
-
-            for (unsigned int j = fragmentRunEntryTemp->GetFirstFragment(); j < lastFragment; j++)
-            {
-              unsigned int diff = j - fragmentRunEntryTemp->GetFirstFragment();
-              CFragmentRunEntry *fragmentRunEntry = new CFragmentRunEntry(
-                fragmentRunEntryTemp->GetFirstFragment() + diff,
-                fragmentTimestamp,
-                fragmentRunEntryTemp->GetFragmentDuration(),
-                fragmentRunEntryTemp->GetDiscontinuityIndicator());
-              fragmentTimestamp += fragmentRunEntryTemp->GetFragmentDuration();
-
-              CHECK_POINTER_HRESULT(result, fragmentRunEntry, result, E_OUTOFMEMORY);
-
-              if (SUCCEEDED(result))
-              {
-                result = (fragmentRunEntryTable->Add(fragmentRunEntry)) ? result : E_FAIL;
-              }
-
-              if (FAILED(result))
-              {
-                FREE_MEM_CLASS(fragmentRunEntry);
-              }
-            }
-          }
-        }
-      }
-
-      if (SUCCEEDED(result))
-      {
-        if (fragmentRunEntryTable->Count() == 0)
-        {
-          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot find any fragment run entry");
-          result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
-        }
-      }
-
-      if (SUCCEEDED(result))
-      {
-        wchar_t *serverBaseUrl = Duplicate(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_BASE_URL, true, L""));
-        for (unsigned int i = 0; i < this->bootstrapInfoBox->GetServerEntryTable()->Count(); i++)
-        {
-          CBootstrapInfoServerEntry *serverEntry = this->bootstrapInfoBox->GetServerEntryTable()->GetItem(i);
-          if (!IsNullOrEmptyOrWhitespace(serverEntry->GetServerEntry()))
-          {
-            FREE_MEM(serverBaseUrl);
-            serverBaseUrl = Duplicate(serverEntry->GetServerEntry());
-          }
-        }
-
-        CHECK_POINTER_HRESULT(result, serverBaseUrl, result, E_OUTOFMEMORY);
-
-        if (SUCCEEDED(result))
-        {
-          wchar_t *mediaPartUrl = Duplicate(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_MEDIA_PART_URL, true, L""));
-          CHECK_POINTER_HRESULT(result, mediaPartUrl, result, E_OUTOFMEMORY);
-
-          if (SUCCEEDED(result))
-          {
-            wchar_t *baseUrl = FormatAbsoluteUrl(serverBaseUrl, mediaPartUrl);
-            CHECK_POINTER_HRESULT(result, baseUrl, result, E_OUTOFMEMORY);
-
-            if (SUCCEEDED(result))
-            {
-              //wchar_t *movieIdentifierUrl = FormatAbsoluteUrl(baseUrl, this->bootstrapInfoBox->GetMovieIdentifier());
-              //CHECK_POINTER_HRESULT(result, movieIdentifierUrl, result, E_OUTOFMEMORY);
-
-              if (SUCCEEDED(result))
-              {
-                //wchar_t *qualityUrl = FormatString(L"%s%s", movieIdentifierUrl, (quality == NULL) ? L"" : quality);
-                wchar_t *qualityUrl = FormatAbsoluteUrl(baseUrl, (quality == NULL) ? L"" : quality);
-                CHECK_POINTER_HRESULT(result, qualityUrl, result, E_OUTOFMEMORY);
-
-                if (SUCCEEDED(result))
-                {
-                  // convert segment run entry table to simplier collection
-                  FREE_MEM_CLASS(this->segmentsFragments);
-                  this->segmentsFragments = new CSegmentFragmentCollection();
-                  CHECK_POINTER_HRESULT(result, this->segmentsFragments, result, E_OUTOFMEMORY);
-
-                  if (SUCCEEDED(result))
-                  {
-                    unsigned int fragmentRunEntryTableIndex  = 0;
-
-                    for (unsigned int i = 0; i < segmentRunEntryTable->Count(); i++)
-                    {
-                      CSegmentRunEntry *segmentRunEntry = segmentRunEntryTable->GetItem(i);
-                      unsigned int lastSegment = (i == (segmentRunEntryTable->Count() - 1)) ? (segmentRunEntry->GetFirstSegment() + 1) : segmentRunEntryTable->GetItem(i + 1)->GetFirstSegment();
-
-                      for (unsigned int j = segmentRunEntry->GetFirstSegment(); j < lastSegment; j++)
-                      {
-                        for (unsigned int k = 0; k < ((segmentRunEntry->GetFragmentsPerSegment() == UINT_MAX) ? fragmentRunEntryTable->Count() : segmentRunEntry->GetFragmentsPerSegment()); k++)
-                        {
-                          // choose fragment and get its timestamp
-                          uint64_t timestamp = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragmentTimestamp();
-                          unsigned int firstFragment = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragment();
-
-                          if (fragmentRunEntryTableIndex > fragmentRunEntryTable->Count())
-                          {
-                            // adjust fragment timestamp
-                            timestamp += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count()) * fragmentRunEntryTable->GetItem(fragmentRunEntryTable->Count() - 1)->GetFragmentDuration();
-                            firstFragment += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count());
-                          }
-                          fragmentRunEntryTableIndex++;
-                          wchar_t *url = FormatString(L"%sSeg%d-Frag%d", qualityUrl, j, firstFragment);
-                          CHECK_POINTER_HRESULT(result, url, result, E_OUTOFMEMORY);
-
-                          if (SUCCEEDED(result))
-                          {
-                            CSegmentFragment *segmentFragment = new CSegmentFragment(j, firstFragment, url, timestamp * 1000 / timeScale);
-                            CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
-
-                            if (SUCCEEDED(result))
-                            {
-                              result = (this->segmentsFragments->Add(segmentFragment)) ? result : E_FAIL;
-                            }
-
-                            if (FAILED(result))
-                            {
-                              FREE_MEM_CLASS(segmentFragment);
-                            }
-                          }
-                          FREE_MEM(url);
-                        }
-                      }
-                    }
-                  }
-                }
-                FREE_MEM(qualityUrl);
-              }
-              //FREE_MEM(movieIdentifierUrl);
-            }
-            FREE_MEM(baseUrl);
-          }
-          FREE_MEM(mediaPartUrl);
-        }
-        FREE_MEM(serverBaseUrl);
-      }
-
-      FREE_MEM(quality);
-      FREE_MEM_CLASS(fragmentRunEntryTable);
-
-      result = (this->segmentsFragments->Count() > 0) ? result : E_FAIL;
-
-      if (SUCCEEDED(result))
-      {
-        for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
-        {
-          CSegmentFragment *segmentFragment = this->segmentsFragments->GetItem(i);
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: segment %d, fragment %d, url '%s', timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, segmentFragment->GetSegment(), segmentFragment->GetFragment(), segmentFragment->GetUrl(), segmentFragment->GetFragmentTimestamp());
-        }
-      }
+      FREE_MEM(this->segmentsFragments);
+      this->segmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(
+        this->logger,
+        METHOD_START_RECEIVING_DATA_NAME,
+        this->configurationParameters,
+        this->bootstrapInfoBox,
+        true);
+      CHECK_POINTER_HRESULT(result, this->segmentsFragments, result, E_POINTER);
     }
   }
 
@@ -1097,7 +889,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
   if (SUCCEEDED(result))
   {
-    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->segmentsFragments->GetItem(this->lastSegmentFragment)->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+    CSegmentFragment *segmentFragmentToDownload = this->GetFirstNotDownloadedSegmentFragment();
+    this->mainCurlInstance = new CHttpCurlInstance(this->logger, segmentFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
     CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
   }
 
@@ -1254,8 +1047,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   this->shouldExit = false;
   FREE_MEM_CLASS(this->bootstrapInfoBox);
   FREE_MEM_CLASS(this->segmentsFragments);
-  this->lastSegmentFragment = 0;
   this->live = false;
+  this->lastBootstrapInfoRequestTime = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -1285,7 +1078,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Afhs::SeekToTime(int64_t time)
   // AFHS protocol can seek to ms
   // time is in ms
 
-  this->lastSegmentFragment = 0;
+  unsigned int segmentFragmentToDownload = UINT_MAX;
   // find segment and fragment to download
   if (this->segmentsFragments != NULL)
   {
@@ -1295,28 +1088,38 @@ int64_t CMPUrlSourceSplitter_Protocol_Afhs::SeekToTime(int64_t time)
 
       if (segFrag->GetFragmentTimestamp() <= (uint64_t)time)
       {
-        this->lastSegmentFragment = i;
+        segmentFragmentToDownload = i;
         result = segFrag->GetFragmentTimestamp();
       }
+    }
+
+    for (unsigned int i = 0; i < segmentFragmentToDownload; i++)
+    {
+      // mark all previous segments as downloaded
+      this->segmentsFragments->GetItem(i)->SetDownloaded(true);
     }
   }
 
   // in this->lastSegmentFragment is id of segment and fragment to download
-  CSegmentFragment *segFrag = this->segmentsFragments->GetItem(this->lastSegmentFragment);
-  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: segment %d, fragment %d, url '%s', timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
-    segFrag->GetSegment(), segFrag->GetFragment(), segFrag->GetUrl(), segFrag->GetFragmentTimestamp());
+  CSegmentFragment *segFrag = this->segmentsFragments->GetItem(segmentFragmentToDownload);
 
-  // reopen connection
-  // StartReceivingData() reset wholeStreamDownloaded
-  this->StartReceivingData(NULL);
+  if (segFrag == NULL)
+  {
+    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: segment %d, fragment %d, url '%s', timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
+      segFrag->GetSegment(), segFrag->GetFragment(), segFrag->GetUrl(), segFrag->GetFragmentTimestamp());
 
-  if (!this->IsConnected())
-  {
-    result = -1;
-  }
-  else
-  {
-    this->streamTime = result;
+    // reopen connection
+    // StartReceivingData() reset wholeStreamDownloaded
+    this->StartReceivingData(NULL);
+
+    if (!this->IsConnected())
+    {
+      result = -1;
+    }
+    else
+    {
+      this->streamTime = result;
+    }
   }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
@@ -1436,3 +1239,331 @@ size_t CMPUrlSourceSplitter_Protocol_Afhs::CurlReceiveData(char *buffer, size_t 
   return (caller->shouldExit) ? 0 : (bytesRead);
 }
 
+void CMPUrlSourceSplitter_Protocol_Afhs::RemoveAllDownloadedSegmentFragment(void)
+{
+  bool foundLastDownloadedSegmentFragment = false;
+
+  if (this->segmentsFragments->Count() > 1)
+  {
+    unsigned int i = 0;
+    while (i < (this->segmentsFragments->Count() - 1))
+    {
+      if (this->segmentsFragments->GetItem(i)->GetDownloaded())
+      {
+        this->segmentsFragments->Remove(i);
+      }
+      else
+      {
+        i++;
+      }
+    }
+  }
+}
+
+CSegmentFragment *CMPUrlSourceSplitter_Protocol_Afhs::GetFirstNotDownloadedSegmentFragment(void)
+{
+  CSegmentFragment *result = NULL;
+
+  for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
+  {
+    if (!this->segmentsFragments->GetItem(i)->GetDownloaded())
+    {
+      result = this->segmentsFragments->GetItem(i);
+      break;
+    }
+  }
+
+  return result;
+}
+
+CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragmentsFromBootstrapInfoBox(CLogger *logger, const wchar_t *methodName, CParameterCollection *configurationParameters, CBootstrapInfoBox *bootstrapInfoBox, bool logCollection)
+{
+  HRESULT result = S_OK;
+  CSegmentFragmentCollection *segmentsFragments = NULL;
+
+  if (SUCCEEDED(result))
+  {
+    // now choose from bootstrap info -> QualityEntryTable highest quality (if exists) with segment run
+    wchar_t *quality = NULL;
+    CSegmentRunEntryCollection *segmentRunEntryTable = NULL;
+
+    for (unsigned int i = 0; ((i <= bootstrapInfoBox->GetQualityEntryTable()->Count()) && (segmentRunEntryTable == NULL)); i++)
+    {
+      FREE_MEM(quality);
+
+      // choose quality only for valid indexes, in another case is quality NULL
+      if (i != bootstrapInfoBox->GetQualityEntryTable()->Count())
+      {
+        CBootstrapInfoQualityEntry *bootstrapInfoQualityEntry = bootstrapInfoBox->GetQualityEntryTable()->GetItem(0);
+        quality = Duplicate(bootstrapInfoQualityEntry->GetQualityEntry());
+      }
+
+      // from segment run table choose segment with specifed quality (if exists) or segment with QualityEntryCount equal to zero
+      for (unsigned int i = 0; i < bootstrapInfoBox->GetSegmentRunTable()->Count(); i++)
+      {
+        CSegmentRunTableBox *segmentRunTableBox = bootstrapInfoBox->GetSegmentRunTable()->GetItem(i);
+
+        if (quality != NULL)
+        {
+          if (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(quality, false))
+          {
+            segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
+          }
+        }
+        else
+        {
+          if ((segmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0) || (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(L"", false)))
+          {
+            segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
+          }
+        }
+      }
+    }
+
+    if (segmentRunEntryTable == NULL)
+    {
+      logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, methodName, L"cannot find any segment run table");
+      result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+    }
+
+    if (SUCCEEDED(result))
+    {
+      if (segmentRunEntryTable->Count() == 0)
+      {
+        logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, methodName, L"cannot find any segment run entry");
+        result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+      }
+    }
+
+    // from fragment run table choose fragment with specifed quality (if exists) or fragment with QualityEntryCount equal to zero
+    CFragmentRunEntryCollection *fragmentRunEntryTableTemp = NULL;
+    unsigned int timeScale = 0;
+    for (unsigned int i = 0; i < bootstrapInfoBox->GetFragmentRunTable()->Count(); i++)
+    {
+      CFragmentRunTableBox *fragmentRunTableBox = bootstrapInfoBox->GetFragmentRunTable()->GetItem(i);
+
+      if (quality != NULL)
+      {
+        if (fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(quality, false))
+        {
+          fragmentRunEntryTableTemp = fragmentRunTableBox->GetFragmentRunEntryTable();
+          timeScale = fragmentRunTableBox->GetTimeScale();
+        }
+      }
+      else
+      {
+        if ((fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0) || (fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(L"", false)))
+        {
+          fragmentRunEntryTableTemp = fragmentRunTableBox->GetFragmentRunEntryTable();
+          timeScale = fragmentRunTableBox->GetTimeScale();
+        }
+      }
+    }
+
+    if (fragmentRunEntryTableTemp == NULL)
+    {
+      logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, methodName, L"cannot find any fragment run table");
+      result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+    }
+
+    CFragmentRunEntryCollection *fragmentRunEntryTable = new CFragmentRunEntryCollection();
+    CHECK_POINTER_HRESULT(result, fragmentRunEntryTable, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      // convert temporary fragment run table to simplier collection
+      for (unsigned int i = 0; i < fragmentRunEntryTableTemp->Count(); i++)
+      {
+        CFragmentRunEntry *fragmentRunEntryTemp = fragmentRunEntryTableTemp->GetItem(i);
+        unsigned int nextItemIndex = i + 1;
+        CFragmentRunEntry *fragmentRunEntryTempNext = NULL;
+
+        for (unsigned int j = nextItemIndex; j < fragmentRunEntryTableTemp->Count(); j++)
+        {
+          CFragmentRunEntry *temp = fragmentRunEntryTableTemp->GetItem(nextItemIndex);
+          if (temp->GetFirstFragment() != 0)
+          {
+            fragmentRunEntryTempNext = temp;
+            break;
+          }
+          else
+          {
+            nextItemIndex++;
+          }
+        }
+
+        if (((fragmentRunEntryTemp->GetFirstFragmentTimestamp() == 0) && (i == 0)) ||
+          (fragmentRunEntryTemp->GetFirstFragmentTimestamp() != 0))
+        {
+          uint64_t fragmentTimestamp = fragmentRunEntryTemp->GetFirstFragmentTimestamp();
+          unsigned int lastFragment = (fragmentRunEntryTempNext == NULL) ? (fragmentRunEntryTemp->GetFirstFragment() + 1) : fragmentRunEntryTempNext->GetFirstFragment();
+
+          for (unsigned int j = fragmentRunEntryTemp->GetFirstFragment(); j < lastFragment; j++)
+          {
+            unsigned int diff = j - fragmentRunEntryTemp->GetFirstFragment();
+            CFragmentRunEntry *fragmentRunEntry = new CFragmentRunEntry(
+              fragmentRunEntryTemp->GetFirstFragment() + diff,
+              fragmentTimestamp,
+              fragmentRunEntryTemp->GetFragmentDuration(),
+              fragmentRunEntryTemp->GetDiscontinuityIndicator());
+            fragmentTimestamp += fragmentRunEntryTemp->GetFragmentDuration();
+
+            CHECK_POINTER_HRESULT(result, fragmentRunEntry, result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
+            {
+              result = (fragmentRunEntryTable->Add(fragmentRunEntry)) ? result : E_FAIL;
+            }
+
+            if (FAILED(result))
+            {
+              FREE_MEM_CLASS(fragmentRunEntry);
+            }
+          }
+        }
+      }
+    }
+
+    if (SUCCEEDED(result))
+    {
+      if (fragmentRunEntryTable->Count() == 0)
+      {
+        logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, methodName, L"cannot find any fragment run entry");
+        result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+      }
+    }
+
+    if (SUCCEEDED(result))
+    {
+      wchar_t *serverBaseUrl = Duplicate(configurationParameters->GetValue(PARAMETER_NAME_AFHS_BASE_URL, true, L""));
+      for (unsigned int i = 0; i < bootstrapInfoBox->GetServerEntryTable()->Count(); i++)
+      {
+        CBootstrapInfoServerEntry *serverEntry = bootstrapInfoBox->GetServerEntryTable()->GetItem(i);
+        if (!IsNullOrEmptyOrWhitespace(serverEntry->GetServerEntry()))
+        {
+          FREE_MEM(serverBaseUrl);
+          serverBaseUrl = Duplicate(serverEntry->GetServerEntry());
+        }
+      }
+
+      CHECK_POINTER_HRESULT(result, serverBaseUrl, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
+      {
+        wchar_t *mediaPartUrl = Duplicate(configurationParameters->GetValue(PARAMETER_NAME_AFHS_MEDIA_PART_URL, true, L""));
+        CHECK_POINTER_HRESULT(result, mediaPartUrl, result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
+        {
+          wchar_t *baseUrl = FormatAbsoluteUrl(serverBaseUrl, mediaPartUrl);
+          CHECK_POINTER_HRESULT(result, baseUrl, result, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(result))
+          {
+            //wchar_t *movieIdentifierUrl = FormatAbsoluteUrl(baseUrl, this->bootstrapInfoBox->GetMovieIdentifier());
+            //CHECK_POINTER_HRESULT(result, movieIdentifierUrl, result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
+            {
+              //wchar_t *qualityUrl = FormatString(L"%s%s", movieIdentifierUrl, (quality == NULL) ? L"" : quality);
+              wchar_t *qualityUrl = FormatAbsoluteUrl(baseUrl, (quality == NULL) ? L"" : quality);
+              CHECK_POINTER_HRESULT(result, qualityUrl, result, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(result))
+              {
+                // convert segment run entry table to simplier collection
+                segmentsFragments = new CSegmentFragmentCollection();
+                CHECK_POINTER_HRESULT(result, segmentsFragments, result, E_OUTOFMEMORY);
+
+                if (SUCCEEDED(result))
+                {
+                  unsigned int fragmentRunEntryTableIndex  = 0;
+
+                  for (unsigned int i = 0; i < segmentRunEntryTable->Count(); i++)
+                  {
+                    CSegmentRunEntry *segmentRunEntry = segmentRunEntryTable->GetItem(i);
+                    unsigned int lastSegment = (i == (segmentRunEntryTable->Count() - 1)) ? (segmentRunEntry->GetFirstSegment() + 1) : segmentRunEntryTable->GetItem(i + 1)->GetFirstSegment();
+
+                    for (unsigned int j = segmentRunEntry->GetFirstSegment(); j < lastSegment; j++)
+                    {
+                      for (unsigned int k = 0; k < ((segmentRunEntry->GetFragmentsPerSegment() == UINT_MAX) ? fragmentRunEntryTable->Count() : segmentRunEntry->GetFragmentsPerSegment()); k++)
+                      {
+                        // choose fragment and get its timestamp
+                        uint64_t timestamp = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragmentTimestamp();
+                        unsigned int firstFragment = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragment();
+
+                        if (fragmentRunEntryTableIndex > fragmentRunEntryTable->Count())
+                        {
+                          // adjust fragment timestamp
+                          timestamp += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count()) * fragmentRunEntryTable->GetItem(fragmentRunEntryTable->Count() - 1)->GetFragmentDuration();
+                          firstFragment += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count());
+                        }
+                        fragmentRunEntryTableIndex++;
+                        wchar_t *url = FormatString(L"%sSeg%d-Frag%d", qualityUrl, j, firstFragment);
+                        CHECK_POINTER_HRESULT(result, url, result, E_OUTOFMEMORY);
+
+                        if (SUCCEEDED(result))
+                        {
+                          CSegmentFragment *segmentFragment = new CSegmentFragment(j, firstFragment, url, timestamp * 1000 / timeScale);
+                          CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
+
+                          if (SUCCEEDED(result))
+                          {
+                            result = (segmentsFragments->Add(segmentFragment)) ? result : E_FAIL;
+                          }
+
+                          if (FAILED(result))
+                          {
+                            FREE_MEM_CLASS(segmentFragment);
+                          }
+                        }
+                        FREE_MEM(url);
+                      }
+                    }
+                  }
+                }
+              }
+              FREE_MEM(qualityUrl);
+            }
+            //FREE_MEM(movieIdentifierUrl);
+          }
+          FREE_MEM(baseUrl);
+        }
+        FREE_MEM(mediaPartUrl);
+      }
+      FREE_MEM(serverBaseUrl);
+    }
+
+    FREE_MEM(quality);
+    FREE_MEM_CLASS(fragmentRunEntryTable);
+
+    result = (segmentsFragments->Count() > 0) ? result : E_FAIL;
+
+    if (SUCCEEDED(result) && (logCollection))
+    {
+      wchar_t *segmentFragmentLog = NULL;
+      for (unsigned int i = 0; i < segmentsFragments->Count(); i++)
+      {
+        CSegmentFragment *segmentFragment = segmentsFragments->GetItem(i);
+
+        wchar_t *temp = FormatString(L"%s%ssegment %d, fragment %d, url '%s', timestamp: %lld", (i == 0) ? L"" : segmentFragmentLog, (i == 0) ? L"" : L"\n", segmentFragment->GetSegment(), segmentFragment->GetFragment(), segmentFragment->GetUrl(), segmentFragment->GetFragmentTimestamp());
+        FREE_MEM(segmentFragmentLog);
+        segmentFragmentLog = temp;
+      }
+
+      if (segmentFragmentLog != NULL)
+      {
+        logger->Log(LOGGER_VERBOSE, L"%s: %s: segments and fragments:\n%s", PROTOCOL_IMPLEMENTATION_NAME, methodName, segmentFragmentLog);
+      }
+
+      FREE_MEM(segmentFragmentLog);
+    }
+  }
+
+  if (FAILED(result))
+  {
+    FREE_MEM_CLASS(segmentsFragments);
+  }
+
+  return segmentsFragments;
+}

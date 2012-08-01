@@ -32,6 +32,12 @@ public:
   CSegmentFragmentCollection(void);
   ~CSegmentFragmentCollection(void);
 
+  // get the segment and fragment from collection with specified url
+  // @param name : the URL of segment and fragment to find
+  // @param invariant : specifies if segment and fragment URL shoud be find with invariant casing
+  // @return : the reference to segment and fragment or NULL if not find
+  CSegmentFragment *GetSegmentFragment(const wchar_t *url, bool invariant);
+
 protected:
 
   // compare two item keys

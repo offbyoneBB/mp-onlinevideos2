@@ -28,6 +28,7 @@ CSegmentFragment::CSegmentFragment(unsigned int segment, unsigned int fragment, 
   this->fragment = fragment;
   this->url = Duplicate(url);
   this->fragmentTimestamp = fragmentTimestamp;
+  this->downloaded = false;
 }
 
 CSegmentFragment::~CSegmentFragment(void)
@@ -53,4 +54,21 @@ const wchar_t *CSegmentFragment::GetUrl(void)
 uint64_t CSegmentFragment::GetFragmentTimestamp(void)
 {
   return this->fragmentTimestamp;
+}
+
+bool CSegmentFragment::GetDownloaded(void)
+{
+  return this->downloaded;
+}
+
+void CSegmentFragment::SetDownloaded(bool downloaded)
+{
+  this->downloaded = downloaded;
+}
+
+CSegmentFragment *CSegmentFragment::Clone(void)
+{
+  CSegmentFragment *clone = new CSegmentFragment(this->segment, this->fragment, this->url, this->fragmentTimestamp);
+
+  return clone;
 }

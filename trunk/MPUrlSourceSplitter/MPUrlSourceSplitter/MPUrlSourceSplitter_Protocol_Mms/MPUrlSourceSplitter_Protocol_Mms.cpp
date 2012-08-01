@@ -1455,9 +1455,3 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsHeaderData(MMSContext *mmsConte
   this->logger->Log(LOGGER_INFO, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_GET_MMS_HEADER_DATA_NAME, result);
   return result;
 }
-
-//if (type == CURLINFO_HEADER_OUT)
-//        {
-//          // we are just interested in headers comming in from peer
-//          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: sent HTTP header: '%s'", caller->protocolName, METHOD_CURL_DEBUG_CALLBACK, curlData);
-//        }

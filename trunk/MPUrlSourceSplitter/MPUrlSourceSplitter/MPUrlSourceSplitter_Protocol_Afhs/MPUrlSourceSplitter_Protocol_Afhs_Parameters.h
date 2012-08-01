@@ -35,7 +35,7 @@
 #define PARAMETER_NAME_AFHS_BASE_URL                                          L"AfhsBaseUrl"
 #define PARAMETER_NAME_AFHS_MEDIA_PART_URL                                    L"AfhsMediaPartUrl"
 #define PARAMETER_NAME_AFHS_MEDIA_METADATA                                    L"AfhsMediaMetadata"
-#define PARAMETER_NAME_AFHS_MANIFEST_URL                                      L"AfhsMediaManifestUrl"
+#define PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL                                L"AfhsMediaBootstrapInfoUrl"
 
 // we should get data in twenty seconds
 #define AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
