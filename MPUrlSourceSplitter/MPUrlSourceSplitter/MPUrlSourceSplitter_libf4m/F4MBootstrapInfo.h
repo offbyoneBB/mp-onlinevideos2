@@ -20,53 +20,36 @@
 
 #pragma once
 
-#ifndef __BOOTSTRAP_INFO_DEFINED
-#define __BOOTSTRAP_INFO_DEFINED
-
-#include "MPUrlSourceSplitter_Parser_F4M_Exports.h"
+#ifndef __F4M_BOOTSTRAP_INFO_DEFINED
+#define __F4M_BOOTSTRAP_INFO_DEFINED
 
 #include "Logger.h"
 
-class MPURLSOURCESPLITTER_PARSER_F4M_API CBootstrapInfo
+class CF4MBootstrapInfo
 {
 public:
-  // constructor
-  // create instance of CBootstrapInfo class
-  // @param id : the ID of bootstrap info
-  // @param profile : the profile name of bootstrap info
-  // @param url : the URL of bootstrap info (have to be NULL if value specified)
-  // @param value : the BASE64 encoded value (have to be NULL if url specified)
-  CBootstrapInfo(const wchar_t *id, const wchar_t *profile, const wchar_t *url, const wchar_t *value);
+  // initializes a new instance of CF4MBootstrapInfo class
+  CF4MBootstrapInfo(void);
 
   // destructor
-  ~CBootstrapInfo(void);
+  ~CF4MBootstrapInfo(void);
 
-  // tests if instance is valid
-  // @return : true if instance is valid
-  bool IsValid(void);
+  /* get methods */
 
-  // tests if for bootstrap info is specified URL
-  // @return : true if URL is specified
-  bool HasUrl(void);
-
-  // tests if for bootstrap info is specified value
-  // @return : true if value is specified
-  bool HasValue(void);
-
-  // gets bootstrap info ID
-  // @return : bootstrap info ID or NULL if error
+  // gets ID of bootstrap info
+  // @return : the ID of bootstrap info
   const wchar_t *GetId(void);
 
   // gets bootstrap info profile name
-  // @return : bootstrap info profile name or NULL if error
+  // @return : bootstrap info profile name
   const wchar_t *GetProfile(void);
 
-  // gets bootstrap info url
-  // @return : bootstrap info url or NULL if value is specified
+  // gets bootstrap info URL (if not specified value)
+  // @return : bootstrap info URL (can be NULL if value specified)
   const wchar_t *GetUrl(void);
 
-  // gets bootstrap info BASE64 encoded value
-  // @return : bootstrap info BASE64 encoded value or NULL if url is specified
+  // gets bootstrap info BASE64 encoded value (if not specified URL)
+  // @return : bootstrap info BASE64 encoded value (can be NULL if URL specified)
   const wchar_t *GetValue(void);
 
   // gets decoding result of BASE64 encoded value
@@ -81,14 +64,50 @@ public:
   // @return : decoded value length, UINT_MAX if error
   unsigned int GetDecodedValueLength(void);
 
+  // gets bootstrap info base URL
+  // @return : bootstrap info base URL
+  const wchar_t *GetBaseUrl(void);
+
+  /* set methods */
+
+  // sets ID of bootstrap info
+  // @param id : the ID of bootstrap info to set
+  // @return : true if successful, false otherwise
+  bool SetId(const wchar_t *id);
+
+  // gets bootstrap info profile name
+  // @param profile : bootstrap info profile name to set
+  // @return : true if successful, false otherwise
+  bool SetProfile(const wchar_t *profile);
+
+  // gets bootstrap info URL (if not specified value)
+  // @param url : bootstrap info URL (can be NULL if value specified) to set
+  // @return : true if successful, false otherwise
+  bool SetUrl(const wchar_t *url);
+
+  // gets bootstrap info BASE64 encoded value (if not specified URL)
+  // @param value : bootstrap info BASE64 encoded value (can be NULL if URL specified) to set
+  // @return : true if successful, false otherwise
+  bool SetValue(const wchar_t *value);
+
   // sets bootstrap info base URL
   // @param baseUrl : bootstrap info base URL to set
   // @return : true if set, false otherwise
   bool SetBaseUrl(const wchar_t *baseUrl);
 
-  // gets bootstrap info base URL
-  // @return : bootstrap info base URL
-  const wchar_t *GetBaseUrl(void);
+  /* other methods */
+
+  // tests if instance is valid
+  // @return : true if instance is valid
+  bool IsValid(void);
+
+  // tests if for bootstrap info is specified URL
+  // @return : true if URL is specified
+  bool HasUrl(void);
+
+  // tests if for bootstrap info is specified value
+  // @return : true if value is specified
+  bool HasValue(void);
 
   // downloads bootstrap info
   // @param : logger for logging purposes
@@ -103,12 +122,13 @@ public:
 private:
   // stores bootstrap info ID
   wchar_t *id;
-  // stores profile name
+  // stores bootstrap info profile name
   wchar_t *profile;
-  // stores bootstrap info URL (NULL if value specified)
+  // stores bootstrap info URL
   wchar_t *url;
-  // stores bootstrap raw value (NULL if url specified)
+  // stores boostrap info BASE64 encoded value
   wchar_t *value;
+
   // stores result of BASE64 decoding
   HRESULT decodeResult;
   // stores decoded value

@@ -24,10 +24,11 @@
 
 CBox::CBox(void)
 {
-  this->length = -1;
+  this->length = 0;
   this->parsed = false;
   this->type = NULL;
   this->hasExtendedHeader = false;
+  this->hasUnspecifiedSize = false;
 }
 
 CBox::~CBox(void)
@@ -47,12 +48,12 @@ bool CBox::IsParsed(void)
 
 bool CBox::IsBigSize(void)
 {
-  return (this->length > ((int64_t)UINT_MAX));
+  return (this->length > ((uint64_t)UINT_MAX));
 }
 
 bool CBox::IsSizeUnspecifed(void)
 {
-  return (this->length == 0);
+  return this->hasUnspecifiedSize;
 }
 
 bool CBox::HasExtendedHeader(void)
@@ -60,7 +61,7 @@ bool CBox::HasExtendedHeader(void)
   return this->hasExtendedHeader;
 }
 
-int64_t CBox::GetSize(void)
+uint64_t CBox::GetSize(void)
 {
   return this->length;
 }
@@ -79,7 +80,7 @@ bool CBox::Parse(const unsigned char *buffer, unsigned int length)
 
   if ((buffer != NULL) && (length >= BOX_HEADER_LENGTH))
   {
-    int64_t size = BE32(buffer);
+    uint64_t size = BE32(buffer);
 
     if (size == 1)
     {
@@ -95,6 +96,7 @@ bool CBox::Parse(const unsigned char *buffer, unsigned int length)
     // set length of box
     // if size == 0 then box is the last one in and its contents extend to the end of the file
     this->length = (size == 0) ? length : size;
+    this->hasUnspecifiedSize = (size == 0);
 
     // read box type
     unsigned char *type = ALLOC_MEM_SET(type, unsigned char, 5, 0);
@@ -170,7 +172,7 @@ wchar_t *CBox::GetParsedHumanReadable(const wchar_t *indent)
 
   if (this->IsBox())
   {
-    result = FormatString(L"%sType: '%s'\n%sSize: %llu\n%sExtended header: %s", indent, this->type, indent, this->length, indent, this->HasExtendedHeader() ? L"true" : L"false");
+    result = FormatString(L"%sType: '%s'\n%sSize: %llu\n%sExtended header: %s\n%sUnspecified size: %s", indent, this->type, indent, this->length, indent, this->HasExtendedHeader() ? L"true" : L"false", indent, this->IsSizeUnspecifed() ? L"true" : L"false");
   }
 
   return result;

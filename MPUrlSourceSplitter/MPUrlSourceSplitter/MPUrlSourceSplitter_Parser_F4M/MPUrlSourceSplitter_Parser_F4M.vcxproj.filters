@@ -38,13 +38,7 @@
     <ClInclude Include="MPUrlSourceSplitter_Parser_F4M_Exports.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BootstrapInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Media.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BootstrapInfoCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MediaCollection.h">
@@ -61,13 +55,7 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BootstrapInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Media.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BootstrapInfoCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MediaCollection.cpp">

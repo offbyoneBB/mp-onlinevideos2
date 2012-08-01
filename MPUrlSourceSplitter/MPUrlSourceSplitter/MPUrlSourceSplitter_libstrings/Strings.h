@@ -23,6 +23,27 @@
 #ifndef __STRINGS_DEFINED
 #define __STRINGS_DEFINED
 
+#define SET_STRING(class_variable, variable)                                  FREE_MEM(class_variable); \
+                                                                              class_variable = Duplicate(variable);
+
+#define TEST_STRING(class_variable, variable)                                 (class_variable != NULL)
+#define TEST_STRING_WITH_NULL(class_variable, variable)                       (TEST_STRING(class_variable, variable)  || (class_variable == variable))
+
+#define SET_STRING_RESULT(class_variable, variable, result)                   SET_STRING(class_variable, variable) \
+                                                                              result = TEST_STRING(class_variable, variable);
+
+#define SET_STRING_RESULT_WITH_NULL(class_variable, variable, result)         SET_STRING(class_variable, variable) \
+                                                                              result = TEST_STRING_WITH_NULL(class_variable, variable);
+
+#define SET_STRING_RESULT_WITH_NULL_DEFINE(class_variable, variable, result)  bool result = false; \
+                                                                              SET_STRING_RESULT_WITH_NULL(class_variable, variable, result)
+
+#define SET_STRING_RETURN(class_variable, variable)                           SET_STRING(class_variable, variable) \
+                                                                              return TEST_STRING(class_variable, variable);
+
+#define SET_STRING_RETURN_WITH_NULL(class_variable, variable)                 SET_STRING(class_variable, variable) \
+                                                                              return TEST_STRING_WITH_NULL(class_variable, variable);
+
 // converts GUID to MBCS string
 // @param guid : GUID to convert
 // @return : reference to null terminated string or NULL if error occured

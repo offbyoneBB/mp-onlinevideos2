@@ -20,18 +20,18 @@
 
 #include "StdAfx.h"
 
-#include "BootstrapInfoCollection.h"
+#include "F4MBootstrapInfoCollection.h"
 
-CBootstrapInfoCollection::CBootstrapInfoCollection(void)
+CF4MBootstrapInfoCollection::CF4MBootstrapInfoCollection(void)
   : CCollection(CCollection::Delete)
 {
 }
 
-CBootstrapInfoCollection::~CBootstrapInfoCollection(void)
+CF4MBootstrapInfoCollection::~CF4MBootstrapInfoCollection(void)
 {
 }
 
-int CBootstrapInfoCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
+int CF4MBootstrapInfoCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
 {
   bool invariant = (*(bool *)context);
 
@@ -45,22 +45,22 @@ int CBootstrapInfoCollection::CompareItemKeys(const wchar_t *firstKey, const wch
   }
 }
 
-const wchar_t *CBootstrapInfoCollection::GetKey(CBootstrapInfo *item)
+const wchar_t *CF4MBootstrapInfoCollection::GetKey(CF4MBootstrapInfo *item)
 {
   return item->GetId();
 }
 
-CBootstrapInfo *CBootstrapInfoCollection::Clone(CBootstrapInfo *item)
+CF4MBootstrapInfo *CF4MBootstrapInfoCollection::Clone(CF4MBootstrapInfo *item)
 {
   return NULL;
 }
 
-bool CBootstrapInfoCollection::Contains(const wchar_t *name, bool invariant)
+bool CF4MBootstrapInfoCollection::Contains(const wchar_t *name, bool invariant)
 {
   return __super::Contains(name, (void *)&invariant);
 }
 
-CBootstrapInfo *CBootstrapInfoCollection::GetBootstrapInfo(const wchar_t *id, bool invariant)
+CF4MBootstrapInfo *CF4MBootstrapInfoCollection::GetBootstrapInfo(const wchar_t *id, bool invariant)
 {
   return this->GetItem(id, (void *)&invariant);
 }

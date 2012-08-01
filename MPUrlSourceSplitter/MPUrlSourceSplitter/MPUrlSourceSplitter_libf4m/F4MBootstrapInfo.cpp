@@ -20,18 +20,18 @@
 
 #include "StdAfx.h"
 
-#include "BootstrapInfo.h"
+#include "F4MBootstrapInfo.h"
 
 #include "base64.h"
-#include "HttpCurlInstance.h"
 #include "formatUrl.h"
+#include "HttpCurlInstance.h"
 
-CBootstrapInfo::CBootstrapInfo(const wchar_t *id, const wchar_t *profile, const wchar_t *url, const wchar_t *value)
+CF4MBootstrapInfo::CF4MBootstrapInfo(void)
 {
-  this->id = Duplicate((id == NULL) ? L"" : id);
-  this->profile = Duplicate(profile);
-  this->url = Duplicate(url);
-  this->value = Duplicate(value);
+  this->id = NULL;
+  this->profile = NULL;
+  this->url = NULL;
+  this->value = NULL;
 
   this->decodedLength = UINT_MAX;
   this->decodedValue = NULL;
@@ -39,9 +39,9 @@ CBootstrapInfo::CBootstrapInfo(const wchar_t *id, const wchar_t *profile, const 
   this->baseUrl = NULL;
 }
 
-CBootstrapInfo::~CBootstrapInfo(void)
+CF4MBootstrapInfo::~CF4MBootstrapInfo(void)
 {
-  FREE_MEM(this->url);
+  FREE_MEM(this->id);
   FREE_MEM(this->profile);
   FREE_MEM(this->url);
   FREE_MEM(this->value);
@@ -50,42 +50,29 @@ CBootstrapInfo::~CBootstrapInfo(void)
   FREE_MEM(this->baseUrl);
 }
 
-bool CBootstrapInfo::IsValid(void)
-{
-  return ((this->id != NULL) && (this->profile != NULL) && (((this->url != NULL) && (this->value == NULL)) || ((this->url == NULL) && (this->value != NULL))));
-}
+/* get methods */
 
-bool CBootstrapInfo::HasUrl(void)
-{
-  return (this->url != NULL);
-}
-
-bool CBootstrapInfo::HasValue(void)
-{
-  return (this->value != NULL);
-}
-
-const wchar_t *CBootstrapInfo::GetId(void)
+const wchar_t *CF4MBootstrapInfo::GetId(void)
 {
   return this->id;
 }
 
-const wchar_t *CBootstrapInfo::GetProfile(void)
+const wchar_t *CF4MBootstrapInfo::GetProfile(void)
 {
   return this->profile;
 }
 
-const wchar_t *CBootstrapInfo::GetUrl(void)
-{
-  return this->url;
-}
+ const wchar_t *CF4MBootstrapInfo::GetUrl(void)
+ {
+   return this->url;
+ }
 
-const wchar_t *CBootstrapInfo::GetValue(void)
+const wchar_t *CF4MBootstrapInfo::GetValue(void)
 {
   return this->value;
 }
 
-HRESULT CBootstrapInfo::GetDecodeResult(void)
+HRESULT CF4MBootstrapInfo::GetDecodeResult(void)
 {
   FREE_MEM(this->decodedValue);
   HRESULT result = this->decodeResult;
@@ -113,30 +100,66 @@ HRESULT CBootstrapInfo::GetDecodeResult(void)
   return result;
 }
 
-const unsigned char *CBootstrapInfo::GetDecodedValue(void)
+const unsigned char *CF4MBootstrapInfo::GetDecodedValue(void)
 {
   return this->decodedValue;
 }
 
-unsigned int CBootstrapInfo::GetDecodedValueLength(void)
+unsigned int CF4MBootstrapInfo::GetDecodedValueLength(void)
 {
   return this->decodedLength;
 }
 
-bool CBootstrapInfo::SetBaseUrl(const wchar_t *baseUrl)
-{
-  FREE_MEM(this->baseUrl);
-  this->baseUrl = Duplicate(baseUrl);
-
-  return (this->baseUrl != NULL);
-}
-
-const wchar_t *CBootstrapInfo::GetBaseUrl(void)
+const wchar_t *CF4MBootstrapInfo::GetBaseUrl(void)
 {
   return this->baseUrl;
 }
 
-HRESULT CBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int receiveDataTimeout, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie)
+/* set methods */
+
+bool CF4MBootstrapInfo::SetId(const wchar_t *id)
+{
+  SET_STRING_RETURN_WITH_NULL(this->id, id);
+}
+
+bool CF4MBootstrapInfo::SetProfile(const wchar_t *profile)
+{
+  SET_STRING_RETURN_WITH_NULL(this->profile, profile);
+}
+
+bool CF4MBootstrapInfo::SetUrl(const wchar_t *url)
+{
+  SET_STRING_RETURN_WITH_NULL(this->url, url);
+}
+
+bool CF4MBootstrapInfo::SetValue(const wchar_t *value)
+{
+  SET_STRING_RETURN_WITH_NULL(this->value, value);
+}
+
+bool CF4MBootstrapInfo::SetBaseUrl(const wchar_t *baseUrl)
+{
+  SET_STRING_RETURN_WITH_NULL(this->baseUrl, baseUrl);
+}
+
+/* other methods */
+
+bool CF4MBootstrapInfo::IsValid(void)
+{
+  return ((this->id != NULL) && (this->profile != NULL) && (((this->url != NULL) && (this->value == NULL)) || ((this->url == NULL) && (this->value != NULL))));
+}
+
+bool CF4MBootstrapInfo::HasUrl(void)
+{
+  return (this->url != NULL);
+}
+
+bool CF4MBootstrapInfo::HasValue(void)
+{
+  return (this->value != NULL);
+}
+
+HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int receiveDataTimeout, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, logger);

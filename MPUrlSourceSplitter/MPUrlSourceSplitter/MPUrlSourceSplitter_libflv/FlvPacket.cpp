@@ -166,6 +166,7 @@ bool CFlvPacket::CreatePacket(unsigned int packetType, const unsigned char *buff
       this->packet[4] = (unsigned char)((timestamp & 0x00FF0000) >> 16);
       this->packet[5] = (unsigned char)((timestamp & 0x00000FF0) >> 8);
       this->packet[6] = (unsigned char)(timestamp & 0x000000FF);
+      this->packet[7] = (unsigned char)((timestamp & 0xFF000000) >> 24);
 
       memcpy(this->packet + 11, buffer, length);
 

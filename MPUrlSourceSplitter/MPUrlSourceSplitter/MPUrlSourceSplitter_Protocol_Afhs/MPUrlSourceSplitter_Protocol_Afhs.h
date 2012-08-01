@@ -191,17 +191,16 @@ protected:
   bool supressData;
 
   // buffer for processing box data before are send to further processing
-  //CLinearBuffer *bufferForBoxProcessing;
   CLinearBufferCollection *bufferForBoxProcessingCollection;
 
   // buffer for processing data before are send to filter
   CLinearBuffer *bufferForProcessing;
 
-  // holds first FLV packet timestamp for correction of video packet timestamps
-  int firstTimestamp;
+  //// holds first FLV packet timestamp for correction of video packet timestamps
+  //int firstTimestamp;
 
-  // holds first video FLV packet timestamp for correction of video packet timestamps
-  int firstVideoTimestamp;
+  //// holds first video FLV packet timestamp for correction of video packet timestamps
+  //int firstVideoTimestamp;
 
   // holds bootstrap info box - segments, fragments, duration, seek information
   CBootstrapInfoBox *bootstrapInfoBox;
@@ -209,6 +208,8 @@ protected:
   CSegmentFragmentCollection *segmentsFragments;
   // holds last segment and fragment index from segmentsFragments
   unsigned int lastSegmentFragment;
+  // specifies if working with live stream
+  bool live;
 };
 
 #endif
