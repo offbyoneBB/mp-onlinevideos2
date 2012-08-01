@@ -68,6 +68,7 @@
     <Compile Include="TVOUtil.cs" />
     <Compile Include="TVtropolisUtil.cs" />
     <Compile Include="YTVUtil.cs" />
+    <Compile Include="ZTeleUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
