@@ -41,6 +41,9 @@ namespace OnlineVideos.Sites.georgius
         private static String videoUrlPostfixRegex = @"postfix:[\s]*'(?<postfix>[^']+)";
 
         private static String videoIdLiveRegex = @"videoID0:[\s]*'(?<videoId>[^']+)";
+        private static String videoLowIdLiveRegex = @"videoID1:[\s]*'(?<videoLowId>[^']+)";
+        private static String videoMediumIdLiveRegex = @"videoID2:[\s]*'(?<videoMediumId>[^']+)";
+        private static String videoHighIdLiveRegex = @"videoID3:[\s]*'(?<videoHighId>[^']+)";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -262,6 +265,12 @@ namespace OnlineVideos.Sites.georgius
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl);
 
             String showUrl = String.Empty;
+            if (video.PlaybackOptions == null)
+            {
+                video.PlaybackOptions = new Dictionary<string, string>();
+            }
+
+            video.PlaybackOptions.Clear();
 
             if (video.VideoUrl != TA3Util.baseLiveUrl)
             {
@@ -301,7 +310,9 @@ namespace OnlineVideos.Sites.georgius
                             postfix = match.Groups["postfix"].Value;
                         }
 
-                        showUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(String.Format("{0}{1}{2}_ta3d.mp4{3}", prefix, TA3Util.videoType[videoType], videoId, postfix)) { Referer = "http://embed.livebox.cz/ta3/player.swf?nocache=1343671458639" }.ToString();
+                        video.PlaybackOptions.Add("Low", new OnlineVideos.MPUrlSourceFilter.HttpUrl(String.Format("{0}{1}{2}_ta3d.mp4{3}", prefix, TA3Util.videoType[videoType], videoId, postfix)) { Referer = "http://embed.livebox.cz/ta3/player.swf?nocache=1343671458639" }.ToString());
+                        video.PlaybackOptions.Add("Medium", new OnlineVideos.MPUrlSourceFilter.HttpUrl(String.Format("{0}{1}{2}_ta2d.mp4{3}", prefix, TA3Util.videoType[videoType], videoId, postfix)) { Referer = "http://embed.livebox.cz/ta3/player.swf?nocache=1343671458639" }.ToString());
+                        video.PlaybackOptions.Add("High", new OnlineVideos.MPUrlSourceFilter.HttpUrl(String.Format("{0}{1}{2}_ta1d.mp4{3}", prefix, TA3Util.videoType[videoType], videoId, postfix)) { Referer = "http://embed.livebox.cz/ta3/player.swf?nocache=1343671458639" }.ToString());
                     }
                 }
             }
@@ -310,6 +321,9 @@ namespace OnlineVideos.Sites.georgius
                 String playerOnlineWebData = SiteUtilBase.GetWebData(TA3Util.playerOnlineUrl, null, video.VideoUrl);
 
                 String videoId = String.Empty;
+                String videoLowId = String.Empty;
+                String videoMediumId = String.Empty;
+                String videoHighId = String.Empty;
                 String prefix = String.Empty;
                 String postfix = String.Empty;
 
@@ -317,6 +331,22 @@ namespace OnlineVideos.Sites.georgius
                 if (match.Success)
                 {
                     videoId = match.Groups["videoId"].Value;
+                }
+
+                match = Regex.Match(playerOnlineWebData, TA3Util.videoLowIdLiveRegex);
+                if (match.Success)
+                {
+                    videoLowId = match.Groups["videoLowId"].Value;
+                }
+                match = Regex.Match(playerOnlineWebData, TA3Util.videoMediumIdLiveRegex);
+                if (match.Success)
+                {
+                    videoMediumId = match.Groups["videoMediumId"].Value;
+                }
+                match = Regex.Match(playerOnlineWebData, TA3Util.videoHighIdLiveRegex);
+                if (match.Success)
+                {
+                    videoHighId = match.Groups["videoHighId"].Value;
                 }
 
                 match = Regex.Match(playerOnlineWebData, TA3Util.videoUrlPrefixRegex);
@@ -331,7 +361,30 @@ namespace OnlineVideos.Sites.georgius
                     postfix = match.Groups["postfix"].Value;
                 }
 
-                showUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(String.Format("{0}{1}{2}", prefix, videoId, postfix)) { Referer = "http://embed.livebox.cz/ta3/player.swf?nocache=1343671458639" }.ToString();
+                if (!String.IsNullOrEmpty(videoLowId))
+                {
+                    video.PlaybackOptions.Add("Low", new OnlineVideos.MPUrlSourceFilter.HttpUrl(String.Format("{0}{1}{2}", prefix, videoLowId, postfix)) { Referer = "http://embed.livebox.cz/ta3/player.swf?nocache=1343671458639" }.ToString());
+                }
+                if (!String.IsNullOrEmpty(videoMediumId))
+                {
+                    video.PlaybackOptions.Add("Medium", new OnlineVideos.MPUrlSourceFilter.HttpUrl(String.Format("{0}{1}{2}", prefix, videoMediumId, postfix)) { Referer = "http://embed.livebox.cz/ta3/player.swf?nocache=1343671458639" }.ToString());
+                }
+                if (!String.IsNullOrEmpty(videoHighId))
+                {
+                    video.PlaybackOptions.Add("High", new OnlineVideos.MPUrlSourceFilter.HttpUrl(String.Format("{0}{1}{2}", prefix, videoHighId, postfix)) { Referer = "http://embed.livebox.cz/ta3/player.swf?nocache=1343671458639" }.ToString());
+                }
+
+                if (video.PlaybackOptions.Count == 0)
+                {
+                    video.PlaybackOptions.Add("Auto", new OnlineVideos.MPUrlSourceFilter.HttpUrl(String.Format("{0}{1}{2}", prefix, videoId, postfix)) { Referer = "http://embed.livebox.cz/ta3/player.swf?nocache=1343671458639" }.ToString());
+                }
+            }
+
+            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+            {
+                var enumer = video.PlaybackOptions.GetEnumerator();
+                enumer.MoveNext();
+                showUrl = enumer.Current.Value;
             }
 
             return showUrl;
