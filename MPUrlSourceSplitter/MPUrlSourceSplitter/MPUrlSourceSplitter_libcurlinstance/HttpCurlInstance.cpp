@@ -267,8 +267,10 @@ void CHttpCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
 {
   if (type == CURLINFO_HEADER_IN)
   {
+    wchar_t *trimmed = Trim(data);
     // we are just interested in headers comming in from peer
-    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received HTTP header: '%s'", this->protocolName, METHOD_CURL_DEBUG_NAME, data);
+    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received HTTP header: '%s'", this->protocolName, METHOD_CURL_DEBUG_NAME, (trimmed != NULL) ? trimmed : data);
+    FREE_MEM(trimmed);
 
     // check for accept-ranges header
     wchar_t *lowerBuffer = Duplicate(data);

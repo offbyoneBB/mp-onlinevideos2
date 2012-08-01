@@ -44,6 +44,8 @@
 #define CURL_STATE_RECEIVING_DATA                                             3
 #define CURL_STATE_RECEIVED_ALL_DATA                                          4
 
+#define MINIMUM_BUFFER_SIZE                                                   256 * 1024
+
 class CCurlInstance
 {
 public:

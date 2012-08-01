@@ -152,6 +152,11 @@ bool CCurlInstance::Initialize(void)
     }
   }
 
+  if (result)
+  {
+    result = this->receivedDataBuffer->InitializeBuffer(MINIMUM_BUFFER_SIZE);
+  }
+
   this->state = (result) ? CURL_STATE_INITIALIZED : CURL_STATE_CREATED;
   return result;
 }

@@ -37,6 +37,8 @@ public:
   // destructor
   ~CSegmentFragment(void);
 
+  /* get methods */
+
   // gets segment ID
   // @return : segment ID
   unsigned int GetSegment(void);
@@ -53,6 +55,20 @@ public:
   // @return : fragment timestamp
   uint64_t GetFragmentTimestamp(void);
 
+  // gets if segment and fragment is downloaded
+  // @return : true if downloaded, false otherwise
+  bool GetDownloaded(void);
+
+  /* set methods */
+
+  // sets if segment and fragment is downloaded
+  // @param downloaded : true if segment and fragment is downloaded
+  void SetDownloaded(bool downloaded);
+
+  // deep clone of current instance
+  // @return : reference to clone of segment and fragment
+  CSegmentFragment *Clone(void);
+
 private:
   // stores segment ID
   unsigned int segment;
@@ -62,6 +78,8 @@ private:
   wchar_t *url;
   // stores fragment timestamp
   uint64_t fragmentTimestamp;
+  // stores if segment and fragment is downloaded
+  bool downloaded;
 };
 
 #endif

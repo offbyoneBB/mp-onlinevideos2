@@ -54,3 +54,8 @@ CSegmentFragment *CSegmentFragmentCollection::Clone(CSegmentFragment *item)
 {
   return NULL;
 }
+
+CSegmentFragment *CSegmentFragmentCollection::GetSegmentFragment(const wchar_t *url, bool invariant)
+{
+  return this->GetItem(url, (void *)&invariant);
+}

@@ -435,16 +435,37 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                               {
                                 this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot parse bootstrap info box");
                               }
+
+                              if (continueParsing && (bootstrapInfo->HasUrl()))
+                              {
+                                wchar_t *bootstrapInfoUrl = FormatAbsoluteUrl(baseUrl, bootstrapInfo->GetUrl());
+                                continueParsing &= (bootstrapInfoUrl != NULL);
+
+                                if (continueParsing)
+                                {
+                                  // create and add connection parameter
+                                  CParameter *bootstrapInfoUrlParameter = new CParameter(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, bootstrapInfoUrl);
+                                  continueParsing &= (bootstrapInfoUrlParameter != NULL);
+
+                                  if (continueParsing)
+                                  {
+                                    continueParsing &= this->connectionParameters->Add(bootstrapInfoUrlParameter);
+                                  }
+
+                                  if (!continueParsing)
+                                  {
+                                    FREE_MEM_CLASS(bootstrapInfoUrlParameter);
+                                  }
+                                }
+                                FREE_MEM(bootstrapInfoUrl);
+                              }
                             }
                             else
                             {
                               this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"not enough memory for bootstrap info box");
                             }
 
-                            if (bootstrapInfoBox != NULL)
-                            {
-                              FREE_MEM_CLASS(bootstrapInfoBox);
-                            }
+                            FREE_MEM_CLASS(bootstrapInfoBox);
                           }
                           else
                           {
@@ -508,8 +529,6 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
                             if (continueParsing)
                             {
-                              continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_URL, true, PARAMETER_NAME_AFHS_MANIFEST_URL);
-
                               this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
                               continueParsing &= this->connectionParameters->Add(urlParameter);
                             }
@@ -557,17 +576,12 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
                     // remove all AFHS parameters from connectio parameters
                     bool invariant = true;
-                    if (this->connectionParameters->Contains(PARAMETER_NAME_AFHS_MANIFEST_URL, true))
-                    {
-                      this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
-                      this->connectionParameters->CopyParameter(PARAMETER_NAME_AFHS_MANIFEST_URL, true, PARAMETER_NAME_URL);
-                    }
 
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BASE_URL, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_PART_URL, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_METADATA, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MANIFEST_URL, (void *)&invariant);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, (void *)&invariant);
 
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_COOKIE, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, (void *)&invariant);
