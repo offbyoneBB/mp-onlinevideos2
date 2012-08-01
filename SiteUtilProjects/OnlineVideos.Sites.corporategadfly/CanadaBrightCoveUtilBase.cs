@@ -159,16 +159,22 @@ namespace OnlineVideos.Sites
                 
                 if (rtmpUrlMatch.Success)
                 {
-                    string query = String.Format(@"videoId={0}&lineUpId=&pubId={1}&playerId={2}&playerTag=&affiliateId=",
-                                                videoId, publisherId, playerId);
+                    string leftover = rtmpUrlMatch.Groups["leftover"].Value;
+                    int questionMarkPosition = leftover.IndexOf('?');
+                    string query = questionMarkPosition == -1
+                        ?
+                        string.Format(@"videoId={0}&lineUpId=&pubId={1}&playerId={2}&playerTag=&affiliateId=",
+                                      videoId, publisherId, playerId)
+                        :
+                        string.Format(@"{0}&videoId={1}&lineUpId=&pubId={2}&playerId={3}&playerTag=&affiliateId=",
+                                      leftover.Substring(questionMarkPosition + 1, leftover.Length - questionMarkPosition - 1), videoId, publisherId, playerId);
                     string app = String.Format("{0}?{1}", rtmpUrlMatch.Groups["app"], query);
-                    string auth = rtmpUrlMatch.Groups["leftover"].Value;
+                    string auth = leftover;
                     string rtmpUrl = String.Format("{0}://{1}/{2}?{3}",
                                                    rtmpUrlMatch.Groups["rtmp"].Value,
                                                    rtmpUrlMatch.Groups["host"].Value,
                                                    rtmpUrlMatch.Groups["app"].Value,
                                                    query);
-                    string leftover = rtmpUrlMatch.Groups["leftover"].Value;
                     int ampersandPosition = leftover.IndexOf('&');
                     string playPath = ampersandPosition == -1 ? leftover : leftover.Substring(0, ampersandPosition);
                     Log.Debug(@"rtmpUrl: {0}, PlayPath: {1}, App: {2}, Auth: {3}", rtmpUrl, playPath, app, auth);
