@@ -21,16 +21,28 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Strings.h">
+    <ClInclude Include="F4MManifest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="base64.h">
+    <ClInclude Include="F4MBootstrapInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="formatUrl.h">
+    <ClInclude Include="F4MMedia.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="conversions.h">
+    <ClInclude Include="F4MMediaCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F4MDeliveryType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F4M_Elements.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F4MBaseUrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="F4MBootstrapInfoCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,16 +50,25 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Strings.cpp">
+    <ClCompile Include="F4MManifest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="base64.cpp">
+    <ClCompile Include="F4MBootstrapInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="formatUrl.cpp">
+    <ClCompile Include="F4MMedia.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="conversions.cpp">
+    <ClCompile Include="F4MMediaCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F4MDeliveryType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F4MBaseUrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F4MBootstrapInfoCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

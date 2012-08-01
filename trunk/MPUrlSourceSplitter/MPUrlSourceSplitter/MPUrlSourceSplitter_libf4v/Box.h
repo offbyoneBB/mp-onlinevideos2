@@ -96,8 +96,8 @@ public:
   virtual bool HasExtendedHeader(void);
 
   // gets box size
-  // @return : box size or -1 if error
-  virtual int64_t GetSize(void);
+  // @return : box size
+  virtual uint64_t GetSize(void);
 
   // gets box type
   // @return : box type or NULL if error
@@ -116,13 +116,15 @@ public:
 
 protected:
   // stores the length of buffer
-  int64_t length;
+  uint64_t length;
   // stores if data were successfully parsed
   bool parsed;
   // stores box type
   wchar_t *type;
   // stores if box has extended header
   bool hasExtendedHeader;
+  // stores if box has unspecified size
+  bool hasUnspecifiedSize;
 
   // gets Unicode string from buffer from specified position
   // @param buffer : the buffer to read UTF-8 string

@@ -79,7 +79,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PARSER_F4M_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(DSHOW_BASE);..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libtinyxml2;..\MPUrlSourceSplitter_libcurlinstance;..\..\libcurl\include;..\..\libcurl\include\curl;..\MPUrlSourceSplitter_Protocol_Afhs;..\MPUrlSourceSplitter_Protocol_Http;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DSHOW_BASE);..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libtinyxml2;..\MPUrlSourceSplitter_libcurlinstance;..\..\libcurl\include;..\..\libcurl\include\curl;..\MPUrlSourceSplitter_Protocol_Afhs;..\MPUrlSourceSplitter_Protocol_Http;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -89,7 +89,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>mpurlsourcesplitter_parser_f4m.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libcurlinstance.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libcurlinstance.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>subwcrev "$(ProjectDir)." "$(ProjectDir)VersionInfo.h.template" "$(ProjectDir)VersionInfo.h"</Command>
@@ -104,8 +104,6 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <None Include="VersionInfo.h.template" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BootstrapInfo.h" />
-    <ClInclude Include="BootstrapInfoCollection.h" />
     <ClInclude Include="Media.h" />
     <ClInclude Include="MediaCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Parser_F4M.h" />
@@ -114,8 +112,6 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BootstrapInfo.cpp" />
-    <ClCompile Include="BootstrapInfoCollection.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

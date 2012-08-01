@@ -20,17 +20,17 @@
 
 #pragma once
 
-#ifndef __BOOTSTRAP_INFO_COLLECTION_DEFINED
-#define __BOOTSTRAP_INFO_COLLECTION_DEFINED
+#ifndef __F4M_BOOTSTRAP_INFO_COLLECTION_DEFINED
+#define __F4M_BOOTSTRAP_INFO_COLLECTION_DEFINED
 
 #include "Collection.h"
-#include "BootstrapInfo.h"
+#include "F4MBootstrapInfo.h"
 
-class CBootstrapInfoCollection : public CCollection<CBootstrapInfo, const wchar_t *>
+class CF4MBootstrapInfoCollection : public CCollection<CF4MBootstrapInfo, const wchar_t *>
 {
 public:
-  CBootstrapInfoCollection(void);
-  ~CBootstrapInfoCollection(void);
+  CF4MBootstrapInfoCollection(void);
+  ~CF4MBootstrapInfoCollection(void);
 
   // test if bootstrap info exists in collection
   // @param name : the ID of bootstrap info to find
@@ -42,7 +42,7 @@ public:
   // @param id : the id of bootstrap info to find
   // @param invariant : specifies if bootstrap info ID shoud be find with invariant casing
   // @return : the reference to bootstrap info or NULL if not find
-  CBootstrapInfo *GetBootstrapInfo(const wchar_t *id, bool invariant);
+  CF4MBootstrapInfo *GetBootstrapInfo(const wchar_t *id, bool invariant);
 
 protected:
 
@@ -56,12 +56,12 @@ protected:
   // gets key for item
   // @param item : the item to get key
   // @return : the key of item
-  const wchar_t *GetKey(CBootstrapInfo *item);
+  const wchar_t *GetKey(CF4MBootstrapInfo *item);
 
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CBootstrapInfo *Clone(CBootstrapInfo *item);
+  CF4MBootstrapInfo *Clone(CF4MBootstrapInfo *item);
 };
 
 #endif

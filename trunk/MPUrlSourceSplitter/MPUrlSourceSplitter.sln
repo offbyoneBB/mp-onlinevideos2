@@ -96,6 +96,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Protoco
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Parser_F4M", "MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M\MPUrlSourceSplitter_Parser_F4M.vcxproj", "{E0603B2F-1F50-48F3-9FEA-7A43E96DA390}"
 	ProjectSection(ProjectDependencies) = postProject
+		{6FDCED1D-DC72-477F-951C-7400E6CC9F5F} = {6FDCED1D-DC72-477F-951C-7400E6CC9F5F}
 		{4AF71A22-6666-4297-A46C-E472F84C8134} = {4AF71A22-6666-4297-A46C-E472F84C8134}
 		{36308E3F-8693-43FC-9F53-988E6C1A830C} = {36308E3F-8693-43FC-9F53-988E6C1A830C}
 		{759BBA46-35B0-4AA4-9358-E3E65818BF6D} = {759BBA46-35B0-4AA4-9358-E3E65818BF6D}
@@ -110,6 +111,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Parser_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Protocol_Afhs", "MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs\MPUrlSourceSplitter_Protocol_Afhs.vcxproj", "{FFFC4A1F-C818-4BC9-96D7-4B66F4C863EA}"
 	ProjectSection(ProjectDependencies) = postProject
+		{6FDCED1D-DC72-477F-951C-7400E6CC9F5F} = {6FDCED1D-DC72-477F-951C-7400E6CC9F5F}
 		{4AF71A22-6666-4297-A46C-E472F84C8134} = {4AF71A22-6666-4297-A46C-E472F84C8134}
 		{8AC5A628-2FE1-4501-A7F6-A0D4066282B6} = {8AC5A628-2FE1-4501-A7F6-A0D4066282B6}
 		{36308E3F-8693-43FC-9F53-988E6C1A830C} = {36308E3F-8693-43FC-9F53-988E6C1A830C}
@@ -146,6 +148,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libflv", "MPUrlSourceSplitter\MPUrlSourceSplitter_libflv\MPUrlSourceSplitter_libflv.vcxproj", "{8AC5A628-2FE1-4501-A7F6-A0D4066282B6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libcurlinstance", "MPUrlSourceSplitter\MPUrlSourceSplitter_libcurlinstance\MPUrlSourceSplitter_libcurlinstance.vcxproj", "{49AAE5D4-3D7C-4B42-8F16-1081F01269D6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libf4m", "MPUrlSourceSplitter\MPUrlSourceSplitter_libf4m\MPUrlSourceSplitter_libf4m.vcxproj", "{6FDCED1D-DC72-477F-951C-7400E6CC9F5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -249,6 +253,10 @@ Global
 		{49AAE5D4-3D7C-4B42-8F16-1081F01269D6}.Debug|Win32.Build.0 = Debug|Win32
 		{49AAE5D4-3D7C-4B42-8F16-1081F01269D6}.Release|Win32.ActiveCfg = Release|Win32
 		{49AAE5D4-3D7C-4B42-8F16-1081F01269D6}.Release|Win32.Build.0 = Release|Win32
+		{6FDCED1D-DC72-477F-951C-7400E6CC9F5F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6FDCED1D-DC72-477F-951C-7400E6CC9F5F}.Debug|Win32.Build.0 = Debug|Win32
+		{6FDCED1D-DC72-477F-951C-7400E6CC9F5F}.Release|Win32.ActiveCfg = Release|Win32
+		{6FDCED1D-DC72-477F-951C-7400E6CC9F5F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
