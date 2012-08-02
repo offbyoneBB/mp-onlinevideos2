@@ -18,10 +18,6 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// stdafx.cpp : source file that includes just the standard includes
-// MPUrlSource_File.pch will be the pre-compiled header
-// stdafx.obj will contain the pre-compiled type information
-
 #include "stdafx.h"
 
 // TODO: reference any additional headers you need in STDAFX.H

@@ -36,6 +36,22 @@ CBox::~CBox(void)
   FREE_MEM(this->type);
 }
 
+/* get methods */
+
+uint64_t CBox::GetSize(void)
+{
+  return this->length;
+}
+
+const wchar_t *CBox::GetType(void)
+{
+  return this->type;
+}
+
+/* set methods */
+
+/* other methods */
+
 bool CBox::IsBox(void)
 {
   return ((this->length >= BOX_HEADER_LENGTH) && (this->type != NULL));
@@ -61,16 +77,6 @@ bool CBox::HasExtendedHeader(void)
   return this->hasExtendedHeader;
 }
 
-uint64_t CBox::GetSize(void)
-{
-  return this->length;
-}
-
-const wchar_t *CBox::GetType(void)
-{
-  return this->type;
-}
-
 bool CBox::Parse(const unsigned char *buffer, unsigned int length)
 {
   this->length = -1;
@@ -80,7 +86,7 @@ bool CBox::Parse(const unsigned char *buffer, unsigned int length)
 
   if ((buffer != NULL) && (length >= BOX_HEADER_LENGTH))
   {
-    uint64_t size = BE32(buffer);
+    uint64_t size = RBE32(buffer, 0);
 
     if (size == 1)
     {
@@ -88,7 +94,7 @@ bool CBox::Parse(const unsigned char *buffer, unsigned int length)
       if (length >= BOX_HEADER_LENGTH_SIZE64)
       {
         // enough data for reading int(64) size
-        size = BE64(buffer + BOX_HEADER_LENGTH);
+        size = RBE64(buffer, BOX_HEADER_LENGTH);
         this->hasExtendedHeader = true;
       }
     }
@@ -130,7 +136,7 @@ HRESULT CBox::GetString(const unsigned char *buffer, unsigned int length, unsign
 
     while (tempPosition < length)
     {
-      if (BE8(buffer + tempPosition) == 0)
+      if (RBE8(buffer, tempPosition) == 0)
       {
         // null terminating character
         foundEnd = true;

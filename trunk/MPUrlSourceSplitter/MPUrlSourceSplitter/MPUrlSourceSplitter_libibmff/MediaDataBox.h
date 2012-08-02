@@ -20,25 +20,36 @@
 
 #pragma once
 
-#ifndef __FRAGMENT_RUN_TABLE_BOX_DEFINED
-#define __SEGMENT_RUN_TABLE_BOX_DEFINED
+#ifndef __MEDIA_DATA_BOX_DEFINED
+#define __MEDIA_DATA_BOX_DEFINED
 
-#include "FullBox.h"
+#include "box.h"
 
-#include "QualitySegmentUrlModifierCollection.h"
-#include "FragmentRunEntryCollection.h"
+#define MEDIA_DATA_BOX_TYPE                                                   L"mdat"
 
-#define FRAGMENT_RUN_TABLE_BOX_TYPE                                           L"afrt"
-
-class CFragmentRunTableBox :
-  public CFullBox
+class CMediaDataBox :
+  public CBox
 {
 public:
-  // initializes a new instance of CFragmentRunTableBox class
-  CFragmentRunTableBox(void);
+  // initializes a new instance of CMediaDataBox class
+  CMediaDataBox(void);
 
   // destructor
-  virtual ~CFragmentRunTableBox(void);
+  virtual ~CMediaDataBox(void);
+
+  /* get methods */
+
+  // gets payload data of media data box
+  // @return : payload data or NULL if error
+  virtual const unsigned char *GetPayload(void);
+
+  // gets payload size
+  // @return : payload size or -1 if error
+  virtual int64_t GetPayloadSize(void);
+
+  /* set methods */
+
+  /* other methods */
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing
@@ -51,23 +62,11 @@ public:
   // @return : box data in human readable format or NULL if error
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
-  // gets the number of time units per second
-  // @return : the number of time units per second
-  virtual unsigned int GetTimeScale(void);
-
-  // gets quality segment url modifiers table
-  // @return : quality segment url modifiers table
-  virtual CQualitySegmentUrlModifierCollection *GetQualitySegmentUrlModifiers(void);
-
-  // gets fragment run entry table
-  // @return : fragment run entry table
-  virtual CFragmentRunEntryCollection *GetFragmentRunEntryTable(void);
-
 protected:
-  unsigned int timeScale;
-
-  CQualitySegmentUrlModifierCollection *qualitySegmentUrlModifiers;
-  CFragmentRunEntryCollection *fragmentRunEntryTable;
+  // stores playload
+  unsigned char *payload;
+  // stores payload size
+  int64_t playloadSize;
 };
 
 #endif

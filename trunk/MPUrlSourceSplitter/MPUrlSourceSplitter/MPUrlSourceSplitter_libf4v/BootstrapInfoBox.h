@@ -23,7 +23,7 @@
 #ifndef __BOOTSTRAP_INFO_BOX_DEFINED
 #define __BOOTSTRAP_INFO_BOX_DEFINED
 
-#include "box.h"
+#include "FullBox.h"
 
 #include "BootstrapInfoServerEntryCollection.h"
 #include "BootstrapInfoQualityEntryCollection.h"
@@ -36,7 +36,7 @@
 #define PROFILE_RANGE_ACCESS                                                  1
 
 class CBootstrapInfoBox :
-  public CBox
+  public CFullBox
 {
 public:
   // initializes a new instance of CBootstrapInfoBox class
@@ -55,14 +55,6 @@ public:
   // @param indent : string to insert before each line
   // @return : box data in human readable format or NULL if error
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
-
-  // gets version
-  // @return : version
-  virtual unsigned int GetVersion(void);
-
-  // gets flags
-  // @return : flags
-  virtual unsigned int GetFlags(void);
 
   // gets the version number of the bootstrap information
   // when IsUpdate field is true, bootstrapinfo version indicates the version number that is being updated
@@ -126,10 +118,6 @@ public:
   virtual CFragmentRunTableBoxCollection *GetFragmentRunTable(void);
 
 protected:
-
-  unsigned int version;
-
-  unsigned int flags;
 
   unsigned int bootstrapInfoVersion;
 

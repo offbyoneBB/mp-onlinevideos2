@@ -20,22 +20,34 @@
 
 #pragma once
 
-#ifndef __MEDIA_DATA_BOX_DEFINED
-#define __MEDIA_DATA_BOX_DEFINED
+#ifndef __FULL_BOX_DEFINED
+#define __FULL_BOX_DEFINED
 
 #include "box.h"
 
-#define MEDIA_DATA_BOX_TYPE                                                   L"mdat"
-
-class CMediaDataBox :
+class CFullBox :
   public CBox
 {
 public:
-  // initializes a new instance of CMediaDataBox class
-  CMediaDataBox(void);
+  // initializes a new instance of CFullBox class
+  CFullBox(void);
 
   // destructor
-  virtual ~CMediaDataBox(void);
+  virtual ~CFullBox(void);
+
+  /* get methods */
+
+  // gets version of this format of the box
+  // @return : version of this format of the box
+  virtual unsigned int GetVersion(void);
+
+  // gets map of flags
+  // @return : map of flags
+  virtual unsigned int GetFlags(void);
+
+  /* set methods */
+
+  /* other methods */
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing
@@ -48,19 +60,11 @@ public:
   // @return : box data in human readable format or NULL if error
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
-  // gets payload data of media data box
-  // @return : payload data or NULL if error
-  virtual const unsigned char *GetPayload(void);
-
-  // gets payload size
-  // @return : payload size or -1 if error
-  virtual int64_t GetPayloadSize(void);
-
 protected:
-  // stores playload
-  unsigned char *payload;
-  // stores payload size
-  int64_t playloadSize;
+  // stores version of this format of the box
+  unsigned int version;
+  // stores map of flags
+  unsigned int flags;
 };
 
 #endif

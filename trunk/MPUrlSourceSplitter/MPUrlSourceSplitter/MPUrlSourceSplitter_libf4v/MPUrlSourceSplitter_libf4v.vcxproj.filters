@@ -36,9 +36,6 @@
     <ClInclude Include="BootstrapInfoServerEntryCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Box.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FragmentRunEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -69,9 +66,6 @@
     <ClInclude Include="SegmentRunTableBoxCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MediaDataBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -90,9 +84,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BootstrapInfoServerEntryCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Box.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FragmentRunEntry.cpp">
@@ -123,9 +114,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SegmentRunTableBoxCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MediaDataBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

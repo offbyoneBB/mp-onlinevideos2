@@ -23,10 +23,8 @@
 #include "SegmentRunTableBox.h"
 
 CSegmentRunTableBox::CSegmentRunTableBox(void)
-  :CBox()
+  :CFullBox()
 {
-  this->version = 0;
-  this->flags = 0;
   this->segmentRunEntryTable = new CSegmentRunEntryCollection();
   this->qualitySegmentUrlModifiers = new CQualitySegmentUrlModifierCollection();
 }
@@ -39,8 +37,6 @@ CSegmentRunTableBox::~CSegmentRunTableBox(void)
 
 bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length)
 {
-  this->version = 0;
-  this->flags = 0;
   if (this->segmentRunEntryTable != NULL)
   {
     this->segmentRunEntryTable->Clear();
@@ -68,23 +64,13 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
       unsigned int position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
 
       // until version and flags end is 4 bytes
-      bool continueParsing = ((position + 4) <= length);
+      position += 4;
+      bool continueParsing = (position < length);
       
       if (continueParsing)
       {
-        this->version = BE8(buffer + position);
-        position++;
-
-        this->flags = BE24(buffer + position);
-        position += 3;
-      }
-
-      continueParsing &= (position < length);
-      if (continueParsing)
-      {
         // quality entry count and quality segment url modifiers
-        unsigned int qualityEntryCount = BE8(buffer + position);
-        position++;
+        RBE8INC_DEFINE(buffer, position, qualityEntryCount, unsigned int);
         continueParsing &= (position < length);
 
         for(unsigned int i = 0; continueParsing && (i < qualityEntryCount); i++)
@@ -122,8 +108,7 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
       if (continueParsing)
       {
         // segment run entry count and segment run entry table
-        unsigned int segmentRunEntryCount = BE32(buffer + position);
-        position += 4;
+        RBE32INC_DEFINE(buffer, position, segmentRunEntryCount, unsigned int);
 
         for(unsigned int i = 0; continueParsing && (i < segmentRunEntryCount); i++)
         {
@@ -133,11 +118,8 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
 
           if (continueParsing)
           {
-            unsigned int firstSegment = BE32(buffer + position);
-            position += 4;
-
-            unsigned int fragmentsPerSegment = BE32(buffer + position);
-            position += 4;
+            RBE32INC_DEFINE(buffer, position, firstSegment, unsigned int);
+            RBE32INC_DEFINE(buffer, position, fragmentsPerSegment, unsigned int);
 
             CSegmentRunEntry *segment = new CSegmentRunEntry(firstSegment, fragmentsPerSegment);
             continueParsing &= (segment != NULL);
@@ -155,11 +137,7 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
         }
       }
 
-      if (!continueParsing)
-      {
-        // not correctly parsed
-        this->parsed = false;
-      }
+      this->parsed = continueParsing;
     }
   }
 
@@ -215,16 +193,12 @@ wchar_t *CSegmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
     // prepare finally human readable representation
     result = FormatString( \
       L"%s\n" \
-      L"%sVersion: %u\n" \
-      L"%sFlags: 0x%06X\n" \
       L"%sQuality entry count: %d\n" \
       L"%s%s" \
       L"%sSegment run entry count: %d\n" \
       L"%s",
       
       previousResult,
-      indent, this->version,
-      indent, this->flags,
       indent, this->qualitySegmentUrlModifiers->Count(),
       (qualitySegmentUrlModifier == NULL) ? L"" : qualitySegmentUrlModifier, (qualitySegmentUrlModifier == NULL) ? L"" : L"\n",
       indent, this->segmentRunEntryTable->Count(),

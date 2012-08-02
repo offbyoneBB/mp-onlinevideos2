@@ -34,6 +34,22 @@ CMediaDataBox::~CMediaDataBox(void)
   FREE_MEM(this->payload);
 }
 
+/* get methods */
+
+const unsigned char *CMediaDataBox::GetPayload(void)
+{
+  return this->payload;
+}
+
+int64_t CMediaDataBox::GetPayloadSize(void)
+{
+  return this->playloadSize;
+}
+
+/* set methods */
+
+/* other methods */
+
 bool CMediaDataBox::Parse(const unsigned char *buffer, unsigned int length)
 {
   FREE_MEM(this->payload);
@@ -53,23 +69,20 @@ bool CMediaDataBox::Parse(const unsigned char *buffer, unsigned int length)
       // box is bootstrap info box, parse all values
       unsigned int position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
       this->playloadSize = this->GetSize() - position;
+      bool continueParsing = ((position + this->playloadSize) <= length);
 
-      if ((position + this->playloadSize) <= length)
+      if (continueParsing)
       {
         this->payload = ALLOC_MEM_SET(this->payload, unsigned char, (unsigned int)this->playloadSize, 0);
-        if (this->payload != NULL)
+        continueParsing &= (this->payload != NULL);
+
+        if (continueParsing)
         {
           memcpy(this->payload, buffer + position, (unsigned int)this->playloadSize);
         }
-        else
-        {
-          this->parsed = false;
-        }
       }
-      else
-      {
-        this->parsed = false;
-      }
+      
+      this->parsed = continueParsing;
     }
   }
 
@@ -86,20 +99,17 @@ wchar_t *CMediaDataBox::GetParsedHumanReadable(const wchar_t *indent)
   if ((previousResult != NULL) && (this->IsParsed()))
   {
     // prepare finally human readable representation
-    result = FormatString(L"%s\nPayload size: %lld", previousResult, this->playloadSize);
+    result = FormatString(
+      L"%s\n" \
+      L"%sPayload size: %lld",
+      
+      previousResult,
+      indent, this->playloadSize
+      
+      );
   }
 
   FREE_MEM(previousResult);
 
   return result;
-}
-
-const unsigned char *CMediaDataBox::GetPayload(void)
-{
-  return this->payload;
-}
-
-int64_t CMediaDataBox::GetPayloadSize(void)
-{
-  return this->playloadSize;
 }

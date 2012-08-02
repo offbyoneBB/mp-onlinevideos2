@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{74B75089-FBAC-403A-B356-8AEB6FB6A012}</ProjectGuid>
+    <ProjectGuid>{0FA17EC5-0542-4BAD-9956-F31C0DFE491D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>MPUrlSourceSplitter_libf4v</RootNamespace>
+    <RootNamespace>MPUrlSourceSplitter_libibmff</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -61,7 +61,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(DSHOW_BASE);..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libibmff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DSHOW_BASE);..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_libshared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -71,40 +72,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BootstrapInfoBox.h" />
-    <ClInclude Include="BootstrapInfoQualityEntry.h" />
-    <ClInclude Include="BootstrapInfoQualityEntryCollection.h" />
-    <ClInclude Include="BootstrapInfoServerEntry.h" />
-    <ClInclude Include="BootstrapInfoServerEntryCollection.h" />
-    <ClInclude Include="FragmentRunEntry.h" />
-    <ClInclude Include="FragmentRunEntryCollection.h" />
-    <ClInclude Include="FragmentRunTableBox.h" />
-    <ClInclude Include="FragmentRunTableBoxCollection.h" />
-    <ClInclude Include="QualitySegmentUrlModifier.h" />
-    <ClInclude Include="QualitySegmentUrlModifierCollection.h" />
-    <ClInclude Include="SegmentRunEntry.h" />
-    <ClInclude Include="SegmentRunEntryCollection.h" />
-    <ClInclude Include="SegmentRunTableBox.h" />
-    <ClInclude Include="SegmentRunTableBoxCollection.h" />
+    <ClInclude Include="Box.h" />
+    <ClInclude Include="Brand.h" />
+    <ClInclude Include="BrandCollection.h" />
+    <ClInclude Include="FileTypeBox.h" />
+    <ClInclude Include="FullBox.h" />
+    <ClInclude Include="MediaDataBox.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BootstrapInfoBox.cpp" />
-    <ClCompile Include="BootstrapInfoQualityEntry.cpp" />
-    <ClCompile Include="BootstrapInfoQualityEntryCollection.cpp" />
-    <ClCompile Include="BootstrapInfoServerEntry.cpp" />
-    <ClCompile Include="BootstrapInfoServerEntryCollection.cpp" />
-    <ClCompile Include="FragmentRunEntry.cpp" />
-    <ClCompile Include="FragmentRunEntryCollection.cpp" />
-    <ClCompile Include="FragmentRunTableBox.cpp" />
-    <ClCompile Include="FragmentRunTableBoxCollection.cpp" />
-    <ClCompile Include="QualitySegmentUrlModifier.cpp" />
-    <ClCompile Include="QualitySegmentUrlModifierCollection.cpp" />
-    <ClCompile Include="SegmentRunEntry.cpp" />
-    <ClCompile Include="SegmentRunEntryCollection.cpp" />
-    <ClCompile Include="SegmentRunTableBox.cpp" />
-    <ClCompile Include="SegmentRunTableBoxCollection.cpp" />
+    <ClCompile Include="Box.cpp" />
+    <ClCompile Include="Brand.cpp" />
+    <ClCompile Include="BrandCollection.cpp" />
+    <ClCompile Include="FileTypeBox.cpp" />
+    <ClCompile Include="FullBox.cpp" />
+    <ClCompile Include="MediaDataBox.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
