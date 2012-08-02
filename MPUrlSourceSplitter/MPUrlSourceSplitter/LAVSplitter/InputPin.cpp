@@ -752,6 +752,7 @@ HRESULT CLAVInputPin::EndOfStreamReached(int64_t streamPosition)
       {
         // all data received
         this->allDataReceived = true;
+        this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, L"all data received");
 
         // if downloading file, download callback can be called after storing all data to download file
       }
@@ -1319,7 +1320,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   {
                     // we are not receiving more data
                     // finish request
-                    caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u' complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_FALSE);
+                    caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%d', complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), S_FALSE);
                     request->SetBufferLength(foundDataLength);
                     request->Complete(S_OK);
                   }
