@@ -18,7 +18,39 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
-// TODO: reference any additional headers you need in STDAFX.H
-// and not in this file
+#include "BrandCollection.h"
+
+CBrandCollection::CBrandCollection(void)
+  : CCollection(CCollection::Delete)
+{
+}
+
+CBrandCollection::~CBrandCollection(void)
+{
+}
+
+int CBrandCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
+{
+  bool invariant = (*(bool *)context);
+
+  if (invariant)
+  {
+    return _wcsicmp(firstKey, secondKey);
+  }
+  else
+  {
+    return wcscmp(firstKey, secondKey);
+  }
+}
+
+const wchar_t *CBrandCollection::GetKey(CBrand *item)
+{
+  return item->GetBrandString();
+}
+
+CBrand *CBrandCollection::Clone(CBrand *item)
+{
+  return NULL;
+}

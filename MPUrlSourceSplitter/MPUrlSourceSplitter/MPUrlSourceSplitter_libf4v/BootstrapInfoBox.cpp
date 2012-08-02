@@ -23,10 +23,8 @@
 #include "BootstrapInfoBox.h"
 
 CBootstrapInfoBox::CBootstrapInfoBox(void)
-  : CBox()
+  : CFullBox()
 {
-  this->version = 0;
-  this->flags = 0;
   this->bootstrapInfoVersion = 0;
   this->profile = 0;
   this->live = false;
@@ -56,8 +54,6 @@ CBootstrapInfoBox::~CBootstrapInfoBox(void)
 
 bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
 {
-  this->version = 0;
-  this->flags = 0;
   this->bootstrapInfoVersion = 0;
   this->profile = 0;
   this->live = false;
@@ -106,30 +102,18 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
       
       if (continueParsing)
       {
-        this->version = BE8(buffer + position);
-        position++;
-
-        this->flags = BE24(buffer + position);
-        position += 3;
-
-        this->bootstrapInfoVersion = BE32(buffer + position);
         position += 4;
 
-        unsigned int profileLiveUpdate = BE8(buffer + position);
-        position++;
+        RBE32INC(buffer, position, this->bootstrapInfoVersion);
+        RBE8INC_DEFINE(buffer, position, profileLiveUpdate, unsigned int);
 
         this->profile = (profileLiveUpdate >> 6);
         this->live = ((profileLiveUpdate & 0x20) != 0);
         this->update = ((profileLiveUpdate & 0x10) != 0);
 
-        this->timeScale = BE32(buffer + position);
-        position += 4;
-
-        this->currentMediaTime = BE64(buffer + position);
-        position += 8;
-
-        this->smpteTimeCodeOffset = BE64(buffer + position);
-        position += 8;
+        RBE32INC(buffer, position, this->timeScale);
+        RBE64INC(buffer, position, this->currentMediaTime);
+        RBE64INC(buffer, position, this->smpteTimeCodeOffset);
       }
 
       if (continueParsing)
@@ -147,8 +131,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
       if (continueParsing)
       {
         // server entry count and server entry table
-        unsigned int serverEntryCount = BE8(buffer + position);
-        position++;
+        RBE8INC_DEFINE(buffer, position, serverEntryCount , unsigned int);
         continueParsing &= (position < length);
 
         for(unsigned int i = 0; continueParsing && (i < serverEntryCount); i++)
@@ -187,8 +170,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
       if (continueParsing)
       {
         // quality entry count and quality entry table
-        unsigned int qualityEntryCount = BE8(buffer + position);
-        position++;
+        RBE8INC_DEFINE(buffer, position, qualityEntryCount, unsigned int);
         continueParsing &= (position < length);
 
         for(unsigned int i = 0; continueParsing && (i < qualityEntryCount); i++)
@@ -253,8 +235,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
       if (continueParsing)
       {
         // read segment run table count and segment run table
-        unsigned int segmentRunTableCount = BE8(buffer + position);
-        position++;
+        RBE8INC_DEFINE(buffer, position, segmentRunTableCount, unsigned int);
         continueParsing &= (position < length);
 
         for (unsigned int i = 0; continueParsing && (i < segmentRunTableCount); i++)
@@ -289,8 +270,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
       if (continueParsing)
       {
         // read fragment run table count and fragment run table
-        unsigned int fragmentRunTableCount = BE8(buffer + position);
-        position++;
+        RBE8INC_DEFINE(buffer, position, fragmentRunTableCount, unsigned int);
         continueParsing &= (position < length);
 
         for (unsigned int i = 0; continueParsing && (i < fragmentRunTableCount); i++)
@@ -321,11 +301,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
         }
       }
       
-      if (!continueParsing)
-      {
-        // not correctly parsed
-        this->parsed = false;
-      }
+      this->parsed = continueParsing;
     }
   }
 
@@ -412,8 +388,6 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(const wchar_t *indent)
 
     // prepare finally human readable representation
     result = FormatString(L"%s\n" \
-      L"%sVersion: %u\n" \
-      L"%sFlags: 0x%06X\n" \
       L"%sBootstrap info version: %u\n" \
       L"%sProfile: %u\n" \
       L"%sLive: %s\n" \
@@ -434,8 +408,6 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(const wchar_t *indent)
       L"%s%s",
       
       previousResult,
-      indent, this->version,
-      indent, this->flags,
       indent, this->bootstrapInfoVersion,
       indent, this->profile,
       indent, this->live ? L"true" : L"false",
@@ -466,16 +438,6 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(const wchar_t *indent)
   FREE_MEM(previousResult);
 
   return result;
-}
-
-unsigned int CBootstrapInfoBox::GetVersion(void)
-{
-  return this->version;
-}
-
-unsigned int CBootstrapInfoBox::GetFlags(void)
-{
-  return this->flags;
 }
 
 unsigned int CBootstrapInfoBox::GetBootstrapInfoVersion(void)

@@ -23,7 +23,7 @@
 #ifndef __SEGMENT_RUN_TABLE_BOX_DEFINED
 #define __SEGMENT_RUN_TABLE_BOX_DEFINED
 
-#include "box.h"
+#include "FullBox.h"
 
 #include "QualitySegmentUrlModifierCollection.h"
 #include "SegmentRunEntryCollection.h"
@@ -31,7 +31,7 @@
 #define SEGMENT_RUN_TABLE_BOX_TYPE                                            L"asrt"
 
 class CSegmentRunTableBox :
-  public CBox
+  public CFullBox
 {
 public:
   // initializes a new instance of CSegmentRunTableBox class
@@ -60,9 +60,6 @@ public:
   virtual CSegmentRunEntryCollection *GetSegmentRunEntryTable(void);
 
 protected:
-  unsigned int version;
-  unsigned int flags;
-
   CQualitySegmentUrlModifierCollection *qualitySegmentUrlModifiers;
   CSegmentRunEntryCollection *segmentRunEntryTable;
 };

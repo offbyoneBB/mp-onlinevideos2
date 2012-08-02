@@ -151,6 +151,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libcurl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libf4m", "MPUrlSourceSplitter\MPUrlSourceSplitter_libf4m\MPUrlSourceSplitter_libf4m.vcxproj", "{6FDCED1D-DC72-477F-951C-7400E6CC9F5F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libibmff", "MPUrlSourceSplitter\MPUrlSourceSplitter_libibmff\MPUrlSourceSplitter_libibmff.vcxproj", "{0FA17EC5-0542-4BAD-9956-F31C0DFE491D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -257,6 +259,10 @@ Global
 		{6FDCED1D-DC72-477F-951C-7400E6CC9F5F}.Debug|Win32.Build.0 = Debug|Win32
 		{6FDCED1D-DC72-477F-951C-7400E6CC9F5F}.Release|Win32.ActiveCfg = Release|Win32
 		{6FDCED1D-DC72-477F-951C-7400E6CC9F5F}.Release|Win32.Build.0 = Release|Win32
+		{0FA17EC5-0542-4BAD-9956-F31C0DFE491D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0FA17EC5-0542-4BAD-9956-F31C0DFE491D}.Debug|Win32.Build.0 = Debug|Win32
+		{0FA17EC5-0542-4BAD-9956-F31C0DFE491D}.Release|Win32.ActiveCfg = Release|Win32
+		{0FA17EC5-0542-4BAD-9956-F31C0DFE491D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

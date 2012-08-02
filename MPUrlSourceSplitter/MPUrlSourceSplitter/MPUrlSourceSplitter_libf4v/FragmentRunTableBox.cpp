@@ -23,10 +23,8 @@
 #include "FragmentRunTableBox.h"
 
 CFragmentRunTableBox::CFragmentRunTableBox(void)
-  :CBox()
+  : CFullBox()
 {
-  this->version = 0;
-  this->flags = 0;
   this->timeScale = 0;
   this->qualitySegmentUrlModifiers = new CQualitySegmentUrlModifierCollection();
   this->fragmentRunEntryTable = new CFragmentRunEntryCollection();
@@ -40,9 +38,6 @@ CFragmentRunTableBox::~CFragmentRunTableBox(void)
 
 bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length)
 {
-  this->version = 0;
-  this->flags = 0;
-
   bool result = (this->qualitySegmentUrlModifiers != NULL) && (this->fragmentRunEntryTable != NULL);
   // in bad case we don't have tables, but still it can be valid box
   result &= __super::Parse(buffer, length);
@@ -65,22 +60,16 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
       
       if (continueParsing)
       {
-        this->version = BE8(buffer + position);
-        position++;
-
-        this->flags = BE24(buffer + position);
-        position += 3;
-
-        this->timeScale = BE32(buffer + position);
         position += 4;
+
+        this->timeScale = RBE32INC(buffer, position, this->timeScale);
       }
 
       continueParsing &= (position < length);
       if (continueParsing)
       {
         // quality entry count and quality segment url modifiers
-        unsigned int qualityEntryCount = BE8(buffer + position);
-        position++;
+        RBE8INC_DEFINE(buffer, position, qualityEntryCount, unsigned int);
         continueParsing &= (position < length);
 
         for(unsigned int i = 0; continueParsing && (i < qualityEntryCount); i++)
@@ -118,8 +107,7 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
       if (continueParsing)
       {
         // fragment run entry count and fragment run entry table
-        unsigned int fragmentRunEntryCount = BE32(buffer + position);
-        position += 4;
+        RBE32INC_DEFINE(buffer, position, fragmentRunEntryCount, unsigned int);
 
         for(unsigned int i = 0; continueParsing && (i < fragmentRunEntryCount); i++)
         {
@@ -129,14 +117,9 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
 
           if (continueParsing)
           {
-            unsigned int firstFragment = BE32(buffer + position);
-            position += 4;
-
-            uint64_t firstFragmentTimestamp = BE64(buffer + position);
-            position += 8;
-
-            unsigned int fragmentDuration = BE32(buffer + position);
-            position += 4;
+            RBE32INC_DEFINE(buffer, position, firstFragment, unsigned int);
+            RBE64INC_DEFINE(buffer, position, firstFragmentTimestamp, uint64_t);
+            RBE32INC_DEFINE(buffer, position, fragmentDuration, unsigned int);
 
             unsigned int discontinuityIndicator = DISCONTINUITY_INDICATOR_NOT_AVAILABLE;
             if (fragmentDuration == 0)
@@ -145,8 +128,7 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
 
               if (continueParsing)
               {
-                discontinuityIndicator = BE8(buffer + position);
-                position++;
+                RBE8INC(buffer, position, discontinuityIndicator);
               }
             }
 
@@ -166,11 +148,7 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
         }
       }
 
-      if (!continueParsing)
-      {
-        // not correctly parsed
-        this->parsed = false;
-      }
+      this->parsed = continueParsing;
     }
   }
 
@@ -229,8 +207,6 @@ wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
     // prepare finally human readable representation
     result = FormatString( \
       L"%s\n" \
-      L"%sVersion: %u\n" \
-      L"%sFlags: 0x%06X\n"  \
       L"%sTime scale: %u\n" \
       L"%sQuality entry count: %d\n" \
       L"%s%s" \
@@ -238,8 +214,6 @@ wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
       L"%s%s",
 
       previousResult,
-      indent, this->version,
-      indent, this->flags,
       indent, this->timeScale,
       indent, this->qualitySegmentUrlModifiers->Count(),
       (qualitySegmentUrlModifier == NULL) ? L"" : qualitySegmentUrlModifier, (qualitySegmentUrlModifier == NULL) ? L"" : L"\n",
@@ -252,16 +226,6 @@ wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
   FREE_MEM(previousResult);
 
   return result;
-}
-
-unsigned int CFragmentRunTableBox::GetVersion(void)
-{
-  return this->version;
-}
-
-unsigned int CFragmentRunTableBox::GetFlags(void)
-{
-  return this->flags;
 }
 
 unsigned int CFragmentRunTableBox::GetTimeScale(void)

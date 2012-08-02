@@ -20,25 +20,41 @@
 
 #pragma once
 
-#ifndef __FRAGMENT_RUN_TABLE_BOX_DEFINED
-#define __SEGMENT_RUN_TABLE_BOX_DEFINED
+#ifndef __FILE_TYPE_BOX_DEFINED
+#define __FILE_TYPE_BOX_DEFINED
 
-#include "FullBox.h"
+#include "box.h"
+#include "BrandCollection.h"
 
-#include "QualitySegmentUrlModifierCollection.h"
-#include "FragmentRunEntryCollection.h"
+#define FILE_TYPE_BOX_TYPE                                                    L"ftyp"
 
-#define FRAGMENT_RUN_TABLE_BOX_TYPE                                           L"afrt"
-
-class CFragmentRunTableBox :
-  public CFullBox
+class CFileTypeBox :
+  public CBox
 {
 public:
-  // initializes a new instance of CFragmentRunTableBox class
-  CFragmentRunTableBox(void);
+  // initializes a new instance of CFileTypeBox class
+  CFileTypeBox(void);
 
   // destructor
-  virtual ~CFragmentRunTableBox(void);
+  virtual ~CFileTypeBox(void);
+
+  /* get methods */
+
+  // gets major brand
+  // @return : major brand
+  virtual CBrand *GetMajorBrand(void);
+
+  // gets minor version
+  // @return : minor version
+  virtual unsigned int GetMinorVersion(void);
+
+  // gets compatible brands
+  // @return : compatible brands
+  virtual CBrandCollection *GetCompatibleBrands(void);
+
+  /* set methods */
+
+  /* other methods */
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing
@@ -51,23 +67,13 @@ public:
   // @return : box data in human readable format or NULL if error
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
-  // gets the number of time units per second
-  // @return : the number of time units per second
-  virtual unsigned int GetTimeScale(void);
-
-  // gets quality segment url modifiers table
-  // @return : quality segment url modifiers table
-  virtual CQualitySegmentUrlModifierCollection *GetQualitySegmentUrlModifiers(void);
-
-  // gets fragment run entry table
-  // @return : fragment run entry table
-  virtual CFragmentRunEntryCollection *GetFragmentRunEntryTable(void);
-
 protected:
-  unsigned int timeScale;
-
-  CQualitySegmentUrlModifierCollection *qualitySegmentUrlModifiers;
-  CFragmentRunEntryCollection *fragmentRunEntryTable;
+  // stores major brand
+  CBrand *majorBrand;
+  // stores minor version
+  unsigned int minorVersion;
+  // stores compatible brands
+  CBrandCollection *compatibleBrands;
 };
 
 #endif
