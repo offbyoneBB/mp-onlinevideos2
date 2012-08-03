@@ -36,7 +36,7 @@ CFragmentRunTableBox::~CFragmentRunTableBox(void)
   FREE_MEM_CLASS(this->fragmentRunEntryTable);
 }
 
-bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length)
+bool CFragmentRunTableBox::Parse(const uint8_t *buffer, uint32_t length)
 {
   bool result = (this->qualitySegmentUrlModifiers != NULL) && (this->fragmentRunEntryTable != NULL);
   // in bad case we don't have tables, but still it can be valid box
@@ -53,7 +53,7 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
     else
     {
       // box is bootstrap info box, parse all values
-      unsigned int position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
 
       // until time scale end is 8 bytes
       bool continueParsing = ((position + 8) <= length);
@@ -69,12 +69,12 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
       if (continueParsing)
       {
         // quality entry count and quality segment url modifiers
-        RBE8INC_DEFINE(buffer, position, qualityEntryCount, unsigned int);
+        RBE8INC_DEFINE(buffer, position, qualityEntryCount, uint32_t);
         continueParsing &= (position < length);
 
-        for(unsigned int i = 0; continueParsing && (i < qualityEntryCount); i++)
+        for(uint32_t  i = 0; continueParsing && (i < qualityEntryCount); i++)
         {
-          unsigned int positionAfter = position;
+          uint32_t  positionAfter = position;
           wchar_t *qualitySegmentUrlModifier = NULL;
           continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &qualitySegmentUrlModifier, &positionAfter));
 
@@ -107,9 +107,9 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
       if (continueParsing)
       {
         // fragment run entry count and fragment run entry table
-        RBE32INC_DEFINE(buffer, position, fragmentRunEntryCount, unsigned int);
+        RBE32INC_DEFINE(buffer, position, fragmentRunEntryCount, uint32_t );
 
-        for(unsigned int i = 0; continueParsing && (i < fragmentRunEntryCount); i++)
+        for(uint32_t  i = 0; continueParsing && (i < fragmentRunEntryCount); i++)
         {
           // minimum fragment size is 16 bytes
           // but fragment can be last in buffer
@@ -117,11 +117,11 @@ bool CFragmentRunTableBox::Parse(const unsigned char *buffer, unsigned int lengt
 
           if (continueParsing)
           {
-            RBE32INC_DEFINE(buffer, position, firstFragment, unsigned int);
+            RBE32INC_DEFINE(buffer, position, firstFragment, uint32_t );
             RBE64INC_DEFINE(buffer, position, firstFragmentTimestamp, uint64_t);
-            RBE32INC_DEFINE(buffer, position, fragmentDuration, unsigned int);
+            RBE32INC_DEFINE(buffer, position, fragmentDuration, uint32_t );
 
-            unsigned int discontinuityIndicator = DISCONTINUITY_INDICATOR_NOT_AVAILABLE;
+            uint32_t discontinuityIndicator = DISCONTINUITY_INDICATOR_NOT_AVAILABLE;
             if (fragmentDuration == 0)
             {
               continueParsing &= (position < length);

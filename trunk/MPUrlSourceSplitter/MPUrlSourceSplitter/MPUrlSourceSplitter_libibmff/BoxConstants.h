@@ -18,25 +18,12 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently, but
-// are changed infrequently
-//
-
 #pragma once
 
-#include "targetver.h"
+#ifndef __BOX_CONSTANTS_DEFINED
+#define __BOX_CONSTANTS_DEFINED
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-#include <windows.h>
+#define BOX_HEADER_LENGTH                                                     8
+#define BOX_HEADER_LENGTH_SIZE64                                              16
 
-
-
-// TODO: reference additional headers your program requires here
-#include "Memory.h"
-#include "Strings.h"
-#include "Utilities.h"
-#include "BoxConstants.h"
-#include "BufferHelper.h"
-
+#endif

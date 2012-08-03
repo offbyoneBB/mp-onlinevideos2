@@ -35,21 +35,42 @@ CFullBox::~CFullBox(void)
 
 /* get methods */
 
-unsigned int CFullBox::GetVersion(void)
+uint8_t CFullBox::GetVersion(void)
 {
   return this->version;
 }
 
-unsigned int CFullBox::GetFlags(void)
+uint32_t CFullBox::GetFlags(void)
 {
   return this->flags;
+}
+
+bool CFullBox::GetBox(uint8_t **buffer, uint32_t *length)
+{
+  bool result = __super::GetBox(buffer, length);
+
+  if (result)
+  {
+    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+
+    WBE8INC(*buffer, position, this->GetVersion());
+    WBE24INC(*buffer, position, this->GetFlags());
+
+    if (!result)
+    {
+      FREE_MEM(*buffer);
+      *length = 0;
+    }
+  }
+
+  return result;
 }
 
 /* set methods */
 
 /* other methods */
 
-bool CFullBox::Parse(const unsigned char *buffer, unsigned int length)
+bool CFullBox::Parse(const uint8_t *buffer, uint32_t length)
 {
   this->version = 0;
   this->flags = 0;
@@ -59,8 +80,8 @@ bool CFullBox::Parse(const unsigned char *buffer, unsigned int length)
   if (result)
   {
     // box is file type box, parse all values
-    unsigned int position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-    bool continueParsing = ((position + 4) <= min(length, (unsigned int)this->GetSize()));
+    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+    bool continueParsing = ((position + FULL_BOX_DATA_SIZE) <= min(length, (uint32_t)this->GetSize()));
 
     if (continueParsing)
     {
@@ -98,4 +119,9 @@ wchar_t *CFullBox::GetParsedHumanReadable(const wchar_t *indent)
   FREE_MEM(previousResult);
 
   return result;
+}
+
+uint64_t CFullBox::GetBoxSize(uint64_t size)
+{
+  return __super::GetBoxSize(size + FULL_BOX_DATA_SIZE);
 }

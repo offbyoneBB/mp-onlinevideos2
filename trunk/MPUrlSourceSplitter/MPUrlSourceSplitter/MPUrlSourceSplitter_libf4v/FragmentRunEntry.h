@@ -36,12 +36,12 @@ class CFragmentRunEntry
 {
 public:
   // initializes a new instance of CFragmentRunEntry class
-  CFragmentRunEntry(unsigned int firstFragment, uint64_t firstFragmentTimestamp, unsigned int fragmentDuration, unsigned int discontinuityIndicator);
+  CFragmentRunEntry(uint32_t firstFragment, uint64_t firstFragmentTimestamp, uint32_t fragmentDuration, uint32_t discontinuityIndicator);
   ~CFragmentRunEntry(void);
 
   // gets first fragment
   // @return : first fragment
-  unsigned int GetFirstFragment(void);
+  uint32_t GetFirstFragment(void);
 
   // gets first fragment timestamp
   // @return : first fragment timestamp
@@ -49,22 +49,22 @@ public:
 
   // gets fragment duration
   // @return : fragment duration
-  unsigned int GetFragmentDuration(void);
+  uint32_t GetFragmentDuration(void);
 
   // gets discontinuity indicator
   // @return : discontinuity indicator or DISCONTINUITY_INDICATOR_NOT_AVAILABLE if not available
-  unsigned int GetDiscontinuityIndicator(void);
+  uint32_t GetDiscontinuityIndicator(void);
 
 private:
   // stores the identifying number of the first fragment in this run of fragments with the same duration
-  unsigned int firstFragment;
+  uint32_t firstFragment;
   // stores the timestamp of the FirstFragment, in TimeScale units
   uint64_t firstFragmentTimestamp;
   // stores the duration, in TimeScale units, of each fragment in this run
-  unsigned int fragmentDuration;
+  uint32_t fragmentDuration;
   // indicates discontinuities in timestamps, fragment numbers, or both
   // this field is also used to identify the end of a (live) presentation
-  unsigned int discontinuityIndicator;
+  uint32_t discontinuityIndicator;
 };
 
 #endif

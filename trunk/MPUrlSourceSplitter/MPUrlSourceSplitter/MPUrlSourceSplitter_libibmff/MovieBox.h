@@ -20,32 +20,24 @@
 
 #pragma once
 
-#ifndef __MEDIA_DATA_BOX_DEFINED
-#define __MEDIA_DATA_BOX_DEFINED
+#ifndef __MOVIE_BOX_DEFINED
+#define __MOVIE_BOX_DEFINED
 
 #include "box.h"
 
-#define MEDIA_DATA_BOX_TYPE                                                   L"mdat"
+#define MOVIE_BOX_TYPE                                                        L"moov"
 
-class CMediaDataBox :
+class CMovieBox :
   public CBox
 {
 public:
-  // initializes a new instance of CMediaDataBox class
-  CMediaDataBox(void);
+  // initializes a new instance of CMovieBox class
+  CMovieBox(void);
 
   // destructor
-  virtual ~CMediaDataBox(void);
+  virtual ~CMovieBox(void);
 
   /* get methods */
-
-  // gets payload data of media data box
-  // @return : payload data or NULL if error
-  virtual const uint8_t *GetPayload(void);
-
-  // gets payload size
-  // @return : payload size
-  virtual uint64_t GetPayloadSize(void);
 
   // gets whole box into buffer
   // @param buffer : the buffer for box data
@@ -54,12 +46,6 @@ public:
   virtual bool GetBox(uint8_t **buffer, uint32_t *length);
 
   /* set methods */
-
-  // sets payload data of media data box
-  // @param buffer : buffer with payload data
-  // @param length : buffer size (payload data size)
-  // @return : true if successfull, false otherwise
-  virtual bool SetPayload(const uint8_t *buffer, uint32_t length);
 
   /* other methods */
 
@@ -75,10 +61,6 @@ public:
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
 protected:
-  // stores playload
-  uint8_t *payload;
-  // stores payload size
-  uint64_t payloadSize;
 
   // gets box size added to size
   // method is called to determine whole box size for storing box into buffer

@@ -40,12 +40,51 @@ CBox::~CBox(void)
 
 uint64_t CBox::GetSize(void)
 {
-  return this->length;
+  return (this->length == 0) ? this->GetBoxSize(0) : this->length;
 }
 
 const wchar_t *CBox::GetType(void)
 {
   return this->type;
+}
+
+bool CBox::GetBox(uint8_t **buffer, uint32_t *length)
+{
+  bool result = ((buffer != NULL) && (length != NULL) && (!this->IsBigSize()));
+
+  if (result)
+  {
+    ALLOC_MEM_DEFINE_SET(tempBuffer, uint8_t, (uint32_t)this->GetBoxSize(0), 0);
+    result &= (tempBuffer != NULL);
+
+    if (result)
+    {
+      uint32_t position = 0;
+      WBE32INC(tempBuffer, position, (uint32_t)this->GetSize());
+
+      char *type = ConvertToMultiByteW(this->GetType());
+      result &= (type != NULL);
+
+      if (result)
+      {
+        memcpy(tempBuffer + position, type, 4);
+      }
+
+      FREE_MEM(type);
+    }
+
+    if (result)
+    {
+      *buffer = tempBuffer;
+      *length = (uint32_t)this->GetSize();
+    }
+    else
+    {
+      FREE_MEM(tempBuffer);
+    }
+  }
+
+  return result;
 }
 
 /* set methods */
@@ -64,7 +103,7 @@ bool CBox::IsParsed(void)
 
 bool CBox::IsBigSize(void)
 {
-  return (this->length > ((uint64_t)UINT_MAX));
+  return (this->GetSize() > ((uint64_t)UINT_MAX));
 }
 
 bool CBox::IsSizeUnspecifed(void)
@@ -77,9 +116,9 @@ bool CBox::HasExtendedHeader(void)
   return this->hasExtendedHeader;
 }
 
-bool CBox::Parse(const unsigned char *buffer, unsigned int length)
+bool CBox::Parse(const uint8_t *buffer, uint32_t length)
 {
-  this->length = -1;
+  this->length = 0;
   this->parsed = false;
   FREE_MEM(this->type);
   this->hasExtendedHeader = false;
@@ -105,7 +144,7 @@ bool CBox::Parse(const unsigned char *buffer, unsigned int length)
     this->hasUnspecifiedSize = (size == 0);
 
     // read box type
-    unsigned char *type = ALLOC_MEM_SET(type, unsigned char, 5, 0);
+    uint8_t *type = ALLOC_MEM_SET(type, uint8_t, 5, 0);
     if (type != NULL)
     {
       // copy 4 chars after size field
@@ -122,7 +161,20 @@ bool CBox::Parse(const unsigned char *buffer, unsigned int length)
   return this->parsed;
 }
 
-HRESULT CBox::GetString(const unsigned char *buffer, unsigned int length, unsigned int startPosition, wchar_t **output, unsigned int *positionAfterString)
+uint64_t CBox::GetBoxSize(uint64_t size)
+{
+  uint64_t result = size + BOX_HEADER_LENGTH;
+
+  if (size > (uint64_t)UINT_MAX)
+  {
+    // size of box doesn't fit into box header
+    size = size - BOX_HEADER_LENGTH + BOX_HEADER_LENGTH_SIZE64;
+  }
+
+  return result;
+}
+
+HRESULT CBox::GetString(const uint8_t *buffer, uint32_t length, uint32_t startPosition, wchar_t **output, uint32_t *positionAfterString)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, buffer);
@@ -132,7 +184,7 @@ HRESULT CBox::GetString(const unsigned char *buffer, unsigned int length, unsign
   if (SUCCEEDED(result))
   {
     bool foundEnd = false;
-    unsigned int tempPosition = startPosition;
+    uint32_t tempPosition = startPosition;
 
     while (tempPosition < length)
     {
@@ -153,8 +205,8 @@ HRESULT CBox::GetString(const unsigned char *buffer, unsigned int length, unsign
     if (SUCCEEDED(result))
     {
       // if foundEnd is true then in tempPosition is positon of null terminating character
-      unsigned int length = tempPosition - startPosition;
-      unsigned char *utf8string = ALLOC_MEM_SET(utf8string, unsigned char, length + 1, 0);
+      uint32_t length = tempPosition - startPosition;
+      uint8_t *utf8string = ALLOC_MEM_SET(utf8string, uint8_t, length + 1, 0);
       CHECK_POINTER_HRESULT(result, utf8string, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))

@@ -27,6 +27,7 @@ CFileTypeBox::CFileTypeBox(void)
 {
   this->majorBrand = new CBrand();
   this->compatibleBrands = new CBrandCollection();
+  this->type = Duplicate(FILE_TYPE_BOX_TYPE);
 }
 
 CFileTypeBox::~CFileTypeBox(void)
@@ -42,7 +43,7 @@ CBrand *CFileTypeBox::GetMajorBrand(void)
   return this->majorBrand;
 }
 
-unsigned int CFileTypeBox::GetMinorVersion(void)
+uint32_t CFileTypeBox::GetMinorVersion(void)
 {
   return this->minorVersion;
 }
@@ -52,11 +53,45 @@ CBrandCollection *CFileTypeBox::GetCompatibleBrands(void)
   return this->compatibleBrands;
 }
 
+bool CFileTypeBox::GetBox(uint8_t **buffer, uint32_t *length)
+{
+  bool result = __super::GetBox(buffer, length);
+
+  if (result)
+  {
+    unsigned int position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+
+    WBE32INC(*buffer, position, this->GetMajorBrand()->GetBrand());
+    WBE32INC(*buffer, position, this->GetMinorVersion());
+
+    for (unsigned int i = 0; i < this->GetCompatibleBrands()->Count(); i++)
+    {
+      CBrand *brand = this->GetCompatibleBrands()->GetItem(i);
+
+      WBE32INC(*buffer, position, brand->GetBrand());
+    }
+
+    if (!result)
+    {
+      FREE_MEM(*buffer);
+      *length = 0;
+    }
+  }
+
+  return result;
+}
+
 /* set methods */
+
+bool CFileTypeBox::SetMinorVersion(uint32_t minorVersion)
+{
+  this->minorVersion = minorVersion;
+  return true;
+}
 
 /* other methods */
 
-bool CFileTypeBox::Parse(const unsigned char *buffer, unsigned int length)
+bool CFileTypeBox::Parse(const uint8_t *buffer, uint32_t length)
 {
   FREE_MEM_CLASS(this->majorBrand);
   FREE_MEM_CLASS(this->compatibleBrands);
@@ -78,8 +113,8 @@ bool CFileTypeBox::Parse(const unsigned char *buffer, unsigned int length)
     else
     {
       // box is file type box, parse all values
-      unsigned int position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-      bool continueParsing = (((position + 8) <= length) && (this->GetSize() <= length));
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      bool continueParsing = (((position + 8) <= length) && (this->GetSize() <= (uint64_t)length));
 
       if (continueParsing)
       {
@@ -93,7 +128,7 @@ bool CFileTypeBox::Parse(const unsigned char *buffer, unsigned int length)
       if (continueParsing)
       {
         // the last bytes in file type box are compatible brands (each 4 characters)
-        while (continueParsing && ((position + 3) < (unsigned int)this->GetSize()))
+        while (continueParsing && ((position + 3) < (uint32_t)this->GetSize()))
         {
           CBrand *brand = new CBrand();
           continueParsing &= (brand != NULL);
@@ -153,14 +188,15 @@ wchar_t *CFileTypeBox::GetParsedHumanReadable(const wchar_t *indent)
     // prepare finally human readable representation
     result = FormatString(
       L"%s\n" \
-      L"Brand: %s\n" \
-      L"Minor version: %u\n" \
-      L"Compatible brands:" \
+      L"%sBrand: %s\n" \
+      L"%sMinor version: %u\n" \
+      L"%sCompatible brands:" \
       L"%s%s",
       
       previousResult,
-      this->majorBrand->GetBrandString(),
-      this->minorVersion,
+      indent, this->majorBrand->GetBrandString(),
+      indent, this->minorVersion,
+      indent,
       (compatibleBrands == NULL) ? L"" : L"\n", (compatibleBrands == NULL) ? L"" : compatibleBrands
       );
   }
@@ -168,4 +204,9 @@ wchar_t *CFileTypeBox::GetParsedHumanReadable(const wchar_t *indent)
   FREE_MEM(previousResult);
 
   return result;
+}
+
+uint64_t CFileTypeBox::GetBoxSize(uint64_t size)
+{
+  return __super::GetBoxSize(size + 8 + this->GetCompatibleBrands()->Count() * 4);
 }

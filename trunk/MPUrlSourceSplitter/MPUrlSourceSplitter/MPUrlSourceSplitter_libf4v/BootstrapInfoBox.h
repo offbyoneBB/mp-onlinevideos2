@@ -49,7 +49,7 @@ public:
   // @param buffer : buffer with box data for parsing
   // @param length : the length of data in buffer
   // @return : true if parsed successfully, false otherwise
-  virtual bool Parse(const unsigned char *buffer, unsigned int length);
+  virtual bool Parse(const uint8_t *buffer, uint32_t length);
 
   // gets box data in human readable format
   // @param indent : string to insert before each line
@@ -59,11 +59,11 @@ public:
   // gets the version number of the bootstrap information
   // when IsUpdate field is true, bootstrapinfo version indicates the version number that is being updated
   // @return : the version number of the bootstrap information
-  virtual unsigned int GetBootstrapInfoVersion(void);
+  virtual uint32_t GetBootstrapInfoVersion(void);
 
   // gets profile
   // @return : profile value (PROFILE_NAMED_ACCESS or PROFILE_RANGE_ACCESS)
-  virtual unsigned int GetProfile(void);
+  virtual uint8_t GetProfile(void);
 
   // gets if the media presentation is live or not
   // @return : true if the media presentation is live, false otherwise
@@ -75,7 +75,7 @@ public:
 
   // gets the number of time units per second
   // @return : the number of time units per second
-  virtual unsigned int GetTimeScale(void);
+  virtual uint32_t GetTimeScale(void);
 
   // gets the timestamp in TimeScale units of the latest available fragment in the media presentation
   // return : the timestamp in TimeScale units
@@ -119,15 +119,16 @@ public:
 
 protected:
 
-  unsigned int bootstrapInfoVersion;
+  uint32_t bootstrapInfoVersion;
 
-  unsigned int profile;
+  // only lower 6 bits used
+  uint8_t profile;
 
   bool live;
 
   bool update;
 
-  unsigned int timeScale;
+  uint32_t timeScale;
 
   uint64_t currentMediaTime;
 

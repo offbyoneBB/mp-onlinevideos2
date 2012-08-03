@@ -23,28 +23,29 @@
 #ifndef __SEGMENT_RUN_ENTRY_DEFINED
 #define __SEGMENT_RUN_ENTRY_DEFINED
 
+#include <stdint.h>
+
 class CSegmentRunEntry
 {
 public:
   // initializes a new instance of CSegmentRunEntry class
-  CSegmentRunEntry(unsigned int firstSegment, unsigned int fragmentsPerSegment);
+  CSegmentRunEntry(uint32_t firstSegment, uint32_t fragmentsPerSegment);
 
   ~CSegmentRunEntry(void);
 
   // gets first segment
   // @return : first segment
-  unsigned int GetFirstSegment(void);
+  uint32_t GetFirstSegment(void);
 
   // gets fragments per segment
   // @return : fragments per segment
-  unsigned int GetFragmentsPerSegment(void);
+  uint32_t GetFragmentsPerSegment(void);
 
 private:
   // stores the identifying number of the first segment in the run of segments containing the same number of fragments
-  unsigned int firstSegment;
+  uint32_t firstSegment;
   // stores the number of fragments in each segment in this run
-  unsigned int fragmentsPerSegment;
-
+  uint32_t fragmentsPerSegment;
 };
 
 #endif

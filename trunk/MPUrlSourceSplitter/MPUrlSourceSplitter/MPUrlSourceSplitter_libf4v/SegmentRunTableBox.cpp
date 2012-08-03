@@ -35,7 +35,7 @@ CSegmentRunTableBox::~CSegmentRunTableBox(void)
   FREE_MEM_CLASS(this->qualitySegmentUrlModifiers);
 }
 
-bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length)
+bool CSegmentRunTableBox::Parse(const uint8_t *buffer, uint32_t length)
 {
   if (this->segmentRunEntryTable != NULL)
   {
@@ -61,7 +61,7 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
     else
     {
       // box is bootstrap info box, parse all values
-      unsigned int position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
 
       // until version and flags end is 4 bytes
       position += 4;
@@ -70,12 +70,12 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
       if (continueParsing)
       {
         // quality entry count and quality segment url modifiers
-        RBE8INC_DEFINE(buffer, position, qualityEntryCount, unsigned int);
+        RBE8INC_DEFINE(buffer, position, qualityEntryCount, uint32_t);
         continueParsing &= (position < length);
 
-        for(unsigned int i = 0; continueParsing && (i < qualityEntryCount); i++)
+        for(uint32_t i = 0; continueParsing && (i < qualityEntryCount); i++)
         {
-          unsigned int positionAfter = position;
+          uint32_t positionAfter = position;
           wchar_t *qualitySegmentUrlModifier = NULL;
           continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &qualitySegmentUrlModifier, &positionAfter));
 
@@ -108,9 +108,9 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
       if (continueParsing)
       {
         // segment run entry count and segment run entry table
-        RBE32INC_DEFINE(buffer, position, segmentRunEntryCount, unsigned int);
+        RBE32INC_DEFINE(buffer, position, segmentRunEntryCount, uint32_t);
 
-        for(unsigned int i = 0; continueParsing && (i < segmentRunEntryCount); i++)
+        for(uint32_t i = 0; continueParsing && (i < segmentRunEntryCount); i++)
         {
           // need to read 8 bytes
           // but this segment can be last in buffer
@@ -118,8 +118,8 @@ bool CSegmentRunTableBox::Parse(const unsigned char *buffer, unsigned int length
 
           if (continueParsing)
           {
-            RBE32INC_DEFINE(buffer, position, firstSegment, unsigned int);
-            RBE32INC_DEFINE(buffer, position, fragmentsPerSegment, unsigned int);
+            RBE32INC_DEFINE(buffer, position, firstSegment, uint32_t);
+            RBE32INC_DEFINE(buffer, position, fragmentsPerSegment, uint32_t);
 
             CSegmentRunEntry *segment = new CSegmentRunEntry(firstSegment, fragmentsPerSegment);
             continueParsing &= (segment != NULL);
