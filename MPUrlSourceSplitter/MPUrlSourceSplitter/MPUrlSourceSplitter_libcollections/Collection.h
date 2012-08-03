@@ -45,7 +45,8 @@ public:
 
   // append collection of items
   // @param collection : the reference to collection to add
-  void Append(CCollection<TItem, TItemKey> *collection);
+  // @return : true if all items added, false otherwise
+  virtual bool Append(CCollection<TItem, TItemKey> *collection);
 
   // clear collection of items
   virtual void Clear(void);
@@ -54,33 +55,33 @@ public:
   // @param key : item key to find
   // @param context : the reference to user defined context
   // @return : true if item exists, false otherwise
-  bool Contains(TItemKey key, void *context);
+  virtual bool Contains(TItemKey key, void *context);
 
   // get the item from collection with specified index
   // @param index : the index of item to find
   // @return : the reference to item or NULL if not find
-  TItem *GetItem(unsigned int index);
+  virtual TItem *GetItem(unsigned int index);
 
   // get the item from collection with specified key
   // @param key : item key to find
   // @param context : the reference to user defined context
   // @return : the reference to item or NULL if not find
-  TItem *GetItem(TItemKey key, void *context);
+  virtual TItem *GetItem(TItemKey key, void *context);
 
   // get count of items in collection
   // @return : count of items in collection
-  unsigned int Count(void);
+  virtual unsigned int Count(void);
 
   // remove item with specified index from collection
   // @param index : the index of item to remove
   // @return : true if removed, false otherwise
-  bool Remove(unsigned int index);
+  virtual bool Remove(unsigned int index);
 
   // remove item with specified key from collection
   // @param key : key of item to remove
   // @param context : the reference to user defined context
   // @return : true if removed, false otherwise
-  bool Remove(TItemKey key, void *context);
+  virtual bool Remove(TItemKey key, void *context);
 
   // get item index of item with specified key
   // @param key : the key of item to find
@@ -133,7 +134,7 @@ protected:
   // if in internal buffer is not enough space, method tries to allocate enough space
   // @param requestedCount : the requested count of items
   // @return : true if in internal buffer is enough space, false otherwise
-  bool EnsureEnoughSpace(unsigned int requestedCount);
+  virtual bool EnsureEnoughSpace(unsigned int requestedCount);
 };
 
 // implementation
@@ -218,16 +219,18 @@ template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Add(TI
 }
 
 
-template <class TItem, class TItemKey> void CCollection<TItem, TItemKey>::Append(CCollection<TItem, TItemKey> *collection)
+template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Append(CCollection<TItem, TItemKey> *collection)
 {
+  bool result = true;
   if (collection != NULL)
   {
     unsigned int count = collection->Count();
     for (unsigned int i = 0; i < count; i++)
     {
-      this->Add(this->Clone(collection->GetItem(i)));
+      result &= this->Add(this->Clone(collection->GetItem(i)));
     }
   }
+  return result;
 }
 
 template <class TItem, class TItemKey> unsigned int CCollection<TItem, TItemKey>::Count(void)

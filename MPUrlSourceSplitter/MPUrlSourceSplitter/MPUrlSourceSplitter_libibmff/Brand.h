@@ -23,6 +23,8 @@
 #ifndef __BRAND_DEFINED
 #define __BRAND_DEFINED
 
+#include <stdint.h>
+
 class CBrand
 {
 public:
@@ -36,7 +38,7 @@ public:
 
   // gets brand as unsigned integer
   // @return : brand as unsigned integer
-  unsigned int GetBrand(void);
+  uint32_t GetBrand(void);
 
   // gets brand as string
   // @return : brand as string
@@ -47,7 +49,7 @@ public:
   // sets brand as unsigned integer
   // @param brand : brand as unsigned integer to set
   // @return : true if successful, false otherwise
-  bool SetBrand(unsigned int brand);
+  bool SetBrand(uint32_t brand);
 
   // sets brand as string
   // @param brandString : brand as string to set
@@ -58,7 +60,7 @@ public:
 
 protected:
   // holds brand
-  unsigned int brand;
+  uint32_t brand;
   // hodls brand string
   wchar_t *brandString;
 

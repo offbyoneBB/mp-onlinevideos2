@@ -52,7 +52,7 @@ CBootstrapInfoBox::~CBootstrapInfoBox(void)
   FREE_MEM_CLASS(this->fragmentRunTable);
 }
 
-bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
+bool CBootstrapInfoBox::Parse(const uint8_t *buffer, uint32_t length)
 {
   this->bootstrapInfoVersion = 0;
   this->profile = 0;
@@ -95,7 +95,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
     else
     {
       // box is bootstrap info box, parse all values
-      unsigned int position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
 
       // until smpteTimeCodeOffset end is 29 bytes
       bool continueParsing = ((position + 29) <= length);
@@ -105,7 +105,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
         position += 4;
 
         RBE32INC(buffer, position, this->bootstrapInfoVersion);
-        RBE8INC_DEFINE(buffer, position, profileLiveUpdate, unsigned int);
+        RBE8INC_DEFINE(buffer, position, profileLiveUpdate, uint8_t);
 
         this->profile = (profileLiveUpdate >> 6);
         this->live = ((profileLiveUpdate & 0x20) != 0);
@@ -118,7 +118,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
 
       if (continueParsing)
       {
-        unsigned int positionAfter = position;
+        uint32_t positionAfter = position;
         continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &this->movieIdentifier, &positionAfter));
 
         if (continueParsing)
@@ -131,12 +131,12 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
       if (continueParsing)
       {
         // server entry count and server entry table
-        RBE8INC_DEFINE(buffer, position, serverEntryCount , unsigned int);
+        RBE8INC_DEFINE(buffer, position, serverEntryCount , uint8_t);
         continueParsing &= (position < length);
 
-        for(unsigned int i = 0; continueParsing && (i < serverEntryCount); i++)
+        for(uint8_t i = 0; continueParsing && (i < serverEntryCount); i++)
         {
-          unsigned int positionAfter = position;
+          uint32_t positionAfter = position;
           wchar_t *serverEntry = NULL;
           continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &serverEntry, &positionAfter));
 
@@ -170,12 +170,12 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
       if (continueParsing)
       {
         // quality entry count and quality entry table
-        RBE8INC_DEFINE(buffer, position, qualityEntryCount, unsigned int);
+        RBE8INC_DEFINE(buffer, position, qualityEntryCount, uint8_t);
         continueParsing &= (position < length);
 
-        for(unsigned int i = 0; continueParsing && (i < qualityEntryCount); i++)
+        for(uint8_t i = 0; continueParsing && (i < qualityEntryCount); i++)
         {
-          unsigned int positionAfter = position;
+          uint32_t positionAfter = position;
           wchar_t *qualityEntry = NULL;
           continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &qualityEntry, &positionAfter));
 
@@ -209,7 +209,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
       if (continueParsing)
       {
         // read DRM data string
-        unsigned int positionAfter = position;
+        uint32_t positionAfter = position;
         continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &this->drmData, &positionAfter));
 
         if (continueParsing)
@@ -222,7 +222,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
       if (continueParsing)
       {
         // read metadata string
-        unsigned int positionAfter = position;
+        uint32_t positionAfter = position;
         continueParsing &= SUCCEEDED(this->GetString(buffer, length, position, &this->metaData, &positionAfter));
 
         if (continueParsing)
@@ -235,10 +235,10 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
       if (continueParsing)
       {
         // read segment run table count and segment run table
-        RBE8INC_DEFINE(buffer, position, segmentRunTableCount, unsigned int);
+        RBE8INC_DEFINE(buffer, position, segmentRunTableCount, uint8_t);
         continueParsing &= (position < length);
 
-        for (unsigned int i = 0; continueParsing && (i < segmentRunTableCount); i++)
+        for (uint8_t i = 0; continueParsing && (i < segmentRunTableCount); i++)
         {
           CSegmentRunTableBox *segmentRunTableBox = new CSegmentRunTableBox();
           continueParsing &= (segmentRunTableBox != NULL);
@@ -253,7 +253,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
 
               if (continueParsing)
               {
-                position += (unsigned int)segmentRunTableBox->GetSize();
+                position += (uint32_t)segmentRunTableBox->GetSize();
               }
             }
           }
@@ -270,10 +270,10 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
       if (continueParsing)
       {
         // read fragment run table count and fragment run table
-        RBE8INC_DEFINE(buffer, position, fragmentRunTableCount, unsigned int);
+        RBE8INC_DEFINE(buffer, position, fragmentRunTableCount, uint8_t);
         continueParsing &= (position < length);
 
-        for (unsigned int i = 0; continueParsing && (i < fragmentRunTableCount); i++)
+        for (uint8_t i = 0; continueParsing && (i < fragmentRunTableCount); i++)
         {
           CFragmentRunTableBox *fragmentRunTableBox = new CFragmentRunTableBox();
           continueParsing &= (fragmentRunTableBox != NULL);
@@ -288,7 +288,7 @@ bool CBootstrapInfoBox::Parse(const unsigned char *buffer, unsigned int length)
 
               if (continueParsing)
               {
-                position += (unsigned int)fragmentRunTableBox->GetSize();
+                position += (uint32_t)fragmentRunTableBox->GetSize();
               }
             }
           }
@@ -440,12 +440,12 @@ wchar_t *CBootstrapInfoBox::GetParsedHumanReadable(const wchar_t *indent)
   return result;
 }
 
-unsigned int CBootstrapInfoBox::GetBootstrapInfoVersion(void)
+uint32_t CBootstrapInfoBox::GetBootstrapInfoVersion(void)
 {
   return this->bootstrapInfoVersion;
 }
 
-unsigned int CBootstrapInfoBox::GetProfile(void)
+uint8_t CBootstrapInfoBox::GetProfile(void)
 {
   return this->profile;
 }

@@ -26,7 +26,8 @@ CMediaDataBox::CMediaDataBox(void)
   : CBox()
 {
   this->payload = NULL;
-  this->playloadSize = -1;
+  this->payloadSize = 0;
+  this->type = Duplicate(MEDIA_DATA_BOX_TYPE);
 }
 
 CMediaDataBox::~CMediaDataBox(void)
@@ -36,24 +37,71 @@ CMediaDataBox::~CMediaDataBox(void)
 
 /* get methods */
 
-const unsigned char *CMediaDataBox::GetPayload(void)
+const uint8_t *CMediaDataBox::GetPayload(void)
 {
   return this->payload;
 }
 
-int64_t CMediaDataBox::GetPayloadSize(void)
+uint64_t CMediaDataBox::GetPayloadSize(void)
 {
-  return this->playloadSize;
+  return this->payloadSize;
+}
+
+bool CMediaDataBox::GetBox(uint8_t **buffer, uint32_t *length)
+{
+  bool result = __super::GetBox(buffer, length);
+
+  if (result)
+  {
+    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+
+    if (this->GetPayloadSize() > 0)
+    {
+      memcpy((*buffer) + position, this->GetPayload(), (uint32_t)this->GetPayloadSize());
+    }
+
+    if (!result)
+    {
+      FREE_MEM(*buffer);
+      *length = 0;
+    }
+  }
+
+  return result;
 }
 
 /* set methods */
 
+bool CMediaDataBox::SetPayload(const uint8_t *buffer, uint32_t length)
+{
+  bool result = (buffer != NULL) || (length == 0);
+  FREE_MEM(this->payload);
+  this->payloadSize = 0;
+
+  if (result)
+  {
+    if (length > 0)
+    {
+      this->payload = ALLOC_MEM_SET(this->payload, uint8_t, length, 0);
+      result &= (this->payload != NULL);
+
+      if (result)
+      {
+        memcpy(this->payload, buffer, length);
+        this->payloadSize = length;
+      }
+    }
+  }
+
+  return result;
+}
+
 /* other methods */
 
-bool CMediaDataBox::Parse(const unsigned char *buffer, unsigned int length)
+bool CMediaDataBox::Parse(const uint8_t *buffer, uint32_t length)
 {
   FREE_MEM(this->payload);
-  this->playloadSize = -1;
+  this->payloadSize = 0;
 
   bool result = __super::Parse(buffer, length);
 
@@ -67,18 +115,18 @@ bool CMediaDataBox::Parse(const unsigned char *buffer, unsigned int length)
     else
     {
       // box is bootstrap info box, parse all values
-      unsigned int position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-      this->playloadSize = this->GetSize() - position;
-      bool continueParsing = ((position + this->playloadSize) <= length);
+      uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+      this->payloadSize = this->GetSize() - position;
+      bool continueParsing = ((position + this->payloadSize) <= length);
 
       if (continueParsing)
       {
-        this->payload = ALLOC_MEM_SET(this->payload, unsigned char, (unsigned int)this->playloadSize, 0);
+        this->payload = ALLOC_MEM_SET(this->payload, uint8_t, (uint32_t)this->payloadSize, 0);
         continueParsing &= (this->payload != NULL);
 
         if (continueParsing)
         {
-          memcpy(this->payload, buffer + position, (unsigned int)this->playloadSize);
+          memcpy(this->payload, buffer + position, (uint32_t)this->payloadSize);
         }
       }
       
@@ -101,10 +149,10 @@ wchar_t *CMediaDataBox::GetParsedHumanReadable(const wchar_t *indent)
     // prepare finally human readable representation
     result = FormatString(
       L"%s\n" \
-      L"%sPayload size: %lld",
+      L"%sPayload size: %llu",
       
       previousResult,
-      indent, this->playloadSize
+      indent, this->payloadSize
       
       );
   }
@@ -112,4 +160,9 @@ wchar_t *CMediaDataBox::GetParsedHumanReadable(const wchar_t *indent)
   FREE_MEM(previousResult);
 
   return result;
+}
+
+uint64_t CMediaDataBox::GetBoxSize(uint64_t size)
+{
+  return __super::GetBoxSize(size + this->payloadSize);
 }

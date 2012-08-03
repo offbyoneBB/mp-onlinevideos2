@@ -22,7 +22,7 @@
 
 #include "FragmentRunEntry.h"
 
-CFragmentRunEntry::CFragmentRunEntry(unsigned int firstFragment, uint64_t firstFragmentTimestamp, unsigned int fragmentDuration, unsigned int discontinuityIndicator)
+CFragmentRunEntry::CFragmentRunEntry(uint32_t firstFragment, uint64_t firstFragmentTimestamp, uint32_t fragmentDuration, uint32_t discontinuityIndicator)
 {
   this->firstFragment = firstFragment;
   this->firstFragmentTimestamp = firstFragmentTimestamp;
@@ -34,7 +34,7 @@ CFragmentRunEntry::~CFragmentRunEntry(void)
 {
 }
 
-unsigned int CFragmentRunEntry::GetFirstFragment(void)
+uint32_t CFragmentRunEntry::GetFirstFragment(void)
 {
   return this->firstFragment;
 }
@@ -44,12 +44,12 @@ uint64_t CFragmentRunEntry::GetFirstFragmentTimestamp(void)
   return this->firstFragmentTimestamp;
 }
 
-unsigned int CFragmentRunEntry::GetFragmentDuration(void)
+uint32_t CFragmentRunEntry::GetFragmentDuration(void)
 {
   return this->fragmentDuration;
 }
 
-unsigned int CFragmentRunEntry::GetDiscontinuityIndicator(void)
+uint32_t CFragmentRunEntry::GetDiscontinuityIndicator(void)
 {
   return this->discontinuityIndicator;
 }

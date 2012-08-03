@@ -22,7 +22,7 @@
 
 #include "SegmentRunEntry.h"
 
-CSegmentRunEntry::CSegmentRunEntry(unsigned int firstSegment, unsigned int fragmentsPerSegment)
+CSegmentRunEntry::CSegmentRunEntry(uint32_t firstSegment, uint32_t fragmentsPerSegment)
 {
   this->firstSegment = firstSegment;
   this->fragmentsPerSegment = fragmentsPerSegment;
@@ -32,12 +32,12 @@ CSegmentRunEntry::~CSegmentRunEntry(void)
 {
 }
 
-unsigned int CSegmentRunEntry::GetFirstSegment(void)
+uint32_t CSegmentRunEntry::GetFirstSegment(void)
 {
   return this->firstSegment;
 }
 
-unsigned int CSegmentRunEntry::GetFragmentsPerSegment(void)
+uint32_t CSegmentRunEntry::GetFragmentsPerSegment(void)
 {
   return this->fragmentsPerSegment;
 }

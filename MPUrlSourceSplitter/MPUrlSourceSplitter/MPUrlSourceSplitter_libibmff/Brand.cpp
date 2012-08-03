@@ -35,7 +35,7 @@ CBrand::~CBrand(void)
 
 /* get methods */
 
-unsigned int CBrand::GetBrand(void)
+uint32_t CBrand::GetBrand(void)
 {
   return this->brand;
 }
@@ -47,7 +47,7 @@ const wchar_t *CBrand::GetBrandString(void)
 
 /* set methods */
 
-bool CBrand::SetBrand(unsigned int brand)
+bool CBrand::SetBrand(uint32_t brand)
 {
   this->brand = brand;
   return this->ConvertBrandToString();
@@ -92,13 +92,13 @@ bool CBrand::ConvertBrandToUnsignedInteger(void)
 
   if (result)
   {
-    unsigned int length = strlen(buffer);
+    uint32_t length = strlen(buffer);
     this->brand = 0;
 
-    for (unsigned int i = 0; i < 4; i++)
+    for (uint32_t i = 0; i < 4; i++)
     {
       this->brand <<= 8;
-      this->brand += (i < length) ? (unsigned char)buffer[i] : 0;
+      this->brand += (i < length) ? (uint8_t)buffer[i] : 0;
     }
   }
 

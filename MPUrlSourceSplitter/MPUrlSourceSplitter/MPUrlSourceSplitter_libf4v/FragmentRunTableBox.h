@@ -44,7 +44,7 @@ public:
   // @param buffer : buffer with box data for parsing
   // @param length : the length of data in buffer
   // @return : true if parsed successfully, false otherwise
-  virtual bool Parse(const unsigned char *buffer, unsigned int length);
+  virtual bool Parse(const uint8_t *buffer, uint32_t length);
 
   // gets box data in human readable format
   // @param indent : string to insert before each line
@@ -53,7 +53,7 @@ public:
 
   // gets the number of time units per second
   // @return : the number of time units per second
-  virtual unsigned int GetTimeScale(void);
+  virtual uint32_t GetTimeScale(void);
 
   // gets quality segment url modifiers table
   // @return : quality segment url modifiers table
@@ -64,7 +64,7 @@ public:
   virtual CFragmentRunEntryCollection *GetFragmentRunEntryTable(void);
 
 protected:
-  unsigned int timeScale;
+  uint32_t timeScale;
 
   CQualitySegmentUrlModifierCollection *qualitySegmentUrlModifiers;
   CFragmentRunEntryCollection *fragmentRunEntryTable;

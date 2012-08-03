@@ -46,13 +46,24 @@ public:
 
   // gets minor version
   // @return : minor version
-  virtual unsigned int GetMinorVersion(void);
+  virtual uint32_t GetMinorVersion(void);
 
   // gets compatible brands
   // @return : compatible brands
   virtual CBrandCollection *GetCompatibleBrands(void);
 
+  // gets whole box into buffer
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @return : true if all data were successfully stored into buffer, false otherwise
+  virtual bool GetBox(uint8_t **buffer, uint32_t *length);
+
   /* set methods */
+
+  // sets minor version
+  // @param minorVersion : minor version to set
+  // @return : true if successful, false otherwise
+  virtual bool SetMinorVersion(uint32_t minorVersion);
 
   /* other methods */
 
@@ -60,7 +71,7 @@ public:
   // @param buffer : buffer with box data for parsing
   // @param length : the length of data in buffer
   // @return : true if parsed successfully, false otherwise
-  virtual bool Parse(const unsigned char *buffer, unsigned int length);
+  virtual bool Parse(const uint8_t *buffer, uint32_t length);
 
   // gets box data in human readable format
   // @param indent : string to insert before each line
@@ -71,9 +82,15 @@ protected:
   // stores major brand
   CBrand *majorBrand;
   // stores minor version
-  unsigned int minorVersion;
+  uint32_t minorVersion;
   // stores compatible brands
   CBrandCollection *compatibleBrands;
+
+  // gets box size added to size
+  // method is called to determine whole box size for storing box into buffer
+  // @param size : the size of box calling this method
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(uint64_t size);
 };
 
 #endif

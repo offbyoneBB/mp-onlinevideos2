@@ -25,6 +25,8 @@
 
 #include "box.h"
 
+#define FULL_BOX_DATA_SIZE                                                    4
+
 class CFullBox :
   public CBox
 {
@@ -39,11 +41,17 @@ public:
 
   // gets version of this format of the box
   // @return : version of this format of the box
-  virtual unsigned int GetVersion(void);
+  virtual uint8_t GetVersion(void);
 
   // gets map of flags
   // @return : map of flags
-  virtual unsigned int GetFlags(void);
+  virtual uint32_t GetFlags(void);
+
+  // gets whole box into buffer
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @return : true if all data were successfully stored into buffer, false otherwise
+  virtual bool GetBox(uint8_t **buffer, uint32_t *length);
 
   /* set methods */
 
@@ -53,7 +61,7 @@ public:
   // @param buffer : buffer with box data for parsing
   // @param length : the length of data in buffer
   // @return : true if parsed successfully, false otherwise
-  virtual bool Parse(const unsigned char *buffer, unsigned int length);
+  virtual bool Parse(const uint8_t *buffer, uint32_t length);
 
   // gets box data in human readable format
   // @param indent : string to insert before each line
@@ -62,9 +70,15 @@ public:
 
 protected:
   // stores version of this format of the box
-  unsigned int version;
-  // stores map of flags
-  unsigned int flags;
+  uint8_t version;
+  // stores map of flags (used only lower 24 bits)
+  uint32_t flags;
+
+  // gets box size added to size
+  // method is called to determine whole box size for storing box into buffer
+  // @param size : the size of box calling this method
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(uint64_t size);
 };
 
 #endif

@@ -44,7 +44,7 @@ public:
   // @param buffer : buffer with box data for parsing
   // @param length : the length of data in buffer
   // @return : true if parsed successfully, false otherwise
-  virtual bool Parse(const unsigned char *buffer, unsigned int length);
+  virtual bool Parse(const uint8_t *buffer, uint32_t length);
 
   // gets box data in human readable format
   // @param indent : string to insert before each line

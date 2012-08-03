@@ -37,3 +37,5 @@
 #include "Memory.h"
 #include "Strings.h"
 #include "Utilities.h"
+#include "BoxConstants.h"
+#include "BufferHelper.h"

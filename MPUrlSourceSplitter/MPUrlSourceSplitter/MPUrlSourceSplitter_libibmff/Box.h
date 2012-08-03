@@ -25,94 +25,6 @@
 
 #include <stdint.h>
 
-#define BOX_HEADER_LENGTH                                   8
-#define BOX_HEADER_LENGTH_SIZE64                            16
-
-#ifndef RBE8
-#define RBE8(buffer, position)                              ((uint8_t)((const uint8_t*)(buffer + position))[0])
-#endif
-
-#ifndef RBE8INC
-#define RBE8INC(buffer, position, result)                   result = RBE8(buffer, position); \
-                                                            position++;
-#endif
-
-#ifndef RBE8INC_DEFINE
-#define RBE8INC_DEFINE(buffer, position, result, type)      type result = 0; \
-                                                            RBE8INC(buffer, position, result);
-#endif
-
-#ifndef RBE16
-#define RBE16(buffer, position)                             (((uint16_t)((const uint8_t*)(buffer + position))[0] << 8) | \
-                                                                       (((const uint8_t*)(buffer + position))[1]))
-#endif
-
-#ifndef RBE16INC
-#define RBE16INC(buffer, position, result)                  result = RBE16(buffer, position); \
-                                                            position += 2;
-#endif
-
-#ifndef RBE16INC_DEFINE
-#define RBE16INC_DEFINE(buffer, position, result, type)     type result = 0; \
-                                                            RBE16INC(buffer, position, result);
-#endif
-
-
-#ifndef RBE24
-#define RBE24(buffer, position)                             (((uint32_t)((const uint8_t*)(buffer + position))[0] << 16) | \
-                                                                       (((const uint8_t*)(buffer + position))[1] << 8)  | \
-                                                                       (((const uint8_t*)(buffer + position))[2]))
-#endif
-
-#ifndef RBE24INC
-#define RBE24INC(buffer, position, result)                  result = RBE24(buffer, position); \
-                                                            position += 3;
-#endif
-
-#ifndef RBE24INC_DEFINE
-#define RBE24INC_DEFINE(buffer, position, result, type)     type result = 0; \
-                                                            RBE24INC(buffer, position, result);
-#endif
-
-#ifndef RBE32
-#define RBE32(buffer, position)                            (((uint32_t)((const uint8_t*)(buffer + position))[0] << 24) | \
-                                                                       (((const uint8_t*)(buffer + position))[1] << 16) | \
-                                                                       (((const uint8_t*)(buffer + position))[2] <<  8) | \
-                                                                       (((const uint8_t*)(buffer + position))[3]))
-#endif
-
-#ifndef RBE32INC
-#define RBE32INC(buffer, position, result)                  result = RBE32(buffer, position); \
-                                                            position += 4;
-#endif
-
-#ifndef RBE32INC_DEFINE
-#define RBE32INC_DEFINE(buffer, position, result, type)     type result = 0; \
-                                                            RBE32INC(buffer, position, result);
-#endif
-
-
-#ifndef RBE64
-#define RBE64(buffer, position)                             (((uint64_t)((const uint8_t*)(buffer + position))[0] << 56) | \
-                                                             ((uint64_t)((const uint8_t*)(buffer + position))[1] << 48) | \
-                                                             ((uint64_t)((const uint8_t*)(buffer + position))[2] << 40) | \
-                                                             ((uint64_t)((const uint8_t*)(buffer + position))[3] << 32) | \
-                                                             ((uint64_t)((const uint8_t*)(buffer + position))[4] << 24) | \
-                                                             ((uint64_t)((const uint8_t*)(buffer + position))[5] << 16) | \
-                                                             ((uint64_t)((const uint8_t*)(buffer + position))[6] <<  8) | \
-                                                             ((uint64_t)((const uint8_t*)(buffer + position))[7]))
-#endif
-
-#ifndef RBE64INC
-#define RBE64INC(buffer, position, result)                  result = RBE64(buffer, position); \
-                                                            position += 8;
-#endif
-
-#ifndef RBE64INC_DEFINE
-#define RBE64INC_DEFINE(buffer, position, result, type)     type result = 0; \
-                                                            RBE64INC(buffer, position, result);
-#endif
-
 class CBox
 {
 public:
@@ -131,6 +43,12 @@ public:
   // gets box type
   // @return : box type or NULL if error
   virtual const wchar_t *GetType(void);
+
+  // gets whole box into buffer
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @return : true if all data were successfully stored into buffer, false otherwise
+  virtual bool GetBox(uint8_t **buffer, uint32_t *length);
 
   /* set methods */
 
@@ -159,7 +77,7 @@ public:
   // @param buffer : buffer with box data for parsing
   // @param length : the length of data in buffer
   // @return : true if parsed successfully, false otherwise
-  virtual bool Parse(const unsigned char *buffer, unsigned int length);
+  virtual bool Parse(const unsigned char *buffer, uint32_t length);
 
   // gets box data in human readable format
   // @param indent : string to insert before each line
@@ -167,7 +85,7 @@ public:
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
 protected:
-  // stores the length of buffer
+  // stores the length of box
   uint64_t length;
   // stores if data were successfully parsed
   bool parsed;
@@ -178,6 +96,12 @@ protected:
   // stores if box has unspecified size
   bool hasUnspecifiedSize;
 
+  // gets box size added to size
+  // method is called to determine whole box size for storing box into buffer
+  // @param size : the size of box calling this method
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(uint64_t size);
+
   // gets Unicode string from buffer from specified position
   // @param buffer : the buffer to read UTF-8 string
   // @param length : the length of buffer
@@ -185,7 +109,7 @@ protected:
   // @param output : reference to Unicode buffer where result will be stored
   // @param positionAfterString : reference to variable where will be stored position after null terminating character of UTF-8 string
   // @return : S_OK if successful, E_POINTER if buffer, output or positionAfterString is NULL, HRESULT_FROM_WIN32(ERROR_INVALID_DATA) if not enough data in buffer, E_OUTOFMEMORY if not enough memory for results
-  HRESULT GetString(const unsigned char *buffer, unsigned int length, unsigned int startPosition, wchar_t **output, unsigned int *positionAfterString);
+  HRESULT GetString(const uint8_t *buffer, uint32_t length, uint32_t startPosition, wchar_t **output, uint32_t *positionAfterString);
 };
 
 #endif
