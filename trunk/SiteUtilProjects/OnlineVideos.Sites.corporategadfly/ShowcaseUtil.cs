@@ -6,6 +6,8 @@ namespace OnlineVideos.Sites
     {
         public override string FeedPIDUrl { get { return @"http://www.showcase.ca/CommonUI/Scripts/video/cwpShowcaseVC.js"; } }
         public override string PlayerTag { get { return @"z/Showcase Video Centre"; } }
+        public override bool IsSwfUrlNeeded { get { return true; } }
+        public override string SwfUrl { get { return @"http://www.showcase.ca/video/swf/flvPlayer.swf"; } }
         public override Regex FeedPIDRegex
         {
             get
