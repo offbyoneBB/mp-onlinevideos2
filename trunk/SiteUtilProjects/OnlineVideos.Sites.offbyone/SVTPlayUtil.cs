@@ -15,6 +15,9 @@ namespace OnlineVideos.Sites
 		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Split by Letter"), Description("Chose if you want a flat list of all shows or split by the first letter.")]
 		protected bool splitByLetter = true;
 
+		[Category("OnlineVideosConfiguration")]
+		protected string SwfUrl = "http://www.svtplay.se/public/swf/video/svtplayer-2012.28.swf";
+
         protected int currentVideosMaxPages = 0;
         protected string nextPageUrl = "";
 
@@ -337,11 +340,12 @@ namespace OnlineVideos.Sites
                 string url = (string)option["url"];
 				if (url.StartsWith("rtmp"))
 				{
-					url = url.Replace("_definst_", "?slist=");
-					if (video.VideoUrl.Contains("/live"))
+					url = new MPUrlSourceFilter.RtmpUrl(url.Replace("_definst_", "?slist=")) 
 					{
-						url = new MPUrlSourceFilter.RtmpUrl(url) { Live = true }.ToString();
-					}
+						SwfVerify = true,
+						SwfUrl = SwfUrl,
+						Live = video.VideoUrl.Contains("/live")
+					}.ToString();
 				}
 				else if (url.StartsWith("http://geoip.api"))
 					url = HttpUtility.ParseQueryString(new Uri(url).Query)["vurl"];
