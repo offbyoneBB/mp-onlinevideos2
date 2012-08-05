@@ -72,29 +72,7 @@ bool CFullBox::GetBox(uint8_t **buffer, uint32_t *length)
 
 bool CFullBox::Parse(const uint8_t *buffer, uint32_t length)
 {
-  this->version = 0;
-  this->flags = 0;
-
-  bool result = __super::Parse(buffer, length);
-
-  if (result)
-  {
-    // box is file type box, parse all values
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-    bool continueParsing = ((position + FULL_BOX_DATA_SIZE) <= min(length, (uint32_t)this->GetSize()));
-
-    if (continueParsing)
-    {
-      RBE8INC(buffer, position, this->version);
-      RBE24INC(buffer, position, this->flags);
-    }
-
-    this->parsed = continueParsing;
-  }
-
-  result = this->parsed;
-
-  return result;
+  return this->ParseInternal(buffer, length, true);
 }
 
 wchar_t *CFullBox::GetParsedHumanReadable(const wchar_t *indent)
@@ -111,8 +89,8 @@ wchar_t *CFullBox::GetParsedHumanReadable(const wchar_t *indent)
       L"%sFlags: 0x%06X",
       
       previousResult,
-      indent, this->version,
-      indent, this->flags
+      indent, this->GetVersion(),
+      indent, this->GetFlags()
       );
   }
 
@@ -124,4 +102,36 @@ wchar_t *CFullBox::GetParsedHumanReadable(const wchar_t *indent)
 uint64_t CFullBox::GetBoxSize(uint64_t size)
 {
   return __super::GetBoxSize(size + FULL_BOX_DATA_SIZE);
+}
+
+bool CFullBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  this->version = 0;
+  this->flags = 0;
+
+  bool result = __super::ParseInternal(buffer, length, false);
+
+  if (result)
+  {
+    // box is file type box, parse all values
+    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
+    bool continueParsing = ((position + FULL_BOX_DATA_SIZE) <= min(length, (uint32_t)this->GetSize()));
+
+    if (continueParsing)
+    {
+      RBE8INC(buffer, position, this->version);
+      RBE24INC(buffer, position, this->flags);
+    }
+
+    if (continueParsing && processAdditionalBoxes)
+    {
+      this->ProcessAdditionalBoxes(buffer, length, position);
+    }
+
+    this->parsed = continueParsing;
+  }
+
+  result = this->parsed;
+
+  return result;
 }

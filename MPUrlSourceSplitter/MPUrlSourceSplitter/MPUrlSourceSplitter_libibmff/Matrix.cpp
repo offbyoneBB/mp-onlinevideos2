@@ -28,39 +28,39 @@ CMatrix::CMatrix(void)
   CFixedPointNumber *number = NULL;
 
   // a
-  number = new CFixedPointNumber(16, 16);
+  number = new CFixedPointNumber(17, 16);
   __super::Add(number);
 
   // b
-  number = new CFixedPointNumber(16, 16);
+  number = new CFixedPointNumber(17, 16);
   __super::Add(number);
 
   // u
-  number = new CFixedPointNumber(2, 30);
+  number = new CFixedPointNumber(3, 30);
   __super::Add(number);
 
   // c
-  number = new CFixedPointNumber(16, 16);
+  number = new CFixedPointNumber(17, 16);
   __super::Add(number);
 
   // d
-  number = new CFixedPointNumber(16, 16);
+  number = new CFixedPointNumber(17, 16);
   __super::Add(number);
 
   // v
-  number = new CFixedPointNumber(2, 30);
+  number = new CFixedPointNumber(3, 30);
   __super::Add(number);
 
   // x
-  number = new CFixedPointNumber(16, 16);
+  number = new CFixedPointNumber(17, 16);
   __super::Add(number);
 
   // y
-  number = new CFixedPointNumber(16, 16);
+  number = new CFixedPointNumber(17, 16);
   __super::Add(number);
 
   // w
-  number = new CFixedPointNumber(2, 30);
+  number = new CFixedPointNumber(3, 30);
   __super::Add(number);
 }
 

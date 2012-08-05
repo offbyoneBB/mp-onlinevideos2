@@ -41,12 +41,17 @@
     <OutDir>$(SolutionDir)bin_$(PlatformName)\lib\</OutDir>
     <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>$(SolutionDir)bin_$(PlatformName)d\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)bin_$(PlatformName)d\lib\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(DSHOW_BASE);..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_libshared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -72,36 +77,106 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AudioSampleEntryBox.h" />
+    <ClInclude Include="BitRateBox.h" />
     <ClInclude Include="Box.h" />
+    <ClInclude Include="BoxCollection.h" />
     <ClInclude Include="BoxConstants.h" />
+    <ClInclude Include="BoxFactory.h" />
     <ClInclude Include="Brand.h" />
     <ClInclude Include="BrandCollection.h" />
     <ClInclude Include="BufferHelper.h" />
+    <ClInclude Include="ChunkLargeOffsetBox.h" />
+    <ClInclude Include="ChunkOffset.h" />
+    <ClInclude Include="ChunkOffsetBox.h" />
+    <ClInclude Include="ChunkOffsetCollection.h" />
+    <ClInclude Include="CleanApertureBox.h" />
+    <ClInclude Include="DataEntryBox.h" />
+    <ClInclude Include="DataEntryBoxCollection.h" />
+    <ClInclude Include="DataEntryUrlBox.h" />
+    <ClInclude Include="DataEntryUrnBox.h" />
+    <ClInclude Include="DataInformationBox.h" />
+    <ClInclude Include="DataReferenceBox.h" />
     <ClInclude Include="FileTypeBox.h" />
     <ClInclude Include="FixedPointNumber.h" />
     <ClInclude Include="FullBox.h" />
+    <ClInclude Include="HandlerBox.h" />
+    <ClInclude Include="HintMediaHeaderBox.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="MediaBox.h" />
     <ClInclude Include="MediaDataBox.h" />
+    <ClInclude Include="MediaHeaderBox.h" />
+    <ClInclude Include="MediaInformationBox.h" />
+    <ClInclude Include="MediaInformationBoxFactory.h" />
+    <ClInclude Include="MetaBox.h" />
     <ClInclude Include="MovieBox.h" />
     <ClInclude Include="MovieHeaderBox.h" />
+    <ClInclude Include="NullMediaHeaderBox.h" />
+    <ClInclude Include="PixelAspectRatioBox.h" />
+    <ClInclude Include="SampleDescriptionBox.h" />
+    <ClInclude Include="SampleEntryBox.h" />
+    <ClInclude Include="SampleEntryBoxCollection.h" />
+    <ClInclude Include="SampleEntryBoxFactory.h" />
+    <ClInclude Include="SampleTableBox.h" />
+    <ClInclude Include="SoundMediaHeaderBox.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TrackBox.h" />
+    <ClInclude Include="TrackHeaderBox.h" />
+    <ClInclude Include="UserDataBox.h" />
+    <ClInclude Include="VideoMediaHeaderBox.h" />
+    <ClInclude Include="VisualSampleEntryBox.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioSampleEntryBox.cpp" />
+    <ClCompile Include="BitRateBox.cpp" />
     <ClCompile Include="Box.cpp" />
+    <ClCompile Include="BoxCollection.cpp" />
+    <ClCompile Include="BoxFactory.cpp" />
     <ClCompile Include="Brand.cpp" />
     <ClCompile Include="BrandCollection.cpp" />
+    <ClCompile Include="ChunkLargeOffsetBox.cpp" />
+    <ClCompile Include="ChunkOffset.cpp" />
+    <ClCompile Include="ChunkOffsetBox.cpp" />
+    <ClCompile Include="ChunkOffsetCollection.cpp" />
+    <ClCompile Include="CleanApertureBox.cpp" />
+    <ClCompile Include="DataEntryBox.cpp" />
+    <ClCompile Include="DataEntryBoxCollection.cpp" />
+    <ClCompile Include="DataEntryUrlBox.cpp" />
+    <ClCompile Include="DataEntryUrnBox.cpp" />
+    <ClCompile Include="DataInformationBox.cpp" />
+    <ClCompile Include="DataReferenceBox.cpp" />
     <ClCompile Include="FileTypeBox.cpp" />
     <ClCompile Include="FixedPointNumber.cpp" />
     <ClCompile Include="FullBox.cpp" />
+    <ClCompile Include="HandlerBox.cpp" />
+    <ClCompile Include="HintMediaHeaderBox.cpp" />
     <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="MediaBox.cpp" />
     <ClCompile Include="MediaDataBox.cpp" />
+    <ClCompile Include="MediaHeaderBox.cpp" />
+    <ClCompile Include="MediaInformationBox.cpp" />
+    <ClCompile Include="MediaInformationBoxFactory.cpp" />
+    <ClCompile Include="MetaBox.cpp" />
     <ClCompile Include="MovieBox.cpp" />
     <ClCompile Include="MovieHeaderBox.cpp" />
+    <ClCompile Include="NullMediaHeaderBox.cpp" />
+    <ClCompile Include="PixelAspectRatioBox.cpp" />
+    <ClCompile Include="SampleDescriptionBox.cpp" />
+    <ClCompile Include="SampleEntryBox.cpp" />
+    <ClCompile Include="SampleEntryBoxCollection.cpp" />
+    <ClCompile Include="SampleEntryBoxFactory.cpp" />
+    <ClCompile Include="SampleTableBox.cpp" />
+    <ClCompile Include="SoundMediaHeaderBox.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TrackBox.cpp" />
+    <ClCompile Include="TrackHeaderBox.cpp" />
+    <ClCompile Include="UserDataBox.cpp" />
+    <ClCompile Include="VideoMediaHeaderBox.cpp" />
+    <ClCompile Include="VisualSampleEntryBox.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -85,6 +85,13 @@ protected:
   // @param size : the size of box calling this method
   // @return : size of box 
   virtual uint64_t GetBoxSize(uint64_t size);
+
+  // parses data in buffer
+  // @param buffer : buffer with box data for parsing
+  // @param length : the length of data in buffer
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed
+  // @return : true if parsed successfully, false otherwise
+  virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

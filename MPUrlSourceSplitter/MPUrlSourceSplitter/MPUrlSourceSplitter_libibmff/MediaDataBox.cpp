@@ -100,10 +100,43 @@ bool CMediaDataBox::SetPayload(const uint8_t *buffer, uint32_t length)
 
 bool CMediaDataBox::Parse(const uint8_t *buffer, uint32_t length)
 {
+  return this->ParseInternal(buffer, length, true);
+}
+
+wchar_t *CMediaDataBox::GetParsedHumanReadable(const wchar_t *indent)
+{
+  wchar_t *result = NULL;
+  wchar_t *previousResult = __super::GetParsedHumanReadable(indent);
+
+  if ((previousResult != NULL) && (this->IsParsed()))
+  {
+    // prepare finally human readable representation
+    result = FormatString(
+      L"%s\n" \
+      L"%sPayload size: %llu",
+      
+      previousResult,
+      indent, this->payloadSize
+      
+      );
+  }
+
+  FREE_MEM(previousResult);
+
+  return result;
+}
+
+uint64_t CMediaDataBox::GetBoxSize(uint64_t size)
+{
+  return __super::GetBoxSize(size + this->payloadSize);
+}
+
+bool CMediaDataBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
+{
   FREE_MEM(this->payload);
   this->payloadSize = 0;
 
-  bool result = __super::Parse(buffer, length);
+  bool result = __super::ParseInternal(buffer, length, false);
 
   if (result)
   {
@@ -137,32 +170,4 @@ bool CMediaDataBox::Parse(const uint8_t *buffer, uint32_t length)
   result = this->parsed;
 
   return result;
-}
-
-wchar_t *CMediaDataBox::GetParsedHumanReadable(const wchar_t *indent)
-{
-  wchar_t *result = NULL;
-  wchar_t *previousResult = __super::GetParsedHumanReadable(indent);
-
-  if ((previousResult != NULL) && (this->IsParsed()))
-  {
-    // prepare finally human readable representation
-    result = FormatString(
-      L"%s\n" \
-      L"%sPayload size: %llu",
-      
-      previousResult,
-      indent, this->payloadSize
-      
-      );
-  }
-
-  FREE_MEM(previousResult);
-
-  return result;
-}
-
-uint64_t CMediaDataBox::GetBoxSize(uint64_t size)
-{
-  return __super::GetBoxSize(size + this->payloadSize);
 }

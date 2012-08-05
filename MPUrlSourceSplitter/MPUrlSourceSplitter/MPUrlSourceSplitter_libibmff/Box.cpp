@@ -21,6 +21,8 @@
 #include "StdAfx.h"
 
 #include "Box.h"
+#include "BoxCollection.h"
+#include "BoxFactory.h"
 
 CBox::CBox(void)
 {
@@ -29,11 +31,13 @@ CBox::CBox(void)
   this->type = NULL;
   this->hasExtendedHeader = false;
   this->hasUnspecifiedSize = false;
+  this->boxes = new CBoxCollection();
 }
 
 CBox::~CBox(void)
 {
   FREE_MEM(this->type);
+  FREE_MEM_CLASS(this->boxes);
 }
 
 /* get methods */
@@ -87,6 +91,11 @@ bool CBox::GetBox(uint8_t **buffer, uint32_t *length)
   return result;
 }
 
+CBoxCollection *CBox::GetBoxes(void)
+{
+  return this->boxes;
+}
+
 /* set methods */
 
 /* other methods */
@@ -118,12 +127,197 @@ bool CBox::HasExtendedHeader(void)
 
 bool CBox::Parse(const uint8_t *buffer, uint32_t length)
 {
+  return this->ParseInternal(buffer, length, true);
+}
+
+uint64_t CBox::GetBoxSize(uint64_t size)
+{
+  uint64_t result = size + BOX_HEADER_LENGTH;
+
+  if (size > (uint64_t)UINT_MAX)
+  {
+    // size of box doesn't fit into box header
+    size = size - BOX_HEADER_LENGTH + BOX_HEADER_LENGTH_SIZE64;
+  }
+
+  return result;
+}
+
+HRESULT CBox::GetString(const uint8_t *buffer, uint32_t length, uint32_t startPosition, wchar_t **output, uint32_t *positionAfterString)
+{
+  return this->GetString(buffer, length, startPosition, output, positionAfterString, UINT32_MAX);
+}
+
+HRESULT CBox::GetString(const uint8_t *buffer, uint32_t length, uint32_t startPosition, wchar_t **output, uint32_t *positionAfterString, uint32_t maxLength)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, buffer);
+  CHECK_POINTER_DEFAULT_HRESULT(result, output);
+  CHECK_POINTER_DEFAULT_HRESULT(result, positionAfterString);
+
+  if (SUCCEEDED(result))
+  {
+    bool foundEnd = false;
+    bool maxLengthReached = false;
+    uint32_t tempPosition = startPosition;
+
+    while (tempPosition < length)
+    {
+      if ((tempPosition - startPosition) < maxLength)
+      {
+        if (RBE8(buffer, tempPosition) == 0)
+        {
+          // null terminating character
+          foundEnd = true;
+          break;
+        }
+        else
+        {
+          tempPosition++;
+        }
+      }
+      else
+      {
+        maxLengthReached = true;
+        foundEnd = true;
+        break;
+      }
+    }
+
+    result = (foundEnd) ? S_OK : HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+
+    if (SUCCEEDED(result))
+    {
+      // if foundEnd is true then in tempPosition is positon of null terminating character
+      uint32_t copyLength = tempPosition - startPosition;
+      uint8_t *utf8string = ALLOC_MEM_SET(utf8string, uint8_t, copyLength + 1, 0);
+      CHECK_POINTER_HRESULT(result, utf8string, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
+      {
+        // copy value from buffer and convert it into wchar_t (Unicode)
+        memcpy(utf8string, buffer + startPosition, copyLength);
+
+        *output = ConvertUtf8ToUnicode((char *)utf8string);
+        *positionAfterString = tempPosition + ((maxLengthReached) ? 0 : 1);
+        CHECK_POINTER_HRESULT(result, *output, result, E_OUTOFMEMORY);
+      }
+    }
+  }
+
+  return result;
+}
+
+wchar_t *CBox::GetParsedHumanReadable(const wchar_t *indent)
+{
+  wchar_t *result = NULL;
+
+  if (this->IsBox())
+  {
+    // prepare boxes collection
+    wchar_t *boxes = NULL;
+    wchar_t *tempIndent = FormatString(L"%s\t", indent);
+    for (unsigned int i = 0; i < this->GetBoxes()->Count(); i++)
+    {
+      CBox *box = this->GetBoxes()->GetItem(i);
+      wchar_t *tempBoxes = FormatString(
+        L"%s%s%s--- box %d start ---\n%s\n%s--- box %d end ---",
+        (i == 0) ? L"" : boxes,
+        (i == 0) ? L"" : L"\n",
+        tempIndent, i + 1,
+        box->GetParsedHumanReadable(tempIndent),
+        tempIndent, i + 1);
+      FREE_MEM(boxes);
+
+      boxes = tempBoxes;
+    }
+
+    result = FormatString(
+      L"%sType: '%s'\n" \
+      L"%sSize: %llu\n" \
+      L"%sExtended header: %s\n" \
+      L"%sUnspecified size: %s\n" \
+      L"%sBoxes:%s" \
+      L"%s"
+      , 
+      
+      indent, this->type, 
+      indent, this->length, 
+      indent, this->HasExtendedHeader() ? L"true" : L"false",
+      indent, this->IsSizeUnspecifed() ? L"true" : L"false",
+      indent, (this->GetBoxes()->Count() == 0) ? L"" : L"\n",
+      (this->GetBoxes()->Count() == 0) ? L"" : boxes
+      
+      );
+
+    FREE_MEM(boxes);
+    FREE_MEM(tempIndent);
+  }
+
+  return result;
+}
+
+bool CBox::IsType(const wchar_t *type)
+{
+  return ((this->GetType() != NULL) && (type != NULL) && (wcsncmp(this->GetType(), type, BOX_TYPE_LENGTH) == 0));
+}
+
+bool CBox::ProcessAdditionalBoxes(const uint8_t *buffer, uint32_t length, uint32_t position)
+{
+  if (this->boxes != NULL)
+  {
+    this->boxes->Clear();
+  }
+
+  bool continueParsing = ((this->boxes != NULL) && (this->GetSize() <= (uint64_t)length));
+
+  if (continueParsing)
+  {
+    uint32_t processed = 0;
+    uint32_t sizeToProcess = (uint32_t)this->GetSize() -  position;
+    CBoxFactory *factory = new CBoxFactory();
+    continueParsing &= (factory != NULL);
+
+    while (continueParsing && (processed < sizeToProcess))
+    {
+      CBox *box = factory->CreateBox(buffer + position + processed, (uint32_t)(sizeToProcess - processed));
+      continueParsing &= (box != NULL);
+
+      if (continueParsing)
+      {
+        continueParsing &= this->boxes->Add(box);
+        processed += (uint32_t)box->GetSize();
+      }
+
+      if (!continueParsing)
+      {
+        FREE_MEM_CLASS(box);
+      }
+    }
+
+    FREE_MEM_CLASS(factory);
+  }
+
+  if ((this->boxes != NULL) && (!continueParsing))
+  {
+    this->boxes->Clear();
+  }
+
+  return continueParsing;
+}
+
+bool CBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
+{
   this->length = 0;
   this->parsed = false;
   FREE_MEM(this->type);
   this->hasExtendedHeader = false;
+  if (this->boxes != NULL)
+  {
+    this->boxes->Clear();
+  }
 
-  if ((buffer != NULL) && (length >= BOX_HEADER_LENGTH))
+  if ((buffer != NULL) && (length >= BOX_HEADER_LENGTH) && (this->boxes != NULL))
   {
     uint64_t size = RBE32(buffer, 0);
 
@@ -148,7 +342,7 @@ bool CBox::Parse(const uint8_t *buffer, uint32_t length)
     if (type != NULL)
     {
       // copy 4 chars after size field
-      memcpy(type, buffer + 4, 4);
+      memcpy(type, buffer + 4, BOX_TYPE_LENGTH);
     }
 
     this->type = ConvertToUnicodeA((char *)type);
@@ -159,79 +353,4 @@ bool CBox::Parse(const uint8_t *buffer, uint32_t length)
   }
 
   return this->parsed;
-}
-
-uint64_t CBox::GetBoxSize(uint64_t size)
-{
-  uint64_t result = size + BOX_HEADER_LENGTH;
-
-  if (size > (uint64_t)UINT_MAX)
-  {
-    // size of box doesn't fit into box header
-    size = size - BOX_HEADER_LENGTH + BOX_HEADER_LENGTH_SIZE64;
-  }
-
-  return result;
-}
-
-HRESULT CBox::GetString(const uint8_t *buffer, uint32_t length, uint32_t startPosition, wchar_t **output, uint32_t *positionAfterString)
-{
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, buffer);
-  CHECK_POINTER_DEFAULT_HRESULT(result, output);
-  CHECK_POINTER_DEFAULT_HRESULT(result, positionAfterString);
-
-  if (SUCCEEDED(result))
-  {
-    bool foundEnd = false;
-    uint32_t tempPosition = startPosition;
-
-    while (tempPosition < length)
-    {
-      if (RBE8(buffer, tempPosition) == 0)
-      {
-        // null terminating character
-        foundEnd = true;
-        break;
-      }
-      else
-      {
-        tempPosition++;
-      }
-    }
-
-    result = (foundEnd) ? S_OK : HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
-
-    if (SUCCEEDED(result))
-    {
-      // if foundEnd is true then in tempPosition is positon of null terminating character
-      uint32_t length = tempPosition - startPosition;
-      uint8_t *utf8string = ALLOC_MEM_SET(utf8string, uint8_t, length + 1, 0);
-      CHECK_POINTER_HRESULT(result, utf8string, result, E_OUTOFMEMORY);
-
-      if (SUCCEEDED(result))
-      {
-        // copy value from buffer and convert it into wchar_t (Unicode)
-        memcpy(utf8string, buffer + startPosition, length);
-
-        *output = ConvertUtf8ToUnicode((char *)utf8string);
-        *positionAfterString = tempPosition + 1;
-        CHECK_POINTER_HRESULT(result, *output, result, E_OUTOFMEMORY);
-      }
-    }
-  }
-
-  return result;
-}
-
-wchar_t *CBox::GetParsedHumanReadable(const wchar_t *indent)
-{
-  wchar_t *result = NULL;
-
-  if (this->IsBox())
-  {
-    result = FormatString(L"%sType: '%s'\n%sSize: %llu\n%sExtended header: %s\n%sUnspecified size: %s", indent, this->type, indent, this->length, indent, this->HasExtendedHeader() ? L"true" : L"false", indent, this->IsSizeUnspecifed() ? L"true" : L"false");
-  }
-
-  return result;
 }

@@ -58,10 +58,38 @@ bool CMovieBox::GetBox(uint8_t **buffer, uint32_t *length)
 
 bool CMovieBox::Parse(const uint8_t *buffer, uint32_t length)
 {
-  //bool result = ((this->majorBrand != NULL) && (this->compatibleBrands != NULL));
-  bool result = true;
-  // in bad case we don't have objects, but still it can be valid box
-  result &= __super::Parse(buffer, length);
+  return this->ParseInternal(buffer, length, true);
+}
+
+wchar_t *CMovieBox::GetParsedHumanReadable(const wchar_t *indent)
+{
+  wchar_t *result = NULL;
+  wchar_t *previousResult = __super::GetParsedHumanReadable(indent);
+
+  if ((previousResult != NULL) && (this->IsParsed()))
+  {
+    // prepare finally human readable representation
+    result = FormatString(
+      L"%s"
+      ,
+      
+      previousResult
+      );
+  }
+
+  FREE_MEM(previousResult);
+
+  return result;
+}
+
+uint64_t CMovieBox::GetBoxSize(uint64_t size)
+{
+  return __super::GetBoxSize(size);
+}
+
+bool CMovieBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  bool result = __super::ParseInternal(buffer, length, false);
 
   if (result)
   {
@@ -74,10 +102,11 @@ bool CMovieBox::Parse(const uint8_t *buffer, uint32_t length)
     {
       // box is file type box, parse all values
       uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-      bool continueParsing = (((position + 8) <= length) && (this->GetSize() <= length));
+      bool continueParsing = (this->GetSize() <= (uint64_t)length);
 
-      if (continueParsing)
+      if (continueParsing && processAdditionalBoxes)
       {
+        this->ProcessAdditionalBoxes(buffer, length, position);
       }
 
       this->parsed = continueParsing;
@@ -87,54 +116,4 @@ bool CMovieBox::Parse(const uint8_t *buffer, uint32_t length)
   result = this->parsed;
 
   return result;
-}
-
-wchar_t *CMovieBox::GetParsedHumanReadable(const wchar_t *indent)
-{
-  wchar_t *result = NULL;
-  wchar_t *previousResult = __super::GetParsedHumanReadable(indent);
-
-  if ((previousResult != NULL) && (this->IsParsed()))
-  {
-    //// prepare compatible brands collection
-    //wchar_t *compatibleBrands = NULL;
-    //wchar_t *tempIndent = FormatString(L"%s\t", indent);
-    //for (unsigned int i = 0; i < this->compatibleBrands->Count(); i++)
-    //{
-    //  CBrand *brand = this->compatibleBrands->GetItem(i);
-    //  wchar_t *tempCompatibleBrands = FormatString(
-    //    L"%s%s%s'%s'",
-    //    (i == 0) ? L"" : compatibleBrands,
-    //    (i == 0) ? L"" : L"\n",
-    //    tempIndent,
-    //    brand->GetBrandString()
-    //    );
-    //  FREE_MEM(compatibleBrands);
-
-    //  compatibleBrands = tempCompatibleBrands;
-    //}
-
-    //// prepare finally human readable representation
-    //result = FormatString(
-    //  L"%s\n" \
-    //  L"Brand: %s\n" \
-    //  L"Minor version: %u\n" \
-    //  L"Compatible brands:" \
-    //  L"%s%s",
-    //  
-    //  previousResult,
-    //  this->majorBrand->GetBrandString(),
-    //  this->minorVersion,
-    //  (compatibleBrands == NULL) ? L"" : L"\n", (compatibleBrands == NULL) ? L"" : compatibleBrands
-    //  );
-  }
-
-  FREE_MEM(previousResult);
-
-  return result;
-}
-
-uint64_t CMovieBox::GetBoxSize(uint64_t size)
-{
-  return __super::GetBoxSize(size);
 }

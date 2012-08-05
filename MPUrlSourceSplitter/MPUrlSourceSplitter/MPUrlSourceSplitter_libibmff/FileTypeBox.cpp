@@ -93,6 +93,65 @@ bool CFileTypeBox::SetMinorVersion(uint32_t minorVersion)
 
 bool CFileTypeBox::Parse(const uint8_t *buffer, uint32_t length)
 {
+  return this->ParseInternal(buffer, length, true);
+}
+
+wchar_t *CFileTypeBox::GetParsedHumanReadable(const wchar_t *indent)
+{
+  wchar_t *result = NULL;
+  wchar_t *previousResult = __super::GetParsedHumanReadable(indent);
+
+  if ((previousResult != NULL) && (this->IsParsed()))
+  {
+    // prepare compatible brands collection
+    wchar_t *compatibleBrands = NULL;
+    wchar_t *tempIndent = FormatString(L"%s\t", indent);
+    for (unsigned int i = 0; i < this->compatibleBrands->Count(); i++)
+    {
+      CBrand *brand = this->compatibleBrands->GetItem(i);
+      wchar_t *tempCompatibleBrands = FormatString(
+        L"%s%s%s'%s'",
+        (i == 0) ? L"" : compatibleBrands,
+        (i == 0) ? L"" : L"\n",
+        tempIndent,
+        brand->GetBrandString()
+        );
+      FREE_MEM(compatibleBrands);
+
+      compatibleBrands = tempCompatibleBrands;
+    }
+
+    // prepare finally human readable representation
+    result = FormatString(
+      L"%s\n" \
+      L"%sBrand: %s\n" \
+      L"%sMinor version: %u\n" \
+      L"%sCompatible brands:" \
+      L"%s%s",
+      
+      previousResult,
+      indent, this->majorBrand->GetBrandString(),
+      indent, this->minorVersion,
+      indent,
+      (compatibleBrands == NULL) ? L"" : L"\n", (compatibleBrands == NULL) ? L"" : compatibleBrands
+      );
+
+    FREE_MEM(compatibleBrands);
+    FREE_MEM(tempIndent);
+  }
+
+  FREE_MEM(previousResult);
+
+  return result;
+}
+
+uint64_t CFileTypeBox::GetBoxSize(uint64_t size)
+{
+  return __super::GetBoxSize(size + 8 + this->GetCompatibleBrands()->Count() * 4);
+}
+
+bool CFileTypeBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
+{
   FREE_MEM_CLASS(this->majorBrand);
   FREE_MEM_CLASS(this->compatibleBrands);
 
@@ -101,7 +160,7 @@ bool CFileTypeBox::Parse(const uint8_t *buffer, uint32_t length)
 
   bool result = ((this->majorBrand != NULL) && (this->compatibleBrands != NULL));
   // in bad case we don't have objects, but still it can be valid box
-  result &= __super::Parse(buffer, length);
+  result &= __super::ParseInternal(buffer, length, false);
 
   if (result)
   {
@@ -150,6 +209,11 @@ bool CFileTypeBox::Parse(const uint8_t *buffer, uint32_t length)
           position += 4;
         }
       }
+
+      if (continueParsing && processAdditionalBoxes)
+      {
+        this->ProcessAdditionalBoxes(buffer, length, position);
+      }
       
       this->parsed = continueParsing;
     }
@@ -158,55 +222,4 @@ bool CFileTypeBox::Parse(const uint8_t *buffer, uint32_t length)
   result = this->parsed;
 
   return result;
-}
-
-wchar_t *CFileTypeBox::GetParsedHumanReadable(const wchar_t *indent)
-{
-  wchar_t *result = NULL;
-  wchar_t *previousResult = __super::GetParsedHumanReadable(indent);
-
-  if ((previousResult != NULL) && (this->IsParsed()))
-  {
-    // prepare compatible brands collection
-    wchar_t *compatibleBrands = NULL;
-    wchar_t *tempIndent = FormatString(L"%s\t", indent);
-    for (unsigned int i = 0; i < this->compatibleBrands->Count(); i++)
-    {
-      CBrand *brand = this->compatibleBrands->GetItem(i);
-      wchar_t *tempCompatibleBrands = FormatString(
-        L"%s%s%s'%s'",
-        (i == 0) ? L"" : compatibleBrands,
-        (i == 0) ? L"" : L"\n",
-        tempIndent,
-        brand->GetBrandString()
-        );
-      FREE_MEM(compatibleBrands);
-
-      compatibleBrands = tempCompatibleBrands;
-    }
-
-    // prepare finally human readable representation
-    result = FormatString(
-      L"%s\n" \
-      L"%sBrand: %s\n" \
-      L"%sMinor version: %u\n" \
-      L"%sCompatible brands:" \
-      L"%s%s",
-      
-      previousResult,
-      indent, this->majorBrand->GetBrandString(),
-      indent, this->minorVersion,
-      indent,
-      (compatibleBrands == NULL) ? L"" : L"\n", (compatibleBrands == NULL) ? L"" : compatibleBrands
-      );
-  }
-
-  FREE_MEM(previousResult);
-
-  return result;
-}
-
-uint64_t CFileTypeBox::GetBoxSize(uint64_t size)
-{
-  return __super::GetBoxSize(size + 8 + this->GetCompatibleBrands()->Count() * 4);
 }

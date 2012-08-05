@@ -23,6 +23,7 @@
 #ifndef __BOX_CONSTANTS_DEFINED
 #define __BOX_CONSTANTS_DEFINED
 
+#define BOX_TYPE_LENGTH                                                       4
 #define BOX_HEADER_LENGTH                                                     8
 #define BOX_HEADER_LENGTH_SIZE64                                              16
 
