@@ -23,13 +23,13 @@
 #ifndef __MOVIE_HEADER_BOX_DEFINED
 #define __MOVIE_HEADER_BOX_DEFINED
 
-#include "fullbox.h"
+#include "FullBox.h"
 #include "FixedPointNumber.h"
 #include "Matrix.h"
 
 #define MOVIE_HEADER_BOX_TYPE                                                 L"mvhd"
 
-#define MOVIE_HEADER_DATA_VERSION_0_SIZE                                      87
+#define MOVIE_HEADER_DATA_VERSION_0_SIZE                                      96
 #define MOVIE_HEADER_DATA_VERSION_1_SIZE                                      MOVIE_HEADER_DATA_VERSION_0_SIZE + 12
 
 class CMovieHeaderBox :
@@ -50,13 +50,37 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t **buffer, uint32_t *length);
 
+  // gets the creation time of the presentation (in seconds since midnight, Jan. 1, 1904, in UTC time)
+  // @return : the creation time
   virtual uint64_t GetCreationTime(void);
 
+  // gets the most recent time the presentation was modified (in seconds since midnight, Jan. 1, 1904, in UTC time)
+  // @return : the most recent time the presentation was modified 
   virtual uint64_t GetModificationTime(void);
 
+  // gets the time-scale for the entire presentation
+  // @return : the time-scale for the entire presentation
   virtual uint32_t GetTimeScale(void);
 
+  // gets length of the presentation (in the indicated timescale)
+  // @return : length of the presentation (in the indicated timescale)
   virtual uint64_t GetDuration(void);
+
+  // gets the fixed point 16.16 number that indicates the preferred rate to play the presentation
+  // @return : the fixed point 16.16 number that indicates the preferred rate to play the presentation
+  virtual CFixedPointNumber *GetRate(void);
+
+  // gets the fixed point 8.8 number that indicates the preferred playback volume
+  // @return : the fixed point 8.8 number that indicates the preferred playback volume
+  virtual CFixedPointNumber *GetVolume(void);
+
+  // gets the transformation matrix for the video
+  // @return : the transformation matrix for the video
+  virtual CMatrix *GetMatrix(void);
+
+  // gets next track ID
+  // @return : next track ID
+  virtual uint32_t GetNextTrackId(void);
 
   /* set methods */
 
@@ -81,7 +105,7 @@ protected:
   uint64_t modificationTime;
   // specifies the time-scale for the entire presentation; this is the number of time units that pass in one second
   // for example, a time coordinate system that measures time in sixtieths of a second has a time scale of 60
-  uint32_t timescale;
+  uint32_t timeScale;
   // declares length of the presentation (in the indicated timescale)
   // this property is derived from the presentation’s tracks: the value of this field corresponds to
   // the duration of the longest track in the presentation
@@ -107,6 +131,12 @@ protected:
   // @return : size of box 
   virtual uint64_t GetBoxSize(uint64_t size);
 
+  // parses data in buffer
+  // @param buffer : buffer with box data for parsing
+  // @param length : the length of data in buffer
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed
+  // @return : true if parsed successfully, false otherwise
+  virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

@@ -27,6 +27,9 @@
 
 #define FULL_BOX_DATA_SIZE                                                    4
 
+#define FULL_BOX_HEADER_LENGTH                                                BOX_HEADER_LENGTH + FULL_BOX_DATA_SIZE
+#define FULL_BOX_HEADER_LENGTH_SIZE64                                         BOX_HEADER_LENGTH_SIZE64 + FULL_BOX_DATA_SIZE
+
 class CFullBox :
   public CBox
 {
@@ -79,6 +82,13 @@ protected:
   // @param size : the size of box calling this method
   // @return : size of box 
   virtual uint64_t GetBoxSize(uint64_t size);
+
+  // parses data in buffer
+  // @param buffer : buffer with box data for parsing
+  // @param length : the length of data in buffer
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed
+  // @return : true if parsed successfully, false otherwise
+  virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

@@ -25,6 +25,8 @@
 
 #include <stdint.h>
 
+class CBoxCollection;
+
 class CBox
 {
 public:
@@ -49,6 +51,10 @@ public:
   // @param length : the length of buffer for data
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t **buffer, uint32_t *length);
+
+  // gets additional boxes stored in this box
+  // @return : additional boxes stored in this box
+  virtual CBoxCollection *GetBoxes(void);
 
   /* set methods */
 
@@ -84,6 +90,11 @@ public:
   // @return : box data in human readable format or NULL if error
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
+  // tests if box is specified type
+  // @param type : the requested box type
+  // @return : true if box is specified type, false otherwise
+  virtual bool IsType(const wchar_t *type);
+
 protected:
   // stores the length of box
   uint64_t length;
@@ -95,6 +106,9 @@ protected:
   bool hasExtendedHeader;
   // stores if box has unspecified size
   bool hasUnspecifiedSize;
+
+  // stores additional boxes stored in this box
+  CBoxCollection *boxes;
 
   // gets box size added to size
   // method is called to determine whole box size for storing box into buffer
@@ -110,6 +124,30 @@ protected:
   // @param positionAfterString : reference to variable where will be stored position after null terminating character of UTF-8 string
   // @return : S_OK if successful, E_POINTER if buffer, output or positionAfterString is NULL, HRESULT_FROM_WIN32(ERROR_INVALID_DATA) if not enough data in buffer, E_OUTOFMEMORY if not enough memory for results
   HRESULT GetString(const uint8_t *buffer, uint32_t length, uint32_t startPosition, wchar_t **output, uint32_t *positionAfterString);
+
+  // gets Unicode string from buffer from specified position
+  // @param buffer : the buffer to read UTF-8 string
+  // @param length : the length of buffer
+  // @param startPosition : the position within buffer to start reading UTF-8 string
+  // @param output : reference to Unicode buffer where result will be stored
+  // @param positionAfterString : reference to variable where will be stored position after null terminating character of UTF-8 string
+  // @param maxLength : the maximum length of string
+  // @return : S_OK if successful, E_POINTER if buffer, output or positionAfterString is NULL, HRESULT_FROM_WIN32(ERROR_INVALID_DATA) if not enough data in buffer, E_OUTOFMEMORY if not enough memory for results
+  HRESULT GetString(const uint8_t *buffer, uint32_t length, uint32_t startPosition, wchar_t **output, uint32_t *positionAfterString, uint32_t maxLength);
+
+  // process remaining data in box as boxes
+  // @param buffer : the buffer to process
+  // @param length : the length of buffer
+  // @param position : the position within buffer to start processing
+  // @return : true if successful, false otherwise
+  virtual bool ProcessAdditionalBoxes(const uint8_t *buffer, uint32_t length, uint32_t position);
+
+  // parses data in buffer
+  // @param buffer : buffer with box data for parsing
+  // @param length : the length of data in buffer
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed
+  // @return : true if parsed successfully, false otherwise
+  virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif
