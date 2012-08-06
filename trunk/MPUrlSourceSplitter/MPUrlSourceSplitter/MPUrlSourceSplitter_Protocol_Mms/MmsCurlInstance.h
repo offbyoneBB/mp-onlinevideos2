@@ -31,9 +31,10 @@ class CMmsCurlInstance :
 public:
   // initializes a new instance of CMmsCurlInstance class
   // @param logger : logger for logging purposes
+  // @param mutex : mutex for locking access to receive data buffer
   // @param url : the url to open
   // @param protocolName : the protocol name instantiating
-  CMmsCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName);
+  CMmsCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName);
 
   // destructor
   virtual ~CMmsCurlInstance(void);

@@ -40,9 +40,10 @@ class CHttpCurlInstance :
 public:
   // initializes a new instance of CHttpCurlInstance class
   // @param logger : logger for logging purposes
+  // @param mutex : mutex for locking access to receive data buffer
   // @param url : the url to open
   // @param protocolName : the protocol name instantiating
-  CHttpCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName);
+  CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName);
   ~CHttpCurlInstance(void);
 
   // initializes CURL instance

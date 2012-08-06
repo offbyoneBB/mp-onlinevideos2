@@ -20,25 +20,34 @@
 
 #pragma once
 
-#ifndef __FRAGMENT_RUN_TABLE_BOX_DEFINED
-#define __SEGMENT_RUN_TABLE_BOX_DEFINED
+#ifndef __MOVIE_FRAGMENT_BOX_DEFINED
+#define __MOVIE_FRAGMENT_BOX_DEFINED
 
-#include "FullBox.h"
+#include "Box.h"
 
-#include "QualitySegmentUrlModifierCollection.h"
-#include "FragmentRunEntryCollection.h"
+#define MOVIE_FRAGMENT_BOX_TYPE                                               L"moof"
 
-#define FRAGMENT_RUN_TABLE_BOX_TYPE                                           L"afrt"
-
-class CFragmentRunTableBox :
-  public CFullBox
+class CMovieFragmentBox :
+  public CBox
 {
 public:
-  // initializes a new instance of CFragmentRunTableBox class
-  CFragmentRunTableBox(void);
+  // initializes a new instance of CMovieFragmentBox class
+  CMovieFragmentBox(void);
 
   // destructor
-  virtual ~CFragmentRunTableBox(void);
+  virtual ~CMovieFragmentBox(void);
+
+  /* get methods */
+
+  // gets whole box into buffer
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @return : true if all data were successfully stored into buffer, false otherwise
+  virtual bool GetBox(uint8_t **buffer, uint32_t *length);
+
+  /* set methods */
+
+  /* other methods */
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing
@@ -51,23 +60,13 @@ public:
   // @return : box data in human readable format or NULL if error
   virtual wchar_t *GetParsedHumanReadable(const wchar_t *indent);
 
-  // gets the number of time units per second
-  // @return : the number of time units per second
-  virtual uint32_t GetTimeScale(void);
-
-  // gets quality segment url modifiers table
-  // @return : quality segment url modifiers table
-  virtual CQualitySegmentUrlModifierCollection *GetQualitySegmentUrlModifiers(void);
-
-  // gets fragment run entry table
-  // @return : fragment run entry table
-  virtual CFragmentRunEntryCollection *GetFragmentRunEntryTable(void);
-
 protected:
-  uint32_t timeScale;
 
-  CQualitySegmentUrlModifierCollection *qualitySegmentUrlModifiers;
-  CFragmentRunEntryCollection *fragmentRunEntryTable;
+  // gets box size added to size
+  // method is called to determine whole box size for storing box into buffer
+  // @param size : the size of box calling this method
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(uint64_t size);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

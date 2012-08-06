@@ -291,6 +291,96 @@ void CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit)
     {
       if (!this->wholeStreamDownloaded)
       {
+        if (!(this->shouldExit))
+        {
+          long responseCode = 0;
+          CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
+          if (errorCode == CURLE_OK)
+          {
+            if ((responseCode < 200) && (responseCode >= 400))
+            {
+              // response code 200 - 299 = OK
+              // response code 300 - 399 = redirect (OK)
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+            }
+          }
+
+          if ((responseCode >= 200) && (responseCode < 400))
+          {
+            if (this->receivingData)
+            {
+              if ((!this->setLength) && (this->lengthCanBeSet))
+              {
+                double streamSize = 0;
+                CURLcode errorCode = curl_easy_getinfo(this->mainCurlInstance->GetCurlHandle(), CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
+                if ((errorCode == CURLE_OK) && (streamSize > 0) && (this->streamTime < streamSize))
+                {
+                  LONGLONG total = LONGLONG(streamSize);
+                  this->streamLength = total;
+                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
+                  this->filter->SetTotalLength(total, false);
+                  this->setLength = true;
+                }
+                else
+                {
+                  if ((this->streamLength == 0) || (this->bytePosition > (this->streamLength * 3 / 4)))
+                  {
+                    if (this->bytePosition != 0)
+                    {
+                      if (this->streamLength == 0)
+                      {
+                        // error occured or stream duration is not set
+                        // just make guess
+                        this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+                        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+                        this->filter->SetTotalLength(this->streamLength, true);
+                      }
+                      else if ((this->bytePosition > (this->streamLength * 3 / 4)))
+                      {
+                        // it is time to adjust stream length, we are approaching to end but still we don't know total length
+                        this->streamLength = this->bytePosition * 2;
+                        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+                        this->filter->SetTotalLength(this->streamLength, true);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+            if (bytesRead != 0)
+            {
+              unsigned int bufferSize = this->mmsContext->GetBuffer()->GetBufferSize();
+              unsigned int freeSpace = this->mmsContext->GetBuffer()->GetBufferFreeSpace();
+              unsigned int newBufferSize = max(bufferSize * 2, bufferSize + bytesRead);
+
+              if (freeSpace < bytesRead)
+              {
+                this->logger->Log(LOGGER_INFO, L"%s: %s: not enough free space in buffer for received data, buffer size: %d, free size: %d, received data: %d, new buffer size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, freeSpace, bytesRead, newBufferSize);
+                if (!this->mmsContext->GetBuffer()->ResizeBuffer(newBufferSize))
+                {
+                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"resizing of buffer unsuccessful");
+                  // it indicates error
+                  bytesRead = 0;
+                }
+              }
+
+              if (bytesRead != 0)
+              {
+                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
+                if (buffer != NULL)
+                {
+                  this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                  this->mmsContext->GetBuffer()->AddToBuffer(buffer, bytesRead);
+                  this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+                }
+                FREE_MEM(buffer);
+              }
+            }
+          }
+        }
+
         if (this->receivingData)
         {
           if (this->mmsContext->GetAsfHeaderLength() != 0)
@@ -536,14 +626,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
     if (SUCCEEDED(result))
     {
-      this->mainCurlInstance = new CMmsCurlInstance(this->logger, url, PROTOCOL_IMPLEMENTATION_NAME);
+      this->mainCurlInstance = new CMmsCurlInstance(this->logger, this->lockMutex, url, PROTOCOL_IMPLEMENTATION_NAME);
       result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
     }
 
     if (SUCCEEDED(result))
     {
       this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-      this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Mms::CurlReceiveData, this);
       this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_REFERER, true, NULL));
       this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_USER_AGENT, true, NULL));
       this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_COOKIE, true, NULL));
@@ -618,7 +707,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
           }
 
           // wait some time
-          Sleep(1);
+          Sleep(10);
         }
       }
     }
@@ -659,14 +748,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
       if (SUCCEEDED(result))
       {
-        this->mainCurlInstance = new CMmsCurlInstance(this->logger, url, PROTOCOL_IMPLEMENTATION_NAME);
+        this->mainCurlInstance = new CMmsCurlInstance(this->logger, this->lockMutex, url, PROTOCOL_IMPLEMENTATION_NAME);
         result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
       }
 
       if (SUCCEEDED(result))
       {
         this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-        this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Mms::CurlReceiveData, this);
         this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_REFERER, true, NULL));
         this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_USER_AGENT, true, NULL));
         this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_COOKIE, true, NULL));
@@ -741,7 +829,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
             }
 
             // wait some time
-            Sleep(1);
+            Sleep(10);
           }
         }
       }
@@ -1001,100 +1089,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::Initialize(PluginConfiguration *confi
 }
 
 // other methods
-
-size_t CMPUrlSourceSplitter_Protocol_Mms::CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata)
-{
-  CMPUrlSourceSplitter_Protocol_Mms *caller = (CMPUrlSourceSplitter_Protocol_Mms *)userdata;
-  CLockMutex lock(caller->lockMutex, INFINITE);
-  unsigned int bytesRead = size * nmemb;
-
-  if (!((caller->shouldExit) || (caller->internalExitRequest)))
-  {
-    long responseCode = 0;
-    CURLcode errorCode = caller->mainCurlInstance->GetResponseCode(&responseCode);
-    if (errorCode == CURLE_OK)
-    {
-      if ((responseCode < 200) && (responseCode >= 400))
-      {
-        // response code 200 - 299 = OK
-        // response code 300 - 399 = redirect (OK)
-        caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-        // return error
-        bytesRead = 0;
-      }
-    }
-
-    if ((responseCode >= 200) && (responseCode < 400))
-    {
-      if (caller->receivingData)
-      {
-        if ((!caller->setLength) && (caller->lengthCanBeSet))
-        {
-          double streamSize = 0;
-          CURLcode errorCode = curl_easy_getinfo(caller->mainCurlInstance->GetCurlHandle(), CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
-          if ((errorCode == CURLE_OK) && (streamSize > 0) && (caller->streamTime < streamSize))
-          {
-            LONGLONG total = LONGLONG(streamSize);
-            caller->streamLength = total;
-            caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
-            caller->filter->SetTotalLength(total, false);
-            caller->setLength = true;
-          }
-          else
-          {
-            if ((caller->streamLength == 0) || (caller->bytePosition > (caller->streamLength * 3 / 4)))
-            {
-              if (caller->bytePosition != 0)
-              {
-                if (caller->streamLength == 0)
-                {
-                  // error occured or stream duration is not set
-                  // just make guess
-                  caller->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
-                  caller->filter->SetTotalLength(caller->streamLength, true);
-                }
-                else if ((caller->bytePosition > (caller->streamLength * 3 / 4)))
-                {
-                  // it is time to adjust stream length, we are approaching to end but still we don't know total length
-                  caller->streamLength = caller->bytePosition * 2;
-                  caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
-                  caller->filter->SetTotalLength(caller->streamLength, true);
-                }
-              }
-            }
-          }
-        }
-      }
-
-      if (bytesRead != 0)
-      {
-        unsigned int bufferSize = caller->mmsContext->GetBuffer()->GetBufferSize();
-        unsigned int freeSpace = caller->mmsContext->GetBuffer()->GetBufferFreeSpace();
-        unsigned int newBufferSize = max(bufferSize * 2, bufferSize + bytesRead);
-
-        if (freeSpace < bytesRead)
-        {
-          caller->logger->Log(LOGGER_INFO, L"%s: %s: not enough free space in buffer for received data, buffer size: %d, free size: %d, received data: %d, new buffer size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, freeSpace, bytesRead, newBufferSize);
-          if (!caller->mmsContext->GetBuffer()->ResizeBuffer(newBufferSize))
-          {
-            caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"resizing of buffer unsuccessful");
-            // it indicates error
-            bytesRead = 0;
-          }
-        }
-
-        if (bytesRead != 0)
-        {
-          caller->mmsContext->GetBuffer()->AddToBuffer((unsigned char *)buffer, bytesRead);
-        }
-      }
-    }
-  }
-
-  // if returned 0 (or lower value than bytesRead) it cause transfer interruption
-  return ((caller->shouldExit) || (caller->internalExitRequest)) ? 0 : (bytesRead);
-}
 
 HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsChunk(MMSContext *mmsContext, MMSChunk *mmsChunk)
 {
@@ -1370,6 +1364,25 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsHeaderData(MMSContext *mmsConte
 
     while (SUCCEEDED(result) && (!finish))
     {
+      // fill data to buffer
+      if (SUCCEEDED(result))
+      {
+        CLockMutex(this->lockMutex, INFINITE);
+
+        unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+        if (bytesRead > 0)
+        {
+          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
+          if (buffer != 0)
+          {
+            this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+            result = (this->mmsContext->GetBuffer()->AddToBufferWithResize(buffer, bytesRead) == bytesRead) ? S_OK : E_OUTOFMEMORY;
+            this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+          }
+          FREE_MEM(buffer);
+        }
+      }
+
       if (tempMmsChunk->IsCleared())
       {
         result = this->GetMmsChunk(mmsContext, tempMmsChunk);

@@ -24,8 +24,8 @@
 
 #include <librtmp/log.h>
 
-CRtmpCurlInstance::CRtmpCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName)
-  : CCurlInstance(logger, url, protocolName)
+CRtmpCurlInstance::CRtmpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName)
+  : CCurlInstance(logger, mutex, url, protocolName)
 {
   this->rtmpApp = RTMP_APP_DEFAULT;
   this->rtmpArbitraryData = RTMP_ARBITRARY_DATA_DEFAULT;

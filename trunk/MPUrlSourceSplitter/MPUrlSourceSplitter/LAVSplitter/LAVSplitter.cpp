@@ -1822,14 +1822,18 @@ void CLAVSplitter::ffmpeg_log_callback(void *ptr, int log_level, const char *for
   {
     vsprintf_s(buffer, length, format, vl);
 
-    wchar_t *logLine = ConvertToUnicodeA(buffer);
-
-    if (logLine != NULL)
+    char *trimmed = TrimA(buffer);
+    if (trimmed != NULL)
     {
-      ffmpeg_logger_instance.Log(LOGGER_VERBOSE, L"%s: %s: log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", log_level, logLine);
-    }
+      wchar_t *logLine = ConvertToUnicodeA(trimmed);
+      if (logLine != NULL)
+      {
+        ffmpeg_logger_instance.Log(LOGGER_VERBOSE, L"%s: %s: log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", log_level, logLine);
+      }
 
-    FREE_MEM(logLine);
+      FREE_MEM(logLine);
+    }
+    FREE_MEM(trimmed);
   }
 
   FREE_MEM(buffer);

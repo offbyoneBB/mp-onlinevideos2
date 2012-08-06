@@ -51,9 +51,10 @@ class CCurlInstance
 public:
   // initializes a new instance of CCurlInstance class
   // @param logger : logger for logging purposes
+  // @param mutex : mutex for locking access to receive data buffer
   // @param url : the url to open
   // @param protocolName : the protocol name instantiating
-  CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName);
+  CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName);
 
   // destructor
   virtual ~CCurlInstance(void);
@@ -90,11 +91,6 @@ public:
   // sets receive data timeout
   // @param timeout : receive data timeout (UINT_MAX if not specified)
   virtual void SetReceivedDataTimeout(unsigned int timeout);
-
-  // sets write callback for CURL
-  // @param writeCallback : callback method for writing data received by CURL
-  // @param writeData : user specified data supplied to write callback method
-  virtual void SetWriteCallback(curl_write_callback writeCallback, void *writeData);
 
   // starts receiving data
   // @return : true if successful, false otherwise
@@ -133,6 +129,7 @@ public:
 protected:
   CURL *curl;
   CLogger *logger;
+  HANDLE mutex;
 
   // libcurl worker thread
   HANDLE hCurlWorkerThread;
@@ -197,6 +194,13 @@ protected:
   // @param length : the length of buffer
   // @return : the length of processed data (lower value than length means error)
   virtual size_t CurlReceiveData(const unsigned char *buffer, size_t length);
+
+private:
+
+  // sets write callback for CURL
+  // @param writeCallback : callback method for writing data received by CURL
+  // @param writeData : user specified data supplied to write callback method
+  virtual void SetWriteCallback(curl_write_callback writeCallback, void *writeData);
 };
 
 #endif

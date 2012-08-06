@@ -22,8 +22,8 @@
 
 #include "MmsCurlInstance.h"
 
-CMmsCurlInstance::CMmsCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName)
-  : CHttpCurlInstance(logger, url, protocolName)
+CMmsCurlInstance::CMmsCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName)
+  : CHttpCurlInstance(logger, mutex, url, protocolName)
 {
 }
 
@@ -34,15 +34,7 @@ CMmsCurlInstance::~CMmsCurlInstance(void)
 
 bool CMmsCurlInstance::Initialize(void)
 {
-  bool result = __super::Initialize();
-
-  /*if (result)
-  {
-    CURLcode errorCode = CURLE_OK;
-  }*/
-
-  this->state = (result) ? CURL_STATE_INITIALIZED : CURL_STATE_CREATED;
-  return result;
+  return __super::Initialize();
 }
 
 void CMmsCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)

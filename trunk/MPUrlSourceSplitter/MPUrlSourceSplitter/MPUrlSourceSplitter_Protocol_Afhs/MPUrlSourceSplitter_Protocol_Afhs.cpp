@@ -256,6 +256,47 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
   {
     if (!this->wholeStreamDownloaded)
     {
+      if (!(this->shouldExit))
+      {
+        unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+        if (bytesRead != 0)
+        {
+          if (this->bufferForBoxProcessingCollection != NULL)
+          {
+            CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
+            if (linearBuffer != NULL)
+            {
+              unsigned int bufferSize = linearBuffer->GetBufferSize();
+              unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
+
+              if (freeSpace < bytesRead)
+              {
+                unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
+                if (!linearBuffer->ResizeBuffer(bufferNewSize))
+                {
+                  this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+                  // error
+                  bytesRead = 0;
+                }
+              }
+
+              if (bytesRead != 0)
+              {
+                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
+                if (buffer != NULL)
+                {
+                  this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                  linearBuffer->AddToBuffer(buffer, bytesRead);
+                  this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+                }
+                FREE_MEM(buffer);
+              }
+            }
+          }
+        }
+      }
+
       if ((!this->setLength) && (this->bytePosition != 0))
       {
         // adjust total length if not already set
@@ -462,13 +503,12 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
           if (SUCCEEDED(result))
           {
             // we need to download for another url
-            this->mainCurlInstance = new CHttpCurlInstance(this->logger, segmentFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+            this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, segmentFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
             CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
 
             if (SUCCEEDED(result))
             {
               this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-              this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Afhs::CurlReceiveData, this);
               this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
               this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
               this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
@@ -503,7 +543,7 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
             {
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: live streaming, requesting bootstrap info, url: '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, url);
 
-              CHttpCurlInstance *bootstrapInfoCurlInstance = new CHttpCurlInstance(this->logger, url, PROTOCOL_IMPLEMENTATION_NAME);
+              CHttpCurlInstance *bootstrapInfoCurlInstance = new CHttpCurlInstance(this->logger, NULL, url, PROTOCOL_IMPLEMENTATION_NAME);
               bootstrapInfoCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
               bootstrapInfoCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
               bootstrapInfoCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
@@ -890,14 +930,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
   if (SUCCEEDED(result))
   {
     CSegmentFragment *segmentFragmentToDownload = this->GetFirstNotDownloadedSegmentFragment();
-    this->mainCurlInstance = new CHttpCurlInstance(this->logger, segmentFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, segmentFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
     CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
   }
 
   if (SUCCEEDED(result))
   {
     this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-    this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Protocol_Afhs::CurlReceiveData, this);
     this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
     this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
     this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
@@ -1191,53 +1230,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(PluginConfiguration *conf
 }
 
 // other methods
-
-size_t CMPUrlSourceSplitter_Protocol_Afhs::CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata)
-{
-  CMPUrlSourceSplitter_Protocol_Afhs *caller = (CMPUrlSourceSplitter_Protocol_Afhs *)userdata;
-  CLockMutex lock(caller->lockMutex, INFINITE);
-  unsigned int bytesRead = size * nmemb;
-
-  if (!(caller->shouldExit))
-  {
-    if (bytesRead != 0)
-    {
-      if (caller->bufferForBoxProcessingCollection != NULL)
-      {
-        CLinearBuffer *linearBuffer = caller->bufferForBoxProcessingCollection->GetItem(caller->bufferForBoxProcessingCollection->Count() - 1);
-        if (linearBuffer != NULL)
-        {
-          unsigned int bufferSize = linearBuffer->GetBufferSize();
-          unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
-
-          if (freeSpace < bytesRead)
-          {
-            unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
-            caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
-            if (!linearBuffer->ResizeBuffer(bufferNewSize))
-            {
-              caller->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-            }
-
-            freeSpace = linearBuffer->GetBufferFreeSpace();
-          }
-
-          if (freeSpace >= bytesRead)
-          {
-            linearBuffer->AddToBuffer((unsigned char *)buffer, bytesRead);
-          }
-        }
-        else
-        {
-          bytesRead = 0;
-        }
-      }
-    }
-  }
-
-  // if returned 0 (or lower value than bytesRead) it cause transfer interruption
-  return (caller->shouldExit) ? 0 : (bytesRead);
-}
 
 void CMPUrlSourceSplitter_Protocol_Afhs::RemoveAllDownloadedSegmentFragment(void)
 {

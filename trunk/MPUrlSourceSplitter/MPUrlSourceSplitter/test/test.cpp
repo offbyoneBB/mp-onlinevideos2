@@ -23,14 +23,13 @@
 
 #include "stdafx.h"
 
-#include "FileTypeBox.h"
-#include "MovieBox.h"
+#include "BoxFactory.h"
 
 #include <stdio.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-  FILE *stream = fopen("D:\\svnroot\\HttpStreaming\\test.mp4", "rb");
+  FILE *stream = fopen("D:\\svnroot\\HttpStreaming\\lmfao.ismv", "rb");
   if (stream != NULL)
   {
     unsigned int length = 256 * 1024;
@@ -41,47 +40,28 @@ int _tmain(int argc, _TCHAR* argv[])
 
       unsigned int position = 0;
 
-      while (length > position)
+      CBoxFactory *factory = new CBoxFactory();
+
+      while ((length > position) && (factory != NULL))
       {
+        CBox *box = factory->CreateBox(buffer + position, length - position);
+        if (box != NULL)
         {
-          CFileTypeBox *box = new CFileTypeBox();
-          if (box != NULL)
-          {
-            if (box->Parse(buffer + position, length - position))
-            {
-              wprintf(L"%s\n", box->GetParsedHumanReadable(L""));
-              position += box->GetSize();
-            }
-          }
-          FREE_MEM_CLASS(box);
-        }
+          wchar_t *parsed = box->GetParsedHumanReadable(L"");
+          position += (unsigned int)box->GetSize();
 
-        {
-          CMovieBox *box = new CMovieBox();
-          if (box != NULL)
-          {
-            if (box->Parse(buffer + position, length - position))
-            {
-              wprintf(L"%s\n", box->GetParsedHumanReadable(L""));
-              position += box->GetSize();
-            }
-          }
-          FREE_MEM_CLASS(box);
-        }
+          wprintf(L"%s\n", parsed);
 
-        {
-          CBox *box = new CBox();
-          if (box != NULL)
-          {
-            if (box->Parse(buffer + position, length - position))
-            {
-              wprintf(L"%s\n", box->GetParsedHumanReadable(L""));
-              position += box->GetSize();
-            }
-          }
-          FREE_MEM_CLASS(box);
+          FREE_MEM(parsed);
         }
+        else
+        {
+          break;
+        }
+        FREE_MEM_CLASS(box);
       }
+
+      FREE_MEM_CLASS(factory);
     }
     FREE_MEM(buffer);
     fclose(stream);
