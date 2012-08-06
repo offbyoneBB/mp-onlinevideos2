@@ -118,9 +118,15 @@
     <ClInclude Include="SampleEntryBoxCollection.h" />
     <ClInclude Include="SampleEntryBoxFactory.h" />
     <ClInclude Include="SampleTableBox.h" />
+    <ClInclude Include="SampleToChunk.h" />
+    <ClInclude Include="SampleToChunkBox.h" />
+    <ClInclude Include="SampleToChunkCollection.h" />
     <ClInclude Include="SoundMediaHeaderBox.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TimeToSample.h" />
+    <ClInclude Include="TimeToSampleBox.h" />
+    <ClInclude Include="TimeToSampleCollection.h" />
     <ClInclude Include="TrackBox.h" />
     <ClInclude Include="TrackHeaderBox.h" />
     <ClInclude Include="UserDataBox.h" />
@@ -167,11 +173,17 @@
     <ClCompile Include="SampleEntryBoxCollection.cpp" />
     <ClCompile Include="SampleEntryBoxFactory.cpp" />
     <ClCompile Include="SampleTableBox.cpp" />
+    <ClCompile Include="SampleToChunk.cpp" />
+    <ClCompile Include="SampleToChunkBox.cpp" />
+    <ClCompile Include="SampleToChunkCollection.cpp" />
     <ClCompile Include="SoundMediaHeaderBox.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TimeToSample.cpp" />
+    <ClCompile Include="TimeToSampleBox.cpp" />
+    <ClCompile Include="TimeToSampleCollection.cpp" />
     <ClCompile Include="TrackBox.cpp" />
     <ClCompile Include="TrackHeaderBox.cpp" />
     <ClCompile Include="UserDataBox.cpp" />

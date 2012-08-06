@@ -45,6 +45,8 @@
 #include "BitRateBox.h"
 #include "ChunkOffsetBox.h"
 #include "ChunkLargeOffsetBox.h"
+#include "SampleToChunkBox.h"
+#include "TimeToSampleBox.h"
 
 CBoxFactory::CBoxFactory(void)
 {
@@ -93,6 +95,8 @@ CBox *CBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length)
         CREATE_SPECIFIC_BOX(box, BITRATE_BOX_TYPE, CBitrateBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, CHUNK_OFFSET_BOX_TYPE, CChunkOffsetBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, CHUNK_LARGE_OFFSET_BOX_TYPE, CChunkLargeOffsetBox, buffer, length, continueParsing, result);
+        CREATE_SPECIFIC_BOX(box, SAMPLE_TO_CHUNK_BOX_TYPE, CSampleToChunkBox, buffer, length, continueParsing, result);
+        CREATE_SPECIFIC_BOX(box, TIME_TO_SAMPLE_BOX_TYPE, CTimeToSampleBox, buffer, length, continueParsing, result);
       }
     }
 
