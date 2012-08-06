@@ -38,9 +38,100 @@ CFragmentRunTableBox::~CFragmentRunTableBox(void)
 
 bool CFragmentRunTableBox::Parse(const uint8_t *buffer, uint32_t length)
 {
+  return this->ParseInternal(buffer, length, true);
+}
+
+wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
+{
+  wchar_t *result = NULL;
+  wchar_t *previousResult = __super::GetParsedHumanReadable(indent);
+
+  if ((previousResult != NULL) && (this->IsParsed()))
+  {
+    // prepare quality segment url modifier collection
+    wchar_t *qualitySegmentUrlModifier = NULL;
+    wchar_t *tempIndent = FormatString(L"%s\t", indent);
+    for (unsigned int i = 0; i < this->qualitySegmentUrlModifiers->Count(); i++)
+    {
+      CQualitySegmentUrlModifier *qualitySegmentUrlModifierEntry = this->qualitySegmentUrlModifiers->GetItem(i);
+      wchar_t *tempqualitySegmentUrlModifierEntry = FormatString(
+        L"%s%s%s'%s'",
+        (i == 0) ? L"" : qualitySegmentUrlModifier,
+        (i == 0) ? L"" : L"\n",
+        tempIndent,
+        qualitySegmentUrlModifierEntry->GetQualitySegmentUrlModifier()
+        );
+      FREE_MEM(qualitySegmentUrlModifier);
+
+      qualitySegmentUrlModifier = tempqualitySegmentUrlModifierEntry;
+    }
+
+    // prepare fragment run entry table
+    wchar_t *fragmentRunEntry = NULL;
+    for (unsigned int i = 0; i < this->fragmentRunEntryTable->Count(); i++)
+    {
+      CFragmentRunEntry *fragmentRunEntryEntry = this->fragmentRunEntryTable->GetItem(i);
+
+      wchar_t *tempFragmentRunEntry = FormatString(
+        L"%s%s%sFirst fragment: %u, first fragment timestamp: %llu, fragment duration: %u, discontinuity indicator: %u",
+        (i == 0) ? L"" : fragmentRunEntry,
+        (i == 0) ? L"" : L"\n",
+        tempIndent,
+        fragmentRunEntryEntry->GetFirstFragment(),
+        fragmentRunEntryEntry->GetFirstFragmentTimestamp(),
+        fragmentRunEntryEntry->GetFragmentDuration(),
+        fragmentRunEntryEntry->GetDiscontinuityIndicator()
+        );
+      FREE_MEM(fragmentRunEntry);
+
+      fragmentRunEntry = tempFragmentRunEntry;
+    }
+    FREE_MEM(tempIndent);
+
+    // prepare finally human readable representation
+    result = FormatString( \
+      L"%s\n" \
+      L"%sTime scale: %u\n" \
+      L"%sQuality entry count: %d\n" \
+      L"%s%s" \
+      L"%sFragment run entry count: %d" \
+      L"%s%s",
+
+      previousResult,
+      indent, this->timeScale,
+      indent, this->qualitySegmentUrlModifiers->Count(),
+      (qualitySegmentUrlModifier == NULL) ? L"" : qualitySegmentUrlModifier, (qualitySegmentUrlModifier == NULL) ? L"" : L"\n",
+      indent, this->fragmentRunEntryTable->Count(),
+      (fragmentRunEntry == NULL) ? L"" : L"\n", (fragmentRunEntry == NULL) ? L"" : fragmentRunEntry
+
+      );
+  }
+
+  FREE_MEM(previousResult);
+
+  return result;
+}
+
+unsigned int CFragmentRunTableBox::GetTimeScale(void)
+{
+  return this->timeScale;
+}
+
+CQualitySegmentUrlModifierCollection *CFragmentRunTableBox::GetQualitySegmentUrlModifiers(void)
+{
+  return this->qualitySegmentUrlModifiers;
+}
+
+CFragmentRunEntryCollection *CFragmentRunTableBox::GetFragmentRunEntryTable(void)
+{
+  return this->fragmentRunEntryTable;
+}
+
+bool CFragmentRunTableBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
+{
   bool result = (this->qualitySegmentUrlModifiers != NULL) && (this->fragmentRunEntryTable != NULL);
   // in bad case we don't have tables, but still it can be valid box
-  result &= __super::Parse(buffer, length);
+  result &= __super::ParseInternal(buffer, length, false);
 
   if (result)
   {
@@ -148,6 +239,11 @@ bool CFragmentRunTableBox::Parse(const uint8_t *buffer, uint32_t length)
         }
       }
 
+      if (continueParsing && processAdditionalBoxes)
+      {
+        this->ProcessAdditionalBoxes(buffer, length, position);
+      }
+
       this->parsed = continueParsing;
     }
   }
@@ -155,90 +251,4 @@ bool CFragmentRunTableBox::Parse(const uint8_t *buffer, uint32_t length)
   result = this->parsed;
 
   return result;
-}
-
-wchar_t *CFragmentRunTableBox::GetParsedHumanReadable(const wchar_t *indent)
-{
-  wchar_t *result = NULL;
-  wchar_t *previousResult = __super::GetParsedHumanReadable(indent);
-
-  if ((previousResult != NULL) && (this->IsParsed()))
-  {
-    // prepare quality segment url modifier collection
-    wchar_t *qualitySegmentUrlModifier = NULL;
-    wchar_t *tempIndent = FormatString(L"%s\t", indent);
-    for (unsigned int i = 0; i < this->qualitySegmentUrlModifiers->Count(); i++)
-    {
-      CQualitySegmentUrlModifier *qualitySegmentUrlModifierEntry = this->qualitySegmentUrlModifiers->GetItem(i);
-      wchar_t *tempqualitySegmentUrlModifierEntry = FormatString(
-        L"%s%s%s'%s'",
-        (i == 0) ? L"" : qualitySegmentUrlModifier,
-        (i == 0) ? L"" : L"\n",
-        tempIndent,
-        qualitySegmentUrlModifierEntry->GetQualitySegmentUrlModifier()
-        );
-      FREE_MEM(qualitySegmentUrlModifier);
-
-      qualitySegmentUrlModifier = tempqualitySegmentUrlModifierEntry;
-    }
-
-    // prepare fragment run entry table
-    wchar_t *fragmentRunEntry = NULL;
-    for (unsigned int i = 0; i < this->fragmentRunEntryTable->Count(); i++)
-    {
-      CFragmentRunEntry *fragmentRunEntryEntry = this->fragmentRunEntryTable->GetItem(i);
-
-      wchar_t *tempFragmentRunEntry = FormatString(
-        L"%s%s%sFirst fragment: %u, first fragment timestamp: %llu, fragment duration: %u, discontinuity indicator: %u",
-        (i == 0) ? L"" : fragmentRunEntry,
-        (i == 0) ? L"" : L"\n",
-        tempIndent,
-        fragmentRunEntryEntry->GetFirstFragment(),
-        fragmentRunEntryEntry->GetFirstFragmentTimestamp(),
-        fragmentRunEntryEntry->GetFragmentDuration(),
-        fragmentRunEntryEntry->GetDiscontinuityIndicator()
-        );
-      FREE_MEM(fragmentRunEntry);
-
-      fragmentRunEntry = tempFragmentRunEntry;
-    }
-    FREE_MEM(tempIndent);
-
-    // prepare finally human readable representation
-    result = FormatString( \
-      L"%s\n" \
-      L"%sTime scale: %u\n" \
-      L"%sQuality entry count: %d\n" \
-      L"%s%s" \
-      L"%sFragment run entry count: %d" \
-      L"%s%s",
-
-      previousResult,
-      indent, this->timeScale,
-      indent, this->qualitySegmentUrlModifiers->Count(),
-      (qualitySegmentUrlModifier == NULL) ? L"" : qualitySegmentUrlModifier, (qualitySegmentUrlModifier == NULL) ? L"" : L"\n",
-      indent, this->fragmentRunEntryTable->Count(),
-      (fragmentRunEntry == NULL) ? L"" : L"\n", (fragmentRunEntry == NULL) ? L"" : fragmentRunEntry
-
-      );
-  }
-
-  FREE_MEM(previousResult);
-
-  return result;
-}
-
-unsigned int CFragmentRunTableBox::GetTimeScale(void)
-{
-  return this->timeScale;
-}
-
-CQualitySegmentUrlModifierCollection *CFragmentRunTableBox::GetQualitySegmentUrlModifiers(void)
-{
-  return this->qualitySegmentUrlModifiers;
-}
-
-CFragmentRunEntryCollection *CFragmentRunTableBox::GetFragmentRunEntryTable(void)
-{
-  return this->fragmentRunEntryTable;
 }

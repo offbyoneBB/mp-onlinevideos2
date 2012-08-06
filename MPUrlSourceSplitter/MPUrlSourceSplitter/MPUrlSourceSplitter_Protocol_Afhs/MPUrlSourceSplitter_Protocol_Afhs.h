@@ -181,9 +181,6 @@ protected:
   // main instance of CURL
   CHttpCurlInstance *mainCurlInstance;
 
-  // callback function for receiving data from libcurl
-  static size_t CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata);
-
   // reference to variable that signalize if protocol is requested to exit
   bool shouldExit;
   // specifies if whole stream is downloaded

@@ -110,6 +110,7 @@
     <ClInclude Include="MediaInformationBoxFactory.h" />
     <ClInclude Include="MetaBox.h" />
     <ClInclude Include="MovieBox.h" />
+    <ClInclude Include="MovieFragmentBox.h" />
     <ClInclude Include="MovieHeaderBox.h" />
     <ClInclude Include="NullMediaHeaderBox.h" />
     <ClInclude Include="PixelAspectRatioBox.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="MediaInformationBoxFactory.cpp" />
     <ClCompile Include="MetaBox.cpp" />
     <ClCompile Include="MovieBox.cpp" />
+    <ClCompile Include="MovieFragmentBox.cpp" />
     <ClCompile Include="MovieHeaderBox.cpp" />
     <ClCompile Include="NullMediaHeaderBox.cpp" />
     <ClCompile Include="PixelAspectRatioBox.cpp" />

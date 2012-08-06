@@ -22,8 +22,9 @@
 
 #include "CurlInstance.h"
 #include "Logger.h"
+#include "LockMutex.h"
 
-CCurlInstance::CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t *protocolName)
+CCurlInstance::CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName)
 {
   this->logger = logger;
   this->url = Duplicate(url);
@@ -38,6 +39,7 @@ CCurlInstance::CCurlInstance(CLogger *logger, const wchar_t *url, const wchar_t 
   this->state = CURL_STATE_CREATED;
   this->closeWithoutWaiting = false;
   this->curlErrorMessage = NULL;
+  this->mutex = mutex;
 
   this->SetWriteCallback(CCurlInstance::CurlReceiveDataCallback, this);
   this->receivedDataBuffer = new CLinearBuffer();
@@ -229,8 +231,6 @@ DWORD WINAPI CCurlInstance::CurlWorker(LPVOID lpParam)
   CCurlInstance *caller = (CCurlInstance *)lpParam;
   caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, caller->protocolName, METHOD_CURL_WORKER_NAME);
 
-  caller->state = CURL_STATE_RECEIVING_DATA;
-
   // on next line will be stopped processing of code - until something happens
   caller->curlWorkerErrorCode = curl_easy_perform(caller->curl);
 
@@ -280,6 +280,8 @@ size_t CCurlInstance::CurlReceiveDataCallback(char *buffer, size_t size, size_t 
 {
   CCurlInstance *caller = (CCurlInstance *)userdata;
 
+  caller->state = CURL_STATE_RECEIVING_DATA;
+
   return caller->CurlReceiveData((unsigned char *)buffer, (size_t)(size * nmemb));
 }
 
@@ -287,6 +289,10 @@ size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length
 {
   if (length != 0)
   {
+    // lock access to receive data buffer
+    // if mutex is NULL then access to received data buffer is not locked
+    CLockMutex(this->mutex, INFINITE);
+
     unsigned int bufferSize = this->receivedDataBuffer->GetBufferSize();
     unsigned int freeSpace = this->receivedDataBuffer->GetBufferFreeSpace();
     unsigned int newBufferSize = max(bufferSize * 2, bufferSize + length);

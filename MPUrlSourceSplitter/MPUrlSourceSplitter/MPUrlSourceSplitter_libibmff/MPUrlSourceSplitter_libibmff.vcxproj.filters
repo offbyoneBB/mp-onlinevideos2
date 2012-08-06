@@ -207,6 +207,9 @@
     <ClInclude Include="TimeToSampleBox.h">
       <Filter>Boxes\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MovieFragmentBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -363,6 +366,9 @@
       <Filter>Collections\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TimeToSampleBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovieFragmentBox.cpp">
       <Filter>Boxes\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
