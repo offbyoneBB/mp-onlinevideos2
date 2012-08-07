@@ -210,6 +210,36 @@
     <ClInclude Include="MovieFragmentBox.h">
       <Filter>Boxes\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MovieExtendsBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovieExtendsHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackExtendsBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MovieFragmentHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackFragmentBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackFragmentHeaderBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UuidBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sample.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackRunBox.h">
+      <Filter>Boxes\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -369,6 +399,36 @@
       <Filter>Boxes\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MovieFragmentBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovieExtendsBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovieExtendsHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackExtendsBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovieFragmentHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackFragmentBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackFragmentHeaderBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UuidBox.cpp">
+      <Filter>Boxes\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackRunBox.cpp">
       <Filter>Boxes\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

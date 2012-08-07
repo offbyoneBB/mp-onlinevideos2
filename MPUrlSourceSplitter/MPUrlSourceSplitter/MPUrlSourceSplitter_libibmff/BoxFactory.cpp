@@ -48,6 +48,14 @@
 #include "SampleToChunkBox.h"
 #include "TimeToSampleBox.h"
 #include "MovieFragmentBox.h"
+#include "MovieExtendsBox.h"
+#include "MovieExtendsHeaderBox.h"
+#include "TrackExtendsBox.h"
+#include "MovieFragmentHeaderBox.h"
+#include "TrackFragmentBox.h"
+#include "TrackFragmentHeaderBox.h"
+#include "UuidBox.h"
+#include "TrackRunBox.h"
 
 CBoxFactory::CBoxFactory(void)
 {
@@ -99,6 +107,14 @@ CBox *CBoxFactory::CreateBox(const uint8_t *buffer, uint32_t length)
         CREATE_SPECIFIC_BOX(box, SAMPLE_TO_CHUNK_BOX_TYPE, CSampleToChunkBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, TIME_TO_SAMPLE_BOX_TYPE, CTimeToSampleBox, buffer, length, continueParsing, result);
         CREATE_SPECIFIC_BOX(box, MOVIE_FRAGMENT_BOX_TYPE, CMovieFragmentBox, buffer, length, continueParsing, result);
+        CREATE_SPECIFIC_BOX(box, MOVIE_EXTENDS_BOX_TYPE, CMovieExtendsBox, buffer, length, continueParsing, result);
+        CREATE_SPECIFIC_BOX(box, MOVIE_EXTENDS_HEADER_BOX_TYPE, CMovieExtendsHeaderBox, buffer, length, continueParsing, result);
+        CREATE_SPECIFIC_BOX(box, TRACK_EXTENDS_BOX_TYPE, CTrackExtendsBox, buffer, length, continueParsing, result);
+        CREATE_SPECIFIC_BOX(box, MOVIE_FRAGMENT_HEADER_BOX_TYPE, CMovieFragmentHeaderBox, buffer, length, continueParsing, result);
+        CREATE_SPECIFIC_BOX(box, TRACK_FRAGMENT_BOX_TYPE, CTrackFragmentBox, buffer, length, continueParsing, result);
+        CREATE_SPECIFIC_BOX(box, TRACK_FRAGMENT_HEADER_BOX_TYPE, CTrackFragmentHeaderBox, buffer, length, continueParsing, result);
+        CREATE_SPECIFIC_BOX(box, UUID_BOX_TYPE, CUuidBox, buffer, length, continueParsing, result);
+        CREATE_SPECIFIC_BOX(box, TRACK_RUN_BOX_TYPE, CTrackRunBox, buffer, length, continueParsing, result);
       }
     }
 

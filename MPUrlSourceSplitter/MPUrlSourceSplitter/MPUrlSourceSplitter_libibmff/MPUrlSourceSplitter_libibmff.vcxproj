@@ -110,14 +110,19 @@
     <ClInclude Include="MediaInformationBoxFactory.h" />
     <ClInclude Include="MetaBox.h" />
     <ClInclude Include="MovieBox.h" />
+    <ClInclude Include="MovieExtendsBox.h" />
+    <ClInclude Include="MovieExtendsHeaderBox.h" />
     <ClInclude Include="MovieFragmentBox.h" />
+    <ClInclude Include="MovieFragmentHeaderBox.h" />
     <ClInclude Include="MovieHeaderBox.h" />
     <ClInclude Include="NullMediaHeaderBox.h" />
     <ClInclude Include="PixelAspectRatioBox.h" />
+    <ClInclude Include="SampleCollection.h" />
     <ClInclude Include="SampleDescriptionBox.h" />
     <ClInclude Include="SampleEntryBox.h" />
     <ClInclude Include="SampleEntryBoxCollection.h" />
     <ClInclude Include="SampleEntryBoxFactory.h" />
+    <ClInclude Include="Sample.h" />
     <ClInclude Include="SampleTableBox.h" />
     <ClInclude Include="SampleToChunk.h" />
     <ClInclude Include="SampleToChunkBox.h" />
@@ -129,8 +134,13 @@
     <ClInclude Include="TimeToSampleBox.h" />
     <ClInclude Include="TimeToSampleCollection.h" />
     <ClInclude Include="TrackBox.h" />
+    <ClInclude Include="TrackExtendsBox.h" />
+    <ClInclude Include="TrackFragmentBox.h" />
+    <ClInclude Include="TrackFragmentHeaderBox.h" />
     <ClInclude Include="TrackHeaderBox.h" />
+    <ClInclude Include="TrackRunBox.h" />
     <ClInclude Include="UserDataBox.h" />
+    <ClInclude Include="UuidBox.h" />
     <ClInclude Include="VideoMediaHeaderBox.h" />
     <ClInclude Include="VisualSampleEntryBox.h" />
   </ItemGroup>
@@ -166,14 +176,19 @@
     <ClCompile Include="MediaInformationBoxFactory.cpp" />
     <ClCompile Include="MetaBox.cpp" />
     <ClCompile Include="MovieBox.cpp" />
+    <ClCompile Include="MovieExtendsBox.cpp" />
+    <ClCompile Include="MovieExtendsHeaderBox.cpp" />
     <ClCompile Include="MovieFragmentBox.cpp" />
+    <ClCompile Include="MovieFragmentHeaderBox.cpp" />
     <ClCompile Include="MovieHeaderBox.cpp" />
     <ClCompile Include="NullMediaHeaderBox.cpp" />
     <ClCompile Include="PixelAspectRatioBox.cpp" />
+    <ClCompile Include="SampleCollection.cpp" />
     <ClCompile Include="SampleDescriptionBox.cpp" />
     <ClCompile Include="SampleEntryBox.cpp" />
     <ClCompile Include="SampleEntryBoxCollection.cpp" />
     <ClCompile Include="SampleEntryBoxFactory.cpp" />
+    <ClCompile Include="Sample.cpp" />
     <ClCompile Include="SampleTableBox.cpp" />
     <ClCompile Include="SampleToChunk.cpp" />
     <ClCompile Include="SampleToChunkBox.cpp" />
@@ -187,8 +202,13 @@
     <ClCompile Include="TimeToSampleBox.cpp" />
     <ClCompile Include="TimeToSampleCollection.cpp" />
     <ClCompile Include="TrackBox.cpp" />
+    <ClCompile Include="TrackExtendsBox.cpp" />
+    <ClCompile Include="TrackFragmentBox.cpp" />
+    <ClCompile Include="TrackFragmentHeaderBox.cpp" />
     <ClCompile Include="TrackHeaderBox.cpp" />
+    <ClCompile Include="TrackRunBox.cpp" />
     <ClCompile Include="UserDataBox.cpp" />
+    <ClCompile Include="UuidBox.cpp" />
     <ClCompile Include="VideoMediaHeaderBox.cpp" />
     <ClCompile Include="VisualSampleEntryBox.cpp" />
   </ItemGroup>
