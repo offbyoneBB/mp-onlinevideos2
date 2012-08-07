@@ -116,7 +116,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
         CMediaPacket *mp = this->storedMediaPackets->GetItem(i);
         length += mp->GetBuffer()->GetBufferOccupiedSpace();
       }
-      length++;
+      length += 2;
 
       ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
       if ((buffer != NULL) && (length > 1))
@@ -128,6 +128,17 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
           unsigned int bufferOccupiedSpace = mp->GetBuffer()->GetBufferOccupiedSpace();
           mp->GetBuffer()->CopyFromBuffer(buffer + bufferPosition, bufferOccupiedSpace, 0, 0);
           bufferPosition += bufferOccupiedSpace;
+        }
+
+        if (((buffer[0] == 0xFF) && (buffer[1] == 0xFE)) ||
+            ((buffer[1] == 0xFF) && (buffer[0] == 0xFE)))
+        {
+          // input is probably in UTF-16 (Unicode)
+          char *temp = ConvertUnicodeToUtf8((wchar_t *)(buffer + 2));
+          FREE_MEM(buffer);
+          buffer = (unsigned char *)temp;
+
+          length = (buffer != NULL) ? strlen(temp) : 0;
         }
 
         CF4MManifest *manifest = new CF4MManifest();
@@ -604,7 +615,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
             FREE_MEM_CLASS(bootstrapInfoCollection);
             FREE_MEM_CLASS(mediaCollection);
           }
-          else if (manifest->IsXml())
+          else if (manifest->IsXml() && (manifest->GetParseError() != 0))
           {
             // we have XML declaration, it is valid XML file, just not complete
             this->logger->Log(LOGGER_WARNING, L"%s: %s: XML file probably not complete, XML parse error: %d", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, manifest->GetParseError());

@@ -18,23 +18,25 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// dllmain.cpp : Defines the entry point for the DLL application.
+#pragma once
 
-#include "stdafx.h"
+#ifndef __MSHS_QUALITY_LEVEL_MANIFEST_DEFINED
+#define __MSHS_QUALITY_LEVEL_MANIFEST_DEFINED
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-					 )
+class CMSHSQualityLevel
 {
-	switch (ul_reason_for_call)
-	{
-	case DLL_PROCESS_ATTACH:
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-	return TRUE;
-}
+public:
+  // creats new instance of CMSHSQualityLevel class
+  CMSHSQualityLevel(void);
 
+  // desctructor
+  ~CMSHSQualityLevel(void);
+
+  /* get methods */
+
+  /* set methods */
+
+  /* other methods */
+};
+
+#endif

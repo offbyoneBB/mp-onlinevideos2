@@ -18,23 +18,25 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// dllmain.cpp : Defines the entry point for the DLL application.
+#pragma once
 
-#include "stdafx.h"
+#ifndef __MSHS_SMOOTH_STREAMIN_MEDIA_DEFINED
+#define __MSHS_SMOOTH_STREAMIN_MEDIA_DEFINED
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-					 )
+class CMSHSSmoothStreamingMedia
 {
-	switch (ul_reason_for_call)
-	{
-	case DLL_PROCESS_ATTACH:
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-	return TRUE;
-}
+public:
+  // creates new instance of CMSHSSmoothStreamingMedia class
+  CMSHSSmoothStreamingMedia(void);
 
+  // destructor
+  ~CMSHSSmoothStreamingMedia(void);
+
+  /* get methods */
+
+  /* set methods */
+
+  /* other methods*/
+};
+
+#endif
