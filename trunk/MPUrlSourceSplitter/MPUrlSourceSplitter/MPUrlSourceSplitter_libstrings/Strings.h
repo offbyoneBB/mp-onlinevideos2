@@ -63,6 +63,25 @@ wchar_t *ConvertGuidToStringW(const GUID guid);
 #define ConvertGuidToString ConvertGuidToStringW
 #endif
 
+// converts MBCS string to GUID
+// @param guid : string GUID to convert
+// @return : GUID or GUID_NULL if error
+GUID ConvertStringToGuidA(const char *guid);
+
+// converts Unicode string to GUID
+// @param guid : string GUID to convert
+// @return : GUID or GUID_NULL if error
+GUID ConvertStringToGuidW(const wchar_t *guid);
+
+// converts GUID to string
+// @param guid : GUID to convert
+// @return : reference to null terminated string or NULL if error occured
+#ifdef _MBCS
+#define ConvertStringToGuid ConvertStringToGuidA
+#else
+#define ConvertStringToGuid ConvertStringToGuidW
+#endif
+
 // converts string to mutli byte string
 // @param string : string to convert
 // @return : reference to null terminated string or NULL if error occured

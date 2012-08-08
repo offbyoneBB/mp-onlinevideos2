@@ -24,14 +24,72 @@
 
 CMSHSSmoothStreamingMedia::CMSHSSmoothStreamingMedia(void)
 {
+  this->majorVersion = MANIFEST_MAJOR_VERSION;
+  this->minorVersion = MANIFEST_MINOR_VERSION;
+  this->timeScale = MANIFEST_TIMESCALE_DEFAULT;
+  this->duration = 0;
+  this->protections = new CMSHSProtectionCollection();
+  this->streams = new CMSHSStreamCollection();
 }
 
 CMSHSSmoothStreamingMedia::~CMSHSSmoothStreamingMedia(void)
 {
+  FREE_MEM_CLASS(this->protections);
+  FREE_MEM_CLASS(this->streams);
 }
 
 /* get methods */
 
+uint32_t CMSHSSmoothStreamingMedia::GetMajorVersion(void)
+{
+  return this->majorVersion;
+}
+
+uint32_t CMSHSSmoothStreamingMedia::GetMinorVersion(void)
+{
+  return this->minorVersion;
+}
+
+uint64_t CMSHSSmoothStreamingMedia::GetTimeScale(void)
+{
+  return this->timeScale;
+}
+
+uint64_t CMSHSSmoothStreamingMedia::GetDuration(void)
+{
+  return this->duration;
+}
+
+CMSHSProtectionCollection *CMSHSSmoothStreamingMedia::GetProtections(void)
+{
+  return this->protections;
+}
+
+CMSHSStreamCollection *CMSHSSmoothStreamingMedia::GetStreams(void)
+{
+  return this->streams;
+}
+
 /* set methods */
+
+void CMSHSSmoothStreamingMedia::SetMajorVersion(uint32_t majorVersion)
+{
+  this->majorVersion = majorVersion;
+}
+
+void CMSHSSmoothStreamingMedia::SetMinorVersion(uint32_t minorVersion)
+{
+  this->minorVersion = minorVersion;
+}
+
+void CMSHSSmoothStreamingMedia::SetTimeScale(uint64_t timeScale)
+{
+  this->timeScale = timeScale;
+}
+
+void CMSHSSmoothStreamingMedia::SetDuration(uint64_t duration)
+{
+  this->duration = duration;
+}
 
 /* other methods */

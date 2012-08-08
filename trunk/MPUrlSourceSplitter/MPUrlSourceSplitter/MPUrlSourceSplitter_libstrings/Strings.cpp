@@ -55,6 +55,37 @@ wchar_t *ConvertGuidToStringW(const GUID guid)
   return wideGuid;
 }
 
+GUID ConvertStringToGuidA(const char *guid)
+{
+  GUID result = GUID_NULL;
+
+  if (!IsNullOrEmptyOrWhitespaceA(guid))
+  {
+    wchar_t *wideGuid = ConvertToUnicodeA(guid);
+    if (wideGuid != NULL)
+    {
+      result = ConvertStringToGuidW(wideGuid);
+    }
+    FREE_MEM(wideGuid);
+  }
+  return result;
+}
+
+GUID ConvertStringToGuidW(const wchar_t *guid)
+{
+  GUID result = GUID_NULL;
+
+  if (!IsNullOrEmptyOrWhitespaceW(guid))
+  {
+    if (IIDFromString(guid, &result) != S_OK)
+    {
+      result = GUID_NULL;
+    }
+  }
+
+  return result;
+}
+
 char *ConvertToMultiByteA(const char *string)
 {
   char *result = NULL;
