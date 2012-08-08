@@ -68,7 +68,7 @@ int _tmain(int argc, _TCHAR* argv[])
     fclose(stream);
   }*/
 
-  FILE *stream = fopen("D:\\svnroot\\HttpStreaming\\test_manifest.xml", "r");
+  FILE *stream = fopen("D:\\svnroot\\HttpStreaming\\autosalon_Manifest.xml", "r");
   if (stream != NULL)
   {
     unsigned int length = 256 * 1024;

@@ -26,8 +26,6 @@
 #include "MSHSProtectionCollection.h"
 #include "MSHSStreamCollection.h"
 
-#include <stdint.h>
-
 #define MANIFEST_MAJOR_VERSION                                                2
 #define MANIFEST_MINOR_VERSION                                                0
 #define MANIFEST_TIMESCALE_DEFAULT                                            10000000
@@ -87,6 +85,10 @@ public:
   void SetDuration(uint64_t duration);
 
   /* other methods*/
+
+  // tests if media is protected
+  // @return : true if protected, false otherwise
+  bool IsProtected(void);
 
 private:
   uint32_t majorVersion;

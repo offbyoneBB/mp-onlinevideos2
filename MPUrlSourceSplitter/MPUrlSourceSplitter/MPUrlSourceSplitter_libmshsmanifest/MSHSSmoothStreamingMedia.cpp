@@ -93,3 +93,8 @@ void CMSHSSmoothStreamingMedia::SetDuration(uint64_t duration)
 }
 
 /* other methods */
+
+bool CMSHSSmoothStreamingMedia::IsProtected(void)
+{
+  return (this->GetProtections()->Count() != 0);
+}
