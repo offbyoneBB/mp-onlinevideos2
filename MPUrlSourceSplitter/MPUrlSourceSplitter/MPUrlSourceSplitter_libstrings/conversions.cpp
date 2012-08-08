@@ -22,28 +22,82 @@
 
 #include "conversions.h"
 
-unsigned int GetValueUnsignedInt(const char *input, unsigned int defaultValue)
+unsigned int GetValueUnsignedIntA(const char *input, unsigned int defaultValue)
 {
-  char *end = NULL;
-  long valueLong = strtol((input == NULL) ? "" : input, &end, 10);
-  if ((valueLong == 0) && (input == end))
+  if (!IsNullOrEmptyOrWhitespaceA(input))
   {
-    // error while converting
-    valueLong = defaultValue;
-  }
+    char *end = NULL;
+    long valueLong = strtol(input, &end, 10);
+    if ((valueLong == 0) && (input == end))
+    {
+      // error while converting
+      valueLong = defaultValue;
+    }
 
-  return (unsigned int)valueLong;
+    return (unsigned int)valueLong;
+  }
+  else
+  {
+    return defaultValue;
+  }
 }
 
-unsigned int GetValueUnsignedInt(const wchar_t *input, unsigned int defaultValue)
+unsigned int GetValueUnsignedIntW(const wchar_t *input, unsigned int defaultValue)
 {
-  wchar_t *end = NULL;
-  long valueLong = wcstol((input == NULL) ? L"" : input, &end, 10);
-  if ((valueLong == 0) && (input == end))
+  if (!IsNullOrEmptyOrWhitespaceW(input))
   {
-    // error while converting
-    valueLong = defaultValue;
-  }
+    wchar_t *end = NULL;
+    long valueLong = wcstol(input, &end, 10);
+    if ((valueLong == 0) && (input == end))
+    {
+      // error while converting
+      valueLong = defaultValue;
+    }
 
-  return (unsigned int)valueLong;
+    return (unsigned int)valueLong;
+  }
+  else
+  {
+    return defaultValue;
+  }
+}
+
+uint64_t GetValueUnsignedInt64A(const char *input, uint64_t defaultValue)
+{
+  if (!IsNullOrEmptyOrWhitespaceA(input))
+  {
+    char *end = NULL;
+    uint64_t valueLong = _strtoui64(input, &end, 10);
+    if ((valueLong == 0) && (input == end))
+    {
+      // error while converting
+      valueLong = defaultValue;
+    }
+
+    return valueLong;
+  }
+  else
+  {
+    return defaultValue;
+  }
+}
+
+uint64_t GetValueUnsignedInt64W(const wchar_t *input, uint64_t defaultValue)
+{
+  if (!IsNullOrEmptyOrWhitespaceW(input))
+  {
+    wchar_t *end = NULL;
+    uint64_t valueLong = _wcstoui64(input, &end, 10);
+    if ((valueLong == 0) && (input == end))
+    {
+      // error while converting
+      valueLong = defaultValue;
+    }
+
+    return valueLong;
+  }
+  else
+  {
+    return defaultValue;
+  }
 }

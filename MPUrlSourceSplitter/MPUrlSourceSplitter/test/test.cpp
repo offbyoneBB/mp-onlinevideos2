@@ -24,12 +24,13 @@
 #include "stdafx.h"
 
 #include "BoxFactory.h"
+#include "MSHSManifest.h"
 
 #include <stdio.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-  FILE *stream = fopen("D:\\svnroot\\HttpStreaming\\lmfao.ismv", "rb");
+  /*FILE *stream = fopen("D:\\svnroot\\HttpStreaming\\lmfao.ismv", "rb");
   if (stream != NULL)
   {
     unsigned int length = 256 * 1024;
@@ -62,6 +63,36 @@ int _tmain(int argc, _TCHAR* argv[])
       }
 
       FREE_MEM_CLASS(factory);
+    }
+    FREE_MEM(buffer);
+    fclose(stream);
+  }*/
+
+  FILE *stream = fopen("D:\\svnroot\\HttpStreaming\\test_manifest.xml", "r");
+  if (stream != NULL)
+  {
+    unsigned int length = 256 * 1024;
+    ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+    if (buffer != NULL)
+    {
+      unsigned int readBytes = fread(buffer, sizeof(unsigned char), length, stream);
+
+      if (((buffer[0] == 0xFF) && (buffer[1] == 0xFE)) ||
+        ((buffer[1] == 0xFF) && (buffer[0] == 0xFE)))
+      {
+        // input is probably in UTF-16 (Unicode)
+        char *temp = ConvertUnicodeToUtf8((wchar_t *)(buffer + 2));
+        FREE_MEM(buffer);
+        buffer = (unsigned char *)temp;
+
+        length = (buffer != NULL) ? strlen(temp) : 0;
+      }
+
+      CMSHSManifest *manifest = new CMSHSManifest();
+      if (manifest->Parse((char *)buffer))
+      {
+        printf("parsed");
+      }
     }
     FREE_MEM(buffer);
     fclose(stream);

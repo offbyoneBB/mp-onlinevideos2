@@ -77,16 +77,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="MSHSManifest.h" />
+    <ClInclude Include="MSHSProtection.h" />
+    <ClInclude Include="MSHSProtectionCollection.h" />
     <ClInclude Include="MSHSQualityLevel.h" />
     <ClInclude Include="MSHSSmoothStreamingMedia.h" />
+    <ClInclude Include="MSHSStream.h" />
+    <ClInclude Include="MSHSStreamCollection.h" />
+    <ClInclude Include="MSHSTrack.h" />
     <ClInclude Include="MSHS_Elements.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MSHSManifest.cpp" />
+    <ClCompile Include="MSHSProtection.cpp" />
+    <ClCompile Include="MSHSProtectionCollection.cpp" />
     <ClCompile Include="MSHSQualityLevel.cpp" />
     <ClCompile Include="MSHSSmoothStreamingMedia.cpp" />
+    <ClCompile Include="MSHSStream.cpp" />
+    <ClCompile Include="MSHSStreamCollection.cpp" />
+    <ClCompile Include="MSHSTrack.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

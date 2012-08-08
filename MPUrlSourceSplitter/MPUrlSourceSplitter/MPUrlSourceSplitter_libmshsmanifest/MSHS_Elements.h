@@ -26,5 +26,47 @@
 // The root element in the document is <SmoothStreamingMedia>.
 #define MSHS_ELEMENT_MANIFEST                                                 "SmoothStreamingMedia"
 
+#define MSHS_ELEMENT_MANIFEST_ATTRIBUTE_MAJOR_VERSION                         "MajorVersion"
+#define MSHS_ELEMENT_MANIFEST_ATTRIBUTE_MINOR_VERSION                         "MinorVersion"
+#define MSHS_ELEMENT_MANIFEST_ATTRIBUTE_TIMESCALE                             "TimeScale"
+#define MSHS_ELEMENT_MANIFEST_ATTRIBUTE_DURATION                              "Duration"
+
+#define MSHS_ELEMENT_PROTECTION                                               "Protection"
+#define MSHS_ELEMENT_PROTECTION_ELEMENT_PROTECTION_HEADER                     "ProtectionHeader"
+
+#define MSHS_ELEMENT_PROTECTION_ELEMENT_PROTECTION_HEADER_ATTRIBUTE_SYSTEMID  "SystemID"
+
+#define MSHS_ELEMENT_STREAM                                                   "StreamIndex"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE                                    "Type"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE_VALUE_VIDEO                        "video"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE_VALUE_AUDIO                        "audio"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE_VALUE_TEXT                         "text"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_SUBTYPE                                 "Subtype"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_STREAM_TIMESCALE                        "TimeScale"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_NAME                                    "Name"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_NUMBER_OF_FRAGMENTS                     "Chunks"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_NUMBER_OF_TRACKS                        "QualityLevels"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_URL                                     "Url"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_STREAM_MAX_WIDTH                        "MaxWidth"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_STREAM_MAX_HEIGHT                       "MaxHeight"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_DISPLAY_WIDTH                           "DisplayWidth"
+#define MSHS_ELEMENT_STREAM_ATTRIBUTE_DISPLAY_HEIGHT                          "DisplayHeight"
+
+#define MSHS_ELEMENT_TRACK                                                    "QualityLevel"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_INDEX                                    "Index"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_BITRATE                                  "Bitrate"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_MAX_WIDTH                                "MaxWidth"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_MAX_HEIGHT                               "MaxHeight"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_CODEC_PRIVATE_DATA                       "CodecPrivateData"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_SAMPLING_RATE                            "SamplingRate"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_CHANNELS                                 "Channels"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_BITS_PER_SAMPLE                          "BitsPerSample"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_PACKET_SIZE                              "PacketSize"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_AUDIO_TAG                                "AudioTag"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_FOURCC                                   "FourCC"
+#define MSHS_ELEMENT_TRACK_ATTRIBUTE_NAL_UNIT_LENGTH_FIELD                    "NALUnitLengthField"
+
+
+
 
 #endif

@@ -23,14 +23,18 @@
 #ifndef __CONVERSIONS_DEFINED
 #define __CONVERSIONS_DEFINED
 
-// converts GUID to MBCS string
-// @param guid : GUID to convert
-// @return : reference to null terminated string or NULL if error occured
+#include <stdint.h>
+
+// converts string to unsigned int
+// @param input : string to convert
+// @param defaultValue : default value
+// @return : converted string value or default value if error
 unsigned int GetValueUnsignedIntA(const char *input, unsigned int defaultValue);
 
-// converts GUID to Unicode string
-// @param guid : GUID to convert
-// @return : reference to null terminated string or NULL if error occured
+// converts string to unsigned int
+// @param input : string to convert
+// @param defaultValue : default value
+// @return : converted string value or default value if error
 unsigned int GetValueUnsignedIntW(const wchar_t *input, unsigned int defaultValue);
 
 #ifdef _MBCS
@@ -38,5 +42,24 @@ unsigned int GetValueUnsignedIntW(const wchar_t *input, unsigned int defaultValu
 #else
 #define GetValueUnsignedInt GetValueUnsignedIntW
 #endif
+
+// converts string to unsigned int64
+// @param input : string to convert
+// @param defaultValue : default value
+// @return : converted string value or default value if error
+uint64_t GetValueUnsignedInt64A(const char *input, uint64_t defaultValue);
+
+// converts string to unsigned int64
+// @param input : string to convert
+// @param defaultValue : default value
+// @return : converted string value or default value if error
+uint64_t GetValueUnsignedInt64W(const wchar_t *input, uint64_t defaultValue);
+
+#ifdef _MBCS
+#define GetValueUnsignedInt64 GetValueUnsignedInt64A
+#else
+#define GetValueUnsignedInt64 GetValueUnsignedInt64W
+#endif
+
 
 #endif

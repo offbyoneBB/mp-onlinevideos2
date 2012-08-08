@@ -68,10 +68,12 @@ bool CMSHSManifest::Parse(const char *buffer)
   this->smoothStreamingMedia = new CMSHSSmoothStreamingMedia();
 
   bool result = false;
-  bool continueParsing = ((this->smoothStreamingMedia != NULL));
+  bool continueParsing = ((this->smoothStreamingMedia != NULL) && (this->smoothStreamingMedia->GetProtections() != NULL));
 
   if (continueParsing && (buffer != NULL))
   {
+    this->smoothStreamingMedia->GetProtections()->Clear();
+
     XMLDocument *document = new XMLDocument();
 
     if (document != NULL)
@@ -87,118 +89,235 @@ bool CMSHSManifest::Parse(const char *buffer)
         {
           // correct MSHS manifest, continue in parsing
 
-          XMLElement *child = manifest->FirstChildElement();
-          if (child != NULL)
+          // check manifest attributes
+          const char *value = manifest->Attribute(MSHS_ELEMENT_MANIFEST_ATTRIBUTE_MAJOR_VERSION);
+          if (value != NULL)
           {
-            //do
-            //{
-            //  // bootstrap info
-            //  if (strcmp(child->Name(), F4M_ELEMENT_BOOTSTRAPINFO) == 0)
-            //  {
-            //    // we found bootstrap info element
-            //    wchar_t *id = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_ID));
-            //    wchar_t *profile = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE));
-            //    wchar_t *url = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_URL));
-            //    wchar_t *convertedValue = ConvertUtf8ToUnicode(child->GetText());
-            //    wchar_t *value = Trim(convertedValue);
-            //    FREE_MEM(convertedValue);
+            this->smoothStreamingMedia->SetMajorVersion(GetValueUnsignedIntA(value, MANIFEST_MAJOR_VERSION));
+          }
+          value = manifest->Attribute(MSHS_ELEMENT_MANIFEST_ATTRIBUTE_MINOR_VERSION);
+          if (value != NULL)
+          {
+            this->smoothStreamingMedia->SetMinorVersion(GetValueUnsignedIntA(value, MANIFEST_MINOR_VERSION));
+          }
+          value = manifest->Attribute(MSHS_ELEMENT_MANIFEST_ATTRIBUTE_TIMESCALE);
+          if (value != NULL)
+          {
+            this->smoothStreamingMedia->SetTimeScale(GetValueUnsignedInt64A(value, MANIFEST_TIMESCALE_DEFAULT));
+          }
+          value = manifest->Attribute(MSHS_ELEMENT_MANIFEST_ATTRIBUTE_DURATION);
+          if (value != NULL)
+          {
+            this->smoothStreamingMedia->SetDuration(GetValueUnsignedInt64A(value, 0));
+          }
 
-            //    continueParsing &= this->bootstrapInfo->SetId((id == NULL) ? L"" : id);
-            //    continueParsing &= this->bootstrapInfo->SetProfile(profile);
-            //    continueParsing &= this->bootstrapInfo->SetUrl(url);
-            //    continueParsing &= this->bootstrapInfo->SetValue(value);
+          continueParsing &= ((this->smoothStreamingMedia->GetMajorVersion() == MANIFEST_MAJOR_VERSION) && (this->smoothStreamingMedia->GetMinorVersion() == MANIFEST_MINOR_VERSION));
 
-            //    FREE_MEM(id);
-            //    FREE_MEM(profile);
-            //    FREE_MEM(url);
-            //    FREE_MEM(value);
-            //  }
+          if (continueParsing)
+          {
+            XMLElement *child = manifest->FirstChildElement();
+            if (child != NULL)
+            {
+              do
+              {
+                if (strcmp(child->Name(), MSHS_ELEMENT_PROTECTION) == 0)
+                {
+                  // protection element, parse it and add to protection collection
+                  XMLElement *protectionHeader = child->FirstChildElement(MSHS_ELEMENT_PROTECTION_ELEMENT_PROTECTION_HEADER);
+                  if (protectionHeader != NULL)
+                  {
+                    wchar_t *systemId = ConvertUtf8ToUnicode(protectionHeader->Attribute(MSHS_ELEMENT_PROTECTION_ELEMENT_PROTECTION_HEADER_ATTRIBUTE_SYSTEMID));
+                    wchar_t *content = ConvertUtf8ToUnicode(protectionHeader->GetText());
 
-            //  // piece of media
-            //  if (strcmp(child->Name(), F4M_ELEMENT_MEDIA) == 0)
-            //  {
-            //    // we found piece of media
-            //    wchar_t *url = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_URL));
-            //    wchar_t *bitrate = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_BITRATE));
-            //    wchar_t *width = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_WIDTH));
-            //    wchar_t *height = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_HEIGHT));
-            //    wchar_t *drmAdditionalHeaderId = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_DRMADDITTIONALHEADERID));
-            //    wchar_t *bootstrapInfoId = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_BOOTSTRAPINFOID));
-            //    wchar_t *dvrInfoId = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_DVRINFOID));
-            //    wchar_t *groupspec = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_GROUPSPEC));
-            //    wchar_t *multicastStreamName = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_MULTICASTSTREAMNAME));
-            //    wchar_t *metadataValue = NULL;
+                    CMSHSProtection *protection = new CMSHSProtection();
+                    continueParsing &= (protection != NULL);
 
-            //    XMLElement *metadata = child->FirstChildElement(F4M_ELEMENT_MEDIA_ELEMENT_METADATA);
-            //    if (metadata != NULL)
-            //    {
-            //      wchar_t *convertedMetadata = ConvertUtf8ToUnicode(metadata->GetText());
-            //      metadataValue = Trim(convertedMetadata);
-            //      FREE_MEM(convertedMetadata);
-            //    }
+                    if (continueParsing)
+                    {
+                      protection->SetSystemId(ConvertStringToGuid(systemId));
+                      continueParsing &= protection->SetContent(content);
 
-            //    unsigned int bitrateValue = GetValueUnsignedInt(bitrate, UINT_MAX);
-            //    unsigned int widthValue = GetValueUnsignedInt(width, UINT_MAX);
-            //    unsigned int heightValue = GetValueUnsignedInt(height, UINT_MAX);
+                      if (continueParsing)
+                      {
+                        continueParsing &= this->smoothStreamingMedia->GetProtections()->Add(protection);
+                      }
+                    }
 
-            //    CF4MMedia *media = new CF4MMedia();
-            //    continueParsing &= (media != NULL);
+                    FREE_MEM(content);
+                    if (!continueParsing)
+                    {
+                      FREE_MEM_CLASS(protection);
+                    }
+                  }
+                }
 
-            //    if (continueParsing)
-            //    {
-            //      continueParsing &= media->SetBitrate(bitrateValue);
-            //      continueParsing &= media->SetWidth(widthValue);
-            //      continueParsing &= media->SetHeight(heightValue);
+                if (strcmp(child->Name(), MSHS_ELEMENT_STREAM) == 0)
+                {
+                  // stream element
 
-            //      continueParsing &= media->SetUrl(url);
-            //      continueParsing &= media->SetDrmAdditionalHeaderId(drmAdditionalHeaderId);
-            //      continueParsing &= media->SetBootstrapInfoId(bootstrapInfoId);
-            //      continueParsing &= media->SetDvrInfoId(dvrInfoId);
-            //      continueParsing &= media->SetGroupSpecifier(groupspec);
-            //      continueParsing &= media->SetMulticastStreamName(multicastStreamName);
-            //      continueParsing &= media->SetMetadata(metadataValue);
+                  wchar_t *type = ConvertUtf8ToUnicode(child->Attribute(MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE));
+                  wchar_t *subType = ConvertUtf8ToUnicode(child->Attribute(MSHS_ELEMENT_STREAM_ATTRIBUTE_SUBTYPE));;
+                  wchar_t *url = ConvertUtf8ToUnicode(child->Attribute(MSHS_ELEMENT_STREAM_ATTRIBUTE_URL));
+                  wchar_t *timeScale = ConvertUtf8ToUnicode(child->Attribute(MSHS_ELEMENT_STREAM_ATTRIBUTE_STREAM_TIMESCALE));
+                  wchar_t *name = ConvertUtf8ToUnicode(child->Attribute(MSHS_ELEMENT_STREAM_ATTRIBUTE_NAME));
+                  wchar_t *numberOfFragments = ConvertUtf8ToUnicode(child->Attribute(MSHS_ELEMENT_STREAM_ATTRIBUTE_NUMBER_OF_FRAGMENTS));
+                  wchar_t *numberOfTracks = ConvertUtf8ToUnicode(child->Attribute(MSHS_ELEMENT_STREAM_ATTRIBUTE_NUMBER_OF_TRACKS));
+                  wchar_t *maxWidth = ConvertUtf8ToUnicode(child->Attribute(MSHS_ELEMENT_STREAM_ATTRIBUTE_STREAM_MAX_WIDTH));
+                  wchar_t *maxHeight = ConvertUtf8ToUnicode(child->Attribute(MSHS_ELEMENT_STREAM_ATTRIBUTE_STREAM_MAX_HEIGHT));
+                  wchar_t *displayWidth = ConvertUtf8ToUnicode(child->Attribute(MSHS_ELEMENT_STREAM_ATTRIBUTE_DISPLAY_WIDTH));
+                  wchar_t *displayHeight = ConvertUtf8ToUnicode(child->Attribute(MSHS_ELEMENT_STREAM_ATTRIBUTE_DISPLAY_HEIGHT));
 
-            //      continueParsing &= this->mediaCollection->Add(media);
-            //    }
+                  CMSHSStream *stream = new CMSHSStream();
+                  continueParsing &= (stream != NULL);
 
-            //    if (!continueParsing)
-            //    {
-            //      FREE_MEM_CLASS(media);
-            //    }
+                  if (continueParsing)
+                  {
+                    continueParsing &= stream->SetType(type);
+                    continueParsing &= stream->SetSubType(subType);
+                    continueParsing &= stream->SetUrl(url);
+                    stream->SetTimeScale(GetValueUnsignedInt64(timeScale, this->smoothStreamingMedia->GetTimeScale()));
+                    continueParsing &= stream->SetName(name);
+                    stream->SetNumberOfFragments(GetValueUnsignedInt(numberOfFragments, 0));
+                    stream->SetNumberOfTracks(GetValueUnsignedInt(numberOfTracks, 0));
+                    stream->SetMaxWidth(GetValueUnsignedInt(maxWidth, 0));
+                    stream->SetMaxHeight(GetValueUnsignedInt(maxHeight, 0));
+                    stream->SetDisplayWidth(GetValueUnsignedInt(displayWidth, 0));
+                    stream->SetDisplayHeight(GetValueUnsignedInt(displayHeight, 0));
 
-            //    FREE_MEM(url);
-            //    FREE_MEM(bitrate);
-            //    FREE_MEM(width);
-            //    FREE_MEM(height);
-            //    FREE_MEM(drmAdditionalHeaderId);
-            //    FREE_MEM(bootstrapInfoId);
-            //    FREE_MEM(dvrInfoId);
-            //    FREE_MEM(groupspec);
-            //    FREE_MEM(multicastStreamName);
-            //    FREE_MEM(metadataValue);
-            //  }
+                    if (continueParsing)
+                    {
+                      continueParsing &= this->smoothStreamingMedia->GetStreams()->Add(stream);
+                    }
+                  }
 
-            //  // delivery type
-            //  if (strcmp(child->Name(), F4M_ELEMENT_DELIVERYTYPE) == 0)
-            //  {
-            //    wchar_t *deliveryType = ConvertUtf8ToUnicode(child->GetText());
-            //    this->deliveryType->SetDeliveryType(deliveryType);
-            //    FREE_MEM(deliveryType);
-            //  }
+                  if (!continueParsing)
+                  {
+                    FREE_MEM_CLASS(stream);
+                  }
 
-            //  // base URL - it's replacing manifest URL
-            //  if (strcmp(child->Name(), F4M_ELEMENT_BASEURL) == 0)
-            //  {
-            //    wchar_t *baseUrl = ConvertUtf8ToUnicode(child->GetText());
-            //    continueParsing &= this->baseUrl->SetBaseUrl(baseUrl);
-            //    FREE_MEM(baseUrl);
-            //  }
-            //}
-            //while (continueParsing && ((child = child->NextSiblingElement()) != NULL));
+                  /*
+  wchar_t *type;
+  wchar_t *subType;
+  wchar_t *url;
+  uint64_t timeScale;
+  wchar_t *name;
+  uint32_t numberOfFragments;
+  uint32_t numberOfTracks;
+  uint32_t maxWidth;
+  uint32_t maxHeight;
+  uint32_t displayWidth;
+  uint32_t displayHeight;
+                  */
+                }
 
-            result = continueParsing;
+              //  // bootstrap info
+              //  if (strcmp(child->Name(), F4M_ELEMENT_BOOTSTRAPINFO) == 0)
+              //  {
+              //    // we found bootstrap info element
+              //    wchar_t *id = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_ID));
+              //    wchar_t *profile = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE));
+              //    wchar_t *url = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_URL));
+              //    wchar_t *convertedValue = ConvertUtf8ToUnicode(child->GetText());
+              //    wchar_t *value = Trim(convertedValue);
+              //    FREE_MEM(convertedValue);
+
+              //    continueParsing &= this->bootstrapInfo->SetId((id == NULL) ? L"" : id);
+              //    continueParsing &= this->bootstrapInfo->SetProfile(profile);
+              //    continueParsing &= this->bootstrapInfo->SetUrl(url);
+              //    continueParsing &= this->bootstrapInfo->SetValue(value);
+
+              //    FREE_MEM(id);
+              //    FREE_MEM(profile);
+              //    FREE_MEM(url);
+              //    FREE_MEM(value);
+              //  }
+
+              //  // piece of media
+              //  if (strcmp(child->Name(), F4M_ELEMENT_MEDIA) == 0)
+              //  {
+              //    // we found piece of media
+              //    wchar_t *url = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_URL));
+              //    wchar_t *bitrate = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_BITRATE));
+              //    wchar_t *width = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_WIDTH));
+              //    wchar_t *height = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_HEIGHT));
+              //    wchar_t *drmAdditionalHeaderId = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_DRMADDITTIONALHEADERID));
+              //    wchar_t *bootstrapInfoId = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_BOOTSTRAPINFOID));
+              //    wchar_t *dvrInfoId = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_DVRINFOID));
+              //    wchar_t *groupspec = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_GROUPSPEC));
+              //    wchar_t *multicastStreamName = ConvertUtf8ToUnicode(child->Attribute(F4M_ELEMENT_MEDIA_ATTRIBUTE_MULTICASTSTREAMNAME));
+              //    wchar_t *metadataValue = NULL;
+
+              //    XMLElement *metadata = child->FirstChildElement(F4M_ELEMENT_MEDIA_ELEMENT_METADATA);
+              //    if (metadata != NULL)
+              //    {
+              //      wchar_t *convertedMetadata = ConvertUtf8ToUnicode(metadata->GetText());
+              //      metadataValue = Trim(convertedMetadata);
+              //      FREE_MEM(convertedMetadata);
+              //    }
+
+              //    unsigned int bitrateValue = GetValueUnsignedInt(bitrate, UINT_MAX);
+              //    unsigned int widthValue = GetValueUnsignedInt(width, UINT_MAX);
+              //    unsigned int heightValue = GetValueUnsignedInt(height, UINT_MAX);
+
+              //    CF4MMedia *media = new CF4MMedia();
+              //    continueParsing &= (media != NULL);
+
+              //    if (continueParsing)
+              //    {
+              //      continueParsing &= media->SetBitrate(bitrateValue);
+              //      continueParsing &= media->SetWidth(widthValue);
+              //      continueParsing &= media->SetHeight(heightValue);
+
+              //      continueParsing &= media->SetUrl(url);
+              //      continueParsing &= media->SetDrmAdditionalHeaderId(drmAdditionalHeaderId);
+              //      continueParsing &= media->SetBootstrapInfoId(bootstrapInfoId);
+              //      continueParsing &= media->SetDvrInfoId(dvrInfoId);
+              //      continueParsing &= media->SetGroupSpecifier(groupspec);
+              //      continueParsing &= media->SetMulticastStreamName(multicastStreamName);
+              //      continueParsing &= media->SetMetadata(metadataValue);
+
+              //      continueParsing &= this->mediaCollection->Add(media);
+              //    }
+
+              //    if (!continueParsing)
+              //    {
+              //      FREE_MEM_CLASS(media);
+              //    }
+
+              //    FREE_MEM(url);
+              //    FREE_MEM(bitrate);
+              //    FREE_MEM(width);
+              //    FREE_MEM(height);
+              //    FREE_MEM(drmAdditionalHeaderId);
+              //    FREE_MEM(bootstrapInfoId);
+              //    FREE_MEM(dvrInfoId);
+              //    FREE_MEM(groupspec);
+              //    FREE_MEM(multicastStreamName);
+              //    FREE_MEM(metadataValue);
+              //  }
+
+              //  // delivery type
+              //  if (strcmp(child->Name(), F4M_ELEMENT_DELIVERYTYPE) == 0)
+              //  {
+              //    wchar_t *deliveryType = ConvertUtf8ToUnicode(child->GetText());
+              //    this->deliveryType->SetDeliveryType(deliveryType);
+              //    FREE_MEM(deliveryType);
+              //  }
+
+              //  // base URL - it's replacing manifest URL
+              //  if (strcmp(child->Name(), F4M_ELEMENT_BASEURL) == 0)
+              //  {
+              //    wchar_t *baseUrl = ConvertUtf8ToUnicode(child->GetText());
+              //    continueParsing &= this->baseUrl->SetBaseUrl(baseUrl);
+              //    FREE_MEM(baseUrl);
+              //  }
+              }
+              while (continueParsing && ((child = child->NextSiblingElement()) != NULL));
+            }
           }
         }
+
+        result = continueParsing;
       }
       else
       {
