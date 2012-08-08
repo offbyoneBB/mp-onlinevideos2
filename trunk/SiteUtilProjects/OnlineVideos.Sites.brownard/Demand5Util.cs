@@ -22,6 +22,8 @@ namespace OnlineVideos.Sites
         string proxyPassword = null;
         [Category("OnlineVideosConfiguration"), Description("HashValue")]
         protected string hashValue = ""; //"8e8e110bb9d7d95eb3c3e500a86a21024eccd983";
+        [Category("OnlineVideosConfiguration"), Description("PlayerID")]
+        protected double playerId = 1707001743001;
         [Category("OnlineVideosUserConfiguration"), Description("Select stream automatically?")]
         protected bool AutoSelectStream = false;
         [Category("OnlineVideosUserConfiguration"), Description("Stream quality preference\r\n1 is low, 5 high")]
@@ -184,8 +186,8 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string webdata = GetWebData(video.VideoUrl);
-            Match m = new Regex(@"playerID=(\d+).*?videoPlayer=ref:(C\d+)").Match(webdata);
-
+            //Match m = new Regex(@"playerID=(\d+).*?videoPlayer=ref:(C\d+)").Match(webdata);
+            Match m = new Regex(@"videoPlayer=ref:(C\d+)").Match(webdata);
             if (!m.Success)
                 return String.Empty;
 
@@ -198,7 +200,7 @@ namespace OnlineVideos.Sites
             OnlineVideos.AMF.AMFObject contentOverride = new AMFObject("com.brightcove.experience.ContentOverride");
             contentOverride.Add("contentId", double.NaN);
             contentOverride.Add("target", "videoPlayer");
-            contentOverride.Add("contentRefId", m.Groups[2].Value);
+            contentOverride.Add("contentRefId", m.Groups[1].Value);
             contentOverride.Add("featuredRefId", null);
             contentOverride.Add("contentRefIds", null);
             contentOverride.Add("featuredId", double.NaN);
@@ -214,12 +216,12 @@ namespace OnlineVideos.Sites
             ViewerExperienceRequest.Add("contentOverrides", array);
             ViewerExperienceRequest.Add("URL", video.VideoUrl);
 
-            ViewerExperienceRequest.Add("experienceId", (double)Int64.Parse(m.Groups[1].Value));
+            ViewerExperienceRequest.Add("experienceId", playerId);
 
             AMFSerializer ser = new AMFSerializer();
             byte[] data = ser.Serialize(ViewerExperienceRequest, hashValue);
 
-            string requestUrl = "http://c.brightcove.com/services/messagebroker/amf?playerid=" + m.Groups[1].Value;
+            string requestUrl = "http://c.brightcove.com/services/messagebroker/amf?playerid=" + playerId;
 
             AMFObject response = GetResponse(requestUrl, data);
 
