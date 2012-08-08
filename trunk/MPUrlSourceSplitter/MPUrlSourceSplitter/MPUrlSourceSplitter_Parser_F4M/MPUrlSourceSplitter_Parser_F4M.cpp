@@ -585,7 +585,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                     // remove it and try to find another
                     mediaCollection->Remove(mediaWithHighestBitstreamIndex);
 
-                    // remove all AFHS parameters from connectio parameters
+                    // remove all AFHS parameters from connection parameters
                     bool invariant = true;
 
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BASE_URL, (void *)&invariant);

@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "MSHSStream.h"
+#include "MSHS_Elements.h"
 
 CMSHSStream::CMSHSStream(void)
 {
@@ -35,6 +36,8 @@ CMSHSStream::CMSHSStream(void)
   this->timeScale = 0;
   this->type = NULL;
   this->url = NULL;
+  this->tracks = new CMSHSTrackCollection();
+  this->streamFragments = new CMSHSStreamFragmentCollection();
 }
 
 CMSHSStream::~CMSHSStream(void)
@@ -43,6 +46,8 @@ CMSHSStream::~CMSHSStream(void)
   FREE_MEM(this->subType);
   FREE_MEM(this->type);
   FREE_MEM(this->url);
+  FREE_MEM_CLASS(this->tracks);
+  FREE_MEM_CLASS(this->streamFragments);
 }
 
 /* get methods */
@@ -100,6 +105,16 @@ uint32_t CMSHSStream::GetDisplayWidth(void)
 uint32_t CMSHSStream::GetDisplayHeight(void)
 {
   return this->displayHeight;
+}
+
+CMSHSTrackCollection *CMSHSStream::GetTracks(void)
+{
+  return this->tracks;
+}
+
+CMSHSStreamFragmentCollection *CMSHSStream::GetStreamFragments(void)
+{
+  return this->streamFragments;
 }
 
 /* set methods */
@@ -160,3 +175,18 @@ void CMSHSStream::SetDisplayHeight(uint32_t displayHeight)
 }
 
 /* other methods */
+
+bool CMSHSStream::IsVideo(void)
+{
+  return (wcscmp(this->GetType(), MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE_VALUE_VIDEOW) == 0);
+}
+
+bool CMSHSStream::IsAudio(void)
+{
+  return (wcscmp(this->GetType(), MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE_VALUE_AUDIOW) == 0);
+}
+
+bool CMSHSStream::IsText(void)
+{
+  return (wcscmp(this->GetType(), MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE_VALUE_TEXTW) == 0);
+}

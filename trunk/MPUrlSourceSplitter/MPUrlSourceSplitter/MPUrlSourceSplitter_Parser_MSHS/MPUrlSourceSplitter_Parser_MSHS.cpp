@@ -24,6 +24,10 @@
 #include "VersionInfo.h"
 #include "formatUrl.h"
 #include "MSHSManifest.h"
+#include "MPUrlSourceSplitter_Protocol_Http_Parameters.h"
+#include "MPUrlSourceSplitter_Protocol_Mshs_Parameters.h"
+
+#include "base64.h"
 
 #include <stdio.h>
 
@@ -150,466 +154,171 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *med
             }
             FREE_MEM(mshsBuffer);
 
-        //    // parse bootstrap info
-        //    // bootstrap info should have information about segments, fragments and seeking information
+            if (!manifest->GetSmoothStreamingMedia()->IsProtected())
+            {
+              CMSHSStream *video = NULL;
+              CMSHSStream *audio = NULL;
 
-        //    wchar_t *baseUrl = GetBaseUrl(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
-        //    bool continueParsing = (baseUrl != NULL);
-        //    CF4MBootstrapInfoCollection *bootstrapInfoCollection = new CF4MBootstrapInfoCollection();
-        //    CMediaCollection *mediaCollection = new CMediaCollection();
+              for (unsigned int i = 0; i < manifest->GetSmoothStreamingMedia()->GetStreams()->Count(); i++)
+              {
+                CMSHSStream *stream = manifest->GetSmoothStreamingMedia()->GetStreams()->GetItem(i);
 
-        //    if ((bootstrapInfoCollection != NULL) && (mediaCollection != NULL))
-        //    {
-        //      // bootstrap info profile have to be 'named' (F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMED)
-        //      if ((manifest->GetBootstrapInfo()->GetProfile() != NULL) && (wcscmp(manifest->GetBootstrapInfo()->GetProfile(), F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMEDW) == 0))
-        //      {
-        //        CF4MBootstrapInfo *bootstrapInfo = new CF4MBootstrapInfo();
+                if (stream->IsVideo() && (video == NULL))
+                {
+                  video = stream;
+                }
+                
+                if (stream->IsAudio() && (audio == NULL))
+                {
+                  audio = stream;
+                }
+              }
 
-        //        if (bootstrapInfo != NULL)
-        //        {
-        //          bootstrapInfo->SetId(manifest->GetBootstrapInfo()->GetId());
-        //          bootstrapInfo->SetProfile(manifest->GetBootstrapInfo()->GetProfile());
-        //          bootstrapInfo->SetUrl(manifest->GetBootstrapInfo()->GetUrl());
-        //          bootstrapInfo->SetValue(manifest->GetBootstrapInfo()->GetValue());
+              bool continueParsing = ((video != NULL) || (audio != NULL));
 
-        //          if (bootstrapInfo->IsValid())
-        //          {
-        //            bootstrapInfoCollection->Add(bootstrapInfo);
-        //          }
-        //          else
-        //          {
-        //            this->logger->Log(LOGGER_WARNING, L"%s: %s: bootstrap info is not valid, id: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, bootstrapInfo->GetId());
-        //            FREE_MEM_CLASS(bootstrapInfo);
-        //          }
-        //        }
-        //      }
-        //      else
-        //      {
-        //        this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"bootstrap info profile is not 'named'");
-        //      }
+              if (continueParsing)
+              {
+                // add base url parameter
+                wchar_t *baseUrl = GetBaseUrl(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+                continueParsing &= (baseUrl != NULL);
 
-        //      // we should have url
-        //      // we exclude piece of media with drmAdditionalHeaderId
-        //      for (unsigned int i = 0; i < manifest->GetMediaCollection()->Count(); i++)
-        //      {
-        //        CF4MMedia *f4mMedia = manifest->GetMediaCollection()->GetItem(i);
-        //        if ((f4mMedia->GetUrl() != NULL) && (f4mMedia->GetDrmAdditionalHeaderId() == NULL))
-        //        {
-        //          CMedia *media = new CMedia(
-        //            f4mMedia->GetUrl(),
-        //            f4mMedia->GetBitrate(),
-        //            f4mMedia->GetWidth(),
-        //            f4mMedia->GetHeight(),
-        //            f4mMedia->GetDrmAdditionalHeaderId(),
-        //            f4mMedia->GetBootstrapInfoId(),
-        //            f4mMedia->GetDvrInfoId(),
-        //            f4mMedia->GetGroupSpecifier(),
-        //            f4mMedia->GetMulticastStreamName(),
-        //            f4mMedia->GetMetadata());
+                if (continueParsing)
+                {
+                  CParameter *baseUrlParameter = new CParameter(PARAMETER_NAME_MSHS_BASE_URL, baseUrl);
+                  continueParsing &= (baseUrlParameter != NULL);
 
-        //          if (media != NULL)
-        //          {
-        //            if (!mediaCollection->Add(media))
-        //            {
-        //              FREE_MEM_CLASS(f4mMedia);
-        //            }
-        //          }
-        //        }
-        //        else
-        //        {
-        //          this->logger->Log(LOGGER_WARNING, L"%s: %s: piece of media doesn't have url ('%s') or has DRM additional header ID ('%s')", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, f4mMedia->GetUrl(), f4mMedia->GetDrmAdditionalHeaderId());
-        //        }
-        //      }
+                  if (continueParsing)
+                  {
+                    continueParsing &= this->connectionParameters->Add(baseUrlParameter);
+                  }
 
-        //      if (!IsNullOrEmptyOrWhitespace(manifest->GetBaseUrl()->GetBaseUrl()))
-        //      {
-        //        FREE_MEM(baseUrl);
-        //        baseUrl = GetBaseUrl(manifest->GetBaseUrl()->GetBaseUrl());
+                  if (!continueParsing)
+                  {
+                    FREE_MEM_CLASS(baseUrlParameter);
+                  }
+                }
 
-        //        if (baseUrl == NULL)
-        //        {
-        //          // cannot get base url
-        //          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot get base url");
-        //          continueParsing = false;
-        //        }
-        //        else if (IsNullOrEmpty(baseUrl))
-        //        {
-        //          // base url is empty
-        //          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"base url is empty");
-        //          continueParsing = false;
-        //        }
+                FREE_MEM(baseUrl);
+              }
 
-        //        if (continueParsing)
-        //        {
-        //          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: changed base URL: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, baseUrl);
-        //        }
-        //      }
+              if (continueParsing)
+              {
+                // add BASE64 encoded manifest into connection parameters
+                char *manifestBase64Encoded = NULL;
+                continueParsing &= SUCCEEDED(base64_encode(buffer, length, &manifestBase64Encoded));
 
-        //      if (continueParsing && (bootstrapInfoCollection->Count() == 0))
-        //      {
-        //        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"no bootstrap info profile");
-        //        continueParsing = false;
-        //      }
+                if (continueParsing)
+                {
+                  wchar_t *encoded = ConvertToUnicodeA(manifestBase64Encoded);
+                  continueParsing &= (encoded != NULL);
 
-        //      if (continueParsing)
-        //      {
-        //        unsigned int i = 0;
-        //        while (i < mediaCollection->Count())
-        //        {
-        //          CMedia *media = mediaCollection->GetItem(i);
-        //          if (!bootstrapInfoCollection->Contains(media->GetBootstrapInfoId(), false))
-        //          {
-        //            this->logger->Log(LOGGER_ERROR, L"%s: %s: no bootstrap info '%s' for media '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, media->GetBootstrapInfoId(), media->GetUrl());
-        //            mediaCollection->Remove(i);
-        //          }
-        //          else
-        //          {
-        //            i++;
-        //          }
-        //        }
-        //      }
+                  if (continueParsing)
+                  {
+                    CParameter *manifestParameter = new CParameter(PARAMETER_NAME_MSHS_MANIFEST, encoded);
+                    continueParsing &= (manifestParameter != NULL);
 
-        //      if (continueParsing && (mediaCollection->Count() == 0))
-        //      {
-        //        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"no piece of media");
-        //        continueParsing = false;
-        //      }
+                    if (continueParsing)
+                    {
+                      continueParsing &= this->connectionParameters->Add(manifestParameter);
+                    }
 
-        //      if (continueParsing)
-        //      {
-        //        // at least one media with bootstrap info and without DRM
-        //        // find media with highest bitrate
+                    if (!continueParsing)
+                    {
+                      FREE_MEM_CLASS(manifestParameter);
+                    }
+                  }
 
-        //        while (mediaCollection->Count() != 0)
-        //        {
-        //          unsigned int bitrate = 0;
-        //          unsigned int i = 0;
-        //          CMedia *mediaWithHighestBitstream = NULL;
-        //          unsigned int mediaWithHighestBitstreamIndex = UINT_MAX;
-        //          continueParsing = true;
+                  FREE_MEM(encoded);
+                }
+                FREE_MEM(manifestBase64Encoded);
+              }
 
-        //          for (unsigned int i = 0; i < mediaCollection->Count(); i++)
-        //          {
-        //            CMedia *media = mediaCollection->GetItem(i);
-        //            if (media->GetBitrate() > bitrate)
-        //            {
-        //              mediaWithHighestBitstream = media;
-        //              mediaWithHighestBitstreamIndex = i;
-        //              bitrate = media->GetBitrate();
-        //            }
-        //          }
+              if (continueParsing)
+              {
+                if (continueParsing)
+                {
+                  wchar_t *replacedUrl = ReplaceString(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL), L"http://", L"mshs://");
+                  if (replacedUrl != NULL)
+                  {
+                    if (wcsstr(replacedUrl, L"mshs://") != NULL)
+                    {
+                      CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, replacedUrl);
+                      if (urlParameter != NULL)
+                      {
+                        bool invariant = true;
 
-        //          if ((mediaWithHighestBitstream == NULL) && (mediaCollection->Count() != 0))
-        //          {
-        //            // if no piece of media chosen, then choose first media (if possible)
-        //            mediaWithHighestBitstream = mediaCollection->GetItem(0);
-        //            mediaWithHighestBitstreamIndex = 0;
-        //          }
+                        continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_COOKIE, true, PARAMETER_NAME_MSHS_COOKIE);
+                        continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH);
+                        continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, PARAMETER_NAME_MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS);
+                        continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, PARAMETER_NAME_MSHS_RECEIVE_DATA_TIMEOUT);
+                        continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_REFERER, true, PARAMETER_NAME_MSHS_REFERER);
+                        continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_USER_AGENT, true, PARAMETER_NAME_MSHS_USER_AGENT);
+                        continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_VERSION, true, PARAMETER_NAME_MSHS_VERSION);
 
-        //          if (mediaWithHighestBitstream != NULL)
-        //          {
-        //            continueParsing &= (mediaWithHighestBitstream->GetUrl() != NULL);
+                        if (continueParsing)
+                        {
+                          this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
+                          continueParsing &= this->connectionParameters->Add(urlParameter);
+                        }
 
-        //            if (continueParsing)
-        //            {
-        //              // add media url into connection parameters
-        //              CParameter *mediaUrlParameter = new CParameter(PARAMETER_NAME_AFHS_MEDIA_PART_URL, mediaWithHighestBitstream->GetUrl());
-        //              continueParsing &= (mediaUrlParameter != NULL);
+                        if (continueParsing)
+                        {
+                          result = ParseResult_Known;
+                        }
+                        else
+                        {
+                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add new URL parameter into connection parameters");
+                        }
+                      }
+                      else
+                      {
+                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create new URL parameter");
+                        continueParsing = false;
+                      }
+                    }
+                    else
+                    {
+                      this->logger->Log(LOGGER_ERROR, L"%s: %s: only HTTP protocol supported in base URL: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+                      continueParsing = false;
+                    }
+                  }
+                  else
+                  {
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot specify MSHS protocol");
+                    continueParsing = false;
+                  }
+                  FREE_MEM(replacedUrl);
+                }
 
-        //              if (continueParsing)
-        //              {
-        //                continueParsing &= this->connectionParameters->Add(mediaUrlParameter);
 
-        //                if (!continueParsing)
-        //                {
-        //                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add media URL parameter into connection parameters");
-        //                }
-        //              }
-        //              else
-        //              {
-        //                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create media URL parameter");
-        //              }
+                if (!continueParsing)
+                {
+                  // remove all MSHS parameters from connection parameters
+                  bool invariant = true;
 
-        //              if ((!continueParsing) && (mediaUrlParameter != NULL))
-        //              {
-        //                // cleanup, cannot add media URL parameter into connection parameters
-        //                FREE_MEM_CLASS(mediaUrlParameter);
-        //              }
-        //            }
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_BASE_URL, (void *)&invariant);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_MANIFEST, (void *)&invariant);
 
-        //            if (continueParsing)
-        //            {
-        //              if (mediaWithHighestBitstream->GetMetadata() != NULL)
-        //              {
-        //                // add media metadata into connection parameters
-        //                CParameter *mediaMetadataParameter = new CParameter(PARAMETER_NAME_AFHS_MEDIA_METADATA, mediaWithHighestBitstream->GetMetadata());
-        //                continueParsing &= (mediaMetadataParameter != NULL);
-
-        //                if (continueParsing)
-        //                {
-        //                  continueParsing &= this->connectionParameters->Add(mediaMetadataParameter);
-
-        //                  if (!continueParsing)
-        //                  {
-        //                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add media metadata parameter into connection parameters");
-        //                  }
-        //                }
-        //                else
-        //                {
-        //                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create media metadata parameter");
-        //                }
-
-        //                if ((!continueParsing) && (mediaMetadataParameter != NULL))
-        //                {
-        //                  // cleanup, cannot add media metadata parameter into connection parameters
-        //                  FREE_MEM_CLASS(mediaMetadataParameter);
-        //                }
-        //              }
-        //            }
-
-        //            if (continueParsing)
-        //            {
-        //              // add bootstrap info into connection parameters
-        //              CF4MBootstrapInfo *bootstrapInfo = bootstrapInfoCollection->GetBootstrapInfo(mediaWithHighestBitstream->GetBootstrapInfoId(), false);
-        //              if (bootstrapInfo != NULL)
-        //              {
-        //                continueParsing &= (bootstrapInfo->GetValue() != NULL);
-
-        //                if ((!continueParsing) && (bootstrapInfo->GetUrl() != NULL))
-        //                {
-        //                  this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info doesn't have value but has url, we need to download bootstrap info from '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, bootstrapInfo->GetUrl());
-
-        //                  continueParsing = bootstrapInfo->SetBaseUrl(baseUrl);
-        //                  HRESULT downloadResult = bootstrapInfo->DownloadBootstrapInfo(
-        //                    this->logger,
-        //                    PARSER_IMPLEMENTATION_NAME,
-        //                    this->connectionParameters->GetValueLong(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT),
-        //                    this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL),
-        //                    this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL),
-        //                    this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL)
-        //                    );
-
-        //                  this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info download result: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, downloadResult);
-        //                  if (SUCCEEDED(result))
-        //                  {
-        //                    this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info BASE64 encoded value: '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, bootstrapInfo->GetValue());
-        //                  }
-        //                  continueParsing &= SUCCEEDED(downloadResult);
-        //                }
-
-        //                if (continueParsing)
-        //                {
-        //                  // but before adding, decode bootstrap info (just for sure if it is valid)
-        //                  HRESULT decodeResult = bootstrapInfo->GetDecodeResult();
-        //                  continueParsing &= SUCCEEDED(decodeResult);
-
-        //                  if (continueParsing)
-        //                  {
-        //                    CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox();
-        //                    continueParsing &= (bootstrapInfoBox != NULL);
-
-        //                    if (continueParsing)
-        //                    {
-        //                      continueParsing &= bootstrapInfoBox->Parse(bootstrapInfo->GetDecodedValue(), bootstrapInfo->GetDecodedValueLength());
-
-        //                      if (continueParsing)
-        //                      {
-        //                        // create and add connection parameter
-        //                        CParameter *bootstrapInfoParameter = new CParameter(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, bootstrapInfo->GetValue());
-        //                        continueParsing &= (bootstrapInfoParameter != NULL);
-
-        //                        if (continueParsing)
-        //                        {
-        //                          continueParsing &= this->connectionParameters->Add(bootstrapInfoParameter);
-
-        //                          if (!continueParsing)
-        //                          {
-        //                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add bootstrap info parameter into connection parameters");
-        //                          }
-        //                        }
-        //                        else
-        //                        {
-        //                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create bootstrap info parameter");
-        //                        }
-
-        //                        if ((!continueParsing) && (bootstrapInfoParameter != NULL))
-        //                        {
-        //                          // cleanup, cannot add bootstrap info parameter into connection parameters
-        //                          FREE_MEM_CLASS(bootstrapInfoParameter);
-        //                        }
-        //                      }
-        //                      else
-        //                      {
-        //                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot parse bootstrap info box");
-        //                      }
-
-        //                      if (continueParsing && (bootstrapInfo->HasUrl()))
-        //                      {
-        //                        wchar_t *bootstrapInfoUrl = FormatAbsoluteUrl(baseUrl, bootstrapInfo->GetUrl());
-        //                        continueParsing &= (bootstrapInfoUrl != NULL);
-
-        //                        if (continueParsing)
-        //                        {
-        //                          // create and add connection parameter
-        //                          CParameter *bootstrapInfoUrlParameter = new CParameter(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, bootstrapInfoUrl);
-        //                          continueParsing &= (bootstrapInfoUrlParameter != NULL);
-
-        //                          if (continueParsing)
-        //                          {
-        //                            continueParsing &= this->connectionParameters->Add(bootstrapInfoUrlParameter);
-        //                          }
-
-        //                          if (!continueParsing)
-        //                          {
-        //                            FREE_MEM_CLASS(bootstrapInfoUrlParameter);
-        //                          }
-        //                        }
-        //                        FREE_MEM(bootstrapInfoUrl);
-        //                      }
-        //                    }
-        //                    else
-        //                    {
-        //                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"not enough memory for bootstrap info box");
-        //                    }
-
-        //                    FREE_MEM_CLASS(bootstrapInfoBox);
-        //                  }
-        //                  else
-        //                  {
-        //                    this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot decode bootstrap info BASE64 value, reason: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, decodeResult);
-        //                  }
-        //                }
-        //              }
-        //              else
-        //              {
-        //                this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot find bootstrap info '%s' for media '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, mediaWithHighestBitstream->GetBootstrapInfoId(), mediaWithHighestBitstream->GetUrl());
-        //                continueParsing = false;
-        //              }
-        //            }
-
-        //            if (continueParsing)
-        //            {
-        //              // add base URL into connection parameters
-        //              CParameter *baseUrlParameter = new CParameter(PARAMETER_NAME_AFHS_BASE_URL, baseUrl);
-        //              continueParsing &= (baseUrlParameter != NULL);
-
-        //              if (continueParsing)
-        //              {
-        //                continueParsing &= this->connectionParameters->Add(baseUrlParameter);
-
-        //                if (!continueParsing)
-        //                {
-        //                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add base URL parameter into connection parameters");
-        //                }
-        //              }
-        //              else
-        //              {
-        //                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create base URL parameter");
-        //              }
-
-        //              if ((!continueParsing) && (baseUrlParameter != NULL))
-        //              {
-        //                // cleanup, cannot add base URL parameter into connection parameters
-        //                FREE_MEM_CLASS(baseUrlParameter);
-        //              }
-        //            }
-
-        //            if (continueParsing)
-        //            {
-        //              wchar_t *replacedUrl = ReplaceString(baseUrl, L"http://", L"afhs://");
-        //              if (replacedUrl != NULL)
-        //              {
-        //                if (wcsstr(replacedUrl, L"afhs://") != NULL)
-        //                {
-        //                  CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, replacedUrl);
-        //                  if (urlParameter != NULL)
-        //                  {
-        //                    bool invariant = true;
-
-        //                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_COOKIE, true, PARAMETER_NAME_AFHS_COOKIE);
-        //                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH);
-        //                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, PARAMETER_NAME_AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS);
-        //                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT);
-        //                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_REFERER, true, PARAMETER_NAME_AFHS_REFERER);
-        //                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_USER_AGENT, true, PARAMETER_NAME_AFHS_USER_AGENT);
-        //                    continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_VERSION, true, PARAMETER_NAME_AFHS_VERSION);
-
-        //                    if (continueParsing)
-        //                    {
-        //                      this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
-        //                      continueParsing &= this->connectionParameters->Add(urlParameter);
-        //                    }
-
-        //                    if (continueParsing)
-        //                    {
-        //                      result = ParseResult_Known;
-        //                    }
-        //                    else
-        //                    {
-        //                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add new URL parameter into connection parameters");
-        //                    }
-        //                  }
-        //                  else
-        //                  {
-        //                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create new URL parameter");
-        //                    continueParsing = false;
-        //                  }
-        //                }
-        //                else
-        //                {
-        //                  this->logger->Log(LOGGER_ERROR, L"%s: %s: only HTTP protocol supported in base URL: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, baseUrl);
-        //                  continueParsing = false;
-        //                }
-        //              }
-        //              else
-        //              {
-        //                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot specify AFHS protocol");
-        //                continueParsing = false;
-        //              }
-        //              FREE_MEM(replacedUrl);
-        //            }
-        //          }
-        //          else
-        //          {
-        //            // this should not happen, just for sure
-        //            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"no piece of media with highest bitrate");
-        //          }
-
-        //          if (!continueParsing)
-        //          {
-        //            // error occured while processing last piece of media
-        //            // remove it and try to find another
-        //            mediaCollection->Remove(mediaWithHighestBitstreamIndex);
-
-        //            // remove all AFHS parameters from connectio parameters
-        //            bool invariant = true;
-
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BASE_URL, (void *)&invariant);
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_PART_URL, (void *)&invariant);
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_METADATA, (void *)&invariant);
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, (void *)&invariant);
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, (void *)&invariant);
-
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_COOKIE, (void *)&invariant);
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, (void *)&invariant);
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, (void *)&invariant);
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT, (void *)&invariant);
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_REFERER, (void *)&invariant);
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_USER_AGENT, (void *)&invariant);
-        //            this->connectionParameters->Remove(PARAMETER_NAME_AFHS_VERSION, (void *)&invariant);
-        //          }
-        //          else
-        //          {
-        //            // we finished, we have media and bootstrap info
-        //            break;
-        //          }
-        //        }
-        //      }
-        //    }
-
-        //    FREE_MEM(baseUrl);
-        //    FREE_MEM_CLASS(bootstrapInfoCollection);
-        //    FREE_MEM_CLASS(mediaCollection);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_COOKIE, (void *)&invariant);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, (void *)&invariant);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, (void *)&invariant);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_RECEIVE_DATA_TIMEOUT, (void *)&invariant);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_REFERER, (void *)&invariant);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_USER_AGENT, (void *)&invariant);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_VERSION, (void *)&invariant);
+                }
+              }
+              else
+              {
+                // media doesn't have any audio or video
+                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"stream without video or audio");
+              }
+            }
+            else
+            {
+              // stream is protected, unsupported
+              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"stream is protected, unsupported");
+            }
           }
           else if (manifest->IsXml() && (manifest->GetParseError() != 0))
           {

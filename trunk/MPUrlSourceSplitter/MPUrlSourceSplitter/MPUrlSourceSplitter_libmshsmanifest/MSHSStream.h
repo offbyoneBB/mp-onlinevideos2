@@ -23,7 +23,8 @@
 #ifndef __MSHS_STREAM_DEFINED
 #define __MSHS_STREAM_DEFINED
 
-#include <stdint.h>
+#include "MSHSTrackCollection.h"
+#include "MSHSStreamFragmentCollection.h"
 
 class CMSHSStream
 {
@@ -92,6 +93,14 @@ public:
   // @return : the suggested display height of a video Sample, in pixels
   uint32_t GetDisplayHeight(void);
 
+  // gets tracks associated with stream
+  // @return : stream tracks
+  CMSHSTrackCollection *GetTracks(void);
+
+  // gets stream fragments
+  // @return : stream fragments
+  CMSHSStreamFragmentCollection *GetStreamFragments(void);
+
   /* set methods */
 
   // sets the type of the Stream: video, audio, or text
@@ -144,6 +153,18 @@ public:
 
   /* other methods */
 
+  // tests if stream is video type stream
+  // @return : true if stream is video type stream, false otherwise
+  bool IsVideo(void);
+
+  // tests if stream is audio type stream
+  // @return : true if stream is audio type stream, false otherwise
+  bool IsAudio(void);
+
+  // tests if stream is text type stream
+  // @return : true if stream is text type stream, false otherwise
+  bool IsText(void);
+
 private:
 
   // the type of the Stream: video, audio, or text
@@ -190,6 +211,10 @@ private:
 
   // the suggested display height of a video Sample, in pixels
   uint32_t displayHeight;
+
+  CMSHSTrackCollection *tracks;
+
+  CMSHSStreamFragmentCollection *streamFragments;
 };
 
 #endif
