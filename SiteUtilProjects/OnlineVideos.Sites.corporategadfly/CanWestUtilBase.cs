@@ -15,7 +15,6 @@ namespace OnlineVideos.Sites
         public abstract Regex FeedPIDRegex { get; }
         public abstract string PlayerTag { get; }
 
-        public virtual Boolean IsSwfUrlNeeded { get { return false; } }
         public virtual string SwfUrl { get { return @""; } }
 
         private static string categoriesJsonUrl = baseUrl + @"getCategoryList?PID={0}&field=ID&field=depth&field=title&field=hasReleases&field=fullTitle&field=hasChildren&query=CustomText|PlayerTag|{1}";
@@ -290,7 +289,7 @@ namespace OnlineVideos.Sites
                         }
                         Log.Debug(@"Host: {0}, PlayPath: {1}", host, playPath);
                         MPUrlSourceFilter.RtmpUrl rtmpUrl = new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = playPath };
-                        if (IsSwfUrlNeeded)
+                        if (!string.IsNullOrEmpty(SwfUrl))
                         {
                             rtmpUrl.SwfUrl = SwfUrl;
                             rtmpUrl.SwfVerify = true;
