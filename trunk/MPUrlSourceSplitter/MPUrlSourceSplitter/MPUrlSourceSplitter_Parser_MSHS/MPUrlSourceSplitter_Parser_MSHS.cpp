@@ -28,6 +28,7 @@
 #include "MPUrlSourceSplitter_Protocol_Mshs_Parameters.h"
 
 #include "base64.h"
+#include "compress_zlib.h"
 
 #include <stdio.h>
 
@@ -203,34 +204,84 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *med
 
               if (continueParsing)
               {
-                // add BASE64 encoded manifest into connection parameters
-                char *manifestBase64Encoded = NULL;
-                continueParsing &= SUCCEEDED(base64_encode(buffer, length, &manifestBase64Encoded));
+                uint32_t serializeSize = manifest->GetSmoothStreamingMedia()->GetSerializeSize();
+                ALLOC_MEM_DEFINE_SET(serializedManifest, uint8_t, serializeSize, 0);
+                continueParsing &= (serializedManifest != NULL);
 
                 if (continueParsing)
                 {
-                  wchar_t *encoded = ConvertToUnicodeA(manifestBase64Encoded);
-                  continueParsing &= (encoded != NULL);
+                  continueParsing &= manifest->GetSmoothStreamingMedia()->Serialize(serializedManifest);
+
+                  if (!continueParsing)
+                  {
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot serialize manifest");
+                  }
+                }
+
+                if (continueParsing)
+                {
+                  // compress serialized manifest
+                  uint8_t *compressedManifest = NULL;
+                  uint32_t compressedLength = 0;
+
+                  HRESULT compressionResult = compress_zlib(serializedManifest, serializeSize, &compressedManifest, &compressedLength, -1);
+                  continueParsing &= SUCCEEDED(result);
 
                   if (continueParsing)
                   {
-                    CParameter *manifestParameter = new CParameter(PARAMETER_NAME_MSHS_MANIFEST, encoded);
-                    continueParsing &= (manifestParameter != NULL);
+                    char *compressedManifestBase64Encoded = NULL;
+                    continueParsing &= SUCCEEDED(base64_encode(compressedManifest, compressedLength, &compressedManifestBase64Encoded));
 
                     if (continueParsing)
                     {
-                      continueParsing &= this->connectionParameters->Add(manifestParameter);
-                    }
+                      wchar_t *encoded = ConvertToUnicodeA(compressedManifestBase64Encoded);
+                      continueParsing &= (encoded != NULL);
 
-                    if (!continueParsing)
+                      if (continueParsing)
+                      {
+                        CParameter *manifestParameter = new CParameter(PARAMETER_NAME_MSHS_MANIFEST, encoded);
+                        continueParsing &= (manifestParameter != NULL);
+
+                        if (continueParsing)
+                        {
+                          continueParsing &= this->connectionParameters->Add(manifestParameter);
+
+                          if (!continueParsing)
+                          {
+                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add MSHS manifest parameter to connection parameters");
+                          }
+                        }
+                        else
+                        {
+                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create MSHS manifest parameter");
+                        }
+
+                        if (!continueParsing)
+                        {
+                          FREE_MEM_CLASS(manifestParameter);
+                        }
+                      }
+                      else
+                      {
+                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot convert encoded compressed manifest");
+                      }
+
+                      FREE_MEM(encoded);
+                    }
+                    else
                     {
-                      FREE_MEM_CLASS(manifestParameter);
+                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot encode compressed manifest");
                     }
                   }
 
-                  FREE_MEM(encoded);
+                  if (FAILED(result))
+                  {
+                    this->logger->Log(LOGGER_ERROR, L"%s: %s: manifest compression failed: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, compressionResult);
+                  }
+                  FREE_MEM(compressedManifest);
                 }
-                FREE_MEM(manifestBase64Encoded);
+
+                FREE_MEM(serializedManifest);
               }
 
               if (continueParsing)
