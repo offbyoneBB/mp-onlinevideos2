@@ -160,14 +160,16 @@ namespace OnlineVideos.Sites
                 if (rtmpUrlMatch.Success)
                 {
                     string leftover = rtmpUrlMatch.Groups["leftover"].Value;
+                    string query = string.Format(@"videoId={0}&lineUpId=&pubId={1}&playerId={2}&playerTag=&affiliateId=",
+                                                 videoId, publisherId, playerId);
+                    
                     int questionMarkPosition = leftover.IndexOf('?');
-                    string query = questionMarkPosition == -1
-                        ?
-                        string.Format(@"videoId={0}&lineUpId=&pubId={1}&playerId={2}&playerTag=&affiliateId=",
-                                      videoId, publisherId, playerId)
-                        :
-                        string.Format(@"{0}&videoId={1}&lineUpId=&pubId={2}&playerId={3}&playerTag=&affiliateId=",
-                                      leftover.Substring(questionMarkPosition + 1, leftover.Length - questionMarkPosition - 1), videoId, publisherId, playerId);
+                    // use existing query (if present) in the new query string
+                    if (questionMarkPosition != -1)
+                    {
+                        query = string.Format(@"{0}{1}", leftover.Substring(questionMarkPosition + 1, leftover.Length - questionMarkPosition - 1), query);
+                    }
+
                     string app = String.Format("{0}?{1}", rtmpUrlMatch.Groups["app"], query);
                     string auth = leftover;
                     string rtmpUrl = String.Format("{0}://{1}/{2}?{3}",
