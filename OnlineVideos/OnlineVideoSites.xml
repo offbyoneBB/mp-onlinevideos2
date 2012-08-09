@@ -1478,9 +1478,6 @@
     <Site name="ZTélé" util="ZTele" agecheck="false" enabled="true" lang="fr">
       <Description>Ztélé est une chaîne de télévision spécialisée dans les nouvelles technologies, la science, le multimédia, les jeux vidéo et les séries de science-fiction. Le site présente également la grille horaire des émissions, des blogues technos, des capsules vidéo, des concours, des fonds d'écran et plus encore.</Description>
     </Site>
-    <Site name="Family" util="Family" agecheck="false" enabled="true" lang="en">
-      <Description>Family.ca and the Family you see on TV are close cousins! In addition to providing the schedule and info for all the awesome shows and movies, family.ca promises to always have tons of fun and entertaining things for kids to do online.</Description>
-    </Site>
     <Site name="ABC.com" util="ABC" agecheck="false" enabled="true" lang="en">
       <Description>The American Broadcasting Company (ABC) is an American commercial broadcasting television network.</Description>
     </Site>
