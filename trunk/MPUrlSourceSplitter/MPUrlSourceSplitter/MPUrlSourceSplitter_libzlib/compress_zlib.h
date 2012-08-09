@@ -18,39 +18,24 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "StdAfx.h"
+#pragma once
 
-#include "MSHSTrackCollection.h"
+#ifndef __COMPRESS_ZLIB
+#define __COMPRESS_ZLIB
 
-CMSHSTrackCollection::CMSHSTrackCollection(void)
-  : CSerializableCollection(CCollection::Delete)
-{
-}
+#include <stdint.h>
 
-CMSHSTrackCollection::~CMSHSTrackCollection(void)
-{
-}
+/* Compress from file source to file dest until EOF on source.
+   def() returns Z_OK on success, Z_MEM_ERROR if memory could not be
+   allocated for processing, Z_STREAM_ERROR if an invalid compression
+   level is supplied, Z_VERSION_ERROR if the version of zlib.h and the
+   version of the library linked do not match, or Z_ERRNO if there is
+   an error reading or writing the files. */
 
-int CMSHSTrackCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
-{
-  bool invariant = (*(bool *)context);
+// compress from source to destination
+// @param source : the source to compress
+// @param destination : 
+// @param compressionLevel :
+HRESULT compress_zlib(const uint8_t *source, uint8_t **destination, int compressionLevel);
 
-  if (invariant)
-  {
-    return _wcsicmp(firstKey, secondKey);
-  }
-  else
-  {
-    return wcscmp(firstKey, secondKey);
-  }
-}
-
-const wchar_t *CMSHSTrackCollection::GetKey(CMSHSTrack *item)
-{
-  return L"";
-}
-
-CMSHSTrack *CMSHSTrackCollection::Clone(CMSHSTrack *item)
-{
-  return NULL;
-}
+#endif

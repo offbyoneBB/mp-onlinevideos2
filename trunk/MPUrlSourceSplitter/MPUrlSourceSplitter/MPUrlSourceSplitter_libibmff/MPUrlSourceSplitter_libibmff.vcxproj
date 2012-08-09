@@ -85,7 +85,6 @@
     <ClInclude Include="BoxFactory.h" />
     <ClInclude Include="Brand.h" />
     <ClInclude Include="BrandCollection.h" />
-    <ClInclude Include="BufferHelper.h" />
     <ClInclude Include="ChunkLargeOffsetBox.h" />
     <ClInclude Include="ChunkOffset.h" />
     <ClInclude Include="ChunkOffsetBox.h" />

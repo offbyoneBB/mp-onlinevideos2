@@ -22,8 +22,10 @@
 
 #include "MSHSStream.h"
 #include "MSHS_Elements.h"
+#include "BufferHelper.h"
 
 CMSHSStream::CMSHSStream(void)
+  : CSerializable()
 {
   this->displayHeight = 0;
   this->displayWidth = 0;
@@ -189,4 +191,133 @@ bool CMSHSStream::IsAudio(void)
 bool CMSHSStream::IsText(void)
 {
   return (wcscmp(this->GetType(), MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE_VALUE_TEXTW) == 0);
+}
+
+uint32_t CMSHSStream::GetSerializeSize(void)
+{
+  uint32_t required = 32;
+  required += this->GetSerializeStringSize(this->type);
+  required += this->GetSerializeStringSize(this->subType);
+  required += this->GetSerializeStringSize(this->url);
+  required += this->GetSerializeStringSize(this->name);
+  required += this->tracks->GetSerializeSize();
+  required += this->streamFragments->GetSerializeSize();
+
+  return required;
+}
+
+bool CMSHSStream::Serialize(uint8_t *buffer)
+{
+  bool result = __super::Serialize(buffer);
+  uint32_t position = __super::GetSerializeSize();
+
+  // store type
+  result &= this->SerializeString(buffer + position, this->type);
+  position += this->GetSerializeStringSize(this->type);
+
+  // store subType
+  result &= this->SerializeString(buffer + position, this->subType);
+  position += this->GetSerializeStringSize(this->subType);
+
+  // store url
+  result &= this->SerializeString(buffer + position, this->url);
+  position += this->GetSerializeStringSize(this->url);
+
+  WBE64INC(buffer, position, this->timeScale);
+
+  // store name
+  result &= this->SerializeString(buffer + position, this->name);
+  position += this->GetSerializeStringSize(this->name);
+
+  WBE32INC(buffer, position, this->numberOfFragments);
+  WBE32INC(buffer, position, this->numberOfTracks);
+  WBE32INC(buffer, position, this->maxWidth);
+  WBE32INC(buffer, position, this->maxHeight);
+  WBE32INC(buffer, position, this->displayWidth);
+  WBE32INC(buffer, position, this->displayHeight);
+
+  // store tracks
+  result &= this->tracks->Serialize(buffer + position);
+  position += this->tracks->GetSerializeSize();
+
+  // store stream fragments
+  result &= this->streamFragments->Serialize(buffer + position);
+  position += this->streamFragments->GetSerializeSize();
+
+  return result;
+}
+
+bool CMSHSStream::Deserialize(const uint8_t *buffer)
+{
+  FREE_MEM_CLASS(this->tracks);
+  FREE_MEM_CLASS(this->streamFragments);
+  FREE_MEM(this->type);
+  FREE_MEM(this->subType);
+  FREE_MEM(this->url);
+  FREE_MEM(this->name);
+
+  this->tracks = new CMSHSTrackCollection();
+  this->streamFragments = new CMSHSStreamFragmentCollection();
+
+  bool result = (__super::Deserialize(buffer) && (this->tracks != NULL) && (this->streamFragments != NULL));
+  uint32_t position = __super::GetSerializeSize();
+
+  // store type
+  if (result)
+  {
+    result &= this->DeserializeString(buffer + position, &this->type);
+    position += this->GetSerializeStringSize(this->type);
+  }
+
+  // store subType
+  if (result)
+  {
+    result &= this->DeserializeString(buffer + position, &this->subType);
+    position += this->GetSerializeStringSize(this->subType);
+  }
+
+  // store url
+  if (result)
+  {
+    result &= this->DeserializeString(buffer + position, &this->url);
+    position += this->GetSerializeStringSize(this->url);
+  }
+
+  if (result)
+  {
+    RBE64INC(buffer, position, this->timeScale);
+  }
+
+  // store name
+  if (result)
+  {
+    result &= this->DeserializeString(buffer + position, &this->name);
+    position += this->GetSerializeStringSize(this->name);
+  }
+
+  if (result)
+  {
+    RBE32INC(buffer, position, this->numberOfFragments);
+    RBE32INC(buffer, position, this->numberOfTracks);
+    RBE32INC(buffer, position, this->maxWidth);
+    RBE32INC(buffer, position, this->maxHeight);
+    RBE32INC(buffer, position, this->displayWidth);
+    RBE32INC(buffer, position, this->displayHeight);
+  }
+
+  // store tracks
+  if (result)
+  {
+    result &= this->tracks->Deserialize(buffer + position);
+    position += this->tracks->GetSerializeSize();
+  }
+
+  // store stream fragments
+  if (result)
+  {
+    result &= this->streamFragments->Deserialize(buffer + position);
+    position += this->streamFragments->GetSerializeSize();
+  }
+
+  return result;
 }

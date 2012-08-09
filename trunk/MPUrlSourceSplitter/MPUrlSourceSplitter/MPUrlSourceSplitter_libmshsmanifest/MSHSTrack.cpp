@@ -23,6 +23,7 @@
 #include "MSHSTrack.h"
 
 CMSHSTrack::CMSHSTrack(void)
+  : CSerializable()
 {
   this->index = 0;
   this->bitrate = 0;
@@ -175,3 +176,106 @@ void CMSHSTrack::SetNalUnitLengthField(uint16_t nalUnitLengthField)
 }
 
 /* other methods */
+
+uint32_t CMSHSTrack::GetSerializeSize(void)
+{
+  uint32_t required = 34;
+  required += this->GetSerializeStringSize(this->codecPrivateData);
+  required += this->GetSerializeStringSize(this->fourCC);
+  required += this->customAttributes->GetSerializeSize();
+
+  return required;
+}
+
+bool CMSHSTrack::Serialize(uint8_t *buffer)
+{
+  bool result = __super::Serialize(buffer);
+  uint32_t position = __super::GetSerializeSize();
+
+  if (result)
+  {
+    WBE32INC(buffer, position, this->index);
+    WBE32INC(buffer, position, this->bitrate);
+    WBE32INC(buffer, position, this->maxWidth);
+    WBE32INC(buffer, position, this->maxHeight);
+
+    // store codec private data
+    result = this->SerializeString(buffer + position, this->codecPrivateData);
+    position += this->GetSerializeStringSize(this->codecPrivateData);
+
+    WBE32INC(buffer, position, this->samplingRate);
+    WBE16INC(buffer, position, this->channels);
+    WBE16INC(buffer, position, this->bitsPerSample);
+    WBE32INC(buffer, position, this->packetSize);
+    WBE32INC(buffer, position, this->audioTag);
+
+    // store four CC
+    result = this->SerializeString(buffer + position, this->fourCC);
+    position += this->GetSerializeStringSize(this->fourCC);
+
+    WBE16INC(buffer, position, this->nalUnitLengthField);
+
+    // store custom attributes
+    result &= this->customAttributes->Serialize(buffer + position);
+    position = this->customAttributes->GetSerializeSize();
+  }
+
+  return result;
+}
+
+bool CMSHSTrack::Deserialize(const uint8_t *buffer)
+{
+  FREE_MEM(this->codecPrivateData);
+  FREE_MEM(this->fourCC);
+  FREE_MEM_CLASS(this->customAttributes);
+
+  this->customAttributes = new CMSHSCustomAttributeCollection();
+
+  bool result = (__super::Deserialize(buffer) && (this->customAttributes != NULL));
+  uint32_t position = __super::GetSerializeSize();
+
+  if (result)
+  {
+    RBE32INC(buffer, position, this->index);
+    RBE32INC(buffer, position, this->bitrate);
+    RBE32INC(buffer, position, this->maxWidth);
+    RBE32INC(buffer, position, this->maxHeight);
+
+    // store codec private data
+    if (result)
+    {
+      result = this->DeserializeString(buffer + position, &this->codecPrivateData);
+      position += this->GetSerializeStringSize(this->codecPrivateData);
+    }
+
+    if (result)
+    {
+      RBE32INC(buffer, position, this->samplingRate);
+      RBE16INC(buffer, position, this->channels);
+      RBE16INC(buffer, position, this->bitsPerSample);
+      RBE32INC(buffer, position, this->packetSize);
+      RBE32INC(buffer, position, this->audioTag);
+    }
+
+    // store four CC
+    if (result)
+    {
+      result = this->DeserializeString(buffer + position, &this->fourCC);
+      position += this->GetSerializeStringSize(this->fourCC);
+    }
+
+    if (result)
+    {
+      RBE16INC(buffer, position, this->nalUnitLengthField);
+    }
+
+    // store custom attributes
+    if (result)
+    {
+      result &= this->customAttributes->Deserialize(buffer + position);
+      position = this->customAttributes->GetSerializeSize();
+    }
+  }
+
+  return result;
+}

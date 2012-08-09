@@ -23,8 +23,6 @@
 #ifndef __LINEAR_BUFFER_DEFINED
 #define __LINEAR_BUFFER_DEFINED
 
-//#include "Logger.h"
-
 // represents linear buffer
 // this class is not thread safe !!!
 class CLinearBuffer

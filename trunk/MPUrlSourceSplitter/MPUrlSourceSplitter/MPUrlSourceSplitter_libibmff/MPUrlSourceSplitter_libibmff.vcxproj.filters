@@ -54,9 +54,6 @@
     <ClInclude Include="BoxConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BufferHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FixedPointNumber.h">
       <Filter>Header Files</Filter>
     </ClInclude>

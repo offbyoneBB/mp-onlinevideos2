@@ -23,9 +23,11 @@
 #ifndef __MSHS_STREAM_FRAGMENT__DEFINED
 #define __MSHS_STREAM_FRAGMENT__DEFINED
 
+#include "Serializable.h"
+
 #include <stdint.h>
 
-class CMSHSStreamFragment
+class CMSHSStreamFragment : public CSerializable
 {
 public:
   // creats new instance of CMSHSStreamFragment class
@@ -63,6 +65,20 @@ public:
   void SetFragmentTime(uint64_t fragmentTime);
 
   /* other methods */
+
+  // gets necessary buffer length for serializing instance
+  // @return : necessary size for buffer
+  virtual uint32_t GetSerializeSize(void);
+
+  // serialize instance into buffer, buffer must be allocated before and must have necessary size
+  // @param buffer : buffer which stores serialized instance
+  // @return : true if successful, false otherwise
+  virtual bool Serialize(uint8_t *buffer);
+
+  // deserializes instance
+  // @param : buffer which stores serialized instance
+  // @return : true if successful, false otherwise
+  virtual bool Deserialize(const uint8_t *buffer);
 
 private:
 

@@ -23,10 +23,10 @@
 #ifndef __MSHS_CUSTOM_ATTRIBUTE_COLLECTION_DEFINED
 #define __MSHS_CUSTOM_ATTRIBUTE_COLLECTION_DEFINED
 
-#include "Collection.h"
+#include "SerializableCollection.h"
 #include "MSHSCustomAttribute.h"
 
-class CMSHSCustomAttributeCollection : public CCollection<CMSHSCustomAttribute, const wchar_t *>
+class CMSHSCustomAttributeCollection : public CSerializableCollection<CMSHSCustomAttribute, const wchar_t *>
 {
 public:
   CMSHSCustomAttributeCollection(void);

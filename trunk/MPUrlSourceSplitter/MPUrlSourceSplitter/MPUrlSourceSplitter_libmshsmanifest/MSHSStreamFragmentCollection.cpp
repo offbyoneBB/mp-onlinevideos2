@@ -23,7 +23,7 @@
 #include "MSHSStreamFragmentCollection.h"
 
 CMSHSStreamFragmentCollection::CMSHSStreamFragmentCollection(void)
-  : CCollection(CCollection::Delete)
+  : CSerializableCollection(CCollection::Delete)
 {
 }
 

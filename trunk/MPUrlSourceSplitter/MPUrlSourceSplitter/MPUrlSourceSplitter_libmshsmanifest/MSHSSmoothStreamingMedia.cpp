@@ -21,8 +21,10 @@
 #include "StdAfx.h"
 
 #include "MSHSSmoothStreamingMedia.h"
+#include "BufferHelper.h"
 
 CMSHSSmoothStreamingMedia::CMSHSSmoothStreamingMedia(void)
+  : CSerializable()
 {
   this->majorVersion = MANIFEST_MAJOR_VERSION;
   this->minorVersion = MANIFEST_MINOR_VERSION;
@@ -97,4 +99,71 @@ void CMSHSSmoothStreamingMedia::SetDuration(uint64_t duration)
 bool CMSHSSmoothStreamingMedia::IsProtected(void)
 {
   return (this->GetProtections()->Count() != 0);
+}
+
+uint32_t CMSHSSmoothStreamingMedia::GetSerializeSize(void)
+{
+  return (24 + this->protections->GetSerializeSize() + this->streams->GetSerializeSize());
+}
+
+bool CMSHSSmoothStreamingMedia::Serialize(uint8_t *buffer)
+{
+  bool result = __super::Serialize(buffer);
+  uint32_t position = __super::GetSerializeSize();
+
+  if (result)
+  {
+    WBE32INC(buffer, position, this->majorVersion);
+    WBE32INC(buffer, position, this->minorVersion);
+    WBE64INC(buffer, position, this->timeScale);
+    WBE64INC(buffer, position, this->duration);
+  }
+
+  if (result)
+  {
+    result &= this->protections->Serialize(buffer + position);
+    position += this->protections->GetSerializeSize();
+  }
+
+  if (result)
+  {
+    result &= this->streams->Serialize(buffer + position);
+    position += this->streams->GetSerializeSize();
+  }
+
+  return result;
+}
+
+bool CMSHSSmoothStreamingMedia::Deserialize(const uint8_t *buffer)
+{
+  FREE_MEM_CLASS(this->protections);
+  FREE_MEM_CLASS(this->streams);
+
+  this->protections = new CMSHSProtectionCollection();
+  this->streams = new CMSHSStreamCollection();
+
+  bool result = (__super::Deserialize(buffer) && (this->protections != NULL) && (this->streams != NULL));
+  uint32_t position = __super::GetSerializeSize();
+
+  if (result)
+  {
+    RBE32INC(buffer, position, this->majorVersion);
+    RBE32INC(buffer, position, this->minorVersion);
+    RBE64INC(buffer, position, this->timeScale);
+    RBE64INC(buffer, position, this->duration);
+  }
+
+  if (result)
+  {
+    result &= this->protections->Deserialize(buffer + position);
+    position += this->protections->GetSerializeSize();
+  }
+
+  if (result)
+  {
+    result &= this->streams->Deserialize(buffer + position);
+    position += this->streams->GetSerializeSize();
+  }
+
+  return result;
 }

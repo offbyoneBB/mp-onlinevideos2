@@ -21,9 +21,10 @@
 #include "StdAfx.h"
 
 #include "MSHSStreamCollection.h"
+#include "BufferHelper.h"
 
 CMSHSStreamCollection::CMSHSStreamCollection(void)
-  : CCollection(CCollection::Delete)
+  : CSerializableCollection(CCollection::Delete)
 {
 }
 

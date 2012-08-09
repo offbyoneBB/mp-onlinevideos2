@@ -23,10 +23,10 @@
 #ifndef __MSHS_STREAM_FRAGMENT_COLLECTION_DEFINED
 #define __MSHS_STREAM_FRAGMENT_COLLECTION_DEFINED
 
-#include "Collection.h"
+#include "SerializableCollection.h"
 #include "MSHSStreamFragment.h"
 
-class CMSHSStreamFragmentCollection : public CCollection<CMSHSStreamFragment, const wchar_t *>
+class CMSHSStreamFragmentCollection : public CSerializableCollection<CMSHSStreamFragment, const wchar_t *>
 {
 public:
   CMSHSStreamFragmentCollection(void);

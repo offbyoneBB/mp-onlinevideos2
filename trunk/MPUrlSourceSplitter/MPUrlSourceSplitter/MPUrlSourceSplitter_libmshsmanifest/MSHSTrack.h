@@ -23,6 +23,7 @@
 #ifndef __MSHS_TRACK_DEFINED
 #define __MSHS_TRACK_DEFINED
 
+#include "Serializable.h"
 #include "MSHSCustomAttributeCollection.h"
 
 #include <stdint.h>
@@ -41,7 +42,7 @@
 #define MSHS_FOURCC_AACL                                                      L"AACL"
 #define MSHS_FOURCC_WMAP                                                      L"WMAP"
 
-class CMSHSTrack
+class CMSHSTrack : public CSerializable
 {
 public:
   // creats new instance of CMSHSTrack class
@@ -189,6 +190,20 @@ public:
   void SetNalUnitLengthField(uint16_t nalUnitLengthField);
 
   /* other methods */
+
+  // gets necessary buffer length for serializing instance
+  // @return : necessary size for buffer
+  virtual uint32_t GetSerializeSize(void);
+
+  // serialize instance into buffer, buffer must be allocated before and must have necessary size
+  // @param buffer : buffer which stores serialized instance
+  // @return : true if successful, false otherwise
+  virtual bool Serialize(uint8_t *buffer);
+
+  // deserializes instance
+  // @param : buffer which stores serialized instance
+  // @return : true if successful, false otherwise
+  virtual bool Deserialize(const uint8_t *buffer);
 
 private:
 
