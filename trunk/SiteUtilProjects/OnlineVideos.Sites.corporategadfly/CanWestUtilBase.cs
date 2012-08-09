@@ -9,7 +9,7 @@ namespace OnlineVideos.Sites
 {
     public abstract class CanWestUtilBase : SiteUtilBase
     {
-        private static string baseUrl = @"http://feeds.theplatform.com/ps/JSON/PortalService/2.2/";
+        private static string baseUrlPrefix = @"http://feeds.theplatform.com/ps/JSON/PortalService/2.2/";
 
         public abstract string FeedPIDUrl { get; }
         public abstract Regex FeedPIDRegex { get; }
@@ -17,8 +17,8 @@ namespace OnlineVideos.Sites
 
         public virtual string SwfUrl { get { return @""; } }
 
-        private static string categoriesJsonUrl = baseUrl + @"getCategoryList?PID={0}&field=ID&field=depth&field=title&field=hasReleases&field=fullTitle&field=hasChildren&query=CustomText|PlayerTag|{1}";
-        private static string releasesJsonUrl = baseUrl + @"getReleaseList?PID={0}&field=title&field=PID&field=ID&field=description&field=categoryIDs&field=thumbnailURL&field=URL&field=airdate&field=length&field=bitrate&sortField=airdate&sortDescending=true&startIndex=1&endIndex=100&query=CategoryIDs|{1}";
+        private static string categoriesJsonUrl = baseUrlPrefix + @"getCategoryList?PID={0}&field=ID&field=depth&field=title&field=hasReleases&field=fullTitle&field=hasChildren&query=CustomText|PlayerTag|{1}";
+        private static string releasesJsonUrl = baseUrlPrefix + @"getReleaseList?PID={0}&field=title&field=PID&field=ID&field=description&field=categoryIDs&field=thumbnailURL&field=URL&field=airdate&field=length&field=bitrate&sortField=airdate&sortDescending=true&startIndex=1&endIndex=100&query=CategoryIDs|{1}";
         private static string videoContentUrl = @"http://release.theplatform.com/content.select?pid={0}&format=SMIL&mbr=true";
 
         private static int rootDepth = 1;
