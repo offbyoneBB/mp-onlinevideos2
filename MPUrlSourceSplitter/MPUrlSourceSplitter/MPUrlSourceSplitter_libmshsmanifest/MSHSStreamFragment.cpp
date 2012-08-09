@@ -21,8 +21,10 @@
 #include "StdAfx.h"
 
 #include "MSHSStreamFragment.h"
+#include "BufferHelper.h"
 
 CMSHSStreamFragment::CMSHSStreamFragment(void)
+  : CSerializable()
 {
   this->fragmentDuration = 0;
   this->fragmentNumber = 0;
@@ -68,3 +70,38 @@ void CMSHSStreamFragment::SetFragmentTime(uint64_t fragmentTime)
 }
 
 /* other methods */
+
+uint32_t CMSHSStreamFragment::GetSerializeSize(void)
+{
+  return 20;
+}
+
+bool CMSHSStreamFragment::Serialize(uint8_t *buffer)
+{
+  bool result = __super::Serialize(buffer);
+  uint32_t position = __super::GetSerializeSize();
+
+  if (result)
+  {
+    WBE32INC(buffer, position, this->fragmentNumber);
+    WBE64INC(buffer, position, this->fragmentDuration);
+    WBE64INC(buffer, position, this->fragmentTime);
+  }
+
+  return result;
+}
+
+bool CMSHSStreamFragment::Deserialize(const uint8_t *buffer)
+{
+  bool result = __super::Deserialize(buffer);
+  uint32_t position = __super::GetSerializeSize();
+
+  if (result)
+  {
+    RBE32INC(buffer, position, this->fragmentNumber);
+    RBE64INC(buffer, position, this->fragmentDuration);
+    RBE64INC(buffer, position, this->fragmentTime);
+  }
+
+  return result;
+}

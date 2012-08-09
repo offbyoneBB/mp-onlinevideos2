@@ -18,25 +18,21 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// stdafx.h : include file for standard system include files,
+// or project specific include files that are used frequently, but
+// are changed infrequently
+//
+
 #pragma once
 
-#ifndef __MSHS_QUALITY_LEVEL_MANIFEST_DEFINED
-#define __MSHS_QUALITY_LEVEL_MANIFEST_DEFINED
+#include "targetver.h"
 
-class CMSHSQualityLevel
-{
-public:
-  // creats new instance of CMSHSQualityLevel class
-  CMSHSQualityLevel(void);
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+// Windows Header Files:
+#include <windows.h>
 
-  // desctructor
-  ~CMSHSQualityLevel(void);
 
-  /* get methods */
 
-  /* set methods */
-
-  /* other methods */
-};
-
-#endif
+// TODO: reference additional headers your program requires here
+#include "Memory.h"
+#include "Strings.h"

@@ -21,9 +21,10 @@
 #include "StdAfx.h"
 
 #include "MSHSProtectionCollection.h"
+#include "BufferHelper.h"
 
 CMSHSProtectionCollection::CMSHSProtectionCollection(void)
-  : CCollection(CCollection::Delete)
+  : CSerializableCollection(CCollection::Delete)
 {
 }
 

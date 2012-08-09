@@ -25,8 +25,9 @@
 
 #include "MSHSTrackCollection.h"
 #include "MSHSStreamFragmentCollection.h"
+#include "Serializable.h"
 
-class CMSHSStream
+class CMSHSStream : public CSerializable
 {
 public:
   // creats new instance of CMSHSStream class
@@ -164,6 +165,20 @@ public:
   // tests if stream is text type stream
   // @return : true if stream is text type stream, false otherwise
   bool IsText(void);
+
+  // gets necessary buffer length for serializing instance
+  // @return : necessary size for buffer
+  virtual uint32_t GetSerializeSize(void);
+
+  // serialize instance into buffer, buffer must be allocated before and must have necessary size
+  // @param buffer : buffer which stores serialized instance
+  // @return : true if successful, false otherwise
+  virtual bool Serialize(uint8_t *buffer);
+
+  // deserializes instance
+  // @param : buffer which stores serialized instance
+  // @return : true if successful, false otherwise
+  virtual bool Deserialize(const uint8_t *buffer);
 
 private:
 

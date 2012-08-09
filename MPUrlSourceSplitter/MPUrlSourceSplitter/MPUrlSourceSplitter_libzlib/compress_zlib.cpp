@@ -19,38 +19,3 @@
 */
 
 #include "StdAfx.h"
-
-#include "MSHSTrackCollection.h"
-
-CMSHSTrackCollection::CMSHSTrackCollection(void)
-  : CSerializableCollection(CCollection::Delete)
-{
-}
-
-CMSHSTrackCollection::~CMSHSTrackCollection(void)
-{
-}
-
-int CMSHSTrackCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
-{
-  bool invariant = (*(bool *)context);
-
-  if (invariant)
-  {
-    return _wcsicmp(firstKey, secondKey);
-  }
-  else
-  {
-    return wcscmp(firstKey, secondKey);
-  }
-}
-
-const wchar_t *CMSHSTrackCollection::GetKey(CMSHSTrack *item)
-{
-  return L"";
-}
-
-CMSHSTrack *CMSHSTrackCollection::Clone(CMSHSTrack *item)
-{
-  return NULL;
-}

@@ -23,10 +23,12 @@
 #ifndef __MSHS_PROTECTION_COLLECTION_DEFINED
 #define __MSHS_PROTECTION_COLLECTION_DEFINED
 
-#include "Collection.h"
+#include "SerializableCollection.h"
 #include "MSHSProtection.h"
 
-class CMSHSProtectionCollection : public CCollection<CMSHSProtection, GUID>
+#include <stdint.h>
+
+class CMSHSProtectionCollection : public CSerializableCollection<CMSHSProtection, GUID>
 {
 public:
   CMSHSProtectionCollection(void);

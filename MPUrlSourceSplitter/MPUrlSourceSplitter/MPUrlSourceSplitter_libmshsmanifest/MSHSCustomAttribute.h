@@ -23,7 +23,9 @@
 #ifndef __MSHS_CUSTOM_ATTRIBUTE_DEFINED
 #define __MSHS_CUSTOM_ATTRIBUTE_DEFINED
 
-class CMSHSCustomAttribute
+#include "Serializable.h"
+
+class CMSHSCustomAttribute : public CSerializable
 {
 public:
   // creats new instance of CMSHSCustomAttribute class
@@ -53,6 +55,20 @@ public:
   bool SetValue(const wchar_t *value);
 
   /* other methods */
+
+  // gets necessary buffer length for serializing instance
+  // @return : necessary size for buffer
+  virtual uint32_t GetSerializeSize(void);
+
+  // serialize instance into buffer, buffer must be allocated before and must have necessary size
+  // @param buffer : buffer which stores serialized instance
+  // @return : true if successful, false otherwise
+  virtual bool Serialize(uint8_t *buffer);
+
+  // deserializes instance
+  // @param : buffer which stores serialized instance
+  // @return : true if successful, false otherwise
+  virtual bool Deserialize(const uint8_t *buffer);
 
 private:
 

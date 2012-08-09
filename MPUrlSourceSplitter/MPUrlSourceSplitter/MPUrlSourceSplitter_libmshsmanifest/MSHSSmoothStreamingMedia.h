@@ -25,12 +25,14 @@
 
 #include "MSHSProtectionCollection.h"
 #include "MSHSStreamCollection.h"
+#include "Serializable.h"
 
 #define MANIFEST_MAJOR_VERSION                                                2
 #define MANIFEST_MINOR_VERSION                                                0
 #define MANIFEST_TIMESCALE_DEFAULT                                            10000000
 
-class CMSHSSmoothStreamingMedia
+class CMSHSSmoothStreamingMedia :
+  public CSerializable
 {
 public:
   // creates new instance of CMSHSSmoothStreamingMedia class
@@ -89,6 +91,20 @@ public:
   // tests if media is protected
   // @return : true if protected, false otherwise
   bool IsProtected(void);
+
+  // gets necessary buffer length for serializing instance
+  // @return : necessary size for buffer
+  virtual uint32_t GetSerializeSize(void);
+
+  // serialize instance into buffer, buffer must be allocated before and must have necessary size
+  // @param buffer : buffer which stores serialized instance
+  // @return : true if successful, false otherwise
+  virtual bool Serialize(uint8_t *buffer);
+
+  // deserializes instance
+  // @param : buffer which stores serialized instance
+  // @return : true if successful, false otherwise
+  virtual bool Deserialize(const uint8_t *buffer);
 
 private:
   uint32_t majorVersion;

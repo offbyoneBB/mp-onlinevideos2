@@ -27,9 +27,6 @@
     <ClInclude Include="MSHSManifest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MSHSQualityLevel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MSHSSmoothStreamingMedia.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -69,9 +66,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MSHSManifest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MSHSQualityLevel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MSHSSmoothStreamingMedia.cpp">

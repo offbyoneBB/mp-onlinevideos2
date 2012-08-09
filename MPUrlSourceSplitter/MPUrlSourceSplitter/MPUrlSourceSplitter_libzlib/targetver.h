@@ -18,39 +18,11 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "StdAfx.h"
+#pragma once
 
-#include "MSHSTrackCollection.h"
+// Including SDKDDKVer.h defines the highest available Windows platform.
 
-CMSHSTrackCollection::CMSHSTrackCollection(void)
-  : CSerializableCollection(CCollection::Delete)
-{
-}
+// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
+// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
 
-CMSHSTrackCollection::~CMSHSTrackCollection(void)
-{
-}
-
-int CMSHSTrackCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
-{
-  bool invariant = (*(bool *)context);
-
-  if (invariant)
-  {
-    return _wcsicmp(firstKey, secondKey);
-  }
-  else
-  {
-    return wcscmp(firstKey, secondKey);
-  }
-}
-
-const wchar_t *CMSHSTrackCollection::GetKey(CMSHSTrack *item)
-{
-  return L"";
-}
-
-CMSHSTrack *CMSHSTrackCollection::Clone(CMSHSTrack *item)
-{
-  return NULL;
-}
+#include <SDKDDKVer.h>

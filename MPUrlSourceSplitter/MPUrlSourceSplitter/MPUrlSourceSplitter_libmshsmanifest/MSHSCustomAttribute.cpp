@@ -23,6 +23,7 @@
 #include "MSHSCustomAttribute.h"
 
 CMSHSCustomAttribute::CMSHSCustomAttribute(void)
+  : CSerializable()
 {
   this->name = NULL;
   this->value = NULL;
@@ -57,3 +58,52 @@ bool CMSHSCustomAttribute::SetValue(const wchar_t *value)
 }
 
 /* other methods */
+
+uint32_t CMSHSCustomAttribute::GetSerializeSize(void)
+{
+  uint32_t required = 0;
+  required += this->GetSerializeStringSize(this->name);
+  required += this->GetSerializeStringSize(this->value);
+
+  return required;
+}
+
+bool CMSHSCustomAttribute::Serialize(uint8_t *buffer)
+{
+  bool result = __super::Serialize(buffer);
+  uint32_t position = __super::GetSerializeSize();
+
+  if (result)
+  {
+    result &= this->SerializeString(buffer + position, this->name);
+    position += this->GetSerializeStringSize(this->name);
+
+    result &= this->SerializeString(buffer + position, this->value);
+    position += this->GetSerializeStringSize(this->value);
+  }
+
+  return result;
+}
+
+bool CMSHSCustomAttribute::Deserialize(const uint8_t *buffer)
+{
+  FREE_MEM(this->name);
+  FREE_MEM(this->value);
+
+  bool result = __super::Deserialize(buffer);
+  uint32_t position = __super::GetSerializeSize();
+
+  if (result)
+  {
+    result &= this->DeserializeString(buffer + position, &this->name);
+    position += this->GetSerializeStringSize(this->name);
+  }
+
+  if (result)
+  {
+    result &= this->DeserializeString(buffer + position, &this->value);
+    position += this->GetSerializeStringSize(this->value);
+  }
+
+  return result;
+}
