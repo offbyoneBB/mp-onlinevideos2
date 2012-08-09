@@ -25,17 +25,21 @@
 
 #include <stdint.h>
 
-/* Compress from file source to file dest until EOF on source.
-   def() returns Z_OK on success, Z_MEM_ERROR if memory could not be
-   allocated for processing, Z_STREAM_ERROR if an invalid compression
-   level is supplied, Z_VERSION_ERROR if the version of zlib.h and the
-   version of the library linked do not match, or Z_ERRNO if there is
-   an error reading or writing the files. */
-
 // compress from source to destination
 // @param source : the source to compress
-// @param destination : 
-// @param compressionLevel :
-HRESULT compress_zlib(const uint8_t *source, uint8_t **destination, int compressionLevel);
+// @param sourceLength : the length of buffer to compress
+// @param destination : the destination compressed buffer
+// @param destinationLength : the length of compressed buffer
+// @param compressionLevel : compression level (0 - 9)
+// @return : S_OK if successful, error code otherwise
+HRESULT compress_zlib(const uint8_t *source, uint32_t sourceLength, uint8_t **destination, uint32_t *destinationLength, int compressionLevel);
+
+// decompress from source to destination
+// @param source : the source to decompress
+// @param sourceLength : the length of buffer to decompress
+// @param destination : the destination decompressed buffer
+// @param destinationLength : the length of decompressed buffer
+// @return : S_OK if successful, error code otherwise
+HRESULT decompress_zlib(const uint8_t *source, uint32_t sourceLength, uint8_t **destination, uint32_t *destinationLength);
 
 #endif

@@ -53,12 +53,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libmshsmanifest;..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libmshsmanifest;..\..\zlib;..\MPUrlSourceSplitter_libzlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libmshsmanifest.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libmshsmanifest.lib;zlib.lib;MPUrlSourceSplitter_libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -70,7 +70,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libmshsmanifest;..\..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libmshsmanifest;..\..\zlib;..\MPUrlSourceSplitter_libzlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,7 +78,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libmshsmanifest.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libmshsmanifest.lib;zlib.lib;MPUrlSourceSplitter_libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
