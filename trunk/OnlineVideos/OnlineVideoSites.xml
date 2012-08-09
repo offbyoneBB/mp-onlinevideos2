@@ -1499,9 +1499,6 @@
     <Site name="Space" util="SpaceCast" agecheck="false" enabled="true" lang="en">
       <Description>SPACE is Canada’s national science fiction, fantasy and horror channel. Look no further for your fix of the paranormal, edgy, scary, creepy and fun! SPACE is the station for all those who dare to challenge their imagination.</Description>
     </Site>
-    <Site name="Bravo!" util="Bravo" agecheck="false" enabled="true" lang="en">
-      <Description>This innovative channel covers all aspects and facets of the arts, including; music, ballet, literature, drama, visual arts, modern dance, opera, architecture, the art of talk, and much more.</Description>
-    </Site>
     <Site name="Fashion Television" util="Fashion" agecheck="false" enabled="true" lang="en">
       <Description>FashionTelevisionChannel (FT) is Canada's first and only 24-hour English language fashion channel dedicated to the world of art, architecture, photography, and design.</Description>
     </Site>
