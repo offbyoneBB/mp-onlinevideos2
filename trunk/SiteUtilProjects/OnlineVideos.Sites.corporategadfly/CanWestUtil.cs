@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -7,43 +8,54 @@ using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
-    public abstract class CanWestUtilBase : SiteUtilBase
+    public class CanWestUtil : GenericSiteUtil
     {
+        [Category("OnlineVideosConfiguration"), Description("The Url from where to discover the feed PID")]
+        protected string feedPIDUrl = null;
+        [Category("OnlineVideosConfiguration"), Description("The Regex String for parsing the feed PID")]
+        protected string feedPIDRegexString = null;
+        [Category("OnlineVideosConfiguration"), Description("The player tag which is part of the URL for getting the main categories via JSON")]
+        protected string playerTag = null;
+        [Category("OnlineVideosConfiguration"), Description("URL of the SWF player (SwfVfy will also be set to true if this is provided)")]
+        protected string swfUrl = null;
+
         private static string baseUrlPrefix = @"http://feeds.theplatform.com/ps/JSON/PortalService/2.2/";
-
-        public abstract string FeedPIDUrl { get; }
-        public abstract Regex FeedPIDRegex { get; }
-        public abstract string PlayerTag { get; }
-
-        public virtual string SwfUrl { get { return @""; } }
-
         private static string categoriesJsonUrl = baseUrlPrefix + @"getCategoryList?PID={0}&field=ID&field=depth&field=title&field=hasReleases&field=fullTitle&field=hasChildren&query=CustomText|PlayerTag|{1}";
         private static string releasesJsonUrl = baseUrlPrefix + @"getReleaseList?PID={0}&field=title&field=PID&field=ID&field=description&field=categoryIDs&field=thumbnailURL&field=URL&field=airdate&field=length&field=bitrate&sortField=airdate&sortDescending=true&startIndex=1&endIndex=100&query=CategoryIDs|{1}";
         private static string videoContentUrl = @"http://release.theplatform.com/content.select?pid={0}&format=SMIL&mbr=true";
 
         private static int rootDepth = 1;
 
-        private string feedPID;
+        protected string feedPID;
+        
+        protected Regex feedPIDRegex;
 
         private static Regex rtmpUrlRegex = new Regex(@"^(?<host>rtmp.*?)(\{break\}|\<break\>)(?<playPath>.*?)$",
             RegexOptions.Compiled);
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+            
+            if (!string.IsNullOrEmpty(feedPIDRegexString)) feedPIDRegex = new Regex(feedPIDRegexString, RegexOptions.Compiled);
+        }
 
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
 
-            string webData = GetWebData(FeedPIDUrl);
+            string webData = GetWebData(feedPIDUrl);
 
             if (!string.IsNullOrEmpty(webData))
             {
-                Match match = FeedPIDRegex.Match(webData);
+                Match match = feedPIDRegex.Match(webData);
                 if (match.Success)
                 {
                     feedPID = match.Groups["feedPID"].Value;
 
                     Log.Debug(@"Feed PID: {0}", feedPID);
 
-                    JObject json = GetWebData<JObject>(String.Format(categoriesJsonUrl, feedPID, PlayerTag));
+                    JObject json = GetWebData<JObject>(String.Format(categoriesJsonUrl, feedPID, playerTag));
                     if (json != null)
                     {
                         JArray allItems = json["items"] as JArray;
@@ -135,7 +147,7 @@ namespace OnlineVideos.Sites
 
             Log.Debug(@"Discovering subcategories for: {0}, depth: {1}, full title: {2}", parentCategory.Name, parentDepth, parentFullTitle);
 
-            JObject json = GetWebData<JObject>(String.Format(categoriesJsonUrl, feedPID, PlayerTag));
+            JObject json = GetWebData<JObject>(String.Format(categoriesJsonUrl, feedPID, playerTag));
 
             if (json != null)
             {
@@ -289,9 +301,9 @@ namespace OnlineVideos.Sites
                         }
                         Log.Debug(@"Host: {0}, PlayPath: {1}", host, playPath);
                         MPUrlSourceFilter.RtmpUrl rtmpUrl = new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = playPath };
-                        if (!string.IsNullOrEmpty(SwfUrl))
+                        if (!string.IsNullOrEmpty(swfUrl))
                         {
-                            rtmpUrl.SwfUrl = SwfUrl;
+                            rtmpUrl.SwfUrl = swfUrl;
                             rtmpUrl.SwfVerify = true;
                         }
                         urlsDictionary.Add(bitrate / 1000, rtmpUrl.ToString());
