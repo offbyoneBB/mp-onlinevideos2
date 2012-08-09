@@ -163,17 +163,17 @@ int _tmain(int argc, _TCHAR* argv[])
           char *output = NULL;
           if (SUCCEEDED(base64_encode(buffer, length, &output)))
           {
-            FILE *out = fopen("X:\\mshs_out_encoded.dat", "w");
+            FILE *out = fopen("D:\\mshs_out_encoded.dat", "w");
             fwrite(output, sizeof(char), strlen(output), out);
             fclose(out);
           }
 
-          FILE *out = fopen("X:\\mshs_out.dat", "wb");
+          FILE *out = fopen("D:\\mshs_out.dat", "wb");
           fwrite(buffer, sizeof(uint8_t), length, out);
           fclose(out);
 
-          FILE *inp = fopen("X:\\mshs_out.dat", "rb");
-          FILE *ou = fopen("X:\\mshs_out_zlib.dat", "wb");
+          FILE *inp = fopen("D:\\mshs_out.dat", "rb");
+          FILE *ou = fopen("D:\\mshs_out_zlib.dat", "wb");
 
           int err = def(inp, ou, -1);
 
