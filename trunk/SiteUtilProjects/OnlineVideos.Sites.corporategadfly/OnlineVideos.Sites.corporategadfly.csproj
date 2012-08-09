@@ -51,6 +51,7 @@
     <Compile Include="CTVUtilBase.cs" />
     <Compile Include="DiscoveryUtil.cs" />
     <Compile Include="DIYUtil.cs" />
+    <Compile Include="FamilyUtil.cs" />
     <Compile Include="FashionUtil.cs" />
     <Compile Include="FoodNetworkUtil.cs" />
     <Compile Include="GlobalUtil.cs" />
