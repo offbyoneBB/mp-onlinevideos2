@@ -42,16 +42,9 @@
     <Compile Include="CanadaBrightCoveUtilBase.cs" />
     <Compile Include="CanWestUtil.cs" />
     <Compile Include="CBCUtil.cs" />
-    <Compile Include="ComedyNetworkUtil.cs" />
-    <Compile Include="CTVLocalNewsUtil.cs" />
-    <Compile Include="CTVNewsUtil.cs" />
     <Compile Include="CTVUtil.cs" />
-    <Compile Include="CTVUtilBase.cs" />
-    <Compile Include="DiscoveryUtil.cs" />
     <Compile Include="FamilyUtil.cs" />
-    <Compile Include="FashionUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpaceCastUtil.cs" />
     <Compile Include="TouTvUtil.cs" />
     <Compile Include="TreehouseTVUtil.cs" />
     <Compile Include="TSNUtil.cs" />
