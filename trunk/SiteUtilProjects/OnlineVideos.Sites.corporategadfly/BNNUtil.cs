@@ -4,12 +4,8 @@ using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
-    public class BNNUtil : CTVUtilBase
+    public class BNNUtil : CTVUtil
     {
-        public override string BaseUrl { get { return @"http://watch.bnn.ca"; } }
-        public override string Swf { get { return @"http://watch.bnn.ca/news/Flash/player.swf?themeURL=http://watch.bnn.ca/themes/BusinessNews/player/theme.aspx"; } }
-        public override bool IsLookaheadNeededAtMainLevel { get { return true; } }
-
         private static Regex weekdayRegex = new Regex(@"Monday|Tuesday|Wednesday|Thursday|Friday",
             RegexOptions.Compiled);
         private static Regex weekdayEpisodeListRegex = new Regex(@"<dt><a[^>]*>(?<title>[^<]*)</a></dt>\s+<dd\sclass=""Thumbnail"">.*?ClipId:'(?<episode>[^']*)'.*?<img\ssrc=""(?<thumb>[^""]*)""\s/><span></span></a></dd>\s+<dd class=""Description"">(?<description>[^<]*)</dd>",

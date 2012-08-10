@@ -5,14 +5,10 @@ using System.Web;
 
 namespace OnlineVideos.Sites
 {
-    public class TSNUtil : CTVUtilBase
+    public class TSNUtil : CTVUtil
     {
         private Regex _episodeListRegex = new Regex(@"<dt><a\shref=""[^#]*#clip(?<episode>[^""]*)""\sonclick.*?Thumbnail:'(?<thumb>[^']*)'.*?Description:'(?<description>[^']*)'.*?Title:'(?<title>[^']*)'",
             RegexOptions.Compiled | RegexOptions.Singleline);
-
-        public override string BaseUrl { get { return @"http://watch.tsn.ca"; } }
-
-        public override string Swf { get { return @"http://watch.tsn.ca/Flash/player.swf?themeURL=http://watch.ctv.ca/themes/TSN/player/theme.aspx"; } }
 
         public override int StartingPanelLevel { get { return 2; } }
 
@@ -24,7 +20,7 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
 
-            string webData = GetWebData(BaseUrl + mainVideoLibraryUri);
+            string webData = GetWebData(string.Format(@"{0}{1}", baseUrl, mainVideoLibraryUri));
 
             if (!string.IsNullOrEmpty(webData))
             {

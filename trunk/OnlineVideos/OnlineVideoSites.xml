@@ -1483,30 +1483,52 @@
     </Site>
     <Site name="CTV.ca" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>CTV is Canada's largest private broadcaster, offering a wide range of leading news, sports, and entertainment programming.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://watch.ctv.ca]]></item>
+      </Configuration>
     </Site>
-    <Site name="CTV News" util="CTVNews" agecheck="false" enabled="true" lang="en">
-      <Description>CTV News</Description>
-    </Site>
-    <Site name="CTV Local News" util="CTVLocalNews" agecheck="false" enabled="true" lang="en">
-      <Description>CTV Local News</Description>
-    </Site>
-    <Site name="Discovery Channel Canada" util="Discovery" agecheck="false" enabled="true" lang="en">
+    <Site name="Discovery Channel Canada" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>Canadian TV Channel dedicated to documentaries about popular science, technology, and history.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://watch.discoverychannel.ca]]></item>
+		<item key="swfUrl"><![CDATA[http://watch.discoverychannel.ca/Flash/player.swf?themeURL=http://watch.discoverychannel.ca/themes/Discoverynew/player/theme.aspx]]></item>
+        <item key="isLookaheadNeededAtMainLevel"><![CDATA[true]]></item>
+      </Configuration>
     </Site>
-    <Site name="The Comedy Network" util="ComedyNetwork" agecheck="false" enabled="true" lang="en">
+    <Site name="The Comedy Network" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>Canada's first specialty comedy service, The Comedy Network airs comedy of all kinds, 24-hours-a-day. Launched in October 1997, The Comedy Network broadcasts, uncut and uncensored, an eclectic mix of scripted, stand-up, sketch, improv, and animated comedy - as well as topical comedy talk shows, game shows and classic situation comedies.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://watch.thecomedynetwork.ca]]></item>
+		<item key="swfUrl"><![CDATA[http://watch.thecomedynetwork.ca/Flash/player.swf?themeURL=http://watch.thecomedynetwork.ca/themes/Comedy/player/theme.aspx]]></item>
+      </Configuration>
     </Site>
-    <Site name="Space" util="SpaceCast" agecheck="false" enabled="true" lang="en">
+    <Site name="Space" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>SPACE is Canada’s national science fiction, fantasy and horror channel. Look no further for your fix of the paranormal, edgy, scary, creepy and fun! SPACE is the station for all those who dare to challenge their imagination.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://watch.spacecast.com]]></item>
+      </Configuration>
     </Site>
-    <Site name="Fashion Television" util="Fashion" agecheck="false" enabled="true" lang="en">
+    <Site name="Fashion Television" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>FashionTelevisionChannel (FT) is Canada's first and only 24-hour English language fashion channel dedicated to the world of art, architecture, photography, and design.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://watch.fashiontelevision.com]]></item>
+		<item key="swfUrl"><![CDATA[http://watch.fashiontelevision.com/Flash/player.swf?themeURL=http://watch.fashiontelevision.com/themes/FashionTelevision/player/theme.aspx]]></item>
+      </Configuration>
     </Site>
     <Site name="TSN" util="TSN" agecheck="false" enabled="true" lang="en">
       <Description>TSN is Canada's leading English language sports TV channel.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://watch.tsn.ca]]></item>
+		<item key="swfUrl"><![CDATA[http://watch.tsn.ca/Flash/player.swf?themeURL=http://watch.ctv.ca/themes/TSN/player/theme.aspx]]></item>
+      </Configuration>
     </Site>
     <Site name="BNN" util="BNN" agecheck="false" enabled="true" lang="en">
       <Description>Business News Network is Canada’s only all business and financial news channel.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://watch.bnn.ca]]></item>
+        <item key="swfUrl"><![CDATA[http://watch.bnn.ca/news/Flash/player.swf?themeURL=http://watch.bnn.ca/themes/BusinessNews/player/theme.aspx]]></item>
+        <item key="isLookaheadNeededAtMainLevel"><![CDATA[true]]></item>
+      </Configuration>
     </Site>
     <Site name="Global TV" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>Global Television reaches almost 100% of Canadians and is the online destination for Global Entertainment show information, episodes, web exclusives and more!</Description>
