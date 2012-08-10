@@ -37,19 +37,13 @@ CBitrateBox::~CBitrateBox(void)
 
 /* get methods */
 
-bool CBitrateBox::GetBox(uint8_t **buffer, uint32_t *length)
+bool CBitrateBox::GetBox(uint8_t *buffer, uint32_t length)
 {
   bool result = __super::GetBox(buffer, length);
 
   if (result)
   {
     uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-
-    if (!result)
-    {
-      FREE_MEM(*buffer);
-      *length = 0;
-    }
   }
 
   return result;
@@ -106,9 +100,9 @@ wchar_t *CBitrateBox::GetParsedHumanReadable(const wchar_t *indent)
   return result;
 }
 
-uint64_t CBitrateBox::GetBoxSize(uint64_t size)
+uint64_t CBitrateBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize(size);
+  return __super::GetBoxSize();
 }
 
 bool CBitrateBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)

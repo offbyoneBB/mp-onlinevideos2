@@ -36,19 +36,13 @@ CChunkOffsetBox::~CChunkOffsetBox(void)
 
 /* get methods */
 
-bool CChunkOffsetBox::GetBox(uint8_t **buffer, uint32_t *length)
+bool CChunkOffsetBox::GetBox(uint8_t *buffer, uint32_t length)
 {
   bool result = __super::GetBox(buffer, length);
 
   if (result)
   {
     uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-
-    if (!result)
-    {
-      FREE_MEM(*buffer);
-      *length = 0;
-    }
   }
 
   return result;
@@ -114,9 +108,9 @@ wchar_t *CChunkOffsetBox::GetParsedHumanReadable(const wchar_t *indent)
   return result;
 }
 
-uint64_t CChunkOffsetBox::GetBoxSize(uint64_t size)
+uint64_t CChunkOffsetBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize(size);
+  return __super::GetBoxSize();
 }
 
 bool CChunkOffsetBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)

@@ -33,19 +33,13 @@ CDataEntryBox::~CDataEntryBox(void)
 
 /* get methods */
 
-bool CDataEntryBox::GetBox(uint8_t **buffer, uint32_t *length)
+bool CDataEntryBox::GetBox(uint8_t *buffer, uint32_t length)
 {
   bool result = __super::GetBox(buffer, length);
 
   if (result)
   {
     uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-
-    if (!result)
-    {
-      FREE_MEM(*buffer);
-      *length = 0;
-    }
   }
 
   return result;
@@ -89,9 +83,9 @@ wchar_t *CDataEntryBox::GetParsedHumanReadable(const wchar_t *indent)
   return result;
 }
 
-uint64_t CDataEntryBox::GetBoxSize(uint64_t size)
+uint64_t CDataEntryBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize(size);
+  return __super::GetBoxSize();
 }
 
 bool CDataEntryBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)

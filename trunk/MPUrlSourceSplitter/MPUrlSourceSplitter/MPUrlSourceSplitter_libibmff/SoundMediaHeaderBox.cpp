@@ -36,19 +36,13 @@ CSoundMediaHeaderBox::~CSoundMediaHeaderBox(void)
 
 /* get methods */
 
-bool CSoundMediaHeaderBox::GetBox(uint8_t **buffer, uint32_t *length)
+bool CSoundMediaHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
 {
   bool result = __super::GetBox(buffer, length);
 
   if (result)
   {
     uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-
-    if (!result)
-    {
-      FREE_MEM(*buffer);
-      *length = 0;
-    }
   }
 
   return result;
@@ -92,9 +86,9 @@ wchar_t *CSoundMediaHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
   return result;
 }
 
-uint64_t CSoundMediaHeaderBox::GetBoxSize(uint64_t size)
+uint64_t CSoundMediaHeaderBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize(size);
+  return __super::GetBoxSize();
 }
 
 bool CSoundMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)

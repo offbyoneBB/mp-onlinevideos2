@@ -45,19 +45,13 @@ CMovieHeaderBox::~CMovieHeaderBox(void)
 
 /* get methods */
 
-bool CMovieHeaderBox::GetBox(uint8_t **buffer, uint32_t *length)
+bool CMovieHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
 {
   bool result = __super::GetBox(buffer, length);
 
   if (result)
   {
     uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-
-    if (!result)
-    {
-      FREE_MEM(*buffer);
-      *length = 0;
-    }
   }
 
   return result;
@@ -177,7 +171,7 @@ wchar_t *CMovieHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
   return result;
 }
 
-uint64_t CMovieHeaderBox::GetBoxSize(uint64_t size)
+uint64_t CMovieHeaderBox::GetBoxSize(void)
 {
   uint64_t adjust = 0;
   switch(this->GetVersion())
@@ -192,7 +186,7 @@ uint64_t CMovieHeaderBox::GetBoxSize(uint64_t size)
     break;
   }
 
-  return __super::GetBoxSize(size + adjust);
+  return __super::GetBoxSize();
 }
 
 bool CMovieHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)

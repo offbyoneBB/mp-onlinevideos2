@@ -24,46 +24,48 @@
 #include "stdafx.h"
 
 #include <stdio.h>
-#include "base64.h"
-#include <stdint.h>
-#include "compress_zlib.h"
-#include "MSHSSmoothStreamingMedia.h"
+#include "FileTypeBox.h"
+#include "MovieBox.h"
+#include "BoxCollection.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-  ALLOC_MEM_DEFINE_SET(base64EncodedManifest, char, 30441, 0);
-  FILE *stream = fopen("D:\\input.dat", "r");
-  fread(base64EncodedManifest, 1, 30440, stream);
-  fclose(stream);
-  uint8_t *output = NULL;
-  uint32_t length = 0;
+  CFileTypeBox *box = new CFileTypeBox();
 
-  if (SUCCEEDED(base64_decode(base64EncodedManifest, &output, &length)))
+  box->GetMajorBrand()->SetBrandString(L"isml");
+  box->SetMinorVersion(0x00000200);
+  CBrand *brand = new CBrand();
+  brand->SetBrandString(L"piff");
+  box->GetCompatibleBrands()->Add(brand);
+  brand = new CBrand();
+  brand->SetBrandString(L"iso2");
+  box->GetCompatibleBrands()->Add(brand);
+
+  uint8_t *buffer = NULL;
+  uint32_t length = box->GetBoxSize(0);
+  
+  if (box->GetBox(&buffer, &length))
   {
-    uint8_t *output2 = NULL;
-    uint32_t length2 = 0;
-
-    if (SUCCEEDED(decompress_zlib(output, length, &output2, &length2)))
-    {
-      CMSHSSmoothStreamingMedia *media = new CMSHSSmoothStreamingMedia();
-      if (media->Deserialize(output2))
-      {
-        for(int i=0; i < media->GetStreams()->Count();i++)
-        {
-          CMSHSStream *stream = media->GetStreams()->GetItem(i);
-
-          for(int j = 0; j < stream->GetTracks()->Count(); j++)
-          {
-            CMSHSTrack *track = stream->GetTracks()->GetItem(j);
-
-            printf("A");
-          }
-        }
-        printf("des");
-      }
-    }
+    FILE *stream = fopen("D:\\test_dat.mp4", "wb");
+    fwrite(buffer, 1, length, stream);
+    fclose(stream);
   }
 
+  /*CMovieBox *movieBox = new CMovieBox();
+
+  movieBox->GetBoxes()->Add(box);
+
+  buffer = NULL;
+  length = 0;
+  
+  if (movieBox->GetBox(&buffer, &length))
+  {
+    FILE *stream = fopen("D:\\test_dat.mp4", "ab");
+    fwrite(buffer, 1, length, stream);
+    fclose(stream);
+  }*/
+
+  
 	return 0;
 }
 

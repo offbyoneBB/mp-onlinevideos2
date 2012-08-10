@@ -36,19 +36,13 @@ CPixelAspectRatioBox::~CPixelAspectRatioBox(void)
 
 /* get methods */
 
-bool CPixelAspectRatioBox::GetBox(uint8_t **buffer, uint32_t *length)
+bool CPixelAspectRatioBox::GetBox(uint8_t *buffer, uint32_t length)
 {
   bool result = __super::GetBox(buffer, length);
 
   if (result)
   {
     uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-
-    if (!result)
-    {
-      FREE_MEM(*buffer);
-      *length = 0;
-    }
   }
 
   return result;
@@ -99,9 +93,9 @@ wchar_t *CPixelAspectRatioBox::GetParsedHumanReadable(const wchar_t *indent)
   return result;
 }
 
-uint64_t CPixelAspectRatioBox::GetBoxSize(uint64_t size)
+uint64_t CPixelAspectRatioBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize(size);
+  return __super::GetBoxSize();
 }
 
 bool CPixelAspectRatioBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)

@@ -45,7 +45,7 @@ uint32_t CFullBox::GetFlags(void)
   return this->flags;
 }
 
-bool CFullBox::GetBox(uint8_t **buffer, uint32_t *length)
+bool CFullBox::GetBox(uint8_t *buffer, uint32_t length)
 {
   bool result = __super::GetBox(buffer, length);
 
@@ -53,14 +53,8 @@ bool CFullBox::GetBox(uint8_t **buffer, uint32_t *length)
   {
     uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
 
-    WBE8INC(*buffer, position, this->GetVersion());
-    WBE24INC(*buffer, position, this->GetFlags());
-
-    if (!result)
-    {
-      FREE_MEM(*buffer);
-      *length = 0;
-    }
+    WBE8INC(buffer, position, this->GetVersion());
+    WBE24INC(buffer, position, this->GetFlags());
   }
 
   return result;
@@ -99,9 +93,9 @@ wchar_t *CFullBox::GetParsedHumanReadable(const wchar_t *indent)
   return result;
 }
 
-uint64_t CFullBox::GetBoxSize(uint64_t size)
+uint64_t CFullBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize(size + FULL_BOX_DATA_SIZE);
+  return __super::GetBoxSize();
 }
 
 bool CFullBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
