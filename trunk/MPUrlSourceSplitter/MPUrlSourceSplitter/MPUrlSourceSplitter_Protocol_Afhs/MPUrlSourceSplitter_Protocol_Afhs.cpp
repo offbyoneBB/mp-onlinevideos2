@@ -478,7 +478,6 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
           this->segmentsFragments->GetSegmentFragment(this->mainCurlInstance->GetUrl(), true)->SetDownloaded(true);
         }
-
         
         CSegmentFragment *segmentFragmentToDownload = this->GetFirstNotDownloadedSegmentFragment();
         if (segmentFragmentToDownload != NULL)
@@ -1233,8 +1232,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(PluginConfiguration *conf
 
 void CMPUrlSourceSplitter_Protocol_Afhs::RemoveAllDownloadedSegmentFragment(void)
 {
-  bool foundLastDownloadedSegmentFragment = false;
-
   if (this->segmentsFragments->Count() > 1)
   {
     unsigned int i = 0;
@@ -1538,7 +1535,7 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
       {
         CSegmentFragment *segmentFragment = segmentsFragments->GetItem(i);
 
-        wchar_t *temp = FormatString(L"%s%ssegment %d, fragment %d, url '%s', timestamp: %lld", (i == 0) ? L"" : segmentFragmentLog, (i == 0) ? L"" : L"\n", segmentFragment->GetSegment(), segmentFragment->GetFragment(), segmentFragment->GetUrl(), segmentFragment->GetFragmentTimestamp());
+        wchar_t *temp = FormatString(L"%s%ssegment %u, fragment %u, url '%s', timestamp: %llu", (i == 0) ? L"" : segmentFragmentLog, (i == 0) ? L"" : L"\n", segmentFragment->GetSegment(), segmentFragment->GetFragment(), segmentFragment->GetUrl(), segmentFragment->GetFragmentTimestamp());
         FREE_MEM(segmentFragmentLog);
         segmentFragmentLog = temp;
       }

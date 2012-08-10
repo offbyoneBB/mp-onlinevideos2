@@ -24,9 +24,46 @@
 #include "stdafx.h"
 
 #include <stdio.h>
+#include "base64.h"
+#include <stdint.h>
+#include "compress_zlib.h"
+#include "MSHSSmoothStreamingMedia.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+  ALLOC_MEM_DEFINE_SET(base64EncodedManifest, char, 30441, 0);
+  FILE *stream = fopen("D:\\input.dat", "r");
+  fread(base64EncodedManifest, 1, 30440, stream);
+  fclose(stream);
+  uint8_t *output = NULL;
+  uint32_t length = 0;
+
+  if (SUCCEEDED(base64_decode(base64EncodedManifest, &output, &length)))
+  {
+    uint8_t *output2 = NULL;
+    uint32_t length2 = 0;
+
+    if (SUCCEEDED(decompress_zlib(output, length, &output2, &length2)))
+    {
+      CMSHSSmoothStreamingMedia *media = new CMSHSSmoothStreamingMedia();
+      if (media->Deserialize(output2))
+      {
+        for(int i=0; i < media->GetStreams()->Count();i++)
+        {
+          CMSHSStream *stream = media->GetStreams()->GetItem(i);
+
+          for(int j = 0; j < stream->GetTracks()->Count(); j++)
+          {
+            CMSHSTrack *track = stream->GetTracks()->GetItem(j);
+
+            printf("A");
+          }
+        }
+        printf("des");
+      }
+    }
+  }
+
 	return 0;
 }
 

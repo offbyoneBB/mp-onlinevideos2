@@ -70,14 +70,6 @@ public:
   // @return : the name of the Stream
   const wchar_t *GetName(void);
 
-  // gets the number of Fragments available for this Stream
-  // @return : the number of Fragments available for this Stream
-  uint32_t GetNumberOfFragments(void);
-
-  // gets the number of Tracks available for this Stream
-  // @return : the number of Tracks available for this Stream
-  uint32_t GetNumberOfTracks(void);
-
   // gets the maximum width of a video Sample, in pixels
   // @return : the maximum width of a video Sample, in pixels
   uint32_t GetMaxWidth(void);
@@ -127,14 +119,6 @@ public:
   // @param name : the name of the Stream set
   // @return : true if successful, false otherwise
   bool SetName(const wchar_t *name);
-
-  // sets the number of Fragments available for this Stream
-  // @param numberOfFragments : the number of Fragments available for this Stream to set
-  void SetNumberOfFragments(uint32_t numberOfFragments);
-
-  // sets the number of Tracks available for this Stream
-  // @param numberOfTracks: the number of Tracks available for this Stream to set
-  void SetNumberOfTracks(uint32_t numberOfTracks);
 
   // sets the maximum width of a video Sample, in pixels
   // @param maxWidth: the maximum width of a video Sample to set
@@ -208,12 +192,6 @@ private:
 
   // the name of the Stream
   wchar_t *name;
-
-  // the number of Fragments available for this Stream
-  uint32_t numberOfFragments;
-
-  // the number of Tracks available for this Stream
-  uint32_t numberOfTracks;
 
   // the maximum width of a video Sample, in pixels
   uint32_t maxWidth;

@@ -180,8 +180,8 @@ bool CMSHSManifest::Parse(const char *buffer)
                     continueParsing &= stream->SetUrl(url);
                     stream->SetTimeScale(GetValueUnsignedInt64(timeScale, this->smoothStreamingMedia->GetTimeScale()));
                     continueParsing &= stream->SetName(name);
-                    stream->SetNumberOfFragments(GetValueUnsignedInt(numberOfFragments, 0));
-                    stream->SetNumberOfTracks(GetValueUnsignedInt(numberOfTracks, 0));
+                    /*stream->SetNumberOfFragments(GetValueUnsignedInt(numberOfFragments, 0));
+                    stream->SetNumberOfTracks(GetValueUnsignedInt(numberOfTracks, 0));*/
                     stream->SetMaxWidth(GetValueUnsignedInt(maxWidth, 0));
                     stream->SetMaxHeight(GetValueUnsignedInt(maxHeight, 0));
                     stream->SetDisplayWidth(GetValueUnsignedInt(displayWidth, 0));
@@ -209,6 +209,9 @@ bool CMSHSManifest::Parse(const char *buffer)
                   if (continueParsing && (streamChild != NULL))
                   {
                     // go through all child nodes in stream to acquire tracks or stream fragments
+                    uint32_t trackIndex = 0;
+                    uint32_t streamFragmentNumber = 0;
+                    uint64_t streamFragmentTime = 0;
                     do
                     {
                       if (strcmp(streamChild->Name(), MSHS_ELEMENT_STREAM_ELEMENT_TRACK) == 0)
@@ -233,7 +236,7 @@ bool CMSHSManifest::Parse(const char *buffer)
 
                         if (continueParsing)
                         {
-                          track->SetIndex(GetValueUnsignedInt(index, 0));
+                          track->SetIndex(GetValueUnsignedInt(index, trackIndex++));
                           track->SetBitrate(GetValueUnsignedInt(bitrate, 0));
                           track->SetMaxWidth(GetValueUnsignedInt(maxWidth, 0));
                           track->SetMaxHeight(GetValueUnsignedInt(maxHeight, 0));
@@ -330,9 +333,11 @@ bool CMSHSManifest::Parse(const char *buffer)
 
                         if (continueParsing)
                         {
-                          streamFragment->SetFragmentNumber(GetValueUnsignedInt(fragmentNumber, 0));
+                          streamFragment->SetFragmentNumber(GetValueUnsignedInt(fragmentNumber, streamFragmentNumber++));
                           streamFragment->SetFragmentDuration(GetValueUnsignedInt64(fragmentDuration, 0));
-                          streamFragment->SetFragmentTime(GetValueUnsignedInt64(fragmentTime, 0));
+                          streamFragment->SetFragmentTime(GetValueUnsignedInt64(fragmentTime, streamFragmentTime));
+
+                          streamFragmentTime = streamFragment->GetFragmentTime() + streamFragment->GetFragmentDuration();
 
                           if (continueParsing)
                           {

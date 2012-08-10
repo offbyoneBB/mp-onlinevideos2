@@ -20,8 +20,8 @@
 
 #pragma once
 
-#ifndef __MSHS_STREAM_FRAGMENT__DEFINED
-#define __MSHS_STREAM_FRAGMENT__DEFINED
+#ifndef __MSHS_STREAM_FRAGMENT_DEFINED
+#define __MSHS_STREAM_FRAGMENT_DEFINED
 
 #include "Serializable.h"
 

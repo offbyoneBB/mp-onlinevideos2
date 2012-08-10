@@ -28,6 +28,9 @@
 #include "IProtocolPlugin.h"
 #include "LinearBufferCollection.h"
 #include "HttpCurlInstance.h"
+#include "StreamFragmentCollection.h"
+
+#include "MSHSSmoothStreamingMedia.h"
 
 #include <curl/curl.h>
 
@@ -187,6 +190,34 @@ protected:
 
   // buffer for processing data before are send to filter
   CLinearBuffer *bufferForProcessing;
+
+  // holds stream fragments and urls
+  CStreamFragmentCollection *streamFragments;
+
+  // removes all downloaded stream fragments
+  // the last one stream fragment (even downloaded) still preserve
+  void RemoveAllDownloadedStreamFragments(void);
+
+  // gets first not downloaded stream fragment
+  // @return : first not downloaded stream fragment or NULL if not exists
+  CStreamFragment *GetFirstNotDownloadedStreamFragment(void);
+
+  // gets stream fragments collection created from manifest
+  // @param logger : the logger for logging purposes
+  // @param methodName : the name of method calling GetStreamFragmentsFromManifest()
+  // @param configurationParameters : the configuration parameters
+  // @param manifest : manifest to create stream fragments collection
+  // @param logCollection : specifies if result collection should be logged
+  // @return : stream fragments collection created from manifest or NULL if error
+  CStreamFragmentCollection *GetStreamFragmentsFromManifest(CLogger *logger, const wchar_t *methodName, CParameterCollection *configurationParameters, CMSHSSmoothStreamingMedia *manifest, bool logCollection);
+
+  // formats url
+  // @param baseUrl : the base url (manifest url)
+  // @param urlPattern : the url pattern
+  // @param track : track for which is url formatted
+  // @param fragment : fragment for which is url formatted
+  // @return : url or NULL if error
+  wchar_t *FormatUrl(const wchar_t *baseUrl, const wchar_t *urlPattern, CMSHSTrack *track, CMSHSStreamFragment *fragment);
 };
 
 #endif
