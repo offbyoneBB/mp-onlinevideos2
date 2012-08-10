@@ -26,6 +26,9 @@
 #include "LockMutex.h"
 #include "VersionInfo.h"
 
+#include "base64.h"
+#include "compress_zlib.h"
+#include "formatUrl.h"
 
 // protocol implementation name
 #ifdef _DEBUG
@@ -88,6 +91,7 @@ CMPUrlSourceSplitter_Protocol_Mshs::CMPUrlSourceSplitter_Protocol_Mshs(CParamete
   this->bufferForBoxProcessingCollection = NULL;
   this->bufferForProcessing = NULL;
   this->shouldExit = false;
+  this->streamFragments = NULL;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -110,6 +114,7 @@ CMPUrlSourceSplitter_Protocol_Mshs::~CMPUrlSourceSplitter_Protocol_Mshs()
   FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
   FREE_MEM_CLASS(this->bufferForProcessing);
   FREE_MEM_CLASS(this->configurationParameters);
+  FREE_MEM_CLASS(this->streamFragments);
 
   if (this->lockMutex != NULL)
   {
@@ -232,507 +237,329 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
 
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  //if (this->IsConnected())
-  //{
-  //  if (!this->wholeStreamDownloaded)
-  //  {
-  //    if (!(this->shouldExit))
-  //    {
-  //      unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
-  //      if (bytesRead != 0)
-  //      {
-  //        if (this->bufferForBoxProcessingCollection != NULL)
-  //        {
-  //          CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
-  //          if (linearBuffer != NULL)
-  //          {
-  //            unsigned int bufferSize = linearBuffer->GetBufferSize();
-  //            unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
+  if (this->IsConnected())
+  {
+    if (!this->wholeStreamDownloaded)
+    {
+      if (!(this->shouldExit))
+      {
+        unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+        if (bytesRead != 0)
+        {
+          if (this->bufferForBoxProcessingCollection != NULL)
+          {
+            CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
+            if (linearBuffer != NULL)
+            {
+              unsigned int bufferSize = linearBuffer->GetBufferSize();
+              unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
 
-  //            if (freeSpace < bytesRead)
-  //            {
-  //              unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
-  //              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
-  //              if (!linearBuffer->ResizeBuffer(bufferNewSize))
-  //              {
-  //                this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-  //                // error
-  //                bytesRead = 0;
-  //              }
-  //            }
+              if (freeSpace < bytesRead)
+              {
+                unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
+                if (!linearBuffer->ResizeBuffer(bufferNewSize))
+                {
+                  this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+                  // error
+                  bytesRead = 0;
+                }
+              }
 
-  //            if (bytesRead != 0)
-  //            {
-  //              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
-  //              if (buffer != NULL)
-  //              {
-  //                this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-  //                linearBuffer->AddToBuffer(buffer, bytesRead);
-  //                this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
-  //              }
-  //              FREE_MEM(buffer);
-  //            }
-  //          }
-  //        }
-  //      }
-  //    }
+              if (bytesRead != 0)
+              {
+                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
+                if (buffer != NULL)
+                {
+                  this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                  linearBuffer->AddToBuffer(buffer, bytesRead);
+                  this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+                }
+                FREE_MEM(buffer);
+              }
+            }
+          }
+        }
+      }
 
-  //    if ((!this->setLength) && (this->bytePosition != 0))
-  //    {
-  //      // adjust total length if not already set
-  //      if (this->streamLength == 0)
-  //      {
-  //        // error occured or stream duration is not set
-  //        // just make guess
-  //        this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-  //        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-  //        this->filter->SetTotalLength(this->streamLength, true);
-  //      }
-  //      else if ((this->bytePosition > (this->streamLength * 3 / 4)))
-  //      {
-  //        // it is time to adjust stream length, we are approaching to end but still we don't know total length
-  //        this->streamLength = this->bytePosition * 2;
-  //        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-  //        this->filter->SetTotalLength(this->streamLength, true);
-  //      }
-  //    }
+      if ((!this->setLength) && (this->bytePosition != 0))
+      {
+        // adjust total length if not already set
+        if (this->streamLength == 0)
+        {
+          // error occured or stream duration is not set
+          // just make guess
+          this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+          this->filter->SetTotalLength(this->streamLength, true);
+        }
+        else if ((this->bytePosition > (this->streamLength * 3 / 4)))
+        {
+          // it is time to adjust stream length, we are approaching to end but still we don't know total length
+          this->streamLength = this->bytePosition * 2;
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+          this->filter->SetTotalLength(this->streamLength, true);
+        }
+      }
 
-  //    if ((!this->supressData) && (this->bufferForBoxProcessingCollection != NULL))
-  //    {
-  //      bool continueProcessing = false;
+      if ((!this->supressData) && (this->bufferForBoxProcessingCollection != NULL))
+      {
+        bool continueProcessing = false;
 
-  //      while (this->bufferForBoxProcessingCollection->Count() > 1)
-  //      {
-  //        CLinearBuffer *bufferForBoxProcessing = this->bufferForBoxProcessingCollection->GetItem(0);
-  //        do
-  //        {
-  //          continueProcessing = false;
-  //          CBox *box = new CBox();
-  //          if (box != NULL)
-  //          {
-  //            unsigned int length = bufferForBoxProcessing->GetBufferOccupiedSpace();
-  //            if (length > 0)
-  //            {
-  //              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-  //              if (buffer != NULL)
-  //              {
-  //                bufferForBoxProcessing->CopyFromBuffer(buffer, length, 0, 0);
-  //                if (box->Parse(buffer, length))
-  //                {
-  //                  unsigned int boxSize = (unsigned int)box->GetSize();
-  //                  if (length >= boxSize)
-  //                  {
-  //                    continueProcessing = true;
+        while (this->bufferForBoxProcessingCollection->Count() > 1)
+        {
+          CLinearBuffer *bufferForBoxProcessing = this->bufferForBoxProcessingCollection->GetItem(0);
+          do
+          {
+            continueProcessing = false;
+            //CBox *box = new CBox();
+            //if (box != NULL)
+            {
+              unsigned int length = bufferForBoxProcessing->GetBufferOccupiedSpace();
+              if (length > 0)
+              {
+                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+                if (buffer != NULL)
+                {
+                  bufferForBoxProcessing->CopyFromBuffer(buffer, length, 0, 0);
+                  //if (box->Parse(buffer, length))
+                  {
+                    //unsigned int boxSize = (unsigned int)box->GetSize();
+                    //if (length >= boxSize)
+                    {
+                      continueProcessing = true;
 
-  //                    if (wcscmp(box->GetType(), MEDIA_DATA_BOX_TYPE) == 0)
-  //                    {
-  //                      CMediaDataBox *mediaBox = new CMediaDataBox();
-  //                      if (mediaBox != NULL)
-  //                      {
-  //                        continueProcessing &= mediaBox->Parse(buffer, length);
+                      //if (wcscmp(box->GetType(), MEDIA_DATA_BOX_TYPE) == 0)
+                      {
+                        //CMediaDataBox *mediaBox = new CMediaDataBox();
+                        //if (mediaBox != NULL)
+                        {
+                          //continueProcessing &= mediaBox->Parse(buffer, length);
 
-  //                        if (continueProcessing)
-  //                        {
-  //                          unsigned int payloadSize = (unsigned int)mediaBox->GetPayloadSize();
-  //                          continueProcessing &= (this->bufferForProcessing->AddToBufferWithResize(mediaBox->GetPayload(), payloadSize) == payloadSize);
-  //                        }
-  //                      }
-  //                      FREE_MEM_CLASS(mediaBox);
-  //                    }
+                          if (continueProcessing)
+                          {
+                            //unsigned int payloadSize = (unsigned int)mediaBox->GetPayloadSize();
+                            //continueProcessing &= (this->bufferForProcessing->AddToBufferWithResize(mediaBox->GetPayload(), payloadSize) == payloadSize);
+                            continueProcessing &= (this->bufferForProcessing->AddToBufferWithResize(buffer, length) == length);
+                          }
+                        }
+                        //FREE_MEM_CLASS(mediaBox);
+                      }
 
-  //                    //if (wcscmp(box->GetType(), BOOTSTRAP_INFO_BOX_TYPE) == 0)
-  //                    //{
-  //                    //  CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox();
-  //                    //  if (bootstrapInfoBox != NULL)
-  //                    //  {
-  //                    //    continueProcessing &= bootstrapInfoBox->Parse(buffer, length);
+                      if (continueProcessing)
+                      {
+                        //bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
+                        bufferForBoxProcessing->RemoveFromBufferAndMove(length);
+                        continueProcessing = true;
+                      }
+                    }
+                  }
+                }
+                FREE_MEM(buffer);
+              }
+            }
+            //FREE_MEM_CLASS(box);
+          } while (continueProcessing);
 
-  //                    //    if (continueProcessing)
-  //                    //    {
-  //                    //      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: bootstrap info box:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bootstrapInfoBox->GetParsedHumanReadable(L""));
-  //                    //    }
+          if (bufferForBoxProcessing->GetBufferOccupiedSpace() == 0)
+          {
+            // all data are processed, remove buffer from collection
+            this->bufferForBoxProcessingCollection->Remove(0);
+          }
+        }
+      }
 
-  //                    //    // ignore errors while processing bootstrap info boxes
-  //                    //    continueProcessing = true;
-  //                    //  }
-  //                    //  FREE_MEM_CLASS(bootstrapInfoBox);
-  //                    //}
-  //                    
-  //                    if (continueProcessing)
-  //                    {
-  //                      bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
-  //                      continueProcessing = true;
-  //                    }
-  //                  }
-  //                }
-  //              }
-  //              FREE_MEM(buffer);
-  //            }
-  //          }
-  //          FREE_MEM_CLASS(box);
-  //        } while (continueProcessing);
+      if ((!this->supressData) && (this->bufferForProcessing != NULL))
+      {
+      //  CFlvPacket *flvPacket = new CFlvPacket();
+      //  if (flvPacket != NULL)
+      //  {
+      //    while (flvPacket->ParsePacket(this->bufferForProcessing))
+      //    {
+      //      // FLV packet parsed correctly
+      //      // push FLV packet to filter
 
-  //        if (bufferForBoxProcessing->GetBufferOccupiedSpace() == 0)
-  //        {
-  //          // all data are processed, remove buffer from collection
-  //          this->bufferForBoxProcessingCollection->Remove(0);
-  //        }
-  //      }
-  //    }
+      //      //if ((flvPacket->GetType() != FLV_PACKET_HEADER) && (this->firstTimestamp == (-1)))
+      //      //{
+      //      //  this->firstTimestamp = flvPacket->GetTimestamp();
+      //      //  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstTimestamp);
+      //      //}
 
-  //    if ((!this->supressData) && (this->bufferForProcessing != NULL))
-  //    {
-  //      CFlvPacket *flvPacket = new CFlvPacket();
-  //      if (flvPacket != NULL)
-  //      {
-  //        while (flvPacket->ParsePacket(this->bufferForProcessing))
-  //        {
-  //          // FLV packet parsed correctly
-  //          // push FLV packet to filter
+      //      //if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp == (-1)))
+      //      //{
+      //      //  this->firstVideoTimestamp = flvPacket->GetTimestamp();
+      //      //  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first video timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstVideoTimestamp);
+      //      //}
 
-  //          //if ((flvPacket->GetType() != FLV_PACKET_HEADER) && (this->firstTimestamp == (-1)))
-  //          //{
-  //          //  this->firstTimestamp = flvPacket->GetTimestamp();
-  //          //  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstTimestamp);
-  //          //}
+      //      //if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp != (-1)) && (this->firstTimestamp != (-1)))
+      //      //{
+      //      //  // correction of video timestamps
+      //      //  flvPacket->SetTimestamp(flvPacket->GetTimestamp() + this->firstTimestamp - this->firstVideoTimestamp);
+      //      //}
 
-  //          //if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp == (-1)))
-  //          //{
-  //          //  this->firstVideoTimestamp = flvPacket->GetTimestamp();
-  //          //  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first video timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstVideoTimestamp);
-  //          //}
+      //      if ((flvPacket->GetType() == FLV_PACKET_AUDIO) ||
+      //        (flvPacket->GetType() == FLV_PACKET_HEADER) ||
+      //        (flvPacket->GetType() == FLV_PACKET_META) ||
+      //        (flvPacket->GetType() == FLV_PACKET_VIDEO))
+      //      {
+      //        // do nothing, known packet types
+      //      }
+      //      else
+      //      {
+      //        this->logger->Log(LOGGER_WARNING, L"%s: %s: unknown FLV packet: %d, size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, flvPacket->GetType(), flvPacket->GetSize());
+      //      }
 
-  //          //if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp != (-1)) && (this->firstTimestamp != (-1)))
-  //          //{
-  //          //  // correction of video timestamps
-  //          //  flvPacket->SetTimestamp(flvPacket->GetTimestamp() + this->firstTimestamp - this->firstVideoTimestamp);
-  //          //}
+      //      if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
+      //      {
+      //        // create media packet
+      //        // set values of media packet
 
-  //          if ((flvPacket->GetType() == FLV_PACKET_AUDIO) ||
-  //            (flvPacket->GetType() == FLV_PACKET_HEADER) ||
-  //            (flvPacket->GetType() == FLV_PACKET_META) ||
-  //            (flvPacket->GetType() == FLV_PACKET_VIDEO))
-  //          {
-  //            // do nothing, known packet types
-  //          }
-  //          else
-  //          {
-  //            this->logger->Log(LOGGER_WARNING, L"%s: %s: unknown FLV packet: %d, size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, flvPacket->GetType(), flvPacket->GetSize());
-  //          }
+        unsigned int length = this->bufferForProcessing->GetBufferOccupiedSpace();
 
-  //          if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
-  //          {
-  //            // create media packet
-  //            // set values of media packet
-  //            CMediaPacket *mediaPacket = new CMediaPacket();
-  //            mediaPacket->GetBuffer()->InitializeBuffer(flvPacket->GetSize());
-  //            mediaPacket->GetBuffer()->AddToBuffer(flvPacket->GetData(), flvPacket->GetSize());
-  //            mediaPacket->SetStart(this->bytePosition);
-  //            mediaPacket->SetEnd(this->bytePosition + flvPacket->GetSize() - 1);
+        if (length > 0)
+        {
+        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+        if (buffer != NULL)
+        {
+              this->bufferForProcessing->CopyFromBuffer(buffer, length, 0, 0);
 
-  //            HRESULT result = this->filter->PushMediaPacket(mediaPacket);
-  //            if (FAILED(result))
-  //            {
-  //              this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
-  //            }
-  //            this->bytePosition += flvPacket->GetSize();
+              CMediaPacket *mediaPacket = new CMediaPacket();
+              //mediaPacket->GetBuffer()->InitializeBuffer(flvPacket->GetSize());
+              mediaPacket->GetBuffer()->InitializeBuffer(length);
+              //mediaPacket->GetBuffer()->AddToBuffer(flvPacket->GetData(), flvPacket->GetSize());
+              mediaPacket->GetBuffer()->AddToBuffer(buffer, length);
+              mediaPacket->SetStart(this->bytePosition);
+              //mediaPacket->SetEnd(this->bytePosition + flvPacket->GetSize() - 1);
+              mediaPacket->SetEnd(this->bytePosition + length - 1);
 
-  //            FREE_MEM_CLASS(mediaPacket);
-  //          }
-  //          // we are definitely not seeking
-  //          this->seekingActive = false;
-  //          this->bufferForProcessing->RemoveFromBufferAndMove(flvPacket->GetSize());
+              HRESULT result = this->filter->PushMediaPacket(mediaPacket);
+              if (FAILED(result))
+              {
+                this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+              }
+              //this->bytePosition += flvPacket->GetSize();
+              this->bytePosition += length;
 
-  //          flvPacket->Clear();
-  //        }
+              FREE_MEM_CLASS(mediaPacket);
+      //      }
+      //      // we are definitely not seeking
+            this->seekingActive = false;
+            //this->bufferForProcessing->RemoveFromBufferAndMove(flvPacket->GetSize());
+            this->bufferForProcessing->RemoveFromBufferAndMove(length);
+        }
 
-  //        FREE_MEM_CLASS(flvPacket);
-  //      }
-  //    }
+            FREE_MEM(buffer);
+        }
+      //      flvPacket->Clear();
+      //    }
 
-  //    if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
-  //    {
-  //      // all data received, we're not receiving data
-  //      if (!this->segmentsFragments->GetSegmentFragment(this->mainCurlInstance->GetUrl(), true)->GetDownloaded())
-  //      {
-  //        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
-  //        this->segmentsFragments->GetSegmentFragment(this->mainCurlInstance->GetUrl(), true)->SetDownloaded(true);
-  //      }
+      //    FREE_MEM_CLASS(flvPacket);
+      //  }
+      }
 
-  //      
-  //      CSegmentFragment *segmentFragmentToDownload = this->GetFirstNotDownloadedSegmentFragment();
-  //      if (segmentFragmentToDownload != NULL)
-  //      {
-  //        FREE_MEM_CLASS(this->mainCurlInstance);
-  //        HRESULT result = S_OK;
+      if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+      {
+        // all data received, we're not receiving data
+        if (!this->streamFragments->GetStreamFragment(this->mainCurlInstance->GetUrl(), true)->GetDownloaded())
+        {
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
+          this->streamFragments->GetStreamFragment(this->mainCurlInstance->GetUrl(), true)->SetDownloaded(true);
+        }
+        
+        CStreamFragment *streamFragmentToDownload = this->GetFirstNotDownloadedStreamFragment();
+        if (streamFragmentToDownload != NULL)
+        {
+          FREE_MEM_CLASS(this->mainCurlInstance);
+          HRESULT result = S_OK;
 
-  //        CLinearBuffer *buffer = new CLinearBuffer();
-  //        CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+          CLinearBuffer *buffer = new CLinearBuffer();
+          CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
 
-  //        if (SUCCEEDED(result))
-  //        {
-  //          buffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-  //          result = (this->bufferForBoxProcessingCollection->Add(buffer)) ? result : E_OUTOFMEMORY;
-  //        }
+          if (SUCCEEDED(result))
+          {
+            buffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+            result = (this->bufferForBoxProcessingCollection->Add(buffer)) ? result : E_OUTOFMEMORY;
+          }
 
-  //        if (FAILED(result))
-  //        {
-  //          FREE_MEM_CLASS(buffer);
-  //        }
+          if (FAILED(result))
+          {
+            FREE_MEM_CLASS(buffer);
+          }
 
-  //        if (SUCCEEDED(result))
-  //        {
-  //          // we need to download for another url
-  //          this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, segmentFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
-  //          CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
+          if (SUCCEEDED(result))
+          {
+            // we need to download for another url
+            this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, streamFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+            CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
 
-  //          if (SUCCEEDED(result))
-  //          {
-  //            this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-  //            this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
-  //            this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
-  //            this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
-  //            this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-  //            this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+            if (SUCCEEDED(result))
+            {
+              this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+              this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
+              this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
+              this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
+              this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
+              this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
 
-  //            result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+              result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
 
-  //            if (SUCCEEDED(result))
-  //            {
-  //              // all parameters set
-  //              // start receiving data
+              if (SUCCEEDED(result))
+              {
+                // all parameters set
+                // start receiving data
 
-  //              result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
-  //            }
-  //          }
-  //        }
-  //      }
-  //      else
-  //      {
-  //        // we are on last segment and fragment, we received all data
-  //        // in case of live stream we need to download again manifest and parse bootstrap info for new information about stream
-  //        if ((this->live) && (GetTickCount() > (this->lastBootstrapInfoRequestTime + LAST_REQUEST_BOOTSTRAP_INFO_DELAY)))
-  //        {
-  //          // request for next bootstrap info repeat after five seconds
-  //          this->lastBootstrapInfoRequestTime = GetTickCount();
-  //          this->RemoveAllDownloadedSegmentFragment();
+                result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+              }
+            }
+          }
+        }
+        else
+        {
+          // we are on last stream fragment, we received all data
+          
+          // whole stream downloaded
+          this->wholeStreamDownloaded = true;
+          FREE_MEM_CLASS(this->mainCurlInstance);
 
+          if (!this->seekingActive)
+          {
+            // we are not seeking, so we can set total length
+            if (!this->setLength)
+            {
+              this->streamLength = this->bytePosition;
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+              this->filter->SetTotalLength(this->streamLength, false);
+              this->setLength = true;
+            }
 
-  //          const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, true, NULL);
-  //          if (url != NULL)
-  //          {
-  //            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: live streaming, requesting bootstrap info, url: '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, url);
-
-  //            CHttpCurlInstance *bootstrapInfoCurlInstance = new CHttpCurlInstance(this->logger, NULL, url, PROTOCOL_IMPLEMENTATION_NAME);
-  //            bootstrapInfoCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-  //            bootstrapInfoCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
-  //            bootstrapInfoCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
-  //            bootstrapInfoCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
-  //            bootstrapInfoCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-  //            bootstrapInfoCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-
-  //            if (bootstrapInfoCurlInstance->Initialize())
-  //            {
-  //              if (bootstrapInfoCurlInstance->StartReceivingData())
-  //              {
-  //                bool continueWithBootstrapInfo = true;
-  //                long responseCode = 0;
-  //                while (responseCode == 0)
-  //                {
-  //                  CURLcode errorCode = bootstrapInfoCurlInstance->GetResponseCode(&responseCode);
-  //                  if (errorCode == CURLE_OK)
-  //                  {
-  //                    if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-  //                    {
-  //                      // response code 200 - 299 = OK
-  //                      // response code 300 - 399 = redirect (OK)
-  //                      continueWithBootstrapInfo = false;
-  //                    }
-  //                  }
-  //                  else
-  //                  {
-  //                    continueWithBootstrapInfo = false;
-  //                    break;
-  //                  }
-
-  //                  if ((responseCode == 0) && (bootstrapInfoCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
-  //                  {
-  //                    // we received data too fast
-  //                    continueWithBootstrapInfo = false;
-  //                    break;
-  //                  }
-
-  //                  // wait some time
-  //                  Sleep(1);
-  //                }
-
-  //                if (continueWithBootstrapInfo)
-  //                {
-  //                  // wait until all data are received
-  //                  while (bootstrapInfoCurlInstance->GetCurlState() != CURL_STATE_RECEIVED_ALL_DATA)
-  //                  {
-  //                    // sleep some time
-  //                    Sleep(10);
-  //                  }
-
-  //                  continueWithBootstrapInfo &= (bootstrapInfoCurlInstance->GetErrorCode() == CURLE_OK);
-  //                }
-
-  //                if (continueWithBootstrapInfo)
-  //                {
-  //                  unsigned int length = bootstrapInfoCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
-  //                  continueWithBootstrapInfo &= (length > 1);
-
-  //                  if (continueWithBootstrapInfo)
-  //                  {
-  //                    ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-  //                    continueWithBootstrapInfo &= (buffer != NULL);
-
-  //                    if (continueWithBootstrapInfo)
-  //                    {
-  //                      bootstrapInfoCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, length, 0, 0);
-
-  //                      CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox();
-  //                      continueWithBootstrapInfo &= (bootstrapInfoBox != NULL);
-
-  //                      if (continueWithBootstrapInfo)
-  //                      {
-  //                        if (bootstrapInfoBox->Parse(buffer, length))
-  //                        {
-  //                          //this->logger->Log(LOGGER_VERBOSE, L"%s: %s: new bootstrap info box:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bootstrapInfoBox->GetParsedHumanReadable(L""));
-
-  //                          CSegmentFragmentCollection *segmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(
-  //                            this->logger,
-  //                            METHOD_RECEIVE_DATA_NAME,
-  //                            this->configurationParameters,
-  //                            bootstrapInfoBox,
-  //                            false);
-  //                          continueWithBootstrapInfo &= (segmentsFragments != NULL);
-
-  //                          if (continueWithBootstrapInfo)
-  //                          {
-  //                            CSegmentFragment *lastSegmentFragment = this->segmentsFragments->GetItem(this->segmentsFragments->Count() - 1);
-
-  //                            for (unsigned int i = 0; i < segmentsFragments->Count(); i++)
-  //                            {
-  //                              CSegmentFragment *parsedSegmentFragment = segmentsFragments->GetItem(i);
-  //                              if (parsedSegmentFragment->GetFragment() > lastSegmentFragment->GetFragment())
-  //                              {
-  //                                // new segment fragment, add it to be downloaded
-  //                                CSegmentFragment *clone = parsedSegmentFragment->Clone();
-  //                                continueWithBootstrapInfo &= (clone != NULL);
-
-  //                                if (continueWithBootstrapInfo)
-  //                                {
-  //                                  continueWithBootstrapInfo &= this->segmentsFragments->Add(clone);
-  //                                  if (continueWithBootstrapInfo)
-  //                                  {
-  //                                    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: added new segment and fragment, segment %d, fragment %d, url '%s', timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, clone->GetSegment(), clone->GetFragment(), clone->GetUrl(), clone->GetFragmentTimestamp());
-  //                                  }
-  //                                }
-
-  //                                if (!continueWithBootstrapInfo)
-  //                                {
-  //                                  FREE_MEM_CLASS(clone);
-  //                                }
-  //                              }
-  //                            }
-  //                          }
-  //                          else
-  //                          {
-  //                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot create segments and fragments to download");
-  //                          }
-
-  //                          FREE_MEM_CLASS(segmentsFragments);
-  //                        }
-  //                        else
-  //                        {
-  //                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot parse new bootstrap info box");
-  //                        }
-  //                      }
-  //                      else
-  //                      {
-  //                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for new bootstrap info box");
-  //                      }
-
-  //                      FREE_MEM_CLASS(bootstrapInfoBox);
-  //                    }
-  //                    else
-  //                    {
-  //                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for new bootstrap info data");
-  //                    }
-
-  //                    FREE_MEM(buffer);
-  //                  }
-  //                  else
-  //                  {
-  //                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"too short data downloaded for new bootstrap info");
-  //                  }
-  //                }
-  //                else
-  //                {
-  //                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error occured while receiving data of new bootstrap info");
-  //                }
-  //              }
-  //              else
-  //              {
-  //                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot start receiving data of new bootstrap info");
-  //              }
-  //            }
-  //            else
-  //            {
-  //              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot initialize new bootstrap info download");
-  //            }
-  //            FREE_MEM_CLASS(bootstrapInfoCurlInstance);
-  //          }
-  //        }
-
-  //        if (!this->live)
-  //        {
-  //          // whole stream downloaded
-  //          this->wholeStreamDownloaded = true;
-  //          FREE_MEM_CLASS(this->mainCurlInstance);
-
-  //          if (!this->seekingActive)
-  //          {
-  //            // we are not seeking, so we can set total length
-  //            if (!this->setLength)
-  //            {
-  //              this->streamLength = this->bytePosition;
-  //              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-  //              this->filter->SetTotalLength(this->streamLength, false);
-  //              this->setLength = true;
-  //            }
-
-  //            // notify filter the we reached end of stream
-  //            // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-  //            this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
-  //          }
-  //        }
-  //      }
-  //    }
-  //  }
-  //  else
-  //  {
-  //    // set total length (if not set earlier)
-  //    if (!this->setLength)
-  //    {
-  //      this->streamLength = this->bytePosition;
-  //      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-  //      this->filter->SetTotalLength(this->streamLength, false);
-  //      this->setLength = true;
-  //    }
-  //  }
-  //}
-  //else
-  //{
-  //  this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"connection closed, opening new one");
-  //  // re-open connection if previous is lost
-  //  if (this->StartReceivingData(NULL) != S_OK)
-  //  {
-  //    this->StopReceivingData();
-  //  }
-  //}
+            // notify filter the we reached end of stream
+            // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+            this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
+          }
+        }
+      }
+    }
+    else
+    {
+      // set total length (if not set earlier)
+      if (!this->setLength)
+      {
+        this->streamLength = this->bytePosition;
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+        this->filter->SetTotalLength(this->streamLength, false);
+        this->setLength = true;
+      }
+    }
+  }
+  else
+  {
+    this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"connection closed, opening new one");
+    // re-open connection if previous is lost
+    if (this->StartReceivingData(NULL) != S_OK)
+    {
+      this->StopReceivingData();
+    }
+  }
 
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
 }
@@ -761,99 +588,94 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
   this->streamLength = 0;
   this->setLength = false;
 
-  result = E_NOTIMPL;
+  if (this->streamFragments == NULL)
+  {
+    char *encoded = ConvertToMultiByteW(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_MANIFEST, true, NULL));
+    unsigned char *compressedManifestDecoded = NULL;
+    uint32_t compressedManifestDecodedLength = 0;
+    result = base64_decode(encoded, &compressedManifestDecoded, &compressedManifestDecodedLength);
 
-  //if (this->segmentsFragments == NULL)
-  //{
-  //  char *bootstrapInfoBase64Encoded = ConvertToMultiByteW(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, true, NULL));
-  //  CHECK_POINTER_HRESULT(result, bootstrapInfoBase64Encoded, result, E_POINTER);
+    if (SUCCEEDED(result))
+    {
+      // decompress manifest
+      uint8_t *decompressedManifest = NULL;
+      uint32_t decompressedLength = 0;
 
-  //  if (SUCCEEDED(result))
-  //  {
-  //    // bootstrap info is BASE64 encoded
-  //    unsigned char *bootstrapInfo = NULL;
-  //    unsigned int bootstrapInfoLength = 0;
+      result = decompress_zlib(compressedManifestDecoded, compressedManifestDecodedLength, &decompressedManifest, &decompressedLength);
 
-  //    result = base64_decode(bootstrapInfoBase64Encoded, &bootstrapInfo, &bootstrapInfoLength);
+      if (SUCCEEDED(result))
+      {
+        CMSHSSmoothStreamingMedia *smoothStreamingMedia = new CMSHSSmoothStreamingMedia();
+        CHECK_POINTER_HRESULT(result, smoothStreamingMedia, result, E_OUTOFMEMORY);
 
-  //    if (SUCCEEDED(result))
-  //    {
-  //      FREE_MEM_CLASS(this->bootstrapInfoBox);
-  //      this->bootstrapInfoBox = new CBootstrapInfoBox();
-  //      CHECK_POINTER_HRESULT(result, this->bootstrapInfoBox, result, E_OUTOFMEMORY);
+        if (SUCCEEDED(result))
+        {
+          result = (smoothStreamingMedia->Deserialize(decompressedManifest)) ? S_OK : HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
 
-  //      if (SUCCEEDED(result))
-  //      {
-  //        result = (this->bootstrapInfoBox->Parse(bootstrapInfo, bootstrapInfoLength)) ? result : HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+          if (SUCCEEDED(result))
+          {
+            FREE_MEM(this->streamFragments);
+            this->streamFragments = this->GetStreamFragmentsFromManifest(
+              this->logger,
+              METHOD_START_RECEIVING_DATA_NAME,
+              this->configurationParameters,
+              smoothStreamingMedia,
+              true);
+            CHECK_POINTER_HRESULT(result, this->streamFragments, result, E_POINTER);
+          }
+          else
+          {
+            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, L"cannot deserialize manifest");
+          }
+        }
 
-  //        if (SUCCEEDED(result))
-  //        {
-  //          wchar_t *parsedBootstrapInfoBox = this->bootstrapInfoBox->GetParsedHumanReadable(L"");
-  //          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: parsed bootstrap info:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, parsedBootstrapInfoBox);
-  //          FREE_MEM(parsedBootstrapInfoBox);
-  //        }
-  //        else
-  //        {
-  //          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, L"cannot parse bootstrap info box");
-  //        }
-  //      }
-  //    }
-  //    else
-  //    {
-  //      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, L"cannot decode bootstrap info");
-  //    }
-  //  }
+        FREE_MEM_CLASS(smoothStreamingMedia);
+      }
+      else
+      {
+        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, L"cannot decompress manifest");
+      }
+    }
+    else
+    {
+      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, L"cannot decode manifest");
+    }
+  }
 
-  //  if (SUCCEEDED(result))
-  //  {
-  //    // we have bootstrap info box successfully parsed
-  //    this->live = this->bootstrapInfoBox->IsLive();
+  if (SUCCEEDED(result))
+  {
+    if (this->bufferForBoxProcessingCollection == NULL)
+    {
+      this->bufferForBoxProcessingCollection = new CLinearBufferCollection();
+    }
+    CHECK_POINTER_HRESULT(result, this->bufferForBoxProcessingCollection, result, E_OUTOFMEMORY);
 
-  //    FREE_MEM(this->segmentsFragments);
-  //    this->segmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(
-  //      this->logger,
-  //      METHOD_START_RECEIVING_DATA_NAME,
-  //      this->configurationParameters,
-  //      this->bootstrapInfoBox,
-  //      true);
-  //    CHECK_POINTER_HRESULT(result, this->segmentsFragments, result, E_POINTER);
-  //  }
-  //}
+    if (SUCCEEDED(result))
+    {
+      CLinearBuffer *buffer = new CLinearBuffer();
+      CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
 
-  //if (SUCCEEDED(result))
-  //{
-  //  if (this->bufferForBoxProcessingCollection == NULL)
-  //  {
-  //    this->bufferForBoxProcessingCollection = new CLinearBufferCollection();
-  //  }
-  //  CHECK_POINTER_HRESULT(result, this->bufferForBoxProcessingCollection, result, E_OUTOFMEMORY);
+      if (SUCCEEDED(result))
+      {
+        buffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+        result = (this->bufferForBoxProcessingCollection->Add(buffer)) ? result : E_OUTOFMEMORY;
+      }
 
-  //  if (SUCCEEDED(result))
-  //  {
-  //    CLinearBuffer *buffer = new CLinearBuffer();
-  //    CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+      if (FAILED(result))
+      {
+        FREE_MEM_CLASS(buffer);
+      }
+    }
+  }
 
-  //    if (SUCCEEDED(result))
-  //    {
-  //      buffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-  //      result = (this->bufferForBoxProcessingCollection->Add(buffer)) ? result : E_OUTOFMEMORY;
-  //    }
+  if (SUCCEEDED(result))
+  {
+    this->bufferForProcessing = new CLinearBuffer();
+    CHECK_POINTER_HRESULT(result, this->bufferForProcessing, result, E_OUTOFMEMORY);
 
-  //    if (FAILED(result))
-  //    {
-  //      FREE_MEM_CLASS(buffer);
-  //    }
-  //  }
-  //}
-
-  //if (SUCCEEDED(result))
-  //{
-  //  this->bufferForProcessing = new CLinearBuffer();
-  //  CHECK_POINTER_HRESULT(result, this->bufferForProcessing, result, E_OUTOFMEMORY);
-
-  //  if (SUCCEEDED(result))
-  //  {
-  //    result = (this->bufferForProcessing->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER)) ? result : E_FAIL;
+    if (SUCCEEDED(result))
+    {
+      result = (this->bufferForProcessing->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER)) ? result : E_FAIL;
 
   //    if ((SUCCEEDED(result)) && (!this->seekingActive))
   //    {
@@ -906,72 +728,72 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
   //      }
   //      FREE_MEM(mediaMetadataBase64Encoded);
   //    }
-  //  }
-  //}
+    }
+  }
 
-  //if (SUCCEEDED(result))
-  //{
-  //  CSegmentFragment *segmentFragmentToDownload = this->GetFirstNotDownloadedSegmentFragment();
-  //  this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, segmentFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
-  //  CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
-  //}
+  if (SUCCEEDED(result))
+  {
+    CStreamFragment *streamFragmentToDownload = this->GetFirstNotDownloadedStreamFragment();
+    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, streamFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+    CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
+  }
 
-  //if (SUCCEEDED(result))
-  //{
-  //  this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-  //  this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
-  //  this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
-  //  this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
-  //  this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-  //  this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+  if (SUCCEEDED(result))
+  {
+    this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+    this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
+    this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
+    this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
+    this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
+    this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
 
-  //  result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+    result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
 
-  //  if (SUCCEEDED(result))
-  //  {
-  //    // all parameters set
-  //    // start receiving data
+    if (SUCCEEDED(result))
+    {
+      // all parameters set
+      // start receiving data
 
-  //    result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
-  //  }
+      result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+    }
 
-  //  if (SUCCEEDED(result))
-  //  {
-  //    // wait for HTTP status code
+    if (SUCCEEDED(result))
+    {
+      // wait for HTTP status code
 
-  //    long responseCode = 0;
-  //    while (responseCode == 0)
-  //    {
-  //      CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
-  //      if (errorCode == CURLE_OK)
-  //      {
-  //        if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-  //        {
-  //          // response code 200 - 299 = OK
-  //          // response code 300 - 399 = redirect (OK)
-  //          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-  //          result = E_FAIL;
-  //        }
-  //      }
-  //      else
-  //      {
-  //        this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
-  //        result = E_FAIL;
-  //        break;
-  //      }
+      long responseCode = 0;
+      while (responseCode == 0)
+      {
+        CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
+        if (errorCode == CURLE_OK)
+        {
+          if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
+          {
+            // response code 200 - 299 = OK
+            // response code 300 - 399 = redirect (OK)
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+            result = E_FAIL;
+          }
+        }
+        else
+        {
+          this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
+          result = E_FAIL;
+          break;
+        }
 
-  //      if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
-  //      {
-  //        // we received data too fast
-  //        result = E_FAIL;
-  //        break;
-  //      }
+        if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+        {
+          // we received data too fast
+          result = E_FAIL;
+          break;
+        }
 
-  //      // wait some time
-  //      Sleep(1);
-  //    }
-  //  }
-  //}
+        // wait some time
+        Sleep(1);
+      }
+    }
+  }
 
   if (FAILED(result))
   {
@@ -1075,7 +897,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ClearSession(void)
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetSeekingCapabilities(void)
 {
-  return SEEKING_METHOD_TIME;
+  //return SEEKING_METHOD_TIME;
+  return SEEKING_METHOD_NONE;
 }
 
 int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToTime(int64_t time)
@@ -1208,3 +1031,244 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::Initialize(PluginConfiguration *conf
 }
 
 // other methods
+
+void CMPUrlSourceSplitter_Protocol_Mshs::RemoveAllDownloadedStreamFragments(void)
+{
+  if (this->streamFragments->Count() > 1)
+  {
+    unsigned int i = 0;
+    while (i < (this->streamFragments->Count() - 1))
+    {
+      if (this->streamFragments->GetItem(i)->GetDownloaded())
+      {
+        this->streamFragments->Remove(i);
+      }
+      else
+      {
+        i++;
+      }
+    }
+  }
+}
+
+CStreamFragment *CMPUrlSourceSplitter_Protocol_Mshs::GetFirstNotDownloadedStreamFragment(void)
+{
+  CStreamFragment *result = NULL;
+
+  for (unsigned int i = 0; i < this->streamFragments->Count(); i++)
+  {
+    if (!this->streamFragments->GetItem(i)->GetDownloaded())
+    {
+      result = this->streamFragments->GetItem(i);
+      break;
+    }
+  }
+
+  return result;
+}
+
+CStreamFragmentCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragmentsFromManifest(CLogger *logger, const wchar_t *methodName, CParameterCollection *configurationParameters, CMSHSSmoothStreamingMedia *manifest, bool logCollection)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, logger);
+  CHECK_POINTER_DEFAULT_HRESULT(result, methodName);
+  CHECK_POINTER_DEFAULT_HRESULT(result, configurationParameters);
+  CHECK_POINTER_DEFAULT_HRESULT(result, manifest);
+
+  CStreamFragmentCollection *streamFragments = NULL;
+  if (SUCCEEDED(result))
+  {
+    streamFragments = new CStreamFragmentCollection();
+    CHECK_POINTER_HRESULT(result, streamFragments, result, E_OUTOFMEMORY);
+  }
+
+  if (SUCCEEDED(result))
+  {
+    uint32_t videoIndex = 0;
+    uint32_t audioIndex = 0;
+    uint64_t lastTimestamp = 0;
+    uint32_t maxVideoIndex = 0;
+    uint32_t maxAudioIndex = 0;
+
+    // get maximum video and audio indexes
+    for (unsigned int i = 0; i < manifest->GetStreams()->Count(); i++)
+    {
+      CMSHSStream *stream = manifest->GetStreams()->GetItem(i);
+
+      if (stream->IsVideo())
+      {
+        maxVideoIndex = stream->GetStreamFragments()->Count();
+      }
+      else if (stream->IsAudio())
+      {
+        maxAudioIndex = stream->GetStreamFragments()->Count();
+      }
+    }
+
+    const wchar_t *videoUrlPattern = NULL;
+    const wchar_t *audioUrlPattern = NULL;
+    CMSHSTrack *videoTrack = NULL;
+    CMSHSTrack *audioTrack = NULL;
+    const wchar_t *baseUrl = configurationParameters->GetValue(PARAMETER_NAME_MSHS_BASE_URL, true, NULL);
+
+    while ((videoIndex < maxVideoIndex) && (audioIndex < maxAudioIndex))
+    {
+      // there is still some fragment to add to stream fragments
+      // choose fragment which is nearest to last timestamp
+
+      CMSHSStreamFragment *videoFragment = NULL;
+      CMSHSStreamFragment *audioFragment = NULL;
+
+      for (unsigned int i = 0; i < manifest->GetStreams()->Count(); i++)
+      {
+        CMSHSStream *stream = manifest->GetStreams()->GetItem(i);
+
+        if (stream->IsVideo() && (videoIndex < maxVideoIndex))
+        {
+          videoTrack = stream->GetTracks()->GetItem(0);
+          videoUrlPattern = stream->GetUrl();
+          videoFragment = stream->GetStreamFragments()->GetItem(videoIndex);
+        }
+        else if (stream->IsAudio() && (audioIndex < maxAudioIndex))
+        {
+          audioTrack = stream->GetTracks()->GetItem(0);
+          audioUrlPattern = stream->GetUrl();
+          audioFragment = stream->GetStreamFragments()->GetItem(audioIndex);
+        }
+      }
+
+      wchar_t *url = NULL;
+      uint64_t fragmentTime = 0;
+      uint64_t fragmentDuration = 0;
+
+      if (SUCCEEDED(result))
+      {
+        if ((videoFragment != NULL) && (audioFragment != NULL))
+        {
+          uint64_t videoDiff = videoFragment->GetFragmentTime() - lastTimestamp;
+          uint64_t audioDiff = audioFragment->GetFragmentTime() - lastTimestamp;
+
+          if (videoDiff <= audioDiff)
+          {
+            fragmentTime = videoFragment->GetFragmentTime();
+            fragmentDuration = videoFragment->GetFragmentDuration();
+            url = this->FormatUrl(baseUrl, videoUrlPattern, videoTrack, videoFragment);
+            videoIndex++;
+          }
+          else if (audioDiff < videoDiff)
+          {
+            fragmentTime = audioFragment->GetFragmentTime();
+            fragmentDuration = audioFragment->GetFragmentDuration();
+            url = this->FormatUrl(baseUrl, audioUrlPattern, audioTrack, audioFragment);
+            audioIndex++;
+          }
+        }
+        else if (videoFragment != NULL)
+        {
+          fragmentTime = videoFragment->GetFragmentTime();
+          fragmentDuration = videoFragment->GetFragmentDuration();
+          url = this->FormatUrl(baseUrl, videoUrlPattern, videoTrack, videoFragment);
+          videoIndex++;
+        }
+        else if (audioFragment != NULL)
+        {
+          fragmentTime = audioFragment->GetFragmentTime();
+          fragmentDuration = audioFragment->GetFragmentDuration();
+          url = this->FormatUrl(baseUrl, audioUrlPattern, audioTrack, audioFragment);
+          audioIndex++;
+        }
+        else
+        {
+          // bad case, this should not happen
+          logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, methodName, L"no audio or video fragment to process");
+          result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+        }
+      }
+
+      if (SUCCEEDED(result))
+      {
+        lastTimestamp = fragmentTime;
+
+        CStreamFragment *streamFragment = new CStreamFragment(url, fragmentDuration, fragmentTime);
+        CHECK_POINTER_HRESULT(result, streamFragment, result, E_OUTOFMEMORY);
+
+        // add stream fragment to stream fragments
+        if (SUCCEEDED(result))
+        {
+          result = (streamFragments->Add(streamFragment)) ? S_OK : E_FAIL;
+        }
+
+        if (FAILED(result))
+        {
+          FREE_MEM_CLASS(streamFragment);
+        }
+      }
+
+      FREE_MEM(url);
+    }
+
+    result = (streamFragments->Count() > 0) ? result : E_FAIL;
+
+    /*if (SUCCEEDED(result) && (logCollection))
+    {
+      wchar_t *streamFragmentLog = NULL;
+      for (unsigned int i = 0; i < streamFragments->Count(); i++)
+      {
+        CStreamFragment *streamFragment = streamFragments->GetItem(i);
+
+        wchar_t *temp = FormatString(L"%s%surl '%s', timestamp: %llu", (i == 0) ? L"" : streamFragmentLog, (i == 0) ? L"" : L"\n", streamFragment->GetUrl(), streamFragment->GetFragmentTime());
+        FREE_MEM(streamFragmentLog);
+        streamFragmentLog = temp;
+      }
+
+      if (streamFragmentLog != NULL)
+      {
+        logger->Log(LOGGER_VERBOSE, L"%s: %s: stream fragments:\n%s", PROTOCOL_IMPLEMENTATION_NAME, methodName, streamFragmentLog);
+      }
+
+      FREE_MEM(streamFragmentLog);
+    }*/
+  }
+
+  if (FAILED(result))
+  {
+    FREE_MEM_CLASS(streamFragments);
+  }
+
+  return streamFragments;
+}
+
+wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::FormatUrl(const wchar_t *baseUrl, const wchar_t *urlPattern, CMSHSTrack *track, CMSHSStreamFragment *fragment)
+{
+  wchar_t *result = NULL;
+
+  if ((baseUrl != NULL) && (urlPattern != NULL) && (track != NULL) && (fragment != NULL))
+  {
+    // in url pattern replace {bitrate} or {Bitrate} with track bitrate bitrate
+    // in url pattern replace {start time} or {Start time} with fragment time
+
+    wchar_t *bitrate = FormatString(L"%u", track->GetBitrate());
+    wchar_t *startTime = FormatString(L"%llu", fragment->GetFragmentTime());
+
+    if ((bitrate != NULL) && (startTime != NULL))
+    {
+      wchar_t *replaced1 = ReplaceString(urlPattern, L"{bitrate}", bitrate);
+      wchar_t *replaced2 = ReplaceString(replaced1, L"{Bitrate}", bitrate);
+
+      wchar_t *replaced3 = ReplaceString(replaced2, L"{start time}", startTime);
+      wchar_t *replaced4 = ReplaceString(replaced3, L"{Start time}", startTime);
+
+      result = FormatAbsoluteUrl(baseUrl, replaced4);
+
+      FREE_MEM(replaced1);
+      FREE_MEM(replaced2);
+      FREE_MEM(replaced3);
+      FREE_MEM(replaced4);
+    }
+
+    FREE_MEM(bitrate);
+    FREE_MEM(startTime);
+  }
+
+  return result;
+}

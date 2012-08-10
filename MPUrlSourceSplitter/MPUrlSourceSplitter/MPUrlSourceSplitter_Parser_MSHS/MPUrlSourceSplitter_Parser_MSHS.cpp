@@ -204,6 +204,146 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *med
 
               if (continueParsing)
               {
+                // check tracks for supported video and audio tracks
+                unsigned int i = 0;
+
+                while (continueParsing && (i < manifest->GetSmoothStreamingMedia()->GetStreams()->Count()))
+                {
+                  CMSHSStream *stream = manifest->GetSmoothStreamingMedia()->GetStreams()->GetItem(i);
+
+                  if (stream->IsVideo())
+                  {
+                    unsigned int j = 0;
+                    while (continueParsing && (j < stream->GetTracks()->Count()))
+                    {
+                      bool supportedTrack = false;
+                      CMSHSTrack *track = stream->GetTracks()->GetItem(j);
+
+                      for (int k = 0; k < TOTAL_SUPPORTED_VIDEO_TRACKS; k++)
+                      {
+                        if (!IsNullOrEmptyOrWhitespace(track->GetFourCC()))
+                        {
+                          if (wcscmp(track->GetFourCC(), SUPPORTED_VIDEO_TRACKS[k]) == 0)
+                          {
+                            supportedTrack = true;
+                            break;
+                          }
+                        }
+                      }
+
+                      if (!supportedTrack)
+                      {
+                        stream->GetTracks()->Remove(j);
+                      }
+                      else
+                      {
+                        j++;
+                      }
+                    }
+
+                    if (stream->GetTracks()->Count() == 0)
+                    {
+                      // remove stream which doesn't have any track
+                      manifest->GetSmoothStreamingMedia()->GetStreams()->Remove(i);
+                    }
+                    else
+                    {
+                      i++;
+                    }
+                  }
+                  else if (stream->IsAudio())
+                  {
+                    unsigned int j = 0;
+                    while (continueParsing && (j < stream->GetTracks()->Count()))
+                    {
+                      bool supportedTrack = false;
+                      CMSHSTrack *track = stream->GetTracks()->GetItem(j);
+
+                      for (int k = 0; k < TOTAL_SUPPORTED_AUDIO_TRACKS; k++)
+                      {
+                        if (!IsNullOrEmptyOrWhitespace(track->GetFourCC()))
+                        {
+                          if (wcscmp(track->GetFourCC(), SUPPORTED_AUDIO_TRACKS[k]) == 0)
+                          {
+                            supportedTrack = true;
+                            break;
+                          }
+                        }
+                      }
+
+                      if (!supportedTrack)
+                      {
+                        stream->GetTracks()->Remove(j);
+                      }
+                      else
+                      {
+                        j++;
+                      }
+                    }
+
+                    if (stream->GetTracks()->Count() == 0)
+                    {
+                      // remove stream which doesn't have any track
+                      manifest->GetSmoothStreamingMedia()->GetStreams()->Remove(i);
+                    }
+                    else
+                    {
+                      i++;
+                    }
+                  }
+                  else
+                  {
+                    // not needed stream
+                    manifest->GetSmoothStreamingMedia()->GetStreams()->Remove(i);
+                  }
+                }
+
+                if (continueParsing)
+                {
+                  // leave only video and audio tracks with highest bitrate
+                  for (unsigned int i = 0; (continueParsing && (i < manifest->GetSmoothStreamingMedia()->GetStreams()->Count())); i++)
+                  {
+                    CMSHSStream *stream = manifest->GetSmoothStreamingMedia()->GetStreams()->GetItem(i);
+
+                    uint32_t maxBitrate = 0;
+                    unsigned int maxBitrateIndex = 0;
+                    for (unsigned int j = 0; (continueParsing && (j < stream->GetTracks()->Count())); j++)
+                    {
+                      CMSHSTrack *track = stream->GetTracks()->GetItem(j);
+                      if (track->GetBitrate() > maxBitrate)
+                      {
+                        maxBitrate = track->GetBitrate();
+                        maxBitrateIndex = j;
+                      }
+                    }
+
+                    // remove everything except track with max bitrate
+                    for (unsigned int j = 0; (continueParsing && ((maxBitrateIndex + 1) < stream->GetTracks()->Count())); j++)
+                    {
+                      stream->GetTracks()->Remove(maxBitrateIndex + 1);
+                    }
+                    for (unsigned int j = 0; (continueParsing && (j < maxBitrateIndex)); j++)
+                    {
+                      stream->GetTracks()->Remove(0);
+                    }
+                  }
+                }
+
+                bool containsVideoStream = false;
+                bool containsAudioStream = false;
+                for (unsigned int i = 0; i < manifest->GetSmoothStreamingMedia()->GetStreams()->Count(); i++)
+                {
+                  CMSHSStream *stream = manifest->GetSmoothStreamingMedia()->GetStreams()->GetItem(i);
+
+                  containsVideoStream |= stream->IsVideo();
+                  containsAudioStream |= stream->IsAudio();
+                }
+
+                continueParsing &= (containsVideoStream && containsAudioStream);
+              }
+
+              if (continueParsing)
+              {
                 uint32_t serializeSize = manifest->GetSmoothStreamingMedia()->GetSerializeSize();
                 ALLOC_MEM_DEFINE_SET(serializedManifest, uint8_t, serializeSize, 0);
                 continueParsing &= (serializedManifest != NULL);
@@ -225,7 +365,7 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *med
                   uint32_t compressedLength = 0;
 
                   HRESULT compressionResult = compress_zlib(serializedManifest, serializeSize, &compressedManifest, &compressedLength, -1);
-                  continueParsing &= SUCCEEDED(result);
+                  continueParsing &= SUCCEEDED(compressionResult);
 
                   if (continueParsing)
                   {

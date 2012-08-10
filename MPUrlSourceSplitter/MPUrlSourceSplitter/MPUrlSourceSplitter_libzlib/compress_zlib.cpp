@@ -90,9 +90,9 @@ HRESULT compress_zlib(const uint8_t *source, uint32_t sourceLength, uint8_t **de
             }
 
             encodedLength += encoded;
-            processed +=  min(CHUNK_DATA_LENGTH, sourceLength - processed);
           }
           while (strm->avail_out == 0);
+          processed +=  min(CHUNK_DATA_LENGTH, sourceLength - processed);
 
           // done when last data in buffer processed
         }
@@ -189,9 +189,9 @@ HRESULT decompress_zlib(const uint8_t *source, uint32_t sourceLength, uint8_t **
             }
 
             encodedLength += encoded;
-            processed +=  min(CHUNK_DATA_LENGTH, sourceLength - processed);
           }
           while (strm->avail_out == 0);
+          processed +=  min(CHUNK_DATA_LENGTH, sourceLength - processed);
 
           // done when last data in buffer processed
         }

@@ -26,7 +26,16 @@
 #include "MPUrlSourceSplitter_Parser_MSHS_Exports.h"
 #include "IParserPlugin.h"
 
-#define PARSER_NAME                                               L"MSHS"
+#include "MSHSTrack.h"
+
+#define PARSER_NAME                                                           L"MSHS"
+
+#define TOTAL_SUPPORTED_VIDEO_TRACKS                                          1
+wchar_t *SUPPORTED_VIDEO_TRACKS[TOTAL_SUPPORTED_VIDEO_TRACKS] =               { MSHS_FOURCC_H264 };
+
+#define TOTAL_SUPPORTED_AUDIO_TRACKS                                          1
+wchar_t *SUPPORTED_AUDIO_TRACKS[TOTAL_SUPPORTED_AUDIO_TRACKS] =               { MSHS_FOURCC_AACL };
+
 
 // This class is exported from the MPUrlSourceSplitter_Parser_MSHS.dll
 class MPURLSOURCESPLITTER_PARSER_MSHS_API CMPUrlSourceSplitter_Parser_MSHS : public IParserPlugin

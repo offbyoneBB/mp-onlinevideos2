@@ -32,8 +32,6 @@ CMSHSStream::CMSHSStream(void)
   this->maxHeight = 0;
   this->maxWidth = 0;
   this->name = NULL;
-  this->numberOfFragments = 0;
-  this->numberOfTracks = 0;
   this->subType = NULL;
   this->timeScale = 0;
   this->type = NULL;
@@ -77,16 +75,6 @@ uint64_t CMSHSStream::GetTimeScale(void)
 const wchar_t *CMSHSStream::GetName(void)
 {
   return this->name;
-}
-
-uint32_t CMSHSStream::GetNumberOfFragments(void)
-{
-  return this->numberOfFragments;
-}
-
-uint32_t CMSHSStream::GetNumberOfTracks(void)
-{
-  return this->numberOfTracks;
 }
 
 uint32_t CMSHSStream::GetMaxWidth(void)
@@ -146,16 +134,6 @@ bool CMSHSStream::SetName(const wchar_t *name)
   SET_STRING_RETURN_WITH_NULL(this->name, name);
 }
 
-void CMSHSStream::SetNumberOfFragments(uint32_t numberOfFragments)
-{
-  this->numberOfFragments = numberOfFragments;
-}
-
-void CMSHSStream::SetNumberOfTracks(uint32_t numberOfTracks)
-{
-  this->numberOfTracks = numberOfTracks;
-}
-
 void CMSHSStream::SetMaxWidth(uint32_t maxWidth)
 {
   this->maxWidth = maxWidth;
@@ -195,7 +173,7 @@ bool CMSHSStream::IsText(void)
 
 uint32_t CMSHSStream::GetSerializeSize(void)
 {
-  uint32_t required = 32;
+  uint32_t required = 24;
   required += this->GetSerializeStringSize(this->type);
   required += this->GetSerializeStringSize(this->subType);
   required += this->GetSerializeStringSize(this->url);
@@ -229,8 +207,6 @@ bool CMSHSStream::Serialize(uint8_t *buffer)
   result &= this->SerializeString(buffer + position, this->name);
   position += this->GetSerializeStringSize(this->name);
 
-  WBE32INC(buffer, position, this->numberOfFragments);
-  WBE32INC(buffer, position, this->numberOfTracks);
   WBE32INC(buffer, position, this->maxWidth);
   WBE32INC(buffer, position, this->maxHeight);
   WBE32INC(buffer, position, this->displayWidth);
@@ -297,8 +273,6 @@ bool CMSHSStream::Deserialize(const uint8_t *buffer)
 
   if (result)
   {
-    RBE32INC(buffer, position, this->numberOfFragments);
-    RBE32INC(buffer, position, this->numberOfTracks);
     RBE32INC(buffer, position, this->maxWidth);
     RBE32INC(buffer, position, this->maxHeight);
     RBE32INC(buffer, position, this->displayWidth);
