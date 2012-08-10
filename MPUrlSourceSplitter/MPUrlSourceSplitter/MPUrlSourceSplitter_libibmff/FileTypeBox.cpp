@@ -53,7 +53,7 @@ CBrandCollection *CFileTypeBox::GetCompatibleBrands(void)
   return this->compatibleBrands;
 }
 
-bool CFileTypeBox::GetBox(uint8_t **buffer, uint32_t *length)
+bool CFileTypeBox::GetBox(uint8_t *buffer, uint32_t length)
 {
   bool result = __super::GetBox(buffer, length);
 
@@ -61,20 +61,14 @@ bool CFileTypeBox::GetBox(uint8_t **buffer, uint32_t *length)
   {
     unsigned int position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
 
-    WBE32INC(*buffer, position, this->GetMajorBrand()->GetBrand());
-    WBE32INC(*buffer, position, this->GetMinorVersion());
+    WBE32INC(buffer, position, this->GetMajorBrand()->GetBrand());
+    WBE32INC(buffer, position, this->GetMinorVersion());
 
     for (unsigned int i = 0; i < this->GetCompatibleBrands()->Count(); i++)
     {
       CBrand *brand = this->GetCompatibleBrands()->GetItem(i);
 
-      WBE32INC(*buffer, position, brand->GetBrand());
-    }
-
-    if (!result)
-    {
-      FREE_MEM(*buffer);
-      *length = 0;
+      WBE32INC(buffer, position, brand->GetBrand());
     }
   }
 
@@ -145,9 +139,9 @@ wchar_t *CFileTypeBox::GetParsedHumanReadable(const wchar_t *indent)
   return result;
 }
 
-uint64_t CFileTypeBox::GetBoxSize(uint64_t size)
+uint64_t CFileTypeBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize(size + 8 + this->GetCompatibleBrands()->Count() * 4);
+  return __super::GetBoxSize();
 }
 
 bool CFileTypeBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)

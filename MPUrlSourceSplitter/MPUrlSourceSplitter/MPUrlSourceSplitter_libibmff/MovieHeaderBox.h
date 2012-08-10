@@ -44,11 +44,16 @@ public:
 
   /* get methods */
 
-  // gets whole box into buffer
+  // gets whole box into buffer (buffer must be allocated before)
   // @param buffer : the buffer for box data
   // @param length : the length of buffer for data
   // @return : true if all data were successfully stored into buffer, false otherwise
-  virtual bool GetBox(uint8_t **buffer, uint32_t *length);
+  virtual bool GetBox(uint8_t *buffer, uint32_t length);
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // gets the creation time of the presentation (in seconds since midnight, Jan. 1, 1904, in UTC time)
   // @return : the creation time
@@ -124,12 +129,6 @@ protected:
   // if this value is equal to all 1s (32-bit maxint), and a new media track is to be added,
   // then a search must be made in the file for an unused track identifier
   uint32_t nextTrackId;
-
-  // gets box size added to size
-  // method is called to determine whole box size for storing box into buffer
-  // @param size : the size of box calling this method
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(uint64_t size);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

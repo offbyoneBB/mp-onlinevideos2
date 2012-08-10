@@ -52,11 +52,16 @@ public:
   // @return : compatible brands
   virtual CBrandCollection *GetCompatibleBrands(void);
 
-  // gets whole box into buffer
+  // gets whole box into buffer (buffer must be allocated before)
   // @param buffer : the buffer for box data
   // @param length : the length of buffer for data
   // @return : true if all data were successfully stored into buffer, false otherwise
-  virtual bool GetBox(uint8_t **buffer, uint32_t *length);
+  virtual bool GetBox(uint8_t *buffer, uint32_t length);
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   /* set methods */
 
@@ -85,12 +90,6 @@ protected:
   uint32_t minorVersion;
   // stores compatible brands
   CBrandCollection *compatibleBrands;
-
-  // gets box size added to size
-  // method is called to determine whole box size for storing box into buffer
-  // @param size : the size of box calling this method
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(uint64_t size);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

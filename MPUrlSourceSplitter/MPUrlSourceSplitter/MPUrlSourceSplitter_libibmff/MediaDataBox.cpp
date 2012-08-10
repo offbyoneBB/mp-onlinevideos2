@@ -47,7 +47,7 @@ uint64_t CMediaDataBox::GetPayloadSize(void)
   return this->payloadSize;
 }
 
-bool CMediaDataBox::GetBox(uint8_t **buffer, uint32_t *length)
+bool CMediaDataBox::GetBox(uint8_t *buffer, uint32_t length)
 {
   bool result = __super::GetBox(buffer, length);
 
@@ -57,13 +57,7 @@ bool CMediaDataBox::GetBox(uint8_t **buffer, uint32_t *length)
 
     if (this->GetPayloadSize() > 0)
     {
-      memcpy((*buffer) + position, this->GetPayload(), (uint32_t)this->GetPayloadSize());
-    }
-
-    if (!result)
-    {
-      FREE_MEM(*buffer);
-      *length = 0;
+      memcpy(buffer + position, this->GetPayload(), (uint32_t)this->GetPayloadSize());
     }
   }
 
@@ -126,9 +120,9 @@ wchar_t *CMediaDataBox::GetParsedHumanReadable(const wchar_t *indent)
   return result;
 }
 
-uint64_t CMediaDataBox::GetBoxSize(uint64_t size)
+uint64_t CMediaDataBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize(size + this->payloadSize);
+  return __super::GetBoxSize();
 }
 
 bool CMediaDataBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)

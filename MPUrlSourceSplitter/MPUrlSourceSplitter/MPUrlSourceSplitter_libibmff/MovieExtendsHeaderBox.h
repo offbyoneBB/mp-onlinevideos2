@@ -39,11 +39,16 @@ public:
 
   /* get methods */
 
-  // gets whole box into buffer
+  // gets whole box into buffer (buffer must be allocated before)
   // @param buffer : the buffer for box data
   // @param length : the length of buffer for data
   // @return : true if all data were successfully stored into buffer, false otherwise
-  virtual bool GetBox(uint8_t **buffer, uint32_t *length);
+  virtual bool GetBox(uint8_t *buffer, uint32_t length);
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // gets the length of the presentation of the whole movie including fragments
   // @return : length of the presentation of the whole movie including fragments
@@ -71,12 +76,6 @@ protected:
   // if an MP4 file is created in real-time, such as used in live streaming, it is not likely that the fragment_duration
   // is known in advance and this box may be omitted
   uint64_t fragmentDuration;
-
-  // gets box size added to size
-  // method is called to determine whole box size for storing box into buffer
-  // @param size : the size of box calling this method
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(uint64_t size);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

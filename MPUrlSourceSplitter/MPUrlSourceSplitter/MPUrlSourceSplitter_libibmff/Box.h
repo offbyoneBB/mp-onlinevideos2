@@ -46,11 +46,16 @@ public:
   // @return : box type or NULL if error
   virtual const wchar_t *GetType(void);
 
-  // gets whole box into buffer
+  // gets whole box into buffer (buffer must be allocated before)
   // @param buffer : the buffer for box data
   // @param length : the length of buffer for data
   // @return : true if all data were successfully stored into buffer, false otherwise
-  virtual bool GetBox(uint8_t **buffer, uint32_t *length);
+  virtual bool GetBox(uint8_t *buffer, uint32_t length);
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // gets additional boxes stored in this box
   // @return : additional boxes stored in this box
@@ -110,12 +115,6 @@ protected:
   // stores additional boxes stored in this box
   CBoxCollection *boxes;
 
-  // gets box size added to size
-  // method is called to determine whole box size for storing box into buffer
-  // @param size : the size of box calling this method
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(uint64_t size);
-
   // gets Unicode string from buffer from specified position
   // @param buffer : the buffer to read UTF-8 string
   // @param length : the length of buffer
@@ -148,6 +147,20 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : true if all data were successfully stored into buffer, false otherwise
+  virtual bool GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // get remaining boxes into buffer
+  // @param buffer : the buffer to store remaining boxes
+  // @param length : the length of buffer
+  // @param position : the position within buffer to start storing
+  // @return : true if successful, false otherwise
+  virtual bool GetAdditionalBoxes(uint8_t *buffer, uint32_t length, uint32_t position);
 };
 
 #endif

@@ -44,7 +44,7 @@ CBox::~CBox(void)
 
 uint64_t CBox::GetSize(void)
 {
-  return (this->length == 0) ? this->GetBoxSize(0) : this->length;
+  return (this->length == 0) ? this->GetBoxSize() : this->length;
 }
 
 const wchar_t *CBox::GetType(void)
@@ -52,43 +52,9 @@ const wchar_t *CBox::GetType(void)
   return this->type;
 }
 
-bool CBox::GetBox(uint8_t **buffer, uint32_t *length)
+bool CBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = ((buffer != NULL) && (length != NULL) && (!this->IsBigSize()));
-
-  if (result)
-  {
-    ALLOC_MEM_DEFINE_SET(tempBuffer, uint8_t, (uint32_t)this->GetBoxSize(0), 0);
-    result &= (tempBuffer != NULL);
-
-    if (result)
-    {
-      uint32_t position = 0;
-      WBE32INC(tempBuffer, position, (uint32_t)this->GetSize());
-
-      char *type = ConvertToMultiByteW(this->GetType());
-      result &= (type != NULL);
-
-      if (result)
-      {
-        memcpy(tempBuffer + position, type, 4);
-      }
-
-      FREE_MEM(type);
-    }
-
-    if (result)
-    {
-      *buffer = tempBuffer;
-      *length = (uint32_t)this->GetSize();
-    }
-    else
-    {
-      FREE_MEM(tempBuffer);
-    }
-  }
-
-  return result;
+  return this->GetBoxInternal(buffer, length, true);
 }
 
 CBoxCollection *CBox::GetBoxes(void)
@@ -130,14 +96,20 @@ bool CBox::Parse(const uint8_t *buffer, uint32_t length)
   return this->ParseInternal(buffer, length, true);
 }
 
-uint64_t CBox::GetBoxSize(uint64_t size)
+uint64_t CBox::GetBoxSize(void)
 {
-  uint64_t result = size + BOX_HEADER_LENGTH;
+  uint64_t result = BOX_HEADER_LENGTH;
 
-  if (size > (uint64_t)UINT_MAX)
+  for (unsigned int i = 0; i < this->GetBoxes()->Count(); i++)
+  {
+    CBox *box = this->GetBoxes()->GetItem(i);
+    result += box->GetBoxSize();
+  }
+
+  if (result > (uint64_t)UINT_MAX)
   {
     // size of box doesn't fit into box header
-    size = size - BOX_HEADER_LENGTH + BOX_HEADER_LENGTH_SIZE64;
+    result = result - BOX_HEADER_LENGTH + BOX_HEADER_LENGTH_SIZE64;
   }
 
   return result;
@@ -353,4 +325,43 @@ bool CBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool proc
   }
 
   return this->parsed;
+}
+
+bool CBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  bool result = ((buffer != NULL) && (!this->IsBigSize()));
+
+  if (result)
+  {
+    unsigned int boxSize = (uint32_t)this->GetBoxSize();
+    uint32_t position = 0;
+
+    if (result)
+    {
+      WBE32INC(buffer, position, (uint32_t)this->GetSize());
+
+      char *type = ConvertToMultiByteW(this->GetType());
+      result &= (type != NULL);
+
+      if (result)
+      {
+        memcpy(buffer + position, type, 4);
+        position += 4;
+      }
+
+      FREE_MEM(type);
+    }
+
+    if (result && processAdditionalBoxes)
+    {
+      result &= this->GetAdditionalBoxes(buffer, boxSize, position);
+    }
+  }
+
+  return result;
+}
+
+bool CBox::GetAdditionalBoxes(uint8_t *buffer, uint32_t length, uint32_t position)
+{
+  return false;
 }
