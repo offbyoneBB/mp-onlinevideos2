@@ -9,17 +9,16 @@ namespace OnlineVideos.Sites
 {
     public class CTVNewsUtil : GenericSiteUtil
     {
-        // override the Regex for main categories from base class
-        protected static Regex mainCategoriesRegex = new Regex(@"<li\sclass=""video""\s+>\s+<a\s+href=""(?<url>[^""]*)""[^>]*>(?<title>[^<]*)</a>",
-                                                               RegexOptions.Compiled);
-        protected Regex videoListRegex = new Regex(@"<img.*?src='(?<thumb>[^']*)'\s/>.*?clip\.id\s=\s(?<clipId>[^;]*);\s+clip\.title\s=\sescape\(""(?<title>[^""]*)""\);.*?clip\.description\s=\sescape\(""(?<description>[^""]*)""\);",
-                                                       RegexOptions.Compiled | RegexOptions.Singleline);
-        protected Regex manifestRegex = new Regex(@"Video\.Load\((?<json>[^\)]*)\)",
-                                                  RegexOptions.Compiled);
-        protected Regex nextPageRegex = new Regex(@"<span\sclass=""videoPaginationNext"">\s+<a\shref=""javascript:getPlaylists\('(?<binId>[^']*)',\s'(?<pageNumber>[^']*)',\s'12'\);"">Next\s&gt;</a>\s+</span>",
-                                                  RegexOptions.Compiled);
+        private static Regex mainCategoriesRegex = new Regex(@"<li\sclass=""video""\s+>\s+<a\s+href=""(?<url>[^""]*)""[^>]*>(?<title>[^<]*)</a>",
+                                                             RegexOptions.Compiled);
+        private static Regex videoListRegex = new Regex(@"<img.*?src='(?<thumb>[^']*)'\s/>.*?clip\.id\s=\s(?<clipId>[^;]*);\s+clip\.title\s=\sescape\(""(?<title>[^""]*)""\);.*?clip\.description\s=\sescape\(""(?<description>[^""]*)""\);",
+                                                        RegexOptions.Compiled | RegexOptions.Singleline);
+        private static Regex manifestRegex = new Regex(@"Video\.Load\((?<json>[^\)]*)\)",
+                                                       RegexOptions.Compiled);
+        private static Regex nextPageRegex = new Regex(@"<span\sclass=""videoPaginationNext"">\s+<a\shref=""javascript:getPlaylists\('(?<binId>[^']*)',\s'(?<pageNumber>[^']*)',\s'12'\);"">Next\s&gt;</a>\s+</span>",
+                                                       RegexOptions.Compiled);
         
-        private static string videoListUrlFormat = @"{0}/lifestyle-{1}?ot=example.AjaxPageLayout.ot&maxItemsPerPage=12&pageNum={2}";
+        protected static string videoListUrlFormat = @"{0}/{1}?ot=example.AjaxPageLayout.ot&maxItemsPerPage=12&pageNum={2}";
         private static string urlgenFormat = @"http://esi.ctv.ca/datafeed/flv/urlgenjs.aspx?formatid=18&timeZone=4&vid={0}";
         private static string manifestUrlFormat = @"{0}?hdcore=";
             
