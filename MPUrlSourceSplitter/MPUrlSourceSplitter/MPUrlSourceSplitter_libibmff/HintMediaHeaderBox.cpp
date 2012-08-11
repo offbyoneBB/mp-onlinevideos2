@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "HintMediaHeaderBox.h"
+#include "BoxCollection.h"
 
 CHintMediaHeaderBox::CHintMediaHeaderBox(void)
   : CFullBox()
@@ -40,14 +41,7 @@ CHintMediaHeaderBox::~CHintMediaHeaderBox(void)
 
 bool CHintMediaHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 uint16_t CHintMediaHeaderBox::GetMaxPDUSize(void)
@@ -71,6 +65,26 @@ uint32_t CHintMediaHeaderBox::GetAverageBitrate(void)
 }
 
 /* set methods */
+
+void CHintMediaHeaderBox::SetMaxPDUSize(uint16_t maxPDUSize)
+{
+  this->maxPDUSize = maxPDUSize;
+}
+
+void CHintMediaHeaderBox::SetAveragePDUSize(uint16_t averagePDUSize)
+{
+  this->averagePDUSize = averagePDUSize;
+}
+
+void CHintMediaHeaderBox::SetMaxBitrate(uint32_t maxBitrate)
+{
+  this->maxBitrate = maxBitrate;
+}
+
+void CHintMediaHeaderBox::SetAverageBitrate(uint32_t averageBitrate)
+{
+  this->averageBitrate = averageBitrate;
+}
 
 /* other methods */
 
@@ -111,7 +125,15 @@ wchar_t *CHintMediaHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CHintMediaHeaderBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 16;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CHintMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -142,6 +164,9 @@ bool CHintMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t le
         RBE16INC(buffer, position, this->averagePDUSize);
         RBE32INC(buffer, position, this->maxBitrate);
         RBE32INC(buffer, position, this->averageBitrate);
+
+        // skip 4 reserved bytes
+        position += 4;
       }
 
       if (continueParsing && processAdditionalBoxes)
@@ -154,6 +179,30 @@ bool CHintMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t le
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CHintMediaHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE16INC(buffer, result, this->GetMaxPDUSize());
+    WBE16INC(buffer, result, this->GetAveragePDUSize());
+    WBE32INC(buffer, result, this->GetMaxBitrate());
+    WBE32INC(buffer, result, this->GetAverageBitrate());
+
+    // skip 4 reserved bytes
+    result += 4;
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

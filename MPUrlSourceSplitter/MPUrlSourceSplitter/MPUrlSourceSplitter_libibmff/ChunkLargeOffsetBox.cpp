@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "ChunkLargeOffsetBox.h"
+#include "BoxCollection.h"
 
 CChunkLargeOffsetBox::CChunkLargeOffsetBox(void)
   : CFullBox()
@@ -38,14 +39,7 @@ CChunkLargeOffsetBox::~CChunkLargeOffsetBox(void)
 
 bool CChunkLargeOffsetBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 CChunkOffsetCollection *CChunkLargeOffsetBox::GetChunkOffsets(void)
@@ -110,7 +104,15 @@ wchar_t *CChunkLargeOffsetBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CChunkLargeOffsetBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 4 + this->GetChunkOffsets()->Count() * 8;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CChunkLargeOffsetBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -170,6 +172,29 @@ bool CChunkLargeOffsetBox::ParseInternal(const unsigned char *buffer, uint32_t l
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CChunkLargeOffsetBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->GetChunkOffsets()->Count());
+
+    for (uint32_t i = 0; (i < this->GetChunkOffsets()->Count()); i++)
+    {
+      WBE64INC(buffer, result, this->GetChunkOffsets()->GetItem(i)->GetChunkOffset());
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

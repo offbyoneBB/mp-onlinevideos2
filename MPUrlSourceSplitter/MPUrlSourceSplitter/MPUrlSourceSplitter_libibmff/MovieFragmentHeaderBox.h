@@ -56,6 +56,10 @@ public:
 
   /* set methods */
 
+  // sets the ordinal number of this fragment, in increasing order
+  // @param sequenceNumber : the ordinal number of this fragment to set, in increasing order
+  virtual void SetSequenceNumber(uint32_t sequenceNumber);
+
   /* other methods */
 
   // parses data in buffer
@@ -80,6 +84,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

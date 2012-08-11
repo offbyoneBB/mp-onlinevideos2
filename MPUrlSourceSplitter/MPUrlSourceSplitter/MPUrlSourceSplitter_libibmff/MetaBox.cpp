@@ -21,12 +21,13 @@
 #include "StdAfx.h"
 
 #include "MetaBox.h"
+#include "BoxCollection.h"
 
 CMetaBox::CMetaBox(void)
   : CFullBox()
 {
   this->type = Duplicate(META_BOX_TYPE);
-  this->handlerBox = NULL;
+  this->handlerBox = new CHandlerBox();
 }
 
 CMetaBox::~CMetaBox(void)
@@ -38,14 +39,7 @@ CMetaBox::~CMetaBox(void)
 
 bool CMetaBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 CHandlerBox *CMetaBox::GetHandlerBox(void)
@@ -93,7 +87,15 @@ wchar_t *CMetaBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CMetaBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = this->GetHandlerBox()->GetBoxSize();
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CMetaBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -144,6 +146,24 @@ bool CMetaBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CMetaBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    result = this->GetHandlerBox()->GetBox(buffer + result, length - result) ? (result + (uint32_t)this->GetHandlerBox()->GetBoxSize()) : 0;
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

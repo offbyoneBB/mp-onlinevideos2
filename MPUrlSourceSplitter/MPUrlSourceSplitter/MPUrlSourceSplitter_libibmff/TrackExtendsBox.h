@@ -67,6 +67,26 @@ public:
 
   /* set methods */
 
+  // sets track ID of a track in the Movie Box
+  // @param trackId : track ID of a track in the Movie Box to set
+  virtual void SetTrackId(uint32_t trackId);
+
+  // sets default sample description index for track fragments
+  // @param defaultSampleDescriptionIndex : default sample description index for track fragments to set
+  virtual void SetDefaultSampleDescriptionIndex(uint32_t defaultSampleDescriptionIndex);
+
+  // sets default sample duration for track fragments
+  // @param defaultSampleDuration : default sample duration for track fragments to set
+  virtual void SetDefaultSampleDuration(uint32_t defaultSampleDuration);
+
+  // sets default sample size for track fragments
+  // @param defaultSampleSize : default sample size for track fragments to set
+  virtual void SetDefaultSampleSize(uint32_t defaultSampleSize);
+
+  // sets default sample flags for track fragments
+  // @param defaultSampleFlags : default sample flags for track fragments to set
+  virtual void SetDefaultSampleFlags(uint32_t defaultSampleFlags);
+
   /* other methods */
 
   // parses data in buffer
@@ -126,6 +146,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

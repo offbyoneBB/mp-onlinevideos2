@@ -51,7 +51,7 @@ public:
   virtual uint64_t GetBoxSize(void);
 
   // gets name
-  // @return : nameor NULL if error
+  // @return : name or NULL if error
   virtual const wchar_t *GetName(void);
 
   // gets location
@@ -59,6 +59,16 @@ public:
   virtual const wchar_t *GetLocation(void);
 
   /* set methods */
+
+  // sets name
+  // @param name : name to set
+  // @return : true if successful, false otherwise
+  virtual bool SetName(const wchar_t *name);
+
+  // gets location
+  // @param location : location to set
+  // @return : true if successful, false otherwise
+  virtual bool SetLocation(const wchar_t *location);
 
   /* other methods */
 
@@ -87,6 +97,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

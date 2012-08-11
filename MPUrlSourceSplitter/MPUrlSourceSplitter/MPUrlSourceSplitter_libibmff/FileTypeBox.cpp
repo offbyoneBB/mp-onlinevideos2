@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "FileTypeBox.h"
+#include "BoxCollection.h"
 
 CFileTypeBox::CFileTypeBox(void)
   : CBox()
@@ -55,24 +56,7 @@ CBrandCollection *CFileTypeBox::GetCompatibleBrands(void)
 
 bool CFileTypeBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    unsigned int position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-
-    WBE32INC(buffer, position, this->GetMajorBrand()->GetBrand());
-    WBE32INC(buffer, position, this->GetMinorVersion());
-
-    for (unsigned int i = 0; i < this->GetCompatibleBrands()->Count(); i++)
-    {
-      CBrand *brand = this->GetCompatibleBrands()->GetItem(i);
-
-      WBE32INC(buffer, position, brand->GetBrand());
-    }
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 /* set methods */
@@ -141,7 +125,15 @@ wchar_t *CFileTypeBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CFileTypeBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 8 + this->GetCompatibleBrands()->Count() * 4;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CFileTypeBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -214,6 +206,32 @@ bool CFileTypeBox::ParseInternal(const unsigned char *buffer, uint32_t length, b
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CFileTypeBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->GetMajorBrand()->GetBrand());
+    WBE32INC(buffer, result, this->GetMinorVersion());
+
+    for (unsigned int i = 0; i < this->GetCompatibleBrands()->Count(); i++)
+    {
+      CBrand *brand = this->GetCompatibleBrands()->GetItem(i);
+
+      WBE32INC(buffer, result, brand->GetBrand());
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

@@ -49,7 +49,7 @@ public:
   // @return : size of box 
   virtual uint64_t GetBoxSize(void);
 
-  // gets audio coding name
+  // gets video coding name
   // @return : coding name
   virtual const wchar_t *GetCodingName(void);
 
@@ -83,6 +83,33 @@ public:
   virtual uint16_t GetDepth(void);
 
   /* set methods */
+
+  // sets video coding name
+  // @param codingName : video coding name to set
+  // @return : true if successful, false otherwise
+  virtual bool SetCodingName(const wchar_t *codingName);
+
+  // sets the maximum visual width of the stream described by this sample description, in pixels
+  // @param width : the maximum visual width of the stream described by this sample description to set, in pixels
+  virtual void SetWidth(uint16_t width);
+
+  // sets the maximum visual height of the stream described by this sample description, in pixels
+  // @param height : the maximum visual height of the stream described by this sample description to set, in pixels
+  virtual void SetHeight(uint16_t height);
+
+  // sets how many frames of compressed video are stored in each sample
+  // the default is 1, for one frame per sample; it may be more than 1 for multiple frames per sample
+  // @param frameCount : how many frames of compressed video are stored in each sample to set
+  virtual void SetFrameCount(uint16_t frameCount);
+
+  // sets name, for informative purposes
+  // @param compressorName : name to set, for informative purposes
+  // @return : true if successful, false otherwise
+  virtual bool SetCompressorName(const wchar_t *compressorName);
+
+  // sets one of the following values 0x0018 – images are in colour with no alpha
+  // @param depth : one of the following values 0x0018 
+  virtual void SetDepth(uint16_t depth);
 
   /* other methods */
 
@@ -131,6 +158,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

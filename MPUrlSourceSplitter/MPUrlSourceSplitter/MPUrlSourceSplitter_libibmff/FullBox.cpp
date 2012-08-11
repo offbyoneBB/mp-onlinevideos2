@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "FullBox.h"
+#include "BoxCollection.h"
 
 CFullBox::CFullBox(void)
   : CBox()
@@ -47,20 +48,20 @@ uint32_t CFullBox::GetFlags(void)
 
 bool CFullBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-
-    WBE8INC(buffer, position, this->GetVersion());
-    WBE24INC(buffer, position, this->GetFlags());
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 /* set methods */
+
+void CFullBox::SetVersion(uint8_t version)
+{
+  this->version = version;
+}
+
+void CFullBox::SetFlags(uint32_t flags)
+{
+  this->flags = flags;
+}
 
 /* other methods */
 
@@ -95,7 +96,15 @@ wchar_t *CFullBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CFullBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 4;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CFullBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -126,6 +135,25 @@ bool CFullBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CFullBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE8INC(buffer, result, this->GetVersion());
+    WBE24INC(buffer, result, this->GetFlags());
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

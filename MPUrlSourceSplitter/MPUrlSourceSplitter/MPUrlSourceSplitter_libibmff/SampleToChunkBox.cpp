@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "SampleToChunkBox.h"
+#include "BoxCollection.h"
 
 CSampleToChunkBox::CSampleToChunkBox(void)
   : CFullBox()
@@ -38,14 +39,7 @@ CSampleToChunkBox::~CSampleToChunkBox(void)
 
 bool CSampleToChunkBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 CSampleToChunkCollection *CSampleToChunkBox::GetSamplesToChunks(void)
@@ -112,7 +106,15 @@ wchar_t *CSampleToChunkBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CSampleToChunkBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 4 + this->GetSamplesToChunks()->Count() * 12;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CSampleToChunkBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -178,6 +180,32 @@ bool CSampleToChunkBox::ParseInternal(const unsigned char *buffer, uint32_t leng
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CSampleToChunkBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->GetSamplesToChunks()->Count());
+
+    for (uint32_t i = 0; (i < this->GetSamplesToChunks()->Count()); i++)
+    {
+      CSampleToChunk *sampleToChunk = this->GetSamplesToChunks()->GetItem(i);
+      WBE32INC(buffer, result, sampleToChunk->GetFirstChunk());
+      WBE32INC(buffer, result, sampleToChunk->GetSamplesPerChunk());
+      WBE32INC(buffer, result, sampleToChunk->GetSampleDescriptionIndex());
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

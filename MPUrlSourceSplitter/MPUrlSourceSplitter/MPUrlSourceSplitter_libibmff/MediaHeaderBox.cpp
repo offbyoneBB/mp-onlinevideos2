@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "MediaHeaderBox.h"
+#include "BoxCollection.h"
 
 CMediaHeaderBox::CMediaHeaderBox(void)
   : CFullBox()
@@ -30,7 +31,7 @@ CMediaHeaderBox::CMediaHeaderBox(void)
   this->timeScale = 0;
   this->duration = 0;
   this->type = Duplicate(MEDIA_HEADER_BOX_TYPE);
-  this->language = NULL;
+  this->language = Duplicate(MEDIA_HEADER_LANGUAGE_UNDEFINED);
 }
 
 CMediaHeaderBox::~CMediaHeaderBox(void)
@@ -42,14 +43,7 @@ CMediaHeaderBox::~CMediaHeaderBox(void)
 
 bool CMediaHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 uint64_t CMediaHeaderBox::GetCreationTime(void)
@@ -78,6 +72,31 @@ const wchar_t *CMediaHeaderBox::GetLanguage(void)
 }
 
 /* set methods */
+
+void CMediaHeaderBox::SetCreationTime(uint64_t creationTime)
+{
+  this->creationTime = creationTime;
+}
+
+void CMediaHeaderBox::SetModificationTime(uint64_t modificationTime)
+{
+  this->modificationTime = modificationTime;
+}
+
+void CMediaHeaderBox::SetTimeScale(uint32_t timeScale)
+{
+  this->timeScale = timeScale;
+}
+
+void CMediaHeaderBox::SetDuration(uint64_t duration)
+{
+  this->duration = duration;
+}
+
+bool CMediaHeaderBox::SetLanguage(const wchar_t *language)
+{
+  SET_STRING_RETURN(this->language, language);
+}
 
 /* other methods */
 
@@ -120,7 +139,27 @@ wchar_t *CMediaHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CMediaHeaderBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 0;
+
+  switch(this->GetVersion())
+  {
+  case 0:
+    result = 20;
+    break;
+  case 1:
+    result = 32;
+    break;
+  default:
+    break;
+  }
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -202,6 +241,72 @@ bool CMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CMediaHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    switch (this->GetVersion())
+    {
+    case 0:
+      WBE32INC(buffer, result, this->GetCreationTime());
+      WBE32INC(buffer, result, this->GetModificationTime());
+      WBE32INC(buffer, result, this->GetTimeScale());
+      WBE32INC(buffer, result, this->GetDuration());
+      break;
+    case 1:
+      WBE64INC(buffer, result, this->GetCreationTime());
+      WBE64INC(buffer, result, this->GetModificationTime());
+      WBE32INC(buffer, result, this->GetTimeScale());
+      WBE64INC(buffer, result, this->GetDuration());
+      break;
+    default:
+      result = 0;
+      break;
+    }
+
+    if (result != 0)
+    {
+      // each character is packed as the difference between its ASCII value and 0x60
+      // since the code is confined to being three lower-case letters, these values are strictly positive
+
+      uint16_t languageCode = 0;
+      char *languageCodeAscii = ConvertToMultiByteW(this->GetLanguage());
+      result = (languageCodeAscii != NULL) ? result : 0;
+
+      if (result != 0)
+      {
+        result = (strlen(languageCodeAscii) == 3) ? result : 0;
+
+        if (result != 0)
+        {
+          // bit(1) pad = 0;
+          // unsigned int(5)[3] language; // ISO-639-2/T language code
+
+          languageCode |= (((languageCodeAscii[0] - 0x60) << 10) & 0x7C00);
+          languageCode |= (((languageCodeAscii[1] - 0x60) << 5) & 0x03E0);
+          languageCode |= ((languageCodeAscii[2] - 0x60) & 0x001F);
+
+          WBE16INC(buffer, result, languageCode);
+
+          // skip 2 bytes pre-defined
+          result += 2;
+        }
+      }
+      FREE_MEM(languageCodeAscii);
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

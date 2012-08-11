@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "TrackFragmentHeaderBox.h"
+#include "BoxCollection.h"
 
 CTrackFragmentHeaderBox::CTrackFragmentHeaderBox(void)
   : CFullBox()
@@ -42,14 +43,7 @@ CTrackFragmentHeaderBox::~CTrackFragmentHeaderBox(void)
 
 bool CTrackFragmentHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 uint32_t CTrackFragmentHeaderBox::GetTrackId(void)
@@ -83,6 +77,36 @@ uint32_t CTrackFragmentHeaderBox::GetDefaultSampleFlags(void)
 }
 
 /* set methods */
+
+void CTrackFragmentHeaderBox::SetTrackId(uint32_t trackId)
+{
+  this->trackId = trackId;
+}
+
+void CTrackFragmentHeaderBox::SetBaseDataOffset(uint64_t baseDataOffset)
+{
+  this->baseDataOffset = baseDataOffset;
+}
+
+void CTrackFragmentHeaderBox::SetSampleDescriptionIndex(uint32_t sampleDescriptionIndex)
+{
+  this->sampleDescriptionIndex = sampleDescriptionIndex;
+}
+
+void CTrackFragmentHeaderBox::SetDefaultSampleDuration(uint32_t defaultSampleDuration)
+{
+  this->defaultSampleDuration = defaultSampleDuration;
+}
+
+void CTrackFragmentHeaderBox::SetDefaultSampleSize(uint32_t defaultSampleSize)
+{
+  this->defaultSampleSize = defaultSampleSize;
+}
+
+void CTrackFragmentHeaderBox::SetDefaultSampleFlags(uint32_t defaultSampleFlags)
+{
+  this->defaultSampleFlags = defaultSampleFlags;
+}
 
 /* other methods */
 
@@ -126,7 +150,36 @@ wchar_t *CTrackFragmentHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CTrackFragmentHeaderBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 4;
+
+  if (this->IsBaseDataOffsetPresent())
+  {
+    result += 8;
+  }
+  if (this->IsSampleDescriptionIndexPresent())
+  {
+    result += 4;
+  }
+  if (this->IsDefaultSampleDurationPresent())
+  {
+    result += 4;
+  }
+  if (this->IsDefaultSampleSizePresent())
+  {
+    result += 4;
+  }
+  if (this->IsDefaultSampleFlagsPresent())
+  {
+    result += 4;
+  }
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CTrackFragmentHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -220,4 +273,42 @@ bool CTrackFragmentHeaderBox::IsDefaultSampleFlagsPresent(void)
 bool CTrackFragmentHeaderBox::IsDurationIsEmpty(void)
 {
   return ((this->GetFlags() & FLAGS_DURATION_IS_EMPTY) != 0);
+}
+
+uint32_t CTrackFragmentHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->GetTrackId());
+    if (this->IsBaseDataOffsetPresent())
+    {
+      WBE64INC(buffer, result, this->GetBaseDataOffset());
+    }
+    if (this->IsSampleDescriptionIndexPresent())
+    {
+      WBE32INC(buffer, result, this->GetSampleDescriptionIndex());
+    }
+    if (this->IsDefaultSampleDurationPresent())
+    {
+      WBE32INC(buffer, result, this->GetDefaultSampleDuration());
+    }
+    if (this->IsDefaultSampleSizePresent())
+    {
+      WBE32INC(buffer, result, this->GetDefaultSampleSize());
+    }
+    if (this->IsDefaultSampleFlagsPresent())
+    {
+      WBE32INC(buffer, result, this->GetDefaultSampleFlags());
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
+
+  return result;
 }

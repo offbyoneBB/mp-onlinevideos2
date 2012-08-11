@@ -67,6 +67,19 @@ public:
 
   /* set methods */
 
+  // sets audio coding name
+  // @param codingName : audio coding name to set
+  // @return : true if successful, false otherwise
+  virtual bool SetCodingName(const wchar_t *codingName);
+
+  // sets channel count
+  // @param channelCount : channel count to set
+  virtual void SetChannelCount(uint16_t channelCount);
+
+  // sets sample size
+  // @param sampleSize : the sample size (in bits) to set
+  virtual void SetSampleSize(uint16_t sampleSize);
+
   /* other methods */
 
   // parses data in buffer
@@ -97,6 +110,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

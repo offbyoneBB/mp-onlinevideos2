@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "MovieHeaderBox.h"
+#include "BoxCollection.h"
 
 CMovieHeaderBox::CMovieHeaderBox(void)
   : CFullBox()
@@ -34,6 +35,11 @@ CMovieHeaderBox::CMovieHeaderBox(void)
   this->volume = new CFixedPointNumber(8, 8);
   this->matrix = new CMatrix();
   this->nextTrackId = 0;
+
+  // set unity matrix
+  this->matrix->GetItem(0)->SetIntegerPart(1);
+  this->matrix->GetItem(4)->SetIntegerPart(1);
+  this->matrix->GetItem(8)->SetIntegerPart(1);
 }
 
 CMovieHeaderBox::~CMovieHeaderBox(void)
@@ -47,14 +53,7 @@ CMovieHeaderBox::~CMovieHeaderBox(void)
 
 bool CMovieHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 uint64_t CMovieHeaderBox::GetCreationTime(void)
@@ -98,6 +97,31 @@ uint32_t CMovieHeaderBox::GetNextTrackId(void)
 }
 
 /* set methods */
+
+void CMovieHeaderBox::SetCreationTime(uint64_t creationTime)
+{
+  this->creationTime = creationTime;
+}
+
+void CMovieHeaderBox::SetModificationTime(uint64_t modificationTime)
+{
+  this->modificationTime = modificationTime;
+}
+
+void CMovieHeaderBox::SetTimeScale(uint32_t timeScale)
+{
+  this->timeScale = timeScale;
+}
+
+void CMovieHeaderBox::SetDuration(uint64_t duration)
+{
+  this->duration = duration;
+}
+
+void CMovieHeaderBox::SetNextTrackId(uint32_t nextTrackId)
+{
+  this->nextTrackId = nextTrackId;
+}
 
 /* other methods */
 
@@ -173,20 +197,27 @@ wchar_t *CMovieHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CMovieHeaderBox::GetBoxSize(void)
 {
-  uint64_t adjust = 0;
+  uint64_t result = 0;
+
   switch(this->GetVersion())
   {
   case 0:
-    adjust = MOVIE_HEADER_DATA_VERSION_0_SIZE;
+    result = MOVIE_HEADER_DATA_VERSION_0_SIZE;
     break;
   case 1:
-    adjust = MOVIE_HEADER_DATA_VERSION_1_SIZE;
+    result = MOVIE_HEADER_DATA_VERSION_1_SIZE;
     break;
   default:
     break;
   }
 
-  return __super::GetBoxSize();
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CMovieHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -285,6 +316,61 @@ bool CMovieHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CMovieHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    switch (this->GetVersion())
+    {
+    case 0:
+      WBE32INC(buffer, result, this->GetCreationTime());
+      WBE32INC(buffer, result, this->GetModificationTime());
+      WBE32INC(buffer, result, this->GetTimeScale());
+      WBE32INC(buffer, result, this->GetDuration());
+      break;
+    case 1:
+      WBE64INC(buffer, result, this->GetCreationTime());
+      WBE64INC(buffer, result, this->GetModificationTime());
+      WBE32INC(buffer, result, this->GetTimeScale());
+      WBE64INC(buffer, result, this->GetDuration());
+      break;
+    default:
+      result = 0;
+      break;
+    }
+
+    if (result != 0)
+    {
+      WBE32INC(buffer, result, this->GetRate()->GetNumber());
+      WBE16INC(buffer, result, this->GetVolume()->GetNumber());
+
+      // skip 10 bytes reserved
+      result += 10;
+
+      // write matrix
+      for (unsigned int i = 0; (i < this->GetMatrix()->Count()); i++)
+      {
+        WBE32INC(buffer, result, this->GetMatrix()->GetItem(i)->GetNumber());
+      }
+
+      // skip 6 * bit(32)
+      result += 24;
+
+      WBE32INC(buffer, result, this->GetNextTrackId());
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

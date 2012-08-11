@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "VisualSampleEntryBox.h"
+#include "BoxCollection.h"
 
 CVisualSampleEntryBox::CVisualSampleEntryBox(void)
   : CSampleEntryBox()
@@ -45,14 +46,7 @@ CVisualSampleEntryBox::~CVisualSampleEntryBox(void)
 
 bool CVisualSampleEntryBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 const wchar_t *CVisualSampleEntryBox::GetCodingName(void)
@@ -96,6 +90,36 @@ uint16_t CVisualSampleEntryBox::GetDepth(void)
 }
 
 /* set methods */
+
+bool CVisualSampleEntryBox::SetCodingName(const wchar_t *codingName)
+{
+  SET_STRING_RETURN(this->type, codingName);
+}
+
+void CVisualSampleEntryBox::SetWidth(uint16_t width)
+{
+  this->width = width;
+}
+
+void CVisualSampleEntryBox::SetHeight(uint16_t height)
+{
+  this->height = height;
+}
+
+void CVisualSampleEntryBox::SetFrameCount(uint16_t frameCount)
+{
+  this->frameCount = frameCount;
+}
+
+bool CVisualSampleEntryBox::SetCompressorName(const wchar_t *compressorName)
+{
+  SET_STRING_RETURN(this->compressorName, compressorName);
+}
+
+void CVisualSampleEntryBox::SetDepth(uint16_t depth)
+{
+  this->depth = depth;
+}
 
 /* other methods */
 
@@ -143,7 +167,26 @@ wchar_t *CVisualSampleEntryBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CVisualSampleEntryBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 70;
+
+  char *utf8String = ConvertUnicodeToUtf8(this->GetCompressorName());
+  result = (utf8String != NULL) ? result : 0;
+
+  if (result != 0)
+  {
+    unsigned int compressorNameLength = strlen(utf8String);
+    // compressor name length can be at max 31
+    result = (compressorNameLength < 32) ? result : 0;
+  }
+  FREE_MEM(utf8String);
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0;
+  }
+
+  return result;
 }
 
 bool CVisualSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -214,6 +257,78 @@ bool CVisualSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t 
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CVisualSampleEntryBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    // skip 16 reserved and pre-defined bytes
+    result += 16;
+
+    WBE16INC(buffer, result, this->GetWidth());
+    WBE16INC(buffer, result, this->GetHeight());
+
+    WBE32INC(buffer, result, this->GetHorizontalResolution()->GetNumber());
+    WBE32INC(buffer, result, this->GetVerticalResolution()->GetNumber());
+
+    // skip 4 reserved bytes
+    result += 4;
+
+    WBE16INC(buffer, result, this->GetFrameCount());
+
+    if (this->GetCompressorName() != NULL)
+    {
+      char *utf8String = ConvertUnicodeToUtf8(this->GetCompressorName());
+      result = (utf8String != NULL) ? result : 0;
+
+      if (result != 0)
+      {
+        unsigned int compressorNameLength = strlen(utf8String);
+        // compressor name length can be at max 31
+        result = (compressorNameLength < 32) ? result : 0;
+
+        if (result != 0)
+        {
+          WBE8INC(buffer, result, compressorNameLength);
+
+          for (unsigned int i = 0; i < compressorNameLength; i++)
+          {
+            WBE8INC(buffer, result, utf8String[i]);
+          }
+
+          result += (31 - compressorNameLength);
+        }
+      }
+      FREE_MEM(utf8String);
+    }
+    else
+    {
+      result += 32;
+    }
+
+    if (result != 0)
+    {
+      WBE16INC(buffer, result, this->GetDepth());
+
+      // skip 2 pre-defined bytes (0xFFFF)
+      WBE16INC(buffer, result, 0xFFFF);
+
+      // optional clean aperture box
+
+      // optional pixel aspect ratio box
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

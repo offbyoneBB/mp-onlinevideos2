@@ -22,6 +22,7 @@
 
 #include "SampleDescriptionBox.h"
 #include "SampleEntryBoxFactory.h"
+#include "BoxCollection.h"
 
 CSampleDescriptionBox::CSampleDescriptionBox(uint32_t handlerType)
   : CFullBox()
@@ -40,14 +41,7 @@ CSampleDescriptionBox::~CSampleDescriptionBox(void)
 
 bool CSampleDescriptionBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 CSampleEntryBoxCollection *CSampleDescriptionBox::GetSampleEntries(void)
@@ -119,7 +113,21 @@ wchar_t *CSampleDescriptionBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CSampleDescriptionBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 4;
+
+  for (unsigned int i = 0; i < this->GetSampleEntries()->Count(); i++)
+  {
+    uint64_t boxSize = this->GetSampleEntries()->GetItem(i)->GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CSampleDescriptionBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -181,6 +189,30 @@ bool CSampleDescriptionBox::ParseInternal(const unsigned char *buffer, uint32_t 
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CSampleDescriptionBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->GetSampleEntries()->Count());
+
+    for (unsigned int i = 0; ((result != 0) && (i < this->GetSampleEntries()->Count())); i++)
+    {
+      CSampleEntryBox *box = this->GetSampleEntries()->GetItem(i);
+      result = box->GetBox(buffer + result, length - result) ? (result + (uint32_t)box->GetBoxSize()) : 0;
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

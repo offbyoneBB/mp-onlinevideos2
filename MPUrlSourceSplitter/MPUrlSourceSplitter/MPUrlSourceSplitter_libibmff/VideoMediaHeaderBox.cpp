@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "VideoMediaHeaderBox.h"
+#include "BoxCollection.h"
 
 CVideoMediaHeaderBox::CVideoMediaHeaderBox(void)
   : CFullBox()
@@ -40,14 +41,7 @@ CVideoMediaHeaderBox::~CVideoMediaHeaderBox(void)
 
 bool CVideoMediaHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 uint16_t CVideoMediaHeaderBox::GetGraphicsMode(void)
@@ -71,6 +65,26 @@ uint16_t CVideoMediaHeaderBox::GetColorBlue(void)
 }
 
 /* set methods */
+
+void CVideoMediaHeaderBox::SetGraphicsMode(uint16_t graphicsMods)
+{
+  this->graphicsMode = graphicsMode;
+}
+
+void CVideoMediaHeaderBox::SetColorRed(uint16_t red)
+{
+  this->colorRed = red;
+}
+
+ void CVideoMediaHeaderBox::SetColorGreen(uint16_t green)
+ {
+   this->colorGreen = green;
+ }
+
+void CVideoMediaHeaderBox::SetColorBlue(uint16_t blue)
+{
+  this->colorBlue = blue;
+}
 
 /* other methods */
 
@@ -111,7 +125,15 @@ wchar_t *CVideoMediaHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CVideoMediaHeaderBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 8;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CVideoMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -154,6 +176,27 @@ bool CVideoMediaHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t l
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CVideoMediaHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE16INC(buffer, result, this->GetGraphicsMode());
+    WBE16INC(buffer, result, this->GetColorRed());
+    WBE16INC(buffer, result, this->GetColorGreen());
+    WBE16INC(buffer, result, this->GetColorBlue());
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

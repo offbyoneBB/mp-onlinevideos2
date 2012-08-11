@@ -26,6 +26,7 @@
 #include "FullBox.h"
 
 #define MEDIA_HEADER_BOX_TYPE                                                 L"mdhd"
+#define MEDIA_HEADER_LANGUAGE_UNDEFINED                                       L"und"
 
 class CMediaHeaderBox :
   public CFullBox
@@ -74,6 +75,29 @@ public:
 
   /* set methods */
 
+  // sets the creation time of the media in this track (in seconds since midnight, Jan. 1, 1904, in UTC time)
+  // @param creationTime : the creation time of the media in this track (in seconds since midnight, Jan. 1, 1904, in UTC time) to set
+  virtual void SetCreationTime(uint64_t creationTime);
+
+  // sets the most recent time the media in this track was modified (in seconds since midnight, Jan. 1, 1904, in UTC time)
+  // @param modificationTime : the most recent time the media in this track was modified (in seconds since midnight, Jan. 1, 1904, in UTC time) to set
+  virtual void SetModificationTime(uint64_t modificationTime);
+
+  // sets the time-scale for this media; this is the number of time units that pass in one second
+  // for example, a time coordinate system that measures time in sixtieths of a second has a time scale of 60
+  // @param timeScale : the time-scale for this media to set
+  virtual void SetTimeScale(uint32_t timeScale);
+
+  // sets the duration of this media (in the scale of the timescale)
+  // @param duration : the duration of this media to set
+  virtual void SetDuration(uint64_t duration);
+
+  // sets the language code for this media
+  // see ISO 639-2/T for the set of three character codes
+  // @param language : the language code for this media to set
+  // @return : true if successful, false otherwise
+  virtual bool SetLanguage(const wchar_t *language);
+
   /* other methods */
 
   // parses data in buffer
@@ -108,6 +132,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

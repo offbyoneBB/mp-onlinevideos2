@@ -24,48 +24,9 @@
 #include "stdafx.h"
 
 #include <stdio.h>
-#include "FileTypeBox.h"
-#include "MovieBox.h"
-#include "BoxCollection.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-  CFileTypeBox *box = new CFileTypeBox();
-
-  box->GetMajorBrand()->SetBrandString(L"isml");
-  box->SetMinorVersion(0x00000200);
-  CBrand *brand = new CBrand();
-  brand->SetBrandString(L"piff");
-  box->GetCompatibleBrands()->Add(brand);
-  brand = new CBrand();
-  brand->SetBrandString(L"iso2");
-  box->GetCompatibleBrands()->Add(brand);
-
-  uint8_t *buffer = NULL;
-  uint32_t length = box->GetBoxSize(0);
-  
-  if (box->GetBox(&buffer, &length))
-  {
-    FILE *stream = fopen("D:\\test_dat.mp4", "wb");
-    fwrite(buffer, 1, length, stream);
-    fclose(stream);
-  }
-
-  /*CMovieBox *movieBox = new CMovieBox();
-
-  movieBox->GetBoxes()->Add(box);
-
-  buffer = NULL;
-  length = 0;
-  
-  if (movieBox->GetBox(&buffer, &length))
-  {
-    FILE *stream = fopen("D:\\test_dat.mp4", "ab");
-    fwrite(buffer, 1, length, stream);
-    fclose(stream);
-  }*/
-
-  
 	return 0;
 }
 
