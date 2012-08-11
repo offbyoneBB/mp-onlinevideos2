@@ -1493,6 +1493,9 @@
         <item key="baseUrl"><![CDATA[http://www.ctvnews.ca/video]]></item>
       </Configuration>
     </Site>
+    <Site name="CTV Local News" util="CTVLocalNews" agecheck="false" enabled="true" lang="en" lastUpdated="2012-08-11T11:26:55.1867848-04:00">
+      <Description>CTV Local News.</Description>
+    </Site>
     <Site name="Discovery Channel Canada" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>Canadian TV Channel dedicated to documentaries about popular science, technology, and history.</Description>
       <Configuration>
