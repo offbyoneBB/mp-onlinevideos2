@@ -42,6 +42,7 @@
     <Compile Include="CanadaBrightCoveUtilBase.cs" />
     <Compile Include="CanWestUtil.cs" />
     <Compile Include="CBCUtil.cs" />
+    <Compile Include="CTVNewsUtil.cs" />
     <Compile Include="CTVUtil.cs" />
     <Compile Include="FamilyUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
