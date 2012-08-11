@@ -31,7 +31,7 @@ CF4MManifest::CF4MManifest(void)
   this->isXml = false;
   this->parseError = XML_NO_ERROR;
 
-  this->bootstrapInfo = new CF4MBootstrapInfo();
+  this->bootstrapInfoCollection = new CF4MBootstrapInfoCollection();
   this->mediaCollection = new CF4MMediaCollection();
   this->deliveryType = new CF4MDeliveryType();
   this->baseUrl = new CF4MBaseUrl();
@@ -41,15 +41,15 @@ CF4MManifest::CF4MManifest(void)
 
 CF4MManifest::~CF4MManifest(void)
 {
-  FREE_MEM_CLASS(this->bootstrapInfo);
+  FREE_MEM_CLASS(this->bootstrapInfoCollection);
   FREE_MEM_CLASS(this->mediaCollection);
   FREE_MEM_CLASS(this->deliveryType);
   FREE_MEM_CLASS(this->baseUrl);
 }
 
-CF4MBootstrapInfo *CF4MManifest::GetBootstrapInfo(void)
+CF4MBootstrapInfoCollection *CF4MManifest::GetBootstrapInfoCollection(void)
 {
-  return this->bootstrapInfo;
+  return this->bootstrapInfoCollection;
 }
 
 CF4MMediaCollection *CF4MManifest::GetMediaCollection(void)
@@ -86,17 +86,17 @@ bool CF4MManifest::Parse(const char *buffer)
   this->isXml = false;
   this->parseError = XML_NO_ERROR;
   FREE_MEM_CLASS(this->baseUrl);
-  FREE_MEM_CLASS(this->bootstrapInfo);
+  FREE_MEM_CLASS(this->bootstrapInfoCollection);
   FREE_MEM_CLASS(this->deliveryType);
   FREE_MEM_CLASS(this->mediaCollection);
 
   this->baseUrl = new CF4MBaseUrl();
-  this->bootstrapInfo = new CF4MBootstrapInfo();
+  this->bootstrapInfoCollection = new CF4MBootstrapInfoCollection();
   this->deliveryType = new CF4MDeliveryType();
   this->mediaCollection = new CF4MMediaCollection();
 
   bool result = false;
-  bool continueParsing = ((this->baseUrl != NULL) && (this->bootstrapInfo != NULL) && (this->deliveryType != NULL) && (this->mediaCollection != NULL));
+  bool continueParsing = ((this->baseUrl != NULL) && (this->bootstrapInfoCollection != NULL) && (this->deliveryType != NULL) && (this->mediaCollection != NULL));
 
   if (continueParsing && (buffer != NULL))
   {
@@ -137,10 +137,23 @@ bool CF4MManifest::Parse(const char *buffer)
                     wchar_t *value = Trim(convertedValue);
                     FREE_MEM(convertedValue);
 
-                    continueParsing &= this->bootstrapInfo->SetId((id == NULL) ? L"" : id);
-                    continueParsing &= this->bootstrapInfo->SetProfile(profile);
-                    continueParsing &= this->bootstrapInfo->SetUrl(url);
-                    continueParsing &= this->bootstrapInfo->SetValue(value);
+                    CF4MBootstrapInfo *bootstrapInfo = new CF4MBootstrapInfo();
+                    continueParsing &= (bootstrapInfo != NULL);
+
+                    if (continueParsing)
+                    {
+                      continueParsing &= bootstrapInfo->SetId((id == NULL) ? L"" : id);
+                      continueParsing &= bootstrapInfo->SetProfile(profile);
+                      continueParsing &= bootstrapInfo->SetUrl(url);
+                      continueParsing &= bootstrapInfo->SetValue(value);
+
+                      continueParsing &= this->bootstrapInfoCollection->Add(bootstrapInfo);
+                    }
+
+                    if (!continueParsing)
+                    {
+                      FREE_MEM_CLASS(bootstrapInfo);
+                    }
 
                     FREE_MEM(id);
                     FREE_MEM(profile);

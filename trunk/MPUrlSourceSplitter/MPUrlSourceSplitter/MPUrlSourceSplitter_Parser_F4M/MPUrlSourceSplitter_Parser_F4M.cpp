@@ -165,31 +165,39 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
             if ((bootstrapInfoCollection != NULL) && (mediaCollection != NULL))
             {
               // bootstrap info profile have to be 'named' (F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMED)
-              if ((manifest->GetBootstrapInfo()->GetProfile() != NULL) && (wcscmp(manifest->GetBootstrapInfo()->GetProfile(), F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMEDW) == 0))
+              for (unsigned int i = 0; i < manifest->GetBootstrapInfoCollection()->Count(); i++)
               {
-                CF4MBootstrapInfo *bootstrapInfo = new CF4MBootstrapInfo();
+                CF4MBootstrapInfo *f4mBootstrapInfo = manifest->GetBootstrapInfoCollection()->GetItem(i);
 
-                if (bootstrapInfo != NULL)
+                if ((f4mBootstrapInfo->GetProfile() != NULL) && (wcscmp(f4mBootstrapInfo->GetProfile(), F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMEDW) == 0))
                 {
-                  bootstrapInfo->SetId(manifest->GetBootstrapInfo()->GetId());
-                  bootstrapInfo->SetProfile(manifest->GetBootstrapInfo()->GetProfile());
-                  bootstrapInfo->SetUrl(manifest->GetBootstrapInfo()->GetUrl());
-                  bootstrapInfo->SetValue(manifest->GetBootstrapInfo()->GetValue());
+                  CF4MBootstrapInfo *bootstrapInfo = new CF4MBootstrapInfo();
 
-                  if (bootstrapInfo->IsValid())
+                  if (bootstrapInfo != NULL)
                   {
-                    bootstrapInfoCollection->Add(bootstrapInfo);
-                  }
-                  else
-                  {
-                    this->logger->Log(LOGGER_WARNING, L"%s: %s: bootstrap info is not valid, id: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, bootstrapInfo->GetId());
-                    FREE_MEM_CLASS(bootstrapInfo);
+                    bootstrapInfo->SetId(f4mBootstrapInfo->GetId());
+                    bootstrapInfo->SetProfile(f4mBootstrapInfo->GetProfile());
+                    bootstrapInfo->SetUrl(f4mBootstrapInfo->GetUrl());
+                    bootstrapInfo->SetValue(f4mBootstrapInfo->GetValue());
+
+                    if (bootstrapInfo->IsValid())
+                    {
+                      if (!bootstrapInfoCollection->Add(bootstrapInfo))
+                      {
+                        FREE_MEM_CLASS(bootstrapInfo);
+                      }
+                    }
+                    else
+                    {
+                      this->logger->Log(LOGGER_WARNING, L"%s: %s: bootstrap info is not valid, id: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, bootstrapInfo->GetId());
+                      FREE_MEM_CLASS(bootstrapInfo);
+                    }
                   }
                 }
-              }
-              else
-              {
-                this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"bootstrap info profile is not 'named'");
+                else
+                {
+                  this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"bootstrap info profile is not 'named'");
+                }
               }
 
               // we should have url
