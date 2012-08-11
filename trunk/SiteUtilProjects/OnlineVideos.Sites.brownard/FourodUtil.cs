@@ -111,7 +111,7 @@ namespace OnlineVideos.Sites
             string epId = video.VideoUrl;
             string url = string.Format("http://ais.channel4.com/asset/{0}", epId);
 
-            string xml = GetWebData(url, null, null, getProxy());
+            string xml = GetWebData(url, null, new System.Collections.Specialized.NameValueCollection(), null, getProxy(), false, false, null, false);
             if (RetrieveSubtitles)
             {
                 Match subtitle = new Regex("<subtitlesFileUri>(.*?)</subtitlesFileUri>").Match(xml);
