@@ -23,7 +23,7 @@
 #ifndef __F4M_MANIFEST_DEFINED
 #define __F4M_MANIFEST_DEFINED
 
-#include "F4MBootstrapInfo.h"
+#include "F4MBootstrapInfoCollection.h"
 #include "F4MMediaCollection.h"
 #include "F4MDeliveryType.h"
 #include "F4MBaseUrl.h"
@@ -39,9 +39,9 @@ public:
 
   /* get methods */
 
-  // gets bootstrap info from manifest
-  // @return : bootstrap info from manifest
-  CF4MBootstrapInfo *GetBootstrapInfo(void);
+  // gets bootstrap info collection from manifest
+  // @return : bootstrap info collection from manifest
+  CF4MBootstrapInfoCollection *GetBootstrapInfoCollection(void);
 
   // gets media collection from manifest
   // @return : media collection from manifest
@@ -75,8 +75,8 @@ public:
 private:
   // stores if data are in XML format
   bool isXml;
-  // stores bootstrap info
-  CF4MBootstrapInfo *bootstrapInfo;
+  // stores bootstrap info collection
+  CF4MBootstrapInfoCollection *bootstrapInfoCollection;
   // stores media collection
   CF4MMediaCollection *mediaCollection;
   // stores delivery type
