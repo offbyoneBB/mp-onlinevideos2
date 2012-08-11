@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "AudioSampleEntryBox.h"
+#include "BoxCollection.h"
 
 CAudioSampleEntryBox::CAudioSampleEntryBox(void)
   : CSampleEntryBox()
@@ -39,14 +40,7 @@ CAudioSampleEntryBox::~CAudioSampleEntryBox(void)
 
 bool CAudioSampleEntryBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 const wchar_t *CAudioSampleEntryBox::GetCodingName(void)
@@ -70,6 +64,26 @@ CFixedPointNumber *CAudioSampleEntryBox::GetSampleRate(void)
 }
 
 /* set methods */
+
+bool CAudioSampleEntryBox::SetCodingName(const wchar_t *codingName)
+{
+  if ((codingName != NULL) && (wcslen(codingName) == 4))
+  {
+    SET_STRING_RETURN(this->type, codingName);
+  }
+
+  return false;
+}
+
+void CAudioSampleEntryBox::SetChannelCount(uint16_t channelCount)
+{
+  this->channelCount = channelCount;
+}
+
+void CAudioSampleEntryBox::SetSampleSize(uint16_t sampleSize)
+{
+  this->sampleSize = sampleSize;
+}
 
 /* other methods */
 
@@ -109,7 +123,15 @@ wchar_t *CAudioSampleEntryBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CAudioSampleEntryBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 20;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CAudioSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -148,6 +170,33 @@ bool CAudioSampleEntryBox::ParseInternal(const unsigned char *buffer, uint32_t l
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CAudioSampleEntryBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    // skip 2 x uint(32) reserved
+    result += 8;
+
+    WBE16INC(buffer, result, this->GetChannelCount());
+    WBE16INC(buffer, result, this->GetSampleSize());
+
+    // skip 1 x uint(16) pre-defined and 1 x uint(16) reserved
+    result += 4;
+
+    WBE32INC(buffer, result, this->GetSampleRate()->GetNumber());
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

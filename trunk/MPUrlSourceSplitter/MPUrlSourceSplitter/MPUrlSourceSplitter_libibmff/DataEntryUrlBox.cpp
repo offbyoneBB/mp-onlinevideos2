@@ -21,12 +21,13 @@
 #include "StdAfx.h"
 
 #include "DataEntryUrlBox.h"
+#include "BoxCollection.h"
 
 CDataEntryUrlBox::CDataEntryUrlBox(void)
   : CDataEntryBox()
 {
   this->type = Duplicate(DATA_ENTRY_URL_BOX_TYPE);
-  this->location = NULL;
+  this->location = Duplicate(L"");
 }
 
 CDataEntryUrlBox::~CDataEntryUrlBox(void)
@@ -38,14 +39,7 @@ CDataEntryUrlBox::~CDataEntryUrlBox(void)
 
 bool CDataEntryUrlBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 const wchar_t *CDataEntryUrlBox::GetLocation(void)
@@ -54,6 +48,11 @@ const wchar_t *CDataEntryUrlBox::GetLocation(void)
 }
 
 /* set methods */
+
+bool CDataEntryUrlBox::SetLocation(const wchar_t *location)
+{
+  SET_STRING_RETURN(this->location, location);
+}
 
 /* other methods */
 
@@ -88,7 +87,15 @@ wchar_t *CDataEntryUrlBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CDataEntryUrlBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = (this->IsSelfContained()) ? 0 : this->GetStringSize(this->GetLocation());
+
+  if ((result != 0) || (this->IsSelfContained()))
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CDataEntryUrlBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -134,6 +141,28 @@ bool CDataEntryUrlBox::ParseInternal(const unsigned char *buffer, uint32_t lengt
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CDataEntryUrlBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    if (!this->IsSelfContained())
+    {
+      uint32_t res = this->SetString(buffer + result, length - result, this->GetLocation());
+      result = (res != 0) ? (result + res) : 0;
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

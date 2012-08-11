@@ -134,6 +134,18 @@ protected:
   // @return : S_OK if successful, E_POINTER if buffer, output or positionAfterString is NULL, HRESULT_FROM_WIN32(ERROR_INVALID_DATA) if not enough data in buffer, E_OUTOFMEMORY if not enough memory for results
   HRESULT GetString(const uint8_t *buffer, uint32_t length, uint32_t startPosition, wchar_t **output, uint32_t *positionAfterString, uint32_t maxLength);
 
+  // sets Unicode string into buffer
+  // @param buffer : the buffer to write UTF-8 string
+  // @param length : the length of buffer
+  // @param input : reference to Unicode string which will be stored into buffer
+  // @return : number of bytes written into buffer (including NULL terminating character), 0 is error when input is not NULL
+  uint32_t SetString(uint8_t *buffer, uint32_t length, const wchar_t *input);
+
+  // gets Unicode string necessary size to store into buffer
+  // @param input : reference to Unicode string which will be stored into buffer
+  // @return : number of bytes necessary in buffer (including NULL terminating character), 0 is error when input is not NULL
+  uint32_t GetStringSize(const wchar_t *input);
+
   // process remaining data in box as boxes
   // @param buffer : the buffer to process
   // @param length : the length of buffer
@@ -152,15 +164,14 @@ protected:
   // @param buffer : the buffer for box data
   // @param length : the length of buffer for data
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
-  // @return : true if all data were successfully stored into buffer, false otherwise
-  virtual bool GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 
   // get remaining boxes into buffer
   // @param buffer : the buffer to store remaining boxes
   // @param length : the length of buffer
-  // @param position : the position within buffer to start storing
-  // @return : true if successful, false otherwise
-  virtual bool GetAdditionalBoxes(uint8_t *buffer, uint32_t length, uint32_t position);
+  // @return : number of bytes stored into buffer, 0 is error only if there are boxes
+  virtual uint32_t GetAdditionalBoxes(uint8_t *buffer, uint32_t length);
 };
 
 #endif

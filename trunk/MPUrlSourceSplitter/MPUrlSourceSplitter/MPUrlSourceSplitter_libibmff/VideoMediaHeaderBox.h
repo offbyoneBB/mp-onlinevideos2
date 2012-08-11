@@ -62,6 +62,16 @@ public:
 
   /* set methods */
 
+  // sets composition mode for this video track
+  // @param graphicsMods : composition mode for this video track to set
+  virtual void SetGraphicsMode(uint16_t graphicsMods);
+
+  virtual void SetColorRed(uint16_t red);
+
+  virtual void SetColorGreen(uint16_t green);
+
+  virtual void SetColorBlue(uint16_t blue);
+
   /* other methods */
 
   // parses data in buffer
@@ -93,6 +103,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

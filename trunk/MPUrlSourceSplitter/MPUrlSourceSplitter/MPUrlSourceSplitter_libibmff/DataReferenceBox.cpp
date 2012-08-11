@@ -22,6 +22,7 @@
 
 #include "DataReferenceBox.h"
 #include "BoxFactory.h"
+#include "BoxCollection.h"
 
 CDataReferenceBox::CDataReferenceBox(void)
   : CFullBox()
@@ -39,14 +40,7 @@ CDataReferenceBox::~CDataReferenceBox(void)
 
 bool CDataReferenceBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 CDataEntryBoxCollection *CDataReferenceBox::GetDataEntryBoxCollection(void)
@@ -111,7 +105,27 @@ wchar_t *CDataReferenceBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CDataReferenceBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 4;
+
+  for (unsigned int i = 0; i < this->GetDataEntryBoxCollection()->Count(); i++)
+  {
+    uint64_t boxSize = this->GetDataEntryBoxCollection()->GetItem(i)->GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0;
+
+    if (result == 0)
+    {
+      // error occured
+      break;
+    }
+  }
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CDataReferenceBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -181,6 +195,37 @@ bool CDataReferenceBox::ParseInternal(const unsigned char *buffer, uint32_t leng
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CDataReferenceBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->GetDataEntryBoxCollection()->Count());
+
+    for (unsigned int i = 0; (i < this->GetDataEntryBoxCollection()->Count()); i++)
+    {
+      CDataEntryBox *box = this->GetDataEntryBoxCollection()->GetItem(i);
+
+      result = box->GetBox(buffer + result, length - result) ? (result + (uint32_t)box->GetBoxSize()) : 0;
+
+      if (result == 0)
+      {
+        // error occured
+        break;
+      }
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

@@ -54,7 +54,7 @@ const wchar_t *CBox::GetType(void)
 
 bool CBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  return this->GetBoxInternal(buffer, length, true);
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 CBoxCollection *CBox::GetBoxes(void)
@@ -175,6 +175,48 @@ HRESULT CBox::GetString(const uint8_t *buffer, uint32_t length, uint32_t startPo
         CHECK_POINTER_HRESULT(result, *output, result, E_OUTOFMEMORY);
       }
     }
+  }
+
+  return result;
+}
+
+uint32_t CBox::SetString(uint8_t *buffer, uint32_t length, const wchar_t *input)
+{
+  uint32_t result = 0;
+
+  if (buffer != NULL)
+  {
+    if (input != NULL)
+    {
+      char *converted = ConvertUnicodeToUtf8(input);
+      if (converted != NULL)
+      {
+        unsigned int length = strlen(converted);
+        memcpy(buffer, converted, length);
+        result += length;
+
+        // write NULL terminating character
+        WBE8INC(buffer, result, 0);
+      }
+      FREE_MEM(converted);
+    }
+  }
+
+  return result;
+}
+
+uint32_t CBox::GetStringSize(const wchar_t *input)
+{
+  uint32_t result = 0;
+
+  if (input != NULL)
+  {
+    char *converted = ConvertUnicodeToUtf8(input);
+    if (converted != NULL)
+    {
+      result = strlen(converted) + 1;
+    }
+    FREE_MEM(converted);
   }
 
   return result;
@@ -327,41 +369,51 @@ bool CBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool proc
   return this->parsed;
 }
 
-bool CBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+uint32_t CBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
 {
-  bool result = ((buffer != NULL) && (!this->IsBigSize()));
+  uint32_t position = 0;
 
-  if (result)
+  if (((buffer != NULL) && (!this->IsBigSize())))
   {
-    unsigned int boxSize = (uint32_t)this->GetBoxSize();
-    uint32_t position = 0;
+    WBE32INC(buffer, position, (uint32_t)this->GetSize());
 
-    if (result)
+    char *type = ConvertToMultiByteW(this->GetType());
+    position = (type != NULL) ? position : 0;
+
+    if (position != 0)
     {
-      WBE32INC(buffer, position, (uint32_t)this->GetSize());
-
-      char *type = ConvertToMultiByteW(this->GetType());
-      result &= (type != NULL);
-
-      if (result)
-      {
-        memcpy(buffer + position, type, 4);
-        position += 4;
-      }
-
-      FREE_MEM(type);
+      memcpy(buffer + position, type, 4);
+      position += 4;
     }
 
-    if (result && processAdditionalBoxes)
+    FREE_MEM(type);
+
+    if ((position != 0) && processAdditionalBoxes)
     {
-      result &= this->GetAdditionalBoxes(buffer, boxSize, position);
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + position, length - position);
+      position = (boxSizes != 0) ? (position + boxSizes) : 0;
     }
   }
 
-  return result;
+  return position;
 }
 
-bool CBox::GetAdditionalBoxes(uint8_t *buffer, uint32_t length, uint32_t position)
+uint32_t CBox::GetAdditionalBoxes(uint8_t *buffer, uint32_t length)
 {
-  return false;
+  uint32_t processed = 0;
+
+  for (unsigned int i = 0; i < this->GetBoxes()->Count(); i++)
+  {
+    CBox *box = this->GetBoxes()->GetItem(i);
+
+    processed = (box->GetBox(buffer + processed, length - processed)) ? (processed + (uint32_t)box->GetBoxSize()) : 0;
+
+    if (processed == 0)
+    {
+      // error occured
+      break;
+    }
+  }
+
+  return processed;
 }

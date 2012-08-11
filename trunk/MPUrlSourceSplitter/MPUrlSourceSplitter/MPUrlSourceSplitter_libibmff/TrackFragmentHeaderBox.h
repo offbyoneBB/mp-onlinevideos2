@@ -58,7 +58,7 @@ public:
   virtual uint64_t GetBoxSize(void);
 
   // gets track ID
-  // @ return : track ID
+  // @return : track ID
   virtual uint32_t GetTrackId(void);
 
   // gets base offset to use when calculating data offsets
@@ -87,6 +87,35 @@ public:
   virtual uint32_t GetDefaultSampleFlags(void);
 
   /* set methods */
+
+  // sets track ID
+  // @param trackId : track ID to set
+  virtual void SetTrackId(uint32_t trackId);
+
+  // gets base offset to use when calculating data offsets
+  // value valid only if IsBaseDataOffsetPresent() is true
+  // @param baseDataOffset : base offset to set to use when calculating data offsets
+  virtual void SetBaseDataOffset(uint64_t baseDataOffset);
+
+  // gets sample description index
+  // value valid only if IsSampleDescriptionIndexPresent() is true
+  // @param sampleDescriptionIndex : sample description index to set
+  virtual void SetSampleDescriptionIndex(uint32_t sampleDescriptionIndex);
+
+  // gets default sample duration
+  // value valid only if IsDefaultSampleDurationPresent() is true
+  // @param defaultSampleDuration : default sample duration to set
+  virtual void SetDefaultSampleDuration(uint32_t defaultSampleDuration);
+
+  // gets default sample size
+  // value valid only if IsDefaultSampleSizePresent() is true
+  // @param defaultSampleSize : default sample size to set
+  virtual void SetDefaultSampleSize(uint32_t defaultSampleSize);
+
+  // gets default sample flags
+  // value valid only if IsDefaultSampleFlagsPresent() is true
+  // @param defaultSampleFlags : default sample flags to set
+  virtual void SetDefaultSampleFlags(uint32_t defaultSampleFlags);
 
   /* other methods */
 
@@ -177,6 +206,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

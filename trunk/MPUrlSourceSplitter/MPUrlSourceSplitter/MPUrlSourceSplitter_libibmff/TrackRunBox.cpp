@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "TrackRunBox.h"
+#include "BoxCollection.h"
 
 CTrackRunBox::CTrackRunBox(void)
   : CFullBox()
@@ -38,14 +39,7 @@ CTrackRunBox::~CTrackRunBox(void)
 
 bool CTrackRunBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 int32_t CTrackRunBox::GetDataOffset(void)
@@ -64,6 +58,16 @@ CSampleCollection *CTrackRunBox::GetSamples(void)
 }
 
 /* set methods */
+
+void CTrackRunBox::SetDataOffset(int32_t dataOffset)
+{
+  this->dataOffset = dataOffset;
+}
+
+void CTrackRunBox::SetFirstSampleFlags(uint32_t firstSampleFlags)
+{
+  this->firstSampleFlags = firstSampleFlags;
+}
 
 /* other methods */
 
@@ -128,7 +132,43 @@ wchar_t *CTrackRunBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CTrackRunBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 0;
+
+  if (this->IsSampleDurationPresent())
+  {
+    result += 4;
+  }
+  if (this->IsSampleSizePresent())
+  {
+    result += 4;
+  }
+  if (this->IsSampleFlagsPresent())
+  {
+    result += 4;
+  }
+  if (this->IsSampleCompositionTimeOffsetsPresent())
+  {
+    result += 4;
+  }
+
+  result = result * this->GetSamples()->Count();
+  result += 4;
+  if (this->IsDataOffsetPresent())
+  {
+    result += 4;
+  }
+  if (this->IsFirstDataSampleFlagsPresent())
+  {
+    result += 4;
+  }
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CTrackRunBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -251,4 +291,56 @@ bool CTrackRunBox::IsSampleFlagsPresent(void)
 bool CTrackRunBox::IsSampleCompositionTimeOffsetsPresent(void)
 {
   return ((this->GetFlags() & FLAGS_SAMPLE_COMPOSITION_TIME_OFFSETS_PRESENT) != 0);
+}
+
+uint32_t CTrackRunBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->GetSamples()->Count());
+
+    if (this->IsDataOffsetPresent())
+    {
+      WBE32INC(buffer, result, this->GetDataOffset());
+    }
+    if (this->IsFirstDataSampleFlagsPresent())
+    {
+      WBE32INC(buffer, result, this->GetFirstSampleFlags());
+    }
+
+    for (uint32_t i = 0; (i < this->GetSamples()->Count()); i++)
+    {
+      CSample *sample = this->GetSamples()->GetItem(i);
+
+      if (this->IsSampleDurationPresent())
+      {
+        WBE32INC(buffer, result, sample->GetSampleDuration());
+      }
+
+      if (this->IsSampleSizePresent())
+      {
+        WBE32INC(buffer, result, sample->GetSampleSize());
+      }
+
+      if (this->IsSampleFlagsPresent())
+      {
+        WBE32INC(buffer, result, sample->GetSampleFlags());
+      }
+
+      if (this->IsSampleCompositionTimeOffsetsPresent())
+      {
+        WBE32INC(buffer, result, sample->GetSampleCompositionTimeOffset());
+      }
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
+
+  return result;
 }

@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "UuidBox.h"
+#include "BoxCollection.h"
 
 CUuidBox::CUuidBox(void)
   : CBox()
@@ -47,14 +48,7 @@ CUuidBox::~CUuidBox(void)
 
 bool CUuidBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 GUID CUuidBox::GetGuid(void)
@@ -63,6 +57,11 @@ GUID CUuidBox::GetGuid(void)
 }
 
 /* set methods */
+
+void CUuidBox::SetGuid(GUID guid)
+{
+  this->guid = guid;
+}
 
 /* other methods */
 
@@ -99,7 +98,15 @@ wchar_t *CUuidBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CUuidBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 16;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CUuidBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -151,6 +158,34 @@ bool CUuidBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool 
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CUuidBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->GetGuid().Data1);
+    WBE16INC(buffer, result, this->GetGuid().Data2);
+    WBE16INC(buffer, result, this->GetGuid().Data3);
+    WBE8INC(buffer, result, this->GetGuid().Data4[0]);
+    WBE8INC(buffer, result, this->GetGuid().Data4[1]);
+    WBE8INC(buffer, result, this->GetGuid().Data4[2]);
+    WBE8INC(buffer, result, this->GetGuid().Data4[3]);
+    WBE8INC(buffer, result, this->GetGuid().Data4[4]);
+    WBE8INC(buffer, result, this->GetGuid().Data4[5]);
+    WBE8INC(buffer, result, this->GetGuid().Data4[6]);
+    WBE8INC(buffer, result, this->GetGuid().Data4[7]);
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

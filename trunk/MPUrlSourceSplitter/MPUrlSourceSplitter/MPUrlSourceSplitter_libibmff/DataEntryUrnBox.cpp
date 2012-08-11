@@ -21,13 +21,14 @@
 #include "StdAfx.h"
 
 #include "DataEntryUrnBox.h"
+#include "BoxCollection.h"
 
 CDataEntryUrnBox::CDataEntryUrnBox(void)
   : CDataEntryBox()
 {
   this->type = Duplicate(DATA_ENTRY_URN_BOX_TYPE);
-  this->name = NULL;
-  this->location = NULL;
+  this->name = Duplicate(L"");
+  this->location = Duplicate(L"");
 }
 
 CDataEntryUrnBox::~CDataEntryUrnBox(void)
@@ -40,14 +41,7 @@ CDataEntryUrnBox::~CDataEntryUrnBox(void)
 
 bool CDataEntryUrnBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 const wchar_t *CDataEntryUrnBox::GetName(void)
@@ -61,6 +55,16 @@ const wchar_t *CDataEntryUrnBox::GetLocation(void)
 }
 
 /* set methods */
+
+bool CDataEntryUrnBox::SetName(const wchar_t *name)
+{
+  SET_STRING_RETURN(this->name, name);
+}
+
+bool CDataEntryUrnBox::SetLocation(const wchar_t *location)
+{
+  SET_STRING_RETURN(this->location, location);
+}
 
 /* other methods */
 
@@ -97,7 +101,18 @@ wchar_t *CDataEntryUrnBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CDataEntryUrnBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint32_t nameLength = this->GetStringSize(this->name);
+  uint32_t locationLength = this->GetStringSize(this->location);
+
+  uint64_t result = ((nameLength != 0) && (locationLength != 0)) ? (nameLength + locationLength) : 0;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CDataEntryUrnBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -153,6 +168,31 @@ bool CDataEntryUrnBox::ParseInternal(const unsigned char *buffer, uint32_t lengt
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CDataEntryUrnBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    uint32_t res = this->SetString(buffer + result, length - result, this->GetName());
+    result = (res != 0) ? (result + res) : 0;
+
+    if (result != 0)
+    {
+      res = this->SetString(buffer + result, length - result, this->GetLocation());
+      result = (res != 0) ? (result + res) : 0;
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

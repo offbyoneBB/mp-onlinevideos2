@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "TrackHeaderBox.h"
+#include "BoxCollection.h"
 
 CTrackHeaderBox::CTrackHeaderBox(void)
   : CFullBox()
@@ -36,6 +37,11 @@ CTrackHeaderBox::CTrackHeaderBox(void)
   this->matrix = new CMatrix();
   this->width = new CFixedPointNumber(16, 16);
   this->height = new CFixedPointNumber(16, 16);
+
+  // set unity matrix
+  this->matrix->GetItem(0)->SetIntegerPart(1);
+  this->matrix->GetItem(4)->SetIntegerPart(1);
+  this->matrix->GetItem(8)->SetIntegerPart(1);
 }
 
 CTrackHeaderBox::~CTrackHeaderBox(void)
@@ -50,14 +56,7 @@ CTrackHeaderBox::~CTrackHeaderBox(void)
 
 bool CTrackHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 uint64_t CTrackHeaderBox::GetCreationTime(void)
@@ -111,6 +110,36 @@ CFixedPointNumber *CTrackHeaderBox::GetHeight(void)
 }
 
 /* set methods */
+
+void CTrackHeaderBox::SetCreationTime(uint64_t creationTime)
+{
+  this->creationTime = creationTime;
+}
+
+void CTrackHeaderBox::SetModificationTime(uint64_t modificationTime)
+{
+  this->modificationTime = modificationTime;
+}
+
+void CTrackHeaderBox::SetTrackId(uint32_t trackId)
+{
+  this->trackId = trackId;
+}
+
+void CTrackHeaderBox::SetLayer(int16_t layer)
+{
+  this->layer = layer;
+}
+
+void CTrackHeaderBox::SetAlternateGroup(int16_t alternateGroup)
+{
+  this->alternateGroup = alternateGroup;
+}
+
+void CTrackHeaderBox::SetDuration(uint64_t duration)
+{
+  this->duration = duration;
+}
 
 /* other methods */
 
@@ -190,7 +219,32 @@ wchar_t *CTrackHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CTrackHeaderBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 0;
+
+  switch(this->GetVersion())
+  {
+  case 0:
+    result = 20;
+    break;
+  case 1:
+    result = 32;
+    break;
+  default:
+    break;
+  }
+
+  if (result != 0)
+  {
+    result += 60;
+  }
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CTrackHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -295,6 +349,67 @@ bool CTrackHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CTrackHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    switch (this->GetVersion())
+    {
+    case 0:
+      WBE32INC(buffer, result, this->GetCreationTime());
+      WBE32INC(buffer, result, this->GetModificationTime());
+      WBE32INC(buffer, result, this->GetTrackId());
+      // skip int(32) reserved field
+      result += 4;
+      WBE32INC(buffer, result, this->GetDuration());
+      break;
+    case 1:
+      WBE64INC(buffer, result, this->GetCreationTime());
+      WBE64INC(buffer, result, this->GetModificationTime());
+      WBE32INC(buffer, result, this->GetTrackId());
+      // skip int(32) reserved field
+      result += 4;
+      WBE64INC(buffer, result, this->GetDuration());
+      break;
+    default:
+      result = 0;
+      break;
+    }
+
+    if (result != 0)
+    {
+      // skip 2 x int(32) reserved field
+      result += 8;
+
+      WBE16INC(buffer, result, this->GetLayer());
+      WBE16INC(buffer, result, this->GetAlternateGroup());
+      WBE16INC(buffer, result, this->GetVolume()->GetNumber());
+
+      // skip int(16)
+      result += 2;
+
+      // write matrix
+      for (unsigned int i = 0; (i < this->GetMatrix()->Count()); i++)
+      {
+        WBE32INC(buffer, result, this->GetMatrix()->GetItem(i)->GetNumber());
+      }
+
+      WBE32INC(buffer, result, this->GetWidth()->GetNumber());
+      WBE32INC(buffer, result, this->GetHeight()->GetNumber());
+    }
+    
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

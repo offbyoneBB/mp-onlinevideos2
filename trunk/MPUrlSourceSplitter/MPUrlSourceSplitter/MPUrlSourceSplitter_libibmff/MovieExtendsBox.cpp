@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "MovieExtendsBox.h"
+#include "BoxCollection.h"
 
 CMovieExtendsBox::CMovieExtendsBox(void)
   : CBox()
@@ -36,14 +37,7 @@ CMovieExtendsBox::~CMovieExtendsBox(void)
 
 bool CMovieExtendsBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 /* set methods */
@@ -108,6 +102,22 @@ bool CMovieExtendsBox::ParseInternal(const unsigned char *buffer, uint32_t lengt
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CMovieExtendsBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "TrackExtendsBox.h"
+#include "BoxCollection.h"
 
 CTrackExtendsBox::CTrackExtendsBox(void)
   : CFullBox()
@@ -41,14 +42,7 @@ CTrackExtendsBox::~CTrackExtendsBox(void)
 
 bool CTrackExtendsBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 uint32_t CTrackExtendsBox::GetTrackId(void)
@@ -77,6 +71,31 @@ uint32_t CTrackExtendsBox::GetDefaultSampleFlags(void)
 }
 
 /* set methods */
+
+void CTrackExtendsBox::SetTrackId(uint32_t trackId)
+{
+  this->trackId = trackId;
+}
+
+void CTrackExtendsBox::SetDefaultSampleDescriptionIndex(uint32_t defaultSampleDescriptionIndex)
+{
+  this->defaultSampleDescriptionIndex = defaultSampleDescriptionIndex;
+}
+
+void CTrackExtendsBox::SetDefaultSampleDuration(uint32_t defaultSampleDuration)
+{
+  this->defaultSampleDuration = defaultSampleDuration;
+}
+
+void CTrackExtendsBox::SetDefaultSampleSize(uint32_t defaultSampleSize)
+{
+  this->defaultSampleSize = defaultSampleSize;
+}
+
+void CTrackExtendsBox::SetDefaultSampleFlags(uint32_t defaultSampleFlags)
+{
+  this->defaultSampleFlags = defaultSampleFlags;
+}
 
 /* other methods */
 
@@ -118,7 +137,15 @@ wchar_t *CTrackExtendsBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CTrackExtendsBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 20;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CTrackExtendsBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -163,6 +190,28 @@ bool CTrackExtendsBox::ParseInternal(const unsigned char *buffer, uint32_t lengt
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CTrackExtendsBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->GetTrackId());
+    WBE32INC(buffer, result, this->GetDefaultSampleDescriptionIndex());
+    WBE32INC(buffer, result, this->GetDefaultSampleDuration());
+    WBE32INC(buffer, result, this->GetDefaultSampleSize());
+    WBE32INC(buffer, result, this->GetDefaultSampleFlags());
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

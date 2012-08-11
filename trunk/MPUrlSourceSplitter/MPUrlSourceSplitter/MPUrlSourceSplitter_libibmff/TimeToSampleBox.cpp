@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "TimeToSampleBox.h"
+#include "BoxCollection.h"
 
 CTimeToSampleBox::CTimeToSampleBox(void)
   : CFullBox()
@@ -38,14 +39,7 @@ CTimeToSampleBox::~CTimeToSampleBox(void)
 
 bool CTimeToSampleBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 CTimeToSampleCollection *CTimeToSampleBox::GetTimesToSamples(void)
@@ -111,7 +105,15 @@ wchar_t *CTimeToSampleBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CTimeToSampleBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 4 + this->GetTimesToSamples()->Count() * 8;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CTimeToSampleBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -174,6 +176,31 @@ bool CTimeToSampleBox::ParseInternal(const unsigned char *buffer, uint32_t lengt
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CTimeToSampleBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->GetTimesToSamples()->Count());
+
+    for (uint32_t i = 0; (i < this->GetTimesToSamples()->Count()); i++)
+    {
+      CTimeToSample *timeToSample = this->GetTimesToSamples()->GetItem(i);
+      WBE32INC(buffer, result, timeToSample->GetSampleCount());
+      WBE32INC(buffer, result, timeToSample->GetSampleDelta());
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

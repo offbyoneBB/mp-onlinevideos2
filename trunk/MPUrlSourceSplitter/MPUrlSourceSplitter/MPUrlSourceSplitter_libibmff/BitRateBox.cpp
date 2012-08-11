@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "BitRateBox.h"
+#include "BoxCollection.h"
 
 CBitrateBox::CBitrateBox(void)
   : CBox()
@@ -39,14 +40,7 @@ CBitrateBox::~CBitrateBox(void)
 
 bool CBitrateBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 uint32_t CBitrateBox::GetBufferSize(void)
@@ -65,6 +59,21 @@ uint32_t CBitrateBox::GetAverageBitrate(void)
 }
 
 /* set methods */
+
+void CBitrateBox::SetBufferSize(uint32_t bufferSize)
+{
+  this->bufferSize = bufferSize;
+}
+
+void CBitrateBox::SetMaximumBitrate(uint32_t maximumBitrate)
+{
+  this->maximumBitrate = maximumBitrate;
+}
+
+void CBitrateBox::SetAverageBitrate(uint32_t averageBitrate)
+{
+  this->averageBitrate = averageBitrate;
+}
 
 /* other methods */
 
@@ -102,7 +111,15 @@ wchar_t *CBitrateBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CBitrateBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 12;
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CBitrateBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -143,6 +160,26 @@ bool CBitrateBox::ParseInternal(const unsigned char *buffer, uint32_t length, bo
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CBitrateBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    WBE32INC(buffer, result, this->GetBufferSize());
+    WBE32INC(buffer, result, this->GetMaximumBitrate());
+    WBE32INC(buffer, result, this->GetAverageBitrate());
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

@@ -75,6 +75,16 @@ public:
 
   /* set methods */
 
+  // sets addition to the implicit or explicit data offset established in the track fragment header
+  // value valid only if IsDataOffsetPresent() is true
+  // @param dataOffset : addition to the implicit or explicit data offset established in the track fragment header to set
+  virtual void SetDataOffset(int32_t dataOffset);
+
+  // sets set of flags for the first sample only of this run
+  // value valid only if IsFirstDataSampleFlagsPresent() is true
+  // @param firstSampleFlags : set of flags for the first sample only of this run to set
+  virtual void SetFirstSampleFlags(uint32_t firstSampleFlags);
+
   /* other methods */
 
   // parses data in buffer
@@ -167,6 +177,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

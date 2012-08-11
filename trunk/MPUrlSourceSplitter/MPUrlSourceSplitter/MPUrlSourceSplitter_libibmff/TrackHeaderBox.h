@@ -117,6 +117,42 @@ public:
 
   /* set methods */
 
+  // sets the creation time of this track (in seconds since midnight, Jan. 1, 1904, in UTC time)
+  // @param creationTime : the creation time of this track (in seconds since midnight, Jan. 1, 1904, in UTC time) to set
+  virtual void SetCreationTime(uint64_t creationTime);
+
+  // sets the most recent time the track was modified (in seconds since midnight, Jan. 1, 1904, in UTC time)
+  // @param modificationTime : the most recent time the track was modified (in seconds since midnight, Jan. 1, 1904, in UTC time) to set
+  virtual void SetModificationTime(uint64_t modificationTime);
+
+  // sets unique track ID over the entire life-time of this presentation
+  // track IDs are never re-used and cannot be zero
+  // @param trackId : unique track ID over the entire life-time of this presentation to set
+  virtual void SetTrackId(uint32_t trackId);
+
+  // sets front-to-back ordering of video tracks; tracks with lower numbers are closer to the viewer
+  // 0 is the normal value, and -1 would be in front of track 0, and so on
+  // @param layer : front-to-back ordering of video tracks to set
+  virtual void SetLayer(int16_t layer);
+
+  // sets a group or collection of tracks
+  // if this field is 0 there is no information on possible relations to other tracks
+  // if this field is not 0, it should be the same for tracks that contain alternate data for one another
+  // and different for tracks belonging to different such groups
+  // only one track within an alternate group should be played or streamed at any one time, and must be distinguishable
+  // from other tracks in the group via attributes such as bitrate, codec, language, packet size etc
+  // a group may have only one member
+  // @param alternateGroup : group or collection of tracks to set
+  virtual void SetAlternateGroup(int16_t alternateGroup);
+
+  // sets  duration of this track (in the timescale indicated in the Movie Header Box)
+  // the value of this field is equal to the sum of the durations of all of the track’s edits
+  // if there is no edit list, then the duration is the sum of the sample durations, converted into the timescale
+  // in the Movie Header Box
+  // if the duration of this track cannot be determined then duration is set to all 1s (32-bit maxint)
+  // @param duration : duration of this track (in the timescale indicated in the Movie Header Box) to set
+  virtual void SetDuration(uint64_t duration);
+
   /* other methods */
 
   // parses data in buffer
@@ -184,6 +220,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

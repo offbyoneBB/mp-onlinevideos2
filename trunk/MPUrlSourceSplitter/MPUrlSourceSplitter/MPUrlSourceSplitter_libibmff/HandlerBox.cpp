@@ -21,12 +21,13 @@
 #include "StdAfx.h"
 
 #include "HandlerBox.h"
+#include "BoxCollection.h"
 
 CHandlerBox::CHandlerBox(void)
   : CFullBox()
 {
   this->type = Duplicate(HANDLER_BOX_TYPE);
-  this->name = NULL;
+  this->name = Duplicate(L"");
   this->handlerType = 0;
 }
 
@@ -39,14 +40,7 @@ CHandlerBox::~CHandlerBox(void)
 
 bool CHandlerBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 uint32_t CHandlerBox::GetHandlerType(void)
@@ -60,6 +54,16 @@ const wchar_t *CHandlerBox::GetName(void)
 }
 
 /* set methods */
+
+void CHandlerBox::SetHandlerType(uint32_t handlerType)
+{
+  this->handlerType = handlerType;
+}
+
+bool CHandlerBox::SetName(const wchar_t *name)
+{
+  SET_STRING_RETURN(this->name, name);
+}
 
 /* other methods */
 
@@ -95,7 +99,20 @@ wchar_t *CHandlerBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CHandlerBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = this->GetStringSize(this->GetName());
+
+  if (result != 0)
+  {
+    result += 20;
+  }
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CHandlerBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -152,6 +169,34 @@ bool CHandlerBox::ParseInternal(const unsigned char *buffer, uint32_t length, bo
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CHandlerBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    // pre-defined field uint32_t
+    result += 4;
+
+    // handler type uint32_t
+    WBE32INC(buffer, result, this->GetHandlerType());
+
+    // reserved, 3 x uint32_t
+    result += 12;
+
+    uint32_t res = this->SetString(buffer + result, length - result, this->GetName());
+    result = (res != 0) ? (result + res) : 0;
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

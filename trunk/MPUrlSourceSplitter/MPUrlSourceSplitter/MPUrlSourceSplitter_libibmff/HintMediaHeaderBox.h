@@ -68,6 +68,22 @@ public:
 
   /* set methods */
 
+  // sets the size in bytes of the largest PDU in this (hint) stream
+  // @param maxPDUSize : the size in bytes of the largest PDU in this (hint) stream to set
+  virtual void SetMaxPDUSize(uint16_t maxPDUSize);
+
+  // sets the average size of a PDU over the entire presentation
+  // @param averagePDUSize : the average size of a PDU over the entire presentation to set
+  virtual void SetAveragePDUSize(uint16_t averagePDUSize);
+
+  // sets the maximum rate in bits/second over any window of one second
+  // @param maxBitrate : the maximum rate in bits/second over any window of one second to set
+  virtual void SetMaxBitrate(uint32_t maxBitrate);
+
+  // sets the average rate in bits/second over the entire presentation
+  // @param averageBitrate : the average rate in bits/second over the entire presentation to set
+  virtual void SetAverageBitrate(uint32_t averageBitrate);
+
   /* other methods */
 
   // parses data in buffer
@@ -98,6 +114,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

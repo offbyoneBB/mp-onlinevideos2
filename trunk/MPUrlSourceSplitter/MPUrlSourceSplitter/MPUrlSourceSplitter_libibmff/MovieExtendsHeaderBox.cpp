@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "MovieExtendsHeaderBox.h"
+#include "BoxCollection.h"
 
 CMovieExtendsHeaderBox::CMovieExtendsHeaderBox(void)
   : CFullBox()
@@ -37,14 +38,7 @@ CMovieExtendsHeaderBox::~CMovieExtendsHeaderBox(void)
 
 bool CMovieExtendsHeaderBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 uint64_t CMovieExtendsHeaderBox::GetFragmentDuration(void)
@@ -53,6 +47,11 @@ uint64_t CMovieExtendsHeaderBox::GetFragmentDuration(void)
 }
 
 /* set methods */
+
+void CMovieExtendsHeaderBox::SetFragmentDuration(uint64_t fragmentDuration)
+{
+  this->fragmentDuration = fragmentDuration;
+}
 
 /* other methods */
 
@@ -87,7 +86,27 @@ wchar_t *CMovieExtendsHeaderBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CMovieExtendsHeaderBox::GetBoxSize(void)
 {
-  return __super::GetBoxSize();
+  uint64_t result = 0;
+
+  switch(this->GetVersion())
+  {
+  case 0:
+    result = 4;
+    break;
+  case 1:
+    result = 8;
+    break;
+  default:
+    break;
+  }
+
+  if (result != 0)
+  {
+    uint64_t boxSize = __super::GetBoxSize();
+    result = (boxSize != 0) ? (result + boxSize) : 0; 
+  }
+
+  return result;
 }
 
 bool CMovieExtendsHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
@@ -135,6 +154,35 @@ bool CMovieExtendsHeaderBox::ParseInternal(const unsigned char *buffer, uint32_t
   }
 
   result = this->parsed;
+
+  return result;
+}
+
+uint32_t CMovieExtendsHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    switch(this->GetVersion())
+    {
+    case 0:
+      WBE32INC(buffer, result, this->GetFragmentDuration());
+      break;
+    case 1:
+      WBE64INC(buffer, result, this->GetFragmentDuration());
+      break;
+    default:
+      result = 0;
+      break;
+    }
+
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
 
   return result;
 }

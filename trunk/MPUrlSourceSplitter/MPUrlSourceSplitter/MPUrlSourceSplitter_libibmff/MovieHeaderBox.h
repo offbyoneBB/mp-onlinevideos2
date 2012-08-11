@@ -89,6 +89,26 @@ public:
 
   /* set methods */
 
+  // sets the creation time of the presentation (in seconds since midnight, Jan. 1, 1904, in UTC time)
+  // @param creationTime : the creation time to set
+  virtual void SetCreationTime(uint64_t creationTime);
+
+  // sets the most recent time the presentation was modified (in seconds since midnight, Jan. 1, 1904, in UTC time)
+  // @param modificationTime : the most recent time the presentation was modified to set
+  virtual void SetModificationTime(uint64_t modificationTime);
+
+  // sets the time-scale for the entire presentation
+  // @param timeScale : the time-scale for the entire presentation to set
+  virtual void SetTimeScale(uint32_t timeScale);
+
+  // sets length of the presentation (in the indicated timescale)
+  // @param duration : length of the presentation (in the indicated timescale) to set
+  virtual void SetDuration(uint64_t duration);
+
+  // sets next track ID
+  // @param nextTrackId : next track ID to set
+  virtual void SetNextTrackId(uint32_t nextTrackId);
+
   /* other methods */
 
   // parses data in buffer
@@ -136,6 +156,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

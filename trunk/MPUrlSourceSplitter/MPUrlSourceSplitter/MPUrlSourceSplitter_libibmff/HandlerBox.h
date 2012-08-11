@@ -67,10 +67,26 @@ public:
   virtual uint32_t GetHandlerType(void);
 
   // gets human-readable name for the track type
-  // @retunr : human-readable name for the track type
+  // @return : human-readable name for the track type
   virtual const wchar_t *GetName(void);
 
   /* set methods */
+
+  // sets handler type
+  // when present in a media box, is an integer containing one of the following values, or a value from a derived specification:
+  // ‘vide’ Video track
+  // ‘soun’ Audio track
+  // ‘hint’ Hint track
+  // ‘meta’ Timed Metadata track
+  // when present in a meta box, contains an appropriate value to indicate the format of the meta box contents
+  // the value ‘null’ can be used in the primary meta box to indicate that it is merely being used to hold resources
+  // @param handlerType : handler type to set
+  virtual void SetHandlerType(uint32_t handlerType);
+
+  // sets human-readable name for the track type
+  // @param name : human-readable name for the track type to set
+  // @return : true if successful, false otherwise
+  virtual bool SetName(const wchar_t *name);
 
   /* other methods */
 
@@ -104,6 +120,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

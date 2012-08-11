@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "DataEntryBox.h"
+#include "BoxCollection.h"
 
 CDataEntryBox::CDataEntryBox(void)
   : CFullBox()
@@ -35,14 +36,7 @@ CDataEntryBox::~CDataEntryBox(void)
 
 bool CDataEntryBox::GetBox(uint8_t *buffer, uint32_t length)
 {
-  bool result = __super::GetBox(buffer, length);
-
-  if (result)
-  {
-    uint32_t position = this->HasExtendedHeader() ? BOX_HEADER_LENGTH_SIZE64 : BOX_HEADER_LENGTH;
-  }
-
-  return result;
+  return (this->GetBoxInternal(buffer, length, true) != 0);
 }
 
 bool CDataEntryBox::IsSelfContained(void)
@@ -51,6 +45,11 @@ bool CDataEntryBox::IsSelfContained(void)
 }
 
 /* set methods */
+
+void CDataEntryBox::SetSelfContained(bool selfContained)
+{
+  this->flags = (selfContained) ? (this->flags | FLAGS_SELF_CONTAINED) : (this->flags & (~FLAGS_SELF_CONTAINED));
+}
 
 /* other methods */
 
@@ -91,4 +90,20 @@ uint64_t CDataEntryBox::GetBoxSize(void)
 bool CDataEntryBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes)
 {
   return __super::ParseInternal(buffer, length, processAdditionalBoxes);
+}
+
+uint32_t CDataEntryBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes)
+{
+  uint32_t result = __super::GetBoxInternal(buffer, length, false);
+
+  if (result != 0)
+  {
+    if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
+    {
+      uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
+      result = (boxSizes != 0) ? (result + boxSizes) : 0;
+    }
+  }
+
+  return result;
 }

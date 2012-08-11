@@ -56,6 +56,10 @@ public:
 
   /* set methods */
 
+  // sets the length of the presentation of the whole movie including fragments
+  // @param fragmentDuration : length of the presentation of the whole movie including fragments to set
+  virtual void SetFragmentDuration(uint64_t fragmentDuration);
+
   /* other methods */
 
   // parses data in buffer
@@ -83,6 +87,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif

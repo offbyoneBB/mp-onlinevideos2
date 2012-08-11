@@ -64,6 +64,18 @@ public:
 
   /* set methods */
 
+  // sets the size of the decoding buffer for the elementary stream in bytes
+  // @param bufferSize : the size of the decoding buffer to set for the elementary stream in bytes
+  virtual void SetBufferSize(uint32_t bufferSize);
+
+  // sets the maximum rate in bits/second over any window of one second
+  // @param maximumBitrate: the maximum rate in bits/second to set over any window of one second
+  virtual void SetMaximumBitrate(uint32_t maximumBitrate);
+
+  // sets the average rate in bits/second over the entire presentation
+  // @param averageBitrate : the average rate in bits/second to set over the entire presentation
+  virtual void SetAverageBitrate(uint32_t averageBitrate);
+
   /* other methods */
 
   // parses data in buffer
@@ -94,6 +106,13 @@ protected:
   // @param processAdditionalBoxes : specifies if additional boxes have to be processed
   // @return : true if parsed successfully, false otherwise
   virtual bool ParseInternal(const unsigned char *buffer, uint32_t length, bool processAdditionalBoxes);
+
+  // gets whole box into buffer (buffer must be allocated before)
+  // @param buffer : the buffer for box data
+  // @param length : the length of buffer for data
+  // @param processAdditionalBoxes : specifies if additional boxes have to be processed (added to buffer)
+  // @return : number of bytes stored into buffer, 0 if error
+  virtual uint32_t GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAdditionalBoxes);
 };
 
 #endif
