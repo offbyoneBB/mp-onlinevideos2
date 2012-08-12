@@ -180,8 +180,6 @@ bool CMSHSManifest::Parse(const char *buffer)
                     continueParsing &= stream->SetUrl(url);
                     stream->SetTimeScale(GetValueUnsignedInt64(timeScale, this->smoothStreamingMedia->GetTimeScale()));
                     continueParsing &= stream->SetName(name);
-                    /*stream->SetNumberOfFragments(GetValueUnsignedInt(numberOfFragments, 0));
-                    stream->SetNumberOfTracks(GetValueUnsignedInt(numberOfTracks, 0));*/
                     stream->SetMaxWidth(GetValueUnsignedInt(maxWidth, 0));
                     stream->SetMaxHeight(GetValueUnsignedInt(maxHeight, 0));
                     stream->SetDisplayWidth(GetValueUnsignedInt(displayWidth, 0));

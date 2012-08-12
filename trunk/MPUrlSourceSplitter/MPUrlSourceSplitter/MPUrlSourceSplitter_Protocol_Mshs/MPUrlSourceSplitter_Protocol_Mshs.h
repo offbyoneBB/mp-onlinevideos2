@@ -31,6 +31,32 @@
 #include "StreamFragmentCollection.h"
 
 #include "MSHSSmoothStreamingMedia.h"
+#include "Box.h"
+#include "FileTypeBox.h"
+#include "TrackFragmentHeaderBox.h"
+#include "MovieBox.h"
+#include "TrackBox.h"
+#include "HandlerBox.h"
+#include "TrackHeaderBox.h"
+#include "MediaBox.h"
+#include "MediaHeaderBox.h"
+#include "MediaInformationBox.h"
+#include "VideoMediaHeaderBox.h"
+#include "SoundMediaHeaderBox.h"
+#include "DataInformationBox.h"
+#include "DataReferenceBox.h"
+#include "DataEntryUrlBox.h"
+#include "SampleTableBox.h"
+#include "SampleDescriptionBox.h"
+#include "TimeToSampleBox.h"
+#include "SampleToChunkBox.h"
+#include "ChunkOffsetBox.h"
+#include "MovieExtendsBox.h"
+#include "TrackExtendsBox.h"
+#include "VisualSampleEntryBox.h"
+#include "AudioSampleEntryBox.h"
+#include "AVCConfigurationBox.h"
+#include "ESDBox.h"
 
 #include <curl/curl.h>
 
@@ -176,6 +202,11 @@ protected:
   // main instance of CURL
   CHttpCurlInstance *mainCurlInstance;
 
+  // CURL instance for first video URL
+  CHttpCurlInstance *videoCurlInstance;
+  // CURL instance for first audio URL
+  CHttpCurlInstance *audioCurlInstance;
+
   // reference to variable that signalize if protocol is requested to exit
   bool shouldExit;
   // specifies if whole stream is downloaded
@@ -193,6 +224,9 @@ protected:
 
   // holds stream fragments and urls
   CStreamFragmentCollection *streamFragments;
+
+  // holds smooth streaming media for further processing
+  CMSHSSmoothStreamingMedia *streamingMedia;
 
   // removes all downloaded stream fragments
   // the last one stream fragment (even downloaded) still preserve
@@ -218,6 +252,50 @@ protected:
   // @param fragment : fragment for which is url formatted
   // @return : url or NULL if error
   wchar_t *FormatUrl(const wchar_t *baseUrl, const wchar_t *urlPattern, CMSHSTrack *track, CMSHSStreamFragment *fragment);
+
+  // creates file type box
+  // @return : file type box or NULL if error
+  CFileTypeBox *CreateFileTypeBox(void);
+
+  // gets track fragment header box from linear buffer (video or audio CURL instance)
+  // @param buffer : buffer to get track fragment header box
+  // @return : track fragment header box or NULL if error
+  CTrackFragmentHeaderBox *GetTrackFragmentHeaderBox(CLinearBuffer *buffer);
+
+  // stores box into buffer
+  // @param box : box to store in buffer
+  // @param buffer : the buffer
+  // @return : true if successful, false otherwise
+  bool PutBoxIntoBuffer(CBox *box, CLinearBuffer *buffer);
+
+  // gets movie box
+  // @param media : smooth streaming media
+  // @param videoFragmentHeaderBox : video fragment header box
+  // @param audioFragmentHeaderBox : audio fragment header box
+  // @return : movie box or NULL if error
+  CMovieBox *GetMovieBox(CMSHSSmoothStreamingMedia *media, CTrackFragmentHeaderBox *videoFragmentHeaderBox, CTrackFragmentHeaderBox *audioFragmentHeaderBox);
+
+  // gets video track box
+  // @param media : smooth streaming media
+  // @param streamIndex : the index of stream
+  // @param trackIndex : the index of track in stream
+  // @param fragmentHeaderBox : fragment header box
+  // @return : video track box or NULL if error
+  CTrackBox *GetVideoTrackBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, unsigned int trackIndex, CTrackFragmentHeaderBox *fragmentHeaderBox);
+
+  // gets audio track box
+  // @param media : smooth streaming media
+  // @param fragmentHeaderBox : fragment header box
+  // @return : audio track box or NULL if error
+  CTrackBox *GetAudioTrackBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, unsigned int trackIndex, CTrackFragmentHeaderBox *fragmentHeaderBox);
+
+  CDataInformationBox *GetDataInformationBox(void);
+
+  CHandlerBox *GetHandlerBox(uint32_t handlerType, const wchar_t *handlerName);
+
+  CSampleTableBox *GetVideoSampleTableBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, unsigned int trackIndex, CTrackFragmentHeaderBox *fragmentHeaderBox);
+
+  CSampleTableBox *GetAudioSampleTableBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, unsigned int trackIndex, CTrackFragmentHeaderBox *fragmentHeaderBox);
 };
 
 #endif

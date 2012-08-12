@@ -27,6 +27,10 @@
 #include "MSHSStreamFragmentCollection.h"
 #include "Serializable.h"
 
+#define STREAM_TYPE_VIDEO                                                     L"video"
+#define STREAM_TYPE_AUDIO                                                     L"audio"
+#define STREAM_TYPE_TEXT                                                      L"text"
+
 class CMSHSStream : public CSerializable
 {
 public:

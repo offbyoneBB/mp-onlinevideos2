@@ -101,3 +101,135 @@ uint64_t GetValueUnsignedInt64W(const wchar_t *input, uint64_t defaultValue)
     return defaultValue;
   }
 }
+
+uint8_t HexToDecA(const char c)
+{
+  switch(c)
+  {
+  case '0':
+  case '1':
+  case '2':
+  case '3':
+  case '4':
+  case '5':
+  case '6':
+  case '7':
+  case '8':
+  case '9':
+    return (c - '0');
+  case 'a':
+  case 'b':
+  case 'c':
+  case 'd':
+  case 'e':
+  case 'f':
+    return (c - 'a' + 10);
+  case 'A':
+  case 'B':
+  case 'C':
+  case 'D':
+  case 'E':
+  case 'F':
+    return (c - 'A' + 10);
+  default:
+    return UINT8_MAX;
+  }
+}
+
+uint8_t HexToDecW(const wchar_t c)
+{
+  switch(c)
+  {
+  case L'0':
+  case L'1':
+  case L'2':
+  case L'3':
+  case L'4':
+  case L'5':
+  case L'6':
+  case L'7':
+  case L'8':
+  case L'9':
+    return (c - L'0');
+  case L'a':
+  case L'b':
+  case L'c':
+  case L'd':
+  case L'e':
+  case L'f':
+    return (c - L'a' + 10);
+  case L'A':
+  case L'B':
+  case L'C':
+  case L'D':
+  case L'E':
+  case L'F':
+    return (c - L'A' + 10);
+  default:
+    return UINT8_MAX;
+  }
+}
+
+uint8_t *HexToDecA(const char *input)
+{
+  uint8_t *result = NULL;
+
+  if (input != NULL)
+  {
+    unsigned int length = strlen(input);
+    result = ALLOC_MEM_SET(result, uint8_t, (length / 2), 0);
+    
+    if (result != NULL)
+    {
+      for (unsigned int i = 0; ((result != NULL) && (i < length)); i+= 2)
+      {
+        uint8_t high = HexToDec(input[i]);
+        uint8_t low = HexToDec(input[i + 1]);
+
+        if ((high != UINT8_MAX) && (low != UINT8_MAX))
+        {
+          result[i / 2] = (uint8_t)((high << 4) + low);
+        }
+        else
+        {
+          // error while converting
+          FREE_MEM(result);
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+uint8_t *HexToDecW(const wchar_t *input)
+{
+  uint8_t *result = NULL;
+
+  if (input != NULL)
+  {
+    unsigned int length = wcslen(input);
+    result = ALLOC_MEM_SET(result, uint8_t, (length / 2), 0);
+    
+    if (result != NULL)
+    {
+      for (unsigned int i = 0; ((result != NULL) && (i < length)); i+= 2)
+      {
+        uint8_t high = HexToDec(input[i]);
+        uint8_t low = HexToDec(input[i + 1]);
+
+        if ((high != UINT8_MAX) && (low != UINT8_MAX))
+        {
+          result[i / 2] = (uint8_t)((high << 4) + low);
+        }
+        else
+        {
+          // error while converting
+          FREE_MEM(result);
+        }
+      }
+    }
+  }
+
+  return result;
+}

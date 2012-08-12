@@ -61,5 +61,18 @@ uint64_t GetValueUnsignedInt64W(const wchar_t *input, uint64_t defaultValue);
 #define GetValueUnsignedInt64 GetValueUnsignedInt64W
 #endif
 
+uint8_t HexToDecA(const char c);
+
+uint8_t HexToDecW(const wchar_t c);
+
+uint8_t *HexToDecA(const char *input);
+
+uint8_t *HexToDecW(const wchar_t *input);
+
+#ifdef _MBCS
+#define HexToDec HexToDecA
+#else
+#define HexToDec HexToDecW
+#endif
 
 #endif

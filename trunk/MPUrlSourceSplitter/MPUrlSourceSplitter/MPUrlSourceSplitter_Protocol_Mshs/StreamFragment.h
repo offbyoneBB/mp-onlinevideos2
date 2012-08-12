@@ -25,11 +25,15 @@
 
 #include <stdint.h>
 
+#define FRAGMENT_TYPE_UNSPECIFIED                                             0
+#define FRAGMENT_TYPE_VIDEO                                                   1
+#define FRAGMENT_TYPE_AUDIO                                                   2
+
 class CStreamFragment
 {
 public:
   // creats new instance of CStreamFragment class
-  CStreamFragment(const wchar_t *url, uint64_t fragmentDuration, uint64_t fragmentTime);
+  CStreamFragment(const wchar_t *url, uint64_t fragmentDuration, uint64_t fragmentTime, unsigned int fragmentType);
 
   // desctructor
   ~CStreamFragment(void);
@@ -47,6 +51,10 @@ public:
   // gets stream fragment url
   // @return : stream fragment url or NULL if error
   const wchar_t *GetUrl(void);
+
+  // gets stream fragment type (audio, video, ...)
+  // @return : stream fragment type
+  unsigned int GetFragmentType(void);
 
   // gets if stream fragment is downloaded
   // @return : true if downloaded, false otherwise
@@ -74,6 +82,8 @@ private:
   wchar_t *url;
   // stores if stream fragment is downloaded
   bool downloaded;
+  // stores fragment type (audio, video, ...)
+  unsigned int fragmentType;
 };
 
 #endif

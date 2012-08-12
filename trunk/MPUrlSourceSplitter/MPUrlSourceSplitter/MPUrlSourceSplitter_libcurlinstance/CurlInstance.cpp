@@ -229,7 +229,7 @@ HRESULT CCurlInstance::DestroyCurlWorker(void)
 DWORD WINAPI CCurlInstance::CurlWorker(LPVOID lpParam)
 {
   CCurlInstance *caller = (CCurlInstance *)lpParam;
-  caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, caller->protocolName, METHOD_CURL_WORKER_NAME);
+  caller->logger->Log(LOGGER_INFO, L"%s: %s: Start, url: '%s'", caller->protocolName, METHOD_CURL_WORKER_NAME, caller->GetUrl());
 
   // on next line will be stopped processing of code - until something happens
   caller->curlWorkerErrorCode = curl_easy_perform(caller->curl);
