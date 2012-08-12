@@ -29,6 +29,13 @@
 #include "base64.h"
 #include "compress_zlib.h"
 #include "formatUrl.h"
+#include "conversions.h"
+
+#include "MovieFragmentBox.h"
+#include "TrackFragmentBox.h"
+#include "TrackFragmentHeaderBox.h"
+#include "BoxCollection.h"
+#include "MovieHeaderBox.h"
 
 // protocol implementation name
 #ifdef _DEBUG
@@ -92,6 +99,9 @@ CMPUrlSourceSplitter_Protocol_Mshs::CMPUrlSourceSplitter_Protocol_Mshs(CParamete
   this->bufferForProcessing = NULL;
   this->shouldExit = false;
   this->streamFragments = NULL;
+  this->videoCurlInstance = NULL;
+  this->audioCurlInstance = NULL;
+  this->streamingMedia = NULL;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -105,16 +115,14 @@ CMPUrlSourceSplitter_Protocol_Mshs::~CMPUrlSourceSplitter_Protocol_Mshs()
     this->StopReceivingData();
   }
 
-  if (this->mainCurlInstance != NULL)
-  {
-    delete this->mainCurlInstance;
-    this->mainCurlInstance = NULL;
-  }
-
+  FREE_MEM_CLASS(this->videoCurlInstance);
+  FREE_MEM_CLASS(this->audioCurlInstance);
+  FREE_MEM_CLASS(this->mainCurlInstance);
   FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
   FREE_MEM_CLASS(this->bufferForProcessing);
   FREE_MEM_CLASS(this->configurationParameters);
   FREE_MEM_CLASS(this->streamFragments);
+  FREE_MEM_CLASS(this->streamingMedia);
 
   if (this->lockMutex != NULL)
   {
@@ -132,7 +140,7 @@ CMPUrlSourceSplitter_Protocol_Mshs::~CMPUrlSourceSplitter_Protocol_Mshs()
 
 bool CMPUrlSourceSplitter_Protocol_Mshs::IsConnected(void)
 {
-  return ((this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded));
+  return ((this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded) || ((this->videoCurlInstance != NULL) && (this->audioCurlInstance != NULL)));
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetOpenConnectionMaximumAttempts(void)
@@ -243,39 +251,130 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
     {
       if (!(this->shouldExit))
       {
-        unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
-        if (bytesRead != 0)
+        if ((this->videoCurlInstance != NULL) && (this->audioCurlInstance != NULL) &&
+            (this->videoCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA) &&
+            (this->audioCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
         {
-          if (this->bufferForBoxProcessingCollection != NULL)
-          {
-            CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
-            if (linearBuffer != NULL)
-            {
-              unsigned int bufferSize = linearBuffer->GetBufferSize();
-              unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
+          // we need to reconstruct header
+          CTrackFragmentHeaderBox *videoTrackFragmentHeaderBox = this->GetTrackFragmentHeaderBox(this->videoCurlInstance->GetReceiveDataBuffer());
+          CTrackFragmentHeaderBox *audioTrackFragmentHeaderBox = this->GetTrackFragmentHeaderBox(this->audioCurlInstance->GetReceiveDataBuffer());
 
-              if (freeSpace < bytesRead)
+          if ((videoTrackFragmentHeaderBox != NULL) && (audioTrackFragmentHeaderBox != NULL))
+          {
+            wchar_t *videoData = videoTrackFragmentHeaderBox->GetParsedHumanReadable(L"");
+            wchar_t *audioData = audioTrackFragmentHeaderBox->GetParsedHumanReadable(L"");
+
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: video track fragment header box:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, videoData);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: audio track fragment header box:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, audioData);
+
+            FREE_MEM(videoData);
+            FREE_MEM(audioData);
+
+            // create file type box
+            CFileTypeBox *fileTypeBox = this->CreateFileTypeBox();
+
+            if (fileTypeBox != NULL)
+            {
+              // copy file type box to processing
+              if (this->bufferForBoxProcessingCollection != NULL)
               {
-                unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
-                if (!linearBuffer->ResizeBuffer(bufferNewSize))
+                CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
+                if (linearBuffer != NULL)
                 {
-                  this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-                  // error
-                  bytesRead = 0;
+                  this->PutBoxIntoBuffer(fileTypeBox, linearBuffer);
                 }
               }
+            }
+            FREE_MEM_CLASS(fileTypeBox);
 
-              if (bytesRead != 0)
+            // create movie box
+            CMovieBox *movieBox = this->GetMovieBox(this->streamingMedia, videoTrackFragmentHeaderBox, audioTrackFragmentHeaderBox);
+
+            if (movieBox != NULL)
+            {
+              // copy movie box to processing
+              if (this->bufferForBoxProcessingCollection != NULL)
               {
-                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
-                if (buffer != NULL)
+                CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
+                if (linearBuffer != NULL)
                 {
-                  this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-                  linearBuffer->AddToBuffer(buffer, bytesRead);
-                  this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+                  this->PutBoxIntoBuffer(movieBox, linearBuffer);
                 }
-                FREE_MEM(buffer);
+              }
+            }
+            FREE_MEM_CLASS(movieBox);
+
+            // copy data from video buffer and from audio buffer to processing
+            if (this->bufferForBoxProcessingCollection != NULL)
+            {
+              CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
+              if (linearBuffer != NULL)
+              {
+                {
+                  unsigned int length = this->videoCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+                  ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+                  if (buffer != NULL)
+                  {
+                    this->videoCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, length, 0, 0);
+                    linearBuffer->AddToBufferWithResize(buffer, length);
+                  }
+                  FREE_MEM(buffer);
+                }
+
+                {
+                  unsigned int length = this->audioCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+                  ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+                  if (buffer != NULL)
+                  {
+                    this->audioCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, length, 0, 0);
+                    linearBuffer->AddToBufferWithResize(buffer, length);
+                  }
+                  FREE_MEM(buffer);
+                }
+              }
+            }
+          }
+
+          FREE_MEM_CLASS(videoTrackFragmentHeaderBox);
+          FREE_MEM_CLASS(audioTrackFragmentHeaderBox);
+        }
+
+        if (this->mainCurlInstance != NULL)
+        {
+          unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+          if (bytesRead != 0)
+          {
+            if (this->bufferForBoxProcessingCollection != NULL)
+            {
+              CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
+              if (linearBuffer != NULL)
+              {
+                unsigned int bufferSize = linearBuffer->GetBufferSize();
+                unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
+
+                if (freeSpace < bytesRead)
+                {
+                  unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
+                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
+                  if (!linearBuffer->ResizeBuffer(bufferNewSize))
+                  {
+                    this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+                    // error
+                    bytesRead = 0;
+                  }
+                }
+
+                if (bytesRead != 0)
+                {
+                  ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
+                  if (buffer != NULL)
+                  {
+                    this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                    linearBuffer->AddToBuffer(buffer, bytesRead);
+                    this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+                  }
+                  FREE_MEM(buffer);
+                }
               }
             }
           }
@@ -312,53 +411,28 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
           do
           {
             continueProcessing = false;
-            //CBox *box = new CBox();
-            //if (box != NULL)
+            unsigned int length = bufferForBoxProcessing->GetBufferOccupiedSpace();
+            if (length > 0)
             {
-              unsigned int length = bufferForBoxProcessing->GetBufferOccupiedSpace();
-              if (length > 0)
+              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+              if (buffer != NULL)
               {
-                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                if (buffer != NULL)
+                bufferForBoxProcessing->CopyFromBuffer(buffer, length, 0, 0);
+                continueProcessing = true;
+
+                if (continueProcessing)
                 {
-                  bufferForBoxProcessing->CopyFromBuffer(buffer, length, 0, 0);
-                  //if (box->Parse(buffer, length))
-                  {
-                    //unsigned int boxSize = (unsigned int)box->GetSize();
-                    //if (length >= boxSize)
-                    {
-                      continueProcessing = true;
-
-                      //if (wcscmp(box->GetType(), MEDIA_DATA_BOX_TYPE) == 0)
-                      {
-                        //CMediaDataBox *mediaBox = new CMediaDataBox();
-                        //if (mediaBox != NULL)
-                        {
-                          //continueProcessing &= mediaBox->Parse(buffer, length);
-
-                          if (continueProcessing)
-                          {
-                            //unsigned int payloadSize = (unsigned int)mediaBox->GetPayloadSize();
-                            //continueProcessing &= (this->bufferForProcessing->AddToBufferWithResize(mediaBox->GetPayload(), payloadSize) == payloadSize);
-                            continueProcessing &= (this->bufferForProcessing->AddToBufferWithResize(buffer, length) == length);
-                          }
-                        }
-                        //FREE_MEM_CLASS(mediaBox);
-                      }
-
-                      if (continueProcessing)
-                      {
-                        //bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
-                        bufferForBoxProcessing->RemoveFromBufferAndMove(length);
-                        continueProcessing = true;
-                      }
-                    }
-                  }
+                  continueProcessing &= (this->bufferForProcessing->AddToBufferWithResize(buffer, length) == length);
                 }
-                FREE_MEM(buffer);
+
+                if (continueProcessing)
+                {
+                  bufferForBoxProcessing->RemoveFromBufferAndMove(length);
+                  continueProcessing = true;
+                }
               }
+              FREE_MEM(buffer);
             }
-            //FREE_MEM_CLASS(box);
           } while (continueProcessing);
 
           if (bufferForBoxProcessing->GetBufferOccupiedSpace() == 0)
@@ -371,90 +445,59 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
 
       if ((!this->supressData) && (this->bufferForProcessing != NULL))
       {
-      //  CFlvPacket *flvPacket = new CFlvPacket();
-      //  if (flvPacket != NULL)
-      //  {
-      //    while (flvPacket->ParsePacket(this->bufferForProcessing))
-      //    {
-      //      // FLV packet parsed correctly
-      //      // push FLV packet to filter
-
-      //      //if ((flvPacket->GetType() != FLV_PACKET_HEADER) && (this->firstTimestamp == (-1)))
-      //      //{
-      //      //  this->firstTimestamp = flvPacket->GetTimestamp();
-      //      //  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstTimestamp);
-      //      //}
-
-      //      //if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp == (-1)))
-      //      //{
-      //      //  this->firstVideoTimestamp = flvPacket->GetTimestamp();
-      //      //  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first video timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstVideoTimestamp);
-      //      //}
-
-      //      //if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp != (-1)) && (this->firstTimestamp != (-1)))
-      //      //{
-      //      //  // correction of video timestamps
-      //      //  flvPacket->SetTimestamp(flvPacket->GetTimestamp() + this->firstTimestamp - this->firstVideoTimestamp);
-      //      //}
-
-      //      if ((flvPacket->GetType() == FLV_PACKET_AUDIO) ||
-      //        (flvPacket->GetType() == FLV_PACKET_HEADER) ||
-      //        (flvPacket->GetType() == FLV_PACKET_META) ||
-      //        (flvPacket->GetType() == FLV_PACKET_VIDEO))
-      //      {
-      //        // do nothing, known packet types
-      //      }
-      //      else
-      //      {
-      //        this->logger->Log(LOGGER_WARNING, L"%s: %s: unknown FLV packet: %d, size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, flvPacket->GetType(), flvPacket->GetSize());
-      //      }
-
-      //      if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
-      //      {
-      //        // create media packet
-      //        // set values of media packet
-
         unsigned int length = this->bufferForProcessing->GetBufferOccupiedSpace();
 
         if (length > 0)
         {
-        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-        if (buffer != NULL)
-        {
-              this->bufferForProcessing->CopyFromBuffer(buffer, length, 0, 0);
+          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+          if (buffer != NULL)
+          {
+            this->bufferForProcessing->CopyFromBuffer(buffer, length, 0, 0);
 
-              CMediaPacket *mediaPacket = new CMediaPacket();
-              //mediaPacket->GetBuffer()->InitializeBuffer(flvPacket->GetSize());
-              mediaPacket->GetBuffer()->InitializeBuffer(length);
-              //mediaPacket->GetBuffer()->AddToBuffer(flvPacket->GetData(), flvPacket->GetSize());
-              mediaPacket->GetBuffer()->AddToBuffer(buffer, length);
-              mediaPacket->SetStart(this->bytePosition);
-              //mediaPacket->SetEnd(this->bytePosition + flvPacket->GetSize() - 1);
-              mediaPacket->SetEnd(this->bytePosition + length - 1);
+            CMediaPacket *mediaPacket = new CMediaPacket();
+            mediaPacket->GetBuffer()->InitializeBuffer(length);
+            mediaPacket->GetBuffer()->AddToBuffer(buffer, length);
+            mediaPacket->SetStart(this->bytePosition);
+            mediaPacket->SetEnd(this->bytePosition + length - 1);
 
-              HRESULT result = this->filter->PushMediaPacket(mediaPacket);
-              if (FAILED(result))
-              {
-                this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
-              }
-              //this->bytePosition += flvPacket->GetSize();
-              this->bytePosition += length;
+            HRESULT result = this->filter->PushMediaPacket(mediaPacket);
+            if (FAILED(result))
+            {
+              this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+            }
+            this->bytePosition += length;
 
-              FREE_MEM_CLASS(mediaPacket);
-      //      }
-      //      // we are definitely not seeking
+            FREE_MEM_CLASS(mediaPacket);
             this->seekingActive = false;
-            //this->bufferForProcessing->RemoveFromBufferAndMove(flvPacket->GetSize());
             this->bufferForProcessing->RemoveFromBufferAndMove(length);
+          }
+
+          FREE_MEM(buffer);
+        }
+      }
+
+      if ((this->videoCurlInstance != NULL) && (this->audioCurlInstance != NULL) &&
+        (this->videoCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA) &&
+        (this->audioCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+      {
+        // mark video and audio fragments as downloaded
+        if (!this->streamFragments->GetStreamFragment(this->videoCurlInstance->GetUrl(), true)->GetDownloaded())
+        {
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->videoCurlInstance->GetUrl());
+          this->streamFragments->GetStreamFragment(this->videoCurlInstance->GetUrl(), true)->SetDownloaded(true);
+        }
+        if (!this->streamFragments->GetStreamFragment(this->audioCurlInstance->GetUrl(), true)->GetDownloaded())
+        {
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->audioCurlInstance->GetUrl());
+          this->streamFragments->GetStreamFragment(this->audioCurlInstance->GetUrl(), true)->SetDownloaded(true);
         }
 
-            FREE_MEM(buffer);
-        }
-      //      flvPacket->Clear();
-      //    }
-
-      //    FREE_MEM_CLASS(flvPacket);
-      //  }
+        // all data for video and audio are received
+        // remove audio CURL instance
+        FREE_MEM_CLASS(this->audioCurlInstance);
+        // move video CURL instance into main CURL instance and continue as in common case
+        this->mainCurlInstance = this->videoCurlInstance;
+        this->videoCurlInstance = NULL;
       }
 
       if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
@@ -582,8 +625,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
   CLockMutex lock(this->lockMutex, INFINITE);
 
   this->wholeStreamDownloaded = false;
-  //this->firstTimestamp = -1;
-  //this->firstVideoTimestamp = -1;
   this->bytePosition = 0;
   this->streamLength = 0;
   this->setLength = false;
@@ -605,12 +646,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
 
       if (SUCCEEDED(result))
       {
-        CMSHSSmoothStreamingMedia *smoothStreamingMedia = new CMSHSSmoothStreamingMedia();
-        CHECK_POINTER_HRESULT(result, smoothStreamingMedia, result, E_OUTOFMEMORY);
+        this->streamingMedia = new CMSHSSmoothStreamingMedia();
+        CHECK_POINTER_HRESULT(result, this->streamingMedia, result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
         {
-          result = (smoothStreamingMedia->Deserialize(decompressedManifest)) ? S_OK : HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+          result = (this->streamingMedia->Deserialize(decompressedManifest)) ? S_OK : HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
 
           if (SUCCEEDED(result))
           {
@@ -619,7 +660,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
               this->logger,
               METHOD_START_RECEIVING_DATA_NAME,
               this->configurationParameters,
-              smoothStreamingMedia,
+              this->streamingMedia,
               true);
             CHECK_POINTER_HRESULT(result, this->streamFragments, result, E_POINTER);
           }
@@ -629,7 +670,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
           }
         }
 
-        FREE_MEM_CLASS(smoothStreamingMedia);
+        if (FAILED(result))
+        {
+          FREE_MEM_CLASS(this->streamingMedia);
+        }
       }
       else
       {
@@ -676,85 +720,75 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
     if (SUCCEEDED(result))
     {
       result = (this->bufferForProcessing->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER)) ? result : E_FAIL;
-
-  //    if ((SUCCEEDED(result)) && (!this->seekingActive))
-  //    {
-  //      this->bufferForProcessing->AddToBuffer(FLV_FILE_HEADER, FLV_FILE_HEADER_LENGTH);
-
-  //      char *mediaMetadataBase64Encoded = ConvertToMultiByteW(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_MEDIA_METADATA, true, NULL));
-  //      if (mediaMetadataBase64Encoded != NULL)
-  //      {
-  //        // metadata can be in connection parameters, but it is optional
-  //        // metadata is BASE64 encoded
-  //        unsigned char *metadata = NULL;
-  //        unsigned int metadataLength = 0;
-  //        result = base64_decode(mediaMetadataBase64Encoded, &metadata, &metadataLength);
-
-  //        if (SUCCEEDED(result))
-  //        {
-  //          // create FLV packet from metadata and add its content to buffer for processing
-  //          CFlvPacket *metadataFlvPacket = new CFlvPacket();
-  //          CHECK_POINTER_HRESULT(result, metadataFlvPacket, result, E_OUTOFMEMORY);
-
-  //          if (SUCCEEDED(result))
-  //          {
-  //            result = metadataFlvPacket->CreatePacket(FLV_PACKET_META, metadata, metadataLength, (unsigned int)this->segmentsFragments->GetItem(0)->GetFragmentTimestamp()) ? result : E_FAIL;
-
-  //            if (SUCCEEDED(result))
-  //            {
-  //              result = (this->bufferForProcessing->AddToBufferWithResize(metadataFlvPacket->GetData(), metadataFlvPacket->GetSize()) == metadataFlvPacket->GetSize()) ? result : E_FAIL;
-
-  //              if (FAILED(result))
-  //              {
-  //                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot add FLV metadata packet to buffer");
-  //              }
-  //            }
-  //            else
-  //            {
-  //              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot create FLV metadata packet");
-  //            }
-  //          }
-  //          else
-  //          {
-  //            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for FLV metadata packet");
-  //          }
-  //          FREE_MEM_CLASS(metadataFlvPacket);
-  //        }
-  //        else
-  //        {
-  //          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot decode metadata");
-  //        }
-  //        FREE_MEM(metadata);
-  //      }
-  //      FREE_MEM(mediaMetadataBase64Encoded);
-  //    }
     }
   }
 
-  if (SUCCEEDED(result))
+  if (SUCCEEDED(result) && (!this->seekingActive))
   {
-    CStreamFragment *streamFragmentToDownload = this->GetFirstNotDownloadedStreamFragment();
-    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, streamFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
-    CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
-  }
+    // start downloading first video and first audio stream fragments
+    // both are needed for header reconstruction
 
-  if (SUCCEEDED(result))
-  {
-    this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-    this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
-    this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
-    this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
-    this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
-    this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+    CStreamFragment *videoStreamFragment = NULL;
+    CStreamFragment *audioStreamFragment = NULL;
 
-    result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+    // find first not downloaded video and audio streams
+    unsigned int i = 0;
+    while (((videoStreamFragment == NULL) || (audioStreamFragment == NULL)) && (i < this->streamFragments->Count()))
+    {
+      CStreamFragment *fragment = this->streamFragments->GetItem(i);
+
+      if ((videoStreamFragment == NULL) && (fragment->GetFragmentType() == FRAGMENT_TYPE_VIDEO))
+      {
+        videoStreamFragment = fragment;
+      }
+
+      if ((audioStreamFragment == NULL) && (fragment->GetFragmentType() == FRAGMENT_TYPE_AUDIO))
+      {
+        audioStreamFragment = fragment;
+      }
+
+      i++;
+    }
+
+    CHECK_POINTER_HRESULT(result, videoStreamFragment, result, E_POINTER);
+    CHECK_POINTER_HRESULT(result, audioStreamFragment, result, E_POINTER);
+
+    if (SUCCEEDED(result))
+    {
+      this->videoCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, videoStreamFragment->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+      this->audioCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, audioStreamFragment->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+
+      CHECK_POINTER_HRESULT(result, this->videoCurlInstance, result, E_POINTER);
+      CHECK_POINTER_HRESULT(result, this->audioCurlInstance, result, E_POINTER);
+    }
+
+    if (SUCCEEDED(result))
+    {
+      this->videoCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+      this->videoCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
+      this->videoCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
+      this->videoCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
+      this->videoCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
+      this->videoCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
+      this->audioCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+      this->audioCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
+      this->audioCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
+      this->audioCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
+      this->audioCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
+      this->audioCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
+      result = (this->videoCurlInstance->Initialize()) ? result : E_FAIL;
+      result = (this->audioCurlInstance->Initialize()) ? result : E_FAIL;
+    }
 
     if (SUCCEEDED(result))
     {
       // all parameters set
       // start receiving data
 
-      result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+      result = (this->videoCurlInstance->StartReceivingData()) ? result : E_FAIL;
+      result = (this->audioCurlInstance->StartReceivingData()) ? result : E_FAIL;
     }
 
     if (SUCCEEDED(result))
@@ -762,27 +796,28 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
       // wait for HTTP status code
 
       long responseCode = 0;
-      while (responseCode == 0)
+      while ((responseCode == 0) && SUCCEEDED(result))
       {
-        CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
+        // check state of video CURL instance
+        CURLcode errorCode = this->videoCurlInstance->GetResponseCode(&responseCode);
         if (errorCode == CURLE_OK)
         {
           if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
           {
             // response code 200 - 299 = OK
             // response code 300 - 399 = redirect (OK)
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: video fragment HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
             result = E_FAIL;
           }
         }
         else
         {
-          this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
+          this->videoCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
           result = E_FAIL;
           break;
         }
 
-        if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+        if ((responseCode == 0) && (this->videoCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
         {
           // we received data too fast
           result = E_FAIL;
@@ -791,6 +826,110 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
 
         // wait some time
         Sleep(1);
+      }
+
+      responseCode = 0;
+      while ((responseCode == 0) && (SUCCEEDED(result)))
+      {
+        // check state of audio CURL instance
+        CURLcode errorCode = this->audioCurlInstance->GetResponseCode(&responseCode);
+        if (errorCode == CURLE_OK)
+        {
+          if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
+          {
+            // response code 200 - 299 = OK
+            // response code 300 - 399 = redirect (OK)
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: audio fragment HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+            result = E_FAIL;
+          }
+        }
+        else
+        {
+          this->audioCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
+          result = E_FAIL;
+          break;
+        }
+
+        if ((responseCode == 0) && (this->audioCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+        {
+          // we received data too fast
+          result = E_FAIL;
+          break;
+        }
+
+        // wait some time
+        Sleep(1);
+      }
+    }
+
+    if (FAILED(result))
+    {
+      // free video and audio CURL instances - not needed because of error
+      FREE_MEM_CLASS(this->videoCurlInstance);
+      FREE_MEM_CLASS(this->audioCurlInstance);
+    }
+  }
+  else if (SUCCEEDED(result))
+  {
+    // common situation, just download first not downloaded stream fragment
+    CStreamFragment *streamFragmentToDownload = this->GetFirstNotDownloadedStreamFragment();
+    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, streamFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+    CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
+
+    if (SUCCEEDED(result))
+    {
+      this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+      this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
+      this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
+      this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
+      this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
+      this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
+      result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+
+      if (SUCCEEDED(result))
+      {
+        // all parameters set
+        // start receiving data
+
+        result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+      }
+
+      if (SUCCEEDED(result))
+      {
+        // wait for HTTP status code
+
+        long responseCode = 0;
+        while (responseCode == 0)
+        {
+          CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
+          if (errorCode == CURLE_OK)
+          {
+            if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
+            {
+              // response code 200 - 299 = OK
+              // response code 300 - 399 = redirect (OK)
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+              result = E_FAIL;
+            }
+          }
+          else
+          {
+            this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
+            result = E_FAIL;
+            break;
+          }
+
+          if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+          {
+            // we received data too fast
+            result = E_FAIL;
+            break;
+          }
+
+          // wait some time
+          Sleep(1);
+        }
       }
     }
   }
@@ -810,6 +949,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StopReceivingData(void)
 
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
+
+  FREE_MEM_CLASS(this->videoCurlInstance);
+  FREE_MEM_CLASS(this->audioCurlInstance);
 
   if (this->mainCurlInstance != NULL)
   {
@@ -879,6 +1021,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ClearSession(void)
 
   FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
   FREE_MEM_CLASS(this->bufferForProcessing);
+  FREE_MEM_CLASS(this->streamingMedia);
  
   this->streamLength = 0;
   this->setLength = false;
@@ -1140,6 +1283,7 @@ CStreamFragmentCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragment
       wchar_t *url = NULL;
       uint64_t fragmentTime = 0;
       uint64_t fragmentDuration = 0;
+      unsigned int fragmentType = FRAGMENT_TYPE_UNSPECIFIED;
 
       if (SUCCEEDED(result))
       {
@@ -1152,6 +1296,7 @@ CStreamFragmentCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragment
           {
             fragmentTime = videoFragment->GetFragmentTime();
             fragmentDuration = videoFragment->GetFragmentDuration();
+            fragmentType = FRAGMENT_TYPE_VIDEO;
             url = this->FormatUrl(baseUrl, videoUrlPattern, videoTrack, videoFragment);
             videoIndex++;
           }
@@ -1159,6 +1304,7 @@ CStreamFragmentCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragment
           {
             fragmentTime = audioFragment->GetFragmentTime();
             fragmentDuration = audioFragment->GetFragmentDuration();
+            fragmentType = FRAGMENT_TYPE_AUDIO;
             url = this->FormatUrl(baseUrl, audioUrlPattern, audioTrack, audioFragment);
             audioIndex++;
           }
@@ -1167,6 +1313,7 @@ CStreamFragmentCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragment
         {
           fragmentTime = videoFragment->GetFragmentTime();
           fragmentDuration = videoFragment->GetFragmentDuration();
+          fragmentType = FRAGMENT_TYPE_VIDEO;
           url = this->FormatUrl(baseUrl, videoUrlPattern, videoTrack, videoFragment);
           videoIndex++;
         }
@@ -1174,6 +1321,7 @@ CStreamFragmentCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragment
         {
           fragmentTime = audioFragment->GetFragmentTime();
           fragmentDuration = audioFragment->GetFragmentDuration();
+          fragmentType = FRAGMENT_TYPE_AUDIO;
           url = this->FormatUrl(baseUrl, audioUrlPattern, audioTrack, audioFragment);
           audioIndex++;
         }
@@ -1189,7 +1337,7 @@ CStreamFragmentCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragment
       {
         lastTimestamp = fragmentTime;
 
-        CStreamFragment *streamFragment = new CStreamFragment(url, fragmentDuration, fragmentTime);
+        CStreamFragment *streamFragment = new CStreamFragment(url, fragmentDuration, fragmentTime, fragmentType);
         CHECK_POINTER_HRESULT(result, streamFragment, result, E_OUTOFMEMORY);
 
         // add stream fragment to stream fragments
@@ -1271,4 +1419,1181 @@ wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::FormatUrl(const wchar_t *baseUrl, c
   }
 
   return result;
+}
+
+CFileTypeBox *CMPUrlSourceSplitter_Protocol_Mshs::CreateFileTypeBox(void)
+{
+  bool continueCreating = true;
+  CFileTypeBox *fileTypeBox = new CFileTypeBox();
+  continueCreating &= (fileTypeBox != NULL);
+
+  if (continueCreating)
+  {
+    continueCreating &= fileTypeBox->GetMajorBrand()->SetBrandString(L"isml");
+  }
+
+  if (continueCreating)
+  {
+    fileTypeBox->SetMinorVersion(512);
+
+    CBrand *brand = new CBrand();
+    continueCreating &= (brand != NULL);
+
+    if (continueCreating)
+    {
+      continueCreating &= brand->SetBrandString(L"piff");
+      if (continueCreating)
+      {
+        continueCreating &= fileTypeBox->GetCompatibleBrands()->Add(brand);
+      }
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(brand);
+    }
+
+    if (continueCreating)
+    {
+      brand = new CBrand();
+      continueCreating &= (brand != NULL);
+
+      if (continueCreating)
+      {
+        continueCreating &= brand->SetBrandString(L"iso2");
+        if (continueCreating)
+        {
+          continueCreating &= fileTypeBox->GetCompatibleBrands()->Add(brand);
+        }
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(brand);
+      }
+    }
+  }
+
+  if (!continueCreating)
+  {
+    FREE_MEM_CLASS(fileTypeBox);
+  }
+
+  return fileTypeBox;
+}
+
+CTrackFragmentHeaderBox *CMPUrlSourceSplitter_Protocol_Mshs::GetTrackFragmentHeaderBox(CLinearBuffer *buffer)
+{
+  CTrackFragmentHeaderBox *result = NULL;
+  unsigned int bytesRead = buffer->GetBufferOccupiedSpace();
+
+  if (bytesRead != 0)
+  {
+    ALLOC_MEM_DEFINE_SET(tempBuffer, unsigned char, bytesRead, 0);
+
+    if (tempBuffer != NULL)
+    {
+      buffer->CopyFromBuffer(tempBuffer, bytesRead, 0, 0);
+
+      CMovieFragmentBox *movieFragmentBox = new CMovieFragmentBox();
+
+      if (movieFragmentBox != NULL)
+      {
+        if (movieFragmentBox->Parse(tempBuffer, bytesRead))
+        {
+          for (unsigned int i = 0; ((result == NULL) && (i < movieFragmentBox->GetBoxes()->Count())); i++)
+          {
+            CBox *trackFragmentBox = movieFragmentBox->GetBoxes()->GetItem(i);
+
+            if (trackFragmentBox->IsType(TRACK_FRAGMENT_BOX_TYPE))
+            {
+              for (unsigned int j = 0; ((result == NULL) && (j < trackFragmentBox->GetBoxes()->Count())); j++)
+              {
+                CBox *trackFragmentHeaderBox = trackFragmentBox->GetBoxes()->GetItem(j);
+
+                if (trackFragmentHeaderBox->IsType(TRACK_FRAGMENT_HEADER_BOX_TYPE))
+                {
+                  // we found video track fragment header box
+                  // we can't return reference because movie fragment box is container and will be destroyed
+                  // we can save track fragment header box into buffer and then create track fragment header box from buffer
+
+                  uint32_t trackFragmentHeaderBoxSize = (uint32_t)trackFragmentHeaderBox->GetBoxSize();
+                  if (trackFragmentHeaderBoxSize != 0)
+                  {
+                    ALLOC_MEM_DEFINE_SET(trackFragmentHeaderBoxBuffer, uint8_t, trackFragmentHeaderBoxSize, 0);
+                    if (trackFragmentHeaderBoxBuffer != NULL)
+                    {
+                      if (trackFragmentHeaderBox->GetBox(trackFragmentHeaderBoxBuffer, trackFragmentHeaderBoxSize))
+                      {
+                        result = new CTrackFragmentHeaderBox();
+                        if (result != NULL)
+                        {
+                          if (!result->Parse(trackFragmentHeaderBoxBuffer, trackFragmentHeaderBoxSize))
+                          {
+                            FREE_MEM_CLASS(result);
+                          }
+                        }
+                      }
+                    }
+                    FREE_MEM(trackFragmentHeaderBoxBuffer);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      FREE_MEM_CLASS(movieFragmentBox);
+    }
+
+    FREE_MEM(tempBuffer);
+  }
+
+  return result;
+}
+
+bool CMPUrlSourceSplitter_Protocol_Mshs::PutBoxIntoBuffer(CBox *box, CLinearBuffer *buffer)
+{
+  bool result = false;
+
+  if ((box != NULL) && (buffer != NULL))
+  {
+    // copy box to buffer
+    uint32_t boxBufferLength = (uint32_t)box->GetBoxSize();
+    if (boxBufferLength != 0)
+    {
+      ALLOC_MEM_DEFINE_SET(boxBuffer, unsigned char, boxBufferLength, 0);
+
+      if (boxBuffer != NULL)
+      {
+        if (box->GetBox(boxBuffer, boxBufferLength))
+        {
+          result = (buffer->AddToBufferWithResize(boxBuffer, boxBufferLength) == boxBufferLength);
+        }
+      }
+      FREE_MEM(boxBuffer);
+    }
+  }
+
+  return result;
+}
+
+CMovieBox *CMPUrlSourceSplitter_Protocol_Mshs::GetMovieBox(CMSHSSmoothStreamingMedia *media, CTrackFragmentHeaderBox *videoFragmentHeaderBox, CTrackFragmentHeaderBox *audioFragmentHeaderBox)
+{
+  CMovieBox *movieBox = NULL;
+  bool continueCreating = ((media != NULL) && (videoFragmentHeaderBox != NULL) && (audioFragmentHeaderBox != NULL));
+
+  if (continueCreating)
+  {
+    movieBox = new CMovieBox();
+    continueCreating &= (movieBox != NULL);
+
+    // add movie header box
+    if (continueCreating)
+    {
+      CMovieHeaderBox *movieHeaderBox = new CMovieHeaderBox();
+      continueCreating &= (movieHeaderBox != NULL);
+
+      if (continueCreating)
+      {
+        // set time scale by manifest
+        movieHeaderBox->SetTimeScale((uint32_t)media->GetTimeScale());
+
+        // set next track ID to higher value from video and audio
+        movieHeaderBox->SetNextTrackId(
+          (videoFragmentHeaderBox->GetTrackId() < audioFragmentHeaderBox->GetTrackId()) ?
+          audioFragmentHeaderBox->GetTrackId() : videoFragmentHeaderBox->GetTrackId());
+
+        movieHeaderBox->GetRate()->SetIntegerPart(1);
+        movieHeaderBox->GetVolume()->SetIntegerPart(1);
+
+        if (continueCreating)
+        {
+          continueCreating &= movieBox->GetBoxes()->Add(movieHeaderBox);
+        }
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(movieHeaderBox);
+      }
+    }
+
+    unsigned int videoStreamIndex = 0;
+    unsigned int audioStreamIndex = 0;
+    unsigned int trackIndex = 0;
+
+    for (unsigned int i = 0; i < media->GetStreams()->Count(); i++)
+    {
+      CMSHSStream *stream = media->GetStreams()->GetItem(i);
+
+      if (stream->IsVideo())
+      {
+        videoStreamIndex = i;
+        break;
+      }
+    }
+
+    for (unsigned int i = 0; i < media->GetStreams()->Count(); i++)
+    {
+      CMSHSStream *stream = media->GetStreams()->GetItem(i);
+
+      if (stream->IsAudio())
+      {
+        audioStreamIndex = i;
+        break;
+      }
+    }
+
+    // add track box (video or audio - depends on track ID)
+    if (continueCreating)
+    {
+      CTrackBox *trackBox = 
+        (videoFragmentHeaderBox->GetTrackId() < audioFragmentHeaderBox->GetTrackId()) ? 
+        this->GetVideoTrackBox(media, videoStreamIndex, trackIndex, videoFragmentHeaderBox) : this->GetAudioTrackBox(media, audioStreamIndex, trackIndex, audioFragmentHeaderBox);
+      continueCreating &= (trackBox != NULL);
+
+      if (continueCreating)
+      {
+        continueCreating &= movieBox->GetBoxes()->Add(trackBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(trackBox);
+      }
+    }
+
+    // add track box (video or audio - depends on track ID)
+    if (continueCreating)
+    {
+      CTrackBox *trackBox = 
+        (videoFragmentHeaderBox->GetTrackId() < audioFragmentHeaderBox->GetTrackId()) ? 
+        this->GetAudioTrackBox(media, audioStreamIndex, trackIndex, audioFragmentHeaderBox) : this->GetVideoTrackBox(media, videoStreamIndex, trackIndex, videoFragmentHeaderBox);
+      continueCreating &= (trackBox != NULL);
+
+      if (continueCreating)
+      {
+        continueCreating &= movieBox->GetBoxes()->Add(trackBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(trackBox);
+      }
+    }
+
+    // add movie extends box
+    if (continueCreating)
+    {
+      CMovieExtendsBox *movieExtendsBox = new CMovieExtendsBox();
+      continueCreating &= (movieExtendsBox != NULL);
+
+      // add track extends box (video or audio - depends on tack ID)
+      if (continueCreating)
+      {
+        CTrackExtendsBox *trackExtendsBox = new CTrackExtendsBox();
+        continueCreating &= (trackExtendsBox != NULL);
+
+        if (continueCreating)
+        {
+          trackExtendsBox->SetTrackId(
+            (videoFragmentHeaderBox->GetTrackId() < audioFragmentHeaderBox->GetTrackId()) ? 
+            videoFragmentHeaderBox->GetTrackId() : audioFragmentHeaderBox->GetTrackId());
+
+          trackExtendsBox->SetDefaultSampleDescriptionIndex(1);
+        }
+
+        if (continueCreating)
+        {
+          continueCreating &= movieExtendsBox->GetBoxes()->Add(trackExtendsBox);
+        }
+
+        if (!continueCreating)
+        {
+          FREE_MEM_CLASS(trackExtendsBox);
+        }
+      }
+
+      // add track extends box (video or audio - depends on tack ID)
+      if (continueCreating)
+      {
+        CTrackExtendsBox *trackExtendsBox = new CTrackExtendsBox();
+        continueCreating &= (trackExtendsBox != NULL);
+
+        if (continueCreating)
+        {
+          trackExtendsBox->SetTrackId(
+            (videoFragmentHeaderBox->GetTrackId() < audioFragmentHeaderBox->GetTrackId()) ? 
+            audioFragmentHeaderBox->GetTrackId() : videoFragmentHeaderBox->GetTrackId());
+
+          trackExtendsBox->SetDefaultSampleDescriptionIndex(1);
+        }
+
+        if (continueCreating)
+        {
+          continueCreating &= movieExtendsBox->GetBoxes()->Add(trackExtendsBox);
+        }
+
+        if (!continueCreating)
+        {
+          FREE_MEM_CLASS(trackExtendsBox);
+        }
+      }
+
+      if (continueCreating)
+      {
+        continueCreating &= movieBox->GetBoxes()->Add(movieExtendsBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(movieExtendsBox);
+      }
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(movieBox);
+    }
+  }
+
+  return movieBox;
+}
+
+CTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetVideoTrackBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, unsigned int trackIndex, CTrackFragmentHeaderBox *fragmentHeaderBox)
+{
+  CTrackBox *trackBox = NULL;
+  bool continueCreating = ((media != NULL) && (fragmentHeaderBox != NULL));
+
+  if (continueCreating)
+  {
+    trackBox = new CTrackBox();
+    continueCreating &= (trackBox != NULL);
+  }
+
+  CMSHSStream *stream = media->GetStreams()->GetItem(streamIndex);
+  continueCreating &= (stream != NULL);
+
+  CMSHSTrack *track = NULL;
+  if (continueCreating)
+  {
+    track = stream->GetTracks()->GetItem(trackIndex);
+  }
+  continueCreating &= (track != NULL);
+
+  // add track header box
+  if (continueCreating)
+  {
+    CTrackHeaderBox *trackHeaderBox = new CTrackHeaderBox();
+    continueCreating &= (trackHeaderBox != NULL);
+
+    if (continueCreating)
+    {
+      // set flags, track ID, duration, width and height
+      // set version to 1 (uint(64))
+      trackHeaderBox->SetFlags(0x0000000F);
+      trackHeaderBox->SetTrackId(fragmentHeaderBox->GetTrackId());
+      trackHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
+      trackHeaderBox->SetVersion(1);
+
+      trackHeaderBox->GetWidth()->SetIntegerPart(track->GetMaxWidth());
+      trackHeaderBox->GetHeight()->SetIntegerPart(track->GetMaxHeight());
+    }
+
+    if (continueCreating)
+    {
+      continueCreating &= trackBox->GetBoxes()->Add(trackHeaderBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(trackHeaderBox);
+    }
+  }
+
+  // add media box
+  if (continueCreating)
+  {
+    CMediaBox *mediaBox = new CMediaBox();
+    continueCreating &= (mediaBox != NULL);
+
+    // add media header box
+    if (continueCreating)
+    {
+      CMediaHeaderBox *mediaHeaderBox = new CMediaHeaderBox();
+      continueCreating &= (mediaHeaderBox != NULL);
+
+      if (continueCreating)
+      {
+        // set version (1 = uint(64)), time scale from manifest, duration
+        mediaHeaderBox->SetVersion(1);
+        mediaHeaderBox->SetTimeScale((uint32_t)media->GetTimeScale());
+        mediaHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
+      }
+
+      if (continueCreating)
+      {
+        continueCreating &= mediaBox->GetBoxes()->Add(mediaHeaderBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(mediaHeaderBox);
+      }
+    }
+
+    // add handler box
+    if (continueCreating)
+    {
+      CHandlerBox *handlerBox = this->GetHandlerBox(HANDLER_TYPE_VIDEO, L"VideoHandler");
+      continueCreating &= (handlerBox != NULL);
+
+      if (continueCreating)
+      {
+        continueCreating &= mediaBox->GetBoxes()->Add(handlerBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(handlerBox);
+      }
+    }
+
+    // add media information box
+    if (continueCreating)
+    {
+      CMediaInformationBox *mediaInformationBox = new CMediaInformationBox(HANDLER_TYPE_VIDEO);
+      continueCreating &= (mediaInformationBox != NULL);
+
+      // add video media header box
+      if (continueCreating)
+      {
+        CVideoMediaHeaderBox *videoMediaHeaderBox = new CVideoMediaHeaderBox();
+        continueCreating &= (videoMediaHeaderBox != NULL);
+
+        if (continueCreating)
+        {
+          videoMediaHeaderBox->SetFlags(0x00000001);
+        }
+
+        if (continueCreating)
+        {
+          continueCreating &= mediaInformationBox->GetBoxes()->Add(videoMediaHeaderBox);
+        }
+
+        if (!continueCreating)
+        {
+          FREE_MEM_CLASS(videoMediaHeaderBox);
+        }
+      }
+
+      // add data information box
+      if (continueCreating)
+      {
+        CDataInformationBox *dataInformationBox = this->GetDataInformationBox();
+        continueCreating &= (dataInformationBox != NULL);
+
+        if (continueCreating)
+        {
+          continueCreating &= mediaInformationBox->GetBoxes()->Add(dataInformationBox);
+        }
+
+        if (!continueCreating)
+        {
+          FREE_MEM_CLASS(dataInformationBox);
+        }
+      }
+
+      // add samle table box
+      if (continueCreating)
+      {
+        CSampleTableBox *sampleTableBox = this->GetVideoSampleTableBox(media, streamIndex, trackIndex, fragmentHeaderBox);
+        continueCreating &= (sampleTableBox != NULL);
+
+        if (continueCreating)
+        {
+          continueCreating &= mediaInformationBox->GetBoxes()->Add(sampleTableBox);
+        }
+
+        if (!continueCreating)
+        {
+          FREE_MEM_CLASS(sampleTableBox);
+        }
+      }
+
+      if (continueCreating)
+      {
+        continueCreating &= mediaBox->GetBoxes()->Add(mediaInformationBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(mediaInformationBox);
+      }
+    }
+
+    if (continueCreating)
+    {
+      continueCreating &= trackBox->GetBoxes()->Add(mediaBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(mediaBox);
+    }
+  }
+
+  if (!continueCreating)
+  {
+    FREE_MEM_CLASS(trackBox);
+  }
+
+  return trackBox;
+}
+
+CTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetAudioTrackBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, unsigned int trackIndex, CTrackFragmentHeaderBox *fragmentHeaderBox)
+{
+  CTrackBox *trackBox = NULL;
+  bool continueCreating = ((media != NULL) && (fragmentHeaderBox != NULL));
+
+  if (continueCreating)
+  {
+    trackBox = new CTrackBox();
+    continueCreating &= (trackBox != NULL);
+  }
+
+  // add track header box
+  if (continueCreating)
+  {
+    CTrackHeaderBox *trackHeaderBox = new CTrackHeaderBox();
+    continueCreating &= (trackHeaderBox != NULL);
+
+    if (continueCreating)
+    {
+      // set flags, track ID, duration, width and height
+      // set version to 1 (uint(64))
+      trackHeaderBox->SetFlags(0x0000000F);
+      trackHeaderBox->SetTrackId(fragmentHeaderBox->GetTrackId());
+      trackHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
+      trackHeaderBox->SetVersion(1);
+      trackHeaderBox->SetAlternateGroup(1);
+      trackHeaderBox->GetVolume()->SetIntegerPart(1);
+    }
+
+    if (continueCreating)
+    {
+      continueCreating &= trackBox->GetBoxes()->Add(trackHeaderBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(trackHeaderBox);
+    }
+  }
+
+  // add media box
+  if (continueCreating)
+  {
+    CMediaBox *mediaBox = new CMediaBox();
+    continueCreating &= (mediaBox != NULL);
+
+    // add media header box
+    if (continueCreating)
+    {
+      CMediaHeaderBox *mediaHeaderBox = new CMediaHeaderBox();
+      continueCreating &= (mediaHeaderBox != NULL);
+
+      if (continueCreating)
+      {
+        // set version (1 = uint(64)), time scale from manifest, duration
+        mediaHeaderBox->SetVersion(1);
+        mediaHeaderBox->SetTimeScale((uint32_t)media->GetTimeScale());
+        mediaHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
+      }
+
+      if (continueCreating)
+      {
+        continueCreating &= mediaBox->GetBoxes()->Add(mediaHeaderBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(mediaHeaderBox);
+      }
+    }
+
+    // add handler box
+    if (continueCreating)
+    {
+      CHandlerBox *handlerBox = this->GetHandlerBox(HANDLER_TYPE_AUDIO, L"SoundHandler");
+      continueCreating &= (handlerBox != NULL);
+
+      if (continueCreating)
+      {
+        continueCreating &= mediaBox->GetBoxes()->Add(handlerBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(handlerBox);
+      }
+    }
+
+    // add media information box
+    if (continueCreating)
+    {
+      CMediaInformationBox *mediaInformationBox = new CMediaInformationBox(HANDLER_TYPE_AUDIO);
+      continueCreating &= (mediaInformationBox != NULL);
+
+      // add sound media header box
+      if (continueCreating)
+      {
+        CSoundMediaHeaderBox *soundMediaHeaderBox = new CSoundMediaHeaderBox();
+        continueCreating &= (soundMediaHeaderBox != NULL);
+
+        if (continueCreating)
+        {
+          continueCreating &= mediaInformationBox->GetBoxes()->Add(soundMediaHeaderBox);
+        }
+
+        if (!continueCreating)
+        {
+          FREE_MEM_CLASS(soundMediaHeaderBox);
+        }
+      }
+
+      // add data information box
+      if (continueCreating)
+      {
+        CDataInformationBox *dataInformationBox = this->GetDataInformationBox();
+        continueCreating &= (dataInformationBox != NULL);
+
+        if (continueCreating)
+        {
+          continueCreating &= mediaInformationBox->GetBoxes()->Add(dataInformationBox);
+        }
+
+        if (!continueCreating)
+        {
+          FREE_MEM_CLASS(dataInformationBox);
+        }
+      }
+
+      // add samle table box
+      if (continueCreating)
+      {
+        CSampleTableBox *sampleTableBox = this->GetAudioSampleTableBox(media, streamIndex, trackIndex, fragmentHeaderBox);
+        continueCreating &= (sampleTableBox != NULL);
+
+        if (continueCreating)
+        {
+          continueCreating &= mediaInformationBox->GetBoxes()->Add(sampleTableBox);
+        }
+
+        if (!continueCreating)
+        {
+          FREE_MEM_CLASS(sampleTableBox);
+        }
+      }
+
+      if (continueCreating)
+      {
+        continueCreating &= mediaBox->GetBoxes()->Add(mediaInformationBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(mediaInformationBox);
+      }
+    }
+
+    if (continueCreating)
+    {
+      continueCreating &= trackBox->GetBoxes()->Add(mediaBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(mediaBox);
+    }
+  }
+
+  if (!continueCreating)
+  {
+    FREE_MEM_CLASS(trackBox);
+  }
+
+  return trackBox;
+}
+
+CDataInformationBox *CMPUrlSourceSplitter_Protocol_Mshs::GetDataInformationBox(void)
+{
+  CDataInformationBox *dataInformationBox = new CDataInformationBox();
+  bool continueCreating = (dataInformationBox != NULL);
+
+  if (continueCreating)
+  {
+    // add data reference box
+    if (continueCreating)
+    {
+      CDataReferenceBox *dataReferenceBox = new CDataReferenceBox();
+      continueCreating &= (dataReferenceBox != NULL);
+
+      if (continueCreating)
+      {
+        // add data entry url box
+        if (continueCreating)
+        {
+          CDataEntryUrlBox *dataEntryUrlBox = new CDataEntryUrlBox();
+          continueCreating &= (dataEntryUrlBox != NULL);
+
+          if (continueCreating)
+          {
+            dataEntryUrlBox->SetSelfContained(true);
+          }
+
+          if (continueCreating)
+          {
+            continueCreating &= dataReferenceBox->GetDataEntryBoxCollection()->Add(dataEntryUrlBox);
+          }
+
+          if (!continueCreating)
+          {
+            FREE_MEM_CLASS(dataEntryUrlBox);
+          }
+        }
+      }
+
+      if (continueCreating)
+      {
+        continueCreating &= dataInformationBox->GetBoxes()->Add(dataReferenceBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(dataReferenceBox);
+      }
+    }
+  }
+
+  if (!continueCreating)
+  {
+    FREE_MEM_CLASS(dataInformationBox);
+  }
+
+  return dataInformationBox;
+}
+
+CHandlerBox *CMPUrlSourceSplitter_Protocol_Mshs::GetHandlerBox(uint32_t handlerType, const wchar_t *handlerName)
+{
+  CHandlerBox *handlerBox = new CHandlerBox();
+  bool continueCreating = (handlerBox != NULL);
+
+  if (continueCreating)
+  {
+    handlerBox->SetHandlerType(handlerType);
+    continueCreating &= handlerBox->SetName(handlerName);
+  }
+
+  if (!continueCreating)
+  {
+    FREE_MEM_CLASS(handlerBox);
+  }
+
+  return handlerBox;
+}
+
+CSampleTableBox *CMPUrlSourceSplitter_Protocol_Mshs::GetVideoSampleTableBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, unsigned int trackIndex, CTrackFragmentHeaderBox *fragmentHeaderBox)
+{
+  CSampleTableBox *sampleTableBox = new CSampleTableBox(HANDLER_TYPE_VIDEO);
+  bool continueCreating = ((sampleTableBox != NULL) && (media != NULL));
+
+  CMSHSStream *stream = media->GetStreams()->GetItem(streamIndex);
+  continueCreating &= (stream != NULL);
+
+  CMSHSTrack *track = NULL;
+  if (continueCreating)
+  {
+    track = stream->GetTracks()->GetItem(trackIndex);
+  }
+  continueCreating &= (track != NULL);
+
+  // add sample description box
+  if (continueCreating)
+  {
+    CSampleDescriptionBox *sampleDescriptionBox = new CSampleDescriptionBox(HANDLER_TYPE_VIDEO);
+    continueCreating &= (sampleDescriptionBox != NULL);
+
+    // add visual sample entry
+    if (continueCreating)
+    {
+      CVisualSampleEntryBox *visualSampleEntryBox = new CVisualSampleEntryBox();
+      continueCreating &= (visualSampleEntryBox != NULL);
+
+      if (continueCreating)
+      {
+        continueCreating &= visualSampleEntryBox->SetCodingName(L"avc1");
+        visualSampleEntryBox->SetDataReferenceIndex(1);
+        visualSampleEntryBox->GetHorizontalResolution()->SetIntegerPart(72);
+        visualSampleEntryBox->GetVerticalResolution()->SetIntegerPart(72);
+        visualSampleEntryBox->SetFrameCount(1);
+        continueCreating &= visualSampleEntryBox->SetCompressorName(L"");
+        visualSampleEntryBox->SetDepth(24);
+        visualSampleEntryBox->SetWidth((uint16_t)track->GetMaxWidth());
+        visualSampleEntryBox->SetHeight((uint16_t)track->GetMaxHeight());
+      }
+
+      // add AVC configuration box
+      if (continueCreating)
+      {
+        CAVCConfigurationBox *avcConfigurationBox = new CAVCConfigurationBox();
+        continueCreating &= (avcConfigurationBox != NULL);
+
+        if (continueCreating)
+        {
+          char *codecPrivateData = ConvertToMultiByte(track->GetCodecPrivateData());
+          continueCreating &= (codecPrivateData != NULL);
+
+          if (continueCreating)
+          {
+            const char *spsStart = strstr(codecPrivateData, "00000001");
+            continueCreating &= (spsStart != NULL);
+
+            if (continueCreating)
+            {
+              spsStart += 8;
+
+              const char *ppsStart = strstr(spsStart, "00000001");
+              continueCreating &= (ppsStart != NULL);
+
+              if (continueCreating)
+              {
+                ppsStart += 8;
+                unsigned int ppsLength = strlen(ppsStart);
+                unsigned int spsLength = strlen(spsStart) - ppsLength - 8;
+
+                // we have SPS start and PPS start
+                // parse data to AVC configuration box
+                ALLOC_MEM_DEFINE_SET(sps, char, (spsLength + 1), 0);
+                continueCreating &= (sps != NULL);
+
+                if (continueCreating)
+                {
+                  memcpy(sps, spsStart, spsLength);
+
+                  uint8_t *convertedSps = HexToDecA(sps);
+                  uint8_t *convertedPps = HexToDecA(ppsStart);
+                  continueCreating &= ((convertedSps != NULL) && (convertedPps != NULL));
+
+                  if (continueCreating)
+                  {
+                    avcConfigurationBox->GetAVCDecoderConfiguration()->SetConfigurationVersion(1);
+                    avcConfigurationBox->GetAVCDecoderConfiguration()->SetAvcProfileIndication(convertedSps[1]);
+                    avcConfigurationBox->GetAVCDecoderConfiguration()->SetProfileCompatibility(convertedSps[2]);
+                    avcConfigurationBox->GetAVCDecoderConfiguration()->SetAvcLevelIndication(convertedSps[3]);
+                    avcConfigurationBox->GetAVCDecoderConfiguration()->SetLengthSizeMinusOne(3);
+                  }
+
+                  if (continueCreating)
+                  {
+                    CSequenceParameterSetNALUnit *spsUnit = new CSequenceParameterSetNALUnit();
+                    continueCreating &= (spsUnit != NULL);
+
+                    if (continueCreating)
+                    {
+                      continueCreating &= spsUnit->SetBuffer(convertedSps, spsLength / 2);
+                    }
+
+                    if (continueCreating)
+                    {
+                      continueCreating &= avcConfigurationBox->GetAVCDecoderConfiguration()->GetSequenceParameterSetNALUnits()->Add(spsUnit);
+                    }
+
+                    if (!continueCreating)
+                    {
+                      FREE_MEM_CLASS(spsUnit);
+                    }
+                  }
+
+                  if (continueCreating)
+                  {
+                    CPictureParameterSetNALUnit *ppsUnit = new CPictureParameterSetNALUnit();
+                    continueCreating &= (ppsUnit != NULL);
+
+                    if (continueCreating)
+                    {
+                      continueCreating &= ppsUnit->SetBuffer(convertedPps, ppsLength / 2);
+                    }
+
+                    if (continueCreating)
+                    {
+                      continueCreating &= avcConfigurationBox->GetAVCDecoderConfiguration()->GetPictureParameterSetNALUnits()->Add(ppsUnit);
+                    }
+
+                    if (!continueCreating)
+                    {
+                      FREE_MEM_CLASS(ppsUnit);
+                    }
+                  }
+
+                  FREE_MEM(convertedSps);
+                  FREE_MEM(convertedPps);
+                }
+                FREE_MEM(sps);
+              }
+            }
+          }
+          FREE_MEM(codecPrivateData);
+        }
+
+        if (continueCreating)
+        {
+          continueCreating &= visualSampleEntryBox->GetBoxes()->Add(avcConfigurationBox);
+        }
+
+        if (!continueCreating)
+        {
+          FREE_MEM_CLASS(avcConfigurationBox);
+        }
+      }
+
+      if (continueCreating)
+      {
+        continueCreating &= sampleDescriptionBox->GetSampleEntries()->Add(visualSampleEntryBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(visualSampleEntryBox);
+      }
+    }
+
+    if (continueCreating)
+    {
+      continueCreating &= sampleTableBox->GetBoxes()->Add(sampleDescriptionBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(sampleDescriptionBox);
+    }
+  }
+
+  // add time to sample box
+  if (continueCreating)
+  {
+    CTimeToSampleBox *timeToSampleBox = new CTimeToSampleBox();
+    continueCreating &= (timeToSampleBox != NULL);
+
+    if (continueCreating)
+    {
+      continueCreating &= sampleTableBox->GetBoxes()->Add(timeToSampleBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(timeToSampleBox);
+    }
+  }
+
+  // add sample to chunk box
+  if (continueCreating)
+  {
+    CSampleToChunkBox *sampleToChunkBox = new CSampleToChunkBox();
+    continueCreating &= (sampleToChunkBox != NULL);
+
+    if (continueCreating)
+    {
+      continueCreating &= sampleTableBox->GetBoxes()->Add(sampleToChunkBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(sampleToChunkBox);
+    }
+  }
+
+  // add chunk offset box
+  if (continueCreating)
+  {
+    CChunkOffsetBox *chunkOffsetBox = new CChunkOffsetBox();
+    continueCreating &= (chunkOffsetBox != NULL);
+
+    if (continueCreating)
+    {
+      continueCreating &= sampleTableBox->GetBoxes()->Add(chunkOffsetBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(chunkOffsetBox);
+    }
+  }
+
+  if (!continueCreating)
+  {
+    FREE_MEM_CLASS(sampleTableBox);
+  }
+
+  return sampleTableBox;
+}
+
+CSampleTableBox *CMPUrlSourceSplitter_Protocol_Mshs::GetAudioSampleTableBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, unsigned int trackIndex, CTrackFragmentHeaderBox *fragmentHeaderBox)
+{
+  CSampleTableBox *sampleTableBox = new CSampleTableBox(HANDLER_TYPE_AUDIO);
+  bool continueCreating = ((sampleTableBox != NULL) && (media != NULL));
+
+  CMSHSStream *stream = media->GetStreams()->GetItem(streamIndex);
+  continueCreating &= (stream != NULL);
+
+  CMSHSTrack *track = NULL;
+  if (continueCreating)
+  {
+    track = stream->GetTracks()->GetItem(trackIndex);
+  }
+  continueCreating &= (track != NULL);
+
+  // add sample description box
+  if (continueCreating)
+  {
+    CSampleDescriptionBox *sampleDescriptionBox = new CSampleDescriptionBox(HANDLER_TYPE_AUDIO);
+    continueCreating &= (sampleDescriptionBox != NULL);
+
+    // add audio sample entry
+    if (continueCreating)
+    {
+      CAudioSampleEntryBox *audioSampleEntryBox = new CAudioSampleEntryBox();
+      continueCreating &= (audioSampleEntryBox != NULL);
+
+      if (continueCreating)
+      {
+        continueCreating &= audioSampleEntryBox->SetCodingName(L"mp4a");
+        audioSampleEntryBox->SetChannelCount(track->GetChannels());
+        audioSampleEntryBox->SetSampleSize(track->GetBitsPerSample());
+        audioSampleEntryBox->GetSampleRate()->SetIntegerPart(track->GetSamplingRate());
+      }
+
+      // add ESD box
+      if (continueCreating)
+      {
+        CESDBox *esdBox = new CESDBox();
+        continueCreating &= (esdBox != NULL);
+
+        if (continueCreating)
+        {
+          uint32_t length = (track->GetCodecPrivateData() != NULL) ? wcslen(track->GetCodecPrivateData()) : 0;
+
+          if (continueCreating)
+          {
+            esdBox->SetTrackId(fragmentHeaderBox->GetTrackId());
+            esdBox->SetCodecTag(CODEC_TAG_AAC);
+            esdBox->SetMaxBitrate(128000);
+
+            if (length > 0)
+            {
+              uint8_t *convertedCodecPrivateData = HexToDecW(track->GetCodecPrivateData());
+              continueCreating &= (convertedCodecPrivateData != NULL);
+
+              if (continueCreating)
+              {
+                continueCreating &= esdBox->SetCodecPrivateData(convertedCodecPrivateData, length);
+              }
+
+              FREE_MEM(convertedCodecPrivateData);
+            }
+          }
+        }
+
+        if (continueCreating)
+        {
+          continueCreating &= audioSampleEntryBox->GetBoxes()->Add(esdBox);
+        }
+
+        if (!continueCreating)
+        {
+          FREE_MEM_CLASS(esdBox);
+        }
+      }
+
+      if (continueCreating)
+      {
+        continueCreating &= sampleDescriptionBox->GetSampleEntries()->Add(audioSampleEntryBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(audioSampleEntryBox);
+      }
+    }
+
+    if (continueCreating)
+    {
+      continueCreating &= sampleTableBox->GetBoxes()->Add(sampleDescriptionBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(sampleDescriptionBox);
+    }
+  }
+
+  // add time to sample box
+  if (continueCreating)
+  {
+    CTimeToSampleBox *timeToSampleBox = new CTimeToSampleBox();
+    continueCreating &= (timeToSampleBox != NULL);
+
+    if (continueCreating)
+    {
+      continueCreating &= sampleTableBox->GetBoxes()->Add(timeToSampleBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(timeToSampleBox);
+    }
+  }
+
+  // add sample to chunk box
+  if (continueCreating)
+  {
+    CSampleToChunkBox *sampleToChunkBox = new CSampleToChunkBox();
+    continueCreating &= (sampleToChunkBox != NULL);
+
+    if (continueCreating)
+    {
+      continueCreating &= sampleTableBox->GetBoxes()->Add(sampleToChunkBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(sampleToChunkBox);
+    }
+  }
+
+  // add chunk offset box
+  if (continueCreating)
+  {
+    CChunkOffsetBox *chunkOffsetBox = new CChunkOffsetBox();
+    continueCreating &= (chunkOffsetBox != NULL);
+
+    if (continueCreating)
+    {
+      continueCreating &= sampleTableBox->GetBoxes()->Add(chunkOffsetBox);
+    }
+
+    if (!continueCreating)
+    {
+      FREE_MEM_CLASS(chunkOffsetBox);
+    }
+  }
+
+  if (!continueCreating)
+  {
+    FREE_MEM_CLASS(sampleTableBox);
+  }
+
+  return sampleTableBox;
 }

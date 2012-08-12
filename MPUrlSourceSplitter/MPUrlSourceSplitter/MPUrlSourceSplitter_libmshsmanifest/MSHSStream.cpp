@@ -158,17 +158,17 @@ void CMSHSStream::SetDisplayHeight(uint32_t displayHeight)
 
 bool CMSHSStream::IsVideo(void)
 {
-  return (wcscmp(this->GetType(), MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE_VALUE_VIDEOW) == 0);
+  return (wcscmp(this->GetType(), STREAM_TYPE_VIDEO) == 0);
 }
 
 bool CMSHSStream::IsAudio(void)
 {
-  return (wcscmp(this->GetType(), MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE_VALUE_AUDIOW) == 0);
+  return (wcscmp(this->GetType(), STREAM_TYPE_AUDIO) == 0);
 }
 
 bool CMSHSStream::IsText(void)
 {
-  return (wcscmp(this->GetType(), MSHS_ELEMENT_STREAM_ATTRIBUTE_TYPE_VALUE_TEXTW) == 0);
+  return (wcscmp(this->GetType(), STREAM_TYPE_TEXT) == 0);
 }
 
 uint32_t CMSHSStream::GetSerializeSize(void)

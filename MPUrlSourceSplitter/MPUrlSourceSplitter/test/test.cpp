@@ -24,9 +24,68 @@
 #include "stdafx.h"
 
 #include <stdio.h>
+#include <stdint.h>
+
+#include "BoxFactory.h"
+
+#include "FileTypeBox.h"
+#include "BoxCollection.h"
+#include "AVCConfigurationBox.h"
+
+#include "conversions.h"
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+  uint32_t length = 256 * 1024;
+
+  ALLOC_MEM_DEFINE_SET(buffer, uint8_t, length, 0);
+  //FILE *stream = fopen("D:\\svnroot\\HttpStreaming\\lmfao.ismv", "rb");
+  //FILE *stream = fopen("D:\\outout_dat.mp4", "rb");
+  FILE *stream = fopen("D:\\test_dat.mp4", "rb");
+  uint32_t read = fread(buffer, 1, length, stream);
+  fclose(stream);
+
+  uint32_t processed = 0;
+  CBoxFactory *factory = new CBoxFactory();
+
+  while (processed < length)
+  {
+    CBox *box = factory->CreateBox(buffer + processed, read - processed);
+
+    if (box != NULL)
+    {
+      wprintf(L"%s\n", box->GetParsedHumanReadable(L""));
+      processed += (uint32_t)box->GetSize();
+    }
+    else
+    {
+      break;
+    }
+  }
+
+  FREE_MEM_CLASS(factory);
+
+  /*CBox *box = GetFileTypeBox();
+  uint64_t length = box->GetBoxSize();
+  ALLOC_MEM_DEFINE_SET(buffer, uint8_t, length, 0);
+  if (box->GetBox(buffer, length))
+  {
+    FILE *stream = fopen("D:\\outout_dat.mp4", "wb");
+    fwrite(buffer, 1, length, stream);
+    fclose(stream);
+  }
+
+  FREE_MEM(buffer);
+  FREE_MEM_CLASS(box);*/
+
+  /*CAVCConfigurationBox *box = new CAVCConfigurationBox();
+
+  if (box->Parse(buffer + 0x020B, length))
+  {
+    printf("parsed");
+  }*/
+
 	return 0;
 }
 

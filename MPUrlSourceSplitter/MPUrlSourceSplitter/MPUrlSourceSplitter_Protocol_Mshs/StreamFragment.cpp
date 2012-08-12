@@ -22,12 +22,13 @@
 
 #include "StreamFragment.h"
 
-CStreamFragment::CStreamFragment(const wchar_t *url, uint64_t fragmentDuration, uint64_t fragmentTime)
+CStreamFragment::CStreamFragment(const wchar_t *url, uint64_t fragmentDuration, uint64_t fragmentTime, unsigned int fragmentType)
 {
   this->url = Duplicate(url);
   this->fragmentDuration = fragmentDuration;
   this->fragmentTime = fragmentTime;
   this->downloaded = false;
+  this->fragmentType = fragmentType;
 }
 
 CStreamFragment::~CStreamFragment(void)
@@ -57,6 +58,11 @@ bool CStreamFragment::GetDownloaded(void)
   return this->downloaded;
 }
 
+unsigned int CStreamFragment::GetFragmentType(void)
+{
+  return this->fragmentType;
+}
+
 /* set methods */
 
 void CStreamFragment::SetDownloaded(bool downloaded)
@@ -68,7 +74,7 @@ void CStreamFragment::SetDownloaded(bool downloaded)
 
 CStreamFragment *CStreamFragment::Clone(void)
 {
-  CStreamFragment *fragment = new CStreamFragment(this->url, this->fragmentDuration, this->fragmentTime);
+  CStreamFragment *fragment = new CStreamFragment(this->url, this->fragmentDuration, this->fragmentTime, this->fragmentType);
 
   return fragment;
 }
