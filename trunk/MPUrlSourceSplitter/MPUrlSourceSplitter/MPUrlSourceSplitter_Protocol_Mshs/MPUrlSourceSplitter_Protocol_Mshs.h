@@ -228,6 +228,9 @@ protected:
   // holds smooth streaming media for further processing
   CMSHSSmoothStreamingMedia *streamingMedia;
 
+  // specifies if last fragment was downloaded
+  bool lastFragmentDownloaded;
+
   // removes all downloaded stream fragments
   // the last one stream fragment (even downloaded) still preserve
   void RemoveAllDownloadedStreamFragments(void);

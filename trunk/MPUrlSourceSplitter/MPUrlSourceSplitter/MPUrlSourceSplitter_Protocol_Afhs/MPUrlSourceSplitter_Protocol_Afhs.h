@@ -210,6 +210,8 @@ protected:
   bool live;
   // holds last bootstrap info request time for live streaming
   DWORD lastBootstrapInfoRequestTime;
+  // specifies if last stream and fragment was downloaded
+  bool lastStreamAndFragmentDownloaded;
 
   // removes all downloaded segment and fragment
   // the last one segment and fragment (even downloaded) still preserve

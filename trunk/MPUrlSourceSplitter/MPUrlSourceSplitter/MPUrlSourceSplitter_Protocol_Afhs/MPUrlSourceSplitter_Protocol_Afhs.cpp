@@ -105,6 +105,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->segmentsFragments = NULL;
   this->live = false;
   this->lastBootstrapInfoRequestTime = 0;
+  this->lastStreamAndFragmentDownloaded = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -278,6 +279,8 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
                   this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
                   // error
                   bytesRead = 0;
+                  // in case of error don't report end of stream
+                  this->lastStreamAndFragmentDownloaded = false;
                 }
               }
 
@@ -320,8 +323,9 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
       if ((!this->supressData) && (this->bufferForBoxProcessingCollection != NULL))
       {
         bool continueProcessing = false;
+        unsigned int limit = this->lastStreamAndFragmentDownloaded ? 0 : 1;
 
-        while (this->bufferForBoxProcessingCollection->Count() > 1)
+        while (this->bufferForBoxProcessingCollection->Count() > limit)
         {
           CLinearBuffer *bufferForBoxProcessing = this->bufferForBoxProcessingCollection->GetItem(0);
           do
@@ -396,8 +400,12 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
           {
             // all data are processed, remove buffer from collection
             this->bufferForBoxProcessingCollection->Remove(0);
+            continueProcessing = true;
           }
         }
+
+        // in case of error don't report end of stream
+        this->lastStreamAndFragmentDownloaded &= continueProcessing;
       }
 
       if ((!this->supressData) && (this->bufferForProcessing != NULL))
@@ -467,6 +475,29 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
           }
 
           FREE_MEM_CLASS(flvPacket);
+        }
+      }
+
+      if (this->lastStreamAndFragmentDownloaded)
+      {
+        // whole stream downloaded
+        this->wholeStreamDownloaded = true;
+        FREE_MEM_CLASS(this->mainCurlInstance);
+
+        if (!this->seekingActive)
+        {
+          // we are not seeking, so we can set total length
+          if (!this->setLength)
+          {
+            this->streamLength = this->bytePosition;
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+            this->filter->SetTotalLength(this->streamLength, false);
+            this->setLength = true;
+          }
+
+          // notify filter the we reached end of stream
+          // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+          this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
         }
       }
 
@@ -708,25 +739,8 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
 
           if (!this->live)
           {
-            // whole stream downloaded
-            this->wholeStreamDownloaded = true;
-            FREE_MEM_CLASS(this->mainCurlInstance);
-
-            if (!this->seekingActive)
-            {
-              // we are not seeking, so we can set total length
-              if (!this->setLength)
-              {
-                this->streamLength = this->bytePosition;
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                this->filter->SetTotalLength(this->streamLength, false);
-                this->setLength = true;
-              }
-
-              // notify filter the we reached end of stream
-              // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-              this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
-            }
+            // we are on last stream fragment, we received all data
+            this->lastStreamAndFragmentDownloaded = true;
           }
         }
       }
@@ -1087,6 +1101,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   FREE_MEM_CLASS(this->segmentsFragments);
   this->live = false;
   this->lastBootstrapInfoRequestTime = 0;
+  this->lastStreamAndFragmentDownloaded = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
