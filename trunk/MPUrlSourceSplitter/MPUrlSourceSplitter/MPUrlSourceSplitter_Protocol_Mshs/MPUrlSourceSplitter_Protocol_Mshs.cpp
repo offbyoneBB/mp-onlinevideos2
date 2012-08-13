@@ -318,6 +318,7 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
                   {
                     this->videoCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, length, 0, 0);
                     linearBuffer->AddToBufferWithResize(buffer, length);
+                    this->videoCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(length);
                   }
                   FREE_MEM(buffer);
                 }
@@ -541,6 +542,12 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
         {
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
           this->streamFragments->GetStreamFragment(this->mainCurlInstance->GetUrl(), true)->SetDownloaded(true);
+        }
+
+        if (this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace() != 0)
+        {
+          // this should not happen, just for sure
+          this->logger->Log(LOGGER_ERROR, L"%s: %s: still some data in CURL: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace());
         }
         
         CStreamFragment *streamFragmentToDownload = this->GetFirstNotDownloadedStreamFragment();
@@ -1811,7 +1818,8 @@ CTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetVideoTrackBox(CMSHSSmoothStrea
       // set version to 1 (uint(64))
       trackHeaderBox->SetFlags(0x0000000F);
       trackHeaderBox->SetTrackId(fragmentHeaderBox->GetTrackId());
-      trackHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
+      //trackHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
+      trackHeaderBox->SetDuration(media->GetDuration());
       trackHeaderBox->SetVersion(1);
 
       trackHeaderBox->GetWidth()->SetIntegerPart(track->GetMaxWidth());
@@ -1846,7 +1854,8 @@ CTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetVideoTrackBox(CMSHSSmoothStrea
         // set version (1 = uint(64)), time scale from manifest, duration
         mediaHeaderBox->SetVersion(1);
         mediaHeaderBox->SetTimeScale((uint32_t)media->GetTimeScale());
-        mediaHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
+        //mediaHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
+        mediaHeaderBox->SetDuration(media->GetDuration());
       }
 
       if (continueCreating)
