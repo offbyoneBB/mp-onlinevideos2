@@ -102,6 +102,7 @@ CMPUrlSourceSplitter_Protocol_Mshs::CMPUrlSourceSplitter_Protocol_Mshs(CParamete
   this->videoCurlInstance = NULL;
   this->audioCurlInstance = NULL;
   this->streamingMedia = NULL;
+  this->lastFragmentDownloaded = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -361,6 +362,8 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
                     this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
                     // error
                     bytesRead = 0;
+                    // in case of error don't report end of stream
+                    this->lastFragmentDownloaded = false;
                   }
                 }
 
@@ -404,8 +407,9 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
       if ((!this->supressData) && (this->bufferForBoxProcessingCollection != NULL))
       {
         bool continueProcessing = false;
+        unsigned int limit = this->lastFragmentDownloaded ? 0 : 1;
 
-        while (this->bufferForBoxProcessingCollection->Count() > 1)
+        while (this->bufferForBoxProcessingCollection->Count() > limit)
         {
           CLinearBuffer *bufferForBoxProcessing = this->bufferForBoxProcessingCollection->GetItem(0);
           do
@@ -439,8 +443,12 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
           {
             // all data are processed, remove buffer from collection
             this->bufferForBoxProcessingCollection->Remove(0);
+            continueProcessing = true;
           }
         }
+
+        // in case of error don't report end of stream
+        this->lastFragmentDownloaded &= continueProcessing;
       }
 
       if ((!this->supressData) && (this->bufferForProcessing != NULL))
@@ -464,6 +472,9 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
             if (FAILED(result))
             {
               this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+
+              // in case of error don't report end of stream
+              this->lastFragmentDownloaded = false;
             }
             this->bytePosition += length;
 
@@ -498,6 +509,29 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
         // move video CURL instance into main CURL instance and continue as in common case
         this->mainCurlInstance = this->videoCurlInstance;
         this->videoCurlInstance = NULL;
+      }
+
+      if (this->lastFragmentDownloaded)
+      {
+        // whole stream downloaded
+        this->wholeStreamDownloaded = true;
+        FREE_MEM_CLASS(this->mainCurlInstance);
+
+        if (!this->seekingActive)
+        {
+          // we are not seeking, so we can set total length
+          if (!this->setLength)
+          {
+            this->streamLength = this->bytePosition;
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+            this->filter->SetTotalLength(this->streamLength, false);
+            this->setLength = true;
+          }
+
+          // notify filter the we reached end of stream
+          // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+          this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
+        }
       }
 
       if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
@@ -559,26 +593,7 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
         else
         {
           // we are on last stream fragment, we received all data
-          
-          // whole stream downloaded
-          this->wholeStreamDownloaded = true;
-          FREE_MEM_CLASS(this->mainCurlInstance);
-
-          if (!this->seekingActive)
-          {
-            // we are not seeking, so we can set total length
-            if (!this->setLength)
-            {
-              this->streamLength = this->bytePosition;
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-              this->filter->SetTotalLength(this->streamLength, false);
-              this->setLength = true;
-            }
-
-            // notify filter the we reached end of stream
-            // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-            this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
-          }
+          this->lastFragmentDownloaded = true;
         }
       }
     }
@@ -1031,6 +1046,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ClearSession(void)
   this->openConnetionMaximumAttempts = MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->bytePosition = 0;
   this->shouldExit = false;
+  this->lastFragmentDownloaded = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -1254,7 +1270,7 @@ CStreamFragmentCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragment
     CMSHSTrack *audioTrack = NULL;
     const wchar_t *baseUrl = configurationParameters->GetValue(PARAMETER_NAME_MSHS_BASE_URL, true, NULL);
 
-    while ((videoIndex < maxVideoIndex) && (audioIndex < maxAudioIndex))
+    while ((videoIndex < maxVideoIndex) || (audioIndex < maxAudioIndex))
     {
       // there is still some fragment to add to stream fragments
       // choose fragment which is nearest to last timestamp
