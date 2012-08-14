@@ -2,7 +2,7 @@
 The purpose of this document is to remark all changes made in ffmpeg by any developer. These same changes
 (or at least their meaning) must be made in next releases of ffmpeg.
 
-Changes in ffmpeg (lavfilters HEAD a73f6321f4f78101557426100120a1100abb5aaf):
+Changes in ffmpeg (ffmpeg from lavfilters HEAD 89e359e74bf32b558d03a78d4f644c3f349a7a19):
 
 File: build_ff_win32.sh
 Comment: replace OPTIONS
@@ -106,3 +106,34 @@ Code:
          get accurate estimate from the PTSes 
         estimate_timings_from_pts2(ic, old_offset);
     } */
+
+--------------------------------------------
+File: \libavformat\isom.h
+Comment: add in MOVContext struct
+Code:
+
+int fragmented;         /// fragmented video
+
+--------------------------------------------
+File: \libavformat\mov.c
+Comment: in mov_read_ftyp() method add after if (strcmp(type, "qt  ")) c->isom = 1;
+Code:
+
+c->fragmented = (strcmp(type, "isml") == 0) ? 1 : 0;
+
+--------------------------------------------
+Comment: in mov_read_default() method replace 'while (total_size + 8 <= atom.size && !url_feof(pb)) {'
+Code:
+
+while (total_size + 8 <= atom.size && !url_feof(pb) && !(c->found_moov && c->found_mdat && c->fragmented)) {
+
+--------------------------------------------
+Comment: in mov_read_default() method add after cycle 'for (i = 0; mov_default_parse_table[i].type; i++)'
+Code:
+
+if (c->fragmented && (a.type == MKTAG('m','d','a','t')))
+{
+    int64_t start_pos = avio_tell(pb);
+    c->next_root_atom = start_pos + a.size;
+}
+

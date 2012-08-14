@@ -1131,6 +1131,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Afhs::SeekToTime(int64_t time)
   // AFHS protocol can seek to ms
   // time is in ms
 
+  this->lastStreamAndFragmentDownloaded = false;
   unsigned int segmentFragmentToDownload = UINT_MAX;
   // find segment and fragment to download
   if (this->segmentsFragments != NULL)
@@ -1151,12 +1152,17 @@ int64_t CMPUrlSourceSplitter_Protocol_Afhs::SeekToTime(int64_t time)
       // mark all previous segments as downloaded
       this->segmentsFragments->GetItem(i)->SetDownloaded(true);
     }
+    for (unsigned int i = segmentFragmentToDownload; i < this->segmentsFragments->Count(); i++)
+    {
+      // mark all other segments as not downloaded
+      this->segmentsFragments->GetItem(i)->SetDownloaded(false);
+    }
   }
 
   // in this->lastSegmentFragment is id of segment and fragment to download
   CSegmentFragment *segFrag = this->segmentsFragments->GetItem(segmentFragmentToDownload);
 
-  if (segFrag == NULL)
+  if (segFrag != NULL)
   {
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: segment %d, fragment %d, url '%s', timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
       segFrag->GetSegment(), segFrag->GetFragment(), segFrag->GetUrl(), segFrag->GetFragmentTimestamp());

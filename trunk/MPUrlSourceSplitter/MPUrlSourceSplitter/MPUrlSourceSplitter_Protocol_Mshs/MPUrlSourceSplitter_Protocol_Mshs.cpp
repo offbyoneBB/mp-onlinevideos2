@@ -2001,7 +2001,7 @@ CTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetAudioTrackBox(CMSHSSmoothStrea
       // set version to 1 (uint(64))
       trackHeaderBox->SetFlags(0x0000000F);
       trackHeaderBox->SetTrackId(fragmentHeaderBox->GetTrackId());
-      trackHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
+      trackHeaderBox->SetDuration(media->GetDuration());
       trackHeaderBox->SetVersion(1);
       trackHeaderBox->SetAlternateGroup(1);
       trackHeaderBox->GetVolume()->SetIntegerPart(1);
@@ -2035,7 +2035,7 @@ CTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetAudioTrackBox(CMSHSSmoothStrea
         // set version (1 = uint(64)), time scale from manifest, duration
         mediaHeaderBox->SetVersion(1);
         mediaHeaderBox->SetTimeScale((uint32_t)media->GetTimeScale());
-        mediaHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
+        mediaHeaderBox->SetDuration(media->GetDuration());
       }
 
       if (continueCreating)
