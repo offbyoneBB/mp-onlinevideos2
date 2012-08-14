@@ -171,7 +171,7 @@ namespace OnlineVideos.Sites
 
                 if (result.Count.Equals(1))
                 {
-                    // if there was only one result, we should covert to RTMP
+                    // if there was only one result, we should convert to RTMP
                     result[0] = CreateRTMPUrl(result[0]);
                 }
             }
