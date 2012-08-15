@@ -42,7 +42,7 @@ int _tmain(int argc, _TCHAR* argv[])
   ALLOC_MEM_DEFINE_SET(buffer, uint8_t, length, 0);
   //FILE *stream = fopen("D:\\svnroot\\HttpStreaming\\lmfao.ismv", "rb");
   //FILE *stream = fopen("D:\\outout_dat.mp4", "rb");
-  FILE *stream = fopen("D:\\test_dat.mp4", "rb");
+  FILE *stream = fopen("D:\\test.dat", "rb");
   uint32_t read = fread(buffer, 1, length, stream);
   fclose(stream);
 

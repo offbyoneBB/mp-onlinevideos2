@@ -1159,7 +1159,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Afhs::SeekToTime(int64_t time)
     }
   }
 
-  // in this->lastSegmentFragment is id of segment and fragment to download
+  // in segmentFragmentToDownload is id of segment and fragment to download
   CSegmentFragment *segFrag = this->segmentsFragments->GetItem(segmentFragmentToDownload);
 
   if (segFrag != NULL)
