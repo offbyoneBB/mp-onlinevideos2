@@ -144,7 +144,8 @@ void CLinearBuffer::RemoveFromBufferAndMove(unsigned int length)
 
   if (length > 0)
   {
-    if (length == this->GetBufferOccupiedSpace())
+    unsigned int occupiedSpace = this->GetBufferOccupiedSpace();
+    if (length == occupiedSpace)
     {
       // removing all data from buffer
       this->ClearBuffer();
@@ -153,8 +154,8 @@ void CLinearBuffer::RemoveFromBufferAndMove(unsigned int length)
     {
       this->dataStart += length;
 
-      int remainingDataLength = this->GetBufferOccupiedSpace();
-      memcpy(this->buffer, this->dataStart, remainingDataLength);
+      int remainingDataLength = occupiedSpace - length;
+      memmove(this->buffer, this->dataStart, remainingDataLength);
       this->dataStart = this->buffer;
       this->dataEnd = this->buffer + remainingDataLength;
     }

@@ -291,7 +291,7 @@ size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length
   {
     // lock access to receive data buffer
     // if mutex is NULL then access to received data buffer is not locked
-    CLockMutex(this->mutex, INFINITE);
+    CLockMutex lock(this->mutex, INFINITE);
 
     unsigned int bufferSize = this->receivedDataBuffer->GetBufferSize();
     unsigned int freeSpace = this->receivedDataBuffer->GetBufferFreeSpace();
@@ -310,7 +310,7 @@ size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length
 
     if (length != 0)
     {
-      this->receivedDataBuffer->AddToBuffer(buffer, length);
+      this->receivedDataBuffer->AddToBuffer(buffer, length);              
     }
   }
 

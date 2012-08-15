@@ -105,19 +105,9 @@ CMPUrlSourceSplitter_Protocol_Rtmp::~CMPUrlSourceSplitter_Protocol_Rtmp()
     this->StopReceivingData();
   }
 
-  if (this->mainCurlInstance != NULL)
-  {
-    delete this->mainCurlInstance;
-    this->mainCurlInstance = NULL;
-  }
-
-  if (this->bufferForProcessing != NULL)
-  {
-    delete this->bufferForProcessing;
-    this->bufferForProcessing = NULL;
-  }
-
-  delete this->configurationParameters;
+  FREE_MEM_CLASS(this->mainCurlInstance);
+  FREE_MEM_CLASS(this->bufferForProcessing);
+  FREE_MEM_CLASS(this->configurationParameters);
 
   if (this->lockMutex != NULL)
   {
@@ -332,8 +322,8 @@ void CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit)
               ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
               if (buffer != NULL)
               {
-                this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-                this->bufferForProcessing->AddToBuffer(buffer, bytesRead);
+                unsigned int copyFromBuffer = this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                unsigned int addedToBuffer = this->bufferForProcessing->AddToBuffer(buffer, bytesRead);
                 this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
               }
               FREE_MEM(buffer); 
@@ -351,7 +341,6 @@ void CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit)
           {
             // FLV packet parsed correctly
             // push FLV packet to filter
-
             if ((flvPacket->GetType() != FLV_PACKET_HEADER) && (this->firstTimestamp == (-1)))
             {
               this->firstTimestamp = flvPacket->GetTimestamp();
@@ -576,15 +565,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StopReceivingData(void)
   if (this->mainCurlInstance != NULL)
   {
     this->mainCurlInstance->SetCloseWithoutWaiting(this->seekingActive);
-    delete this->mainCurlInstance;
-    this->mainCurlInstance = NULL;
   }
 
-  if (this->bufferForProcessing != NULL)
-  {
-    delete this->bufferForProcessing;
-    this->bufferForProcessing = NULL;
-  }
+  FREE_MEM_CLASS(this->mainCurlInstance);
+  FREE_MEM_CLASS(this->bufferForProcessing);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
