@@ -1063,8 +1063,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ClearSession(void)
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetSeekingCapabilities(void)
 {
-  //return SEEKING_METHOD_TIME;
-  return SEEKING_METHOD_NONE;
+  return SEEKING_METHOD_TIME;
 }
 
 int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToTime(int64_t time)
@@ -1084,49 +1083,55 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToTime(int64_t time)
   // MSHS protocol can seek to ms
   // time is in ms
 
-  //unsigned int segmentFragmentToDownload = UINT_MAX;
-  //// find segment and fragment to download
-  //if (this->segmentsFragments != NULL)
-  //{
-  //  for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
-  //  {
-  //    CSegmentFragment *segFrag = this->segmentsFragments->GetItem(i);
+  this->lastFragmentDownloaded = false;
+  unsigned int fragmentToDownload = UINT_MAX;
+  // find fragment to download
+  if (this->streamFragments != NULL)
+  {
+    for (unsigned int i = 0; i < this->streamFragments->Count(); i++)
+    {
+      CStreamFragment *fragment = this->streamFragments->GetItem(i);
 
-  //    if (segFrag->GetFragmentTimestamp() <= (uint64_t)time)
-  //    {
-  //      segmentFragmentToDownload = i;
-  //      result = segFrag->GetFragmentTimestamp();
-  //    }
-  //  }
+      if ((fragment->GetFragmentType() == FRAGMENT_TYPE_VIDEO) && (fragment->GetFragmentTime() <= (uint64_t)time))
+      {
+        fragmentToDownload = i;
+        result = fragment->GetFragmentTime();
+      }
+    }
 
-  //  for (unsigned int i = 0; i < segmentFragmentToDownload; i++)
-  //  {
-  //    // mark all previous segments as downloaded
-  //    this->segmentsFragments->GetItem(i)->SetDownloaded(true);
-  //  }
-  //}
+    for (unsigned int i = 0; i < fragmentToDownload; i++)
+    {
+      // mark all previous fragments as downloaded
+      this->streamFragments->GetItem(i)->SetDownloaded(true);
+    }
+    for (unsigned int i = fragmentToDownload; i < this->streamFragments->Count(); i++)
+    {
+      // mark all other fragments as not downloaded
+      this->streamFragments->GetItem(i)->SetDownloaded(false);
+    }
+  }
 
-  //// in this->lastSegmentFragment is id of segment and fragment to download
-  //CSegmentFragment *segFrag = this->segmentsFragments->GetItem(segmentFragmentToDownload);
+  // in fragmentToDownload is id of fragment to download
+  CStreamFragment *fragment = this->streamFragments->GetItem(fragmentToDownload);
 
-  //if (segFrag == NULL)
-  //{
-  //  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: segment %d, fragment %d, url '%s', timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
-  //    segFrag->GetSegment(), segFrag->GetFragment(), segFrag->GetUrl(), segFrag->GetFragmentTimestamp());
+  if (fragment != NULL)
+  {
+    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: url '%s', timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
+      fragment->GetUrl(), fragment->GetFragmentTime());
 
-  //  // reopen connection
-  //  // StartReceivingData() reset wholeStreamDownloaded
-  //  this->StartReceivingData(NULL);
+    // reopen connection
+    // StartReceivingData() reset wholeStreamDownloaded
+    this->StartReceivingData(NULL);
 
-  //  if (!this->IsConnected())
-  //  {
-  //    result = -1;
-  //  }
-  //  else
-  //  {
-  //    this->streamTime = result;
-  //  }
-  //}
+    if (!this->IsConnected())
+    {
+      result = -1;
+    }
+    else
+    {
+      this->streamTime = result;
+    }
+  }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
   return result;
@@ -1818,7 +1823,6 @@ CTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetVideoTrackBox(CMSHSSmoothStrea
       // set version to 1 (uint(64))
       trackHeaderBox->SetFlags(0x0000000F);
       trackHeaderBox->SetTrackId(fragmentHeaderBox->GetTrackId());
-      //trackHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
       trackHeaderBox->SetDuration(media->GetDuration());
       trackHeaderBox->SetVersion(1);
 
@@ -1854,7 +1858,6 @@ CTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetVideoTrackBox(CMSHSSmoothStrea
         // set version (1 = uint(64)), time scale from manifest, duration
         mediaHeaderBox->SetVersion(1);
         mediaHeaderBox->SetTimeScale((uint32_t)media->GetTimeScale());
-        //mediaHeaderBox->SetDuration(0xFFFFFFFFFFFFFFFF);
         mediaHeaderBox->SetDuration(media->GetDuration());
       }
 

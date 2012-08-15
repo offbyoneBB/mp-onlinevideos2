@@ -114,6 +114,7 @@ CLAVFDemuxer::CLAVFDemuxer(CCritSec *pLock, ILAVFSettingsInternal *settings, IFi
   , m_rtCurrent(0)
   , m_bFlv(FALSE)
   , m_bAsf(FALSE)
+  , m_bMp4(FALSE)
   , m_bMatroska(FALSE)
   , m_bOgg(FALSE)
   , m_bAVI(FALSE)
@@ -375,6 +376,7 @@ STDMETHODIMP CLAVFDemuxer::InitAVFormat(LPCOLESTR pszFileName)
 
   m_bFlv = (_strnicmp(m_pszInputFormat, "flv", 3) == 0);
   m_bAsf = (_strnicmp(m_pszInputFormat, "asf", 3) == 0);
+  m_bMp4 = (_strnicmp(m_pszInputFormat, "mp4", 3) == 0);
   m_bMatroska = (_strnicmp(m_pszInputFormat, "matroska", 8) == 0);
   m_bOgg = (_strnicmp(m_pszInputFormat, "ogg", 3) == 0);
   m_bAVI = (_strnicmp(m_pszInputFormat, "avi", 3) == 0);
@@ -968,12 +970,12 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
     ff_read_frame_flush(this->m_avFormat);
     index = av_index_search_timestamp(st, seek_pts, flags);
 
-    if ((index >= 0) && (index < (st->nb_index_entries - 1)))
-    {
-      // if index is lower than zero => surely not found in buffer
-      // if index is lower than index entries - 1 => surely in buffer
-      found = true;
-    }
+    //if ((index >= 0) && (index < (st->nb_index_entries - 1)))
+    //{
+    //  // if index is lower than zero => surely not found in buffer
+    //  // if index is lower than index entries - 1 => surely in buffer
+    //  found = true;
+    //}
 
     if (!found) 
     {
@@ -993,6 +995,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
         found = true;
         asf_reset_header2(this->m_avFormat);
       }
+
       logger->Log(LOGGER_VERBOSE, L"%s: %s: seeked to time: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, seekedTime);
     }
 
@@ -1087,7 +1090,7 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
 
               av_free_packet(&avPacket);
 
-              if ((videoStreamId == avPacket.stream_index) && (avPacket.dts > seek_pts))
+              if (videoStreamId == avPacket.stream_index)
               {
                 if (avPacket.flags & AV_PKT_FLAG_KEY)
                 {
