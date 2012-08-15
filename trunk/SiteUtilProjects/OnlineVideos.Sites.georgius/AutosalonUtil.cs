@@ -27,8 +27,10 @@ namespace OnlineVideos.Sites.georgius
         private static String showEpisodeThumbUrlRegex = @"href=""[^""]*""><img src=""(?<showThumbUrl>[^""]*)";
         private static String showEpisodeUrlAndTitleRegex = @"<h4><a href=""(?<showUrl>[^""]*)"">(?<showTitle>[^<]*)";
         
-        private static String showEpisodeVideoUrlFormat = @"mms://bcastd.livebox.cz/up/as/{1}/_{0}{1}.wmv"; // 0 - week, 1 - year
-        private static String showEpisodeVideoUrlRegex = @"year=(?<year>[0-9]+)&week=(?<week>[0-9]+)";
+        private static String showEpisodeVideoStart = @"LBX.init";
+        private static String showEpisodeVideoEnd = @");";
+        private static String showEpisodeVideoRegex = @"year=(?<year>[0-9]*),week=(?<week>[0-9]*)";
+        private static String showEpisodeUrlFormat = @"http://bcaste.livebox.cz/UP_Smooth/AS/{0}/{1:00}{0}/{1:00}{0}.ism/Manifest"; // 0 - year, 1 - week
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -217,13 +219,29 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
-            Match match = Regex.Match(video.VideoUrl, AutosalonUtil.showEpisodeVideoUrlRegex);
-            if (match.Success)
+            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl);
+            String videoUrl = String.Empty;
+
+            int startIndex = baseWebData.IndexOf(AutosalonUtil.showEpisodeVideoStart);
+            if (startIndex >= 0)
             {
-                return String.Format(AutosalonUtil.showEpisodeVideoUrlFormat, match.Groups["week"].Value, match.Groups["year"].Value);
+                int endIndex = baseWebData.IndexOf(AutosalonUtil.showEpisodeVideoEnd, startIndex);
+                if (endIndex >= 0)
+                {
+                    String data = baseWebData.Substring(startIndex, endIndex - startIndex);
+
+                    Match match = Regex.Match(data, AutosalonUtil.showEpisodeVideoRegex);
+                    if (match.Success)
+                    {
+                        String year = match.Groups["year"].Value;
+                        String week = match.Groups["week"].Value;
+
+                        videoUrl = String.Format(AutosalonUtil.showEpisodeUrlFormat, year, week);
+                    }
+                }
             }
 
-            return video.VideoUrl;
+            return videoUrl;
         }
 
         #endregion
