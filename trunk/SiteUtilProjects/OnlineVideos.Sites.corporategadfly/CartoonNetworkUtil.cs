@@ -125,5 +125,13 @@ namespace OnlineVideos.Sites
             }
             return result;
         }
+        
+        public override string getUrl(VideoInfo video)
+        {
+            // override base getUrl method which was mangling the rtmp URL
+            //      incoming URL: rtmpe://cp102794.edgefcs.net####Url=
+            //      outgoing URL: rtmpe://cp102794.edgefcs.net/#%23%23%23Url=
+            return video.VideoUrl;
+        }
     }
 }
