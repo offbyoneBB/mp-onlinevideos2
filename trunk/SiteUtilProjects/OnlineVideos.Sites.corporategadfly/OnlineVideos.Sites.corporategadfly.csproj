@@ -41,6 +41,7 @@
     <Compile Include="BNNUtil.cs" />
     <Compile Include="CanadaBrightCoveUtilBase.cs" />
     <Compile Include="CanWestUtil.cs" />
+    <Compile Include="CartoonNetworkUtil.cs" />
     <Compile Include="CBCUtil.cs" />
     <Compile Include="CTVLocalNewsUtil.cs" />
     <Compile Include="CTVNewsUtil.cs" />
