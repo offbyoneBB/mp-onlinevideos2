@@ -57,6 +57,8 @@
 #include "AudioSampleEntryBox.h"
 #include "AVCConfigurationBox.h"
 #include "ESDBox.h"
+#include "FragmentedIndexBox.h"
+#include "FragmentedIndexTrackBox.h"
 
 #include <curl/curl.h>
 
@@ -231,6 +233,10 @@ protected:
   // specifies if last fragment was downloaded
   bool lastFragmentDownloaded;
 
+  uint32_t videoTrackId;
+
+  uint32_t audioTrackId;
+
   // removes all downloaded stream fragments
   // the last one stream fragment (even downloaded) still preserve
   void RemoveAllDownloadedStreamFragments(void);
@@ -299,6 +305,10 @@ protected:
   CSampleTableBox *GetVideoSampleTableBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, unsigned int trackIndex, CTrackFragmentHeaderBox *fragmentHeaderBox);
 
   CSampleTableBox *GetAudioSampleTableBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, unsigned int trackIndex, CTrackFragmentHeaderBox *fragmentHeaderBox);
+
+  CFragmentedIndexBox *GetFragmentedIndexBox(CMSHSSmoothStreamingMedia *media, uint32_t videoTrackId, uint32_t audioTrackId);
+
+  CFragmentedIndexTrackBox *GetFragmentedIndexTrackBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, uint32_t trackId);
 };
 
 #endif
