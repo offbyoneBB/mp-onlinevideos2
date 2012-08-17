@@ -2,13 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ComponentModel;
 using OnlineVideos.Hoster.Base;
 
 namespace OnlineVideos.Sites
 {
     public class DeferredResolveUtil : GenericSiteUtil
     {
+        /// <summary>
+        /// Defines the number of urls that are shown for each hoster. 
+        /// 
+        /// For example, if the limit is 5, only the top 5 entries will be shown
+        /// for each hoster (e.g. putlocker, megavideo,...).
+        /// </summary>
+        [Category("OnlineVideosUserConfiguration"), Description("Limit Number of Urls that are shown per hosters (0: show all).")]
         protected int limitUrlsPerHoster = 5;
+
+        /// <summary>
+        /// If false, all video urls that have no hoster utility yet will be hidden. If true, all urls will
+        /// be shown (unknown hosters will get a "ns" suffix)
+        /// </summary>
+        [Category("OnlineVideosUserConfiguration"), Description("Show hosters for which no provider exists.")]
         protected bool showUnknownHosters = false;
 
         public override string getUrl(VideoInfo video)
