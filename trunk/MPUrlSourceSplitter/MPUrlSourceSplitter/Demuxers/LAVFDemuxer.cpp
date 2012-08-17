@@ -996,6 +996,26 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
         asf_reset_header2(this->m_avFormat);
       }
 
+      if (SUCCEEDED(result) && (this->m_bMp4))
+      {
+        if (this->m_avFormat->iformat->read_seek)
+        {
+          logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking by internal MP4 format time seeking method", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME);
+          ff_read_frame_flush(this->m_avFormat);
+          int ret = m_avFormat->iformat->read_seek(this->m_avFormat, videoStreamId, seek_pts, flags);
+          logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking by internal format time seeking method result: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, ret);
+
+          // if ret is not 0, then error and seek failed
+          found = (ret == 0);
+          result = (ret == 0) ? 0 : (-8);
+        }
+        else
+        {
+          // error, MP4 must have its internal time seeking method
+          result = -9;
+        }
+      }
+
       logger->Log(LOGGER_VERBOSE, L"%s: %s: seeked to time: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, seekedTime);
     }
 

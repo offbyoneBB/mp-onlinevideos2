@@ -79,6 +79,10 @@
     <ClInclude Include="AVCConfigurationBox.h" />
     <ClInclude Include="AVCDecoderConfiguration.h" />
     <ClInclude Include="ESDBox.h" />
+    <ClInclude Include="FragmentedIndex.h" />
+    <ClInclude Include="FragmentedIndexBox.h" />
+    <ClInclude Include="FragmentedIndexCollection.h" />
+    <ClInclude Include="FragmentedIndexTrackBox.h" />
     <ClInclude Include="PictureParameterSetNALUnit.h" />
     <ClInclude Include="PictureParameterSetNALUnitCollection.h" />
     <ClInclude Include="SequenceParameterSetNALUnit.h" />
@@ -90,6 +94,10 @@
     <ClCompile Include="AVCConfigurationBox.cpp" />
     <ClCompile Include="AVCDecoderConfiguration.cpp" />
     <ClCompile Include="ESDBox.cpp" />
+    <ClCompile Include="FragmentedIndex.cpp" />
+    <ClCompile Include="FragmentedIndexBox.cpp" />
+    <ClCompile Include="FragmentedIndexCollection.cpp" />
+    <ClCompile Include="FragmentedIndexTrackBox.cpp" />
     <ClCompile Include="PictureParameterSetNALUnit.cpp" />
     <ClCompile Include="PictureParameterSetNALUnitCollection.cpp" />
     <ClCompile Include="SequenceParameterSetNALUnit.cpp" />

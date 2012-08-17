@@ -103,6 +103,8 @@ CMPUrlSourceSplitter_Protocol_Mshs::CMPUrlSourceSplitter_Protocol_Mshs(CParamete
   this->audioCurlInstance = NULL;
   this->streamingMedia = NULL;
   this->lastFragmentDownloaded = false;
+  this->videoTrackId = 0;
+  this->audioTrackId = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -288,6 +290,9 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
             }
             FREE_MEM_CLASS(fileTypeBox);
 
+            this->videoTrackId = videoTrackFragmentHeaderBox->GetTrackId();
+            this->audioTrackId = audioTrackFragmentHeaderBox->GetTrackId();
+
             // create movie box
             CMovieBox *movieBox = this->GetMovieBox(this->streamingMedia, videoTrackFragmentHeaderBox, audioTrackFragmentHeaderBox);
 
@@ -403,6 +408,23 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
           this->filter->SetTotalLength(this->streamLength, true);
         }
+      }
+
+      if (this->seekingActive && (!this->supressData))
+      {
+        // this should happen only once per seek
+        // created fragmented index box
+        CFragmentedIndexBox *fragmentedIndexBox = this->GetFragmentedIndexBox(this->streamingMedia, this->videoTrackId, this->audioTrackId);
+
+        if (fragmentedIndexBox != NULL)
+        {
+          // copy fragmented index box to processing
+          if (this->bufferForProcessing != NULL)
+          {
+            this->PutBoxIntoBuffer(fragmentedIndexBox, this->bufferForProcessing);
+          }
+        }
+        FREE_MEM_CLASS(fragmentedIndexBox);
       }
 
       if ((!this->supressData) && (this->bufferForBoxProcessingCollection != NULL))
@@ -813,6 +835,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
       result = (this->audioCurlInstance->StartReceivingData()) ? result : E_FAIL;
     }
 
+    if (SUCCEEDED(result) && this->seekingActive)
+    {
+      // add fragmented index to buffer
+    }
+
     if (SUCCEEDED(result))
     {
       // wait for HTTP status code
@@ -1054,6 +1081,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ClearSession(void)
   this->bytePosition = 0;
   this->shouldExit = false;
   this->lastFragmentDownloaded = false;
+  this->videoTrackId = 0;
+  this->audioTrackId = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -1116,7 +1145,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToTime(int64_t time)
 
   if (fragment != NULL)
   {
-    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: url '%s', timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
+    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: url '%s', timestamp: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
       fragment->GetUrl(), fragment->GetFragmentTime());
 
     // reopen connection
@@ -2624,4 +2653,133 @@ CSampleTableBox *CMPUrlSourceSplitter_Protocol_Mshs::GetAudioSampleTableBox(CMSH
   }
 
   return sampleTableBox;
+}
+
+CFragmentedIndexBox *CMPUrlSourceSplitter_Protocol_Mshs::GetFragmentedIndexBox(CMSHSSmoothStreamingMedia *media, uint32_t videoTrackId, uint32_t audioTrackId)
+{
+  CFragmentedIndexBox *fragmentedIndexBox = NULL;
+  bool continueCreating = (media != NULL);
+
+  if (continueCreating)
+  {
+    fragmentedIndexBox = new CFragmentedIndexBox();
+    continueCreating &= (fragmentedIndexBox != NULL);
+
+    unsigned int videoStreamIndex = 0;
+    unsigned int audioStreamIndex = 0;
+
+    for (unsigned int i = 0; i < media->GetStreams()->Count(); i++)
+    {
+      CMSHSStream *stream = media->GetStreams()->GetItem(i);
+
+      if (stream->IsVideo())
+      {
+        videoStreamIndex = i;
+        break;
+      }
+    }
+
+    for (unsigned int i = 0; i < media->GetStreams()->Count(); i++)
+    {
+      CMSHSStream *stream = media->GetStreams()->GetItem(i);
+
+      if (stream->IsAudio())
+      {
+        audioStreamIndex = i;
+        break;
+      }
+    }
+
+    // add fragmented index track box (video or audio - depends on track ID)
+    if (continueCreating)
+    {
+      CFragmentedIndexTrackBox *fragmentedIndexTrackBox = 
+        (videoTrackId < audioTrackId) ? 
+        this->GetFragmentedIndexTrackBox(media, videoStreamIndex, videoTrackId) : this->GetFragmentedIndexTrackBox(media, audioStreamIndex, audioTrackId);
+      continueCreating &= (fragmentedIndexTrackBox != NULL);
+
+      if (continueCreating)
+      {
+        continueCreating &= fragmentedIndexBox->GetBoxes()->Add(fragmentedIndexTrackBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(fragmentedIndexTrackBox);
+      }
+    }
+
+    // add fragmented index track box (video or audio - depends on track ID)
+    if (continueCreating)
+    {
+      CFragmentedIndexTrackBox *fragmentedIndexTrackBox = 
+        (videoTrackId < audioTrackId) ? 
+        this->GetFragmentedIndexTrackBox(media, audioStreamIndex, audioTrackId) : this->GetFragmentedIndexTrackBox(media, videoStreamIndex, videoTrackId);
+      continueCreating &= (fragmentedIndexTrackBox != NULL);
+
+      if (continueCreating)
+      {
+        continueCreating &= fragmentedIndexBox->GetBoxes()->Add(fragmentedIndexTrackBox);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(fragmentedIndexTrackBox);
+      }
+    }
+  }
+
+  return fragmentedIndexBox;
+}
+
+CFragmentedIndexTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetFragmentedIndexTrackBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, uint32_t trackId)
+{
+  CFragmentedIndexTrackBox *fragmentedIndexTrackBox = NULL;
+  bool continueCreating = (media != NULL);
+
+  if (continueCreating)
+  {
+    fragmentedIndexTrackBox = new CFragmentedIndexTrackBox();
+    continueCreating &= (fragmentedIndexTrackBox != NULL);
+  }
+
+  CMSHSStream *stream = media->GetStreams()->GetItem(streamIndex);
+  continueCreating &= (stream != NULL);
+
+  // add fragmented indexes for this track ID
+  if (continueCreating)
+  {
+    fragmentedIndexTrackBox->SetTrackId(trackId);
+
+    for (unsigned int i = 0; (continueCreating && (i < stream->GetStreamFragments()->Count())); i++)
+    {
+      CMSHSStreamFragment *streamFragment = stream->GetStreamFragments()->GetItem(i);
+
+      CFragmentedIndex *index = new CFragmentedIndex();
+      continueCreating &= (index != NULL);
+
+      if (continueCreating)
+      {
+        index->SetTimestamp(streamFragment->GetFragmentTime());
+        index->SetDuration(streamFragment->GetFragmentDuration());
+      }
+
+      if (continueCreating)
+      {
+        continueCreating &= fragmentedIndexTrackBox->GetFragmentedIndexes()->Add(index);
+      }
+
+      if (!continueCreating)
+      {
+        FREE_MEM_CLASS(index);
+      }
+    }
+  }
+
+  if (!continueCreating)
+  {
+    FREE_MEM_CLASS(fragmentedIndexTrackBox);
+  }
+
+  return fragmentedIndexTrackBox;
 }
