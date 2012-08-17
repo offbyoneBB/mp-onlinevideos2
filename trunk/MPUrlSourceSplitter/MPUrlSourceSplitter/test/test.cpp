@@ -37,7 +37,7 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-  uint32_t length = 256 * 1024;
+  uint32_t length = 10 * 1024 * 1024;
 
   ALLOC_MEM_DEFINE_SET(buffer, uint8_t, length, 0);
   //FILE *stream = fopen("D:\\svnroot\\HttpStreaming\\lmfao.ismv", "rb");
