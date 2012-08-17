@@ -112,6 +112,8 @@ namespace OnlineVideos.Subtitles
                 List<FileInfo> subtitleFiles = sd.SaveSubtitle(minSub);
                 if (subtitleFiles.Count > 0)
                     video.SubtitleText = File.ReadAllText(subtitleFiles[0].FullName, System.Text.Encoding.UTF8);
+                foreach (FileInfo fi in subtitleFiles)
+                    fi.Delete();
             }
         }
 
