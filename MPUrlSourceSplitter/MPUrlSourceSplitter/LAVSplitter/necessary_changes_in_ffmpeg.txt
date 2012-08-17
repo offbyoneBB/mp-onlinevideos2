@@ -113,6 +113,7 @@ Comment: add in MOVContext struct
 Code:
 
 int fragmented;         /// fragmented video
+int stop_parsing_at_fragmented_index; /// stops parsing when fragmented index box is found
 
 --------------------------------------------
 File: \libavformat\mov.c
@@ -120,12 +121,85 @@ Comment: in mov_read_ftyp() method add after if (strcmp(type, "qt  ")) c->isom =
 Code:
 
 c->fragmented = (strcmp(type, "isml") == 0) ? 1 : 0;
+c->stop_parsing_at_fragmented_index = 0;
+
+--------------------------------------------
+Comment: in mov_read_tmcd() method add
+Code:
+
+static int mov_read_fmix(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+{
+    int ret = 0;
+
+    avio_r8(pb); /* version */
+    avio_rb24(pb); /* flags */
+
+    atom.size -= 4;
+
+    if ((ret = mov_read_default(c, pb, atom)) < 0)
+        return ret;
+
+    return ret;
+}
+
+static int mov_read_ftix(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+{
+    int i;
+    AVStream *st = NULL;
+    uint32_t trackId;
+    uint32_t entries;
+
+    avio_r8(pb); 	/* version */
+    avio_rb24(pb); 	/* flags */
+    trackId = avio_rb32(pb);	/* track ID */
+    entries = avio_rb32(pb);	/* count of fragmented track index */
+
+    for (i = 0; i < c->fc->nb_streams; i++)
+    {
+        if (c->fc->streams[i]->id == trackId)
+        {
+            st = c->fc->streams[i];
+            break;
+        }
+    }
+
+    if (!st)
+    {
+        av_log(c->fc, AV_LOG_ERROR, "could not find corresponding track id %d\n", trackId);
+        return AVERROR_INVALIDDATA;
+    }
+
+    st->nb_index_entries = 0;
+
+    for (i = 0; i < entries; i++)
+    {
+        uint64_t timestamp = avio_rb64(pb);
+        avio_rb64(pb);
+
+        av_add_index_entry(st, 0, timestamp, 0, 0, AVINDEX_KEYFRAME);
+    }
+    
+    return 0;
+}
+
+--------------------------------------------
+Comment: in mov_default_parse_table table add to end (before { 0, NULL })
+Code:
+
+{ MKTAG('f','m','i','x'), mov_read_fmix },
+{ MKTAG('f','t','i','x'), mov_read_ftix },
+ 
+--------------------------------------------
+Comment: in mov_read_default() method replace 'MOVAtom a;'
+Code:
+
+MOVAtom a = { .type = 0 };
 
 --------------------------------------------
 Comment: in mov_read_default() method replace 'while (total_size + 8 <= atom.size && !url_feof(pb)) {'
 Code:
 
-while (total_size + 8 <= atom.size && !url_feof(pb) && !(c->found_moov && c->found_mdat && c->fragmented)) {
+while (total_size + 8 <= atom.size && !url_feof(pb) && !(c->found_moov && c->found_mdat && c->fragmented) && !(c->fragmented && c->stop_parsing_at_fragmented_index && a.type == MKTAG('f','m','i','x'))) {
 
 --------------------------------------------
 Comment: in mov_read_default() method add after cycle 'for (i = 0; mov_default_parse_table[i].type; i++)'
@@ -137,3 +211,81 @@ if (c->fragmented && (a.type == MKTAG('m','d','a','t')))
     c->next_root_atom = start_pos + a.size;
 }
 
+--------------------------------------------
+Comment: in mov_read_default() method replace 'return 0;'
+Code:
+
+return (a.type == MKTAG('f','m','i','x')) ? 1 : 0;
+
+--------------------------------------------
+Comment: in mov_read_seek() method add after 'int i;' (variable declare)
+Code:
+
+ MOVContext *mov = s->priv_data;
+ MOVStreamContext *sc;
+
+--------------------------------------------
+Comment: in mov_read_seek() method add after 'if (sample_time < 0) sample_time = 0;'
+Code:
+
+if (mov->fragmented)
+{
+    MOVAtom atom = { AV_RL32("root"), .size = INT64_MAX };
+    int err = 0;
+
+    mov->found_mdat = 0;
+    mov->next_root_atom = 0;
+    mov->stop_parsing_at_fragmented_index = 1;
+
+    /* seek to 0, data MUST be always from 0 */
+    if ((err = avio_seek(s->pb, 0, SEEK_SET)) < 0)
+    {
+        av_log(s, AV_LOG_ERROR, "error seeking to start: %d", err);
+        return err;
+    }
+
+    /* read fragmented index */
+    if ((err = mov_read_default(mov, s->pb, atom)) != 1)
+    {
+        av_log(s, AV_LOG_ERROR, "fragmented index not found");
+        return (-1);
+    }
+
+    mov->stop_parsing_at_fragmented_index = 0;
+
+    for (i = 0; i < s->nb_streams; i++)
+    {
+        st = s->streams[i];
+        sample = mov_seek_stream(s, st, sample_time, flags);
+
+        if (sample < 0)
+        {
+            av_log(NULL, AV_LOG_ERROR, "cannot find sample for stream, index: %d, timestamp: %"PRId64"", i, sample_time);
+            return sample;
+        }
+
+        seek_timestamp = st->index_entries[sample].timestamp;
+        sc = s->streams[i]->priv_data;
+
+        timestamp = av_rescale_q(seek_timestamp, s->streams[stream_index]->time_base, st->time_base);
+
+        sc->track_end = timestamp;
+
+        if (stream_index == i)
+            continue;
+        mov_seek_stream(s, st, timestamp, flags);
+    }
+
+    for (i = 0; i < s->nb_streams; i++)
+    {
+        st = s->streams[i];
+        st->nb_index_entries = 0;
+    }
+
+    /* read all root atoms */
+    if ((err = mov_read_default(mov, s->pb, atom)) < 0)
+    {
+        av_log(s, AV_LOG_ERROR, "error reading header: %d", err);
+        return err;
+    }
+}

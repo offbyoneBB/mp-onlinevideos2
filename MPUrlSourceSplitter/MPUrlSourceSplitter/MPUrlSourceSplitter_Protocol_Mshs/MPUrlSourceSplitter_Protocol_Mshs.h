@@ -306,9 +306,9 @@ protected:
 
   CSampleTableBox *GetAudioSampleTableBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, unsigned int trackIndex, CTrackFragmentHeaderBox *fragmentHeaderBox);
 
-  CFragmentedIndexBox *GetFragmentedIndexBox(CMSHSSmoothStreamingMedia *media, uint32_t videoTrackId, uint32_t audioTrackId);
+  CFragmentedIndexBox *GetFragmentedIndexBox(CMSHSSmoothStreamingMedia *media, uint32_t videoTrackId, uint32_t audioTrackId, uint64_t timestamp);
 
-  CFragmentedIndexTrackBox *GetFragmentedIndexTrackBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, uint32_t trackId);
+  CFragmentedIndexTrackBox *GetFragmentedIndexTrackBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, uint32_t trackId, uint64_t timestamp);
 };
 
 #endif

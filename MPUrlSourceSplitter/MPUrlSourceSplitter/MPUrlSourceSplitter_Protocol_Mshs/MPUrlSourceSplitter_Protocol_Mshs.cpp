@@ -412,9 +412,11 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
 
       if (this->seekingActive && (!this->supressData))
       {
+        CStreamFragment *streamFragmentToDownload = this->GetFirstNotDownloadedStreamFragment();
+
         // this should happen only once per seek
         // created fragmented index box
-        CFragmentedIndexBox *fragmentedIndexBox = this->GetFragmentedIndexBox(this->streamingMedia, this->videoTrackId, this->audioTrackId);
+        CFragmentedIndexBox *fragmentedIndexBox = this->GetFragmentedIndexBox(this->streamingMedia, this->videoTrackId, this->audioTrackId, streamFragmentToDownload->GetFragmentTime());
 
         if (fragmentedIndexBox != NULL)
         {
@@ -2655,7 +2657,7 @@ CSampleTableBox *CMPUrlSourceSplitter_Protocol_Mshs::GetAudioSampleTableBox(CMSH
   return sampleTableBox;
 }
 
-CFragmentedIndexBox *CMPUrlSourceSplitter_Protocol_Mshs::GetFragmentedIndexBox(CMSHSSmoothStreamingMedia *media, uint32_t videoTrackId, uint32_t audioTrackId)
+CFragmentedIndexBox *CMPUrlSourceSplitter_Protocol_Mshs::GetFragmentedIndexBox(CMSHSSmoothStreamingMedia *media, uint32_t videoTrackId, uint32_t audioTrackId, uint64_t timestamp)
 {
   CFragmentedIndexBox *fragmentedIndexBox = NULL;
   bool continueCreating = (media != NULL);
@@ -2695,7 +2697,7 @@ CFragmentedIndexBox *CMPUrlSourceSplitter_Protocol_Mshs::GetFragmentedIndexBox(C
     {
       CFragmentedIndexTrackBox *fragmentedIndexTrackBox = 
         (videoTrackId < audioTrackId) ? 
-        this->GetFragmentedIndexTrackBox(media, videoStreamIndex, videoTrackId) : this->GetFragmentedIndexTrackBox(media, audioStreamIndex, audioTrackId);
+        this->GetFragmentedIndexTrackBox(media, videoStreamIndex, videoTrackId, timestamp) : this->GetFragmentedIndexTrackBox(media, audioStreamIndex, audioTrackId, timestamp);
       continueCreating &= (fragmentedIndexTrackBox != NULL);
 
       if (continueCreating)
@@ -2714,7 +2716,7 @@ CFragmentedIndexBox *CMPUrlSourceSplitter_Protocol_Mshs::GetFragmentedIndexBox(C
     {
       CFragmentedIndexTrackBox *fragmentedIndexTrackBox = 
         (videoTrackId < audioTrackId) ? 
-        this->GetFragmentedIndexTrackBox(media, audioStreamIndex, audioTrackId) : this->GetFragmentedIndexTrackBox(media, videoStreamIndex, videoTrackId);
+        this->GetFragmentedIndexTrackBox(media, audioStreamIndex, audioTrackId, timestamp) : this->GetFragmentedIndexTrackBox(media, videoStreamIndex, videoTrackId, timestamp);
       continueCreating &= (fragmentedIndexTrackBox != NULL);
 
       if (continueCreating)
@@ -2732,7 +2734,7 @@ CFragmentedIndexBox *CMPUrlSourceSplitter_Protocol_Mshs::GetFragmentedIndexBox(C
   return fragmentedIndexBox;
 }
 
-CFragmentedIndexTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetFragmentedIndexTrackBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, uint32_t trackId)
+CFragmentedIndexTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetFragmentedIndexTrackBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, uint32_t trackId, uint64_t timestamp)
 {
   CFragmentedIndexTrackBox *fragmentedIndexTrackBox = NULL;
   bool continueCreating = (media != NULL);
@@ -2755,23 +2757,28 @@ CFragmentedIndexTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetFragmentedIndex
     {
       CMSHSStreamFragment *streamFragment = stream->GetStreamFragments()->GetItem(i);
 
-      CFragmentedIndex *index = new CFragmentedIndex();
-      continueCreating &= (index != NULL);
-
-      if (continueCreating)
+      if (streamFragment->GetFragmentTime() >= timestamp)
       {
-        index->SetTimestamp(streamFragment->GetFragmentTime());
-        index->SetDuration(streamFragment->GetFragmentDuration());
-      }
+        CFragmentedIndex *index = new CFragmentedIndex();
+        continueCreating &= (index != NULL);
 
-      if (continueCreating)
-      {
-        continueCreating &= fragmentedIndexTrackBox->GetFragmentedIndexes()->Add(index);
-      }
+        if (continueCreating)
+        {
+          index->SetTimestamp(streamFragment->GetFragmentTime());
+          index->SetDuration(streamFragment->GetFragmentDuration());
+        }
 
-      if (!continueCreating)
-      {
-        FREE_MEM_CLASS(index);
+        if (continueCreating)
+        {
+          continueCreating &= fragmentedIndexTrackBox->GetFragmentedIndexes()->Add(index);
+        }
+
+        if (!continueCreating)
+        {
+          FREE_MEM_CLASS(index);
+        }
+
+        break;
       }
     }
   }

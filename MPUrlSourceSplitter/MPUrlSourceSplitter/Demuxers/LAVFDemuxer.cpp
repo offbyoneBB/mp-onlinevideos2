@@ -970,13 +970,6 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
     ff_read_frame_flush(this->m_avFormat);
     index = av_index_search_timestamp(st, seek_pts, flags);
 
-    //if ((index >= 0) && (index < (st->nb_index_entries - 1)))
-    //{
-    //  // if index is lower than zero => surely not found in buffer
-    //  // if index is lower than index entries - 1 => surely in buffer
-    //  found = true;
-    //}
-
     if (!found) 
     {
       st->nb_index_entries = 0;
