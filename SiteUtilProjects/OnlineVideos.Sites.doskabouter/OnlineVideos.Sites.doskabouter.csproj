@@ -53,6 +53,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SubtitleDownloader">
+      <HintPath>C:\Program Files\Team MediaPortal\MediaPortal\SubtitleDownloader.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -99,6 +102,7 @@
     <Compile Include="RTEPlayerUtil.cs" />
     <Compile Include="RtmpUtil.cs" />
     <Compile Include="SBS6GemistUtil.cs" />
+    <Compile Include="SubtitleHandler.cs" />
     <Compile Include="TubePlusUtil.cs" />
     <Compile Include="TV3NZOnDemandUtil.cs" />
     <Compile Include="TVLinkscc.cs" />
