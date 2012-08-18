@@ -74,12 +74,13 @@ namespace OnlineVideos.Sites
             Regex regEx_VideoListTmp = new Regex("");
             regEx_VideoListTmp = regEx_VideoList;
 
-            string searchBase = "http://www.gametrailers.com/fragments/search/";
+            string searchBase = "http://www.gametrailers.com/feeds/search/";
 
             //Replace Regexp with search friendly regexp, since the search results don't have the game name it would fail otherwise
             if (url.StartsWith(searchBase))
             {
-                string strRegEx_VideoList = @"<div\sclass=""holder""\sitemscope\sitemtype=""http://schema\.org/VideoObject"">\s*<meta\sitemprop=""url""\scontent=""(?<VideoUrl>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>";
+                string strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""[^""]*""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^\?]*)\?""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\sclass=""thumbnail_bug_overlay""\ssrc=""[^""]*""\swidth=160\sheight=90\salt=""""\s/>\s*<img\ssrc=""[^""]*""\s*alt=""[^""]*""\s/>\s*</a>\s*<h3><a\shref=""[^""]*"">(?<gameName>[^<]*)</a></h3>";
+                //string strRegEx_VideoList2 = @"<div\sclass=""holder""\sitemscope\sitemtype=""http://schema\.org/VideoObject"">\s*<meta\sitemprop=""url""\scontent=""(?<VideoUrl>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>";
                 regEx_VideoListTmp = new Regex(strRegEx_VideoList);
             }
             if (data.Length > 0)
@@ -93,10 +94,6 @@ namespace OnlineVideos.Sites
                         {
                             VideoInfo videoInfo = CreateVideoInfo();
                             if (url.StartsWith(searchBase))
-                            {
-                                videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
-                            }
-                            else if (m.Groups["gameName"].Value != "" || m.Groups["gameName"].Value != null)
                             {
                                 videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                             }
@@ -239,7 +236,7 @@ namespace OnlineVideos.Sites
             // if an override Encoding was specified, we need to UrlEncode the search string with that encoding
             if (encodingOverride != null) query = HttpUtility.UrlEncode(encodingOverride.GetBytes(query));
 
-            searchUrl = "http://www.gametrailers.com/fragments/search/child/" + promotionID + "/?tabName=videos&platforms=&sortBy=most_recent&keywords=" + query;
+            searchUrl = "http://www.gametrailers.com/feeds/search/child/" + promotionID + "/?tabName=videos&platforms=&sortBy=most_recent&keywords=" + query;
 
             return getVideoList(searchUrl);
         }
