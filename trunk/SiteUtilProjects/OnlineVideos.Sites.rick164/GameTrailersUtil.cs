@@ -73,13 +73,36 @@ namespace OnlineVideos.Sites
             //Make sure Regexp doesn't get copied over after search so save it in a new Regexp.
             Regex regEx_VideoListTmp = new Regex("");
             regEx_VideoListTmp = regEx_VideoList;
+            string strRegEx_VideoList = "";
 
             string searchBase = "http://www.gametrailers.com/feeds/search/";
 
-            //Replace Regexp with search friendly regexp, since the search results don't have the game name it would fail otherwise
+            //Add checks for actual content, new site layout/content is buggy so this is a workaround for now.
+            if (url.Contains("&category") || url.Contains("platform_video_index"))
+            {
+
+                strRegEx_VideoList = @"<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^\?]*)\?""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\sclass=""thumbnail_bug_overlay""\ssrc=""[^""]*""\swidth=160\sheight=90\salt=""""\s/>\s*<img\ssrc=""[^""]*""\s*alt=""[^""]*""\s/>\s*</a>\s*<h3><a\shref=""[^""]*"">(?<gameName>[^<]*)</a></h3>\s*<h4><a\shref=""[^""]*""\sclass=""override_promo_font_color"">(?<Title>[^<]*)</a></h4>";
+                //strRegEx_VideoList = @"<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\sclass=""thumbnail_bug_overlay""\ssrc=""[^""]*""\swidth=160\sheight=90\salt=""""\s/>\s*<img\ssrc=""[^""]*""\s*alt=""(?<Title>[^""]*)""\s/>";
+                regEx_VideoListTmp = new Regex(strRegEx_VideoList);
+            }
+            else
+            {
+                strRegEx_VideoList = @"<meta\sitemprop=""name""\scontent=""[^""]*""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\ssrc=""[^""]*""\s*alt=""(?<Title>[^""]*)""\s/>";
+                regEx_VideoListTmp = new Regex(strRegEx_VideoList);
+            }
+
+            //Make exception for category trailers, layout it different for this one
+            if(url.Contains("category=Trailer"))
+            {
+
+                strRegEx_VideoList = @"<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\ssrc=""[^""]*""\s*alt=""[^""]*""\s/>\s*</a>\s*<h3><a\shref=""[^""]*"">(?<gameName>[^<]*)</a></h3>\s*<h4><a\shref=""[^""]*""\sclass=""override_promo_font_color"">(?<Title>[^<]*)</a></h4>";
+                regEx_VideoListTmp = new Regex(strRegEx_VideoList);
+            }
+
+            //Replace Regexp with search friendly regexp
             if (url.StartsWith(searchBase))
             {
-                string strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""[^""]*""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^\?]*)\?""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\sclass=""thumbnail_bug_overlay""\ssrc=""[^""]*""\swidth=160\sheight=90\salt=""""\s/>\s*<img\ssrc=""[^""]*""\s*alt=""[^""]*""\s/>\s*</a>\s*<h3><a\shref=""[^""]*"">(?<gameName>[^<]*)</a></h3>";
+                strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""[^""]*""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^\?]*)\?""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\sclass=""thumbnail_bug_overlay""\ssrc=""[^""]*""\swidth=160\sheight=90\salt=""""\s/>\s*<img\ssrc=""[^""]*""\s*alt=""[^""]*""\s/>\s*</a>\s*<h3><a\shref=""[^""]*"">(?<gameName>[^<]*)</a></h3>";
                 //string strRegEx_VideoList2 = @"<div\sclass=""holder""\sitemscope\sitemtype=""http://schema\.org/VideoObject"">\s*<meta\sitemprop=""url""\scontent=""(?<VideoUrl>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>";
                 regEx_VideoListTmp = new Regex(strRegEx_VideoList);
             }
@@ -89,11 +112,13 @@ namespace OnlineVideos.Sites
                 {
                     try
                     {
+                        Log.Debug("USED URL: " + url);
+                        Log.Debug("USED REGEX: " +strRegEx_VideoList); 
                         Match m = regEx_VideoListTmp.Match(data);
                         while (m.Success)
                         {
                             VideoInfo videoInfo = CreateVideoInfo();
-                            if (url.StartsWith(searchBase))
+                            if (url.StartsWith(searchBase) || url.Contains("category="))
                             {
                                 videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                             }
@@ -101,6 +126,8 @@ namespace OnlineVideos.Sites
                             {
                                 videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                             }
+
+                            videoInfo.Title = videoInfo.Title.Replace(" Thumb", "").Replace(" thumb", "");
 
                             videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                             videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
