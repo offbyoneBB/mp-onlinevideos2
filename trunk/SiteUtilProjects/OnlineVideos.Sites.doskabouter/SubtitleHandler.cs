@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 using System.IO;
 using SubtitleDownloader.Core;
 
@@ -88,6 +89,7 @@ namespace OnlineVideos.Subtitles
         {
             ISubtitleDownloader sd = (ISubtitleDownloader)sdObject;
             EpisodeSearchQuery qu = new EpisodeSearchQuery(it.Title, (int)it.Season, (int)it.Episode);
+            qu.LanguageCodes = languagePrios.Keys.ToArray();
             List<Subtitle> results = sd.SearchSubtitles(qu);
             Log.Debug("Subtitles found:" + results.Count.ToString());
             if (results.Count > 0)
