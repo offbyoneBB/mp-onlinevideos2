@@ -16,28 +16,26 @@ namespace OnlineVideos.Sites.georgius
 
         private static String baseUrl = "http://voyo.nova.cz/serialy";
 
-        private static String dynamicCategoryStart = @"<!--p id=""seriesFilterAllSeries9055d130301""";
-        private static String dynamicCategoryEnd = @"<div class=""cw_1""";
+        private static String dynamicCategoryStart = @"<div class=""productsList series"" id=";
+        private static String dynamicCategoryEnd = @"<div class=""productsPagination"">";
 
-        private static String categoryNextPage = @"<a href='(?<categoryNextPage>[^']*)' onclick='[^']*'>další</a>";
+        private static String categoryNextPage = @"<a href=""(?<categoryNextPage>[^""]*)"" onclick=""[^""]*"">další</a>";
 
-        private static String showStart = @"<div class='poster'>";
-        private static String showEnd = @"</div>";
+        private static String showStart = @"<div class=""poster"">";
+        private static String showEnd = @"<div class=""ratings"">";
 
-		    private static String showUrlTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>";
-        private static String showThumbRegex = @"<img src='(?<showThumbUrl>[^']*)";
+		private static String showUrlTitleRegex = @"<a href=""(?<showUrl>[^""]*)"" title=""(?<showTitle>[^""]*)"">";
+        private static String showThumbRegex = @"<img src=""(?<showThumbUrl>[^""]*)";
 
-        private static String showEpisodesStart = @"<div class=""productsList";
+        private static String showEpisodesStart = @"<div class=""productsList series"" id=";
 
-        private static String showEpisodeBlockStart = @"<div class='section_item'>";
-        private static String showEpisodeBlockEnd = @"<div class='clearer'>";
+        private static String showEpisodeBlockStart = @"<div class=""poster"">";
+        private static String showEpisodeBlockEnd = @"<div class=""clearer"">";
 
-        private static String showEpisodeThumbUrlRegex = @"<img src='(?<showThumbUrl>[^']*)";
-        private static String showEpisodeUrlAndTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>";
-        private static String showEpisodeDescriptionStart = @"<div class=""padding"" >";
-        private static String showEpisodeDescriptionEnd = @"</div>";
+        private static String showEpisodeThumbUrlRegex = @"<img src=""(?<showThumbUrl>[^""]*)";
+        private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]*)"" title=""(?<showTitle>[^""]*)"">";
 
-        private static String showEpisodeNextPageRegex = @"<a href='(?<nextPageUrl>[^']*)' onclick='[^']*'>další</a>";
+        private static String showEpisodeNextPageRegex = @"<a href=""(?<nextPageUrl>[^""]*)"" onclick=""[^""]*"">další</a>";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -265,7 +263,6 @@ namespace OnlineVideos.Sites.georgius
                                 String showTitle = String.Empty;
                                 String showThumbUrl = String.Empty;
                                 String showUrl = String.Empty;
-                                String showDescription = String.Empty;
 
                                 match = Regex.Match(showData, NovaUtil.showEpisodeThumbUrlRegex);
                                 if (match.Success)
@@ -280,21 +277,10 @@ namespace OnlineVideos.Sites.georgius
                                     showTitle = HttpUtility.HtmlDecode(match.Groups["showTitle"].Value);
                                 }
 
-                                int descriptionStart = showData.IndexOf(NovaUtil.showEpisodeDescriptionStart);
-                                if (descriptionStart >= 0)
-                                {
-                                    int descriptionEnd = showData.IndexOf(NovaUtil.showEpisodeDescriptionEnd, descriptionStart);
-                                    if (descriptionEnd >= 0)
-                                    {
-                                        showDescription = showData.Substring(descriptionStart + NovaUtil.showEpisodeDescriptionStart.Length, descriptionEnd - descriptionStart - NovaUtil.showEpisodeDescriptionStart.Length);
-                                    }
-                                }
-
                                 if (!(String.IsNullOrEmpty(showUrl) || String.IsNullOrEmpty(showTitle)))
                                 {
                                     VideoInfo videoInfo = new VideoInfo()
                                     {
-                                        Description = showDescription,
                                         ImageUrl = showThumbUrl,
                                         Title = showTitle,
                                         VideoUrl = showUrl
