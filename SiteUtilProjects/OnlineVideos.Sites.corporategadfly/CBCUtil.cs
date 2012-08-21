@@ -101,19 +101,6 @@ namespace OnlineVideos.Sites
             return getvideos(contentData);
         }
 
-
-        public override bool CanSearch { get { return true; } }
-
-        public override List<VideoInfo> Search(string query)
-        {
-            string url = @"http://www.cbc.ca/search/cbc?json=true&sitesearch=www.cbc.ca/video/watch&q=" + HttpUtility.UrlEncode(query);
-            JObject contentData = GetWebData<JObject>(url);
-            JToken searchRes = contentData["searchResults"];
-
-            return getvideos(searchRes);
-        }
-
-
         private List<Category> getChildren(string parentID)
         {
             JObject contentData = GetWebData<JObject>(platformRoot + @"getCategoryList?PID=" + feedPID + "&field=ID&field=title&field=parentID&field=description&field=customData&field=hasChildren&field=fullTitle&query=ParentIDs|" + parentID);
