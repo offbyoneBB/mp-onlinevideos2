@@ -17,14 +17,18 @@ namespace OnlineVideos.Sites
     {
         private string feedPID;
         private string platformRoot = @"http://cbc.feeds.theplatform.com/ps/JSON/PortalService/2.2/";
-        private string baseUrl = @"http://www.cbc.ca/video";
+        private string feedPIDUrl = @"http://www.cbc.ca/video/js/SWFVideoPlayer.js";
+        private static Regex feedPIDRegex = new Regex(@"{PID:\s""(?<feedPID>[^""]*)"",",
+                                                      RegexOptions.Compiled);
 
         public override int DiscoverDynamicCategories()
         {
-            string webData = GetWebData(baseUrl);
-            Match m = Regex.Match(webData, @"var\sfeedPID\s=\s""(?<feedPID>[^""]*)""");
+            string webData = GetWebData(feedPIDUrl);
+            Match m = feedPIDRegex.Match(webData);
             if (m.Success)
                 feedPID = m.Groups["feedPID"].Value;
+            else
+                Log.Error("Feed PID not found for cbc.ca");
 
             List<Category> lst = new List<Category>();
             foreach (Category cat in getChildren("1221254309"))
