@@ -216,7 +216,7 @@ namespace OnlineVideos.Sites
             // sort the URLs ascending by bitrate
             foreach (var item in urlsDictionary.OrderBy(u => u.Key))
             {
-                video.PlaybackOptions.Add(item.Key.ToString(), item.Value);
+                video.PlaybackOptions.Add(string.Format(@"{0} kbps", item.Key.ToString()), item.Value);
                 // return last URL as the default (will be the highest bitrate)
                 result = item.Value;
             }
