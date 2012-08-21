@@ -23,7 +23,7 @@ namespace OnlineVideos.Sites
                                                           RegexOptions.Compiled);
         private static Regex airDateDurationRegex = new Regex(@"(?<airDate>[^\s]*)\s\|\s(?<duration>.*)",
                                                               RegexOptions.Compiled);
-        private static Regex videoIdRegex = new Regex(@"player=video_id=(?<videoId>[^,]*),",
+        private static Regex videoIdRegex = new Regex(@"(var\svideoCID\s=\s'(?<videoId>[^,]*|player=video_id=(?<videoId>[^,]*),)')",
                                                       RegexOptions.Compiled);
         private static string rtmpUrlListFormat = @"http://vmscdn-download.s3.amazonaws.com/videos_mcm/{0}.js";
         
