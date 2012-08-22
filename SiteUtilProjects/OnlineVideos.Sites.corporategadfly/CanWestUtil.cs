@@ -325,6 +325,7 @@ namespace OnlineVideos.Sites
                 XmlNode geolockReference = xml.SelectSingleNode(@"//a:ref", nsmRequest);
                 if (geolockReference != null)
                 {
+                    Log.Error(@"You are not in a geographic region that has access to this content.");
                     result = string.Format(@"{0}{1}",
                                            metaBaseValue,
                                            geolockReference.Attributes["src"].Value);
