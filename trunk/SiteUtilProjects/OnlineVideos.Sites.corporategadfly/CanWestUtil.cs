@@ -318,6 +318,18 @@ namespace OnlineVideos.Sites
                 // return last URL as the default (will be the highest bitrate)
                 result = item.Value;
             }
+            
+            // if result is still empty then perhaps we are geo-locked
+            if (string.IsNullOrEmpty(result))
+            {
+                XmlNode geolockReference = xml.SelectSingleNode(@"//a:ref", nsmRequest);
+                if (geolockReference != null)
+                {
+                    result = string.Format(@"{0}{1}",
+                                           metaBaseValue,
+                                           geolockReference.Attributes["src"].Value);
+                }
+            }
             return result;
         }
     }
