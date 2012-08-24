@@ -61,10 +61,8 @@ namespace OnlineVideos.Sites
 
         protected override List<VideoInfo> Parse(string url, string data)
         {
-            List<VideoInfo> res = base.Parse(url, data);
-            if (!String.IsNullOrEmpty(nextPageUrl))
-                nextPageUrl = nextPageUrl.Replace(@"/?", "?");
-            return res;
+            nextPageRegExUrlFormatString = url.Split('?')[0] + "{0}";
+            return base.Parse(url, data);
         }
 
         private static string GetSubString(string s, string start, string until)
