@@ -1204,13 +1204,13 @@
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<img\sclass="[^"]*"\s*src="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*(?:<img[^>]*>\s*</div>\s*<div\sclass="videoInfo">\s*)?<h2><a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a></h2>\s*(?:<p\sclass="editorialTeaserText">)?\s*<span\sclass="lessImportant">\s*(?<Airdate>[^<]*)</span>\s*(?<Description>[^<]*)<]]></item>
         <item key="nextPageRegEx"><![CDATA[<li><a\sdata-pagenumber="[^"]*"\shref="(?<url>[^\s]*)\s*">Volgende</a></li>]]></item>
-        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<embed\ssrc="(?<m0>[^"]*)"]]></item>
-        <item key="baseUrl"><![CDATA[http://nl.hardware.info/tv/]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[true]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<iframe\sclass="videoplayer"\ssrc="(?<m0>[^"]*)"></iframe>]]></item>
+        <item key="baseUrl"><![CDATA[http://nl.hardware.info/tv]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Laatste videos">http://nl.hardware.info/tv/</Category>
-        <Category xsi:type="RssLink" name="Losse Items">http://nl.hardware.info/tv/losse-items/</Category>
+        <Category xsi:type="RssLink" name="Laatste videos">http://nl.hardware.info/tv</Category>
+        <Category xsi:type="RssLink" name="Losse Items">http://nl.hardware.info/tv/losse-items</Category>
       </Categories>
     </Site>
     <Site name="Khan Academy" util="KhanAcademy" agecheck="false" enabled="true" lang="en">
