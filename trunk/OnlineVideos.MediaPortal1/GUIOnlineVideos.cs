@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -436,7 +437,7 @@ namespace OnlineVideos.MediaPortal1
                                 dlgSel.Add(string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Queued));
                                 dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("DownloadQueued", null));
 
-                                if (loadParamInfo != null && !string.IsNullOrEmpty(loadParamInfo.DownloadDir) && System.IO.Directory.Exists(loadParamInfo.DownloadDir))
+                                if (loadParamInfo != null && !string.IsNullOrEmpty(loadParamInfo.DownloadDir) && Directory.Exists(loadParamInfo.DownloadDir))
                                 {
                                     if (string.IsNullOrEmpty(loadParamInfo.DownloadMenuEntry))
                                         dlgSel.Add(Translation.Instance.DownloadUserdefined);
@@ -2372,7 +2373,10 @@ namespace OnlineVideos.MediaPortal1
             {
                 (factory.PreparedPlayer as OVSPLayer).GoFullscreen = goFullScreen;
 
-                if (!string.IsNullOrEmpty(playItem.Video.SubtitleText) || !string.IsNullOrEmpty(playItem.Video.SubtitleUrl) && Utils.IsValidUri(playItem.Video.SubtitleUrl))
+                Uri subtitleUri = null;
+                bool validUri = !String.IsNullOrEmpty(playItem.Video.SubtitleUrl) && Uri.TryCreate(playItem.Video.SubtitleUrl, UriKind.Absolute, out subtitleUri);
+
+                if (!string.IsNullOrEmpty(playItem.Video.SubtitleText) || (validUri && !subtitleUri.IsFile))
                 {
                     // download subtitle file before starting playback
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
@@ -2380,8 +2384,8 @@ namespace OnlineVideos.MediaPortal1
                         string subs = string.IsNullOrEmpty(playItem.Video.SubtitleText) ? Sites.SiteUtilBase.GetWebData(playItem.Video.SubtitleUrl) : playItem.Video.SubtitleText;
                         if (!string.IsNullOrEmpty(subs))
                         {
-                            string subFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "OnlineVideoSubtitles.txt");
-                            System.IO.File.WriteAllText(subFile, subs, System.Text.Encoding.UTF8);
+                            string subFile = Path.Combine(Path.GetTempPath(), "OnlineVideoSubtitles.txt");
+                            File.WriteAllText(subFile, subs, System.Text.Encoding.UTF8);
                             (factory.PreparedPlayer as OVSPLayer).SubtitleFile = subFile;
                         }
                         return true;
@@ -2394,6 +2398,8 @@ namespace OnlineVideos.MediaPortal1
                 }
                 else
                 {
+                    if (validUri && subtitleUri.IsFile)
+                        (factory.PreparedPlayer as OVSPLayer).SubtitleFile = subtitleUri.AbsolutePath;
                     Play_Step6(playItem, lsUrl, factory);
                 }
             }
@@ -2405,10 +2411,10 @@ namespace OnlineVideos.MediaPortal1
             g_Player.Factory = factory;
             try
             {
-				if (factory.PreparedPlayer is OnlineVideosPlayer)
-					g_Player.Play("http://localhost/OnlineVideo.mp4", g_Player.MediaType.Video); // hack to get around the MP 1.3 Alpha bug with non http URLs
-				else
-					g_Player.Play(lsUrl, g_Player.MediaType.Video);
+                if (factory.PreparedPlayer is OnlineVideosPlayer)
+                    g_Player.Play("http://localhost/OnlineVideo.mp4", g_Player.MediaType.Video); // hack to get around the MP 1.3 Alpha bug with non http URLs
+                else
+                    g_Player.Play(lsUrl, g_Player.MediaType.Video);
             }
             catch (Exception ex) // since many plugins attach to the g_Player.PlayBackStarted event, this might throw unexpected errors
             {
@@ -2627,32 +2633,32 @@ namespace OnlineVideos.MediaPortal1
             if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFolder))
             {
                 if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFileName))
-                    saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.OverrideFileName);
+                    saveItems.CurrentItem.LocalFile = Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.OverrideFileName);
                 else
-                    saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
+                    saveItems.CurrentItem.LocalFile = Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
             }
             else
             {
-                saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, saveItems.CurrentItem.Util.Settings.Name), saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
+                saveItems.CurrentItem.LocalFile = Path.Combine(Path.Combine(OnlineVideoSettings.Instance.DownloadDir, saveItems.CurrentItem.Util.Settings.Name), saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
             }
 
             if (saveItems.DownloadItems != null && saveItems.DownloadItems.Count > 1)
             {
                 saveItems.CurrentItem.LocalFile = string.Format(@"{0}\{1} - {2}#{3}{4}",
-                    System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
-                    System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile),
+                    Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
+                    Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile),
                     (saveItems.DownloadItems.IndexOf(saveItems.CurrentItem) + 1).ToString().PadLeft((saveItems.DownloadItems.Count).ToString().Length, '0'),
                     (saveItems.DownloadItems.Count).ToString(),
-                    System.IO.Path.GetExtension(saveItems.CurrentItem.LocalFile));
+                    Path.GetExtension(saveItems.CurrentItem.LocalFile));
             }
 
             saveItems.CurrentItem.LocalFile = Utils.GetNextFileName(saveItems.CurrentItem.LocalFile);
             saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.ImageUrl : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
 
             // make sure the target dir exists
-            if (!(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile))))
+            if (!(Directory.Exists(Path.GetDirectoryName(saveItems.CurrentItem.LocalFile))))
             {
-                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile));
+                Directory.CreateDirectory(Path.GetDirectoryName(saveItems.CurrentItem.LocalFile));
             }
 
             if (enque == true)
@@ -2743,17 +2749,17 @@ namespace OnlineVideos.MediaPortal1
                     if (saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http"))
                     {
                         string thumbFile = Utils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
-                        if (System.IO.File.Exists(thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
+                        if (File.Exists(thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
                         else if (ImageDownloader.DownloadAndCheckImage(saveItems.CurrentItem.ThumbFile, thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
                     }
                     // save thumb for this video as well if it exists
-                    if (!saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http") && System.IO.File.Exists(saveItems.CurrentItem.ThumbFile))
+                    if (!saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http") && File.Exists(saveItems.CurrentItem.ThumbFile))
                     {
-                        string localImageName = System.IO.Path.Combine(
-                            System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
-                            System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile))
-                            + System.IO.Path.GetExtension(saveItems.CurrentItem.ThumbFile);
-                        System.IO.File.Copy(saveItems.CurrentItem.ThumbFile, localImageName, true);
+                        string localImageName = Path.Combine(
+                            Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
+                            Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile))
+                            + Path.GetExtension(saveItems.CurrentItem.ThumbFile);
+                        File.Copy(saveItems.CurrentItem.ThumbFile, localImageName, true);
                     }
                 }
                 catch (Exception ex)
@@ -2765,7 +2771,7 @@ namespace OnlineVideos.MediaPortal1
                 int fileSize = saveItems.CurrentItem.KbTotal;
                 if (fileSize <= 0)
                 {
-                    try { fileSize = (int)((new System.IO.FileInfo(saveItems.CurrentItem.LocalFile)).Length / 1024); }
+                    try { fileSize = (int)((new FileInfo(saveItems.CurrentItem.LocalFile)).Length / 1024); }
                     catch { }
                 }
 
@@ -3180,18 +3186,18 @@ namespace OnlineVideos.MediaPortal1
             {
                 // use png with the same name as the Site - first check subfolder of current skin (allows skinners to use custom icons)
                 image = string.Format(@"{0}\Media\OnlineVideos\{1}s\{2}.png", GUIGraphicsContext.Skin, type, siteName);
-                if (!System.IO.File.Exists(image))
+                if (!File.Exists(image))
                 {
                     // use png with the same name as the Site
                     image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, siteName);
-                    if (!System.IO.File.Exists(image))
+                    if (!File.Exists(image))
                     {
                         image = string.Empty;
                         // if that does not exist, try image with the same name as the Util
                         if (!string.IsNullOrEmpty(utilName))
                         {
                             image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, utilName);
-                            if (!System.IO.File.Exists(image)) image = string.Empty;
+                            if (!File.Exists(image)) image = string.Empty;
                         }
                     }
                 }
