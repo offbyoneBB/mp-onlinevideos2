@@ -113,7 +113,16 @@ namespace OnlineVideos.Subtitles
 
                 List<FileInfo> subtitleFiles = sd.SaveSubtitle(minSub);
                 if (subtitleFiles.Count > 0)
+                {
+                    // for new version after 1.3.0.0
+                    /*
+                    string subFile = Path.Combine(Path.GetTempPath(), "OnlineVideoSubtitles.txt");
+                    File.Copy(subtitleFiles[0].FullName, subFile, true);
+                    video.SubtitleUrl = Uri.UriSchemeFile + Uri.SchemeDelimiter + subFile;
+                    */
+
                     video.SubtitleText = File.ReadAllText(subtitleFiles[0].FullName, System.Text.Encoding.UTF8);
+                }
                 foreach (FileInfo fi in subtitleFiles)
                     fi.Delete();
             }
