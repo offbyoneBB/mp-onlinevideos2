@@ -122,6 +122,8 @@ namespace OnlineVideos.Subtitles
                     */
 
                     video.SubtitleText = File.ReadAllText(subtitleFiles[0].FullName, System.Text.Encoding.UTF8);
+                    if (video.SubtitleText.IndexOf('�') != -1)
+                        video.SubtitleText = File.ReadAllText(subtitleFiles[0].FullName, System.Text.Encoding.Default);
                 }
                 foreach (FileInfo fi in subtitleFiles)
                     fi.Delete();
