@@ -282,7 +282,7 @@
         <item key="dynamicSubCategoriesRegEx"><![CDATA[ajax.php',\s'(?<url>getEpisodeListFromSeason[^']+)',[^>]+>(?<title>[^<]+)</a></li>]]></item>
         <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/php/ajax.php?action={0}]]></item>
         <item key="dynamicSubCategoryUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]+)">(?<Title>[^<]+)</a>\s*<[^>]+>\s*<[^>]+>\s*<div\sclass="tooltipTop">\s*<div\sclass="spacer10"></div>\s*<div\sclass="toolTipLeft"><img\ssrc="(?<ImageUrl>[^"]+)"\salt="[^<]+</div>\s*<div\sclass="toolTipRight"><h5>[^<]+</h5>(?<Description>[^<]+)</div>\s*[^']+'[^']+'[^']+'[^']+'[^']+'[^']+'[^']+'[^']+'"><a\shref="[^"]+">(?<Duration>[^<]+)</a></td>]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]+)"[^>]*>(?<Title>[^<]+)</a>\s*<[^>]+>\s*<[^>]+>\s*<div\sclass="tooltipTop">\s*<div\sclass="spacer10"></div>\s*<div\sclass="toolTipLeft"><img\ssrc="(?<ImageUrl>[^"]+)"\salt="[^<]+</div>\s*<div\sclass="toolTipRight"><h5>[^<]+</h5>(?<Description>[^<]+)</div>]]></item>
         <item key="playlistUrlRegEx"><![CDATA[load_vote_stars\('video',\s(?<url>[^,]+),]]></item>
         <item key="playlistUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/apps/video/getvideometadataxml.php?id={0}]]></item>
         <item key="fileUrlRegEx"><![CDATA[<url_flv><!\[CDATA\[(?<m0>[^\]]+)\]\]></url_flv>]]></item>
