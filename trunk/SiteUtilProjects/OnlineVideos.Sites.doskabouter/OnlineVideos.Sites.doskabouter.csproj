@@ -54,7 +54,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SubtitleDownloader">
-      <HintPath>C:\Program Files\Team MediaPortal\MediaPortal\SubtitleDownloader.dll</HintPath>
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\SubtitleDownloader.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
