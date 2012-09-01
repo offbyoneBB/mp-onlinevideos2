@@ -158,7 +158,7 @@ namespace OnlineVideos.Sites
                         Title = avDoc.SelectSingleNode("title").InnerText,
                         Airdate = avDoc.SelectSingleNode("webTime").InnerText,
                         Description = avDoc.SelectSingleNode("teaserText").InnerText,
-                        ImageUrl = avDoc.SelectSingleNode("teaserimages/teaserimage/url").InnerText,
+                        ImageUrl = avDoc.SelectSingleNode("teaserimages/teaserimage/url") != null ? avDoc.SelectSingleNode("teaserimages/teaserimage/url").InnerText : null,
                         Length = avDoc.SelectSingleNode("duration").InnerText,
                         PlaybackOptions = new Dictionary<string,string>()
                     };
@@ -166,8 +166,8 @@ namespace OnlineVideos.Sites
                     foreach (XmlElement asset in avDoc.SelectNodes("assets/asset[not(*[contains(name(),'rtsp')])]"))
                     {
                         string baseInfo = string.Format("{0}x{1} ({2}) | {3}:// | {4}",
-                        asset.SelectSingleNode("frameWidth").InnerText,
-                        asset.SelectSingleNode("frameHeight").InnerText,
+						asset.SelectSingleNode("frameWidth") != null ? asset.SelectSingleNode("frameWidth").InnerText : "?",
+                        asset.SelectSingleNode("frameHeight") != null ? asset.SelectSingleNode("frameHeight").InnerText : "?",
                         ((int.Parse(asset.SelectSingleNode("bitrateVideo").InnerText) + (asset.SelectSingleNode("bitrateAudio") != null ? int.Parse(asset.SelectSingleNode("bitrateAudio").InnerText) : 0)) / 1000).ToString() + " kbps",
                         new Uri(asset.SelectSingleNode("*[contains(name(),'URL') or contains(name(), 'Url')]").InnerText).Scheme,
                         asset.SelectSingleNode("mediaType").InnerText);
