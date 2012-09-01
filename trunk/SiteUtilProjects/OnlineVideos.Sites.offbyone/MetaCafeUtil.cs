@@ -46,22 +46,20 @@ namespace OnlineVideos.Sites
                         string error = HttpUtility.UrlDecode(m.Groups["error"].Value);
                         if (!string.IsNullOrEmpty(error)) throw new OnlineVideosException(error);
                     }
-
-                    string id = Regex.Match(dataPage, "value=\"itemID=(.+?)&").Groups[1].Value;
-                    dataPage = GetWebData("http://release.theplatform.com/content.select?format=SMIL&Tracking=true&balance=true&pid=" + id);
-                    System.Xml.XmlDocument xDoc = new System.Xml.XmlDocument();
-                    xDoc.LoadXml(dataPage);
-                    System.Xml.XmlElement elem = xDoc.SelectSingleNode("//*[local-name() = 'ref'][not(@tags)]") as System.Xml.XmlElement;
-                    string src = elem.GetAttribute("src");
-                    if (src.StartsWith("rtmp"))
-                    {
-                        string playpath = src.Substring(src.IndexOf("<break>") + "<break>".Length);
-                        if (playpath.ToLower().EndsWith(".mp4")) playpath = "mp4:" + playpath;
-                        src = src.Replace("ondemand/?", "ondemand/?ovpfv=1.1&?");
-                        src = src.Substring(0, src.IndexOf("<break>"));
-						return new MPUrlSourceFilter.RtmpUrl(src) { PageUrl = video.VideoUrl, SwfUrl = "http://www.cbs.com/thunder/chromeless/metacafe.swf", PlayPath = playpath }.ToString();
-                    }
-                    else return "";
+                    string id = Regex.Match(dataPage, @"id=""flashVars""\s+name=""flashvars""\s+value=""([^""]+)""").Groups[1].Value;
+					string mediaData = System.Web.HttpUtility.ParseQueryString(id)["mediaData"];
+					var json = Newtonsoft.Json.Linq.JObject.Parse(mediaData);
+					string url = json.First.First["mediaURL"].ToString();
+					List<string> parameters = new List<string>();
+					foreach (var item in json.First.First["access"])
+					{
+						parameters.Add(string.Format("{0}={1}", item["key"].ToString(), item["value"].ToString()));
+					}
+					if (parameters.Count > 0)
+					{
+						url += "?" + string.Join("&", parameters.ToArray());
+					}
+					return url;
                 }
             }
         }
