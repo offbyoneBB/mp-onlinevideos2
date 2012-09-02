@@ -69,42 +69,33 @@ namespace OnlineVideos.Sites
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
             string data = GetWebData(url);
- 
+
             //Make sure Regexp doesn't get copied over after search so save it in a new Regexp.
             Regex regEx_VideoListTmp = new Regex("");
+            Regex regEx_VideoListGameName = new Regex("");
+
             regEx_VideoListTmp = regEx_VideoList;
             string strRegEx_VideoList = "";
+            string strRegEx_VideoListGameName = "";
 
             string searchBase = "http://www.gametrailers.com/feeds/search/";
-
-            //Add checks for actual content, new site layout/content is buggy so this is a workaround for now.
-            if (url.Contains("&category") || url.Contains("platform_video_index"))
-            {
-
-                strRegEx_VideoList = @"<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^\?]*)\?""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\sclass=""thumbnail_bug_overlay""\ssrc=""[^""]*""\swidth=160\sheight=90\salt=""""\s/>\s*<img\ssrc=""[^""]*""\s*alt=""[^""]*""\s/>\s*</a>\s*<h3><a\shref=""[^""]*"">(?<gameName>[^<]*)</a></h3>\s*<h4><a\shref=""[^""]*""\sclass=""override_promo_font_color"">(?<Title>[^<]*)</a></h4>";
-                //strRegEx_VideoList = @"<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\sclass=""thumbnail_bug_overlay""\ssrc=""[^""]*""\swidth=160\sheight=90\salt=""""\s/>\s*<img\ssrc=""[^""]*""\s*alt=""(?<Title>[^""]*)""\s/>";
-                regEx_VideoListTmp = new Regex(strRegEx_VideoList);
-            }
-            else
-            {
-                strRegEx_VideoList = @"<meta\sitemprop=""name""\scontent=""[^""]*""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\ssrc=""[^""]*""\s*alt=""(?<Title>[^""]*)""\s/>";
-                regEx_VideoListTmp = new Regex(strRegEx_VideoList);
-            }
-
-            //Make exception for category trailers, layout it different for this one
-            if(url.Contains("category=Trailer"))
-            {
-
-                strRegEx_VideoList = @"<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\ssrc=""[^""]*""\s*alt=""[^""]*""\s/>\s*</a>\s*<h3><a\shref=""[^""]*"">(?<gameName>[^<]*)</a></h3>\s*<h4><a\shref=""[^""]*""\sclass=""override_promo_font_color"">(?<Title>[^<]*)</a></h4>";
-                regEx_VideoListTmp = new Regex(strRegEx_VideoList);
-            }
 
             //Replace Regexp with search friendly regexp
             if (url.StartsWith(searchBase))
             {
-                strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""[^""]*""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^\?]*)\?""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">\s*<img\sclass=""thumbnail_bug_overlay""\ssrc=""[^""]*""\swidth=160\sheight=90\salt=""""\s/>\s*<img\ssrc=""[^""]*""\s*alt=""[^""]*""\s/>\s*</a>\s*<h3><a\shref=""[^""]*"">(?<gameName>[^<]*)</a></h3>";
-                //string strRegEx_VideoList2 = @"<div\sclass=""holder""\sitemscope\sitemtype=""http://schema\.org/VideoObject"">\s*<meta\sitemprop=""url""\scontent=""(?<VideoUrl>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>";
+                strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""http://www\.gametrailers\.com/[^/]*/(?<tmpTitle>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">";
                 regEx_VideoListTmp = new Regex(strRegEx_VideoList);
+            }
+
+            //Hardcode regexp as we probably need to add workaround later (when GT changes their per-category layout once again)
+            else
+            {
+                strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""http://www\.gametrailers\.com/[^/]*/(?<tmpTitle>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">";
+                regEx_VideoListTmp = new Regex(strRegEx_VideoList);
+
+                //Full video title regexp
+                strRegEx_VideoListGameName = @"<h3><a\shref=""[^""]*"">(?<gameName>[^<]*)</a></h3>\s*<h4><a\shref=""[^""]*""\sclass=""override_promo_font_color"">(?<Title>[^<]*)</a></h4>";
+                regEx_VideoListGameName = new Regex(strRegEx_VideoListGameName);
             }
             if (data.Length > 0)
             {
@@ -115,30 +106,44 @@ namespace OnlineVideos.Sites
                         Log.Debug("USED URL: " + url);
                         Log.Debug("USED REGEX: " +strRegEx_VideoList); 
                         Match m = regEx_VideoListTmp.Match(data);
+                        Match m2 = regEx_VideoListGameName.Match(data);
+                        int counter = 0;
+                        int videoCount = 0;
+
                         while (m.Success)
                         {
                             VideoInfo videoInfo = CreateVideoInfo();
-                            if (url.StartsWith(searchBase) || url.Contains("category="))
-                            {
-                                videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m.Groups["Title"].Value);
-                            }
-                            else
-                            {
-                                videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
-                            }
 
-                            videoInfo.Title = videoInfo.Title.Replace(" Thumb", "").Replace(" thumb", "");
+                            videoInfo.Title = m.Groups["Title"].Value;
+
+                            //Try to retrieve full title (gameName + title) since these are listed differently per category or spread out, couldn't match those easily with one Regexp.
+                            if (!url.StartsWith(searchBase))
+                            {
+                                while (m2.Success)
+                                {
+                                    if (counter == videoCount)
+                                    {
+                                        videoInfo.Title = HttpUtility.HtmlDecode(m2.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m2.Groups["Title"].Value);
+                                        counter++;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
 
                             videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                             videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                             videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Trim();
-                            videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
+                            videoInfo.Description =HttpUtility.HtmlDecode(m.Groups["Description"].Value);
 
-                            //Added Title to description to avoid not being able to read long titles (unless you wait for scrolling to occur)
-                            videoInfo.Description = HttpUtility.HtmlDecode(m.Groups["Title"].Value) + Environment.NewLine + HttpUtility.HtmlDecode(m.Groups["Description"].Value);
+                            videoCount++;
                             videoList.Add(videoInfo);
                             m = m.NextMatch();
+                            m2 = m2.NextMatch();
                         }
+
                     }
                     catch (Exception eVideoListRetrieval)
                     {
