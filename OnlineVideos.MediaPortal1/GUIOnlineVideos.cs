@@ -2798,7 +2798,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     try
                     {
-                        VideoDownloaded(saveItems.CurrentItem.LocalFile, saveItems.CurrentItem.Util.Settings.Name, saveItems.CurrentItem.Category.RecursiveName(), saveItems.CurrentItem.Title);
+						VideoDownloaded(saveItems.CurrentItem.LocalFile, saveItems.CurrentItem.Util.Settings.Name, saveItems.CurrentItem.Category != null ? saveItems.CurrentItem.Category.RecursiveName() : "", saveItems.CurrentItem.Title);
                     }
                     catch (Exception ex)
                     {
