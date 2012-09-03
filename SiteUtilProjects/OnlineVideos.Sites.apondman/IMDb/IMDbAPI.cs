@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
         #region Regular Expression Patterns
 
-        static Regex videoTitleExpression = new Regex(@"^(?<filename>(.+?)_V1)(.+?)150_ZA(?<title>[^,]+),4(.+?)1_ZA(?<length>[\d:]+),164(.+?)(?<ext>\.[^\.]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static Regex videoTitleExpression = new Regex(@"^(?<filename>(.+?)_V1)(.+?)255,1_ZA(?<length>[\d:]+)(.+?)(?<ext>\.[^\.]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoFormatExpression = new Regex(@"case\s+'(?<format>[^']+)'\s+:\s+url = '(?<video>/video/[^']+)'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoFileExpression = new Regex(@"IMDbPlayer.playerKey = ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoPlayerExpression = new Regex(@"IMDbPlayer.playerType = ['""](?<player>[^'""]+)['""]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -328,7 +328,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                     {
                         HtmlNode v = node.FirstChild.SelectSingleNode("a/img[@class='video']");
 
-                        string src = v.Attributes["src"].Value;
+                        // the src is url encode twice so we decode it twice before parsing
+                        string src = HttpUtility.UrlDecode(HttpUtility.UrlDecode(v.Attributes["src"].Value));
                         Match m = videoTitleExpression.Match(src);
                         if (!m.Success) 
                         {
