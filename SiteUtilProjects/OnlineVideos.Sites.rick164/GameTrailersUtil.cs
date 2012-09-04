@@ -135,6 +135,7 @@ namespace OnlineVideos.Sites
 
                             videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                             videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+                            videoInfo.Airdate = m.Groups["Airdate"].Value;
                             videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Trim();
                             videoInfo.Description =HttpUtility.HtmlDecode(m.Groups["Description"].Value);
 
