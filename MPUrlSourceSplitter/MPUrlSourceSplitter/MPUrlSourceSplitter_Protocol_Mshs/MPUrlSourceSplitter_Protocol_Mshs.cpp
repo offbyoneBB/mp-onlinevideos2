@@ -707,7 +707,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
               METHOD_START_RECEIVING_DATA_NAME,
               this->configurationParameters,
               this->streamingMedia,
-              true);
+              false);
             CHECK_POINTER_HRESULT(result, this->streamFragments, result, E_POINTER);
           }
           else
@@ -1416,7 +1416,7 @@ CStreamFragmentCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragment
 
     result = (streamFragments->Count() > 0) ? result : E_FAIL;
 
-    /*if (SUCCEEDED(result) && (logCollection))
+    if (SUCCEEDED(result) && (logCollection))
     {
       wchar_t *streamFragmentLog = NULL;
       for (unsigned int i = 0; i < streamFragments->Count(); i++)
@@ -1434,7 +1434,7 @@ CStreamFragmentCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragment
       }
 
       FREE_MEM(streamFragmentLog);
-    }*/
+    }
   }
 
   if (FAILED(result))

@@ -817,13 +817,18 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
         {
           result = (this->bootstrapInfoBox->Parse(bootstrapInfo, bootstrapInfoLength)) ? result : HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
 
-          if (SUCCEEDED(result))
-          {
-            wchar_t *parsedBootstrapInfoBox = this->bootstrapInfoBox->GetParsedHumanReadable(L"");
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: parsed bootstrap info:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, parsedBootstrapInfoBox);
-            FREE_MEM(parsedBootstrapInfoBox);
-          }
-          else
+          //if (SUCCEEDED(result))
+          //{
+          //  //wchar_t *parsedBootstrapInfoBox = this->bootstrapInfoBox->GetParsedHumanReadable(L"");
+          //  //this->logger->Log(LOGGER_VERBOSE, L"%s: %s: parsed bootstrap info:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, parsedBootstrapInfoBox);
+          //  //FREE_MEM(parsedBootstrapInfoBox);
+          //}
+          //else
+          //{
+          //  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, L"cannot parse bootstrap info box");
+          //}
+
+          if (FAILED(result))
           {
             this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, L"cannot parse bootstrap info box");
           }
@@ -846,7 +851,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
         METHOD_START_RECEIVING_DATA_NAME,
         this->configurationParameters,
         this->bootstrapInfoBox,
-        true);
+        false);
       CHECK_POINTER_HRESULT(result, this->segmentsFragments, result, E_POINTER);
     }
   }
