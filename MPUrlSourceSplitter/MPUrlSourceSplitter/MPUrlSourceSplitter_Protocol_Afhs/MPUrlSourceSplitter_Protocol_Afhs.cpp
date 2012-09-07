@@ -817,16 +817,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
         {
           result = (this->bootstrapInfoBox->Parse(bootstrapInfo, bootstrapInfoLength)) ? result : HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
 
-          //if (SUCCEEDED(result))
-          //{
-          //  //wchar_t *parsedBootstrapInfoBox = this->bootstrapInfoBox->GetParsedHumanReadable(L"");
-          //  //this->logger->Log(LOGGER_VERBOSE, L"%s: %s: parsed bootstrap info:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, parsedBootstrapInfoBox);
-          //  //FREE_MEM(parsedBootstrapInfoBox);
-          //}
-          //else
-          //{
-          //  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, L"cannot parse bootstrap info box");
-          //}
+          /*if (SUCCEEDED(result))
+          {
+            wchar_t *parsedBootstrapInfoBox = this->bootstrapInfoBox->GetParsedHumanReadable(L"");
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: parsed bootstrap info:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, parsedBootstrapInfoBox);
+            FREE_MEM(parsedBootstrapInfoBox);
+          }*/
 
           if (FAILED(result))
           {
@@ -1507,11 +1503,11 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
                         uint64_t timestamp = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragmentTimestamp();
                         unsigned int firstFragment = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragment();
 
-                        if (fragmentRunEntryTableIndex > fragmentRunEntryTable->Count())
+                        if (fragmentRunEntryTableIndex >= fragmentRunEntryTable->Count())
                         {
                           // adjust fragment timestamp
-                          timestamp += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count()) * fragmentRunEntryTable->GetItem(fragmentRunEntryTable->Count() - 1)->GetFragmentDuration();
-                          firstFragment += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count());
+                          timestamp += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count() + 1) * fragmentRunEntryTable->GetItem(fragmentRunEntryTable->Count() - 1)->GetFragmentDuration();
+                          firstFragment += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count() + 1);
                         }
                         fragmentRunEntryTableIndex++;
                         wchar_t *url = FormatString(L"%sSeg%d-Frag%d", qualityUrl, j, firstFragment);
