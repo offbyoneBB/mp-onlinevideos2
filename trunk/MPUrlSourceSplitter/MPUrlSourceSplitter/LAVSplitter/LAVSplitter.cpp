@@ -860,9 +860,15 @@ DWORD CLAVSplitter::ThreadProc()
     HRESULT hr = S_OK;
     while(SUCCEEDED(hr) && !CheckRequest(&cmd))
     {
-      hr = (cmd == CMD_PAUSE) ? S_OK : DemuxNextPacket();
-
-      Sleep(1);
+      if (cmd == CMD_PAUSE)
+      {
+        hr = S_OK;
+        Sleep(1);
+      }
+      else
+      {
+        hr = DemuxNextPacket();
+      }
     }
 
     // If we didnt exit by request, deliver end-of-stream
