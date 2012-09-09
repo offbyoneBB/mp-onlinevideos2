@@ -33,21 +33,16 @@ namespace OnlineVideos.MediaPortal1.Player
             }
             else
             {
-                Action translatedAction = new Action();
-                if (ActionTranslator.GetAction((int)Window.WINDOW_FULLSCREEN_VIDEO, action.m_key, ref translatedAction))
+                // translate the action as if our window was the WINDOW_FULLSCREEN_VIDEO
+                if (ActionTranslator.GetAction((int)Window.WINDOW_FULLSCREEN_VIDEO, action.m_key, ref action))
                 {
-                    if (translatedAction.wID == Action.ActionType.ACTION_SHOW_OSD)
+                    if (action.wID == Action.ActionType.ACTION_SHOW_OSD) // handle the OSD action differently - we need to show our OSD
                     {
-                        base.OnAction(translatedAction);
+                        base.OnAction(action);
                         if (GUIWindowManager.VisibleOsd == Window.WINDOW_OSD)
                         {
                             GUIWindowManager.VisibleOsd = (Window)GUIOnlineVideoOSD.WINDOW_ONLINEVIDEOS_OSD;
                         }
-                        return;
-                    }
-                    if (translatedAction.wID == Action.ActionType.ACTION_ASPECT_RATIO)
-                    {
-                        base.OnAction(translatedAction);
                         return;
                     }
                 }
