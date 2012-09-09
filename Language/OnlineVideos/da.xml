@@ -1,178 +1,178 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Online Videos translation file -->
+ï»¿<?xml version="1.0" encoding="utf-8"?>
+<!-- OnlineVideos translation file -->
 <!-- Danish translation created/maintained by Mediaportal forum users msj33/steffansp - Last updated Rev 1651-->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<strings> 
+<resources> 
 
 <!-- A -->
-<string Field="Airdate">Vist i TV</string>
-<string Field="AlreadyDownloading">Fil downloades allerede</string>
-<string Field="All">Alle</string>
-<string Field="Actions">Handlinger</string>
-<string Field="Actors">Skuespillere</string>
-<string Field="AddToMySites">Tilføj til Mine Sider</string>
-<string Field="AddToFavourites">Tilføj til Favoritter</string>
-<string Field="AddingToFavorites">Tilføjer til Favoritter</string>
-<string Field="AutomaticUpdate">Autoupdate aktiveret</string>
-<string Field="AutomaticUpdateDisabled">Autoupdate deaktiveret</string>
+<string name="Airdate">Vist i TV</string>
+<string name="AlreadyDownloading">Fil downloades allerede</string>
+<string name="All">Alle</string>
+<string name="Actions">Handlinger</string>
+<string name="Actors">Skuespillere</string>
+<string name="AddToMySites">TilfÃ¸j til Mine Sider</string>
+<string name="AddToFavourites">TilfÃ¸j til Favoritter</string>
+<string name="AddingToFavorites">TilfÃ¸jer til Favoritter</string>
+<string name="AutomaticUpdate">Autoupdate aktiveret</string>
+<string name="AutomaticUpdateDisabled">Autoupdate deaktiveret</string>
 
 <!-- B -->
-<string Field="Broken">Ude af funktion</string>
-<string Field="Buffered">Indlæst</string>
+<string name="Broken">Ude af funktion</string>
+<string name="Buffered">IndlÃ¦st</string>
 
 <!-- C -->
-<string Field="Cancel">Annuller</string>
-<string Field="Category">Kategori</string>
-<string Field="Categories">Kategorier</string>
-<string Field="Creator">Lavet af</string>
-<string Field="CheckingForPluginUpdate">Søger efter ny version</string>
-<string Field="Concurrent">sideløbende</string>
+<string name="Cancel">Annuller</string>
+<string name="Category">Kategori</string>
+<string name="Categories">Kategorier</string>
+<string name="Creator">Lavet af</string>
+<string name="CheckingForPluginUpdate">SÃ¸ger efter ny version</string>
+<string name="Concurrent">sidelÃ¸bende</string>
 
 <!-- D -->
-<string Field="Date">Dato</string>
-<string Field="DateOfRelease">Udgivelsesdato</string>
-<string Field="Directors">Instruktører</string>
-<string Field="Download">Download</string>
-<string Field="DownloadUserdefined">Download til brugermappe</string>
-<string Field="Downloading">Downloader</string>
-<string Field="DownloadingDescription">Viser en liste over igangværende downloads</string>
-<string Field="DownloadingSubtitle">Henter undertekster</string>
-<string Field="DownloadFailed">Download fejlede</string>
-<string Field="DownloadCancelled">Download annulleret</string>
-<string Field="DownloadComplete">Download færdig</string>
-<string Field="DownloadStarted">Download Startet</string>
-<string Field="DownloadedVideos">Downloaded Videoer</string>
-<string Field="DownloadsWillBeAborted">Downloads vil blive afbrudt.</string>
-<string Field="Delete">Slet</string>
-<string Field="DeleteAll">Slet Alle</string>
-<string Field="Default">normal</string>
-<string Field="Done">Færdig</string>
-<string Field="DeletingOldThumbs">Slet gamle thumbnails</string>
+<string name="Date">Dato</string>
+<string name="DateOfRelease">Udgivelsesdato</string>
+<string name="Directors">InstruktÃ¸rer</string>
+<string name="Download">Download</string>
+<string name="DownloadUserdefined">Download til brugermappe</string>
+<string name="Downloading">Downloader</string>
+<string name="DownloadingDescription">Viser en liste over igangvÃ¦rende downloads</string>
+<string name="DownloadingSubtitle">Henter undertekster</string>
+<string name="DownloadFailed">Download fejlede</string>
+<string name="DownloadCancelled">Download annulleret</string>
+<string name="DownloadComplete">Download fÃ¦rdig</string>
+<string name="DownloadStarted">Download Startet</string>
+<string name="DownloadedVideos">Downloaded Videoer</string>
+<string name="DownloadsWillBeAborted">Downloads vil blive afbrudt.</string>
+<string name="Delete">Slet</string>
+<string name="DeleteAll">Slet Alle</string>
+<string name="Default">normal</string>
+<string name="Done">FÃ¦rdig</string>
+<string name="DeletingOldThumbs">Slet gamle thumbnails</string>
 
 <!-- E -->
-<string Field="Error">Fejl</string>
-<string Field="EnterPin">Indtast kode</string>
+<string name="Error">Fejl</string>
+<string name="EnterPin">Indtast kode</string>
 
 <!-- F -->
-<string Field="Favourites">Favoritter</string>
-<string Field="Filter">Filtrer</string>
-<string Field="FullUpdate">Fuld opdatering</string>
+<string name="Favourites">Favoritter</string>
+<string name="Filter">Filtrer</string>
+<string name="FullUpdate">Fuld opdatering</string>
 
 <!-- G -->
-<string Field="Genre">Genre</string>
-<string Field="GettingVideoDetails">Henter videodetaljer</string>
-<string Field="GettingCategoryVideos">Henter kategoridetaljer</string>
-<string Field="GettingFavoriteVideos">Henter favoritvideoer</string>
-<string Field="GettingSearchResults">Henter søgeresultater</string>
-<string Field="GettingRelatedVideos">Henter lignende videoer</string>
-<string Field="GettingFilteredVideos">Henter filtrerede videoer</string>
-<string Field="GettingNextPageVideos">Henter næste videoside</string>
-<string Field="GettingPreviousPageVideos">Henter forrige videoside</string>
-<string Field="GettingPlaybackUrlsForVideo">Henter video link</string>
-<string Field="GettingDynamicCategories">Henter dynamiske kategorier</string>
-<string Field="GettingReports">Henter rapport fra nettet</string>
-<string Field="GettingSiteXml">Henter xml fra nettet</string>
-<string Field="GettingIcon">Henter icon fra nettet</string>
-<string Field="GettingBanner">Henter banner fra nettet</string>
-<string Field="GettingDll">Henter DLL fra nettet</string>
-<string Field="Groups">Grupper</string>
+<string name="Genre">Genre</string>
+<string name="GettingVideoDetails">Henter videodetaljer</string>
+<string name="GettingCategoryVideos">Henter kategoridetaljer</string>
+<string name="GettingFavoriteVideos">Henter favoritvideoer</string>
+<string name="GettingSearchResults">Henter sÃ¸geresultater</string>
+<string name="GettingRelatedVideos">Henter lignende videoer</string>
+<string name="GettingFilteredVideos">Henter filtrerede videoer</string>
+<string name="GettingNextPageVideos">Henter nÃ¦ste videoside</string>
+<string name="GettingPreviousPageVideos">Henter forrige videoside</string>
+<string name="GettingPlaybackUrlsForVideo">Henter video link</string>
+<string name="GettingDynamicCategories">Henter dynamiske kategorier</string>
+<string name="GettingReports">Henter rapport fra nettet</string>
+<string name="GettingSiteXml">Henter xml fra nettet</string>
+<string name="GettingIcon">Henter icon fra nettet</string>
+<string name="GettingBanner">Henter banner fra nettet</string>
+<string name="GettingDll">Henter DLL fra nettet</string>
+<string name="Groups">Grupper</string>
 
 <!-- H -->
 
 <!-- I -->
 
 <!-- L -->
-<string Field="LatestVersionRequired">Nyeste version ({0}) påkrævet!</string>
-<string Field="Language">Sprog</string>
-<string Field="LayoutList">Listevisning</string>
-<string Field="LayoutIcons">Ikonvisning</string>
-<string Field="LayoutBigIcons">Ikonvisning stor</string>
+<string name="LatestVersionRequired">Nyeste version ({0}) pÃ¥krÃ¦vet!</string>
+<string name="Language">Sprog</string>
+<string name="LayoutList">Listevisning</string>
+<string name="LayoutIcons">Ikonvisning</string>
+<string name="LayoutBigIcons">Ikonvisning stor</string>
 
 <!-- M -->
-<string Field="ManageSites">Administrer sider</string>
-<string Field="MaxResults">Max resultater</string>
+<string name="ManageSites">Administrer sider</string>
+<string name="MaxResults">Max resultater</string>
 
 <!-- N -->
-<string Field="Name">Navn</string>
-<string Field="NextPage">Næste side</string>
-<string Field="NewVideos">Næste vidoer</string>
-<string Field="None">Ingen</string>
-<string Field="NoVideoFound">Ingen video fundet</string>
-<string Field="NoReportsForSite">Ingen rapporter fundet</string>
-<string Field="NewDllDownloaded">Ny dll downloaded</string>
-<string Field="NewSearch">Ny søgning</string>
+<string name="Name">Navn</string>
+<string name="NextPage">NÃ¦ste side</string>
+<string name="NewVideos">NÃ¦ste vidoer</string>
+<string name="None">Ingen</string>
+<string name="NoVideoFound">Ingen video fundet</string>
+<string name="NoReportsForSite">Ingen rapporter fundet</string>
+<string name="NewDllDownloaded">Ny dll downloaded</string>
+<string name="NewSearch">Ny sÃ¸gning</string>
 
 <!-- O -->
-<string Field="Others">Andet</string>
+<string name="Others">Andet</string>
 
 <!-- P -->
-<string Field="PlayAll">Afspil alle</string>
-<string Field="PlayWith">Afspil med ...</string>
-<string Field="Playlists">Playlister</string>
-<string Field="PlaybackWillBeStopped">Afspilningen vil blive stoppet.</string>
-<string Field="PleaseEnterDescription">Giv venligst en kort beskrivelse.</string>
-<string Field="PlotOutline">Handling</string>
-<string Field="PreviousPage">Forrige side</string>
-<string Field="PerformAutomaticUpdate">Skal der automatisk opdateres?</string>
+<string name="PlayAll">Afspil alle</string>
+<string name="PlayWith">Afspil med ...</string>
+<string name="Playlists">Playlister</string>
+<string name="PlaybackWillBeStopped">Afspilningen vil blive stoppet.</string>
+<string name="PleaseEnterDescription">Giv venligst en kort beskrivelse.</string>
+<string name="PlotOutline">Handling</string>
+<string name="PreviousPage">Forrige side</string>
+<string name="PerformAutomaticUpdate">Skal der automatisk opdateres?</string>
 
 <!-- Q -->
-<string Field="Queued">sat i kø</string>
+<string name="Queued">sat i kÃ¸</string>
 
 <!-- R -->
-<string Field="Recommendations">Anbefalinger</string>
-<string Field="RemoveFromFavorites">Fjern fra Favoritter</string>
-<string Field="RemovingFromFavorites">Fjerner fra Favoritter</string>
-<string Field="Refresh">Opdater</string>
-<string Field="RelatedVideos">Lignede Videoer</string>
-<string Field="ReportBroken">Reportér istykker</string>
-<string Field="Reported">Rapporteret</string>
-<string Field="Reports">Rapporter</string>
-<string Field="Runtime">Spilletid</string>
-<string Field="RemoveFromMySites">Fjern fra Mine sider</string>
-<string Field="RestartMediaPortal">Genstart Mediaportal!</string>
-<string Field="RetrievingRemoteDlls">Henter eksterne dll'er</string>
-<string Field="RetrievingRemoteSites">Henter eksterne sider</string>
+<string name="Recommendations">Anbefalinger</string>
+<string name="RemoveFromFavorites">Fjern fra Favoritter</string>
+<string name="RemovingFromFavorites">Fjerner fra Favoritter</string>
+<string name="Refresh">Opdater</string>
+<string name="RelatedVideos">Lignede Videoer</string>
+<string name="ReportBroken">ReportÃ©r istykker</string>
+<string name="Reported">Rapporteret</string>
+<string name="Reports">Rapporter</string>
+<string name="Runtime">Spilletid</string>
+<string name="RemoveFromMySites">Fjern fra Mine sider</string>
+<string name="RestartMediaPortal">Genstart Mediaportal!</string>
+<string name="RetrievingRemoteDlls">Henter eksterne dll'er</string>
+<string name="RetrievingRemoteSites">Henter eksterne sider</string>
 
 <!-- S -->
-<string Field="SearchHistory">Søgehistorik</string>
-<string Field="SearchResults">Søgeresultater</string>
-<string Field="SelectSource">Vælg kilde</string>
-<string Field="Sites">Sider</string>
-<string Field="Size">Størrelse</string>
-<string Field="SortOptions">Sorterings muligheder</string>
-<string Field="Search">Søg</string>
-<string Field="SetDownloadFolderInConfig">Konfigurer download mappe i Mediaportal konfiguration</string>
-<string Field="State">Status</string>
-<string Field="SavingLocalSiteList">Gemmer lokal side liste</string>
-<string Field="ShowReports">Vis rapporter fra Ejer/brugere</string>
-<string Field="StartingPlayback">Starter afspilning</string>
-<string Field="Subscriptions">Tilmeldinger</string>
-<string Field="Success">Succesfuld</string>
+<string name="SearchHistory">SÃ¸gehistorik</string>
+<string name="SearchResults">SÃ¸geresultater</string>
+<string name="SelectSource">VÃ¦lg kilde</string>
+<string name="Sites">Sider</string>
+<string name="Size">StÃ¸rrelse</string>
+<string name="SortOptions">Sorterings muligheder</string>
+<string name="Search">SÃ¸g</string>
+<string name="SetDownloadFolderInConfig">Konfigurer download mappe i Mediaportal konfiguration</string>
+<string name="State">Status</string>
+<string name="SavingLocalSiteList">Gemmer lokal side liste</string>
+<string name="ShowReports">Vis rapporter fra Ejer/brugere</string>
+<string name="StartingPlayback">Starter afspilning</string>
+<string name="Subscriptions">Tilmeldinger</string>
+<string name="Success">Succesfuld</string>
 
 <!-- T -->
-<string Field="Timeframe">Tidshorisont</string>
-<string Field="Timeout">Timeout</string>
-<string Field="Tags">Tags</string>
+<string name="Timeframe">Tidshorisont</string>
+<string name="Timeout">Timeout</string>
+<string name="Tags">Tags</string>
 
 <!-- U -->
-<string Field="Updated">Opdateret</string>
-<string Field="Updatable">Ny version tilgængelig</string>
-<string Field="UpdateAll">Opdater/Tilføj alle</string>
-<string Field="UpdateAllSkipCategories">Opdater/Tilføj alle (springer kategorier over</string>
-<string Field="UpdateMySite">Opdater sider</string>
-<string Field="UpdateMySiteSkipCategories">Opdater min siden(uden kategorier)</string>
-<string Field="UpdateAllYourSites">Dette vil opdatere dine sider</string>
-<string Field="UnableToPlayVideo">Kan ikke afspilles - Fejl i URL</string>
-<string Field="UnableToDownloadVideo">Kan ikke downloades - Fejl i URL</string>
-<string Field="UploadsBy">Oploadet af</string>
+<string name="Updated">Opdateret</string>
+<string name="Updatable">Ny version tilgÃ¦ngelig</string>
+<string name="UpdateAll">Opdater/TilfÃ¸j alle</string>
+<string name="UpdateAllSkipCategories">Opdater/TilfÃ¸j alle (springer kategorier over</string>
+<string name="UpdateMySite">Opdater sider</string>
+<string name="UpdateMySiteSkipCategories">Opdater min siden(uden kategorier)</string>
+<string name="UpdateAllYourSites">Dette vil opdatere dine sider</string>
+<string name="UnableToPlayVideo">Kan ikke afspilles - Fejl i URL</string>
+<string name="UnableToDownloadVideo">Kan ikke downloades - Fejl i URL</string>
+<string name="UploadsBy">Oploadet af</string>
 
 <!-- V -->
-<string Field="Videos">Videoer</string>
-<string Field="VideoQuality">Video kvalitet</string>
+<string name="Videos">Videoer</string>
+<string name="VideoQuality">Video kvalitet</string>
 
 <!-- W -->
-<string Field="Working">Arbejder</string>
-<string Field="Writers">Forfattere</string>
+<string name="Working">Arbejder</string>
+<string name="Writers">Forfattere</string>
 
 <!-- Y -->
-</strings>
+</resources>

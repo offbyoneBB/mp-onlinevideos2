@@ -1,216 +1,216 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Moving Pictures translation file -->
+ï»¿<?xml version="1.0" encoding="utf-8"?>
+<!-- OnlineVideos translation file -->
 <!-- Swedish -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<strings>  
+<resources>  
 
   <!-- A -->
-  <string Field="Airdate">Sändningsdatum</string>
-  <string Field="AlreadyDownloading">Filen laddas redan ned.</string>
-  <string Field="All">Alla</string>
-  <string Field="Actions">Händelser</string>
-  <string Field="Actors">Skådespelare</string>
-  <string Field="AddComment">Kommentera ...</string>
-  <string Field="AddToPlaylist">Lägg till i spellista ...</string>
-  <string Field="AddToMySites">Lägg till bland egna sidor</string>
-  <string Field="AddToFavourites">Lägg till bland favoriter</string>
-  <string Field="AddingToFavorites">lägger till bland favoriter</string>
-  <string Field="AutomaticUpdate">Automatisk uppdatering</string>
-  <string Field="AutomaticUpdateDisabled">Automatisk uppdatering är inte aktiv.</string>
+  <string name="Airdate">SÃ¤ndningsdatum</string>
+  <string name="AlreadyDownloading">Filen laddas redan ned.</string>
+  <string name="All">Alla</string>
+  <string name="Actions">HÃ¤ndelser</string>
+  <string name="Actors">SkÃ¥despelare</string>
+  <string name="AddComment">Kommentera ...</string>
+  <string name="AddToPlaylist">LÃ¤gg till i spellista ...</string>
+  <string name="AddToMySites">LÃ¤gg till bland egna sidor</string>
+  <string name="AddToFavourites">LÃ¤gg till bland favoriter</string>
+  <string name="AddingToFavorites">lÃ¤gger till bland favoriter</string>
+  <string name="AutomaticUpdate">Automatisk uppdatering</string>
+  <string name="AutomaticUpdateDisabled">Automatisk uppdatering Ã¤r inte aktiv.</string>
 
   <!-- B -->
-  <string Field="Broken">Trasig</string>
-  <string Field="Buffered">buffrat</string>
+  <string name="Broken">Trasig</string>
+  <string name="Buffered">buffrat</string>
 
   <!-- C -->
-  <string Field="Cancel">Avbryt</string>
-  <string Field="Category">Kategori</string>
-  <string Field="CategoryNotFound">Kategorin saknas</string>
-  <string Field="Categories">Kategorier</string>
-  <string Field="Creator">Skapad av</string>
-  <string Field="CreateNewPlaylist">Skapa ny Spellista ...</string>
-  <string Field="CheckingForPluginUpdate">söker efter uppdaterad plugin-version</string>
-  <string Field="Concurrent">samtidig</string>
+  <string name="Cancel">Avbryt</string>
+  <string name="Category">Kategori</string>
+  <string name="CategoryNotFound">Kategorin saknas</string>
+  <string name="Categories">Kategorier</string>
+  <string name="Creator">Skapad av</string>
+  <string name="CreateNewPlaylist">Skapa ny Spellista ...</string>
+  <string name="CheckingForPluginUpdate">sÃ¶ker efter uppdaterad plugin-version</string>
+  <string name="Concurrent">samtidig</string>
 
   <!-- D -->
-  <string Field="Date">Datum</string>
-  <string Field="DateOfRelease">Utkomstdatum</string>
-  <string Field="Directors">Regi</string>
-  <string Field="Download">Ladda ner</string>
-  <string Field="DownloadUserdefined">Ladda ner till förvald katalog</string>
-  <string Field="Downloading">Laddar ner</string>
-  <string Field="DownloadingDescription">Visar en lista över pågående nerladdningar</string>
-  <string Field="DownloadingSubtitle">hämtar undertext</string>
-  <string Field="DownloadFailed">Nerladdning misslyckades: {0}</string>
-  <string Field="DownloadCancelled">Nerladdning avbröts</string>
-  <string Field="DownloadComplete">Nerladdning färdig</string>
-  <string Field="DownloadStarted">Nerladdning påbörjad</string>  
-  <string Field="DownloadedVideos">Nerladdade videor</string>
-  <string Field="DownloadsWillBeAborted">Nerladdningar kommer att avbrytas.</string>
-  <string Field="Delete">Ta bort</string>
-  <string Field="DeletePlaylist">Ta bort spellista</string>
-  <string Field="DeleteAll">Ta bort samtliga</string>
-  <string Field="Default">Förvald</string>
-  <string Field="Done">Färdig</string>
-  <string Field="DeletingOldThumbs">Tar bort gamla tumnagelbilder</string>
+  <string name="Date">Datum</string>
+  <string name="DateOfRelease">Utkomstdatum</string>
+  <string name="Directors">Regi</string>
+  <string name="Download">Ladda ner</string>
+  <string name="DownloadUserdefined">Ladda ner till fÃ¶rvald katalog</string>
+  <string name="Downloading">Laddar ner</string>
+  <string name="DownloadingDescription">Visar en lista Ã¶ver pÃ¥gÃ¥ende nerladdningar</string>
+  <string name="DownloadingSubtitle">hÃ¤mtar undertext</string>
+  <string name="DownloadFailed">Nerladdning misslyckades: {0}</string>
+  <string name="DownloadCancelled">Nerladdning avbrÃ¶ts</string>
+  <string name="DownloadComplete">Nerladdning fÃ¤rdig</string>
+  <string name="DownloadStarted">Nerladdning pÃ¥bÃ¶rjad</string>  
+  <string name="DownloadedVideos">Nerladdade videor</string>
+  <string name="DownloadsWillBeAborted">Nerladdningar kommer att avbrytas.</string>
+  <string name="Delete">Ta bort</string>
+  <string name="DeletePlaylist">Ta bort spellista</string>
+  <string name="DeleteAll">Ta bort samtliga</string>
+  <string name="Default">FÃ¶rvald</string>
+  <string name="Done">FÃ¤rdig</string>
+  <string name="DeletingOldThumbs">Tar bort gamla tumnagelbilder</string>
 
   <!-- E -->
-  <string Field="Error">Fel</string>
-  <string Field="EnterPin">Skriv in lösen</string>
+  <string name="Error">Fel</string>
+  <string name="EnterPin">Skriv in lÃ¶sen</string>
 
   <!-- F -->
-  <string Field="Favourites">Favoriter</string>
-  <string Field="Filter">Filter</string>
-  <string Field="FullUpdate">Fullständig uppdatering</string>
+  <string name="Favourites">Favoriter</string>
+  <string name="Filter">Filter</string>
+  <string name="FullUpdate">FullstÃ¤ndig uppdatering</string>
 
   <!-- G -->
-  <string Field="Genre">Genre</string>
-  <string Field="GettingVideoDetails">hämtar videodetaljer</string>
-  <string Field="GettingCategoryVideos">hämtar kategorins videor</string>
-  <string Field="GettingFavoriteVideos">hämtar favoritvideor</string>
-  <string Field="GettingSearchResults">hämtar sökresultat</string>
-  <string Field="GettingRelatedVideos">hämtar relaterade videor</string>
-  <string Field="GettingFilteredVideos">hämtar filtrerade videor</string>
-  <string Field="GettingNextPageVideos">hämtar nästa sida med videor</string>
-  <string Field="GettingPreviousPageVideos">hämtar föregående sida med videor</string>
-  <string Field="GettingPlaybackUrlsForVideo">hämtar uppspelningsadresser för videor</string>
-  <string Field="GettingDynamicCategories">hämtar dynamiska kategorier</string>
-  <string Field="GettingReports">hämtar rapporter från webtjänst</string>
-  <string Field="GettingSiteXml">hämtar sidans xml från webtjänst</string>
-  <string Field="GettingIcon">hämtar sidans ikon från webtjänst</string>
-  <string Field="GettingBanner">hämtar sidans banner från webtjänst</string>
-  <string Field="GettingDll">hämtar dll från webtjänst</string>
-  <string Field="Groups">Grupper</string>  
+  <string name="Genre">Genre</string>
+  <string name="GettingVideoDetails">hÃ¤mtar videodetaljer</string>
+  <string name="GettingCategoryVideos">hÃ¤mtar kategorins videor</string>
+  <string name="GettingFavoriteVideos">hÃ¤mtar favoritvideor</string>
+  <string name="GettingSearchResults">hÃ¤mtar sÃ¶kresultat</string>
+  <string name="GettingRelatedVideos">hÃ¤mtar relaterade videor</string>
+  <string name="GettingFilteredVideos">hÃ¤mtar filtrerade videor</string>
+  <string name="GettingNextPageVideos">hÃ¤mtar nÃ¤sta sida med videor</string>
+  <string name="GettingPreviousPageVideos">hÃ¤mtar fÃ¶regÃ¥ende sida med videor</string>
+  <string name="GettingPlaybackUrlsForVideo">hÃ¤mtar uppspelningsadresser fÃ¶r videor</string>
+  <string name="GettingDynamicCategories">hÃ¤mtar dynamiska kategorier</string>
+  <string name="GettingReports">hÃ¤mtar rapporter frÃ¥n webtjÃ¤nst</string>
+  <string name="GettingSiteXml">hÃ¤mtar sidans xml frÃ¥n webtjÃ¤nst</string>
+  <string name="GettingIcon">hÃ¤mtar sidans ikon frÃ¥n webtjÃ¤nst</string>
+  <string name="GettingBanner">hÃ¤mtar sidans banner frÃ¥n webtjÃ¤nst</string>
+  <string name="GettingDll">hÃ¤mtar dll frÃ¥n webtjÃ¤nst</string>
+  <string name="Groups">Grupper</string>  
 
   <!-- H -->
 
   <!-- I -->
 
   <!-- L -->
-  <string Field="LatestVersionRequired">Senaste versionen ({0}) krävs!</string>
-  <string Field="Language">Språk</string>
-  <string Field="LayoutList">Layout: Lista</string>
-  <string Field="LayoutIcons">Layout: Ikoner</string>
-  <string Field="LayoutBigIcons">Layout: Stora ikoner</string>
+  <string name="LatestVersionRequired">Senaste versionen ({0}) krÃ¤vs!</string>
+  <string name="Language">SprÃ¥k</string>
+  <string name="LayoutList">Layout: Lista</string>
+  <string name="LayoutIcons">Layout: Ikoner</string>
+  <string name="LayoutBigIcons">Layout: Stora ikoner</string>
 
   <!-- M -->
-  <string Field="ManageSites">Hantera websidor</string>
-  <string Field="MaxResults">Högsta antal träffar</string>
+  <string name="ManageSites">Hantera websidor</string>
+  <string name="MaxResults">HÃ¶gsta antal trÃ¤ffar</string>
 
   <!-- N -->
-  <string Field="Name">Namn</string>
-  <string Field="NextPage">Nästa sida</string>
-  <string Field="NewVideos">Nya videor</string>
-  <string Field="None">Inga</string>
-  <string Field="NoVideoFound">Ingen video funnen</string>
-  <string Field="NoReportsForSite">Inga rapporter är tillgängliga för denna sida.</string>
-  <string Field="NewDllDownloaded">Ny dll hämtad!</string>
-  <string Field="NewSearch">Ny sökning</string>
+  <string name="Name">Namn</string>
+  <string name="NextPage">NÃ¤sta sida</string>
+  <string name="NewVideos">Nya videor</string>
+  <string name="None">Inga</string>
+  <string name="NoVideoFound">Ingen video funnen</string>
+  <string name="NoReportsForSite">Inga rapporter Ã¤r tillgÃ¤ngliga fÃ¶r denna sida.</string>
+  <string name="NewDllDownloaded">Ny dll hÃ¤mtad!</string>
+  <string name="NewSearch">Ny sÃ¶kning</string>
 
   <!-- O -->
-  <string Field="OnlyLocal">Endast lokalt</string>
-  <string Field="OnlyServer">Endast server</string>
-  <string Field="Others">Övriga</string>
+  <string name="OnlyLocal">Endast lokalt</string>
+  <string name="OnlyServer">Endast server</string>
+  <string name="Others">Ã–vriga</string>
 
   <!-- P -->
-  <string Field="PlayAll">Spela samtliga</string>
-  <string Field="PlayAllRandom">Spela samtliga (slumpa ordning)</string>
-  <string Field="PlayWith">Spela med ...</string>
-  <string Field="Playlists">Spellistor</string>
-  <string Field="PlaybackWillBeStopped">Uppspelning kommer att stoppas.</string>
-  <string Field="PleaseEnterDescription">Ge en kort beskrivning, tack.</string>
-  <string Field="PlotOutline">Handlingen i korthet</string>
-  <string Field="PreviousPage">Föregående sida</string>
-  <string Field="PerformAutomaticUpdate">Uppdatera automatiskt nu?</string>
+  <string name="PlayAll">Spela samtliga</string>
+  <string name="PlayAllRandom">Spela samtliga (slumpa ordning)</string>
+  <string name="PlayWith">Spela med ...</string>
+  <string name="Playlists">Spellistor</string>
+  <string name="PlaybackWillBeStopped">Uppspelning kommer att stoppas.</string>
+  <string name="PleaseEnterDescription">Ge en kort beskrivning, tack.</string>
+  <string name="PlotOutline">Handlingen i korthet</string>
+  <string name="PreviousPage">FÃ¶regÃ¥ende sida</string>
+  <string name="PerformAutomaticUpdate">Uppdatera automatiskt nu?</string>
 
   <!-- Q -->
-  <string Field="Queued">köad</string>
+  <string name="Queued">kÃ¶ad</string>
   
   <!-- R -->
-  <string Field="RateVideo">Betygsätt videon ...</string>
-  <string Field="Recommendations">Rekommendationer</string>
-  <string Field="RemoveFromFavorites">Ta bort från favoriter</string>
-  <string Field="RemoveFromPlaylist">Ta bort från spellistan</string>
-  <string Field="RemovingFromFavorites">tar bort från favoriter</string>
-  <string Field="Refresh">Uppdatera</string>
-  <string Field="RelatedVideos">Relaterade videor</string>
-  <string Field="ReportBroken">Rapportera som trasig</string>
-  <string Field="Reported">Rapporterad</string>
-  <string Field="Reports">Rapporter</string>
-  <string Field="Runtime">Speltid</string>
-  <string Field="RemoveFromMySites">Ta bort från egna sidor</string>
-  <string Field="RemoveAllFromMySites">Ta bort alla från egna sidor</string>
-  <string Field="RestartMediaPortal">Starta om MediaPortal!</string>
-  <string Field="RetrievingRemoteDlls">Hämtar dll från Internet ...</string>
-  <string Field="RetrievingRemoteSites">Hämtar sidinformation från Internet ...</string>
+  <string name="RateVideo">BetygsÃ¤tt videon ...</string>
+  <string name="Recommendations">Rekommendationer</string>
+  <string name="RemoveFromFavorites">Ta bort frÃ¥n favoriter</string>
+  <string name="RemoveFromPlaylist">Ta bort frÃ¥n spellistan</string>
+  <string name="RemovingFromFavorites">tar bort frÃ¥n favoriter</string>
+  <string name="Refresh">Uppdatera</string>
+  <string name="RelatedVideos">Relaterade videor</string>
+  <string name="ReportBroken">Rapportera som trasig</string>
+  <string name="Reported">Rapporterad</string>
+  <string name="Reports">Rapporter</string>
+  <string name="Runtime">Speltid</string>
+  <string name="RemoveFromMySites">Ta bort frÃ¥n egna sidor</string>
+  <string name="RemoveAllFromMySites">Ta bort alla frÃ¥n egna sidor</string>
+  <string name="RestartMediaPortal">Starta om MediaPortal!</string>
+  <string name="RetrievingRemoteDlls">HÃ¤mtar dll frÃ¥n Internet ...</string>
+  <string name="RetrievingRemoteSites">HÃ¤mtar sidinformation frÃ¥n Internet ...</string>
 
   <!-- S -->
-  <string Field="SearchHistory">Sökhistorik</string>
-  <string Field="SearchResults">Sökresultat</string>
-  <string Field="SelectSource">Välj källa</string>
-  <string Field="Sites">Sidor</string>
-  <string Field="Size">Storlek</string>  
-  <string Field="SortOptions">Sorteringsval</string>
-  <string Field="Search">Sök</string>
-  <string Field="SetDownloadFolderInConfig">Välj först en destinationsfolder under inställningar!</string>
-  <string Field="State">Läge</string>
-  <string Field="SavingLocalSiteList">Sparar lista med lokala sidor ...</string>
-  <string Field="ShowReports">Visa rapporter av skapare och användare</string>
-  <string Field="StartingPlayback">påbörjar uppspelning</string>
-  <string Field="Subscriptions">Prenumerationer</string>
-  <string Field="Success">Succé</string>
+  <string name="SearchHistory">SÃ¶khistorik</string>
+  <string name="SearchResults">SÃ¶kresultat</string>
+  <string name="SelectSource">VÃ¤lj kÃ¤lla</string>
+  <string name="Sites">Sidor</string>
+  <string name="Size">Storlek</string>  
+  <string name="SortOptions">Sorteringsval</string>
+  <string name="Search">SÃ¶k</string>
+  <string name="SetDownloadFolderInConfig">VÃ¤lj fÃ¶rst en destinationsfolder under instÃ¤llningar!</string>
+  <string name="State">LÃ¤ge</string>
+  <string name="SavingLocalSiteList">Sparar lista med lokala sidor ...</string>
+  <string name="ShowReports">Visa rapporter av skapare och anvÃ¤ndare</string>
+  <string name="StartingPlayback">pÃ¥bÃ¶rjar uppspelning</string>
+  <string name="Subscriptions">Prenumerationer</string>
+  <string name="Success">SuccÃ©</string>
 
   <!-- T -->
-  <string Field="Timeframe">Tidsram</string>
-  <string Field="Timeout">Timeout</string>
-  <string Field="Tags">Taggar</string>
+  <string name="Timeframe">Tidsram</string>
+  <string name="Timeout">Timeout</string>
+  <string name="Tags">Taggar</string>
 
   <!-- U -->
-  <string Field="Updated">Uppdaterade</string>
-  <string Field="Updatable">Uppdatering tillgänglig</string>
-  <string Field="UpdateAll">Uppdatera/Lägg till alla</string>
-  <string Field="UpdateAllSkipCategories">Uppdatera/Lägg till alla (skippa kategorier)</string>
-  <string Field="UpdateMySite">Uppdatera egen sida</string>
-  <string Field="UpdateMySiteSkipCategories">Uppdatera egna sidor (skippa kategorier)</string>
-  <string Field="UpdateAllYourSites">Detta kommer att uppdatera alla eget valda sidor.</string>
-  <string Field="UnableToPlayVideo">Kan inte spela videon. Saknar URL.</string>
-  <string Field="UnableToDownloadVideo">Kan inte ladda ner videon. Ogiltig URL.</string>
-  <string Field="UploadsBy">uppladdningar av</string>
+  <string name="Updated">Uppdaterade</string>
+  <string name="Updatable">Uppdatering tillgÃ¤nglig</string>
+  <string name="UpdateAll">Uppdatera/LÃ¤gg till alla</string>
+  <string name="UpdateAllSkipCategories">Uppdatera/LÃ¤gg till alla (skippa kategorier)</string>
+  <string name="UpdateMySite">Uppdatera egen sida</string>
+  <string name="UpdateMySiteSkipCategories">Uppdatera egna sidor (skippa kategorier)</string>
+  <string name="UpdateAllYourSites">Detta kommer att uppdatera alla eget valda sidor.</string>
+  <string name="UnableToPlayVideo">Kan inte spela videon. Saknar URL.</string>
+  <string name="UnableToDownloadVideo">Kan inte ladda ner videon. Ogiltig URL.</string>
+  <string name="UploadsBy">uppladdningar av</string>
 
   <!-- V -->
-  <string Field="Videos">Videor</string>
-  <string Field="VideoQuality">Videokvalitet</string>
+  <string name="Videos">Videor</string>
+  <string name="VideoQuality">Videokvalitet</string>
 
   <!-- W -->
-  <string Field="Working">Arbetar</string>
-  <string Field="Writers">Skrivet av</string>
+  <string name="Working">Arbetar</string>
+  <string name="Writers">Skrivet av</string>
 
   <!-- Y -->
 
   <!-- Strings from the settings file -->
-  <string Field="Settings_Yes">Ja</string>
-  <string Field="Settings_No">Nej</string>
-  <string Field="Settings_SearchHistoryType_Off">Av</string>
-  <string Field="Settings_SearchHistoryType_Simple">Enkel</string>
-  <string Field="Settings_SearchHistoryType_Extended">Utökad</string>
-  <string Field="Settings_BasicHomeName">Basic Home-namn</string>
-  <string Field="Settings_PluginEnabled">Plugin Aktiv</string>
-  <string Field="Settings_ListedInHome">Visas i Home-skärmen</string>
-  <string Field="Settings_ListedInPlugins">Visas i Plugins</string>
-  <string Field="Settings_AutoGroupByLang">Gruppera automatiskt alla sidor efter språk</string>
-  <string Field="Settings_UseQuickSelect">Använd alfanumeriska knapptryckningar för att navigera snabbare i listor</string>
-  <string Field="Settings_SearchHistoryType">Sökhistorik</string>
-  <string Field="Settings_ThumbAge">Max antal dagar att behålla tumnagelbilder</string>
-  <string Field="Settings_CacheTimeout">Tid (minuter) innan cache laddas om från Internet</string>
-  <string Field="Settings_CategoryDiscoveryTimeout">Tid (minuter) innan kategorier laddas om från Internet</string>
-  <string Field="Settings_UtilTimeout">Timeout (sekunder) för begäran mot Internet</string>
-  <string Field="Settings_WmpBuffer">Buffring (millisekunder) för Windows Media Player</string>
-  <string Field="Settings_PlayBuffer">Procent att buffra innan uppspelning startar</string>
-  <string Field="Settings_AllowRefreshrateChange">Tillåt dynamisk refresh rate-tillämpning</string>
-  <string Field="Settings_FavoritesFirst">Lägg favoriter samt Nerladdningar längst upp i listan istället för längst ner</string>
-  <string Field="Settings_LatestVideosRandomize">Slumpa alla nya videor innan de visas</string>
-  <string Field="Settings_LatestVideosOnlineDataRefresh">Uppdatera senaste video-datan från Internet varje x minuter</string>
-  <string Field="Settings_LatestVideosGuiDataRefresh">Uppdatera visad lista över senaste videor varje x antal minuter</string>
-  <string Field="Settings_StoreLayoutPerCategory">Kom ihåg vy-layout för sidor och kategorier</string>
+  <string name="Settings_Yes">Ja</string>
+  <string name="Settings_No">Nej</string>
+  <string name="Settings_SearchHistoryType_Off">Av</string>
+  <string name="Settings_SearchHistoryType_Simple">Enkel</string>
+  <string name="Settings_SearchHistoryType_Extended">UtÃ¶kad</string>
+  <string name="Settings_BasicHomeName">Basic Home-namn</string>
+  <string name="Settings_PluginEnabled">Plugin Aktiv</string>
+  <string name="Settings_ListedInHome">Visas i Home-skÃ¤rmen</string>
+  <string name="Settings_ListedInPlugins">Visas i Plugins</string>
+  <string name="Settings_AutoGroupByLang">Gruppera automatiskt alla sidor efter sprÃ¥k</string>
+  <string name="Settings_UseQuickSelect">AnvÃ¤nd alfanumeriska knapptryckningar fÃ¶r att navigera snabbare i listor</string>
+  <string name="Settings_SearchHistoryType">SÃ¶khistorik</string>
+  <string name="Settings_ThumbAge">Max antal dagar att behÃ¥lla tumnagelbilder</string>
+  <string name="Settings_CacheTimeout">Tid (minuter) innan cache laddas om frÃ¥n Internet</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Tid (minuter) innan kategorier laddas om frÃ¥n Internet</string>
+  <string name="Settings_UtilTimeout">Timeout (sekunder) fÃ¶r begÃ¤ran mot Internet</string>
+  <string name="Settings_WmpBuffer">Buffring (millisekunder) fÃ¶r Windows Media Player</string>
+  <string name="Settings_PlayBuffer">Procent att buffra innan uppspelning startar</string>
+  <string name="Settings_AllowRefreshrateChange">TillÃ¥t dynamisk refresh rate-tillÃ¤mpning</string>
+  <string name="Settings_FavoritesFirst">LÃ¤gg favoriter samt Nerladdningar lÃ¤ngst upp i listan istÃ¤llet fÃ¶r lÃ¤ngst ner</string>
+  <string name="Settings_LatestVideosRandomize">Slumpa alla nya videor innan de visas</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Uppdatera senaste video-datan frÃ¥n Internet varje x minuter</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Uppdatera visad lista Ã¶ver senaste videor varje x antal minuter</string>
+  <string name="Settings_StoreLayoutPerCategory">Kom ihÃ¥g vy-layout fÃ¶r sidor och kategorier</string>
 
-</strings>
+</resources>

@@ -1,117 +1,117 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
+<!-- OnlineVideos translation file -->
 <!-- Spanish -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<strings>
+<resources>
 
   <!-- A -->
-  <string Field="Airdate">Emitido</string>
-  <string Field="AlreadyDownloading">Descargando el archivo.</string>
-  <string Field="All">Todos</string>
-  <string Field="Actions">Acciones</string>
-  <string Field="Actors">Actores:</string>
-  <string Field="AddToMySites">Añadir a mis sitios</string>
-  <string Field="AddToFavourites">Añadir a favoritos</string>  
+  <string name="Airdate">Emitido</string>
+  <string name="AlreadyDownloading">Descargando el archivo.</string>
+  <string name="All">Todos</string>
+  <string name="Actions">Acciones</string>
+  <string name="Actors">Actores:</string>
+  <string name="AddToMySites">Añadir a mis sitios</string>
+  <string name="AddToFavourites">Añadir a favoritos</string>  
 
   <!-- B -->
-  <string Field="Broken">Roto</string>
+  <string name="Broken">Roto</string>
 
   <!-- C -->
-  <string Field="Category">Categoría</string>
-  <string Field="Creator">Creador</string>  
+  <string name="Category">Categoría</string>
+  <string name="Creator">Creador</string>  
 
   <!-- D -->
-  <string Field="DateOfRelease">Añadido el:</string>
-  <string Field="Directors">Directores</string>
-  <string Field="Download">Descargar</string>
-  <string Field="DownloadFailed">Error en la descarga: {0}</string>
-  <string Field="DownloadComplete">Descarga completa</string>
-  <string Field="DownloadedVideos">Vídeos descargados</string>
-  <string Field="Delete">Eliminar</string>
-  <string Field="Default">Por defecto</string>
-  <string Field="Done">Hecho</string>
+  <string name="DateOfRelease">Añadido el:</string>
+  <string name="Directors">Directores</string>
+  <string name="Download">Descargar</string>
+  <string name="DownloadFailed">Error en la descarga: {0}</string>
+  <string name="DownloadComplete">Descarga completa</string>
+  <string name="DownloadedVideos">Vídeos descargados</string>
+  <string name="Delete">Eliminar</string>
+  <string name="Default">Por defecto</string>
+  <string name="Done">Hecho</string>
 
   <!-- E -->
-  <string Field="Error">Error</string>
-  <string Field="EnterPin">PIN</string>
+  <string name="Error">Error</string>
+  <string name="EnterPin">PIN</string>
 
   <!-- F -->
-  <string Field="Favourites">Favoritos</string>
-  <string Field="Filter">Filtrar</string>
-  <string Field="FullUpdate">Actualización completa</string>
+  <string name="Favourites">Favoritos</string>
+  <string name="Filter">Filtrar</string>
+  <string name="FullUpdate">Actualización completa</string>
 
   <!-- G -->
-  <string Field="Genre">Género:</string>
+  <string name="Genre">Género:</string>
 
   <!-- H -->
 
   <!-- I -->
 
   <!-- L -->
-  <string Field="Language">Idioma</string>
-  <string Field="LayoutList">Vista: Lista</string>
-  <string Field="LayoutIcons">Vista: Icónos</string>
-  <string Field="LayoutBigIcons">Vista: Iconos grandes</string>
+  <string name="Language">Idioma</string>
+  <string name="LayoutList">Vista: Lista</string>
+  <string name="LayoutIcons">Vista: Icónos</string>
+  <string name="LayoutBigIcons">Vista: Iconos grandes</string>
 
   <!-- M -->
-  <string Field="ManageSites">Organizar sitios</string>
-  <string Field="MaxResults">Máx resultados</string>
+  <string name="ManageSites">Organizar sitios</string>
+  <string name="MaxResults">Máx resultados</string>
 
   <!-- N -->
-  <string Field="Name">Nombre</string>
-  <string Field="NextPage">Siguiente página</string>
-  <string Field="None">Nada</string>
-  <string Field="NoVideoFound">No se encontró el vídeo</string>
-  <string Field="NewDllDownloaded">¡Nueva DLL descargada!</string>
+  <string name="Name">Nombre</string>
+  <string name="NextPage">Siguiente página</string>
+  <string name="None">Nada</string>
+  <string name="NoVideoFound">No se encontró el vídeo</string>
+  <string name="NewDllDownloaded">¡Nueva DLL descargada!</string>
 
   <!-- O -->
 
   <!-- P -->
-  <string Field="PlayAll">Reproducir todos</string>
-  <string Field="PlotOutline">Sinopsis:</string>
-  <string Field="PreviousPage">Página anterior</string>
-  <string Field="PerformAutomaticUpdate">¿Actualizar automáticamente?</string>
+  <string name="PlayAll">Reproducir todos</string>
+  <string name="PlotOutline">Sinopsis:</string>
+  <string name="PreviousPage">Página anterior</string>
+  <string name="PerformAutomaticUpdate">¿Actualizar automáticamente?</string>
 
   <!-- R -->
-  <string Field="RemoveFromFavorites">Eliminar de favoritos</string>
-  <string Field="Refresh">Actualizar</string>
-  <string Field="RelatedVideos">Vídeos similares</string>
-  <string Field="Reported">Reportado</string>
-  <string Field="Runtime">Duración:</string>
-  <string Field="RemoveFromMySites">Eliminar de mis sitios</string>
-  <string Field="RestartMediaPortalAndAutomaticUpdate">Reiniciar Mediaportal y actualizar automáticamente!</string>
-  <string Field="RetrievingRemoteDlls">Recibiendo DLLs online...</string>
-  <string Field="RetrievingRemoteSites">Recibiendo sitios online...</string>
+  <string name="RemoveFromFavorites">Eliminar de favoritos</string>
+  <string name="Refresh">Actualizar</string>
+  <string name="RelatedVideos">Vídeos similares</string>
+  <string name="Reported">Reportado</string>
+  <string name="Runtime">Duración:</string>
+  <string name="RemoveFromMySites">Eliminar de mis sitios</string>
+  <string name="RestartMediaPortalAndAutomaticUpdate">Reiniciar Mediaportal y actualizar automáticamente!</string>
+  <string name="RetrievingRemoteDlls">Recibiendo DLLs online...</string>
+  <string name="RetrievingRemoteSites">Recibiendo sitios online...</string>
 
   <!-- S -->
-  <string Field="SearchResults">Resultados de búsqueda</string>
-  <string Field="SelectSource">Seleccionar fuente</string>
-  <string Field="SortOptions">Opciones de filtrado</string>
-  <string Field="Search">Buscar</string>  
-  <string Field="SetDownloadFolderInConfig">Por favor, elija una carpeta de descarga.</string>
-  <string Field="State">Estado</string>
-  <string Field="SavingLocalSiteList">Guardando la lista de sitios...</string>
-  <string Field="ShowReports">Mostrar reportes del creador y del usuario</string>
+  <string name="SearchResults">Resultados de búsqueda</string>
+  <string name="SelectSource">Seleccionar fuente</string>
+  <string name="SortOptions">Opciones de filtrado</string>
+  <string name="Search">Buscar</string>  
+  <string name="SetDownloadFolderInConfig">Por favor, elija una carpeta de descarga.</string>
+  <string name="State">Estado</string>
+  <string name="SavingLocalSiteList">Guardando la lista de sitios...</string>
+  <string name="ShowReports">Mostrar reportes del creador y del usuario</string>
 
   <!-- T -->
-  <string Field="Timeframe">Timeframe</string>
-  <string Field="Timeout">Fuera de tiempo</string>
-  <string Field="Tags">Etiqueta</string>
+  <string name="Timeframe">Timeframe</string>
+  <string name="Timeout">Fuera de tiempo</string>
+  <string name="Tags">Etiqueta</string>
 
   <!-- U -->  
-  <string Field="Updated">Actualizado</string>
-  <string Field="Updatable">Actualizable</string>
-  <string Field="UpdateMySite">Actualizar el sitio</string>
-  <string Field="UpdateMySiteSkipCategories">Actualizar el sitio (evitar categorías)</string>
-  <string Field="UpdateAllYourSites">Se actualizarán todos sus sitios.</string>
-  <string Field="UnableToPlayVideo">Imposible reproducir el vídeo. No URL.</string>
-  <string Field="UnableToDownloadVideo">Imposible descargar el vídeo. URL no válida.</string>
+  <string name="Updated">Actualizado</string>
+  <string name="Updatable">Actualizable</string>
+  <string name="UpdateMySite">Actualizar el sitio</string>
+  <string name="UpdateMySiteSkipCategories">Actualizar el sitio (evitar categorías)</string>
+  <string name="UpdateAllYourSites">Se actualizarán todos sus sitios.</string>
+  <string name="UnableToPlayVideo">Imposible reproducir el vídeo. No URL.</string>
+  <string name="UnableToDownloadVideo">Imposible descargar el vídeo. URL no válida.</string>
 
   <!-- V -->
 
   <!-- W -->
-  <string Field="Working">Cargando</string>
+  <string name="Working">Cargando</string>
 
   <!-- Y -->
 
-</strings>
+</resources>

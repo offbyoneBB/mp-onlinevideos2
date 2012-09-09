@@ -1,154 +1,154 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
+<!-- OnlineVideos translation file -->
 <!-- Finnish (FI) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<strings>  
+<resources>  
 
   <!-- A -->
-  <string Field="Airdate">Lähetetty</string>
-  <string Field="AlreadyDownloading">Tiedostoa ladataan jo.</string>
-  <string Field="All">Kaikki</string>
-  <string Field="Actions">Toiminnot</string>
-  <string Field="Actors">Näyttelijät</string>
-  <string Field="AddToMySites">Lisää omiin sivuihin</string>
-  <string Field="AddToFavourites">Lisää suosikkeihin</string>
-  <string Field="AddingToFavorites">lisätään suosikkeihin</string>
-  <string Field="AutomaticUpdate">Automaattipäivitys</string>
-  <string Field="AutomaticUpdateDisabled">Automaattipäivitys pois.</string>
+  <string name="Airdate">Lähetetty</string>
+  <string name="AlreadyDownloading">Tiedostoa ladataan jo.</string>
+  <string name="All">Kaikki</string>
+  <string name="Actions">Toiminnot</string>
+  <string name="Actors">Näyttelijät</string>
+  <string name="AddToMySites">Lisää omiin sivuihin</string>
+  <string name="AddToFavourites">Lisää suosikkeihin</string>
+  <string name="AddingToFavorites">lisätään suosikkeihin</string>
+  <string name="AutomaticUpdate">Automaattipäivitys</string>
+  <string name="AutomaticUpdateDisabled">Automaattipäivitys pois.</string>
 
   <!-- B -->
-  <string Field="Broken">Rikki</string>
-  <string Field="Buffered">puskuroitu</string>
+  <string name="Broken">Rikki</string>
+  <string name="Buffered">puskuroitu</string>
 
   <!-- C -->
-  <string Field="Cancel">Peruuta</string>
-  <string Field="Category">Kategoria</string>
-  <string Field="Categories">Kategoriat</string>
-  <string Field="Creator">Creator</string>
-  <string Field="CheckingForPluginUpdate">tarkistetaan lisäosan päivitykset</string>
+  <string name="Cancel">Peruuta</string>
+  <string name="Category">Kategoria</string>
+  <string name="Categories">Kategoriat</string>
+  <string name="Creator">Creator</string>
+  <string name="CheckingForPluginUpdate">tarkistetaan lisäosan päivitykset</string>
 
   <!-- D -->
-  <string Field="Date">Pvm</string>
-  <string Field="DateOfRelease">Julkaisun pvm</string>
-  <string Field="Directors">Ohjaajat</string>
-  <string Field="Download">Lataa</string>
-  <string Field="Downloading">Lataa</string>
-  <string Field="DownloadingDescription">Näyttää nykyisten latausten listan.</string>
-  <string Field="DownloadFailed">Lataus epäonnistui: {0}</string>
-  <string Field="DownloadCancelled">Lataus peruttu</string>
-  <string Field="DownloadComplete">Lataus valmis</string>
-  <string Field="DownloadStarted">Lataus aloitettu</string>  
-  <string Field="DownloadedVideos">Ladatut videot</string>
-  <string Field="Delete">Poista</string>
-  <string Field="DeleteAll">Poista kaikki</string>
-  <string Field="Default">Oletus</string>
-  <string Field="Done">Valmis</string>
-  <string Field="DeletingOldThumbs">Poistetaan vanhat esikatselukuvat</string>
+  <string name="Date">Pvm</string>
+  <string name="DateOfRelease">Julkaisun pvm</string>
+  <string name="Directors">Ohjaajat</string>
+  <string name="Download">Lataa</string>
+  <string name="Downloading">Lataa</string>
+  <string name="DownloadingDescription">Näyttää nykyisten latausten listan.</string>
+  <string name="DownloadFailed">Lataus epäonnistui: {0}</string>
+  <string name="DownloadCancelled">Lataus peruttu</string>
+  <string name="DownloadComplete">Lataus valmis</string>
+  <string name="DownloadStarted">Lataus aloitettu</string>  
+  <string name="DownloadedVideos">Ladatut videot</string>
+  <string name="Delete">Poista</string>
+  <string name="DeleteAll">Poista kaikki</string>
+  <string name="Default">Oletus</string>
+  <string name="Done">Valmis</string>
+  <string name="DeletingOldThumbs">Poistetaan vanhat esikatselukuvat</string>
 
   <!-- E -->
-  <string Field="Error">Virhe</string>
-  <string Field="EnterPin">Syötä Pin</string>
+  <string name="Error">Virhe</string>
+  <string name="EnterPin">Syötä Pin</string>
 
   <!-- F -->
-  <string Field="Favourites">Suosikit</string>
-  <string Field="Filter">Suodata</string>
-  <string Field="FullUpdate">Täysi päivitys</string>
+  <string name="Favourites">Suosikit</string>
+  <string name="Filter">Suodata</string>
+  <string name="FullUpdate">Täysi päivitys</string>
 
   <!-- G -->
-  <string Field="Genre">Genre</string>
-  <string Field="GettingVideoDetails">haetaan videon tiedot</string>
-  <string Field="GettingCategoryVideos">haetaan kategorian videot</string>
-  <string Field="GettingFavoriteVideos">haetaan suosikkivideot</string>
-  <string Field="GettingSearchResults">haetaan hakutulokset</string>
-  <string Field="GettingRelatedVideos">haetaan liittyvät videot</string>
-  <string Field="GettingFilteredVideos">haetaan suodatetut vieot</string>
-  <string Field="GettingNextPageVideos">haetaan seuraavan sivun videot</string>
-  <string Field="GettingPreviousPageVideos">haetaan edellisen sivun videot</string>
-  <string Field="GettingPlaybackUrlsForVideo">haetaan url-osoitteet videoille</string>
-  <string Field="GettingDynamicCategories">haetaan dynaamiset kategoriat</string>
-  <string Field="GettingReports">haetaan raportit nettipalvelusta</string>
-  <string Field="GettingSiteXml">haetaan sivun xml nettipalvelusta</string>
-  <string Field="GettingIcon">haetaan sivun kuvake nettipalvelusta</string>
-  <string Field="GettingBanner">haetaan sivun banneri nettipalvelusta</string>
-  <string Field="GettingDll">haetaan dll nettipalvelusta</string>
+  <string name="Genre">Genre</string>
+  <string name="GettingVideoDetails">haetaan videon tiedot</string>
+  <string name="GettingCategoryVideos">haetaan kategorian videot</string>
+  <string name="GettingFavoriteVideos">haetaan suosikkivideot</string>
+  <string name="GettingSearchResults">haetaan hakutulokset</string>
+  <string name="GettingRelatedVideos">haetaan liittyvät videot</string>
+  <string name="GettingFilteredVideos">haetaan suodatetut vieot</string>
+  <string name="GettingNextPageVideos">haetaan seuraavan sivun videot</string>
+  <string name="GettingPreviousPageVideos">haetaan edellisen sivun videot</string>
+  <string name="GettingPlaybackUrlsForVideo">haetaan url-osoitteet videoille</string>
+  <string name="GettingDynamicCategories">haetaan dynaamiset kategoriat</string>
+  <string name="GettingReports">haetaan raportit nettipalvelusta</string>
+  <string name="GettingSiteXml">haetaan sivun xml nettipalvelusta</string>
+  <string name="GettingIcon">haetaan sivun kuvake nettipalvelusta</string>
+  <string name="GettingBanner">haetaan sivun banneri nettipalvelusta</string>
+  <string name="GettingDll">haetaan dll nettipalvelusta</string>
 
   <!-- H -->
 
   <!-- I -->
 
   <!-- L -->
-  <string Field="LatestVersionRequired">Tarvitaan viimeisin ({0}) versio!</string>
-  <string Field="Language">Kieli</string>
-  <string Field="LayoutList">Asettelu: Lista</string>
-  <string Field="LayoutIcons">Asettelu: ikonit</string>
-  <string Field="LayoutBigIcons">Asettelu: Isot ikonit</string>
+  <string name="LatestVersionRequired">Tarvitaan viimeisin ({0}) versio!</string>
+  <string name="Language">Kieli</string>
+  <string name="LayoutList">Asettelu: Lista</string>
+  <string name="LayoutIcons">Asettelu: ikonit</string>
+  <string name="LayoutBigIcons">Asettelu: Isot ikonit</string>
 
   <!-- M -->
-  <string Field="ManageSites">Hallitse Sivuja</string>
-  <string Field="MaxResults">Max tuloksia</string>
+  <string name="ManageSites">Hallitse Sivuja</string>
+  <string name="MaxResults">Max tuloksia</string>
 
   <!-- N -->
-  <string Field="Name">Nimi</string>
-  <string Field="NextPage">Seuraava sivu</string>
-  <string Field="None">Ei yhtään</string>
-  <string Field="NoVideoFound">Videota ei löydy</string>
-  <string Field="NoReportsForSite">Tälle sivulle ei raportteja saatavissa.</string>
-  <string Field="NewDllDownloaded">Uusi dll ladattu!</string>
+  <string name="Name">Nimi</string>
+  <string name="NextPage">Seuraava sivu</string>
+  <string name="None">Ei yhtään</string>
+  <string name="NoVideoFound">Videota ei löydy</string>
+  <string name="NoReportsForSite">Tälle sivulle ei raportteja saatavissa.</string>
+  <string name="NewDllDownloaded">Uusi dll ladattu!</string>
 
   <!-- O -->
 
   <!-- P -->
-  <string Field="PlayAll">Toista kaikki</string>
-  <string Field="PlotOutline">Juonen kuvaus</string>
-  <string Field="PreviousPage">Edellinen sivu</string>
-  <string Field="PerformAutomaticUpdate">Suorita automaattipäivitys?</string>
+  <string name="PlayAll">Toista kaikki</string>
+  <string name="PlotOutline">Juonen kuvaus</string>
+  <string name="PreviousPage">Edellinen sivu</string>
+  <string name="PerformAutomaticUpdate">Suorita automaattipäivitys?</string>
 
   <!-- R -->
-  <string Field="RemoveFromFavorites">Poista suosikeista</string>
-  <string Field="RemovingFromFavorites">poistetaan suosikeista</string>
-  <string Field="Refresh">Päivitä</string>
-  <string Field="RelatedVideos">Liittyvät videot</string>
-  <string Field="Reported">Raportoitu</string>
-  <string Field="Runtime">Toistoaika</string>
-  <string Field="RemoveFromMySites">Poista omista sivuista</string>
-  <string Field="RestartMediaPortal">Uudelleenkäynnistä MediaPortal!</string>
-  <string Field="RetrievingRemoteDlls">Haetaan etä-dll:t ...</string>
-  <string Field="RetrievingRemoteSites">Haetaan etä-sivustot ...</string>
+  <string name="RemoveFromFavorites">Poista suosikeista</string>
+  <string name="RemovingFromFavorites">poistetaan suosikeista</string>
+  <string name="Refresh">Päivitä</string>
+  <string name="RelatedVideos">Liittyvät videot</string>
+  <string name="Reported">Raportoitu</string>
+  <string name="Runtime">Toistoaika</string>
+  <string name="RemoveFromMySites">Poista omista sivuista</string>
+  <string name="RestartMediaPortal">Uudelleenkäynnistä MediaPortal!</string>
+  <string name="RetrievingRemoteDlls">Haetaan etä-dll:t ...</string>
+  <string name="RetrievingRemoteSites">Haetaan etä-sivustot ...</string>
 
   <!-- S -->
-  <string Field="SearchResults">Hakutulokset</string>
-  <string Field="SelectSource">Valitse lähde</string>
-  <string Field="Sites">Sivut</string>
-  <string Field="Size">Koko</string>  
-  <string Field="SortOptions">Lajitteluasetukset</string>
-  <string Field="Search">Haku</string>
-  <string Field="SetDownloadFolderInConfig">Aseta latauskansio asetuksista!</string>
-  <string Field="State">Tila</string>
-  <string Field="SavingLocalSiteList">Tallennetaan paikallisten sivujen lista ...</string>
-  <string Field="ShowReports">Näytä tekijän ja käyttäjien raportit</string>
-  <string Field="StartingPlayback">aloitetaan toisto</string>
-  <string Field="Subscriptions">Tilaukset</string>
+  <string name="SearchResults">Hakutulokset</string>
+  <string name="SelectSource">Valitse lähde</string>
+  <string name="Sites">Sivut</string>
+  <string name="Size">Koko</string>  
+  <string name="SortOptions">Lajitteluasetukset</string>
+  <string name="Search">Haku</string>
+  <string name="SetDownloadFolderInConfig">Aseta latauskansio asetuksista!</string>
+  <string name="State">Tila</string>
+  <string name="SavingLocalSiteList">Tallennetaan paikallisten sivujen lista ...</string>
+  <string name="ShowReports">Näytä tekijän ja käyttäjien raportit</string>
+  <string name="StartingPlayback">aloitetaan toisto</string>
+  <string name="Subscriptions">Tilaukset</string>
   
   <!-- T -->
-  <string Field="Timeframe">Aikajakso</string>
-  <string Field="Timeout">Aikakatkaisu</string>
-  <string Field="Tags">Tagit</string>
+  <string name="Timeframe">Aikajakso</string>
+  <string name="Timeout">Aikakatkaisu</string>
+  <string name="Tags">Tagit</string>
 
   <!-- U -->
-  <string Field="Updated">Päivitetty</string>
-  <string Field="Updatable">Päivitettävissä</string>
-  <string Field="UpdateMySite">Päivitä sivuni</string>
-  <string Field="UpdateMySiteSkipCategories">Päivitä sivustoni (ohita kategoriat)</string>
-  <string Field="UpdateAllYourSites">Tämä päivittää kaikki nykyiset sivustosi.</string>
-  <string Field="UnableToPlayVideo">Toisto ei onnistu. Ei URL-osoitetta.</string>
-  <string Field="UnableToDownloadVideo">Lataus ei onnistu. Epäkelpo URL.</string>
+  <string name="Updated">Päivitetty</string>
+  <string name="Updatable">Päivitettävissä</string>
+  <string name="UpdateMySite">Päivitä sivuni</string>
+  <string name="UpdateMySiteSkipCategories">Päivitä sivustoni (ohita kategoriat)</string>
+  <string name="UpdateAllYourSites">Tämä päivittää kaikki nykyiset sivustosi.</string>
+  <string name="UnableToPlayVideo">Toisto ei onnistu. Ei URL-osoitetta.</string>
+  <string name="UnableToDownloadVideo">Lataus ei onnistu. Epäkelpo URL.</string>
 
   <!-- V -->
-  <string Field="Videos">Videot</string>
+  <string name="Videos">Videot</string>
 
   <!-- W -->
-  <string Field="Working">Toimii</string>
+  <string name="Working">Toimii</string>
 
   <!-- Y -->
 
-</strings>
+</resources>

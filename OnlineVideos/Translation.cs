@@ -318,7 +318,7 @@ namespace OnlineVideos
 				{
 					try
 					{
-						TranslatedStrings.Add(stringEntry.Attributes.GetNamedItem("Field").Value, stringEntry.InnerText);
+						TranslatedStrings.Add(stringEntry.Attributes.GetNamedItem("name").Value, stringEntry.InnerText);
 					}
 					catch (Exception ex)
 					{
