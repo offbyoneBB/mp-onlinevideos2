@@ -1,109 +1,109 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
+<!-- OnlineVideos translation file -->
 <!-- Portuguese (PT) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<strings>
+<resources>
 
   <!-- A -->
-  <string Field="Airdate">Emitido</string>
-  <string Field="AlreadyDownloading">Já foi descarregado este video.</string>
-  <string Field="Actions">Acções</string>
-  <string Field="Actors">Actores:</string>
-  <string Field="AddToMySites">Adicionar a Locais</string>
-  <string Field="All">Todos</string>
-  <string Field="AddToFavourites">Adicionar a Favoritos</string>  
+  <string name="Airdate">Emitido</string>
+  <string name="AlreadyDownloading">Já foi descarregado este video.</string>
+  <string name="Actions">Acções</string>
+  <string name="Actors">Actores:</string>
+  <string name="AddToMySites">Adicionar a Locais</string>
+  <string name="All">Todos</string>
+  <string name="AddToFavourites">Adicionar a Favoritos</string>  
 
   <!-- B -->
-  <string Field="Broken">Danificado</string>
+  <string name="Broken">Danificado</string>
 
   <!-- C -->
-  <string Field="Category">Categoria</string>
-  <string Field="Creator">Criador</string>  
+  <string name="Category">Categoria</string>
+  <string name="Creator">Criador</string>  
 
   <!-- D -->
-  <string Field="DateOfRelease">Adicionado em:</string>
-  <string Field="Download">Download</string>
-  <string Field="DownloadFailed">Erro ao descarregar: {0}</string>
-  <string Field="DownloadComplete">Download completo</string>
-  <string Field="DownloadedVideos">Vídeos descarregados</string>
-  <string Field="Delete">Eliminar</string>
-  <string Field="Default">Por defeito</string>
+  <string name="DateOfRelease">Adicionado em:</string>
+  <string name="Download">Download</string>
+  <string name="DownloadFailed">Erro ao descarregar: {0}</string>
+  <string name="DownloadComplete">Download completo</string>
+  <string name="DownloadedVideos">Vídeos descarregados</string>
+  <string name="Delete">Eliminar</string>
+  <string name="Default">Por defeito</string>
 
   <!-- E -->
-  <string Field="Error">Erro</string>
-  <string Field="EnterPin">PIN</string>
+  <string name="Error">Erro</string>
+  <string name="EnterPin">PIN</string>
 
   <!-- F -->
-  <string Field="Favourites">Favoritos</string>
-  <string Field="Filter">Filtrar</string>
-  <string Field="FullUpdate">Actualização completa</string>
+  <string name="Favourites">Favoritos</string>
+  <string name="Filter">Filtrar</string>
+  <string name="FullUpdate">Actualização completa</string>
 
   <!-- G -->
-  <string Field="Genre">Género:</string>
+  <string name="Genre">Género:</string>
 
   <!-- H -->
 
   <!-- I -->
 
   <!-- L -->
-  <string Field="LayoutList">Vista: Lista</string>
-  <string Field="LayoutIcons">Vista: Icones</string>
-  <string Field="LayoutBigIcons">Vista: Icones Grandes</string>
+  <string name="LayoutList">Vista: Lista</string>
+  <string name="LayoutIcons">Vista: Icones</string>
+  <string name="LayoutBigIcons">Vista: Icones Grandes</string>
 
   <!-- M -->
-  <string Field="ManageSites">Organizar Locais</string>
-  <string Field="MaxResults">Máx. Resultados</string>
+  <string name="ManageSites">Organizar Locais</string>
+  <string name="MaxResults">Máx. Resultados</string>
 
   <!-- N -->
-  <string Field="NextPage">Pág. Seguinte</string>
-  <string Field="None">Nada</string>
-  <string Field="NoVideoFound">Video não encontrado</string>
-  <string Field="NewDllRequired">É necessário um novo DLL!</string>
+  <string name="NextPage">Pág. Seguinte</string>
+  <string name="None">Nada</string>
+  <string name="NoVideoFound">Video não encontrado</string>
+  <string name="NewDllRequired">É necessário um novo DLL!</string>
 
   <!-- O -->
 
   <!-- P -->
-  <string Field="PlayAll">Reproduzir todos</string>
-  <string Field="PlotOutline">Sinópse:</string>
-  <string Field="PreviousPage">Pág. Anterior</string>
-  <string Field="PerformAutomaticUpdate">Actualizar automáticamente?</string>
+  <string name="PlayAll">Reproduzir todos</string>
+  <string name="PlotOutline">Sinópse:</string>
+  <string name="PreviousPage">Pág. Anterior</string>
+  <string name="PerformAutomaticUpdate">Actualizar automáticamente?</string>
 
   <!-- R -->
-  <string Field="RemoveFromFavorites">Eliminar de favoritos</string>
-  <string Field="Refresh">Actualizar</string>
-  <string Field="RelatedVideos">Vídeos similares</string>
-  <string Field="Reported">Reportado</string>
-  <string Field="Runtime">Duração:</string>
-  <string Field="RemoveFromMySites">Eliminar de Meus Locais</string>
-  <string Field="RestartMediaPortalAndAutomaticUpdate">Reiniciar MediaPortal e actualizar automaticamente!</string>
+  <string name="RemoveFromFavorites">Eliminar de favoritos</string>
+  <string name="Refresh">Actualizar</string>
+  <string name="RelatedVideos">Vídeos similares</string>
+  <string name="Reported">Reportado</string>
+  <string name="Runtime">Duração:</string>
+  <string name="RemoveFromMySites">Eliminar de Meus Locais</string>
+  <string name="RestartMediaPortalAndAutomaticUpdate">Reiniciar MediaPortal e actualizar automaticamente!</string>
 
   <!-- S -->
-  <string Field="SearchResults">Resultados da busca.</string>
-  <string Field="SelectSource">Seleccionar fonte</string>
-  <string Field="SortOptions">Filtar</string>  
-  <string Field="SortByName">Nome</string>
-  <string Field="SortByLanguage">Idioma</string>
-  <string Field="SortByUpdated">Actualizado</string>
-  <string Field="Search">Procurar</string>
-  <string Field="SetDownloadFolderInConfig">Configura a pasta de downloads!</string>
+  <string name="SearchResults">Resultados da busca.</string>
+  <string name="SelectSource">Seleccionar fonte</string>
+  <string name="SortOptions">Filtar</string>  
+  <string name="SortByName">Nome</string>
+  <string name="SortByLanguage">Idioma</string>
+  <string name="SortByUpdated">Actualizado</string>
+  <string name="Search">Procurar</string>
+  <string name="SetDownloadFolderInConfig">Configura a pasta de downloads!</string>
 
   <!-- T -->
-  <string Field="Timeframe">Timeframe</string>
-  <string Field="Timeout">Fora de tempo</string>
+  <string name="Timeframe">Timeframe</string>
+  <string name="Timeout">Fora de tempo</string>
 
   <!-- U -->  
-  <string Field="Updatable">Actualizável</string>
-  <string Field="UpdateMySite">Actualizar Meus Locais</string>
-  <string Field="UpdateMySiteSkipCategories">Actualizar Meus Locais (excluir categorías)</string>
-  <string Field="UpdateAllYourSites">Actuakizará todos os seus sites.</string>
-  <string Field="UnableToPlayVideo">Impossivel reproduzir video. URL inexistente.</string>
-  <string Field="UnableToDownloadVideo">Impossivel descarregar video. URL inválida.</string>
+  <string name="Updatable">Actualizável</string>
+  <string name="UpdateMySite">Actualizar Meus Locais</string>
+  <string name="UpdateMySiteSkipCategories">Actualizar Meus Locais (excluir categorías)</string>
+  <string name="UpdateAllYourSites">Actuakizará todos os seus sites.</string>
+  <string name="UnableToPlayVideo">Impossivel reproduzir video. URL inexistente.</string>
+  <string name="UnableToDownloadVideo">Impossivel descarregar video. URL inválida.</string>
 
   <!-- V -->
 
   <!-- W -->
-  <string Field="Working">Em processo</string>
+  <string name="Working">Em processo</string>
 
   <!-- Y -->
 
-</strings>
+</resources>

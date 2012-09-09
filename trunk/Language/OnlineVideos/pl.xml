@@ -1,154 +1,154 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
+<!-- OnlineVideos translation file -->
 <!-- Polish (PL) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<strings>  
+<resources>  
 
   <!-- A -->
-  <string Field="Airdate">Emitowane</string>
-  <string Field="AlreadyDownloading">Już ściągam ten plik.</string>
-  <string Field="All">Wszystkie</string>
-  <string Field="Actions">Akcje</string>
-  <string Field="Actors">Aktorzy</string>
-  <string Field="AddToMySites">Dodaj do moich witryn</string>
-  <string Field="AddToFavourites">Dodaj do ulubionych</string>
-  <string Field="AddingToFavorites">dodawanie do ulubionych</string>
-  <string Field="AutomaticUpdate">Automatyczna aktualizacja</string>
-  <string Field="AutomaticUpdateDisabled">Automatyczna aktualizacja jest nieaktywna.</string>
+  <string name="Airdate">Emitowane</string>
+  <string name="AlreadyDownloading">Już ściągam ten plik.</string>
+  <string name="All">Wszystkie</string>
+  <string name="Actions">Akcje</string>
+  <string name="Actors">Aktorzy</string>
+  <string name="AddToMySites">Dodaj do moich witryn</string>
+  <string name="AddToFavourites">Dodaj do ulubionych</string>
+  <string name="AddingToFavorites">dodawanie do ulubionych</string>
+  <string name="AutomaticUpdate">Automatyczna aktualizacja</string>
+  <string name="AutomaticUpdateDisabled">Automatyczna aktualizacja jest nieaktywna.</string>
 
   <!-- B -->
-  <string Field="Broken">Nieaktualne</string>
-  <string Field="Buffered">zbuforowane</string>
+  <string name="Broken">Nieaktualne</string>
+  <string name="Buffered">zbuforowane</string>
 
   <!-- C -->
-  <string Field="Cancel">Anuluj</string>
-  <string Field="Category">Kategoria</string>
-  <string Field="Categories">Kategorie</string>
-  <string Field="Creator">Kreator</string>
-  <string Field="CheckingForPluginUpdate">sprawdzanie dostępności nowej wersji wtyczki</string>
+  <string name="Cancel">Anuluj</string>
+  <string name="Category">Kategoria</string>
+  <string name="Categories">Kategorie</string>
+  <string name="Creator">Kreator</string>
+  <string name="CheckingForPluginUpdate">sprawdzanie dostępności nowej wersji wtyczki</string>
 
   <!-- D -->
-  <string Field="Date">Data</string>
-  <string Field="DateOfRelease">Date wypuszczenia</string>
-  <string Field="Directors">Reżyserzy</string>
-  <string Field="Download">Ściągnij</string>
-  <string Field="Downloading">Ściąganie</string>
-  <string Field="DownloadingDescription">Pokazuje listę aktualnych ściągań.</string>
-  <string Field="DownloadFailed">Ściąganie nieudane: {0}</string>
-  <string Field="DownloadCancelled">Ściąganie nieudane</string>
-  <string Field="DownloadComplete">Ściąganie zakończone</string>
-  <string Field="DownloadStarted">Ściąganie rozpoczęte</string>  
-  <string Field="DownloadedVideos">Ściągnięte wideo</string>
-  <string Field="Delete">Usuń</string>
-  <string Field="DeleteAll">Usuń wszystkie</string>
-  <string Field="Default">Domyślne</string>
-  <string Field="Done">Gotowe</string>
-  <string Field="DeletingOldThumbs">Usuwanie starych miniatur</string>
+  <string name="Date">Data</string>
+  <string name="DateOfRelease">Date wypuszczenia</string>
+  <string name="Directors">Reżyserzy</string>
+  <string name="Download">Ściągnij</string>
+  <string name="Downloading">Ściąganie</string>
+  <string name="DownloadingDescription">Pokazuje listę aktualnych ściągań.</string>
+  <string name="DownloadFailed">Ściąganie nieudane: {0}</string>
+  <string name="DownloadCancelled">Ściąganie nieudane</string>
+  <string name="DownloadComplete">Ściąganie zakończone</string>
+  <string name="DownloadStarted">Ściąganie rozpoczęte</string>  
+  <string name="DownloadedVideos">Ściągnięte wideo</string>
+  <string name="Delete">Usuń</string>
+  <string name="DeleteAll">Usuń wszystkie</string>
+  <string name="Default">Domyślne</string>
+  <string name="Done">Gotowe</string>
+  <string name="DeletingOldThumbs">Usuwanie starych miniatur</string>
 
   <!-- E -->
-  <string Field="Error">Błąd</string>
-  <string Field="EnterPin">Wpisz Pin</string>
+  <string name="Error">Błąd</string>
+  <string name="EnterPin">Wpisz Pin</string>
 
   <!-- F -->
-  <string Field="Favourites">Ulubione</string>
-  <string Field="Filter">Filtr</string>
-  <string Field="FullUpdate">Pełna aktualizacja</string>
+  <string name="Favourites">Ulubione</string>
+  <string name="Filter">Filtr</string>
+  <string name="FullUpdate">Pełna aktualizacja</string>
 
   <!-- G -->
-  <string Field="Genre">Rodzaj</string>
-  <string Field="GettingVideoDetails">uzyskiwanie szczegółów filmu</string>
-  <string Field="GettingCategoryVideos">uzyskiwanie kategorii filmów</string>
-  <string Field="GettingFavoriteVideos">uzyskiwanie ulubionych filmów</string>
-  <string Field="GettingSearchResults">uzyskiwanie wyników wyszukiwania</string>
-  <string Field="GettingRelatedVideos">uzyskiwanie podobnych wideo</string>
-  <string Field="GettingFilteredVideos">uzyskiwanie przefiltrowanych wideo</string>
-  <string Field="GettingNextPageVideos">uzyskiwanie następnej strony wideo</string>
-  <string Field="GettingPreviousPageVideos">uzyskiwanie poprzedniej strony wideo</string>
-  <string Field="GettingPlaybackUrlsForVideo">uzyskiwanie adresów odtwarzania</string>
-  <string Field="GettingDynamicCategories">uzyskiwanie dynamicznych kategorii</string>
-  <string Field="GettingReports">uzyskiwanie raportów z sieci</string>
-  <string Field="GettingSiteXml">uzyskiwanie xml strony z sieci</string>
-  <string Field="GettingIcon">uzyskiwanie ikony witryny z sieci</string>
-  <string Field="GettingBanner">uzyskiwanie banera strony z sieci</string>
-  <string Field="GettingDll">uzyskiwanie biblioteki dll z sieci</string>
+  <string name="Genre">Rodzaj</string>
+  <string name="GettingVideoDetails">uzyskiwanie szczegółów filmu</string>
+  <string name="GettingCategoryVideos">uzyskiwanie kategorii filmów</string>
+  <string name="GettingFavoriteVideos">uzyskiwanie ulubionych filmów</string>
+  <string name="GettingSearchResults">uzyskiwanie wyników wyszukiwania</string>
+  <string name="GettingRelatedVideos">uzyskiwanie podobnych wideo</string>
+  <string name="GettingFilteredVideos">uzyskiwanie przefiltrowanych wideo</string>
+  <string name="GettingNextPageVideos">uzyskiwanie następnej strony wideo</string>
+  <string name="GettingPreviousPageVideos">uzyskiwanie poprzedniej strony wideo</string>
+  <string name="GettingPlaybackUrlsForVideo">uzyskiwanie adresów odtwarzania</string>
+  <string name="GettingDynamicCategories">uzyskiwanie dynamicznych kategorii</string>
+  <string name="GettingReports">uzyskiwanie raportów z sieci</string>
+  <string name="GettingSiteXml">uzyskiwanie xml strony z sieci</string>
+  <string name="GettingIcon">uzyskiwanie ikony witryny z sieci</string>
+  <string name="GettingBanner">uzyskiwanie banera strony z sieci</string>
+  <string name="GettingDll">uzyskiwanie biblioteki dll z sieci</string>
 
   <!-- H -->
 
   <!-- I -->
 
   <!-- L -->
-  <string Field="LatestVersionRequired">Najnowsza wersja ({0}) jest niezbędna!</string>
-  <string Field="Language">Język</string>
-  <string Field="LayoutList">Widok: Lista</string>
-  <string Field="LayoutIcons">Widok: Ikony</string>
-  <string Field="LayoutBigIcons">Widok: Duże ikony</string>
+  <string name="LatestVersionRequired">Najnowsza wersja ({0}) jest niezbędna!</string>
+  <string name="Language">Język</string>
+  <string name="LayoutList">Widok: Lista</string>
+  <string name="LayoutIcons">Widok: Ikony</string>
+  <string name="LayoutBigIcons">Widok: Duże ikony</string>
 
   <!-- M -->
-  <string Field="ManageSites">Zarządzaj stronami</string>
-  <string Field="MaxResults">Maksymalne wyniki</string>
+  <string name="ManageSites">Zarządzaj stronami</string>
+  <string name="MaxResults">Maksymalne wyniki</string>
 
   <!-- N -->
-  <string Field="Name">Nazwa</string>
-  <string Field="NextPage">Następna strona</string>
-  <string Field="None">Żaden</string>
-  <string Field="NoVideoFound">Nie znaleziono wideo</string>
-  <string Field="NoReportsForSite">Żadne raporty nie są dostępne dla tej strony.</string>
-  <string Field="NewDllDownloaded">Nowa biblioteka dll ściągnięta!</string>
+  <string name="Name">Nazwa</string>
+  <string name="NextPage">Następna strona</string>
+  <string name="None">Żaden</string>
+  <string name="NoVideoFound">Nie znaleziono wideo</string>
+  <string name="NoReportsForSite">Żadne raporty nie są dostępne dla tej strony.</string>
+  <string name="NewDllDownloaded">Nowa biblioteka dll ściągnięta!</string>
 
   <!-- O -->
 
   <!-- P -->
-  <string Field="PlayAll">Odtwarzaj wszystko</string>
-  <string Field="PlotOutline">Skrót</string>
-  <string Field="PreviousPage">Poprzednia strona</string>
-  <string Field="PerformAutomaticUpdate">Przeprowadzić automatyczną aktualizację?</string>
+  <string name="PlayAll">Odtwarzaj wszystko</string>
+  <string name="PlotOutline">Skrót</string>
+  <string name="PreviousPage">Poprzednia strona</string>
+  <string name="PerformAutomaticUpdate">Przeprowadzić automatyczną aktualizację?</string>
 
   <!-- R -->
-  <string Field="RemoveFromFavorites">Usuń z ulubionych</string>
-  <string Field="RemovingFromFavorites">usuwanie z ulubionych</string>
-  <string Field="Refresh">Odśwież</string>
-  <string Field="RelatedVideos">Podobne wideo</string>
-  <string Field="Reported">Zgłoszone</string>
-  <string Field="Runtime">Czas trwania</string>
-  <string Field="RemoveFromMySites">Usuń z moich stron</string>
-  <string Field="RestartMediaPortal">Uruchom MediaPortal ponownie!</string>
-  <string Field="RetrievingRemoteDlls">Uzyskiwanie zdalnych bibliotek dll ...</string>
-  <string Field="RetrievingRemoteSites">Uzyskiwanie zdalnych stron ...</string>
+  <string name="RemoveFromFavorites">Usuń z ulubionych</string>
+  <string name="RemovingFromFavorites">usuwanie z ulubionych</string>
+  <string name="Refresh">Odśwież</string>
+  <string name="RelatedVideos">Podobne wideo</string>
+  <string name="Reported">Zgłoszone</string>
+  <string name="Runtime">Czas trwania</string>
+  <string name="RemoveFromMySites">Usuń z moich stron</string>
+  <string name="RestartMediaPortal">Uruchom MediaPortal ponownie!</string>
+  <string name="RetrievingRemoteDlls">Uzyskiwanie zdalnych bibliotek dll ...</string>
+  <string name="RetrievingRemoteSites">Uzyskiwanie zdalnych stron ...</string>
 
   <!-- S -->
-  <string Field="SearchResults">Wyniki szukania</string>
-  <string Field="SelectSource">Wybierz źródło</string>
-  <string Field="Sites">Witryny</string>
-  <string Field="Size">Rozmiar</string>  
-  <string Field="SortOptions">Opcje sortowania</string>
-  <string Field="Search">Szukaj</string>
-  <string Field="SetDownloadFolderInConfig">Wybierz katalog ściągania w konfiguracji!</string>
-  <string Field="State">Stan</string>
-  <string Field="SavingLocalSiteList">Zapisywanie lokalnej listy stron ...</string>
-  <string Field="ShowReports">Pokaż raporty kreatorów i użytkowników</string>
-  <string Field="StartingPlayback">rozpoczynanie odtwarzania</string>
-  <string Field="Subscriptions">Subskrypcje</string>
+  <string name="SearchResults">Wyniki szukania</string>
+  <string name="SelectSource">Wybierz źródło</string>
+  <string name="Sites">Witryny</string>
+  <string name="Size">Rozmiar</string>  
+  <string name="SortOptions">Opcje sortowania</string>
+  <string name="Search">Szukaj</string>
+  <string name="SetDownloadFolderInConfig">Wybierz katalog ściągania w konfiguracji!</string>
+  <string name="State">Stan</string>
+  <string name="SavingLocalSiteList">Zapisywanie lokalnej listy stron ...</string>
+  <string name="ShowReports">Pokaż raporty kreatorów i użytkowników</string>
+  <string name="StartingPlayback">rozpoczynanie odtwarzania</string>
+  <string name="Subscriptions">Subskrypcje</string>
   
   <!-- T -->
-  <string Field="Timeframe">Rama czasowa</string>
-  <string Field="Timeout">Przekroczenie czasu</string>
-  <string Field="Tags">Tagi</string>
+  <string name="Timeframe">Rama czasowa</string>
+  <string name="Timeout">Przekroczenie czasu</string>
+  <string name="Tags">Tagi</string>
 
   <!-- U -->
-  <string Field="Updated">Zaktualizowane</string>
-  <string Field="Updatable">Możliwe do zaktualizowania</string>
-  <string Field="UpdateMySite">Aktualizuj moją stronę</string>
-  <string Field="UpdateMySiteSkipCategories">Aktualizuj moją stronę (pomiń kategorie)</string>
-  <string Field="UpdateAllYourSites">Zaktualizowane zostaną wszystkie twoje aktualne strony.</string>
-  <string Field="UnableToPlayVideo">Nie można odtworzyć. Brak adresu.</string>
-  <string Field="UnableToDownloadVideo">Nie można ściągnąć wideo. Nieprawidłowy adres.</string>
+  <string name="Updated">Zaktualizowane</string>
+  <string name="Updatable">Możliwe do zaktualizowania</string>
+  <string name="UpdateMySite">Aktualizuj moją stronę</string>
+  <string name="UpdateMySiteSkipCategories">Aktualizuj moją stronę (pomiń kategorie)</string>
+  <string name="UpdateAllYourSites">Zaktualizowane zostaną wszystkie twoje aktualne strony.</string>
+  <string name="UnableToPlayVideo">Nie można odtworzyć. Brak adresu.</string>
+  <string name="UnableToDownloadVideo">Nie można ściągnąć wideo. Nieprawidłowy adres.</string>
 
   <!-- V -->
-  <string Field="Videos">Wideo</string>
+  <string name="Videos">Wideo</string>
 
   <!-- W -->
-  <string Field="Working">Działa</string>
+  <string name="Working">Działa</string>
 
   <!-- Y -->
 
-</strings>
+</resources>

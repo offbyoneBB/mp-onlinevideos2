@@ -1,170 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
+<!-- OnlineVideos translation file -->
 <!-- Czech -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<strings>  
+<resources>  
 
   <!-- A -->
-  <string Field="Airdate">Vysíláno</string>
-  <string Field="AlreadyDownloading">Tento soubor je již stahován.</string>
-  <string Field="All">Vše</string>
-  <string Field="Actions">Akce</string>
-  <string Field="Actors">Obsazení</string>
-  <string Field="AddToMySites">Přidat do mých stránek</string>
-  <string Field="AddToFavourites">Přidat k Oblíbeným</string>
-  <string Field="AddingToFavorites">při přidávání k Oblíbeným.</string>
-  <string Field="AutomaticUpdate">Autom. aktualizace</string>
-  <string Field="AutomaticUpdateDisabled">Autom. aktualizace vypnuta.</string>
+  <string name="Airdate">Vysíláno</string>
+  <string name="AlreadyDownloading">Tento soubor je již stahován.</string>
+  <string name="All">Vše</string>
+  <string name="Actions">Akce</string>
+  <string name="Actors">Obsazení</string>
+  <string name="AddToMySites">Přidat do mých stránek</string>
+  <string name="AddToFavourites">Přidat k Oblíbeným</string>
+  <string name="AddingToFavorites">při přidávání k Oblíbeným.</string>
+  <string name="AutomaticUpdate">Autom. aktualizace</string>
+  <string name="AutomaticUpdateDisabled">Autom. aktualizace vypnuta.</string>
 
   <!-- B -->
-  <string Field="Broken">Nefunkční</string>
-  <string Field="Buffered">k dispozici</string>
+  <string name="Broken">Nefunkční</string>
+  <string name="Buffered">k dispozici</string>
 
   <!-- C -->
-  <string Field="Cancel">Zrušit</string>
-  <string Field="Category">Kategorie</string>
-  <string Field="Categories">kategorií</string>
-  <string Field="Creator">Autor</string>
-  <string Field="CheckingForPluginUpdate">Kontrolují se aktualizace ...</string>
+  <string name="Cancel">Zrušit</string>
+  <string name="Category">Kategorie</string>
+  <string name="Categories">kategorií</string>
+  <string name="Creator">Autor</string>
+  <string name="CheckingForPluginUpdate">Kontrolují se aktualizace ...</string>
 
   <!-- D -->
-  <string Field="Date">Datum</string>
-  <string Field="DateOfRelease">Premiéra</string>
-  <string Field="Directors">Režie</string>
-  <string Field="Download">Stáhnout</string>
-  <string Field="DownloadUserdefined">Stáhnout do složky uživatele</string>
-  <string Field="Downloading">Stahování</string>
-  <string Field="DownloadingDescription">Zobrazí seznam momentálně stahovaných videí.</string>
-  <string Field="DownloadingSubtitle">stahování titulků.</string>
-  <string Field="DownloadFailed">Stahování neúspěšné: {0}</string>
-  <string Field="DownloadCancelled">Stahování zrušeno</string>
-  <string Field="DownloadComplete">Stahování dokončeno</string>
-  <string Field="DownloadStarted">Stahování zahájeno</string>  
-  <string Field="DownloadedVideos">Uložené video</string>
-  <string Field="Delete">Odstranit</string>
-  <string Field="DeleteAll">Odstranit vše</string>
-  <string Field="Default">(výchozí)</string>
-  <string Field="Done">Dokončeno</string>
-  <string Field="DeletingOldThumbs">Odstraňují se staré náhledy ...</string>
+  <string name="Date">Datum</string>
+  <string name="DateOfRelease">Premiéra</string>
+  <string name="Directors">Režie</string>
+  <string name="Download">Stáhnout</string>
+  <string name="DownloadUserdefined">Stáhnout do složky uživatele</string>
+  <string name="Downloading">Stahování</string>
+  <string name="DownloadingDescription">Zobrazí seznam momentálně stahovaných videí.</string>
+  <string name="DownloadingSubtitle">stahování titulků.</string>
+  <string name="DownloadFailed">Stahování neúspěšné: {0}</string>
+  <string name="DownloadCancelled">Stahování zrušeno</string>
+  <string name="DownloadComplete">Stahování dokončeno</string>
+  <string name="DownloadStarted">Stahování zahájeno</string>  
+  <string name="DownloadedVideos">Uložené video</string>
+  <string name="Delete">Odstranit</string>
+  <string name="DeleteAll">Odstranit vše</string>
+  <string name="Default">(výchozí)</string>
+  <string name="Done">Dokončeno</string>
+  <string name="DeletingOldThumbs">Odstraňují se staré náhledy ...</string>
 
   <!-- E -->
-  <string Field="Error">Nastala chyba</string>
-  <string Field="EnterPin">Vložení PIN</string>
+  <string name="Error">Nastala chyba</string>
+  <string name="EnterPin">Vložení PIN</string>
 
   <!-- F -->
-  <string Field="Favourites">Oblíbené</string>
-  <string Field="Filter">Filtr</string>
-  <string Field="FullUpdate">Aktualizovat vše</string>
+  <string name="Favourites">Oblíbené</string>
+  <string name="Filter">Filtr</string>
+  <string name="FullUpdate">Aktualizovat vše</string>
 
   <!-- G -->
-  <string Field="Genre">Žánr</string>
-  <string Field="GettingVideoDetails">při zobrazení detailů videa.</string>
-  <string Field="GettingCategoryVideos">při zobrazení kategorií videa.</string>
-  <string Field="GettingFavoriteVideos">při zobrazení oblíbeného videa.</string>
-  <string Field="GettingSearchResults">při získání výsledků hledání.</string>
-  <string Field="GettingRelatedVideos">při získání návrhů.</string>
-  <string Field="GettingFilteredVideos">při získání videa dle filtru.</string>
-  <string Field="GettingNextPageVideos">při zobrazení následující stránky.</string>
-  <string Field="GettingPreviousPageVideos">při zobrazení předchozí stránky.</string>
-  <string Field="GettingPlaybackUrlsForVideo">při získání odkazů pro přehrání videa.</string>
-  <string Field="GettingDynamicCategories">při zobrazení dynamických kategorií.</string>
-  <string Field="GettingReports">při získání oznámení z webové služby.</string>
-  <string Field="GettingSiteXml">při stažení xml stránky z webové služby.</string>
-  <string Field="GettingIcon">při stažení ikony stránky z webové služby.</string>
-  <string Field="GettingBanner">při stažení banneru z webové služby.</string>
-  <string Field="GettingDll">při získání DLL z webové služby.</string>
-  <string Field="Groups">skupin</string>  
+  <string name="Genre">Žánr</string>
+  <string name="GettingVideoDetails">při zobrazení detailů videa.</string>
+  <string name="GettingCategoryVideos">při zobrazení kategorií videa.</string>
+  <string name="GettingFavoriteVideos">při zobrazení oblíbeného videa.</string>
+  <string name="GettingSearchResults">při získání výsledků hledání.</string>
+  <string name="GettingRelatedVideos">při získání návrhů.</string>
+  <string name="GettingFilteredVideos">při získání videa dle filtru.</string>
+  <string name="GettingNextPageVideos">při zobrazení následující stránky.</string>
+  <string name="GettingPreviousPageVideos">při zobrazení předchozí stránky.</string>
+  <string name="GettingPlaybackUrlsForVideo">při získání odkazů pro přehrání videa.</string>
+  <string name="GettingDynamicCategories">při zobrazení dynamických kategorií.</string>
+  <string name="GettingReports">při získání oznámení z webové služby.</string>
+  <string name="GettingSiteXml">při stažení xml stránky z webové služby.</string>
+  <string name="GettingIcon">při stažení ikony stránky z webové služby.</string>
+  <string name="GettingBanner">při stažení banneru z webové služby.</string>
+  <string name="GettingDll">při získání DLL z webové služby.</string>
+  <string name="Groups">skupin</string>  
 
   <!-- H -->
 
   <!-- I -->
 
   <!-- L -->
-  <string Field="LatestVersionRequired">Je vyžadována poslední verze ({0}).</string>
-  <string Field="Language">Dle jazyka</string>
-  <string Field="LayoutList">Zobrazení: Seznam</string>
-  <string Field="LayoutIcons">Zobrazení: Ikony</string>
-  <string Field="LayoutBigIcons">Zobrazení: Velké ikony</string>
+  <string name="LatestVersionRequired">Je vyžadována poslední verze ({0}).</string>
+  <string name="Language">Dle jazyka</string>
+  <string name="LayoutList">Zobrazení: Seznam</string>
+  <string name="LayoutIcons">Zobrazení: Ikony</string>
+  <string name="LayoutBigIcons">Zobrazení: Velké ikony</string>
 
   <!-- M -->
-  <string Field="ManageSites">Správa stránek</string>
-  <string Field="MaxResults">Max výsledků</string>
+  <string name="ManageSites">Správa stránek</string>
+  <string name="MaxResults">Max výsledků</string>
 
   <!-- N -->
-  <string Field="Name">Dle názvu</string>
-  <string Field="NextPage">Další strana</string>
-  <string Field="NewVideos">Nová videa</string>
-  <string Field="None">žádné</string>
-  <string Field="NoVideoFound">Žádné video nenalezeno.</string>
-  <string Field="NoReportsForSite">Tato stránka nemá žádná oznámení.</string>
-  <string Field="NewDllDownloaded">Byly staženy nové DLL soubory.</string>
-  <string Field="NewSearch">(nový dotaz)</string>
+  <string name="Name">Dle názvu</string>
+  <string name="NextPage">Další strana</string>
+  <string name="NewVideos">Nová videa</string>
+  <string name="None">žádné</string>
+  <string name="NoVideoFound">Žádné video nenalezeno.</string>
+  <string name="NoReportsForSite">Tato stránka nemá žádná oznámení.</string>
+  <string name="NewDllDownloaded">Byly staženy nové DLL soubory.</string>
+  <string name="NewSearch">(nový dotaz)</string>
 
   <!-- O -->
-  <string Field="Others">Ostatní</string>
+  <string name="Others">Ostatní</string>
 
   <!-- P -->
-  <string Field="PlayAll">Přehrát vše</string>
-  <string Field="PlayWith">Přehrát pomocí ...</string>
-  <string Field="PleaseEnterDescription">Zadejte prosím stručný popis.</string>
-  <string Field="PlotOutline">Stručný obsah</string>
-  <string Field="PreviousPage">Předchozí strana</string>
-  <string Field="PerformAutomaticUpdate">Zahájit automatickou aktualizaci?</string>
+  <string name="PlayAll">Přehrát vše</string>
+  <string name="PlayWith">Přehrát pomocí ...</string>
+  <string name="PleaseEnterDescription">Zadejte prosím stručný popis.</string>
+  <string name="PlotOutline">Stručný obsah</string>
+  <string name="PreviousPage">Předchozí strana</string>
+  <string name="PerformAutomaticUpdate">Zahájit automatickou aktualizaci?</string>
 
   <!-- R -->
-  <string Field="RemoveFromFavorites">Odstranit z Oblíbených</string>
-  <string Field="RemovingFromFavorites">Odstranění z Oblíbených ...</string>
-  <string Field="Refresh">Obnovit</string>
-  <string Field="RelatedVideos">Návrhy</string>
-  <string Field="ReportBroken">Oznámit nefunkčnost</string>
-  <string Field="Reported">Oznámené</string>
-  <string Field="Reports">oznámení</string>
-  <string Field="Runtime">Délka</string>
-  <string Field="RemoveFromMySites">Odstranit z mých stránek</string>
-  <string Field="RestartMediaPortal">Prosím restartujte MediaPortal.</string>
-  <string Field="RetrievingRemoteDlls">načítání vzdálených DLL ...</string>
-  <string Field="RetrievingRemoteSites">načítání vzdálených stránek ...</string>
+  <string name="RemoveFromFavorites">Odstranit z Oblíbených</string>
+  <string name="RemovingFromFavorites">Odstranění z Oblíbených ...</string>
+  <string name="Refresh">Obnovit</string>
+  <string name="RelatedVideos">Návrhy</string>
+  <string name="ReportBroken">Oznámit nefunkčnost</string>
+  <string name="Reported">Oznámené</string>
+  <string name="Reports">oznámení</string>
+  <string name="Runtime">Délka</string>
+  <string name="RemoveFromMySites">Odstranit z mých stránek</string>
+  <string name="RestartMediaPortal">Prosím restartujte MediaPortal.</string>
+  <string name="RetrievingRemoteDlls">načítání vzdálených DLL ...</string>
+  <string name="RetrievingRemoteSites">načítání vzdálených stránek ...</string>
 
   <!-- S -->
-  <string Field="SearchHistory">Historie hledání</string>
-  <string Field="SearchResults">Výsledky hledání</string>
-  <string Field="SelectSource">Zvolte zdroj</string>
-  <string Field="Sites">stránek</string>
-  <string Field="Size">Velikost</string>  
-  <string Field="SortOptions">Změnit řazení</string>
-  <string Field="Search">Hledat</string>
-  <string Field="SetDownloadFolderInConfig">Zvolte prosím složku ke stahování v konfiguraci.</string>
-  <string Field="State">Stav</string>
-  <string Field="SavingLocalSiteList">Ukládání lokálního seznamu stránek ...</string>
-  <string Field="ShowReports">Zobrazit oznámení autorů / uživatelů</string>
-  <string Field="StartingPlayback">při zahájení přehrávání.</string>
-  <string Field="Subscriptions">Odběry</string>
+  <string name="SearchHistory">Historie hledání</string>
+  <string name="SearchResults">Výsledky hledání</string>
+  <string name="SelectSource">Zvolte zdroj</string>
+  <string name="Sites">stránek</string>
+  <string name="Size">Velikost</string>  
+  <string name="SortOptions">Změnit řazení</string>
+  <string name="Search">Hledat</string>
+  <string name="SetDownloadFolderInConfig">Zvolte prosím složku ke stahování v konfiguraci.</string>
+  <string name="State">Stav</string>
+  <string name="SavingLocalSiteList">Ukládání lokálního seznamu stránek ...</string>
+  <string name="ShowReports">Zobrazit oznámení autorů / uživatelů</string>
+  <string name="StartingPlayback">při zahájení přehrávání.</string>
+  <string name="Subscriptions">Odběry</string>
   
   <!-- T -->
-  <string Field="Timeframe">Časový úsek</string>
-  <string Field="Timeout">Časový limit vypršel</string>
-  <string Field="Tags">Tagy</string>
+  <string name="Timeframe">Časový úsek</string>
+  <string name="Timeout">Časový limit vypršel</string>
+  <string name="Tags">Tagy</string>
 
   <!-- U -->
-  <string Field="Updated">Dle data</string>
-  <string Field="Updatable">Změněné</string>
-  <string Field="UpdateAll">Aktualizovat / Přidat vše</string>
-  <string Field="UpdateAllSkipCategories">Aktualizovat / Přidat vše (bez kategorií)</string>
-  <string Field="UpdateMySite">Aktualizovat stránku</string>
-  <string Field="UpdateMySiteSkipCategories">Aktualizovat stránku (bez kategorií)</string>
-  <string Field="UpdateAllYourSites">Platí pro všechny vámi zvolené stránky.</string>
-  <string Field="UnableToPlayVideo">Nelze přehrát video. Chybí URL.</string>
-  <string Field="UnableToDownloadVideo">Nelze stáhnout video. Chybné URL.</string>
-  <string Field="UploadsBy">Videa od</string>
+  <string name="Updated">Dle data</string>
+  <string name="Updatable">Změněné</string>
+  <string name="UpdateAll">Aktualizovat / Přidat vše</string>
+  <string name="UpdateAllSkipCategories">Aktualizovat / Přidat vše (bez kategorií)</string>
+  <string name="UpdateMySite">Aktualizovat stránku</string>
+  <string name="UpdateMySiteSkipCategories">Aktualizovat stránku (bez kategorií)</string>
+  <string name="UpdateAllYourSites">Platí pro všechny vámi zvolené stránky.</string>
+  <string name="UnableToPlayVideo">Nelze přehrát video. Chybí URL.</string>
+  <string name="UnableToDownloadVideo">Nelze stáhnout video. Chybné URL.</string>
+  <string name="UploadsBy">Videa od</string>
 
   <!-- V -->
-  <string Field="Videos">videí</string>
-  <string Field="VideoQuality">Kvalita videa</string>
+  <string name="Videos">videí</string>
+  <string name="VideoQuality">Kvalita videa</string>
 
   <!-- W -->
-  <string Field="Working">Funkční</string>
-  <string Field="Writers">Scénář</string>
+  <string name="Working">Funkční</string>
+  <string name="Writers">Scénář</string>
 
   <!-- Y -->
 
-</strings>
+</resources>

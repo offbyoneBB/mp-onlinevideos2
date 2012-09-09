@@ -2,216 +2,216 @@
 <!-- Online Videos translation file -->
 <!-- English (US) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<strings>  
+<resources>  
 
   <!-- A -->
-  <string Field="Airdate">Aired</string>
-  <string Field="AlreadyDownloading">Already downloading this file.</string>
-  <string Field="All">All</string>
-  <string Field="Actions">Actions</string>
-  <string Field="Actors">Actors</string>
-  <string Field="AddComment">Add a Comment ...</string>
-  <string Field="AddToPlaylist">Add to Playlist ...</string>
-  <string Field="AddToMySites">Add to my sites</string>
-  <string Field="AddToFavourites">Add to favorites</string>
-  <string Field="AddingToFavorites">adding to favorites</string>
-  <string Field="AutomaticUpdate">Automatic Update</string>
-  <string Field="AutomaticUpdateDisabled">Automatic Update disabled.</string>
+  <string name="Airdate">Aired</string>
+  <string name="AlreadyDownloading">Already downloading this file.</string>
+  <string name="All">All</string>
+  <string name="Actions">Actions</string>
+  <string name="Actors">Actors</string>
+  <string name="AddComment">Add a Comment ...</string>
+  <string name="AddToPlaylist">Add to Playlist ...</string>
+  <string name="AddToMySites">Add to my sites</string>
+  <string name="AddToFavourites">Add to favorites</string>
+  <string name="AddingToFavorites">adding to favorites</string>
+  <string name="AutomaticUpdate">Automatic Update</string>
+  <string name="AutomaticUpdateDisabled">Automatic Update disabled.</string>
 
   <!-- B -->
-  <string Field="Broken">Broken</string>
-  <string Field="Buffered">buffered</string>
+  <string name="Broken">Broken</string>
+  <string name="Buffered">buffered</string>
 
   <!-- C -->
-  <string Field="Cancel">Cancel</string>
-  <string Field="Category">Category</string>
-  <string Field="CategoryNotFound">Category not found</string>
-  <string Field="Categories">Categories</string>
-  <string Field="Creator">Creator</string>
-  <string Field="CreateNewPlaylist">Create new Playlist ...</string>
-  <string Field="CheckingForPluginUpdate">checking for updated plugin version</string>
-  <string Field="Concurrent">concurrent</string>
+  <string name="Cancel">Cancel</string>
+  <string name="Category">Category</string>
+  <string name="CategoryNotFound">Category not found</string>
+  <string name="Categories">Categories</string>
+  <string name="Creator">Creator</string>
+  <string name="CreateNewPlaylist">Create new Playlist ...</string>
+  <string name="CheckingForPluginUpdate">checking for updated plugin version</string>
+  <string name="Concurrent">concurrent</string>
 
   <!-- D -->
-  <string Field="Date">Date</string>
-  <string Field="DateOfRelease">Date of Release</string>
-  <string Field="Directors">Directors</string>
-  <string Field="Download">Download</string>
-  <string Field="DownloadUserdefined">Download to User Directory</string>
-  <string Field="Downloading">Downloading</string>
-  <string Field="DownloadingDescription">Shows a list of downloads currently running.</string>
-  <string Field="DownloadingSubtitle">downloading subtitle</string>
-  <string Field="DownloadFailed">Download failed: {0}</string>
-  <string Field="DownloadCancelled">Download Cancelled</string>
-  <string Field="DownloadComplete">Download Complete</string>
-  <string Field="DownloadStarted">Download Started</string>  
-  <string Field="DownloadedVideos">Downloaded Videos</string>
-  <string Field="DownloadsWillBeAborted">Downloads will be aborted.</string>
-  <string Field="Delete">Delete</string>
-  <string Field="DeletePlaylist">Delete Playlist</string>
-  <string Field="DeleteAll">Delete All</string>
-  <string Field="Default">Default</string>
-  <string Field="Done">Done</string>
-  <string Field="DeletingOldThumbs">Deleting old thumbnails</string>
+  <string name="Date">Date</string>
+  <string name="DateOfRelease">Date of Release</string>
+  <string name="Directors">Directors</string>
+  <string name="Download">Download</string>
+  <string name="DownloadUserdefined">Download to User Directory</string>
+  <string name="Downloading">Downloading</string>
+  <string name="DownloadingDescription">Shows a list of downloads currently running.</string>
+  <string name="DownloadingSubtitle">downloading subtitle</string>
+  <string name="DownloadFailed">Download failed: {0}</string>
+  <string name="DownloadCancelled">Download Cancelled</string>
+  <string name="DownloadComplete">Download Complete</string>
+  <string name="DownloadStarted">Download Started</string>  
+  <string name="DownloadedVideos">Downloaded Videos</string>
+  <string name="DownloadsWillBeAborted">Downloads will be aborted.</string>
+  <string name="Delete">Delete</string>
+  <string name="DeletePlaylist">Delete Playlist</string>
+  <string name="DeleteAll">Delete All</string>
+  <string name="Default">Default</string>
+  <string name="Done">Done</string>
+  <string name="DeletingOldThumbs">Deleting old thumbnails</string>
 
   <!-- E -->
-  <string Field="Error">Error</string>
-  <string Field="EnterPin">Enter Pin</string>
+  <string name="Error">Error</string>
+  <string name="EnterPin">Enter Pin</string>
 
   <!-- F -->
-  <string Field="Favourites">Favorites</string>
-  <string Field="Filter">Filter</string>
-  <string Field="FullUpdate">Full Update</string>
+  <string name="Favourites">Favorites</string>
+  <string name="Filter">Filter</string>
+  <string name="FullUpdate">Full Update</string>
 
   <!-- G -->
-  <string Field="Genre">Genre</string>
-  <string Field="GettingVideoDetails">getting video details</string>
-  <string Field="GettingCategoryVideos">getting category videos</string>
-  <string Field="GettingFavoriteVideos">getting favorite videos</string>
-  <string Field="GettingSearchResults">getting search results</string>
-  <string Field="GettingRelatedVideos">getting related videos</string>
-  <string Field="GettingFilteredVideos">getting filtered videos</string>
-  <string Field="GettingNextPageVideos">getting next page videos</string>
-  <string Field="GettingPreviousPageVideos">getting previous page videos</string>
-  <string Field="GettingPlaybackUrlsForVideo">getting playback urls for video</string>
-  <string Field="GettingDynamicCategories">getting dynamic categories</string>
-  <string Field="GettingReports">getting reports from webservice</string>
-  <string Field="GettingSiteXml">getting site xml from webservice</string>
-  <string Field="GettingIcon">getting site icon from webservice</string>
-  <string Field="GettingBanner">getting site banner from webservice</string>
-  <string Field="GettingDll">getting dll from webservice</string>
-  <string Field="Groups">Groups</string>  
+  <string name="Genre">Genre</string>
+  <string name="GettingVideoDetails">getting video details</string>
+  <string name="GettingCategoryVideos">getting category videos</string>
+  <string name="GettingFavoriteVideos">getting favorite videos</string>
+  <string name="GettingSearchResults">getting search results</string>
+  <string name="GettingRelatedVideos">getting related videos</string>
+  <string name="GettingFilteredVideos">getting filtered videos</string>
+  <string name="GettingNextPageVideos">getting next page videos</string>
+  <string name="GettingPreviousPageVideos">getting previous page videos</string>
+  <string name="GettingPlaybackUrlsForVideo">getting playback urls for video</string>
+  <string name="GettingDynamicCategories">getting dynamic categories</string>
+  <string name="GettingReports">getting reports from webservice</string>
+  <string name="GettingSiteXml">getting site xml from webservice</string>
+  <string name="GettingIcon">getting site icon from webservice</string>
+  <string name="GettingBanner">getting site banner from webservice</string>
+  <string name="GettingDll">getting dll from webservice</string>
+  <string name="Groups">Groups</string>  
 
   <!-- H -->
 
   <!-- I -->
 
   <!-- L -->
-  <string Field="LatestVersionRequired">Latest version ({0}) required!</string>
-  <string Field="Language">Language</string>
-  <string Field="LayoutList">Layout: List</string>
-  <string Field="LayoutIcons">Layout: Icons</string>
-  <string Field="LayoutBigIcons">Layout: Big Icons</string>
+  <string name="LatestVersionRequired">Latest version ({0}) required!</string>
+  <string name="Language">Language</string>
+  <string name="LayoutList">Layout: List</string>
+  <string name="LayoutIcons">Layout: Icons</string>
+  <string name="LayoutBigIcons">Layout: Big Icons</string>
 
   <!-- M -->
-  <string Field="ManageSites">Manage Sites</string>
-  <string Field="MaxResults">Max Results</string>
+  <string name="ManageSites">Manage Sites</string>
+  <string name="MaxResults">Max Results</string>
 
   <!-- N -->
-  <string Field="Name">Name</string>
-  <string Field="NextPage">Next page</string>
-  <string Field="NewVideos">New Videos</string>
-  <string Field="None">None</string>
-  <string Field="NoVideoFound">No video found</string>
-  <string Field="NoReportsForSite">No reports for this site available.</string>
-  <string Field="NewDllDownloaded">New dll downloaded!</string>
-  <string Field="NewSearch">New search</string>
+  <string name="Name">Name</string>
+  <string name="NextPage">Next page</string>
+  <string name="NewVideos">New Videos</string>
+  <string name="None">None</string>
+  <string name="NoVideoFound">No video found</string>
+  <string name="NoReportsForSite">No reports for this site available.</string>
+  <string name="NewDllDownloaded">New dll downloaded!</string>
+  <string name="NewSearch">New search</string>
 
   <!-- O -->
-  <string Field="OnlyLocal">Only Local</string>
-  <string Field="OnlyServer">Only Server</string>
-  <string Field="Others">Others</string>
+  <string name="OnlyLocal">Only Local</string>
+  <string name="OnlyServer">Only Server</string>
+  <string name="Others">Others</string>
 
   <!-- P -->
-  <string Field="PlayAll">Play all</string>
-  <string Field="PlayAllRandom">Play all (random order)</string>
-  <string Field="PlayWith">Play with ...</string>
-  <string Field="Playlists">Playlists</string>
-  <string Field="PlaybackWillBeStopped">Playback will be stopped.</string>
-  <string Field="PleaseEnterDescription">Please give a short description.</string>
-  <string Field="PlotOutline">Plot outline</string>
-  <string Field="PreviousPage">Previous page</string>
-  <string Field="PerformAutomaticUpdate">Perform automatic update?</string>
+  <string name="PlayAll">Play all</string>
+  <string name="PlayAllRandom">Play all (random order)</string>
+  <string name="PlayWith">Play with ...</string>
+  <string name="Playlists">Playlists</string>
+  <string name="PlaybackWillBeStopped">Playback will be stopped.</string>
+  <string name="PleaseEnterDescription">Please give a short description.</string>
+  <string name="PlotOutline">Plot outline</string>
+  <string name="PreviousPage">Previous page</string>
+  <string name="PerformAutomaticUpdate">Perform automatic update?</string>
 
   <!-- Q -->
-  <string Field="Queued">queued</string>
+  <string name="Queued">queued</string>
   
   <!-- R -->
-  <string Field="RateVideo">Rate the Video ...</string>
-  <string Field="Recommendations">Recommendations</string>
-  <string Field="RemoveFromFavorites">Remove from favorites</string>
-  <string Field="RemoveFromPlaylist">Remove from Playlist</string>
-  <string Field="RemovingFromFavorites">removing from favorites</string>
-  <string Field="Refresh">Refresh</string>
-  <string Field="RelatedVideos">Related Videos</string>
-  <string Field="ReportBroken">Report Broken</string>
-  <string Field="Reported">Reported</string>
-  <string Field="Reports">Reports</string>
-  <string Field="Runtime">Runtime</string>
-  <string Field="RemoveFromMySites">Remove from my sites</string>
-  <string Field="RemoveAllFromMySites">Remove all from my sites</string>
-  <string Field="RestartMediaPortal">Restart MediaPortal!</string>
-  <string Field="RetrievingRemoteDlls">Retrieving remote dlls ...</string>
-  <string Field="RetrievingRemoteSites">Retrieving remote sites ...</string>
+  <string name="RateVideo">Rate the Video ...</string>
+  <string name="Recommendations">Recommendations</string>
+  <string name="RemoveFromFavorites">Remove from favorites</string>
+  <string name="RemoveFromPlaylist">Remove from Playlist</string>
+  <string name="RemovingFromFavorites">removing from favorites</string>
+  <string name="Refresh">Refresh</string>
+  <string name="RelatedVideos">Related Videos</string>
+  <string name="ReportBroken">Report Broken</string>
+  <string name="Reported">Reported</string>
+  <string name="Reports">Reports</string>
+  <string name="Runtime">Runtime</string>
+  <string name="RemoveFromMySites">Remove from my sites</string>
+  <string name="RemoveAllFromMySites">Remove all from my sites</string>
+  <string name="RestartMediaPortal">Restart MediaPortal!</string>
+  <string name="RetrievingRemoteDlls">Retrieving remote dlls ...</string>
+  <string name="RetrievingRemoteSites">Retrieving remote sites ...</string>
 
   <!-- S -->
-  <string Field="SearchHistory">Search history</string>
-  <string Field="SearchResults">Search results</string>
-  <string Field="SelectSource">Select source</string>
-  <string Field="Sites">Sites</string>
-  <string Field="Size">Size</string>  
-  <string Field="SortOptions">Sort options</string>
-  <string Field="Search">Search</string>
-  <string Field="SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>
-  <string Field="State">State</string>
-  <string Field="SavingLocalSiteList">Saving local site list ...</string>
-  <string Field="ShowReports">Show creator's and user's reports</string>
-  <string Field="StartingPlayback">starting playback</string>
-  <string Field="Subscriptions">Subscriptions</string>
-  <string Field="Success">Success</string>
+  <string name="SearchHistory">Search history</string>
+  <string name="SearchResults">Search results</string>
+  <string name="SelectSource">Select source</string>
+  <string name="Sites">Sites</string>
+  <string name="Size">Size</string>  
+  <string name="SortOptions">Sort options</string>
+  <string name="Search">Search</string>
+  <string name="SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>
+  <string name="State">State</string>
+  <string name="SavingLocalSiteList">Saving local site list ...</string>
+  <string name="ShowReports">Show creator's and user's reports</string>
+  <string name="StartingPlayback">starting playback</string>
+  <string name="Subscriptions">Subscriptions</string>
+  <string name="Success">Success</string>
 
   <!-- T -->
-  <string Field="Timeframe">Timeframe</string>
-  <string Field="Timeout">Timeout</string>
-  <string Field="Tags">Tags</string>
+  <string name="Timeframe">Timeframe</string>
+  <string name="Timeout">Timeout</string>
+  <string name="Tags">Tags</string>
 
   <!-- U -->
-  <string Field="Updated">Updated</string>
-  <string Field="Updatable">Updatable</string>
-  <string Field="UpdateAll">Update/Add all</string>
-  <string Field="UpdateAllSkipCategories">Update/Add all (skip categories)</string>
-  <string Field="UpdateMySite">Update my site</string>
-  <string Field="UpdateMySiteSkipCategories">Update my site (skip categories)</string>
-  <string Field="UpdateAllYourSites">This will update all your current sites.</string>
-  <string Field="UnableToPlayVideo">Unable to play the video. No URL.</string>
-  <string Field="UnableToDownloadVideo">Unable to download the video. Invalid URL.</string>
-  <string Field="UploadsBy">uploads by</string>
+  <string name="Updated">Updated</string>
+  <string name="Updatable">Updatable</string>
+  <string name="UpdateAll">Update/Add all</string>
+  <string name="UpdateAllSkipCategories">Update/Add all (skip categories)</string>
+  <string name="UpdateMySite">Update my site</string>
+  <string name="UpdateMySiteSkipCategories">Update my site (skip categories)</string>
+  <string name="UpdateAllYourSites">This will update all your current sites.</string>
+  <string name="UnableToPlayVideo">Unable to play the video. No URL.</string>
+  <string name="UnableToDownloadVideo">Unable to download the video. Invalid URL.</string>
+  <string name="UploadsBy">uploads by</string>
 
   <!-- V -->
-  <string Field="Videos">Videos</string>
-  <string Field="VideoQuality">Video Quality</string>
+  <string name="Videos">Videos</string>
+  <string name="VideoQuality">Video Quality</string>
 
   <!-- W -->
-  <string Field="Working">Working</string>
-  <string Field="Writers">Writers</string>
+  <string name="Working">Working</string>
+  <string name="Writers">Writers</string>
 
   <!-- Y -->
 
   <!-- Strings from the settings file -->
-  <string Field="Settings_Yes">Yes</string>
-  <string Field="Settings_No">No</string>
-  <string Field="Settings_SearchHistoryType_Off">Off</string>
-  <string Field="Settings_SearchHistoryType_Simple">Simple</string>
-  <string Field="Settings_SearchHistoryType_Extended">Extended</string>
-  <string Field="Settings_BasicHomeName">Basic Home Name</string>
-  <string Field="Settings_PluginEnabled">Plugin Enabled</string>
-  <string Field="Settings_ListedInHome">Listed in Home</string>
-  <string Field="Settings_ListedInPlugins">Listed in My Plugins</string>
-  <string Field="Settings_AutoGroupByLang">Automatically group all sites by their language</string>
-  <string Field="Settings_UseQuickSelect">Use alphanumeric keys to quickly select items by first letter</string>
-  <string Field="Settings_SearchHistoryType">Search history</string>
-  <string Field="Settings_ThumbAge">Maximum age (days) for thumbnails</string>
-  <string Field="Settings_CacheTimeout">Time (minutes) to cache data from the web</string>
-  <string Field="Settings_CategoryDiscoveryTimeout">Time (minutes) after which categories are reloaded from the web</string>
-  <string Field="Settings_UtilTimeout">Timeout (seconds) for webrequests</string>
-  <string Field="Settings_WmpBuffer">Buffer (milliseconds) for Windows Media Player</string>
-  <string Field="Settings_PlayBuffer">Percentage to buffer before starting playback</string>
-  <string Field="Settings_AllowRefreshrateChange">Enable dynamic refresh rate adaption</string>
-  <string Field="Settings_FavoritesFirst">Put Favorites and Downloads sites first in the list instead of last</string>
-  <string Field="Settings_LatestVideosMaxItems">Amount of latest videos to display</string>
-  <string Field="Settings_LatestVideosRandomize">Randomize all latest videos before displaying</string>
-  <string Field="Settings_LatestVideosOnlineDataRefresh">Refresh latest videos data from web every x minutes</string>
-  <string Field="Settings_LatestVideosGuiDataRefresh">Refresh displayed latest videos every x seconds</string>
-  <string Field="Settings_StoreLayoutPerCategory">Remember view layout per Site and Category</string>
+  <string name="Settings_Yes">Yes</string>
+  <string name="Settings_No">No</string>
+  <string name="Settings_SearchHistoryType_Off">Off</string>
+  <string name="Settings_SearchHistoryType_Simple">Simple</string>
+  <string name="Settings_SearchHistoryType_Extended">Extended</string>
+  <string name="Settings_BasicHomeName">Basic Home Name</string>
+  <string name="Settings_PluginEnabled">Plugin Enabled</string>
+  <string name="Settings_ListedInHome">Listed in Home</string>
+  <string name="Settings_ListedInPlugins">Listed in My Plugins</string>
+  <string name="Settings_AutoGroupByLang">Automatically group all sites by their language</string>
+  <string name="Settings_UseQuickSelect">Use alphanumeric keys to quickly select items by first letter</string>
+  <string name="Settings_SearchHistoryType">Search history</string>
+  <string name="Settings_ThumbAge">Maximum age (days) for thumbnails</string>
+  <string name="Settings_CacheTimeout">Time (minutes) to cache data from the web</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Time (minutes) after which categories are reloaded from the web</string>
+  <string name="Settings_UtilTimeout">Timeout (seconds) for webrequests</string>
+  <string name="Settings_WmpBuffer">Buffer (milliseconds) for Windows Media Player</string>
+  <string name="Settings_PlayBuffer">Percentage to buffer before starting playback</string>
+  <string name="Settings_AllowRefreshrateChange">Enable dynamic refresh rate adaption</string>
+  <string name="Settings_FavoritesFirst">Put Favorites and Downloads sites first in the list instead of last</string>
+  <string name="Settings_LatestVideosMaxItems">Amount of latest videos to display</string>
+  <string name="Settings_LatestVideosRandomize">Randomize all latest videos before displaying</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Refresh latest videos data from web every x minutes</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Refresh displayed latest videos every x seconds</string>
+  <string name="Settings_StoreLayoutPerCategory">Remember view layout per Site and Category</string>
 
-</strings>
+</resources>

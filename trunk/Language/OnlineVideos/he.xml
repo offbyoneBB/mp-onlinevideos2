@@ -1,149 +1,149 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Online Videos translation file -->
-<!-- English (US) -->
+<!-- Hebrew -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<strings>  
+<resources>  
 
   <!-- A -->
-  <string Field="Airdate">שודר</string>
-  <string Field="AlreadyDownloading">קובץ זה כבר בתהליך הורדה.</string>
-  <string Field="All">הכל</string>
-  <string Field="Actions">פעולות</string>
-  <string Field="Actors">שחקנים</string>
-  <string Field="AddToMySites">הוסף לאתרים שלי</string>
-  <string Field="AddToFavourites">הוסף למועדפים</string>
-  <string Field="AddingToFavorites">מוסיף למועדפים</string>
-  <string Field="AutomaticUpdate">עדכון אוטומטי</string>
-  <string Field="AutomaticUpdateDisabled">עדכון אוטומטי מבוטל.</string>
+  <string name="Airdate">שודר</string>
+  <string name="AlreadyDownloading">קובץ זה כבר בתהליך הורדה.</string>
+  <string name="All">הכל</string>
+  <string name="Actions">פעולות</string>
+  <string name="Actors">שחקנים</string>
+  <string name="AddToMySites">הוסף לאתרים שלי</string>
+  <string name="AddToFavourites">הוסף למועדפים</string>
+  <string name="AddingToFavorites">מוסיף למועדפים</string>
+  <string name="AutomaticUpdate">עדכון אוטומטי</string>
+  <string name="AutomaticUpdateDisabled">עדכון אוטומטי מבוטל.</string>
 
   <!-- B -->
-  <string Field="Broken">פגום</string>
-  <string Field="Buffered">בטעינה</string>
+  <string name="Broken">פגום</string>
+  <string name="Buffered">בטעינה</string>
 
   <!-- C -->
-  <string Field="Category">קטגוריה</string>
-  <string Field="Categories">קטגוריות</string>
-  <string Field="Creator">יוצר</string>
-  <string Field="CheckingForPluginUpdate">בודק אם יש גירסת עדכון לתוסף</string>
+  <string name="Category">קטגוריה</string>
+  <string name="Categories">קטגוריות</string>
+  <string name="Creator">יוצר</string>
+  <string name="CheckingForPluginUpdate">בודק אם יש גירסת עדכון לתוסף</string>
 
   <!-- D -->
-  <string Field="DateOfRelease">תאריך שחרור</string>
-  <string Field="Directors">במאים</string>
-  <string Field="Download">הורדה</string>
-  <string Field="Downloading">מוריד</string>
-  <string Field="DownloadingDescription">מציג רשימת הורדות פעילות.</string>
-  <string Field="DownloadFailed">הורדה נכשלה: {0}</string>
-  <string Field="DownloadCancelled">הורדה בוטלה</string>
-  <string Field="DownloadComplete">הורדה הושלמה</string>
-  <string Field="DownloadStarted">הורדה התחילה</string>  
-  <string Field="DownloadedVideos">סרטים שהורדו</string>
-  <string Field="Delete">מחק</string>
-  <string Field="Default">ברירת מחדל</string>
-  <string Field="Done">הושלם</string>
-  <string Field="DeletingOldThumbs">מוחק תמונות ישנות</string>
+  <string name="DateOfRelease">תאריך שחרור</string>
+  <string name="Directors">במאים</string>
+  <string name="Download">הורדה</string>
+  <string name="Downloading">מוריד</string>
+  <string name="DownloadingDescription">מציג רשימת הורדות פעילות.</string>
+  <string name="DownloadFailed">הורדה נכשלה: {0}</string>
+  <string name="DownloadCancelled">הורדה בוטלה</string>
+  <string name="DownloadComplete">הורדה הושלמה</string>
+  <string name="DownloadStarted">הורדה התחילה</string>  
+  <string name="DownloadedVideos">סרטים שהורדו</string>
+  <string name="Delete">מחק</string>
+  <string name="Default">ברירת מחדל</string>
+  <string name="Done">הושלם</string>
+  <string name="DeletingOldThumbs">מוחק תמונות ישנות</string>
 
   <!-- E -->
-  <string Field="Error">שגיאה</string>
-  <string Field="EnterPin">הכנסת קוד סודי</string>
+  <string name="Error">שגיאה</string>
+  <string name="EnterPin">הכנסת קוד סודי</string>
 
   <!-- F -->
-  <string Field="Favourites">מועדפים</string>
-  <string Field="Filter">מסנן</string>
-  <string Field="FullUpdate">עדכון מלא</string>
+  <string name="Favourites">מועדפים</string>
+  <string name="Filter">מסנן</string>
+  <string name="FullUpdate">עדכון מלא</string>
 
   <!-- G -->
-  <string Field="Genre">ז'אנר</string>
-  <string Field="GettingVideoDetails">טעינת פרטי סרטים</string>
-  <string Field="GettingCategoryVideos">טעינת קטגוריות סרטים</string>
-  <string Field="GettingFavoriteVideos">טעינת סרטים מועדפים</string>
-  <string Field="GettingSearchResults">טעינת תוצאות חיפוש</string>
-  <string Field="GettingRelatedVideos">טעינת סרטים קשורים</string>
-  <string Field="GettingFilteredVideos">טעינת סרטים מסוננים</string>
-  <string Field="GettingNextPageVideos">טעינת דף הסרטים הבא</string>
-  <string Field="GettingPreviousPageVideos">טעינת דף הסרטים הקודם</string>
-  <string Field="GettingPlaybackUrlsForVideo">טעינת כתובות ניגון עבור הסרט</string>
-  <string Field="GettingDynamicCategories">טעינת קטגוריות דינאמיות</string>
-  <string Field="GettingReports">טעינת דיווחים משירות האינטרנט</string>
-  <string Field="GettingSiteXml">טעינת XML של האתר משירות האינטרנט</string>
-  <string Field="GettingIcon">טעינת תמונת אתר משירות האינטרנט</string>
-  <string Field="GettingBanner">טעינת באנר אתר משירות האינטרנט</string>
-  <string Field="GettingDll">טעינת DLL משירות האינטרנט</string>
+  <string name="Genre">ז'אנר</string>
+  <string name="GettingVideoDetails">טעינת פרטי סרטים</string>
+  <string name="GettingCategoryVideos">טעינת קטגוריות סרטים</string>
+  <string name="GettingFavoriteVideos">טעינת סרטים מועדפים</string>
+  <string name="GettingSearchResults">טעינת תוצאות חיפוש</string>
+  <string name="GettingRelatedVideos">טעינת סרטים קשורים</string>
+  <string name="GettingFilteredVideos">טעינת סרטים מסוננים</string>
+  <string name="GettingNextPageVideos">טעינת דף הסרטים הבא</string>
+  <string name="GettingPreviousPageVideos">טעינת דף הסרטים הקודם</string>
+  <string name="GettingPlaybackUrlsForVideo">טעינת כתובות ניגון עבור הסרט</string>
+  <string name="GettingDynamicCategories">טעינת קטגוריות דינאמיות</string>
+  <string name="GettingReports">טעינת דיווחים משירות האינטרנט</string>
+  <string name="GettingSiteXml">טעינת XML של האתר משירות האינטרנט</string>
+  <string name="GettingIcon">טעינת תמונת אתר משירות האינטרנט</string>
+  <string name="GettingBanner">טעינת באנר אתר משירות האינטרנט</string>
+  <string name="GettingDll">טעינת DLL משירות האינטרנט</string>
 
   <!-- H -->
 
   <!-- I -->
 
   <!-- L -->
-  <string Field="LatestVersionRequired">הגרסה העדכנית ביותר ({0}) נדרשת!</string>
-  <string Field="Language">שפה</string>
-  <string Field="LayoutList">סידור: רשימה</string>
-  <string Field="LayoutIcons">סידור: תמונות</string>
-  <string Field="LayoutBigIcons">סידור: תמונות גדולות</string>
+  <string name="LatestVersionRequired">הגרסה העדכנית ביותר ({0}) נדרשת!</string>
+  <string name="Language">שפה</string>
+  <string name="LayoutList">סידור: רשימה</string>
+  <string name="LayoutIcons">סידור: תמונות</string>
+  <string name="LayoutBigIcons">סידור: תמונות גדולות</string>
 
   <!-- M -->
-  <string Field="ManageSites">ניהול אתרים</string>
-  <string Field="MaxResults">מקס. תוצאות</string>
+  <string name="ManageSites">ניהול אתרים</string>
+  <string name="MaxResults">מקס. תוצאות</string>
 
   <!-- N -->
-  <string Field="Name">שם</string>
-  <string Field="NextPage">עמוד הבא</string>
-  <string Field="None">ללא</string>
-  <string Field="NoVideoFound">לא נמצאו סרטים</string>
-  <string Field="NoReportsForSite">אין דיווחים זמינים עבור אתר זה.</string>
-  <string Field="NewDllDownloaded">קובץ DLL חדש הורד!</string>
+  <string name="Name">שם</string>
+  <string name="NextPage">עמוד הבא</string>
+  <string name="None">ללא</string>
+  <string name="NoVideoFound">לא נמצאו סרטים</string>
+  <string name="NoReportsForSite">אין דיווחים זמינים עבור אתר זה.</string>
+  <string name="NewDllDownloaded">קובץ DLL חדש הורד!</string>
 
   <!-- O -->
 
   <!-- P -->
-  <string Field="PlayAll">נגן הכל</string>
-  <string Field="PlotOutline">תקציר העלילה</string>
-  <string Field="PreviousPage">עמוד קודם</string>
-  <string Field="PerformAutomaticUpdate">בצע עדכון אוטומטי?</string>
+  <string name="PlayAll">נגן הכל</string>
+  <string name="PlotOutline">תקציר העלילה</string>
+  <string name="PreviousPage">עמוד קודם</string>
+  <string name="PerformAutomaticUpdate">בצע עדכון אוטומטי?</string>
 
   <!-- R -->
-  <string Field="RemoveFromFavorites">הסר מרשימת המועדפים</string>
-  <string Field="RemovingFromFavorites">מסיר מרשימת המועדפים</string>
-  <string Field="Refresh">רענן</string>
-  <string Field="RelatedVideos">סרטים קשורים</string>
-  <string Field="Reported">דווח</string>
-  <string Field="Runtime">זמן ריצה</string>
-  <string Field="RemoveFromMySites">הסר מרשימת האתרים שלי</string>
-  <string Field="RestartMediaPortal">הפעל מחדש את מדיה-פורטל!</string>
-  <string Field="RetrievingRemoteDlls">מקבל קבצי DLL מרוחקים ...</string>
-  <string Field="RetrievingRemoteSites">מקבל רשימת אתרים ...</string>
+  <string name="RemoveFromFavorites">הסר מרשימת המועדפים</string>
+  <string name="RemovingFromFavorites">מסיר מרשימת המועדפים</string>
+  <string name="Refresh">רענן</string>
+  <string name="RelatedVideos">סרטים קשורים</string>
+  <string name="Reported">דווח</string>
+  <string name="Runtime">זמן ריצה</string>
+  <string name="RemoveFromMySites">הסר מרשימת האתרים שלי</string>
+  <string name="RestartMediaPortal">הפעל מחדש את מדיה-פורטל!</string>
+  <string name="RetrievingRemoteDlls">מקבל קבצי DLL מרוחקים ...</string>
+  <string name="RetrievingRemoteSites">מקבל רשימת אתרים ...</string>
 
   <!-- S -->
-  <string Field="SearchResults">תוצאות חיפוש</string>
-  <string Field="SelectSource">בחר מקור</string>
-  <string Field="Sites">אתרים</string>
-  <string Field="SortOptions">אפשרויות מיון</string>
-  <string Field="Search">חיפוש</string>
-  <string Field="SetDownloadFolderInConfig">אנא הגדר ספריית הורדות מתוכנת ההגדרות!</string>
-  <string Field="State">מצב</string>
-  <string Field="SavingLocalSiteList">שומר רשימת אתרים מקומית ...</string>
-  <string Field="ShowReports">הצג דיווחי יוצר ומשתמשים</string>
-  <string Field="StartingPlayback">מתחיל לנגן</string>
+  <string name="SearchResults">תוצאות חיפוש</string>
+  <string name="SelectSource">בחר מקור</string>
+  <string name="Sites">אתרים</string>
+  <string name="SortOptions">אפשרויות מיון</string>
+  <string name="Search">חיפוש</string>
+  <string name="SetDownloadFolderInConfig">אנא הגדר ספריית הורדות מתוכנת ההגדרות!</string>
+  <string name="State">מצב</string>
+  <string name="SavingLocalSiteList">שומר רשימת אתרים מקומית ...</string>
+  <string name="ShowReports">הצג דיווחי יוצר ומשתמשים</string>
+  <string name="StartingPlayback">מתחיל לנגן</string>
   
   <!-- T -->
-  <string Field="Timeframe">מסגרת זמן</string>
-  <string Field="Timeout">חריגה מהזמן שהוקצה</string>
-  <string Field="Tags">תגיות</string>
+  <string name="Timeframe">מסגרת זמן</string>
+  <string name="Timeout">חריגה מהזמן שהוקצה</string>
+  <string name="Tags">תגיות</string>
 
   <!-- U -->
-  <string Field="Updated">מעודכנים</string>
-  <string Field="Updatable">ניתנים לעדכון</string>
-  <string Field="UpdateMySite">עדכן אתר שלי</string>
-  <string Field="UpdateMySiteSkipCategories">עדכן אתר שלי (דלג על קטגוריות)</string>
-  <string Field="UpdateAllYourSites">פעולה זו תעדכן את כל האתרים שלך.</string>
-  <string Field="UnableToPlayVideo">לא ניתן לנגן סרט. אין כתובת אינטרנט.</string>
-  <string Field="UnableToDownloadVideo">לא ניתן להוריד סרט. כתובת אינטרנט לא חוקית.</string>
+  <string name="Updated">מעודכנים</string>
+  <string name="Updatable">ניתנים לעדכון</string>
+  <string name="UpdateMySite">עדכן אתר שלי</string>
+  <string name="UpdateMySiteSkipCategories">עדכן אתר שלי (דלג על קטגוריות)</string>
+  <string name="UpdateAllYourSites">פעולה זו תעדכן את כל האתרים שלך.</string>
+  <string name="UnableToPlayVideo">לא ניתן לנגן סרט. אין כתובת אינטרנט.</string>
+  <string name="UnableToDownloadVideo">לא ניתן להוריד סרט. כתובת אינטרנט לא חוקית.</string>
 
   <!-- V -->
-  <string Field="Videos">סרטים</string>
+  <string name="Videos">סרטים</string>
 
   <!-- W -->
-  <string Field="Working">עובד</string>
+  <string name="Working">עובד</string>
 
   <!-- Y -->
 
-</strings>
+</resources>
