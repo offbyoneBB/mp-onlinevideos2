@@ -89,9 +89,9 @@ namespace OnlineVideos.Sites
                         spc = SouthParkCountry.World;
                     else if (video.VideoUrl.ToLower().Contains(".de") || video.VideoUrl.ToLower().Contains("de."))
                         spc = SouthParkCountry.De;
-                    else if (video.VideoUrl.Contains("southparkstudios.nl"))
+                    else if (video.VideoUrl.Contains("southpark.nl"))
                         spc = SouthParkCountry.Nl;
-                    if (spc == SouthParkCountry.World)
+                    if (spc == SouthParkCountry.World || spc == SouthParkCountry.Nl)
                     {
                         playerUrl = System.Web.HttpUtility.UrlEncode(playerUrl);
                         playerUrl = new Uri(new Uri(baseUrl), @"/feeds/video-player/mrss/" + playerUrl).AbsoluteUri;

@@ -307,8 +307,8 @@
       <Description>All episodes now available</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.southpark.nl/episodes]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[href="(?<url>/guide/episodes/season[^"]+)">(?<title>[^<]+)<]]></item>
-        <item key="videoListRegEx"><![CDATA[<li\sclass="grid_item">\s*<div\sclass="image">\s*(?:(?!<img).)*<img\ssrc="(?<ImageUrl>[^"]*)"(?:(?!<a).)*<a\sclass="overlay"\shref="/guide(?<VideoUrl>[^"]*)">\s*<span\sclass="epnumber">(?<Duration>[^<]*)</span>\s*<span\sclass="title\septitle">(?<Title>[^<]*)</span>\s*<span\sclass="epdate">(?<Airdate>[^<]*)</span>\s*<span\sclass="epdesc">(?<Description>[^<]*)</span>\s*</a>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[href="(?<url>http://www.southpark.nl/full-episodes/season[^"]+)">(?<title>[^<]+)<]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\sclass="content_eppreview"\shref="(?<VideoUrl>[^"]*)"><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*></a>\s*<div\sclass="content_epmoreinfo">\s*<h4><a\shref="[^>]*>Watch\sThis\sEpisode</a></h4>\s*<div>\s*<h5>(?<Title>[^<]*)</h5>\s*<h6>Original\sAir\sDate:\s(?<Airdate>[^<]*)</h6>\s*<p>(?<Description>[^<]*)</p>]]></item>
       </Configuration>
     </Site>
     <Site name="SouthParkDE" util="SouthPark" agecheck="false" enabled="true" lang="de">
