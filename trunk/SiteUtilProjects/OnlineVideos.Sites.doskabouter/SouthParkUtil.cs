@@ -146,9 +146,9 @@ namespace OnlineVideos.Sites
                         swfUrl = @"http://media.mtvnservices.com/player/prime/mediaplayerprime.1.11.3.swf"; break;
                     //case SouthParkCountry.Nl: swfUrl = String.Empty; break;
                 }*/
-
-                res.Add(bitrate + "K " + videoType,
-                    new MPUrlSourceFilter.RtmpUrl(url) { SwfVerify = swfUrl != null, SwfUrl = swfUrl }.ToString());
+                string br = bitrate + "K " + videoType;
+                if (!res.ContainsKey(br))
+                    res.Add(br, new MPUrlSourceFilter.RtmpUrl(url) { SwfVerify = swfUrl != null, SwfUrl = swfUrl }.ToString());
 
             }
             return res;
