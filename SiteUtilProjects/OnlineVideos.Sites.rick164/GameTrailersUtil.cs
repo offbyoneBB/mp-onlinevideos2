@@ -123,7 +123,10 @@ namespace OnlineVideos.Sites
                                 {
                                     if (counter == videoCount)
                                     {
-                                        videoInfo.Title = HttpUtility.HtmlDecode(m2.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m2.Groups["Title"].Value);
+                                        if (m2.Groups["gameName"].Value != "" && m2.Groups["gameName"].Value != null)
+                                        {
+                                            videoInfo.Title = HttpUtility.HtmlDecode(m2.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m2.Groups["Title"].Value);
+                                        }
                                         counter++;
                                     }
                                     else
