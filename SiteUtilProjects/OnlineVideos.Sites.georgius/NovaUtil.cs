@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites.georgius
         private static String showStart = @"<div class=""poster"">";
         private static String showEnd = @"<div class=""ratings"">";
 
-		private static String showUrlTitleRegex = @"<a href=""(?<showUrl>[^""]*)"" title=""(?<showTitle>[^""]*)"">";
+		private static String showUrlTitleRegex = @"<a href=""(?<showUrl>[^""]*)"" title=""(?<showTitle>[^""]*)""";
         private static String showThumbRegex = @"<img src=""(?<showThumbUrl>[^""]*)";
 
         private static String showEpisodesStart = @"<div class=""productsList series"" id=";
@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites.georgius
         private static String showEpisodeBlockEnd = @"<div class=""clearer"">";
 
         private static String showEpisodeThumbUrlRegex = @"<img src=""(?<showThumbUrl>[^""]*)";
-        private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]*)"" title=""(?<showTitle>[^""]*)"">";
+        private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]*)"" title=""(?<showTitle>[^""]*)""";
 
         private static String showEpisodeNextPageRegex = @"<a href=""(?<nextPageUrl>[^""]*)"" onclick=""[^""]*"">další</a>";
 
