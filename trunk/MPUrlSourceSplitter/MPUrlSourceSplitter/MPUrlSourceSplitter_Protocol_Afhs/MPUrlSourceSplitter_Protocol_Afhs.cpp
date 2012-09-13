@@ -872,6 +872,42 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
         this->bootstrapInfoBox,
         false);
       CHECK_POINTER_HRESULT(result, this->segmentsFragments, result, E_POINTER);
+
+      if (this->live)
+      {
+        // in case of live stream check current media time and choose right segment and fragment
+
+        uint64_t currentMediaTime = (this->bootstrapInfoBox->GetCurrentMediaTime() > 0) ? (this->bootstrapInfoBox->GetCurrentMediaTime() - 1): 0;
+        // this download one fragment before current media time
+
+        this->lastStreamAndFragmentDownloaded = false;
+        unsigned int segmentFragmentToDownload = UINT_MAX;
+        // find segment and fragment to download
+        if (this->segmentsFragments != NULL)
+        {
+          for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
+          {
+            CSegmentFragment *segFrag = this->segmentsFragments->GetItem(i);
+
+            if (segFrag->GetFragmentTimestamp() <= (uint64_t)currentMediaTime)
+            {
+              segmentFragmentToDownload = i;
+              result = segFrag->GetFragmentTimestamp();
+            }
+          }
+
+          for (unsigned int i = 0; i < segmentFragmentToDownload; i++)
+          {
+            // mark all previous segments as downloaded
+            this->segmentsFragments->GetItem(i)->SetDownloaded(true);
+          }
+          for (unsigned int i = segmentFragmentToDownload; i < this->segmentsFragments->Count(); i++)
+          {
+            // mark all other segments as not downloaded
+            this->segmentsFragments->GetItem(i)->SetDownloaded(false);
+          }
+        }
+      }
     }
   }
 
