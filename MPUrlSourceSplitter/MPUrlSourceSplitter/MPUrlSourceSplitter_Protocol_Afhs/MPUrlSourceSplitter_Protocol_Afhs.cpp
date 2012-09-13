@@ -450,6 +450,29 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
 
             if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
             {
+              // set or adjust total length (if needed)
+              int64_t newBytePosition = this->bytePosition + flvPacket->GetSize();
+
+              if ((!this->setLength) && (newBytePosition != 0))
+              {
+                // adjust total length if not already set
+                if (this->streamLength == 0)
+                {
+                  // error occured or stream duration is not set
+                  // just make guess
+                  this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+                  this->filter->SetTotalLength(this->streamLength, true);
+                }
+                else if ((newBytePosition > (this->streamLength * 3 / 4)))
+                {
+                  // it is time to adjust stream length, we are approaching to end but still we don't know total length
+                  this->streamLength = newBytePosition * 2;
+                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+                  this->filter->SetTotalLength(this->streamLength, true);
+                }
+              }
+
               // create media packet
               // set values of media packet
               CMediaPacket *mediaPacket = new CMediaPacket();
