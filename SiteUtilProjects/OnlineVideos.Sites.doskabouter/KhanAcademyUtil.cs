@@ -13,20 +13,22 @@ namespace OnlineVideos.Sites
             string webData = GetWebData(baseUrl);
             JArray jt = JArray.Parse(webData);
 
-            SortedList<string, Category> dynamicCategories = new SortedList<string, Category>(); // put all new discovered Categories in a separate list
+            List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a separate list
             foreach (JToken j in jt)
             {
                 RssLink cat = new RssLink();
                 cat.Name = j.Value<string>("standalone_title");
                 string s = j.Value<string>("title");
-                if (cat.Name != s)
-                    cat.Name += ":" + s;
+                string id = j.Value<string>("id");
+                //if (cat.Name != s)
+                //cat.Name += ":" + s;
                 cat.Description = j.Value<string>("description");
-                cat.Url = String.Format(@"http://www.khanacademy.org/api/v1/playlists/{0}/videos", s.Replace(" ", "%20"));
-                dynamicCategories.Add(cat.Name, cat);
+                cat.Url = String.Format(@"http://www.khanacademy.org/api/v1/playlists/{0}/videos", id);
+                dynamicCategories.Add(cat);
             }
+            dynamicCategories.Sort(CategoryComparer);
             if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
-            foreach (Category cat in dynamicCategories.Values) Settings.Categories.Add(cat);
+            foreach (Category cat in dynamicCategories) Settings.Categories.Add(cat);
             Settings.DynamicCategoriesDiscovered = dynamicCategories.Count > 0;
             return dynamicCategories.Count;
         }
@@ -53,5 +55,12 @@ namespace OnlineVideos.Sites
 
             return res;
         }
+
+        private int CategoryComparer(Category cat1, Category cat2)
+        {
+            return String.Compare(cat1.Name, cat2.Name);
+
+        }
+
     }
 }
