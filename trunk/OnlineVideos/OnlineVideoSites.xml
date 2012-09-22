@@ -1443,37 +1443,21 @@
     <Site name="Yle Areena" util="YleAreena" agecheck="false" enabled="true" lang="fi">
       <Description>Areena - Ylen netti-tv ja -radio</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)">\s*<span\sid="[^"]*"\sclass="topline">(?<title>[^<]*)</span>\s*</a>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\shref="/ohjelmat\#(?<url>anchor[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="showlistitem-image">\s*<[^>]*><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>(?:(?!</div>).)*</div><!--\sshowlistitem-image\s-->\s*
-<div\sclass="showlistitem-description\sseriestitle">\s*
-<div\sclass="showlistitem-type[^>]*><span\sclass="hide">[^<]*</span></div>\s*
-<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>\s*
-</div>\s*
-<div\sclass="showlistitem-info">\s*
-<div\sclass="showlistitem-description">\s*
-(?:<ul\sclass="showlistitem-description\sfirst-list">\s*<li\sclass="showlistitem-channel">(?<Channel>[^<]*)</li>)?\s*
-(?:<li\sclass="showlistitem-showtime">(?<Airdate>[^<]*)</li>\s*)?
-(?:</ul>)?\s*
-<ul\sclass="showlistitem-description\ssecond-list">\s*(?:(?!</ul>).)*</ul>\s*
-</div>
-<!--\sshowlistitem-description-->\s*
-<div\sclass="showlistitem-description">\s*<p>(?<Description>[^<]*)</p>\s*</div>\s*
-<div\sclass="showlistitem-description">\s*
-<ul\sclass="first-list\saddinfo">\s*
-<li\sclass="showlistitem-duration">[^<]*<span\sclass="strong">(?<Duration>[^<]*)</span></li>]]></item>
         <item key="baseUrl"><![CDATA[http://areena.yle.fi/]]></item>
         <item key="forceUTF8Encoding"><![CDATA[true]]></item>
-        <item key="flashurl"><![CDATA[flashu.yle.fi]]></item>
-        <item key="atozVideolist"><![CDATA[((?#first one)<div\sid="bd">\s*<div\sid="yui-main">\s*<div\sclass="yui-b\snavigation">\s*<div\sclass="yui-gc">\s*<div\sid="maincontent"\sclass="clearfix">\s*<div\sclass="AreenaPlayerContainer-large">\s*<a\sclass="AreenaPlayer"\sid="flashcontent"\shref="(?<VideoUrl>[^"]*)">[^<]*</a>\s*<div\sclass="AreenaPlayerParams">clip:[^;]*;[^;]*;[^;]*;[^;]*;initialPreview:(?<ImageUrl>[^;]*);[^<]*</div>\s*</div>\s*<!--\s*-->\s*<div\sid="relatedinfo">\s*<div\sclass="relatedinfo-text\sclearfix">\s*<div\sclass="open">\s*<a[^>]*><span>[^<]*</span></a>\s*</div>\s*<div\sclass="relatedinfo-container">\s*<div\sclass="basic">\s*<h1\sclass="cliptitle">(?<Title>[^<]*)</h1>\s*<div\sclass="relatedinfo-text\sdescription">\s*<p>(?<Description>[^<]*)</p>\s*<fb[^>]*></fb:like>\s*<a[^>]*>Tweet</a>\s*<a[^>]*></a>\s*<g:plusone\ssize="tall"></g:plusone>\s*</div>\s*</div><!--\srelatedinfo-text\sdescription\s-->\s*<div\sclass="relatedinfo-text\smeta">\s*<ul>\s*<li\sclass="strong">[^<]*</li>\s*(?:<li\sclass="strong">(?<Airdate>[^<]*)</li>)?\s*<li>Kesto\s<span\sclass="strong">(?<Duration>[^<]*)</span></li>)
-        |
-        ((?#rest of list)(?<!<span\sclass="hide">Vinkkaa\sja\slähetä</span>.*)(?<=span\sclass="hide">Lisätiedot</span>.*)<li>\s*<a\sclass="related\svideo"\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>\s*(?:<span\sclass="related\ssmall\sclearfix">(?<Airdate>[^<]*)</span>)?\s*<div\sclass="showlistitem-image\scarousel">\s*<[^>]*><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*></a>\s*<p\sclass="showlistitem-timeleft\scarousel">\s*<[^>]*>(?<Description>.*?)</a>)
-]]></item>
-        <item key="atozCategories"><![CDATA[<li><a\shref="/ohjelmat\#(?<url>anchor[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="atozSubcategories"><![CDATA[<td\sclass="programname"><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></td>\s*<td\sclass="videocount">(?<videocount>[^<]*)</td>\s*<td\sclass="audiocount">(?<audiocount>[^<]*)</td>]]></item>
+        <item key="videoListRegExFormatString"><![CDATA[http://areena.yle.fi/tv/{0}.json]]></item>
+        <item key="fileUrlRegEx"><![CDATA["media":\s*{\s"id":\s"(?<m0>[^"]*)"]]></item>
+        <item key="fileUrlFormatString"><![CDATA[http://papi.yle.fi/ng/mod/rtmp/{0}]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Ohjelmat A-Ö">http://areena.yle.fi/ohjelmat</Category>
+        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://areena.yle.fi/tv</Category>
+        <Category xsi:type="RssLink" name="Sarjat ja elokuvat">http://areena.yle.fi/tv/sarjat-ja-elokuvat</Category>
+        <Category xsi:type="RssLink" name="Viihde ja kulttuuri">http://areena.yle.fi/tv/viihde-ja-kulttuuri</Category>
+        <Category xsi:type="RssLink" name="Dokumentit ja fakta">http://areena.yle.fi/tv/dokumentit-ja-fakta</Category>
+        <Category xsi:type="RssLink" name="Uutiset">http://areena.yle.fi/tv/uutiset</Category>
+        <Category xsi:type="RssLink" name="Urheilu">http://areena.yle.fi/tv/urheilu</Category>
+        <Category xsi:type="RssLink" name="Lapset">http://areena.yle.fi/tv/lapset</Category>
       </Categories>
     </Site>
     <Site name="ZTélé" util="ZTele" agecheck="false" enabled="true" lang="fr">

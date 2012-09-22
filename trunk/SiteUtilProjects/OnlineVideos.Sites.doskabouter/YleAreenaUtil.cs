@@ -1,203 +1,208 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 using System.Text.RegularExpressions;
 using System.IO;
-using System.Web;
-using System.Threading;
-using System.Collections.Specialized;
-using HybridDSP.Net.HTTP;
+using OnlineVideos.MPUrlSourceFilter;
 using System.ComponentModel;
-using RTMP_LIB;
+using System.Security.Cryptography;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
-    public class YleAreenaUtil : GenericSiteUtil, IRequestHandler
+    public class YleAreenaUtil : GenericSiteUtil
     {
-
-        [Category("OnlineVideosConfiguration"), Description("flashurl to use for the rtmprequests")]
-        protected string flashurl = null;
-        [Category("OnlineVideosConfiguration"), Description("regex for the a-z video list")]
-        protected string atozVideolist = null;
-        [Category("OnlineVideosConfiguration"), Description("regex for the a-z categories")]
-        protected string atozCategories = null;
-        [Category("OnlineVideosConfiguration"), Description("regex for the a-z subcategories")]
-        protected string atozSubcategories = null;
-
-        private Regex rtmpUrlRegEx;
-        private string clipId;
-        private Regex atozRegex;
-        private Regex atozSubRegex;
-        private Regex atozVideolistRegex;
-        private Regex frontpagevideolistRegex;
-
-        public override void Initialize(SiteSettings siteSettings)
-        {
-            base.Initialize(siteSettings);
-
-            RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
-
-            rtmpUrlRegEx = new Regex(@"""url"":""(?<url>[^""]*)""", defaultRegexOptions);
-            atozRegex = new Regex(atozCategories, defaultRegexOptions);
-            atozSubRegex = new Regex(atozSubcategories, defaultRegexOptions);
-            atozVideolistRegex = new Regex(atozVideolist, defaultRegexOptions);
-            frontpagevideolistRegex = regEx_VideoList;
-        }
+        private string bareUrl;
+        int newStart;
+        private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
 
         public override int DiscoverDynamicCategories()
         {
-            int nrStatic = Settings.Categories.Count;
             int res = base.DiscoverDynamicCategories();
-            for (int i = 0; i < res + nrStatic; i++)
-            {
-                Settings.Categories[i].HasSubCategories = i < nrStatic;
-                if (!Settings.Categories[i].HasSubCategories)
-                    Settings.Categories[i].Other = frontpagevideolistRegex;
-            }
+            foreach (Category cat in Settings.Categories)
+                cat.HasSubCategories = true;
             return res;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            //atoz
-            string webData = GetWebData(((RssLink)parentCategory).Url);
+            string url = ((RssLink)parentCategory).Url;
+            bool isAZ = !url.Contains("/tv");
+            if (isAZ)
+                return SubcatFromAZ((RssLink)parentCategory);
             parentCategory.SubCategories = new List<Category>();
-            Match m = atozRegex.Match(webData);
-            while (m.Success)
+            string catUrl = ((RssLink)parentCategory).Url + "/kaikki.json?from=0&to=24";
+            string webData = GetWebData(catUrl, forceUTF8: true);
+            JToken j = JToken.Parse(webData);
+            JArray orders = j["filters"]["jarjestys"] as JArray;
+            parentCategory.SubCategories = new List<Category>();
+            foreach (JToken order in orders)
             {
-                Category subcat = new Category();
-                subcat.ParentCategory = parentCategory;
-                subcat.HasSubCategories = true;
-                subcat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
-                subcat.SubCategories = new List<Category>();
-                parentCategory.SubCategories.Add(subcat);
-                string anch = m.Groups["url"].Value;
-                int p = webData.IndexOf(@"<div id=""" + anch + @""">");
-                int q = webData.IndexOf(@"<div id=""anchor", p + 1);
-                if (q == -1)
-                    q = webData.IndexOf(@"</tbody>");
-                string subset = webData.Substring(p, q - p);
-                Match m2 = atozSubRegex.Match(subset);
-                while (m2.Success)
+                string orderBy = order.Value<string>("key");
+                RssLink subcat = new RssLink()
                 {
-                    RssLink subsubcat = new RssLink();
-                    subsubcat.ParentCategory = subcat;
-                    subsubcat.Name = HttpUtility.HtmlDecode(m2.Groups["title"].Value);
-                    subsubcat.Url = new Uri(new Uri(baseUrl), m2.Groups["url"].Value).AbsoluteUri;
-                    subsubcat.Description = String.Format("videos: {0} Audio: {1}", m2.Groups["videocount"].Value, m2.Groups["audiocount"].Value);
-                    subsubcat.Other = atozVideolistRegex;
-                    subcat.SubCategories.Add(subsubcat);
-                    m2 = m2.NextMatch();
-                }
-                subcat.SubCategoriesDiscovered = true;
-                m = m.NextMatch();
+                    Name = orderBy,
+                    Url = ((RssLink)parentCategory).Url + "/kaikki.json?jarjestys=" + orderBy + '&',
+                    ParentCategory = parentCategory,
+                };
+                parentCategory.SubCategories.Add(subcat);
             }
-
             parentCategory.SubCategoriesDiscovered = true;
+
             return parentCategory.SubCategories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            regEx_VideoList = category.Other as Regex;
-            List<VideoInfo> res = base.getVideoList(category);
-            foreach (VideoInfo video in res)
+            return getVideos(((RssLink)category).Url, 0);
+        }
+
+        private List<VideoInfo> getVideos(string url, int startNr)
+        {
+            List<VideoInfo> result = new List<VideoInfo>();
+            bareUrl = url;
+            newStart = startNr + 24;
+            string webData = GetWebData(String.Format(url + "from={0}&to={1}", startNr, newStart), forceUTF8: true);
+            JToken j = JToken.Parse(webData);
+            /*if (startNr == 0 && false)// only for not a-z
             {
-                video.Title = HttpUtility.HtmlDecode(video.Title);
-                if (String.IsNullOrEmpty(video.Title))
-                    video.Title = "No title";
-                video.Description = HttpUtility.HtmlDecode(video.Description);
-                video.Length = HttpUtility.HtmlDecode(video.Length);
-                video.CleanDescriptionAndTitle();
+                JArray orders = j["filters"]["jarjestys"] as JArray;
+                orderByList = new Dictionary<string, string>();
+                foreach (JToken order in orders)
+                    orderByList.Add(order.Value<string>("key"), order.Value<string>("key"));
+            }*/
+            JArray videos = j["search"]["results"] as JArray;
+            foreach (JToken jvid in videos)
+            {
+                JToken images = jvid["images"];
+                VideoInfo video = new VideoInfo()
+                {
+                    Title = jvid.Value<string>("title"),
+                    Description = jvid.Value<string>("desc"),
+                    Length = jvid.Value<string>("durationSec"),
+                    Airdate = jvid.Value<string>("published"),
+                    ImageUrl = images.Value<string>("XL"),
+                    VideoUrl = String.Format(@"http://areena.yle.fi/tv/{0}.json", jvid.Value<string>("id"))
+                };
+                result.Add(video);
             }
-            return res;
+            nextPageAvailable = result.Count >= 24;
+            return result;
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            return getVideos(bareUrl, newStart);
+        }
+
+
+        private int SubcatFromAZ(RssLink parentCategory)
+        {
+            parentCategory.SubCategories = new List<Category>();
+            string webData = GetWebData(parentCategory.Url, forceUTF8: true);
+            string[] parts = webData.Split(new[] { @"<li class=""h2"">" }, StringSplitOptions.RemoveEmptyEntries);
+            Regex r = new Regex(@"<li>\s*<a\sclass=""aotip""\stitle=""""\s*href=""(?<url>[^""]*)""\s>\s*<span\sclass=""world[^""]*"">(?<title>[^<]*)</span>\s*</a>\s*<div\sclass=""mini-epg-tooltip\sao""\sstyle=""display:none;"">\s*<h1\sclass=""h3"">[^<]*</h1>\s*<div\sclass=""desc"">(?:(?!<img).)*<img\ssrc=""(?<thumb>[^""]*)""\s(?:(?!class=""short"").)*class=""short"">\s*(?<description>[^<]*)<", defaultRegexOptions);
+            foreach (string part in parts)
+            {
+                int p = part.IndexOf('<');
+                if (p > 0)
+                {
+                    RssLink chr = new RssLink()
+                    {
+                        Name = part.Substring(0, p).Trim(),
+                        SubCategories = new List<Category>(),
+                        SubCategoriesDiscovered = true,
+                        HasSubCategories = true,
+                        ParentCategory = parentCategory
+                    };
+                    Match m = r.Match(part);
+                    while (m.Success)
+                    {
+                        RssLink subcat = new RssLink()
+                        {
+                            Name = m.Groups["title"].Value,
+                            Url = m.Groups["url"].Value,
+                            Thumb = m.Groups["thumb"].Value,
+                            Description = m.Groups["description"].Value,
+                            ParentCategory = chr,
+                            HasSubCategories = true,
+                            SubCategoriesDiscovered = true,
+                            SubCategories = new List<Category>()
+                        };
+                        chr.SubCategories.Add(subcat);
+                        subcat.SubCategories.Add(new RssLink()
+                        {
+                            Name = "Ohjelmat",
+                            Url = subcat.Url + ".json?sisalto=ohjelmat&",
+                            ParentCategory = subcat,
+                            Other = true
+                        });
+                        subcat.SubCategories.Add(new RssLink()
+                        {
+                            Name = "Muut videot",
+                            Url = subcat.Url + ".json?sisalto=muut&",
+                            ParentCategory = subcat,
+                            Other = true
+                        });
+                        m = m.NextMatch();
+                    }
+                    if (chr.SubCategories.Count > 0)
+                        parentCategory.SubCategories.Add(chr);
+                }
+
+            }
+            parentCategory.SubCategoriesDiscovered = true;
+            return parentCategory.SubCategories.Count;
         }
 
         public override string getUrl(VideoInfo video)
         {
-            int i = video.VideoUrl.LastIndexOf('/');
+            string papiurl = base.getUrl(video);
 
-            clipId = video.VideoUrl.Substring(i + 1);
-            //"1619954";
-
-            if (!ReverseProxy.Instance.HasHandler(this)) ReverseProxy.Instance.AddHandler(this);
-
-            return ReverseProxy.Instance.GetProxyUri(this,
-                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}",
-                HttpUtility.UrlEncode("rtmp://" + flashurl + "/AreenaServer/video.mp4")));
-        }
-
-        private bool UnknownMethodHandler(string method, AMFObject obj, RTMP rtmp)
-        {
-            if (method == "authenticationDetails")
+            string data = GetWebData(papiurl);
+            byte[] bytes = Convert.FromBase64String(data);
+            RijndaelManaged rijndael = new RijndaelManaged();
+            byte[] iv = new byte[16];
+            Array.Copy(bytes, iv, 16);
+            rijndael.IV = iv;
+            rijndael.Key = Encoding.ASCII.GetBytes("hjsadf89hk123ghk");
+            rijndael.Mode = CipherMode.CFB;
+            rijndael.Padding = PaddingMode.Zeros;
+            ICryptoTransform decryptor = rijndael.CreateDecryptor(rijndael.Key, rijndael.IV);
+            int padLen = 16 - bytes.Length % 16;
+            byte[] newbytes = new byte[bytes.Length - 16 + padLen];
+            Array.Copy(bytes, 16, newbytes, 0, bytes.Length - 16);
+            Array.Clear(newbytes, newbytes.Length - padLen, padLen);
+            string result = null;
+            using (MemoryStream msDecrypt = new MemoryStream(newbytes))
             {
-                int randomAuth = Convert.ToInt32(obj.GetProperty(3).GetObject().GetProperty("randomAuth").GetNumber());
-                int authResult = (randomAuth + 447537687) % 6834253;
-                rtmp.SendFlex("authenticateRandomNumber", authResult);
-                if (rtmp.GetExpectedPacket("randomNumberAuthenticated", out obj))
+                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                 {
-                    rtmp.SendRequestData("e0", "session/authenticate/1");
-                    rtmp.GetExpectedPacket("rpcResult", out obj);
-                    rtmp.SendRequestData("e1", "clips/info/" + clipId);
-                    if (rtmp.GetExpectedPacket("rpcResult", out obj))
+                    using (StreamReader srDecrypt = new StreamReader(csDecrypt))
                     {
-                        string s = obj.GetProperty(4).GetString();
-                        Match m = rtmpUrlRegEx.Match(s);
-                        if (m.Success)
-                        {
-                            string t = m.Groups["url"].Value;
-                            t = t.Replace(@"\/", "/");
-                            //rtmp://flashu.yle.fi/AreenaServer/maailma/1/61/99/1619955_691405.mp4
-                            string ext = Path.GetExtension(t).Trim('.');
-                            t = Path.ChangeExtension(t, String.Empty).Trim('.');
-                            rtmp.Link.playpath = t.Replace(@"rtmp://" + flashurl + "/AreenaServer/", ext + ":");
-                            rtmp.SendRequestData("e3", "clips/featured/" + clipId);
-                            rtmp.SendCreateStream();
-                        }
-                        return false;
+                        result = srDecrypt.ReadToEnd();
+                        int p = result.IndexOf("</media>");
+                        result = result.Substring(0, p + 8);
                     }
                 }
             }
-            return false;
-        }
 
-        #region IRequestHandler
-        bool invalidHeader = false;
-
-        public bool DetectInvalidPackageHeader()
-        {
-            return invalidHeader;
-        }
-
-        public void HandleRequest(string url, HTTPServerRequest request, HTTPServerResponse response)
-        {
-            Thread.CurrentThread.Name = "RTMPYleProxy";
-            Logger.Log("Request from yle url=" + url);
-            RTMP rtmp = null;
-            try
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(result);
+            XmlNode urlNode = doc.SelectSingleNode("//media/onlineAsset/url");
+            string rtmpUrl = urlNode.SelectSingleNode("connect").InnerText;
+            string stream = urlNode.SelectSingleNode("stream").InnerText;
+            RtmpUrl theUrl = new RtmpUrl(rtmpUrl.Split('?')[0])
             {
-                NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(new Uri(url).Query);
-
-                Link link = Link.FromRtmpUrl(new Uri(paramsHash["rtmpurl"]));
-                link.flashVer = "WIN 10,0,32,18";
-                link.swfUrl = @"http://areena.yle.fi/player/Application.swf?build=2";
-                link.tcUrl = @"rtmp://" + flashurl + ":1935/AreenaServer";
-                link.pageUrl = @"http://areena.yle.fi/video/" + clipId;
-
-
-                rtmp = new RTMP() { Link = link };
-                rtmp.SkipCreateStream = true;
-                rtmp.MethodHookHandler = UnknownMethodHandler;
-
-                RTMPRequestHandler.ConnectAndGetStream(rtmp, request, response, ref invalidHeader);
-            }
-            finally
-            {
-                if (rtmp != null) rtmp.Close();
-            }
-
-            Logger.Log("Request finished.");
+                PlayPath = stream,
+                SwfUrl = @"http://areena.yle.fi/static/player/1.2.8/flowplayer/flowplayer.commercial-3.2.7-encrypted.swf",
+                App = "ondemand?" + rtmpUrl.Split('?')[1],
+                PageUrl = video.VideoUrl,
+                TcUrl = rtmpUrl
+            };
+            return theUrl.ToString();
         }
-        #endregion
+
     }
 }
