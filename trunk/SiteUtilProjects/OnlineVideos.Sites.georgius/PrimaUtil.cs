@@ -25,7 +25,7 @@ namespace OnlineVideos.Sites.georgius
         private static String episodeLqFileNameFormat = @"'lq_id':'(?<lqFileName>[^']*)";
         private static String episodeAuth = @"'?auth=(?<auth>[^']*)";
         private static String episodeZone = @"'zoneGEO':(?<zone>[^,]*)";
-        private static String episodeBaseUrlStart = @"embed['stream'] = '";
+        private static String episodeBaseUrlStart = @"embed['stream'] = 'rtmp";
         private static String episodeBaseUrlEnd = @"'+(";
 
         private static String flashVarsStartRegex = @"(<param name=""flashvars"" value=)|(writeSWF)";
@@ -247,7 +247,7 @@ namespace OnlineVideos.Sites.georgius
                 int endIndex = episodeJS.IndexOf(PrimaUtil.episodeBaseUrlEnd, startIndex + PrimaUtil.episodeBaseUrlStart.Length);
                 if (endIndex >= 0)
                 {
-                    baseRtmpUrl = episodeJS.Substring(startIndex + PrimaUtil.episodeBaseUrlStart.Length, endIndex - startIndex - PrimaUtil.episodeBaseUrlStart.Length).Replace("iprima_token", "");
+                    baseRtmpUrl = "rtmp" + episodeJS.Substring(startIndex + PrimaUtil.episodeBaseUrlStart.Length, endIndex - startIndex - PrimaUtil.episodeBaseUrlStart.Length).Replace("iprima_token", "");
                 }
             }
 
