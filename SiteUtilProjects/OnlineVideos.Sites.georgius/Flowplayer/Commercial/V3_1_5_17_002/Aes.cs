@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Flowplayer.Commercial.V3_1_5_17_002
 {
-    internal class Aes
+    public class Aes
     {
         public enum KeyType
         {
@@ -283,59 +283,108 @@ namespace Flowplayer.Commercial.V3_1_5_17_002
             }
 
             return Utf8.Decode(builder.ToString());
-
-            //return plaintext;
         }
 
+        public static String Encrypt(String plainText, String password, KeyType keyType)
+        {
+            int blockSize = 16; // block size fixed at 16 bytes / 128 bits (Nb=4) for AES
+            int bits = (int)keyType;
 
-        //public static String Decrypt(String content, String key, KeyType keyType)
-        //{
-        //    content = Base64.Decode(content, false);
-        //    key = Utf8.Encode(key);
-        //    int keyLength = (int)keyType / 8;
-        //    int[] binaryKey = new int[keyLength];
-        //    for (int i = 0; i < keyLength; i++)
-        //    {
-        //        binaryKey[i] = content[i];
-        //    }
+            plainText = Utf8.Encode(plainText);
+            password = Utf8.Encode(password);
 
-        //    int[] cipher = Cipher(binaryKey, KeyExpansion(binaryKey));
-        //    int[] temp = new int[cipher.Length + keyLength - 16];
-        //    for (int i = 0; i < cipher.Length; i++)
-        //    {
-        //        temp[i] = cipher[i];
-        //    }
-        //    for (int i = cipher.Length; i < (cipher.Length + keyLength - 16); i++)
-        //    {
-        //        temp[i] = cipher[i - cipher.Length];
-        //    }
-        //    cipher = temp;
+            // use AES itself to encrypt password to get cipher key (using plain password as source for key
+            // expansion) - gives us well encrypted key
 
-        //    temp = new int[8];
-        //    for (int i = 0; i < 8; i++)
-        //    {
-        //        temp[i] = content[i];
-        //    }
+            int bytes = bits / 8;   // no bytes in key
+            int[] pwBytes = new int[bytes];
+            for (int i = 0; i < bytes; i++)
+            {
+                pwBytes[i] = password[i];
+            }
 
-        //    int[,] expandedCipher = KeyExpansion(cipher);
-        //    int i1 = (int)Math.Ceiling(((double)(content.Length - 8)) / 16.0);
-        //    String[] temp2 = new String[i1];
-        //    for (int i = 0; i < i1; i++)
-        //    {
-        //        temp2[i] = content.Substring(8 + i * 16, 16);
-        //    }
-        //    for (int i = 0; i < i1; i++)
-        //    {
-        //        for (int j = 0; j < 4; j++)
-        //        {
-        //            temp[15 - j] = ((i >> j) * 8) & 0x000000FF;
-        //        }
-        //        for (int j = 0; j < 4; j++)
-        //        {
-        //            temp[15 -j - 4] = ((i+1) 
-        //        }
-        //    }
-        //}
+            int[] temp = Cipher(pwBytes, KeyExpansion(pwBytes));    // gives us 16-byte key
+            int[] key = new int[temp.Length + bytes - 16];          // expand key to 16/24/32 bytes long
+            // expand key to 16/24/32 bytes long
+            for (int i = 0; i < temp.Length; i++)
+            {
+                key[i] = temp[i];
+            }
+            for (int i = temp.Length; i < (temp.Length + bytes - 16); i++)
+            {
+                key[i] = temp[i - temp.Length];
+            }
+
+            // initialise counter block (NIST SP800-38A §B.2): millisecond time-stamp for nonce in 1st 8 bytes,
+            // block counter in 2nd 8 bytes
+            int[] counterBlock = new int[16];
+            int nonce = (int)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;    // timestamp: milliseconds since 1-Jan-1970
+            int nonceSec = (int)Math.Floor((double)nonce / (double)1000);
+            int nonceMs = nonce % 1000;
+
+            // encode nonce with seconds in 1st 4 bytes, and (repeated) ms part filling 2nd 4 bytes
+            for (int i = 0; i < 4; i++)
+            {
+                counterBlock[i] = (nonceSec >> i * 8) & 0xFF;
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                counterBlock[i + 4] = nonceMs & 0xFF;
+            }
+
+            // and convert it to a string to go on the front of the ciphertext
+            String ctrTxt = String.Empty;
+            for (int i = 0; i < 8; i++)
+            {
+                ctrTxt += (Char)counterBlock[i];
+            }
+
+            // generate key schedule - an expansion of the key into distinct Key Rounds for each round
+            int[,] keySchedule = KeyExpansion(key);
+            int blockCount = (int)Math.Ceiling((double)plainText.Length / (double)blockSize);
+            String[] cipherTxt = new String[blockCount];    // ciphertext as array of strings
+
+
+            for (int i = 0; i < blockCount; i++)
+            {
+                // set counter (block #) in last 8 bytes of counter block (leaving nonce in 1st 8 bytes)
+                // done in two stages for 32-bit ops: using two words allows us to go past 2^32 blocks (68GB)
+
+                for (int j = 0; j < 4; j++)
+                {
+                    counterBlock[15 - j] = (i >> j * 8) & 0xFF;
+                }
+
+                for (int j = 0; j < 4; j++)
+                {
+                    //counterBlock[15 - c - 4] = (b / 0x100000000 >>> c * 8);
+                    counterBlock[15 - j - 4] = 0;
+                }
+
+                int[] cipherCntr = Cipher(counterBlock, keySchedule);   // -- encrypt counter block --
+                // block size is reduced on final block
+                int blockLength = i < (blockCount - 1) ? blockSize : (plainText.Length - i * blockSize);
+
+                Char[] cipherChar = new Char[blockLength];
+                for (int j = 0; j < blockLength; j++)
+                {
+                    // -- xor plaintext with ciphered counter char-by-char --
+                    cipherChar[j] = (Char)(cipherCntr[j] ^ plainText[i * blockSize + j]);
+                }
+
+                // ciphertxt[b] = cipherChar.join('');
+                cipherTxt[i] = new String(cipherChar);
+            }
+
+            StringBuilder builder = new StringBuilder();
+            builder.Append(ctrTxt);
+            foreach (var str in cipherTxt)
+            {
+                builder.Append(str);
+            }
+
+            return Base64.Encode(builder.ToString(), false);
+        }
 
         public const String Key = "EaDUutg4ppGYXwNMFdRJsadenFSnI6gJ";
 
@@ -374,36 +423,5 @@ namespace Flowplayer.Commercial.V3_1_5_17_002
             {0x36, 0x00, 0x00, 0x00}
         };
 
-
-        //internal static int[] SBOX = new int[] {
-        //    99, 124, 119, 123, 242, 107, 111, 197, 48, 1, 103, 43, 254, 215, 171, 118,
-        //    202, 130, 201, 125, 250, 89, 71, 240, 173, 212, 162, 175, 156, 164, 114, 192,
-        //    183, 253, 147, 38, 54, 63, 247, 204, 52, 165, 229, 241, 113, 216, 49, 21,
-        //    4, 199, 35, 195, 24, 150, 5, 154, 7, 18, 128, 226, 235, 39, 178, 117,
-        //    9, 131, 44, 26, 27, 110, 90, 160, 82, 59, 214, 179, 41, 227, 47, 132,
-        //    83, 209, 0, 237, 32, 252, 177, 91, 106, 203, 190, 57, 74, 76, 88, 207,
-        //    208, 239, 170, 251, 67, 77, 51, 133, 69, 249, 2, 127, 80, 60, 159, 168,
-        //    81, 163, 64, 143, 146, 157, 56, 245, 188, 182, 218, 33, 16, 255, 243, 210,
-        //    205, 12, 19, 236, 95, 151, 68, 23, 196, 167, 126, 61, 100, 93, 25, 115,
-        //    96, 129, 79, 220, 34, 42, 144, 136, 70, 238, 184, 20, 222, 94, 11, 219,
-        //    224, 50, 58, 10, 73, 6, 36, 92, 194, 211, 172, 98, 145, 149, 228, 121,
-        //    231, 200, 55, 109, 141, 213, 78, 169, 108, 86, 244, 234, 101, 122, 174, 8,
-        //    186, 120, 37, 46, 28, 166, 180, 198, 232, 221, 116, 31, 75, 189, 139, 138,
-        //    112, 62, 181, 102, 72, 3, 246, 14, 97, 53, 87, 185, 134, 193, 29, 158,
-        //    225, 248, 152, 17, 105, 217, 142, 148, 155, 30, 135, 233, 206, 85, 40, 223,
-        //    140, 161, 137, 13, 191, 230, 66, 104, 65, 153, 45, 15, 176, 84, 187, 22 };
-
-        //internal static int[,] RCON = new int[11, 4] {
-        //    { 0, 0, 0, 0 },
-        //    { 1, 0, 0, 0 },
-        //    { 2, 0, 0, 0 }, 
-        //    { 4, 0, 0, 0 }, 
-        //    { 8, 0, 0, 0 }, 
-        //    { 16, 0, 0, 0 }, 
-        //    { 32, 0, 0, 0 }, 
-        //    { 64, 0, 0, 0 }, 
-        //    { 128, 0, 0, 0 }, 
-        //    { 27, 0, 0, 0 }, 
-        //    { 54, 0, 0, 0 } };
     }
 }
