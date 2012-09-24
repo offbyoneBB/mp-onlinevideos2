@@ -1203,10 +1203,10 @@
     <Site name="HardwareInfo" util="HardwareInfo" agecheck="false" enabled="true" lang="nl">
       <Description>Informational videos about computer hardware</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[<img\sclass="[^"]*"\s*src="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*(?:<img[^>]*>\s*</div>\s*<div\sclass="videoInfo">\s*)?<h2><a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a></h2>\s*(?:<p\sclass="editorialTeaserText">)?\s*<span\sclass="lessImportant">\s*(?<Airdate>[^<]*)</span>\s*(?<Description>[^<]*)<]]></item>
+        <item key="videoListRegEx"><![CDATA[<img\sclass="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\stitle="[^"]*"\salt="[^"]*">\s*</a>\s*</div>\s*<div\sclass="description">\s*<h2>\s*<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>\s*</h2>\s*<p\sclass="teaser">\s*<small>\s*(?<Airdate>[^<]*)</small><br>\s*(?<Description>[^<]*)<]]></item>
         <item key="nextPageRegEx"><![CDATA[<li><a\sdata-pagenumber="[^"]*"\shref="(?<url>[^\s]*)\s*">Volgende</a></li>]]></item>
         <item key="nextPageRegExUrlDecoding"><![CDATA[true]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<iframe\sclass="videoplayer"\ssrc="(?<m0>[^"]*)"></iframe>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<iframe\sid="activePlayer"\sclass="videoplayer"\ssrc="(?<m0>[^"]*)"[^>]*></iframe>]]></item>
         <item key="baseUrl"><![CDATA[http://nl.hardware.info/tv]]></item>
       </Configuration>
       <Categories>
