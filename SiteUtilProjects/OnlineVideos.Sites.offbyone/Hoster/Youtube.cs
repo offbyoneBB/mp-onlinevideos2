@@ -104,7 +104,7 @@ namespace OnlineVideos.Hoster
                     }
                     string finalUrl = urlOptions.Get("url");
                     if (!string.IsNullOrEmpty(finalUrl))
-						PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + "&ext=." + type.Replace("webm", "mkv"));
+						PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), HttpUtility.UrlDecode(finalUrl) + "&ext=." + type.Replace("webm", "mkv"));
                     else
                     {
                         string rtmpUrl = urlOptions.Get("conn");
