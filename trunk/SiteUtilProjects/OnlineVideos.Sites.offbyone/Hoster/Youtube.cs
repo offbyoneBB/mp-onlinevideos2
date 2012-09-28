@@ -102,9 +102,9 @@ namespace OnlineVideos.Hoster
                         type = Regex.Replace(type, @"; codecs=""[^""]*""", "");
                         type = type.Substring(type.LastIndexOfAny(new char[] { '/', '-' }) + 1);
                     }
-                    string finalUrl = urlOptions.Get("url");
+					string finalUrl = urlOptions.Get("url");
                     if (!string.IsNullOrEmpty(finalUrl))
-						PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), HttpUtility.UrlDecode(finalUrl) + "&ext=." + type.Replace("webm", "mkv"));
+						PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl +  "&signature=" + urlOptions.Get("sig") + "&ext=." + type.Replace("webm", "mkv"));
                     else
                     {
                         string rtmpUrl = urlOptions.Get("conn");
