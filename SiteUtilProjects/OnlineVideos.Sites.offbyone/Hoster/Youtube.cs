@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using OnlineVideos.Hoster.Base;
 using System.Web;
 using System.Globalization;
+using System.ComponentModel;
 
 namespace OnlineVideos.Hoster
 {
@@ -16,6 +17,13 @@ namespace OnlineVideos.Hoster
             return "Youtube.com";
         }
 
+		[Category("OnlineVideosUserConfiguration"), Description("Don't show the 3D formats that youtube offers on some clips."), LocalizableDisplayName("Hide 3D Formats")]
+		protected bool hide3DFormats = true;
+		[Category("OnlineVideosUserConfiguration"), Description("Don't show the 3gpp formats that youtube offers on some clips."), LocalizableDisplayName("Hide Mobile Formats")]
+		protected bool hideMobileFormats = true;
+
+		static readonly byte[] fmtOptions3D = new byte[] { 82, 83, 84, 85, 100, 101, 102 };
+		static readonly byte[] fmtOptionsMobile = new byte[] { 13, 17 };
 		static readonly byte[] fmtOptionsQualitySorted = new byte[] { 38, 85, 46, 37, 102, 84, 45, 22, 101, 83, 44, 35, 100, 82, 43, 18, 34, 6, 5, 0, 17, 13 };
         static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS'|swf)\s*(?:=|\:)\s((""\s*(?<html>.*)"";)|(?<json>\{.+\})|(?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|(flashvars=""(?<params>[^""]+)""))", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         static Regex unicodeFinder = new Regex(@"\\[uU]([0-9A-F]{4})", RegexOptions.Compiled);
@@ -92,7 +100,12 @@ namespace OnlineVideos.Hoster
                 PlaybackOptions = new Dictionary<string, string>();
                 foreach (var quality in qualities)
                 {
-                    if (!fmtOptionsQualitySorted.Contains(byte.Parse(quality.Key[0]))) continue;
+					byte fmt_quality = byte.Parse(quality.Key[0]);
+
+					if (!fmtOptionsQualitySorted.Contains(fmt_quality)) continue;
+
+					if (hideMobileFormats && fmtOptionsMobile.Any(b => b == fmt_quality)) continue;
+					if (hide3DFormats && fmtOptions3D.Any(b => b == fmt_quality)) continue;
 
                     var urlOptions = HttpUtility.ParseQueryString(quality.Value);
                     string type = urlOptions.Get("type");
