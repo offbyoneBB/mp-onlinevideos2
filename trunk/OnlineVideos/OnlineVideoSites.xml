@@ -1692,10 +1692,11 @@
       <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="cat_pic">\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*<img\s+src="(?<thumb>[^"]+)"[^>]*>\s*<span[^>]*>[^<]*</span>\s*</a>\s*<div>\s*<a[^>]*>\s*<strong>(?<title>[^<]*)</strong>\s*</a>\s*</div>]]></item>
-        <item key="videoListRegEx"><![CDATA[<li\s+class="videoBox">\s*<a[^>]+>\s*<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>\s*</a>\s*
-<a\s+class="videoTitle"\s+href="(?<VideoUrl>/watch/[^"]+)">(?<Title>[^<]+)</a>\s*
+        <item key="videoListRegEx"><![CDATA[<li\s+class="videoBox"[^>]*>\s*<div\s+class="wrapping-video-box">\s*
+<a[^>]+>\s*<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>\s*</a>\s*
+<a\s+class="videoTitle"\s+href="(?<VideoUrl>/watch/[^"]+)">(?<Title>[^<]+)</a>\s*</div>\s*
 <div\s+class="information">\s*
-<(div|h2)\s+class="duration[^"]*">(?<Duration>[^<]*)</(div|h2)>]]></item>
+<(div|h2)\s+class="duration[^"]*">(?<Duration>[^<]*)<]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\s+class="prev-next">\s*<a\s+href="(?<url>[^"]+)">[^<]*<span>&raquo;</span>\s*</a>\s*</li>]]></item>
         <item key="fileUrlRegEx"><![CDATA[(?<=<ul\s+class="downloadList">.*)<li[^>]*>\s*<span>[^<]*</span>\s*<a\s+href="(?<m0>[^"]+)">(?<n0>[^<]+)</a>(?<n1>[^<]*)</li>\s*]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
