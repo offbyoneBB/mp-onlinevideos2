@@ -28,7 +28,7 @@ namespace OnlineVideos.Sites
         string videosRegex = @"<img alt=""[^""]*"" src=""(?<thumb>[^""]+)"".*?<h\d[^>]*>\s*<a.*?href=""(?<url>[^""]+)"">(?<title>[^<]*)</a>\s*</h\d>.*?<em[^>]*>\s*(<span[^>]*>)?(?<length>\d+\:\d+)(</span>)?\s+Posted\:\s*(?<aired>.*?)</em>";
         string downloadPageUrlRegex = @"(download_dialog.load\('(?<url>[^']+)')|(<iframe src=""(?<youtubeurl>https?://www.youtube.com/[^&]+)&)";
         string downloadOptionsRegex = @"<input name=""download_quality"" id=""[^""]+"" type=""radio"" data-name=""[^""]+"" value=""(?<value>[^""]*)"".*?/> <label for=""[^""]*"">(?<label>[^<]*)</label>";
-        string downloadFileUrlRegex = @"var url = '(?<url>[^{]+{quality}{lang}.mp4)'";
+		string downloadFileUrlRegex = @"var url = '(?<url>[^{]+{quality}{lang}.mp4)[^']*'";
 
         string nextPageUrl;
 
