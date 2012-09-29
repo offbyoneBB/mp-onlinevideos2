@@ -438,11 +438,11 @@ namespace Standalone
                     {
                         if (dlg.lvChoices.SelectedItem.ToString().Contains(Translation.Instance.Concurrent))
                         {
-                            SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(video, SelectedCategory, SelectedSite) });
+                            SaveVideo_Step1(DownloadList.Create(DownloadInfo.Create(video, SelectedCategory, SelectedSite)));
                         }
                         else if (dlg.lvChoices.SelectedItem.ToString().Contains(Translation.Instance.Queued))
                         {
-                            SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(video, SelectedCategory, SelectedSite) }, true);
+                            SaveVideo_Step1(DownloadList.Create(DownloadInfo.Create(video, SelectedCategory, SelectedSite)), true);
                         }
                     }
                     else

@@ -49,9 +49,15 @@
 						<Component Id="MPUrlSource" Guid="04047A84-E2C0-4EC8-A490-8467EDC2D302">
 							<File Id="MPUrlSource_ax" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter.ax" DiskId="1" Vital="yes"/>
 							<File Id="libcurl_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\libcurl.dll" DiskId="1" Vital="yes"/>
-							<File Id="MPUrlSource_Http_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll" DiskId="1" Vital="yes"/>
-							<File Id="MPUrlSource_Rtmp_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll" DiskId="1" Vital="yes"/>
-							<File Id="avcodec_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Afhs_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Http_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Mms_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mms.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Mshs_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mshs.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Rtmp_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Parser_Asx_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_Asx.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Parser_F4m_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_F4M.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Parser_Mshs_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_MSHS.dll" DiskId="1" Vital="yes"/>
+              <File Id="avcodec_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
 							<File Id="avformat_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
 							<File Id="avutil_51_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll" DiskId="1" Vital="yes"/>
 						</Component>
@@ -109,7 +115,7 @@
 							<File Id="fr_xml" Source="$(var.SolutionDir)Language\OnlineVideos\fr.xml" DiskId="1" Vital="yes"/>
 							<File Id="he_xml" Source="$(var.SolutionDir)Language\OnlineVideos\he.xml" DiskId="1" Vital="yes"/>
 							<File Id="it_xml" Source="$(var.SolutionDir)Language\OnlineVideos\it.xml" DiskId="1" Vital="yes"/>
-							<File Id="lt_LT_xml" Source="$(var.SolutionDir)Language\OnlineVideos\lt-LT.xml" DiskId="1" Vital="yes"/>
+							<File Id="lt_xml" Source="$(var.SolutionDir)Language\OnlineVideos\lt.xml" DiskId="1" Vital="yes"/>
 							<File Id="nl_xml" Source="$(var.SolutionDir)Language\OnlineVideos\nl.xml" DiskId="1" Vital="yes"/>
 							<File Id="no_xml" Source="$(var.SolutionDir)Language\OnlineVideos\no.xml" DiskId="1" Vital="yes"/>
 							<File Id="pl_xml" Source="$(var.SolutionDir)Language\OnlineVideos\pl.xml" DiskId="1" Vital="yes"/>
@@ -118,7 +124,7 @@
 							<File Id="sk_xml" Source="$(var.SolutionDir)Language\OnlineVideos\sk.xml" DiskId="1" Vital="yes"/>
 							<File Id="sv_xml" Source="$(var.SolutionDir)Language\OnlineVideos\sv.xml" DiskId="1" Vital="yes"/>
 							<File Id="tr_xml" Source="$(var.SolutionDir)Language\OnlineVideos\tr.xml" DiskId="1" Vital="yes"/>
-							<File Id="zh_CN_xml" Source="$(var.SolutionDir)Language\OnlineVideos\zh-CN.xml" DiskId="1" Vital="yes"/>
+							<File Id="zh_xml" Source="$(var.SolutionDir)Language\OnlineVideos\zh.xml" DiskId="1" Vital="yes"/>
 						</Component>
 					</Directory>
 				</Directory>
