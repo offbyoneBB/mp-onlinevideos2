@@ -14,48 +14,48 @@ namespace OnlineVideos.Sites
     public class GenericSiteUtil : SiteUtilBase
     {
         public enum HosterResolving { None, FromUrl, ByRequest };
-		public enum UrlDecoding { None, HtmlDecode, UrlDecode };
+        public enum UrlDecoding { None, HtmlDecode, UrlDecode };
 
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for dynamic categories. Group names: 'url', 'title', 'thumb', 'description'. Will not be used if not set.")]
         protected string dynamicCategoriesRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the dynamicCategoriesRegEx.")]
         protected string dynamicCategoryUrlFormatString;
-		[Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'url' match of the dynamicCategoryUrlFormatString.")]
-		protected UrlDecoding dynamicCategoryUrlDecoding = UrlDecoding.None;
-		[Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the data retrieved to get the dynamic categories for a link to another page with more categories. Group names: 'url'. Will not be used if not set.")]
-		protected string dynamicCategoriesNextPageRegEx;
-		[Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for dynamic categories. Group names: 'url', 'title', 'thumb', 'description'. Will be used on the web pages resulting from the links from the dynamicCategoriesRegEx. Will not be used if not set.")]
+        [Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'url' match of the dynamicCategoryUrlFormatString.")]
+        protected UrlDecoding dynamicCategoryUrlDecoding = UrlDecoding.None;
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the data retrieved to get the dynamic categories for a link to another page with more categories. Group names: 'url'. Will not be used if not set.")]
+        protected string dynamicCategoriesNextPageRegEx;
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for dynamic categories. Group names: 'url', 'title', 'thumb', 'description'. Will be used on the web pages resulting from the links from the dynamicCategoriesRegEx. Will not be used if not set.")]
         protected string dynamicSubCategoriesRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the dynamicSubCategoriesRegEx.")]
         protected string dynamicSubCategoryUrlFormatString;
-		[Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'url' match of the dynamicSubCategoriesRegEx.")]
-		protected UrlDecoding dynamicSubCategoryUrlDecoding = UrlDecoding.None;
-		[Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the data retrieved to get the dynamic subcategories for a link to another page with more subcategories. Group names: 'url'. Will not be used if not set.")]
-		protected string dynamicSubCategoriesNextPageRegEx;
+        [Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'url' match of the dynamicSubCategoriesRegEx.")]
+        protected UrlDecoding dynamicSubCategoryUrlDecoding = UrlDecoding.None;
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the data retrieved to get the dynamic subcategories for a link to another page with more subcategories. Group names: 'url'. Will not be used if not set.")]
+        protected string dynamicSubCategoriesNextPageRegEx;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration', 'Description', 'Airdate'.")]
         protected string videoListRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the videoListRegEx.")]
         protected string videoListRegExFormatString;
-		[Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'url' match of the videoListRegExFormatString.")]
-		protected UrlDecoding videoListUrlDecoding = UrlDecoding.None;
+        [Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'url' match of the videoListRegExFormatString.")]
+        protected UrlDecoding videoListUrlDecoding = UrlDecoding.None;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to match on the video url retrieved as a result of the 'VideoUrl' match of the videoListRegEx. Groups should be named 'm0', 'm1' and so on. Only used if set.")]
         protected string videoUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the video url of an item that was found in the rss. If videoUrlRegEx is set those groups will be taken as parameters.")]
         protected string videoUrlFormatString = "{0}";
-		[Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'm0', 'm1', ... match of the videoUrlRegEx.")]
-		protected UrlDecoding videoUrlDecoding = UrlDecoding.None;
+        [Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'm0', 'm1', ... match of the videoUrlRegEx.")]
+        protected UrlDecoding videoUrlDecoding = UrlDecoding.None;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a next page link. Group should be named 'url'.")]
         protected string nextPageRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the nextPageRegEx.")]
         protected string nextPageRegExUrlFormatString;
-		[Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'url' match of the nextPageRegEx")]
-		protected UrlDecoding nextPageRegExUrlDecoding = UrlDecoding.None;
+        [Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'url' match of the nextPageRegEx")]
+        protected UrlDecoding nextPageRegExUrlDecoding = UrlDecoding.None;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link. Group should be named 'url'.")]
         protected string prevPageRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the prevPageRegEx.")]
         protected string prevPageRegExUrlFormatString;
-		[Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'url' match of the prevPageRegEx")]
-		protected UrlDecoding prevPageRegExUrlDecoding = UrlDecoding.None;
+        [Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the 'url' match of the prevPageRegEx")]
+        protected UrlDecoding prevPageRegExUrlDecoding = UrlDecoding.None;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a link that points to another file holding the actual playback url. Group should be named 'url'. If this is not set, the fileUrlRegEx will be used directly, otherwise first this and afterwards the fileUrlRegEx on the result.")]
         protected string playlistUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string used with the 'url' match of the playlistUrlRegEx to create the Url for the playlist request.")]
@@ -65,7 +65,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Format string used with the groups (m0, m1, ..) of the regex matches of the fileUrlRegEx to create the Url for playback.")]
         protected string fileUrlFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("Format string used with the groups (n0, n1, ..) of the regex matches of the fileUrlRegEx to create the Name for a playback choice.")]
-        protected string fileUrlNameFormatString = "{0}";        
+        protected string fileUrlNameFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the (m0, m1, ...) matches of the fileUrlRegEx")]
         protected UrlDecoding fileUrlDecoding = UrlDecoding.UrlDecode;
         [Category("OnlineVideosConfiguration"), Description("What type of decoding should be applied to the (n0, n1, ...) matches of the fileUrlRegEx")]
@@ -109,19 +109,20 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Enables getting the redirected url instead of the given url for playback.")]
         protected bool getRedirectedFileUrl = false;
 
-		protected Regex regEx_dynamicCategories, regEx_dynamicCategoriesNextPage, regEx_dynamicSubCategories, regEx_dynamicSubCategoriesNextPage, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_VideoUrl, regEx_PlaylistUrl, regEx_FileUrl;
+        protected Regex regEx_dynamicCategories, regEx_dynamicCategoriesNextPage, regEx_dynamicSubCategories, regEx_dynamicSubCategoriesNextPage, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_VideoUrl, regEx_PlaylistUrl, regEx_FileUrl;
         protected System.Text.Encoding encodingOverride;
+
+        protected readonly RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
 
-            RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
 
             if (!string.IsNullOrEmpty(dynamicCategoriesRegEx)) regEx_dynamicCategories = new Regex(dynamicCategoriesRegEx, defaultRegexOptions);
-			if (!string.IsNullOrEmpty(dynamicCategoriesNextPageRegEx)) regEx_dynamicCategoriesNextPage = new Regex(dynamicCategoriesNextPageRegEx, defaultRegexOptions);
-			if (!string.IsNullOrEmpty(dynamicSubCategoriesRegEx)) regEx_dynamicSubCategories = new Regex(dynamicSubCategoriesRegEx, defaultRegexOptions);
-			if (!string.IsNullOrEmpty(dynamicSubCategoriesNextPageRegEx)) regEx_dynamicSubCategoriesNextPage = new Regex(dynamicSubCategoriesNextPageRegEx, defaultRegexOptions);
+            if (!string.IsNullOrEmpty(dynamicCategoriesNextPageRegEx)) regEx_dynamicCategoriesNextPage = new Regex(dynamicCategoriesNextPageRegEx, defaultRegexOptions);
+            if (!string.IsNullOrEmpty(dynamicSubCategoriesRegEx)) regEx_dynamicSubCategories = new Regex(dynamicSubCategoriesRegEx, defaultRegexOptions);
+            if (!string.IsNullOrEmpty(dynamicSubCategoriesNextPageRegEx)) regEx_dynamicSubCategoriesNextPage = new Regex(dynamicSubCategoriesNextPageRegEx, defaultRegexOptions);
             if (!string.IsNullOrEmpty(videoListRegEx)) regEx_VideoList = new Regex(videoListRegEx, defaultRegexOptions);
             if (!string.IsNullOrEmpty(nextPageRegEx)) regEx_NextPage = new Regex(nextPageRegEx, defaultRegexOptions);
             if (!string.IsNullOrEmpty(prevPageRegEx)) regEx_PrevPage = new Regex(prevPageRegEx, defaultRegexOptions);
@@ -133,7 +134,7 @@ namespace OnlineVideos.Sites
             {
                 try { encodingOverride = System.Text.Encoding.GetEncoding(overrideEncoding); }
                 catch (Exception ex) { Log.Warn("{0} - could not create encoding {1} : {2}", siteSettings.Name, encodingOverride, ex.Message); }
-                
+
             }
         }
 
@@ -155,48 +156,48 @@ namespace OnlineVideos.Sites
                 string data = GetWebData(baseUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 if (!string.IsNullOrEmpty(data))
                 {
-					return ParseCategories(data);
+                    return ParseCategories(data);
                 }
             }
             return 0; // coming here means no dynamic categories were discovered
         }
 
-		public virtual int ParseCategories(string data)
-		{
-			List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a separate list
-			Match m = regEx_dynamicCategories.Match(data);
-			while (m.Success)
-			{
-				RssLink cat = new RssLink();
-				cat.Url = m.Groups["url"].Value;
-				if (!string.IsNullOrEmpty(dynamicCategoryUrlFormatString)) cat.Url = string.Format(dynamicCategoryUrlFormatString, cat.Url);
-				cat.Url = ApplyUrlDecoding(cat.Url, dynamicCategoryUrlDecoding);
-				if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
-				cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim().Replace('\n', ' '));
-				cat.Thumb = m.Groups["thumb"].Value;
-				if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
-				cat.Description = m.Groups["description"].Value;
-				if (regEx_dynamicSubCategories != null) cat.HasSubCategories = true;
-				dynamicCategories.Add(cat);
-				m = m.NextMatch();
-			}
-			// discovery finished, copy them to the actual list -> prevents double entries if error occurs in the middle of adding
-			if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
-			foreach (Category cat in dynamicCategories) Settings.Categories.Add(cat);
-			Settings.DynamicCategoriesDiscovered = dynamicCategories.Count > 0; // only set to true if actually discovered (forces re-discovery until found)
-			// Paging for Categories
-			if (dynamicCategories.Count > 0 && regEx_dynamicCategoriesNextPage != null)
-			{
-				m = regEx_dynamicCategoriesNextPage.Match(data);
-				if (m.Success)
-				{
-					string nextCatPageUrl = m.Groups["url"].Value;
-					if (!Uri.IsWellFormedUriString(nextCatPageUrl, System.UriKind.Absolute)) nextCatPageUrl = new Uri(new Uri(baseUrl), nextCatPageUrl).AbsoluteUri;
-					Settings.Categories.Add(new NextPageCategory() { Url = nextCatPageUrl });
-				}
-			}
-			return dynamicCategories.Count;
-		}
+        public virtual int ParseCategories(string data)
+        {
+            List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a separate list
+            Match m = regEx_dynamicCategories.Match(data);
+            while (m.Success)
+            {
+                RssLink cat = new RssLink();
+                cat.Url = m.Groups["url"].Value;
+                if (!string.IsNullOrEmpty(dynamicCategoryUrlFormatString)) cat.Url = string.Format(dynamicCategoryUrlFormatString, cat.Url);
+                cat.Url = ApplyUrlDecoding(cat.Url, dynamicCategoryUrlDecoding);
+                if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
+                cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim().Replace('\n', ' '));
+                cat.Thumb = m.Groups["thumb"].Value;
+                if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
+                cat.Description = m.Groups["description"].Value;
+                if (regEx_dynamicSubCategories != null) cat.HasSubCategories = true;
+                dynamicCategories.Add(cat);
+                m = m.NextMatch();
+            }
+            // discovery finished, copy them to the actual list -> prevents double entries if error occurs in the middle of adding
+            if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
+            foreach (Category cat in dynamicCategories) Settings.Categories.Add(cat);
+            Settings.DynamicCategoriesDiscovered = dynamicCategories.Count > 0; // only set to true if actually discovered (forces re-discovery until found)
+            // Paging for Categories
+            if (dynamicCategories.Count > 0 && regEx_dynamicCategoriesNextPage != null)
+            {
+                m = regEx_dynamicCategoriesNextPage.Match(data);
+                if (m.Success)
+                {
+                    string nextCatPageUrl = m.Groups["url"].Value;
+                    if (!Uri.IsWellFormedUriString(nextCatPageUrl, System.UriKind.Absolute)) nextCatPageUrl = new Uri(new Uri(baseUrl), nextCatPageUrl).AbsoluteUri;
+                    Settings.Categories.Add(new NextPageCategory() { Url = nextCatPageUrl });
+                }
+            }
+            return dynamicCategories.Count;
+        }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
@@ -211,38 +212,38 @@ namespace OnlineVideos.Sites
                     data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 if (!string.IsNullOrEmpty(data))
                 {
-					List<Category> dynamicSubCategories = new List<Category>(); // put all new discovered Categories in a separate list
+                    List<Category> dynamicSubCategories = new List<Category>(); // put all new discovered Categories in a separate list
                     Match m = regEx_dynamicSubCategories.Match(data);
                     while (m.Success)
                     {
                         RssLink cat = new RssLink();
                         cat.Url = m.Groups["url"].Value;
                         if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
-						cat.Url = ApplyUrlDecoding(cat.Url, dynamicSubCategoryUrlDecoding);
+                        cat.Url = ApplyUrlDecoding(cat.Url, dynamicSubCategoryUrlDecoding);
                         if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
                         cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
                         cat.Thumb = m.Groups["thumb"].Value;
                         if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
                         cat.Description = m.Groups["description"].Value;
                         cat.ParentCategory = parentCategory;
-						dynamicSubCategories.Add(cat);
+                        dynamicSubCategories.Add(cat);
                         m = m.NextMatch();
                     }
-					// discovery finished, copy them to the actual list -> prevents double entries if error occurs in the middle of adding
-					if (parentCategory.SubCategories == null) parentCategory.SubCategories = new List<Category>();
-					foreach (Category cat in dynamicSubCategories) parentCategory.SubCategories.Add(cat);
-					parentCategory.SubCategoriesDiscovered = dynamicSubCategories.Count > 0; // only set to true if actually discovered (forces re-discovery until found)
-					// Paging for SubCategories
-					if (parentCategory.SubCategories.Count > 0 && regEx_dynamicSubCategoriesNextPage != null)
-					{
-						m = regEx_dynamicSubCategoriesNextPage.Match(data);
-						if (m.Success)
-						{
-							string nextCatPageUrl = m.Groups["url"].Value;
-							if (!Uri.IsWellFormedUriString(nextCatPageUrl, System.UriKind.Absolute)) nextCatPageUrl = new Uri(new Uri(baseUrl), nextCatPageUrl).AbsoluteUri;
-							parentCategory.SubCategories.Add(new NextPageCategory() { Url = nextCatPageUrl, ParentCategory = parentCategory });
-						}
-					}
+                    // discovery finished, copy them to the actual list -> prevents double entries if error occurs in the middle of adding
+                    if (parentCategory.SubCategories == null) parentCategory.SubCategories = new List<Category>();
+                    foreach (Category cat in dynamicSubCategories) parentCategory.SubCategories.Add(cat);
+                    parentCategory.SubCategoriesDiscovered = dynamicSubCategories.Count > 0; // only set to true if actually discovered (forces re-discovery until found)
+                    // Paging for SubCategories
+                    if (parentCategory.SubCategories.Count > 0 && regEx_dynamicSubCategoriesNextPage != null)
+                    {
+                        m = regEx_dynamicSubCategoriesNextPage.Match(data);
+                        if (m.Success)
+                        {
+                            string nextCatPageUrl = m.Groups["url"].Value;
+                            if (!Uri.IsWellFormedUriString(nextCatPageUrl, System.UriKind.Absolute)) nextCatPageUrl = new Uri(new Uri(baseUrl), nextCatPageUrl).AbsoluteUri;
+                            parentCategory.SubCategories.Add(new NextPageCategory() { Url = nextCatPageUrl, ParentCategory = parentCategory });
+                        }
+                    }
                 }
                 return parentCategory.SubCategories == null ? 0 : parentCategory.SubCategories.Count;
             }
@@ -252,22 +253,22 @@ namespace OnlineVideos.Sites
             }
         }
 
-		public override int DiscoverNextPageCategories(NextPageCategory category)
-		{
-			string data = GetWebData(category.Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+        public override int DiscoverNextPageCategories(NextPageCategory category)
+        {
+            string data = GetWebData(category.Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
 
-			if (category.ParentCategory == null)
-			{
-				Settings.Categories.Remove(category);
-				return ParseCategories(data);
-			}
-			else
-			{
-				category.ParentCategory.SubCategories.Remove(category);
-				int oldAmount = category.ParentCategory.SubCategories.Count;
-				return ParseSubCategories(category.ParentCategory, data);
-			}
-		}
+            if (category.ParentCategory == null)
+            {
+                Settings.Categories.Remove(category);
+                return ParseCategories(data);
+            }
+            else
+            {
+                category.ParentCategory.SubCategories.Remove(category);
+                int oldAmount = category.ParentCategory.SubCategories.Count;
+                return ParseSubCategories(category.ParentCategory, data);
+            }
+        }
 
         public virtual VideoInfo CreateVideoInfo()
         {
@@ -288,10 +289,10 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = CreateVideoInfo();
                     video.Title = channel.StreamName;
-					// rtmp live stream urls need to set the live flag (if they are not yet in the MPUrlSourceFilter format)
-					if (channel.Url.ToLower().StartsWith("rtmp") && !channel.Url.Contains(MPUrlSourceFilter.RtmpUrl.ParameterSeparator))
+                    // rtmp live stream urls need to set the live flag (if they are not yet in the MPUrlSourceFilter format)
+                    if (channel.Url.ToLower().StartsWith("rtmp") && !channel.Url.Contains(MPUrlSourceFilter.RtmpUrl.ParameterSeparator))
                     {
-						video.VideoUrl = new MPUrlSourceFilter.RtmpUrl(channel.Url) { Live = true }.ToString();
+                        video.VideoUrl = new MPUrlSourceFilter.RtmpUrl(channel.Url) { Live = true }.ToString();
                     }
                     else
                     {
@@ -319,7 +320,7 @@ namespace OnlineVideos.Sites
                         if (matchVideoUrl.Groups["m" + i.ToString()].Success)
                             groupValues.Add(HttpUtility.UrlDecode(matchVideoUrl.Groups["m" + i.ToString()].Value));
                     resultUrl = string.Format(videoUrlFormatString, groupValues.ToArray());
-					resultUrl = ApplyUrlDecoding(resultUrl, videoUrlDecoding);
+                    resultUrl = ApplyUrlDecoding(resultUrl, videoUrlDecoding);
                 }
             }
             else
@@ -395,15 +396,15 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-			// it is a live stream that was configured in the xml, return the url right away
-			if (video.Other as string == "livestream") return video.VideoUrl;
+            // it is a live stream that was configured in the xml, return the url right away
+            if (video.Other as string == "livestream") return video.VideoUrl;
 
-			// set playbackoption to null, as they will be rediscovered (not doing so would result in double resolving of them)
-			video.PlaybackOptions = null; 
+            // set playbackoption to null, as they will be rediscovered (not doing so would result in double resolving of them)
+            video.PlaybackOptions = null;
 
-			// deserialize PlaybackOptions if they were saved in Other object (happens if they are already discovered when building the list of videos)
+            // deserialize PlaybackOptions if they were saved in Other object (happens if they are already discovered when building the list of videos)
             if (video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
-                video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));            
+                video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
 
             string resultUrl = getFormattedVideoUrl(video);
 
@@ -442,8 +443,9 @@ namespace OnlineVideos.Sites
                     // try to resolve asx to mms streams
                     if (video.PlaybackOptions[key].EndsWith(".asx"))
                     {
-						string mmsUrl = null;
-						try { mmsUrl = SiteUtilBase.ParseASX(video.PlaybackOptions[key])[0]; } catch { }
+                        string mmsUrl = null;
+                        try { mmsUrl = SiteUtilBase.ParseASX(video.PlaybackOptions[key])[0]; }
+                        catch { }
                         if (!string.IsNullOrEmpty(mmsUrl) && !video.PlaybackOptions.ContainsValue(mmsUrl))
                         {
                             Uri uri = new Uri(mmsUrl);
@@ -508,7 +510,7 @@ namespace OnlineVideos.Sites
                                 Dictionary<string, string> options = hosterUtil.getPlaybackOptions(value);
                                 if (options != null && options.Count > 0)
                                     foreach (var option in options)
-                                        video.PlaybackOptions.Add(string.Format("{0} - {1}",video.PlaybackOptions.Count + 1, option.Key), option.Value);
+                                        video.PlaybackOptions.Add(string.Format("{0} - {1}", video.PlaybackOptions.Count + 1, option.Key), option.Value);
                             }
                     }
 
@@ -640,8 +642,8 @@ namespace OnlineVideos.Sites
                         // get, format and if needed absolutify the video url
                         videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                         if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
-						videoInfo.VideoUrl = ApplyUrlDecoding(videoInfo.VideoUrl, videoListUrlDecoding);
-						if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;                        
+                        videoInfo.VideoUrl = ApplyUrlDecoding(videoInfo.VideoUrl, videoListUrlDecoding);
+                        if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
                         // get, format and if needed absolutify the thumb url
                         videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                         if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.ImageUrl = string.Format(videoThumbFormatString, videoInfo.ImageUrl);
@@ -683,7 +685,7 @@ namespace OnlineVideos.Sites
                     foreach (RssItem rssItem in RssToolkit.Rss.RssDocument.Load(data).Channel.Items)
                     {
                         VideoInfo video = VideoInfo.FromRssItem(rssItem, regEx_FileUrl != null, new Predicate<string>(isPossibleVideo));
-						// only if a video url was set, add this Video to the list
+                        // only if a video url was set, add this Video to the list
                         if (!string.IsNullOrEmpty(video.VideoUrl))
                         {
                             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
@@ -775,15 +777,15 @@ namespace OnlineVideos.Sites
             }
         }
 
-		protected virtual string ApplyUrlDecoding(string text, UrlDecoding decoding)
-		{
-			switch (decoding)
-			{
-				case UrlDecoding.HtmlDecode: return HttpUtility.HtmlDecode(text);
-				case UrlDecoding.UrlDecode: return HttpUtility.UrlDecode(text);
-				default: return text;
-			}
-		}
+        protected virtual string ApplyUrlDecoding(string text, UrlDecoding decoding)
+        {
+            switch (decoding)
+            {
+                case UrlDecoding.HtmlDecode: return HttpUtility.HtmlDecode(text);
+                case UrlDecoding.UrlDecode: return HttpUtility.UrlDecode(text);
+                default: return text;
+            }
+        }
 
         #region Next/Previous Page
 
