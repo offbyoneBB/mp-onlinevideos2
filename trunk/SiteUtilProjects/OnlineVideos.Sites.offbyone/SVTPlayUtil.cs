@@ -347,6 +347,10 @@ namespace OnlineVideos.Sites
 						Live = video.VideoUrl.Contains("/live")
 					}.ToString();
 				}
+				else if (url.StartsWith("http://") && url.EndsWith(".f4m"))
+				{
+					url = url + "?hdcore=2.10.3";
+				}
 				else if (url.StartsWith("http://geoip.api"))
 					url = HttpUtility.ParseQueryString(new Uri(url).Query)["vurl"];
 
