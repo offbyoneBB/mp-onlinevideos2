@@ -309,6 +309,7 @@ namespace OnlineVideos.Sites
                         parameters.Add(m.Groups["var"].Value, m.Groups["val"].Value);
                 }
             }
+			parameters["domain"] = "www.myvideo.de";
             // check if webpage uses a different type of player
             if (string.IsNullOrEmpty(url))
             {
