@@ -110,6 +110,7 @@
     <Compile Include="VimeoUtil.cs" />
     <Compile Include="Vimeo\AuthBase.cs" />
     <Compile Include="YleAreenaUtil.cs" />
+    <Compile Include="ZieNlUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CinemassacreUtil.cs" />

@@ -1467,6 +1467,18 @@
         <Category xsi:type="RssLink" name="Lapset">http://areena.yle.fi/tv/lapset</Category>
       </Categories>
     </Site>
+    <Site name="Zie.nl" util="ZieNl" agecheck="false" enabled="true" lang="nl">
+      <Description>Op zoek naar leuke en interessante video's? Zie.nl, de nieuwe videosite van Nederland.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="[^"]*">\s*<h2>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</h2>\s*</li>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li>\s*<h2>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</h2>\s*</li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="floatclear\szero\s[^"]*">[^<]*<div\sclass="floatleft"\sstyle="margin-right:\s5px;"><a\shref="(?<VideoUrl>[^"]*)"[^>]*><img\ssize="ws"\s*height="88"\s*width="155"\s*src="(?<ImageUrl>[^"]*)"\s*alt="[^"]*"\s*style=""\s/></a></div>[^<]*<span\sclass="colorprofile\stitle">[^<]*<a[^>]*>(?<Title>[^<]*)</a>[^<]*</span>[^<]*(?:<span\sclass="description"\sstyle="padding-right:\s10px;">(?<Description>.*?)</span>)?[^<]*(?:<div\sstyle="position:absolute;\sbottom:\s0;left:160px"\sclass="darkgrey\ssmall">(?<Airdate>[^<]*)</div>)?]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<meta\sproperty="og:video"\scontent="[^\?]*\?config=[^&]*&file=(?<m0>[^&]*)&logo=[^>]*>]]></item>
+        <item key="searchUrl"><![CDATA[http://www.zie.nl/search]]></item>
+        <item key="searchPostString"><![CDATA[q={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.zie.nl/]]></item>
+      </Configuration>
+    </Site>
     <Site name="ZTélé" util="ZTele" agecheck="false" enabled="true" lang="fr">
       <Description>Ztélé est une chaîne de télévision spécialisée dans les nouvelles technologies, la science, le multimédia, les jeux vidéo et les séries de science-fiction. Le site présente également la grille horaire des émissions, des blogues technos, des capsules vidéo, des concours, des fonds d'écran et plus encore.</Description>
     </Site>
