@@ -7,13 +7,13 @@
 
 This part of the program is used as an aid to get the correct regex for the various parts of the configuraion.
 
-When this part is entered (through the "Create Regex" button), the relevant html is already loaded in the box at the right side. This is the base on which to create the regex.
+When this part is entered (through the "Create Regex" button), the relevant html is already loaded in the pane at the right side. This is the base on which to create the regex.
 
 Make sure you have this page visible in your web-browser, that will make the next steps easier.
 First you enter a (part of the) text you are searching for, e.g. one of the Categories you see in your browser. Hit "Find" to go to that particular part of the html.
-Then you have to select the relevant part (this requires some experience) and click on the <img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteParser/Resources/curved.png"/>. This will overwrite the text selected in the top-left box with the selected text of the right part.
+Then you have to select the relevant part (this requires some experience) and click on the <img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteParser/Resources/curved.png"/>. This will overwrite the text selected in the top-left pane with the selected text of the right part.
 
-Then for all the pieces in the top-left box that you recognize (e.g. the name, the URL etc) you select them, choose the kind of item that it represents, and click "<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteParser/Resources/arrowDn.png"/>Insert"
+Then for all the pieces in the top-left pane that you recognize (e.g. the name, the URL etc) you select them, choose the kind of item that it represents, and click "<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteParser/Resources/arrowDn.png"/>Insert"
 
 For all the remaining data, you can select parts, and choose e.g. "skip to" (multiple chars), "skip to single char" or "optional".
 
