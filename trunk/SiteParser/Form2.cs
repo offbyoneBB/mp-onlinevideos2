@@ -259,19 +259,37 @@ namespace SiteParser
         {
             if (String.IsNullOrEmpty(regexText))
             {
+                treeView1.BeginUpdate();
                 treeView1.Nodes.Clear();
+                treeView1.EndUpdate();
                 return;
             }
 
             treeView1.BeginUpdate();
             treeView1.Nodes.Clear();
+            int charpos = richTextBox1.GetCharIndexFromPosition(new System.Drawing.Point(1, 1));
+            bool highlightMatches = checkBoxHighlightMatches.Checked;
             try
             {
-
                 Regex test = new Regex(regexText, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
-                Match m = test.Match(testData);
+                Match m;
+                if (highlightMatches)
+                {
+                    LockWindowUpdate(richTextBox1.Handle);
+
+                    richTextBox1.SelectAll();
+                    richTextBox1.SelectionBackColor = richTextBox1.BackColor;
+                    m = test.Match(richTextBox1.Text);
+                }
+                else
+                    m = test.Match(testData);
                 while (m.Success)
                 {
+                    if (highlightMatches)
+                    {
+                        richTextBox1.Select(m.Index, m.Length);
+                        richTextBox1.SelectionBackColor = Color.White;
+                    }
                     TreeNode node = treeView1.Nodes.Add(treeView1.Nodes.Count.ToString());
                     foreach (String field in fields)
                     {
@@ -288,6 +306,13 @@ namespace SiteParser
             {
                 if (showMessage)
                     MessageBox.Show(ex.Message);
+            }
+            if (highlightMatches)
+            {
+                richTextBox1.Select(charpos, 0);
+                richTextBox1.ScrollToCaret();
+
+                LockWindowUpdate(IntPtr.Zero);
             }
             treeView1.EndUpdate();
         }
@@ -309,7 +334,9 @@ namespace SiteParser
                 LockWindowUpdate(regexRichText.Handle);
                 int selStart = regexRichText.SelectionStart;
                 int selEnd = selStart + richTextBox1.SelectionLength;
-                regexRichText.SelectedRtf = richTextBox1.SelectedRtf;
+                string s = richTextBox1.SelectedRtf;
+                s = Regex.Replace(s, @"\\highlight\d*\\", @"\");// remove background color
+                regexRichText.SelectedRtf = s;
                 for (int i = selStart; i < selEnd; )
                 {
                     switch (regexRichText.Text[i])

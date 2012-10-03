@@ -40,6 +40,7 @@
             this.textToRegexButton = new System.Windows.Forms.Button();
             this.testButton = new System.Windows.Forms.Button();
             this.insertButton = new System.Windows.Forms.Button();
+            this.checkBoxHighlightMatches = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.regexRichText = new System.Windows.Forms.RichTextBox();
@@ -114,9 +115,9 @@
             // 
             // treeView1
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView1.Location = new System.Drawing.Point(3, 32);
             this.treeView1.Name = "treeView1";
             this.treeView1.Size = new System.Drawing.Size(321, 270);
@@ -163,11 +164,22 @@
             this.insertButton.UseVisualStyleBackColor = true;
             this.insertButton.Click += new System.EventHandler(this.insertBbutton_Click);
             // 
+            // checkBoxHighlightMatches
+            // 
+            this.checkBoxHighlightMatches.AutoSize = true;
+            this.checkBoxHighlightMatches.Location = new System.Drawing.Point(153, 7);
+            this.checkBoxHighlightMatches.Name = "checkBoxHighlightMatches";
+            this.checkBoxHighlightMatches.Size = new System.Drawing.Size(111, 17);
+            this.checkBoxHighlightMatches.TabIndex = 41;
+            this.checkBoxHighlightMatches.Text = "Highlight Matches";
+            this.toolTip1.SetToolTip(this.checkBoxHighlightMatches, "Warning! This may affect correct matching on whitespace");
+            this.checkBoxHighlightMatches.UseVisualStyleBackColor = true;
+            // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(12, 39);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -197,6 +209,7 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.checkBoxHighlightMatches);
             this.splitContainer2.Panel2.Controls.Add(this.checkBoxOnlySelected);
             this.splitContainer2.Panel2.Controls.Add(this.treeView1);
             this.splitContainer2.Panel2.Controls.Add(this.testButton);
@@ -206,9 +219,9 @@
             // 
             // regexRichText
             // 
-            this.regexRichText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.regexRichText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.regexRichText.HideSelection = false;
             this.regexRichText.Location = new System.Drawing.Point(5, 37);
             this.regexRichText.Name = "regexRichText";
@@ -229,9 +242,9 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.TextViewTab);
             this.tabControl1.Controls.Add(this.WebViewTab);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
@@ -255,9 +268,9 @@
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox1.DetectUrls = false;
             this.richTextBox1.HideSelection = false;
             this.richTextBox1.Location = new System.Drawing.Point(0, 0);
@@ -356,5 +369,6 @@
         private System.Windows.Forms.RichTextBox regexRichText;
         private System.Windows.Forms.Button helpButton;
         private System.Windows.Forms.CheckBox checkBoxOnlySelected;
+        private System.Windows.Forms.CheckBox checkBoxHighlightMatches;
     }
 }
