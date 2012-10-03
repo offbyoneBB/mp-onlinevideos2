@@ -824,6 +824,7 @@
         <Category xsi:type="RssLink" name="The Ed Show">http://rss.msnbc.msn.com/id/30012522/device/rss/rss.xml</Category>
         <Category xsi:type="RssLink" name="ZeitGeist">http://rss.msnbc.msn.com/id/20418176/device/rss/rss.xml</Category>
         <Category xsi:type="RssLink" name="Business Video">http://rss.msnbc.msn.com/id/18424696/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Martin Bashir">http://rss.msnbc.msn.com/id/41894607/device/rss/rss.xml</Category>
       </Categories>
     </Site>
     <Site name="TEDTalks" util="TEDTalks" agecheck="false" enabled="true" lang="en">
