@@ -348,6 +348,12 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
                         string vconst = v.Attributes["viconst"].Value;
                         string title = node.FirstChild.SelectSingleNode("h2/a").InnerText;
+						
+						string href = node.FirstChild.SelectSingleNode("h2/a").GetAttributeValue("href","");
+						if (href.Contains("/imdblink/"))
+						{
+							continue; // link to an external trailer
+						}
 
                         if (title.ToLower().Trim() == movieTitle.ToLower().Trim())
                         {
@@ -370,9 +376,21 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                         video.Title = HttpUtility.HtmlDecode(title);
                         video.Description = HttpUtility.HtmlDecode(HttpUtility.UrlDecode(desc));
                         video.Image = m.Groups["filename"].Value + m.Groups["ext"].Value;
-
-                        string length = m.Groups["length"].Value;
-                        video.Duration = new TimeSpan(0, int.Parse(length.Split(':')[0]), int.Parse(length.Split(':')[1]));
+						
+						// when parsing the length make sure it is set as we expect, otherwise one error makes all clips inaccessible
+                        string length = m.Groups["length"].Value.Trim();
+						if (!string.IsNullOrEmpty(length))
+						{
+							string[] splits = length.Split(':');
+							if (splits.Length > 1)
+							{
+								video.Duration = new TimeSpan(0, int.Parse(length.Split(':')[0]), int.Parse(length.Split(':')[1]));
+							}
+							else
+							{
+								video.Duration = TimeSpan.FromSeconds(int.Parse(splits[0]));
+							}
+						}
 
                         videos.Add(video);
                     }

@@ -311,7 +311,8 @@ namespace OnlineVideos.Sites.Pondman
             video.Other = title;
             video.Title = title.Title;
             video.Description = title.Plot;
-            video.ImageUrl = getResizedImage(title.Image);
+            if (!string.IsNullOrEmpty(title.Image))
+				video.ImageUrl = getResizedImage(title.Image);
             
             List<VideoReference> videos = title.GetVideos();
 
