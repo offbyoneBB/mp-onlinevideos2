@@ -206,33 +206,28 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
-			RTMP_LIB.Link link = YahooRTMPLinkCatcher(video.VideoUrl);
-			return new MPUrlSourceFilter.RtmpUrl(link.tcUrl, link.hostname, link.port) { App = link.app, PlayPath = link.playpath } .ToString();
+			string url = string.Format(videoUrlFormatString, video.VideoUrl);
+			System.Xml.XmlDocument data = new System.Xml.XmlDocument();
+			data.Load(System.Xml.XmlReader.Create(url));
+
+			System.Xml.XmlElement stream = (System.Xml.XmlElement)data.SelectSingleNode("//SEQUENCE-ITEM[@TYPE='S_STREAM']/STREAM");
+			if (stream != null)
+			{
+				string tcUrl = stream.Attributes["APP"].Value;
+				string hostname = stream.Attributes["SERVER"].Value;
+				string queryString = stream.Attributes["QUERYSTRING"].Value;
+				string path = stream.Attributes["PATH"].Value.Substring(1);
+				string app = tcUrl.Substring(tcUrl.LastIndexOf('/') + 1);
+				string playpath = path.Substring(0, path.LastIndexOf('.')) + '?' + queryString;
+
+				return new MPUrlSourceFilter.RtmpUrl(tcUrl, hostname, 1935) { App = app, PlayPath = playpath }.ToString();
+			}
+			else
+			{
+				return "";
+			}
         }
         
-        RTMP_LIB.Link YahooRTMPLinkCatcher(string videoId)
-        {
-            RTMP_LIB.Link link = new RTMP_LIB.Link();
-
-            string url = string.Format(videoUrlFormatString, videoId);
-            System.Xml.XmlDocument data = new System.Xml.XmlDocument();
-            data.Load(System.Xml.XmlReader.Create(url));
-
-            System.Xml.XmlElement stream = (System.Xml.XmlElement)data.SelectSingleNode("//SEQUENCE-ITEM[@TYPE='S_STREAM']/STREAM");
-            if (stream != null)
-            {
-                link.tcUrl = stream.Attributes["APP"].Value;
-                link.hostname = stream.Attributes["SERVER"].Value;
-                link.port = 1935;
-                string queryString = stream.Attributes["QUERYSTRING"].Value;
-                string path = stream.Attributes["PATH"].Value.Substring(1);
-                link.app = link.tcUrl.Substring(link.tcUrl.LastIndexOf('/') + 1);
-                link.playpath = path.Substring(0, path.LastIndexOf('.')) + '?' + queryString;
-            }
-
-            return link;
-        }
-
         string FormatTitle(VideoResponse vid)
         {
             if (string.IsNullOrEmpty(format_Title))
