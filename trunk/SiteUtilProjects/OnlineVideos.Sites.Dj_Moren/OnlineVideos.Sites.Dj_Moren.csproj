@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -41,8 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Antena3NuevoUtil.cs" />
+    <Compile Include="MiteleUtil.cs" />
     <Compile Include="LaSextaUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\Flowplayer\Commercial\V3_1_5_17_002\Aes.cs" />
+    <Compile Include="Utils\Flowplayer\Commercial\V3_1_5_17_002\Base64.cs" />
+    <Compile Include="Utils\Flowplayer\Commercial\V3_1_5_17_002\Utf8.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
@@ -50,6 +55,10 @@
       <Name>OnlineVideos</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
