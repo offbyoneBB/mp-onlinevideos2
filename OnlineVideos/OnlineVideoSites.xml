@@ -1229,6 +1229,16 @@
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
     </Site>
+    <Site name="League of Legends Streams" util="LeagueOfLegends" agecheck="false" enabled="true" lang="en">
+      <Description>League of Legends Streams</Description>
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[<tr\sheight="32px"\sstyle="cursor:pointer;"\sonclick="view_stream\('(?<VideoUrl>[^']*)','[^,]*,'(?<hoster>[^']*)'\);"\sonMouseOver="show_preview\('[^']*',(?<ImageUrl>[^,]*),[^,]*,'[^']*','(?<Description>[^']*)'\);"[^>]*>\s<a\shref="[^"]*"\sstyle="display:none;">[^<]*</a>\s<td\sclass="live-td"><img[^>]*></td>\s<td\sclass="stream-name-td">(?<Title>[^<]*)<div[^>]*></div></td>\s<td\sclass="current-viewers-td"><font\scolor="green">(?<viewers>[^<]*)</font></td>\s<td\sclass="region-td"><img\ssrc="[^"]*"\stitle="(?<country>[^"]*)"\salt="[^"]*"/></td>\s</tr>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.leagueoflegendsstreams.com/]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Video">http://www.leagueoflegendsstreams.com/home/stream.php</Category>
+      </Categories>
+    </Site>
     <Site name="LuckyTV" util="GenericSite" agecheck="false" enabled="true" lang="nl">
       <Description>LuckyTV. Uw dagelijkse mediarevolte na De Wereld Draait Door. Bekijk hier de laatste Lucky of bezoek het ontzagwekkende LuckyTV videoarchief:  honderden filmpjes uit DWDD, De Staat van Verwarring, Vara Laat, Jensen en meer. LuckyTV. Wir leben Fernsehen.</Description>
       <Configuration>
