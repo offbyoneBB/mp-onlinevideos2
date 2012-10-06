@@ -13,54 +13,61 @@ using System.IO;
 
 namespace OnlineVideos.Sites
 {
-    public class LaSextaUtil : GenericSiteUtil, IChoice
+    public class LaSextaUtil : GenericSiteUtil
     {
-        internal String laSextaBaseUrl = "http://www.lasexta.com/lasextaon";
-        internal String programsListContentRegex = "<div\\sclass=\"capaseccionl\\sitem_vip\">\\s*<div\\sclass=\"player\">\\s*<a\\shref=\"(?<url>[^\"]*)\">\\s*<img\\ssrc=\"(?<thumb>[^\"]*)\"\\swidth=\"182\"\\sheight=\"102\"\\stitle=\"(?<description>[^\"]*)\"\\salt=\"[^\"]*\"\\s/>\\s*<label\\sclass=\"item_vip_player_label\">(?<title>[^<]*)</label>\\s*<img\\ssrc=\"http://www\\.lasexta\\.com/media/common/img/1pxtrans\\.gif\"\\sclass=\"item_vip_player_link\"\\salt=\"[^\"]*\"/>";
-        internal String nextPageRegex = "<a\\shref=\"javascript:reload_programs\\('(?<numero>[^']*)'\\);\"\\sclass=\"siguiente\"";
-        internal String reloadProgramsURL = "http://www.lasexta.com/sextatv/reload_programs";
-        internal String reloadProgramsARGS1 = "item_id=1&show_id=1&bd_id=1&pagina=";
-        internal String reloadProgramsARGS2 = "&limit=3&_=";
-        internal String programsData = "";
-        internal String getProgramsURL1 = "http://www.lasexta.com/sextatv/change_videos/";
-        internal String getProgramsURL2 = "/programasCompletos/undefined";
-        internal String programVideosRegex = "href=\"javascript:change_videos\\('(?<programID>[^']*)','programasCompletos'\\);\"";
-        internal String videoNextPageRegex = "href=\"javascript:reload\\('[^_]*_programasCompletos_(?<numero>[^']*)'\\);\"\\sclass=\"siguiente\"";
-        internal String reloadVideosURL = "http://www.lasexta.com/sextatv/reload";
-        internal String reloadVideosARGS1 = "seccion=";
-        internal String reloadVideosARGS2 = "&pagina=";
-        internal String reloadVideosARGS3 = "&tipo=programasCompletos&section_id&_=";
-        internal String videosData = "";
-        internal String programVideosContentRegex = "<div\\sclass=\"capaseccionl\\sitem\">\\s*<div\\sclass=\"player_programas\">\\s*<a\\shref=\"(?<VideoUrl>[^\"]*)\"><img\\ssrc=\"(?<ImageUrl>[^\"]*)\"\\swidth=\"170\"\\sheight=\"127\"\\stitle=\"[^\"]*\"\\salt=\"[^\"]*\"\\s/></a>\\s*<a\\shref=\"[^\"]*\"\\sclass=\"item_cortina\">\\s*<img\\ssrc=\"http://www\\.lasexta\\.com/media/common/img/1pxtrans\\.gif\"\\swidth=\"170\"\\sheight=\"127\"\\stitle=\"[^\"]*\"\\salt=\"[^\"]*\"\\s/>\\s*<label\\sclass=\"item_cortina_text\">(?<Description>[^<]*)</label>\\s*<label\\sclass=\"item_cortina_play\">PLAY</label>\\s*</a>\\s*</div>\\s*<h6\\sclass=\"fecha\">(?<Airdate>[^<]*)</h6>\\s*<h5\\sclass=\"titulo\">\\s*<a\\shref=\"[^\"]*\"\\stitle=\"[^\"]*\">(?<Title>[^<]*)</a></h5>\\s*</div>";
-        internal String cipherURL1Regex = "_urlVideo=(?<url>[^&]*)&";
-        internal String cipherURL2Regex = "_url_list=(?<url>[^&]*)&";
-        internal String videoURLRegex = "<url>(?<url>[^<]*)<";
-        internal String videoHDURLRegex = "<urlHD>(?<url>[^<]*)<";
-        internal const String calidadSD = "Calidad estándar";
-        internal const String calidadHD = "Calidad HD";
-        internal byte[] keyParameter = {115,100,52,115,100,102,107,118,109,50,51,52};
+        internal String laSextaBaseUrl = "http://www.lasexta.com";
+        internal String categoryContentRegex = "\\<ul class=\"subemnu\"\\>(?<content>.*?)</ul>";
+        internal String categoryRegex = "\\<a.*?title=\"(?<title>.*?)\".*?href=\"(?<link>.*?)\".*?\\>(?<label>.*?)\\</a\\>";
+        internal String videoLinksRegex = "\\<a.*?title=\"(?<title>.*?)\"\\s*?href=\"(?<url>.*?)\"\\s*?\\>\\s*?\\<img.*?title=\"(.*?)\"\\s*?src=\"(?<img>.*?)\"\\s*?alt=\"(.*?)\"\\s*?href=\"(.*?)\"\\s*?/\\>";
+        internal String seriesListRegex = "\\<img.*?title=\"(?<title>.*?)\"\\s*?href=\".*?\"\\s*?src=\"(?<img>.*?)\"\\s*?alt=\"(.*?)\"\\s*?/>\\s*?\\<a.*?title=\"(.*?)\"\\s*?href=\"(?<url>.*?)\"\\s*?\\>\\s*?\\<h2\\>\\s*?\\<p\\>(?<label>.*?)\\</p\\>\\s*?\\</h2\\>\\s*?\\</a\\>";
+        internal String videoXmlUrlRegex = "player_capitulo.xml='(?<url>.*?)';";
+        internal String seriesSeasonContentRegex = "\\<dd class=\"paginador\"\\>(?<content>(\\s|\\S)*?)\\</dd\\>";
+        internal String seriesSeasonRegex = "\\<li.*?\\>\\s*?\\<a\\s*?title=\"(.*?)\"\\s*?href=\"(?<url>.*?)\"\\s*?\\>\\s*?(?<label>.*?)\\s*?\\</a\\>\\s*?\\</li\\>";
+        internal String videoUrlContentRegex = "\\<multimedias\\>\\s*\\<multimedia.*?\\>(?<content>(\\s|\\S)*?)\\</multimedia\\>";
+        internal String videoBaseUrlHttpRegex = "\\<urlHttpVideo\\>\\s*\\<!\\[CDATA\\[(?<url>.*?)\\]\\]\\>\\s*?\\</urlHttpVideo\\>";
+        internal String videoBaseUrlMp4Regex = "\\<urlVideoMp4\\>\\s*\\<!\\[CDATA\\[(?<url>.*?)\\]\\]\\>\\s*?\\</urlVideoMp4\\>";
+        internal String videoBaseUrlFlvRegex = "\\<urlVideoFlv\\>\\s*\\<!\\[CDATA\\[(?<url>.*?)\\]\\]\\>\\s*?\\</urlVideoFlv\\>";
+        internal String videoMovieUrlRegex = "\\<archivoMultimedia\\>\\s*\\<archivo\\>\\s*?\\<!\\[CDATA\\[(?<url>.*?)\\]\\]\\>\\</archivo\\>";
+        internal String videoThumbUrlRegex = "\\<archivoMultimediaMaxi\\>\\s*\\<archivo\\>\\s*?\\<!\\[CDATA\\[(?<url>.*?)\\]\\]\\>\\</archivo\\>";
+        //internal String programsListContentRegex = "\\<ul class=\"carrusel\"\\>(?<content>(\\s|\\S)*?)\\</ul\\>";
+        internal String programsListContentRegex = "<img\\stitle=\"[^\"]*\"\\s*src=\"(?<thumb>[^\"]*)\"\\s*alt=\"[^\"]*\"\\s*href=\"[^\"]*\"\\s*/>\\s*<a\\stitle=\"(?<description>[^\"]*)\"\\shref=\"(?<url>[^\"]*)\"\\s*><h2><p>(?<title>[^<]*)</p></h2></a>\\s*</a>\\s*</div>\\s*</li>";
+        internal String programsListRegex = "\\<li\\>\\s*\\<div\\>\\s*\\<a\\s+title=\"(?<title>(.*?))\"\\s+href=\"(?<url>(.*?))\"\\s*\\>\\s*\\<img\\s+title=\"(?<imgtitle>(.*?))\"\\s+src=\"(?<img>(.*?))\"(\\s|\\S)*?href=\"(?<imglink>(.*?))\"(\\s|\\S)*?\\<h2\\>\\s*\\<p\\>((?<label>.*?))\\</p\\>\\s*\\</h2\\>";
+        internal String programsYearsContentRegex = "\\<dd\\s+class=\"seleccion\"\\>(?<content>(\\s|\\S)*?)\\</dd\\>";
+        internal String programsYearsRegex = "\\<li.*?\\>\\s*\\<a\\s+title=\"(?<title>(.*?))\"\\s+href=\"(?<url>(.*?))\"\\s*\\>(?<label>(.*?))\\</a\\>\\s*\\</li\\>";
+        internal String programsMonthsContentRegex = "\\<dd\\s+class=\"paginador\"\\>(?<content>(\\s|\\S)*?)\\</dd\\>";
+        internal String programsMonthsRegex = "\\<li.*?\\>\\s*\\<a\\s+title=\"(?<title>(.*?))\"\\s+href=\"(?<url>(.*?))\"(\\s|\\S)*?\\>(?<label>(.*?))\\</a\\>\\s*\\</li\\>";
+        internal String programContentRegex = "\\<ul class=\"carrusel carruDetalle\"\\>(?<content>(\\s|\\S)*?)\\</ul\\>";
+        internal String programRegex = "\\<li\\>\\s*\\<div\\>\\s*\\<a\\s+title=\"(?<title>(.*?))\"\\s+href=\"(?<url>(.*?))\"\\s*\\>\\s*\\<img\\s+title=\"(?<imgtitle>(.*?))\"\\s+src=\"(?<img>(.*?))\"(\\s|\\S)*?href=\"(?<imglink>(.*?))\"(\\s|\\S)*?\\<h2\\>\\s*\\<p\\>((?<label>.*?))\\</p\\>\\s*\\</h2\\>";
 
+        internal Regex regexCategory;
+        internal Regex regexCategoryContent;
+        internal Regex regexVideoLinks;
+        internal Regex regexSeriesList;
+        internal Regex regexSeriesSeasonContent;
+        internal Regex regexSeriesSeason;
+        internal Regex regexVideoXmlUrl;
+        internal Regex regexVideoUrlContent;
+        internal Regex regexVideoBaseUrlHttp;
+        internal Regex regexVideoBaseUrlMp4;
+        internal Regex regexVideoBaseUrlFlv;
+        internal Regex regexVideoMovieUrl;
         internal Regex regexProgramsListContent;
-        internal Regex regexNextPage;
-        internal Regex regexProgramVideos;
-        internal Regex regexVideoNextPage;
-        internal Regex regexProgramVideosContent;
-        internal Regex regexCipherURL1;
-        internal Regex regexCipherURL2;
-        internal Regex regexVideoURL;
-        internal Regex regexVideoHDURL;
+        internal Regex regexProgramsList;
+        internal Regex regexProgramsYearsContent;
+        internal Regex regexProgramsYears;
+        internal Regex regexProgramsMonthsContent;
+        internal Regex regexProgramsMonths;
+        internal Regex regexProgramContent;
+        internal Regex regexProgram;
 
-        internal void InitializeRegex()
+        internal enum CategoryType
         {
-            regexProgramsListContent = new Regex(programsListContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexNextPage = new Regex(nextPageRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexProgramVideos = new Regex(programVideosRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexVideoNextPage = new Regex(videoNextPageRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexProgramVideosContent = new Regex(programVideosContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexCipherURL1 = new Regex(cipherURL1Regex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexCipherURL2 = new Regex(cipherURL2Regex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexVideoURL = new Regex(videoURLRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexVideoHDURL = new Regex(videoHDURLRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            None,
+            Series,
+            SeriesSeason,
+            Program,
+            ProgramYear,
+            ProgramMonth
         }
 
         public override void Initialize(SiteSettings siteSettings)
@@ -70,225 +77,289 @@ namespace OnlineVideos.Sites
             base.Initialize(siteSettings);
         }
 
-        public override int DiscoverDynamicCategories()
-        {
-            string data = GetWebData(laSextaBaseUrl);
-            if (!string.IsNullOrEmpty(data))
-            {
-                programsData += data;
-                getNextPages(data);
-                regEx_dynamicCategories = regexProgramsListContent;
-                return ParseCategories(programsData);
-            }
-            return 0;
-        }
-
-        public void getNextPages(String data)
-        {
-            String newData = "";
-            if (!string.IsNullOrEmpty(data))
-            {
-                Match match = regexNextPage.Match(data);
-                if (match.Success)
-                {
-                    fileUrlPostString = reloadProgramsARGS1 + match.Groups["numero"].Value + reloadProgramsARGS2;
-                    Log.Debug("LaSexta: searching next pages categories {0} {1}", reloadProgramsURL, fileUrlPostString);
-                    newData = GetWebDataFromPost(reloadProgramsURL, fileUrlPostString);
-                    programsData += newData;
-                    match = regexNextPage.Match(newData);
+        /*
+ 
+                    String data = WebUtil.GetWebData(baseUrl + url);
+                    Match match = regexVideoXmlUrl.Match(data);
                     if (match.Success)
                     {
-                        getNextPages(newData);
-                    }
-                }
-            }
-        }
-
-        public override List<VideoInfo> getVideoList(Category category)
-        {
-            Log.Debug("LaSexta: getting video list from category {0}", category.Name);
-            List<VideoInfo> videoList = new List<VideoInfo>();
-            String data = GetWebData((category as RssLink).Url);
-            Match programVideosMatch = regexProgramVideos.Match(data);
-            if (programVideosMatch.Success)
-            {
-                String programID = programVideosMatch.Groups["programID"].Value;
-                //videosData = GetWebData(getProgramsURL1 + programID + getProgramsURL2);
-                fileUrlPostString = reloadVideosARGS1 + programID + reloadVideosARGS2 + '0' + reloadVideosARGS3;
-                videosData = GetWebDataFromPost(reloadVideosURL, fileUrlPostString);
-                getNextVideos(videosData, programID);
-                if (!string.IsNullOrEmpty(videosData))
-                {
-                    Match videoMatch = regexProgramVideosContent.Match(videosData);
-                    while (videoMatch.Success)
-                    {
-                        VideoInfo video = new VideoInfo();
-                        video.Title = videoMatch.Groups["Title"].Value;
-                        video.Description = videoMatch.Groups["Description"].Value;
-                        video.Airdate = videoMatch.Groups["Airdate"].Value;
-                        video.ImageUrl = videoMatch.Groups["ImageUrl"].Value;
-                        video.VideoUrl = videoMatch.Groups["VideoUrl"].Value;
-                        videoList.Add(video);
-                        videoMatch = videoMatch.NextMatch();
-                    }
-                }
-            }
-            return videoList;
-        }
-
-        public void getNextVideos(String data, String programID)
-        {
-            String newData = "";
-            if (!string.IsNullOrEmpty(data))
-            {
-                Match match = regexVideoNextPage.Match(data);
-                if (match.Success)
-                {
-                    fileUrlPostString = reloadVideosARGS1 + programID + reloadVideosARGS2 + match.Groups["numero"].Value + reloadVideosARGS3;
-                    Log.Debug("LaSexta: searching next pages videos {0} {1}", reloadVideosURL, fileUrlPostString);
-                    newData = GetWebDataFromPost(reloadVideosURL, fileUrlPostString);
-                    videosData += newData;
-                    match = regexVideoNextPage.Match(newData);
-                    if (match.Success)
-                    {
-                        getNextVideos(newData, programID);
-                    }
-                }
-            }
-        }
-
-        public VideoInfo setCustomVideoInfo(VideoInfo video, String definition, String URL)
-        {
-            VideoInfo vid = new VideoInfo();
-            vid.Title = video.Title;
-            vid.Title2 = definition;
-            vid.Description = video.Description;
-            vid.ImageUrl = video.ImageUrl;
-            vid.ThumbnailImage = video.ThumbnailImage;
-            vid.VideoUrl = URL;
-            return vid;
-        }
-
-        public List<VideoInfo> getClips(VideoInfo video, Match match)
-        {
-            Log.Debug("LaSexta: getting clip info from video {0}", video.Title);
-            List<VideoInfo> clips = new List<VideoInfo>();
-            String videosURL = decryptVideosURL(match.Groups["url"].Value);
-            String data2 = GetWebData(videosURL);
-            Match matchVideo = regexVideoURL.Match(data2);
-            if (matchVideo.Success)
-            {
-                VideoInfo vid = new VideoInfo();
-                vid = setCustomVideoInfo(video, calidadSD, videosURL);
-                clips.Add(vid);
-            }
-            Match matchVideoHD = regexVideoHDURL.Match(data2);
-            if (matchVideoHD.Success)
-            {
-                VideoInfo vid = new VideoInfo();
-                vid = setCustomVideoInfo(video, calidadHD, videosURL);
-                clips.Add(vid);
-            }
-            return clips;
-        }
-
-        public List<VideoInfo> getVideoChoices(VideoInfo video)
-        {
-            Log.Debug("LaSexta: getting video choices info from video {0}", video.Title);
-            List<VideoInfo> clips = new List<VideoInfo>();
-
-            String data = GetWebData(video.VideoUrl);
-            Match match = regexCipherURL1.Match(data);
-            if (match.Success)
-            {
-                clips = getClips(video, match);
-            }
-            else
-            {
-                match = regexCipherURL2.Match(data);
-                if (match.Success)
-                {
-                    clips = getClips(video, match);
-                }
-            }
-
-            return clips;
-        }
+                        data = WebUtil.GetWebData(baseUrl + match.Groups["url"].Value);
+                        match = regexVideoBaseUrl.Match(data);
+                        if (match.Success)
+                        {
+                            String videoBaseUrl = match.Groups["url"].Value;
+                            match = regexVideoMovieUrl.Match(data);
+                            while (match.Success)
+                            {
+                                String videoUrl = match.Groups["url"].Value;
+                                Console.WriteLine(videoBaseUrl + videoUrl);
+                                match = match.NextMatch();
+                            }
+                       }
+                    }  
+  
+        */
 
         public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            Log.Debug("LaSexta: getting multiple video URLs from video {0} with quality {1}", video.Title, video.Title2);
             List<String> result = new List<String>();
-            String data = GetWebData(video.VideoUrl);
-            if (video.Title2.Equals(calidadSD))
+            String data = GetWebData(laSextaBaseUrl + video.VideoUrl);
+            Match match = regexVideoXmlUrl.Match(data);
+            if (match.Success)
             {
-                Match matchVideo = regexVideoURL.Match(data);
-                while (matchVideo.Success)
+                Log.Debug("lasexta: getting xml file from {0}", laSextaBaseUrl + match.Groups["url"].Value);
+                data = GetWebData(laSextaBaseUrl + match.Groups["url"].Value);
+                match = regexVideoBaseUrlHttp.Match(data);
+                if (match.Success)
                 {
-                    String url = matchVideo.Groups["url"].Value;
-                    url = replaceURL(url);
-                    result.Add(url);
-                    matchVideo = matchVideo.NextMatch();
-                }
-            }
-            else if (video.Title2.Equals(calidadHD))
-            {
-                Match matchVideoHD = regexVideoHDURL.Match(data);
-                while (matchVideoHD.Success)
-                {
-                    String url = decryptVideosURL(matchVideoHD.Groups["url"].Value);
-                    url = replaceURL(url);
-                    result.Add(url);
-                    matchVideoHD = matchVideoHD.NextMatch();
+                    String videoBaseUrl = match.Groups["url"].Value;
+                    videoBaseUrl = (videoBaseUrl.Equals("http://deslasexta.antena3.com/") || videoBaseUrl.Equals("http://geodeslasexta.antena3.com/")) ? "http://desprogresiva.antena3.com/" : videoBaseUrl;
+                    match = regexVideoMovieUrl.Match(data);
+                    while (match.Success)
+                    {
+                        Log.Debug("lasexta: adding {0} to playlist", match.Groups["url"].Value);
+                        result.Add(videoBaseUrl + match.Groups["url"].Value);
+                        match = match.NextMatch();
+                    }
                 }
             }
             return result;
         }
 
-        public String replaceURL(String url)
+        public override List<VideoInfo> getVideoList(Category category)
         {
-            Log.Debug("LaSexta: replacing final URL: {0}", url);
-            url = url.Replace("/mp4:", "/");
-            url = url.Replace("/flv:", "/");
-            //url = url.Replace("/_definst_/", "/");
-            url = url.Replace("/manifest.f4m", "");
-            url = url.Replace("http://lasextavod-f.akamaihd.net/z/", "http://descarga.lasexta.com/");
-            Log.Debug("LaSexta: final URL replaced: {0}", url);
-            return url;
-        }
-
-        public String decryptVideosURL(String cypheredHexURL)
-        {
-            var enc_data_b = ArrayFromHexstring(cypheredHexURL);
-            byte[] dec_data = new byte[enc_data_b.Length];
-            var rc4 = new Org.BouncyCastle.Crypto.Engines.RC4Engine();
-            rc4.Init(false, new Org.BouncyCastle.Crypto.Parameters.KeyParameter(keyParameter));
-            rc4.ProcessBytes(enc_data_b, 0, enc_data_b.Length, dec_data, 0);
-            return ASCIIEncoding.ASCII.GetString(dec_data);
-        }
-        
-
-        #region Array Helper
-        static byte[] ArrayFromHexstring(string s)
-        {
-            List<byte> a = new List<byte>();
-            for (int i = 0; i < s.Length; i = i + 2)
+            Log.Debug("lasexta: getting video list for {0}.", category.Name);
+            List<VideoInfo> videoList = new List<VideoInfo>();
+            String data = GetWebData(laSextaBaseUrl + (category as RssLink).Url);
+            Match videoMatch = regexVideoLinks.Match(data);
+            while (videoMatch.Success)
             {
-                a.Add(byte.Parse(s.Substring(i, 2), System.Globalization.NumberStyles.HexNumber));
+                VideoInfo video = new VideoInfo();
+                video.Title = videoMatch.Groups["title"].Value.Replace("Vídeos de ", "");
+                video.ImageUrl = laSextaBaseUrl + videoMatch.Groups["img"].Value;
+                video.VideoUrl = videoMatch.Groups["url"].Value;
+                videoList.Add(video);
+                videoMatch = videoMatch.NextMatch();
             }
-            return a.ToArray();
+            return videoList;
         }
 
-        static string HexstringFromArray(byte[] array)
+        internal void InitializeRegex()
         {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < array.Length; i++)
-            {
-                sb.Append(array[i].ToString("x2"));
-            }
-            return sb.ToString();
+            regexCategoryContent = new Regex(categoryContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexCategory = new Regex(categoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexVideoLinks = new Regex(videoLinksRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexSeriesList = new Regex(seriesListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexSeriesSeasonContent = new Regex(seriesSeasonContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexSeriesSeason = new Regex(seriesSeasonRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexVideoXmlUrl = new Regex(videoXmlUrlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexVideoUrlContent = new Regex(videoUrlContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexVideoBaseUrlHttp = new Regex(videoBaseUrlHttpRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexVideoBaseUrlFlv = new Regex(videoBaseUrlFlvRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexVideoBaseUrlMp4 = new Regex(videoBaseUrlMp4Regex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexVideoMovieUrl = new Regex(videoMovieUrlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexProgramsListContent = new Regex(programsListContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexProgramsList = new Regex(programsListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexProgramsYearsContent = new Regex(programsYearsContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexProgramsYears = new Regex(programsYearsRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexProgramsMonthsContent = new Regex(programsMonthsContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexProgramsMonths = new Regex(programsMonthsRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexProgramContent = new Regex(programContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexProgram = new Regex(programRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
         }
-        #endregion
 
+        internal String FormatMonthLabel(String fromLabel)
+        {
+            switch (fromLabel.ToLowerInvariant())
+            {
+                case "ene":
+                    return "Enero";
+                case "feb":
+                    return "Febrero";
+                case "mar":
+                    return "Marzo";
+                case "abr":
+                    return "Abril";
+                case "may":
+                    return "Mayo";
+                case "jun":
+                    return "Junio";
+                case "jul":
+                    return "Julio";
+                case "ago":
+                    return "Agosto";
+                case "sep":
+                    return "Septiembre";
+                case "oct":
+                    return "Octubre";
+                case "nov":
+                    return "Noviembre";
+                case "dic":
+                    return "Diciembre";
+                default:
+                    return fromLabel;
+            }
+        }
+
+        internal List<Category> DiscoverSeriesSeasons(RssLink parentCategory)
+        {
+            List<Category> result = new List<Category>();
+            String data = GetWebData(laSextaBaseUrl + parentCategory.Url);
+            Match content = regexSeriesSeasonContent.Match(data);
+            if (content.Success)
+            {
+                MatchCollection matches = regexSeriesSeason.Matches(content.Groups["content"].Value);
+                parentCategory.SubCategories = new List<Category>();
+                foreach (Match match in matches)
+                {
+                    String label = match.Groups["label"].Value;
+                    String url = match.Groups["url"].Value;
+                    String name = label.Length < 3 ? "Temporada " + label : label;
+                    result.Add(CreateCategory(name, url, String.Empty, CategoryType.None, ""));
+                    Log.Debug("lasexta: season {0} added.", name);
+                }
+            }
+            return result;
+        }
+
+        internal List<Category> DiscoverSeries(RssLink parentCategory)
+        {
+            List<Category> result = new List<Category>();
+            String data = GetWebData(laSextaBaseUrl + parentCategory.Url);
+            Match match = regexSeriesList.Match(data);
+            while (match.Success)
+            {
+                String name = match.Groups["label"].Value;
+                String url = match.Groups["url"].Value;
+                String thumbUrl = laSextaBaseUrl + match.Groups["img"].Value;
+                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.SeriesSeason, ""));
+                Log.Debug("lasexta: series {0} added.", name);
+                match = match.NextMatch();
+            }
+            return result;
+        }
+
+        internal List<Category> DiscoverProgramMonths(RssLink parentCategory)
+        {
+            List<Category> result = new List<Category>();
+            String data = GetWebData(laSextaBaseUrl + parentCategory.Url);
+            Match content = regexProgramsMonthsContent.Match(data);
+            if (content.Success)
+            {
+                String programMonthsContent = content.Groups["content"].Value;
+                MatchCollection matches = regexProgramsMonths.Matches(programMonthsContent);
+                foreach (Match match in matches)
+                {
+                    String name = FormatMonthLabel(match.Groups["label"].Value);
+                    String url = match.Groups["url"].Value;
+                    String thumbUrl = laSextaBaseUrl + match.Groups["img"].Value;
+                    result.Add(CreateCategory(name, url, thumbUrl, CategoryType.None, ""));
+                    Log.Debug("lasexta: program month {0} added.", name);
+                }
+            }
+            return result;
+        }
+
+        internal List<Category> DicoverProgramYears(RssLink parentCategory)
+        {
+            List<Category> result = new List<Category>();
+            String data = GetWebData(laSextaBaseUrl + parentCategory.Url);
+            Match content = regexProgramsYearsContent.Match(data);
+            if (content.Success)
+            {
+                String programYearsContent = content.Groups["content"].Value;
+                MatchCollection matches = regexProgramsYears.Matches(programYearsContent);
+                foreach (Match match in matches)
+                {
+                    String name = match.Groups["label"].Value;
+                    String url = match.Groups["url"].Value;
+                    String thumbUrl = laSextaBaseUrl + match.Groups["img"].Value;
+                    result.Add(CreateCategory(name, url, thumbUrl, CategoryType.ProgramMonth, ""));
+                    Log.Debug("lasexta: program year {0} added.", name);
+                }
+            }
+            return result;
+        }
+
+        internal List<Category> DiscoverPrograms(RssLink parentCategory)
+        {
+            List<Category> result = new List<Category>();
+            String data = GetWebData(laSextaBaseUrl + parentCategory.Url);
+            Match match = regexProgramsListContent.Match(data);
+            //if (match.Success)
+            //{
+            //String programsContent = match.Groups["content"].Value;
+            //match = regexProgramsList.Match(programsContent);
+            while (match.Success)
+            {
+                String name = match.Groups["title"].Value;
+                String url = match.Groups["url"].Value;
+                String thumbUrl = laSextaBaseUrl + match.Groups["thumb"].Value;
+                String description = match.Groups["description"].Value;
+                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.ProgramYear, description));
+                Log.Debug("lasexta: program {0} added.", name);
+                match = match.NextMatch();
+            }
+            //}
+            return result;
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            //Log.Debug("lasexta: discovering subcategory {0}", (CategoryType)parentCategory.Other);
+            List<Category> subCategories = null;
+
+            switch ((CategoryType)parentCategory.Other)
+            {
+                case CategoryType.Series:
+                    subCategories = DiscoverSeries(parentCategory as RssLink);
+                    break;
+                case CategoryType.SeriesSeason:
+                    subCategories = DiscoverSeriesSeasons(parentCategory as RssLink);
+                    break;
+                case CategoryType.Program:
+                    subCategories = DiscoverPrograms(parentCategory as RssLink);
+                    break;
+                case CategoryType.ProgramYear:
+                    subCategories = DicoverProgramYears(parentCategory as RssLink);
+                    break;
+                case CategoryType.ProgramMonth:
+                    subCategories = DiscoverProgramMonths(parentCategory as RssLink);
+                    break;
+            }
+
+            parentCategory.SubCategories = subCategories;
+            parentCategory.SubCategoriesDiscovered = true;
+            parentCategory.HasSubCategories = subCategories == null ? false : subCategories.Count > 0;
+
+            return parentCategory.HasSubCategories ? subCategories.Count : 0;
+        }
+
+        internal RssLink CreateCategory(String name, String url, String thumbUrl, CategoryType categoryType, String description)
+        {
+            RssLink category = new RssLink();
+
+            category.Name = name;
+            category.Url = url;
+            category.Thumb = thumbUrl;
+            category.Other = categoryType;
+            category.Description = description;
+            category.HasSubCategories = categoryType != CategoryType.None;
+            category.SubCategoriesDiscovered = false;
+
+            return category;
+        }
+
+        public override int DiscoverDynamicCategories()
+        {
+            Settings.Categories.Clear();
+            Settings.Categories.Add(CreateCategory("Series", "/videos/series.html", String.Empty, CategoryType.Series, ""));
+            Settings.Categories.Add(CreateCategory("Noticias", "/videos/noticias.html", String.Empty, CategoryType.Program, ""));
+            Settings.Categories.Add(CreateCategory("Programas", "/videos/programas.html", String.Empty, CategoryType.Program, ""));
+            Settings.Categories.Add(CreateCategory("Xplora", "/videos/videos-xplora.html", String.Empty, CategoryType.Program, ""));
+            Settings.DynamicCategoriesDiscovered = true;
+
+            return Settings.Categories.Count;
+        }
     }
 }
