@@ -35,21 +35,25 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DirectShowLib-2005">
-      <HintPath>..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\DirectShowLib-2005.dll</HintPath>
+      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\DirectShowLib-2005.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Media">
-      <HintPath>..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\Media\Media.dll</HintPath>
+    <Reference Include="Media, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\Media\Media.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="MediaPortal.Common">
-      <HintPath>..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.Common.dll</HintPath>
+    <Reference Include="MediaPortal.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.Common.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MediaPortal.UI">
-      <HintPath>..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.UI.dll</HintPath>
+      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SkinEngine">
-      <HintPath>..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\SkinEngine\SkinEngine.dll</HintPath>
+      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\SkinEngine\SkinEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -57,7 +61,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="VideoPlayers">
-      <HintPath>..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
+      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -166,13 +170,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language"
-robocopy "$(ProjectDir)Language" "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language" /MIR /NP /XD .svn
-mkdir "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Skin"
-robocopy "$(ProjectDir)Skin" "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Skin" /MIR /NP /XD .svn
-xcopy /Y "$(TargetDir)$(ProjectName).*" "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
-xcopy /Y "$(TargetDir)OnlineVideos.*" "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
-xcopy /Y "$(ProjectDir)plugin.xml" "$(SolutionDir)..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos"
+    <PostBuildEvent>mkdir "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language"
+robocopy "$(ProjectDir)Language" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language" /MIR /NP /XD .svn
+mkdir "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Skin"
+robocopy "$(ProjectDir)Skin" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Skin" /MIR /NP /XD .svn
+xcopy /Y "$(TargetDir)$(ProjectName).*" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
+xcopy /Y "$(TargetDir)OnlineVideos.*" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
+xcopy /Y "$(ProjectDir)plugin.xml" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
