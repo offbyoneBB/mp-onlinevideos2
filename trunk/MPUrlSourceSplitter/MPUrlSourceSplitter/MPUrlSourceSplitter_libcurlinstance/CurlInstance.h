@@ -172,6 +172,13 @@ protected:
   // holds received data
   CLinearBuffer *receivedDataBuffer;
 
+  // holds time when request was sent
+  DWORD startReceivingTicks;
+  // holds time when receiving was stopped
+  DWORD stopReceivingTicks;
+  // holds count of bytes received
+  int64_t totalReceivedBytes;
+
   // callback function for receiving data from libcurl
   // its default write callback when not specified other callback
   static size_t CurlReceiveDataCallback(char *buffer, size_t size, size_t nmemb, void *userdata);
