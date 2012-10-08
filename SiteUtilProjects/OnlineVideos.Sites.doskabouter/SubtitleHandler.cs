@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System.IO;
+using System.Threading;
 using SubtitleDownloader.Core;
 
 namespace OnlineVideos.Subtitles
@@ -67,6 +68,37 @@ namespace OnlineVideos.Subtitles
             }
         }
 
+        public void SetSubtitleText(VideoInfo video, out Thread thread)
+        {
+            thread = null;
+            if (tryLoadSubtitles)
+            {
+                ITrackingInfo it = video.Other as ITrackingInfo;
+                if (sdObject != null && it != null && String.IsNullOrEmpty(video.SubtitleText))
+                {
+                    thread = new Thread(
+                        delegate()
+                        {
+                            try
+                            {
+                                setSubtitleText(video, it);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Warn("SubtitleDownloader: " + e.ToString());
+                            }
+                        });
+                    thread.Start();
+                }
+            }
+        }
+
+        public void WaitForSubtitleCompleted(Thread thread)
+        {
+            if (thread != null)
+                thread.Join();
+        }
+
         // keep all references to subtitledownloader in separate methods, so that methods that are called from siteutil don't throw an ecxeption
         private bool tryLoad(string className)
         {
@@ -121,9 +153,11 @@ namespace OnlineVideos.Subtitles
                     video.SubtitleUrl = Uri.UriSchemeFile + Uri.SchemeDelimiter + subFile;
                     */
 
-                    video.SubtitleText = File.ReadAllText(subtitleFiles[0].FullName, System.Text.Encoding.UTF8);
-                    if (video.SubtitleText.IndexOf('�') != -1)
+                    string s = File.ReadAllText(subtitleFiles[0].FullName, System.Text.Encoding.UTF8);
+                    if (s.IndexOf('�') != -1)
                         video.SubtitleText = File.ReadAllText(subtitleFiles[0].FullName, System.Text.Encoding.Default);
+                    else
+                        video.SubtitleText = s;
                 }
                 foreach (FileInfo fi in subtitleFiles)
                     fi.Delete();
