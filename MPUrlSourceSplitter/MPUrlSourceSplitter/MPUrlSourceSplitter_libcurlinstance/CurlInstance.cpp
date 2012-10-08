@@ -40,6 +40,9 @@ CCurlInstance::CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, 
   this->closeWithoutWaiting = false;
   this->curlErrorMessage = NULL;
   this->mutex = mutex;
+  this->startReceivingTicks = 0;
+  this->stopReceivingTicks = 0;
+  this->totalReceivedBytes = 0;
 
   this->SetWriteCallback(CCurlInstance::CurlReceiveDataCallback, this);
   this->receivedDataBuffer = new CLinearBuffer();
@@ -220,8 +223,13 @@ HRESULT CCurlInstance::DestroyCurlWorker(void)
     }
   }
 
+  if (this->stopReceivingTicks == 0)
+  {
+    this->stopReceivingTicks = GetTickCount();
+  }
   this->hCurlWorkerThread = NULL;
 
+  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: start: %u, end: %u, received bytes: %lld", this->protocolName, METHOD_DESTROY_CURL_WORKER_NAME, this->startReceivingTicks, this->stopReceivingTicks, this->totalReceivedBytes);
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->protocolName, METHOD_DESTROY_CURL_WORKER_NAME, result);
   return result;
 }
@@ -230,9 +238,15 @@ DWORD WINAPI CCurlInstance::CurlWorker(LPVOID lpParam)
 {
   CCurlInstance *caller = (CCurlInstance *)lpParam;
   caller->logger->Log(LOGGER_INFO, L"%s: %s: Start, url: '%s'", caller->protocolName, METHOD_CURL_WORKER_NAME, caller->GetUrl());
+  caller->startReceivingTicks = GetTickCount();
 
   // on next line will be stopped processing of code - until something happens
   caller->curlWorkerErrorCode = curl_easy_perform(caller->curl);
+
+  if (caller->stopReceivingTicks == 0)
+  {
+    caller->stopReceivingTicks = GetTickCount();
+  }
 
   caller->state = CURL_STATE_RECEIVED_ALL_DATA;
 
@@ -292,6 +306,8 @@ size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length
     // lock access to receive data buffer
     // if mutex is NULL then access to received data buffer is not locked
     CLockMutex lock(this->mutex, INFINITE);
+
+    this->totalReceivedBytes += length;
 
     unsigned int bufferSize = this->receivedDataBuffer->GetBufferSize();
     unsigned int freeSpace = this->receivedDataBuffer->GetBufferFreeSpace();
