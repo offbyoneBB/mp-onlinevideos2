@@ -363,9 +363,10 @@ namespace OnlineVideos.Sites
             }
         }
 
+        private System.Threading.Thread subtitleThread;
         public override string getUrl(VideoInfo video)
         {
-            sh.SetSubtitleText(video);
+            sh.SetSubtitleText(video, out subtitleThread);
             return base.getUrl(video);
         }
 
@@ -385,7 +386,10 @@ namespace OnlineVideos.Sites
                 url = GetRedirectedUrl(url);
                 if (url.StartsWith(parent.baseUrl))
                     return String.Empty;
-                return GetVideoUrl(url);
+                string result = GetVideoUrl(url);
+                if (parent.subtitleThread != null)
+                    parent.subtitleThread.Join();
+                return result;
             }
         }
 
