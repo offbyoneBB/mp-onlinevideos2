@@ -32,7 +32,7 @@ namespace OnlineVideos.Hoster
             string page = SiteUtilBase.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
-                Match n = Regex.Match(page, @"document.getElementById\('player[^=]*=(?<json>.*?);Player.checkRatio");
+                Match n = Regex.Match(page, @"document.getElementById\('player[^=]*=(?<json>.*?);Player.checkRatio", RegexOptions.Singleline);
                 if (n.Success)
                 {
                     JToken jt = JObject.Parse(n.Groups["json"].Value) as JToken;
