@@ -349,16 +349,33 @@ namespace OnlineVideos.Sites.georgius
                 {
                     baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                    Match match = Regex.Match(baseWebData, CsfdCzUtil.videoUrlRegex);
-                    if (match.Success)
+                    while (String.IsNullOrEmpty(videoUrl))
                     {
-                        videoUrl = System.Web.HttpUtility.HtmlDecode(match.Groups["videoUrl"].Value).Replace(@"\/", "/");
+                        Match match = Regex.Match(baseWebData, CsfdCzUtil.videoUrlRegex);
+                        if (match.Success)
+                        {
+                            videoUrl = System.Web.HttpUtility.HtmlDecode(match.Groups["videoUrl"].Value).Replace(@"\/", "/");
+                        }
+
+                        if (videoUrl.Contains("/ads/"))
+                        {
+                            videoUrl = String.Empty;
+                        }
+
+                        if (match.Success)
+                        {
+                            baseWebData = baseWebData.Substring(match.Groups["videoUrl"].Index + match.Groups["videoUrl"].Length);
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
 
-                    match = Regex.Match(baseWebData, CsfdCzUtil.subtitleUrlRegex);
-                    if (match.Success)
+                    Match subtitleMatch = Regex.Match(baseWebData, CsfdCzUtil.subtitleUrlRegex);
+                    if (subtitleMatch.Success)
                     {
-                        video.SubtitleUrl = System.Web.HttpUtility.HtmlDecode(match.Groups["subtitleUrl"].Value).Replace(@"\/", "/");
+                        video.SubtitleUrl = System.Web.HttpUtility.HtmlDecode(subtitleMatch.Groups["subtitleUrl"].Value).Replace(@"\/", "/");
                     }
                 }
             }

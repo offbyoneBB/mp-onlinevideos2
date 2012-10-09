@@ -22,8 +22,8 @@ namespace OnlineVideos.Sites.georgius
 
         private static String showEpisodeNextPageRegex = @"<dd class=""next""><a href=""(?<nextPageUrl>[^""]+)"">Další strana</a></dd>";
 
-        private static String showVideoDescriptionRegex = @"&file=/apetit-tv/(?<showVideoDescription>[^&]+)";
-        private static String showVideoUrlsRegex = @"<ref href=""(?<showVideoUrl>[^""]+)"" />";
+        private static String showVideoDescriptionRegex = @"file: ""/apetit-tv/(?<showVideoDescription>[^""]+)";
+        private static String showVideoUrlsRegex = @"<media:content url=""(?<showVideoUrl>[^""]+)";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
