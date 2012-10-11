@@ -54,7 +54,8 @@ namespace OnlineVideos.MediaPortal1.Player
                             RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, cacheFile);
                             try
                             {
-                                EVRUpdateDisplayFPS();
+								if (GUIGraphicsContext.IsEvr)
+									EVRUpdateDisplayFPS();
                             }
                             catch (EntryPointNotFoundException)
                             {
@@ -88,44 +89,47 @@ namespace OnlineVideos.MediaPortal1.Player
 
         void AdaptRefreshRateFromVideoRenderer()
         {
-            if (!refreshRateAdapted && m_state == PlayState.Playing)
-            {
-                try
-                {
-                    if (!PluginConfiguration.Instance.AllowRefreshRateChange)
-                    {
-                        refreshRateAdapted = true;
-                        return;
-                    }
+			if (GUIGraphicsContext.IsEvr)
+			{
+				if (!refreshRateAdapted && m_state == PlayState.Playing)
+				{
+					try
+					{
+						if (!PluginConfiguration.Instance.AllowRefreshRateChange)
+						{
+							refreshRateAdapted = true;
+							return;
+						}
 
-                    double fps = EVRGetVideoFPS(0);
-                    if (fps > 1)
-                    {
-                        refreshRateAdapted = true;
-                        Log.Instance.Info("OnlineVideosPlayer got {0} FPS from dshowhelper.dll after {1} sec", fps, CurrentPosition);
-                        double matchedFps = RefreshRateHelper.MatchConfiguredFPS(fps);
-                        if (matchedFps != default(double))
-                        {
-                            RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, m_strCurrentFile);
-                            EVRUpdateDisplayFPS();
-                        }
-                        else
-                        {
-                            Log.Instance.Info("No matching configured FPS found - skipping RefreshRate Adaption");
-                        }
-                    }
-                }
-                catch (EntryPointNotFoundException)
-                {
-                    Log.Instance.Warn("OnlineVideosPlayer: Your version of dshowhelper.dll does not support FPS reporting.");
-                    refreshRateAdapted = true;
-                }
-                catch (Exception ex)
-                {
-                    Log.Instance.Warn("OnlineVideosPlayer: Exception trying refresh rate change while playing : {0}", ex.ToString());
-                    refreshRateAdapted = true;
-                }
-            }
+						double fps = EVRGetVideoFPS(0);
+						if (fps > 1)
+						{
+							refreshRateAdapted = true;
+							Log.Instance.Info("OnlineVideosPlayer got {0} FPS from dshowhelper.dll after {1} sec", fps, CurrentPosition);
+							double matchedFps = RefreshRateHelper.MatchConfiguredFPS(fps);
+							if (matchedFps != default(double))
+							{
+								RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, m_strCurrentFile);
+								EVRUpdateDisplayFPS();
+							}
+							else
+							{
+								Log.Instance.Info("No matching configured FPS found - skipping RefreshRate Adaption");
+							}
+						}
+					}
+					catch (EntryPointNotFoundException)
+					{
+						Log.Instance.Warn("OnlineVideosPlayer: Your version of dshowhelper.dll does not support FPS reporting.");
+						refreshRateAdapted = true;
+					}
+					catch (Exception ex)
+					{
+						Log.Instance.Warn("OnlineVideosPlayer: Exception trying refresh rate change while playing : {0}", ex.ToString());
+						refreshRateAdapted = true;
+					}
+				}
+			}
         }
 
         #endregion
