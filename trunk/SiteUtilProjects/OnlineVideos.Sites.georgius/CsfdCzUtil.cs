@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections;
+using System.IO;
 
 namespace OnlineVideos.Sites.georgius
 {
@@ -38,10 +39,10 @@ namespace OnlineVideos.Sites.georgius
 
         private static String showEpisodeUrlAndTitleRegex = @"<option value=""(?<showUrl>[^""]+)"">(?<showTitle>[^<]+)";
 
-        private static String videoUrlBlockStart = @"<div id=""videoPlayer1""";
-        private static String videoUrlBlockEnd = @"$(clip)";
-        private static String videoUrlRegex = @"player.addClip\(""(?<videoUrl>[^""]+)";
-        private static String subtitleUrlRegex = @"""subtitles"":""(?<subtitleUrl>[^""]+)";
+        private static String videoUrlBlockStart = @"<video id=""videoPlayer1_lbp""";
+        private static String videoUrlBlockEnd = @"</video>";
+        private static String videoUrlRegex = @"<source src=""(?<videoUrl>[^""]+)""";
+        private static String subtitleUrlRegex = @"<track src=""/subtitles-proxy/\?url=(?<subtitleUrl>[^""]+)";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -337,9 +338,13 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
-            String videoUrl = String.Empty;
-
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+
+            if (video.PlaybackOptions == null)
+            {
+                video.PlaybackOptions = new Dictionary<string, string>();
+            }
+            video.PlaybackOptions.Clear();
 
             int startIndex = baseWebData.IndexOf(CsfdCzUtil.videoUrlBlockStart);
             if (startIndex >= 0)
@@ -349,27 +354,14 @@ namespace OnlineVideos.Sites.georgius
                 {
                     baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                    while (String.IsNullOrEmpty(videoUrl))
+                    MatchCollection matches = Regex.Matches(baseWebData, CsfdCzUtil.videoUrlRegex);
+                    for (int i = 0; i < matches.Count; i++)
                     {
-                        Match match = Regex.Match(baseWebData, CsfdCzUtil.videoUrlRegex);
-                        if (match.Success)
-                        {
-                            videoUrl = System.Web.HttpUtility.HtmlDecode(match.Groups["videoUrl"].Value).Replace(@"\/", "/");
-                        }
+                        String url = matches[i].Groups["videoUrl"].Value;
+                        String extension = Path.GetExtension(url).Replace(".", "");
+                        String fileName = Path.GetFileNameWithoutExtension(url);
 
-                        if (videoUrl.Contains("/ads/"))
-                        {
-                            videoUrl = String.Empty;
-                        }
-
-                        if (match.Success)
-                        {
-                            baseWebData = baseWebData.Substring(match.Groups["videoUrl"].Index + match.Groups["videoUrl"].Length);
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        video.PlaybackOptions.Add(String.Format("{0}p ({1})", fileName, extension), url);
                     }
 
                     Match subtitleMatch = Regex.Match(baseWebData, CsfdCzUtil.subtitleUrlRegex);
@@ -380,7 +372,14 @@ namespace OnlineVideos.Sites.georgius
                 }
             }
 
-            return videoUrl;
+            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+            {
+                var enumer = video.PlaybackOptions.GetEnumerator();
+                enumer.MoveNext();
+                return enumer.Current.Value;
+            }
+
+            return String.Empty;
         }
 
         #endregion
