@@ -883,19 +883,21 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
         this->lastStreamAndFragmentDownloaded = false;
         unsigned int segmentFragmentToDownload = UINT_MAX;
         // find segment and fragment to download
-        if (this->segmentsFragments != NULL)
+
+        result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+        for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
         {
-          for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
+          CSegmentFragment *segFrag = this->segmentsFragments->GetItem(i);
+
+          if (segFrag->GetFragmentTimestamp() <= (uint64_t)currentMediaTime)
           {
-            CSegmentFragment *segFrag = this->segmentsFragments->GetItem(i);
-
-            if (segFrag->GetFragmentTimestamp() <= (uint64_t)currentMediaTime)
-            {
-              segmentFragmentToDownload = i;
-              result = segFrag->GetFragmentTimestamp();
-            }
+            segmentFragmentToDownload = i;
+            result = S_OK;
           }
+        }
 
+        if (SUCCEEDED(result))
+        {
           for (unsigned int i = 0; i < segmentFragmentToDownload; i++)
           {
             // mark all previous segments as downloaded
