@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.IO;
 using System.Xml;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
@@ -71,7 +72,14 @@ namespace OnlineVideos.Sites
                 JObject obj = JObject.Parse(webData);
                 return obj.Value<string>("videofile");
             }
-            return base.getUrl(video);
+            string url = base.getUrl(video);
+            try
+            {
+                string deJSONified = JsonConvert.DeserializeObject<string>('"' + url + '"');
+                if (!string.IsNullOrEmpty(deJSONified)) url = deJSONified;
+            }
+            catch { }
+            return url;
         }
 
         public override string getCurrentVideosTitle()
