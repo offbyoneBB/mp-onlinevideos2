@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
+using System.Net;
 using System.Web;
 using System.Linq;
 
@@ -18,13 +19,16 @@ namespace OnlineVideos.Sites
         private enum UgType { None, Recent, Omroepen, Genres, AtoZ, Type1, AtoZSub, Search };
         private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
         private Regex savedRegEx_dynamicSubCategoriesNextPage;
-        const string UgUserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET4.0C; .NET4.0E)";
 
         string matchaz = @"(?<=<ol\sclass=""letters"">.*)<li[^>]*>\s*<a\shref=""(?<url>[^""]*)""(?:\sclass="""")?\stitle=""(?<description>[^""]*)"">(?<title>[^<]*)</a>\s*</li>";
+        CookieContainer SiteConsent;
 
         public override void Initialize(OnlineVideos.SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
+            SiteConsent = new CookieContainer();
+            Cookie cookie = new Cookie("site_cookie_consent", "yes");
+            SiteConsent.Add(new Uri(baseUrl), cookie);
         }
 
         public override int DiscoverDynamicCategories()
@@ -55,15 +59,32 @@ namespace OnlineVideos.Sites
                 case UgType.AtoZ: return getSubcats(parentCategory, UgType.Type1, matchaz);
                 case UgType.Type1: return getType1Subcats(parentCategory);
                 case UgType.AtoZSub: return getSubcats(parentCategory, UgType.None, @"<li\sclass=""series\sknav""\sid=""series_(?<seriesid>[^""]*)"">\s*<a[^>]*><img\salt=""[^""]*""\sclass=""thumbnail""\sdata-images=""\[(?:&quot;(?<thumb>[^&]*)&)?[^""]*""\sheight=""[^""]*""\ssrc=""[^""]*""[^>]*></a>\s*<h3><a\shref=""(?<url>[^""]*)""\sclass=""series\sknav_link""\stitle=""[^""]*"">(?<title>[^<]*)</a>\s<span\sclass=""broadcasters"">\([^\)]*\)</span></h3>\s*</li>");
+                case UgType.Search: return getSubcats(parentCategory, UgType.None, @"<li\sclass=""series\sknav""\sid=""series_(?<seriesid>[^""]*)"">\s*<div\sclass=""wrapper"">\s*<div\sclass=""img"">\s*<a[^>]*><img\salt=""[^""]*""\sclass=""thumbnail""\sdata-images=""\[(?:&quot;(?<thumb>[^&]*)&)?[^>]*></a>\s*</div>\s*<h3><a\shref=""(?<url>[^""]*)""\sclass=""series\sknav_link""\stitle=""[^""]*"">(?<title>[^<]*)</a>\s<span\sclass=""broadcasters"">\([^\)]*\)</span></h3>\s*<div\sclass=""episodes-count"">[^<]*</div>\s*</div>\s*<div\sclass=""small-wrapper"">");
             }
             return 0;
+        }
+
+        public override int DiscoverNextPageCategories(NextPageCategory category)
+        {
+            int result = base.DiscoverNextPageCategories(category);
+            if ((UgType)category.ParentCategory.Other == UgType.Search)
+                foreach (RssLink npCat in category.ParentCategory.SubCategories)
+                    if (npCat is NextPageCategory)
+                        npCat.Url = HttpUtility.HtmlDecode(npCat.Url) + "&_pjax=true";
+
+            return result;
+        }
+
+        protected override CookieContainer GetCookie()
+        {
+            return SiteConsent;
         }
 
         private int getType1Subcats(Category parentCat)
         {
             if (parentCat.SubCategories == null) parentCat.SubCategories = new List<Category>();
 
-            string webData = GetWebData(((RssLink)parentCat).Url, userAgent: UgUserAgent);
+            //string webData = GetWebData(((RssLink)parentCat).Url, userAgent: UgUserAgent, cc: SiteConsent);
 
             RssLink cat = new RssLink()
             {
@@ -105,11 +126,14 @@ namespace OnlineVideos.Sites
                 {
                     regEx_dynamicSubCategoriesNextPage = null;
                 }
-            string data = GetWebData(((RssLink)parentCat).Url, userAgent: UgUserAgent);
+            string data = GetWebData(((RssLink)parentCat).Url, cc: SiteConsent);
             int res = ParseSubCategories(parentCat, data);
             if (res > 0)
                 foreach (RssLink cat in parentCat.SubCategories)
                 {
+                    if ((UgType)parentCat.Other == UgType.Search && cat is NextPageCategory)
+                        cat.Url = HttpUtility.HtmlDecode(cat.Url) + "&_pjax=true";
+
                     if (subType != UgType.None)
                     {
                         cat.HasSubCategories = true;
@@ -151,28 +175,36 @@ namespace OnlineVideos.Sites
         protected override List<VideoInfo> Parse(string url, string data)
         {
             if (data == null)
-                data = GetWebData(url, userAgent: UgUserAgent);
+                data = GetWebData(url, cc: SiteConsent);
+            bool fromSearch = url.Contains(".nl/zoek/");
             data = Regex.Unescape(data);
-            return base.Parse(url, data);
+            if (fromSearch)
+                data = data.Replace("<em>", String.Empty).Replace("</em>", String.Empty);// for search results
+            List<VideoInfo> res = base.Parse(url, data);
+            if (nextPageAvailable && fromSearch)
+                nextPageUrl = HttpUtility.HtmlDecode(nextPageUrl) + "&_pjax=true";
+            return res;
         }
 
-        private RssLink searchCat;
         public override List<ISearchResultItem> DoSearch(string query)
         {
-
-            searchCat = new RssLink();
-            searchCat.Url = string.Format(searchUrl, query);
-            searchCat.Other = UgType.Search;
-
-            getSubcats(searchCat, UgType.Search, @"<li\sclass=""series\sknav""\sid=""series_(?<seriesid>[^""]*)"">\s*<div\sclass=""wrapper"">\s*<div\sclass=""img"">\s*<a[^>]*><img\salt=""[^""]*""\sclass=""thumbnail""\sdata-images=""\[(?:&quot;(?<thumb>[^&]*)&)?[^>]*></a>\s*</div>\s*<h3><a\shref=""(?<url>[^""]*)""\sclass=""series\sknav_link""\stitle=""[^""]*"">(?<title>[^<]*)</a>\s<span\sclass=""broadcasters"">\([^\)]*\)</span></h3>\s*<div\sclass=""episodes-count"">[^<]*</div>\s*</div>\s*<div\sclass=""small-wrapper"">");
-            List<ISearchResultItem> res = new List<ISearchResultItem>();
-            foreach (RssLink cat in searchCat.SubCategories)
+            List<ISearchResultItem> result = new List<ISearchResultItem>();
+            RssLink cat = new RssLink()
             {
-                if (cat is NextPageCategory)
-                    cat.Url = HttpUtility.HtmlDecode(cat.Url);
-                res.Add(cat);
-            }
-            return res;
+                Name = "Programmas",
+                Other = UgType.Search,
+                Url = String.Format(@"http://www.uitzendinggemist.nl/zoek/programmas?id={0}&series_page=1&_pjax=true", query),
+                HasSubCategories = true
+            };
+            result.Add(cat);
+
+            cat = new RssLink()
+            {
+                Name = "Uitzendingen",
+                Url = String.Format(@"http://www.uitzendinggemist.nl/zoek/uitzendingen?id={0}&page=1&_pjax=true", query)
+            };
+            result.Add(cat);
+            return result;
         }
 
     }
