@@ -124,7 +124,7 @@ c->fragmented = (strcmp(type, "isml") == 0) ? 1 : 0;
 c->stop_parsing_at_fragmented_index = 0;
 
 --------------------------------------------
-Comment: in mov_read_tmcd() method add
+Comment: after mov_read_tmcd() method add
 Code:
 
 static int mov_read_fmix(MOVContext *c, AVIOContext *pb, MOVAtom atom)
