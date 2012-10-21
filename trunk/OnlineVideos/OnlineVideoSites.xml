@@ -1277,8 +1277,8 @@
     <Site name="Nickelodeon.nl" util="NickelodeonNL" agecheck="false" enabled="true" lang="nl">
       <Description>Nickelodeon.nl is de leukste website voor kinderen met veel online videos van Spongebob, Dora, Big Time Rush en Pinguins van Madagascar.</Description>
       <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="[^"]*"\sclass="preview"><img\salt="[^"]*"\sheight="[^"]*"\ssrc="(?<thumb>[^"]*)"[^>]*>\s*</a><div\sclass='description'>\s*<h3>(?<title>[^<]*)</h3>\s*<a[^>]*><span>Games</span>\s*</a><a\shref="(?<url>[^"]*)"\sclass="action\srelated_videos"><span>Videos</span>\s*</a></div>]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass="preview"><img\salt="[^"]*"\s(?:height="[^"]*"\s)?src="(?<ImageUrl>[^"]*)"[^>]*>\s*</a><div\sclass='description'>\s*<h3>(?<Title>[^<]*)</h3>\s*<a\shref="[^"]*"\sclass="action">bekijk</a>\s*</div>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass='teaser_item[^']*'>\s*<a\shref="[^"]*"\sclass="preview"\stitle="[^"]*"><img\salt="[^"]*"\sheight="[^"]*"\ssrc="(?<thumb>[^"]*)"\stitle="[^"]*"\swidth="[^"]*"\s/>\s*</a><div\sclass='description'>\s*<h3>(?<title>[^<]*)</h3>\s*<a[^>]*><span>Games</span>\s*</a><a\shref="(?<url>[^"]*)"\sclass="action\srelated_videos"\stitle="[^"]*"><span>Video’s</span>\s*</a></div>]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass="preview"><span\sclass='playicon'>Play</span>\s*<img\s(?:alt="[^"]*"\s)?(?:height="[^"]*"\s)?src="(?<ImageUrl>[^"]*)"[^>]*>\s*</a><div\sclass='description'>\s*<h3>(?<Title>[^<]*)</h3>\s*<a\shref="[^"]*"\sclass="action">bekijk</a>\s*</div>]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\sclass="next_page"\srel="next"\shref="(?<url>[^"]*)"><span>meer\svideo’s</span>]]></item>
         <item key="baseUrl"><![CDATA[http://www.nickelodeon.nl/]]></item>
       </Configuration>
@@ -1288,12 +1288,6 @@
         <Category xsi:type="RssLink" name="Nick Jr.">http://www.nickelodeon.nl/shows?active_tab=1&amp;ajax</Category>
         <Category xsi:type="RssLink" name="Nick Toons">http://www.nickelodeon.nl/kanalen/28?window=nicktoons</Category>
         <Category xsi:type="RssLink" name="Teen Nick">http://www.nickelodeon.nl/kanalen/28?window=teennick</Category>
-        <Category xsi:type="Group" name="Live">
-          <Channels>
-            <Channel name="Nick Jr.">http://www.garnierstreamingmedia.com/asx/nickjr_video_low.asp</Channel>
-            <Channel name="Nickelodeon">http://www.garnierstreamingmedia.com/asx/nick_video_low.asp</Channel>
-          </Channels>
-        </Category>
       </Categories>
     </Site>
     <Site name="Nos" util="NOS" agecheck="false" enabled="true" lang="nl">
