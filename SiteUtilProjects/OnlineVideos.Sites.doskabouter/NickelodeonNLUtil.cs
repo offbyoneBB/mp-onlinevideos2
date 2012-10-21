@@ -8,8 +8,8 @@ namespace OnlineVideos.Sites
 {
     public class NickelodeonNLUtil : GenericSiteUtil
     {
-        private string playListRegex = @"embedSWF\(""http://media\.mtvnservices\.com/(?<url>[^""]*)"",";
-        private string urlRegex = @"<media:content\sduration='0'\sisDefault='true'\stype='text/xml'\surl='(?<url>[^']*)'></media:content>";
+        private string playListRegex = @"swfobject\.embedSWF\('http://media\.mtvnservices\.com/(?<url>[^']*)',\s'player_prime_container',";
+        private string urlRegex = @"<media:content\sduration='[^']*'\sisDefault='true'\stype='text/xml'\surl='(?<url>[^']*)'></media:content>";
 
         private Regex regEx_PlayList;
         private Regex regex_Url;
