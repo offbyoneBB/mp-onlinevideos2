@@ -13,9 +13,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>LAVFilters-0.51.2.exe</LocalFileName>
+              <LocalFileName>LAVFilters-0.52.exe</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.51.2.exe</ZipFileName>
-              <DestinationFilename>%Base%\LAVFilters-0.51.2.exe</DestinationFilename>
+              <DestinationFilename>%Base%\LAVFilters-0.52.exe</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -46,7 +46,7 @@
               <Params>
                 <Items>
                   <SectionParam Name="Path to application">
-                    <Value>%Base%\LAVFilters-0.51.2.exe</Value>
+                    <Value>%Base%\LAVFilters-0.52.exe</Value>
                     <ValueType>Template</ValueType>
                     <Description>Path to the application like 
  %Base%\MediaPortal.exe</Description>
@@ -100,7 +100,7 @@ public class Script
   public static void Main(PackageClass packageClass, ActionItem actionItem)
   {
     string setupExe = Path.Combine(
-      MpeInstaller.TransformInRealPath("%Base%"), "LAVFilters-0.51.2.exe");
+      MpeInstaller.TransformInRealPath("%Base%"), "LAVFilters-0.52.exe");
 
     try
     {
@@ -179,54 +179,39 @@ public class Script
     <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=52</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>51</Minor>
-      <Build>2</Build>
+      <Minor>52</Minor>
+      <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>The extension installs the LAV Filter package, which contains a splitter, audio and video decoder for the most common formats that are used around the web.</ExtensionDescription>
-    <VersionDescription>0.51.2 - 2012/07/15
-LAV Splitter
-- Improved H264 media type creation with some files
-- Fixed reading of QuickTime/AppleText chapters in MOV/MP4
+    <VersionDescription>LAV Splitter
+- Improved IO performance on network sources
+- Added an option to configure the maximum memory usage of the frame queues
+- Support ALAC in MKV
+- Support SRT subtitles in AVI
+- Improved raw video support in combination with LAV Video
 
 LAV Video
-- Reduced latency of H264 software decoding (improves Live TV playback)
-- Fixed chroma handling of the YCgCo to RGB conversion
-- Fixed timestamp handling of MPEG2 (regression introduced in 0.51)
+- Support for DVD Video decoding
+- Slight GPU memory usage reduction with DXVA2 Native
+- Fixed video corruption after seeks with VP3/Theora
+- Fixed decoding of "old" H.264 4:4:4 lossless files
+- More stricter handling of output pixel formats, only enabled formats are allowed for output
+- QuickSync: Improved compatibility with new driver series
+- Improved support for VC-1 with the SageTV MpegDemux
 
 LAV Audio
-- Re-Mix audio as a fallback when the audio chain refuses a new channel configuration
-- Fixed an error that caused 16-bit FLAC to show as 24-bit on the status panel
-
-0.51.1 - 2012/07/10
-LAV Video
-- Improved compatibility between DXVA and certain DVB players
-
-0.51.0 - 2012/07/09
-LAV Splitter
-- Increased IO responsiveness on high-latency network connections
-- Improved timestamp handling for MPEG-PS (.mpg/.vob/.evo)
-- Improved support for H264 streams in SSIF MPEG-TS files
-- Added an option to control the priority of audio streams for the hearing/visually impaired
-- Added new flags to the advanced subtitle selection
-  - "h" for hearing impaired
-  - "n" for normal streams (no flags)
-  - "!" NOT operator for inverting the meaning of the flags
-
-LAV Video
-- Improved DXVA2 Native to software fallback in some situations
-- Support for YCgCo to RGB conversion
-- Added a new smart Stream Aspect Ratio mode
-  - Will only use Stream AR when the container does not provide a realiable AR
-
-LAV Audio
-- Improved decoding performance of MP4 ALS and a few other formats
-- Fixed playback of COOK with the MPC-HC RM Splitter
-- Auto A/V Sync is now automatically disabled on pure-audio files to avoid potential conflicts
-- Audio Down-Mixing support</VersionDescription>
+- Fixed a few issues with audio mixing
+  - Some channels would occasionally be mixed twice, causing incorrect audio levels
+  - Downmixing 8ch to stereo could crash on some systems
+  - Increased maximum LFE coefficient to 3.0 and fixed scale to be consistent with surround/center coefficients
+  - Added downmixing to Mono
+  - Clipping protection is no longer reset on seeks
+- Added support for Opus
+- Fixed excessive memory allocations when decoding MPEG4-ALS</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-    <ReleaseDate>2012-07-17T21:36:36</ReleaseDate>
+    <ReleaseDate>2012-10-20T21:36:36</ReleaseDate>
     <Tags>codec</Tags>
     <Location>.\LAVFilters[Version].mpe1</Location>
     <Params>
@@ -266,9 +251,9 @@ LAV Audio
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>LAVFilters-0.51.2.exe</LocalFileName>
+        <LocalFileName>LAVFilters-0.52.exe</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.51.2.exe</ZipFileName>
-        <DestinationFilename>%Base%\LAVFilters-0.51.2.exe</DestinationFilename>
+        <DestinationFilename>%Base%\LAVFilters-0.52.exe</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
