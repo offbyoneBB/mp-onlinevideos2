@@ -69,6 +69,16 @@ namespace OnlineVideos.MPUrlSourceFilter
         DrmProtected                                                                = -22,
 
         /// <summary>
+        /// Unknown stream type.
+        /// </summary>
+        /// <remarks>
+        /// Unknown stream type can occure when specific stream type have to be returned,
+        /// but another stream type is actually returned. Typical example is Adobe Flash HTTP streaming protocol,
+        /// where FLV stream type have to be returned.
+        /// </remarks>
+        UnknownStreamType                                                           = -23,
+
+        /// <summary>
         /// No protocol loaded.
         /// </summary>
         NoProtocolLoaded                                                            = -30,
