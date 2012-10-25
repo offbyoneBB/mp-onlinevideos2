@@ -23,6 +23,8 @@
 #ifndef __UTILITIES_DEFINED
 #define __UTILITIES_DEFINED
 
+#include "ParameterCollection.h"
+
 #include <WinInet.h>
 
 // get Tv Server folder
@@ -53,5 +55,11 @@ void ZeroURL(URL_COMPONENTS *url);
 // caller is responsible for freeing memory
 // @return : version info string or NULL if error
 wchar_t *GetVersionInfo(const wchar_t *version, const wchar_t *compile);
+
+// gets store file path based on configuration
+// creates folder structure if not created
+// @param configuration : the configuration
+// @return : store file path or NULL if error
+wchar_t *GetStoreFilePath(CParameterCollection *configuration);
 
 #endif

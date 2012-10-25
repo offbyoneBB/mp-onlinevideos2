@@ -62,6 +62,8 @@ CMPUrlSourceSplitter_Parser_Asx::CMPUrlSourceSplitter_Parser_Asx(CParameterColle
   }
   FREE_MEM(version);
 
+  this->storedMediaPackets = new CMediaPacketCollection();
+
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
 
@@ -69,12 +71,12 @@ CMPUrlSourceSplitter_Parser_Asx::~CMPUrlSourceSplitter_Parser_Asx()
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
 
-  delete this->connectionParameters;
+  FREE_MEM_CLASS(this->connectionParameters);
+  FREE_MEM_CLASS(this->storedMediaPackets);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
 
-  delete this->logger;
-  this->logger = NULL;
+  FREE_MEM_CLASS(this->logger);
 }
 
 // IParser interface
@@ -84,101 +86,119 @@ HRESULT CMPUrlSourceSplitter_Parser_Asx::ClearSession(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 
   this->connectionParameters->Clear();
+  this->storedMediaPackets->Clear();
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
 }
 
-ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *mediaPacket)
+ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPackets(CMediaPacketCollection *mediaPackets)
 {
   ParseResult result = ParseResult_NotKnown;
-  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME);
 
-  if (mediaPacket != NULL)
+  if (mediaPackets != NULL)
   {
-    unsigned int length = mediaPacket->GetBuffer()->GetBufferOccupiedSpace() + 1;
-    ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-    if ((buffer != NULL) && (length > 1))
+    if (this->storedMediaPackets->Append(mediaPackets))
     {
-      mediaPacket->GetBuffer()->CopyFromBuffer(buffer, length - 1, 0, 0);
-
-      char *lowerBuffer = DuplicateA((char *)buffer);
-      if (lowerBuffer != NULL)
+      unsigned int length = 0;
+      for (unsigned int i = 0; i < this->storedMediaPackets->Count(); i++)
       {
-        size_t length = strlen(lowerBuffer);
-        if (length > 0)
+        CMediaPacket *mp = this->storedMediaPackets->GetItem(i);
+        length += mp->GetBuffer()->GetBufferOccupiedSpace();
+      }
+      length += 2;
+
+      ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+      if ((buffer != NULL) && (length > 1))
+      {
+        unsigned int bufferPosition = 0;
+        for (unsigned int i = 0; i < this->storedMediaPackets->Count(); i++)
         {
-          _strlwr_s(lowerBuffer, length + 1);
+          CMediaPacket *mp = this->storedMediaPackets->GetItem(i); 
+          unsigned int bufferOccupiedSpace = mp->GetBuffer()->GetBufferOccupiedSpace();
+          mp->GetBuffer()->CopyFromBuffer(buffer + bufferPosition, bufferOccupiedSpace, 0, 0);
+          bufferPosition += bufferOccupiedSpace;
+        }
 
-          if (length > 4)
+        char *lowerBuffer = DuplicateA((char *)buffer);
+        if (lowerBuffer != NULL)
+        {
+          size_t length = strlen(lowerBuffer);
+          if (length > 0)
           {
-            // the length of received data should be at least 5 characters '<asx '
+            _strlwr_s(lowerBuffer, length + 1);
 
-            if (strncmp(lowerBuffer, "<asx ", 5) == 0)
+            if (length > 4)
             {
-              // possible ASX file
-              // try to parse
+              // the length of received data should be at least 5 characters '<asx '
 
-              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"ASX stream");
-              wchar_t *asxBuffer = ConvertToUnicodeA((char *)buffer);
-              if (asxBuffer != NULL)
+              if (strncmp(lowerBuffer, "<asx ", 5) == 0)
               {
-                this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, asxBuffer);
-              }
-              FREE_MEM(asxBuffer);
+                // possible ASX file
+                // try to parse
 
-              char *entryStartString = strstr(lowerBuffer, "<entry");
-              if (entryStartString != NULL)
-              {
-                char *entryEndString = strstr(entryStartString, "</entry>");
-                if (entryEndString != NULL)
+                this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"ASX stream");
+                wchar_t *asxBuffer = ConvertToUnicodeA((char *)buffer);
+                if (asxBuffer != NULL)
                 {
-                  char *hrefNode = strstr(entryStartString, "href");
-                  if (hrefNode != NULL)
+                  this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, asxBuffer);
+                }
+                FREE_MEM(asxBuffer);
+
+                char *entryStartString = strstr(lowerBuffer, "<entry");
+                if (entryStartString != NULL)
+                {
+                  char *entryEndString = strstr(entryStartString, "</entry>");
+                  if (entryEndString != NULL)
                   {
-                    hrefNode += 4;
-                    // found href attribute in ref node
-                    hrefNode = (char *)SkipBlanksA(hrefNode);
-                    if (strncmp(hrefNode, "=", 1) == 0)
+                    char *hrefNode = strstr(entryStartString, "href");
+                    if (hrefNode != NULL)
                     {
-                      hrefNode++;
+                      hrefNode += 4;
+                      // found href attribute in ref node
                       hrefNode = (char *)SkipBlanksA(hrefNode);
-                      if (strncmp(hrefNode, "\"", 1) == 0)
+                      if (strncmp(hrefNode, "=", 1) == 0)
                       {
-                        // we are on the first ", find second "
-                        char *first = hrefNode + 1;
-                        char *last = strstr(first, "\"");
-                        if ((first != NULL) && (last != NULL))
+                        hrefNode++;
+                        hrefNode = (char *)SkipBlanksA(hrefNode);
+                        if (strncmp(hrefNode, "\"", 1) == 0)
                         {
-                          unsigned int firstIndex = first - lowerBuffer;
-                          unsigned int lastIndex = last - lowerBuffer;
-
-                          if (lastIndex > firstIndex)
+                          // we are on the first ", find second "
+                          char *first = hrefNode + 1;
+                          char *last = strstr(first, "\"");
+                          if ((first != NULL) && (last != NULL))
                           {
-                            unsigned int urlLength = lastIndex - firstIndex + 1;
-                            ALLOC_MEM_DEFINE_SET(url, char, urlLength, 0);
-                            if (url != NULL)
+                            unsigned int firstIndex = first - lowerBuffer;
+                            unsigned int lastIndex = last - lowerBuffer;
+
+                            if (lastIndex > firstIndex)
                             {
-                              memcpy(url, buffer + firstIndex, urlLength - 1);
-
-                              wchar_t *w_url = ConvertToUnicodeA(url);
-                              if (w_url != NULL)
+                              unsigned int urlLength = lastIndex - firstIndex + 1;
+                              ALLOC_MEM_DEFINE_SET(url, char, urlLength, 0);
+                              if (url != NULL)
                               {
-                                this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, w_url);
+                                memcpy(url, buffer + firstIndex, urlLength - 1);
 
-                                CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, w_url);
-                                if (urlParameter != NULL)
+                                wchar_t *w_url = ConvertToUnicodeA(url);
+                                if (w_url != NULL)
                                 {
-                                  bool invariant = true;
-                                  this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
-                                  this->connectionParameters->Add(urlParameter);
+                                  this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, w_url);
 
-                                  result = ParseResult_Known;
+                                  CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, w_url);
+                                  if (urlParameter != NULL)
+                                  {
+                                    bool invariant = true;
+                                    this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
+                                    this->connectionParameters->Add(urlParameter);
+
+                                    result = ParseResult_Known;
+                                  }
                                 }
+                                FREE_MEM(w_url);
                               }
-                              FREE_MEM(w_url);
+                              FREE_MEM(url);
                             }
-                            FREE_MEM(url);
                           }
                         }
                       }
@@ -187,83 +207,83 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
                 }
               }
             }
-          }
 
-          if ((result == ParseResult_NotKnown) && (length > 11))
-          {
-            // the length of received data should be at least 11 characters '[Reference]'
-            if (strncmp(lowerBuffer, "[reference]", 11) == 0)
+            if ((result == ParseResult_NotKnown) && (length > 11))
             {
-              // possible special ASX file
-              // try to parse
-
-              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"special ASX stream");
-              wchar_t *asxBuffer = ConvertToUnicodeA((char *)buffer);
-              if (asxBuffer != NULL)
+              // the length of received data should be at least 11 characters '[Reference]'
+              if (strncmp(lowerBuffer, "[reference]", 11) == 0)
               {
-                this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, asxBuffer);
-              }
-              FREE_MEM(asxBuffer);
+                // possible special ASX file
+                // try to parse
 
-              char *ref1StartString = strstr(lowerBuffer, "ref1=");
-              if (ref1StartString != NULL)
-              {
-                char *ref1EndString1 = strstr(ref1StartString, "\n");
-                char *ref1EndString2 = strstr(ref1StartString, "\r");
+                this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"special ASX stream");
+                wchar_t *asxBuffer = ConvertToUnicodeA((char *)buffer);
+                if (asxBuffer != NULL)
+                {
+                  this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, asxBuffer);
+                }
+                FREE_MEM(asxBuffer);
 
-                char *ref1EndString = NULL;
-                if ((ref1EndString1 != NULL) && (ref1EndString2 != NULL))
+                char *ref1StartString = strstr(lowerBuffer, "ref1=");
+                if (ref1StartString != NULL)
                 {
-                  ref1EndString = (ref1EndString1 < ref1EndString2) ? ref1EndString1 : ref1EndString2;
-                }
-                else if (ref1EndString1 != NULL)
-                {
-                  ref1EndString = ref1EndString1;
-                }
-                else if (ref1EndString2 != NULL)
-                {
-                  ref1EndString = ref1EndString2;
-                }
+                  char *ref1EndString1 = strstr(ref1StartString, "\n");
+                  char *ref1EndString2 = strstr(ref1StartString, "\r");
 
-                if (ref1EndString != NULL)
-                {
-                  char *first = ref1StartString + 5;
-                  if (first != NULL)
+                  char *ref1EndString = NULL;
+                  if ((ref1EndString1 != NULL) && (ref1EndString2 != NULL))
                   {
-                    unsigned int firstIndex = first - lowerBuffer;
-                    unsigned int lastIndex = ref1EndString - lowerBuffer;
+                    ref1EndString = (ref1EndString1 < ref1EndString2) ? ref1EndString1 : ref1EndString2;
+                  }
+                  else if (ref1EndString1 != NULL)
+                  {
+                    ref1EndString = ref1EndString1;
+                  }
+                  else if (ref1EndString2 != NULL)
+                  {
+                    ref1EndString = ref1EndString2;
+                  }
 
-                    if (lastIndex > firstIndex)
+                  if (ref1EndString != NULL)
+                  {
+                    char *first = ref1StartString + 5;
+                    if (first != NULL)
                     {
-                      unsigned int urlLength = lastIndex - firstIndex + 1;
-                      ALLOC_MEM_DEFINE_SET(url, char, urlLength, 0);
-                      if (url != NULL)
+                      unsigned int firstIndex = first - lowerBuffer;
+                      unsigned int lastIndex = ref1EndString - lowerBuffer;
+
+                      if (lastIndex > firstIndex)
                       {
-                        memcpy(url, buffer + firstIndex, urlLength - 1);
-
-                        wchar_t *w_url = ConvertToUnicodeA(url);
-                        if (w_url != NULL)
+                        unsigned int urlLength = lastIndex - firstIndex + 1;
+                        ALLOC_MEM_DEFINE_SET(url, char, urlLength, 0);
+                        if (url != NULL)
                         {
-                          wchar_t *replacedUrl = ReplaceString(w_url, L"http://", L"mms://");
-                          if (replacedUrl != NULL)
+                          memcpy(url, buffer + firstIndex, urlLength - 1);
+
+                          wchar_t *w_url = ConvertToUnicodeA(url);
+                          if (w_url != NULL)
                           {
-                            this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, replacedUrl);
-
-                            CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, replacedUrl);
-                            if (urlParameter != NULL)
+                            wchar_t *replacedUrl = ReplaceString(w_url, L"http://", L"mms://");
+                            if (replacedUrl != NULL)
                             {
-                              bool invariant = true;
-                              this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
-                              this->connectionParameters->Add(urlParameter);
+                              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, replacedUrl);
 
-                              result = ParseResult_Known;
+                              CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, replacedUrl);
+                              if (urlParameter != NULL)
+                              {
+                                bool invariant = true;
+                                this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
+                                this->connectionParameters->Add(urlParameter);
+
+                                result = ParseResult_Known;
+                              }
                             }
+                            FREE_MEM(replacedUrl);
                           }
-                          FREE_MEM(replacedUrl);
+                          FREE_MEM(w_url);
                         }
-                        FREE_MEM(w_url);
+                        FREE_MEM(url);
                       }
-                      FREE_MEM(url);
                     }
                   }
                 }
@@ -271,13 +291,14 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPacket(CMediaPacket *medi
             }
           }
         }
+        FREE_MEM(lowerBuffer);
       }
-      FREE_MEM(lowerBuffer);
+      FREE_MEM(buffer);
     }
-    FREE_MEM(buffer);
+
   }
 
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, result);
   return result;
 }
 

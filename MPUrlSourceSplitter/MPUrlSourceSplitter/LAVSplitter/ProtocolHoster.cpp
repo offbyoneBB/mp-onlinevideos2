@@ -21,9 +21,10 @@
 #include "stdafx.h"
 
 #include "ProtocolHoster.h"
+#include "ErrorCodes.h"
 
-CProtocolHoster::CProtocolHoster(CLogger *logger, CParameterCollection *configuration, IOutputStream *outputStream)
-  : COutputStreamHoster(logger, configuration, L"ProtocolHoster", L"mpurlsourcesplitter_protocol_*.dll", outputStream)
+CProtocolHoster::CProtocolHoster(CLogger *logger, CParameterCollection *configuration)
+  : CHoster(logger, configuration, L"ProtocolHoster", L"mpurlsourcesplitter_protocol_*.dll")
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_PROTOCOL_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
 
@@ -78,7 +79,6 @@ PluginConfiguration *CProtocolHoster::GetPluginConfiguration(void)
   if (pluginConfiguration != NULL)
   {
     pluginConfiguration->configuration = this->configuration;
-    pluginConfiguration->outputStream = this;
   }
 
   return pluginConfiguration;
@@ -98,7 +98,7 @@ unsigned int CProtocolHoster::GetOpenConnectionMaximumAttempts(void)
 
 HRESULT CProtocolHoster::ParseUrl(const CParameterCollection *parameters)
 {
-  HRESULT retval = (this->pluginImplementationsCount == 0) ? E_NOT_VALID_STATE : S_OK;
+  HRESULT retval = (this->pluginImplementationsCount == 0) ? E_NO_PROTOCOL_LOADED : S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(retval, parameters);
 
   if (SUCCEEDED(retval))
@@ -125,12 +125,14 @@ HRESULT CProtocolHoster::ParseUrl(const CParameterCollection *parameters)
   return retval;
 }
 
-void CProtocolHoster::ReceiveData(bool *shouldExit)
+HRESULT CProtocolHoster::ReceiveData(bool *shouldExit, CReceiveData *receiveData)
 {
   if (this->activeProtocol != NULL)
   {
-    this->activeProtocol->ReceiveData(shouldExit);
+    return this->activeProtocol->ReceiveData(shouldExit, receiveData);
   }
+
+  return E_NO_ACTIVE_PROTOCOL;
 }
 
 // ISimpleProtocol interface implementation
@@ -143,7 +145,7 @@ unsigned int CProtocolHoster::GetReceiveDataTimeout(void)
 HRESULT CProtocolHoster::StartReceivingData(const CParameterCollection *parameters)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, this->activeProtocol);
+  CHECK_POINTER_HRESULT(result, this->activeProtocol, result, E_NO_ACTIVE_PROTOCOL);
 
   if (SUCCEEDED(result))
   {
@@ -208,12 +210,12 @@ unsigned int CProtocolHoster::GetSeekingCapabilities(void)
 
 int64_t CProtocolHoster::SeekToTime(int64_t time)
 {
-  return (this->activeProtocol != NULL) ? this->activeProtocol->SeekToTime(time) : (-1);
+  return (this->activeProtocol != NULL) ? this->activeProtocol->SeekToTime(time) : E_NOT_VALID_STATE;
 }
 
 int64_t CProtocolHoster::SeekToPosition(int64_t start, int64_t end)
 {
-  return (this->activeProtocol != NULL) ? this->activeProtocol->SeekToPosition(start, end) : (-1);
+  return (this->activeProtocol != NULL) ? this->activeProtocol->SeekToPosition(start, end) : E_NOT_VALID_STATE;
 }
 
 void CProtocolHoster::SetSupressData(bool supressData)

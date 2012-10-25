@@ -23,6 +23,8 @@
 #ifndef __SEGMENT_FRAGMENT_DEFINED
 #define __SEGMENT_FRAGMENT_DEFINED
 
+#include "LinearBuffer.h"
+
 #include <stdint.h>
 
 class CSegmentFragment
@@ -59,15 +61,35 @@ public:
   // @return : true if downloaded, false otherwise
   bool GetDownloaded(void);
 
+  // gets position of start of segment and fragment within store file
+  // @return : file position or -1 if error
+  int64_t GetStoreFilePosition(void);
+
+  // gets linear buffer
+  // @return : linear buffer or NULL if error or segment and fragment is stored to file
+  CLinearBuffer *GetBuffer();
+
+  // gets the length of segment and fragment data
+  // @return : the length of segment and fragment data
+  unsigned int GetLength(void);
+
   /* set methods */
 
   // sets if segment and fragment is downloaded
   // @param downloaded : true if segment and fragment is downloaded
   void SetDownloaded(bool downloaded);
 
-  // deep clone of current instance
-  // @return : reference to clone of segment and fragment
-  CSegmentFragment *Clone(void);
+  // sets position within store file
+  // if segment and fragment is stored than linear buffer is deleted
+  // if store file path is cleared (NULL) than linear buffer is created
+  // @param position : the position of start of segment and fragment within store file or (-1) if segment and fragment is in memory
+  void SetStoredToFile(int64_t position);
+
+  /* other methods */
+
+  // tests if media packet is stored to file
+  // @return : true if media packet is stored to file, false otherwise
+  bool IsStoredToFile(void);
 
 private:
   // stores segment ID
@@ -80,6 +102,12 @@ private:
   uint64_t fragmentTimestamp;
   // stores if segment and fragment is downloaded
   bool downloaded;
+  // posittion in store file
+  int64_t storeFilePosition;
+  // internal linear buffer for segment and fragment data
+  CLinearBuffer *buffer;
+  // the length of segment and fragment data
+  unsigned int length;
 };
 
 #endif

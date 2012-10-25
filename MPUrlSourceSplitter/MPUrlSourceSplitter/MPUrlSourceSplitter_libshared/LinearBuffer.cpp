@@ -57,8 +57,7 @@ CLinearBuffer *CLinearBuffer::Clone(void)
   
   if (!success)
   {
-    delete clone;
-    clone = NULL;
+    FREE_MEM_CLASS(clone);
   }
 
   return clone;

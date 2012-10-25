@@ -100,15 +100,14 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::ClearSession(void)
   return S_OK;
 }
 
-ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *mediaPacket)
+ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketCollection *mediaPackets)
 {
   ParseResult result = ParseResult_NotKnown;
-  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME);
 
-  if (mediaPacket != NULL)
+  if (mediaPackets != NULL)
   {
-    CMediaPacket *clone = mediaPacket->Clone();
-    if (this->storedMediaPackets->Add(clone))
+    if (this->storedMediaPackets->Append(mediaPackets))
     {
       unsigned int length = 0;
       for (unsigned int i = 0; i < this->storedMediaPackets->Count(); i++)
@@ -146,11 +145,11 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
         {
           if (manifest->Parse((char *)buffer))
           {
-            this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"F4M manifest");
+            this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"F4M manifest");
             wchar_t *f4mBuffer = ConvertUtf8ToUnicode((char *)buffer);
             if (f4mBuffer != NULL)
             {
-              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, f4mBuffer);
+              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, f4mBuffer);
             }
             FREE_MEM(f4mBuffer);
 
@@ -189,22 +188,24 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                     }
                     else
                     {
-                      this->logger->Log(LOGGER_WARNING, L"%s: %s: bootstrap info is not valid, id: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, bootstrapInfo->GetId());
+                      this->logger->Log(LOGGER_WARNING, L"%s: %s: bootstrap info is not valid, id: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, bootstrapInfo->GetId());
                       FREE_MEM_CLASS(bootstrapInfo);
                     }
                   }
                 }
                 else
                 {
-                  this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"bootstrap info profile is not 'named'");
+                  this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"bootstrap info profile is not 'named'");
                 }
               }
 
               // we should have url
               // we exclude piece of media with drmAdditionalHeaderId
+              bool hasDrm = false;
               for (unsigned int i = 0; i < manifest->GetMediaCollection()->Count(); i++)
               {
                 CF4MMedia *f4mMedia = manifest->GetMediaCollection()->GetItem(i);
+                hasDrm |= (f4mMedia->GetDrmAdditionalHeaderId() != NULL);
                 if ((f4mMedia->GetUrl() != NULL) && (f4mMedia->GetDrmAdditionalHeaderId() == NULL))
                 {
                   CMedia *media = new CMedia(
@@ -229,8 +230,15 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                 }
                 else
                 {
-                  this->logger->Log(LOGGER_WARNING, L"%s: %s: piece of media doesn't have url ('%s') or has DRM additional header ID ('%s')", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, f4mMedia->GetUrl(), f4mMedia->GetDrmAdditionalHeaderId());
+                  this->logger->Log(LOGGER_WARNING, L"%s: %s: piece of media doesn't have url ('%s') or has DRM additional header ID ('%s')", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, f4mMedia->GetUrl(), f4mMedia->GetDrmAdditionalHeaderId());
                 }
+              }
+
+              if ((mediaCollection->Count() == 0) && (hasDrm))
+              {
+                // there is no piece of media and rest of them have DRM
+                result = ParseResult_DrmProtected;
+                continueParsing = false;
               }
 
               if (!IsNullOrEmptyOrWhitespace(manifest->GetBaseUrl()->GetBaseUrl()))
@@ -241,25 +249,25 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                 if (baseUrl == NULL)
                 {
                   // cannot get base url
-                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot get base url");
+                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot get base url");
                   continueParsing = false;
                 }
                 else if (IsNullOrEmpty(baseUrl))
                 {
                   // base url is empty
-                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"base url is empty");
+                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"base url is empty");
                   continueParsing = false;
                 }
 
                 if (continueParsing)
                 {
-                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: changed base URL: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, baseUrl);
+                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: changed base URL: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, baseUrl);
                 }
               }
 
               if (continueParsing && (bootstrapInfoCollection->Count() == 0))
               {
-                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"no bootstrap info profile");
+                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"no bootstrap info profile");
                 continueParsing = false;
               }
 
@@ -271,7 +279,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                   CMedia *media = mediaCollection->GetItem(i);
                   if (!bootstrapInfoCollection->Contains(media->GetBootstrapInfoId(), false))
                   {
-                    this->logger->Log(LOGGER_ERROR, L"%s: %s: no bootstrap info '%s' for media '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, media->GetBootstrapInfoId(), media->GetUrl());
+                    this->logger->Log(LOGGER_ERROR, L"%s: %s: no bootstrap info '%s' for media '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, media->GetBootstrapInfoId(), media->GetUrl());
                     mediaCollection->Remove(i);
                   }
                   else
@@ -283,7 +291,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
               if (continueParsing && (mediaCollection->Count() == 0))
               {
-                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"no piece of media");
+                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"no piece of media");
                 continueParsing = false;
               }
 
@@ -334,12 +342,12 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
                         if (!continueParsing)
                         {
-                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add media URL parameter into connection parameters");
+                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot add media URL parameter into connection parameters");
                         }
                       }
                       else
                       {
-                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create media URL parameter");
+                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot create media URL parameter");
                       }
 
                       if ((!continueParsing) && (mediaUrlParameter != NULL))
@@ -363,12 +371,12 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
                           if (!continueParsing)
                           {
-                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add media metadata parameter into connection parameters");
+                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot add media metadata parameter into connection parameters");
                           }
                         }
                         else
                         {
-                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create media metadata parameter");
+                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot create media metadata parameter");
                         }
 
                         if ((!continueParsing) && (mediaMetadataParameter != NULL))
@@ -389,7 +397,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
                         if ((!continueParsing) && (bootstrapInfo->GetUrl() != NULL))
                         {
-                          this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info doesn't have value but has url, we need to download bootstrap info from '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, bootstrapInfo->GetUrl());
+                          this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info doesn't have value but has url, we need to download bootstrap info from '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, bootstrapInfo->GetUrl());
 
                           continueParsing = bootstrapInfo->SetBaseUrl(baseUrl);
                           HRESULT downloadResult = bootstrapInfo->DownloadBootstrapInfo(
@@ -401,10 +409,10 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                             this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL)
                             );
 
-                          this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info download result: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, downloadResult);
+                          this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info download result: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, downloadResult);
                           if (SUCCEEDED(result))
                           {
-                            this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info BASE64 encoded value: '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, bootstrapInfo->GetValue());
+                            this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info BASE64 encoded value: '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, bootstrapInfo->GetValue());
                           }
                           continueParsing &= SUCCEEDED(downloadResult);
                         }
@@ -436,12 +444,12 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
                                   if (!continueParsing)
                                   {
-                                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add bootstrap info parameter into connection parameters");
+                                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot add bootstrap info parameter into connection parameters");
                                   }
                                 }
                                 else
                                 {
-                                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create bootstrap info parameter");
+                                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot create bootstrap info parameter");
                                 }
 
                                 if ((!continueParsing) && (bootstrapInfoParameter != NULL))
@@ -452,7 +460,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                               }
                               else
                               {
-                                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot parse bootstrap info box");
+                                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot parse bootstrap info box");
                               }
 
                               if (continueParsing && (bootstrapInfo->HasUrl()))
@@ -481,20 +489,20 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                             }
                             else
                             {
-                              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"not enough memory for bootstrap info box");
+                              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"not enough memory for bootstrap info box");
                             }
 
                             FREE_MEM_CLASS(bootstrapInfoBox);
                           }
                           else
                           {
-                            this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot decode bootstrap info BASE64 value, reason: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, decodeResult);
+                            this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot decode bootstrap info BASE64 value, reason: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, decodeResult);
                           }
                         }
                       }
                       else
                       {
-                        this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot find bootstrap info '%s' for media '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, mediaWithHighestBitstream->GetBootstrapInfoId(), mediaWithHighestBitstream->GetUrl());
+                        this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot find bootstrap info '%s' for media '%s'", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, mediaWithHighestBitstream->GetBootstrapInfoId(), mediaWithHighestBitstream->GetUrl());
                         continueParsing = false;
                       }
                     }
@@ -511,12 +519,12 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
 
                         if (!continueParsing)
                         {
-                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add base URL parameter into connection parameters");
+                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot add base URL parameter into connection parameters");
                         }
                       }
                       else
                       {
-                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create base URL parameter");
+                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot create base URL parameter");
                       }
 
                       if ((!continueParsing) && (baseUrlParameter != NULL))
@@ -558,24 +566,24 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                             }
                             else
                             {
-                              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add new URL parameter into connection parameters");
+                              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot add new URL parameter into connection parameters");
                             }
                           }
                           else
                           {
-                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create new URL parameter");
+                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot create new URL parameter");
                             continueParsing = false;
                           }
                         }
                         else
                         {
-                          this->logger->Log(LOGGER_ERROR, L"%s: %s: only HTTP protocol supported in base URL: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, baseUrl);
+                          this->logger->Log(LOGGER_ERROR, L"%s: %s: only HTTP protocol supported in base URL: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, baseUrl);
                           continueParsing = false;
                         }
                       }
                       else
                       {
-                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot specify AFHS protocol");
+                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot specify AFHS protocol");
                         continueParsing = false;
                       }
                       FREE_MEM(replacedUrl);
@@ -584,7 +592,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
                   else
                   {
                     // this should not happen, just for sure
-                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"no piece of media with highest bitrate");
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"no piece of media with highest bitrate");
                   }
 
                   if (!continueParsing)
@@ -626,7 +634,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
           else if (manifest->IsXml() && (manifest->GetParseError() != 0))
           {
             // we have XML declaration, it is valid XML file, just not complete
-            this->logger->Log(LOGGER_WARNING, L"%s: %s: XML file probably not complete, XML parse error: %d", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, manifest->GetParseError());
+            this->logger->Log(LOGGER_WARNING, L"%s: %s: XML file probably not complete, XML parse error: %d", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, manifest->GetParseError());
             result = ParseResult_Pending;
           }
         }
@@ -634,15 +642,9 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPacket(CMediaPacket *medi
       }
       FREE_MEM(buffer);
     }
-    else
-    {
-      // error while adding media packet to stored media packet collection
-      // cleanup
-      FREE_MEM_CLASS(clone);
-    }
   }
 
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, result);
   return result;
 }
 

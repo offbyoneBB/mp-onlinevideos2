@@ -27,6 +27,7 @@ CFlvPacket::CFlvPacket(void)
   this->packet = NULL;
   this->size = 0;
   this->type = FLV_PACKET_NONE;
+  this->encrypted = false;
 }
 
 CFlvPacket::~CFlvPacket(void)
@@ -59,25 +60,26 @@ bool CFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
   bool result = false;
   this->Clear();
 
-  if ((buffer != NULL) && (length >= 13))
+  if ((buffer != NULL) && (length >= FLV_PACKET_HEADER_LENGTH))
   {
     // at least size for FLV header
-    this->packet = ALLOC_MEM_SET(this->packet, unsigned char, 13, 0);
+    this->packet = ALLOC_MEM_SET(this->packet, unsigned char, FLV_PACKET_HEADER_LENGTH, 0);
     if (this->packet != NULL)
     {
-      memcpy(this->packet, buffer, 13);
+      memcpy(this->packet, buffer, FLV_PACKET_HEADER_LENGTH);
 
       // copied 13 bytes, check first 3 bytes
       if (strncmp("FLV", (char *)this->packet, 3) == 0)
       {
-        this->size = 13;
+        this->size = FLV_PACKET_HEADER_LENGTH;
         this->type = FLV_PACKET_HEADER;
         result = true;
       }
       else
       {
         // we got first 13 bytes to analyze
-        this->type = (*this->packet);
+        this->type = (*this->packet) & FLV_PACKET_TYPE_MASK;
+        this->encrypted = ((*this->packet) & FLV_PACKET_ENCRYPTED_MASK) != 0;
 
         this->size = ((unsigned char)this->packet[1]) << 8;
         this->size += ((unsigned char)this->packet[2]);
@@ -118,21 +120,59 @@ bool CFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
   return result;
 }
 
+unsigned int CFlvPacket::GetPossiblePacketSize(const unsigned char *buffer, unsigned int length)
+{
+  unsigned int result = UINT_MAX;
+
+  if ((buffer != NULL) && (length >= FLV_PACKET_HEADER_LENGTH))
+  {
+    // enough data for FLV header packet, check first 3 bytes
+    if (strncmp("FLV", (char *)buffer, 3) == 0)
+    {
+      result = FLV_PACKET_HEADER_LENGTH;
+    }
+    else
+    {
+      // we got at least FLV_PACKET_HEADER_LENGTH bytes to analyze
+
+      result = ((unsigned char)buffer[1]) << 8;
+      result += ((unsigned char)buffer[2]);
+      result <<= 8;
+      result += ((unsigned char)buffer[3]) + 0x0F;
+    }
+  }
+
+  return result;
+}
+
 bool CFlvPacket::ParsePacket(CLinearBuffer *buffer)
 {
   bool result = false;
   this->Clear();
 
-  if ((buffer != NULL) && (buffer->GetBufferOccupiedSpace() >= 13))
+  if ((buffer != NULL) && (buffer->GetBufferOccupiedSpace() >= FLV_PACKET_HEADER_LENGTH))
   {
-    // at least size for FLV header
-    ALLOC_MEM_DEFINE_SET(buf, unsigned char, buffer->GetBufferOccupiedSpace(), 0);
-    if (buf != NULL)
+    unsigned int possibleSize = UINT_MAX;
+    // first get possible FLV packet size
+    ALLOC_MEM_DEFINE_SET(sizeBuffer, unsigned char, FLV_PACKET_HEADER_LENGTH, 0);
+    if (sizeBuffer != NULL)
     {
-      buffer->CopyFromBuffer(buf, buffer->GetBufferOccupiedSpace(), 0, 0);
-      result = this->ParsePacket(buf, buffer->GetBufferOccupiedSpace());
+      buffer->CopyFromBuffer(sizeBuffer, FLV_PACKET_HEADER_LENGTH, 0, 0);
+      possibleSize = this->GetPossiblePacketSize(sizeBuffer, FLV_PACKET_HEADER_LENGTH);
     }
-    FREE_MEM(buf);
+    FREE_MEM(sizeBuffer);
+
+    if (possibleSize != UINT_MAX)
+    {
+      // at least size for FLV header
+      ALLOC_MEM_DEFINE_SET(buf, unsigned char, possibleSize, 0);
+      if (buf != NULL)
+      {
+        buffer->CopyFromBuffer(buf, possibleSize, 0, 0);
+        result = this->ParsePacket(buf, possibleSize);
+      }
+      FREE_MEM(buf);
+    }
   }
 
   if (!result)
@@ -143,7 +183,7 @@ bool CFlvPacket::ParsePacket(CLinearBuffer *buffer)
   return result;
 }
 
-bool CFlvPacket::CreatePacket(unsigned int packetType, const unsigned char *buffer, unsigned int length, unsigned int timestamp)
+bool CFlvPacket::CreatePacket(unsigned int packetType, const unsigned char *buffer, unsigned int length, unsigned int timestamp, bool encrypted)
 {
   bool result = false;
   this->Clear();
@@ -151,6 +191,7 @@ bool CFlvPacket::CreatePacket(unsigned int packetType, const unsigned char *buff
   if ((buffer != NULL) && ((packetType == FLV_PACKET_AUDIO) || (packetType == FLV_PACKET_VIDEO) || (packetType == FLV_PACKET_META)))
   {
     this->type = packetType;
+    this->encrypted = encrypted;
     this->size = length + 0x0F;
     this->packet = ALLOC_MEM_SET(this->packet, unsigned char, this->size, 0);
     result = (this->packet != NULL);
@@ -158,6 +199,7 @@ bool CFlvPacket::CreatePacket(unsigned int packetType, const unsigned char *buff
     if (result)
     {
       this->packet[0] = (unsigned char)packetType;
+      this->packet[0] |= (this->encrypted) ? (unsigned char)FLV_PACKET_ENCRYPTED_MASK : (unsigned char)0;
       
       this->packet[1] = (unsigned char)((length & 0x00FF0000) >> 16);
       this->packet[2] = (unsigned char)((length & 0x00000FF0) >> 8);
@@ -186,6 +228,11 @@ bool CFlvPacket::CreatePacket(unsigned int packetType, const unsigned char *buff
   return result;
 }
 
+bool CFlvPacket::IsEncrypted(void)
+{
+  return this->encrypted;
+}
+
 unsigned int CFlvPacket::GetTimestamp(void)
 {
   unsigned int result = 0;
@@ -198,11 +245,6 @@ unsigned int CFlvPacket::GetTimestamp(void)
     result += ((unsigned char)this->packet[5]);
     result <<= 8;
     result += ((unsigned char)this->packet[6]);
-
-    /*result = ((unsigned char)this->packet[4]) << 8;
-    result += ((unsigned char)this->packet[5]);
-    result <<= 8;
-    result += ((unsigned char)this->packet[6]);*/
   }
 
   return result;
@@ -219,12 +261,6 @@ void CFlvPacket::SetTimestamp(unsigned int timestamp)
     this->packet[4] = (unsigned char)(timestamp & 0xFF);
     timestamp >>= 8;
     this->packet[7] = (unsigned char)(timestamp & 0xFF);
-
-    /*this->packet[6] = (unsigned char)(timestamp & 0xFF);
-    timestamp >>= 8;
-    this->packet[5] = (unsigned char)(timestamp & 0xFF);
-    timestamp >>= 8;
-    this->packet[4] = (unsigned char)(timestamp & 0xFF);*/
   }
 }
 
@@ -273,4 +309,5 @@ void CFlvPacket::Clear(void)
   FREE_MEM(this->packet);
   this->size = 0;
   this->type = FLV_PACKET_NONE;
+  this->encrypted = false;
 }

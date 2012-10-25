@@ -45,10 +45,10 @@ public:
   // @return : S_OK if successfull
   HRESULT ClearSession(void);
 
-  // parses media packet
-  // @param mediaPacket : media packet to parse
-  // @return : one of IParserPlugin::ParseResult values
-  ParseResult ParseMediaPacket(CMediaPacket *mediaPacket);
+  // parses media packets
+  // @param mediaPackets : media packet collection to parse
+  // @return : one of ParseResult values
+  ParseResult ParseMediaPackets(CMediaPacketCollection *mediaPackets);
 
   // sets current connection url and parameters
   // @param parameters : the collection of url and connection parameters

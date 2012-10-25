@@ -49,11 +49,11 @@ HRESULT COutputStreamHoster::SetTotalLength(int64_t total, bool estimate)
   return E_NOT_VALID_STATE;
 }
 
-HRESULT COutputStreamHoster::PushMediaPacket(CMediaPacket *mediaPacket)
+HRESULT COutputStreamHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
 {
   if (this->outputStream != NULL)
   {
-    return this->outputStream->PushMediaPacket(mediaPacket);
+    return this->outputStream->PushMediaPackets(mediaPackets);
   }
 
   return E_NOT_VALID_STATE;

@@ -34,10 +34,7 @@ CMediaPacket::CMediaPacket(void)
 
 CMediaPacket::~CMediaPacket(void)
 {
-  if (this->buffer != NULL)
-  {
-    delete this->buffer;
-  }
+  FREE_MEM_CLASS(this->buffer);
 }
 
 CLinearBuffer *CMediaPacket::GetBuffer()

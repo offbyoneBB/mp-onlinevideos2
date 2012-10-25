@@ -21,6 +21,8 @@
 #include "stdafx.h"
 
 #include "ParserHoster.h"
+#include "ErrorCodes.h"
+#include "LockMutex.h"
 
 #include <Shlwapi.h>
 #include <Shlobj.h>
@@ -32,7 +34,7 @@ CParserHoster::CParserHoster(CLogger *logger, CParameterCollection *configuratio
 
   this->parserOutputStream = parserOutputStream;
 
-  this->protocolHoster = new CProtocolHoster(this->logger, this->configuration, this);
+  this->protocolHoster = new CProtocolHoster(this->logger, this->configuration);
   if (this->protocolHoster != NULL)
   {
     this->protocolHoster->LoadPlugins();
@@ -47,6 +49,9 @@ CParserHoster::CParserHoster(CLogger *logger, CParameterCollection *configuratio
   this->hReceiveDataWorkerThread = NULL;
   this->status = STATUS_NONE;
 
+  this->supressData = false;
+  this->lockMutex = CreateMutex(NULL, FALSE, NULL);
+
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_PARSER_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
 }
 
@@ -59,8 +64,13 @@ CParserHoster::~CParserHoster(void)
   if (this->protocolHoster != NULL)
   {
     this->protocolHoster->RemoveAllPlugins();
-    delete this->protocolHoster;
-    this->protocolHoster = NULL;
+    FREE_MEM_CLASS(this->protocolHoster);
+  }
+
+  if (this->lockMutex != NULL)
+  {
+    CloseHandle(this->lockMutex);
+    this->lockMutex = NULL;
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_PARSER_HOSTER_NAME, METHOD_DESTRUCTOR_NAME);
@@ -132,7 +142,7 @@ HRESULT CParserHoster::SetTotalLength(int64_t total, bool estimate)
   return E_NOT_VALID_STATE;
 }
 
-HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
+HRESULT CParserHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
 {
   HRESULT result = E_NOT_VALID_STATE;
 
@@ -140,6 +150,7 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
   {
     bool pendingPlugin = false;
     bool pendingPluginsBeforeParsing = false;
+    bool drmProtected = false;
 
     for (unsigned int i = 0; i < this->pluginImplementationsCount; i++)
     {
@@ -147,14 +158,17 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
       if (implementation->result == ParseResult_Pending)
       {
         pendingPluginsBeforeParsing = true;
-        break;
+      }
+      if (implementation->result == ParseResult_DrmProtected)
+      {
+        drmProtected = true;
       }
     }
 
     if (this->parsingPlugin != NULL)
     {
       // is there is plugin which returned ParseResult::Known result
-      this->parsingPlugin->ParseMediaPacket(mediaPacket);
+      this->parsingPlugin->ParseMediaPackets(mediaPackets);
       result = S_OK;
     }
     else 
@@ -166,40 +180,51 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
         IParserPlugin *plugin = (IParserPlugin *)implementation->pImplementation;
 
         if ((implementation->result == ParseResult_Unspecified) ||
-            (implementation->result == ParseResult_Pending))
+          (implementation->result == ParseResult_Pending))
         {
           // parse data only in case when parser can process data
           // if parser returned ParseResult::NotKnown result than parser surely 
           // doesn't recognize any pattern in stream
 
-          ParseResult pluginParseResult = plugin->ParseMediaPacket(mediaPacket);
+          ParseResult pluginParseResult = plugin->ParseMediaPackets(mediaPackets);
           implementation->result = pluginParseResult;
 
           switch(pluginParseResult)
           {
           case ParseResult_Unspecified:
-            this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' return unspecified result", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, implementation->name);
+            this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' return unspecified result", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
             break;
           case ParseResult_NotKnown:
-            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' doesn't recognize any pattern", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, implementation->name);
+            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' doesn't recognize any pattern", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
             break;
           case ParseResult_Pending:
-            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' waits for more data", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, implementation->name);
+            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' waits for more data", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
             pendingPlugin = true;
             break;
           case ParseResult_Known:
-            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, implementation->name);
+            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
             this->parsingPlugin = plugin;
             break;
+          case ParseResult_DrmProtected:
+            this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' recognizes pattern, DRM protected", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
+            drmProtected = true;
+            break;
           default:
-            this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' return unknown result", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, implementation->name);
+            this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' return unknown result", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, implementation->name);
             break;
           }
         }
       }
     }
 
-    if ((!pendingPlugin) && (this->parsingPlugin == NULL))
+    if ((!pendingPlugin) && (this->parsingPlugin == NULL) && (drmProtected))
+    {
+      // there is no pending plugin, there is no parsing plugin
+      // stream is DRM protected
+      this->status = E_DRM_PROTECTED;
+      result = S_OK;
+    }
+    else if ((!pendingPlugin) && (this->parsingPlugin == NULL))
     {
       // all parsers don't recognize any pattern in stream
       // do not parse media packets, just send them directly to filter
@@ -230,20 +255,16 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
 
         if ((mediaPacketsToResend != NULL) && (this->outputStream != NULL))
         {
-          for (unsigned int i = 0; i < mediaPacketsToResend->Count(); i++)
+          result = this->outputStream->PushMediaPackets(mediaPacketsToResend);
+          if (FAILED(result))
           {
-            CMediaPacket *mediaPacketToResend = mediaPacketsToResend->GetItem(i);
-            result = this->outputStream->PushMediaPacket(mediaPacketToResend);
-            if (FAILED(result))
-            {
-              this->logger->Log(LOGGER_WARNING, L"%s: %s: resending media packet failed: 0x%08X, start: %lld, end: %lld", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, result, mediaPacketToResend->GetStart(), mediaPacketToResend->GetEnd());
-            }
+            this->logger->Log(LOGGER_WARNING, L"%s: %s: resending media packets failed: 0x%08X", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, result);
           }
         }
       }
       else if (this->outputStream != NULL)
       {
-        result = this->outputStream->PushMediaPacket(mediaPacket);
+        result = this->outputStream->PushMediaPackets(mediaPackets);
       }
     }
     else if (this->parsingPlugin != NULL)
@@ -256,16 +277,16 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
       switch (action)
       {
       case Action_Unspecified:
-        this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns unspecified action", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, name);
+        this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns unspecified action", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, name);
         result = E_FAIL;
         break;
       case Action_GetNewConnection:
         this->status = STATUS_NEW_URL_SPECIFIED;
-        this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' specifies new connection", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, name);
+        this->logger->Log(LOGGER_INFO, L"%s: %s: parser '%s' specifies new connection", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, name);
         result = S_OK;
         break;
       default:
-        this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns unknown action", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, name);
+        this->logger->Log(LOGGER_WARNING, L"%s: %s: parser '%s' returns unknown action", MODULE_PARSER_HOSTER_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, name);
         result = E_FAIL;
         break;
       }
@@ -283,7 +304,7 @@ HRESULT CParserHoster::PushMediaPacket(CMediaPacket *mediaPacket)
 
     if (this->outputStream != NULL)
     {
-      result = this->outputStream->PushMediaPacket(mediaPacket);
+      result = this->outputStream->PushMediaPackets(mediaPackets);
     }
   }
 
@@ -326,7 +347,7 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
   if (SUCCEEDED(retval))
   {
     CParameterCollection *urlConnection = new CParameterCollection();
-    retval = (urlConnection == NULL) ? E_OUTOFMEMORY : S_OK;
+    retval = (urlConnection == NULL) ? E_INVALID_CONFIGURATION : S_OK;
 
     if (SUCCEEDED(retval))
     {
@@ -381,13 +402,13 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
           else
           {
             this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, this->moduleName, METHOD_START_RECEIVING_DATA_NAME, L"no active protocol");
-            retval = E_NOT_VALID_STATE;
+            retval = E_NO_ACTIVE_PROTOCOL;
           }
 
           if (SUCCEEDED(retval))
           {
             // wait for receiving data, timeout or exit
-            while ((this->status != STATUS_NEW_URL_SPECIFIED) && (this->status != STATUS_RECEIVING_DATA) && (this->status != STATUS_NO_DATA_ERROR) && ((GetTickCount() - ticks) <= timeout) && (!this->receiveDataWorkerShouldExit))
+            while ((this->status != STATUS_NEW_URL_SPECIFIED) && (this->status != STATUS_RECEIVING_DATA) && (this->status >= STATUS_NONE) && ((GetTickCount() - ticks) <= timeout) && (!this->receiveDataWorkerShouldExit))
             {
               Sleep(1);
             }
@@ -397,14 +418,11 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
             case STATUS_NONE:
               retval = E_FAIL;
               break;
-            case STATUS_NO_DATA_ERROR:
-              retval = -1;
-              break;
             case STATUS_RECEIVING_DATA:
               retval = S_OK;
               break;
             case STATUS_PARSER_PENDING:
-              retval = -2;
+              retval = E_PARSER_STILL_PENDING;
               break;
             case STATUS_NEW_URL_SPECIFIED:
               this->DestroyReceiveDataWorker();
@@ -412,7 +430,7 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
               retval = S_OK;
               break;
             default:
-              retval = E_UNEXPECTED;
+              retval = this->status;
               break;
             }
 
@@ -484,12 +502,28 @@ HRESULT CParserHoster::StopReceivingData(void)
 
 HRESULT CParserHoster::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
 {
-  return (this->protocolHoster != NULL) ? this->protocolHoster->QueryStreamProgress(total, current) : E_NOT_VALID_STATE;
+  HRESULT result = E_NOT_VALID_STATE;
+
+  {
+    CLockMutex lock(this->lockMutex, INFINITE);
+
+    result = (this->protocolHoster != NULL) ? this->protocolHoster->QueryStreamProgress(total, current) : E_NOT_VALID_STATE;
+  }
+
+  return result;
 }
   
 HRESULT CParserHoster::QueryStreamAvailableLength(CStreamAvailableLength *availableLength)
 {
-  return (this->protocolHoster != NULL) ? this->protocolHoster->QueryStreamAvailableLength(availableLength) : E_NOT_VALID_STATE;
+  HRESULT result = E_NOT_VALID_STATE;
+
+  {
+    CLockMutex lock(this->lockMutex, INFINITE);
+
+    result = (this->protocolHoster != NULL) ? this->protocolHoster->QueryStreamAvailableLength(availableLength) : E_NOT_VALID_STATE;
+  }
+
+  return result;
 }
 
 HRESULT CParserHoster::ClearSession(void)
@@ -531,16 +565,20 @@ unsigned int CParserHoster::GetSeekingCapabilities(void)
 
 int64_t CParserHoster::SeekToTime(int64_t time)
 {
-  return (this->protocolHoster != NULL) ? this->protocolHoster->SeekToTime(time) : (-1);
+  return (this->protocolHoster != NULL) ? this->protocolHoster->SeekToTime(time) : E_NOT_VALID_STATE;
 }
 
 int64_t CParserHoster::SeekToPosition(int64_t start, int64_t end)
 {
-  return (this->protocolHoster != NULL) ? this->protocolHoster->SeekToPosition(start, end) : (-1);
+  return (this->protocolHoster != NULL) ? this->protocolHoster->SeekToPosition(start, end) : E_NOT_VALID_STATE;
 }
 
 void CParserHoster::SetSupressData(bool supressData)
 {
+  // supress data can be set only when not receiving data in ReceiveDataWorker()
+  CLockMutex lock(this->lockMutex, INFINITE);
+
+  this->supressData = supressData;
   if (this->protocolHoster != NULL)
   {
     this->protocolHoster->SetSupressData(supressData);
@@ -567,7 +605,7 @@ HRESULT CParserHoster::CreateReceiveDataWorker(void)
     this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     if (!SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL))
     {
@@ -617,8 +655,14 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
   bool stopReceivingData = false;
 
   HRESULT result = S_OK;
+  CReceiveData *receiveData = NULL;
   while ((!caller->receiveDataWorkerShouldExit) && (!stopReceivingData))
   {
+    if (receiveData == NULL)
+    {
+      receiveData = new CReceiveData();
+    }
+
     Sleep(1);
 
     if (caller->protocolHoster != NULL)
@@ -626,12 +670,42 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
       unsigned int maximumAttempts = caller->protocolHoster->GetOpenConnectionMaximumAttempts();
       if (maximumAttempts != UINT_MAX)
       {
-
         // if in active protocol is opened connection than receive data
         // if not than open connection
         if (caller->protocolHoster->IsConnected())
         {
-          caller->protocolHoster->ReceiveData(&caller->receiveDataWorkerShouldExit);
+          CLockMutex lock(caller->lockMutex, INFINITE);
+
+          if ((!caller->supressData) && (receiveData != NULL))
+          {
+            receiveData->Clear();
+            result = caller->protocolHoster->ReceiveData(&caller->receiveDataWorkerShouldExit, receiveData);
+
+            if (SUCCEEDED(result))
+            {
+              if (receiveData->GetTotalLength()->IsSet())
+              {
+                caller->SetTotalLength(receiveData->GetTotalLength()->GetTotalLength(), receiveData->GetTotalLength()->IsEstimate());
+              }
+
+              if (receiveData->GetMediaPacketCollection()->Count() != 0)
+              {
+                caller->PushMediaPackets(receiveData->GetMediaPacketCollection());
+              }
+
+              if (receiveData->GetEndOfStreamReached()->IsSet())
+              {
+                caller->EndOfStreamReached(receiveData->GetEndOfStreamReached()->GetStreamPosition());
+              }
+            }
+
+            if (FAILED(result))
+            {
+              caller->logger->Log(LOGGER_ERROR, L"%s: %s: protocol returned error: 0x%08X", caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME, result);
+              caller->status = result;
+              stopReceivingData = true;
+            }
+          }
         }
         else
         {
@@ -652,7 +726,7 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
           else
           {
             caller->logger->Log(LOGGER_ERROR, L"%s: %s: maximum attempts of opening connection reached, attempts: %u, maximum attempts: %u", caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME, attempts, maximumAttempts);
-            caller->status = STATUS_NO_DATA_ERROR;
+            caller->status = result;
             stopReceivingData = true;
 
             if (caller->parserOutputStream->IsDownloading())
@@ -664,7 +738,13 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
       }
     }
   }
+  FREE_MEM_CLASS(receiveData);
 
   caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME);
   return S_OK;
+}
+
+HRESULT CParserHoster::GetParserHosterStatus(void)
+{
+  return this->status;
 }

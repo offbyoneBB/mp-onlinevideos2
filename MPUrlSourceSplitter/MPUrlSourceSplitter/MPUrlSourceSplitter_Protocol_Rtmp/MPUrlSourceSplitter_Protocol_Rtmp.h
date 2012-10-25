@@ -66,9 +66,11 @@ public:
   // @return : S_OK if successfull
   HRESULT ParseUrl(const CParameterCollection *parameters);
 
-  // receive data and stores them into internal buffer
+  // receives data and stores them into receive data parameter
   // @param shouldExit : the reference to variable specifying if method have to be finished immediately
-  void ReceiveData(bool *shouldExit);
+  // @param receiveData : received data
+  // @result: S_OK if successful, error code otherwise
+  HRESULT ReceiveData(bool *shouldExit, CReceiveData *receiveData);
 
   // ISimpleProtocol interface
 
@@ -140,9 +142,6 @@ public:
 
 protected:
   CLogger *logger;
-
-  // source filter that created this instance
-  IOutputStream *filter;
 
   // holds various parameters supplied by caller
   CParameterCollection *configurationParameters;

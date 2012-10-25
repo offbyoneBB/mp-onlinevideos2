@@ -45,6 +45,15 @@
     <ClInclude Include="BufferHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ReceiveData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SetTotalLength.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EndOfStreamReached.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -69,6 +78,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Serializable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReceiveData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SetTotalLength.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EndOfStreamReached.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

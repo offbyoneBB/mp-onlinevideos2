@@ -257,7 +257,7 @@ STDMETHODIMP CLAVFDemuxer::OpenInputStream(AVIOContext *byteContext, LPCOLESTR p
   return S_OK;
 done:
   CleanupAVFormat();
-  return E_FAIL;
+  return ret;
 }
 
 void CLAVFDemuxer::AddMPEGTSStream(int pid, uint32_t stream_type)
@@ -767,7 +767,7 @@ STDMETHODIMP CLAVFDemuxer::GetNextPacket(Packet **ppPacket)
       // if difference between two packets is greater than one second
       // it should happen only on start of stream
 
-      this->m_pFilter->GetLogger()->Log(LOGGER_VERBOSE, L"%s: %s: id: %d, packet start: %lld, packet stop: %lld, last start: %lld, last stop: %lld, descrease: %lld", MODULE_NAME, METHOD_GET_NEXT_PACKET_NAME, pPacket->StreamId, pPacket->rtStart, pPacket->rtStop, timestamp->lastPacketStart, timestamp->lastPacketStop, timestamp->decreaseTimestamp);
+      this->m_pFilter->GetLogger()->Log(LOGGER_VERBOSE, L"%s: %s: id: %d, packet start: %lld, packet stop: %lld, last start: %lld, last stop: %lld, decrease: %lld", MODULE_NAME, METHOD_GET_NEXT_PACKET_NAME, pPacket->StreamId, pPacket->rtStart, pPacket->rtStop, timestamp->lastPacketStart, timestamp->lastPacketStop, timestamp->decreaseTimestamp);
 
       pPacket->rtStop = (timestamp->lastPacketStop / 10000 + 1) * 10000 + pPacket->rtStop - pPacket->rtStart;
       pPacket->rtStart = (timestamp->lastPacketStop / 10000 + 1) * 10000;
@@ -782,7 +782,7 @@ STDMETHODIMP CLAVFDemuxer::GetNextPacket(Packet **ppPacket)
       timestamp->needRecalculate = false;
       this->dontChangeTimestamps = true;
 
-      this->m_pFilter->GetLogger()->Log(LOGGER_VERBOSE, L"%s: %s: id: %d, packet start: %lld, packet stop: %lld, last start: %lld, last stop: %lld, descrease: %lld", MODULE_NAME, METHOD_GET_NEXT_PACKET_NAME, pPacket->StreamId, pPacket->rtStart, pPacket->rtStop, timestamp->lastPacketStart, timestamp->lastPacketStop, timestamp->decreaseTimestamp);
+      this->m_pFilter->GetLogger()->Log(LOGGER_VERBOSE, L"%s: %s: id: %d, packet start: %lld, packet stop: %lld, last start: %lld, last stop: %lld, decrease: %lld", MODULE_NAME, METHOD_GET_NEXT_PACKET_NAME, pPacket->StreamId, pPacket->rtStart, pPacket->rtStop, timestamp->lastPacketStart, timestamp->lastPacketStop, timestamp->decreaseTimestamp);
     }
     else
     {

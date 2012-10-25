@@ -23,11 +23,11 @@
 #ifndef __OUTPUTSTREAMINTERFACE_DEFINED
 #define __OUTPUTSTREAMINTERFACE_DEFINED
 
-#include "MediaPacket.h"
+#include "MediaPacketCollection.h"
 
 #include <stdint.h>
 
-#define METHOD_PUSH_MEDIA_PACKET_NAME                                         L"PushMediaPacket()"
+#define METHOD_PUSH_MEDIA_PACKETS_NAME                                        L"PushMediaPackets()"
 #define METHOD_END_OF_STREAM_REACHED_NAME                                     L"EndOfStreamReached()"
 
 // defines interface for stream output
@@ -40,11 +40,10 @@ struct IOutputStream
   // @return : S_OK if successful
   virtual HRESULT SetTotalLength(int64_t total, bool estimate) = 0;
 
-  // pushes media packet to output pin
-  // caller is responsible for freeing memory
-  // @param mediaPacket : reference to media packet to push to output pin
+  // pushes media packets to filter
+  // @param mediaPackets : collection of media packets to push to filter
   // @return : S_OK if successful
-  virtual HRESULT PushMediaPacket(CMediaPacket *mediaPacket) = 0;
+  virtual HRESULT PushMediaPackets(CMediaPacketCollection *mediaPackets) = 0;
 
   // notifies output stream that end of stream was reached
   // this method can be called only when protocol support SEEKING_METHOD_POSITION

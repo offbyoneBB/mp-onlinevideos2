@@ -18,27 +18,43 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "StdAfx.h"
 
-#ifndef __PROTOCOLPLUGININTERFACE_DEFINED
-#define __PROTOCOLPLUGININTERFACE_DEFINED
+#include "EndOfStreamReached.h"
 
-#include "IProtocol.h"
-#include "IPlugin.h"
-
-#include <streams.h>
-
-struct ProtocolPluginConfiguration : public PluginConfiguration
+CEndOfStreamReached::CEndOfStreamReached(void)
 {
-};
+  this->Clear();
+}
 
-// defines interface for stream protocol plugin implementation
-// each stream protocol plugin implementation will be in separate library and MUST implement this interface
-struct IProtocolPlugin : public IProtocol, public IPlugin
+CEndOfStreamReached::~CEndOfStreamReached(void)
 {
-public:
-};
+}
 
-typedef IProtocolPlugin* PIProtocolPlugin;
+/* get methods */
 
-#endif
+int64_t CEndOfStreamReached::GetStreamPosition(void)
+{
+  return this->streamPosition;
+}
+
+/* set methods */
+
+void CEndOfStreamReached::SetStreamPosition(int64_t streamPosition)
+{
+  this->streamPosition = streamPosition;
+  this->setValue = true;
+}
+
+/* other methods */
+
+bool CEndOfStreamReached::IsSet(void)
+{
+  return this->setValue;
+}
+
+void CEndOfStreamReached::Clear(void)
+{
+  this->streamPosition = 0;
+  this->setValue = false;
+}

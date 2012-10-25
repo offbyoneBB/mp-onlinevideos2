@@ -30,6 +30,7 @@
 #include "HttpCurlInstance.h"
 #include "BootstrapInfoBox.h"
 #include "SegmentFragmentCollection.h"
+#include "ParameterCollection.h"
 
 #include <curl/curl.h>
 
@@ -39,8 +40,6 @@
 
 #define TOTAL_SUPPORTED_PROTOCOLS                                             1
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"AFHS" };
-
-#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 
 #define FLV_FILE_HEADER_LENGTH                                                13
 unsigned char FLV_FILE_HEADER[FLV_FILE_HEADER_LENGTH] =                       { 0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x00 };
@@ -75,9 +74,11 @@ public:
   // @return : S_OK if successfull
   HRESULT ParseUrl(const CParameterCollection *parameters);
 
-  // receive data and stores them into internal buffer
+  // receives data and stores them into receive data parameter
   // @param shouldExit : the reference to variable specifying if method have to be finished immediately
-  void ReceiveData(bool *shouldExit);
+  // @param receiveData : received data
+  // @result: S_OK if successful, error code otherwise
+  HRESULT ReceiveData(bool *shouldExit, CReceiveData *receiveData);
 
   // ISimpleProtocol interface
 
@@ -150,9 +151,6 @@ public:
 protected:
   CLogger *logger;
 
-  // source filter that created this instance
-  IOutputStream *filter;
-
   // holds various parameters supplied by caller
   CParameterCollection *configurationParameters;
 
@@ -167,6 +165,8 @@ protected:
 
   // holds if length of stream was set
   bool setLength;
+  // holds if end of stream was set
+  bool setEndOfStream;
 
   // stream time
   int64_t streamTime;
@@ -190,8 +190,13 @@ protected:
   // specifies if filter requested supressing data
   bool supressData;
 
-  // buffer for processing box data before are send to further processing
-  CLinearBufferCollection *bufferForBoxProcessingCollection;
+  // holds which segment and fragment is currently downloading (UINT_MAX means none)
+  unsigned int segmentFragmentDownloading;
+  // holds which segment and fragment is currently processed
+  unsigned int segmentFragmentProcessing;
+  // holds which segment and fragment have to be downloaded
+  // (UINT_MAX means next segment fragment, always reset after started download of segment and fragment)
+  unsigned int segmentFragmentToDownload;
 
   // buffer for processing data before are send to filter
   CLinearBuffer *bufferForProcessing;
@@ -210,16 +215,11 @@ protected:
   bool live;
   // holds last bootstrap info request time for live streaming
   DWORD lastBootstrapInfoRequestTime;
-  // specifies if last stream and fragment was downloaded
-  bool lastStreamAndFragmentDownloaded;
-
-  // removes all downloaded segment and fragment
-  // the last one segment and fragment (even downloaded) still preserve
-  void RemoveAllDownloadedSegmentFragment(void);
 
   // gets first not downloaded segment and fragment
-  // @return : first not downloaded segment and fragment or NULL if not exists
-  CSegmentFragment *GetFirstNotDownloadedSegmentFragment(void);
+  // @param requested : start index for searching
+  // @return : index of first not downloaded segment and fragment or UINT_MAX if not exists
+  unsigned int GetFirstNotDownloadedSegmentFragment(unsigned int start);
 
   // gets segment and fragment collection created from bootstrap info box
   // @param logger : the logger for logging purposes
@@ -229,6 +229,26 @@ protected:
   // @param logCollection : specifies if result collection should be logged
   // @return : segment and fragment collection created from bootstrap info box or NULL if error
   CSegmentFragmentCollection *GetSegmentsFragmentsFromBootstrapInfoBox(CLogger *logger, const wchar_t *methodName, CParameterCollection *configurationParameters, CBootstrapInfoBox *bootstrapInfoBox, bool logCollection);
+
+  // gets store file path based on configuration
+  // creates folder structure if not created
+  // @return : store file or NULL if error
+  wchar_t *GetStoreFile(void);
+
+  // holds store file path
+  wchar_t *storeFilePath;
+  // holds last store time of storing segments and fragments to file
+  DWORD lastStoreTime;
+
+  // specifies if we are still connected
+  bool isConnected;
+
+  // fills buffer for processing with segment and fragment data (stored in memory or in store file)
+  // @param segmentsFragments : segments and fragments collection
+  // @param segmentFragmentProcessing : segment and fragment to get data
+  // @param storeFile : the name of store file
+  // @return : buffer for processing with filled data, NULL otherwise
+  CLinearBuffer *FillBufferForProcessing(CSegmentFragmentCollection *segmentsFragments, unsigned int segmentFragmentProcessing, wchar_t *storeFile);
 };
 
 #endif

@@ -70,7 +70,6 @@ CMPUrlSourceSplitter_Protocol_File::CMPUrlSourceSplitter_Protocol_File(CParamete
 
   this->receiveDataTimeout = 0;
   this->openConnetionMaximumAttempts = FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
-  this->filter = NULL;
   this->fileLength = 0;
   this->setLength = false;
   this->streamTime = 0;
@@ -130,7 +129,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::ParseUrl(const CParameterCollection 
     ALLOC_MEM_DEFINE_SET(protocolConfiguration, ProtocolPluginConfiguration, 1, 0);
     if (protocolConfiguration != NULL)
     {
-      protocolConfiguration->outputStream = this->filter;
       protocolConfiguration->configuration = (CParameterCollection *)parameters;
     }
     this->Initialize(protocolConfiguration);
@@ -286,7 +284,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::ParseUrl(const CParameterCollection 
   return result;
 }
 
-void CMPUrlSourceSplitter_Protocol_File::ReceiveData(bool *shouldExit)
+HRESULT CMPUrlSourceSplitter_Protocol_File::ReceiveData(bool *shouldExit, CReceiveData *receiveData)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
 
@@ -306,7 +304,7 @@ void CMPUrlSourceSplitter_Protocol_File::ReceiveData(bool *shouldExit)
       {
         if (!this->setLength)
         {
-          this->filter->SetTotalLength(this->fileLength, false);
+          receiveData->GetTotalLength()->SetTotalLength(this->fileLength, false);
           this->setLength = true;
         }
 
@@ -326,10 +324,13 @@ void CMPUrlSourceSplitter_Protocol_File::ReceiveData(bool *shouldExit)
 
             mediaPacket->SetStart(this->streamTime);
             mediaPacket->SetEnd(this->streamTime + bytesRead - 1);
-            this->filter->PushMediaPacket(mediaPacket);
-            this->streamTime += bytesRead;
 
-            delete mediaPacket;
+            if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
+            {
+              FREE_MEM_CLASS(mediaPacket);
+            }
+
+            this->streamTime += bytesRead;
           }
           FREE_MEM(receiveBuffer);
         }
@@ -338,10 +339,10 @@ void CMPUrlSourceSplitter_Protocol_File::ReceiveData(bool *shouldExit)
           this->wholeStreamDownloaded = true;
 
           // notify filter the we reached end of stream
-          // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
           int64_t streamTime = this->streamTime;
           this->streamTime = this->fileLength;
-          this->filter->EndOfStreamReached(max(0, streamTime - 1));
+
+          receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, streamTime - 1));
         }
       }
     }
@@ -357,6 +358,7 @@ void CMPUrlSourceSplitter_Protocol_File::ReceiveData(bool *shouldExit)
   }
 
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+  return S_OK;
 }
 
 // ISimpleProtocol interface
@@ -552,11 +554,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::Initialize(PluginConfiguration *conf
 
   ProtocolPluginConfiguration *protocolConfiguration = (ProtocolPluginConfiguration *)configuration;
   this->logger->SetParameters(protocolConfiguration->configuration);
-  this->filter = protocolConfiguration->outputStream;
-  if (this->filter == NULL)
-  {
-    return E_POINTER;
-  }
 
   if (this->lockMutex == NULL)
   {

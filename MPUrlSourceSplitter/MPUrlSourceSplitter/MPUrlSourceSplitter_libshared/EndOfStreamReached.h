@@ -20,25 +20,45 @@
 
 #pragma once
 
-#ifndef __PROTOCOLPLUGININTERFACE_DEFINED
-#define __PROTOCOLPLUGININTERFACE_DEFINED
+#ifndef __END_OF_STREAM_REACHED_DEFINED
+#define __END_OF_STREAM_REACHED_DEFINED
 
-#include "IProtocol.h"
-#include "IPlugin.h"
+#include <stdint.h>
 
-#include <streams.h>
-
-struct ProtocolPluginConfiguration : public PluginConfiguration
-{
-};
-
-// defines interface for stream protocol plugin implementation
-// each stream protocol plugin implementation will be in separate library and MUST implement this interface
-struct IProtocolPlugin : public IProtocol, public IPlugin
+class CEndOfStreamReached
 {
 public:
-};
+  CEndOfStreamReached(void);
+  ~CEndOfStreamReached(void);
 
-typedef IProtocolPlugin* PIProtocolPlugin;
+  /* get methods */
+
+  // gets end stream position
+  // @return : end stream position
+  int64_t GetStreamPosition(void);
+
+  /* set methods */
+
+  // sets end stream position
+  // @param streamPosition : end stream position to set
+  void SetStreamPosition(int64_t streamPosition);
+
+  /* other methods */
+
+  // tests if end of stream was set
+  // @return : true if end of stream was set, false otherwise
+  bool IsSet(void);
+
+  // clears current instance to default state
+  void Clear(void);
+
+private:
+
+  // holds end stream position
+  int64_t streamPosition;
+
+  // specifies if value was set
+  bool setValue;
+};
 
 #endif

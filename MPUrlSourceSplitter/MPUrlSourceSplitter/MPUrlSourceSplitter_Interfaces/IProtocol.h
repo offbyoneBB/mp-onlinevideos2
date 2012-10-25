@@ -24,6 +24,7 @@
 #define __PROTOCOLINTERFACE_DEFINED
 
 #include "ISimpleProtocol.h"
+#include "ReceiveData.h"
 
 #include <streams.h>
 
@@ -48,9 +49,11 @@ public:
   // @return : S_OK if successfull
   virtual HRESULT ParseUrl(const CParameterCollection *parameters) = 0;
 
-  // receive data and stores them into internal buffer
+  // receives data and stores them into receive data parameter
   // @param shouldExit : the reference to variable specifying if method have to be finished immediately
-  virtual void ReceiveData(bool *shouldExit) = 0;
+  // @param receiveData : received data
+  // @result: S_OK if successful, error code otherwise
+  virtual HRESULT ReceiveData(bool *shouldExit, CReceiveData *receiveData) = 0;
 };
 
 typedef IProtocol* PIProtocol;

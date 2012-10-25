@@ -77,7 +77,6 @@ CMPUrlSourceSplitter_Protocol_Http::CMPUrlSourceSplitter_Protocol_Http(CParamete
   
   this->receiveDataTimeout = HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
-  this->filter = NULL;
   this->streamLength = 0;
   this->setLength = false;
   this->streamTime = 0;
@@ -117,9 +116,7 @@ CMPUrlSourceSplitter_Protocol_Http::~CMPUrlSourceSplitter_Protocol_Http()
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
-
-  delete this->logger;
-  this->logger = NULL;
+  FREE_MEM_CLASS(this->logger);
 }
 
 // IProtocol interface
@@ -147,7 +144,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ParseUrl(const CParameterCollection 
     ALLOC_MEM_DEFINE_SET(protocolConfiguration, ProtocolPluginConfiguration, 1, 0);
     if (protocolConfiguration != NULL)
     {
-      protocolConfiguration->outputStream = this->filter;
       protocolConfiguration->configuration = (CParameterCollection *)parameters;
     }
     this->Initialize(protocolConfiguration);
@@ -224,7 +220,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ParseUrl(const CParameterCollection 
   return result;
 }
 
-void CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit)
+HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit, CReceiveData *receiveData)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   this->shouldExit = *shouldExit;
@@ -279,7 +275,7 @@ void CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit)
               LONGLONG total = LONGLONG(streamSize);
               this->streamLength = total;
               this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
-              this->filter->SetTotalLength(total, false);
+              receiveData->GetTotalLength()->SetTotalLength(total, false);
               this->setLength = true;
             }
             else
@@ -290,14 +286,14 @@ void CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit)
                 // just make guess
                 this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
                 this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                this->filter->SetTotalLength(this->streamLength, true);
+                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
               }
               else if ((this->streamTime > (this->streamLength * 3 / 4)))
               {
                 // it is time to adjust stream length, we are approaching to end but still we don't know total length
                 this->streamLength = this->streamTime * 2;
                 this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                this->filter->SetTotalLength(this->streamLength, true);
+                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
               }
             }
           }
@@ -350,16 +346,13 @@ void CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit)
           mediaPacket->SetStart(this->streamTime);
           mediaPacket->SetEnd(this->streamTime + bufferOccupiedSpace - 1);
 
-          HRESULT result = this->filter->PushMediaPacket(mediaPacket);
-          if (FAILED(result))
+          if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
           {
-            this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+            FREE_MEM_CLASS(mediaPacket);
           }
 
           this->streamTime += bufferOccupiedSpace;
           this->receivedData->RemoveFromBufferAndMove(bufferOccupiedSpace);
-
-          delete mediaPacket;
         }
         FREE_MEM(buffer);
       }
@@ -377,15 +370,14 @@ void CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit)
           {
             this->streamLength = this->streamTime;
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-            this->filter->SetTotalLength(this->streamLength, false);
+            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
             this->setLength = true;
           }
 
           // notify filter the we reached end of stream
-          // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
           int64_t streamTime = this->streamTime;
           this->streamTime = this->streamLength;
-          this->filter->EndOfStreamReached(max(0, streamTime - 1));
+          receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, streamTime - 1));
         }
       }
     }
@@ -401,6 +393,7 @@ void CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit)
   }
 
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+  return S_OK;
 }
 
 // ISimpleProtocol interface
@@ -676,11 +669,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::Initialize(PluginConfiguration *conf
 
   ProtocolPluginConfiguration *protocolConfiguration = (ProtocolPluginConfiguration *)configuration;
   this->logger->SetParameters(protocolConfiguration->configuration);
-  this->filter = protocolConfiguration->outputStream;
-  if (this->filter == NULL)
-  {
-    return E_POINTER;
-  }
 
   if (this->lockMutex == NULL)
   {

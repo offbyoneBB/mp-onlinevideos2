@@ -29,7 +29,12 @@
 #define FLV_PACKET_AUDIO                                                      0x08
 #define FLV_PACKET_VIDEO                                                      0x09
 #define FLV_PACKET_META                                                       0x12
-#define FLV_PACKET_HEADER                                                     0xFF
+#define FLV_PACKET_HEADER                                                     0x1F
+
+#define FLV_PACKET_HEADER_LENGTH                                              13
+
+#define FLV_PACKET_TYPE_MASK                                                  0x1F
+#define FLV_PACKET_ENCRYPTED_MASK                                             0x20
 
 #define FLV_VIDEO_CODECID_MASK                                                0x0F
 #define FLV_VIDEO_FRAMETYPE_MASK                                              0xF0
@@ -88,8 +93,13 @@ public:
   // @param buffer : data to fill FLV packet
   // @param length : the length of data buffer
   // @param timestamp : the timestamp of FLV packet
+  // @param encrypted : specifies if FLV packet is encrypted
   // @return : true if FLV packet successfully created, false otherwise
-  bool CreatePacket(unsigned int packetType, const unsigned char *buffer, unsigned int length, unsigned int timestamp);
+  bool CreatePacket(unsigned int packetType, const unsigned char *buffer, unsigned int length, unsigned int timestamp, bool encrypted);
+
+  // tests if FLV packet is encrypted
+  // @return : true if packet is encrypted, false otherwise
+  bool IsEncrypted(void);
 
   // gets FLV packet timestamp
   unsigned int GetTimestamp(void);
@@ -116,6 +126,12 @@ public:
   // clears current instance
   void Clear(void);
 
+  // gets possible FLV packet size
+  // @param buffer : buffer to parse
+  // @param length : the length of buffer
+  // @return : the possible size of FLV packet or UINT_MAX if error
+  unsigned int GetPossiblePacketSize(const unsigned char *buffer, unsigned int length);
+
 protected:
   // holds packet type (AUDIO, VIDEO, META or HEADER)
   unsigned int type;
@@ -125,6 +141,9 @@ protected:
 
   // holds FLV packet data
   unsigned char *packet;
+
+  // hold if FLV packet is encrypted
+  bool encrypted;
 };
 
 #endif

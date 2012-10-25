@@ -25,6 +25,7 @@
 #include "OutputPin.h"
 #include "InputPin.h"
 #include "VersionInfo.h"
+#include "ErrorCodes.h"
 
 #include "BaseDemuxer.h"
 #include "LAVFDemuxer.h"
@@ -297,9 +298,7 @@ CLAVSplitter::~CLAVSplitter()
 #endif
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
-
-  delete logger;
-  logger = NULL;
+  FREE_MEM_CLASS(this->logger);
 }
 
 STDMETHODIMP CLAVSplitter::Close()
@@ -860,7 +859,7 @@ DWORD CLAVSplitter::ThreadProc()
     HRESULT hr = S_OK;
     while(SUCCEEDED(hr) && !CheckRequest(&cmd))
     {
-      if (cmd == CMD_PAUSE)
+      if ((cmd == CMD_PAUSE) || (cmd == CMD_SEEK))
       {
         hr = S_OK;
         Sleep(1);
@@ -1895,11 +1894,16 @@ HRESULT CLAVSplitter::IsFilterReadyToConnectPins(bool *ready)
 
   *ready = ((this->GetPinCount() != 0) && (this->m_pInput->storeFilePath != NULL));
 
-  if ((!(*ready)) && this->m_pInput->allDataReceived && (!this->m_pInput->createdDemuxer) && (this->m_pInput->demuxerWorkerFinished))
+  if (this->m_pInput->GetParserHosterStatus() < STATUS_NONE)
+  {
+    // return parser hoster status, there is error
+    return this->m_pInput->GetParserHosterStatus();
+  }
+  else if ((!(*ready)) && this->m_pInput->allDataReceived && (!this->m_pInput->createdDemuxer) && (this->m_pInput->demuxerWorkerFinished))
   {
     // if demuxer is not created, all data are received and demuxer worker finished its work
     // it throws exception in OV and immediately stops buffering and playback
-    return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+    return E_DEMUXER_NOT_CREATED_ALL_DATA_RECEIVED_DEMUXER_WORKER_FINISHED;
   }
 
   return S_OK;
@@ -1914,11 +1918,14 @@ HRESULT CLAVSplitter::GetCacheFileName(wchar_t **path)
     int length = wcslen(this->m_pInput->storeFilePath) + 1;
     *path = ALLOC_MEM_SET(*path, wchar_t, length, 0);
 
+    CheckPointer((*path), E_OUTOFMEMORY);
+
     if (*path != NULL)
     {
       if (wcscpy_s(*path, length, this->m_pInput->storeFilePath) != 0)
       {
         FREE_MEM(*path);
+        return E_CONVERT_STRING_ERROR;
       }
     }
 	}

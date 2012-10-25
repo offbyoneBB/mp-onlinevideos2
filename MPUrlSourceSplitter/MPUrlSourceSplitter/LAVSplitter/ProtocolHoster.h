@@ -23,7 +23,7 @@
 #ifndef __PROTOCOLHOSTER_DEFINED
 #define __PROTOCOLHOSTER_DEFINED
 
-#include "OutputStreamHoster.h"
+#include "Hoster.h"
 #include "IProtocol.h"
 #include "IProtocolPlugin.h"
 
@@ -34,10 +34,10 @@ struct ProtocolImplementation : public PluginImplementation
   bool supported;
 };
 
-class CProtocolHoster : public COutputStreamHoster, public IProtocolPlugin
+class CProtocolHoster : public CHoster, public IProtocolPlugin
 {
 public:
-  CProtocolHoster(CLogger *logger, CParameterCollection *configuration, IOutputStream *outputStream);
+  CProtocolHoster(CLogger *logger, CParameterCollection *configuration);
   ~CProtocolHoster(void);
 
   // IProtocol interface implementation
@@ -56,9 +56,11 @@ public:
   // @return : S_OK if successfull
   HRESULT ParseUrl(const CParameterCollection *parameters);
 
-  // receive data and stores them into internal buffer
+  // receives data and stores them into receive data parameter
   // @param shouldExit : the reference to variable specifying if method have to be finished immediately
-  void ReceiveData(bool *shouldExit);
+  // @param receiveData : received data
+  // @result: S_OK if successful, error code otherwise
+  HRESULT ReceiveData(bool *shouldExit, CReceiveData *receiveData);
 
   // ISimpleProtocol interface implementation
 

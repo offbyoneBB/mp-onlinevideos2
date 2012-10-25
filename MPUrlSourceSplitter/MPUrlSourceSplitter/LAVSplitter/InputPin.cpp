@@ -19,9 +19,11 @@
 
 #include "stdafx.h"
 #include "InputPin.h"
+#include "Utilities.h"
 
 #include "LAVSplitter.h"
 #include "LockMutex.h"
+#include "ErrorCodes.h"
 
 #include <Shlwapi.h>
 #include <Shlobj.h>
@@ -149,8 +151,7 @@ CLAVInputPin::~CLAVInputPin(void)
   {
     this->parserHoster->StopReceivingData();
     this->parserHoster->RemoveAllPlugins();
-    delete this->parserHoster;
-    this->parserHoster = NULL;
+    FREE_MEM_CLASS(this->parserHoster);
   }
 
   this->DestroyAsyncRequestProcessWorker();
@@ -256,7 +257,7 @@ int64_t CLAVInputPin::Seek(void *opaque,  int64_t offset, int whence)
   }
   else
   {
-    result = -1;
+    result = E_INVALIDARG;
     resultSet = true;
     pin->logger->Log(LOGGER_ERROR, L"%s: %s: offset: %lld, unknown seek value", MODULE_NAME, METHOD_SEEK_NAME, offset);
   }
@@ -314,6 +315,7 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
 
+  CHECK_POINTER_HRESULT(result, pszFileName, result, E_INVALIDARG);
   CHECK_POINTER_DEFAULT_HRESULT(result, this->parserHoster);
 
   if (SUCCEEDED(result))
@@ -327,11 +329,7 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   }
 
   wchar_t *url = ConvertToUnicodeW(pszFileName);
-
-  if (url == NULL)
-  {
-    result = E_OUTOFMEMORY;
-  }
+  CHECK_POINTER_HRESULT(result, url, result, E_CONVERT_STRING_ERROR);
 
   if (SUCCEEDED(result))
   {
@@ -347,8 +345,7 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
         this->configuration->Add(new CParameter(PARAMETER_NAME_URL, url));
       }
 
-      delete suppliedParameters;
-      suppliedParameters = NULL;
+      FREE_MEM_CLASS(suppliedParameters);
     }
     else
     {
@@ -386,7 +383,7 @@ STDMETHODIMP CLAVInputPin::GetCurFile(LPOLESTR *ppszFileName, AM_MEDIA_TYPE *pmt
   *ppszFileName = ConvertToUnicode(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
   if ((*ppszFileName) == NULL)
   {
-    return E_FAIL;
+    return E_CONVERT_STRING_ERROR;
   }
 
   return S_OK;
@@ -431,7 +428,7 @@ STDMETHODIMP CLAVInputPin::Download(LPCOLESTR uri, LPCOLESTR fileName)
 
   result = this->DownloadAsync(uri, fileName, this);
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     // downloading process is successfully started
     // just wait for callback and return to caller
@@ -475,7 +472,7 @@ STDMETHODIMP CLAVInputPin::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDow
   {
     this->downloadFileName = ConvertToUnicodeW(fileName);
 
-    result = (this->downloadFileName == NULL) ? E_OUTOFMEMORY : S_OK;
+    result = (this->downloadFileName == NULL) ? E_CONVERT_STRING_ERROR : S_OK;
   }
 
   if (SUCCEEDED(result))
@@ -493,8 +490,7 @@ STDMETHODIMP CLAVInputPin::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDow
       }
       this->configuration->Add(new CParameter(PARAMETER_NAME_DOWNLOAD_FILE_NAME, this->downloadFileName));
 
-      delete suppliedParameters;
-      suppliedParameters = NULL;
+      FREE_MEM_CLASS(suppliedParameters);
     }
     else
     {
@@ -522,7 +518,7 @@ STDMETHODIMP CLAVInputPin::Load()
 
   if (this->configuration == NULL)
   {
-    result = E_FAIL;
+    result = E_INVALID_CONFIGURATION;
   }
 
   if (SUCCEEDED(result))
@@ -533,7 +529,7 @@ STDMETHODIMP CLAVInputPin::Load()
 
   if (SUCCEEDED(result))
   {
-    result = (this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL) == NULL) ? E_OUTOFMEMORY : S_OK;
+    result = (this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL) == NULL) ? E_URL_NOT_SPECIFIED : S_OK;
   }
 
   if (SUCCEEDED(result))
@@ -553,9 +549,9 @@ STDMETHODIMP CLAVInputPin::Load()
 
 // IOutputStream interface
 
-HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
+HRESULT CLAVInputPin::PushMediaPackets(CMediaPacketCollection *mediaPackets)
 {
-  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME);
+  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME);
   HRESULT result = S_OK;
 
   {
@@ -565,16 +561,18 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
     // remember last received media packet time
     this->lastReceivedMediaPacketTime = GetTickCount();
 
-    CHECK_POINTER_DEFAULT_HRESULT(result, mediaPacket);
+    CHECK_POINTER_DEFAULT_HRESULT(result, mediaPackets);
 
-    if (result == S_OK)
+    for (unsigned int i = 0; (SUCCEEDED(result)) && (i < mediaPackets->Count()); i++)
     {
+      CMediaPacket *mediaPacket = mediaPackets->GetItem(i);
+
       CMediaPacketCollection *unprocessedMediaPackets = new CMediaPacketCollection();
       if (unprocessedMediaPackets->Add(mediaPacket->Clone()))
       {
         int64_t start = mediaPacket->GetStart();
         int64_t stop = mediaPacket->GetEnd();
-        this->logger->Log(LOGGER_DATA, L"%s: %s: media packet start: %016llu, length: %08u", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, start, mediaPacket->GetBuffer()->GetBufferOccupiedSpace());
+        this->logger->Log(LOGGER_DATA, L"%s: %s: media packet start: %016llu, length: %08u", MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, start, mediaPacket->GetBuffer()->GetBufferOccupiedSpace());
 
         result = S_OK;
         while ((unprocessedMediaPackets->Count() != 0) && (result == S_OK))
@@ -596,7 +594,7 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
           {
             if ((region->GetStart() == 0) && (region->GetEnd() == 0))
             {
-              this->logger->Log(LOGGER_DATA, L"%s: %s: no overlapped region", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME);
+              this->logger->Log(LOGGER_DATA, L"%s: %s: no overlapped region", MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME);
 
               // there isn't overlapping media packet
               // whole packet can be added to collection
@@ -611,7 +609,7 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
               int64_t overlappingRegionStart = region->GetStart();
               int64_t overlappingRegionEnd = region->GetEnd();
 
-              this->logger->Log(LOGGER_DATA, L"%s: %s: overlapped region, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, overlappingRegionStart, overlappingRegionEnd);
+              this->logger->Log(LOGGER_DATA, L"%s: %s: overlapped region, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, overlappingRegionStart, overlappingRegionEnd);
 
               if (SUCCEEDED(result) && (unprocessedMediaPacketStart < overlappingRegionStart))
               {
@@ -620,7 +618,7 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
                 int64_t end = overlappingRegionStart - 1;
                 CMediaPacket *part = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
 
-                this->logger->Log(LOGGER_DATA, L"%s: %s: creating packet, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, start, end);
+                this->logger->Log(LOGGER_DATA, L"%s: %s: creating packet, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, start, end);
 
                 result = (part != NULL) ? S_OK : E_POINTER;
                 if (SUCCEEDED(result))
@@ -636,7 +634,7 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
                 int64_t end = unprocessedMediaPacketEnd;
                 CMediaPacket *part = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
 
-                this->logger->Log(LOGGER_DATA, L"%s: %s: creating packet, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, start, end);
+                this->logger->Log(LOGGER_DATA, L"%s: %s: creating packet, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, start, end);
 
                 result = (part != NULL) ? S_OK : E_POINTER;
                 if (SUCCEEDED(result))
@@ -651,6 +649,7 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
             // there is serious error
             result = E_FAIL;
           }
+          FREE_MEM_CLASS(region);
 
           // delete processed media packet
           delete unprocessedMediaPacket;
@@ -662,7 +661,7 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
     }
   }
 
-  this->logger->Log(SUCCEEDED(result) ? LOGGER_DATA : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, result);
+  this->logger->Log(SUCCEEDED(result) ? LOGGER_DATA : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, result);
   return result;
 }
 
@@ -850,9 +849,10 @@ CParameterCollection *CLAVInputPin::ParseParameters(const wchar_t *parameters)
 
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME);
 
-  result = ((parameters == NULL) || (parsedParameters == NULL)) ? E_FAIL : S_OK;
+  CHECK_POINTER_HRESULT(result, parameters, result, E_INVALIDARG);
+  CHECK_POINTER_HRESULT(result, parsedParameters, result, E_OUTOFMEMORY);
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     this->logger->Log(LOGGER_INFO, L"%s: %s: parameters: %s", MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, parameters);
 
@@ -861,7 +861,7 @@ CParameterCollection *CLAVInputPin::ParseParameters(const wchar_t *parameters)
 
     parsedParameters->Clear();
 
-    if (result == S_OK)
+    if (SUCCEEDED(result))
     {
       bool splitted = false;
       unsigned int tokenLength = 0;
@@ -888,7 +888,7 @@ CParameterCollection *CLAVInputPin::ParseParameters(const wchar_t *parameters)
               result = E_OUTOFMEMORY;
             }
 
-            if (result == S_OK)
+            if (SUCCEEDED(result))
             {
               // copy token from parameters string
               wcsncpy_s(token, tokenLength, parameters, tokenLength - 1);
@@ -909,7 +909,7 @@ CParameterCollection *CLAVInputPin::ParseParameters(const wchar_t *parameters)
                   result = E_OUTOFMEMORY;
                 }
 
-                if (result == S_OK)
+                if (SUCCEEDED(result))
                 {
                   // copy name from token
                   wcsncpy_s(name, nameLength, token, nameLength - 1);
@@ -924,10 +924,10 @@ CParameterCollection *CLAVInputPin::ParseParameters(const wchar_t *parameters)
                   if (curlValue == NULL)
                   {
                     this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, L"not enough memory for value for CURL library");
-                    result = E_OUTOFMEMORY;
+                    result = E_CONVERT_STRING_ERROR;
                   }
 
-                  if (result == S_OK)
+                  if (SUCCEEDED(result))
                   {
                     char *unescapedCurlValue = curl_easy_unescape(NULL, curlValue, 0, NULL);
 
@@ -937,17 +937,17 @@ CParameterCollection *CLAVInputPin::ParseParameters(const wchar_t *parameters)
                       result = E_FAIL;
                     }
 
-                    if (result == S_OK)
+                    if (SUCCEEDED(result))
                     {
                       wchar_t *unescapedValue = ConvertToUnicodeA(unescapedCurlValue);
 
                       if (unescapedValue == NULL)
                       {
                         this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, "not enough memory for unescaped value");
-                        result = E_OUTOFMEMORY;
+                        result = E_CONVERT_STRING_ERROR;
                       }
 
-                      if (result == S_OK)
+                      if (SUCCEEDED(result))
                       {
                         // we got successfully unescaped parameter value
                         CParameter *parameter = new CParameter(name, unescapedValue);
@@ -971,11 +971,11 @@ CParameterCollection *CLAVInputPin::ParseParameters(const wchar_t *parameters)
 
             FREE_MEM(token);
           }
-        } while ((splitted) && (rest != NULL) && (result == S_OK));
+        } while ((splitted) && (rest != NULL) && (SUCCEEDED(result)));
       }
     }
 
-    if (result == S_OK)
+    if (SUCCEEDED(result))
     {
       this->logger->Log(LOGGER_INFO, L"%s: %s: count of parameters: %u", MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, parsedParameters->Count());
       parsedParameters->LogCollection(this->logger, LOGGER_INFO, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME);
@@ -986,8 +986,7 @@ CParameterCollection *CLAVInputPin::ParseParameters(const wchar_t *parameters)
 
   if ((FAILED(result)) && (parsedParameters != NULL))
   {
-    delete parsedParameters;
-    parsedParameters = NULL;
+    FREE_MEM_CLASS(parsedParameters);
   }
   
   return parsedParameters;
@@ -1062,7 +1061,7 @@ HRESULT CLAVInputPin::CreateAsyncRequestProcessWorker(void)
     this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME, result);
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     if (!SetThreadPriority(this->hAsyncRequestProcessingThread, THREAD_PRIORITY_TIME_CRITICAL))
     {
@@ -1108,14 +1107,14 @@ HRESULT CLAVInputPin::CheckValues(CAsyncRequest *request, CMediaPacket *mediaPac
   CHECK_POINTER_DEFAULT_HRESULT(result, mediaPacketDataStart);
   CHECK_POINTER_DEFAULT_HRESULT(result, mediaPacketDataLength);
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     LONGLONG requestStart = request->GetStart();
     LONGLONG requestEnd = request->GetStart() + request->GetBufferLength();
 
-    result = ((startPosition >= requestStart) && (startPosition <= requestEnd)) ? S_OK : E_INVALIDARG;
+    CHECK_CONDITION_HRESULT(result, ((startPosition >= requestStart) && (startPosition <= requestEnd)), result, E_INVALIDARG);
 
-    if (result == S_OK)
+    if (SUCCEEDED(result))
     {
       int64_t mediaPacketStart = mediaPacket->GetStart();
       int64_t mediaPacketEnd = mediaPacket->GetEnd();
@@ -1123,22 +1122,22 @@ HRESULT CLAVInputPin::CheckValues(CAsyncRequest *request, CMediaPacket *mediaPac
       this->logger->Log(LOGGER_DATA, L"%s: %s: async request start: %llu, end: %llu, start time: %llu", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, requestStart, requestEnd, startPosition);
       this->logger->Log(LOGGER_DATA, L"%s: %s: media packet start: %llu, end: %llu", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, mediaPacketStart, mediaPacketEnd);
 
-      if (result == S_OK)
+      if (SUCCEEDED(result))
       {
         // check if start position is in media packet
-        result = ((startPosition >= mediaPacketStart) && (startPosition <= mediaPacketEnd)) ? S_OK : E_INVALIDARG;
+        CHECK_CONDITION_HRESULT(result, ((startPosition >= mediaPacketStart) && (startPosition <= mediaPacketEnd)), result, E_INVALIDARG);
 
-        if (result == S_OK)
+        if (SUCCEEDED(result))
         {
           // increase position end because position end is stamp of last byte in buffer
           mediaPacketEnd++;
 
           // check if async request and media packet are overlapping
-          result = ((requestStart <= mediaPacketEnd) && (requestEnd >= mediaPacketStart)) ? S_OK : E_INVALIDARG;
+          CHECK_CONDITION_HRESULT(result, ((requestStart <= mediaPacketEnd) && (requestEnd >= mediaPacketStart)), result, E_INVALIDARG);
         }
       }
 
-      if (result == S_OK)
+      if (SUCCEEDED(result))
       {
         // check problematic values
         // maximum length of data in media packet can be UINT_MAX - 1
@@ -1184,6 +1183,13 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
       {
         CAsyncRequest *request = caller->currentReadRequest;
 
+        // check if demuxer worker should be finished
+        if (caller->demuxerWorkerShouldExit)
+        {
+          // deny request and report as failed
+          request->Complete(E_DEMUXER_WORKER_STOP_REQUEST);
+        }
+
         if ((request->GetState() == CAsyncRequest::Waiting) || (request->GetState() == CAsyncRequest::WaitingIgnoreTimeout) || (request->GetState() == CAsyncRequest::Requested))
         {
           // process only waiting requests
@@ -1213,7 +1219,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                 // check packet values against async request values
                 result = caller->CheckValues(request, mediaPacket, &mediaPacketDataStart, &mediaPacketDataLength, startPosition);
 
-                if (result == S_OK)
+                if (SUCCEEDED(result))
                 {
                   // successfully checked values
                   int64_t positionStart = mediaPacket->GetStart();
@@ -1335,7 +1341,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                 else
                 {
                   caller->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u' found data length '%u' bigger than requested '%lu'", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), foundDataLength, request->GetBufferLength());
-                  request->Complete(E_OUTOFMEMORY);
+                  request->Complete(E_RESULT_DATA_LENGTH_BIGGER_THAN_REQUESTED);
                 }
               }
               else
@@ -1348,17 +1354,17 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                 request->Complete(result);
               }
             }
+          }
 
-            if ((packetIndex == UINT_MAX) && (request->GetState() == CAsyncRequest::Waiting))
+          if ((packetIndex == UINT_MAX) && (request->GetState() == CAsyncRequest::Waiting))
+          {
+            // get current stream position
+            LONGLONG total = 0;
+            HRESULT queryStreamProgressResult = caller->QueryStreamProgress(&total, &currentStreamPosition);
+            if (FAILED(queryStreamProgressResult))
             {
-              // get current stream position
-              LONGLONG total = 0;
-              HRESULT queryStreamProgressResult = caller->QueryStreamProgress(&total, &currentStreamPosition);
-              if (FAILED(queryStreamProgressResult))
-              {
-                caller->logger->Log(LOGGER_WARNING, L"%s: %s: failed to get current stream position: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, queryStreamProgressResult);
-                currentStreamPosition = -1;
-              }
+              caller->logger->Log(LOGGER_WARNING, L"%s: %s: failed to get current stream position: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, queryStreamProgressResult);
+              currentStreamPosition = -1;
             }
           }
 
@@ -1368,7 +1374,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
             {
               // if all data received then no more will come and we can fail
               caller->logger->Log(LOGGER_ERROR, L"%s: %s: request '%u' no more data available", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId());
-              request->Complete(E_FAIL);
+              request->Complete(E_NO_MORE_DATA_AVAILABLE);
             }
           }
 
@@ -1532,7 +1538,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
           // store all media packets (which are not stored) to file
           if (caller->storeFilePath == NULL)
           {
-            caller->storeFilePath = caller->GetStoreFilePath();
+            caller->storeFilePath = caller->GetStoreFile();
           }
 
           if (caller->storeFilePath != NULL)
@@ -1629,53 +1635,22 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
   return S_OK;
 }
 
-wchar_t *CLAVInputPin::GetStoreFilePath(void)
+wchar_t *CLAVInputPin::GetStoreFile(void)
 {
   wchar_t *result = NULL;
-  wchar_t *guid = ConvertGuidToString(this->logger->loggerInstance);
-  ALLOC_MEM_DEFINE_SET(folder, wchar_t, MAX_PATH, 0);
-  if ((guid != NULL) && (folder != NULL))
+  wchar_t *folder = GetStoreFilePath(this->configuration);
+
+  if (folder != NULL)
   {
-    // check if we have path in configuration
-    const wchar_t *cacheFolder = this->configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
-    if (cacheFolder == NULL)
-    {
-      // get new folder in local app data
-      // get common application data folder
-      if (SHGetSpecialFolderPath(NULL, folder, CSIDL_LOCAL_APPDATA, FALSE))
-      {
-        wcscat_s(folder, MAX_PATH, L"\\MPUrlSourceSplitter\\");
-      }
-    }
-    else
-    {
-      // copy cache folder to folder
-      wcscat_s(folder, MAX_PATH, cacheFolder);
-    }
+    wchar_t *guid = ConvertGuidToString(this->logger->loggerInstance);
 
-    unsigned int length = wcslen(folder);
-    if ((length > 0) && (folder[length - 1] != L'\\'))
+    if (guid != NULL)
     {
-      // append last '\' if not already in path
-      wcscat_s(folder, MAX_PATH, L"\\");
-    }
-
-    length = wcslen(folder);
-    if (length > 0)
-    {
-      // there is something in folder variable
-      // create directory path
-      int error = SHCreateDirectory(NULL, folder);
-      if ((error == ERROR_SUCCESS) || (error == ERROR_FILE_EXISTS) || (error == ERROR_ALREADY_EXISTS))
-      {
-        // correct, directory exists
-        result = FormatString(L"%smpurlsourcesplitter_%s.temp", folder, guid);
-      }
+      result = FormatString(L"%smpurlsourcesplitter_%s.temp", folder, guid);
     }
   }
-  FREE_MEM(guid);
-  FREE_MEM(folder);
 
+  FREE_MEM(folder);
   return result;
 }
 
@@ -1725,7 +1700,7 @@ STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
               // graph requests data that are beyond stream (data doesn't exists)
               this->logger->Log(LOGGER_WARNING, L"%s: %s: graph requests data beyond stream, stream total length: %llu, request start: %llu", MODULE_NAME, METHOD_SYNC_READ_NAME, this->totalLength, this->currentReadRequest->GetStart());
               // complete result with error code
-              this->currentReadRequest->Complete(E_FAIL);
+              this->currentReadRequest->Complete(E_REQUESTED_DATA_AFTER_TOTAL_LENGTH);
             }
 
             if (this->currentReadRequest->GetState() == CAsyncRequest::Completed)
@@ -1819,25 +1794,24 @@ STDMETHODIMP CLAVInputPin::Length(LONGLONG *total, LONGLONG *available)
     mediaPacketCount = this->mediaPacketCollection->Count();
   }
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
     *total = this->totalLength;
     *available = this->totalLength;
     
-
     CStreamAvailableLength *availableLength = new CStreamAvailableLength();
     result = this->QueryStreamAvailableLength(availableLength);
-    if (result == S_OK)
+    if (SUCCEEDED(result))
     {
       result = availableLength->GetQueryResult();
     }
 
-    if (result == S_OK)
+    if (SUCCEEDED(result))
     {
       *available = availableLength->GetAvailableLength();
     }
     
-    if (result != S_OK)
+    if (FAILED(result))
     {
       // error occured while requesting stream available length
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: cannot query available stream length, result: 0x%08X", MODULE_NAME, METHOD_LENGTH_NAME, result);
@@ -1861,6 +1835,7 @@ STDMETHODIMP CLAVInputPin::Length(LONGLONG *total, LONGLONG *available)
 
       result = S_OK;
     }
+    FREE_MEM_CLASS(availableLength);
 
     result = (this->estimate) ? VFW_S_ESTIMATED : S_OK;
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: total length: %llu, available length: %llu, estimate: %u, media packets: %u", MODULE_NAME, METHOD_LENGTH_NAME, this->totalLength, *available, (this->estimate) ? 1 : 0, mediaPacketCount);
@@ -1884,7 +1859,7 @@ HRESULT CLAVInputPin::QueryStreamAvailableLength(CStreamAvailableLength *availab
 
 int64_t CLAVInputPin::SeekToPosition(int64_t start, int64_t end)
 {
-  int64_t result = -1;
+  int64_t result = E_NOT_VALID_STATE;
 
   if (this->parserHoster != NULL)
   {
@@ -2284,6 +2259,9 @@ int64_t CLAVInputPin::SeekToTime(int64_t time)
         DeleteFile(this->storeFilePath);
       }
       this->m_llBufferPosition = 0;
+
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length to zero, estimate: %d", MODULE_NAME, METHOD_SEEK_TO_TIME_NAME, SUCCEEDED(result) ? 1 : 0);
+      this->SetTotalLength(0, SUCCEEDED(result));
     }
 
     // if correctly seeked than reset flag that all data are received
@@ -2306,3 +2284,12 @@ void CLAVInputPin::SetSupressData(bool supressData)
   }
 }
 
+HRESULT CLAVInputPin::GetParserHosterStatus(void)
+{
+  if (this->parserHoster != NULL)
+  {
+    return this->parserHoster->GetParserHosterStatus();
+  }
+
+  return E_NOT_VALID_STATE;
+}
