@@ -30,7 +30,6 @@
 #include "ISimpleProtocol.h"
 
 #define STATUS_NONE                                                           0
-#define STATUS_NO_DATA_ERROR                                                  -1
 #define STATUS_RECEIVING_DATA                                                 1
 #define STATUS_PARSER_PENDING                                                 2
 #define STATUS_NEW_URL_SPECIFIED                                              3
@@ -111,16 +110,20 @@ public:
   // @return : S_OK if successful
   HRESULT SetTotalLength(int64_t total, bool estimate);
 
-  // pushes media packet to output pin
-  // @param mediaPacket : reference to media packet to push to output pin
+  // pushes media packets to filter
+  // @param mediaPackets : collection of media packets to push to filter
   // @return : S_OK if successful
-  HRESULT PushMediaPacket(CMediaPacket *mediaPacket);
+  HRESULT PushMediaPackets(CMediaPacketCollection *mediaPackets);
 
   // notifies output stream that end of stream was reached
   // this method can be called only when protocol support SEEKING_METHOD_POSITION
   // @param streamPosition : the last valid stream position
   // @return : S_OK if successful
   HRESULT EndOfStreamReached(int64_t streamPosition);
+
+  // gets parser hoster status
+  // @return : one of STATUS_* values or error code if error
+  HRESULT GetParserHosterStatus(void);
 
 protected:
   // hoster methods
@@ -184,6 +187,12 @@ protected:
   bool endOfStreamReachedCalled;
   // holds last EndOfStreamReached() method call parameters
   int64_t streamPosition;
+
+  // holds if data are supressed
+  bool supressData;
+
+  // mutex for locking access to file, buffer, ...
+  HANDLE lockMutex;
 };
 
 #endif

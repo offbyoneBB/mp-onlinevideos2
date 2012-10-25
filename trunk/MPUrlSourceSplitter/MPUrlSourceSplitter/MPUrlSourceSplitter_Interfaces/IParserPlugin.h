@@ -26,7 +26,7 @@
 #include "IPlugin.h"
 #include "MediaPacketCollection.h"
 
-#define METHOD_PARSE_MEDIA_PACKET_NAME                                            L"ParseMediaPacket()"
+#define METHOD_PARSE_MEDIA_PACKETS_NAME                                           L"ParseMediaPackets()"
 #define METHOD_CLEAR_SESSION_NAME                                                 L"ClearSession()"
 
 struct ParserPluginConfiguration : public PluginConfiguration
@@ -38,7 +38,8 @@ enum ParseResult
   ParseResult_Unspecified,
   ParseResult_NotKnown,
   ParseResult_Pending,
-  ParseResult_Known
+  ParseResult_Known,
+  ParseResult_DrmProtected
 } ;
 
 enum Action
@@ -55,10 +56,10 @@ struct IParserPlugin : public IPlugin
   // @return : S_OK if successfull
   virtual HRESULT ClearSession(void) = 0;
 
-  // parses media packet
-  // @param mediaPacket : media packet to parse
+  // parses media packets
+  // @param mediaPackets : media packet collection to parse
   // @return : one of ParseResult values
-  virtual ParseResult ParseMediaPacket(CMediaPacket *mediaPacket) = 0;
+  virtual ParseResult ParseMediaPackets(CMediaPacketCollection *mediaPackets) = 0;
 
   // sets current connection url and parameters
   // @param parameters : the collection of url and connection parameters

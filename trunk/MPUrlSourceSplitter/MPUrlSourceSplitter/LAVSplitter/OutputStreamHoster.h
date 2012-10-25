@@ -42,10 +42,10 @@ public:
   // @return : S_OK if successful
   HRESULT SetTotalLength(int64_t total, bool estimate);
 
-  // pushes media packet to output pin
-  // @param mediaPacket : reference to media packet to push to output pin
+  // pushes media packets to filter
+  // @param mediaPackets : collection of media packets to push to filter
   // @return : S_OK if successful
-  HRESULT PushMediaPacket(CMediaPacket *mediaPacket);
+  HRESULT PushMediaPackets(CMediaPacketCollection *mediaPackets);
 
   // notifies output stream that end of stream was reached
   // this method can be called only when protocol support SEEKING_METHOD_POSITION

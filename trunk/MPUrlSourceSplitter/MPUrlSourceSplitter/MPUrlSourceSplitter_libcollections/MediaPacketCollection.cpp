@@ -40,11 +40,7 @@ CMediaPacketCollection::CMediaPacketCollection(bool consolidateSpace)
 
 CMediaPacketCollection::~CMediaPacketCollection(void)
 {
-  if (this->consolidatedMediaPackets != NULL)
-  {
-    delete this->consolidatedMediaPackets;
-    this->consolidatedMediaPackets = NULL;
-  }
+  FREE_MEM_CLASS(this->consolidatedMediaPackets);
 }
 
 bool CMediaPacketCollection::Add(CMediaPacket *item)
@@ -204,8 +200,7 @@ int64_t CMediaPacketCollection::GetKey(CMediaPacket *item)
 
 CMediaPacket *CMediaPacketCollection::Clone(CMediaPacket *item)
 {
-  // not implemented media packet cloning
-  return NULL;
+  return item->Clone();
 }
 
 unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenPositions(int64_t time)

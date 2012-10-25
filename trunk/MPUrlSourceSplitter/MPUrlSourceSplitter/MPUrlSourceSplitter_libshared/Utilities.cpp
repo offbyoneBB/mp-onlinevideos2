@@ -106,3 +106,56 @@ wchar_t *GetVersionInfo(const wchar_t *version, const wchar_t *compile)
 {
   return FormatString(L"Version: %s Build date: %s", version, compile);
 }
+
+wchar_t *GetStoreFilePath(CParameterCollection *configuration)
+{
+  wchar_t *result = NULL;
+  ALLOC_MEM_DEFINE_SET(folder, wchar_t, MAX_PATH, 0);
+  if (folder != NULL)
+  {
+    // check if we have path in configuration
+    const wchar_t *cacheFolder = configuration->GetValue(PARAMETER_NAME_CACHE_FOLDER, true, NULL);
+    if (cacheFolder == NULL)
+    {
+      // get new folder in local app data
+      // get common application data folder
+      if (SHGetSpecialFolderPath(NULL, folder, CSIDL_LOCAL_APPDATA, FALSE))
+      {
+        wcscat_s(folder, MAX_PATH, L"\\MPUrlSourceSplitter\\");
+      }
+    }
+    else
+    {
+      // copy cache folder to folder
+      wcscat_s(folder, MAX_PATH, cacheFolder);
+    }
+
+    unsigned int length = wcslen(folder);
+    if ((length > 0) && (folder[length - 1] != L'\\'))
+    {
+      // append last '\' if not already in path
+      wcscat_s(folder, MAX_PATH, L"\\");
+    }
+
+    length = wcslen(folder);
+    if (length > 0)
+    {
+      // there is something in folder variable
+      // create directory path
+      int error = SHCreateDirectory(NULL, folder);
+      if ((error == ERROR_SUCCESS) || (error == ERROR_FILE_EXISTS) || (error == ERROR_ALREADY_EXISTS))
+      {
+        // correct, directory exists
+        result = folder;
+      }
+    }
+  }
+
+  if (result == NULL)
+  {
+    // error occured, but folder can be allocated
+    FREE_MEM(folder);
+  }
+
+  return result;
+}

@@ -79,7 +79,6 @@ CMPUrlSourceSplitter_Protocol_Rtmp::CMPUrlSourceSplitter_Protocol_Rtmp(CParamete
   
   this->receiveDataTimeout = RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
-  this->filter = NULL;
   this->streamLength = 0;
   this->setLength = false;
   this->streamTime = 0;
@@ -145,7 +144,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ParseUrl(const CParameterCollection 
     ALLOC_MEM_DEFINE_SET(protocolConfiguration, ProtocolPluginConfiguration, 1, 0);
     if (protocolConfiguration != NULL)
     {
-      protocolConfiguration->outputStream = this->filter;
       protocolConfiguration->configuration = (CParameterCollection *)parameters;
     }
     this->Initialize(protocolConfiguration);
@@ -222,7 +220,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ParseUrl(const CParameterCollection 
   return result;
 }
 
-void CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit)
+HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CReceiveData *receiveData)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   this->shouldExit = *shouldExit;
@@ -244,7 +242,7 @@ void CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit)
             LONGLONG total = LONGLONG(streamSize);
             this->streamLength = total;
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
-            this->filter->SetTotalLength(total, false);
+            receiveData->GetTotalLength()->SetTotalLength(total, false);
             this->setLength = true;
           }
         }
@@ -273,7 +271,7 @@ void CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit)
               {
                 this->streamLength = tempLength;
                 this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess by stream duration total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                this->filter->SetTotalLength(this->streamLength, true);
+                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
               }
             }
             else if (this->bytePosition != 0)
@@ -284,14 +282,14 @@ void CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit)
                 // just make guess
                 this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
                 this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                this->filter->SetTotalLength(this->streamLength, true);
+                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
               }
               else if ((this->bytePosition > (this->streamLength * 3 / 4)))
               {
                 // it is time to adjust stream length, we are approaching to end but still we don't know total length
                 this->streamLength = this->bytePosition * 2;
                 this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                this->filter->SetTotalLength(this->streamLength, true);
+                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
               }
             }
           }
@@ -381,14 +379,12 @@ void CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit)
               mediaPacket->SetStart(this->bytePosition);
               mediaPacket->SetEnd(this->bytePosition + flvPacket->GetSize() - 1);
 
-              HRESULT result = this->filter->PushMediaPacket(mediaPacket);
-              if (FAILED(result))
+              if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
               {
-                this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+                FREE_MEM_CLASS(mediaPacket);
               }
+              
               this->bytePosition += flvPacket->GetSize();
-
-              delete mediaPacket;
             }
             // we are definitely not seeking
             this->seekingActive = false;
@@ -418,13 +414,12 @@ void CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit)
           {
             this->streamLength = this->bytePosition;
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-            this->filter->SetTotalLength(this->streamLength, false);
+            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
             this->setLength = true;
           }
 
           // notify filter the we reached end of stream
-          // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-          this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
+          receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, this->bytePosition - 1));
         }
       }
     }
@@ -435,7 +430,7 @@ void CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit)
       {
         this->streamLength = this->bytePosition;
         this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-        this->filter->SetTotalLength(this->streamLength, false);
+        receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
         this->setLength = true;
       }
     }
@@ -451,6 +446,7 @@ void CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit)
   }
 
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+  return S_OK;
 }
 
 // ISimpleProtocol interface
@@ -724,11 +720,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::Initialize(PluginConfiguration *conf
 
   ProtocolPluginConfiguration *protocolConfiguration = (ProtocolPluginConfiguration *)configuration;
   this->logger->SetParameters(protocolConfiguration->configuration);
-  this->filter = protocolConfiguration->outputStream;
-  if (this->filter == NULL)
-  {
-    return E_POINTER;
-  }
 
   if (this->lockMutex == NULL)
   {

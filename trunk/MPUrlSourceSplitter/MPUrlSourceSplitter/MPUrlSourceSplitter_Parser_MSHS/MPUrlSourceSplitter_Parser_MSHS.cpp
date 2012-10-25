@@ -101,15 +101,14 @@ HRESULT CMPUrlSourceSplitter_Parser_MSHS::ClearSession(void)
   return S_OK;
 }
 
-ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *mediaPacket)
+ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPackets(CMediaPacketCollection *mediaPackets)
 {
   ParseResult result = ParseResult_NotKnown;
-  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME);
 
-  if (mediaPacket != NULL)
+  if (mediaPackets != NULL)
   {
-    CMediaPacket *clone = mediaPacket->Clone();
-    if (this->storedMediaPackets->Add(clone))
+    if (this->storedMediaPackets->Append(mediaPackets))
     {
       unsigned int length = 0;
       for (unsigned int i = 0; i < this->storedMediaPackets->Count(); i++)
@@ -147,11 +146,11 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *med
         {
           if (manifest->Parse((char *)buffer))
           {
-            this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"MSHS manifest");
+            this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"MSHS manifest");
             wchar_t *mshsBuffer = ConvertUtf8ToUnicode((char *)buffer);
             if (mshsBuffer != NULL)
             {
-              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, mshsBuffer);
+              this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, mshsBuffer);
             }
             FREE_MEM(mshsBuffer);
 
@@ -354,7 +353,7 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *med
 
                   if (!continueParsing)
                   {
-                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot serialize manifest");
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot serialize manifest");
                   }
                 }
 
@@ -388,12 +387,12 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *med
 
                           if (!continueParsing)
                           {
-                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add MSHS manifest parameter to connection parameters");
+                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot add MSHS manifest parameter to connection parameters");
                           }
                         }
                         else
                         {
-                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create MSHS manifest parameter");
+                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot create MSHS manifest parameter");
                         }
 
                         if (!continueParsing)
@@ -403,20 +402,20 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *med
                       }
                       else
                       {
-                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot convert encoded compressed manifest");
+                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot convert encoded compressed manifest");
                       }
 
                       FREE_MEM(encoded);
                     }
                     else
                     {
-                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot encode compressed manifest");
+                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot encode compressed manifest");
                     }
                   }
 
                   if (FAILED(result))
                   {
-                    this->logger->Log(LOGGER_ERROR, L"%s: %s: manifest compression failed: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, compressionResult);
+                    this->logger->Log(LOGGER_ERROR, L"%s: %s: manifest compression failed: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, compressionResult);
                   }
                   FREE_MEM(compressedManifest);
                 }
@@ -458,24 +457,24 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *med
                         }
                         else
                         {
-                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot add new URL parameter into connection parameters");
+                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot add new URL parameter into connection parameters");
                         }
                       }
                       else
                       {
-                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot create new URL parameter");
+                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot create new URL parameter");
                         continueParsing = false;
                       }
                     }
                     else
                     {
-                      this->logger->Log(LOGGER_ERROR, L"%s: %s: only HTTP protocol supported in base URL: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+                      this->logger->Log(LOGGER_ERROR, L"%s: %s: only HTTP protocol supported in base URL: %s", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
                       continueParsing = false;
                     }
                   }
                   else
                   {
-                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"cannot specify MSHS protocol");
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"cannot specify MSHS protocol");
                     continueParsing = false;
                   }
                   FREE_MEM(replacedUrl);
@@ -502,19 +501,19 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *med
               else
               {
                 // media doesn't have any audio or video
-                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"stream without video or audio");
+                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"stream without video or audio");
               }
             }
             else
             {
               // stream is protected, unsupported
-              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, L"stream is protected, unsupported");
+              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"stream is protected, unsupported");
             }
           }
           else if (manifest->IsXml() && (manifest->GetParseError() != 0))
           {
             // we have XML declaration, it is valid XML file, just not complete
-            this->logger->Log(LOGGER_WARNING, L"%s: %s: XML file probably not complete, XML parse error: %d", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, manifest->GetParseError());
+            this->logger->Log(LOGGER_WARNING, L"%s: %s: XML file probably not complete, XML parse error: %d", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, manifest->GetParseError());
             result = ParseResult_Pending;
           }
         }
@@ -522,15 +521,9 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPacket(CMediaPacket *med
       }
       FREE_MEM(buffer);
     }
-    else
-    {
-      // error while adding media packet to stored media packet collection
-      // cleanup
-      FREE_MEM_CLASS(clone);
-    }
   }
 
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKET_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, result);
   return result;
 }
 

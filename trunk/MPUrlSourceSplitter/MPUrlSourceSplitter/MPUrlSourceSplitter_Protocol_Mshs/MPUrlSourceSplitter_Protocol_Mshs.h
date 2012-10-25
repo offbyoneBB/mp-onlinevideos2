@@ -98,9 +98,11 @@ public:
   // @return : S_OK if successfull
   HRESULT ParseUrl(const CParameterCollection *parameters);
 
-  // receive data and stores them into internal buffer
+  // receives data and stores them into receive data parameter
   // @param shouldExit : the reference to variable specifying if method have to be finished immediately
-  void ReceiveData(bool *shouldExit);
+  // @param receiveData : received data
+  // @result: S_OK if successful, error code otherwise
+  HRESULT ReceiveData(bool *shouldExit, CReceiveData *receiveData);
 
   // ISimpleProtocol interface
 
@@ -173,9 +175,6 @@ public:
 protected:
   CLogger *logger;
 
-  // source filter that created this instance
-  IOutputStream *filter;
-
   // holds various parameters supplied by caller
   CParameterCollection *configurationParameters;
 
@@ -190,6 +189,8 @@ protected:
 
   // holds if length of stream was set
   bool setLength;
+  // holds if end of stream was set
+  bool setEndOfStream;
 
   // stream time
   int64_t streamTime;
@@ -204,10 +205,8 @@ protected:
   // main instance of CURL
   CHttpCurlInstance *mainCurlInstance;
 
-  // CURL instance for first video URL
-  CHttpCurlInstance *videoCurlInstance;
-  // CURL instance for first audio URL
-  CHttpCurlInstance *audioCurlInstance;
+  // holds is ISO based media file format header reconstructed
+  bool reconstructedHeader;
 
   // reference to variable that signalize if protocol is requested to exit
   bool shouldExit;
@@ -218,8 +217,13 @@ protected:
   // specifies if filter requested supressing data
   bool supressData;
 
-  // buffer for processing box data before are send to further processing
-  CLinearBufferCollection *bufferForBoxProcessingCollection;
+  // holds which stream fragment is currently downloading (UINT_MAX means none)
+  unsigned int streamFragmentDownloading;
+  // holds which stream fragment is currently processed
+  unsigned int streamFragmentProcessing;
+  // holds which stream fragment have to be downloaded
+  // (UINT_MAX means next stream fragment, always reset after started download of stream fragment)
+  unsigned int streamFragmentToDownload;
 
   // buffer for processing data before are send to filter
   CLinearBuffer *bufferForProcessing;
@@ -231,19 +235,18 @@ protected:
   CMSHSSmoothStreamingMedia *streamingMedia;
 
   // specifies if last fragment was downloaded
-  bool lastFragmentDownloaded;
+  //bool lastFragmentDownloaded;
 
-  uint32_t videoTrackId;
+  //uint32_t videoTrackId;
+  CTrackFragmentHeaderBox *videoTrackFragmentHeaderBox;
 
-  uint32_t audioTrackId;
-
-  // removes all downloaded stream fragments
-  // the last one stream fragment (even downloaded) still preserve
-  void RemoveAllDownloadedStreamFragments(void);
+  //uint32_t audioTrackId;
+  CTrackFragmentHeaderBox *audioTrackFragmentHeaderBox;
 
   // gets first not downloaded stream fragment
-  // @return : first not downloaded stream fragment or NULL if not exists
-  CStreamFragment *GetFirstNotDownloadedStreamFragment(void);
+  // @param requested : start index for searching
+  // @return : index of first not downloaded stream fragment or UINT_MAX if not exists
+  unsigned int GetFirstNotDownloadedStreamFragment(unsigned int start);
 
   // gets stream fragments collection created from manifest
   // @param logger : the logger for logging purposes
@@ -309,6 +312,26 @@ protected:
   CFragmentedIndexBox *GetFragmentedIndexBox(CMSHSSmoothStreamingMedia *media, uint32_t videoTrackId, uint32_t audioTrackId, uint64_t timestamp);
 
   CFragmentedIndexTrackBox *GetFragmentedIndexTrackBox(CMSHSSmoothStreamingMedia *media, unsigned int streamIndex, uint32_t trackId, uint64_t timestamp);
+
+  // gets store file path based on configuration
+  // creates folder structure if not created
+  // @return : store file or NULL if error
+  wchar_t *GetStoreFile(void);
+
+  // holds store file path
+  wchar_t *storeFilePath;
+  // holds last store time of storing stream fragments to file
+  DWORD lastStoreTime;
+
+  // specifies if we are still connected
+  bool isConnected;
+
+  // fills buffer for processing with stream fragment data (stored in memory or in store file)
+  // @param streamFragments : stream fragments collection
+  // @param streamFragmentProcessing : stream fragment to get data
+  // @param storeFile : the name of store file
+  // @return : buffer for processing with filled data, NULL otherwise
+  CLinearBuffer *FillBufferForProcessing(CStreamFragmentCollection *streamFragments, unsigned int streamFragmentProcessing, wchar_t *storeFile);
 };
 
 #endif

@@ -83,10 +83,10 @@ public:
   // @return : S_OK if successful
   HRESULT SetTotalLength(int64_t total, bool estimate);
 
-  // pushes media packet to output pin
-  // @param mediaPacket : reference to media packet to push to output pin
+  // pushes media packets to filter
+  // @param mediaPackets : collection of media packets to push to filter
   // @return : S_OK if successful
-  HRESULT PushMediaPacket(CMediaPacket *mediaPacket);
+  HRESULT PushMediaPackets(CMediaPacketCollection *mediaPackets);
 
   // notifies output stream that end of stream was reached
   // this method can be called only when protocol support SEEKING_METHOD_POSITION
@@ -184,6 +184,10 @@ public:
   // sets if protocol have to supress sending data to filter
   // @param supressData : true if protocol have to supress sending data to filter, false otherwise
   void SetSupressData(bool supressData);
+
+  // gets parser hoster status
+  // @return : one of STATUS_* values or error code if error
+  HRESULT GetParserHosterStatus(void);
 
 protected:
   static int Read(void *opaque, uint8_t *buf, int buf_size);
@@ -327,6 +331,6 @@ private:
 
   // gets store file path based on configuration
   // creates folder structure if not created
-  // @return : store file path or NULL if error
-  wchar_t *GetStoreFilePath(void);
+  // @return : store file or NULL if error
+  wchar_t *GetStoreFile(void);
 };

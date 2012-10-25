@@ -40,5 +40,6 @@
 // we should get data in twenty seconds
 #define AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
 #define AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT                         3
+#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 
 #endif

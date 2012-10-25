@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "SegmentFragment.h"
+#include "MPUrlSourceSplitter_Protocol_Afhs_Parameters.h"
 
 CSegmentFragment::CSegmentFragment(unsigned int segment, unsigned int fragment, const wchar_t *url, uint64_t fragmentTimestamp)
 {
@@ -29,11 +30,16 @@ CSegmentFragment::CSegmentFragment(unsigned int segment, unsigned int fragment, 
   this->url = Duplicate(url);
   this->fragmentTimestamp = fragmentTimestamp;
   this->downloaded = false;
+  this->storeFilePosition = -1;
+
+  this->buffer = new CLinearBuffer();
+  this->length = 0;
 }
 
 CSegmentFragment::~CSegmentFragment(void)
 {
   FREE_MEM(this->url);
+  FREE_MEM_CLASS(this->buffer);
 }
 
 unsigned int CSegmentFragment::GetSegment(void)
@@ -61,14 +67,48 @@ bool CSegmentFragment::GetDownloaded(void)
   return this->downloaded;
 }
 
+int64_t CSegmentFragment::GetStoreFilePosition(void)
+{
+  return this->storeFilePosition;
+}
+
+CLinearBuffer *CSegmentFragment::GetBuffer()
+{
+  return this->buffer;
+}
+
+unsigned int CSegmentFragment::GetLength(void)
+{
+  return (this->buffer != NULL) ? this->buffer->GetBufferOccupiedSpace() : this->length;
+}
+
 void CSegmentFragment::SetDownloaded(bool downloaded)
 {
   this->downloaded = downloaded;
 }
 
-CSegmentFragment *CSegmentFragment::Clone(void)
+void CSegmentFragment::SetStoredToFile(int64_t position)
 {
-  CSegmentFragment *clone = new CSegmentFragment(this->segment, this->fragment, this->url, this->fragmentTimestamp);
+  this->storeFilePosition = position;
+  if (this->storeFilePosition != (-1))
+  {
+    if (this->buffer != NULL)
+    {
+      this->length = this->buffer->GetBufferOccupiedSpace();
+    }
 
-  return clone;
+    FREE_MEM_CLASS(this->buffer);
+  }
+  else
+  {
+    if (this->buffer == NULL)
+    {
+      this->buffer = new CLinearBuffer();
+    }
+  }
+}
+
+bool CSegmentFragment::IsStoredToFile(void)
+{
+  return (this->storeFilePosition != (-1));
 }

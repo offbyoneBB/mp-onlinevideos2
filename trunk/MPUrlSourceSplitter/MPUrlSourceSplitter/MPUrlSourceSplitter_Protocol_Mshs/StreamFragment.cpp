@@ -29,11 +29,16 @@ CStreamFragment::CStreamFragment(const wchar_t *url, uint64_t fragmentDuration, 
   this->fragmentTime = fragmentTime;
   this->downloaded = false;
   this->fragmentType = fragmentType;
+  this->storeFilePosition = -1;
+
+  this->buffer = new CLinearBuffer();
+  this->length = 0;
 }
 
 CStreamFragment::~CStreamFragment(void)
 {
   FREE_MEM(this->url);
+  FREE_MEM_CLASS(this->buffer);
 }
 
 /* get methods */
@@ -63,6 +68,21 @@ unsigned int CStreamFragment::GetFragmentType(void)
   return this->fragmentType;
 }
 
+int64_t CStreamFragment::GetStoreFilePosition(void)
+{
+  return this->storeFilePosition;
+}
+
+CLinearBuffer *CStreamFragment::GetBuffer()
+{
+  return this->buffer;
+}
+
+unsigned int CStreamFragment::GetLength(void)
+{
+  return (this->buffer != NULL) ? this->buffer->GetBufferOccupiedSpace() : this->length;
+}
+
 /* set methods */
 
 void CStreamFragment::SetDownloaded(bool downloaded)
@@ -70,11 +90,30 @@ void CStreamFragment::SetDownloaded(bool downloaded)
   this->downloaded = downloaded;
 }
 
+void CStreamFragment::SetStoredToFile(int64_t position)
+{
+  this->storeFilePosition = position;
+  if (this->storeFilePosition != (-1))
+  {
+    if (this->buffer != NULL)
+    {
+      this->length = this->buffer->GetBufferOccupiedSpace();
+    }
+
+    FREE_MEM_CLASS(this->buffer);
+  }
+  else
+  {
+    if (this->buffer == NULL)
+    {
+      this->buffer = new CLinearBuffer();
+    }
+  }
+}
+
 /* other methods */
 
-CStreamFragment *CStreamFragment::Clone(void)
+bool CStreamFragment::IsStoredToFile(void)
 {
-  CStreamFragment *fragment = new CStreamFragment(this->url, this->fragmentDuration, this->fragmentTime, this->fragmentType);
-
-  return fragment;
+  return (this->storeFilePosition != (-1));
 }

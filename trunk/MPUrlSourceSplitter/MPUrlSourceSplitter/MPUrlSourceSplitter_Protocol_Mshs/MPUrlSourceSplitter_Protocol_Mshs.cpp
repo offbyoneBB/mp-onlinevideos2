@@ -44,6 +44,8 @@
 #define PROTOCOL_IMPLEMENTATION_NAME                                          L"MPUrlSourceSplitter_Protocol_Mshs"
 #endif
 
+#define METHOD_FILL_BUFFER_FOR_PROCESSING_NAME                                L"FillBufferForProcessing()"
+
 PIPlugin CreatePluginInstance(CParameterCollection *configuration)
 {
   return new CMPUrlSourceSplitter_Protocol_Mshs(configuration);
@@ -85,9 +87,9 @@ CMPUrlSourceSplitter_Protocol_Mshs::CMPUrlSourceSplitter_Protocol_Mshs(CParamete
   
   this->receiveDataTimeout = MSHS_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
-  this->filter = NULL;
   this->streamLength = 0;
   this->setLength = false;
+  this->setEndOfStream = false;
   this->streamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->wholeStreamDownloaded = false;
@@ -95,16 +97,19 @@ CMPUrlSourceSplitter_Protocol_Mshs::CMPUrlSourceSplitter_Protocol_Mshs(CParamete
   this->bytePosition = 0;
   this->seekingActive = false;
   this->supressData = false;
-  this->bufferForBoxProcessingCollection = NULL;
   this->bufferForProcessing = NULL;
   this->shouldExit = false;
   this->streamFragments = NULL;
-  this->videoCurlInstance = NULL;
-  this->audioCurlInstance = NULL;
+  this->videoTrackFragmentHeaderBox = NULL;
+  this->audioTrackFragmentHeaderBox = NULL;
+  this->reconstructedHeader = false;
   this->streamingMedia = NULL;
-  this->lastFragmentDownloaded = false;
-  this->videoTrackId = 0;
-  this->audioTrackId = 0;
+  this->storeFilePath = NULL;
+  this->lastStoreTime = 0;
+  this->isConnected = false;
+  this->streamFragmentDownloading = UINT_MAX;
+  this->streamFragmentProcessing = 0;
+  this->streamFragmentToDownload = UINT_MAX;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -118,14 +123,19 @@ CMPUrlSourceSplitter_Protocol_Mshs::~CMPUrlSourceSplitter_Protocol_Mshs()
     this->StopReceivingData();
   }
 
-  FREE_MEM_CLASS(this->videoCurlInstance);
-  FREE_MEM_CLASS(this->audioCurlInstance);
+  if (this->storeFilePath != NULL)
+  {
+    DeleteFile(this->storeFilePath);
+  }
+
+  FREE_MEM_CLASS(this->videoTrackFragmentHeaderBox);
+  FREE_MEM_CLASS(this->audioTrackFragmentHeaderBox);
   FREE_MEM_CLASS(this->mainCurlInstance);
-  FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
   FREE_MEM_CLASS(this->bufferForProcessing);
   FREE_MEM_CLASS(this->configurationParameters);
   FREE_MEM_CLASS(this->streamFragments);
   FREE_MEM_CLASS(this->streamingMedia);
+  FREE_MEM(this->storeFilePath);
 
   if (this->lockMutex != NULL)
   {
@@ -135,15 +145,14 @@ CMPUrlSourceSplitter_Protocol_Mshs::~CMPUrlSourceSplitter_Protocol_Mshs()
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
 
-  delete this->logger;
-  this->logger = NULL;
+  FREE_MEM_CLASS(this->logger);
 }
 
 // IProtocol interface
 
 bool CMPUrlSourceSplitter_Protocol_Mshs::IsConnected(void)
 {
-  return ((this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded) || ((this->videoCurlInstance != NULL) && (this->audioCurlInstance != NULL)));
+  return ((this->isConnected) || (this->wholeStreamDownloaded));
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetOpenConnectionMaximumAttempts(void)
@@ -164,7 +173,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ParseUrl(const CParameterCollection 
     ALLOC_MEM_DEFINE_SET(protocolConfiguration, ProtocolPluginConfiguration, 1, 0);
     if (protocolConfiguration != NULL)
     {
-      protocolConfiguration->outputStream = this->filter;
       protocolConfiguration->configuration = (CParameterCollection *)parameters;
     }
     this->Initialize(protocolConfiguration);
@@ -241,7 +249,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ParseUrl(const CParameterCollection 
   return result;
 }
 
-void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
+HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CReceiveData *receiveData)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   this->shouldExit = *shouldExit;
@@ -254,18 +262,24 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
     {
       if (!(this->shouldExit))
       {
-        if ((this->videoCurlInstance != NULL) && (this->audioCurlInstance != NULL) &&
-            (this->videoCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA) &&
-            (this->audioCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+        if ((!this->reconstructedHeader) &&
+          (this->videoTrackFragmentHeaderBox != NULL) &&
+          (this->audioTrackFragmentHeaderBox != NULL))
         {
           // we need to reconstruct header
-          CTrackFragmentHeaderBox *videoTrackFragmentHeaderBox = this->GetTrackFragmentHeaderBox(this->videoCurlInstance->GetReceiveDataBuffer());
-          CTrackFragmentHeaderBox *audioTrackFragmentHeaderBox = this->GetTrackFragmentHeaderBox(this->audioCurlInstance->GetReceiveDataBuffer());
+          bool continueReconstructing = true;
+          CLinearBuffer *header = new CLinearBuffer();
+          continueReconstructing &= (header != NULL);
 
-          if ((videoTrackFragmentHeaderBox != NULL) && (audioTrackFragmentHeaderBox != NULL))
+          if (continueReconstructing)
           {
-            wchar_t *videoData = videoTrackFragmentHeaderBox->GetParsedHumanReadable(L"");
-            wchar_t *audioData = audioTrackFragmentHeaderBox->GetParsedHumanReadable(L"");
+            continueReconstructing &= header->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+          }
+
+          if (continueReconstructing)
+          {
+            wchar_t *videoData = this->videoTrackFragmentHeaderBox->GetParsedHumanReadable(L"");
+            wchar_t *audioData = this->audioTrackFragmentHeaderBox->GetParsedHumanReadable(L"");
 
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: video track fragment header box:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, videoData);
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: audio track fragment header box:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, audioData);
@@ -275,116 +289,98 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
 
             // create file type box
             CFileTypeBox *fileTypeBox = this->CreateFileTypeBox();
-
-            if (fileTypeBox != NULL)
+            continueReconstructing &= (fileTypeBox != NULL);
+            if (continueReconstructing)
             {
-              // copy file type box to processing
-              if (this->bufferForBoxProcessingCollection != NULL)
-              {
-                CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
-                if (linearBuffer != NULL)
-                {
-                  this->PutBoxIntoBuffer(fileTypeBox, linearBuffer);
-                }
-              }
+              continueReconstructing &= this->PutBoxIntoBuffer(fileTypeBox, header);
             }
             FREE_MEM_CLASS(fileTypeBox);
 
-            this->videoTrackId = videoTrackFragmentHeaderBox->GetTrackId();
-            this->audioTrackId = audioTrackFragmentHeaderBox->GetTrackId();
-
             // create movie box
-            CMovieBox *movieBox = this->GetMovieBox(this->streamingMedia, videoTrackFragmentHeaderBox, audioTrackFragmentHeaderBox);
-
+            CMovieBox *movieBox = this->GetMovieBox(this->streamingMedia, this->videoTrackFragmentHeaderBox, this->audioTrackFragmentHeaderBox);
+            continueReconstructing &= (movieBox != NULL);
             if (movieBox != NULL)
             {
-              // copy movie box to processing
-              if (this->bufferForBoxProcessingCollection != NULL)
-              {
-                CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
-                if (linearBuffer != NULL)
-                {
-                  this->PutBoxIntoBuffer(movieBox, linearBuffer);
-                }
-              }
+              continueReconstructing &= this->PutBoxIntoBuffer(movieBox, header);
             }
             FREE_MEM_CLASS(movieBox);
 
-            // copy data from video buffer and from audio buffer to processing
-            if (this->bufferForBoxProcessingCollection != NULL)
+            // if reconstructing is correct, put all data to output buffer
+            if (continueReconstructing)
             {
-              CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
-              if (linearBuffer != NULL)
-              {
-                {
-                  unsigned int length = this->videoCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
-                  ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                  if (buffer != NULL)
-                  {
-                    this->videoCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, length, 0, 0);
-                    linearBuffer->AddToBufferWithResize(buffer, length);
-                    this->videoCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(length);
-                  }
-                  FREE_MEM(buffer);
-                }
+              unsigned int length = header->GetBufferOccupiedSpace();
+              continueReconstructing &= (length != 0);
 
+              if (continueReconstructing)
+              {
+                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+                continueReconstructing &= (buffer != NULL);
+                if (continueReconstructing)
                 {
-                  unsigned int length = this->audioCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
-                  ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                  if (buffer != NULL)
+                  continueReconstructing &= (header->CopyFromBuffer(buffer, length, 0, 0) == length);
+                  if (continueReconstructing)
                   {
-                    this->audioCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, length, 0, 0);
-                    linearBuffer->AddToBufferWithResize(buffer, length);
+                    continueReconstructing &= (this->bufferForProcessing->AddToBufferWithResize(buffer, length) == length);
                   }
-                  FREE_MEM(buffer);
                 }
+                FREE_MEM(buffer);
               }
             }
           }
+          FREE_MEM_CLASS(header);
 
-          FREE_MEM_CLASS(videoTrackFragmentHeaderBox);
-          FREE_MEM_CLASS(audioTrackFragmentHeaderBox);
-        }
-
-        if (this->mainCurlInstance != NULL)
-        {
-          unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
-          if (bytesRead != 0)
+          if (continueReconstructing)
           {
-            if (this->bufferForBoxProcessingCollection != NULL)
+            // successfully reconstructed header
+            // start processing of stream fragments from start
+            this->reconstructedHeader = true;
+            this->streamFragmentProcessing = 0;
+          }
+        }
+      }
+
+      if ((!this->shouldExit) && (this->streamFragmentDownloading != UINT_MAX) && (this->mainCurlInstance != NULL))
+      {
+        unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+        if (bytesRead != 0)
+        {
+          CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentDownloading);
+          CLinearBuffer *linearBuffer = streamFragment->GetBuffer();
+
+          if (linearBuffer != NULL)
+          {
+            unsigned int bufferSize = linearBuffer->GetBufferSize();
+            if (bufferSize == 0)
             {
-              CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
-              if (linearBuffer != NULL)
+              // initialize buffer
+              linearBuffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+              bufferSize = linearBuffer->GetBufferSize();
+            }
+
+            unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
+
+            if (freeSpace < bytesRead)
+            {
+              unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
+              if (!linearBuffer->ResizeBuffer(bufferNewSize))
               {
-                unsigned int bufferSize = linearBuffer->GetBufferSize();
-                unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
-
-                if (freeSpace < bytesRead)
-                {
-                  unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
-                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
-                  if (!linearBuffer->ResizeBuffer(bufferNewSize))
-                  {
-                    this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-                    // error
-                    bytesRead = 0;
-                    // in case of error don't report end of stream
-                    this->lastFragmentDownloaded = false;
-                  }
-                }
-
-                if (bytesRead != 0)
-                {
-                  ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
-                  if (buffer != NULL)
-                  {
-                    this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-                    linearBuffer->AddToBuffer(buffer, bytesRead);
-                    this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
-                  }
-                  FREE_MEM(buffer);
-                }
+                this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+                // error
+                bytesRead = 0;
               }
+            }
+
+            if (bytesRead != 0)
+            {
+              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
+              if (buffer != NULL)
+              {
+                this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                linearBuffer->AddToBuffer(buffer, bytesRead);
+                this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+              }
+              FREE_MEM(buffer);
             }
           }
         }
@@ -399,44 +395,47 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
           // just make guess
           this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          this->filter->SetTotalLength(this->streamLength, true);
+          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
         }
         else if ((this->bytePosition > (this->streamLength * 3 / 4)))
         {
           // it is time to adjust stream length, we are approaching to end but still we don't know total length
           this->streamLength = this->bytePosition * 2;
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          this->filter->SetTotalLength(this->streamLength, true);
+          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
         }
       }
 
-      if (this->seekingActive && (!this->supressData))
+      if (this->seekingActive && (!this->supressData) && (this->reconstructedHeader))
       {
-        CStreamFragment *streamFragmentToDownload = this->GetFirstNotDownloadedStreamFragment();
+        CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentProcessing);
 
-        // this should happen only once per seek
-        // created fragmented index box
-        CFragmentedIndexBox *fragmentedIndexBox = this->GetFragmentedIndexBox(this->streamingMedia, this->videoTrackId, this->audioTrackId, streamFragmentToDownload->GetFragmentTime());
-
-        if (fragmentedIndexBox != NULL)
+        if (streamFragment != NULL)
         {
-          // copy fragmented index box to processing
-          if (this->bufferForProcessing != NULL)
+          // this should happen only once per seek
+          // created fragmented index box
+          CFragmentedIndexBox *fragmentedIndexBox = this->GetFragmentedIndexBox(this->streamingMedia, this->videoTrackFragmentHeaderBox->GetTrackId(), this->audioTrackFragmentHeaderBox->GetTrackId(), streamFragment->GetFragmentTime());
+
+          if (fragmentedIndexBox != NULL)
           {
-            this->PutBoxIntoBuffer(fragmentedIndexBox, this->bufferForProcessing);
+            // copy fragmented index box to processing
+            if (this->bufferForProcessing != NULL)
+            {
+              this->PutBoxIntoBuffer(fragmentedIndexBox, this->bufferForProcessing);
+            }
           }
+          FREE_MEM_CLASS(fragmentedIndexBox);
         }
-        FREE_MEM_CLASS(fragmentedIndexBox);
       }
 
-      if ((!this->supressData) && (this->bufferForBoxProcessingCollection != NULL))
+      if ((!this->supressData) && (this->streamFragmentProcessing < this->streamFragments->Count()) && (this->reconstructedHeader))
       {
-        bool continueProcessing = false;
-        unsigned int limit = this->lastFragmentDownloaded ? 0 : 1;
-
-        while (this->bufferForBoxProcessingCollection->Count() > limit)
+        CLinearBuffer *bufferForBoxProcessing = this->FillBufferForProcessing(this->streamFragments, this->streamFragmentProcessing, this->storeFilePath);
+        if (bufferForBoxProcessing != NULL)
         {
-          CLinearBuffer *bufferForBoxProcessing = this->bufferForBoxProcessingCollection->GetItem(0);
+          // buffer successfully filled
+
+          bool continueProcessing = false;
           do
           {
             continueProcessing = false;
@@ -466,14 +465,29 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
 
           if (bufferForBoxProcessing->GetBufferOccupiedSpace() == 0)
           {
-            // all data are processed, remove buffer from collection
-            this->bufferForBoxProcessingCollection->Remove(0);
+            // all data are processed
             continueProcessing = true;
           }
-        }
 
-        // in case of error don't report end of stream
-        this->lastFragmentDownloaded &= continueProcessing;
+          if (continueProcessing)
+          {
+            this->streamFragmentProcessing++;
+
+            // check if stream fragment is downloaded
+            // if stream fragment is not downloaded, then schedule it for download
+
+            if (this->streamFragmentProcessing < this->streamFragments->Count())
+            {
+              CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentProcessing);
+              if ((!streamFragment->GetDownloaded()) && (this->streamFragmentProcessing != this->streamFragmentDownloading))
+              {
+                // stream fragment is not downloaded and also is not downloading currently
+                this->streamFragmentToDownload = this->streamFragmentProcessing;
+              }
+            }
+          }
+        }
+        FREE_MEM_CLASS(bufferForBoxProcessing);
       }
 
       if ((!this->supressData) && (this->bufferForProcessing != NULL))
@@ -499,14 +513,14 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
                 // just make guess
                 this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
                 this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                this->filter->SetTotalLength(this->streamLength, true);
+                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
               }
               else if ((newBytePosition > (this->streamLength * 3 / 4)))
               {
                 // it is time to adjust stream length, we are approaching to end but still we don't know total length
                 this->streamLength = newBytePosition * 2;
                 this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                this->filter->SetTotalLength(this->streamLength, true);
+                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
               }
             }
 
@@ -516,17 +530,13 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
             mediaPacket->SetStart(this->bytePosition);
             mediaPacket->SetEnd(this->bytePosition + length - 1);
 
-            HRESULT result = this->filter->PushMediaPacket(mediaPacket);
-            if (FAILED(result))
+            if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
             {
-              this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
-
-              // in case of error don't report end of stream
-              this->lastFragmentDownloaded = false;
+              FREE_MEM_CLASS(mediaPacket);
             }
+
             this->bytePosition += length;
 
-            FREE_MEM_CLASS(mediaPacket);
             this->seekingActive = false;
             this->bufferForProcessing->RemoveFromBufferAndMove(length);
           }
@@ -535,36 +545,21 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
         }
       }
 
-      if ((this->videoCurlInstance != NULL) && (this->audioCurlInstance != NULL) &&
-        (this->videoCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA) &&
-        (this->audioCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+      if ((this->streamFragmentProcessing >= this->streamFragments->Count()) &&
+        (this->streamFragmentToDownload == UINT_MAX) &&
+        (this->streamFragmentDownloading == UINT_MAX))
       {
-        // mark video and audio fragments as downloaded
-        if (!this->streamFragments->GetStreamFragment(this->videoCurlInstance->GetUrl(), true)->GetDownloaded())
-        {
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->videoCurlInstance->GetUrl());
-          this->streamFragments->GetStreamFragment(this->videoCurlInstance->GetUrl(), true)->SetDownloaded(true);
-        }
-        if (!this->streamFragments->GetStreamFragment(this->audioCurlInstance->GetUrl(), true)->GetDownloaded())
-        {
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->audioCurlInstance->GetUrl());
-          this->streamFragments->GetStreamFragment(this->audioCurlInstance->GetUrl(), true)->SetDownloaded(true);
-        }
-
-        // all data for video and audio are received
-        // remove audio CURL instance
-        FREE_MEM_CLASS(this->audioCurlInstance);
-        // move video CURL instance into main CURL instance and continue as in common case
-        this->mainCurlInstance = this->videoCurlInstance;
-        this->videoCurlInstance = NULL;
-      }
-
-      if (this->lastFragmentDownloaded)
-      {
+        // all stream fragments downloaded and processed
         // whole stream downloaded
         this->wholeStreamDownloaded = true;
+        this->isConnected = false;
         FREE_MEM_CLASS(this->mainCurlInstance);
+      }
 
+      if (this->streamFragmentProcessing >= this->streamFragments->Count())
+      {
+        // all stream fragments processed
+        // set stream length and report end of stream
         if (!this->seekingActive)
         {
           // we are not seeking, so we can set total length
@@ -572,82 +567,151 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
           {
             this->streamLength = this->bytePosition;
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-            this->filter->SetTotalLength(this->streamLength, false);
+            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
             this->setLength = true;
           }
 
-          // notify filter the we reached end of stream
-          // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-          this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
+          if (!this->setEndOfStream)
+          {
+            // notify filter the we reached end of stream
+            receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, this->bytePosition - 1));
+            this->setEndOfStream = true;
+          }
         }
       }
 
       if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
       {
-        // all data received, we're not receiving data
-        if (!this->streamFragments->GetStreamFragment(this->mainCurlInstance->GetUrl(), true)->GetDownloaded())
+        if (this->mainCurlInstance->GetErrorCode() == CURLE_OK)
         {
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
-          this->streamFragments->GetStreamFragment(this->mainCurlInstance->GetUrl(), true)->SetDownloaded(true);
-        }
-
-        if (this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace() != 0)
-        {
-          // this should not happen, just for sure
-          this->logger->Log(LOGGER_ERROR, L"%s: %s: still some data in CURL: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace());
-        }
-        
-        CStreamFragment *streamFragmentToDownload = this->GetFirstNotDownloadedStreamFragment();
-        if (streamFragmentToDownload != NULL)
-        {
-          FREE_MEM_CLASS(this->mainCurlInstance);
-          HRESULT result = S_OK;
-
-          CLinearBuffer *buffer = new CLinearBuffer();
-          CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
-
-          if (SUCCEEDED(result))
+          if (this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace() == 0)
           {
-            buffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-            result = (this->bufferForBoxProcessingCollection->Add(buffer)) ? result : E_OUTOFMEMORY;
-          }
+            // in CURL instance aren't received data, all data are stored in stream fragment
+            // all data received, we're not receiving data
+            CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentDownloading);
+            streamFragment->SetDownloaded(true);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
 
-          if (FAILED(result))
-          {
-            FREE_MEM_CLASS(buffer);
-          }
+            // if not set stream fragment to download, then set stream fragment to download (get next not downloaded stream fragment after current downloaded stream fragment)
+            this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->GetFirstNotDownloadedStreamFragment(this->streamFragmentDownloading) : this->streamFragmentToDownload;
+            // if not set stream fragment to download, then set stream fragment to download (get next not downloaded stream fragment from first stream fragment)
+            this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->GetFirstNotDownloadedStreamFragment(0) : this->streamFragmentToDownload;
 
-          if (SUCCEEDED(result))
-          {
-            // we need to download for another url
-            this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, streamFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
-            CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
+            // stream fragment to download still can be UINT_MAX = no stream fragment to download
+            this->streamFragmentDownloading = UINT_MAX;
+            FREE_MEM_CLASS(this->mainCurlInstance);
 
-            if (SUCCEEDED(result))
+            // process first video stream fragment or first audio stream fragment (if necessary)
+            if ((this->videoTrackFragmentHeaderBox == NULL) && (streamFragment->GetFragmentType() == FRAGMENT_TYPE_VIDEO))
             {
-              this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-              this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
-              this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
-              this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
-              this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
-              this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+              this->videoTrackFragmentHeaderBox = this->GetTrackFragmentHeaderBox(streamFragment->GetBuffer());
+            }
 
-              result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
-
-              if (SUCCEEDED(result))
-              {
-                // all parameters set
-                // start receiving data
-
-                result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
-              }
+            if ((this->audioTrackFragmentHeaderBox == NULL) && (streamFragment->GetFragmentType() == FRAGMENT_TYPE_AUDIO))
+            {
+              this->audioTrackFragmentHeaderBox = this->GetTrackFragmentHeaderBox(streamFragment->GetBuffer());
             }
           }
         }
         else
         {
-          // we are on last stream fragment, we received all data
-          this->lastFragmentDownloaded = true;
+          // error occured while downloading
+          // download stream fragment again or download scheduled stream fragment
+          this->streamFragmentToDownload = (this->streamFragmentToDownload != UINT_MAX) ? this->streamFragmentDownloading : this->streamFragmentToDownload;
+          this->streamFragmentDownloading = UINT_MAX;
+          FREE_MEM_CLASS(this->mainCurlInstance);
+        }
+      }
+
+      if (this->mainCurlInstance == NULL)
+      {
+        // no CURL instance exists, we finished download
+        // start another one download
+
+        // check if first video stream fragment and first audio stream fragment downloaded
+        // in another case schedule download of what is missing (prefer video)
+        if (this->videoTrackFragmentHeaderBox == NULL)
+        {
+          unsigned int i = 0;
+          while (i < this->streamFragments->Count())
+          {
+            CStreamFragment *fragment = this->streamFragments->GetItem(i);
+
+            if (fragment->GetFragmentType() == FRAGMENT_TYPE_VIDEO)
+            {
+              this->streamFragmentToDownload = i;
+              break;
+            }
+
+            i++;
+          }
+        }
+
+        if ((this->audioTrackFragmentHeaderBox == NULL) && (this->streamFragmentToDownload == UINT_MAX))
+        {
+          unsigned int i = 0;
+          while (i < this->streamFragments->Count())
+          {
+            CStreamFragment *fragment = this->streamFragments->GetItem(i);
+
+            if (fragment->GetFragmentType() == FRAGMENT_TYPE_AUDIO)
+            {
+              this->streamFragmentToDownload = i;
+              break;
+            }
+
+            i++;
+          }
+        }
+
+        // if not set stream fragment to download, then set stream fragment to download (get next not downloaded stream fragment after current processed stream fragment)
+        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->GetFirstNotDownloadedStreamFragment(this->streamFragmentProcessing) : this->streamFragmentToDownload;
+        // if not set stream fragment to download, then set stream fragment to download (get next not downloaded stream fragment from first stream fragment)
+        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->GetFirstNotDownloadedStreamFragment(0) : this->streamFragmentToDownload;
+        // stream fragment to download still can be UINT_MAX = no stream fragment to download
+
+        if (this->streamFragmentToDownload != UINT_MAX)
+        {
+          // there is specified stream fragment to download
+
+          CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentToDownload);
+          if (streamFragment != NULL)
+          {
+            HRESULT result = S_OK;
+
+            if (SUCCEEDED(result))
+            {
+              // we need to download for another url
+              this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, streamFragment->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+              CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
+
+              if (SUCCEEDED(result))
+              {
+                this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+                this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
+                this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
+                this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
+                this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
+                this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
+                result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+
+                if (SUCCEEDED(result))
+                {
+                  // all parameters set
+                  // start receiving data
+
+                  result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+
+                  if (SUCCEEDED(result))
+                  {
+                    this->streamFragmentDownloading = this->streamFragmentToDownload;
+                    this->streamFragmentToDownload = UINT_MAX;
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -658,7 +722,7 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
       {
         this->streamLength = this->bytePosition;
         this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-        this->filter->SetTotalLength(this->streamLength, false);
+        receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
         this->setLength = true;
       }
     }
@@ -673,7 +737,79 @@ void CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit)
     }
   }
 
+  // store stream fragments to temporary file
+  if ((GetTickCount() - this->lastStoreTime) > 1000)
+  {
+    this->lastStoreTime = GetTickCount();
+
+    if (this->streamFragments->Count() > 0)
+    {
+      // store all stream fragments (which are not stored) to file
+      if (this->storeFilePath == NULL)
+      {
+        this->storeFilePath = this->GetStoreFile();
+      }
+
+      if (this->storeFilePath != NULL)
+      {
+        LARGE_INTEGER size;
+        size.QuadPart = 0;
+
+        // open or create file
+        HANDLE hTempFile = CreateFile(this->storeFilePath, FILE_APPEND_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+        if (hTempFile != INVALID_HANDLE_VALUE)
+        {
+          if (!GetFileSizeEx(hTempFile, &size))
+          {
+            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while getting size");
+            // error occured while getting file size
+            size.QuadPart = -1;
+          }
+
+          if (size.QuadPart >= 0)
+          {
+            unsigned int i = 0;
+            while (i < this->streamFragments->Count())
+            {
+              CStreamFragment *streamFragment = this->streamFragments->GetItem(i);
+
+              if ((!streamFragment->IsStoredToFile()) && (streamFragment->GetDownloaded()))
+              {
+                // if stream fragment is not stored to file
+                // store it to file
+                unsigned int length = streamFragment->GetLength();
+
+                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+                if (streamFragment->GetBuffer()->CopyFromBuffer(buffer, length, 0, 0) == length)
+                {
+                  DWORD written = 0;
+                  if (WriteFile(hTempFile, buffer, length, &written, NULL))
+                  {
+                    if (length == written)
+                    {
+                      // mark as stored
+                      streamFragment->SetStoredToFile(size.QuadPart);
+                      size.QuadPart += length;
+                    }
+                  }
+                }
+                FREE_MEM(buffer);
+              }
+
+              i++;
+            }
+          }
+
+          CloseHandle(hTempFile);
+          hTempFile = INVALID_HANDLE_VALUE;
+        }
+      }
+    }
+  }
+
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+  return S_OK;
 }
 
 // ISimpleProtocol interface
@@ -697,6 +833,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
   this->bytePosition = 0;
   this->streamLength = 0;
   this->setLength = false;
+  this->setEndOfStream = false;
 
   if (this->streamFragments == NULL)
   {
@@ -757,32 +894,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
 
   if (SUCCEEDED(result))
   {
-    if (this->bufferForBoxProcessingCollection == NULL)
-    {
-      this->bufferForBoxProcessingCollection = new CLinearBufferCollection();
-    }
-    CHECK_POINTER_HRESULT(result, this->bufferForBoxProcessingCollection, result, E_OUTOFMEMORY);
-
-    if (SUCCEEDED(result))
-    {
-      CLinearBuffer *buffer = new CLinearBuffer();
-      CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
-
-      if (SUCCEEDED(result))
-      {
-        buffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-        result = (this->bufferForBoxProcessingCollection->Add(buffer)) ? result : E_OUTOFMEMORY;
-      }
-
-      if (FAILED(result))
-      {
-        FREE_MEM_CLASS(buffer);
-      }
-    }
-  }
-
-  if (SUCCEEDED(result))
-  {
     this->bufferForProcessing = new CLinearBuffer();
     CHECK_POINTER_HRESULT(result, this->bufferForProcessing, result, E_OUTOFMEMORY);
 
@@ -809,6 +920,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
       if ((videoStreamFragment == NULL) && (fragment->GetFragmentType() == FRAGMENT_TYPE_VIDEO))
       {
         videoStreamFragment = fragment;
+
+        // process first video stream fragment, then audio stream fragment
+        this->streamFragmentProcessing = i;
       }
 
       if ((audioStreamFragment == NULL) && (fragment->GetFragmentType() == FRAGMENT_TYPE_AUDIO))
@@ -822,189 +936,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
     CHECK_POINTER_HRESULT(result, videoStreamFragment, result, E_POINTER);
     CHECK_POINTER_HRESULT(result, audioStreamFragment, result, E_POINTER);
 
-    if (SUCCEEDED(result))
-    {
-      this->videoCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, videoStreamFragment->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
-      this->audioCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, audioStreamFragment->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
-
-      CHECK_POINTER_HRESULT(result, this->videoCurlInstance, result, E_POINTER);
-      CHECK_POINTER_HRESULT(result, this->audioCurlInstance, result, E_POINTER);
-    }
-
-    if (SUCCEEDED(result))
-    {
-      this->videoCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-      this->videoCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
-      this->videoCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
-      this->videoCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
-      this->videoCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
-      this->videoCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-
-      this->audioCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-      this->audioCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
-      this->audioCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
-      this->audioCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
-      this->audioCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
-      this->audioCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-
-      result = (this->videoCurlInstance->Initialize()) ? result : E_FAIL;
-      result = (this->audioCurlInstance->Initialize()) ? result : E_FAIL;
-    }
-
-    if (SUCCEEDED(result))
-    {
-      // all parameters set
-      // start receiving data
-
-      result = (this->videoCurlInstance->StartReceivingData()) ? result : E_FAIL;
-      result = (this->audioCurlInstance->StartReceivingData()) ? result : E_FAIL;
-    }
-
-    if (SUCCEEDED(result) && this->seekingActive)
-    {
-      // add fragmented index to buffer
-    }
-
-    if (SUCCEEDED(result))
-    {
-      // wait for HTTP status code
-
-      long responseCode = 0;
-      while ((responseCode == 0) && SUCCEEDED(result))
-      {
-        // check state of video CURL instance
-        CURLcode errorCode = this->videoCurlInstance->GetResponseCode(&responseCode);
-        if (errorCode == CURLE_OK)
-        {
-          if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-          {
-            // response code 200 - 299 = OK
-            // response code 300 - 399 = redirect (OK)
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: video fragment HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-            result = E_FAIL;
-          }
-        }
-        else
-        {
-          this->videoCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
-          result = E_FAIL;
-          break;
-        }
-
-        if ((responseCode == 0) && (this->videoCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
-        {
-          // we received data too fast
-          result = E_FAIL;
-          break;
-        }
-
-        // wait some time
-        Sleep(1);
-      }
-
-      responseCode = 0;
-      while ((responseCode == 0) && (SUCCEEDED(result)))
-      {
-        // check state of audio CURL instance
-        CURLcode errorCode = this->audioCurlInstance->GetResponseCode(&responseCode);
-        if (errorCode == CURLE_OK)
-        {
-          if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-          {
-            // response code 200 - 299 = OK
-            // response code 300 - 399 = redirect (OK)
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: audio fragment HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-            result = E_FAIL;
-          }
-        }
-        else
-        {
-          this->audioCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
-          result = E_FAIL;
-          break;
-        }
-
-        if ((responseCode == 0) && (this->audioCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
-        {
-          // we received data too fast
-          result = E_FAIL;
-          break;
-        }
-
-        // wait some time
-        Sleep(1);
-      }
-    }
-
     if (FAILED(result))
     {
-      // free video and audio CURL instances - not needed because of error
-      FREE_MEM_CLASS(this->videoCurlInstance);
-      FREE_MEM_CLASS(this->audioCurlInstance);
-    }
-  }
-  else if (SUCCEEDED(result))
-  {
-    // common situation, just download first not downloaded stream fragment
-    CStreamFragment *streamFragmentToDownload = this->GetFirstNotDownloadedStreamFragment();
-    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, streamFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
-    CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
-
-    if (SUCCEEDED(result))
-    {
-      this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-      this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
-      this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
-      this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
-      this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
-      this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-
-      result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
-
-      if (SUCCEEDED(result))
-      {
-        // all parameters set
-        // start receiving data
-
-        result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
-      }
-
-      if (SUCCEEDED(result))
-      {
-        // wait for HTTP status code
-
-        long responseCode = 0;
-        while (responseCode == 0)
-        {
-          CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
-          if (errorCode == CURLE_OK)
-          {
-            if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-            {
-              // response code 200 - 299 = OK
-              // response code 300 - 399 = redirect (OK)
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-              result = E_FAIL;
-            }
-          }
-          else
-          {
-            this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
-            result = E_FAIL;
-            break;
-          }
-
-          if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
-          {
-            // we received data too fast
-            result = E_FAIL;
-            break;
-          }
-
-          // wait some time
-          Sleep(1);
-        }
-      }
+      this->streamFragmentProcessing = 0;
     }
   }
 
@@ -1012,6 +946,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
   {
     this->StopReceivingData();
   }
+
+  this->isConnected = SUCCEEDED(result);
 
   this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, result);
   return result;
@@ -1024,17 +960,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StopReceivingData(void)
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  FREE_MEM_CLASS(this->videoCurlInstance);
-  FREE_MEM_CLASS(this->audioCurlInstance);
-
   if (this->mainCurlInstance != NULL)
   {
     this->mainCurlInstance->SetCloseWithoutWaiting(this->seekingActive);
     FREE_MEM_CLASS(this->mainCurlInstance);
   }
 
-  FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
   FREE_MEM_CLASS(this->bufferForProcessing);
+  this->isConnected = false;
+  this->streamFragmentDownloading = UINT_MAX;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
@@ -1093,21 +1027,31 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ClearSession(void)
     this->StopReceivingData();
   }
 
-  FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
+  if (this->storeFilePath != NULL)
+  {
+    DeleteFile(this->storeFilePath);
+  }
+
   FREE_MEM_CLASS(this->bufferForProcessing);
   FREE_MEM_CLASS(this->streamingMedia);
  
   this->streamLength = 0;
   this->setLength = false;
+  this->setEndOfStream = false;
   this->streamTime = 0;
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = MSHS_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->bytePosition = 0;
   this->shouldExit = false;
-  this->lastFragmentDownloaded = false;
-  this->videoTrackId = 0;
-  this->audioTrackId = 0;
+  FREE_MEM(this->storeFilePath);
+  this->isConnected = false;
+  this->streamFragmentDownloading = UINT_MAX;
+  this->streamFragmentProcessing = 0;
+  this->streamFragmentToDownload = UINT_MAX;
+  FREE_MEM_CLASS(this->videoTrackFragmentHeaderBox);
+  FREE_MEM_CLASS(this->audioTrackFragmentHeaderBox);
+  this->reconstructedHeader = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -1129,17 +1073,10 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToTime(int64_t time)
 
   int64_t result = -1;
 
-  this->seekingActive = true;
-
-  // close connection
-  this->StopReceivingData();
-
   // MSHS protocol can seek to ms
   // time is in ms
 
-  this->lastFragmentDownloaded = false;
-  unsigned int fragmentToDownload = UINT_MAX;
-  // find fragment to download
+  // find stream fragment to process
   if (this->streamFragments != NULL)
   {
     for (unsigned int i = 0; i < this->streamFragments->Count(); i++)
@@ -1148,43 +1085,54 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToTime(int64_t time)
 
       if ((fragment->GetFragmentType() == FRAGMENT_TYPE_VIDEO) && (fragment->GetFragmentTime() <= (uint64_t)time))
       {
-        fragmentToDownload = i;
+        this->streamFragmentProcessing = i;
         result = fragment->GetFragmentTime();
       }
     }
-
-    for (unsigned int i = 0; i < fragmentToDownload; i++)
-    {
-      // mark all previous fragments as downloaded
-      this->streamFragments->GetItem(i)->SetDownloaded(true);
-    }
-    for (unsigned int i = fragmentToDownload; i < this->streamFragments->Count(); i++)
-    {
-      // mark all other fragments as not downloaded
-      this->streamFragments->GetItem(i)->SetDownloaded(false);
-    }
   }
 
-  // in fragmentToDownload is id of fragment to download
-  CStreamFragment *fragment = this->streamFragments->GetItem(fragmentToDownload);
+  this->seekingActive = true;
+  this->bytePosition = 0;
+  this->streamLength = 0;
+  this->setLength = false;
+  this->setEndOfStream = false;
+  // reset whole stream downloaded, but IsConnected() must return true to avoid calling StartReceivingData()
+  this->isConnected = true;
+  this->wholeStreamDownloaded = false;
 
-  if (fragment != NULL)
+  // in this->sstreamFragmentProcessing is id of stream fragment to process
+  CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentProcessing);
+
+  if (streamFragment != NULL)
   {
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: url '%s', timestamp: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
-      fragment->GetUrl(), fragment->GetFragmentTime());
+      streamFragment->GetUrl(), streamFragment->GetFragmentTime());
 
-    // reopen connection
-    // StartReceivingData() reset wholeStreamDownloaded
-    this->StartReceivingData(NULL);
+    if (!streamFragment->GetDownloaded())
+    {
+      // close connection
+      this->StopReceivingData();
 
-    if (!this->IsConnected())
-    {
-      result = -1;
+      // clear stream fragment to download
+      this->streamFragmentToDownload = UINT_MAX;
+
+      // reopen connection
+      // StartReceivingData() reset wholeStreamDownloaded
+      this->isConnected = SUCCEEDED(this->StartReceivingData(NULL));
     }
-    else
-    {
-      this->streamTime = result;
-    }
+  }
+  else
+  {
+    this->isConnected = false;
+  }
+
+  if (!this->IsConnected())
+  {
+    result = -1;
+  }
+  else
+  {
+    this->streamTime = result;
   }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
@@ -1228,11 +1176,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::Initialize(PluginConfiguration *conf
 
   ProtocolPluginConfiguration *protocolConfiguration = (ProtocolPluginConfiguration *)configuration;
   this->logger->SetParameters(protocolConfiguration->configuration);
-  this->filter = protocolConfiguration->outputStream;
-  if (this->filter == NULL)
-  {
-    return E_POINTER;
-  }
 
   if (this->lockMutex == NULL)
   {
@@ -1257,34 +1200,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::Initialize(PluginConfiguration *conf
 
 // other methods
 
-void CMPUrlSourceSplitter_Protocol_Mshs::RemoveAllDownloadedStreamFragments(void)
+unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetFirstNotDownloadedStreamFragment(unsigned int start)
 {
-  if (this->streamFragments->Count() > 1)
-  {
-    unsigned int i = 0;
-    while (i < (this->streamFragments->Count() - 1))
-    {
-      if (this->streamFragments->GetItem(i)->GetDownloaded())
-      {
-        this->streamFragments->Remove(i);
-      }
-      else
-      {
-        i++;
-      }
-    }
-  }
-}
+  unsigned int result = UINT_MAX;
 
-CStreamFragment *CMPUrlSourceSplitter_Protocol_Mshs::GetFirstNotDownloadedStreamFragment(void)
-{
-  CStreamFragment *result = NULL;
-
-  for (unsigned int i = 0; i < this->streamFragments->Count(); i++)
+  for (unsigned int i = start; i < this->streamFragments->Count(); i++)
   {
     if (!this->streamFragments->GetItem(i)->GetDownloaded())
     {
-      result = this->streamFragments->GetItem(i);
+      result = i;
       break;
     }
   }
@@ -2812,4 +2736,137 @@ CFragmentedIndexTrackBox *CMPUrlSourceSplitter_Protocol_Mshs::GetFragmentedIndex
   }
 
   return fragmentedIndexTrackBox;
+}
+
+wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetStoreFile(void)
+{
+  wchar_t *result = NULL;
+  wchar_t *folder = GetStoreFilePath(this->configurationParameters);
+
+  if (folder != NULL)
+  {
+    wchar_t *guid = ConvertGuidToString(this->logger->loggerInstance);
+
+    if (guid != NULL)
+    {
+      result = FormatString(L"%smpurlsourcesplitter_protocol_mshs_%s.temp", folder, guid);
+    }
+  }
+
+  FREE_MEM(folder);
+  return result;
+}
+
+CLinearBuffer *CMPUrlSourceSplitter_Protocol_Mshs::FillBufferForProcessing(CStreamFragmentCollection *streamFragments, unsigned int streamFragmentProcessing, wchar_t *storeFile)
+{
+  CLinearBuffer *result = NULL;
+
+  if (streamFragments != NULL)
+  {
+    if (streamFragmentProcessing < streamFragments->Count())
+    {
+      CStreamFragment *streamFragment = streamFragments->GetItem(streamFragmentProcessing);
+
+      if (streamFragment->GetDownloaded())
+      {
+        // stream fragment is downloaded
+        // stream fragment can be stored in memory or in store file
+
+        // temporary buffer for data (from store file or from memory)
+        unsigned int bufferLength = streamFragment->GetLength();
+        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferLength, 0);
+
+        if (buffer != NULL)
+        {
+          if ((streamFragment->IsStoredToFile()) && (storeFile != NULL))
+          {
+            // stream fragment is stored into file and store file is specified
+
+            LARGE_INTEGER size;
+            size.QuadPart = 0;
+
+            // open or create file
+            HANDLE hTempFile = CreateFile(storeFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+            if (hTempFile != INVALID_HANDLE_VALUE)
+            {
+              bool error = false;
+
+              LONG distanceToMoveLow = (LONG)(streamFragment->GetStoreFilePosition());
+              LONG distanceToMoveHigh = (LONG)(streamFragment->GetStoreFilePosition() >> 32);
+              LONG distanceToMoveHighResult = distanceToMoveHigh;
+              DWORD setFileResult = SetFilePointer(hTempFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
+              if (setFileResult == INVALID_SET_FILE_POINTER)
+              {
+                DWORD lastError = GetLastError();
+                if (lastError != NO_ERROR)
+                {
+                  this->logger->Log(LOGGER_ERROR, L"%s: %s: error occured while setting position: %lu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, lastError);
+                  error = true;
+                }
+              }
+
+              if (!error)
+              {
+                DWORD read = 0;
+                if (ReadFile(hTempFile, buffer, bufferLength, &read, NULL) == 0)
+                {
+                  this->logger->Log(LOGGER_ERROR, L"%s: %s: error occured reading file: %lu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, GetLastError());
+                  FREE_MEM(buffer);
+                }
+                else if (read != bufferLength)
+                {
+                  this->logger->Log(LOGGER_WARNING, L"%s: %s: readed data length not same as requested, requested: %u, readed: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, bufferLength, read);
+                  FREE_MEM(buffer);
+                }
+              }
+
+              CloseHandle(hTempFile);
+              hTempFile = INVALID_HANDLE_VALUE;
+            }
+          }
+          else if (!streamFragment->IsStoredToFile())
+          {
+            // stream fragment is stored in memory
+            if (streamFragment->GetBuffer() != NULL)
+            {
+              if (streamFragment->GetBuffer()->CopyFromBuffer(buffer, bufferLength, 0, 0) != bufferLength)
+              {
+                // error occured while copying data
+                FREE_MEM(buffer);
+              }
+            }
+          }
+        }
+
+        if (buffer != NULL)
+        {
+          // all data are read
+          bool correct = false;
+          result = new CLinearBuffer();
+          if (result != NULL)
+          {
+            if (result->InitializeBuffer(bufferLength))
+            {
+              if (result->AddToBuffer(buffer, bufferLength) == bufferLength)
+              {
+                // everything correct, data copied successfully
+                correct = true;
+              }
+            }
+          }
+
+          if (!correct)
+          {
+            FREE_MEM_CLASS(result);
+          }
+        }
+
+        // clean-up buffer
+        FREE_MEM(buffer);
+      }
+    }
+  }
+
+  return result;
 }

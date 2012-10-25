@@ -26,6 +26,8 @@
 #include "LockMutex.h"
 #include "VersionInfo.h"
 #include "formatUrl.h"
+#include "ErrorCodes.h"
+#include "Utilities.h"
 
 #include "base64.h"
 
@@ -46,6 +48,8 @@
 #else
 #define PROTOCOL_IMPLEMENTATION_NAME                                          L"MPUrlSourceSplitter_Protocol_Afhs"
 #endif
+
+#define METHOD_FILL_BUFFER_FOR_PROCESSING_NAME                                L"FillBufferForProcessing()"
 
 PIPlugin CreatePluginInstance(CParameterCollection *configuration)
 {
@@ -88,9 +92,9 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   
   this->receiveDataTimeout = AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
-  this->filter = NULL;
   this->streamLength = 0;
   this->setLength = false;
+  this->setEndOfStream = false;
   this->streamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->wholeStreamDownloaded = false;
@@ -98,14 +102,18 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->bytePosition = 0;
   this->seekingActive = false;
   this->supressData = false;
-  this->bufferForBoxProcessingCollection = NULL;
   this->bufferForProcessing = NULL;
   this->shouldExit = false;
   this->bootstrapInfoBox = NULL;
   this->segmentsFragments = NULL;
   this->live = false;
   this->lastBootstrapInfoRequestTime = 0;
-  this->lastStreamAndFragmentDownloaded = false;
+  this->storeFilePath = NULL;
+  this->lastStoreTime = 0;
+  this->isConnected = false;
+  this->segmentFragmentDownloading = UINT_MAX;
+  this->segmentFragmentProcessing = 0;
+  this->segmentFragmentToDownload = UINT_MAX;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -119,13 +127,13 @@ CMPUrlSourceSplitter_Protocol_Afhs::~CMPUrlSourceSplitter_Protocol_Afhs()
     this->StopReceivingData();
   }
 
-  if (this->mainCurlInstance != NULL)
+  FREE_MEM_CLASS(this->mainCurlInstance);
+
+  if (this->storeFilePath != NULL)
   {
-    delete this->mainCurlInstance;
-    this->mainCurlInstance = NULL;
+    DeleteFile(this->storeFilePath);
   }
 
-  FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
   FREE_MEM_CLASS(this->bufferForProcessing);
   FREE_MEM_CLASS(this->configurationParameters);
 
@@ -137,18 +145,18 @@ CMPUrlSourceSplitter_Protocol_Afhs::~CMPUrlSourceSplitter_Protocol_Afhs()
 
   FREE_MEM_CLASS(this->bootstrapInfoBox);
   FREE_MEM_CLASS(this->segmentsFragments);
+  FREE_MEM(this->storeFilePath);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
 
-  delete this->logger;
-  this->logger = NULL;
+  FREE_MEM_CLASS(this->logger);
 }
 
 // IProtocol interface
 
 bool CMPUrlSourceSplitter_Protocol_Afhs::IsConnected(void)
 {
-  return ((this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded));
+  return ((this->isConnected) || (this->wholeStreamDownloaded));
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Afhs::GetOpenConnectionMaximumAttempts(void)
@@ -169,7 +177,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ParseUrl(const CParameterCollection 
     ALLOC_MEM_DEFINE_SET(protocolConfiguration, ProtocolPluginConfiguration, 1, 0);
     if (protocolConfiguration != NULL)
     {
-      protocolConfiguration->outputStream = this->filter;
       protocolConfiguration->configuration = (CParameterCollection *)parameters;
     }
     this->Initialize(protocolConfiguration);
@@ -246,7 +253,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ParseUrl(const CParameterCollection 
   return result;
 }
 
-void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
+HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CReceiveData *receiveData)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   this->shouldExit = *shouldExit;
@@ -257,44 +264,48 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
   {
     if (!this->wholeStreamDownloaded)
     {
-      if (!(this->shouldExit))
+      if ((!this->shouldExit) && (this->segmentFragmentDownloading != UINT_MAX) && (this->mainCurlInstance != NULL))
       {
         unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
         if (bytesRead != 0)
         {
-          if (this->bufferForBoxProcessingCollection != NULL)
+          CSegmentFragment *segmentFragment = this->segmentsFragments->GetItem(this->segmentFragmentDownloading);
+          CLinearBuffer *linearBuffer = segmentFragment->GetBuffer();
+
+          if (linearBuffer != NULL)
           {
-            CLinearBuffer *linearBuffer = this->bufferForBoxProcessingCollection->GetItem(this->bufferForBoxProcessingCollection->Count() - 1);
-            if (linearBuffer != NULL)
+            unsigned int bufferSize = linearBuffer->GetBufferSize();
+            if (bufferSize == 0)
             {
-              unsigned int bufferSize = linearBuffer->GetBufferSize();
-              unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
+              // initialize buffer
+              linearBuffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+              bufferSize = linearBuffer->GetBufferSize();
+            }
 
-              if (freeSpace < bytesRead)
-              {
-                unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
-                if (!linearBuffer->ResizeBuffer(bufferNewSize))
-                {
-                  this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-                  // error
-                  bytesRead = 0;
-                  // in case of error don't report end of stream
-                  this->lastStreamAndFragmentDownloaded = false;
-                }
-              }
+            unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
 
-              if (bytesRead != 0)
+            if (freeSpace < bytesRead)
+            {
+              unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
+              if (!linearBuffer->ResizeBuffer(bufferNewSize))
               {
-                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
-                if (buffer != NULL)
-                {
-                  this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-                  linearBuffer->AddToBuffer(buffer, bytesRead);
-                  this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
-                }
-                FREE_MEM(buffer);
+                this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+                // error
+                bytesRead = 0;
               }
+            }
+
+            if (bytesRead != 0)
+            {
+              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
+              if (buffer != NULL)
+              {
+                this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                linearBuffer->AddToBuffer(buffer, bytesRead);
+                this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+              }
+              FREE_MEM(buffer);
             }
           }
         }
@@ -309,25 +320,25 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
           // just make guess
           this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          this->filter->SetTotalLength(this->streamLength, true);
+          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
         }
         else if ((this->bytePosition > (this->streamLength * 3 / 4)))
         {
           // it is time to adjust stream length, we are approaching to end but still we don't know total length
           this->streamLength = this->bytePosition * 2;
           this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          this->filter->SetTotalLength(this->streamLength, true);
+          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
         }
       }
 
-      if ((!this->supressData) && (this->bufferForBoxProcessingCollection != NULL))
+      if ((!this->supressData) && (this->segmentFragmentProcessing < this->segmentsFragments->Count()))
       {
-        bool continueProcessing = false;
-        unsigned int limit = this->lastStreamAndFragmentDownloaded ? 0 : 1;
-
-        while (this->bufferForBoxProcessingCollection->Count() > limit)
+        CLinearBuffer *bufferForBoxProcessing = this->FillBufferForProcessing(this->segmentsFragments, this->segmentFragmentProcessing, this->storeFilePath);
+        if (bufferForBoxProcessing != NULL)
         {
-          CLinearBuffer *bufferForBoxProcessing = this->bufferForBoxProcessingCollection->GetItem(0);
+          // buffer successfully filled
+
+          bool continueProcessing = false;
           do
           {
             continueProcessing = false;
@@ -381,10 +392,10 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
                       //  }
                       //  FREE_MEM_CLASS(bootstrapInfoBox);
                       //}
-                      
+
                       if (continueProcessing)
                       {
-                        bufferForBoxProcessing->RemoveFromBufferAndMove(boxSize);
+                        bufferForBoxProcessing->RemoveFromBuffer(boxSize);
                         continueProcessing = true;
                       }
                     }
@@ -398,14 +409,29 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
 
           if (bufferForBoxProcessing->GetBufferOccupiedSpace() == 0)
           {
-            // all data are processed, remove buffer from collection
-            this->bufferForBoxProcessingCollection->Remove(0);
+            // all data are processed
             continueProcessing = true;
           }
-        }
 
-        // in case of error don't report end of stream
-        this->lastStreamAndFragmentDownloaded &= continueProcessing;
+          if (continueProcessing)
+          {
+            this->segmentFragmentProcessing++;
+
+            // check if segment and fragment is downloaded
+            // if segment and fragment is not downloaded, then schedule it for download
+
+            if (this->segmentFragmentProcessing < this->segmentsFragments->Count())
+            {
+              CSegmentFragment *segmentFragment = this->segmentsFragments->GetItem(this->segmentFragmentProcessing);
+              if ((!segmentFragment->GetDownloaded()) && (this->segmentFragmentProcessing != this->segmentFragmentDownloading))
+              {
+                // segment and fragment is not downloaded and also is not downloading currently
+                this->segmentFragmentToDownload = this->segmentFragmentProcessing;
+              }
+            }
+          }
+        }
+        FREE_MEM_CLASS(bufferForBoxProcessing);
       }
 
       if ((!this->supressData) && (this->bufferForProcessing != NULL))
@@ -462,14 +488,14 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
                   // just make guess
                   this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
                   this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                  this->filter->SetTotalLength(this->streamLength, true);
+                  receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
                 }
                 else if ((newBytePosition > (this->streamLength * 3 / 4)))
                 {
                   // it is time to adjust stream length, we are approaching to end but still we don't know total length
                   this->streamLength = newBytePosition * 2;
                   this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                  this->filter->SetTotalLength(this->streamLength, true);
+                  receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
                 }
               }
 
@@ -481,14 +507,11 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
               mediaPacket->SetStart(this->bytePosition);
               mediaPacket->SetEnd(this->bytePosition + flvPacket->GetSize() - 1);
 
-              HRESULT result = this->filter->PushMediaPacket(mediaPacket);
-              if (FAILED(result))
+              if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
               {
-                this->logger->Log(LOGGER_WARNING, L"%s: %s: error occured while adding media packet, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+                FREE_MEM_CLASS(mediaPacket);
               }
               this->bytePosition += flvPacket->GetSize();
-
-              FREE_MEM_CLASS(mediaPacket);
             }
             // we are definitely not seeking
             this->seekingActive = false;
@@ -501,12 +524,22 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
         }
       }
 
-      if (this->lastStreamAndFragmentDownloaded)
+      if ((this->segmentFragmentProcessing >= this->segmentsFragments->Count()) &&
+        (this->segmentFragmentToDownload == UINT_MAX) &&
+        (this->segmentFragmentDownloading == UINT_MAX) &&
+        (!this->live))
       {
+        // all segments and fragments downloaded and processed
         // whole stream downloaded
         this->wholeStreamDownloaded = true;
+        this->isConnected = false;
         FREE_MEM_CLASS(this->mainCurlInstance);
+      }
 
+      if ((this->segmentFragmentProcessing >= this->segmentsFragments->Count()) && (!this->live))
+      {
+        // all segments and fragments processed
+        // set stream length and report end of stream
         if (!this->seekingActive)
         {
           // we are not seeking, so we can set total length
@@ -514,68 +547,108 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
           {
             this->streamLength = this->bytePosition;
             this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-            this->filter->SetTotalLength(this->streamLength, false);
+            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
             this->setLength = true;
           }
 
-          // notify filter the we reached end of stream
-          // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-          this->filter->EndOfStreamReached(max(0, this->bytePosition - 1));
+          if (!this->setEndOfStream)
+          {
+            // notify filter the we reached end of stream
+            receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, this->bytePosition - 1));
+            this->setEndOfStream = true;
+          }
         }
       }
 
       if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
       {
-        // all data received, we're not receiving data
-        if (!this->segmentsFragments->GetSegmentFragment(this->mainCurlInstance->GetUrl(), true)->GetDownloaded())
+        if (this->mainCurlInstance->GetErrorCode() == CURLE_OK)
         {
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
-          this->segmentsFragments->GetSegmentFragment(this->mainCurlInstance->GetUrl(), true)->SetDownloaded(true);
+          if (this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace() == 0)
+          {
+            // in CURL instance aren't received data, all data are stored in segment and fragment
+            // all data received, we're not receiving data
+            CSegmentFragment *segmentFragment = this->segmentsFragments->GetItem(this->segmentFragmentDownloading);
+            segmentFragment->SetDownloaded(true);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
+
+            // if it is live session, then download first not downloaded segment and fragment after currently processed segment and fragment
+            // can return UINT_MAX if segment and fragment for download doesn't exist (in that case wait for update of bootstrap info)
+            this->segmentFragmentToDownload = (this->live) ? this->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentProcessing) : this->segmentFragmentToDownload;
+            // if not set segment and fragment to download, then set segment and fragment to download (get next not downloaded segment and fragment after current downloaded segment and fragment)
+            this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentDownloading) : this->segmentFragmentToDownload;
+            // if not set segment and fragment to download, then set segment and fragment to download (get next not downloaded segment and fragment from first segment and fragment)
+            this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->GetFirstNotDownloadedSegmentFragment(0) : this->segmentFragmentToDownload;
+            
+
+            // segment and fragment to download still can be UINT_MAX = no segment and fragment to download
+            this->segmentFragmentDownloading = UINT_MAX;
+            FREE_MEM_CLASS(this->mainCurlInstance);
+          }
         }
-        
-        CSegmentFragment *segmentFragmentToDownload = this->GetFirstNotDownloadedSegmentFragment();
-        if (segmentFragmentToDownload != NULL)
+        else
         {
+          // error occured while downloading
+          // download segment and fragment again or download scheduled segment and fragment
+          this->segmentFragmentToDownload = (this->segmentFragmentToDownload != UINT_MAX) ? this->segmentFragmentDownloading : this->segmentFragmentToDownload;
+          this->segmentFragmentDownloading = UINT_MAX;
           FREE_MEM_CLASS(this->mainCurlInstance);
-          HRESULT result = S_OK;
+        }
+      }
 
-          CLinearBuffer *buffer = new CLinearBuffer();
-          CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+      if (this->mainCurlInstance == NULL)
+      {
+        // no CURL instance exists, we finished download
+        // start another one download
 
-          if (SUCCEEDED(result))
+        // if it is live session, then download first not downloaded segment and fragment after currently processed segment and fragment
+        // can return UINT_MAX if segment and fragment for download doesn't exist (in that case wait for update of bootstrap info)
+        this->segmentFragmentToDownload = (this->live) ? this->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentProcessing) : this->segmentFragmentToDownload;
+        // if not set segment and fragment to download, then set segment and fragment to download (get next not downloaded segment and fragment after current processed segment and fragment)
+        this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentProcessing) : this->segmentFragmentToDownload;
+        // if not set segment and fragment to download, then set segment and fragment to download (get next not downloaded segment and fragment from first segment and fragment)
+        this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->GetFirstNotDownloadedSegmentFragment(0) : this->segmentFragmentToDownload;
+        // segment and fragment to download still can be UINT_MAX = no segment and fragment to download
+
+        if (this->segmentFragmentToDownload != UINT_MAX)
+        {
+          // there is specified segment and fragment to download
+
+          CSegmentFragment *segmentFragment = this->segmentsFragments->GetItem(this->segmentFragmentToDownload);
+          if (segmentFragment != NULL)
           {
-            buffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-            result = (this->bufferForBoxProcessingCollection->Add(buffer)) ? result : E_OUTOFMEMORY;
-          }
-
-          if (FAILED(result))
-          {
-            FREE_MEM_CLASS(buffer);
-          }
-
-          if (SUCCEEDED(result))
-          {
-            // we need to download for another url
-            this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, segmentFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
-            CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
+            HRESULT result = S_OK;
 
             if (SUCCEEDED(result))
             {
-              this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-              this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
-              this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
-              this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
-              this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-              this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-
-              result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+              // we need to download for another url
+              this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, segmentFragment->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+              CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
 
               if (SUCCEEDED(result))
               {
-                // all parameters set
-                // start receiving data
+                this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+                this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
+                this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
+                this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
+                this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
+                this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
 
-                result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+                result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+
+                if (SUCCEEDED(result))
+                {
+                  // all parameters set
+                  // start receiving data
+
+                  result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+
+                  if (SUCCEEDED(result))
+                  {
+                    this->segmentFragmentDownloading = this->segmentFragmentToDownload;
+                    this->segmentFragmentToDownload = UINT_MAX;
+                  }
+                }
               }
             }
           }
@@ -588,8 +661,10 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
           {
             // request for next bootstrap info repeat after five seconds
             this->lastBootstrapInfoRequestTime = GetTickCount();
-            this->RemoveAllDownloadedSegmentFragment();
 
+            // this part HAVE to be reworked
+            // there is possibility of freeze when no response from remote server
+            // request to bootstrap info should be asynchronous
 
             const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, true, NULL);
             if (url != NULL)
@@ -674,25 +749,29 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
                           {
                             //this->logger->Log(LOGGER_VERBOSE, L"%s: %s: new bootstrap info box:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bootstrapInfoBox->GetParsedHumanReadable(L""));
 
-                            CSegmentFragmentCollection *segmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(
+                            CSegmentFragmentCollection *updateSegmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(
                               this->logger,
                               METHOD_RECEIVE_DATA_NAME,
                               this->configurationParameters,
                               bootstrapInfoBox,
                               false);
-                            continueWithBootstrapInfo &= (segmentsFragments != NULL);
+                            continueWithBootstrapInfo &= (updateSegmentsFragments != NULL);
 
                             if (continueWithBootstrapInfo)
                             {
                               CSegmentFragment *lastSegmentFragment = this->segmentsFragments->GetItem(this->segmentsFragments->Count() - 1);
 
-                              for (unsigned int i = 0; i < segmentsFragments->Count(); i++)
+                              for (unsigned int i = 0; i < updateSegmentsFragments->Count(); i++)
                               {
-                                CSegmentFragment *parsedSegmentFragment = segmentsFragments->GetItem(i);
+                                CSegmentFragment *parsedSegmentFragment = updateSegmentsFragments->GetItem(i);
                                 if (parsedSegmentFragment->GetFragment() > lastSegmentFragment->GetFragment())
                                 {
                                   // new segment fragment, add it to be downloaded
-                                  CSegmentFragment *clone = parsedSegmentFragment->Clone();
+                                  CSegmentFragment *clone = new CSegmentFragment(
+                                    parsedSegmentFragment->GetSegment(),
+                                    parsedSegmentFragment->GetFragment(),
+                                    parsedSegmentFragment->GetUrl(),
+                                    parsedSegmentFragment->GetFragmentTimestamp());
                                   continueWithBootstrapInfo &= (clone != NULL);
 
                                   if (continueWithBootstrapInfo)
@@ -716,7 +795,7 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
                               this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot create segments and fragments to download");
                             }
 
-                            FREE_MEM_CLASS(segmentsFragments);
+                            FREE_MEM_CLASS(updateSegmentsFragments);
                           }
                           else
                           {
@@ -759,12 +838,6 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
               FREE_MEM_CLASS(bootstrapInfoCurlInstance);
             }
           }
-
-          if (!this->live)
-          {
-            // we are on last stream fragment, we received all data
-            this->lastStreamAndFragmentDownloaded = true;
-          }
         }
       }
     }
@@ -775,7 +848,7 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
       {
         this->streamLength = this->bytePosition;
         this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-        this->filter->SetTotalLength(this->streamLength, false);
+        receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
         this->setLength = true;
       }
     }
@@ -790,7 +863,79 @@ void CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit)
     }
   }
 
+  // store segments and fragments to temporary file
+  if ((GetTickCount() - this->lastStoreTime) > 1000)
+  {
+    this->lastStoreTime = GetTickCount();
+
+    if (this->segmentsFragments->Count() > 0)
+    {
+      // store all segments and fragments (which are not stored) to file
+      if (this->storeFilePath == NULL)
+      {
+        this->storeFilePath = this->GetStoreFile();
+      }
+
+      if (this->storeFilePath != NULL)
+      {
+        LARGE_INTEGER size;
+        size.QuadPart = 0;
+
+        // open or create file
+        HANDLE hTempFile = CreateFile(this->storeFilePath, FILE_APPEND_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+        if (hTempFile != INVALID_HANDLE_VALUE)
+        {
+          if (!GetFileSizeEx(hTempFile, &size))
+          {
+            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while getting size");
+            // error occured while getting file size
+            size.QuadPart = -1;
+          }
+
+          if (size.QuadPart >= 0)
+          {
+            unsigned int i = 0;
+            while (i < this->segmentsFragments->Count())
+            {
+              CSegmentFragment *segmentFragment = this->segmentsFragments->GetItem(i);
+
+              if ((!segmentFragment->IsStoredToFile()) && (segmentFragment->GetDownloaded()))
+              {
+                // if segment and fragment is not stored to file
+                // store it to file
+                unsigned int length = segmentFragment->GetLength();
+
+                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+                if (segmentFragment->GetBuffer()->CopyFromBuffer(buffer, length, 0, 0) == length)
+                {
+                  DWORD written = 0;
+                  if (WriteFile(hTempFile, buffer, length, &written, NULL))
+                  {
+                    if (length == written)
+                    {
+                      // mark as stored
+                      segmentFragment->SetStoredToFile(size.QuadPart);
+                      size.QuadPart += length;
+                    }
+                  }
+                }
+                FREE_MEM(buffer);
+              }
+
+              i++;
+            }
+          }
+
+          CloseHandle(hTempFile);
+          hTempFile = INVALID_HANDLE_VALUE;
+        }
+      }
+    }
+  }
+
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+  return S_OK;
 }
 
 // ISimpleProtocol interface
@@ -816,6 +961,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
   this->bytePosition = 0;
   this->streamLength = 0;
   this->setLength = false;
+  this->setEndOfStream = false;
 
   if (this->segmentsFragments == NULL)
   {
@@ -880,61 +1026,21 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
         uint64_t currentMediaTime = (this->bootstrapInfoBox->GetCurrentMediaTime() > 0) ? (this->bootstrapInfoBox->GetCurrentMediaTime() - 1): 0;
         // this download one fragment before current media time
 
-        this->lastStreamAndFragmentDownloaded = false;
-        unsigned int segmentFragmentToDownload = UINT_MAX;
-        // find segment and fragment to download
-
+        // find segment and fragment to process
         result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
-        for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
+        if (this->segmentsFragments != NULL)
         {
-          CSegmentFragment *segFrag = this->segmentsFragments->GetItem(i);
-
-          if (segFrag->GetFragmentTimestamp() <= (uint64_t)currentMediaTime)
+          for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
           {
-            segmentFragmentToDownload = i;
-            result = S_OK;
+            CSegmentFragment *segFrag = this->segmentsFragments->GetItem(i);
+
+            if (segFrag->GetFragmentTimestamp() <= (uint64_t)time)
+            {
+              this->segmentFragmentProcessing = i;
+              result = S_OK;
+            }
           }
         }
-
-        if (SUCCEEDED(result))
-        {
-          for (unsigned int i = 0; i < segmentFragmentToDownload; i++)
-          {
-            // mark all previous segments as downloaded
-            this->segmentsFragments->GetItem(i)->SetDownloaded(true);
-          }
-          for (unsigned int i = segmentFragmentToDownload; i < this->segmentsFragments->Count(); i++)
-          {
-            // mark all other segments as not downloaded
-            this->segmentsFragments->GetItem(i)->SetDownloaded(false);
-          }
-        }
-      }
-    }
-  }
-
-  if (SUCCEEDED(result))
-  {
-    if (this->bufferForBoxProcessingCollection == NULL)
-    {
-      this->bufferForBoxProcessingCollection = new CLinearBufferCollection();
-    }
-    CHECK_POINTER_HRESULT(result, this->bufferForBoxProcessingCollection, result, E_OUTOFMEMORY);
-
-    if (SUCCEEDED(result))
-    {
-      CLinearBuffer *buffer = new CLinearBuffer();
-      CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
-
-      if (SUCCEEDED(result))
-      {
-        buffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-        result = (this->bufferForBoxProcessingCollection->Add(buffer)) ? result : E_OUTOFMEMORY;
-      }
-
-      if (FAILED(result))
-      {
-        FREE_MEM_CLASS(buffer);
       }
     }
   }
@@ -969,7 +1075,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
 
             if (SUCCEEDED(result))
             {
-              result = metadataFlvPacket->CreatePacket(FLV_PACKET_META, metadata, metadataLength, (unsigned int)this->segmentsFragments->GetItem(0)->GetFragmentTimestamp()) ? result : E_FAIL;
+              result = metadataFlvPacket->CreatePacket(FLV_PACKET_META, metadata, metadataLength, (unsigned int)this->segmentsFragments->GetItem(0)->GetFragmentTimestamp(), false) ? result : E_FAIL;
 
               if (SUCCEEDED(result))
               {
@@ -1002,74 +1108,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
     }
   }
 
-  if (SUCCEEDED(result))
-  {
-    CSegmentFragment *segmentFragmentToDownload = this->GetFirstNotDownloadedSegmentFragment();
-    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, segmentFragmentToDownload->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
-    CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
-  }
-
-  if (SUCCEEDED(result))
-  {
-    this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-    this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
-    this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
-    this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
-    this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-    this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-
-    result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
-
-    if (SUCCEEDED(result))
-    {
-      // all parameters set
-      // start receiving data
-
-      result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
-    }
-
-    if (SUCCEEDED(result))
-    {
-      // wait for HTTP status code
-
-      long responseCode = 0;
-      while (responseCode == 0)
-      {
-        CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
-        if (errorCode == CURLE_OK)
-        {
-          if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-          {
-            // response code 200 - 299 = OK
-            // response code 300 - 399 = redirect (OK)
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-            result = E_FAIL;
-          }
-        }
-        else
-        {
-          this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
-          result = E_FAIL;
-          break;
-        }
-
-        if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
-        {
-          // we received data too fast
-          result = E_FAIL;
-          break;
-        }
-
-        // wait some time
-        Sleep(1);
-      }
-    }
-  }
-
   if (FAILED(result))
   {
     this->StopReceivingData();
   }
+
+  this->isConnected = SUCCEEDED(result);
 
   this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, result);
   return result;
@@ -1088,8 +1132,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StopReceivingData(void)
     FREE_MEM_CLASS(this->mainCurlInstance);
   }
 
-  FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
   FREE_MEM_CLASS(this->bufferForProcessing);
+  this->isConnected = false;
+  this->segmentFragmentDownloading = UINT_MAX;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
@@ -1148,11 +1193,16 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
     this->StopReceivingData();
   }
 
-  FREE_MEM_CLASS(this->bufferForBoxProcessingCollection);
+  if (this->storeFilePath != NULL)
+  {
+    DeleteFile(this->storeFilePath);
+  }
+
   FREE_MEM_CLASS(this->bufferForProcessing);
  
   this->streamLength = 0;
   this->setLength = false;
+  this->setEndOfStream = false;
   this->streamTime = 0;
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT;
@@ -1163,7 +1213,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   FREE_MEM_CLASS(this->segmentsFragments);
   this->live = false;
   this->lastBootstrapInfoRequestTime = 0;
-  this->lastStreamAndFragmentDownloaded = false;
+  FREE_MEM(this->storeFilePath);
+  this->isConnected = false;
+  this->segmentFragmentDownloading = UINT_MAX;
+  this->segmentFragmentProcessing = 0;
+  this->segmentFragmentToDownload = UINT_MAX;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -1185,17 +1239,10 @@ int64_t CMPUrlSourceSplitter_Protocol_Afhs::SeekToTime(int64_t time)
 
   int64_t result = -1;
 
-  this->seekingActive = true;
-
-  // close connection
-  this->StopReceivingData();
-
   // AFHS protocol can seek to ms
   // time is in ms
 
-  this->lastStreamAndFragmentDownloaded = false;
-  unsigned int segmentFragmentToDownload = UINT_MAX;
-  // find segment and fragment to download
+  // find segment and fragment to process
   if (this->segmentsFragments != NULL)
   {
     for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
@@ -1204,43 +1251,54 @@ int64_t CMPUrlSourceSplitter_Protocol_Afhs::SeekToTime(int64_t time)
 
       if (segFrag->GetFragmentTimestamp() <= (uint64_t)time)
       {
-        segmentFragmentToDownload = i;
+        this->segmentFragmentProcessing = i;
         result = segFrag->GetFragmentTimestamp();
       }
     }
-
-    for (unsigned int i = 0; i < segmentFragmentToDownload; i++)
-    {
-      // mark all previous segments as downloaded
-      this->segmentsFragments->GetItem(i)->SetDownloaded(true);
-    }
-    for (unsigned int i = segmentFragmentToDownload; i < this->segmentsFragments->Count(); i++)
-    {
-      // mark all other segments as not downloaded
-      this->segmentsFragments->GetItem(i)->SetDownloaded(false);
-    }
   }
 
-  // in segmentFragmentToDownload is id of segment and fragment to download
-  CSegmentFragment *segFrag = this->segmentsFragments->GetItem(segmentFragmentToDownload);
+  this->seekingActive = true;
+  this->bytePosition = 0;
+  this->streamLength = 0;
+  this->setLength = false;
+  this->setEndOfStream = false;
+  // reset whole stream downloaded, but IsConnected() must return true to avoid calling StartReceivingData()
+  this->isConnected = true;
+  this->wholeStreamDownloaded = false;
+
+  // in this->segmentFragmentProcessing is id of segment and fragment to process
+  CSegmentFragment *segFrag = this->segmentsFragments->GetItem(this->segmentFragmentProcessing);
 
   if (segFrag != NULL)
   {
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: segment %d, fragment %d, url '%s', timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
       segFrag->GetSegment(), segFrag->GetFragment(), segFrag->GetUrl(), segFrag->GetFragmentTimestamp());
 
-    // reopen connection
-    // StartReceivingData() reset wholeStreamDownloaded
-    this->StartReceivingData(NULL);
+    if (!segFrag->GetDownloaded())
+    {
+      // close connection
+      this->StopReceivingData();
 
-    if (!this->IsConnected())
-    {
-      result = -1;
+      // clear segment and fragment to download
+      this->segmentFragmentToDownload = UINT_MAX;
+
+      // reopen connection
+      // StartReceivingData() reset wholeStreamDownloaded
+      this->isConnected = SUCCEEDED(this->StartReceivingData(NULL));
     }
-    else
-    {
-      this->streamTime = result;
-    }
+  }
+  else
+  {
+    this->isConnected = false;
+  }
+
+  if (!this->IsConnected())
+  {
+    result = -1;
+  }
+  else
+  {
+    this->streamTime = result;
   }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
@@ -1284,11 +1342,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(PluginConfiguration *conf
 
   ProtocolPluginConfiguration *protocolConfiguration = (ProtocolPluginConfiguration *)configuration;
   this->logger->SetParameters(protocolConfiguration->configuration);
-  this->filter = protocolConfiguration->outputStream;
-  if (this->filter == NULL)
-  {
-    return E_POINTER;
-  }
 
   if (this->lockMutex == NULL)
   {
@@ -1313,34 +1366,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(PluginConfiguration *conf
 
 // other methods
 
-void CMPUrlSourceSplitter_Protocol_Afhs::RemoveAllDownloadedSegmentFragment(void)
+unsigned int CMPUrlSourceSplitter_Protocol_Afhs::GetFirstNotDownloadedSegmentFragment(unsigned int start)
 {
-  if (this->segmentsFragments->Count() > 1)
-  {
-    unsigned int i = 0;
-    while (i < (this->segmentsFragments->Count() - 1))
-    {
-      if (this->segmentsFragments->GetItem(i)->GetDownloaded())
-      {
-        this->segmentsFragments->Remove(i);
-      }
-      else
-      {
-        i++;
-      }
-    }
-  }
-}
+  unsigned int result = UINT_MAX;
 
-CSegmentFragment *CMPUrlSourceSplitter_Protocol_Afhs::GetFirstNotDownloadedSegmentFragment(void)
-{
-  CSegmentFragment *result = NULL;
-
-  for (unsigned int i = 0; i < this->segmentsFragments->Count(); i++)
+  for (unsigned int i = start; i < this->segmentsFragments->Count(); i++)
   {
     if (!this->segmentsFragments->GetItem(i)->GetDownloaded())
     {
-      result = this->segmentsFragments->GetItem(i);
+      result = i;
       break;
     }
   }
@@ -1638,4 +1672,137 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
   }
 
   return segmentsFragments;
+}
+
+wchar_t *CMPUrlSourceSplitter_Protocol_Afhs::GetStoreFile(void)
+{
+  wchar_t *result = NULL;
+  wchar_t *folder = GetStoreFilePath(this->configurationParameters);
+
+  if (folder != NULL)
+  {
+    wchar_t *guid = ConvertGuidToString(this->logger->loggerInstance);
+
+    if (guid != NULL)
+    {
+      result = FormatString(L"%smpurlsourcesplitter_protocol_afhs_%s.temp", folder, guid);
+    }
+  }
+
+  FREE_MEM(folder);
+  return result;
+}
+
+CLinearBuffer *CMPUrlSourceSplitter_Protocol_Afhs::FillBufferForProcessing(CSegmentFragmentCollection *segmentsFragments, unsigned int segmentFragmentProcessing, wchar_t *storeFile)
+{
+  CLinearBuffer *result = NULL;
+
+  if (segmentsFragments != NULL)
+  {
+    if (segmentFragmentProcessing < segmentsFragments->Count())
+    {
+      CSegmentFragment *segmentFragment = segmentsFragments->GetItem(segmentFragmentProcessing);
+
+      if (segmentFragment->GetDownloaded())
+      {
+        // segment and fragment is downloaded
+        // segment and fragment can be stored in memory or in store file
+
+        // temporary buffer for data (from store file or from memory)
+        unsigned int bufferLength = segmentFragment->GetLength();
+        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferLength, 0);
+
+        if (buffer != NULL)
+        {
+          if ((segmentFragment->IsStoredToFile()) && (storeFile != NULL))
+          {
+            // segment and fragment is stored into file and store file is specified
+
+            LARGE_INTEGER size;
+            size.QuadPart = 0;
+
+            // open or create file
+            HANDLE hTempFile = CreateFile(storeFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+            if (hTempFile != INVALID_HANDLE_VALUE)
+            {
+              bool error = false;
+
+              LONG distanceToMoveLow = (LONG)(segmentFragment->GetStoreFilePosition());
+              LONG distanceToMoveHigh = (LONG)(segmentFragment->GetStoreFilePosition() >> 32);
+              LONG distanceToMoveHighResult = distanceToMoveHigh;
+              DWORD setFileResult = SetFilePointer(hTempFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
+              if (setFileResult == INVALID_SET_FILE_POINTER)
+              {
+                DWORD lastError = GetLastError();
+                if (lastError != NO_ERROR)
+                {
+                  this->logger->Log(LOGGER_ERROR, L"%s: %s: error occured while setting position: %lu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, lastError);
+                  error = true;
+                }
+              }
+
+              if (!error)
+              {
+                DWORD read = 0;
+                if (ReadFile(hTempFile, buffer, bufferLength, &read, NULL) == 0)
+                {
+                  this->logger->Log(LOGGER_ERROR, L"%s: %s: error occured reading file: %lu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, GetLastError());
+                  FREE_MEM(buffer);
+                }
+                else if (read != bufferLength)
+                {
+                  this->logger->Log(LOGGER_WARNING, L"%s: %s: readed data length not same as requested, requested: %u, readed: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, bufferLength, read);
+                  FREE_MEM(buffer);
+                }
+              }
+
+              CloseHandle(hTempFile);
+              hTempFile = INVALID_HANDLE_VALUE;
+            }
+          }
+          else if (!segmentFragment->IsStoredToFile())
+          {
+            // segment and fragment is stored in memory
+            if (segmentFragment->GetBuffer() != NULL)
+            {
+              if (segmentFragment->GetBuffer()->CopyFromBuffer(buffer, bufferLength, 0, 0) != bufferLength)
+              {
+                // error occured while copying data
+                FREE_MEM(buffer);
+              }
+            }
+          }
+        }
+
+        if (buffer != NULL)
+        {
+          // all data are read
+          bool correct = false;
+          result = new CLinearBuffer();
+          if (result != NULL)
+          {
+            if (result->InitializeBuffer(bufferLength))
+            {
+              if (result->AddToBuffer(buffer, bufferLength) == bufferLength)
+              {
+                // everything correct, data copied successfully
+                correct = true;
+              }
+            }
+          }
+
+          if (!correct)
+          {
+            FREE_MEM_CLASS(result);
+          }
+        }
+
+        // clean-up buffer
+        FREE_MEM(buffer);
+      }
+    }
+  }
+
+  return result;
 }
