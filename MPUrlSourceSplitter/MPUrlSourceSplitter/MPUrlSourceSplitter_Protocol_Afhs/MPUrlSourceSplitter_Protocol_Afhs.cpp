@@ -255,6 +255,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ParseUrl(const CParameterCollection 
 
 HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CReceiveData *receiveData)
 {
+  HRESULT result = S_OK;
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   this->shouldExit = *shouldExit;
 
@@ -264,7 +265,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
   {
     if (!this->wholeStreamDownloaded)
     {
-      if ((!this->shouldExit) && (this->segmentFragmentDownloading != UINT_MAX) && (this->mainCurlInstance != NULL))
+      if (SUCCEEDED(result) && (!this->shouldExit) && (this->segmentFragmentDownloading != UINT_MAX) && (this->mainCurlInstance != NULL))
       {
         unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
         if (bytesRead != 0)
@@ -311,7 +312,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if ((!this->setLength) && (this->bytePosition != 0))
+      if (SUCCEEDED(result) && (!this->setLength) && (this->bytePosition != 0))
       {
         // adjust total length if not already set
         if (this->streamLength == 0)
@@ -331,7 +332,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if ((!this->supressData) && (this->segmentFragmentProcessing < this->segmentsFragments->Count()))
+      if (SUCCEEDED(result) && (!this->supressData) && (this->segmentFragmentProcessing < this->segmentsFragments->Count()))
       {
         CLinearBuffer *bufferForBoxProcessing = this->FillBufferForProcessing(this->segmentsFragments, this->segmentFragmentProcessing, this->storeFilePath);
         if (bufferForBoxProcessing != NULL)
@@ -434,12 +435,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         FREE_MEM_CLASS(bufferForBoxProcessing);
       }
 
-      if ((!this->supressData) && (this->bufferForProcessing != NULL))
+      if (SUCCEEDED(result) && (!this->supressData) && (this->bufferForProcessing != NULL))
       {
         CFlvPacket *flvPacket = new CFlvPacket();
         if (flvPacket != NULL)
         {
-          while (flvPacket->ParsePacket(this->bufferForProcessing))
+          while (SUCCEEDED(result) && (flvPacket->ParsePacket(this->bufferForProcessing)))
           {
             // FLV packet parsed correctly
             // push FLV packet to filter
@@ -468,10 +469,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
               (flvPacket->GetType() == FLV_PACKET_VIDEO))
             {
               // do nothing, known packet types
+              CHECK_CONDITION_HRESULT(result, !flvPacket->IsEncrypted(), result, E_DRM_PROTECTED);
             }
             else
             {
               this->logger->Log(LOGGER_WARNING, L"%s: %s: unknown FLV packet: %d, size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, flvPacket->GetType(), flvPacket->GetSize());
+              result = E_UNKNOWN_STREAM_TYPE;
             }
 
             if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
@@ -524,7 +527,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if ((this->segmentFragmentProcessing >= this->segmentsFragments->Count()) &&
+      if (SUCCEEDED(result) && (this->segmentFragmentProcessing >= this->segmentsFragments->Count()) &&
         (this->segmentFragmentToDownload == UINT_MAX) &&
         (this->segmentFragmentDownloading == UINT_MAX) &&
         (!this->live))
@@ -536,7 +539,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         FREE_MEM_CLASS(this->mainCurlInstance);
       }
 
-      if ((this->segmentFragmentProcessing >= this->segmentsFragments->Count()) && (!this->live))
+      if (SUCCEEDED(result) && (this->segmentFragmentProcessing >= this->segmentsFragments->Count()) && (!this->live))
       {
         // all segments and fragments processed
         // set stream length and report end of stream
@@ -560,7 +563,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+      if (SUCCEEDED(result) && (this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
       {
         if (this->mainCurlInstance->GetErrorCode() == CURLE_OK)
         {
@@ -596,7 +599,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if (this->mainCurlInstance == NULL)
+      if (SUCCEEDED(result) && (this->mainCurlInstance == NULL))
       {
         // no CURL instance exists, we finished download
         // start another one download
@@ -864,7 +867,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
   }
 
   // store segments and fragments to temporary file
-  if ((GetTickCount() - this->lastStoreTime) > 1000)
+  if (SUCCEEDED(result) && ((GetTickCount() - this->lastStoreTime) > 1000))
   {
     this->lastStoreTime = GetTickCount();
 
@@ -935,7 +938,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
   }
 
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-  return S_OK;
+  return result;
 }
 
 // ISimpleProtocol interface
