@@ -126,10 +126,10 @@ namespace OnlineVideos.MPUrlSourceFilter
         #endregion
 
         #region Constants
-		//public const string FilterName = "MediaPortal Url Source Filter";
-        //public const string FilterCLSID = "87DD67C7-5D13-4CD5-819B-586FFCE8650F";
+
         public const string FilterName = "MediaPortal Url Source Splitter";
         public const string FilterCLSID = "59ED045A-A938-4A09-A8A6-8231F5834259";
+
         #endregion
 
         #region Internals
