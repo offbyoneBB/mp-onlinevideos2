@@ -338,6 +338,11 @@ namespace OnlineVideos.MediaPortal1.Player
                         result = ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
                         percentageBuffered = (float)current / (float)total * 100.0f;
                         // after configured percentage has been buffered, connect the graph
+                        if (filterState != null)
+                        {
+                            filterState.IsFilterReadyToConnectPins();
+                        }
+
                         if (!filterConnected && (percentageBuffered >= PluginConfiguration.Instance.playbuffer || skipBuffering))
                         {
                             if (((filterState != null) && (filterState.IsFilterReadyToConnectPins())) ||

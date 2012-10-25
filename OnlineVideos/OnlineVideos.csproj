@@ -197,6 +197,7 @@
     <Compile Include="MPUrlSourceFilter\IFilterState.cs" />
     <Compile Include="MPUrlSourceFilter\LogVerbosity.cs" />
     <Compile Include="MPUrlSourceFilter\MPUrlSourceFilterDownloader.cs" />
+    <Compile Include="MPUrlSourceFilter\MPUrlSourceSplitterError.cs" />
     <Compile Include="MPUrlSourceFilter\Parameter.cs" />
     <Compile Include="MPUrlSourceFilter\ParameterCollection.cs" />
     <Compile Include="MPUrlSourceFilter\RtmpArbitraryData.cs" />
