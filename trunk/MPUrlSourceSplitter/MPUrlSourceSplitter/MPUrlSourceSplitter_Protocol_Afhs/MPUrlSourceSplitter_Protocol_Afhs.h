@@ -45,7 +45,7 @@ wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"AFHS" };
 unsigned char FLV_FILE_HEADER[FLV_FILE_HEADER_LENGTH] =                       { 0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x00 };
 
 // defines delay between two bootstrap info requests
-#define LAST_REQUEST_BOOTSTRAP_INFO_DELAY                                     5000
+#define LAST_REQUEST_BOOTSTRAP_INFO_DELAY                                     10000
 
 // This class is exported from the CMPUrlSourceSplitter_Protocol_Afhs.dll
 class MPURLSOURCESPLITTER_PROTOCOL_AFHS_API CMPUrlSourceSplitter_Protocol_Afhs : public IProtocolPlugin
@@ -180,6 +180,8 @@ protected:
 
   // main instance of CURL
   CHttpCurlInstance *mainCurlInstance;
+  // CURL instance for downloading bootstrap info for live session
+  CHttpCurlInstance *bootstrapInfoCurlInstance;
 
   // reference to variable that signalize if protocol is requested to exit
   bool shouldExit;

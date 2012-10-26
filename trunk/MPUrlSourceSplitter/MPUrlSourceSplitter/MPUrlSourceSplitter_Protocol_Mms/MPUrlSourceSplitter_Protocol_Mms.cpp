@@ -621,7 +621,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
     if (SUCCEEDED(result))
     {
-      this->mainCurlInstance = new CMmsCurlInstance(this->logger, this->lockMutex, url, PROTOCOL_IMPLEMENTATION_NAME);
+      this->mainCurlInstance = new CMmsCurlInstance(this->logger, this->lockMutex, url, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
       result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
     }
 
@@ -743,7 +743,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
       if (SUCCEEDED(result))
       {
-        this->mainCurlInstance = new CMmsCurlInstance(this->logger, this->lockMutex, url, PROTOCOL_IMPLEMENTATION_NAME);
+        this->mainCurlInstance = new CMmsCurlInstance(this->logger, this->lockMutex, url, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
         result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
       }
 

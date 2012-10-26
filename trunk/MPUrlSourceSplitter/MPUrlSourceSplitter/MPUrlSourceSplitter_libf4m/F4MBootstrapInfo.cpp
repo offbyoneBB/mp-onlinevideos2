@@ -172,7 +172,7 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
 
     if (SUCCEEDED(result))
     {
-      CHttpCurlInstance *curlInstance = new CHttpCurlInstance(logger, NULL, bootstrapInfoUrl, protocolName);
+      CHttpCurlInstance *curlInstance = new CHttpCurlInstance(logger, NULL, bootstrapInfoUrl, protocolName, L"CF4MBootstrapInfo");
       CHECK_POINTER_HRESULT(result, curlInstance, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))

@@ -99,6 +99,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->wholeStreamDownloaded = false;
   this->mainCurlInstance = NULL;
+  this->bootstrapInfoCurlInstance = NULL;
   this->bytePosition = 0;
   this->seekingActive = false;
   this->supressData = false;
@@ -128,6 +129,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::~CMPUrlSourceSplitter_Protocol_Afhs()
   }
 
   FREE_MEM_CLASS(this->mainCurlInstance);
+  FREE_MEM_CLASS(this->bootstrapInfoCurlInstance);
 
   if (this->storeFilePath != NULL)
   {
@@ -613,7 +615,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->GetFirstNotDownloadedSegmentFragment(0) : this->segmentFragmentToDownload;
         // segment and fragment to download still can be UINT_MAX = no segment and fragment to download
 
-        if (this->segmentFragmentToDownload != UINT_MAX)
+        if (SUCCEEDED(result) && (this->segmentFragmentToDownload != UINT_MAX))
         {
           // there is specified segment and fragment to download
 
@@ -625,7 +627,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
             if (SUCCEEDED(result))
             {
               // we need to download for another url
-              this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, segmentFragment->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+              this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, segmentFragment->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME, L"Main");
               CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
 
               if (SUCCEEDED(result))
@@ -656,189 +658,157 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
             }
           }
         }
-        else
+      }
+
+      if (SUCCEEDED(result) && (this->live))
+      {
+        // in case of live stream we need to download again manifest and parse bootstrap info for new information about stream
+
+        if ((this->bootstrapInfoCurlInstance != NULL) && (this->bootstrapInfoCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
         {
-          // we are on last segment and fragment, we received all data
-          // in case of live stream we need to download again manifest and parse bootstrap info for new information about stream
-          if ((this->live) && (GetTickCount() > (this->lastBootstrapInfoRequestTime + LAST_REQUEST_BOOTSTRAP_INFO_DELAY)))
+          if (this->bootstrapInfoCurlInstance->GetErrorCode() == CURLE_OK)
           {
-            // request for next bootstrap info repeat after five seconds
-            this->lastBootstrapInfoRequestTime = GetTickCount();
+            unsigned int length = this->bootstrapInfoCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+            bool continueWithBootstrapInfo = (length > 1);
 
-            // this part HAVE to be reworked
-            // there is possibility of freeze when no response from remote server
-            // request to bootstrap info should be asynchronous
-
-            const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, true, NULL);
-            if (url != NULL)
+            if (continueWithBootstrapInfo)
             {
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: live streaming, requesting bootstrap info, url: '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, url);
+              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+              continueWithBootstrapInfo &= (buffer != NULL);
 
-              CHttpCurlInstance *bootstrapInfoCurlInstance = new CHttpCurlInstance(this->logger, NULL, url, PROTOCOL_IMPLEMENTATION_NAME);
-              bootstrapInfoCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-              bootstrapInfoCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
-              bootstrapInfoCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
-              bootstrapInfoCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
-              bootstrapInfoCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-              bootstrapInfoCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-
-              if (bootstrapInfoCurlInstance->Initialize())
+              if (continueWithBootstrapInfo)
               {
-                if (bootstrapInfoCurlInstance->StartReceivingData())
+                this->bootstrapInfoCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, length, 0, 0);
+
+                CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox();
+                continueWithBootstrapInfo &= (bootstrapInfoBox != NULL);
+
+                if (continueWithBootstrapInfo)
                 {
-                  bool continueWithBootstrapInfo = true;
-                  long responseCode = 0;
-                  while (responseCode == 0)
+                  if (bootstrapInfoBox->Parse(buffer, length))
                   {
-                    CURLcode errorCode = bootstrapInfoCurlInstance->GetResponseCode(&responseCode);
-                    if (errorCode == CURLE_OK)
-                    {
-                      if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-                      {
-                        // response code 200 - 299 = OK
-                        // response code 300 - 399 = redirect (OK)
-                        continueWithBootstrapInfo = false;
-                      }
-                    }
-                    else
-                    {
-                      continueWithBootstrapInfo = false;
-                      break;
-                    }
+                    //this->logger->Log(LOGGER_VERBOSE, L"%s: %s: new bootstrap info box:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bootstrapInfoBox->GetParsedHumanReadable(L""));
 
-                    if ((responseCode == 0) && (bootstrapInfoCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
-                    {
-                      // we received data too fast
-                      continueWithBootstrapInfo = false;
-                      break;
-                    }
-
-                    // wait some time
-                    Sleep(1);
-                  }
-
-                  if (continueWithBootstrapInfo)
-                  {
-                    // wait until all data are received
-                    while (bootstrapInfoCurlInstance->GetCurlState() != CURL_STATE_RECEIVED_ALL_DATA)
-                    {
-                      // sleep some time
-                      Sleep(10);
-                    }
-
-                    continueWithBootstrapInfo &= (bootstrapInfoCurlInstance->GetErrorCode() == CURLE_OK);
-                  }
-
-                  if (continueWithBootstrapInfo)
-                  {
-                    unsigned int length = bootstrapInfoCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
-                    continueWithBootstrapInfo &= (length > 1);
+                    CSegmentFragmentCollection *updateSegmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(
+                      this->logger,
+                      METHOD_RECEIVE_DATA_NAME,
+                      this->configurationParameters,
+                      bootstrapInfoBox,
+                      false);
+                    continueWithBootstrapInfo &= (updateSegmentsFragments != NULL);
 
                     if (continueWithBootstrapInfo)
                     {
-                      ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                      continueWithBootstrapInfo &= (buffer != NULL);
+                      CSegmentFragment *lastSegmentFragment = this->segmentsFragments->GetItem(this->segmentsFragments->Count() - 1);
 
-                      if (continueWithBootstrapInfo)
+                      for (unsigned int i = 0; i < updateSegmentsFragments->Count(); i++)
                       {
-                        bootstrapInfoCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, length, 0, 0);
-
-                        CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox();
-                        continueWithBootstrapInfo &= (bootstrapInfoBox != NULL);
-
-                        if (continueWithBootstrapInfo)
+                        CSegmentFragment *parsedSegmentFragment = updateSegmentsFragments->GetItem(i);
+                        if (parsedSegmentFragment->GetFragment() > lastSegmentFragment->GetFragment())
                         {
-                          if (bootstrapInfoBox->Parse(buffer, length))
+                          // new segment fragment, add it to be downloaded
+                          CSegmentFragment *clone = new CSegmentFragment(
+                            parsedSegmentFragment->GetSegment(),
+                            parsedSegmentFragment->GetFragment(),
+                            parsedSegmentFragment->GetUrl(),
+                            parsedSegmentFragment->GetFragmentTimestamp());
+                          continueWithBootstrapInfo &= (clone != NULL);
+
+                          if (continueWithBootstrapInfo)
                           {
-                            //this->logger->Log(LOGGER_VERBOSE, L"%s: %s: new bootstrap info box:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bootstrapInfoBox->GetParsedHumanReadable(L""));
-
-                            CSegmentFragmentCollection *updateSegmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(
-                              this->logger,
-                              METHOD_RECEIVE_DATA_NAME,
-                              this->configurationParameters,
-                              bootstrapInfoBox,
-                              false);
-                            continueWithBootstrapInfo &= (updateSegmentsFragments != NULL);
-
+                            continueWithBootstrapInfo &= this->segmentsFragments->Add(clone);
                             if (continueWithBootstrapInfo)
                             {
-                              CSegmentFragment *lastSegmentFragment = this->segmentsFragments->GetItem(this->segmentsFragments->Count() - 1);
-
-                              for (unsigned int i = 0; i < updateSegmentsFragments->Count(); i++)
-                              {
-                                CSegmentFragment *parsedSegmentFragment = updateSegmentsFragments->GetItem(i);
-                                if (parsedSegmentFragment->GetFragment() > lastSegmentFragment->GetFragment())
-                                {
-                                  // new segment fragment, add it to be downloaded
-                                  CSegmentFragment *clone = new CSegmentFragment(
-                                    parsedSegmentFragment->GetSegment(),
-                                    parsedSegmentFragment->GetFragment(),
-                                    parsedSegmentFragment->GetUrl(),
-                                    parsedSegmentFragment->GetFragmentTimestamp());
-                                  continueWithBootstrapInfo &= (clone != NULL);
-
-                                  if (continueWithBootstrapInfo)
-                                  {
-                                    continueWithBootstrapInfo &= this->segmentsFragments->Add(clone);
-                                    if (continueWithBootstrapInfo)
-                                    {
-                                      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: added new segment and fragment, segment %d, fragment %d, url '%s', timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, clone->GetSegment(), clone->GetFragment(), clone->GetUrl(), clone->GetFragmentTimestamp());
-                                    }
-                                  }
-
-                                  if (!continueWithBootstrapInfo)
-                                  {
-                                    FREE_MEM_CLASS(clone);
-                                  }
-                                }
-                              }
+                              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: added new segment and fragment, segment %d, fragment %d, url '%s', timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, clone->GetSegment(), clone->GetFragment(), clone->GetUrl(), clone->GetFragmentTimestamp());
                             }
-                            else
-                            {
-                              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot create segments and fragments to download");
-                            }
-
-                            FREE_MEM_CLASS(updateSegmentsFragments);
                           }
-                          else
+
+                          if (!continueWithBootstrapInfo)
                           {
-                            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot parse new bootstrap info box");
+                            FREE_MEM_CLASS(clone);
                           }
                         }
-                        else
-                        {
-                          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for new bootstrap info box");
-                        }
-
-                        FREE_MEM_CLASS(bootstrapInfoBox);
                       }
-                      else
-                      {
-                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for new bootstrap info data");
-                      }
-
-                      FREE_MEM(buffer);
                     }
                     else
                     {
-                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"too short data downloaded for new bootstrap info");
+                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot create segments and fragments to download");
                     }
+
+                    FREE_MEM_CLASS(updateSegmentsFragments);
                   }
                   else
                   {
-                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error occured while receiving data of new bootstrap info");
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot parse new bootstrap info box");
                   }
                 }
                 else
                 {
-                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot start receiving data of new bootstrap info");
+                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for new bootstrap info box");
                 }
+
+                FREE_MEM_CLASS(bootstrapInfoBox);
               }
               else
               {
-                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot initialize new bootstrap info download");
+                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"not enough memory for new bootstrap info data");
               }
-              FREE_MEM_CLASS(bootstrapInfoCurlInstance);
+
+              FREE_MEM(buffer);
+            }
+            else
+            {
+              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"too short data downloaded for new bootstrap info");
+            }
+
+            if (continueWithBootstrapInfo)
+            {
+              // everything correct, download next bootstrap info after LAST_REQUEST_BOOTSTRAP_INFO_DELAY seconds
+              this->lastBootstrapInfoRequestTime = GetTickCount();
+            }
+          }
+          else
+          {
+            // error occured while downloading bootstrap info
+            // download bootstrap info again
+            this->lastBootstrapInfoRequestTime = 0;
+          }
+
+          FREE_MEM_CLASS(this->bootstrapInfoCurlInstance);
+        }
+
+        if ((this->bootstrapInfoCurlInstance == NULL) && (GetTickCount() > (this->lastBootstrapInfoRequestTime + LAST_REQUEST_BOOTSTRAP_INFO_DELAY)))
+        {
+          const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, true, NULL);
+          if (url != NULL)
+          {
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: live streaming, requesting bootstrap info, url: '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, url);
+
+            this->bootstrapInfoCurlInstance = new CHttpCurlInstance(this->logger, NULL, url, PROTOCOL_IMPLEMENTATION_NAME, L"BootstrapInfo");
+            this->bootstrapInfoCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+            this->bootstrapInfoCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL));
+            this->bootstrapInfoCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL));
+            this->bootstrapInfoCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL));
+            this->bootstrapInfoCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
+            this->bootstrapInfoCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
+            bool continueWithBootstrapInfo = this->bootstrapInfoCurlInstance->Initialize();
+            if (continueWithBootstrapInfo)
+            {
+              continueWithBootstrapInfo &= this->bootstrapInfoCurlInstance->StartReceivingData();
+              if (!continueWithBootstrapInfo)
+              {
+                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot start receiving data of new bootstrap info");
+              }
+            }
+            else
+            {
+              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"cannot initialize new bootstrap info download");
+            }
+
+            if (!continueWithBootstrapInfo)
+            {
+              FREE_MEM_CLASS(this->bootstrapInfoCurlInstance);
             }
           }
         }
@@ -1133,6 +1103,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StopReceivingData(void)
   {
     this->mainCurlInstance->SetCloseWithoutWaiting(this->seekingActive);
     FREE_MEM_CLASS(this->mainCurlInstance);
+  }
+
+  if (this->bootstrapInfoCurlInstance != NULL)
+  {
+    this->bootstrapInfoCurlInstance->SetCloseWithoutWaiting(this->seekingActive);
+    FREE_MEM_CLASS(this->bootstrapInfoCurlInstance);
   }
 
   FREE_MEM_CLASS(this->bufferForProcessing);

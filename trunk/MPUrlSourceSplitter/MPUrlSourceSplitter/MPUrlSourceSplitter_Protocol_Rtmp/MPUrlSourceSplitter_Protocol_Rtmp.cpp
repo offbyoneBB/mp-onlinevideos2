@@ -475,7 +475,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StartReceivingData(const CParameterC
 
   if (result == S_OK)
   {
-    this->mainCurlInstance = new CRtmpCurlInstance(this->logger, this->lockMutex, this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL), PROTOCOL_IMPLEMENTATION_NAME);
+    this->mainCurlInstance = new CRtmpCurlInstance(this->logger, this->lockMutex, this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL), PROTOCOL_IMPLEMENTATION_NAME, L"Main");
     result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
   }
 

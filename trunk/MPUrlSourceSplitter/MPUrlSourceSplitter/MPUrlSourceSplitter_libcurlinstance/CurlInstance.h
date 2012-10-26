@@ -54,7 +54,8 @@ public:
   // @param mutex : mutex for locking access to receive data buffer
   // @param url : the url to open
   // @param protocolName : the protocol name instantiating
-  CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName);
+  // @param instanceName : the name of CURL instance
+  CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName, const wchar_t *instanceName);
 
   // destructor
   virtual ~CCurlInstance(void);
