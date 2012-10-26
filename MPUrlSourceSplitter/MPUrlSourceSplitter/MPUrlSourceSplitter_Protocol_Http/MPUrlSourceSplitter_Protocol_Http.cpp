@@ -417,7 +417,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(const CParameterC
 
   if (SUCCEEDED(result))
   {
-    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL), PROTOCOL_IMPLEMENTATION_NAME);
+    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL), PROTOCOL_IMPLEMENTATION_NAME, L"Main");
     result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
   }
 

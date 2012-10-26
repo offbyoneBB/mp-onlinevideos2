@@ -682,7 +682,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
             if (SUCCEEDED(result))
             {
               // we need to download for another url
-              this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, streamFragment->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME);
+              this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, streamFragment->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME, L"Main");
               CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
 
               if (SUCCEEDED(result))

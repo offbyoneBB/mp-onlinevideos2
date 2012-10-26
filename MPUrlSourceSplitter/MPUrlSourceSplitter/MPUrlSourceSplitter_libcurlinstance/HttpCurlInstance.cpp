@@ -22,8 +22,8 @@
 
 #include "HttpCurlInstance.h"
 
-CHttpCurlInstance::CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName)
-  : CCurlInstance(logger, mutex, url, protocolName)
+CHttpCurlInstance::CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName, const wchar_t *instanceName)
+  : CCurlInstance(logger, mutex, url, protocolName, instanceName)
 {
   this->referer = NULL;
   this->cookie = NULL;

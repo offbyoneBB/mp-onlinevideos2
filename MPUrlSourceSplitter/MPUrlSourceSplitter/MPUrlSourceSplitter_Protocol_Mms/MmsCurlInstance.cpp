@@ -22,8 +22,8 @@
 
 #include "MmsCurlInstance.h"
 
-CMmsCurlInstance::CMmsCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName)
-  : CHttpCurlInstance(logger, mutex, url, protocolName)
+CMmsCurlInstance::CMmsCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName, const wchar_t *instanceName)
+  : CHttpCurlInstance(logger, mutex, url, protocolName, instanceName)
 {
 }
 

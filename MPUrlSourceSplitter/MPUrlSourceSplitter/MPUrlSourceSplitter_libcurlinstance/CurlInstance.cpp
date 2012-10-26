@@ -24,11 +24,11 @@
 #include "Logger.h"
 #include "LockMutex.h"
 
-CCurlInstance::CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName)
+CCurlInstance::CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName, const wchar_t *instanceName)
 {
   this->logger = logger;
   this->url = Duplicate(url);
-  this->protocolName = Duplicate(protocolName);
+  this->protocolName = FormatString(L"%s: instance '%s'", protocolName, instanceName);
   this->curl = NULL;
   this->hCurlWorkerThread = NULL;
   this->dwCurlWorkerThreadId = 0;
