@@ -42,6 +42,7 @@ namespace SiteParser
 
         void BtnAddRss_Click(object sender, EventArgs e)
         {
+            RssLinkList.SelectedIndex = -1;
             RssLink link = new RssLink() { Name = "new", Url = "http://" };
             ((CurrencyManager)BindingContext[bindingSourceRssLink]).List.Add(link);
             RssLinkList.SelectedIndex = RssLinkList.Items.Count - 1;
