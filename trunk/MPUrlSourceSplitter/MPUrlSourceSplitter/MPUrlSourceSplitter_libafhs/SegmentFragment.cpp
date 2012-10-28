@@ -21,7 +21,6 @@
 #include "StdAfx.h"
 
 #include "SegmentFragment.h"
-#include "MPUrlSourceSplitter_Protocol_Afhs_Parameters.h"
 
 CSegmentFragment::CSegmentFragment(unsigned int segment, unsigned int fragment, const wchar_t *url, uint64_t fragmentTimestamp)
 {

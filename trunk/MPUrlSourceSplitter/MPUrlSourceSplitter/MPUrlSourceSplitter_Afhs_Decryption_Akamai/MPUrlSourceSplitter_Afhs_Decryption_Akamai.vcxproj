@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{FFFC4A1F-C818-4BC9-96D7-4B66F4C863EA}</ProjectGuid>
+    <ProjectGuid>{EEF170E6-0348-4BB8-BE57-5157C421B1A2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>MPUrlSourceSplitter_Protocol_Afhs</RootNamespace>
+    <RootNamespace>MPUrlSourceSplitter_Afhs_Decryption_Akamai</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -52,13 +52,13 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PROTOCOL_AFHS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_AFHS_DECRYPTION_AKAMAI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(DSHOW_BASE);..\..\libcurl\include;..\..\libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libafhs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>mpurlsourcesplitter_protocol_Afhs.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>MPUrlSourceSplitter_Afhs_Decryption_Akamai.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;Shlwapi.lib;libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libafhs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -78,7 +78,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_PROTOCOL_AFHS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPURLSOURCESPLITTER_AFHS_DECRYPTION_AKAMAI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(DSHOW_BASE);..\..\libcurl\include;..\..\libcurl\include\curl;..\MPUrlSourceSplitter_Interfaces;..\MPUrlSourceSplitter_libmemory;..\MPUrlSourceSplitter_libstrings;..\MPUrlSourceSplitter_libcollections;..\MPUrlSourceSplitter_liblogger;..\MPUrlSourceSplitter_libshared;..\MPUrlSourceSplitter_libf4v;..\MPUrlSourceSplitter_libflv;..\MPUrlSourceSplitter_libcurlinstance;..\MPUrlSourceSplitter_libibmff;..\MPUrlSourceSplitter_libf4m;..\MPUrlSourceSplitter_libafhs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -86,9 +86,9 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ModuleDefinitionFile>MPUrlSourceSplitter_Afhs_Decryption_Akamai.def</ModuleDefinitionFile>
       <AdditionalDependencies>wininet.lib;urlmon.lib;Ws2_32.lib;Shlwapi.lib;libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;MPUrlSourceSplitter_libibmff.lib;MPUrlSourceSplitter_libf4m.lib;MPUrlSourceSplitter_libf4v.lib;MPUrlSourceSplitter_libflv.lib;MPUrlSourceSplitter_libcurlinstance.lib;MPUrlSourceSplitter_libtinyxml2.lib;MPUrlSourceSplitter_libafhs.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>mpurlsourcesplitter_protocol_Afhs.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>subwcrev "$(ProjectDir)." "$(ProjectDir)VersionInfo.h.template" "$(ProjectDir)VersionInfo.h"</Command>
@@ -99,19 +99,13 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="mpurlsourcesplitter_protocol_Afhs.def" />
-    <None Include="VersionInfo.h.template" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="AfhsDecryptionHoster.h" />
-    <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs.h" />
-    <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Exports.h" />
-    <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Parameters.h" />
+    <ClInclude Include="MPUrlSourceSplitter_Afhs_Decryption_Akamai.h" />
+    <ClInclude Include="MPUrlSourceSplitter_Afhs_Decryption_Akamai_Exports.h" />
+    <ClInclude Include="MPUrlSourceSplitter_Afhs_Decryption_Akamai_Parameters.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AfhsDecryptionHoster.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -120,11 +114,15 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="MPUrlSourceSplitter_Protocol_Afhs.cpp" />
+    <ClCompile Include="MPUrlSourceSplitter_Afhs_Decryption_Akamai.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MPUrlSourceSplitter_Afhs_Decryption_Akamai.def" />
+    <None Include="VersionInfo.h.template" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -23,7 +23,7 @@
 #include "AfhsDecryptionHoster.h"
 
 CAfhsDecryptionHoster::CAfhsDecryptionHoster(CLogger *logger, CParameterCollection *configuration)
-  : CHoster(logger, configuration, L"AfhsDecryptionHoster", L"mpurlsourcesplitter_protocol_afhs_decryption_*.dll")
+  : CHoster(logger, configuration, L"AfhsDecryptionHoster", L"mpurlsourcesplitter_afhs_decryption_*.dll")
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_AFHS_DECRYPTION_PLUGIN_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
 
