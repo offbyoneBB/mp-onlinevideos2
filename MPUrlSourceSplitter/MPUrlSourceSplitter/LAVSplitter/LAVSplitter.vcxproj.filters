@@ -57,9 +57,6 @@
     <ClCompile Include="ProtocolHoster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hoster.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="OutputStreamHoster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -129,9 +126,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProtocolHoster.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Hoster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OutputStreamHoster.h">

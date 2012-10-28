@@ -57,10 +57,6 @@ public:
   // @return : fragment timestamp
   uint64_t GetFragmentTimestamp(void);
 
-  // gets if segment and fragment is downloaded
-  // @return : true if downloaded, false otherwise
-  bool GetDownloaded(void);
-
   // gets position of start of segment and fragment within store file
   // @return : file position or -1 if error
   int64_t GetStoreFilePosition(void);
@@ -79,6 +75,10 @@ public:
   // @param downloaded : true if segment and fragment is downloaded
   void SetDownloaded(bool downloaded);
 
+  // sets if segment and fragment is processed
+  // @param processed : true if segment and fragment is processed
+  void SetProcessed(bool processed);
+
   // sets position within store file
   // if segment and fragment is stored than linear buffer is deleted
   // if store file path is cleared (NULL) than linear buffer is created
@@ -91,6 +91,14 @@ public:
   // @return : true if media packet is stored to file, false otherwise
   bool IsStoredToFile(void);
 
+  // tests if segment and fragment is downloaded
+  // @return : true if downloaded, false otherwise
+  bool IsDownloaded(void);
+
+  // tests if segment and fragment is processed
+  // @return : true if downloaded, false otherwise
+  bool IsProcessed(void);
+
 private:
   // stores segment ID
   unsigned int segment;
@@ -102,6 +110,8 @@ private:
   uint64_t fragmentTimestamp;
   // stores if segment and fragment is downloaded
   bool downloaded;
+  // stores if segment and fragment is processed
+  bool processed;
   // posittion in store file
   int64_t storeFilePosition;
   // internal linear buffer for segment and fragment data

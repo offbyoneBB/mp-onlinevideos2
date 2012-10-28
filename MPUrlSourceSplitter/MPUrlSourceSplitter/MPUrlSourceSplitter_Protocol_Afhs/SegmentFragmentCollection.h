@@ -38,6 +38,16 @@ public:
   // @return : the reference to segment and fragment or NULL if not find
   CSegmentFragment *GetSegmentFragment(const wchar_t *url, bool invariant);
 
+  // gets first not downloaded segment and fragment
+  // @param requested : start index for searching
+  // @return : index of first not downloaded segment and fragment or UINT_MAX if not exists
+  unsigned int GetFirstNotDownloadedSegmentFragment(unsigned int start);
+
+  // gets first not processed segment and fragment
+  // @param requested : start index for searching
+  // @return : index of first not processed segment and fragment or UINT_MAX if not exists
+  unsigned int GetFirstNotProcessedSegmentFragment(unsigned int start);
+
 protected:
 
   // compare two item keys

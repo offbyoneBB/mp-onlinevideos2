@@ -86,7 +86,7 @@ void CHoster::LoadPlugins(void)
       wcscpy_s(strDllSearch, _MAX_PATH, strDllPath);
       wcscat_s(strDllSearch, _MAX_PATH, this->moduleSearchPattern);
 
-      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: search path: %s", this->moduleName, METHOD_LOAD_PLUGINS_NAME, strDllPath);
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: search path: '%s', search pattern: '%s'", this->moduleName, METHOD_LOAD_PLUGINS_NAME, strDllPath, this->moduleSearchPattern);
       // add plugins directory to search path
       SetDllDirectory(strDllPath);
 
