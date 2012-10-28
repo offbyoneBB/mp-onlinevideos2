@@ -47,6 +47,15 @@
     <ClInclude Include="SegmentFragmentCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IAfhsDecryptionPlugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AfhsDecryptionHoster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IAfhsSimpleDecryptionPlugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -62,6 +71,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SegmentFragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AfhsDecryptionHoster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

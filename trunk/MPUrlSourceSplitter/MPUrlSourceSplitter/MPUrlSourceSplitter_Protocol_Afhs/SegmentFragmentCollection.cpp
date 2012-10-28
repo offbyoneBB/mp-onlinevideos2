@@ -59,3 +59,35 @@ CSegmentFragment *CSegmentFragmentCollection::GetSegmentFragment(const wchar_t *
 {
   return this->GetItem(url, (void *)&invariant);
 }
+
+unsigned int CSegmentFragmentCollection::GetFirstNotDownloadedSegmentFragment(unsigned int start)
+{
+  unsigned int result = UINT_MAX;
+
+  for (unsigned int i = start; i < this->Count(); i++)
+  {
+    if (!this->GetItem(i)->IsDownloaded())
+    {
+      result = i;
+      break;
+    }
+  }
+
+  return result;
+}
+
+unsigned int CSegmentFragmentCollection::GetFirstNotProcessedSegmentFragment(unsigned int start)
+{
+  unsigned int result = UINT_MAX;
+
+  for (unsigned int i = start; i < this->Count(); i++)
+  {
+    if (this->GetItem(i)->IsDownloaded() && (!this->GetItem(i)->IsProcessed()))
+    {
+      result = i;
+      break;
+    }
+  }
+
+  return result;
+}

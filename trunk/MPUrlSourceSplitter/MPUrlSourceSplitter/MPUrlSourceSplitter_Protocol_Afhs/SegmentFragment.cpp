@@ -30,6 +30,7 @@ CSegmentFragment::CSegmentFragment(unsigned int segment, unsigned int fragment, 
   this->url = Duplicate(url);
   this->fragmentTimestamp = fragmentTimestamp;
   this->downloaded = false;
+  this->processed = false;
   this->storeFilePosition = -1;
 
   this->buffer = new CLinearBuffer();
@@ -62,11 +63,6 @@ uint64_t CSegmentFragment::GetFragmentTimestamp(void)
   return this->fragmentTimestamp;
 }
 
-bool CSegmentFragment::GetDownloaded(void)
-{
-  return this->downloaded;
-}
-
 int64_t CSegmentFragment::GetStoreFilePosition(void)
 {
   return this->storeFilePosition;
@@ -85,6 +81,11 @@ unsigned int CSegmentFragment::GetLength(void)
 void CSegmentFragment::SetDownloaded(bool downloaded)
 {
   this->downloaded = downloaded;
+}
+
+void CSegmentFragment::SetProcessed(bool processed)
+{
+  this->processed = processed;
 }
 
 void CSegmentFragment::SetStoredToFile(int64_t position)
@@ -111,4 +112,14 @@ void CSegmentFragment::SetStoredToFile(int64_t position)
 bool CSegmentFragment::IsStoredToFile(void)
 {
   return (this->storeFilePosition != (-1));
+}
+
+bool CSegmentFragment::IsDownloaded(void)
+{
+  return this->downloaded;
+}
+
+bool CSegmentFragment::IsProcessed(void)
+{
+  return this->processed;
 }

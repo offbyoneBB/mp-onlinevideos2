@@ -31,6 +31,7 @@
 #include "BootstrapInfoBox.h"
 #include "SegmentFragmentCollection.h"
 #include "ParameterCollection.h"
+#include "AfhsDecryptionHoster.h"
 
 #include <curl/curl.h>
 
@@ -39,7 +40,7 @@
 #define PROTOCOL_NAME                                                         L"AFHS"
 
 #define TOTAL_SUPPORTED_PROTOCOLS                                             1
-wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"AFHS" };
+wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"AFHS" };
 
 #define FLV_FILE_HEADER_LENGTH                                                13
 unsigned char FLV_FILE_HEADER[FLV_FILE_HEADER_LENGTH] =                       { 0x46, 0x4C, 0x56, 0x01, 0x05, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x00 };
@@ -218,11 +219,6 @@ protected:
   // holds last bootstrap info request time for live streaming
   DWORD lastBootstrapInfoRequestTime;
 
-  // gets first not downloaded segment and fragment
-  // @param requested : start index for searching
-  // @return : index of first not downloaded segment and fragment or UINT_MAX if not exists
-  unsigned int GetFirstNotDownloadedSegmentFragment(unsigned int start);
-
   // gets segment and fragment collection created from bootstrap info box
   // @param logger : the logger for logging purposes
   // @param methodName : the name of method calling GetSegmentsFragmentsFromBootstrapInfoBox()
@@ -251,6 +247,9 @@ protected:
   // @param storeFile : the name of store file
   // @return : buffer for processing with filled data, NULL otherwise
   CLinearBuffer *FillBufferForProcessing(CSegmentFragmentCollection *segmentsFragments, unsigned int segmentFragmentProcessing, wchar_t *storeFile);
+
+  // holds decryption hoster
+  CAfhsDecryptionHoster *decryptionHoster;
 };
 
 #endif

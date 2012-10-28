@@ -124,7 +124,6 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
   <ItemGroup>
     <ClCompile Include="AsyncRequest.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Hoster.cpp" />
     <ClCompile Include="InputPin.cpp" />
     <ClCompile Include="OutputStreamHoster.cpp" />
     <ClCompile Include="PacketAllocator.cpp" />
@@ -150,7 +149,6 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="..\..\common\includes\stdint.h" />
     <ClInclude Include="..\..\common\includes\version.h" />
     <ClInclude Include="AsyncRequest.h" />
-    <ClInclude Include="Hoster.h" />
     <ClInclude Include="InputPin.h" />
     <ClInclude Include="MPUrlSourceSplitterExports.h" />
     <ClInclude Include="OutputStreamHoster.h" />

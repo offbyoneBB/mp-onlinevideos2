@@ -116,6 +116,12 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->segmentFragmentProcessing = 0;
   this->segmentFragmentToDownload = UINT_MAX;
 
+  this->decryptionHoster = new CAfhsDecryptionHoster(this->logger, this->configurationParameters);
+  if (this->decryptionHoster != NULL)
+  {
+    this->decryptionHoster->LoadPlugins();
+  }
+
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
 
@@ -130,6 +136,12 @@ CMPUrlSourceSplitter_Protocol_Afhs::~CMPUrlSourceSplitter_Protocol_Afhs()
 
   FREE_MEM_CLASS(this->mainCurlInstance);
   FREE_MEM_CLASS(this->bootstrapInfoCurlInstance);
+
+  if (this->decryptionHoster != NULL)
+  {
+    this->decryptionHoster->RemoveAllPlugins();
+    FREE_MEM_CLASS(this->decryptionHoster);
+  }
 
   if (this->storeFilePath != NULL)
   {
@@ -426,7 +438,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
             if (this->segmentFragmentProcessing < this->segmentsFragments->Count())
             {
               CSegmentFragment *segmentFragment = this->segmentsFragments->GetItem(this->segmentFragmentProcessing);
-              if ((!segmentFragment->GetDownloaded()) && (this->segmentFragmentProcessing != this->segmentFragmentDownloading))
+              if ((!segmentFragment->IsDownloaded()) && (this->segmentFragmentProcessing != this->segmentFragmentDownloading))
               {
                 // segment and fragment is not downloaded and also is not downloading currently
                 this->segmentFragmentToDownload = this->segmentFragmentProcessing;
@@ -579,12 +591,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
 
             // if it is live session, then download first not downloaded segment and fragment after currently processed segment and fragment
             // can return UINT_MAX if segment and fragment for download doesn't exist (in that case wait for update of bootstrap info)
-            this->segmentFragmentToDownload = (this->live) ? this->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentProcessing) : this->segmentFragmentToDownload;
+            this->segmentFragmentToDownload = (this->live) ? this->segmentsFragments->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentProcessing) : this->segmentFragmentToDownload;
             // if not set segment and fragment to download, then set segment and fragment to download (get next not downloaded segment and fragment after current downloaded segment and fragment)
-            this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentDownloading) : this->segmentFragmentToDownload;
+            this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->segmentsFragments->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentDownloading) : this->segmentFragmentToDownload;
             // if not set segment and fragment to download, then set segment and fragment to download (get next not downloaded segment and fragment from first segment and fragment)
-            this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->GetFirstNotDownloadedSegmentFragment(0) : this->segmentFragmentToDownload;
-            
+            this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->segmentsFragments->GetFirstNotDownloadedSegmentFragment(0) : this->segmentFragmentToDownload;
 
             // segment and fragment to download still can be UINT_MAX = no segment and fragment to download
             this->segmentFragmentDownloading = UINT_MAX;
@@ -601,18 +612,24 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if (SUCCEEDED(result) && (this->mainCurlInstance == NULL))
+      if (SUCCEEDED(result) && (!this->shouldExit) && (this->segmentsFragments->GetFirstNotProcessedSegmentFragment(0) != UINT_MAX))
       {
+        result = this->decryptionHoster->ProcessSegmentsAndFragments(this->segmentsFragments);
+      }
+
+      if (SUCCEEDED(result) && (this->mainCurlInstance == NULL) && (this->segmentsFragments->GetFirstNotProcessedSegmentFragment(0) == UINT_MAX))
+      {
+        // do not start any download until all downloaded segments and fragments processed
         // no CURL instance exists, we finished download
-        // start another one download
+        // start another download
 
         // if it is live session, then download first not downloaded segment and fragment after currently processed segment and fragment
         // can return UINT_MAX if segment and fragment for download doesn't exist (in that case wait for update of bootstrap info)
-        this->segmentFragmentToDownload = (this->live) ? this->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentProcessing) : this->segmentFragmentToDownload;
+        this->segmentFragmentToDownload = (this->live) ? this->segmentsFragments->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentProcessing) : this->segmentFragmentToDownload;
         // if not set segment and fragment to download, then set segment and fragment to download (get next not downloaded segment and fragment after current processed segment and fragment)
-        this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentProcessing) : this->segmentFragmentToDownload;
+        this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->segmentsFragments->GetFirstNotDownloadedSegmentFragment(this->segmentFragmentProcessing) : this->segmentFragmentToDownload;
         // if not set segment and fragment to download, then set segment and fragment to download (get next not downloaded segment and fragment from first segment and fragment)
-        this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->GetFirstNotDownloadedSegmentFragment(0) : this->segmentFragmentToDownload;
+        this->segmentFragmentToDownload = ((!this->live) && (this->segmentFragmentToDownload == UINT_MAX)) ? this->segmentsFragments->GetFirstNotDownloadedSegmentFragment(0) : this->segmentFragmentToDownload;
         // segment and fragment to download still can be UINT_MAX = no segment and fragment to download
 
         if (SUCCEEDED(result) && (this->segmentFragmentToDownload != UINT_MAX))
@@ -873,7 +890,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
             {
               CSegmentFragment *segmentFragment = this->segmentsFragments->GetItem(i);
 
-              if ((!segmentFragment->IsStoredToFile()) && (segmentFragment->GetDownloaded()))
+              if ((!segmentFragment->IsStoredToFile()) && (segmentFragment->IsProcessed()))
               {
                 // if segment and fragment is not stored to file
                 // store it to file
@@ -1172,6 +1189,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
     this->StopReceivingData();
   }
 
+  // clear all decryption plugins session
+  this->decryptionHoster->ClearSession();
+
   if (this->storeFilePath != NULL)
   {
     DeleteFile(this->storeFilePath);
@@ -1253,7 +1273,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Afhs::SeekToTime(int64_t time)
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: segment %d, fragment %d, url '%s', timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
       segFrag->GetSegment(), segFrag->GetFragment(), segFrag->GetUrl(), segFrag->GetFragmentTimestamp());
 
-    if (!segFrag->GetDownloaded())
+    if (!segFrag->IsDownloaded())
     {
       // close connection
       this->StopReceivingData();
@@ -1344,22 +1364,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(PluginConfiguration *conf
 }
 
 // other methods
-
-unsigned int CMPUrlSourceSplitter_Protocol_Afhs::GetFirstNotDownloadedSegmentFragment(unsigned int start)
-{
-  unsigned int result = UINT_MAX;
-
-  for (unsigned int i = start; i < this->segmentsFragments->Count(); i++)
-  {
-    if (!this->segmentsFragments->GetItem(i)->GetDownloaded())
-    {
-      result = i;
-      break;
-    }
-  }
-
-  return result;
-}
 
 CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragmentsFromBootstrapInfoBox(CLogger *logger, const wchar_t *methodName, CParameterCollection *configurationParameters, CBootstrapInfoBox *bootstrapInfoBox, bool logCollection)
 {
@@ -1682,9 +1686,9 @@ CLinearBuffer *CMPUrlSourceSplitter_Protocol_Afhs::FillBufferForProcessing(CSegm
     {
       CSegmentFragment *segmentFragment = segmentsFragments->GetItem(segmentFragmentProcessing);
 
-      if (segmentFragment->GetDownloaded())
+      if (segmentFragment->IsProcessed())
       {
-        // segment and fragment is downloaded
+        // segment and fragment is downloaded and processed
         // segment and fragment can be stored in memory or in store file
 
         // temporary buffer for data (from store file or from memory)
