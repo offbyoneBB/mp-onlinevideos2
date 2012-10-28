@@ -139,8 +139,8 @@ namespace OnlineVideos.Sites
                 string url = list[i].InnerText;
 
                 string swfUrl = null;
-                if (spc == SouthParkCountry.Nl)
-                    url = url.Replace(@"viacomccstrmfs.fplive.net/viacomccstrm", @"cp10740.edgefcs.net/ondemand/mtvnorigin");
+                if (spc == SouthParkCountry.World)
+                    url = url.Replace(@"viacomspstrmfs.fplive.net/viacomspstrm", @"cp10740.edgefcs.net/ondemand/mtvnorigin");
                 /*switch (spc)
                 {
                     case SouthParkCountry.World:
