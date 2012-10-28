@@ -14,16 +14,8 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Version Info">
-      <UniqueIdentifier>{27bcd15c-2c47-40cd-ac3b-56734d284633}</UniqueIdentifier>
+      <UniqueIdentifier>{30becbf3-d59a-4780-8f18-39e57c395924}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="mpurlsourcesplitter_protocol_Afhs.def">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="VersionInfo.h.template">
-      <Filter>Version Info</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -32,16 +24,13 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs.h">
+    <ClInclude Include="MPUrlSourceSplitter_Afhs_Decryption_Akamai.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Exports.h">
+    <ClInclude Include="MPUrlSourceSplitter_Afhs_Decryption_Akamai_Exports.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MPUrlSourceSplitter_Protocol_Afhs_Parameters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AfhsDecryptionHoster.h">
+    <ClInclude Include="MPUrlSourceSplitter_Afhs_Decryption_Akamai_Parameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -49,14 +38,19 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MPUrlSourceSplitter_Protocol_Afhs.cpp">
+    <ClCompile Include="MPUrlSourceSplitter_Afhs_Decryption_Akamai.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AfhsDecryptionHoster.cpp">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VersionInfo.h.template">
+      <Filter>Version Info</Filter>
+    </None>
+    <None Include="MPUrlSourceSplitter_Afhs_Decryption_Akamai.def">
       <Filter>Source Files</Filter>
-    </ClCompile>
+    </None>
   </ItemGroup>
 </Project>
