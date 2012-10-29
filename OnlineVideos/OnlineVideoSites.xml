@@ -681,18 +681,25 @@
         <item key="fileUrlRegEx"><![CDATA[<iframe\s(?:width="[^"]*"\sheight="[^"]*"\s)?src="(?<m0>[^"]*)"|<param\sname="(movie|src)"\svalue="(?<m0>[^"]*)"|embed\s(?:type="[^"]*"\swidth="[^"]*"\sheight="[^"]*"\s)?src="(?<m0>[^"]*)"|<a\shref="(?<m0>(?:http://www.youtube.com/watch|http://www.spike.com/video-clips|http://www.gametrailers.com/(?:video|game))[^"]*)"\starget="_blank">|<iframe\sid="[^"]*"\ssrc="(?<m0>[^"]*)"]]></item>
       </Configuration>
     </Site>
-    <Site name="CollegeHumor" util="GenericSite" agecheck="false" enabled="true" lang="en">
+    <Site name="CollegeHumor" util="CollegeHumor" agecheck="false" enabled="true" lang="en">
       <Description>Funny videos from CollegeHumor.com.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[(?<=Browse\sVideos.*)(?<!>Cast.*)<li(?:\sclass="selected")?><a\shref="(?<url>[^"]*)">(?<title>(?!(?:Vid|Sketch\sC))[^<]*)</a></li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(<li><a\shref="(?<url>[^"]*)"\sclass="tab[^"]*">(?<title>[^<]*)</a></li>)|(<link\srel="(?<title>canonical)"\shref="(?<url>[^"]*)"\s*>.*?section_title)]]></item>
-        <item key="videoListRegEx"><![CDATA[(?<=<div\sclass="listing".*)<a\shref="/video/(?<VideoUrl>[^/]+)/[^"]*"\stitle="(?<Title>[^"]+)"\sclass="context"\sdata-json="{\scontext[^<]*<img\ssrc="(?<ImageUrl>[^"]+)"[^>]*>\s*.+?<p>(?<Description>[^<]*)</p>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass="slide">\s*<a\shref="(?<url>[^"]*)"\stitle="[^"]*"\sclass="thumb\sthumb-overlay">\s*<img\ssrc="(?<thumb>[^"]*)"\swidth="139"\sheight="70"\salt="[^"]*">\s*<strong\sclass="din">(?<title>[^<]*)</strong>\s*</a>\s*</div>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!grid-listing\scfx.*)(?<=well-rounded.*)<li(?:\sclass="active")?><a\shref="(?<url>[^"]*)">(?<title>(?!Pictures)(?!Articles)[^<]*)</a></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[(<div\sclass="pick\spick-1">\s*<div\sclass="heading">Recent</div>\s*|<div\sclass="media\svideo\sgrid3">)\s*<a\shref="/(video|embed)/(?<VideoUrl>[^/]+)/[^"]*"\stitle="[^"]*"\sclass="thumb[^"]*">\s*<img\ssrc="(?<ImageUrl>[^"]*)"\swidth="[^"]*"\sheight="[^"]*"\salt="[^"]*">\s*<strong>(?:<span\sclass="media-type">Video</span>)?(?<Title>[^<]*)</strong>]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www.collegehumor.com/moogaloop/video/{0}]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\sclass="next"\shref="(?<url>[^"]*)">Next</a>]]></item>
-        <item key="prevPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><span\sclass="previous">Previous</span></a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<file><!\[CDATA\[(?<m0>[^]]*)\]\]></file>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\sclass="next"\shref="(?<url>[^"]*)">&gt;</a>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<youtubeID><!\[CDATA\[(?<m0>[^]]*)]]]]><![CDATA[></youtubeID>]]></item>
+        <item key="fileUrlFormatString"><![CDATA[http://youtube.com/{0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.collegehumor.com/videos]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Home page">http://www.collegehumor.com/videos</Category>
+        <Category xsi:type="RssLink" name="Sketch Comedy" desc="The internet is full of lots of people making lots of videos. Most of them are crap. But some of them are great. Here, we've compiled the best sketch videos from the top sketch comedy groups on the internet. Browse through the most viewed videos, or select a group and watch their whole collection. Either way, we hope you enjoy!">http://www.collegehumor.com/sketch-comedy</Category>
+        <Category xsi:type="RssLink" name="TV/Movies">http://www.collegehumor.com/tv-movies/videos</Category>
+        <Category xsi:type="RssLink" name="All Originals">http://www.collegehumor.com/originals</Category>
+      </Categories>
     </Site>
     <Site name="5min" util="FiveMin" agecheck="false" enabled="true" lang="en">
       <Description>Free instructional videos.</Description>
