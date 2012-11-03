@@ -46,22 +46,24 @@ namespace OnlineVideos.Sites
                 }
                 else
                 {
-					var containerDiv = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class, 'playBoxBody') and contains(@class, 'svtTab-Active')]");
+					string tabName = category.Name == "Hela program" ? "episodes" : "clips";
+					var containerDiv = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class, 'playBoxBody') and contains(@data-tabname, '" + tabName + "')]");
 					if (containerDiv != null)
 					{
-						var lastPageNode = containerDiv.SelectSingleNode(".//div[@class = 'playPagerArea']").SelectNodes(".//ul[@class = 'playLargePager']").LastOrDefault();
+						var lastPageNode = containerDiv.Descendants("div").Where(d => d.GetAttributeValue("class", "") == "playBoxContainer").FirstOrDefault();
+						if (lastPageNode != null) lastPageNode = lastPageNode.Element("a");
 						if (lastPageNode != null)
 						{
 							int maxPages = lastPageNode.GetAttributeValue("data-lastpage", 0);
 							if (maxPages > 1)
 							{
 								currentVideosMaxPages = maxPages;
-								nextPageUrl = HttpUtility.HtmlDecode(lastPageNode.GetAttributeValue("data-baseurl", "")) + "page=2";
+								nextPageUrl = HttpUtility.HtmlDecode(lastPageNode.GetAttributeValue("data-baseurl", "")) + lastPageNode.GetAttributeValue("data-name", "") + "=" + lastPageNode.GetAttributeValue("data-nextpage", "");
 								if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute)) nextPageUrl = new Uri(new Uri(url), nextPageUrl).AbsoluteUri;
 								HasNextPage = true;
 							}
 						}
-						return VideosForCurrentCategory(containerDiv.SelectSingleNode(".//div[@class = 'playPagerSections playJsFadeIn']"), url);
+						return VideosForCurrentCategory(containerDiv, url);
 					}
                 }
             }
@@ -137,7 +139,7 @@ namespace OnlineVideos.Sites
                 foreach (var article in articles)
                 {
                     VideoInfo video = new VideoInfo();
-                    video.VideoUrl = article.Elements("a").Select(a => a.GetAttributeValue("href", "")).FirstOrDefault();
+					video.VideoUrl = article.Descendants("a").Select(a => a.GetAttributeValue("href", "")).FirstOrDefault();
                     if (!string.IsNullOrEmpty(video.VideoUrl))
                     {
                         if (!Uri.IsWellFormedUriString(video.VideoUrl, System.UriKind.Absolute)) video.VideoUrl = new Uri(new Uri(url), video.VideoUrl).AbsoluteUri;
@@ -246,17 +248,19 @@ namespace OnlineVideos.Sites
                 }
                 else
                 {
-                    CategoriesFromArticles(htmlDoc.DocumentNode.SelectSingleNode("//div[@class = 'playPagerSections playJsFadeIn']"), parentCategory);
+					var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playBoxBody') and contains(@class,'svtTab-Active')]");
+					CategoriesFromArticles(node, parentCategory);
 
-                    // categories are spread over pages - remember the last page on the parent category, so we know when to stop adding a NextPageCategory
-                    var lastPageNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@class = 'playPagerArea']").SelectNodes(".//ul[@class = 'playLargePager']").LastOrDefault();
+					// categories are spread over pages - remember the last page on the parent category, so we know when to stop adding a NextPageCategory
+					var lastPageNode = node.Descendants("div").Where(d => d.GetAttributeValue("class", "") == "playBoxContainer").FirstOrDefault();
+					if (lastPageNode != null) lastPageNode = lastPageNode.Element("a");
                     if (lastPageNode != null)
                     {
                         int maxPages = lastPageNode.GetAttributeValue("data-lastpage", 0);
                         if (maxPages > 1)
                         {
                             parentCategory.Other = maxPages;
-                            string url = HttpUtility.HtmlDecode(lastPageNode.GetAttributeValue("data-baseurl", "")) + "page=2";
+							string url = HttpUtility.HtmlDecode(lastPageNode.GetAttributeValue("data-baseurl", "")) + lastPageNode.GetAttributeValue("data-name", "") + "=" + lastPageNode.GetAttributeValue("data-nextpage", "");
                             if (!Uri.IsWellFormedUriString(url, System.UriKind.Absolute)) url = new Uri(new Uri(categoryUrl), url).AbsoluteUri;
                             parentCategory.SubCategories.Add(new NextPageCategory() { Url = url, ParentCategory = parentCategory });
                         }
@@ -302,7 +306,7 @@ namespace OnlineVideos.Sites
                 foreach (var article in articles)
                 {
                     RssLink cat = new RssLink();
-                    cat.Url = article.Elements("a").Select(a => a.GetAttributeValue("href", "")).FirstOrDefault();
+					cat.Url = article.Descendants("a").Select(a => a.GetAttributeValue("href", "")).FirstOrDefault();
                     if (!string.IsNullOrEmpty(cat.Url))
                     {
                         if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
@@ -349,7 +353,7 @@ namespace OnlineVideos.Sites
 				}
 				else if (url.StartsWith("http://") && url.EndsWith(".f4m"))
 				{
-					url = url + "?hdcore=2.10.3";
+					url = url + "?hdcore=2.10.3&g=" + GetRandomChars(12);
 				}
 				else if (url.StartsWith("http://geoip.api"))
 					url = HttpUtility.ParseQueryString(new Uri(url).Query)["vurl"];
@@ -366,5 +370,13 @@ namespace OnlineVideos.Sites
 
             return result;
         }
+
+		string GetRandomChars(int amount)
+		{
+			var random = new Random();
+			var sb = new System.Text.StringBuilder(amount);
+			for (int i = 0; i < amount;i++ ) sb.Append(System.Text.Encoding.ASCII.GetString(new byte[] { (byte)random.Next(65, 90) }));
+			return sb.ToString();
+		}
     }
 }
