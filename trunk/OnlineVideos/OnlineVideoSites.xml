@@ -563,14 +563,27 @@
     <Site name="Break" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Funny videos for young men.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.break.com/categories/]]></item>
         <item key="dynamicCategoriesRegEx"><![CDATA[<a[^>]*href="(?<url>[^"]+)">\s*See\smore\s*(?<title>[^<]+)\s*Videos\s*</a>]]></item>
-        <item key="videoListRegEx"><![CDATA[(<li[^>]*><a\s+href="(?<VideoUrl>[^"]+)"[^>]*>[^<]*</a><img\s+src="(?<ImageUrl>[^"]+)"[^>]*><div[^>]*><a[^>]*>(?<Title>[^<]+)</a></div></li>)|
-(<dl[^>]*>\s*<dt>\s*(<ul[^>]*>\s*(<li[^>]*>[^<]*</li>\s*)*</ul>\s*)?<a.+?href="(?<VideoUrl>[^"]+)"[^>]*>(?<Title>[^<]*)</a>.*?</dt>\s*<dd[^>]*>.*?<img.+?src="(?<ImageUrl>[^"]+)"[^>]*>\s*</a>\s*</dd>\s*(<dd[^>]*>\s*<ul>\s*(<li[^>]*>[^<]*</li>\s*)*</ul>\s*</dd>\s*)?<dd>\s*<p\s+class="desc">(<span.*?</span>)?(?<Description>[^<]*)</p>)]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<=<li\s+class='active'>.*)<li><a\s+id='cat_\d+'\s+href='(?<url>[^']*)'>(?<title>.*?)</a></li>]]></item>
+        <item key="videoListRegEx">
+          <![CDATA[<article[^>]*>\s*
+	  <div[^>]*>\s*
+	  <span[^>]*>.*?</span>\s*
+	  <img.*?src='(?<ImageUrl>[^']*)'.*?/>\s*
+	  </div>\s*
+	  <h1>\s*
+	  <a\s+href='(?<VideoUrl>[^']*)'\s*>(?<Title>.*?)</a>\s*
+	  <span\s+class="date">(?<Airdate>.*?)</span>\s+
+	  <span[^>]*>.*?</span>\s*
+	  </h1>\s*
+	  <p>(?<Description>.*?)</p>\s*
+	  </article>]]>
+        </item>
         <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"[^>]*>\s*Next]]></item>
-        <item key="fileUrlRegEx"><![CDATA[sGlobalFileName='(?<m0>[^']*)'(?:(?!flashVars\.icon\s=\s).)*flashVars\.icon\s=\s"(?<m1>[^"]+)"]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}.flv?{1}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[videoPath:\s*'(?<m0>[^']*)'.*?icon:\s*'(?<m1>[^']*)']]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}?{1}]]></item>
         <item key="searchUrl"><![CDATA[http://www.break.com/surfacevideo/{0}/family-off/newest/]]></item>
+        <item key="baseUrl"><![CDATA[http://www.break.com/categories/]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="HomePage">http://www.break.com/</Category>
