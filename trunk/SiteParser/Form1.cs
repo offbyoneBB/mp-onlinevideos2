@@ -209,31 +209,46 @@ namespace SiteParser
 
         private void GetCategoriesButton_Click(object sender, EventArgs e)
         {
-            //get categories
-            GuiToUtil(generic);
+			var oldCursor = Cursor;
+			try
+			{
+				Cursor = Cursors.WaitCursor;
 
-            TreeNode selected = treeView1.SelectedNode;
-            if (selected != null && selected.Tag is NextPageCategory && selected.Parent.Parent == null)
-            {
-                generic.Settings.Categories.RemoveAt(generic.Settings.Categories.Count - 1);
-                generic.DiscoverNextPageCategories((NextPageCategory)selected.Tag);
-            }
-            else
-            {
-                generic.Settings.Categories.Clear();
-                foreach (Category cat in staticList)
-                    generic.Settings.Categories.Add(cat);
+				//get categories
+				GuiToUtil(generic);
 
-                if (GetRegex(generic, "regEx_dynamicCategories") != null)
-                    generic.DiscoverDynamicCategories();
-            }
-            treeView1.Nodes.Clear();
-            TreeNode root = treeView1.Nodes.Add("site");
-            foreach (Category cat in generic.Settings.Categories)
-            {
-                root.Nodes.Add(cat.Name).Tag = cat;
-                cat.HasSubCategories = true;
-            }
+				TreeNode selected = treeView1.SelectedNode;
+				if (selected != null && selected.Tag is NextPageCategory && selected.Parent.Parent == null)
+				{
+					generic.Settings.Categories.RemoveAt(generic.Settings.Categories.Count - 1);
+					generic.DiscoverNextPageCategories((NextPageCategory)selected.Tag);
+				}
+				else
+				{
+					generic.Settings.Categories.Clear();
+					foreach (Category cat in staticList)
+						generic.Settings.Categories.Add(cat);
+
+					if (GetRegex(generic, "regEx_dynamicCategories") != null)
+						generic.DiscoverDynamicCategories();
+				}
+				treeView1.Nodes.Clear();
+				TreeNode root = treeView1.Nodes.Add("site");
+				foreach (Category cat in generic.Settings.Categories)
+				{
+					root.Nodes.Add(cat.Name).Tag = cat;
+					cat.HasSubCategories = true;
+				}
+				root.Expand();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message, "Error getting Categories", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+			finally
+			{
+				Cursor = oldCursor;
+			}
         }
 
         private void CreateCategoryNextPageRegexButton_Click(object sender, EventArgs e)
@@ -301,6 +316,7 @@ namespace SiteParser
                     selected.Nodes.Add(cat.Name).Tag = cat;
                     cat.HasSubCategories = false;
                 }
+				selected.Expand();
             }
             else
                 MessageBox.Show("no valid category selected");
@@ -518,9 +534,12 @@ namespace SiteParser
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Windows Media Player\\wmplayer.exe"),
-                (ResultUrlComboBox.SelectedItem as PlaybackOption).Url);
+			if (ResultUrlComboBox.SelectedItem as PlaybackOption == null)
+				MessageBox.Show("Please select the Url to play", "Nothing selected", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			else
+				System.Diagnostics.Process.Start(
+					Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Windows Media Player\\wmplayer.exe"),
+						(ResultUrlComboBox.SelectedItem as PlaybackOption).Url);
         }
 
         private void copyUrl_Click(object sender, EventArgs e)
