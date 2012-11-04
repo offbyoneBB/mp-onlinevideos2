@@ -302,125 +302,130 @@ namespace OnlineVideos.MediaPortal1.Player
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent; // prevents the BlackRectangle on first time playback
             bool PlaybackReady = false;
             IBaseFilter sourceFilter = null;
-            try
-            {
-				string sourceFilterName = GetSourceFilterName(m_strCurrentFile);
+			string sourceFilterName = null;
+			try
+			{
+				sourceFilterName = GetSourceFilterName(m_strCurrentFile);
 
-                int result = graphBuilder.FindFilterByName(sourceFilterName, out sourceFilter);
-                if (result != 0)
-                {
-                    string errorText = DirectShowLib.DsError.GetErrorText(result);
-                    if (errorText != null) errorText = errorText.Trim();
-                    Log.Instance.Warn("BufferFile : FindFilterByName returned '{0}'{1}", "0x" + result.ToString("X8"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
-                    return false;
-                }
+				int result = graphBuilder.FindFilterByName(sourceFilterName, out sourceFilter);
+				if (result != 0)
+				{
+					string errorText = DirectShowLib.DsError.GetErrorText(result);
+					if (errorText != null) errorText = errorText.Trim();
+					Log.Instance.Warn("BufferFile : FindFilterByName returned '{0}'{1}", "0x" + result.ToString("X8"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
+					return false;
+				}
 
-				result = ((IFileSourceFilter)sourceFilter).Load(m_strCurrentFile, null);
+				Marshal.ThrowExceptionForHR(((IFileSourceFilter)sourceFilter).Load(m_strCurrentFile, null));
 
-                if (result != 0)
-                {
-                    string errorText = DirectShowLib.DsError.GetErrorText(result);
-                    if (errorText != null) errorText = errorText.Trim();
-                    Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned '{0}'{1}", "0x" + result.ToString("X8"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
-                    return false;
-                }
-
-                OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
+				OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
 
 				if (sourceFilter is IAMOpenProgress && !m_strCurrentFile.Contains("live=true") && !m_strCurrentFile.Contains("RtmpLive=1"))
-                {
-                    // buffer before starting playback
-                    bool filterConnected = false;
-                    percentageBuffered = 0.0f;
-                    long total = 0, current = 0, last = 0;
-                    do
-                    {
-                        result = ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
-                        percentageBuffered = (float)current / (float)total * 100.0f;
-                        // after configured percentage has been buffered, connect the graph
-                        if (filterState != null)
-                        {
-                            filterState.IsFilterReadyToConnectPins();
-                        }
+				{
+					// buffer before starting playback
+					bool filterConnected = false;
+					percentageBuffered = 0.0f;
+					long total = 0, current = 0, last = 0;
+					do
+					{
+						result = ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
+						percentageBuffered = (float)current / (float)total * 100.0f;
+						// after configured percentage has been buffered, connect the graph
+						if (!filterConnected && (percentageBuffered >= PluginConfiguration.Instance.playbuffer || skipBuffering))
+						{
+							if (((filterState != null) && (filterState.IsFilterReadyToConnectPins())) ||
+								(filterState == null))
+							{
+								cacheFile = filterState.GetCacheFileName();
+								if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
+								filterConnected = true;
+								renderPinsThread = new Thread(delegate()
+								{
+									try
+									{
+										Log.Instance.Debug("BufferFile : Rendering unconnected output pins of source filter ...");
+										// add audio and video filter from MP Movie Codec setting section
+										AddPreferredFilters(graphBuilder, sourceFilter);
+										// connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
+										DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
+										Log.Instance.Debug("BufferFile : Playback Ready.");
+										PlaybackReady = true;
+									}
+									catch (ThreadAbortException)
+									{
+										Thread.ResetAbort();
+										Log.Instance.Info("RenderUnconnectedOutputPins foribly aborted.");
+									}
+									catch (Exception ex)
+									{
+										Log.Instance.Warn(ex.Message);
+										StopBuffering();
+									}
+								}) { IsBackground = true, Name = "OVGraph" };
+								renderPinsThread.Start();
+							}
+						}
+						// log every percent
+						if (current > last && current - last >= (double)total * 0.01)
+						{
+							Log.Instance.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)percentageBuffered);
+							last = current;
+						}
+						// set the percentage to a gui property, formatted according to percentage, so the user knows very early if anything is buffering                   
+						string formatString = "###";
+						if (percentageBuffered == 0f) formatString = "0.0";
+						else if (percentageBuffered < 1f) formatString = ".00";
+						else if (percentageBuffered < 10f) formatString = "0.0";
+						else if (percentageBuffered < 100f) formatString = "##";
+						GUIPropertyManager.SetProperty("#OnlineVideos.buffered", percentageBuffered.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
+						Thread.Sleep(50); // no need to do this more often than 20 times per second
+					}
+					while (!PlaybackReady && graphBuilder != null && !BufferingStopped);
+				}
+				else
+				{
+					if (filterState != null)
+					{
+						while (!filterState.IsFilterReadyToConnectPins())
+						{
+							Thread.Sleep(50);
+						}
+						cacheFile = filterState.GetCacheFileName();
+					}
+					// add audio and video filter from MP Movie Codec setting section
+					AddPreferredFilters(graphBuilder, sourceFilter);
+					// connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
+					DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
+					percentageBuffered = 100.0f; // no progress reporting possible
+					GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
+					PlaybackReady = true;
+				}
+			}
+			catch (ThreadAbortException)
+			{
+				Thread.ResetAbort();
+			}
+			catch (COMException comEx)
+			{
+				Log.Instance.Warn(comEx.ToString());
 
-                        if (!filterConnected && (percentageBuffered >= PluginConfiguration.Instance.playbuffer || skipBuffering))
-                        {
-                            if (((filterState != null) && (filterState.IsFilterReadyToConnectPins())) ||
-                                (filterState == null))
-                            {
-                                cacheFile = filterState.GetCacheFileName();
-                                if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
-                                filterConnected = true;
-                                renderPinsThread = new Thread(delegate()
-                                {
-                                    try
-                                    {
-                                        Log.Instance.Debug("BufferFile : Rendering unconnected output pins of source filter ...");
-                                        // add audio and video filter from MP Movie Codec setting section
-                                        AddPreferredFilters(graphBuilder, sourceFilter);
-                                        // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
-                                        DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                                        Log.Instance.Debug("BufferFile : Playback Ready.");
-                                        PlaybackReady = true;
-                                    }
-                                    catch (ThreadAbortException)
-                                    {
-                                        Thread.ResetAbort();
-                                        Log.Instance.Info("RenderUnconnectedOutputPins foribly aborted.");
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Log.Instance.Warn(ex.Message);
-                                        StopBuffering();
-                                    }
-                                }) { IsBackground = true, Name = "OVGraph" };
-                                renderPinsThread.Start();
-                            }
-                        }
-                        // log every percent
-                        if (current > last && current - last >= (double)total * 0.01)
-                        {
-                            Log.Instance.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)percentageBuffered);
-                            last = current;
-                        }
-                        // set the percentage to a gui property, formatted according to percentage, so the user knows very early if anything is buffering                   
-                        string formatString = "###";
-                        if (percentageBuffered == 0f) formatString = "0.0";
-                        else if (percentageBuffered < 1f) formatString = ".00";
-                        else if (percentageBuffered < 10f) formatString = "0.0";
-                        else if (percentageBuffered < 100f) formatString = "##";
-                        GUIPropertyManager.SetProperty("#OnlineVideos.buffered", percentageBuffered.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
-                        Thread.Sleep(50); // no need to do this more often than 20 times per second
-                    }
-                    while (!PlaybackReady && graphBuilder != null && !BufferingStopped);
-                }
-                else
-                {
-                    if (filterState != null)
-                    {
-                        while (!filterState.IsFilterReadyToConnectPins())
-                        {
-                            Thread.Sleep(50);
-                        }
-                        cacheFile = filterState.GetCacheFileName();
-                    }
-                    // add audio and video filter from MP Movie Codec setting section
-                    AddPreferredFilters(graphBuilder, sourceFilter);
-                    // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
-                    DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                    percentageBuffered = 100.0f; // no progress reporting possible
-                    GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
-                    PlaybackReady = true;
-                }
-            }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
-            }
-            catch (Exception ex)
-            {
-                Log.Instance.Warn(ex.ToString());
-            }
+				if (sourceFilterName == MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName &&
+					Enum.IsDefined(typeof(MPUrlSourceFilter.MPUrlSourceSplitterError), comEx.ErrorCode))
+				{
+					throw new OnlineVideosException(((MPUrlSourceFilter.MPUrlSourceSplitterError)comEx.ErrorCode).ToString());
+				}
+
+				string errorText = DirectShowLib.DsError.GetErrorText(comEx.ErrorCode);
+				if (errorText != null) errorText = errorText.Trim();
+				if (!string.IsNullOrEmpty(errorText))
+				{
+					throw new OnlineVideosException(errorText);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Instance.Warn(ex.ToString());
+			}
             finally
             {
                 if (sourceFilter != null)

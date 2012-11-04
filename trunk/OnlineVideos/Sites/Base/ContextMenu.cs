@@ -13,12 +13,17 @@ namespace OnlineVideos.Sites
             SubEntries.ListChanged += (o, e) => { if (e.ListChangedType == ListChangedType.ItemAdded) SubEntries[e.NewIndex].ParentEntry = this; };
         }
 
-        public enum UIAction { Execute, GetText, ShowList }
+        public enum UIAction { Execute, GetText, ShowList, PromptYesNo }
 
         /// <summary>
         /// The text that should be displayed for this context menu entry.
         /// </summary>
         public string DisplayText { get; set; }
+
+		/// <summary>
+		/// The text that should be shown as prompt when <see cref="Action"/> is set to PromptYesNo.
+		/// </summary>
+		public string PromptText { get; set; }
 
         /// <summary>
         /// What should happen when this entry is chosen:
@@ -26,6 +31,7 @@ namespace OnlineVideos.Sites
         /// <item><term>Execute</term><description>execute an action in the code</description></item>
         /// <item><term>GetText</term><description>ask the user to input text and then execute an action in the code</description></item>
         /// <item><term>ShowList</term><description>show the list of <see cref="SubEntries"/></description></item>
+		/// <item><term>PromptYesNo</term><description>ask the user a question he can confirm or cancel, before the action is executed</description></item>
         /// </list>
         /// </summary>
         public UIAction Action { get; set; }
