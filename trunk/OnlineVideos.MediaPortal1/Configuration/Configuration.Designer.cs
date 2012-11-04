@@ -61,6 +61,8 @@
 			this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
 			this.mainTabControl = new System.Windows.Forms.TabControl();
 			this.tabGeneral = new System.Windows.Forms.TabPage();
+			this.chkStoreLayoutPerCategory = new System.Windows.Forms.CheckBox();
+			this.label8 = new System.Windows.Forms.Label();
 			this.pictureBox6 = new System.Windows.Forms.PictureBox();
 			this.groupBoxLatestVideos = new System.Windows.Forms.GroupBox();
 			this.chkLatestVideosRandomize = new System.Windows.Forms.CheckBox();
@@ -191,8 +193,6 @@
 			this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.onlineVideosService1 = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
-			this.label8 = new System.Windows.Forms.Label();
-			this.chkStoreLayoutPerCategory = new System.Windows.Forms.CheckBox();
 			siteNameIconPanel = new System.Windows.Forms.Panel();
 			siteColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			siteColumnDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -609,6 +609,26 @@
 			this.tabGeneral.TabIndex = 0;
 			this.tabGeneral.Text = "General";
 			this.tabGeneral.UseVisualStyleBackColor = true;
+			// 
+			// chkStoreLayoutPerCategory
+			// 
+			this.chkStoreLayoutPerCategory.AutoSize = true;
+			this.chkStoreLayoutPerCategory.Location = new System.Drawing.Point(335, 81);
+			this.chkStoreLayoutPerCategory.Name = "chkStoreLayoutPerCategory";
+			this.chkStoreLayoutPerCategory.Size = new System.Drawing.Size(15, 14);
+			this.chkStoreLayoutPerCategory.TabIndex = 74;
+			this.toolTip1.SetToolTip(this.chkStoreLayoutPerCategory, "If enabled, your chosen layout (list, small icons, large icons) will be remembere" +
+        "d per category and site.");
+			this.chkStoreLayoutPerCategory.UseVisualStyleBackColor = true;
+			// 
+			// label8
+			// 
+			this.label8.AutoSize = true;
+			this.label8.Location = new System.Drawing.Point(355, 81);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(130, 13);
+			this.label8.TabIndex = 73;
+			this.label8.Text = "Store Layout per Category";
 			// 
 			// pictureBox6
 			// 
@@ -1512,7 +1532,7 @@
             this.btnSitesGroupDown});
 			this.toolStripSitesGroupLeft.Location = new System.Drawing.Point(0, 0);
 			this.toolStripSitesGroupLeft.Name = "toolStripSitesGroupLeft";
-			this.toolStripSitesGroupLeft.Size = new System.Drawing.Size(24, 240);
+			this.toolStripSitesGroupLeft.Size = new System.Drawing.Size(24, 215);
 			this.toolStripSitesGroupLeft.Stretch = true;
 			this.toolStripSitesGroupLeft.TabIndex = 0;
 			// 
@@ -2139,33 +2159,13 @@
 			// 
 			// openFileDialog1
 			// 
-			this.openFileDialog1.FileName = "openFileDialog1";
+			this.openFileDialog1.Filter = "Image File|*.jpg;*.jpeg;*.png;*.gif";
 			// 
 			// onlineVideosService1
 			// 
 			this.onlineVideosService1.Credentials = null;
 			this.onlineVideosService1.Url = "http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx";
 			this.onlineVideosService1.UseDefaultCredentials = false;
-			// 
-			// label8
-			// 
-			this.label8.AutoSize = true;
-			this.label8.Location = new System.Drawing.Point(355, 81);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(130, 13);
-			this.label8.TabIndex = 73;
-			this.label8.Text = "Store Layout per Category";
-			// 
-			// chkStoreLayoutPerCategory
-			// 
-			this.chkStoreLayoutPerCategory.AutoSize = true;
-			this.chkStoreLayoutPerCategory.Location = new System.Drawing.Point(335, 81);
-			this.chkStoreLayoutPerCategory.Name = "chkStoreLayoutPerCategory";
-			this.chkStoreLayoutPerCategory.Size = new System.Drawing.Size(15, 14);
-			this.chkStoreLayoutPerCategory.TabIndex = 74;
-			this.toolTip1.SetToolTip(this.chkStoreLayoutPerCategory, "If enabled, your chosen layout (list, small icons, large icons) will be remembere" +
-        "d per category and site.");
-			this.chkStoreLayoutPerCategory.UseVisualStyleBackColor = true;
 			// 
 			// Configuration
 			// 

@@ -710,7 +710,12 @@ namespace OnlineVideos.MediaPortal1
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+				// focus the thumbnail textbox so databinding will pick up the new value
+				tbxSitesGroupThumb.Focus();
+				// set the file path from the dialog
                 tbxSitesGroupThumb.Text = openFileDialog1.FileName;
+				// focus a different control seo the text is written to the bound object
+				tbxSitesGroupDesc.Focus(); 
             }
         }
 
