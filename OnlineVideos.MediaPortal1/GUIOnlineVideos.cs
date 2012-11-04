@@ -575,6 +575,17 @@ namespace OnlineVideos.MediaPortal1
                     if (dlgCat.SelectedId == -1) break;
                     else currentEntry = dialogOptions[dlgCat.SelectedId - 1].Value;
                 }
+				if (currentEntry.Action == Sites.ContextMenuEntry.UIAction.PromptYesNo)
+				{
+					GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+					dlgYesNo.Reset();
+					dlgYesNo.SetHeading(currentEntry.PromptText);
+					dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+					if (dlgYesNo.IsConfirmed)
+						execute = true;
+					else
+						break;
+				}
                 if (execute)
                 {
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
@@ -2294,7 +2305,7 @@ namespace OnlineVideos.MediaPortal1
             if (factory.PreparedPlayerType != PlayerType.Internal)
             {
                 // external players can only be created on the main thread
-                Play_Step5(playItem, lsUrl, goFullScreen, factory, true);
+                Play_Step5(playItem, lsUrl, goFullScreen, factory, true, true);
             }
             else
             {
@@ -2327,12 +2338,13 @@ namespace OnlineVideos.MediaPortal1
                         },
                         delegate(bool success, object result)
                         {
-                            Play_Step5(playItem, lsUrl, goFullScreen, factory, result as bool?);
+							// success false means BufferFile threw an exception that was shown to the user - pass it as showMessage
+							Play_Step5(playItem, lsUrl, goFullScreen, factory, result as bool?, success);
                         },
                         Translation.Instance.StartingPlayback, false);
                         break;
                     case false:// play without buffering in background
-                        Play_Step5(playItem, lsUrl, goFullScreen, factory, prepareResult);
+                        Play_Step5(playItem, lsUrl, goFullScreen, factory, prepareResult, true);
                         break;
                     default: // error building graph
                         GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
@@ -2349,11 +2361,10 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        void Play_Step5(PlayListItem playItem, string lsUrl, bool goFullScreen, OnlineVideos.MediaPortal1.Player.PlayerFactory factory, bool? factoryPrepareResult)
+		void Play_Step5(PlayListItem playItem, string lsUrl, bool goFullScreen, OnlineVideos.MediaPortal1.Player.PlayerFactory factory, bool? factoryPrepareResult, bool showMessage)
         {
             if (factoryPrepareResult == null)
             {
-                bool showMessage = true;
                 if (factory.PreparedPlayer is OnlineVideosPlayer && (factory.PreparedPlayer as OnlineVideosPlayer).BufferingStopped == true) showMessage = false;
                 factory.PreparedPlayer.Dispose();
                 if (showMessage)

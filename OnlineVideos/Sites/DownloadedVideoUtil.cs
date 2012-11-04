@@ -163,8 +163,19 @@ namespace OnlineVideos.Sites
             {
                 if (selectedItem.Other as DownloadInfo == null)
                 {
-                    options.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.Delete });
-					options.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.DeleteAll });
+					options.Add(new ContextMenuEntry() 
+					{ 
+						DisplayText = Translation.Instance.Delete,
+						PromptText = string.Format("{0}: \"{1}?\"", Translation.Instance.Delete, selectedItem.Title),
+						Action = ContextMenuEntry.UIAction.PromptYesNo
+					});
+
+					options.Add(new ContextMenuEntry() 
+					{ 
+						DisplayText = Translation.Instance.DeleteAll,
+						PromptText = string.Format("{0}?", Translation.Instance.DeleteAll),
+						Action = ContextMenuEntry.UIAction.PromptYesNo
+					});
                 }
                 else
                 {
