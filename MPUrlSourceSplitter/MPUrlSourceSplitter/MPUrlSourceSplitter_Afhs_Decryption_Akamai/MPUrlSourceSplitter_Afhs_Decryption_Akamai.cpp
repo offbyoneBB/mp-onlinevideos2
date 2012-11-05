@@ -379,12 +379,13 @@ HRESULT CMPUrlSourceSplitter_Afhs_Decryption_Akamai::ProcessSegmentsAndFragments
                 tempTimestamp <<= 8;
                 tempTimestamp |= akamaiFlvPacketData[6] & 0x000000FF;
 
-                if ((tempTimestamp == this->lastTimestamp) || ((tempTimestamp == 0) && (this->lastTimestamp > 0)))
+                // next commented part was causing error when seeking to start of video
+                /*if ((tempTimestamp == this->lastTimestamp) || ((tempTimestamp == 0) && (this->lastTimestamp > 0)))
                 {
                   this->lastTimestamp += 5;
                   tempTimestamp = this->lastTimestamp;
                 }
-                else
+                else*/
                 {
                   this->lastTimestamp = tempTimestamp;
                 }

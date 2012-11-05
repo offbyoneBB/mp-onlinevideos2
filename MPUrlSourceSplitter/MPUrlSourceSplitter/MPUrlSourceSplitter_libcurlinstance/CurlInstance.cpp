@@ -251,6 +251,8 @@ DWORD WINAPI CCurlInstance::CurlWorker(LPVOID lpParam)
   CCurlInstance *caller = (CCurlInstance *)lpParam;
   caller->logger->Log(LOGGER_INFO, L"%s: %s: Start, url: '%s'", caller->protocolName, METHOD_CURL_WORKER_NAME, caller->downloadRequest->GetUrl());
   caller->startReceivingTicks = GetTickCount();
+  caller->stopReceivingTicks = 0;
+  caller->totalReceivedBytes = 0;
 
   // on next line will be stopped processing of code - until something happens
   caller->downloadResponse->SetResultCode(curl_easy_perform(caller->curl));

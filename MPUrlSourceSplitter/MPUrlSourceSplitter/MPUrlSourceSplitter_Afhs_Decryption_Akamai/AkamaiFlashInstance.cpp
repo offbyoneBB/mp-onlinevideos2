@@ -120,7 +120,7 @@ CDecryptedDataCollection *CAkamaiFlashInstance::GetDecryptedData(const wchar_t *
 
   // get total request length
   unsigned int keyLength = wcslen(key);
-  unsigned int length = 68 + 17 + keyLength;
+  unsigned int length = 68 + 17 + keyLength + 30;
 
   // each request is separated by '|'
   for (unsigned int i = 0; i < encryptedDataCollection->Count(); i++)
@@ -155,7 +155,7 @@ CDecryptedDataCollection *CAkamaiFlashInstance::GetDecryptedData(const wchar_t *
       wmemcpy(request + position, L"|", 1);
       position++;
     }
-    
+
     // add end of request
     wmemcpy(request + position, L"</string></arguments></invoke>", 30);
     position += 30;
