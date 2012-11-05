@@ -23,7 +23,8 @@ namespace OnlineVideos.Sites.georgius
 
         private static String episodeHqFileNameFormat = @"'hq_id':'(?<hqFileName>[^']*)";
         private static String episodeLqFileNameFormat = @"'lq_id':'(?<lqFileName>[^']*)";
-        private static String episodeAuth = @"'?auth=(?<auth>[^']*)";
+        private static String episodeAuthStart = @"auth='+""""+'";
+        private static String episodeAuthEnd = @"'";
         private static String episodeZone = @"'zoneGEO':(?<zone>[^,]*)";
         private static String episodeBaseUrlStart = @"embed['stream'] = 'rtmp";
         private static String episodeBaseUrlEnd = @"'+(";
@@ -251,10 +252,14 @@ namespace OnlineVideos.Sites.georgius
                 }
             }
 
-            match = Regex.Match(episodeJS, PrimaUtil.episodeAuth);
-            if (match.Success)
+            startIndex = episodeJS.IndexOf(PrimaUtil.episodeAuthStart);
+            if (startIndex >= 0)
             {
-                auth = match.Groups["auth"].Value;
+                int endIndex = episodeJS.IndexOf(PrimaUtil.episodeAuthEnd, startIndex + PrimaUtil.episodeAuthStart.Length);
+                if (endIndex >= 0)
+                {
+                    auth = episodeJS.Substring(startIndex + PrimaUtil.episodeAuthStart.Length, endIndex - startIndex - PrimaUtil.episodeAuthStart.Length);
+                }
             }
 
             if ((!String.IsNullOrEmpty(auth)) && (!(String.IsNullOrEmpty(lqFileName) || String.IsNullOrEmpty(hqFileName) || String.IsNullOrEmpty(baseRtmpUrl))))

@@ -39,9 +39,9 @@ namespace OnlineVideos.Sites.georgius
 
         private static String showEpisodeUrlAndTitleRegex = @"<option value=""(?<showUrl>[^""]+)"">(?<showTitle>[^<]+)";
 
-        private static String videoUrlBlockStart = @"<video id=""videoPlayer1_lbp""";
-        private static String videoUrlBlockEnd = @"</video>";
-        private static String videoUrlRegex = @"<source src=""(?<videoUrl>[^""]+)""";
+        private static String videoUrlBlockStart = @"new VideoPlayer";
+        private static String videoUrlBlockEnd = @"!readCookie";
+        private static String videoUrlRegex = @"""src"":""(?<videoUrl>[^""]+)";
         private static String subtitleUrlRegex = @"<track src=""/subtitles-proxy/\?url=(?<subtitleUrl>[^""]+)";
 
         private int currentStartIndex = 0;
@@ -357,11 +357,14 @@ namespace OnlineVideos.Sites.georgius
                     MatchCollection matches = Regex.Matches(baseWebData, CsfdCzUtil.videoUrlRegex);
                     for (int i = 0; i < matches.Count; i++)
                     {
-                        String url = matches[i].Groups["videoUrl"].Value;
+                        String url = matches[i].Groups["videoUrl"].Value.Replace("\\/", "/");
                         String extension = Path.GetExtension(url).Replace(".", "");
                         String fileName = Path.GetFileNameWithoutExtension(url);
 
-                        video.PlaybackOptions.Add(String.Format("{0}p ({1})", fileName, extension), url);
+                        if (!url.Contains("/ads/"))
+                        {
+                            video.PlaybackOptions.Add(String.Format("{0}p ({1})", fileName, extension), url);
+                        }
                     }
 
                     Match subtitleMatch = Regex.Match(baseWebData, CsfdCzUtil.subtitleUrlRegex);
