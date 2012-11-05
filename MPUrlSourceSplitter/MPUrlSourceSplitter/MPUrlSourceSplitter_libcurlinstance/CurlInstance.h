@@ -25,6 +25,8 @@
 
 #include "Logger.h"
 #include "LinearBuffer.h"
+#include "DownloadRequest.h"
+#include "DownloadResponse.h"
 
 #include <curl/curl.h>
 
@@ -52,10 +54,9 @@ public:
   // initializes a new instance of CCurlInstance class
   // @param logger : logger for logging purposes
   // @param mutex : mutex for locking access to receive data buffer
-  // @param url : the url to open
   // @param protocolName : the protocol name instantiating
   // @param instanceName : the name of CURL instance
-  CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName, const wchar_t *instanceName);
+  CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName);
 
   // destructor
   virtual ~CCurlInstance(void);
@@ -63,15 +64,6 @@ public:
   // gets CURL handle
   // @return : CURL handle
   virtual CURL *GetCurlHandle(void);
-
-  // gets CURL error code
-  // @return : CURL error code
-  virtual CURLcode GetErrorCode(void);
-
-  // gets human readable error message
-  // @param errorCode : the error code returned by libcurl
-  // @return : human readable error message or NULL if error
-  const wchar_t *GetCurlErrorMessage(CURLcode errorCode);
 
   // report libcurl error into log file
   // @param logLevel : the verbosity level of logged message
@@ -82,8 +74,9 @@ public:
   virtual void ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLcode errorCode);
 
   // initializes CURL instance
+  // @param downloadRequest : download request
   // @return : true if successful, false otherwise
-  virtual bool Initialize(void);
+  virtual bool Initialize(CDownloadRequest *downloadRequest);
 
   // gets receive data timeout
   // @return : receive data timeout or UINT_MAX if not specified
@@ -96,11 +89,6 @@ public:
   // starts receiving data
   // @return : true if successful, false otherwise
   virtual bool StartReceivingData(void);
-
-  // gets response code
-  // @param : reference to variable which holds response code
-  // @return : CURLE_OK if successful, other means error
-  virtual CURLcode GetResponseCode(long *responseCode);
 
   // gets if connection be closed without waiting
   // @return : true if connection be closed without waiting, false otherwise
@@ -119,13 +107,13 @@ public:
   // @return : libcurl version or NULL if error
   static wchar_t *GetCurlVersion(void);
 
-  // gets url
-  // @return : url
-  virtual const wchar_t *GetUrl(void);
+  // gets download request
+  // @return : download request
+  virtual CDownloadRequest *GetDownloadRequest(void);
 
-  // gets receive data buffer
-  // @return : receive data buffer or NULL if error
-  CLinearBuffer *GetReceiveDataBuffer(void);
+  // gets download response
+  // @return : download respose
+  virtual CDownloadResponse *GetDownloadResponse(void);
 
 protected:
   CURL *curl;
@@ -134,18 +122,17 @@ protected:
 
   // libcurl worker thread
   HANDLE hCurlWorkerThread;
-  DWORD dwCurlWorkerThreadId;
-  CURLcode curlWorkerErrorCode;
+  //CURLcode curlWorkerErrorCode;
   static DWORD WINAPI CurlWorker(LPVOID lpParam);
 
-  // the stream url
-  wchar_t *url;
+  // holds download request
+  CDownloadRequest *downloadRequest;
+
+  // holds download response
+  CDownloadResponse *downloadResponse;
 
   // the protocol implementation name (for logging purposes)
   wchar_t *protocolName;
-
-  // holds CURL error message
-  wchar_t *curlErrorMessage;
 
   // creates libcurl worker
   // @return : S_OK if successful
@@ -154,6 +141,9 @@ protected:
   // destroys libcurl worker
   // @return : S_OK if successful
   HRESULT DestroyCurlWorker(void);
+
+  // specifies if CURL worker should exit
+  bool curlWorkerShouldExit;
 
   // holds receive data timeout
   unsigned int receiveDataTimeout;
@@ -169,9 +159,6 @@ protected:
 
   // specifies if current connection have to be closed without waiting
   bool closeWithoutWaiting;
-
-  // holds received data
-  CLinearBuffer *receivedDataBuffer;
 
   // holds time when request was sent
   DWORD startReceivingTicks;
@@ -202,6 +189,10 @@ protected:
   // @param length : the length of buffer
   // @return : the length of processed data (lower value than length means error)
   virtual size_t CurlReceiveData(const unsigned char *buffer, size_t length);
+
+  // gets new instance of download response
+  // @return : new download response or NULL if error
+  virtual CDownloadResponse *GetNewDownloadResponse(void);
 
 private:
 

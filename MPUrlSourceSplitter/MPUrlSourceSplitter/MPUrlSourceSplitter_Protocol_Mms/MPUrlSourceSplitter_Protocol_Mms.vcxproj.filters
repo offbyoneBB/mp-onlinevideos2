@@ -45,9 +45,6 @@
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Mms_Parameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MmsCurlInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -69,9 +66,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MPUrlSourceSplitter_Protocol_Mms.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MmsCurlInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

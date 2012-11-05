@@ -44,6 +44,12 @@
     <ClInclude Include="RtmpCurlInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RtmpDownloadRequest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtmpDownloadResponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -56,6 +62,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RtmpCurlInstance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtmpDownloadRequest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtmpDownloadResponse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

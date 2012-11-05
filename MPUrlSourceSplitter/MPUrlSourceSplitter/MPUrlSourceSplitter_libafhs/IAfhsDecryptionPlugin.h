@@ -25,13 +25,16 @@
 
 #include "IAfhsSimpleDecryptionPlugin.h"
 
+#define METHOD_SUPPORTED_NAME                                                 L"Supported()"
+
 enum DecryptionResult
 {
   DecryptionResult_Unspecified,
   DecryptionResult_NotKnown,
   DecryptionResult_Pending,
-  DecryptionResult_Known
-} ;
+  DecryptionResult_Known,
+  DecryptionResult_Error
+};
 
 struct AfhsDecryptionPluginConfiguration : public PluginConfiguration
 {
@@ -42,9 +45,9 @@ struct AfhsDecryptionPluginConfiguration : public PluginConfiguration
 struct IAfhsDecryptionPlugin : public IAfhsSimpleDecryptionPlugin
 {
   // check if decryption plugin supports decrypting segments and fragments
-  // @param segmentsFragments : collection of segments and fragments
+  // @param context : decryption context of AFHS protocol
   // @result : one of DecryptionResult values
-  virtual DecryptionResult Supported(CSegmentFragmentCollection *segmentsFragments) = 0;
+  virtual DecryptionResult Supported(CAfhsDecryptionContext *context) = 0;
 };
 
 typedef IAfhsDecryptionPlugin* PIAfhsDecryptionPlugin;

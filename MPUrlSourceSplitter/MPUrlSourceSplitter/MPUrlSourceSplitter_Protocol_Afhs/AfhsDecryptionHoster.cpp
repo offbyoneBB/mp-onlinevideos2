@@ -98,7 +98,15 @@ GUID CAfhsDecryptionHoster::GetInstanceId(void)
 
 HRESULT CAfhsDecryptionHoster::Initialize(PluginConfiguration *configuration)
 {
-  return E_NOTIMPL;
+  HRESULT result = S_OK;
+  for(unsigned int i = 0; (SUCCEEDED(result) && (i < this->pluginImplementationsCount)); i++)
+  {
+    AfhsDecryptionPluginImplementation *pluginImplementation = (AfhsDecryptionPluginImplementation *)this->GetPluginImplementation(i);
+    IAfhsDecryptionPlugin *decryptionPlugin = (IAfhsDecryptionPlugin *)pluginImplementation->pImplementation;
+
+    result = decryptionPlugin->Initialize(configuration);
+  }
+  return result;
 }
 
 // IAfhsDecryptionPlugin interface implementation
@@ -127,7 +135,7 @@ HRESULT CAfhsDecryptionHoster::ClearSession(void)
   return S_OK;
 }
 
-HRESULT CAfhsDecryptionHoster::ProcessSegmentsAndFragments(CSegmentFragmentCollection *segmentsFragments)
+HRESULT CAfhsDecryptionHoster::ProcessSegmentsAndFragments(CAfhsDecryptionContext *context)
 {
   HRESULT result = S_OK;
 
@@ -136,15 +144,15 @@ HRESULT CAfhsDecryptionHoster::ProcessSegmentsAndFragments(CSegmentFragmentColle
     // all decryption plugins returned valid values
     if (this->activeDecryptionPlugin != NULL)
     {
-      result = this->activeDecryptionPlugin->ProcessSegmentsAndFragments(segmentsFragments);
+      result = this->activeDecryptionPlugin->ProcessSegmentsAndFragments(context);
     }
     else
     {
       // no active decryption plugin
       // just process every unprocessed segment and fragment
-      for (unsigned int i = 0; i < segmentsFragments->Count(); i++)
+      for (unsigned int i = 0; i < context->GetSegmentsFragments()->Count(); i++)
       {
-        CSegmentFragment *segmentFragment = segmentsFragments->GetItem(i);
+        CSegmentFragment *segmentFragment = context->GetSegmentsFragments()->GetItem(i);
 
         if (segmentFragment->IsDownloaded() && (!segmentFragment->IsProcessed()))
         {
@@ -167,10 +175,11 @@ HRESULT CAfhsDecryptionHoster::ProcessSegmentsAndFragments(CSegmentFragmentColle
       if ((implementation->result == DecryptionResult_Unspecified) ||
         (implementation->result == DecryptionResult_Pending))
       {
+        bool skipPendingMessage = (implementation->result == DecryptionResult_Pending);
         // if decryption plugin returned DecryptionResult::NotKnown result than decryption plugin surely 
         // doesn't recognize any pattern in segments and fragments
 
-        DecryptionResult pluginDecryptionResult = plugin->Supported(segmentsFragments);
+        DecryptionResult pluginDecryptionResult = plugin->Supported(context);
         implementation->result = pluginDecryptionResult;
 
         switch(pluginDecryptionResult)
@@ -182,12 +191,18 @@ HRESULT CAfhsDecryptionHoster::ProcessSegmentsAndFragments(CSegmentFragmentColle
           this->logger->Log(LOGGER_INFO, L"%s: %s: decryption plugin '%s' doesn't recognize any pattern", MODULE_AFHS_DECRYPTION_PLUGIN_HOSTER_NAME, METHOD_PROCESS_SEGMENTS_AND_FRAGMENTS_NAME, implementation->name);
           break;
         case DecryptionResult_Pending:
-          this->logger->Log(LOGGER_INFO, L"%s: %s: decryption plugin '%s' waits for more data", MODULE_AFHS_DECRYPTION_PLUGIN_HOSTER_NAME, METHOD_PROCESS_SEGMENTS_AND_FRAGMENTS_NAME, implementation->name);
+          if (!skipPendingMessage)
+          {
+            this->logger->Log(LOGGER_INFO, L"%s: %s: decryption plugin '%s' waits for more data", MODULE_AFHS_DECRYPTION_PLUGIN_HOSTER_NAME, METHOD_PROCESS_SEGMENTS_AND_FRAGMENTS_NAME, implementation->name);
+          }
           pendingPlugin = true;
           break;
         case DecryptionResult_Known:
           this->logger->Log(LOGGER_INFO, L"%s: %s: decryption plugin '%s' recognizes pattern", MODULE_AFHS_DECRYPTION_PLUGIN_HOSTER_NAME, METHOD_PROCESS_SEGMENTS_AND_FRAGMENTS_NAME, implementation->name);
           this->activeDecryptionPlugin = plugin;
+          break;
+        case DecryptionResult_Error:
+          this->logger->Log(LOGGER_INFO, L"%s: %s: decryption plugin '%s' return error", MODULE_AFHS_DECRYPTION_PLUGIN_HOSTER_NAME, METHOD_PROCESS_SEGMENTS_AND_FRAGMENTS_NAME, implementation->name);
           break;
         default:
           this->logger->Log(LOGGER_WARNING, L"%s: %s: decryption plugin '%s' return unknown result", MODULE_AFHS_DECRYPTION_PLUGIN_HOSTER_NAME, METHOD_PROCESS_SEGMENTS_AND_FRAGMENTS_NAME, implementation->name);

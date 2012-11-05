@@ -252,19 +252,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit, CRecei
     {
       if (!(this->shouldExit))
       {
-        long responseCode = 0;
-        CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
-        if (errorCode == CURLE_OK)
+        long responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
+        if ((responseCode >= 0) && ((responseCode < 200) || (responseCode >= 400)))
         {
-          if ((responseCode < 200) && (responseCode >= 400))
-          {
-            // response code 200 - 299 = OK
-            // response code 300 - 399 = redirect (OK)
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-          }
+          // response code 200 - 299 = OK
+          // response code 300 - 399 = redirect (OK)
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
         }
-
-        if ((responseCode >= 200) && (responseCode < 400))
+        else if ((responseCode >= 200) && (responseCode < 400))
         {
           if (!this->setLength)
           {
@@ -299,7 +294,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit, CRecei
           }
         }
 
-        unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+        unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
         if (bytesRead != 0)
         {
           unsigned int bufferSize = this->receivedData->GetBufferSize();
@@ -322,9 +317,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit, CRecei
             ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
             if (buffer != NULL)
             {
-              this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+              this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
               this->receivedData->AddToBuffer(buffer, bytesRead);
-              this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+              this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
             }
             FREE_MEM(buffer);
           }
@@ -361,7 +356,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit, CRecei
       {
         // all data received, we're not receiving data
 
-        if (this->mainCurlInstance->GetErrorCode() == CURLE_OK)
+        if (this->mainCurlInstance->GetHttpDownloadResponse()->GetResultCode() == CURLE_OK)
         {
           // whole stream downloaded
           this->wholeStreamDownloaded = true;
@@ -417,8 +412,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(const CParameterC
 
   if (SUCCEEDED(result))
   {
-    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL), PROTOCOL_IMPLEMENTATION_NAME, L"Main");
-    result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
+    this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+    CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
   }
 
   if (SUCCEEDED(result))
@@ -435,15 +430,24 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(const CParameterC
   if (SUCCEEDED(result))
   {
     this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-    this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL));
-    this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
-    this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL));
-    this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
-    this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-    this->mainCurlInstance->SetStartStreamTime(this->streamTime);
-    this->mainCurlInstance->SetEndStreamTime(this->endStreamTime);
 
-    result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+    CHttpDownloadRequest *request = new CHttpDownloadRequest();
+    CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      request->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL));
+      request->SetEndPosition(this->endStreamTime);
+      request->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
+      request->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+      request->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL));
+      request->SetStartPosition(this->streamTime);
+      request->SetUrl(this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+      request->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
+
+      result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
+    }
+    FREE_MEM_CLASS(request);
 
     if (SUCCEEDED(result))
     {
@@ -457,25 +461,16 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(const CParameterC
     {
       // wait for HTTP status code
 
-      long responseCode = 0;
+      long responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
       while (responseCode == 0)
       {
-        CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
-        if (errorCode == CURLE_OK)
+        responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
+        if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
         {
-          if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-          {
-            // response code 200 - 299 = OK
-            // response code 300 - 399 = redirect (OK)
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-            result = E_FAIL;
-          }
-        }
-        else
-        {
-          this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
+          // response code 200 - 299 = OK
+          // response code 300 - 399 = redirect (OK)
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
           result = E_FAIL;
-          break;
         }
 
         if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
@@ -507,17 +502,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StopReceivingData(void)
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  if (this->mainCurlInstance != NULL)
-  {
-    delete this->mainCurlInstance;
-    this->mainCurlInstance = NULL;
-  }
-
-  if (this->receivedData != NULL)
-  {
-    delete this->receivedData;
-    this->receivedData = NULL;
-  }
+  FREE_MEM_CLASS(this->mainCurlInstance);
+  FREE_MEM_CLASS(this->receivedData);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
@@ -548,8 +534,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::QueryStreamAvailableLength(CStreamAv
 
   if (result == S_OK)
   {
+    // lock access to stream
+    CLockMutex lock(this->lockMutex, INFINITE);
+
     availableLength->SetQueryResult(S_OK);
-    availableLength->SetAvailableLength(((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetRangesSupported())) ? this->streamLength : this->streamTime);
+    availableLength->SetAvailableLength(((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetHttpDownloadResponse()->GetRangesSupported())) ? this->streamLength : this->streamTime);
   }
 
   return result;
@@ -588,7 +577,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ClearSession(void)
 
 unsigned int CMPUrlSourceSplitter_Protocol_Http::GetSeekingCapabilities(void)
 {
-  return ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetRangesSupported())) ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE;
+  unsigned int result = SEEKING_METHOD_NONE;
+  {
+    // lock access to stream
+    CLockMutex lock(this->lockMutex, INFINITE);
+
+    result = ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetHttpDownloadResponse()->GetRangesSupported())) ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE;
+  }
+  return result;
 }
 
 int64_t CMPUrlSourceSplitter_Protocol_Http::SeekToTime(int64_t time)

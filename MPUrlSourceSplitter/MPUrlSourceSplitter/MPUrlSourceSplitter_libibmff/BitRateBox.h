@@ -45,11 +45,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // gets size of the decoding buffer for the elementary stream in bytes
   // @return : size of the decoding buffer for the elementary stream in bytes
   virtual uint32_t GetBufferSize(void);
@@ -99,6 +94,11 @@ protected:
 
   // stores the average rate in bits/second over the entire presentation
   uint32_t averageBitrate;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

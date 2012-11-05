@@ -316,7 +316,7 @@ STDMETHODIMP CLAVSplitter::Close()
 
   SafeRelease(&m_pDemuxer);
 
-  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_STOP_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CLOSE_NAME);
   return S_OK;
 }
 

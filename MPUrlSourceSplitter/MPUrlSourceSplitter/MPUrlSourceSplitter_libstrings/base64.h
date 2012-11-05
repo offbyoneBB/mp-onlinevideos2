@@ -31,6 +31,32 @@
 // @return : S_OK if successfull, E_POINTER if input or output is NULL, E_OUTOFMEMORY if cannot be allocated required memory for output
 HRESULT base64_encode(const unsigned char *input, unsigned int length, char **output);
 
+// encodes binary input to null-terminated BASE64 encoded string
+// caller is responsible of freeing allocated memory by FREE_MEM() method
+// @param input : binary input to encode
+// @param lenght : the length of binary input
+// @param output : reference to output BASE64 encoded string
+// @param outputLength : reference to output length (can be NULL)
+// @return : S_OK if successfull, E_POINTER if input or output is NULL, E_OUTOFMEMORY if cannot be allocated required memory for output
+HRESULT base64_encode(const unsigned char *input, unsigned int length, char **output, unsigned int *outputLength);
+
+// encodes binary input to null-terminated unicode BASE64 encoded string
+// caller is responsible of freeing allocated memory by FREE_MEM() method
+// @param input : binary input to encode
+// @param lenght : the length of binary input
+// @param output : reference to output unicode BASE64 encoded string
+// @return : S_OK if successfull, E_POINTER if input or output is NULL, E_OUTOFMEMORY if cannot be allocated required memory for output
+HRESULT base64_encode(const unsigned char *input, unsigned int length, wchar_t **output);
+
+// encodes binary input to null-terminated unicode BASE64 encoded string
+// caller is responsible of freeing allocated memory by FREE_MEM() method
+// @param input : binary input to encode
+// @param lenght : the length of binary input
+// @param output : reference to output unicode BASE64 encoded string
+// @param outputLength : reference to output length (can be NULL)
+// @return : S_OK if successfull, E_POINTER if input or output is NULL, E_OUTOFMEMORY if cannot be allocated required memory for output
+HRESULT base64_encode(const unsigned char *input, unsigned int length, wchar_t **output, unsigned int *outputLength);
+
 // decodes BASE64 encoded string to binary output
 // caller is responsible of freeing allocated memory by FREE_MEM() method
 // @param input : BASE64 encoded string to decode
@@ -38,5 +64,13 @@ HRESULT base64_encode(const unsigned char *input, unsigned int length, char **ou
 // @param lenght : reference to the length of binary output
 // @return : S_OK if successfull, E_POINTER if input, output or length are NULL, E_INVALIDARG if input contains not valid BASE64 character, E_OUTOFMEMORY if cannot be allocated required memory for output
 HRESULT base64_decode(const char *input, unsigned char **output, unsigned int *length);
+
+// decodes unicode BASE64 encoded string to binary output
+// caller is responsible of freeing allocated memory by FREE_MEM() method
+// @param input : unicode BASE64 encoded string to decode
+// @param output : reference to binary output
+// @param lenght : reference to the length of binary output
+// @return : S_OK if successfull, E_POINTER if input, output or length are NULL, E_INVALIDARG if input contains not valid BASE64 character, E_OUTOFMEMORY if cannot be allocated required memory for output
+HRESULT base64_decode(const wchar_t *input, unsigned char **output, unsigned int *length);
 
 #endif

@@ -49,11 +49,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // gets data entry box collection stored in data reference box
   // @return : data entry box collection
   virtual CDataEntryBoxCollection *GetDataEntryBoxCollection(void);
@@ -77,6 +72,11 @@ protected:
 
   // stores data entry boxes stored in this data reference box
   CDataEntryBoxCollection *dataEntryBoxCollection;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
   
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

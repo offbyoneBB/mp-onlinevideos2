@@ -44,11 +44,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // gets video coding name
   // @return : coding name
   virtual const wchar_t *GetCodingName(void);
@@ -151,6 +146,11 @@ protected:
 
   // one of the following values 0x0018 – images are in colour with no alpha
   uint16_t depth;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

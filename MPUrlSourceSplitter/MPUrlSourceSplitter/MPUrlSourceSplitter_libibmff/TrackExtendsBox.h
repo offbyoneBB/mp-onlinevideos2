@@ -45,11 +45,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // the track; this shall be the track ID of a track in the Movie Box
   virtual uint32_t GetTrackId(void);
 
@@ -139,6 +134,11 @@ protected:
 
   // default sample flags for track fragments
   uint32_t defaultSampleFlags;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

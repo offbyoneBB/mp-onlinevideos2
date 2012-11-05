@@ -26,66 +26,130 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "BoxFactory.h"
+#include <curl/curl.h>
 
-#include "FileTypeBox.h"
-#include "BoxCollection.h"
-#include "AVCConfigurationBox.h"
+#include "BufferHelper.h"
 
-#include "conversions.h"
+static void CurlDebug(curl_infotype type, const wchar_t *data)
+{
+  if (type == CURLINFO_HEADER_OUT)
+  {
+    wprintf(data);
+    wprintf(L"\n");
+  }
 
+  if (type == CURLINFO_HEADER_IN)
+  {
+    wchar_t *trimmed = Trim(data);
+    // we are just interested in headers comming in from peer
+    wprintf(trimmed);
+    wprintf(L"\n");
+    FREE_MEM(trimmed);
+  }
+}
+
+static int CurlDebugCallback(CURL *handle, curl_infotype type, char *data, size_t size, void *userptr)
+{
+  // warning: data ARE NOT terminated with null character !!
+  if (size > 0)
+  {
+    size_t length = size + 1;
+    ALLOC_MEM_DEFINE_SET(tempData, char, length, 0);
+    if (tempData != NULL)
+    {
+      memcpy(tempData, data, size);
+
+      // now convert data to used character set
+      wchar_t *curlData = ConvertToUnicodeA(tempData);
+
+      if (curlData != NULL)
+      {
+        // we have converted and null terminated data
+        CurlDebug(type, curlData);
+      }
+
+      FREE_MEM(curlData);
+    }
+    FREE_MEM(tempData);
+  }
+
+  return 0;
+}
+
+uint8_t *data = NULL;
+unsigned int length = 0;
+
+size_t CurlReceiveDataCallback(char *buffer, size_t size, size_t nmemb, void *userdata)
+{
+  unsigned int total = size * nmemb;
+  memcpy(data + length, buffer, total);
+  length += total;
+
+  return total;
+}
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-  uint32_t length = 10 * 1024 * 1024;
-
-  ALLOC_MEM_DEFINE_SET(buffer, uint8_t, length, 0);
-  //FILE *stream = fopen("D:\\svnroot\\HttpStreaming\\lmfao.ismv", "rb");
-  //FILE *stream = fopen("D:\\outout_dat.mp4", "rb");
-  FILE *stream = fopen("D:\\test.dat", "rb");
-  uint32_t read = fread(buffer, 1, length, stream);
-  fclose(stream);
-
-  uint32_t processed = 0;
-  CBoxFactory *factory = new CBoxFactory();
-
-  while (processed < length)
+  data = ALLOC_MEM_SET(data, uint8_t, (10 * 1024 * 1024), 0);
+  CURL *curl = curl_easy_init();
+  CURLcode errorCode = CURLE_OK;
+  if (curl != NULL)
   {
-    CBox *box = factory->CreateBox(buffer + processed, read - processed);
+    errorCode = curl_easy_setopt(curl, CURLOPT_URL, "http://svtplay2p-f.akamaihd.net/z/se/secure/20121008/1123072-052A/ADVENTURES_OF_B-052A-f22e5dd766c8c310_,900,320,420,620,1660,2760,.mp4.csmil/manifest.f4m?hdcore=2.10.3&g=SSSIYUEGUPSG");
+    errorCode = curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+    errorCode = curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);
+    errorCode = curl_easy_setopt(curl, CURLOPT_DEBUGDATA, NULL);
+    errorCode = curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+    //errorCode = curl_easy_setopt(curl, CURLOPT_REFERER, "http://www.svtplay.se/public/swf/video/svtplayer-2012.47.swf");
+    //errorCode = curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 6.1; rv:16.0) Gecko/20100101 Firefox/16.0");
 
-    if (box != NULL)
+    errorCode = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CurlReceiveDataCallback);
+    errorCode = curl_easy_setopt(curl, CURLOPT_WRITEDATA, NULL);
+
+    //errorCode = curl_easy_perform(curl);
+
+    /*memset(data, 0, (10 * 1024 * 1024));
+    length = 0;
+    errorCode = curl_easy_setopt(curl, CURLOPT_URL, "http://svtplay2p-f.akamaihd.net/serverip");
+    errorCode = curl_easy_perform(curl);*/
+
+    memset(data, 0, (10 * 1024 * 1024));
+    length = 0;
+    errorCode = curl_easy_setopt(curl, CURLOPT_URL, "http://svtplay2p-f.akamaihd.net/z/se/secure/20121008/1123072-052A/ADVENTURES_OF_B-052A-f22e5dd766c8c310_,900,320,420,620,1660,2760,.mp4.csmil/0_c1c56edfe62a70c4_Seg1-Frag1?hdcore=2.10.3&g=SSSIYUEGUPSG");
+    errorCode = curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+    errorCode = curl_easy_perform(curl);
+
+    unsigned int position = 0;
+    unsigned int size = 0;
+
+    while (true)
     {
-      wprintf(L"%s\n", box->GetParsedHumanReadable(L""));
-      processed += (uint32_t)box->GetSize();
+      size = RBE32(data, position);
+
+      if ((size < 1000) && (size != 0))
+      {
+        position += size;
+      }
+      else
+      {
+        break;
+      }
     }
-    else
-    {
-      break;
-    }
+
+    char *keyUrl = FormatStringA("http://svtplay2p-f.akamaihd.net%s?guid=SSSIYUEGUPSG", data + position + 48);
+
+    memset(data, 0, (10 * 1024 * 1024));
+    length = 0;
+    errorCode = curl_easy_setopt(curl, CURLOPT_URL, keyUrl);
+    errorCode = curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+    errorCode = curl_easy_perform(curl);
+
+    FREE_MEM(keyUrl);
+
+    curl_easy_cleanup(curl);
+    curl = NULL;
   }
 
-  FREE_MEM_CLASS(factory);
-
-  /*CBox *box = GetFileTypeBox();
-  uint64_t length = box->GetBoxSize();
-  ALLOC_MEM_DEFINE_SET(buffer, uint8_t, length, 0);
-  if (box->GetBox(buffer, length))
-  {
-    FILE *stream = fopen("D:\\outout_dat.mp4", "wb");
-    fwrite(buffer, 1, length, stream);
-    fclose(stream);
-  }
-
-  FREE_MEM(buffer);
-  FREE_MEM_CLASS(box);*/
-
-  /*CAVCConfigurationBox *box = new CAVCConfigurationBox();
-
-  if (box->Parse(buffer + 0x020B, length))
-  {
-    printf("parsed");
-  }*/
-
+  FREE_MEM(data);
 	return 0;
 }
-

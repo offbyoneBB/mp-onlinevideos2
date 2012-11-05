@@ -24,6 +24,8 @@
 #define __SEGMENT_FRAGMENT_DEFINED
 
 #include "LinearBuffer.h"
+#include "HttpDownloadRequest.h"
+#include "HttpDownloadResponse.h"
 
 #include <stdint.h>
 
@@ -33,8 +35,7 @@ public:
   // initializes a new instance of CSegmentFragment class
   // @param segment : segment ID
   // @param fragment : fragment ID
-  // @param url : common url for segment and fragment
-  CSegmentFragment(unsigned int segment, unsigned int fragment, const wchar_t *url, uint64_t fragmentTimestamp);
+  CSegmentFragment(unsigned int segment, unsigned int fragment, uint64_t fragmentTimestamp);
 
   // destructor
   ~CSegmentFragment(void);
@@ -49,10 +50,6 @@ public:
   // @return : fragment ID
   unsigned int GetFragment(void);
 
-  // gets segment and fragment url
-  // @return : segment and fragment url or NULL if error
-  const wchar_t *GetUrl(void);
-
   // gets fragment timestamp
   // @return : fragment timestamp
   uint64_t GetFragmentTimestamp(void);
@@ -61,13 +58,17 @@ public:
   // @return : file position or -1 if error
   int64_t GetStoreFilePosition(void);
 
-  // gets linear buffer
-  // @return : linear buffer or NULL if error or segment and fragment is stored to file
-  CLinearBuffer *GetBuffer();
-
   // gets the length of segment and fragment data
   // @return : the length of segment and fragment data
   unsigned int GetLength(void);
+
+  // gets HTTP download request for segment and fragment
+  // @return : HTTP download request
+  CHttpDownloadRequest *GetHttpDownloadRequest(void);
+
+  // gets HTTP download response for segment and fragment
+  // @return : HTTP download response
+  CHttpDownloadResponse *GetHttpDownloadResponse(void);
 
   /* set methods */
 
@@ -85,6 +86,16 @@ public:
   // @param position : the position of start of segment and fragment within store file or (-1) if segment and fragment is in memory
   void SetStoredToFile(int64_t position);
 
+  // sets HTTP download request for segment and fragment
+  // @param downloadRequest : HTTP download request to set
+  // @return : true if successful, false otherwise
+  bool SetHttpDownloadRequest(CHttpDownloadRequest *downloadRequest);
+
+  // sets HTTP download response for segment and fragment
+  // @param downloadResponse : HTTP download response to set
+  // @return : true if successful, false otherwise
+  bool SetHttpDownloadResponse(CHttpDownloadResponse *downloadResponse);
+
   /* other methods */
 
   // tests if media packet is stored to file
@@ -99,13 +110,15 @@ public:
   // @return : true if downloaded, false otherwise
   bool IsProcessed(void);
 
+  // deeply clones current instance
+  // @return : deep clone of current instance or NULL if error
+  CSegmentFragment *Clone(void);
+
 private:
   // stores segment ID
   unsigned int segment;
   // stores fragment ID
   unsigned int fragment;
-  // stores common url for segment and fragment
-  wchar_t *url;
   // stores fragment timestamp
   uint64_t fragmentTimestamp;
   // stores if segment and fragment is downloaded
@@ -114,10 +127,12 @@ private:
   bool processed;
   // posittion in store file
   int64_t storeFilePosition;
-  // internal linear buffer for segment and fragment data
-  CLinearBuffer *buffer;
   // the length of segment and fragment data
   unsigned int length;
+  // holds HTTP download request for current segment and fragment
+  CHttpDownloadRequest *httpDownloadRequest;
+  // holds HTTP download response for current segment and fragment
+  CHttpDownloadResponse *httpDownloadResponse;
 };
 
 #endif

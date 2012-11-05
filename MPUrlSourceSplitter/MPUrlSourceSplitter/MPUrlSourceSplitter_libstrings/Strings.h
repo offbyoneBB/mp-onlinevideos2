@@ -282,4 +282,42 @@ bool EndsWithW(const wchar_t *string, const wchar_t c);
 #define EndsWith EndsWithW
 #endif
 
+int CompareWithNullA(const char *str1, const char *str2);
+int CompareWithNullW(const wchar_t *str1, const wchar_t *str2);
+
+#ifdef _MBCS
+#define CompareWithNull CompareWithNullA
+#else
+#define CompareWithNull CompareWithNullW
+#endif
+
+int CompareWithNullInvariantA(const char *str1, const char *str2);
+int CompareWithNullInvariantW(const wchar_t *str1, const wchar_t *str2);
+
+#ifdef _MBCS
+#define CompareWithNullInvariant CompareWithNullInvariantA
+#else
+#define CompareWithNullInvariant CompareWithNullInvariantW
+#endif
+
+int IndexOfA(const char *string, const char *searchString);
+int IndexOfW(const wchar_t *string, const wchar_t *searchString);
+
+#ifdef _MBCS
+#define IndexOf IndexOfA
+#else
+#define IndexOf IndexOfW
+#endif
+
+char *SubstringA(const char *string, unsigned int position);
+char *SubstringA(const char *string, unsigned int position, unsigned int length);
+wchar_t *SubstringW(const wchar_t *string, unsigned int position);
+wchar_t *SubstringW(const wchar_t *string, unsigned int position, unsigned int length);
+
+#ifdef _MBCS
+#define Substring SubstringA
+#else
+#define Substring SubstringW
+#endif
+
 #endif

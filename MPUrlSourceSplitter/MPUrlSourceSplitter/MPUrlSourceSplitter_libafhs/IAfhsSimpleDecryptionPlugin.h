@@ -24,7 +24,7 @@
 #define __AFHS_SIMPLE_DECRYPTION_PLUGIN_DEFINED
 
 #include "IPlugin.h"
-#include "SegmentFragmentCollection.h"
+#include "AfhsDecryptionContext.h"
 
 #define METHOD_CLEAR_SESSION_NAME                                             L"ClearSession()"
 #define METHOD_PROCESS_SEGMENTS_AND_FRAGMENTS_NAME                            L"ProcessSegmentsAndFragments()"
@@ -37,9 +37,10 @@ struct IAfhsSimpleDecryptionPlugin : public IPlugin
   virtual HRESULT ClearSession(void) = 0;
 
   // process segments and fragments
-  // @param segmentsFragments : collection of segments and fragments
-  // @result : S_OK if successful, error code otherwise
-  virtual HRESULT ProcessSegmentsAndFragments(CSegmentFragmentCollection *segmentsFragments) = 0;
+  // @param context : decryption context of AFHS protocol
+  // @result : S_OK if successful, S_FALSE means that next call of ProcessSegmentsAndFragments() method should be
+  // after finished downloading of next segment and fragment, error code otherwise
+  virtual HRESULT ProcessSegmentsAndFragments(CAfhsDecryptionContext *context) = 0;
 };
 
 typedef IAfhsSimpleDecryptionPlugin* PIAfhsSimpleDecryptionPlugin;

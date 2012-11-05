@@ -36,9 +36,15 @@
 #define PARAMETER_NAME_AFHS_MEDIA_PART_URL                                    L"AfhsMediaPartUrl"
 #define PARAMETER_NAME_AFHS_MEDIA_METADATA                                    L"AfhsMediaMetadata"
 #define PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL                                L"AfhsMediaBootstrapInfoUrl"
+#define PARAMETER_NAME_AFHS_MANIFEST_URL                                      L"AfhsManifestUrl"
+#define PARAMETER_NAME_AFHS_MANIFEST_CONTENT                                  L"AfhsManifestContent"
 
 // we should get data in twenty seconds
+#ifndef _DEBUG
 #define AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
+#else
+#define AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
+#endif
 #define AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT                         3
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 

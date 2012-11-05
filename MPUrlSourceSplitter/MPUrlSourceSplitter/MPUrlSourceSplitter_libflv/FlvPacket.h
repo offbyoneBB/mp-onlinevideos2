@@ -59,34 +59,34 @@ class CFlvPacket
 public:
   // initializes a new instance of CFlvPacket class
   CFlvPacket(void);
-  ~CFlvPacket(void);
+  virtual ~CFlvPacket(void);
 
   // tests if current instance of CFlvPacket is valid
   // @return : true if valid, false otherwise
-  bool IsValid();
+  virtual bool IsValid();
 
   // gets FLV packet type
   // @return : FLV packet type
-  unsigned int GetType(void);
+  virtual unsigned int GetType(void);
 
   // gets FLV packet size
   // @return : FLV packet size
-  unsigned int GetSize(void);
+  virtual unsigned int GetSize(void);
 
   // gets FLV packet data
   // @return : FLV packet data
-  const unsigned char *GetData(void);
+  virtual const unsigned char *GetData(void);
 
   // parses buffer for FLV packet
   // @param buffer : linear buffer to parse
   // @return : true if FLV packet found, false otherwise
-  bool ParsePacket(CLinearBuffer *buffer);
+  virtual bool ParsePacket(CLinearBuffer *buffer);
 
   // parses buffer for FLV packet
   // @param buffer : buffer to parse
   // @param length : length of buffer
   // @return : true if FLV packet found, false otherwise
-  bool ParsePacket(const unsigned char *buffer, unsigned int length);
+  virtual bool ParsePacket(const unsigned char *buffer, unsigned int length);
 
   // creates FLV packet and fill it with data from buffer
   // @param packetType : type of FLV packet (FLV_PACKET_AUDIO, FLV_PACKET_VIDEO, FLV_PACKET_META)
@@ -95,42 +95,42 @@ public:
   // @param timestamp : the timestamp of FLV packet
   // @param encrypted : specifies if FLV packet is encrypted
   // @return : true if FLV packet successfully created, false otherwise
-  bool CreatePacket(unsigned int packetType, const unsigned char *buffer, unsigned int length, unsigned int timestamp, bool encrypted);
+  virtual bool CreatePacket(unsigned int packetType, const unsigned char *buffer, unsigned int length, unsigned int timestamp, bool encrypted);
 
   // tests if FLV packet is encrypted
   // @return : true if packet is encrypted, false otherwise
-  bool IsEncrypted(void);
+  virtual bool IsEncrypted(void);
 
   // gets FLV packet timestamp
-  unsigned int GetTimestamp(void);
+  virtual unsigned int GetTimestamp(void);
 
   // sets FLV packet timestamp
-  void SetTimestamp(unsigned int timestamp);
+  virtual void SetTimestamp(unsigned int timestamp);
 
   // gets codec ID for video packet
   // @return : codec ID or UINT_MAX if not valid
-  unsigned int GetCodecId(void);
-
+  virtual unsigned int GetCodecId(void);
+  
   // sets codec ID for video packet
   // @param codecId : video packet codec ID to set
-  void SetCodecId(unsigned int codecId);
+  virtual void SetCodecId(unsigned int codecId);
 
   // gets frame type for video packet
   // @return : frame type or UINT_MAX if not valid
-  unsigned int GetFrameType(void);
+  virtual unsigned int GetFrameType(void);
 
   // sets video packet frame type
   // @param frameType : video packet frame type to set
-  void SetFrameType(unsigned int frameType);
+  virtual void SetFrameType(unsigned int frameType);
 
   // clears current instance
-  void Clear(void);
+  virtual void Clear(void);
 
   // gets possible FLV packet size
   // @param buffer : buffer to parse
   // @param length : the length of buffer
   // @return : the possible size of FLV packet or UINT_MAX if error
-  unsigned int GetPossiblePacketSize(const unsigned char *buffer, unsigned int length);
+  virtual unsigned int GetPossiblePacketSize(const unsigned char *buffer, unsigned int length);
 
 protected:
   // holds packet type (AUDIO, VIDEO, META or HEADER)

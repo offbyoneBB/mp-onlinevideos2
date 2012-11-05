@@ -47,12 +47,12 @@ int CSegmentFragmentCollection::CompareItemKeys(const wchar_t *firstKey, const w
 
 const wchar_t *CSegmentFragmentCollection::GetKey(CSegmentFragment *item)
 {
-  return item->GetUrl();
+  return item->GetHttpDownloadRequest()->GetUrl();
 }
 
 CSegmentFragment *CSegmentFragmentCollection::Clone(CSegmentFragment *item)
 {
-  return NULL;
+  return item->Clone();
 }
 
 CSegmentFragment *CSegmentFragmentCollection::GetSegmentFragment(const wchar_t *url, bool invariant)

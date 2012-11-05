@@ -250,6 +250,9 @@ protected:
 
   // holds decryption hoster
   CAfhsDecryptionHoster *decryptionHoster;
+
+  // specifies if ProcessSegmentsAndFragments() method can be called (mostly yes, but sometimes can decryption hoster return S_FALSE)
+  bool canCallProcessSegmentsAndFragments;
 };
 
 #endif

@@ -58,11 +58,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   /* set methods */
 
   // sets minor version
@@ -90,6 +85,11 @@ protected:
   uint32_t minorVersion;
   // stores compatible brands
   CBrandCollection *compatibleBrands;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

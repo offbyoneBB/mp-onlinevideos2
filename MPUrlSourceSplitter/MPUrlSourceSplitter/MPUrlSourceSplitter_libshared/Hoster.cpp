@@ -49,16 +49,12 @@ CHoster::~CHoster(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_HOSTER_NAME, METHOD_DESTRUCTOR_NAME);
 
   FREE_MEM(this->pluginImplementations);
+  FREE_MEM_CLASS(this->configuration);
 
-  if (this->configuration != NULL)
-  {
-    delete this->configuration;
-    this->configuration = NULL;
-  }
-
-  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_HOSTER_NAME, METHOD_DESTRUCTOR_NAME);
   FREE_MEM(this->moduleSearchPattern);
   FREE_MEM(this->moduleName);
+
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_HOSTER_NAME, METHOD_DESTRUCTOR_NAME);
 }
 
 void CHoster::LoadPlugins(void)
@@ -166,13 +162,13 @@ void CHoster::LoadPlugins(void)
 
                 if (SUCCEEDED(initialized))
                 {
-                  TCHAR *guid = ConvertGuidToString(implementation->pImplementation->GetInstanceId());
+                  wchar_t *guid = ConvertGuidToString(implementation->pImplementation->GetInstanceId());
                   this->logger->Log(LOGGER_INFO, L"%s: %s: plugin '%s' successfully instanced, id: %s", this->moduleName, METHOD_LOAD_PLUGINS_NAME, implementation->name, guid);
                   FREE_MEM(guid);
                 }
                 else
                 {
-                  this->logger->Log(LOGGER_INFO, L"%s: %s: plugin '%s' not initialized", this->moduleName, METHOD_LOAD_PLUGINS_NAME, implementation->name);
+                  this->logger->Log(LOGGER_INFO, L"%s: %s: plugin '%s' not initialized, error: 0x%08X", this->moduleName, METHOD_LOAD_PLUGINS_NAME, implementation->name, initialized);
                   this->RemovePluginImplementation();
                 }
               }

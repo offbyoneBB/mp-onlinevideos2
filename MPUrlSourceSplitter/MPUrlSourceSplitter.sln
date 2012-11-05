@@ -230,9 +230,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_Afhs_De
 		{D40521AC-7E65-49FA-BAA8-58570A86C05A} = {D40521AC-7E65-49FA-BAA8-58570A86C05A}
 		{0FA17EC5-0542-4BAD-9956-F31C0DFE491D} = {0FA17EC5-0542-4BAD-9956-F31C0DFE491D}
 		{49AAE5D4-3D7C-4B42-8F16-1081F01269D6} = {49AAE5D4-3D7C-4B42-8F16-1081F01269D6}
+		{485B37F6-A41B-42F9-AD8F-A99A15B54E35} = {485B37F6-A41B-42F9-AD8F-A99A15B54E35}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libafhs", "MPUrlSourceSplitter\MPUrlSourceSplitter_libafhs\MPUrlSourceSplitter_libafhs.vcxproj", "{AF3EE606-1A25-4D42-B6F8-A1834610FCEB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSourceSplitter_libflash", "MPUrlSourceSplitter\MPUrlSourceSplitter_libflash\MPUrlSourceSplitter_libflash.vcxproj", "{485B37F6-A41B-42F9-AD8F-A99A15B54E35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -376,6 +379,10 @@ Global
 		{AF3EE606-1A25-4D42-B6F8-A1834610FCEB}.Debug|Win32.Build.0 = Debug|Win32
 		{AF3EE606-1A25-4D42-B6F8-A1834610FCEB}.Release|Win32.ActiveCfg = Release|Win32
 		{AF3EE606-1A25-4D42-B6F8-A1834610FCEB}.Release|Win32.Build.0 = Release|Win32
+		{485B37F6-A41B-42F9-AD8F-A99A15B54E35}.Debug|Win32.ActiveCfg = Debug|Win32
+		{485B37F6-A41B-42F9-AD8F-A99A15B54E35}.Debug|Win32.Build.0 = Debug|Win32
+		{485B37F6-A41B-42F9-AD8F-A99A15B54E35}.Release|Win32.ActiveCfg = Release|Win32
+		{485B37F6-A41B-42F9-AD8F-A99A15B54E35}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

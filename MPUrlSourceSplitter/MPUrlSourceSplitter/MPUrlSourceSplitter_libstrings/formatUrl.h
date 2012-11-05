@@ -28,6 +28,16 @@
 // @return : base URL or NULL if error
 wchar_t *GetBaseUrl(const wchar_t *url);
 
+// gets additional parameters from url
+// @param url : URL to get additional parameters
+// @return : additional parameters or NULL
+wchar_t *GetAdditionalParameters(const wchar_t *url);
+
+// gets host without last '/'
+// @param url : URL to get host
+// @return : host url or NULL if error
+wchar_t *GetHost(const wchar_t *url);
+
 // tests if URL is absolute
 // @param url : URL to test
 // @return : true if URL is absolute, false otherwise or if error

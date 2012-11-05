@@ -22,33 +22,29 @@
 
 #include "HttpCurlInstance.h"
 
-CHttpCurlInstance::CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName, const wchar_t *instanceName)
-  : CCurlInstance(logger, mutex, url, protocolName, instanceName)
+CHttpCurlInstance::CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
+  : CCurlInstance(logger, mutex, protocolName, instanceName)
 {
-  this->referer = NULL;
-  this->cookie = NULL;
-  this->userAgent = NULL;
-  this->version = HTTP_VERSION_DEFAULT;
-  this->ignoreContentLength = HTTP_IGNORE_CONTENT_LENGTH_DEFAULT;
   this->closeWithoutWaiting = false;
-  this->rangesSupported = true;
   this->httpHeaders = NULL;
-  this->startStreamTime = 0;
-  this->endStreamTime = 0;
+
+  this->httpDownloadRequest = dynamic_cast<CHttpDownloadRequest *>(this->downloadRequest);
+  this->httpDownloadResponse = dynamic_cast<CHttpDownloadResponse *>(this->downloadResponse);
 }
 
 CHttpCurlInstance::~CHttpCurlInstance(void)
 {
   this->ClearHeaders();
-  FREE_MEM(this->referer);
-  FREE_MEM(this->cookie);
-  FREE_MEM(this->userAgent);
 }
 
-bool CHttpCurlInstance::Initialize(void)
+bool CHttpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
-  bool result = __super::Initialize();
+  bool result = __super::Initialize(downloadRequest);
   this->state = CURL_STATE_CREATED;
+
+  this->httpDownloadRequest = dynamic_cast<CHttpDownloadRequest *>(this->downloadRequest);
+  this->httpDownloadResponse = dynamic_cast<CHttpDownloadResponse *>(this->downloadResponse);
+  result &= (this->httpDownloadRequest != NULL) && (this->httpDownloadResponse != NULL);
 
   if (result)
   {
@@ -62,9 +58,9 @@ bool CHttpCurlInstance::Initialize(void)
 
     if (errorCode == CURLE_OK)
     {
-      if (!IsNullOrEmpty(this->referer))
+      if (this->httpDownloadRequest->GetReferer() != NULL)
       {
-        char *curlReferer = ConvertToMultiByte(this->referer);
+        char *curlReferer = ConvertToMultiByte(this->httpDownloadRequest->GetReferer());
         errorCode = curl_easy_setopt(this->curl, CURLOPT_REFERER, curlReferer);
         if (errorCode != CURLE_OK)
         {
@@ -77,9 +73,9 @@ bool CHttpCurlInstance::Initialize(void)
 
     if (errorCode == CURLE_OK)
     {
-      if (!IsNullOrEmpty(this->cookie))
+      if (this->httpDownloadRequest->GetCookie() != NULL)
       {
-        char *curlCookie = ConvertToMultiByte(this->cookie);
+        char *curlCookie = ConvertToMultiByte(this->httpDownloadRequest->GetCookie());
         errorCode = curl_easy_setopt(this->curl, CURLOPT_COOKIE, curlCookie);
         if (errorCode != CURLE_OK)
         {
@@ -88,13 +84,23 @@ bool CHttpCurlInstance::Initialize(void)
         }
         FREE_MEM(curlCookie);
       }
+      else
+      {
+        // set default cookie, initializes cookie engine
+        errorCode = curl_easy_setopt(this->curl, CURLOPT_COOKIEFILE, "");
+        if (errorCode != CURLE_OK)
+        {
+          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting default cookie", errorCode);
+          result = false;
+        }
+      }
     }
 
     if (errorCode == CURLE_OK)
     {
-      if (!IsNullOrEmpty(this->userAgent))
+      if (this->httpDownloadRequest->GetUserAgent() != NULL)
       {
-        char *curlUserAgent = ConvertToMultiByte(this->userAgent);
+        char *curlUserAgent = ConvertToMultiByte(this->httpDownloadRequest->GetUserAgent());
         errorCode = curl_easy_setopt(this->curl, CURLOPT_USERAGENT, curlUserAgent);
         if (errorCode != CURLE_OK)
         {
@@ -107,7 +113,7 @@ bool CHttpCurlInstance::Initialize(void)
 
     if (errorCode == CURLE_OK)
     {
-      switch (this->version)
+      switch (this->httpDownloadRequest->GetHttpVersion())
       {
       case HTTP_VERSION_NONE:
         {
@@ -138,7 +144,7 @@ bool CHttpCurlInstance::Initialize(void)
 
     if (errorCode == CURLE_OK)
     {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_IGNORE_CONTENT_LENGTH, this->ignoreContentLength ? 1L : 0L);
+      errorCode = curl_easy_setopt(this->curl, CURLOPT_IGNORE_CONTENT_LENGTH, this->httpDownloadRequest->GetIgnoreContentLength() ? 1L : 0L);
       if (errorCode != CURLE_OK)
       {
         this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting ignore content length", errorCode);
@@ -148,7 +154,7 @@ bool CHttpCurlInstance::Initialize(void)
 
     if (errorCode == CURLE_OK)
     {
-      wchar_t *range = FormatString((this->endStreamTime <= this->startStreamTime) ? L"%llu-" : L"%llu-%llu", this->startStreamTime, this->endStreamTime);
+      wchar_t *range = FormatString((this->httpDownloadRequest->GetEndPosition() <= this->httpDownloadRequest->GetStartPosition()) ? L"%llu-" : L"%llu-%llu", this->httpDownloadRequest->GetStartPosition(), this->httpDownloadRequest->GetEndPosition());
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: requesting range: %s", this->protocolName, METHOD_INITIALIZE_NAME, range);
       char *curlRange = ConvertToMultiByte(range);
       errorCode = curl_easy_setopt(this->curl, CURLOPT_RANGE, curlRange);
@@ -163,6 +169,12 @@ bool CHttpCurlInstance::Initialize(void)
 
     if (errorCode == CURLE_OK)
     {
+      this->ClearHeaders();
+      for (unsigned int i = 0; i < this->httpDownloadRequest->GetHeaders()->Count(); i++)
+      {
+        this->AppendToHeaders(this->httpDownloadRequest->GetHeaders()->GetItem(i));
+      }
+
       errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTPHEADER, this->httpHeaders);
       if (errorCode != CURLE_OK)
       {
@@ -176,87 +188,19 @@ bool CHttpCurlInstance::Initialize(void)
   return result;
 }
 
-
-
-REFERENCE_TIME CHttpCurlInstance::GetStartStreamTime(void)
-{
-  return this->startStreamTime;
-}
-
-void CHttpCurlInstance::SetStartStreamTime(REFERENCE_TIME startStreamTime)
-{
-  this->startStreamTime = startStreamTime;
-}
-
-REFERENCE_TIME CHttpCurlInstance::GetEndStreamTime(void)
-{
-  return this->endStreamTime;
-}
-
-void CHttpCurlInstance::SetEndStreamTime(REFERENCE_TIME endStreamTime)
-{
-  this->endStreamTime = endStreamTime;
-}
-
-void CHttpCurlInstance::SetReferer(const wchar_t *referer)
-{
-  FREE_MEM(this->referer);
-  this->referer = Duplicate(referer);
-}
-
-void CHttpCurlInstance::SetUserAgent(const wchar_t *userAgent)
-{
-  FREE_MEM(this->userAgent);
-  this->userAgent = Duplicate(userAgent);
-}
-
-void CHttpCurlInstance::SetCookie(const wchar_t *cookie)
-{
-  FREE_MEM(this->cookie);
-  this->cookie = Duplicate(cookie);
-}
-
-void CHttpCurlInstance::SetHttpVersion(int version)
-{
-  switch (version)
-  {
-  case HTTP_VERSION_NONE:
-  case HTTP_VERSION_FORCE_HTTP10:
-  case HTTP_VERSION_FORCE_HTTP11:
-    this->version = version;
-    break;
-  default:
-    break;
-  }
-}
-
-void CHttpCurlInstance::SetIgnoreContentLength(bool ignoreContentLength)
-{
-  this->ignoreContentLength = ignoreContentLength;
-}
-
-bool CHttpCurlInstance::GetRangesSupported(void)
-{
-  return this->rangesSupported;
-}
-
 size_t CHttpCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length)
 {
   size_t result = __super::CurlReceiveData(buffer, length);
   if (result == length)
   {
-    long responseCode = 0;
-    CURLcode errorCode = this->GetResponseCode(&responseCode);
-    if (errorCode == CURLE_OK)
+    long responseCode = this->httpDownloadResponse->GetResponseCode();
+    if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
     {
-      if ((responseCode < 200) && (responseCode >= 400))
-      {
-        // response code 200 - 299 = OK
-        // response code 300 - 399 = redirect (OK)
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", this->protocolName, METHOD_CURL_RECEIVE_DATA_NAME, responseCode);
-        // return error
-        result = 0;
-      }
+      // response code 200 - 299 = OK
+      // response code 300 - 399 = redirect (OK)
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", this->protocolName, METHOD_CURL_RECEIVE_DATA_NAME, responseCode);
+      // return error
+      result = 0;
     }
   }
 
@@ -265,11 +209,40 @@ size_t CHttpCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t le
 
 void CHttpCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
 {
+  if (type == CURLINFO_HEADER_OUT)
+  {
+    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: sent HTTP header: '%s'", this->protocolName, METHOD_CURL_DEBUG_CALLBACK, data);
+  }
+
   if (type == CURLINFO_HEADER_IN)
   {
     wchar_t *trimmed = Trim(data);
     // we are just interested in headers comming in from peer
     this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received HTTP header: '%s'", this->protocolName, METHOD_CURL_DEBUG_NAME, (trimmed != NULL) ? trimmed : data);
+
+    int index = IndexOf(trimmed, L":");
+    if (index != (-1))
+    {
+      wchar_t *name = Substring(trimmed, 0, index);
+      wchar_t *value = Substring(trimmed, index + 1);
+      wchar_t *trimmedValue = Trim(value);
+
+      if ((name != NULL) && (value != NULL))
+      {
+        this->httpDownloadResponse->GetHeaders()->Add(name, trimmedValue);
+      }
+      else
+      {
+        this->httpDownloadResponse->GetHeaders()->Add(L"", trimmed);
+      }
+      FREE_MEM(name);
+      FREE_MEM(value);
+      FREE_MEM(trimmedValue);
+    }
+    else
+    {
+      this->httpDownloadResponse->GetHeaders()->Add(L"", trimmed);
+    }
     FREE_MEM(trimmed);
 
     // check for accept-ranges header
@@ -319,7 +292,7 @@ void CHttpCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
                   if (wcsncmp(first, L"none", 4) == 0)
                   {
                     // ranges are not supported
-                    this->rangesSupported = false;
+                    this->httpDownloadResponse->SetRangesSupported(false);
                   }
                 }
               }
@@ -331,19 +304,27 @@ void CHttpCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
   }
 }
 
-bool CHttpCurlInstance::AppendToHeaders(const wchar_t *header)
+bool CHttpCurlInstance::AppendToHeaders(CHttpHeader *header)
 {
-  bool result = false;
-  char *curlHeader = ConvertToMultiByteW(header);
-  if (curlHeader != NULL)
+  bool result = (header != NULL) && (header->IsValid());
+  if (result)
   {
-    this->httpHeaders = curl_slist_append(this->httpHeaders, curlHeader);
-    if (this->httpHeaders != NULL)
+    wchar_t *headerString = FormatString(L"%s: %s", header->GetName(), header->GetValue());
+    result &= (headerString != NULL);
+    if (result)
     {
-      result = true;
+      char *curlHeader = ConvertToMultiByteW(headerString);
+      result &= (curlHeader != NULL);
+      if (result)
+      {
+        this->httpHeaders = curl_slist_append(this->httpHeaders, curlHeader);
+        result &= (this->httpHeaders != NULL);
+      }
+      FREE_MEM(curlHeader);
     }
+    FREE_MEM(headerString);
   }
-  FREE_MEM(curlHeader);
+
   return result;
 }
 
@@ -351,4 +332,19 @@ void CHttpCurlInstance::ClearHeaders(void)
 {
   curl_slist_free_all(this->httpHeaders);
   this->httpHeaders = NULL;
+}
+
+CHttpDownloadRequest *CHttpCurlInstance::GetHttpDownloadRequest(void)
+{
+  return this->httpDownloadRequest;
+}
+
+CHttpDownloadResponse *CHttpCurlInstance::GetHttpDownloadResponse(void)
+{
+  return this->httpDownloadResponse;
+}
+
+CDownloadResponse *CHttpCurlInstance::GetNewDownloadResponse(void)
+{
+  return new CHttpDownloadResponse();
 }
