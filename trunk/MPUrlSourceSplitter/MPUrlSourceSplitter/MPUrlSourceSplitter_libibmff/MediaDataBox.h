@@ -53,11 +53,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   /* set methods */
 
   // sets payload data of media data box
@@ -84,6 +79,11 @@ protected:
   uint8_t *payload;
   // stores payload size
   uint64_t payloadSize;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

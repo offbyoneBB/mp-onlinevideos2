@@ -77,13 +77,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CurlInstance.h" />
+    <ClInclude Include="DownloadRequest.h" />
+    <ClInclude Include="DownloadResponse.h" />
     <ClInclude Include="HttpCurlInstance.h" />
+    <ClInclude Include="HttpDownloadRequest.h" />
+    <ClInclude Include="HttpDownloadResponse.h" />
+    <ClInclude Include="HttpHeader.h" />
+    <ClInclude Include="HttpHeaderCollection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CurlInstance.cpp" />
+    <ClCompile Include="DownloadRequest.cpp" />
+    <ClCompile Include="DownloadResponse.cpp" />
     <ClCompile Include="HttpCurlInstance.cpp" />
+    <ClCompile Include="HttpDownloadRequest.cpp" />
+    <ClCompile Include="HttpDownloadResponse.cpp" />
+    <ClCompile Include="HttpHeader.cpp" />
+    <ClCompile Include="HttpHeaderCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

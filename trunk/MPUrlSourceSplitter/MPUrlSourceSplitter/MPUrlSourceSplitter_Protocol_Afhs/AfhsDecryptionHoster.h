@@ -26,6 +26,7 @@
 #include "Hoster.h"
 #include "IAfhsSimpleDecryptionPlugin.h"
 #include "IAfhsDecryptionPlugin.h"
+#include "AfhsDecryptionContext.h"
 
 #define MODULE_AFHS_DECRYPTION_PLUGIN_HOSTER_NAME                             L"AfhsDecryptionHoster"
 
@@ -47,9 +48,9 @@ public:
   HRESULT ClearSession(void);
 
   // process segments and fragments
-  // @param segmentsFragments : collection of segments and fragments
+  // @param context : decryption context of AFHS protocol
   // @result : S_OK if successful, error code otherwise
-  HRESULT ProcessSegmentsAndFragments(CSegmentFragmentCollection *segmentsFragments);
+  HRESULT ProcessSegmentsAndFragments(CAfhsDecryptionContext *context);
 
   // IPlugin interface implementation
 

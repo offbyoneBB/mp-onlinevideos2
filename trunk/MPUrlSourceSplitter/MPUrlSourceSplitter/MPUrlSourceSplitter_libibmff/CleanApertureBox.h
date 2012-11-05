@@ -45,11 +45,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // fractional number which defines the exact clean aperture width, in counted pixels, of the video image
   virtual uint32_t GetCleanApertureWidthN(void);
 
@@ -122,6 +117,11 @@ protected:
   // fractional number which defines the vertical offset of clean aperture centre minus (height-1)/2
   // typically 0
   uint32_t vertOffD;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

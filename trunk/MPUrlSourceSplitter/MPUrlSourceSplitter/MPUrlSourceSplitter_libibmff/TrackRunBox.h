@@ -53,11 +53,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // gets addition to the implicit or explicit data offset established in the track fragment header
   // value valid only if IsDataOffsetPresent() is true
   // @return : addition to the implicit or explicit data offset established in the track fragment header
@@ -170,6 +165,11 @@ protected:
   uint32_t firstSampleFlags;
 
   CSampleCollection *samples;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

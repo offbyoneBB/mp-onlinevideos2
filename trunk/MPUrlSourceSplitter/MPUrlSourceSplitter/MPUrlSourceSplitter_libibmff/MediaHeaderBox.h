@@ -46,11 +46,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // gets the creation time of the media in this track (in seconds since midnight, Jan. 1, 1904, in UTC time)
   // @return : the creation time of the media in this track (in seconds since midnight, Jan. 1, 1904, in UTC time)
   virtual uint64_t GetCreationTime(void);
@@ -125,6 +120,11 @@ protected:
   // the language code for this media
   // see ISO 639-2/T for the set of three character codes
   wchar_t *language;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

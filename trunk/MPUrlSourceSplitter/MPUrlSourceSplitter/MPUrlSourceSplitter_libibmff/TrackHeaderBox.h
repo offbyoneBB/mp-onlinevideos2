@@ -54,11 +54,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // gets the creation time of this track (in seconds since midnight, Jan. 1, 1904, in UTC time)
   // @return : the creation time of this track (in seconds since midnight, Jan. 1, 1904, in UTC time)
   virtual uint64_t GetCreationTime(void);
@@ -213,6 +208,11 @@ protected:
 
   // track's visual presentation height as fixed-point 16.16 values
   CFixedPointNumber *height;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

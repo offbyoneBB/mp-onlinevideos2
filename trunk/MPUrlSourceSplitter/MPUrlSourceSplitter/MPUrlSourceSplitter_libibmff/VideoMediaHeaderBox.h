@@ -45,11 +45,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // gets composition mode for this video track
   // @return : composition mode for this video track
   virtual uint16_t GetGraphicsMode(void);
@@ -96,6 +91,11 @@ protected:
   uint16_t colorGreen;
 
   uint16_t colorBlue;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

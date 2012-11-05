@@ -295,7 +295,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
           }
         }
 
-        unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+        unsigned int bytesRead = this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
         if (bytesRead != 0)
         {
           if (this->bufferForProcessing != NULL)
@@ -320,9 +320,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
               ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
               if (buffer != NULL)
               {
-                unsigned int copyFromBuffer = this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                unsigned int copyFromBuffer = this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
                 unsigned int addedToBuffer = this->bufferForProcessing->AddToBuffer(buffer, bytesRead);
-                this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+                this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
               }
               FREE_MEM(buffer); 
             }
@@ -473,10 +473,43 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StartReceivingData(const CParameterC
   this->streamLength = 0;
   this->setLength = false;
 
-  if (result == S_OK)
+  if (SUCCEEDED(result))
   {
-    this->mainCurlInstance = new CRtmpCurlInstance(this->logger, this->lockMutex, this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL), PROTOCOL_IMPLEMENTATION_NAME, L"Main");
-    result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
+    this->mainCurlInstance = new CRtmpCurlInstance(this->logger, this->lockMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+    CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      CRtmpDownloadRequest *request = new CRtmpDownloadRequest();
+      CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
+      {
+        request->SetUrl(this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+        request->SetRtmpApp(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_APP, true, RTMP_APP_DEFAULT));
+        request->SetRtmpArbitraryData(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_ARBITRARY_DATA, true, NULL));
+        request->SetRtmpBuffer(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTMP_BUFFER, true, RTMP_BUFFER_DEFAULT));
+        request->SetRtmpFlashVersion(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_FLASHVER, true, RTMP_FLASH_VER_DEFAULT));
+        request->SetRtmpAuth(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_AUTH, true, RTMP_AUTH_DEFAULT));
+        request->SetRtmpJtv(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_JTV, true, RTMP_JTV_DEFAULT));
+        request->SetRtmpLive(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_LIVE, true, RTMP_LIVE_DEFAULT));
+        request->SetRtmpPageUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_PAGE_URL, true, RTMP_PAGE_URL_DEFAULT));
+        request->SetRtmpPlaylist(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_PLAYLIST, true, RTMP_PLAYLIST_DEFAULT));
+        request->SetRtmpPlayPath(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_PLAY_PATH, true, RTMP_PLAY_PATH_DEFAULT));
+        request->SetRtmpStart((this->streamTime >= 0) ? this->streamTime : this->configurationParameters->GetValueInt64(PARAMETER_NAME_RTMP_START, true, RTMP_START_DEFAULT));
+        request->SetRtmpStop(this->configurationParameters->GetValueInt64(PARAMETER_NAME_RTMP_STOP, true, RTMP_STOP_DEFAULT));
+        request->SetRtmpSubscribe(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_SUBSCRIBE, true, RTMP_SUBSCRIBE_DEFAULT));
+        request->SetRtmpSwfAge(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTMP_SWF_AGE, true, RTMP_SWF_AGE_DEFAULT));
+        request->SetRtmpSwfUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_SWF_URL, true, RTMP_SWF_URL_DEFAULT));
+        request->SetRtmpSwfVerify(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_SWF_VERIFY, true, RTMP_SWF_VERIFY_DEFAULT));
+        request->SetRtmpTcUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_TC_URL, true, RTMP_TC_URL_DEFAULT));
+        request->SetRtmpToken(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_TOKEN, true, RTMP_TOKEN_DEFAULT));
+
+        this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+        result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
+      }
+      FREE_MEM_CLASS(request);
+    }
   }
 
   if (SUCCEEDED(result) && (this->bufferForProcessing == NULL))
@@ -492,53 +525,28 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StartReceivingData(const CParameterC
 
   if (SUCCEEDED(result))
   {
-    this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-    this->mainCurlInstance->SetRtmpApp(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_APP, true, RTMP_APP_DEFAULT));
-    this->mainCurlInstance->SetRtmpArbitraryData(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_ARBITRARY_DATA, true, NULL));
-    this->mainCurlInstance->SetRtmpBuffer(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTMP_BUFFER, true, RTMP_BUFFER_DEFAULT));
-    this->mainCurlInstance->SetRtmpFlashVersion(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_FLASHVER, true, RTMP_FLASH_VER_DEFAULT));
-    this->mainCurlInstance->SetRtmpAuth(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_AUTH, true, RTMP_AUTH_DEFAULT));
-    this->mainCurlInstance->SetRtmpJtv(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_JTV, true, RTMP_JTV_DEFAULT));
-    this->mainCurlInstance->SetRtmpLive(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_LIVE, true, RTMP_LIVE_DEFAULT));
-    this->mainCurlInstance->SetRtmpPageUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_PAGE_URL, true, RTMP_PAGE_URL_DEFAULT));
-    this->mainCurlInstance->SetRtmpPlaylist(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_PLAYLIST, true, RTMP_PLAYLIST_DEFAULT));
-    this->mainCurlInstance->SetRtmpPlayPath(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_PLAY_PATH, true, RTMP_PLAY_PATH_DEFAULT));
-    this->mainCurlInstance->SetRtmpStart((this->streamTime >= 0) ? this->streamTime : this->configurationParameters->GetValueInt64(PARAMETER_NAME_RTMP_START, true, RTMP_START_DEFAULT));
-    this->mainCurlInstance->SetRtmpStop(this->configurationParameters->GetValueInt64(PARAMETER_NAME_RTMP_STOP, true, RTMP_STOP_DEFAULT));
-    this->mainCurlInstance->SetRtmpSubscribe(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_SUBSCRIBE, true, RTMP_SUBSCRIBE_DEFAULT));
-    this->mainCurlInstance->SetRtmpSwfAge(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTMP_SWF_AGE, true, RTMP_SWF_AGE_DEFAULT));
-    this->mainCurlInstance->SetRtmpSwfUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_SWF_URL, true, RTMP_SWF_URL_DEFAULT));
-    this->mainCurlInstance->SetRtmpSwfVerify(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_SWF_VERIFY, true, RTMP_SWF_VERIFY_DEFAULT));
-    this->mainCurlInstance->SetRtmpTcUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_TC_URL, true, RTMP_TC_URL_DEFAULT));
-    this->mainCurlInstance->SetRtmpToken(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_TOKEN, true, RTMP_TOKEN_DEFAULT));
+    // all parameters set
+    // start receiving data
 
-    result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+    result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+  }
 
-    if (SUCCEEDED(result))
+  if (SUCCEEDED(result))
+  {
+    // wait until we receive some data or transfer end (whatever comes first)
+    unsigned int state = CURL_STATE_NONE;
+    while ((state != CURL_STATE_RECEIVING_DATA) && (state != CURL_STATE_RECEIVED_ALL_DATA))
     {
-      // all parameters set
-      // start receiving data
+      state = this->mainCurlInstance->GetCurlState();
 
-      result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+      // wait some time
+      Sleep(10);
     }
 
-    if (SUCCEEDED(result))
+    if (state == CURL_STATE_RECEIVED_ALL_DATA)
     {
-      // wait until we receive some data or transfer end (whatever comes first)
-      unsigned int state = CURL_STATE_NONE;
-      while ((state != CURL_STATE_RECEIVING_DATA) && (state != CURL_STATE_RECEIVED_ALL_DATA))
-      {
-        state = this->mainCurlInstance->GetCurlState();
-
-        // wait some time
-        Sleep(10);
-      }
-
-      if (state == CURL_STATE_RECEIVED_ALL_DATA)
-      {
-        // we received data too fast
-        result = E_FAIL;
-      }
+      // we received data too fast
+      result = E_FAIL;
     }
   }
 
@@ -623,11 +631,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
     this->StopReceivingData();
   }
 
-  if (this->bufferForProcessing != NULL)
-  {
-    delete this->bufferForProcessing;
-    this->bufferForProcessing = NULL;
-  }
+  FREE_MEM_CLASS(this->bufferForProcessing);
  
   this->streamLength = 0;
   this->setLength = false;

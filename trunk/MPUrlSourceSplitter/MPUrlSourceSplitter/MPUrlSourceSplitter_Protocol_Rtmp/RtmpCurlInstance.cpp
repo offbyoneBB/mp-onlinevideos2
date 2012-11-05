@@ -24,49 +24,24 @@
 
 #include <librtmp/log.h>
 
-CRtmpCurlInstance::CRtmpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName, const wchar_t *instanceName)
-  : CCurlInstance(logger, mutex, url, protocolName, instanceName)
+CRtmpCurlInstance::CRtmpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
+  : CCurlInstance(logger, mutex, protocolName, instanceName)
 {
-  this->rtmpApp = RTMP_APP_DEFAULT;
-  this->rtmpArbitraryData = RTMP_ARBITRARY_DATA_DEFAULT;
-  this->rtmpBuffer = RTMP_BUFFER_DEFAULT;
-  this->rtmpFlashVersion = RTMP_FLASH_VER_DEFAULT;
-  this->rtmpAuth = RTMP_AUTH_DEFAULT;
-  this->rtmpJtv = RTMP_JTV_DEFAULT;
-  this->rtmpLive = RTMP_LIVE_DEFAULT;
-  this->rtmpPageUrl = RTMP_PAGE_URL_DEFAULT;
-  this->rtmpPlaylist = RTMP_PLAYLIST_DEFAULT;
-  this->rtmpPlayPath = RTMP_PLAY_PATH_DEFAULT;
-  this->rtmpReceiveDataTimeout = RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->rtmpStart = RTMP_START_DEFAULT;
-  this->rtmpStop = RTMP_STOP_DEFAULT;
-  this->rtmpSubscribe = RTMP_SUBSCRIBE_DEFAULT;
-  this->rtmpSwfAge = RTMP_SWF_AGE_DEFAULT;
-  this->rtmpSwfUrl = RTMP_SWF_URL_DEFAULT;
-  this->rtmpSwfVerify = RTMP_SWF_VERIFY_DEFAULT;
-  this->rtmpTcUrl = RTMP_TC_URL_DEFAULT;
-  this->rtmpToken = RTMP_TOKEN_DEFAULT;
+  this->rtmpDownloadRequest = dynamic_cast<CRtmpDownloadRequest *>(this->downloadRequest);
+  this->rtmpDownloadResponse = dynamic_cast<CRtmpDownloadResponse *>(this->downloadResponse);
 }
-
 
 CRtmpCurlInstance::~CRtmpCurlInstance(void)
 {
-  FREE_MEM(this->rtmpApp);
-  FREE_MEM(this->rtmpArbitraryData);
-  FREE_MEM(this->rtmpFlashVersion);
-  FREE_MEM(this->rtmpAuth);
-  FREE_MEM(this->rtmpJtv);
-  FREE_MEM(this->rtmpPageUrl);
-  FREE_MEM(this->rtmpPlayPath);
-  FREE_MEM(this->rtmpSubscribe);
-  FREE_MEM(this->rtmpSwfUrl);
-  FREE_MEM(this->rtmpTcUrl);
-  FREE_MEM(this->rtmpToken);
 }
 
-bool CRtmpCurlInstance::Initialize(void)
+bool CRtmpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
-  bool result = __super::Initialize();
+  bool result = __super::Initialize(downloadRequest);
+
+  this->rtmpDownloadRequest = dynamic_cast<CRtmpDownloadRequest  *>(this->downloadRequest);
+  this->rtmpDownloadResponse = dynamic_cast<CRtmpDownloadResponse *>(this->downloadResponse);
+  result &= (this->rtmpDownloadRequest != NULL) && (this->rtmpDownloadResponse != NULL);
 
   if (result)
   {
@@ -75,80 +50,80 @@ bool CRtmpCurlInstance::Initialize(void)
     {
       // librtmp needs url in specific format
 
-      wchar_t *connectionString = Duplicate(this->url);
+      wchar_t *connectionString = Duplicate(this->rtmpDownloadRequest->GetUrl());
 
-      if (this->rtmpApp != RTMP_APP_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpApp() != RTMP_APP_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_APP, this->rtmpApp, true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_APP, this->rtmpDownloadRequest->GetRtmpApp(), true);
       }
-      if (this->rtmpApp != RTMP_ARBITRARY_DATA_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpArbitraryData() != RTMP_ARBITRARY_DATA_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, this->rtmpArbitraryData);
+        this->AddToRtmpConnectionString(&connectionString, this->rtmpDownloadRequest->GetRtmpArbitraryData());
       }
-      if (this->rtmpBuffer != RTMP_BUFFER_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpBuffer() != RTMP_BUFFER_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_BUFFER, this->rtmpBuffer);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_BUFFER, this->rtmpDownloadRequest->GetRtmpBuffer());
       }
-      if (this->rtmpFlashVersion != RTMP_FLASH_VER_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpFlashVersion() != RTMP_FLASH_VER_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_FLASHVER, this->rtmpFlashVersion, true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_FLASHVER, this->rtmpDownloadRequest->GetRtmpFlashVersion(), true);
       }
-      if (this->rtmpAuth != RTMP_AUTH_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpAuth() != RTMP_AUTH_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_AUTH, this->rtmpAuth, true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_AUTH, this->rtmpDownloadRequest->GetRtmpAuth(), true);
       }
-      if (this->rtmpJtv != RTMP_JTV_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpJtv() != RTMP_JTV_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_JTV, this->rtmpJtv, true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_JTV, this->rtmpDownloadRequest->GetRtmpJtv(), true);
       }
-      if (this->rtmpLive != RTMP_LIVE_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpLive() != RTMP_LIVE_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_LIVE, this->rtmpLive ? L"1" : L"0", true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_LIVE, this->rtmpDownloadRequest->GetRtmpLive() ? L"1" : L"0", true);
       }
-      if (this->rtmpPageUrl != RTMP_PAGE_URL_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpPageUrl() != RTMP_PAGE_URL_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_PAGE_URL, this->rtmpPageUrl, true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_PAGE_URL, this->rtmpDownloadRequest->GetRtmpPageUrl(), true);
       }
-      if (this->rtmpPlaylist != RTMP_PLAYLIST_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpPlaylist() != RTMP_PLAYLIST_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_PLAYLIST, this->rtmpPlaylist ? L"1" : L"0", true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_PLAYLIST, this->rtmpDownloadRequest->GetRtmpPlaylist() ? L"1" : L"0", true);
       }
-      if (this->rtmpPlayPath != RTMP_PLAY_PATH_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpPlayPath() != RTMP_PLAY_PATH_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_PLAY_PATH, this->rtmpPlayPath, true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_PLAY_PATH, this->rtmpDownloadRequest->GetRtmpPlayPath(), true);
       }
       // timeout for RTMP protocol is set through libcurl options
-      if (this->rtmpStart != RTMP_START_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpStart() != RTMP_START_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_START, this->rtmpStart);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_START, this->rtmpDownloadRequest->GetRtmpStart());
       }
-      if (this->rtmpStop != RTMP_STOP_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpStop() != RTMP_STOP_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_STOP, this->rtmpStop);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_STOP, this->rtmpDownloadRequest->GetRtmpStop());
       }
-      if (this->rtmpSubscribe != RTMP_SUBSCRIBE_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpSubscribe() != RTMP_SUBSCRIBE_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_SUBSCRIBE, this->rtmpSubscribe, true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_SUBSCRIBE, this->rtmpDownloadRequest->GetRtmpSubscribe(), true);
       }
-      if (this->rtmpSwfAge != RTMP_SWF_AGE_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpSwfAge() != RTMP_SWF_AGE_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_SWF_AGE, this->rtmpSwfAge);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_SWF_AGE, this->rtmpDownloadRequest->GetRtmpSwfAge());
       }
-      if (this->rtmpSwfUrl != RTMP_SWF_URL_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpSwfUrl() != RTMP_SWF_URL_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_SWF_URL, this->rtmpSwfUrl, true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_SWF_URL, this->rtmpDownloadRequest->GetRtmpSwfUrl(), true);
       }
-      if (this->rtmpSwfVerify != RTMP_SWF_VERIFY_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpSwfVerify() != RTMP_SWF_VERIFY_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_SWF_VERIFY, this->rtmpSwfVerify ? L"1" : L"0", true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_SWF_VERIFY, this->rtmpDownloadRequest->GetRtmpSwfVerify() ? L"1" : L"0", true);
       }
-      if (this->rtmpTcUrl != RTMP_TC_URL_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpTcUrl() != RTMP_TC_URL_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_TC_URL, this->rtmpTcUrl, true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_TC_URL, this->rtmpDownloadRequest->GetRtmpTcUrl(), true);
       }
-      if (this->rtmpToken != RTMP_TOKEN_DEFAULT)
+      if (this->rtmpDownloadRequest->GetRtmpToken() != RTMP_TOKEN_DEFAULT)
       {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_TOKEN, this->rtmpToken, true);
+        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_TOKEN, this->rtmpDownloadRequest->GetRtmpToken() , true);
       }
 
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: librtmp connection string: %s", this->protocolName, METHOD_INITIALIZE_NAME, connectionString);
@@ -187,107 +162,6 @@ bool CRtmpCurlInstance::Initialize(void)
 
   this->state = (result) ? CURL_STATE_INITIALIZED : CURL_STATE_CREATED;
   return result;
-}
-
-void CRtmpCurlInstance::SetRtmpApp(const wchar_t *rtmpApp)
-{
-  FREE_MEM(this->rtmpApp);
-  this->rtmpApp = Duplicate(rtmpApp);
-}
-
-void CRtmpCurlInstance::SetRtmpTcUrl(const wchar_t *rtmpTcUrl)
-{
-  FREE_MEM(this->rtmpTcUrl);
-  this->rtmpTcUrl = Duplicate(rtmpTcUrl);
-}
-
-void CRtmpCurlInstance::SetRtmpPageUrl(const wchar_t *rtmpPageUrl)
-{
-  FREE_MEM(this->rtmpPageUrl);
-  this->rtmpPageUrl = Duplicate(rtmpPageUrl);
-}
-
-void CRtmpCurlInstance::SetRtmpSwfUrl(const wchar_t *rtmpSwfUrl)
-{
-  FREE_MEM(this->rtmpSwfUrl);
-  this->rtmpSwfUrl = Duplicate(rtmpSwfUrl);
-}
-
-void CRtmpCurlInstance::SetRtmpFlashVersion(const wchar_t *rtmpFlashVersion)
-{
-  FREE_MEM(this->rtmpFlashVersion);
-  this->rtmpFlashVersion = Duplicate(rtmpFlashVersion);
-}
-
-void CRtmpCurlInstance::SetRtmpAuth(const wchar_t *rtmpAuth)
-{
-  FREE_MEM(this->rtmpAuth);
-  this->rtmpAuth = Duplicate(rtmpAuth);
-}
-
-void CRtmpCurlInstance::SetRtmpArbitraryData(const wchar_t *rtmpArbitraryData)
-{
-  FREE_MEM(this->rtmpArbitraryData);
-  this->rtmpArbitraryData = Duplicate(rtmpArbitraryData);
-}
-
-void CRtmpCurlInstance::SetRtmpPlayPath(const wchar_t *rtmpPlayPath)
-{
-  FREE_MEM(this->rtmpPlayPath);
-  this->rtmpPlayPath = Duplicate(rtmpPlayPath);
-}
-
-void CRtmpCurlInstance::SetRtmpPlaylist(bool rtmpPlaylist)
-{
-  this->rtmpPlaylist = rtmpPlaylist;
-}
-
-void CRtmpCurlInstance::SetRtmpLive(bool rtmpLive)
-{
-  this->rtmpLive = rtmpLive;
-}
-
-void CRtmpCurlInstance::SetRtmpSubscribe(const wchar_t *rtmpSubscribe)
-{
-  FREE_MEM(this->rtmpSubscribe);
-  this->rtmpSubscribe = Duplicate(rtmpSubscribe);
-}
-
-void CRtmpCurlInstance::SetRtmpStart(int64_t rtmpStart)
-{
-  this->rtmpStart = rtmpStart;
-}
-
-void CRtmpCurlInstance::SetRtmpStop(int64_t rtmpStop)
-{
-  this->rtmpStop = this->rtmpStop;
-}
-
-void CRtmpCurlInstance::SetRtmpBuffer(unsigned int rtmpBuffer)
-{
-  this->rtmpBuffer = rtmpBuffer;
-}
-
-void CRtmpCurlInstance::SetRtmpToken(const wchar_t *rtmpToken)
-{
-  FREE_MEM(this->rtmpToken);
-  this->rtmpToken = Duplicate(rtmpToken);
-}
-
-void CRtmpCurlInstance::SetRtmpJtv(const wchar_t *rtmpJtv)
-{
-  FREE_MEM(this->rtmpJtv);
-  this->rtmpJtv = Duplicate(rtmpJtv);
-}
-
-void CRtmpCurlInstance::SetRtmpSwfVerify(bool rtmpSwfVerify)
-{
-  this->rtmpSwfVerify = rtmpSwfVerify;
-}
-
-void CRtmpCurlInstance::SetRtmpSwfAge(unsigned int rtmpSwfAge)
-{
-  this->rtmpSwfAge = rtmpSwfAge;
 }
 
 void CRtmpCurlInstance::RtmpLogCallback(RTMP *r, int level, const char *format, va_list vl)
@@ -415,4 +289,14 @@ bool CRtmpCurlInstance::AddToRtmpConnectionString(wchar_t **connectionString, co
 
 void CRtmpCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
 {
+}
+
+CRtmpDownloadResponse *CRtmpCurlInstance::GetRtmpDownloadResponse(void)
+{
+  return this->rtmpDownloadResponse;
+}
+
+CDownloadResponse *CRtmpCurlInstance::GetNewDownloadResponse(void)
+{
+  return new CRtmpDownloadResponse();
 }

@@ -123,7 +123,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
         unsigned int bufferPosition = 0;
         for (unsigned int i = 0; i < this->storedMediaPackets->Count(); i++)
         {
-          CMediaPacket *mp = this->storedMediaPackets->GetItem(i); 
+          CMediaPacket *mp = this->storedMediaPackets->GetItem(i);
           unsigned int bufferOccupiedSpace = mp->GetBuffer()->GetBufferOccupiedSpace();
           mp->GetBuffer()->CopyFromBuffer(buffer + bufferPosition, bufferOccupiedSpace, 0, 0);
           bufferPosition += bufferOccupiedSpace;
@@ -157,6 +157,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
             // bootstrap info should have information about segments, fragments and seeking information
 
             wchar_t *baseUrl = GetBaseUrl(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+            
             bool continueParsing = (baseUrl != NULL);
             CF4MBootstrapInfoCollection *bootstrapInfoCollection = new CF4MBootstrapInfoCollection();
             CMediaCollection *mediaCollection = new CMediaCollection();
@@ -553,6 +554,30 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_REFERER, true, PARAMETER_NAME_AFHS_REFERER);
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_USER_AGENT, true, PARAMETER_NAME_AFHS_USER_AGENT);
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_VERSION, true, PARAMETER_NAME_AFHS_VERSION);
+                            continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_URL, true, PARAMETER_NAME_AFHS_MANIFEST_URL);
+
+                            if (continueParsing)
+                            {
+                              wchar_t *content = ConvertToUnicodeA((const char *)buffer);
+                              continueParsing &= (content != NULL);
+                              if (continueParsing)
+                              {
+                                // add manifest content to connection parameters
+                                CParameter *manifestContent = new CParameter(PARAMETER_NAME_AFHS_MANIFEST_CONTENT, content);
+                                continueParsing &= (manifestContent != NULL);
+
+                                if (continueParsing)
+                                {
+                                  continueParsing &= this->connectionParameters->Add(manifestContent);
+                                }
+
+                                if (!continueParsing)
+                                {
+                                  FREE_MEM_CLASS(manifestContent);
+                                }
+                              }
+                              FREE_MEM(content);
+                            }
 
                             if (continueParsing)
                             {
@@ -617,6 +642,8 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_REFERER, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_USER_AGENT, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_VERSION, (void *)&invariant);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MANIFEST_URL, (void *)&invariant);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MANIFEST_CONTENT, (void *)&invariant);
                   }
                   else
                   {

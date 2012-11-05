@@ -131,11 +131,9 @@ CMPUrlSourceSplitter_Protocol_Mms::~CMPUrlSourceSplitter_Protocol_Mms()
     this->StopReceivingData();
   }
 
-  if (this->mainCurlInstance != NULL)
-  {
-    delete this->mainCurlInstance;
-    this->mainCurlInstance = NULL;
-  }
+  FREE_MEM_CLASS(this->mainCurlInstance);
+  FREE_MEM_CLASS(this->configurationParameters);
+  FREE_MEM_CLASS(this->mmsContext);
 
   delete this->configurationParameters;
 
@@ -145,16 +143,8 @@ CMPUrlSourceSplitter_Protocol_Mms::~CMPUrlSourceSplitter_Protocol_Mms()
     this->lockMutex = NULL;
   }
 
-  if (this->mmsContext != NULL)
-  {
-    delete this->mmsContext;
-    this->mmsContext = NULL;
-  }
-
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
-
-  delete this->logger;
-  this->logger = NULL;
+  FREE_MEM_CLASS(this->logger);
 }
 
 // IProtocol interface
@@ -291,16 +281,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit, CReceiv
       {
         if (!(this->shouldExit))
         {
-          long responseCode = 0;
-          CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
-          if (errorCode == CURLE_OK)
+          long responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
+          if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
           {
-            if ((responseCode < 200) && (responseCode >= 400))
-            {
-              // response code 200 - 299 = OK
-              // response code 300 - 399 = redirect (OK)
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-            }
+            // response code 200 - 299 = OK
+            // response code 300 - 399 = redirect (OK)
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: error response code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
           }
 
           if ((responseCode >= 200) && (responseCode < 400))
@@ -346,7 +332,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit, CReceiv
               }
             }
 
-            unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+            unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
             if (bytesRead != 0)
             {
               unsigned int bufferSize = this->mmsContext->GetBuffer()->GetBufferSize();
@@ -369,9 +355,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit, CReceiv
                 ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
                 if (buffer != NULL)
                 {
-                  this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                  this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
                   this->mmsContext->GetBuffer()->AddToBuffer(buffer, bytesRead);
-                  this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+                  this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
                 }
                 FREE_MEM(buffer);
               }
@@ -599,13 +585,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
   if (SUCCEEDED(result))
   {
-    wchar_t * guidTemp = ConvertGuidToString(this->clientGuid);
-    result = (guidTemp == NULL) ? E_OUTOFMEMORY : S_OK;
+    wchar_t *guidTemp = ConvertGuidToString(this->clientGuid);
+    CHECK_POINTER_HRESULT(result, guidTemp, result, E_OUTOFMEMORY);
 
     if (SUCCEEDED(result))
     {
-      clientGuidString = FormatString(CLIENTGUID_FORMAT, guidTemp);
-      result = (clientGuidString == NULL) ? E_OUTOFMEMORY : S_OK;
+      clientGuidString = FormatString(CLIENTGUID_FORMAT_VALUE, guidTemp);
+      CHECK_POINTER_HRESULT(result, clientGuidString, result, E_OUTOFMEMORY);
     }
 
     FREE_MEM(guidTemp);
@@ -621,89 +607,88 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
     if (SUCCEEDED(result))
     {
-      this->mainCurlInstance = new CMmsCurlInstance(this->logger, this->lockMutex, url, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
-      result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
+      this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+      CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
+      {
+        CHttpDownloadRequest *request = new CHttpDownloadRequest();
+        CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
+        {
+          request->SetUrl(url);
+          request->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_REFERER, true, NULL));
+          request->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_USER_AGENT, true, NULL));
+          request->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_COOKIE, true, NULL));
+          request->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_VERSION, true, HTTP_VERSION_DEFAULT));
+          request->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
+          this->sequenceNumber = 1;
+          result = request->GetHeaders()->Add(L"Accept", L"*/*") ? S_OK : E_FAIL;
+          result = request->GetHeaders()->Add(USERAGENT_NAME, USERAGENT_VALUE) ? result : E_FAIL;
+
+          wchar_t *pragma = FormatString(L"no-cache,rate=1.000000,stream-time=%u,request-context=%u,max-duration=0", this->streamTime, this->sequenceNumber++);
+          result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
+          FREE_MEM(pragma);
+
+          result = request->GetHeaders()->Add(L"Pragma", clientGuidString) ? result : E_FAIL;
+          result = request->GetHeaders()->Add(L"Connection", L"Close") ? result : E_FAIL;
+
+          this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+
+          if (SUCCEEDED(result))
+          {
+            result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
+          }
+
+        }
+        FREE_MEM_CLASS(request);
+      }
     }
 
     if (SUCCEEDED(result))
     {
-      this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-      this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_REFERER, true, NULL));
-      this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_USER_AGENT, true, NULL));
-      this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_COOKIE, true, NULL));
-      this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_VERSION, true, HTTP_VERSION_DEFAULT));
-      this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+      FREE_MEM_CLASS(this->mmsContext);
 
-      result = this->mainCurlInstance->AppendToHeaders(L"Accept: */*") ? S_OK : E_FAIL;
-      result = this->mainCurlInstance->AppendToHeaders(USERAGENT) ? result : E_FAIL;
-      this->sequenceNumber = 1;
-      wchar_t *pragma = FormatString(L"Pragma: no-cache,rate=1.000000,stream-time=%u,request-context=%u,max-duration=0", this->streamTime, this->sequenceNumber++);
-      result = this->mainCurlInstance->AppendToHeaders(pragma) ? result : E_FAIL;
-      FREE_MEM(pragma);
-      result = this->mainCurlInstance->AppendToHeaders(clientGuidString) ? result : E_FAIL;
-      result = this->mainCurlInstance->AppendToHeaders(L"Connection: Close") ? result : E_FAIL;
+      this->mmsContext = new MMSContext();
+      result = (this->mmsContext != NULL) ? S_OK : E_OUTOFMEMORY;
+    }
 
-      if (SUCCEEDED(result))
+    if (SUCCEEDED(result))
+    {
+      this->mmsContext->SetTimeout(this->GetReceiveDataTimeout() / 2);
+
+      // all parameters set
+      // start receiving data
+
+      result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+    }
+
+    if (SUCCEEDED(result))
+    {
+      // wait for HTTP status code
+
+      long responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
+      while (responseCode == 0)
       {
-        result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
-      }
-
-      if (SUCCEEDED(result))
-      {
-        if (this->mmsContext != NULL)
+        responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
+        if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
         {
-          delete this->mmsContext;
-          this->mmsContext = NULL;
+          // response code 200 - 299 = OK
+          // response code 300 - 399 = redirect (OK)
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+          result = E_FAIL;
         }
 
-        this->mmsContext = new MMSContext();
-        result = (this->mmsContext != NULL) ? S_OK : E_OUTOFMEMORY;
-      }
-
-      if (SUCCEEDED(result))
-      {
-        this->mmsContext->SetTimeout(this->GetReceiveDataTimeout() / 2);
-
-        // all parameters set
-        // start receiving data
-
-        result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
-      }
-
-      if (SUCCEEDED(result))
-      {
-        // wait for HTTP status code
-
-        long responseCode = 0;
-        while (responseCode == 0)
+        if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
         {
-          CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
-          if (errorCode == CURLE_OK)
-          {
-            if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-            {
-              // response code 200 - 299 = OK
-              // response code 300 - 399 = redirect (OK)
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-              result = E_FAIL;
-            }
-          }
-          else
-          {
-            this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
-            result = E_FAIL;
-            break;
-          }
-
-          if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
-          {
-            // we received all data, but no response code
-            break;
-          }
-
-          // wait some time
-          Sleep(10);
+          // we received all data, but no response code
+          break;
         }
+
+        // wait some time
+        Sleep(10);
       }
     }
   }
@@ -741,91 +726,92 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
       this->wholeStreamDownloaded = false;
 
+      this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+      CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
+
       if (SUCCEEDED(result))
       {
-        this->mainCurlInstance = new CMmsCurlInstance(this->logger, this->lockMutex, url, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
-        result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
+        CHttpDownloadRequest *request = new CHttpDownloadRequest();
+        CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
+        {
+          request->SetUrl(url);
+          request->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_REFERER, true, NULL));
+          request->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_USER_AGENT, true, NULL));
+          request->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_COOKIE, true, NULL));
+          request->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_VERSION, true, HTTP_VERSION_DEFAULT));
+          request->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
+          this->sequenceNumber = 1;
+          result = request->GetHeaders()->Add(L"Accept", L"*/*") ? S_OK : E_FAIL;
+          result = request->GetHeaders()->Add(USERAGENT_NAME, USERAGENT_VALUE) ? result : E_FAIL;
+
+          wchar_t *pragma = FormatString(L"no-cache,rate=1.000000,request-context=%u,stream-time=%u", this->sequenceNumber++, this->streamTime);
+          result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
+          FREE_MEM(pragma);
+
+          result = request->GetHeaders()->Add(L"Pragma", L"xPlayStrm=1") ? result : E_FAIL;
+          result = request->GetHeaders()->Add(L"Pragma", clientGuidString) ? result : E_FAIL;
+
+          pragma = FormatString(L"stream-switch-count=%d", this->mmsContext->GetStreams()->Count());
+          result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
+          FREE_MEM(pragma);
+
+          for (unsigned int i = 0; i < this->mmsContext->GetStreams()->Count(); i++)
+          {
+            MMSStream *stream = mmsContext->GetStreams()->GetItem(i);
+            wchar_t *temp = FormatString(L"%sffff:%d:0 ", (pragma == NULL) ? L"stream-switch-entry=" : pragma, stream->GetId());
+            FREE_MEM(pragma);
+            pragma = temp;
+          }
+          result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
+          FREE_MEM(pragma);
+
+          result = request->GetHeaders()->Add(L"Connection", L"Close") ? result : E_FAIL;
+
+          this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+
+          if (SUCCEEDED(result))
+          {
+            result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
+          }
+        }
+        FREE_MEM_CLASS(request);
       }
 
       if (SUCCEEDED(result))
       {
-        this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-        this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_REFERER, true, NULL));
-        this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_USER_AGENT, true, NULL));
-        this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_COOKIE, true, NULL));
-        this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_VERSION, true, HTTP_VERSION_DEFAULT));
-        this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+        // all parameters set
+        // start receiving data
 
-        result = this->mainCurlInstance->AppendToHeaders(L"Accept: */*") ? S_OK : E_FAIL;
-        result = this->mainCurlInstance->AppendToHeaders(USERAGENT) ? result : E_FAIL;
-        wchar_t *pragma = FormatString(L"Pragma: no-cache,rate=1.000000,request-context=%u,stream-time=%u", this->sequenceNumber++, this->streamTime);
-        result = this->mainCurlInstance->AppendToHeaders(pragma) ? result : E_FAIL;
-        FREE_MEM(pragma);
-        result = this->mainCurlInstance->AppendToHeaders(L"Pragma: xPlayStrm=1") ? result : E_FAIL;
-        result = this->mainCurlInstance->AppendToHeaders(clientGuidString) ? result : E_FAIL;
-        pragma = FormatString(L"Pragma: stream-switch-count=%d", this->mmsContext->GetStreams()->Count());
-        result = this->mainCurlInstance->AppendToHeaders(pragma) ? result : E_FAIL;
-        FREE_MEM(pragma);
+        result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+      }
 
-        for (unsigned int i = 0; i < this->mmsContext->GetStreams()->Count(); i++)
+      if (SUCCEEDED(result))
+      {
+        // wait for HTTP status code
+
+        long responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
+        while (responseCode == 0)
         {
-          MMSStream *stream = mmsContext->GetStreams()->GetItem(i);
-          wchar_t *temp = FormatString(L"%sffff:%d:0 ", (pragma == NULL) ? L"Pragma: stream-switch-entry=" : pragma, stream->GetId());
-          FREE_MEM(pragma);
-          pragma = temp;
-        }
-        result = this->mainCurlInstance->AppendToHeaders(pragma) ? result : E_FAIL;
-        FREE_MEM(pragma);
-
-        result = this->mainCurlInstance->AppendToHeaders(L"Connection: Close") ? result : E_FAIL;
-        
-        if (SUCCEEDED(result))
-        {
-          result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
-        }
-
-        if (SUCCEEDED(result))
-        {
-          // all parameters set
-          // start receiving data
-
-          result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
-        }
-
-        if (SUCCEEDED(result))
-        {
-          // wait for HTTP status code
-
-          long responseCode = 0;
-          while (responseCode == 0)
+          responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
+          if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
           {
-            CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
-            if (errorCode == CURLE_OK)
-            {
-              if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-              {
-                // response code 200 - 299 = OK
-                // response code 300 - 399 = redirect (OK)
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-                result = E_FAIL;
-              }
-            }
-            else
-            {
-              this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while requesting HTTP status code", errorCode);
-              result = E_FAIL;
-              break;
-            }
-
-            if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
-            {
-              // we received all data, but no response code
-              break;
-            }
-
-            // wait some time
-            Sleep(10);
+            // response code 200 - 299 = OK
+            // response code 300 - 399 = redirect (OK)
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: HTTP status code: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+            result = E_FAIL;
           }
+
+          if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+          {
+            // we received all data, but no response code
+            break;
+          }
+
+          // wait some time
+          Sleep(10);
         }
       }
     }
@@ -964,11 +950,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ClearSession(void)
   this->shouldExit = false;
   this->streamEndedLogged = false;
 
-  if (this->mmsContext != NULL)
-  {
-    delete this->mmsContext;
-    this->mmsContext = NULL;
-  }
+  FREE_MEM_CLASS(this->mmsContext);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -1359,15 +1341,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsHeaderData(MMSContext *mmsConte
       {
         CLockMutex(this->lockMutex, INFINITE);
 
-        unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+        unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
         if (bytesRead > 0)
         {
           ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
           if (buffer != 0)
           {
-            this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+            this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
             result = (this->mmsContext->GetBuffer()->AddToBufferWithResize(buffer, bytesRead) == bytesRead) ? S_OK : E_OUTOFMEMORY;
-            this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+            this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
           }
           FREE_MEM(buffer);
         }

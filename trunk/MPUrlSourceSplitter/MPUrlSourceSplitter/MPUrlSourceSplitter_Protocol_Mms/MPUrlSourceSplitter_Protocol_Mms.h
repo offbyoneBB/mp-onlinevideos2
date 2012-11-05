@@ -26,17 +26,18 @@
 #include "MPUrlSourceSplitter_Protocol_Mms_Exports.h"
 #include "Logger.h"
 #include "IProtocolPlugin.h"
-#include "MmsCurlInstance.h"
+#include "HttpCurlInstance.h"
 #include "MMSContext.h"
 #include "MMSChunk.h"
 
 #include <WinSock2.h>
 
 // see Ref 2.2.1.8
-#define USERAGENT                                                 L"User-Agent: NSPlayer/7.10.0.3059"
+#define USERAGENT_NAME                                              L"User-Agent"
+#define USERAGENT_VALUE                                             L"NSPlayer/7.10.0.3059"
 // see Ref 2.2.1.4.33
 // the guid value can be changed to any valid value.
-#define CLIENTGUID_FORMAT                                         L"Pragma: xClientGUID=%s"
+#define CLIENTGUID_FORMAT_VALUE                                     L"xClientGUID=%s"
 
 
 // we should get data in twenty seconds
@@ -190,7 +191,7 @@ protected:
   HANDLE lockMutex;
 
   // main instance of CURL
-  CMmsCurlInstance *mainCurlInstance;
+  CHttpCurlInstance *mainCurlInstance;
 
   // reference to variable that signalize if protocol is requested to exit
   bool shouldExit;

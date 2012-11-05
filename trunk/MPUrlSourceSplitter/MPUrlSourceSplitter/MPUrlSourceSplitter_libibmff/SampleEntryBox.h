@@ -48,11 +48,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // gets the index of the data reference to use to retrieve data associated with samples
   // @return : the index of the data reference to use to retrieve data associated with samples
   virtual uint16_t GetDataReferenceIndex(void);
@@ -83,6 +78,11 @@ protected:
   // data references are stored in Data Reference Boxes
   // the index ranges from 1 to the number of data references
   uint16_t dataReferenceIndex;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

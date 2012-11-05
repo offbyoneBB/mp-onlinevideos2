@@ -23,11 +23,19 @@
 #ifndef __MPURLSOURCESPLITTER_AFHS_DECRYPTION_AKAMAI_DEFINED
 #define __MPURLSOURCESPLITTER_AFHS_DECRYPTION_AKAMAI_DEFINED
 
-#include "MPUrlSourceSplitter_Afhs_Decryption_akamai_Exports.h"
-
+#include "MPUrlSourceSplitter_Afhs_Decryption_Akamai_Exports.h"
 #include "IAfhsDecryptionPlugin.h"
+#include "AkamaiFlashInstance.h"
+#include "AkamaiFlvPacket.h"
+#include "HttpCurlInstance.h"
+#include "BoxCollection.h"
+#include "ParsedMediaDataBox.h"
 
 #define DECRYPTION_NAME                                                       L"AFHS_AKAMAI"
+
+#define AKAMAI_GUID_LENGTH                                                    12
+#define AKAMAI_GUID_URL_PART                                                  L"g="
+#define AKAMAI_GUID_URL_PART_LENGTH                                           2
 
 // This class is exported from the MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll
 class MPURLSOURCESPLITTER_AFHS_DECRYPTION_AKAMAI_API CMPUrlSourceSplitter_Afhs_Decryption_Akamai : public IAfhsDecryptionPlugin
@@ -43,9 +51,9 @@ public:
   // IAfhsDecryptionPlugin interface
 
   // check if decryption plugin supports decrypting segments and fragments
-  // @param segmentsFragments : collection of segments and fragments
+  // @param context : decryption context of AFHS protocol
   // @result : one of DecryptionResult values
-  DecryptionResult Supported(CSegmentFragmentCollection *segmentsFragments);
+  DecryptionResult Supported(CAfhsDecryptionContext *context);
 
   // IAfhsSimpleDecryptionPlugin interface
 
@@ -54,9 +62,9 @@ public:
   HRESULT ClearSession(void);
 
   // process segments and fragments
-  // @param segmentsFragments : collection of segments and fragments
+  // @param context : decryption context of AFHS protocol
   // @result : S_OK if successful, error code otherwise
-  HRESULT ProcessSegmentsAndFragments(CSegmentFragmentCollection *segmentsFragments);
+  HRESULT ProcessSegmentsAndFragments(CAfhsDecryptionContext *context);
 
   // IPlugin interface
 
@@ -79,6 +87,84 @@ protected:
 
   // holds various parameters supplied by caller
   CParameterCollection *configurationParameters;
+
+  // specifies if received data were analysed for akamai pattern
+  bool receivedDataAnalysed;
+  // specifies if received data can be decrypted by akamai decryptor
+  bool receivedDataCanBeDecrypted;
+  // specifies if key was requested and still don't received
+  bool keyRequestPending;
+
+  // holds flash instance initialize result
+  // default E_NOT_VALID_STATE (not initialized)
+  HRESULT initializeAkamaiFlashInstanceResult;
+
+  // holds akamain flash instance to decrypt received data
+  CAkamaiFlashInstance *akamaiFlashInstance;
+
+  // holds akamai GUID
+  wchar_t *akamaiGuid;
+
+  // holds last decryption key url
+  wchar_t *lastKeyUrl;
+  // holds session ID (part of lastKeyUrl)
+  wchar_t *sessionID;
+
+  // holds last key in BASE64 encoding
+  wchar_t *lastKeyBase64;
+  // holds akamai swf file
+  wchar_t *akamaiSwfFile;
+  // holds last timestamp
+  unsigned int lastTimestamp;
+
+  /* methods */
+
+  // gets all boxes in segment and fragment
+  // @param segmentFragment : segment and fragment to get boxes
+  // @return : boxes collection or NULL if error
+  CBoxCollection *GetBoxes(CSegmentFragment *segmentFragment);
+
+  // gets media data box from specified segment and fragment
+  // @param segmentFragment : segment and fragment to get media data box
+  // @result : buffer with media data box data or NULL if error
+  CLinearBuffer *GetMediaDataBox(CSegmentFragment *segmentFragment);
+
+  // gets FLV packet from specified buffer
+  // @param buffer : buffer to get FLV packet
+  // @return : FLV packet or NULL if error
+  CAkamaiFlvPacket *GetAkamaiFlvPacket(CLinearBuffer *buffer);
+
+  // gets akamai GUID (12 random characters from ASCII(65) to ASCII(89))
+  // @return : akamai GUID
+  wchar_t *GetAkamaiGuid(void);
+
+  // gets url for key from url from akamai FLV packet
+  // @param segmentFragmentUrl : url from segment and fragment
+  // @param packetUrl : url from akamai FLV packet
+  // @param akamaiGuid : akamai GUID
+  // @return : url for key or NULL if error
+  wchar_t *GetKeyUrlFromUrl(const wchar_t *segmentFragmentUrl, const wchar_t *packetUrl, const wchar_t *akamaiGuid);
+
+  // gets resource from module
+  // @param name : name of the resource
+  // @param type : the resource type
+  // @return : buffer with filled data from resource or NULL if error
+  CLinearBuffer *GetResource(const wchar_t *name, const wchar_t *type);
+
+  // gets random akamai swf file name
+  // @return : random akamai swf file name or NULL if error
+  wchar_t *CMPUrlSourceSplitter_Afhs_Decryption_Akamai::GetAkamaiSwfFile(void);
+
+  // gets parsed media data box
+  // @param context : decryption context of AFHS protocol
+  // @param segmentFragment : segment and fragment to get media data box
+  // @return : parsed media data box or NULL if error
+  CParsedMediaDataBox *ParseMediaDataBox(CAfhsDecryptionContext *context, CSegmentFragment *segmentFragment);
+
+  // gets decryption key from segment and fragment
+  // @param segmentFragment : segment and fragment to get decryption key
+  // @return : decryption key in BASE64 encoding or NULL if error
+  wchar_t *GetDecryptionKeyFromSegmentFragment(CSegmentFragment *segmentFragment);
 };
 
 #endif

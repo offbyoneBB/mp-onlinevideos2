@@ -46,11 +46,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // gets number that places mono audio tracks in a stereo space; 0 is centre (the normal value);
   // full left is -1.0 and full right is 1.0
   // @return : number that places mono audio tracks in a stereo space
@@ -76,6 +71,11 @@ protected:
   // fixed-point 8.8 number that places mono audio tracks in a stereo space; 0 is centre (the normal value);
   // full left is -1.0 and full right is 1.0
   CFixedPointNumber *balance;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // parses data in buffer
   // @param buffer : buffer with box data for parsing

@@ -157,12 +157,8 @@ CLAVInputPin::~CLAVInputPin(void)
   this->DestroyAsyncRequestProcessWorker();
   this->ReleaseAVIOContext();
 
-  if (this->currentReadRequest != NULL)
-  {
-    delete this->currentReadRequest;
-    this->currentReadRequest = NULL;
-  }
-  delete this->mediaPacketCollection;
+  FREE_MEM_CLASS(this->currentReadRequest);
+  FREE_MEM_CLASS(this->mediaPacketCollection);
 
   if (this->requestMutex != NULL)
   {
@@ -181,7 +177,7 @@ CLAVInputPin::~CLAVInputPin(void)
 
   FREE_MEM(this->storeFilePath);
 
-  delete this->configuration;
+  FREE_MEM_CLASS(this->configuration);
   FREE_MEM(this->downloadFileName);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
@@ -1089,6 +1085,7 @@ HRESULT CLAVInputPin::DestroyAsyncRequestProcessWorker(void)
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_ASYNC_REQUEST_PROCESS_WORKER_NAME, L"thread didn't exit, terminating thread");
       TerminateThread(this->hAsyncRequestProcessingThread, 0);
     }
+    CloseHandle(this->hAsyncRequestProcessingThread);
   }
 
   this->hAsyncRequestProcessingThread = NULL;
@@ -1913,6 +1910,7 @@ HRESULT CLAVInputPin::DestroyDemuxerWorker(void)
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_DEMUXER_WORKER_NAME, L"thread didn't exit, terminating thread");
       TerminateThread(this->hCreateDemuxerWorkerThread, 0);
     }
+    CloseHandle(this->hCreateDemuxerWorkerThread);
   }
 
   this->hCreateDemuxerWorkerThread = NULL;

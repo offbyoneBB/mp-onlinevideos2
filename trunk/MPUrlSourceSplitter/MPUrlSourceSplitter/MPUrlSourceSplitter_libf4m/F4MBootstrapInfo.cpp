@@ -172,99 +172,100 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
 
     if (SUCCEEDED(result))
     {
-      CHttpCurlInstance *curlInstance = new CHttpCurlInstance(logger, NULL, bootstrapInfoUrl, protocolName, L"CF4MBootstrapInfo");
+      CHttpCurlInstance *curlInstance = new CHttpCurlInstance(logger, NULL, protocolName, L"CF4MBootstrapInfo");
       CHECK_POINTER_HRESULT(result, curlInstance, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))
       {
         curlInstance->SetReceivedDataTimeout(receiveDataTimeout);
-        curlInstance->SetReferer(referer);
-        curlInstance->SetUserAgent(userAgent);
-        curlInstance->SetCookie(cookie);
 
-        result = (curlInstance->Initialize()) ? S_OK : E_FAIL;
+        CHttpDownloadRequest *request = new CHttpDownloadRequest();
+        CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
         if (SUCCEEDED(result))
         {
-          // all parameters set
-          // start receiving data
+          request->SetUrl(bootstrapInfoUrl);
+          request->SetReferer(referer);
+          request->SetUserAgent(userAgent);
+          request->SetCookie(cookie);
 
-          result = (curlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+          result = (curlInstance->Initialize(request)) ? S_OK : E_FAIL;
+        }
+        FREE_MEM_CLASS(request);
+      }
+
+      if (SUCCEEDED(result))
+      {
+        // all parameters set
+        // start receiving data
+
+        result = (curlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+      }
+
+      if (SUCCEEDED(result))
+      {
+        // wait for HTTP status code
+
+        long responseCode = curlInstance->GetHttpDownloadResponse()->GetResponseCode();
+        while (responseCode == 0)
+        {
+          responseCode = curlInstance->GetHttpDownloadResponse()->GetResponseCode();
+          if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
+          {
+            // response code 200 - 299 = OK
+            // response code 300 - 399 = redirect (OK)
+            result = E_FAIL;
+          }
+
+          if ((responseCode == 0) && (curlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+          {
+            // we received data too fast
+            result = E_FAIL;
+            break;
+          }
+
+          // wait some time
+          Sleep(1);
         }
 
         if (SUCCEEDED(result))
         {
-          // wait for HTTP status code
-
-          long responseCode = 0;
-          while (responseCode == 0)
+          // wait until all data are received
+          while (curlInstance->GetCurlState() != CURL_STATE_RECEIVED_ALL_DATA)
           {
-            CURLcode errorCode = curlInstance->GetResponseCode(&responseCode);
-            if (errorCode == CURLE_OK)
-            {
-              if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
-              {
-                // response code 200 - 299 = OK
-                // response code 300 - 399 = redirect (OK)
-                result = E_FAIL;
-              }
-            }
-            else
-            {
-              result = E_FAIL;
-              break;
-            }
-
-            if ((responseCode == 0) && (curlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
-            {
-              // we received data too fast
-              result = E_FAIL;
-              break;
-            }
-
-            // wait some time
-            Sleep(1);
+            // sleep some time
+            Sleep(10);
           }
+
+          result = (curlInstance->GetHttpDownloadResponse()->GetResultCode() != CURLE_OK) ? HRESULT_FROM_WIN32(ERROR_INVALID_DATA) : result;
+        }
+
+        if (SUCCEEDED(result))
+        {
+          // copy received data for parsing
+          FREE_MEM(this->decodedValue);
+          this->decodedLength = curlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
+          this->decodedValue = ALLOC_MEM_SET(this->decodedValue, unsigned char, this->decodedLength, 0);
+          CHECK_POINTER_HRESULT(result, this->decodedValue, result, E_OUTOFMEMORY);
 
           if (SUCCEEDED(result))
           {
-            // wait until all data are received
-            while (curlInstance->GetCurlState() != CURL_STATE_RECEIVED_ALL_DATA)
-            {
-              // sleep some time
-              Sleep(10);
-            }
+            curlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(this->decodedValue, this->decodedLength, 0, 0);
 
-            result = (curlInstance->GetErrorCode() != CURLE_OK) ? HRESULT_FROM_WIN32(ERROR_INVALID_DATA) : result;
-          }
-
-          if (SUCCEEDED(result))
-          {
-            // copy received data for parsing
-            FREE_MEM(this->decodedValue);
-            this->decodedLength = curlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
-            this->decodedValue = ALLOC_MEM_SET(this->decodedValue, unsigned char, this->decodedLength, 0);
-            CHECK_POINTER_HRESULT(result, this->decodedValue, result, E_OUTOFMEMORY);
-
+            char *base64EncodedValue = NULL;
+            result = base64_encode(this->decodedValue, this->decodedLength, &base64EncodedValue);
             if (SUCCEEDED(result))
             {
-              curlInstance->GetReceiveDataBuffer()->CopyFromBuffer(this->decodedValue, this->decodedLength, 0, 0);
-
-              char *base64EncodedValue = NULL;
-              result = base64_encode(this->decodedValue, this->decodedLength, &base64EncodedValue);
-              if (SUCCEEDED(result))
-              {
-                FREE_MEM(this->value);
-                this->value = ConvertToUnicodeA(base64EncodedValue);
-                CHECK_POINTER_HRESULT(result, this->value, result, E_OUTOFMEMORY);
-              }
-              FREE_MEM(base64EncodedValue);
+              FREE_MEM(this->value);
+              this->value = ConvertToUnicodeA(base64EncodedValue);
+              CHECK_POINTER_HRESULT(result, this->value, result, E_OUTOFMEMORY);
             }
-
-            this->decodeResult = E_NOT_VALID_STATE;
-            this->decodedLength = 0;
-            FREE_MEM(this->decodedValue);
+            FREE_MEM(base64EncodedValue);
           }
+
+          this->decodeResult = E_NOT_VALID_STATE;
+          this->decodedLength = 0;
+          FREE_MEM(this->decodedValue);
         }
       }
 

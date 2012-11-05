@@ -101,7 +101,6 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
   <ItemGroup>
     <ClInclude Include="MMSChunk.h" />
     <ClInclude Include="MMSContext.h" />
-    <ClInclude Include="MmsCurlInstance.h" />
     <ClInclude Include="MMSStream.h" />
     <ClInclude Include="MMSStreamCollection.h" />
     <ClInclude Include="MPUrlSourceSplitter_Protocol_Mms.h" />
@@ -121,7 +120,6 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     </ClCompile>
     <ClCompile Include="MMSChunk.cpp" />
     <ClCompile Include="MMSContext.cpp" />
-    <ClCompile Include="MmsCurlInstance.cpp" />
     <ClCompile Include="MMSStream.cpp" />
     <ClCompile Include="MMSStreamCollection.cpp" />
     <ClCompile Include="MPUrlSourceSplitter_Protocol_Mms.cpp" />

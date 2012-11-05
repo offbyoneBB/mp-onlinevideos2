@@ -52,11 +52,6 @@ public:
   // @return : true if all data were successfully stored into buffer, false otherwise
   virtual bool GetBox(uint8_t *buffer, uint32_t length);
 
-  // gets whole box size
-  // method is called to determine whole box size for storing box into buffer
-  // @return : size of box 
-  virtual uint64_t GetBoxSize(void);
-
   // gets additional boxes stored in this box
   // @return : additional boxes stored in this box
   virtual CBoxCollection *GetBoxes(void);
@@ -114,6 +109,11 @@ protected:
 
   // stores additional boxes stored in this box
   CBoxCollection *boxes;
+
+  // gets whole box size
+  // method is called to determine whole box size for storing box into buffer
+  // @return : size of box 
+  virtual uint64_t GetBoxSize(void);
 
   // gets Unicode string from buffer from specified position
   // @param buffer : the buffer to read UTF-8 string

@@ -24,28 +24,27 @@
 #include "Logger.h"
 #include "LockMutex.h"
 
-CCurlInstance::CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName, const wchar_t *instanceName)
+CCurlInstance::CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
 {
   this->logger = logger;
-  this->url = Duplicate(url);
   this->protocolName = FormatString(L"%s: instance '%s'", protocolName, instanceName);
   this->curl = NULL;
   this->hCurlWorkerThread = NULL;
-  this->dwCurlWorkerThreadId = 0;
-  this->curlWorkerErrorCode = CURLE_OK;
   this->receiveDataTimeout = UINT_MAX;
   this->writeCallback = NULL;
   this->writeData = NULL;
   this->state = CURL_STATE_CREATED;
   this->closeWithoutWaiting = false;
-  this->curlErrorMessage = NULL;
   this->mutex = mutex;
   this->startReceivingTicks = 0;
   this->stopReceivingTicks = 0;
   this->totalReceivedBytes = 0;
+  this->curlWorkerShouldExit = false;
 
   this->SetWriteCallback(CCurlInstance::CurlReceiveDataCallback, this);
-  this->receivedDataBuffer = new CLinearBuffer();
+
+  this->downloadRequest = NULL;
+  this->downloadResponse = NULL;
 }
 
 CCurlInstance::~CCurlInstance(void)
@@ -58,10 +57,9 @@ CCurlInstance::~CCurlInstance(void)
     this->curl = NULL;
   }
 
-  FREE_MEM(this->url);
   FREE_MEM(this->protocolName);
-  FREE_MEM(this->curlErrorMessage);
-  FREE_MEM_CLASS(this->receivedDataBuffer);
+  FREE_MEM_CLASS(this->downloadRequest);
+  FREE_MEM_CLASS(this->downloadResponse);
 }
 
 CURL *CCurlInstance::GetCurlHandle(void)
@@ -69,18 +67,24 @@ CURL *CCurlInstance::GetCurlHandle(void)
   return this->curl;
 }
 
-CURLcode CCurlInstance::GetErrorCode(void)
+bool CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
-  return this->curlWorkerErrorCode;
-}
-
-bool CCurlInstance::Initialize(void)
-{
-  bool result = (this->logger != NULL) && (this->url != NULL) && (this->protocolName != NULL) && (this->receivedDataBuffer != NULL);
+  bool result = (this->logger != NULL) && (this->protocolName != NULL);
+  result &= SUCCEEDED(this->DestroyCurlWorker());
 
   if (result)
   {
-    this->curl = curl_easy_init();
+    FREE_MEM_CLASS(this->downloadRequest);
+    this->downloadRequest = downloadRequest->Clone();
+    result &= (this->downloadRequest != NULL) && (this->downloadRequest != NULL)  && (this->downloadRequest->GetUrl() != NULL);
+  }
+
+  if (result)
+  {
+    if (this->curl == NULL)
+    {
+      this->curl = curl_easy_init();
+    }
     result = (this->curl != NULL);
 
     CURLcode errorCode = CURLE_OK;
@@ -96,7 +100,7 @@ bool CCurlInstance::Initialize(void)
 
     if (errorCode == CURLE_OK)
     {
-      char *curlUrl = ConvertToMultiByte(this->url);
+      char *curlUrl = ConvertToMultiByte(this->downloadRequest->GetUrl());
       errorCode = curl_easy_setopt(this->curl, CURLOPT_URL, curlUrl);
       if (errorCode != CURLE_OK)
       {
@@ -159,25 +163,24 @@ bool CCurlInstance::Initialize(void)
 
   if (result)
   {
-    result = this->receivedDataBuffer->InitializeBuffer(MINIMUM_BUFFER_SIZE);
+    FREE_MEM_CLASS(this->downloadResponse);
+    this->downloadResponse = this->GetNewDownloadResponse();
+    result &= (this->downloadResponse != NULL) && (this->downloadResponse->GetReceivedData() != NULL);
+    if (result)
+    {
+      result = this->downloadResponse->GetReceivedData()->InitializeBuffer(MINIMUM_BUFFER_SIZE);
+    }
   }
 
   this->state = (result) ? CURL_STATE_INITIALIZED : CURL_STATE_CREATED;
   return result;
 }
 
-const wchar_t *CCurlInstance::GetCurlErrorMessage(CURLcode errorCode)
-{
-  FREE_MEM(this->curlErrorMessage);
-  const char *error = curl_easy_strerror(errorCode);
-  this->curlErrorMessage = ConvertToUnicodeA(error);
-
-  return this->curlErrorMessage;
-}
-
 void CCurlInstance::ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLcode errorCode)
 {
-  this->logger->Log(logLevel, METHOD_CURL_ERROR_MESSAGE, protocolName, functionName, (message == NULL) ? L"libcurl error" : message, this->GetCurlErrorMessage(errorCode));
+  wchar_t *error = ConvertToUnicodeA(curl_easy_strerror(errorCode));
+  this->logger->Log(logLevel, METHOD_CURL_ERROR_MESSAGE, protocolName, functionName, (message == NULL) ? L"libcurl error" : message, error);
+  FREE_MEM(error);
 }
 
 HRESULT CCurlInstance::CreateCurlWorker(void)
@@ -186,7 +189,7 @@ HRESULT CCurlInstance::CreateCurlWorker(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->protocolName, METHOD_CREATE_CURL_WORKER_NAME);
 
   // clear curl error code
-  this->curlWorkerErrorCode = CURLE_OK;
+  this->downloadResponse->SetResultCode(CURLE_OK);
 
   this->hCurlWorkerThread = CreateThread( 
     NULL,                                   // default security attributes
@@ -194,7 +197,7 @@ HRESULT CCurlInstance::CreateCurlWorker(void)
     &CCurlInstance::CurlWorker,             // thread function name
     this,                                   // argument to thread function 
     0,                                      // use default creation flags 
-    &dwCurlWorkerThreadId);                 // returns the thread identifier
+    NULL);                                  // returns the thread identifier
 
   if (this->hCurlWorkerThread == NULL)
   {
@@ -215,12 +218,21 @@ HRESULT CCurlInstance::DestroyCurlWorker(void)
   // wait for the receive data worker thread to exit      
   if (this->hCurlWorkerThread != NULL)
   {
+    this->curlWorkerShouldExit = true;
     if (WaitForSingleObject(this->hCurlWorkerThread, this->closeWithoutWaiting ? 1 : 1000) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_DESTROY_CURL_WORKER_NAME, L"thread didn't exit, terminating thread");
       TerminateThread(this->hCurlWorkerThread, 0);
     }
+    CloseHandle(this->hCurlWorkerThread);
+  }
+  this->curlWorkerShouldExit = false;
+
+  long responseCode;
+  if (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
+  {
+    this->downloadResponse->SetResponseCode(responseCode);
   }
 
   if (this->stopReceivingTicks == 0)
@@ -237,22 +249,28 @@ HRESULT CCurlInstance::DestroyCurlWorker(void)
 DWORD WINAPI CCurlInstance::CurlWorker(LPVOID lpParam)
 {
   CCurlInstance *caller = (CCurlInstance *)lpParam;
-  caller->logger->Log(LOGGER_INFO, L"%s: %s: Start, url: '%s'", caller->protocolName, METHOD_CURL_WORKER_NAME, caller->GetUrl());
+  caller->logger->Log(LOGGER_INFO, L"%s: %s: Start, url: '%s'", caller->protocolName, METHOD_CURL_WORKER_NAME, caller->downloadRequest->GetUrl());
   caller->startReceivingTicks = GetTickCount();
 
   // on next line will be stopped processing of code - until something happens
-  caller->curlWorkerErrorCode = curl_easy_perform(caller->curl);
+  caller->downloadResponse->SetResultCode(curl_easy_perform(caller->curl));
 
   if (caller->stopReceivingTicks == 0)
   {
     caller->stopReceivingTicks = GetTickCount();
   }
 
+  long responseCode;
+  if (curl_easy_getinfo(caller->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
+  {
+    caller->downloadResponse->SetResponseCode(responseCode);
+  }
+
   caller->state = CURL_STATE_RECEIVED_ALL_DATA;
 
-  if ((caller->curlWorkerErrorCode != CURLE_OK) && (caller->curlWorkerErrorCode != CURLE_WRITE_ERROR))
+  if ((caller->downloadResponse->GetResultCode() != CURLE_OK) && (caller->downloadResponse->GetResultCode() != CURLE_WRITE_ERROR))
   {
-    caller->ReportCurlErrorMessage(LOGGER_ERROR, caller->protocolName, METHOD_CURL_WORKER_NAME, L"error while receiving data", caller->curlWorkerErrorCode);
+    caller->ReportCurlErrorMessage(LOGGER_ERROR, caller->protocolName, METHOD_CURL_WORKER_NAME, L"error while receiving data", caller->downloadResponse->GetResultCode());
   }
 
   caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, caller->protocolName, METHOD_CURL_WORKER_NAME);
@@ -280,11 +298,6 @@ bool CCurlInstance::StartReceivingData(void)
   return (this->CreateCurlWorker() == S_OK);
 }
 
-CURLcode CCurlInstance::GetResponseCode(long *responseCode)
-{
-  return curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, responseCode);
-}
-
 unsigned int CCurlInstance::GetCurlState(void)
 {
   return this->state;
@@ -296,11 +309,17 @@ size_t CCurlInstance::CurlReceiveDataCallback(char *buffer, size_t size, size_t 
 
   caller->state = CURL_STATE_RECEIVING_DATA;
 
-  return caller->CurlReceiveData((unsigned char *)buffer, (size_t)(size * nmemb));
+  return (caller->curlWorkerShouldExit) ? 0 : caller->CurlReceiveData((unsigned char *)buffer, (size_t)(size * nmemb));
 }
 
 size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length)
 {
+  long responseCode;
+  if (curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
+  {
+    this->downloadResponse->SetResponseCode(responseCode);
+  }
+
   if (length != 0)
   {
     // lock access to receive data buffer
@@ -309,14 +328,13 @@ size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length
 
     this->totalReceivedBytes += length;
 
-    unsigned int bufferSize = this->receivedDataBuffer->GetBufferSize();
-    unsigned int freeSpace = this->receivedDataBuffer->GetBufferFreeSpace();
+    unsigned int bufferSize = this->downloadResponse->GetReceivedData()->GetBufferSize();
+    unsigned int freeSpace = this->downloadResponse->GetReceivedData()->GetBufferFreeSpace();
     unsigned int newBufferSize = max(bufferSize * 2, bufferSize + length);
 
     if (freeSpace < length)
     {
-      this->logger->Log(LOGGER_INFO, L"%s: %s: not enough free space in buffer for received data, buffer size: %d, free size: %d, received data: %d, new buffer size: %d", this->protocolName, METHOD_CURL_RECEIVE_DATA_NAME, bufferSize, freeSpace, length, newBufferSize);
-      if (!this->receivedDataBuffer->ResizeBuffer(newBufferSize))
+      if (!this->downloadResponse->GetReceivedData()->ResizeBuffer(newBufferSize))
       {
         this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_RECEIVE_DATA_NAME, L"resizing of buffer unsuccessful");
         // it indicates error
@@ -326,7 +344,7 @@ size_t CCurlInstance::CurlReceiveData(const unsigned char *buffer, size_t length
 
     if (length != 0)
     {
-      this->receivedDataBuffer->AddToBuffer(buffer, length);              
+      this->downloadResponse->GetReceivedData()->AddToBuffer(buffer, length);
     }
   }
 
@@ -384,12 +402,17 @@ void CCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
 {
 }
 
-const wchar_t *CCurlInstance::GetUrl(void)
+CDownloadRequest *CCurlInstance::GetDownloadRequest(void)
 {
-  return this->url;
+  return this->downloadRequest;
 }
 
-CLinearBuffer *CCurlInstance::GetReceiveDataBuffer(void)
+CDownloadResponse *CCurlInstance::GetDownloadResponse(void)
 {
-  return this->receivedDataBuffer;
+  return this->downloadResponse;
+}
+
+CDownloadResponse *CCurlInstance::GetNewDownloadResponse(void)
+{
+  return new CDownloadResponse();
 }

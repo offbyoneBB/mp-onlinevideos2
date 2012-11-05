@@ -109,7 +109,7 @@ uint64_t CDataReferenceBox::GetBoxSize(void)
 
   for (unsigned int i = 0; i < this->GetDataEntryBoxCollection()->Count(); i++)
   {
-    uint64_t boxSize = this->GetDataEntryBoxCollection()->GetItem(i)->GetBoxSize();
+    uint64_t boxSize = this->GetDataEntryBoxCollection()->GetItem(i)->GetSize();
     result = (boxSize != 0) ? (result + boxSize) : 0;
 
     if (result == 0)
@@ -211,7 +211,7 @@ uint32_t CDataReferenceBox::GetBoxInternal(uint8_t *buffer, uint32_t length, boo
     {
       CDataEntryBox *box = this->GetDataEntryBoxCollection()->GetItem(i);
 
-      result = box->GetBox(buffer + result, length - result) ? (result + (uint32_t)box->GetBoxSize()) : 0;
+      result = box->GetBox(buffer + result, length - result) ? (result + (uint32_t)box->GetSize()) : 0;
 
       if (result == 0)
       {

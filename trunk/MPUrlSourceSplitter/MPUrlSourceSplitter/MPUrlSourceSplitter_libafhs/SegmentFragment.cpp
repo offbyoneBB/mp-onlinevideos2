@@ -22,25 +22,27 @@
 
 #include "SegmentFragment.h"
 
-CSegmentFragment::CSegmentFragment(unsigned int segment, unsigned int fragment, const wchar_t *url, uint64_t fragmentTimestamp)
+CSegmentFragment::CSegmentFragment(unsigned int segment, unsigned int fragment, uint64_t fragmentTimestamp)
 {
   this->segment = segment;
   this->fragment = fragment;
-  this->url = Duplicate(url);
   this->fragmentTimestamp = fragmentTimestamp;
   this->downloaded = false;
   this->processed = false;
   this->storeFilePosition = -1;
-
-  this->buffer = new CLinearBuffer();
   this->length = 0;
+
+  this->httpDownloadRequest = new CHttpDownloadRequest();
+  this->httpDownloadResponse = new CHttpDownloadResponse();
 }
 
 CSegmentFragment::~CSegmentFragment(void)
 {
-  FREE_MEM(this->url);
-  FREE_MEM_CLASS(this->buffer);
+  FREE_MEM_CLASS(this->httpDownloadRequest);
+  FREE_MEM_CLASS(this->httpDownloadResponse);
 }
+
+/* get methods */
 
 unsigned int CSegmentFragment::GetSegment(void)
 {
@@ -50,11 +52,6 @@ unsigned int CSegmentFragment::GetSegment(void)
 unsigned int CSegmentFragment::GetFragment(void)
 {
   return this->fragment;
-}
-
-const wchar_t *CSegmentFragment::GetUrl(void)
-{
-  return this->url;
 }
 
 uint64_t CSegmentFragment::GetFragmentTimestamp(void)
@@ -67,15 +64,22 @@ int64_t CSegmentFragment::GetStoreFilePosition(void)
   return this->storeFilePosition;
 }
 
-CLinearBuffer *CSegmentFragment::GetBuffer()
-{
-  return this->buffer;
-}
-
 unsigned int CSegmentFragment::GetLength(void)
 {
-  return (this->buffer != NULL) ? this->buffer->GetBufferOccupiedSpace() : this->length;
+  return (this->httpDownloadResponse->GetReceivedData()->GetBufferSize()  != 0) ? this->httpDownloadResponse->GetReceivedData()->GetBufferOccupiedSpace() : this->length;
 }
+
+CHttpDownloadRequest *CSegmentFragment::GetHttpDownloadRequest(void)
+{
+  return this->httpDownloadRequest;
+}
+
+CHttpDownloadResponse *CSegmentFragment::GetHttpDownloadResponse(void)
+{
+  return this->httpDownloadResponse;
+}
+
+/* set methods */
 
 void CSegmentFragment::SetDownloaded(bool downloaded)
 {
@@ -92,21 +96,48 @@ void CSegmentFragment::SetStoredToFile(int64_t position)
   this->storeFilePosition = position;
   if (this->storeFilePosition != (-1))
   {
-    if (this->buffer != NULL)
-    {
-      this->length = this->buffer->GetBufferOccupiedSpace();
-    }
+    this->length = this->httpDownloadResponse->GetReceivedData()->GetBufferOccupiedSpace();
+    this->httpDownloadResponse->GetReceivedData()->DeleteBuffer();
+  }
+}
 
-    FREE_MEM_CLASS(this->buffer);
+bool CSegmentFragment::SetHttpDownloadRequest(CHttpDownloadRequest *downloadRequest)
+{
+  CHttpDownloadRequest *oldRequest = this->httpDownloadRequest;
+  this->httpDownloadRequest = dynamic_cast<CHttpDownloadRequest *>(downloadRequest->Clone());
+  bool result = (this->httpDownloadRequest != NULL);
+
+  if (result)
+  {
+    FREE_MEM_CLASS(oldRequest);
   }
   else
   {
-    if (this->buffer == NULL)
-    {
-      this->buffer = new CLinearBuffer();
-    }
+    this->httpDownloadRequest = oldRequest;
   }
+
+  return result;
 }
+
+bool CSegmentFragment::SetHttpDownloadResponse(CHttpDownloadResponse *downloadResponse)
+{
+  CHttpDownloadResponse *oldResponse = this->httpDownloadResponse;
+  this->httpDownloadResponse = dynamic_cast<CHttpDownloadResponse *>(downloadResponse->Clone());
+  bool result = (this->httpDownloadResponse != NULL);
+
+  if (result)
+  {
+    FREE_MEM_CLASS(oldResponse);
+  }
+  else
+  {
+    this->httpDownloadResponse = oldResponse;
+  }
+
+  return result;
+}
+
+/* other methods */
 
 bool CSegmentFragment::IsStoredToFile(void)
 {
@@ -121,4 +152,21 @@ bool CSegmentFragment::IsDownloaded(void)
 bool CSegmentFragment::IsProcessed(void)
 {
   return this->processed;
+}
+
+CSegmentFragment *CSegmentFragment::Clone(void)
+{
+  CSegmentFragment *result = new CSegmentFragment(this->segment, this->fragment, this->fragmentTimestamp);
+  if (result != NULL)
+  {
+    FREE_MEM_CLASS(result->httpDownloadRequest);
+    FREE_MEM_CLASS(result->httpDownloadResponse);
+    result->downloaded = this->downloaded;
+    result->httpDownloadRequest = dynamic_cast<CHttpDownloadRequest *>(this->httpDownloadRequest->Clone());
+    result->httpDownloadResponse = dynamic_cast<CHttpDownloadResponse *>(this->httpDownloadResponse->Clone());
+    result->length = this->length;
+    result->processed = this->processed;
+    result->storeFilePosition = this->storeFilePosition;
+  }
+  return result;
 }

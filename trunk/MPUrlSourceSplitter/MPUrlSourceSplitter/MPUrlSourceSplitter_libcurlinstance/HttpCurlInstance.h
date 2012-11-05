@@ -24,8 +24,8 @@
 #define __HTTP_CURL_INSTANCE_DEFINED
 
 #include "CurlInstance.h"
-
-#include <DShow.h>
+#include "HttpDownloadRequest.h"
+#include "HttpDownloadResponse.h"
 
 #define HTTP_VERSION_NONE                                                     0
 #define HTTP_VERSION_FORCE_HTTP10                                             1
@@ -41,85 +41,39 @@ public:
   // initializes a new instance of CHttpCurlInstance class
   // @param logger : logger for logging purposes
   // @param mutex : mutex for locking access to receive data buffer
-  // @param url : the url to open
   // @param protocolName : the protocol name instantiating
   // @param instanceName : the name of CURL instance
-  CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName, const wchar_t *instanceName);
+  CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName);
+
   ~CHttpCurlInstance(void);
 
+  /* get methods */
+
+  // gets download request
+  // @return : download request
+  virtual CHttpDownloadRequest *GetHttpDownloadRequest(void);
+
+  // gets download response
+  // @return : download respose
+  virtual CHttpDownloadResponse *GetHttpDownloadResponse(void);
+
+  /* set methods */
+
+  /* other methods */
+
   // initializes CURL instance
+  // @param downloadRequest : download request
   // @return : true if successful, false otherwise
-  virtual bool Initialize(void);
-
-  // gets start stream time
-  // @return : start stream time
-  virtual REFERENCE_TIME GetStartStreamTime(void);
-
-  // sets start stream time
-  // @param startStreamTime : the start stream time to set
-  virtual void SetStartStreamTime(REFERENCE_TIME startStreamTime);
-
-  // gets end stream time
-  // @return : end stream time
-  REFERENCE_TIME GetEndStreamTime(void);
-
-  // sets end stream time
-  // @param endStreamTime : the end stream time to set
-  void SetEndStreamTime(REFERENCE_TIME endStreamTime);
-
-  // sets referer
-  // @param referer : the referer to set
-  void SetReferer(const wchar_t *referer);
-
-  // sets user agent
-  // @param user agent : the user agent to set
-  void SetUserAgent(const wchar_t *userAgent);
-
-  // sets cookie
-  // @param cookie : the cookie to set
-  void SetCookie(const wchar_t *cookie);
-
-  // sets HTTP version
-  // @param version : the HTTP version to set
-  void SetHttpVersion(int version);
-
-  // sets ignore content length
-  // @param ignoreContentLength : the ignore content length to set
-  void SetIgnoreContentLength(bool ignoreContentLength);
-
-  // gets if ranges are supported
-  // @return : true if ranges are supported, false otherwise
-  bool GetRangesSupported(void);
-
-  // appends header to HTTP headers
-  // @return : true if successful, false otherwise
-  bool AppendToHeaders(const wchar_t *header);
-
-  // clears headers
-  void ClearHeaders(void);
+  virtual bool Initialize(CDownloadRequest *downloadRequest);
 
 protected:
-  // start stream time and end stream time
-  REFERENCE_TIME startStreamTime;
-  REFERENCE_TIME endStreamTime;
+  // holds HTTP download request
+  // never created and never destroyed
+  // initialized in constructor by deep cloning
+  CHttpDownloadRequest *httpDownloadRequest;
 
-  // referer header in HTTP request
-  wchar_t *referer;
-
-  // user agent header in HTTP request
-  wchar_t *userAgent;
-
-  // cookie header in HTTP request
-  wchar_t *cookie;
-
-  // the HTTP protocol version
-  int version;
-
-  // specifies if CURL have to ignore content length
-  bool ignoreContentLength;
-
-  // specifies if ranges are supported
-  bool rangesSupported;
+  // holds HTTP download response
+  CHttpDownloadResponse *httpDownloadResponse;
 
   curl_slist *httpHeaders;
 
@@ -133,6 +87,18 @@ protected:
   // @param length : the length of buffer
   // @return : the length of processed data (lower value than length means error)
   virtual size_t CurlReceiveData(const unsigned char *buffer, size_t length);
+
+  // appends header to HTTP headers
+  // @param header : HTTP header to append
+  // @return : true if successful, false otherwise
+  bool AppendToHeaders(CHttpHeader *header);
+
+  // clears headers
+  void ClearHeaders(void);
+
+  // gets new instance of download response
+  // @return : new download response or NULL if error
+  virtual CDownloadResponse *GetNewDownloadResponse(void);
 };
 
 #endif

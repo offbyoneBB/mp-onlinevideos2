@@ -33,6 +33,9 @@
     <ClInclude Include="SegmentFragmentCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AfhsDecryptionContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SegmentFragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AfhsDecryptionContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

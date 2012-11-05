@@ -87,7 +87,7 @@ wchar_t *CMetaBox::GetParsedHumanReadable(const wchar_t *indent)
 
 uint64_t CMetaBox::GetBoxSize(void)
 {
-  uint64_t result = this->GetHandlerBox()->GetBoxSize();
+  uint64_t result = this->GetHandlerBox()->GetSize();
 
   if (result != 0)
   {
@@ -156,7 +156,7 @@ uint32_t CMetaBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool process
 
   if (result != 0)
   {
-    result = this->GetHandlerBox()->GetBox(buffer + result, length - result) ? (result + (uint32_t)this->GetHandlerBox()->GetBoxSize()) : 0;
+    result = this->GetHandlerBox()->GetBox(buffer + result, length - result) ? (result + (uint32_t)this->GetHandlerBox()->GetSize()) : 0;
 
     if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
     {

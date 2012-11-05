@@ -117,7 +117,7 @@ uint64_t CSampleDescriptionBox::GetBoxSize(void)
 
   for (unsigned int i = 0; i < this->GetSampleEntries()->Count(); i++)
   {
-    uint64_t boxSize = this->GetSampleEntries()->GetItem(i)->GetBoxSize();
+    uint64_t boxSize = this->GetSampleEntries()->GetItem(i)->GetSize();
     result = (boxSize != 0) ? (result + boxSize) : 0; 
   }
 
@@ -204,7 +204,7 @@ uint32_t CSampleDescriptionBox::GetBoxInternal(uint8_t *buffer, uint32_t length,
     for (unsigned int i = 0; ((result != 0) && (i < this->GetSampleEntries()->Count())); i++)
     {
       CSampleEntryBox *box = this->GetSampleEntries()->GetItem(i);
-      result = box->GetBox(buffer + result, length - result) ? (result + (uint32_t)box->GetBoxSize()) : 0;
+      result = box->GetBox(buffer + result, length - result) ? (result + (uint32_t)box->GetSize()) : 0;
     }
 
     if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))

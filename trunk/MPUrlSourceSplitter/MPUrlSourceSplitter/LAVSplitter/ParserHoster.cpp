@@ -637,6 +637,7 @@ HRESULT CParserHoster::DestroyReceiveDataWorker(void)
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, this->moduleName, METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME, L"thread didn't exit, terminating thread");
       TerminateThread(this->hReceiveDataWorkerThread, 0);
     }
+    CloseHandle(this->hReceiveDataWorkerThread);
   }
 
   this->hReceiveDataWorkerThread = NULL;
@@ -707,7 +708,7 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
             }
           }
         }
-        else
+        else if (!caller->supressData)
         {
           if (attempts < maximumAttempts)
           {

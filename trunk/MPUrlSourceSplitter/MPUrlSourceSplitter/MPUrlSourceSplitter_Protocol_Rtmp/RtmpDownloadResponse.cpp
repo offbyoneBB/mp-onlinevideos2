@@ -20,28 +20,43 @@
 
 #include "StdAfx.h"
 
-#include "MmsCurlInstance.h"
+#include "RtmpDownloadResponse.h"
 
-CMmsCurlInstance::CMmsCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *url, const wchar_t *protocolName, const wchar_t *instanceName)
-  : CHttpCurlInstance(logger, mutex, url, protocolName, instanceName)
+CRtmpDownloadResponse::CRtmpDownloadResponse(void)
+  : CDownloadResponse()
 {
 }
 
-
-CMmsCurlInstance::~CMmsCurlInstance(void)
+CRtmpDownloadResponse::~CRtmpDownloadResponse(void)
 {
 }
 
-bool CMmsCurlInstance::Initialize(void)
-{
-  return __super::Initialize();
-}
+/* get methods */
 
-void CMmsCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
+/* set methods */
+
+/* other methods */
+
+// deeply clones current instance
+// @result : deep clone of current instance or NULL if error
+CRtmpDownloadResponse *CRtmpDownloadResponse::Clone(void)
 {
-  if (type == CURLINFO_HEADER_OUT)
+  CRtmpDownloadResponse *result = new CRtmpDownloadResponse();
+  if (result != NULL)
   {
-    // we are just interested in headers comming in from peer
-    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: sent HTTP header: '%s'", this->protocolName, METHOD_CURL_DEBUG_CALLBACK, data);
+    if (!this->CloneInternal(result))
+    {
+      FREE_MEM_CLASS(result);
+    }
   }
+  return result;
+}
+
+bool CRtmpDownloadResponse::CloneInternal(CRtmpDownloadResponse *clonedRequest)
+{
+  bool result = __super::CloneInternal(clonedRequest);
+  if (result)
+  {
+  }
+  return result;
 }

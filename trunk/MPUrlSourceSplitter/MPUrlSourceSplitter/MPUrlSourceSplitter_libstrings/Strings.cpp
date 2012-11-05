@@ -863,3 +863,179 @@ bool EndsWithW(const wchar_t *string, const wchar_t c)
 
   return result;
 }
+
+int CompareWithNullA(const char *str1, const char *str2)
+{
+  int result = 0;
+
+  if ((str1 != NULL) && (str2 != NULL))
+  {
+    result = strcmp(str1, str2);
+  }
+  else if (str1 != NULL)
+  {
+    result = -1;
+  }
+  else if (str2 != NULL)
+  {
+    result = 1;
+  }
+
+  return result;
+}
+
+int CompareWithNullW(const wchar_t *str1, const wchar_t *str2)
+{
+  int result = 0;
+
+  if ((str1 != NULL) && (str2 != NULL))
+  {
+    result = wcscmp(str1, str2);
+  }
+  else if (str1 != NULL)
+  {
+    result = -1;
+  }
+  else if (str2 != NULL)
+  {
+    result = 1;
+  }
+
+  return result;
+}
+
+int CompareWithNullInvariantA(const char *str1, const char *str2)
+{
+  int result = 0;
+
+  if ((str1 != NULL) && (str2 != NULL))
+  {
+    result = _stricmp(str1, str2);
+  }
+  else if (str1 != NULL)
+  {
+    result = -1;
+  }
+  else if (str2 != NULL)
+  {
+    result = 1;
+  }
+
+  return result;
+}
+
+int CompareWithNullInvariantW(const wchar_t *str1, const wchar_t *str2)
+{
+  int result = 0;
+
+  if ((str1 != NULL) && (str2 != NULL))
+  {
+    result = _wcsicmp(str1, str2);
+  }
+  else if (str1 != NULL)
+  {
+    result = -1;
+  }
+  else if (str2 != NULL)
+  {
+    result = 1;
+  }
+
+  return result;
+}
+
+int IndexOfA(const char *string, const char *searchString)
+{
+  if ((string == NULL) || (searchString == NULL))
+  {
+    return -1;
+  }
+
+  int result = -1;
+
+  unsigned int stringLength = strlen(string);
+  unsigned int searchStringLength = strlen(searchString);
+
+  for (unsigned int i = 0; i < stringLength; i++)
+  {
+    if (strncmp(string + i, searchString, searchStringLength) == 0)
+    {
+      // we found search string in string
+      result = i;
+      break;
+    }
+  }
+
+  return result;
+}
+
+int IndexOfW(const wchar_t *string, const wchar_t *searchString)
+{
+  if ((string == NULL) || (searchString == NULL))
+  {
+    return -1;
+  }
+
+  int result = -1;
+
+  unsigned int stringLength = wcslen(string);
+  unsigned int searchStringLength = wcslen(searchString);
+
+  for (unsigned int i = 0; i < stringLength; i++)
+  {
+    if (wcsncmp(string + i, searchString, searchStringLength) == 0)
+    {
+      // we found search string in string
+      result = i;
+      break;
+    }
+  }
+
+  return result;
+}
+
+char *SubstringA(const char *string, unsigned int position)
+{
+  return SubstringA(string, position, UINT_MAX);
+}
+
+char *SubstringA(const char *string, unsigned int position, unsigned int length)
+{
+  char *result = NULL;
+  unsigned int inputStringLength = (string != NULL) ? strlen(string) : 0;
+
+  if ((position < inputStringLength) && (length > 0))
+  {
+    unsigned int resultLength = min(inputStringLength - position, length) + 1;
+    result = ALLOC_MEM_SET(result, char, resultLength, 0);
+    if (result != NULL)
+    {
+      strncpy_s(result, resultLength, string + position, resultLength - 1);
+    }
+  }
+
+  return result;
+}
+
+wchar_t *SubstringW(const wchar_t *string, unsigned int position)
+{
+  return SubstringW(string, position, UINT_MAX);
+}
+
+wchar_t *SubstringW(const wchar_t *string, unsigned int position, unsigned int length)
+{
+  wchar_t *result = NULL;
+  unsigned int inputStringLength = (string != NULL) ? wcslen(string) : 0;
+
+  if ((position < inputStringLength) && (length > 0))
+  {
+    unsigned int resultLength = min(inputStringLength - position, length) + 1;
+    result = ALLOC_MEM_SET(result, wchar_t, resultLength, 0);
+    if (result != NULL)
+    {
+      wcsncpy_s(result, resultLength, string + position, resultLength - 1);
+    }
+  }
+
+  return result;
+}

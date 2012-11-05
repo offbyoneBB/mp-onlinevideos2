@@ -341,7 +341,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
 
       if ((!this->shouldExit) && (this->streamFragmentDownloading != UINT_MAX) && (this->mainCurlInstance != NULL))
       {
-        unsigned int bytesRead = this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace();
+        unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
         if (bytesRead != 0)
         {
           CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentDownloading);
@@ -376,9 +376,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
               ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
               if (buffer != NULL)
               {
-                this->mainCurlInstance->GetReceiveDataBuffer()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
                 linearBuffer->AddToBuffer(buffer, bytesRead);
-                this->mainCurlInstance->GetReceiveDataBuffer()->RemoveFromBufferAndMove(bytesRead);
+                this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
               }
               FREE_MEM(buffer);
             }
@@ -582,15 +582,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
 
       if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
       {
-        if (this->mainCurlInstance->GetErrorCode() == CURLE_OK)
+        if (this->mainCurlInstance->GetHttpDownloadResponse()->GetResultCode() == CURLE_OK)
         {
-          if (this->mainCurlInstance->GetReceiveDataBuffer()->GetBufferOccupiedSpace() == 0)
+          if (this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace() == 0)
           {
             // in CURL instance aren't received data, all data are stored in stream fragment
             // all data received, we're not receiving data
             CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentDownloading);
             streamFragment->SetDownloaded(true);
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetUrl());
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data for url '%s'", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetHttpDownloadRequest()->GetUrl());
 
             // if not set stream fragment to download, then set stream fragment to download (get next not downloaded stream fragment after current downloaded stream fragment)
             this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->GetFirstNotDownloadedStreamFragment(this->streamFragmentDownloading) : this->streamFragmentToDownload;
@@ -678,36 +678,47 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
           if (streamFragment != NULL)
           {
             HRESULT result = S_OK;
+            // clear stream fragment buffer
+            // there can be some data from previous unfinished download
+            streamFragment->GetBuffer()->ClearBuffer();
 
             if (SUCCEEDED(result))
             {
               // we need to download for another url
-              this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, streamFragment->GetUrl(), PROTOCOL_IMPLEMENTATION_NAME, L"Main");
-              CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
+              this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+              CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
 
               if (SUCCEEDED(result))
               {
-                this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-                this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
-                this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
-                this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
-                this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
-                this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+                CHttpDownloadRequest *request = new CHttpDownloadRequest();
+                CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
-                result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
+                if (SUCCEEDED(request))
+                {
+                  request->SetUrl(streamFragment->GetUrl());
+                  request->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_REFERER, true, NULL));
+                  request->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_USER_AGENT, true, NULL));
+                  request->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MSHS_COOKIE, true, NULL));
+                  request->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_VERSION, true, HTTP_VERSION_DEFAULT));
+                  request->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
+                  this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+                  result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
+                }
+                FREE_MEM_CLASS(request);
+              }
+
+              if (SUCCEEDED(result))
+              {
+                // all parameters set
+                // start receiving data
+
+                result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
 
                 if (SUCCEEDED(result))
                 {
-                  // all parameters set
-                  // start receiving data
-
-                  result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
-
-                  if (SUCCEEDED(result))
-                  {
-                    this->streamFragmentDownloading = this->streamFragmentToDownload;
-                    this->streamFragmentToDownload = UINT_MAX;
-                  }
+                  this->streamFragmentDownloading = this->streamFragmentToDownload;
+                  this->streamFragmentToDownload = UINT_MAX;
                 }
               }
             }
@@ -1523,7 +1534,7 @@ CTrackFragmentHeaderBox *CMPUrlSourceSplitter_Protocol_Mshs::GetTrackFragmentHea
                   // we can't return reference because movie fragment box is container and will be destroyed
                   // we can save track fragment header box into buffer and then create track fragment header box from buffer
 
-                  uint32_t trackFragmentHeaderBoxSize = (uint32_t)trackFragmentHeaderBox->GetBoxSize();
+                  uint32_t trackFragmentHeaderBoxSize = (uint32_t)trackFragmentHeaderBox->GetSize();
                   if (trackFragmentHeaderBoxSize != 0)
                   {
                     ALLOC_MEM_DEFINE_SET(trackFragmentHeaderBoxBuffer, uint8_t, trackFragmentHeaderBoxSize, 0);
@@ -1566,7 +1577,7 @@ bool CMPUrlSourceSplitter_Protocol_Mshs::PutBoxIntoBuffer(CBox *box, CLinearBuff
   if ((box != NULL) && (buffer != NULL))
   {
     // copy box to buffer
-    uint32_t boxBufferLength = (uint32_t)box->GetBoxSize();
+    uint32_t boxBufferLength = (uint32_t)box->GetSize();
     if (boxBufferLength != 0)
     {
       ALLOC_MEM_DEFINE_SET(boxBuffer, unsigned char, boxBufferLength, 0);
@@ -2746,11 +2757,11 @@ wchar_t *CMPUrlSourceSplitter_Protocol_Mshs::GetStoreFile(void)
   if (folder != NULL)
   {
     wchar_t *guid = ConvertGuidToString(this->logger->loggerInstance);
-
     if (guid != NULL)
     {
       result = FormatString(L"%smpurlsourcesplitter_protocol_mshs_%s.temp", folder, guid);
     }
+    FREE_MEM(guid);
   }
 
   FREE_MEM(folder);

@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "base64.h"
+#include "ErrorCodes.h"
 
 static const char *base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -30,6 +31,11 @@ static inline bool is_base64(unsigned char c)
 }
 
 HRESULT base64_encode(const unsigned char *input, unsigned int length, char **output)
+{
+  return base64_encode(input, length, output, NULL);
+}
+
+HRESULT base64_encode(const unsigned char *input, unsigned int length, char **output, unsigned int *outputLength)
 {
   HRESULT result = S_OK;
 
@@ -95,6 +101,45 @@ HRESULT base64_encode(const unsigned char *input, unsigned int length, char **ou
     {
       FREE_MEM(*output);
     }
+  }
+
+  if (SUCCEEDED(result) && (outputLength != NULL))
+  {
+    *outputLength = strlen(*output);
+  }
+
+  return result;
+}
+
+HRESULT base64_encode(const unsigned char *input, unsigned int length, wchar_t **output)
+{
+  return base64_encode(input, length, output, NULL);
+}
+
+HRESULT base64_encode(const unsigned char *input, unsigned int length, wchar_t **output, unsigned int *outputLength)
+{
+  HRESULT result = S_OK;
+
+  CHECK_POINTER_DEFAULT_HRESULT(result, input);
+  CHECK_POINTER_DEFAULT_HRESULT(result, output);
+
+  if (SUCCEEDED(result))
+  {
+    char *temp = NULL;
+    unsigned int tempLength = 0;
+    result = base64_encode(input, length, &temp, &tempLength);
+
+    if (SUCCEEDED(result))
+    {
+      *output = ConvertToUnicodeA(temp);
+      CHECK_POINTER_HRESULT(result, (*output), result, E_CONVERT_STRING_ERROR);
+
+      if (SUCCEEDED(result) && (outputLength != NULL))
+      {
+        *outputLength = tempLength;
+      }
+    }
+    FREE_MEM(temp);
   }
 
   return result;
@@ -195,6 +240,29 @@ HRESULT base64_decode(const char *input, unsigned char **output, unsigned int *l
     {
       FREE_MEM(*output);
     }
+  }
+
+  return result;
+}
+
+HRESULT base64_decode(const wchar_t *input, unsigned char **output, unsigned int *length)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, input);
+  CHECK_POINTER_DEFAULT_HRESULT(result, output);
+  CHECK_POINTER_DEFAULT_HRESULT(result, length);
+
+  if (SUCCEEDED(result))
+  {
+    char *temp = ConvertToMultiByteW(input);
+    CHECK_POINTER_HRESULT(result, temp, result, E_CONVERT_STRING_ERROR);
+
+    if (SUCCEEDED(result))
+    {
+      result = base64_decode(temp, output, length);
+    }
+
+    FREE_MEM(temp);
   }
 
   return result;

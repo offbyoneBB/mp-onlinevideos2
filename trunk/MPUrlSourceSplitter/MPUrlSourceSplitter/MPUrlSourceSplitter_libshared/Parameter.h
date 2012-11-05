@@ -55,6 +55,7 @@ public:
   // deep clone of current instance
   // @return : reference to clone of parameter
   CParameter* Clone(void);
+
 protected:
   wchar_t *name;
   wchar_t *value;

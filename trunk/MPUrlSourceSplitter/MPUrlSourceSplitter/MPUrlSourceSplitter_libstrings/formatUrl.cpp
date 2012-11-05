@@ -63,6 +63,44 @@ wchar_t *GetBaseUrl(const wchar_t *url)
   return result;
 }
 
+wchar_t *GetAdditionalParameters(const wchar_t *url)
+{
+  wchar_t *result = NULL;
+  int index = IndexOf(url, L"?");
+  if (index != (-1))
+  {
+    result = Substring(url, index + 1);
+  }
+  return result;
+}
+
+wchar_t *GetHost(const wchar_t *url)
+{
+  wchar_t *result = NULL;
+  int index = IndexOf(url, L"://");
+  if (index != (-1))
+  {
+    wchar_t *substring = Substring(url, index + 3);
+    if (substring != NULL)
+    {
+      int index2 = IndexOf(substring, L"/");
+      if (index2 == (-1))
+      {
+        // no additional path, whole url is host
+        result = Duplicate(url);
+      }
+      else
+      {
+        // index2 is relative to index
+        index += index2 + 3;
+        result = Substring(url, 0, index);
+      }
+    }
+    FREE_MEM(substring);
+  }
+  return result;
+}
+
 // tests if URL is absolute
 // @param url : URL to test
 // @return : true if URL is absolute, false otherwise or if error
