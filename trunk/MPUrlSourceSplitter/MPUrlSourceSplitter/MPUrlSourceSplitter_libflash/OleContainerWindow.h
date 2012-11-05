@@ -24,6 +24,7 @@
 #define __OLE_CONTAINER_WINDOW_DEFINED
 
 #include <comdef.h>
+#include <assert.h>
 
 #define OLECONTAINER_DEF                                                        template <class TObj>
 #define OLECONTAINER_DEF2                                                       TObj
