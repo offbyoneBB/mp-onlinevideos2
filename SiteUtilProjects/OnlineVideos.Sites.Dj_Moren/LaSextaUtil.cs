@@ -19,7 +19,8 @@ namespace OnlineVideos.Sites
         internal String categoryContentRegex = "\\<ul class=\"subemnu\"\\>(?<content>.*?)</ul>";
         internal String categoryRegex = "\\<a.*?title=\"(?<title>.*?)\".*?href=\"(?<link>.*?)\".*?\\>(?<label>.*?)\\</a\\>";
         internal String videoLinksRegex = "\\<a.*?title=\"(?<title>.*?)\"\\s*?href=\"(?<url>.*?)\"\\s*?\\>\\s*?\\<img.*?title=\"(.*?)\"\\s*?src=\"(?<img>.*?)\"\\s*?alt=\"(.*?)\"\\s*?href=\"(.*?)\"\\s*?/\\>";
-        internal String seriesListRegex = "\\<img.*?title=\"(?<title>.*?)\"\\s*?href=\".*?\"\\s*?src=\"(?<img>.*?)\"\\s*?alt=\"(.*?)\"\\s*?/>\\s*?\\<a.*?title=\"(.*?)\"\\s*?href=\"(?<url>.*?)\"\\s*?\\>\\s*?\\<h2\\>\\s*?\\<p\\>(?<label>.*?)\\</p\\>\\s*?\\</h2\\>\\s*?\\</a\\>";
+        //internal String seriesListRegex = "\\<img.*?title=\"(?<title>.*?)\"\\s*?href=\".*?\"\\s*?src=\"(?<img>.*?)\"\\s*?alt=\"(.*?)\"\\s*?/>\\s*?\\<a.*?title=\"(.*?)\"\\s*?href=\"(?<url>.*?)\"\\s*?\\>\\s*?\\<h2\\>\\s*?\\<p\\>(?<label>.*?)\\</p\\>\\s*?\\</h2\\>\\s*?\\</a\\>";
+        internal String seriesListRegex = "<li>\\s*<div>\\s*<a\\stitle=\"[^\"]*\"\\shref=\"(?<url>[^\"]*)\">\\s*<img\\stitle=\"(?<description>[^\"]*)\"\\shref=\"[^\"]*\"\\s*src=\"(?<thumb>[^\"]*)\"\\s*alt=\"[^\"]*\"\\s*/>\\s*<h2><p>(?<title>[^<]*)</p></h2>\\s*</a>\\s*</div>\\s*</li>";
         internal String videoXmlUrlRegex = "player_capitulo.xml='(?<url>.*?)';";
         internal String seriesSeasonContentRegex = "\\<dd class=\"paginador\"\\>(?<content>(\\s|\\S)*?)\\</dd\\>";
         internal String seriesSeasonRegex = "\\<li.*?\\>\\s*?\\<a\\s*?title=\"(.*?)\"\\s*?href=\"(?<url>.*?)\"\\s*?\\>\\s*?(?<label>.*?)\\s*?\\</a\\>\\s*?\\</li\\>";
@@ -30,7 +31,8 @@ namespace OnlineVideos.Sites
         internal String videoMovieUrlRegex = "\\<archivoMultimedia\\>\\s*\\<archivo\\>\\s*?\\<!\\[CDATA\\[(?<url>.*?)\\]\\]\\>\\</archivo\\>";
         internal String videoThumbUrlRegex = "\\<archivoMultimediaMaxi\\>\\s*\\<archivo\\>\\s*?\\<!\\[CDATA\\[(?<url>.*?)\\]\\]\\>\\</archivo\\>";
         //internal String programsListContentRegex = "\\<ul class=\"carrusel\"\\>(?<content>(\\s|\\S)*?)\\</ul\\>";
-        internal String programsListContentRegex = "<img\\stitle=\"[^\"]*\"\\s*src=\"(?<thumb>[^\"]*)\"\\s*alt=\"[^\"]*\"\\s*href=\"[^\"]*\"\\s*/>\\s*<a\\stitle=\"(?<description>[^\"]*)\"\\shref=\"(?<url>[^\"]*)\"\\s*><h2><p>(?<title>[^<]*)</p></h2></a>\\s*</a>\\s*</div>\\s*</li>";
+        internal String programsListContentRegex = "<li>\\s*<div>\\s*<a\\s*title=\"[^\"]*\"\\shref=\"(?<url>[^\"]*)\"\\s>\\s*<img\\stitle=\"[^\"]*\"\\s*src=\"(?<thumb>[^\"]*)\"\\s*alt=\"[^>]*>\\s*<h2><p>(?<title>[^<]*)</p></h2>\\s*</a>\\s*</div>\\s*</li>";
+        internal String xploraListContentRegex = "<li>\\s*<div>\\s*<a\\stitle=\"[^\"]*\"\\shref=\"(?<url>[^\"]*)\">\\s*<img\\stitle=\"(?<description>[^\"]*)\"\\s*src=\"(?<thumb>[^\"]*)\"\\s*alt=\"[^>]*>\\s*<h2><p>(?<title>[^<]*)</p></h2>\\s*</a>\\s*</div>\\s*</li>";
         internal String programsListRegex = "\\<li\\>\\s*\\<div\\>\\s*\\<a\\s+title=\"(?<title>(.*?))\"\\s+href=\"(?<url>(.*?))\"\\s*\\>\\s*\\<img\\s+title=\"(?<imgtitle>(.*?))\"\\s+src=\"(?<img>(.*?))\"(\\s|\\S)*?href=\"(?<imglink>(.*?))\"(\\s|\\S)*?\\<h2\\>\\s*\\<p\\>((?<label>.*?))\\</p\\>\\s*\\</h2\\>";
         internal String programsYearsContentRegex = "\\<dd\\s+class=\"seleccion\"\\>(?<content>(\\s|\\S)*?)\\</dd\\>";
         internal String programsYearsRegex = "\\<li.*?\\>\\s*\\<a\\s+title=\"(?<title>(.*?))\"\\s+href=\"(?<url>(.*?))\"\\s*\\>(?<label>(.*?))\\</a\\>\\s*\\</li\\>";
@@ -52,6 +54,7 @@ namespace OnlineVideos.Sites
         internal Regex regexVideoBaseUrlFlv;
         internal Regex regexVideoMovieUrl;
         internal Regex regexProgramsListContent;
+        internal Regex regexXploraListContent;
         internal Regex regexProgramsList;
         internal Regex regexProgramsYearsContent;
         internal Regex regexProgramsYears;
@@ -159,6 +162,7 @@ namespace OnlineVideos.Sites
             regexVideoBaseUrlMp4 = new Regex(videoBaseUrlMp4Regex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             regexVideoMovieUrl = new Regex(videoMovieUrlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             regexProgramsListContent = new Regex(programsListContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexXploraListContent = new Regex(xploraListContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             regexProgramsList = new Regex(programsListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             regexProgramsYearsContent = new Regex(programsYearsContentRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             regexProgramsYears = new Regex(programsYearsRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
@@ -229,9 +233,9 @@ namespace OnlineVideos.Sites
             Match match = regexSeriesList.Match(data);
             while (match.Success)
             {
-                String name = match.Groups["label"].Value;
+                String name = match.Groups["title"].Value;
                 String url = match.Groups["url"].Value;
-                String thumbUrl = laSextaBaseUrl + match.Groups["img"].Value;
+                String thumbUrl = laSextaBaseUrl + match.Groups["thumb"].Value;
                 result.Add(CreateCategory(name, url, thumbUrl, CategoryType.SeriesSeason, ""));
                 Log.Debug("lasexta: series {0} added.", name);
                 match = match.NextMatch();
@@ -286,10 +290,10 @@ namespace OnlineVideos.Sites
             List<Category> result = new List<Category>();
             String data = GetWebData(laSextaBaseUrl + parentCategory.Url);
             Match match = regexProgramsListContent.Match(data);
-            //if (match.Success)
-            //{
-            //String programsContent = match.Groups["content"].Value;
-            //match = regexProgramsList.Match(programsContent);
+            if (!match.Success)
+            {
+                match = regexXploraListContent.Match(data);
+            }
             while (match.Success)
             {
                 String name = match.Groups["title"].Value;
