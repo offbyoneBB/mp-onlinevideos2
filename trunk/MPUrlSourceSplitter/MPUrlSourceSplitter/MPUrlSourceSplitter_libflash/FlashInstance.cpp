@@ -185,6 +185,8 @@ DWORD WINAPI CFlashInstance::FlashWorker(LPVOID lpParam)
   wchar_t *className = NULL;
   bool canExit = false;
 
+  OleInitialize(NULL);
+
   while (!canExit)
   {
     if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
@@ -267,6 +269,8 @@ DWORD WINAPI CFlashInstance::FlashWorker(LPVOID lpParam)
 
     Sleep(1);
   }
+
+  OleUninitialize();
 
   caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, caller->instanceName, METHOD_FLASH_WORKER_NAME);
   return S_OK;

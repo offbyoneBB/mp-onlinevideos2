@@ -1007,7 +1007,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
       // we have bootstrap info box successfully parsed
       this->live = this->bootstrapInfoBox->IsLive();
 
-      FREE_MEM(this->segmentsFragments);
+      FREE_MEM_CLASS(this->segmentsFragments);
       this->segmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(
         this->logger,
         METHOD_START_RECEIVING_DATA_NAME,

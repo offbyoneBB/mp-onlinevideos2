@@ -23,6 +23,8 @@
 #ifndef __COLLECTION_DEFINED
 #define __COLLECTION_DEFINED
 
+#include <assert.h>
+
 template <class TItem, class TItemKey> class CCollection
 {
 public:
@@ -42,6 +44,12 @@ public:
   // @param item : the reference to item to add
   // @return : true if successful, false otherwise
   virtual bool Add(TItem *item);
+
+  // insert item to collection
+  // @param position : zero-based position to insert new item
+  // @param item : item to insert
+  // @result : true if successful, false otherwise
+  virtual bool Insert(unsigned int position, TItem *item);
 
   // append collection of items
   // @param collection : the reference to collection to add
@@ -218,6 +226,31 @@ template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Add(TI
   return true;
 }
 
+template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Insert(unsigned int position, TItem *item)
+{
+  bool result = false;
+
+  if ((position >= 0) && (position <= this->itemCount))
+  {
+    // ensure that enough space is in collection
+    result = this->EnsureEnoughSpace(this->itemCount + 1);
+
+    if (result)
+    {
+      // move everything after insert position
+
+      for (unsigned int i = position; i < this->itemCount; i++)
+      {
+        *(this->items + this->itemCount - i + position) = *(this->items + this->itemCount - 1 - i + position);
+      }
+
+      *(this->items + position) = item;
+      this->itemCount++;
+    }
+  }
+
+  return result;
+}
 
 template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Append(CCollection<TItem, TItemKey> *collection)
 {
@@ -246,7 +279,7 @@ template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Contai
 template <class TItem, class TItemKey> TItem *CCollection<TItem, TItemKey>::GetItem(unsigned int index)
 {
   TItem *result = NULL;
-  if (index <= this->itemCount)
+  if (index < this->itemCount)
   {
     result = *(this->items + index);
   }

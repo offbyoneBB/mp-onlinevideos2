@@ -41,9 +41,9 @@
 
 #define FLV_VIDEO_FRAMETYPE_OFFSET                                            4
 
-#define FLV_FRAME_KEY                                                         1 << FLV_VIDEO_FRAMETYPE_OFFSET
-#define FLV_FRAME_INTER                                                       2 << FLV_VIDEO_FRAMETYPE_OFFSET
-#define FLV_FRAME_DISP_INTER                                                  3 << FLV_VIDEO_FRAMETYPE_OFFSET
+#define FLV_FRAME_KEY                                                         (1 << FLV_VIDEO_FRAMETYPE_OFFSET)
+#define FLV_FRAME_INTER                                                       (2 << FLV_VIDEO_FRAMETYPE_OFFSET)
+#define FLV_FRAME_DISP_INTER                                                  (3 << FLV_VIDEO_FRAMETYPE_OFFSET)
 
 #define FLV_CODECID_H263                                                      2
 #define FLV_CODECID_SCREEN                                                    3
@@ -131,6 +131,9 @@ public:
   // @param length : the length of buffer
   // @return : the possible size of FLV packet or UINT_MAX if error
   virtual unsigned int GetPossiblePacketSize(const unsigned char *buffer, unsigned int length);
+
+  // tests if FLV packet is key frame
+  virtual bool IsKeyFrame(void);
 
 protected:
   // holds packet type (AUDIO, VIDEO, META or HEADER)
