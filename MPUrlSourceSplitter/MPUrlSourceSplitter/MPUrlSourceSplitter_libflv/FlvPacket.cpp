@@ -311,3 +311,8 @@ void CFlvPacket::Clear(void)
   this->type = FLV_PACKET_NONE;
   this->encrypted = false;
 }
+
+bool CFlvPacket::IsKeyFrame(void)
+{
+  return ((this->type == FLV_PACKET_VIDEO) && (this->GetFrameType() == FLV_FRAME_KEY));
+}
