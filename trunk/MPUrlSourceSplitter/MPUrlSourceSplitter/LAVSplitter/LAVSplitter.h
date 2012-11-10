@@ -181,9 +181,9 @@ public:
   bool IsAnyPinDrying();
   void SetFakeASFReader(BOOL bFlag) { m_bFakeASFReader = bFlag; }
 
+  enum {CMD_EXIT, CMD_SEEK, CMD_PAUSE, CMD_PLAY};
 protected:
   // CAMThread
-  enum {CMD_EXIT, CMD_SEEK, CMD_PAUSE, CMD_PLAY};
   DWORD ThreadProc();
 
   HRESULT DemuxSeek(REFERENCE_TIME rtStart);
@@ -261,6 +261,10 @@ public:
   // @return : S_OK if successful (*path can be NULL), E_POINTER if path is NULL
   STDMETHODIMP GetCacheFileName(wchar_t **path);
 
+  // gets last command send to filter
+  // @return : one of CMD_ values or -1 if none
+  int GetLastCommand(void);
+
 protected:
   STDMETHODIMP LoadDefaults();
   STDMETHODIMP LoadSettings();
@@ -269,6 +273,9 @@ protected:
 protected:
   CLAVInputPin *m_pInput;
   CLogger *logger;
+
+  // holds last command sent to filter (one of CMD_ values)
+  int lastCommand;
 
 private:
   CCritSec m_csPins;

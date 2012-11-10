@@ -220,7 +220,7 @@ int64_t CLAVInputPin::Seek(void *opaque,  int64_t offset, int whence)
   CLAVInputPin *pin = static_cast<CLAVInputPin *>(opaque);
   CAutoLock lock(pin);
 
-  pin->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SEEK_NAME);
+  pin->logger->Log((pin->filter->GetLastCommand() != CLAVSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_SEEK_NAME);
 
   int64_t pos = 0;
   LONGLONG total = 0;
@@ -233,23 +233,23 @@ int64_t CLAVInputPin::Seek(void *opaque,  int64_t offset, int whence)
   if (whence == SEEK_SET)
   {
     pin->m_llBufferPosition = offset;
-    pin->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, SEEK_SET", MODULE_NAME, METHOD_SEEK_NAME, offset);
+    pin->logger->Log((pin->filter->GetLastCommand() != CLAVSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, L"%s: %s: offset: %lld, SEEK_SET", MODULE_NAME, METHOD_SEEK_NAME, offset);
   }
   else if (whence == SEEK_CUR)
   {
     pin->m_llBufferPosition += offset;
-    pin->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, SEEK_CUR", MODULE_NAME, METHOD_SEEK_NAME, offset);
+    pin->logger->Log((pin->filter->GetLastCommand() != CLAVSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, L"%s: %s: offset: %lld, SEEK_CUR", MODULE_NAME, METHOD_SEEK_NAME, offset);
   }
   else if (whence == SEEK_END)
   {
     pin->m_llBufferPosition = total - offset;
-    pin->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, SEEK_END", MODULE_NAME, METHOD_SEEK_NAME, offset);
+    pin->logger->Log((pin->filter->GetLastCommand() != CLAVSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, L"%s: %s: offset: %lld, SEEK_END", MODULE_NAME, METHOD_SEEK_NAME, offset);
   }
   else if (whence == AVSEEK_SIZE)
   {
     result = total;
     resultSet = true;
-    pin->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, AVSEEK_SIZE", MODULE_NAME, METHOD_SEEK_NAME, offset);
+    pin->logger->Log((pin->filter->GetLastCommand() != CLAVSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, L"%s: %s: offset: %lld, AVSEEK_SIZE", MODULE_NAME, METHOD_SEEK_NAME, offset);
   }
   else
   {
@@ -269,7 +269,7 @@ int64_t CLAVInputPin::Seek(void *opaque,  int64_t offset, int whence)
     resultSet = true;
   }
 
-  pin->logger->Log(LOGGER_INFO, L"%s: %s: End, result: %lld", MODULE_NAME, METHOD_SEEK_NAME, result);
+  pin->logger->Log((pin->filter->GetLastCommand() != CLAVSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, L"%s: %s: End, result: %lld", MODULE_NAME, METHOD_SEEK_NAME, result);
   return result;
 }
 
@@ -325,6 +325,7 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   }
 
   wchar_t *url = ConvertToUnicodeW(pszFileName);
+  //wchar_t *url = Duplicate(L"rtmp://n15.joj.sk####Url=rtmp%3a%2f%2fn15.joj.sk%2fdat%2fjoj%2farchiv%2f2012%2f10%2f29%2fjoj-2-121019-0002-h264-hq.mp4&RtmpApp=&RtmpPlayPath=dat%2fjoj%2farchiv%2f2012%2f10%2f29%2fjoj-2-121019-0002-h264-hq.mp4&RtmpTcUrl=rtmp%3a%2f%2fn15.joj.sk");
   CHECK_POINTER_HRESULT(result, url, result, E_CONVERT_STRING_ERROR);
 
   if (SUCCEEDED(result))
@@ -1779,8 +1780,8 @@ unsigned int CLAVInputPin::GetReceiveDataTimeout(void)
 
 STDMETHODIMP CLAVInputPin::Length(LONGLONG *total, LONGLONG *available)
 {
-  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME);
-  
+  this->logger->Log((this->filter->GetLastCommand() != CLAVSplitter::CMD_PLAY) ? LOGGER_VERBOSE : LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME);
+
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, total);
   CHECK_POINTER_DEFAULT_HRESULT(result, available);
@@ -1835,10 +1836,10 @@ STDMETHODIMP CLAVInputPin::Length(LONGLONG *total, LONGLONG *available)
     FREE_MEM_CLASS(availableLength);
 
     result = (this->estimate) ? VFW_S_ESTIMATED : S_OK;
-    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: total length: %llu, available length: %llu, estimate: %u, media packets: %u", MODULE_NAME, METHOD_LENGTH_NAME, this->totalLength, *available, (this->estimate) ? 1 : 0, mediaPacketCount);
+    this->logger->Log((this->filter->GetLastCommand() != CLAVSplitter::CMD_PLAY) ? LOGGER_VERBOSE : LOGGER_DATA, L"%s: %s: total length: %llu, available length: %llu, estimate: %u, media packets: %u", MODULE_NAME, METHOD_LENGTH_NAME, this->totalLength, *available, (this->estimate) ? 1 : 0, mediaPacketCount);
   }
 
-  this->logger->Log(LOGGER_VERBOSE, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME, result);
+  this->logger->Log((this->filter->GetLastCommand() != CLAVSplitter::CMD_PLAY) ? LOGGER_VERBOSE : LOGGER_DATA, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME, result);
   return result;
 }
 

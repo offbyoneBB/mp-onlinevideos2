@@ -162,6 +162,7 @@ CLAVSplitter::CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr)
   , m_bFakeASFReader(FALSE)
   //, m_bStopValid(FALSE)
   , m_rtOffset(0)
+  , lastCommand(-1)
 {
   this->logger = new CLogger(NULL);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
@@ -779,9 +780,12 @@ DWORD CLAVSplitter::ThreadProc()
 
   m_fFlushing = false;
   m_eEndFlush.Set();
+  // last command is no command
+  this->lastCommand = -1;
 
   for(DWORD cmd = (DWORD)-1; ; cmd = GetRequest())
   {
+    this->lastCommand = cmd;
     switch (cmd)
     {
     case CMD_EXIT:
@@ -1931,4 +1935,9 @@ HRESULT CLAVSplitter::GetCacheFileName(wchar_t **path)
 	}
 
 	return S_OK;
+}
+
+int CLAVSplitter::GetLastCommand(void)
+{
+  return this->lastCommand;
 }
