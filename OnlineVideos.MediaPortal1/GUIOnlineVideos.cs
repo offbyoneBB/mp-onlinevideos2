@@ -2087,7 +2087,8 @@ namespace OnlineVideos.MediaPortal1
 
             if (currentPlaylist != null)
             {
-                if (g_Player.Player.GetType().Assembly == typeof(GUIOnlineVideos).Assembly)
+                if ((g_Player.Player != null && g_Player.Player.GetType().Assembly == typeof(GUIOnlineVideos).Assembly) || 
+					 g_Player.Player == null && (filename == "http://localhost/OnlineVideo.mp4" || (currentPlayingItem != null && filename == currentPlayingItem.FileName)))
                 {
                     PlayNextPlaylistItem();
                 }
@@ -2445,6 +2446,7 @@ namespace OnlineVideos.MediaPortal1
                         g_Player.SeekAbsolute(seconds);
                     }
                 }
+				playItem.FileName = lsUrl;
                 currentPlayingItem = playItem;
                 SetGuiProperties_PlayingVideo(playItem);
             }
