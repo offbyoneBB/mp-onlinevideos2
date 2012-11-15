@@ -92,6 +92,7 @@ CMPUrlSourceSplitter_Protocol_Mshs::CMPUrlSourceSplitter_Protocol_Mshs(CParamete
   this->setEndOfStream = false;
   this->streamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
+  this->lockCurlMutex = CreateMutex(NULL, FALSE, NULL);
   this->wholeStreamDownloaded = false;
   this->mainCurlInstance = NULL;
   this->bytePosition = 0;
@@ -141,6 +142,11 @@ CMPUrlSourceSplitter_Protocol_Mshs::~CMPUrlSourceSplitter_Protocol_Mshs()
   {
     CloseHandle(this->lockMutex);
     this->lockMutex = NULL;
+  }
+  if (this->lockCurlMutex != NULL)
+  {
+    CloseHandle(this->lockCurlMutex);
+    this->lockCurlMutex = NULL;
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
@@ -341,46 +347,50 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
 
       if ((!this->shouldExit) && (this->streamFragmentDownloading != UINT_MAX) && (this->mainCurlInstance != NULL))
       {
-        unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
-        if (bytesRead != 0)
         {
-          CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentDownloading);
-          CLinearBuffer *linearBuffer = streamFragment->GetBuffer();
+          CLockMutex lockData(this->lockCurlMutex, INFINITE);
 
-          if (linearBuffer != NULL)
+          unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
+          if (bytesRead != 0)
           {
-            unsigned int bufferSize = linearBuffer->GetBufferSize();
-            if (bufferSize == 0)
-            {
-              // initialize buffer
-              linearBuffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-              bufferSize = linearBuffer->GetBufferSize();
-            }
+            CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentDownloading);
+            CLinearBuffer *linearBuffer = streamFragment->GetBuffer();
 
-            unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
-
-            if (freeSpace < bytesRead)
+            if (linearBuffer != NULL)
             {
-              unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
-              if (!linearBuffer->ResizeBuffer(bufferNewSize))
+              unsigned int bufferSize = linearBuffer->GetBufferSize();
+              if (bufferSize == 0)
               {
-                this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-                // error
-                bytesRead = 0;
+                // initialize buffer
+                linearBuffer->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+                bufferSize = linearBuffer->GetBufferSize();
               }
-            }
 
-            if (bytesRead != 0)
-            {
-              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
-              if (buffer != NULL)
+              unsigned int freeSpace = linearBuffer->GetBufferFreeSpace();
+
+              if (freeSpace < bytesRead)
               {
-                this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-                linearBuffer->AddToBuffer(buffer, bytesRead);
-                this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
+                unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
+                if (!linearBuffer->ResizeBuffer(bufferNewSize))
+                {
+                  this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+                  // error
+                  bytesRead = 0;
+                }
               }
-              FREE_MEM(buffer);
+
+              if (bytesRead != 0)
+              {
+                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
+                if (buffer != NULL)
+                {
+                  this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                  linearBuffer->AddToBuffer(buffer, bytesRead);
+                  this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
+                }
+                FREE_MEM(buffer);
+              }
             }
           }
         }
@@ -685,7 +695,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
             if (SUCCEEDED(result))
             {
               // we need to download for another url
-              this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+              this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
               CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
 
               if (SUCCEEDED(result))
@@ -971,11 +981,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StopReceivingData(void)
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  if (this->mainCurlInstance != NULL)
-  {
-    this->mainCurlInstance->SetCloseWithoutWaiting(this->seekingActive);
-    FREE_MEM_CLASS(this->mainCurlInstance);
-  }
+  FREE_MEM_CLASS(this->mainCurlInstance);
 
   FREE_MEM_CLASS(this->bufferForProcessing);
   this->isConnected = false;

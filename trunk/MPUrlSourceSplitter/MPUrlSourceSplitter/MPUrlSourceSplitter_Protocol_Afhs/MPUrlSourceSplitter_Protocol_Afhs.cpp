@@ -96,6 +96,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->setEndOfStream = false;
   this->streamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
+  this->lockCurlMutex = CreateMutex(NULL, FALSE, NULL);
   this->wholeStreamDownloaded = false;
   this->mainCurlInstance = NULL;
   this->bootstrapInfoCurlInstance = NULL;
@@ -158,6 +159,11 @@ CMPUrlSourceSplitter_Protocol_Afhs::~CMPUrlSourceSplitter_Protocol_Afhs()
   {
     CloseHandle(this->lockMutex);
     this->lockMutex = NULL;
+  }
+  if (this->lockCurlMutex != NULL)
+  {
+    CloseHandle(this->lockCurlMutex);
+    this->lockCurlMutex = NULL;
   }
 
   FREE_MEM_CLASS(this->bootstrapInfoBox);
@@ -634,7 +640,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
               // we need to download for another url
               if (this->mainCurlInstance == NULL)
               {
-                this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+                this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
               }
               CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_POINTER);
 
@@ -1123,17 +1129,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StopReceivingData(void)
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  if (this->mainCurlInstance != NULL)
-  {
-    this->mainCurlInstance->SetCloseWithoutWaiting(this->seekingActive);
-    FREE_MEM_CLASS(this->mainCurlInstance);
-  }
-
-  if (this->bootstrapInfoCurlInstance != NULL)
-  {
-    this->bootstrapInfoCurlInstance->SetCloseWithoutWaiting(this->seekingActive);
-    FREE_MEM_CLASS(this->bootstrapInfoCurlInstance);
-  }
+  FREE_MEM_CLASS(this->mainCurlInstance);
+  FREE_MEM_CLASS(this->bootstrapInfoCurlInstance);
 
   FREE_MEM_CLASS(this->bufferForProcessing);
   this->isConnected = false;

@@ -27,16 +27,32 @@
 #include "VersionInfo.h"
 #include "MPUrlSourceSplitter_Protocol_Rtmp_Parameters.h"
 #include "RtmpCurlInstance.h"
+#include "ErrorCodes.h"
 
 #include <WinInet.h>
 #include <stdio.h>
+#include <assert.h>
 
 // protocol implementation name
 #ifdef _DEBUG
-#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSourceSplitter_Protocol_Rtmpd"
+#define PROTOCOL_IMPLEMENTATION_NAME                                          L"MPUrlSourceSplitter_Protocol_Rtmpd"
 #else
-#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSourceSplitter_Protocol_Rtmp"
+#define PROTOCOL_IMPLEMENTATION_NAME                                          L"MPUrlSourceSplitter_Protocol_Rtmp"
 #endif
+
+#define METHOD_FILL_BUFFER_FOR_PROCESSING_NAME                                L"FillBufferForProcessing()"
+
+void CorrectPreviousFragmentEndTimestamp(CRtmpStreamFragmentCollection *streamFragments, unsigned int currentFragment)
+{
+  // correct previous fragment end timestamp
+  if (currentFragment > 0)
+  {
+    CRtmpStreamFragment *fragment = streamFragments->GetItem(currentFragment);
+    CRtmpStreamFragment *previousFragment = streamFragments->GetItem(currentFragment - 1);
+
+    previousFragment->SetFragmentEndTimestamp(max(fragment->GetFragmentStartTimestamp(), 1) - 1);
+  }
+}
 
 PIPlugin CreatePluginInstance(CParameterCollection *configuration)
 {
@@ -81,16 +97,25 @@ CMPUrlSourceSplitter_Protocol_Rtmp::CMPUrlSourceSplitter_Protocol_Rtmp(CParamete
   this->openConnetionMaximumAttempts = RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->streamLength = 0;
   this->setLength = false;
-  this->streamTime = 0;
+  this->setEndOfStream = false;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
+  this->lockCurlMutex = CreateMutex(NULL, FALSE, NULL);
   this->wholeStreamDownloaded = false;
   this->mainCurlInstance = NULL;
   this->streamDuration = 0;
   this->bytePosition = 0;
   this->seekingActive = false;
   this->supressData = false;
-  this->bufferForProcessing = NULL;
   this->shouldExit = false;
+  this->storeFilePath = NULL;
+  this->lastStoreTime = 0;
+  this->isConnected = false;
+  this->rtmpStreamFragments = NULL;
+  this->streamFragmentDownloading = UINT_MAX;
+  this->streamFragmentProcessing = 0;
+  this->streamFragmentToDownload = UINT_MAX;
+  this->ignoreKeyFrameTimestamp = 0;
+  this->additionalCorrection = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -104,9 +129,15 @@ CMPUrlSourceSplitter_Protocol_Rtmp::~CMPUrlSourceSplitter_Protocol_Rtmp()
     this->StopReceivingData();
   }
 
+  if (this->storeFilePath != NULL)
+  {
+    DeleteFile(this->storeFilePath);
+  }
+
   FREE_MEM_CLASS(this->mainCurlInstance);
-  FREE_MEM_CLASS(this->bufferForProcessing);
   FREE_MEM_CLASS(this->configurationParameters);
+  FREE_MEM(this->storeFilePath);
+  FREE_MEM_CLASS(this->rtmpStreamFragments);
 
   if (this->lockMutex != NULL)
   {
@@ -114,17 +145,22 @@ CMPUrlSourceSplitter_Protocol_Rtmp::~CMPUrlSourceSplitter_Protocol_Rtmp()
     this->lockMutex = NULL;
   }
 
+  if (this->lockCurlMutex != NULL)
+  {
+    CloseHandle(this->lockCurlMutex);
+    this->lockCurlMutex = NULL;
+  }
+
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
 
-  delete this->logger;
-  this->logger = NULL;
+  FREE_MEM_CLASS(this->logger);
 }
 
 // IProtocol interface
 
 bool CMPUrlSourceSplitter_Protocol_Rtmp::IsConnected(void)
 {
-  return ((this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded));
+  return ((this->isConnected) || (this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded));
 }
 
 unsigned int CMPUrlSourceSplitter_Protocol_Rtmp::GetOpenConnectionMaximumAttempts(void)
@@ -222,6 +258,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ParseUrl(const CParameterCollection 
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CReceiveData *receiveData)
 {
+  HRESULT result = S_OK;
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   this->shouldExit = *shouldExit;
 
@@ -231,195 +268,543 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
   {
     if (!this->wholeStreamDownloaded)
     {
-      if (!(this->shouldExit))
+      if (SUCCEEDED(result) && (!this->shouldExit) && (!this->setLength) && (this->bytePosition != 0))
       {
-        if (!this->setLength)
+        // adjust total length if not already set
+        if (this->streamLength == 0)
         {
-          double streamSize = 0;
-          CURLcode errorCode = curl_easy_getinfo(this->mainCurlInstance->GetCurlHandle(), CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
-          if ((errorCode == CURLE_OK) && (streamSize > 0))
-          {
-            LONGLONG total = LONGLONG(streamSize);
-            this->streamLength = total;
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
-            receiveData->GetTotalLength()->SetTotalLength(total, false);
-            this->setLength = true;
-          }
+          // error occured or stream duration is not set
+          // just make guess
+          this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
         }
-
-        if (this->streamDuration == 0)
+        else if ((this->bytePosition > (this->streamLength * 3 / 4)))
         {
-          double streamDuration = 0;
-          CURLcode errorCode = curl_easy_getinfo(this->mainCurlInstance->GetCurlHandle(), CURLINFO_RTMP_TOTAL_DURATION, &streamDuration);
-          if ((errorCode == CURLE_OK) && (streamDuration > 0))
-          {
-            this->streamDuration = streamDuration;
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total duration: %lf", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, streamDuration);
-          }
-        }
-
-        if (!this->setLength)
-        {
-          if ((this->streamLength == 0) || (this->bytePosition > (this->streamLength * 3 / 4)))
-          {
-            double currentTime = 0;
-            CURLcode errorCode = curl_easy_getinfo(this->mainCurlInstance->GetCurlHandle(), CURLINFO_RTMP_CURRENT_TIME, &currentTime);
-            if ((errorCode == CURLE_OK) && (currentTime > 0) && (this->streamDuration != 0))
-            {
-              LONGLONG tempLength = static_cast<LONGLONG>(this->bytePosition * this->streamDuration / currentTime);
-              if (tempLength > this->streamLength)
-              {
-                this->streamLength = tempLength;
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess by stream duration total length: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-              }
-            }
-            else if (this->bytePosition != 0)
-            {
-              if (this->streamLength == 0)
-              {
-                // error occured or stream duration is not set
-                // just make guess
-                this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-              }
-              else if ((this->bytePosition > (this->streamLength * 3 / 4)))
-              {
-                // it is time to adjust stream length, we are approaching to end but still we don't know total length
-                this->streamLength = this->bytePosition * 2;
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-              }
-            }
-          }
-        }
-
-        unsigned int bytesRead = this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
-        if (bytesRead != 0)
-        {
-          if (this->bufferForProcessing != NULL)
-          {
-            unsigned int bufferSize = this->bufferForProcessing->GetBufferSize();
-            unsigned int freeSpace = this->bufferForProcessing->GetBufferFreeSpace();
-
-            if (freeSpace < bytesRead)
-            {
-              unsigned int bufferNewSize = max(bufferSize * 2, bufferSize + bytesRead);
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: buffer to small, buffer size: %d, new size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, bufferNewSize);
-              if (!this->bufferForProcessing->ResizeBuffer(bufferNewSize))
-              {
-                this->logger->Log(LOGGER_WARNING, L"%s: %s: resizing buffer unsuccessful, dropping received data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-                // error
-                bytesRead = 0;
-              }
-            }
-
-            if (bytesRead != 0)
-            {
-              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
-              if (buffer != NULL)
-              {
-                unsigned int copyFromBuffer = this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-                unsigned int addedToBuffer = this->bufferForProcessing->AddToBuffer(buffer, bytesRead);
-                this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
-              }
-              FREE_MEM(buffer); 
-            }
-          }
+          // it is time to adjust stream length, we are approaching to end but still we don't know total length
+          this->streamLength = this->bytePosition * 2;
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
         }
       }
 
-      if ((!this->supressData) && (this->bufferForProcessing != NULL))
+      if (SUCCEEDED(result) && (!this->shouldExit) && (this->mainCurlInstance != NULL))
       {
-        CFlvPacket *flvPacket = new CFlvPacket();
-        if (flvPacket != NULL)
+        if (this->mainCurlInstance->GetRtmpDownloadResponse()->GetResultCode() == CURLE_OK)
         {
-          while (flvPacket->ParsePacket(this->bufferForProcessing))
+          // everything correct, we can parse data
+          CRtmpStreamFragment *fragment = this->rtmpStreamFragments->GetItem(this->streamFragmentDownloading);
+          CFlvPacket *flvPacket = new CFlvPacket();
+
+          // there must be always fragment
+          assert(fragment != NULL);
+          // fragment doesn't have to be downloaded
+          assert(!fragment->IsDownloaded());
+
+          bool parsedPacket = true;
+          while (SUCCEEDED(result) && (!this->shouldExit) && (this->streamFragmentDownloading != UINT_MAX) && parsedPacket)
           {
-            // FLV packet parsed correctly
-            // push FLV packet to filter
-            if ((flvPacket->GetType() != FLV_PACKET_HEADER) && (this->firstTimestamp == (-1)))
             {
-              this->firstTimestamp = flvPacket->GetTimestamp();
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstTimestamp);
+              CLockMutex lockData(this->lockCurlMutex, INFINITE);
+
+              parsedPacket = flvPacket->ParsePacket(this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData());
             }
 
-            if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp == (-1)))
+            if (parsedPacket)
             {
-              this->firstVideoTimestamp = flvPacket->GetTimestamp();
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first video timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstVideoTimestamp);
-            }
+              // FLV packet parsed correctly
 
-            if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp != (-1)) && (this->firstTimestamp != (-1)))
-            {
-              // correction of video timestamps
-              flvPacket->SetTimestamp(flvPacket->GetTimestamp() + this->firstTimestamp - this->firstVideoTimestamp);
-            }
-
-            if ((flvPacket->GetType() == FLV_PACKET_AUDIO) ||
-              (flvPacket->GetType() == FLV_PACKET_HEADER) ||
-              (flvPacket->GetType() == FLV_PACKET_META) ||
-              (flvPacket->GetType() == FLV_PACKET_VIDEO))
-            {
-              // do nothing, known packet types
-            }
-            else
-            {
-              this->logger->Log(LOGGER_WARNING, L"%s: %s: unknown FLV packet: %d, size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, flvPacket->GetType(), flvPacket->GetSize());
-            }
-
-            if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
-            {
-              // create media packet
-              // set values of media packet
-              CMediaPacket *mediaPacket = new CMediaPacket();
-              mediaPacket->GetBuffer()->InitializeBuffer(flvPacket->GetSize());
-              mediaPacket->GetBuffer()->AddToBuffer(flvPacket->GetData(), flvPacket->GetSize());
-              mediaPacket->SetStart(this->bytePosition);
-              mediaPacket->SetEnd(this->bytePosition + flvPacket->GetSize() - 1);
-
-              if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
+              // remember correct timestamp values
+              if (SUCCEEDED(result) && (flvPacket->GetType() != FLV_PACKET_HEADER) && (this->firstTimestamp == (-1)))
               {
-                FREE_MEM_CLASS(mediaPacket);
+                this->firstTimestamp = flvPacket->GetTimestamp();
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstTimestamp);
               }
-              
-              this->bytePosition += flvPacket->GetSize();
+
+              if (SUCCEEDED(result) && (flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp == (-1)))
+              {
+                this->firstVideoTimestamp = flvPacket->GetTimestamp();
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first video timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstVideoTimestamp);
+              }
+
+              if (SUCCEEDED(result) && (fragment->IsSeeked()) && (fragment->IsStartTimestampSet()) && (fragment->GetBuffer()->GetBufferOccupiedSpace() == 0))
+              {
+                // seeked to fragment which was downloaded, but interrupted
+                // actually we have to be fragment before
+                // ignore everything to second key frame (first key frame is key frame for previous fragment)
+
+                // activate ignoring packets
+                if ((this->ignoreKeyFrameTimestamp == 0) && (flvPacket->IsKeyFrame()))
+                {
+                  this->ignoreKeyFrameTimestamp = flvPacket->GetTimestamp();
+                }
+
+                if ((this->ignoreKeyFrameTimestamp != 0) && (flvPacket->IsKeyFrame()) && (flvPacket->GetTimestamp() > this->ignoreKeyFrameTimestamp))
+                {
+                  // second key frame, accept
+                  this->ignoreKeyFrameTimestamp = 0;
+
+                  this->additionalCorrection = (unsigned int)fragment->GetFragmentStartTimestamp() + this->firstVideoTimestamp - flvPacket->GetTimestamp() - this->firstTimestamp;
+                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set additional correction: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->additionalCorrection);
+
+                  // we have correct first timestamp, stop ignoring data, set seeked to false
+                  fragment->SetSeeked(false);
+
+                  // we are on key fragment, we can set that fragment has not valid start timestamp
+                  // it will be set few lines after
+                  fragment->SetFragmentStartTimestamp(fragment->GetFragmentStartTimestamp(), false);
+                }
+              }
+
+              if (SUCCEEDED(result) && (flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp != (-1)) && (this->firstTimestamp != (-1)))
+              {
+                // correction of video timestamps
+                flvPacket->SetTimestamp(flvPacket->GetTimestamp() + this->firstTimestamp - this->firstVideoTimestamp + this->additionalCorrection);
+              }
+              else if (SUCCEEDED(result) && (flvPacket->GetType() != FLV_PACKET_VIDEO) && (flvPacket->GetType() != FLV_PACKET_HEADER))
+              {
+                // correction of timestamps for another type of packets (META, AUDIO)
+                flvPacket->SetTimestamp(flvPacket->GetTimestamp() + this->additionalCorrection);
+              }
+
+              if (SUCCEEDED(result) && (this->ignoreKeyFrameTimestamp == 0) &&
+                (((flvPacket->GetType() == FLV_PACKET_META) && (!fragment->IsSeeked())) || (flvPacket->GetType() != FLV_PACKET_META)))
+              {
+                // no ignoring key frames and other data
+
+                // check if packet is not key frame
+                if (flvPacket->IsKeyFrame() && 
+                  ((flvPacket->GetTimestamp() != fragment->GetFragmentStartTimestamp()) || (!fragment->IsStartTimestampSet())) &&
+                  (this->firstTimestamp != (-1)) && 
+                  (this->firstVideoTimestamp != (-1)))
+                {
+                  bool createNewFragment = false;
+                  uint64_t fragmentEnd = 0;
+
+                  if (fragment->IsStartTimestampSet())
+                  {
+                    fragmentEnd = fragment->GetFragmentEndTimestamp();
+
+                    // mark current fragment as downloaded
+                    fragment->SetFragmentEndTimestamp(max(1, flvPacket->GetTimestamp()) - 1);
+                    fragment->SetDownloaded(true);
+
+                    unsigned int downloadedFragment = this->streamFragmentDownloading++;
+                    unsigned int position = this->rtmpStreamFragments->GetFragmentWithTimestamp(flvPacket->GetTimestamp(), this->streamFragmentDownloading);
+
+                    if (position == UINT_MAX)
+                    {
+                      // there is no fragmet with FLV packet timestamp
+                      // create new fragment
+                      createNewFragment = true;
+                    }
+                    else
+                    {
+                      CRtmpStreamFragment *positionFragment = this->rtmpStreamFragments->GetItem(position);
+                      if (positionFragment->IsSeeked())
+                      {
+                        // found fragment has start timestamp lower or equal to FLV packet timestamp
+                        // found fragment has end timestamp higher or equal to FLV packet timestamp
+
+                        // fragment is seeked = not completly downloaded and with incorrect timestamps
+                        this->streamFragmentDownloading = position;
+
+                        positionFragment->SetSeeked(false);
+                        positionFragment->SetDownloaded(false);
+                        positionFragment->SetStoredToFile(-1);
+                        positionFragment->GetBuffer()->ClearBuffer();
+                        positionFragment->SetFragmentStartTimestamp(flvPacket->GetTimestamp(), true);
+                        positionFragment->SetIncorrectTimestamps(fragment->HasIncorrectTimestamps());
+
+                        CorrectPreviousFragmentEndTimestamp(this->rtmpStreamFragments, this->streamFragmentDownloading);
+
+                        fragment = positionFragment;
+                      }
+                      else
+                      {
+                        // found fragment has start timestamp lower or equal to FLV packet timestamp
+                        // found fragment has end timestamp higher or equal to FLV packet timestamp
+
+                        // between fragment and found fragment have to be seeked fragments
+                        // we are downloading data which were already downloaded, but with incorrect timestamps
+
+                        // remove all fragments between fragment and found fragment, rest of fragments until seeked or
+                        // not downloaded fragment correct timestamps (also in FLV packets)
+
+                        for (unsigned int i = 1; i < (position - downloadedFragment); i++)
+                        {
+                          this->rtmpStreamFragments->Remove(downloadedFragment + i);
+                        }
+
+                        // correct rest of fragments
+                        int correction = flvPacket->GetTimestamp() - (unsigned int)this->rtmpStreamFragments->GetItem(downloadedFragment + 1)->GetFragmentStartTimestamp();
+
+                        for (unsigned int i = (downloadedFragment + 1); i < this->rtmpStreamFragments->Count(); i++)
+                        {
+                          CRtmpStreamFragment *fragmentToCorrection = this->rtmpStreamFragments->GetItem(i);
+
+                          if ((fragmentToCorrection->IsSeeked()) || (!fragmentToCorrection->IsDownloaded()))
+                          {
+                            if (fragmentToCorrection->IsSeeked())
+                            {
+                              // fragment to correction cannot be seeked
+                              assert(0);
+                            }
+                            else if (!fragmentToCorrection->IsDownloaded())
+                            {
+                              // fragment is not downloaded
+                              // fragment possibly has incorrect timestamp
+
+                              fragmentToCorrection->SetFragmentStartTimestamp(fragmentToCorrection->GetFragmentStartTimestamp() + correction, true);
+                              fragmentToCorrection->SetIncorrectTimestamps(fragment->HasIncorrectTimestamps());
+
+                              CorrectPreviousFragmentEndTimestamp(this->rtmpStreamFragments, i);
+                            }
+                            break;
+                          }
+
+                          fragmentToCorrection->SetFragmentStartTimestamp(fragmentToCorrection->GetFragmentStartTimestamp() + correction, true);
+                          fragmentToCorrection->SetIncorrectTimestamps(fragment->HasIncorrectTimestamps());
+
+                          CorrectPreviousFragmentEndTimestamp(this->rtmpStreamFragments, i);
+
+                          // correct timestamps in all FLV packets in fragment
+                          fragmentToCorrection->SetPacketCorrection(fragmentToCorrection->GetPacketCorrection() + correction);
+                        }
+
+                        // we are finished with downloading of this block
+                        FREE_MEM_CLASS(this->mainCurlInstance);
+                        fragment = NULL;
+                        this->streamFragmentDownloading = UINT_MAX;
+                      }
+                    }
+                  }
+                  else
+                  {
+                    // for current fragment is start timestamp set not by FLV packet
+                    // or it has been cleared few lines above (handling seeking)
+                    // correct it with right value
+                    fragment->SetFragmentStartTimestamp(flvPacket->GetTimestamp(), true);
+                    CorrectPreviousFragmentEndTimestamp(this->rtmpStreamFragments, this->streamFragmentDownloading);
+                  }
+
+                  if (SUCCEEDED(result) && (this->streamFragmentDownloading != UINT_MAX) && (createNewFragment))
+                  {
+                    // create new fragment with key frame
+                    fragment = new CRtmpStreamFragment();
+                    CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
+
+                    if (SUCCEEDED(result))
+                    {
+                      CRtmpStreamFragment *previousFragment = this->rtmpStreamFragments->GetItem(max(this->streamFragmentDownloading, 1) - 1);
+                      fragment->SetFragmentStartTimestamp(flvPacket->GetTimestamp(), true);
+                      fragment->SetFragmentEndTimestamp(fragmentEnd);
+                      fragment->SetIncorrectTimestamps(previousFragment->HasIncorrectTimestamps());
+
+                      result = (this->rtmpStreamFragments->Insert(this->streamFragmentDownloading, fragment)) ? result : E_FAIL;
+
+                      if (SUCCEEDED(result) && (this->setEndOfStream))
+                      {
+                        // end of stream was reached, increase this->streamFragmentProcessing
+                        this->streamFragmentProcessing++;
+                      }
+                    }
+
+                    if (FAILED(result))
+                    {
+                      FREE_MEM_CLASS(fragment);
+                    }
+                  }
+                }
+
+                if (fragment != NULL)
+                {
+                  // just add packet to fragment
+                  result = (fragment->GetBuffer()->AddToBufferWithResize(flvPacket->GetData(), flvPacket->GetSize()) == flvPacket->GetSize()) ? result : E_OUTOFMEMORY;
+                }
+              }
+
+              // downloading instance can be deleted
+              if (this->mainCurlInstance != NULL)
+              {
+                CLockMutex lockData(this->lockCurlMutex, INFINITE);
+
+                this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(flvPacket->GetSize());
+              }
             }
-            // we are definitely not seeking
-            this->seekingActive = false;
-            this->bufferForProcessing->RemoveFromBufferAndMove(flvPacket->GetSize());
 
             flvPacket->Clear();
           }
 
-          delete flvPacket;
-          flvPacket = NULL;
+          FREE_MEM_CLASS(flvPacket);
         }
       }
 
-      if (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA)
+      if (SUCCEEDED(result) && (!this->shouldExit) && (!this->supressData) && (this->streamFragmentProcessing < this->rtmpStreamFragments->Count()))
       {
-        // all data received, we're not receiving data
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+        CLinearBuffer *bufferForProcessing = this->FillBufferForProcessing(this->rtmpStreamFragments, this->streamFragmentProcessing, this->storeFilePath);
 
-        // whole stream downloaded
-        this->wholeStreamDownloaded = true;
-        FREE_MEM_CLASS(this->mainCurlInstance);
-
-        if (!this->seekingActive)
+        if (SUCCEEDED(result) && (!this->shouldExit) && (!this->supressData) && (bufferForProcessing != NULL))
         {
-          // we are not seeking, so we can set total length
-          if (!this->setLength)
+          CFlvPacket *flvPacket = new CFlvPacket();
+          if (flvPacket != NULL)
           {
-            this->streamLength = this->bytePosition;
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
-            this->setLength = true;
+            while (SUCCEEDED(result) && (!this->shouldExit) && (flvPacket->ParsePacket(bufferForProcessing)))
+            {
+              // FLV packet parsed correctly
+              // push FLV packet to filter
+
+              if ((flvPacket->GetType() == FLV_PACKET_AUDIO) ||
+                (flvPacket->GetType() == FLV_PACKET_HEADER) ||
+                (flvPacket->GetType() == FLV_PACKET_META) ||
+                (flvPacket->GetType() == FLV_PACKET_VIDEO))
+              {
+                // do nothing, known packet types
+                CHECK_CONDITION_HRESULT(result, !flvPacket->IsEncrypted(), result, E_DRM_PROTECTED);
+              }
+              else
+              {
+                this->logger->Log(LOGGER_WARNING, L"%s: %s: unknown FLV packet: %d, size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, flvPacket->GetType(), flvPacket->GetSize());
+                result = E_UNKNOWN_STREAM_TYPE;
+              }
+
+              if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
+              {
+                // set or adjust total length (if needed)
+                int64_t newBytePosition = this->bytePosition + flvPacket->GetSize();
+
+                if ((!this->setLength) && (newBytePosition != 0))
+                {
+                  // adjust total length if not already set
+                  if (this->streamLength == 0)
+                  {
+                    // error occured or stream duration is not set
+                    // just make guess
+                    this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+                    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+                    receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+                  }
+                  else if ((newBytePosition > (this->streamLength * 3 / 4)))
+                  {
+                    // it is time to adjust stream length, we are approaching to end but still we don't know total length
+                    this->streamLength = newBytePosition * 2;
+                    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+                    receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+                  }
+                }
+
+                // create media packet
+                // set values of media packet
+                CMediaPacket *mediaPacket = new CMediaPacket();
+                mediaPacket->GetBuffer()->InitializeBuffer(flvPacket->GetSize());
+                mediaPacket->GetBuffer()->AddToBuffer(flvPacket->GetData(), flvPacket->GetSize());
+                mediaPacket->SetStart(this->bytePosition);
+                mediaPacket->SetEnd(this->bytePosition + flvPacket->GetSize() - 1);
+
+                if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
+                {
+                  FREE_MEM_CLASS(mediaPacket);
+                }
+                this->bytePosition += flvPacket->GetSize();
+              }
+              // we are definitely not seeking
+              this->seekingActive = false;
+              bufferForProcessing->RemoveFromBufferAndMove(flvPacket->GetSize());
+
+              flvPacket->Clear();
+            }
+
+            FREE_MEM_CLASS(flvPacket);
           }
 
-          // notify filter the we reached end of stream
-          receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, this->bytePosition - 1));
+          result = (bufferForProcessing->GetBufferOccupiedSpace() == 0) ? result : E_FAIL;
+
+          if (SUCCEEDED(result))
+          {
+            this->streamFragmentProcessing++;
+
+            // check if fragment is downloaded
+            // if fragment is not downloaded, then schedule it for download
+
+            if (this->streamFragmentProcessing < this->rtmpStreamFragments->Count())
+            {
+              CRtmpStreamFragment *fragment = this->rtmpStreamFragments->GetItem(this->streamFragmentProcessing);
+              if ((!fragment->IsDownloaded()) && (this->streamFragmentProcessing != this->streamFragmentDownloading))
+              {
+                // fragment is not downloaded and also is not downloading currently
+                this->streamFragmentToDownload = this->streamFragmentProcessing;
+              }
+            }
+          }
+        }
+
+        FREE_MEM_CLASS(bufferForProcessing);
+      }
+
+      if (SUCCEEDED(result) && (!this->shouldExit))
+      {
+        if ((this->streamFragmentProcessing >= this->rtmpStreamFragments->Count()) &&
+          (this->streamFragmentToDownload == UINT_MAX) &&
+          (this->streamFragmentDownloading == UINT_MAX) &&
+          (this->rtmpStreamFragments->GetFirstNotDownloadedStreamFragment(0) == UINT_MAX))
+        {
+          // all fragments downloaded and processed
+          // whole stream downloaded
+          this->wholeStreamDownloaded = true;
+          this->isConnected = false;
+        }
+
+        if (this->streamFragmentProcessing >= this->rtmpStreamFragments->Count())
+        {
+          // all stream fragments processed
+          // set stream length and report end of stream
+          if (!this->seekingActive)
+          {
+            // we are not seeking, so we can set total length
+            if (!this->setLength)
+            {
+              this->streamLength = this->bytePosition;
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+              receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
+              this->setLength = true;
+            }
+
+            if (!this->setEndOfStream)
+            {
+              // notify filter the we reached end of stream
+              receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, this->bytePosition - 1));
+              this->setEndOfStream = true;
+            }
+          }
+        }
+      }
+
+      if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+      {
+        if (this->mainCurlInstance->GetDownloadResponse()->GetResultCode() == CURLE_OK)
+        {
+          if (this->mainCurlInstance->GetDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace() == 0)
+          {
+            // all data read from CURL instance, received all data
+            this->logger->Log(LOGGER_INFO, L"%s: %s: all data received", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+            FREE_MEM_CLASS(this->mainCurlInstance);
+
+            // set end timestamp of last fragment
+            CRtmpStreamFragment *fragment = this->rtmpStreamFragments->GetItem(this->rtmpStreamFragments->Count() - 1);
+            CHECK_POINTER_HRESULT(result, fragment, result, E_FAIL);
+            
+            if (SUCCEEDED(result))
+            {
+              fragment->SetDownloaded(true);
+            }
+          }
+        }
+        else
+        {
+          // error occured while downloading
+          // download fragment again or download scheduled fragment
+          this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: %d, restarting download", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetDownloadResponse()->GetResultCode());
+          this->streamFragmentToDownload = (this->streamFragmentToDownload != UINT_MAX) ? this->streamFragmentDownloading : this->streamFragmentToDownload;
+          this->streamFragmentDownloading = UINT_MAX;
+          FREE_MEM_CLASS(this->mainCurlInstance);
+        }
+      }
+
+      if (SUCCEEDED(result) && (!this->shouldExit) && ((this->mainCurlInstance == NULL) || (this->streamFragmentToDownload != UINT_MAX)))
+      {
+        FREE_MEM_CLASS(this->mainCurlInstance);
+        // no CURL instance exists, we finished or not started download
+        // start another download
+
+        // if not set fragment to download, then set fragment to download (get next not downloaded fragment after current processed fragment)
+        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->rtmpStreamFragments->GetFirstNotDownloadedStreamFragment(this->streamFragmentProcessing) : this->streamFragmentToDownload;
+        // if not set fragment to download, then set fragment to download (get next not downloaded fragment from first fragment)
+        this->streamFragmentToDownload = (this->streamFragmentToDownload == UINT_MAX) ? this->rtmpStreamFragments->GetFirstNotDownloadedStreamFragment(0) : this->streamFragmentToDownload;
+        // fragment to download still can be UINT_MAX = no fragment to download
+
+        if (SUCCEEDED(result) && (this->streamFragmentToDownload != UINT_MAX))
+        {
+          // starting download from another point
+
+          // clear additional correction, it will be set after analysing key frames
+          this->additionalCorrection = 0;
+
+          // there is specified fragment to download
+
+          CRtmpStreamFragment *fragment = this->rtmpStreamFragments->GetItem(this->streamFragmentToDownload);
+          CRtmpStreamFragment *previousFragment = this->rtmpStreamFragments->GetItem(max(this->streamFragmentToDownload, 1) - 1);
+          CHECK_POINTER_HRESULT(result, fragment, result, E_POINTER);
+          CHECK_POINTER_HRESULT(result, previousFragment, result, E_POINTER);
+
+          if (SUCCEEDED(result))
+          {
+            // fragment was received, but receiving was interrupted
+            // get previous fragment and start receiving data from previous fragment
+            int64_t rtmpStart = fragment->IsStartTimestampSet() ? previousFragment->GetFragmentStartTimestamp() : fragment->GetFragmentStartTimestamp();
+
+            // clean fragment buffer
+            fragment->SetDownloaded(false);
+            fragment->SetStoredToFile(-1);
+            fragment->GetBuffer()->ClearBuffer();
+            this->firstTimestamp = -1;
+            this->firstVideoTimestamp = -1;
+
+            fragment->SetSeeked(rtmpStart != 0);
+            fragment->SetIncorrectTimestamps(((!fragment->IsStartTimestampSet()) && (rtmpStart != 0)) || (previousFragment->HasIncorrectTimestamps()));
+
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: starting receiving data from timestamp %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, rtmpStart);
+
+            // create CURL instance
+            this->mainCurlInstance = new CRtmpCurlInstance(this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+            CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
+            {
+              CRtmpDownloadRequest *request = new CRtmpDownloadRequest();
+              CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(result))
+              {
+                request->SetUrl(this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+                request->SetRtmpApp(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_APP, true, RTMP_APP_DEFAULT));
+                request->SetRtmpArbitraryData(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_ARBITRARY_DATA, true, NULL));
+                request->SetRtmpBuffer(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTMP_BUFFER, true, RTMP_BUFFER_DEFAULT));
+                request->SetRtmpFlashVersion(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_FLASHVER, true, RTMP_FLASH_VER_DEFAULT));
+                request->SetRtmpAuth(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_AUTH, true, RTMP_AUTH_DEFAULT));
+                request->SetRtmpJtv(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_JTV, true, RTMP_JTV_DEFAULT));
+                request->SetRtmpLive(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_LIVE, true, RTMP_LIVE_DEFAULT));
+                request->SetRtmpPageUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_PAGE_URL, true, RTMP_PAGE_URL_DEFAULT));
+                request->SetRtmpPlaylist(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_PLAYLIST, true, RTMP_PLAYLIST_DEFAULT));
+                request->SetRtmpPlayPath(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_PLAY_PATH, true, RTMP_PLAY_PATH_DEFAULT));
+                request->SetRtmpStart(rtmpStart);
+                request->SetRtmpStop(this->configurationParameters->GetValueInt64(PARAMETER_NAME_RTMP_STOP, true, RTMP_STOP_DEFAULT));
+                request->SetRtmpSubscribe(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_SUBSCRIBE, true, RTMP_SUBSCRIBE_DEFAULT));
+                request->SetRtmpSwfAge(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTMP_SWF_AGE, true, RTMP_SWF_AGE_DEFAULT));
+                request->SetRtmpSwfUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_SWF_URL, true, RTMP_SWF_URL_DEFAULT));
+                request->SetRtmpSwfVerify(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_SWF_VERIFY, true, RTMP_SWF_VERIFY_DEFAULT));
+                request->SetRtmpTcUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_TC_URL, true, RTMP_TC_URL_DEFAULT));
+                request->SetRtmpToken(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_TOKEN, true, RTMP_TOKEN_DEFAULT));
+
+                this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+                result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
+              }
+              FREE_MEM_CLASS(request);
+            }
+
+            if (SUCCEEDED(result))
+            {
+              // all parameters set
+              // start receiving data
+
+              result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
+
+              if (SUCCEEDED(result))
+              {
+                this->streamFragmentDownloading = this->streamFragmentToDownload;
+                this->streamFragmentToDownload = UINT_MAX;
+              }
+            }
+          }
         }
       }
     }
@@ -445,8 +830,79 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
     }
   }
 
+  // store stream fragments to temporary file
+  if ((GetTickCount() - this->lastStoreTime) > 1000)
+  {
+    this->lastStoreTime = GetTickCount();
+
+    if (this->rtmpStreamFragments->Count() > 0)
+    {
+      // store all stream fragments (which are not stored) to file
+      if (this->storeFilePath == NULL)
+      {
+        this->storeFilePath = this->GetStoreFile();
+      }
+
+      if (this->storeFilePath != NULL)
+      {
+        LARGE_INTEGER size;
+        size.QuadPart = 0;
+
+        // open or create file
+        HANDLE hTempFile = CreateFile(this->storeFilePath, FILE_APPEND_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+        if (hTempFile != INVALID_HANDLE_VALUE)
+        {
+          if (!GetFileSizeEx(hTempFile, &size))
+          {
+            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"error while getting size");
+            // error occured while getting file size
+            size.QuadPart = -1;
+          }
+
+          if (size.QuadPart >= 0)
+          {
+            unsigned int i = 0;
+            while (i < this->rtmpStreamFragments->Count())
+            {
+              CRtmpStreamFragment *streamFragment = this->rtmpStreamFragments->GetItem(i);
+
+              if ((!streamFragment->IsStoredToFile()) && (streamFragment->IsDownloaded()))
+              {
+                // if stream fragment is not stored to file
+                // store it to file
+                unsigned int length = streamFragment->GetLength();
+
+                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
+                if (streamFragment->GetBuffer()->CopyFromBuffer(buffer, length, 0, 0) == length)
+                {
+                  DWORD written = 0;
+                  if (WriteFile(hTempFile, buffer, length, &written, NULL))
+                  {
+                    if (length == written)
+                    {
+                      // mark as stored
+                      streamFragment->SetStoredToFile(size.QuadPart);
+                      size.QuadPart += length;
+                    }
+                  }
+                }
+                FREE_MEM(buffer);
+              }
+
+              i++;
+            }
+          }
+
+          CloseHandle(hTempFile);
+          hTempFile = INVALID_HANDLE_VALUE;
+        }
+      }
+    }
+  }
+
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-  return S_OK;
+  return result;
 }
 
 // ISimpleProtocol interface
@@ -472,81 +928,31 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StartReceivingData(const CParameterC
   this->bytePosition = 0;
   this->streamLength = 0;
   this->setLength = false;
+  this->setEndOfStream = false;
 
-  if (SUCCEEDED(result))
+  if (this->rtmpStreamFragments == NULL)
   {
-    this->mainCurlInstance = new CRtmpCurlInstance(this->logger, this->lockMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
-    CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
+    this->rtmpStreamFragments = new CRtmpStreamFragmentCollection();
+    CHECK_POINTER_HRESULT(result, this->rtmpStreamFragments, result, E_OUTOFMEMORY);
 
     if (SUCCEEDED(result))
     {
-      CRtmpDownloadRequest *request = new CRtmpDownloadRequest();
-      CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+      CRtmpStreamFragment *first = new CRtmpStreamFragment();
+      CHECK_POINTER_HRESULT(result, first, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))
       {
-        request->SetUrl(this->configurationParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
-        request->SetRtmpApp(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_APP, true, RTMP_APP_DEFAULT));
-        request->SetRtmpArbitraryData(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_ARBITRARY_DATA, true, NULL));
-        request->SetRtmpBuffer(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTMP_BUFFER, true, RTMP_BUFFER_DEFAULT));
-        request->SetRtmpFlashVersion(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_FLASHVER, true, RTMP_FLASH_VER_DEFAULT));
-        request->SetRtmpAuth(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_AUTH, true, RTMP_AUTH_DEFAULT));
-        request->SetRtmpJtv(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_JTV, true, RTMP_JTV_DEFAULT));
-        request->SetRtmpLive(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_LIVE, true, RTMP_LIVE_DEFAULT));
-        request->SetRtmpPageUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_PAGE_URL, true, RTMP_PAGE_URL_DEFAULT));
-        request->SetRtmpPlaylist(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_PLAYLIST, true, RTMP_PLAYLIST_DEFAULT));
-        request->SetRtmpPlayPath(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_PLAY_PATH, true, RTMP_PLAY_PATH_DEFAULT));
-        request->SetRtmpStart((this->streamTime >= 0) ? this->streamTime : this->configurationParameters->GetValueInt64(PARAMETER_NAME_RTMP_START, true, RTMP_START_DEFAULT));
-        request->SetRtmpStop(this->configurationParameters->GetValueInt64(PARAMETER_NAME_RTMP_STOP, true, RTMP_STOP_DEFAULT));
-        request->SetRtmpSubscribe(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_SUBSCRIBE, true, RTMP_SUBSCRIBE_DEFAULT));
-        request->SetRtmpSwfAge(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTMP_SWF_AGE, true, RTMP_SWF_AGE_DEFAULT));
-        request->SetRtmpSwfUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_SWF_URL, true, RTMP_SWF_URL_DEFAULT));
-        request->SetRtmpSwfVerify(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_SWF_VERIFY, true, RTMP_SWF_VERIFY_DEFAULT));
-        request->SetRtmpTcUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_TC_URL, true, RTMP_TC_URL_DEFAULT));
-        request->SetRtmpToken(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_TOKEN, true, RTMP_TOKEN_DEFAULT));
+        // first fragment is gap
+        first->SetFragmentStartTimestamp(0, false);
+        first->SetFragmentEndTimestamp(UINT64_MAX);
 
-        this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
-        result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
+        result = (this->rtmpStreamFragments->Add(first)) ? result : E_FAIL;
       }
-      FREE_MEM_CLASS(request);
-    }
-  }
 
-  if (SUCCEEDED(result) && (this->bufferForProcessing == NULL))
-  {
-    this->bufferForProcessing = new CLinearBuffer();
-    result = (this->bufferForProcessing != NULL) ? S_OK : E_OUTOFMEMORY;
-
-    if (SUCCEEDED(result))
-    {
-      result = this->bufferForProcessing->InitializeBuffer(BUFFER_FOR_PROCESSING_SIZE_DEFAULT, 0) ? S_OK : E_OUTOFMEMORY;
-    }
-  }
-
-  if (SUCCEEDED(result))
-  {
-    // all parameters set
-    // start receiving data
-
-    result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
-  }
-
-  if (SUCCEEDED(result))
-  {
-    // wait until we receive some data or transfer end (whatever comes first)
-    unsigned int state = CURL_STATE_NONE;
-    while ((state != CURL_STATE_RECEIVING_DATA) && (state != CURL_STATE_RECEIVED_ALL_DATA))
-    {
-      state = this->mainCurlInstance->GetCurlState();
-
-      // wait some time
-      Sleep(10);
-    }
-
-    if (state == CURL_STATE_RECEIVED_ALL_DATA)
-    {
-      // we received data too fast
-      result = E_FAIL;
+      if (FAILED(result))
+      {
+        FREE_MEM_CLASS(first);
+      }
     }
   }
 
@@ -554,6 +960,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StartReceivingData(const CParameterC
   {
     this->StopReceivingData();
   }
+
+  this->isConnected = SUCCEEDED(result);
 
   this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
   return result;
@@ -566,13 +974,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StopReceivingData(void)
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  if (this->mainCurlInstance != NULL)
-  {
-    this->mainCurlInstance->SetCloseWithoutWaiting(this->seekingActive);
-  }
-
   FREE_MEM_CLASS(this->mainCurlInstance);
-  FREE_MEM_CLASS(this->bufferForProcessing);
+  
+  this->isConnected = false;
+  this->streamFragmentDownloading = UINT_MAX;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
@@ -631,17 +1036,28 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
     this->StopReceivingData();
   }
 
-  FREE_MEM_CLASS(this->bufferForProcessing);
+  if (this->storeFilePath != NULL)
+  {
+    DeleteFile(this->storeFilePath);
+  }
  
   this->streamLength = 0;
   this->setLength = false;
-  this->streamTime = 0;
+  this->setEndOfStream = false;
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->streamDuration = 0;
   this->bytePosition = 0;
   this->shouldExit = false;
+  FREE_MEM_CLASS(this->rtmpStreamFragments);
+  FREE_MEM(this->storeFilePath);
+  this->isConnected = false;
+  this->streamFragmentDownloading = UINT_MAX;
+  this->streamFragmentProcessing = 0;
+  this->streamFragmentToDownload = UINT_MAX;
+  this->ignoreKeyFrameTimestamp = 0;
+  this->additionalCorrection = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -663,24 +1079,86 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtmp::SeekToTime(int64_t time)
 
   int64_t result = -1;
 
-  this->seekingActive = true;
-
-  // close connection
-  this->StopReceivingData();
-
   // RTMP protocol can seek to ms
   // time is in ms
 
   // 1 second back
-  this->streamTime = max(0, time - 1000);
+  time = max(0, time - 1000);
 
-  // reopen connection
-  // StartReceivingData() reset wholeStreamDownloaded
-  this->StartReceivingData(NULL);
-
-  if (this->IsConnected())
+  // find fragment to process
+  this->streamFragmentProcessing = this->rtmpStreamFragments->Count();
+  if (this->rtmpStreamFragments != NULL)
   {
-    result = max(0, time - 1000);
+    for (unsigned int i = 0; i < this->rtmpStreamFragments->Count(); i++)
+    {
+      CRtmpStreamFragment *segFrag = this->rtmpStreamFragments->GetItem(i);
+
+      if ((segFrag->GetFragmentStartTimestamp() <= (uint64_t)time) &&
+        (segFrag->GetFragmentEndTimestamp() >= (uint64_t)time))
+      {
+        this->streamFragmentProcessing = i;
+        result = segFrag->GetFragmentStartTimestamp();
+        break;
+      }
+    }
+  }
+
+  this->seekingActive = true;
+  this->bytePosition = 0;
+  this->streamLength = 0;
+  this->setLength = false;
+  this->setEndOfStream = false;
+  // reset whole stream downloaded, but IsConnected() must return true to avoid calling StartReceivingData()
+  this->isConnected = true;
+  this->wholeStreamDownloaded = false;
+
+  // in this->streamFragmentProcessing is id of fragment to process
+  // it must be set, because at least one stream fragment exists and cover all possible timestamps (0 - UINT64_MAX)
+  CRtmpStreamFragment *segFrag = this->rtmpStreamFragments->GetItem(this->streamFragmentProcessing);
+
+  if (!segFrag->IsDownloaded())
+  {
+    result = time;
+
+    // stream fragment is not downloaded, it is gap
+    // split stream fragment
+
+    // close connection
+    this->StopReceivingData();
+
+    // create new fragment within found fragment
+    CRtmpStreamFragment *fragment = new CRtmpStreamFragment();
+    result = (fragment != NULL) ? result : (-1);
+
+    if (result != (-1))
+    {
+      this->streamFragmentProcessing++;
+      fragment->SetFragmentStartTimestamp(time, false);
+      fragment->SetFragmentEndTimestamp(segFrag->GetFragmentEndTimestamp());
+
+      result = this->rtmpStreamFragments->Insert(this->streamFragmentProcessing, fragment) ? result : (-1);
+
+      if (result != (-1))
+      {
+        CorrectPreviousFragmentEndTimestamp(this->rtmpStreamFragments, this->streamFragmentProcessing);
+
+        // clear fragment to download
+        this->streamFragmentToDownload = UINT_MAX;
+
+        // reopen connection
+        // StartReceivingData() reset wholeStreamDownloaded
+        this->isConnected = SUCCEEDED(this->StartReceivingData(NULL));
+      }
+    }
+  }
+  else
+  {
+    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, segFrag->GetFragmentStartTimestamp());
+  }
+
+  if (!this->IsConnected())
+  {
+    result = -1;
   }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
@@ -747,3 +1225,165 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::Initialize(PluginConfiguration *conf
 }
 
 // other methods
+
+wchar_t *CMPUrlSourceSplitter_Protocol_Rtmp::GetStoreFile(void)
+{
+  wchar_t *result = NULL;
+  wchar_t *folder = GetStoreFilePath(this->configurationParameters);
+
+  if (folder != NULL)
+  {
+    wchar_t *guid = ConvertGuidToString(this->logger->loggerInstance);
+    if (guid != NULL)
+    {
+      result = FormatString(L"%smpurlsourcesplitter_protocol_rtmp_%s.temp", folder, guid);
+    }
+    FREE_MEM(guid);
+  }
+
+  FREE_MEM(folder);
+  return result;
+}
+
+CLinearBuffer *CMPUrlSourceSplitter_Protocol_Rtmp::FillBufferForProcessing(CRtmpStreamFragmentCollection *fragments, unsigned int streamFragmentProcessing, wchar_t *storeFile)
+{
+  CLinearBuffer *result = NULL;
+
+  if (fragments != NULL)
+  {
+    if (streamFragmentProcessing < fragments->Count())
+    {
+      CRtmpStreamFragment *fragment = fragments->GetItem(streamFragmentProcessing);
+
+      if (fragment->IsDownloaded())
+      {
+        // fragment is downloaded
+        // fragment can be stored in memory or in store file
+
+        // temporary buffer for data (from store file or from memory)
+        unsigned int bufferLength = fragment->GetLength();
+        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferLength, 0);
+
+        if (buffer != NULL)
+        {
+          if ((fragment->IsStoredToFile()) && (storeFile != NULL))
+          {
+            // segment and fragment is stored into file and store file is specified
+
+            LARGE_INTEGER size;
+            size.QuadPart = 0;
+
+            // open or create file
+            HANDLE hTempFile = CreateFile(storeFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+            if (hTempFile != INVALID_HANDLE_VALUE)
+            {
+              bool error = false;
+
+              LONG distanceToMoveLow = (LONG)(fragment->GetStoreFilePosition());
+              LONG distanceToMoveHigh = (LONG)(fragment->GetStoreFilePosition() >> 32);
+              LONG distanceToMoveHighResult = distanceToMoveHigh;
+              DWORD setFileResult = SetFilePointer(hTempFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
+              if (setFileResult == INVALID_SET_FILE_POINTER)
+              {
+                DWORD lastError = GetLastError();
+                if (lastError != NO_ERROR)
+                {
+                  this->logger->Log(LOGGER_ERROR, L"%s: %s: error occured while setting position: %lu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, lastError);
+                  error = true;
+                }
+              }
+
+              if (!error)
+              {
+                DWORD read = 0;
+                if (ReadFile(hTempFile, buffer, bufferLength, &read, NULL) == 0)
+                {
+                  this->logger->Log(LOGGER_ERROR, L"%s: %s: error occured reading file: %lu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, GetLastError());
+                  FREE_MEM(buffer);
+                }
+                else if (read != bufferLength)
+                {
+                  this->logger->Log(LOGGER_WARNING, L"%s: %s: readed data length not same as requested, requested: %u, readed: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_FILL_BUFFER_FOR_PROCESSING_NAME, bufferLength, read);
+                  FREE_MEM(buffer);
+                }
+              }
+
+              CloseHandle(hTempFile);
+              hTempFile = INVALID_HANDLE_VALUE;
+            }
+          }
+          else if (!fragment->IsStoredToFile())
+          {
+            // fragment is stored in memory
+            if (fragment->GetBuffer()->CopyFromBuffer(buffer, bufferLength, 0, 0) != bufferLength)
+            {
+              // error occured while copying data
+              FREE_MEM(buffer);
+            }
+          }
+        }
+
+        if ((buffer != NULL) && (fragment->GetPacketCorrection() != 0))
+        {
+          // correct FLV packets timestamps
+          CFlvPacket *flvPacket = new CFlvPacket();
+          bool correct = (flvPacket != NULL);
+          unsigned int position = 0;
+
+          while (correct && (position < bufferLength))
+          {
+            correct = (flvPacket->ParsePacket(buffer + position, bufferLength - position));
+
+            if (correct)
+            {
+              if (flvPacket->GetType() != FLV_PACKET_HEADER)
+              {
+                flvPacket->SetTimestamp(flvPacket->GetTimestamp() + fragment->GetPacketCorrection());
+
+                memcpy(buffer + position, flvPacket->GetData(), flvPacket->GetSize());
+              }
+            }
+
+            if (correct)
+            {
+              position += flvPacket->GetSize();
+            }
+
+            flvPacket->Clear();
+          }
+
+          FREE_MEM_CLASS(flvPacket);
+        }
+
+        if (buffer != NULL)
+        {
+          // all data are read
+          bool correct = false;
+          result = new CLinearBuffer();
+          if (result != NULL)
+          {
+            if (result->InitializeBuffer(bufferLength))
+            {
+              if (result->AddToBuffer(buffer, bufferLength) == bufferLength)
+              {
+                // everything correct, data copied successfully
+                correct = true;
+              }
+            }
+          }
+
+          if (!correct)
+          {
+            FREE_MEM_CLASS(result);
+          }
+        }
+
+        // clean-up buffer
+        FREE_MEM(buffer);
+      }
+    }
+  }
+
+  return result;
+}

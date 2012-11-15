@@ -646,8 +646,8 @@ DecryptionResult CMPUrlSourceSplitter_Afhs_Decryption_Akamai::Supported(CAfhsDec
   {
     // data are analysed
     this->receivedDataAnalysed = true;
-    // by default we have error
-    result = DecryptionResult_Error;
+    // by default we have not known pattern
+    result = DecryptionResult_NotKnown;
 
     CParsedMediaDataBox *parsedMediaDataBox = this->ParseMediaDataBox(context, context->GetSegmentsFragments()->GetItem(0));
     if (parsedMediaDataBox != NULL)
@@ -657,6 +657,9 @@ DecryptionResult CMPUrlSourceSplitter_Afhs_Decryption_Akamai::Supported(CAfhsDec
         // it is media data box
         // specified akamai GUID
         // at least one akamai FLV packet
+
+        // by default we have error
+        result = DecryptionResult_Error;
 
         FREE_MEM(this->akamaiGuid);
         this->akamaiGuid = Duplicate(parsedMediaDataBox->GetAkamaiGuid());

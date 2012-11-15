@@ -29,12 +29,12 @@ CCurlInstance::CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *proto
   this->logger = logger;
   this->protocolName = FormatString(L"%s: instance '%s'", protocolName, instanceName);
   this->curl = NULL;
+  this->multi_curl = NULL;
   this->hCurlWorkerThread = NULL;
   this->receiveDataTimeout = UINT_MAX;
   this->writeCallback = NULL;
   this->writeData = NULL;
   this->state = CURL_STATE_CREATED;
-  this->closeWithoutWaiting = false;
   this->mutex = mutex;
   this->startReceivingTicks = 0;
   this->stopReceivingTicks = 0;
@@ -57,14 +57,15 @@ CCurlInstance::~CCurlInstance(void)
     this->curl = NULL;
   }
 
+  if (this->multi_curl != NULL)
+  {
+    curl_multi_cleanup(this->multi_curl);
+    this->multi_curl = NULL;
+  }
+
   FREE_MEM(this->protocolName);
   FREE_MEM_CLASS(this->downloadRequest);
   FREE_MEM_CLASS(this->downloadResponse);
-}
-
-CURL *CCurlInstance::GetCurlHandle(void)
-{
-  return this->curl;
 }
 
 bool CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
@@ -81,12 +82,24 @@ bool CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
   if (result)
   {
+    if (this->multi_curl == NULL)
+    {
+      this->multi_curl = curl_multi_init();
+    }
+    result = (this->multi_curl != NULL);
+  }
+
+  if (result)
+  {
     if (this->curl == NULL)
     {
       this->curl = curl_easy_init();
     }
     result = (this->curl != NULL);
+  }
 
+  if (result)
+  {
     CURLcode errorCode = CURLE_OK;
     if (this->receiveDataTimeout != UINT_MAX)
     {
@@ -183,6 +196,13 @@ void CCurlInstance::ReportCurlErrorMessage(unsigned int logLevel, const wchar_t 
   FREE_MEM(error);
 }
 
+void CCurlInstance::ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLMcode errorCode)
+{
+  wchar_t *error = ConvertToUnicodeA(curl_multi_strerror(errorCode));
+  this->logger->Log(logLevel, METHOD_CURL_ERROR_MESSAGE, protocolName, functionName, (message == NULL) ? L"libcurl (multi) error" : message, error);
+  FREE_MEM(error);
+}
+
 HRESULT CCurlInstance::CreateCurlWorker(void)
 {
   HRESULT result = S_OK;
@@ -219,7 +239,7 @@ HRESULT CCurlInstance::DestroyCurlWorker(void)
   if (this->hCurlWorkerThread != NULL)
   {
     this->curlWorkerShouldExit = true;
-    if (WaitForSingleObject(this->hCurlWorkerThread, this->closeWithoutWaiting ? 1 : 1000) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(this->hCurlWorkerThread, 1000) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_DESTROY_CURL_WORKER_NAME, L"thread didn't exit, terminating thread");
@@ -255,24 +275,59 @@ DWORD WINAPI CCurlInstance::CurlWorker(LPVOID lpParam)
   caller->totalReceivedBytes = 0;
 
   // on next line will be stopped processing of code - until something happens
-  caller->downloadResponse->SetResultCode(curl_easy_perform(caller->curl));
+  //caller->downloadResponse->SetResultCode(curl_easy_perform(caller->curl));
 
-  if (caller->stopReceivingTicks == 0)
+  CURLMcode multiErrorCode = curl_multi_add_handle(caller->multi_curl, caller->curl);
+  if (multiErrorCode == CURLM_OK)
   {
-    caller->stopReceivingTicks = GetTickCount();
+    while ((!caller->curlWorkerShouldExit) && (multiErrorCode == CURLM_OK))
+    {
+      int runningHandles = 0;
+      multiErrorCode = curl_multi_perform(caller->multi_curl, &runningHandles);
+
+      if (runningHandles == 0)
+      {
+        // no running transfers, we can quit
+        break;
+      }
+
+      // sleep some time, get chance for other threads to work
+      Sleep(10);
+    }
+
+    if (multiErrorCode != CURLM_OK)
+    {
+      caller->ReportCurlErrorMessage(LOGGER_ERROR, caller->protocolName, METHOD_CURL_WORKER_NAME, L"error while receiving data", multiErrorCode);
+    }
+
+    multiErrorCode = curl_multi_remove_handle(caller->multi_curl, caller->curl);
+    if (multiErrorCode != CURLM_OK)
+    {
+      caller->ReportCurlErrorMessage(LOGGER_ERROR, caller->protocolName, METHOD_CURL_WORKER_NAME, L"error while removing curl handle", multiErrorCode);
+    }
+
+    if (caller->stopReceivingTicks == 0)
+    {
+      caller->stopReceivingTicks = GetTickCount();
+    }
+    caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: start: %u, end: %u, received bytes: %lld", caller->protocolName, METHOD_CURL_WORKER_NAME, caller->startReceivingTicks, caller->stopReceivingTicks, caller->totalReceivedBytes);
+
+    long responseCode;
+    if (curl_easy_getinfo(caller->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
+    {
+      caller->downloadResponse->SetResponseCode(responseCode);
+    }
+
+    caller->state = CURL_STATE_RECEIVED_ALL_DATA;
+
+    if ((caller->downloadResponse->GetResultCode() != CURLE_OK) && (caller->downloadResponse->GetResultCode() != CURLE_WRITE_ERROR))
+    {
+      caller->ReportCurlErrorMessage(LOGGER_ERROR, caller->protocolName, METHOD_CURL_WORKER_NAME, L"error while receiving data", caller->downloadResponse->GetResultCode());
+    }
   }
-
-  long responseCode;
-  if (curl_easy_getinfo(caller->curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK)
+  else
   {
-    caller->downloadResponse->SetResponseCode(responseCode);
-  }
-
-  caller->state = CURL_STATE_RECEIVED_ALL_DATA;
-
-  if ((caller->downloadResponse->GetResultCode() != CURLE_OK) && (caller->downloadResponse->GetResultCode() != CURLE_WRITE_ERROR))
-  {
-    caller->ReportCurlErrorMessage(LOGGER_ERROR, caller->protocolName, METHOD_CURL_WORKER_NAME, L"error while receiving data", caller->downloadResponse->GetResultCode());
+    caller->ReportCurlErrorMessage(LOGGER_ERROR, caller->protocolName, METHOD_CURL_WORKER_NAME, L"error while adding curl handle", multiErrorCode);
   }
 
   caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, caller->protocolName, METHOD_CURL_WORKER_NAME);
@@ -381,16 +436,6 @@ int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *dat
   }
 
   return 0;
-}
-
-bool CCurlInstance::GetCloseWithoutWaiting(void)
-{
-  return this->closeWithoutWaiting;
-}
-
-void CCurlInstance::SetCloseWithoutWaiting(bool closeWithoutWaiting)
-{
-  this->closeWithoutWaiting = closeWithoutWaiting;
 }
 
 wchar_t *CCurlInstance::GetCurlVersion(void)

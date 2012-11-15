@@ -28,6 +28,7 @@
 #include "IProtocolPlugin.h"
 #include "LinearBuffer.h"
 #include "RtmpCurlInstance.h"
+#include "RtmpStreamFragmentCollection.h"
 
 #include <WinSock2.h>
 
@@ -161,9 +162,8 @@ protected:
 
   // holds if length of stream was set
   bool setLength;
-
-  // stream time
-  int64_t streamTime;
+  // holds if end of stream was set
+  bool setEndOfStream;
 
   // specifies position in buffer
   // it is always reset on seek
@@ -171,6 +171,9 @@ protected:
 
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
+
+  // mutex for locking access to internal buffer of CURL instance
+  HANDLE lockCurlMutex;
 
   // main instance of CURL
   CRtmpCurlInstance *mainCurlInstance;
@@ -184,14 +187,48 @@ protected:
   // specifies if filter requested supressing data
   bool supressData;
 
-  // buffer for processing data before are send to filter
-  CLinearBuffer *bufferForProcessing;
-
   // holds first FLV packet timestamp for correction of video packet timestamps
   int firstTimestamp;
 
   // holds first video FLV packet timestamp for correction of video packet timestamps
   int firstVideoTimestamp;
+
+  // gets store file path based on configuration
+  // creates folder structure if not created
+  // @return : store file or NULL if error
+  wchar_t *GetStoreFile(void);
+
+  // holds store file path
+  wchar_t *storeFilePath;
+  // holds last store time of storing stream fragments to file
+  DWORD lastStoreTime;
+
+  // specifies if we are still connected
+  bool isConnected;
+
+  // holds RTMP stream fragment
+  CRtmpStreamFragmentCollection *rtmpStreamFragments;
+
+  // holds which fragment is currently downloading (UINT_MAX means none)
+  unsigned int streamFragmentDownloading;
+  // holds which fragment is currently processed
+  unsigned int streamFragmentProcessing;
+  // holds which fragment have to be downloaded
+  // (UINT_MAX means next fragment, always reset after started download of fragment)
+  unsigned int streamFragmentToDownload;
+
+  // fills buffer for processing with segment and fragment data (stored in memory or in store file)
+  // @param fragments : stream fragments collection
+  // @param streamFragmentProcessing : fragment to get data
+  // @param storeFile : the name of store file
+  // @return : buffer for processing with filled data, NULL otherwise
+  CLinearBuffer *FillBufferForProcessing(CRtmpStreamFragmentCollection *fragments, unsigned int streamFragmentProcessing, wchar_t *storeFile);
+
+  // specifies if FLV packets until key frame with timestamp higher than specified is received
+  unsigned int ignoreKeyFrameTimestamp;
+
+  // holds additional correction after seeking to known start timestamp
+  int additionalCorrection;
 };
 
 #endif

@@ -111,7 +111,9 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="RtmpCurlInstance.h" />
     <ClInclude Include="RtmpDownloadRequest.h" />
     <ClInclude Include="RtmpDownloadResponse.h" />
+    <ClInclude Include="RtmpStreamFragmentCollection.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="RtmpStreamFragment.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -127,10 +129,12 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="RtmpCurlInstance.cpp" />
     <ClCompile Include="RtmpDownloadRequest.cpp" />
     <ClCompile Include="RtmpDownloadResponse.cpp" />
+    <ClCompile Include="RtmpStreamFragmentCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RtmpStreamFragment.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

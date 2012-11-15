@@ -57,6 +57,10 @@ public:
   // @return : download respose
   virtual CHttpDownloadResponse *GetHttpDownloadResponse(void);
 
+  // gets download content length
+  // @return : download content length or -1 if error or unknown
+  virtual double GetDownloadContentLength(void);
+
   /* set methods */
 
   /* other methods */
