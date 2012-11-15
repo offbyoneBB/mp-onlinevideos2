@@ -441,6 +441,7 @@
     <Compile Include="TEDTalksUtil.cs" />
     <Compile Include="Tube8Util.cs" />
     <Compile Include="TV4Play.cs" />
+    <Compile Include="TwitchTV.cs" />
     <Compile Include="ViasatUtil.cs" />
     <Compile Include="VidiLifeUtil.cs" />
     <Compile Include="WDRUtil.cs" />
