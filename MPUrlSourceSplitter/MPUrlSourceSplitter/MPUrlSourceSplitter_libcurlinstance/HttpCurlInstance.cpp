@@ -25,7 +25,6 @@
 CHttpCurlInstance::CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CCurlInstance(logger, mutex, protocolName, instanceName)
 {
-  this->closeWithoutWaiting = false;
   this->httpHeaders = NULL;
 
   this->httpDownloadRequest = dynamic_cast<CHttpDownloadRequest *>(this->downloadRequest);
@@ -347,4 +346,17 @@ CHttpDownloadResponse *CHttpCurlInstance::GetHttpDownloadResponse(void)
 CDownloadResponse *CHttpCurlInstance::GetNewDownloadResponse(void)
 {
   return new CHttpDownloadResponse();
+}
+
+double CHttpCurlInstance::GetDownloadContentLength(void)
+{
+  double result = -1;
+
+  if (this->curl != NULL)
+  {
+    CURLcode errorCode = curl_easy_getinfo(this->curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &result);
+    result = (errorCode == CURLE_OK) ? result : (-1);
+  }
+
+  return result;
 }

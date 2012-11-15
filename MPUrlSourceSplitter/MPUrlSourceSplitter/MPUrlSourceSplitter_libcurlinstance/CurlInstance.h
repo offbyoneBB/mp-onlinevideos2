@@ -61,10 +61,6 @@ public:
   // destructor
   virtual ~CCurlInstance(void);
 
-  // gets CURL handle
-  // @return : CURL handle
-  virtual CURL *GetCurlHandle(void);
-
   // report libcurl error into log file
   // @param logLevel : the verbosity level of logged message
   // @param protocolName : name of protocol calling ReportCurlErrorMessage()
@@ -72,6 +68,14 @@ public:
   // @param message : optional message to log (can be NULL)
   // @param errorCode : the error code returned by libcurl
   virtual void ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLcode errorCode);
+
+  // report libcurl error into log file
+  // @param logLevel : the verbosity level of logged message
+  // @param protocolName : name of protocol calling ReportCurlErrorMessage()
+  // @param functionName : name of function calling ReportCurlErrorMessage()
+  // @param message : optional message to log (can be NULL)
+  // @param errorCode : the error code returned by libcurl (multi)
+  virtual void ReportCurlErrorMessage(unsigned int logLevel, const wchar_t *protocolName, const wchar_t *functionName, const wchar_t *message, CURLMcode errorCode);
 
   // initializes CURL instance
   // @param downloadRequest : download request
@@ -90,17 +94,9 @@ public:
   // @return : true if successful, false otherwise
   virtual bool StartReceivingData(void);
 
-  // gets if connection be closed without waiting
-  // @return : true if connection be closed without waiting, false otherwise
-  virtual bool GetCloseWithoutWaiting(void);
-
   // gets CURL state
   // @return : one of CURL_STATE values
   virtual unsigned int GetCurlState(void);
-
-  // sets if connection be closed without waiting
-  // @param closeWithoutWaiting : true if connection be closed without waiting, false otherwise
-  virtual void SetCloseWithoutWaiting(bool closeWithoutWaiting);
 
   // gets libcurl version
   // caller is responsible for freeing memory
@@ -117,6 +113,7 @@ public:
 
 protected:
   CURL *curl;
+  CURLM *multi_curl;
   CLogger *logger;
   HANDLE mutex;
 
@@ -156,9 +153,6 @@ protected:
 
   // holds internal state
   unsigned int state;
-
-  // specifies if current connection have to be closed without waiting
-  bool closeWithoutWaiting;
 
   // holds time when request was sent
   DWORD startReceivingTicks;

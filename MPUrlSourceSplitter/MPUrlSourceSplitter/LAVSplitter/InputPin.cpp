@@ -325,7 +325,6 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   }
 
   wchar_t *url = ConvertToUnicodeW(pszFileName);
-  //wchar_t *url = Duplicate(L"rtmp://n15.joj.sk####Url=rtmp%3a%2f%2fn15.joj.sk%2fdat%2fjoj%2farchiv%2f2012%2f10%2f29%2fjoj-2-121019-0002-h264-hq.mp4&RtmpApp=&RtmpPlayPath=dat%2fjoj%2farchiv%2f2012%2f10%2f29%2fjoj-2-121019-0002-h264-hq.mp4&RtmpTcUrl=rtmp%3a%2f%2fn15.joj.sk");
   CHECK_POINTER_HRESULT(result, url, result, E_CONVERT_STRING_ERROR);
 
   if (SUCCEEDED(result))

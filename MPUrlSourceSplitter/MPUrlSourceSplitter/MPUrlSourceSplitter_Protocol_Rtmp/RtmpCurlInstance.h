@@ -89,6 +89,7 @@ public:
   virtual CRtmpDownloadResponse *GetRtmpDownloadResponse(void);
 
 protected:
+
   // holds RTMP download request
   // never created and never destroyed
   // initialized in constructor by deep cloning

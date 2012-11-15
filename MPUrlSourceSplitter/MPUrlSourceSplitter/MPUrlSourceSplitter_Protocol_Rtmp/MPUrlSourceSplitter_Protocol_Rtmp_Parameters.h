@@ -83,7 +83,7 @@
 #define PARAMETER_NAME_RTMP_SUBSCRIBE                                          L"RtmpSubscribe"
 
 // Start at num seconds into the stream. Not valid for live streams.
-#define PARAMETER_NAME_RTMP_START                                 L"RtmpStart"
+#define PARAMETER_NAME_RTMP_START                                              L"RtmpStart"
 
 // Stop at num seconds into the stream.
 #define PARAMETER_NAME_RTMP_STOP                                               L"RtmpStop"
@@ -120,7 +120,7 @@
 #define PARAMETER_NAME_RTMP_SWF_AGE                                           L"RtmpSwfAge"
 
 // we should get data in twenty seconds
-#define RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
+#define RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT                                     200000
 #define RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT                         3
 
 // define default values for RTMP protocol
@@ -136,7 +136,7 @@
 #define RTMP_PLAYLIST_DEFAULT                                                 false
 #define RTMP_LIVE_DEFAULT                                                     false
 #define RTMP_SUBSCRIBE_DEFAULT                                                NULL
-#define RTMP_START_DEFAULT                                                    INT64_MAX
+#define RTMP_START_DEFAULT                                                    0
 #define RTMP_STOP_DEFAULT                                                     INT64_MAX
 #define RTMP_BUFFER_DEFAULT                                                   30000
 #define RTMP_TOKEN_DEFAULT                                                    NULL

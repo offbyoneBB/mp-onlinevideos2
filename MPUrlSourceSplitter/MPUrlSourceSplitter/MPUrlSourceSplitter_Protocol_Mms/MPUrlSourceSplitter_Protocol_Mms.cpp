@@ -107,6 +107,7 @@ CMPUrlSourceSplitter_Protocol_Mms::CMPUrlSourceSplitter_Protocol_Mms(CParameterC
   this->streamTime = 0;
   this->bytePosition = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
+  this->lockCurlMutex = CreateMutex(NULL, FALSE, NULL);
   this->internalExitRequest = false;
   this->wholeStreamDownloaded = false;
   this->mainCurlInstance = NULL;
@@ -141,6 +142,11 @@ CMPUrlSourceSplitter_Protocol_Mms::~CMPUrlSourceSplitter_Protocol_Mms()
   {
     CloseHandle(this->lockMutex);
     this->lockMutex = NULL;
+  }
+  if (this->lockCurlMutex != NULL)
+  {
+    CloseHandle(this->lockCurlMutex);
+    this->lockCurlMutex = NULL;
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
@@ -257,11 +263,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit, CReceiv
   if (this->internalExitRequest)
   {
     // there is internal exit request pending == changed timestamp
-    if (this->mainCurlInstance != NULL)
-    {
-      this->mainCurlInstance->SetCloseWithoutWaiting(true);
-    }
-
     // close connection
     this->StopReceivingData();
 
@@ -295,9 +296,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit, CReceiv
             {
               if ((!this->setLength) && (this->lengthCanBeSet))
               {
-                double streamSize = 0;
-                CURLcode errorCode = curl_easy_getinfo(this->mainCurlInstance->GetCurlHandle(), CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
-                if ((errorCode == CURLE_OK) && (streamSize > 0) && (this->streamTime < streamSize))
+                double streamSize = this->mainCurlInstance->GetDownloadContentLength();
+                if ((streamSize > 0) && (this->streamTime < streamSize))
                 {
                   LONGLONG total = LONGLONG(streamSize);
                   this->streamLength = total;
@@ -332,34 +332,38 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit, CReceiv
               }
             }
 
-            unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
-            if (bytesRead != 0)
             {
-              unsigned int bufferSize = this->mmsContext->GetBuffer()->GetBufferSize();
-              unsigned int freeSpace = this->mmsContext->GetBuffer()->GetBufferFreeSpace();
-              unsigned int newBufferSize = max(bufferSize * 2, bufferSize + bytesRead);
+              CLockMutex lockData(this->lockCurlMutex, INFINITE);
 
-              if (freeSpace < bytesRead)
-              {
-                this->logger->Log(LOGGER_INFO, L"%s: %s: not enough free space in buffer for received data, buffer size: %d, free size: %d, received data: %d, new buffer size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, freeSpace, bytesRead, newBufferSize);
-                if (!this->mmsContext->GetBuffer()->ResizeBuffer(newBufferSize))
-                {
-                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"resizing of buffer unsuccessful");
-                  // it indicates error
-                  bytesRead = 0;
-                }
-              }
-
+              unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
               if (bytesRead != 0)
               {
-                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
-                if (buffer != NULL)
+                unsigned int bufferSize = this->mmsContext->GetBuffer()->GetBufferSize();
+                unsigned int freeSpace = this->mmsContext->GetBuffer()->GetBufferFreeSpace();
+                unsigned int newBufferSize = max(bufferSize * 2, bufferSize + bytesRead);
+
+                if (freeSpace < bytesRead)
                 {
-                  this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-                  this->mmsContext->GetBuffer()->AddToBuffer(buffer, bytesRead);
-                  this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
+                  this->logger->Log(LOGGER_INFO, L"%s: %s: not enough free space in buffer for received data, buffer size: %d, free size: %d, received data: %d, new buffer size: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bufferSize, freeSpace, bytesRead, newBufferSize);
+                  if (!this->mmsContext->GetBuffer()->ResizeBuffer(newBufferSize))
+                  {
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"resizing of buffer unsuccessful");
+                    // it indicates error
+                    bytesRead = 0;
+                  }
                 }
-                FREE_MEM(buffer);
+
+                if (bytesRead != 0)
+                {
+                  ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
+                  if (buffer != NULL)
+                  {
+                    this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
+                    this->mmsContext->GetBuffer()->AddToBuffer(buffer, bytesRead);
+                    this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
+                  }
+                  FREE_MEM(buffer);
+                }
               }
             }
           }
@@ -607,7 +611,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
     if (SUCCEEDED(result))
     {
-      this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+      this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
       CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))
@@ -708,10 +712,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
         // lock access to stream
         CLockMutex lock(this->lockMutex, INFINITE);
 
-        if (this->mainCurlInstance != NULL)
-        {
-          this->mainCurlInstance->SetCloseWithoutWaiting(true);
-        }
         this->StopReceivingData();
       }
     }
@@ -726,7 +726,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
       this->wholeStreamDownloaded = false;
 
-      this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
+      this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
       CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))
@@ -866,16 +866,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StopReceivingData(void)
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  if (this->mainCurlInstance != NULL)
-  {
-    if (this->seekingActive)
-    {
-      this->mainCurlInstance->SetCloseWithoutWaiting(true);
-    }
-
-    delete this->mainCurlInstance;
-    this->mainCurlInstance = NULL;
-  }
+  FREE_MEM_CLASS(this->mainCurlInstance);
 
   this->lengthCanBeSet = false;
 
@@ -1339,7 +1330,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsHeaderData(MMSContext *mmsConte
       // fill data to buffer
       if (SUCCEEDED(result))
       {
-        CLockMutex(this->lockMutex, INFINITE);
+        CLockMutex(this->lockCurlMutex, INFINITE);
 
         unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
         if (bytesRead > 0)

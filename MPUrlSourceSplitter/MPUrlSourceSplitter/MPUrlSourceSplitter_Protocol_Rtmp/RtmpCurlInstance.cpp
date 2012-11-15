@@ -49,6 +49,7 @@ bool CRtmpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
     if (errorCode == CURLE_OK)
     {
       // librtmp needs url in specific format
+      // timeout for RTMP protocol is set through libcurl options
 
       wchar_t *connectionString = Duplicate(this->rtmpDownloadRequest->GetUrl());
 
@@ -92,8 +93,7 @@ bool CRtmpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
       {
         this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_PLAY_PATH, this->rtmpDownloadRequest->GetRtmpPlayPath(), true);
       }
-      // timeout for RTMP protocol is set through libcurl options
-      if (this->rtmpDownloadRequest->GetRtmpStart() != RTMP_START_DEFAULT)
+      // always add start token
       {
         this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_START, this->rtmpDownloadRequest->GetRtmpStart());
       }

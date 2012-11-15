@@ -202,6 +202,9 @@ protected:
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
 
+  // mutex for locking access to internal buffer of CURL instance
+  HANDLE lockCurlMutex;
+
   // main instance of CURL
   CHttpCurlInstance *mainCurlInstance;
 
