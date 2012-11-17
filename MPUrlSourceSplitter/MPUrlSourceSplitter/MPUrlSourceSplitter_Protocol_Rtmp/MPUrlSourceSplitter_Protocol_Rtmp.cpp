@@ -31,7 +31,6 @@
 
 #include <WinInet.h>
 #include <stdio.h>
-#include <assert.h>
 
 // protocol implementation name
 #ifdef _DEBUG
@@ -296,11 +295,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
           CRtmpStreamFragment *fragment = this->rtmpStreamFragments->GetItem(this->streamFragmentDownloading);
           CFlvPacket *flvPacket = new CFlvPacket();
 
-          // there must be always fragment
-          assert(fragment != NULL);
-          // fragment doesn't have to be downloaded
-          assert(!fragment->IsDownloaded());
-
           bool parsedPacket = true;
           while (SUCCEEDED(result) && (!this->shouldExit) && (this->streamFragmentDownloading != UINT_MAX) && parsedPacket)
           {
@@ -443,23 +437,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
                         {
                           CRtmpStreamFragment *fragmentToCorrection = this->rtmpStreamFragments->GetItem(i);
 
-                          if ((fragmentToCorrection->IsSeeked()) || (!fragmentToCorrection->IsDownloaded()))
+                          if (!fragmentToCorrection->IsDownloaded())
                           {
-                            if (fragmentToCorrection->IsSeeked())
-                            {
-                              // fragment to correction cannot be seeked
-                              assert(0);
-                            }
-                            else if (!fragmentToCorrection->IsDownloaded())
-                            {
-                              // fragment is not downloaded
-                              // fragment possibly has incorrect timestamp
+                            // fragment is not downloaded
+                            // fragment possibly has incorrect timestamp
 
-                              fragmentToCorrection->SetFragmentStartTimestamp(fragmentToCorrection->GetFragmentStartTimestamp() + correction, true);
-                              fragmentToCorrection->SetIncorrectTimestamps(fragment->HasIncorrectTimestamps());
+                            fragmentToCorrection->SetFragmentStartTimestamp(fragmentToCorrection->GetFragmentStartTimestamp() + correction, true);
+                            fragmentToCorrection->SetIncorrectTimestamps(fragment->HasIncorrectTimestamps());
 
-                              CorrectPreviousFragmentEndTimestamp(this->rtmpStreamFragments, i);
-                            }
+                            CorrectPreviousFragmentEndTimestamp(this->rtmpStreamFragments, i);
                             break;
                           }
 

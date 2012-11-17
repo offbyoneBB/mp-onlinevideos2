@@ -23,7 +23,7 @@
 #include "FragmentedIndexCollection.h"
 
 CFragmentedIndexCollection::CFragmentedIndexCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

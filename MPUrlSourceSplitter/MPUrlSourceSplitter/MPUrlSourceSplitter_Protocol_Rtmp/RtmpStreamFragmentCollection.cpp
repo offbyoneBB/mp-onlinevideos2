@@ -23,7 +23,7 @@
 #include "RtmpStreamFragmentCollection.h"
 
 CRtmpStreamFragmentCollection::CRtmpStreamFragmentCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

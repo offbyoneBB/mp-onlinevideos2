@@ -347,7 +347,7 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
   if (SUCCEEDED(retval))
   {
     CParameterCollection *urlConnection = new CParameterCollection();
-    retval = (urlConnection == NULL) ? E_INVALID_CONFIGURATION : S_OK;
+    CHECK_POINTER_HRESULT(retval, urlConnection, S_OK, E_INVALID_CONFIGURATION);
 
     if (SUCCEEDED(retval))
     {
@@ -455,9 +455,9 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
           }
         }
       } while ((newUrlSpecified) && SUCCEEDED(retval));
-
-      delete urlConnection;
     }
+
+    FREE_MEM_CLASS(urlConnection);
   }
 
   if (SUCCEEDED(retval))
@@ -603,18 +603,6 @@ HRESULT CParserHoster::CreateReceiveDataWorker(void)
     // thread not created
     result = HRESULT_FROM_WIN32(GetLastError());
     this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
-  }
-
-  if (SUCCEEDED(result))
-  {
-    if (!SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL))
-    {
-      this->logger->Log(LOGGER_WARNING, L"%s: %s: cannot set thread priority for main thread, error: %u", this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, GetLastError());
-    }
-    if (!SetThreadPriority(this->hReceiveDataWorkerThread, THREAD_PRIORITY_TIME_CRITICAL))
-    {
-      this->logger->Log(LOGGER_WARNING, L"%s: %s: cannot set thread priority for receive data thread, error: %u", this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, GetLastError());
-    }
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);

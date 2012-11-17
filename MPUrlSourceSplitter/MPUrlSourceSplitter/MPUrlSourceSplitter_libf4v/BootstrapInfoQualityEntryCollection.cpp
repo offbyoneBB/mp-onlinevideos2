@@ -23,7 +23,7 @@
 #include "BootstrapInfoQualityEntryCollection.h"
 
 CBootstrapInfoQualityEntryCollection::CBootstrapInfoQualityEntryCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

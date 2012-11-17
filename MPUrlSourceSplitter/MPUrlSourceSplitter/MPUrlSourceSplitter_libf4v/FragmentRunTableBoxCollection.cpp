@@ -23,7 +23,7 @@
 #include "FragmentRunTableBoxCollection.h"
 
 CFragmentRunTableBoxCollection::CFragmentRunTableBoxCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

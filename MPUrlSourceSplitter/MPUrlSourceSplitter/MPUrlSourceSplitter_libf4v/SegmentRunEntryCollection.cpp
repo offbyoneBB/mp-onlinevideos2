@@ -23,7 +23,7 @@
 #include "SegmentRunEntryCollection.h"
 
 CSegmentRunEntryCollection::CSegmentRunEntryCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

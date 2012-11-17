@@ -23,7 +23,7 @@
 #include "BrandCollection.h"
 
 CBrandCollection::CBrandCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

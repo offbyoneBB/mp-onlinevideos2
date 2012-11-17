@@ -23,7 +23,7 @@
 #include "BoxCollection.h"
 
 CBoxCollection::CBoxCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

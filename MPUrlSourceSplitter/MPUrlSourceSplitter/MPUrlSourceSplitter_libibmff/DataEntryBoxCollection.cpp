@@ -23,7 +23,7 @@
 #include "DataEntryBoxCollection.h"
 
 CDataEntryBoxCollection::CDataEntryBoxCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

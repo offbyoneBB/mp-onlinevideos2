@@ -23,7 +23,7 @@
 #include "AkamaiFlvPacketCollection.h"
 
 CAkamaiFlvPacketCollection::CAkamaiFlvPacketCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

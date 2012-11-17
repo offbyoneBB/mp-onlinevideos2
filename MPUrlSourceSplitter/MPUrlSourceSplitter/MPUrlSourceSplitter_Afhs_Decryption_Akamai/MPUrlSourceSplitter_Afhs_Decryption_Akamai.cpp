@@ -235,10 +235,15 @@ HRESULT CMPUrlSourceSplitter_Afhs_Decryption_Akamai::ProcessSegmentsAndFragments
                 this->sessionID = Duplicate(packet->GetSessionId());
                 this->lastKeyUrl = Duplicate(packet->GetKeyUrl());
 
-                wchar_t *url = this->GetKeyUrlFromUrl(context->GetSegmentsFragments()->GetItem(0)->GetHttpDownloadRequest()->GetUrl(), packet->GetKeyUrl(), this->akamaiGuid);                
+                wchar_t *url = this->GetKeyUrlFromUrl(segmentFragment->GetHttpDownloadRequest()->GetUrl(), packet->GetKeyUrl(), this->akamaiGuid);
                 continueKeyRequest &= (url != NULL) && (this->sessionID != NULL) && (this->lastKeyUrl != NULL);
                 if (continueKeyRequest)
                 {
+                  if (keyDecryptionSegmentFragment->GetHttpDownloadRequest() == NULL)
+                  {
+                    continueKeyRequest &= keyDecryptionSegmentFragment->CreateHttpDownloadRequest();
+                  }
+
                   continueKeyRequest &= keyDecryptionSegmentFragment->GetHttpDownloadRequest()->SetUrl(url);
                 }
                 FREE_MEM(url);
@@ -687,6 +692,11 @@ DecryptionResult CMPUrlSourceSplitter_Afhs_Decryption_Akamai::Supported(CAfhsDec
                 continueKeyRequest &= (url != NULL) && (this->sessionID != NULL) && (this->lastKeyUrl != NULL);
                 if (continueKeyRequest)
                 {
+                  if (keyDecryptionSegmentFragment->GetHttpDownloadRequest() == NULL)
+                  {
+                    continueKeyRequest &= keyDecryptionSegmentFragment->CreateHttpDownloadRequest();
+                  }
+
                   continueKeyRequest &= keyDecryptionSegmentFragment->GetHttpDownloadRequest()->SetUrl(url);
                 }
                 FREE_MEM(url);

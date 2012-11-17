@@ -23,7 +23,7 @@
 #include "BootstrapInfoServerEntryCollection.h"
 
 CBootstrapInfoServerEntryCollection::CBootstrapInfoServerEntryCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

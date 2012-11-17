@@ -23,7 +23,7 @@
 #include "MSHSTrackCollection.h"
 
 CMSHSTrackCollection::CMSHSTrackCollection(void)
-  : CSerializableCollection(CCollection::Delete)
+  : CSerializableCollection()
 {
 }
 

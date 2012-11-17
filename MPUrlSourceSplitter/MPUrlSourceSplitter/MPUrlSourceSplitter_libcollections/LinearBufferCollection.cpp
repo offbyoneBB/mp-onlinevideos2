@@ -23,7 +23,7 @@
 #include "LinearBufferCollection.h"
 
 CLinearBufferCollection::CLinearBufferCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

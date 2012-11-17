@@ -23,7 +23,7 @@
 #include "MSHSCustomAttributeCollection.h"
 
 CMSHSCustomAttributeCollection::CMSHSCustomAttributeCollection(void)
-  : CSerializableCollection(CCollection::Delete)
+  : CSerializableCollection()
 {
 }
 

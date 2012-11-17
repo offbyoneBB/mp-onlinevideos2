@@ -23,7 +23,7 @@
 #include "SampleCollection.h"
 
 CSampleCollection::CSampleCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

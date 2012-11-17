@@ -22,7 +22,7 @@
 #include "EncryptedDataCollection.h"
 
 CEncryptedDataCollection::CEncryptedDataCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

@@ -23,7 +23,7 @@
 #include "MediaCollection.h"
 
 CMediaCollection::CMediaCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

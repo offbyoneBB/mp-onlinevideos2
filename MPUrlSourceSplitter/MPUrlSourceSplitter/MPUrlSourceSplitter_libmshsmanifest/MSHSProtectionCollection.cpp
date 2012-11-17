@@ -24,7 +24,7 @@
 #include "BufferHelper.h"
 
 CMSHSProtectionCollection::CMSHSProtectionCollection(void)
-  : CSerializableCollection(CCollection::Delete)
+  : CSerializableCollection()
 {
 }
 

@@ -23,7 +23,7 @@
 #include "SampleToChunkCollection.h"
 
 CSampleToChunkCollection::CSampleToChunkCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

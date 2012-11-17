@@ -23,7 +23,7 @@
 #include "HttpHeaderCollection.h"
 
 CHttpHeaderCollection::CHttpHeaderCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

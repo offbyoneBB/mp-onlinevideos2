@@ -23,7 +23,7 @@
 #include "Matrix.h"
 
 CMatrix::CMatrix(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
   CFixedPointNumber *number = NULL;
 

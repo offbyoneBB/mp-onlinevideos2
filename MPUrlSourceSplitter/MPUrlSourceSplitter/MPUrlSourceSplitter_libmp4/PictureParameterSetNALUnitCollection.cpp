@@ -23,7 +23,7 @@
 #include "PictureParameterSetNALUnitCollection.h"
 
 CPictureParameterSetNALUnitCollection::CPictureParameterSetNALUnitCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 
