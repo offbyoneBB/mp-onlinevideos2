@@ -260,7 +260,7 @@ private:
   // @return : reference to variable holding collection of parameters or NULL if error
   CParameterCollection *ParseParameters(const wchar_t *parameters);
 
-  HRESULT Request(CAsyncRequest **request, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData);
+  HRESULT Request(CAsyncRequest **request, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData, bool waitForData);
 
   // handle for thread which makes relation between CMediaPacket and CAsyncRequest
   HANDLE hAsyncRequestProcessingThread;

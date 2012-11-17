@@ -26,6 +26,7 @@
 #include "InputPin.h"
 #include "VersionInfo.h"
 #include "ErrorCodes.h"
+#include "LockMutex.h"
 
 #include "BaseDemuxer.h"
 #include "LAVFDemuxer.h"
@@ -85,6 +86,9 @@ extern "C"
 #define METHOD_CLOSE_NAME                                         L"Close()"
 #define METHOD_PAUSE_NAME                                         L"Pause()"
 #define METHOD_RUN_NAME                                           L"Run()"
+
+// common buffer size for requests
+#define BUFFER_SIZE_REQUEST                                       32768
 
 // if ffmpeg_log_callback_set is true than ffmpeg log callback will not be set
 // in that case we don't receive messages from ffmpeg
@@ -861,18 +865,84 @@ DWORD CLAVSplitter::ThreadProc()
     }
 
     HRESULT hr = S_OK;
+    bool demuxNextPacket = false;
+
+    HRESULT result = S_OK;
+    // alloc buffer for requests
+    ALLOC_MEM_DEFINE_SET(buffer, BYTE, BUFFER_SIZE_REQUEST, 0);
+    CHECK_POINTER_DEFAULT_HRESULT(result, buffer);
+
     while(SUCCEEDED(hr) && !CheckRequest(&cmd))
     {
-      if ((cmd == CMD_PAUSE) || (cmd == CMD_SEEK))
+      //if ((cmd == CMD_PAUSE) || (cmd == CMD_SEEK))
+      if (cmd == CMD_PAUSE)
       {
         hr = S_OK;
         Sleep(1);
       }
       else
       {
-        hr = DemuxNextPacket();
+        demuxNextPacket = false;
+        result = S_OK;
+
+        if (SUCCEEDED(result))
+        {
+          CLockMutex lock(this->m_pInput->requestMutex, 100);
+          result = lock.IsLocked() ? S_OK : E_FAIL;
+
+          // if lock cannot be acquired, try it in next cycle
+
+          if (SUCCEEDED(result))
+          {
+            result = this->m_pInput->Request(&this->m_pInput->currentReadRequest, this->m_pInput->m_llBufferPosition, BUFFER_SIZE_REQUEST, buffer, NULL, false);
+          }
+        }
+
+        if (SUCCEEDED(result))
+        {
+          // wait until request is completed (request must be completed - with or without data)
+          while (true)
+          {
+            {
+              CLockMutex lock(this->m_pInput->requestMutex, INFINITE);
+
+              if ((this->m_pInput->currentReadRequest->GetState() == CAsyncRequest::Completed))
+              {
+                break;
+              }
+            }
+
+            Sleep(1);
+          }
+
+          result = this->m_pInput->currentReadRequest->GetErrorCode();
+
+          if (SUCCEEDED(result))
+          {
+            if ((this->m_pInput->currentReadRequest->GetBufferLength() == BUFFER_SIZE_REQUEST) ||
+              (this->m_pInput->allDataReceived))
+            {
+              // there are some data, we can proceed with demuxing
+              demuxNextPacket = true;
+            }
+          }
+
+          // delete current read request
+          {
+            CLockMutex lock(this->m_pInput->requestMutex, INFINITE);
+
+            FREE_MEM_CLASS(this->m_pInput->currentReadRequest);
+          }
+        }
+
+        if (demuxNextPacket)
+        {
+          hr = DemuxNextPacket();
+        }
       }
     }
+
+    FREE_MEM(buffer);
 
     // If we didnt exit by request, deliver end-of-stream
     if(!CheckRequest(&cmd)) {
@@ -880,7 +950,6 @@ DWORD CLAVSplitter::ThreadProc()
         (*pinIter)->QueueEndOfStream();
       }
     }
-
   }
 
   return 0;
