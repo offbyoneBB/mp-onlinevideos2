@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
 using Newtonsoft.Json.Linq;
-using System.Xml.Linq;
-using System.Globalization;
 
 namespace OnlineVideos.Sites
 {
@@ -14,9 +10,12 @@ namespace OnlineVideos.Sites
 	{
 		string baseApiUrl = "https://api.twitch.tv/kraken";
 		string gamesUrl = "/games/top?limit=100";
-		string streamsUrl = "/streams?limit&game={0}";
+		string featuredStreamsUrl = "/streams/featured";
+		string streamsUrl = "/streams?limit=100&game={0}";
 		string searchUrl = "/search/streams?limit=100&query={0}";
-		string metaInfoUrl = "http://usher.twitch.tv/find/{0}.xml?type=any";
+		string metaInfoUrl = "http://usher.twitch.tv/find/{0}.json?type=any&private_code=null&group=&";
+		string swfUrl = "http://www-cdn.jtvnw.net/widgets/live_site_player.rc64c906b559598ad2bdc14e9deef3b5e8df97e6b.swf";
+		string pageUrlBase = "http://de.twitch.tv/";
 
 		string nextPageUrl;
 
@@ -81,14 +80,23 @@ namespace OnlineVideos.Sites
 		public override string getUrl(OnlineVideos.VideoInfo video)
 		{
 			video.PlaybackOptions = new Dictionary<string, string>();
-			var metaDocText = GetWebData(string.Format(metaInfoUrl, video.VideoUrl));
-			var fixedDocText = Regex.Replace(metaDocText, @"(?<start></?)(?<digit>\d)", @"${start}_${digit}");
-			var doc = XDocument.Parse(fixedDocText);
-			foreach (var quali in doc.Element("nodes").Elements())
+			var metaDataJson = GetWebData<JToken>(string.Format(metaInfoUrl, video.VideoUrl));
+			foreach (var quali in metaDataJson)
 			{
-				video.PlaybackOptions.Add(
-					string.Format("{0:F0} kbps | {1}p", double.Parse(quali.Element("bitrate").Value, CultureInfo.InvariantCulture), quali.Element("video_height").Value),
-					new MPUrlSourceFilter.RtmpUrl(quali.Element("connect").Value) { Live= true, Subscribe = quali.Element("play").Value, Jtv = quali.Element("token").Value }.ToString());
+				if (quali["play"] != null && quali["connect"] != null)
+				{
+					var rtmpUrl = new MPUrlSourceFilter.RtmpUrl(quali.Value<string>("connect") + "/" + quali.Value<string>("play"))
+					{
+						SwfUrl = swfUrl,
+						SwfVerify = true,
+						Live = true,
+						PageUrl = pageUrlBase + video.VideoUrl,
+						Jtv = quali.Value<string>("token")
+					};
+					video.PlaybackOptions.Add(
+						string.Format("{0:F0} kbps | {1}", quali.Value<double>("bitrate"), quali.Value<string>("type")),
+						rtmpUrl.ToString());
+				}
 			}
 			return video.PlaybackOptions.Select(p => p.Value).FirstOrDefault();
 		}
