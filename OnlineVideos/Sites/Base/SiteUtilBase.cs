@@ -463,7 +463,7 @@ namespace OnlineVideos.Sites
         /// It will automatically convert the retrieved data into the type you provided.
         /// Retrieved data is added to a cache if HTTP Status was 200 and more than 500 bytes were retrieved. The cache timeout is user configurable (<see cref="OnlineVideoSettings.CacheTimeout"/>).
         /// </summary>
-		/// <typeparam name="T">The type you want the returned data to be. Supported are <see cref="String"/>, <see cref="Newtonsoft.Json.Linq.JObject"/>, <see cref="RssToolkit.Rss.RssDocument"/>, <see cref="XmlDocument"/>, <see cref="System.Xml.Linq.XDocument"/> and <see cref="HtmlAgilityPack.HtmlDocument"/>.</typeparam>
+		/// <typeparam name="T">The type you want the returned data to be. Supported are <see cref="String"/>, <see cref="Newtonsoft.Json.Linq.JToken"/>, <see cref="Newtonsoft.Json.Linq.JObject"/>, <see cref="RssToolkit.Rss.RssDocument"/>, <see cref="XmlDocument"/>, <see cref="System.Xml.Linq.XDocument"/> and <see cref="HtmlAgilityPack.HtmlDocument"/>.</typeparam>
         /// <param name="url">The url to requets data from.</param>
         /// <param name="cc">A <see cref="CookieContainer"/> that will send cookies along with the request and afterwards contains all cookies of the response.</param>
         /// <param name="referer">A referer that will be send with the request.</param>
@@ -489,6 +489,10 @@ namespace OnlineVideos.Sites
             {
                 return (T)(object)webData;
             }
+			else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JToken))
+			{
+				return (T)(object)Newtonsoft.Json.Linq.JToken.Parse(webData);
+			}
             else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JObject))
             {
                 return (T)(object)Newtonsoft.Json.Linq.JObject.Parse(webData);
