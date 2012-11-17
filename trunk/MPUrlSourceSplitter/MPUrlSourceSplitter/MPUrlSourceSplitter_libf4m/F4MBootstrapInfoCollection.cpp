@@ -23,7 +23,7 @@
 #include "F4MBootstrapInfoCollection.h"
 
 CF4MBootstrapInfoCollection::CF4MBootstrapInfoCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

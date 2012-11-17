@@ -23,7 +23,7 @@
 #include "SampleEntryBoxCollection.h"
 
 CSampleEntryBoxCollection::CSampleEntryBoxCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

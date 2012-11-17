@@ -1057,14 +1057,6 @@ HRESULT CLAVInputPin::CreateAsyncRequestProcessWorker(void)
     this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME, result);
   }
 
-  if (SUCCEEDED(result))
-  {
-    if (!SetThreadPriority(this->hAsyncRequestProcessingThread, THREAD_PRIORITY_TIME_CRITICAL))
-    {
-      this->logger->Log(LOGGER_WARNING, L"%s: %s: cannot set thread priority for receive data thread, error: %u", MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME, GetLastError());
-    }
-  }
-
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME, result);
   return result;
 }

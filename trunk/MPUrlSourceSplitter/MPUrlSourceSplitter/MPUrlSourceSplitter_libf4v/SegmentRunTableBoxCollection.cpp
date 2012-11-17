@@ -23,7 +23,7 @@
 #include "SegmentRunTableBoxCollection.h"
 
 CSegmentRunTableBoxCollection::CSegmentRunTableBoxCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

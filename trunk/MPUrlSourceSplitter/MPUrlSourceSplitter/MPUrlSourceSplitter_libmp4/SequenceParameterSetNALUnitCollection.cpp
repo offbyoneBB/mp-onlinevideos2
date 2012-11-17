@@ -23,7 +23,7 @@
 #include "SequenceParameterSetNALUnitCollection.h"
 
 CSequenceParameterSetNALUnitCollection::CSequenceParameterSetNALUnitCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

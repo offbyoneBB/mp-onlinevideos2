@@ -23,7 +23,7 @@
 #include "F4MMediaCollection.h"
 
 CF4MMediaCollection::CF4MMediaCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

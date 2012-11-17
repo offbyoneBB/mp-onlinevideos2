@@ -647,6 +647,29 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
               if (SUCCEEDED(result))
               {
                 this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+
+                if (segmentFragment->GetHttpDownloadRequest() == NULL)
+                {
+                  result = (segmentFragment->CreateHttpDownloadRequest()) ? result : E_OUTOFMEMORY;
+
+                  if (SUCCEEDED(result))
+                  {
+                    wchar_t *url = this->segmentsFragments->GetSegmentFragmentUrl(segmentFragment);
+                    CHECK_POINTER_HRESULT(result, url, result, E_OUTOFMEMORY);
+
+                    if (SUCCEEDED(result))
+                    {
+                      result = (segmentFragment->GetHttpDownloadRequest()->SetUrl(url)) ? result : E_OUTOFMEMORY;
+                    }
+                    FREE_MEM(url);
+                  }
+                }
+
+                if (segmentFragment->GetHttpDownloadResponse() == NULL)
+                {
+                  result = (segmentFragment->CreateHttpDownloadResponse()) ? result : E_OUTOFMEMORY;
+                }
+
                 result = (this->mainCurlInstance->Initialize(segmentFragment->GetHttpDownloadRequest())) ? S_OK : E_FAIL;
 
                 if (SUCCEEDED(result))
@@ -721,14 +744,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
                             parsedSegmentFragment->GetFragmentTimestamp());
                           continueWithBootstrapInfo &= (clone != NULL);
 
-                          continueWithBootstrapInfo &= clone->SetHttpDownloadRequest(parsedSegmentFragment->GetHttpDownloadRequest());
-
                           if (continueWithBootstrapInfo)
                           {
                             continueWithBootstrapInfo &= this->segmentsFragments->Add(clone);
                             if (continueWithBootstrapInfo)
                             {
-                              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: added new segment and fragment, segment %d, fragment %d, url '%s', timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, clone->GetSegment(), clone->GetFragment(), clone->GetHttpDownloadRequest()->GetUrl(), clone->GetFragmentTimestamp());
+                              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: added new segment and fragment, segment %d, fragment %d, timestamp: %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, clone->GetSegment(), clone->GetFragment(), clone->GetFragmentTimestamp());
                             }
                           }
 
@@ -914,12 +935,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
                       size.QuadPart += length;
 
                       // after storing segment and fragment to file some data are not necessary to hold
-                      segmentFragment->GetHttpDownloadRequest()->SetCookie(NULL);
-                      segmentFragment->GetHttpDownloadRequest()->SetReferer(NULL);
-                      segmentFragment->GetHttpDownloadRequest()->SetUserAgent(NULL);
-                      segmentFragment->GetHttpDownloadRequest()->GetHeaders()->Clear();
-
-                      segmentFragment->GetHttpDownloadResponse()->GetHeaders()->Clear();
+                      segmentFragment->FreeHttpDownloadRequest();
+                      segmentFragment->FreeHttpDownloadResponse();
                     }
                   }
                 }
@@ -1275,8 +1292,8 @@ int64_t CMPUrlSourceSplitter_Protocol_Afhs::SeekToTime(int64_t time)
 
   if (segFrag != NULL)
   {
-    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: segment %d, fragment %d, url '%s', timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
-      segFrag->GetSegment(), segFrag->GetFragment(), segFrag->GetHttpDownloadRequest()->GetUrl(), segFrag->GetFragmentTimestamp());
+    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: segment %d, fragment %d, timestamp %lld", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME,
+      segFrag->GetSegment(), segFrag->GetFragment(), segFrag->GetFragmentTimestamp());
 
     if (!segFrag->IsDownloaded())
     {
@@ -1582,16 +1599,25 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
 
                 if (SUCCEEDED(result))
                 {
+                  result = (segmentsFragments->SetBaseUrl(qualityUrl)) ? result : E_OUTOFMEMORY;
+                }
+
+                if (SUCCEEDED(result))
+                {
                   unsigned int fragmentRunEntryTableIndex  = 0;
 
-                  for (unsigned int i = 0; i < segmentRunEntryTable->Count(); i++)
+                  for (unsigned int i = 0; (SUCCEEDED(result) && (i < segmentRunEntryTable->Count())); i++)
                   {
                     CSegmentRunEntry *segmentRunEntry = segmentRunEntryTable->GetItem(i);
                     unsigned int lastSegment = (i == (segmentRunEntryTable->Count() - 1)) ? (segmentRunEntry->GetFirstSegment() + 1) : segmentRunEntryTable->GetItem(i + 1)->GetFirstSegment();
 
-                    for (unsigned int j = segmentRunEntry->GetFirstSegment(); j < lastSegment; j++)
+                    for (unsigned int j = segmentRunEntry->GetFirstSegment(); (SUCCEEDED(result) && (j < lastSegment)); j++)
                     {
-                      for (unsigned int k = 0; k < ((segmentRunEntry->GetFragmentsPerSegment() == UINT_MAX) ? fragmentRunEntryTable->Count() : segmentRunEntry->GetFragmentsPerSegment()); k++)
+                      unsigned int totalFragmentsPerSegment = ((segmentRunEntry->GetFragmentsPerSegment() == UINT_MAX) ? fragmentRunEntryTable->Count() : segmentRunEntry->GetFragmentsPerSegment());
+
+                      result = (segmentsFragments->EnsureEnoughSpace(segmentsFragments->Count() + totalFragmentsPerSegment)) ? result : E_OUTOFMEMORY;
+
+                      for (unsigned int k = 0; (SUCCEEDED(result) && (k < totalFragmentsPerSegment)); k++)
                       {
                         // choose fragment and get its timestamp
                         uint64_t timestamp = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragmentTimestamp();
@@ -1604,34 +1630,19 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
                           firstFragment += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count() + 1);
                         }
                         fragmentRunEntryTableIndex++;
-                        wchar_t *url = FormatString(L"%sSeg%d-Frag%d", qualityUrl, j, firstFragment);
-                        CHECK_POINTER_HRESULT(result, url, result, E_OUTOFMEMORY);
+
+                        CSegmentFragment *segmentFragment = new CSegmentFragment(j, firstFragment, timestamp * 1000 / timeScale);
+                        CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
 
                         if (SUCCEEDED(result))
                         {
-                          CSegmentFragment *segmentFragment = new CSegmentFragment(j, firstFragment, timestamp * 1000 / timeScale);
-                          CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
-
-                          if (SUCCEEDED(result))
-                          {
-                            result = (segmentFragment->GetHttpDownloadRequest()->SetUrl(url)) ? result : E_FAIL;
-                            result = (segmentFragment->GetHttpDownloadRequest()->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL))) ? result : E_FAIL;
-                            result = (segmentFragment->GetHttpDownloadRequest()->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL))) ? result : E_FAIL;
-                            result = (segmentFragment->GetHttpDownloadRequest()->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL))) ? result : E_FAIL;
-                            segmentFragment->GetHttpDownloadRequest()->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
-                            segmentFragment->GetHttpDownloadRequest()->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-                          }
-                          if (SUCCEEDED(result))
-                          {
-                            result = (segmentsFragments->Add(segmentFragment)) ? result : E_FAIL;
-                          }
-
-                          if (FAILED(result))
-                          {
-                            FREE_MEM_CLASS(segmentFragment);
-                          }
+                          result = (segmentsFragments->Add(segmentFragment)) ? result : E_FAIL;
                         }
-                        FREE_MEM(url);
+
+                        if (FAILED(result))
+                        {
+                          FREE_MEM_CLASS(segmentFragment);
+                        }
                       }
                     }
                   }
@@ -1651,7 +1662,10 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
     FREE_MEM(quality);
     FREE_MEM_CLASS(fragmentRunEntryTable);
 
-    result = (segmentsFragments->Count() > 0) ? result : E_FAIL;
+    if (SUCCEEDED(result))
+    {
+      result = (segmentsFragments->Count() > 0) ? result : E_FAIL;
+    }
 
     if (SUCCEEDED(result) && (logCollection))
     {
@@ -1660,7 +1674,7 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
       {
         CSegmentFragment *segmentFragment = segmentsFragments->GetItem(i);
 
-        wchar_t *temp = FormatString(L"%s%ssegment %u, fragment %u, url '%s', timestamp: %llu", (i == 0) ? L"" : segmentFragmentLog, (i == 0) ? L"" : L"\n", segmentFragment->GetSegment(), segmentFragment->GetFragment(), segmentFragment->GetHttpDownloadRequest()->GetUrl(), segmentFragment->GetFragmentTimestamp());
+        wchar_t *temp = FormatString(L"%s%ssegment %u, fragment %u, timestamp: %llu", (i == 0) ? L"" : segmentFragmentLog, (i == 0) ? L"" : L"\n", segmentFragment->GetSegment(), segmentFragment->GetFragment(), segmentFragment->GetFragmentTimestamp());
         FREE_MEM(segmentFragmentLog);
         segmentFragmentLog = temp;
       }

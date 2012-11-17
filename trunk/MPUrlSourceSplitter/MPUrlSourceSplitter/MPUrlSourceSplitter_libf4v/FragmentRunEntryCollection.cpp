@@ -23,7 +23,7 @@
 #include "FragmentRunEntryCollection.h"
 
 CFragmentRunEntryCollection::CFragmentRunEntryCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

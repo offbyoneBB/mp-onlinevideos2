@@ -23,7 +23,7 @@
 #include "DecryptedDataCollection.h"
 
 CDecryptedDataCollection::CDecryptedDataCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

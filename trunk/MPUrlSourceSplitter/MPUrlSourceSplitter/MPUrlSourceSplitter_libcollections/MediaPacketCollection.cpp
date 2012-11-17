@@ -23,13 +23,13 @@
 #include "MediaPacketCollection.h"
 
 CMediaPacketCollection::CMediaPacketCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
   this->consolidatedMediaPackets = new CMediaPacketCollection(false);
 }
 
 CMediaPacketCollection::CMediaPacketCollection(bool consolidateSpace)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
   this->consolidatedMediaPackets = NULL;
   if (consolidateSpace)

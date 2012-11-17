@@ -23,12 +23,14 @@
 #include "SegmentFragmentCollection.h"
 
 CSegmentFragmentCollection::CSegmentFragmentCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
+  this->defaultBaseUrl = NULL;
 }
 
 CSegmentFragmentCollection::~CSegmentFragmentCollection(void)
 {
+  FREE_MEM(this->defaultBaseUrl);
 }
 
 int CSegmentFragmentCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
@@ -47,7 +49,7 @@ int CSegmentFragmentCollection::CompareItemKeys(const wchar_t *firstKey, const w
 
 const wchar_t *CSegmentFragmentCollection::GetKey(CSegmentFragment *item)
 {
-  return item->GetHttpDownloadRequest()->GetUrl();
+  return L"";
 }
 
 CSegmentFragment *CSegmentFragmentCollection::Clone(CSegmentFragment *item)
@@ -90,4 +92,19 @@ unsigned int CSegmentFragmentCollection::GetFirstNotProcessedSegmentFragment(uns
   }
 
   return result;
+}
+
+wchar_t *CSegmentFragmentCollection::GetSegmentFragmentUrl(CSegmentFragment *segmentFragment)
+{
+  return FormatString(L"%sSeg%d-Frag%d", this->defaultBaseUrl, segmentFragment->GetSegment(), segmentFragment->GetFragment());
+}
+
+const wchar_t *CSegmentFragmentCollection::GetBaseUrl(void)
+{
+  return this->defaultBaseUrl;
+}
+
+bool CSegmentFragmentCollection::SetBaseUrl(const wchar_t *baseUrl)
+{
+  SET_STRING_RETURN_WITH_NULL(this->defaultBaseUrl, baseUrl);
 }

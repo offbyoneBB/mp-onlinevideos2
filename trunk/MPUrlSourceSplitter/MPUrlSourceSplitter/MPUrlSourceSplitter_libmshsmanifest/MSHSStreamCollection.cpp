@@ -24,7 +24,7 @@
 #include "BufferHelper.h"
 
 CMSHSStreamCollection::CMSHSStreamCollection(void)
-  : CSerializableCollection(CCollection::Delete)
+  : CSerializableCollection()
 {
 }
 

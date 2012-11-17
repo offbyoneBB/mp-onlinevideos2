@@ -114,6 +114,20 @@ public:
   // @return : deep clone of current instance or NULL if error
   CSegmentFragment *Clone(void);
 
+  // creates HTTP download request, previous request (if exists) is destroyed
+  // @return : true if HTTP download request created, false otherwise
+  bool CreateHttpDownloadRequest(void);
+
+  // creates HTTP download response, previous response (if exists) is destroyed
+  // @return : true if HTTP download response created, false otherwise
+  bool CreateHttpDownloadResponse(void);
+
+  // frees HTTP download request
+  void FreeHttpDownloadRequest(void);
+
+  // frees HTTP download response
+  void FreeHttpDownloadResponse(void);
+
 private:
   // stores segment ID
   unsigned int segment;

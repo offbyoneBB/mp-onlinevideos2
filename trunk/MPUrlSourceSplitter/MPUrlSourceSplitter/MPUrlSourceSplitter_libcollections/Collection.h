@@ -28,15 +28,8 @@
 template <class TItem, class TItemKey> class CCollection
 {
 public:
-  enum FreeItemMethod
-  {
-    Delete,
-    FreeMem
-  };
-
   // create new instance of CCollection class
-  // @param freeItemMethod : method of removing items from memory
-  CCollection(FreeItemMethod freeItemMethod);
+  CCollection();
 
   virtual ~CCollection(void);
 
@@ -97,6 +90,12 @@ public:
   // @return : the index of item or UINT_MAX if not found
   virtual unsigned int GetItemIndex(TItemKey key, void *context);
 
+  // ensures that in internal buffer is enough space
+  // if in internal buffer is not enough space, method tries to allocate enough space
+  // @param requestedCount : the requested count of items
+  // @return : true if in internal buffer is enough space, false otherwise
+  virtual bool EnsureEnoughSpace(unsigned int requestedCount);
+
 protected:
   // pointer to array of pointers to items
   TItem **items;
@@ -106,13 +105,6 @@ protected:
 
   // maximum count of items to store in collection
   unsigned int itemMaximumCount;
-
-  // method of removing items from memory
-  FreeItemMethod freeItemMethod;
-
-  // delete item from memory
-  // @param item : item to delete from memory
-  virtual void FreeItem(TItem *item);
 
   // compare two items
   // @param firstItem : the first item to compare
@@ -137,21 +129,14 @@ protected:
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
   virtual TItem *Clone(TItem *item) = 0;
-
-  // ensures that in internal buffer is enough space
-  // if in internal buffer is not enough space, method tries to allocate enough space
-  // @param requestedCount : the requested count of items
-  // @return : true if in internal buffer is enough space, false otherwise
-  virtual bool EnsureEnoughSpace(unsigned int requestedCount);
 };
 
 // implementation
 
-template <class TItem, class TItemKey> CCollection<TItem, TItemKey>::CCollection(FreeItemMethod freeItemMethod)
+template <class TItem, class TItemKey> CCollection<TItem, TItemKey>::CCollection()
 {
   this->itemCount = 0;
   this->itemMaximumCount = 16;
-  this->freeItemMethod = freeItemMethod;
   this->items = ALLOC_MEM_SET(this->items, TItem *, this->itemMaximumCount, 0);
 }
 
@@ -162,28 +147,12 @@ template <class TItem, class TItemKey> CCollection<TItem, TItemKey>::~CCollectio
   FREE_MEM(this->items);
 }
 
-template <class TItem, class TItemKey> void CCollection<TItem, TItemKey>::FreeItem(TItem *item)
-{
-  switch (this->freeItemMethod)
-  {
-  case Delete:
-    delete item;
-    break;
-  case FreeMem:
-    FREE_MEM(item);
-    break;
-  default:
-    delete item;
-    break;
-  }
-}
-
 template <class TItem, class TItemKey> void CCollection<TItem, TItemKey>::Clear(void)
 {
   // call destructors of all items
   for(unsigned int i = 0; i < this->itemCount; i++)
   {
-    this->FreeItem(*(this->items + i));
+    FREE_MEM_CLASS((*(this->items + i)));
   }
 
   // set used items to 0
@@ -195,9 +164,7 @@ template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Ensure
   if (requestedCount >= this->itemMaximumCount)
   {
     // there is need to enlarge array of items
-    this->itemMaximumCount = requestedCount;
-
-    TItem **itemArray = REALLOC_MEM(this->items, TItem *, this->itemMaximumCount);
+    TItem **itemArray = REALLOC_MEM(this->items, TItem *, requestedCount);
 
     if (itemArray == NULL)
     {
@@ -205,6 +172,7 @@ template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Ensure
     }
 
     this->items = itemArray;
+    this->itemMaximumCount = requestedCount;
   }
 
   return true;
@@ -335,7 +303,7 @@ template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Remove
   if ((index >= 0) && (index < this->itemCount))
   {
     // delete item on specified index
-    this->FreeItem(*(this->items + index));
+    FREE_MEM_CLASS((*(this->items + index)));
     // move rest of items
     for (unsigned int i = (index + 1); i < this->itemCount; i++)
     {

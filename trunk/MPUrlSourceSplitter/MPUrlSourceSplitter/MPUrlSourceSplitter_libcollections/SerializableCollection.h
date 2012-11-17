@@ -32,8 +32,7 @@ template <class TItem, class TItemKey> class CSerializableCollection : public CC
 {
 public:
   // create new instance of CSerializableCollection class
-  // @param freeItemMethod : method of removing items from memory
-  CSerializableCollection(FreeItemMethod freeItemMethod);
+  CSerializableCollection();
 
   virtual ~CSerializableCollection(void);
 
@@ -54,8 +53,8 @@ public:
 
 // implementation
 
-template <class TItem, class TItemKey> CSerializableCollection<TItem, TItemKey>::CSerializableCollection(FreeItemMethod freeItemMethod)
-  : CCollection<TItem, TItemKey>(freeItemMethod)
+template <class TItem, class TItemKey> CSerializableCollection<TItem, TItemKey>::CSerializableCollection()
+  : CCollection<TItem, TItemKey>()
 {
 }
 

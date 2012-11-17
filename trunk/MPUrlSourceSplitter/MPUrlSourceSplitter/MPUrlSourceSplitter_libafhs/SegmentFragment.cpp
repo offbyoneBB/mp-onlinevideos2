@@ -32,8 +32,8 @@ CSegmentFragment::CSegmentFragment(unsigned int segment, unsigned int fragment, 
   this->storeFilePosition = -1;
   this->length = 0;
 
-  this->httpDownloadRequest = new CHttpDownloadRequest();
-  this->httpDownloadResponse = new CHttpDownloadResponse();
+  this->httpDownloadRequest = NULL;
+  this->httpDownloadResponse = NULL;
 }
 
 CSegmentFragment::~CSegmentFragment(void)
@@ -169,4 +169,30 @@ CSegmentFragment *CSegmentFragment::Clone(void)
     result->storeFilePosition = this->storeFilePosition;
   }
   return result;
+}
+
+bool CSegmentFragment::CreateHttpDownloadRequest(void)
+{
+  FREE_MEM_CLASS(this->httpDownloadRequest);
+  this->httpDownloadRequest = new CHttpDownloadRequest();
+
+  return (this->httpDownloadRequest != NULL);
+}
+
+bool CSegmentFragment::CreateHttpDownloadResponse(void)
+{
+  FREE_MEM_CLASS(this->httpDownloadResponse);
+  this->httpDownloadResponse = new CHttpDownloadResponse();
+
+  return (this->httpDownloadResponse != NULL);
+}
+
+void CSegmentFragment::FreeHttpDownloadRequest(void)
+{
+  FREE_MEM_CLASS(this->httpDownloadRequest);
+}
+
+void CSegmentFragment::FreeHttpDownloadResponse(void)
+{
+  FREE_MEM_CLASS(this->httpDownloadResponse);
 }

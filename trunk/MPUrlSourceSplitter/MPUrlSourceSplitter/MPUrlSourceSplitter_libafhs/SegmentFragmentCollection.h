@@ -48,7 +48,24 @@ public:
   // @return : index of first not processed segment and fragment or UINT_MAX if not exists
   unsigned int GetFirstNotProcessedSegmentFragment(unsigned int start);
 
+  // gets default url for segment and fragment
+  // @param segmentFragment : the segment and fragment to get default url
+  // @return : default url for segment and fragment or NULL if error
+  wchar_t *GetSegmentFragmentUrl(CSegmentFragment *segmentFragment);
+
+  // gets default base url for all segments and fragment
+  // @return : default base url for all segments and fragments or NULL if error
+  const wchar_t *GetBaseUrl(void);
+
+  // sets default base url for all segments and fragments
+  // @param baseUrl : default base url to set
+  // @return : true if successful, false otherwise
+  bool SetBaseUrl(const wchar_t *baseUrl);
+
 protected:
+
+  // holds default base url for all segments and fragments
+  wchar_t *defaultBaseUrl;
 
   // compare two item keys
   // @param firstKey : the first item key to compare

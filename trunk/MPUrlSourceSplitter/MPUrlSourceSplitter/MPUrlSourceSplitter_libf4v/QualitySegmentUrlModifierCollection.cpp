@@ -23,7 +23,7 @@
 #include "QualitySegmentUrlModifierCollection.h"
 
 CQualitySegmentUrlModifierCollection::CQualitySegmentUrlModifierCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

@@ -120,7 +120,7 @@
 #define PARAMETER_NAME_RTMP_SWF_AGE                                           L"RtmpSwfAge"
 
 // we should get data in twenty seconds
-#define RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT                                     200000
+#define RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
 #define RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT                         3
 
 // define default values for RTMP protocol

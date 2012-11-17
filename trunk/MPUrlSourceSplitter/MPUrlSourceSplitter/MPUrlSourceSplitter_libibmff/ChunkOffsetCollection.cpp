@@ -23,7 +23,7 @@
 #include "ChunkOffsetCollection.h"
 
 CChunkOffsetCollection::CChunkOffsetCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

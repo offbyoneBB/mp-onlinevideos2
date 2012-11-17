@@ -23,7 +23,7 @@
 #include "StreamFragmentCollection.h"
 
 CStreamFragmentCollection::CStreamFragmentCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

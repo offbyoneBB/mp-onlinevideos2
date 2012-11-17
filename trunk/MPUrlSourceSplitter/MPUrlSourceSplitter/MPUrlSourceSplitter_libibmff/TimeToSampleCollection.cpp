@@ -23,7 +23,7 @@
 #include "TimeToSampleCollection.h"
 
 CTimeToSampleCollection::CTimeToSampleCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

@@ -23,7 +23,7 @@
 #include "MMSStreamCollection.h"
 
 MMSStreamCollection::MMSStreamCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 

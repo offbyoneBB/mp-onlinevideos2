@@ -23,7 +23,7 @@
 #include "ParameterCollection.h"
 
 CParameterCollection::CParameterCollection(void)
-  : CCollection(CCollection::Delete)
+  : CCollection()
 {
 }
 
