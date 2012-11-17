@@ -38,7 +38,7 @@ CAsyncRequest::~CAsyncRequest(void)
 {
 }
 
-HRESULT CAsyncRequest::Request(unsigned int requestId, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData)
+HRESULT CAsyncRequest::Request(unsigned int requestId, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData, bool waitForData)
 {
   this->requestId = requestId;
   this->position = position;
@@ -47,6 +47,7 @@ HRESULT CAsyncRequest::Request(unsigned int requestId, int64_t position, LONG le
   this->requestState = CAsyncRequest::Waiting;
   this->errorCode = S_OK;
   this->userData = userData;
+  this->waitForData = waitForData;
 
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, this->buffer);
@@ -73,16 +74,6 @@ void CAsyncRequest::Complete(HRESULT errorCode)
 {
   this->requestState = CAsyncRequest::Completed;
   this->errorCode = errorCode;
-}
-
-void CAsyncRequest::Cancel(void)
-{
-  this->requestState = CAsyncRequest::Cancelled;
-}
-
-void CAsyncRequest::Request(void)
-{
-  this->requestState = CAsyncRequest::Requested;
 }
 
 void CAsyncRequest::WaitAndIgnoreTimeout(void)
@@ -113,4 +104,9 @@ unsigned int CAsyncRequest::GetRequestId(void)
 BYTE *CAsyncRequest::GetBuffer(void)
 {
   return this->buffer;
+}
+
+bool CAsyncRequest::IsWaitingForData(void)
+{
+  return this->waitForData;
 }

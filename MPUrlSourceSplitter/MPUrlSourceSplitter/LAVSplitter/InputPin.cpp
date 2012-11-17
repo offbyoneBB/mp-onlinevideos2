@@ -1013,7 +1013,7 @@ HRESULT CLAVInputPin::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
   return result;
 }
 
-HRESULT CLAVInputPin::Request(CAsyncRequest **request, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData)
+HRESULT CLAVInputPin::Request(CAsyncRequest **request, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData, bool waitForData)
 {
   CheckPointer(request, E_POINTER);
 
@@ -1023,7 +1023,7 @@ HRESULT CLAVInputPin::Request(CAsyncRequest **request, int64_t position, LONG le
     return E_OUTOFMEMORY;
   }
 
-  HRESULT result = (*request)->Request(this->requestId++, position, length, buffer, userData);
+  HRESULT result = (*request)->Request(this->requestId++, position, length, buffer, userData, waitForData);
 
   if (FAILED(result))
   {
@@ -1179,7 +1179,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
           request->Complete(E_DEMUXER_WORKER_STOP_REQUEST);
         }
 
-        if ((request->GetState() == CAsyncRequest::Waiting) || (request->GetState() == CAsyncRequest::WaitingIgnoreTimeout) || (request->GetState() == CAsyncRequest::Requested))
+        if ((request->GetState() == CAsyncRequest::Waiting) || (request->GetState() == CAsyncRequest::WaitingIgnoreTimeout))
         {
           // process only waiting requests
           // variable to store found data length
@@ -1345,6 +1345,13 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
             }
           }
 
+          if ((packetIndex == UINT_MAX) && (request->GetState() == CAsyncRequest::Waiting) && (!request->IsWaitingForData()))
+          {
+            // return imidiatelly with filled data
+            request->SetBufferLength(foundDataLength);
+            request->Complete(S_OK);
+          }
+
           if ((packetIndex == UINT_MAX) && (request->GetState() == CAsyncRequest::Waiting))
           {
             // get current stream position
@@ -1497,11 +1504,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   result = (caller->SeekToPosition(requestStart, requestEnd) >= 0) ? S_OK : E_FAIL;
                 }
 
-                if (SUCCEEDED(result))
-                {
-                  request->Request();
-                }
-                else
+                if (FAILED(result))
                 {
                   // if error occured while requesting filter for data
                   caller->logger->Log(LOGGER_WARNING, L"%s: %s: request '%u' error while requesting data, complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
@@ -1657,7 +1660,7 @@ STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
       // lock access to current read request
       CLockMutex lock(this->requestMutex, INFINITE);
 
-      result = this->Request(&this->currentReadRequest, position, length, buffer, NULL);
+      result = this->Request(&this->currentReadRequest, position, length, buffer, NULL, true);
     }
 
     if (SUCCEEDED(result))
@@ -1699,12 +1702,6 @@ STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
               this->logger->Log(LOGGER_DATA, L"%s: %s: returned data length: %lu, result: 0x%08X", MODULE_NAME, METHOD_SYNC_READ_NAME, this->currentReadRequest->GetBufferLength(), result);
               break;
             }
-            else if (this->currentReadRequest->GetState() == CAsyncRequest::Cancelled)
-            {
-              // request is cancelled
-              result = E_ABORT;
-              break;
-            }
             else if (this->currentReadRequest->GetState() == CAsyncRequest::WaitingIgnoreTimeout)
             {
               // we are waiting for data and we have to ignore timeout
@@ -1730,11 +1727,7 @@ STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
         // lock access to current read request
         CLockMutex lock(this->requestMutex, INFINITE);
 
-        if (this->currentReadRequest != NULL)
-        {
-          delete this->currentReadRequest;
-          this->currentReadRequest = NULL;
-        }
+        FREE_MEM_CLASS(this->currentReadRequest);
       }
 
       if (FAILED(result))
