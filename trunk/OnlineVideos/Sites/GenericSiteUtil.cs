@@ -169,10 +169,7 @@ namespace OnlineVideos.Sites
             while (m.Success)
             {
                 RssLink cat = new RssLink();
-                cat.Url = m.Groups["url"].Value;
-                if (!string.IsNullOrEmpty(dynamicCategoryUrlFormatString)) cat.Url = string.Format(dynamicCategoryUrlFormatString, cat.Url);
-                cat.Url = ApplyUrlDecoding(cat.Url, dynamicCategoryUrlDecoding);
-                if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
+				cat.Url = FormatDecodeAbsolutifyUrl(baseUrl, m.Groups["url"].Value, dynamicCategoryUrlFormatString, dynamicCategoryUrlDecoding);
                 cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim().Replace('\n', ' '));
                 cat.Thumb = m.Groups["thumb"].Value;
                 if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
@@ -217,10 +214,7 @@ namespace OnlineVideos.Sites
                     while (m.Success)
                     {
                         RssLink cat = new RssLink();
-                        cat.Url = m.Groups["url"].Value;
-                        if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
-                        cat.Url = ApplyUrlDecoding(cat.Url, dynamicSubCategoryUrlDecoding);
-                        if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
+						cat.Url = FormatDecodeAbsolutifyUrl(baseUrl, m.Groups["url"].Value, dynamicSubCategoryUrlFormatString, dynamicSubCategoryUrlDecoding);						
                         cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
                         cat.Thumb = m.Groups["thumb"].Value;
                         if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
@@ -640,14 +634,9 @@ namespace OnlineVideos.Sites
                         VideoInfo videoInfo = CreateVideoInfo();
                         videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                         // get, format and if needed absolutify the video url
-                        videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
-                        if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
-                        videoInfo.VideoUrl = ApplyUrlDecoding(videoInfo.VideoUrl, videoListUrlDecoding);
-                        if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
+						videoInfo.VideoUrl = FormatDecodeAbsolutifyUrl(url, m.Groups["VideoUrl"].Value, videoListRegExFormatString, videoListUrlDecoding);
                         // get, format and if needed absolutify the thumb url
-                        videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                        if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.ImageUrl = string.Format(videoThumbFormatString, videoInfo.ImageUrl);
-                        if (!string.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
+						videoInfo.ImageUrl = FormatDecodeAbsolutifyUrl(url, m.Groups["ImageUrl"].Value, videoThumbFormatString, UrlDecoding.None);
                         videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
                         videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
                         videoInfo.Description = m.Groups["Description"].Value;
@@ -703,23 +692,8 @@ namespace OnlineVideos.Sites
                     Match mPrev = regEx_PrevPage.Match(data);
                     if (mPrev.Success)
                     {
-                        previousPageAvailable = true;
-                        previousPageUrl = mPrev.Groups["url"].Value;
-                        if (!string.IsNullOrEmpty(prevPageRegExUrlFormatString)) previousPageUrl = string.Format(prevPageRegExUrlFormatString, previousPageUrl);
-                        previousPageUrl = ApplyUrlDecoding(previousPageUrl, prevPageRegExUrlDecoding);
-                        if (!Uri.IsWellFormedUriString(previousPageUrl, System.UriKind.Absolute))
-                        {
-                            Uri uri = null;
-                            if (Uri.TryCreate(new Uri(url), previousPageUrl, out uri))
-                            {
-                                previousPageUrl = uri.ToString();
-                            }
-                            else
-                            {
-                                previousPageAvailable = false;
-                                previousPageUrl = "";
-                            }
-                        }
+						previousPageUrl = FormatDecodeAbsolutifyUrl(url, mPrev.Groups["url"].Value, prevPageRegExUrlFormatString, prevPageRegExUrlDecoding);
+						previousPageAvailable = !string.IsNullOrEmpty(nextPageUrl);
                     }
                     else
                     {
@@ -734,23 +708,8 @@ namespace OnlineVideos.Sites
                     Match mNext = regEx_NextPage.Match(data);
                     if (mNext.Success)
                     {
-                        nextPageAvailable = true;
-                        nextPageUrl = mNext.Groups["url"].Value;
-                        if (!string.IsNullOrEmpty(nextPageRegExUrlFormatString)) nextPageUrl = string.Format(nextPageRegExUrlFormatString, nextPageUrl);
-                        nextPageUrl = ApplyUrlDecoding(nextPageUrl, nextPageRegExUrlDecoding);
-                        if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute))
-                        {
-                            Uri uri = null;
-                            if (Uri.TryCreate(new Uri(url), nextPageUrl, out uri))
-                            {
-                                nextPageUrl = uri.ToString();
-                            }
-                            else
-                            {
-                                nextPageAvailable = false;
-                                nextPageUrl = "";
-                            }
-                        }
+						nextPageUrl = FormatDecodeAbsolutifyUrl(url, mNext.Groups["url"].Value, nextPageRegExUrlFormatString, nextPageRegExUrlDecoding);
+						nextPageAvailable = !string.IsNullOrEmpty(nextPageUrl);
                     }
                     else
                     {
@@ -786,6 +745,38 @@ namespace OnlineVideos.Sites
                 default: return text;
             }
         }
+
+		protected virtual string FormatDecodeAbsolutifyUrl(string currentUrl, string matchedUrl, string matchedUrlFormatString, UrlDecoding matchedUrlDecoding)
+		{
+			// 1. make sure the matched string is not null
+			string result = matchedUrl ?? string.Empty;
+			// 2. format the matched url when both the format string and the matched url aren't null or empty
+			if (!string.IsNullOrEmpty(result) && !string.IsNullOrEmpty(matchedUrlFormatString)) result = string.Format(matchedUrlFormatString, result);
+			// 3. decode the match
+			result = ApplyUrlDecoding(result, matchedUrlDecoding); 
+			// 4. build an absolute url when needed
+			if (!Uri.IsWellFormedUriString(result, UriKind.Absolute))
+			{
+				// 4. a) workaround for .net bug when combining uri with a query only
+				if (result.StartsWith("?")) 
+				{
+					result = new UriBuilder(currentUrl) { Query = result.Substring(1) }.Uri.ToString();
+				}
+				else
+				{
+					Uri uri = null;
+					if (Uri.TryCreate(new Uri(currentUrl), result, out uri))
+					{
+						result = uri.ToString();
+					}
+					else
+					{
+						result = string.Empty;
+					}
+				}
+			}
+			return result;
+		}
 
         #region Next/Previous Page
 
