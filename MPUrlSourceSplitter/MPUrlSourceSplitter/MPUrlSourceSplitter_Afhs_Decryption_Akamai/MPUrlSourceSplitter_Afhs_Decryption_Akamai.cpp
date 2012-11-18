@@ -654,78 +654,81 @@ DecryptionResult CMPUrlSourceSplitter_Afhs_Decryption_Akamai::Supported(CAfhsDec
     // by default we have not known pattern
     result = DecryptionResult_NotKnown;
 
-    CParsedMediaDataBox *parsedMediaDataBox = this->ParseMediaDataBox(context, context->GetSegmentsFragments()->GetItem(0));
-    if (parsedMediaDataBox != NULL)
+    if (context->GetSegmentsFragments()->GetItem(0)->GetHttpDownloadResponse() != NULL)
     {
-      if ((parsedMediaDataBox->IsMediaDataBox()) && (parsedMediaDataBox->GetAkamaiGuid() != NULL) && (parsedMediaDataBox->GetAkamaiFlvPackets()->Count() > 0))
+      CParsedMediaDataBox *parsedMediaDataBox = this->ParseMediaDataBox(context, context->GetSegmentsFragments()->GetItem(0));
+      if (parsedMediaDataBox != NULL)
       {
-        // it is media data box
-        // specified akamai GUID
-        // at least one akamai FLV packet
-
-        // by default we have error
-        result = DecryptionResult_Error;
-
-        FREE_MEM(this->akamaiGuid);
-        this->akamaiGuid = Duplicate(parsedMediaDataBox->GetAkamaiGuid());
-        if (this->akamaiGuid != NULL)
+        if ((parsedMediaDataBox->IsMediaDataBox()) && (parsedMediaDataBox->GetAkamaiGuid() != NULL) && (parsedMediaDataBox->GetAkamaiFlvPackets()->Count() > 0))
         {
-          // key url have to be in first FLV packet
-          CAkamaiFlvPacket *packet = parsedMediaDataBox->GetAkamaiFlvPackets()->GetItem(0);
+          // it is media data box
+          // specified akamai GUID
+          // at least one akamai FLV packet
 
-          if (packet->HasKey())
+          // by default we have error
+          result = DecryptionResult_Error;
+
+          FREE_MEM(this->akamaiGuid);
+          this->akamaiGuid = Duplicate(parsedMediaDataBox->GetAkamaiGuid());
+          if (this->akamaiGuid != NULL)
           {
-            if ((CompareWithNull(this->lastKeyUrl, packet->GetKeyUrl()) != 0) || (this->lastKeyBase64 == NULL))
+            // key url have to be in first FLV packet
+            CAkamaiFlvPacket *packet = parsedMediaDataBox->GetAkamaiFlvPackets()->GetItem(0);
+
+            if (packet->HasKey())
             {
-              // download new decryption key from url
-              CSegmentFragment *keyDecryptionSegmentFragment = new CSegmentFragment(UINT_MAX, UINT_MAX, UINT64_MAX);
-              bool continueKeyRequest = (keyDecryptionSegmentFragment != NULL);
-
-              if (continueKeyRequest)
+              if ((CompareWithNull(this->lastKeyUrl, packet->GetKeyUrl()) != 0) || (this->lastKeyBase64 == NULL))
               {
-                FREE_MEM(this->lastKeyUrl);
-                FREE_MEM(this->sessionID);
-                this->sessionID = Duplicate(packet->GetSessionId());
-                this->lastKeyUrl = Duplicate(packet->GetKeyUrl());
-
-                wchar_t *url = this->GetKeyUrlFromUrl(context->GetSegmentsFragments()->GetItem(0)->GetHttpDownloadRequest()->GetUrl(), packet->GetKeyUrl(), this->akamaiGuid);                
-                continueKeyRequest &= (url != NULL) && (this->sessionID != NULL) && (this->lastKeyUrl != NULL);
-                if (continueKeyRequest)
-                {
-                  if (keyDecryptionSegmentFragment->GetHttpDownloadRequest() == NULL)
-                  {
-                    continueKeyRequest &= keyDecryptionSegmentFragment->CreateHttpDownloadRequest();
-                  }
-
-                  continueKeyRequest &= keyDecryptionSegmentFragment->GetHttpDownloadRequest()->SetUrl(url);
-                }
-                FREE_MEM(url);
+                // download new decryption key from url
+                CSegmentFragment *keyDecryptionSegmentFragment = new CSegmentFragment(UINT_MAX, UINT_MAX, UINT64_MAX);
+                bool continueKeyRequest = (keyDecryptionSegmentFragment != NULL);
 
                 if (continueKeyRequest)
                 {
-                  continueKeyRequest &= context->GetSegmentsFragments()->Add(keyDecryptionSegmentFragment);
+                  FREE_MEM(this->lastKeyUrl);
+                  FREE_MEM(this->sessionID);
+                  this->sessionID = Duplicate(packet->GetSessionId());
+                  this->lastKeyUrl = Duplicate(packet->GetKeyUrl());
 
-                  if (!continueKeyRequest)
+                  wchar_t *url = this->GetKeyUrlFromUrl(context->GetSegmentsFragments()->GetItem(0)->GetHttpDownloadRequest()->GetUrl(), packet->GetKeyUrl(), this->akamaiGuid);                
+                  continueKeyRequest &= (url != NULL) && (this->sessionID != NULL) && (this->lastKeyUrl != NULL);
+                  if (continueKeyRequest)
                   {
-                    FREE_MEM_CLASS(keyDecryptionSegmentFragment);
+                    if (keyDecryptionSegmentFragment->GetHttpDownloadRequest() == NULL)
+                    {
+                      continueKeyRequest &= keyDecryptionSegmentFragment->CreateHttpDownloadRequest();
+                    }
+
+                    continueKeyRequest &= keyDecryptionSegmentFragment->GetHttpDownloadRequest()->SetUrl(url);
+                  }
+                  FREE_MEM(url);
+
+                  if (continueKeyRequest)
+                  {
+                    continueKeyRequest &= context->GetSegmentsFragments()->Add(keyDecryptionSegmentFragment);
+
+                    if (!continueKeyRequest)
+                    {
+                      FREE_MEM_CLASS(keyDecryptionSegmentFragment);
+                    }
                   }
                 }
-              }
 
-              if (continueKeyRequest)
-              {
-                context->SetSegmentFragmentToDownload(context->GetSegmentsFragments()->Count() - 1);
-                context->SetForceDownload(true);
-                result = DecryptionResult_Pending;
-                this->keyRequestPending = true;
+                if (continueKeyRequest)
+                {
+                  context->SetSegmentFragmentToDownload(context->GetSegmentsFragments()->Count() - 1);
+                  context->SetForceDownload(true);
+                  result = DecryptionResult_Pending;
+                  this->keyRequestPending = true;
+                }
               }
             }
           }
         }
-      }
 
+      }
+      FREE_MEM_CLASS(parsedMediaDataBox);
     }
-    FREE_MEM_CLASS(parsedMediaDataBox);
   }
 
   // check if we have valid and initialized flash instance

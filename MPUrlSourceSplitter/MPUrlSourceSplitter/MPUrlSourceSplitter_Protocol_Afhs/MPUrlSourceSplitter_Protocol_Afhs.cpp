@@ -1054,7 +1054,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
           {
             CSegmentFragment *segFrag = this->segmentsFragments->GetItem(i);
 
-            if (segFrag->GetFragmentTimestamp() <= (uint64_t)time)
+            if (segFrag->GetFragmentTimestamp() <= currentMediaTime)
             {
               this->segmentFragmentProcessing = i;
               result = S_OK;
