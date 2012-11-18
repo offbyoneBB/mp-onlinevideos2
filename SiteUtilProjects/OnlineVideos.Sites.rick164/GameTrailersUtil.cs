@@ -114,7 +114,7 @@ namespace OnlineVideos.Sites
                         {
                             VideoInfo videoInfo = CreateVideoInfo();
 
-                            videoInfo.Title = m.Groups["Title"].Value;
+                            videoInfo.Title = m.Groups["Title"].Value.Replace("&acirc;", "'");
 
                             //Try to retrieve full title (gameName + title) since these are listed differently per category or spread out, couldn't match those easily with one Regexp.
                             if (!url.StartsWith(searchBase))
@@ -125,7 +125,7 @@ namespace OnlineVideos.Sites
                                     {
                                         if (m2.Groups["gameName"].Value != "" && m2.Groups["gameName"].Value != null)
                                         {
-                                            videoInfo.Title = HttpUtility.HtmlDecode(m2.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m2.Groups["Title"].Value);
+                                            videoInfo.Title = HttpUtility.HtmlDecode(m2.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m2.Groups["Title"].Value.Replace("&acirc;", "'"));
                                         }
                                         counter++;
                                     }
@@ -140,7 +140,11 @@ namespace OnlineVideos.Sites
                             videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                             videoInfo.Airdate = m.Groups["Airdate"].Value;
                             videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Trim();
-                            videoInfo.Description =HttpUtility.HtmlDecode(m.Groups["Description"].Value);
+
+                            //Log.Debug("Desc: " + m.Groups["Description"].Value);
+                            //Encoding by GT is reported as UTF-8 but it's not in most cases, temporary fix added for "'" character
+                            videoInfo.Description = m.Groups["Description"].Value.Replace("&acirc;", "'");
+                            //Log.Debug("Desc (enc): " + videoInfo.Description);
 
                             videoCount++;
                             videoList.Add(videoInfo);
