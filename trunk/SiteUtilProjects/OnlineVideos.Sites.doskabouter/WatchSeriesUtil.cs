@@ -204,9 +204,6 @@ namespace OnlineVideos.Sites
                     video.Airdate = m.Groups["Airdate"].Value;
                     if (video.Airdate == "-")
                         video.Airdate = String.Empty;
-                    Match m2 = Regex.Match(video.VideoUrl, @"-(?<id>\d+).html");
-
-                    if (m2.Success) video.VideoUrl = baseUrl + "/getlinks.php?q=" + m2.Groups["id"].Value + "&domain=all";
 
                     try
                     {
@@ -363,11 +360,27 @@ namespace OnlineVideos.Sites
             }
         }
 
+        protected override CookieContainer GetCookie()
+        {
+            return cc;
+        }
+
         private System.Threading.Thread subtitleThread;
         public override string getUrl(VideoInfo video)
         {
-            sh.SetSubtitleText(video, out subtitleThread);
-            return base.getUrl(video);
+            GetBaseCookie();
+            string dummy = GetWebData(video.VideoUrl, cc); //needed for getting results in getplaybackoptions
+            string oldUrl = video.VideoUrl;
+            Match m2 = Regex.Match(video.VideoUrl, @"-(?<id>\d+).html");
+            if (m2.Success)
+            {
+                sh.SetSubtitleText(video, out subtitleThread);
+                fileUrlPostString = "q=" + m2.Groups["id"].Value + "&domain=all";
+                video.VideoUrl = baseUrl + "/getlinks.php";
+            }
+            string res = base.getUrl(video);
+            video.VideoUrl = oldUrl;
+            return res;
         }
 
 
@@ -379,7 +392,6 @@ namespace OnlineVideos.Sites
             {
                 string newUrl = base.PlaybackOptions[url];
 
-                parent.GetBaseCookie();
                 string webData = GetWebData(newUrl, parent.cc);
 
                 url = Regex.Match(webData, @"<a\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay").Groups["url"].Value;
