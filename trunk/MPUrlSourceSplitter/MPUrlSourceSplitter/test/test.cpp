@@ -29,127 +29,321 @@
 #include <curl/curl.h>
 
 #include "BufferHelper.h"
+#include "SegmentFragmentCollection.h"
+#include "ParameterCollection.h"
+#include "BootstrapInfoBox.h"
+#include "MPUrlSourceSplitter_Protocol_Afhs_Parameters.h"
+#include "formatUrl.h"
 
-static void CurlDebug(curl_infotype type, const wchar_t *data)
+CSegmentFragmentCollection *GetSegmentsFragmentsFromBootstrapInfoBox(CParameterCollection *configurationParameters, CBootstrapInfoBox *bootstrapInfoBox)
 {
-  if (type == CURLINFO_HEADER_OUT)
-  {
-    wprintf(data);
-    wprintf(L"\n");
-  }
+  HRESULT result = S_OK;
+  CSegmentFragmentCollection *segmentsFragments = NULL;
 
-  if (type == CURLINFO_HEADER_IN)
+  if (SUCCEEDED(result))
   {
-    wchar_t *trimmed = Trim(data);
-    // we are just interested in headers comming in from peer
-    wprintf(trimmed);
-    wprintf(L"\n");
-    FREE_MEM(trimmed);
-  }
-}
+    // now choose from bootstrap info -> QualityEntryTable highest quality (if exists) with segment run
+    wchar_t *quality = NULL;
+    CSegmentRunEntryCollection *segmentRunEntryTable = NULL;
 
-static int CurlDebugCallback(CURL *handle, curl_infotype type, char *data, size_t size, void *userptr)
-{
-  // warning: data ARE NOT terminated with null character !!
-  if (size > 0)
-  {
-    size_t length = size + 1;
-    ALLOC_MEM_DEFINE_SET(tempData, char, length, 0);
-    if (tempData != NULL)
+    for (unsigned int i = 0; ((i <= bootstrapInfoBox->GetQualityEntryTable()->Count()) && (segmentRunEntryTable == NULL)); i++)
     {
-      memcpy(tempData, data, size);
+      FREE_MEM(quality);
 
-      // now convert data to used character set
-      wchar_t *curlData = ConvertToUnicodeA(tempData);
-
-      if (curlData != NULL)
+      // choose quality only for valid indexes, in another case is quality NULL
+      if (i != bootstrapInfoBox->GetQualityEntryTable()->Count())
       {
-        // we have converted and null terminated data
-        CurlDebug(type, curlData);
+        CBootstrapInfoQualityEntry *bootstrapInfoQualityEntry = bootstrapInfoBox->GetQualityEntryTable()->GetItem(0);
+        quality = Duplicate(bootstrapInfoQualityEntry->GetQualityEntry());
       }
 
-      FREE_MEM(curlData);
+      // from segment run table choose segment with specifed quality (if exists) or segment with QualityEntryCount equal to zero
+      for (unsigned int i = 0; i < bootstrapInfoBox->GetSegmentRunTable()->Count(); i++)
+      {
+        CSegmentRunTableBox *segmentRunTableBox = bootstrapInfoBox->GetSegmentRunTable()->GetItem(i);
+
+        if (quality != NULL)
+        {
+          if (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(quality, false))
+          {
+            segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
+          }
+        }
+        else
+        {
+          if ((segmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0) || (segmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(L"", false)))
+          {
+            segmentRunEntryTable = segmentRunTableBox->GetSegmentRunEntryTable();
+          }
+        }
+      }
     }
-    FREE_MEM(tempData);
+
+    if (segmentRunEntryTable == NULL)
+    {
+      result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+    }
+
+    if (SUCCEEDED(result))
+    {
+      if (segmentRunEntryTable->Count() == 0)
+      {
+        result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+      }
+    }
+
+    // from fragment run table choose fragment with specifed quality (if exists) or fragment with QualityEntryCount equal to zero
+    CFragmentRunEntryCollection *fragmentRunEntryTableTemp = NULL;
+    unsigned int timeScale = 0;
+    for (unsigned int i = 0; i < bootstrapInfoBox->GetFragmentRunTable()->Count(); i++)
+    {
+      CFragmentRunTableBox *fragmentRunTableBox = bootstrapInfoBox->GetFragmentRunTable()->GetItem(i);
+
+      if (quality != NULL)
+      {
+        if (fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(quality, false))
+        {
+          fragmentRunEntryTableTemp = fragmentRunTableBox->GetFragmentRunEntryTable();
+          timeScale = fragmentRunTableBox->GetTimeScale();
+        }
+      }
+      else
+      {
+        if ((fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Count() == 0) || (fragmentRunTableBox->GetQualitySegmentUrlModifiers()->Contains(L"", false)))
+        {
+          fragmentRunEntryTableTemp = fragmentRunTableBox->GetFragmentRunEntryTable();
+          timeScale = fragmentRunTableBox->GetTimeScale();
+        }
+      }
+    }
+
+    if (fragmentRunEntryTableTemp == NULL)
+    {
+      result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+    }
+
+    CFragmentRunEntryCollection *fragmentRunEntryTable = new CFragmentRunEntryCollection();
+    CHECK_POINTER_HRESULT(result, fragmentRunEntryTable, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      // convert temporary fragment run table to simplier collection
+      for (unsigned int i = 0; i < fragmentRunEntryTableTemp->Count(); i++)
+      {
+        CFragmentRunEntry *fragmentRunEntryTemp = fragmentRunEntryTableTemp->GetItem(i);
+        unsigned int nextItemIndex = i + 1;
+        CFragmentRunEntry *fragmentRunEntryTempNext = NULL;
+
+        for (unsigned int j = nextItemIndex; j < fragmentRunEntryTableTemp->Count(); j++)
+        {
+          CFragmentRunEntry *temp = fragmentRunEntryTableTemp->GetItem(nextItemIndex);
+          if (temp->GetFirstFragment() != 0)
+          {
+            fragmentRunEntryTempNext = temp;
+            break;
+          }
+          else
+          {
+            nextItemIndex++;
+          }
+        }
+
+        if (((fragmentRunEntryTemp->GetFirstFragmentTimestamp() == 0) && (i == 0)) ||
+          (fragmentRunEntryTemp->GetFirstFragmentTimestamp() != 0))
+        {
+          uint64_t fragmentTimestamp = fragmentRunEntryTemp->GetFirstFragmentTimestamp();
+          unsigned int lastFragment = (fragmentRunEntryTempNext == NULL) ? (fragmentRunEntryTemp->GetFirstFragment() + 1) : fragmentRunEntryTempNext->GetFirstFragment();
+
+          for (unsigned int j = fragmentRunEntryTemp->GetFirstFragment(); j < lastFragment; j++)
+          {
+            unsigned int diff = j - fragmentRunEntryTemp->GetFirstFragment();
+            CFragmentRunEntry *fragmentRunEntry = new CFragmentRunEntry(
+              fragmentRunEntryTemp->GetFirstFragment() + diff,
+              fragmentTimestamp,
+              fragmentRunEntryTemp->GetFragmentDuration(),
+              fragmentRunEntryTemp->GetDiscontinuityIndicator());
+            fragmentTimestamp += fragmentRunEntryTemp->GetFragmentDuration();
+
+            CHECK_POINTER_HRESULT(result, fragmentRunEntry, result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
+            {
+              result = (fragmentRunEntryTable->Add(fragmentRunEntry)) ? result : E_FAIL;
+            }
+
+            if (FAILED(result))
+            {
+              FREE_MEM_CLASS(fragmentRunEntry);
+            }
+          }
+        }
+      }
+    }
+
+    if (SUCCEEDED(result))
+    {
+      if (fragmentRunEntryTable->Count() == 0)
+      {
+        result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+      }
+    }
+
+    if (SUCCEEDED(result))
+    {
+      wchar_t *serverBaseUrl = Duplicate(configurationParameters->GetValue(PARAMETER_NAME_AFHS_BASE_URL, true, L""));
+      for (unsigned int i = 0; i < bootstrapInfoBox->GetServerEntryTable()->Count(); i++)
+      {
+        CBootstrapInfoServerEntry *serverEntry = bootstrapInfoBox->GetServerEntryTable()->GetItem(i);
+        if (!IsNullOrEmptyOrWhitespace(serverEntry->GetServerEntry()))
+        {
+          FREE_MEM(serverBaseUrl);
+          serverBaseUrl = Duplicate(serverEntry->GetServerEntry());
+        }
+      }
+
+      CHECK_POINTER_HRESULT(result, serverBaseUrl, result, E_OUTOFMEMORY);
+
+      if (SUCCEEDED(result))
+      {
+        wchar_t *mediaPartUrl = Duplicate(configurationParameters->GetValue(PARAMETER_NAME_AFHS_MEDIA_PART_URL, true, L""));
+        CHECK_POINTER_HRESULT(result, mediaPartUrl, result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result))
+        {
+          wchar_t *baseUrl = FormatAbsoluteUrl(serverBaseUrl, mediaPartUrl);
+          CHECK_POINTER_HRESULT(result, baseUrl, result, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(result))
+          {
+            //wchar_t *movieIdentifierUrl = FormatAbsoluteUrl(baseUrl, this->bootstrapInfoBox->GetMovieIdentifier());
+            //CHECK_POINTER_HRESULT(result, movieIdentifierUrl, result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
+            {
+              //wchar_t *qualityUrl = FormatString(L"%s%s", movieIdentifierUrl, (quality == NULL) ? L"" : quality);
+              wchar_t *qualityUrl = FormatAbsoluteUrl(baseUrl, (quality == NULL) ? L"" : quality);
+              CHECK_POINTER_HRESULT(result, qualityUrl, result, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(result))
+              {
+                // convert segment run entry table to simplier collection
+                segmentsFragments = new CSegmentFragmentCollection();
+                CHECK_POINTER_HRESULT(result, segmentsFragments, result, E_OUTOFMEMORY);
+
+                if (SUCCEEDED(result))
+                {
+                  result = (segmentsFragments->SetBaseUrl(qualityUrl)) ? result : E_OUTOFMEMORY;
+                }
+
+                if (SUCCEEDED(result))
+                {
+                  unsigned int fragmentRunEntryTableIndex  = 0;
+
+                  for (unsigned int i = 0; (SUCCEEDED(result) && (i < segmentRunEntryTable->Count())); i++)
+                  {
+                    CSegmentRunEntry *segmentRunEntry = segmentRunEntryTable->GetItem(i);
+                    unsigned int lastSegment = (i == (segmentRunEntryTable->Count() - 1)) ? (segmentRunEntry->GetFirstSegment() + 1) : segmentRunEntryTable->GetItem(i + 1)->GetFirstSegment();
+
+                    for (unsigned int j = segmentRunEntry->GetFirstSegment(); (SUCCEEDED(result) && (j < lastSegment)); j++)
+                    {
+                      unsigned int totalFragmentsPerSegment = ((segmentRunEntry->GetFragmentsPerSegment() == UINT_MAX) ? fragmentRunEntryTable->Count() : segmentRunEntry->GetFragmentsPerSegment());
+
+                      result = (segmentsFragments->EnsureEnoughSpace(segmentsFragments->Count() + totalFragmentsPerSegment)) ? result : E_OUTOFMEMORY;
+
+                      for (unsigned int k = 0; (SUCCEEDED(result) && (k < totalFragmentsPerSegment)); k++)
+                      {
+                        // choose fragment and get its timestamp
+                        uint64_t timestamp = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragmentTimestamp();
+                        unsigned int firstFragment = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragment();
+
+                        if (fragmentRunEntryTableIndex >= fragmentRunEntryTable->Count())
+                        {
+                          // adjust fragment timestamp
+                          timestamp += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count() + 1) * fragmentRunEntryTable->GetItem(fragmentRunEntryTable->Count() - 1)->GetFragmentDuration();
+                          firstFragment += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count() + 1);
+                        }
+                        fragmentRunEntryTableIndex++;
+
+                        CSegmentFragment *segmentFragment = new CSegmentFragment(j, firstFragment, timestamp * 1000 / timeScale);
+                        CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
+
+                        if (SUCCEEDED(result))
+                        {
+                          result = (segmentsFragments->Add(segmentFragment)) ? result : E_FAIL;
+                        }
+
+                        if (FAILED(result))
+                        {
+                          FREE_MEM_CLASS(segmentFragment);
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              FREE_MEM(qualityUrl);
+            }
+            //FREE_MEM(movieIdentifierUrl);
+          }
+          FREE_MEM(baseUrl);
+        }
+        FREE_MEM(mediaPartUrl);
+      }
+      FREE_MEM(serverBaseUrl);
+    }
+
+    FREE_MEM(quality);
+    FREE_MEM_CLASS(fragmentRunEntryTable);
+
+    if (SUCCEEDED(result))
+    {
+      result = (segmentsFragments->Count() > 0) ? result : E_FAIL;
+    }
   }
 
-  return 0;
-}
+  if (FAILED(result))
+  {
+    FREE_MEM_CLASS(segmentsFragments);
+  }
 
-uint8_t *data = NULL;
-unsigned int length = 0;
-
-size_t CurlReceiveDataCallback(char *buffer, size_t size, size_t nmemb, void *userdata)
-{
-  unsigned int total = size * nmemb;
-  memcpy(data + length, buffer, total);
-  length += total;
-
-  return total;
+  return segmentsFragments;
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-  data = ALLOC_MEM_SET(data, uint8_t, (10 * 1024 * 1024), 0);
-  CURL *curl = curl_easy_init();
-  CURLcode errorCode = CURLE_OK;
-  if (curl != NULL)
+  unsigned int size = 8624;
+  ALLOC_MEM_DEFINE_SET(buffer, uint8_t, size, 0);
+  FILE *stream = fopen("D:\\bootstrap.dat", "rb");
+
+  fread(buffer, sizeof(uint8_t), size, stream);
+
+  CParameterCollection *params = new CParameterCollection();
+
+  params->Add(new CParameter(PARAMETER_NAME_AFHS_BASE_URL, L""));
+  params->Add(new CParameter(PARAMETER_NAME_AFHS_MEDIA_PART_URL, L""));
+
+  CBootstrapInfoBox *box = new CBootstrapInfoBox();
+  if (box->Parse(buffer, size))
   {
-    errorCode = curl_easy_setopt(curl, CURLOPT_URL, "http://svtplay2p-f.akamaihd.net/z/se/secure/20121008/1123072-052A/ADVENTURES_OF_B-052A-f22e5dd766c8c310_,900,320,420,620,1660,2760,.mp4.csmil/manifest.f4m?hdcore=2.10.3&g=SSSIYUEGUPSG");
-    errorCode = curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
-    errorCode = curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, CurlDebugCallback);
-    errorCode = curl_easy_setopt(curl, CURLOPT_DEBUGDATA, NULL);
-    errorCode = curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-    //errorCode = curl_easy_setopt(curl, CURLOPT_REFERER, "http://www.svtplay.se/public/swf/video/svtplayer-2012.47.swf");
-    //errorCode = curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 6.1; rv:16.0) Gecko/20100101 Firefox/16.0");
+    CSegmentFragmentCollection *sf = GetSegmentsFragmentsFromBootstrapInfoBox(params, box);
 
-    errorCode = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CurlReceiveDataCallback);
-    errorCode = curl_easy_setopt(curl, CURLOPT_WRITEDATA, NULL);
-
-    //errorCode = curl_easy_perform(curl);
-
-    /*memset(data, 0, (10 * 1024 * 1024));
-    length = 0;
-    errorCode = curl_easy_setopt(curl, CURLOPT_URL, "http://svtplay2p-f.akamaihd.net/serverip");
-    errorCode = curl_easy_perform(curl);*/
-
-    memset(data, 0, (10 * 1024 * 1024));
-    length = 0;
-    errorCode = curl_easy_setopt(curl, CURLOPT_URL, "http://svtplay2p-f.akamaihd.net/z/se/secure/20121008/1123072-052A/ADVENTURES_OF_B-052A-f22e5dd766c8c310_,900,320,420,620,1660,2760,.mp4.csmil/0_c1c56edfe62a70c4_Seg1-Frag1?hdcore=2.10.3&g=SSSIYUEGUPSG");
-    errorCode = curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
-    errorCode = curl_easy_perform(curl);
-
-    unsigned int position = 0;
-    unsigned int size = 0;
-
-    while (true)
+    for (unsigned int i = 0; i < sf->Count(); i++)
     {
-      size = RBE32(data, position);
+      CSegmentFragment *sfi = sf->GetItem(i);
 
-      if ((size < 1000) && (size != 0))
+      if (sfi->GetFragmentTimestamp() >= box->GetCurrentMediaTime())
       {
-        position += size;
-      }
-      else
-      {
-        break;
+        printf("found\n");
       }
     }
 
-    char *keyUrl = FormatStringA("http://svtplay2p-f.akamaihd.net%s?guid=SSSIYUEGUPSG", data + position + 48);
-
-    memset(data, 0, (10 * 1024 * 1024));
-    length = 0;
-    errorCode = curl_easy_setopt(curl, CURLOPT_URL, keyUrl);
-    errorCode = curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
-    errorCode = curl_easy_perform(curl);
-
-    FREE_MEM(keyUrl);
-
-    curl_easy_cleanup(curl);
-    curl = NULL;
+    FREE_MEM_CLASS(sf);
   }
 
-  FREE_MEM(data);
+  FREE_MEM_CLASS(box);
+  FREE_MEM_CLASS(params);
+
+  fclose(stream);
+  FREE_MEM(buffer);
 	return 0;
 }
