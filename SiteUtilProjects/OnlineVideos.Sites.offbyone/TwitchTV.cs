@@ -6,11 +6,14 @@ using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
+	/// <summary>
+	/// Twitch API docs can be found here: https://github.com/justintv/Twitch-API
+	/// </summary>
 	public class TwitchTV : SiteUtilBase
 	{
 		string baseApiUrl = "https://api.twitch.tv/kraken";
 		string gamesUrl = "/games/top?limit=100";
-		string featuredStreamsUrl = "/streams/featured";
+		string featuredStreamsUrl = "/streams/featured?limit=100";
 		string streamsUrl = "/streams?limit=100&game={0}";
 		string searchUrl = "/search/streams?limit=100&query={0}";
 		string metaInfoUrl = "http://usher.twitch.tv/find/{0}.json?type=any&private_code=null&group=&";
