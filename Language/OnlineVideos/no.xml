@@ -1,33 +1,31 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- Norwegian -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
-
-  <!-- A -->
+  <!--A-->
   <string name="Airdate">Vist</string>
   <string name="AlreadyDownloading">Filen lastes allerede ned.</string>
   <string name="All">Alle</string>
   <string name="Actions">Oppgaver</string>
   <string name="Actors">Skuespillere</string>
+  <string name="AddComment">Legg igjen en kommentar</string>
+  <string name="AddToPlaylist">Legg til spilleliste</string>
   <string name="AddToMySites">Legg til favorittsider</string>
   <string name="AddToFavourites">Legg til favoritter</string>
   <string name="AddingToFavorites">Legger til favoritter</string>
   <string name="AutomaticUpdate">Automatisk oppdatering</string>
   <string name="AutomaticUpdateDisabled">Automatisk oppdatering deaktivert.</string>
-  
-  <!-- B -->
+  <!--B-->
   <string name="Broken">Ødelagt</string>
   <string name="Buffered">bufret</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Cancel">Avbryt</string>
   <string name="Category">Kategori</string>
+  <string name="CategoryNotFound">Kategorien ble ikke funnet</string>
   <string name="Categories">Kategorier</string>
   <string name="Creator">Lagd av</string>
+  <string name="CreateNewPlaylist">Lag ny spilleliste</string>
   <string name="CheckingForPluginUpdate">ser etter oppdatert plugin versjon</string>
-
-  <!-- D -->
+  <string name="Concurrent">samtidig</string>
+  <!--D-->
   <string name="Date">Dato</string>
   <string name="DateOfRelease">Utgivelse dato</string>
   <string name="Directors">Regissører</string>
@@ -43,21 +41,19 @@
   <string name="DownloadedVideos">Nedlastede videoer</string>
   <string name="DownloadsWillBeAborted">Nedlastinger vil bli avbrutt.</string>
   <string name="Delete">Slett</string>
+  <string name="DeletePlaylist">Slett spilleliste</string>
   <string name="DeleteAll">Slett alle</string>
   <string name="Default">Standard</string>
   <string name="Done">Ferdig</string>
   <string name="DeletingOldThumbs">Sletter gamle miniatyrbilder</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">Feil</string>
   <string name="EnterPin">Skriv inn pinkode</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">Favoritter</string>
   <string name="Filter">Filter</string>
   <string name="FullUpdate">Full oppdatering</string>
-
-  <!-- G -->
+  <!--G-->
   <string name="Genre">Sjanger</string>
   <string name="GettingVideoDetails">henter video detaljer</string>
   <string name="GettingCategoryVideos">henter kategori videoer</string>
@@ -67,7 +63,7 @@
   <string name="GettingFilteredVideos">henter filtrerte videoer</string>
   <string name="GettingNextPageVideos">henter neste sides videoer</string>
   <string name="GettingPreviousPageVideos">henter forrige sides videoer</string>
-  <string name="GettingPlaybackUrlsForVideo">henter avspillings url'er for video</string>
+  <string name="GettingPlaybackUrlsForVideo">henter avspillings url\'er for video</string>
   <string name="GettingDynamicCategories">henter dynamiske kategorier</string>
   <string name="GettingReports">henter rapporter fra webservice</string>
   <string name="GettingSiteXml">henter side xml fra webservice</string>
@@ -75,23 +71,18 @@
   <string name="GettingBanner">henter side banner fra webservice</string>
   <string name="GettingDll">henter dll fra webservice</string>
   <string name="Groups">Grupper</string>
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Siste versjon ({0}) er nødvendig!</string>
   <string name="Language">Språk</string>
   <string name="LayoutList">Visning: Liste</string>
   <string name="LayoutIcons">Visning: Ikoner</string>
   <string name="LayoutBigIcons">Visning: Store Ikoner</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">Konfigurer sider</string>
   <string name="MaxResults">Maks resultater</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">Navn</string>
   <string name="NextPage">Neste side</string>
   <string name="NewVideos">Nye Videoer</string>
@@ -100,12 +91,13 @@
   <string name="NoReportsForSite">Rapporter for denne side er utilgjengelig.</string>
   <string name="NewDllDownloaded">Ny dll lastet ned!</string>
   <string name="NewSearch">Nytt søk</string>
-
-  <!-- O -->
+  <!--O-->
+  <string name="OnlyLocal">Bare lokal</string>
+  <string name="OnlyServer">Bare server</string>
   <string name="Others">Andre</string>
-  
-  <!-- P -->
+  <!--P-->
   <string name="PlayAll">Spill alle</string>
+  <string name="PlayAllRandom">Spill alle (tilfeldig rekkefølge)</string>
   <string name="PlayWith">Spill av med ...</string>
   <string name="Playlists">Spillelister</string>
   <string name="PlaybackWillBeStopped">Avspilling vil bli stoppet.</string>
@@ -113,10 +105,13 @@
   <string name="PlotOutline">Handling</string>
   <string name="PreviousPage">Forrige side</string>
   <string name="PerformAutomaticUpdate">Utfør automatiske oppdateringer?</string>
-
-  <!-- R -->
+  <!--Q-->
+  <string name="Queued">Lagt i kø</string>
+  <!--R-->
+  <string name="RateVideo">Ranger denne videoen...</string>
   <string name="Recommendations">Anbefalinger</string>
   <string name="RemoveFromFavorites">Fjern fra favoritter</string>
+  <string name="RemoveFromPlaylist">Fjern fra spilleliste</string>
   <string name="RemovingFromFavorites">fjerner fra favoritter</string>
   <string name="Refresh">Oppdater</string>
   <string name="RelatedVideos">Relaterte videoer</string>
@@ -125,11 +120,11 @@
   <string name="Reports">Rapporter</string>
   <string name="Runtime">Spilletid</string>
   <string name="RemoveFromMySites">Fjern fra mine sider</string>
+  <string name="RemoveAllFromMySites">Fjern alle fra mine steder</string>
   <string name="RestartMediaPortal">Omstart MediaPortal!</string>
   <string name="RetrievingRemoteDlls">Mottar dlls ...</string>
   <string name="RetrievingRemoteSites">Mottar sider ...</string>
-
-  <!-- S -->
+  <!--S-->
   <string name="SearchHistory">Søkelogg</string>
   <string name="SearchResults">Søkeresultater</string>
   <string name="SelectSource">Velg kilde</string>
@@ -143,13 +138,12 @@
   <string name="ShowReports">Vis skaper og bruker rapporter</string>
   <string name="StartingPlayback">starter avspilling</string>
   <string name="Subscriptions">Abonnement</string>
-
-  <!-- T -->
+  <string name="Success">Suksess</string>
+  <!--T-->
   <string name="Timeframe">Tidsramme</string>
   <string name="Timeout">Tidsavbrudd</string>
   <string name="Tags">Tagg</string>
-
-  <!-- U -->
+  <!--U-->
   <string name="Updated">Oppdatert</string>
   <string name="Updatable">Oppdaterbar</string>
   <string name="UpdateAll">Oppdater/Legg til alt</string>
@@ -160,15 +154,37 @@
   <string name="UnableToPlayVideo">Kan ikke spille av video. Ingen URL.</string>
   <string name="UnableToDownloadVideo">Kan ikke laste ned. Ugyldig URL.</string>
   <string name="UploadsBy">opplastet av</string>
-
-  <!-- V -->
+  <!--V-->
   <string name="Videos">Videoer</string>
   <string name="VideoQuality">Videokvalitet</string>
-
-  <!-- W -->
+  <!--W-->
   <string name="Working">Arbeider</string>
   <string name="Writers">Forfattere</string>
-
-  <!-- Y -->
-
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="Settings_Yes">Ja</string>
+  <string name="Settings_No">Nei</string>
+  <string name="Settings_SearchHistoryType_Off">Av</string>
+  <string name="Settings_SearchHistoryType_Simple">Enkel</string>
+  <string name="Settings_SearchHistoryType_Extended">Utvidet</string>
+  <string name="Settings_BasicHomeName">\"Basic Home\" navn</string>
+  <string name="Settings_PluginEnabled">Plugin aktivert</string>
+  <string name="Settings_ListedInHome">Listet i \"Home\"</string>
+  <string name="Settings_ListedInPlugins">Listet i \"Plugins\"</string>
+  <string name="Settings_AutoGroupByLang">Automatisk grupper alle sider etter språk</string>
+  <string name="Settings_UseQuickSelect">Bruk alfanumeriske taster for rask å velge elementer etter første bokstav</string>
+  <string name="Settings_SearchHistoryType">Søkehistorikk</string>
+  <string name="Settings_ThumbAge">Maksimal alder for miniatyrbilder (i dager)</string>
+  <string name="Settings_CacheTimeout">Tid for å cache data fra nettet (i minutter)</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Tid før kategorier lastes fra nett (i minutter)</string>
+  <string name="Settings_UtilTimeout">Tidsavbrudd for nettforespørsler (i sekunder)</string>
+  <string name="Settings_WmpBuffer">Buffer for Windows Media Player (i millisekunder)</string>
+  <string name="Settings_PlayBuffer">Prosent som skal buffres før avspilling</string>
+  <string name="Settings_AllowRefreshrateChange">Aktiver adoptering av dynamisk oppfriskningsrate</string>
+  <string name="Settings_FavoritesFirst">sett nedlasting- og favorittsider først i stedet for sist</string>
+  <string name="Settings_LatestVideosMaxItems">Mengde av siste video som skal vises</string>
+  <string name="Settings_LatestVideosRandomize">Tilfeldiggjør alle siste videoer før visning </string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Oppfrisk data for siste videoer fra nett hver x minutter </string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Oppfrisk viste siste videoer hver x minutt</string>
+  <string name="Settings_StoreLayoutPerCategory">Husk visning av layout for hver side og kategori</string>
 </resources>

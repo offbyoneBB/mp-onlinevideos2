@@ -1,26 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- Portuguese (PT) -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
-
-  <!-- A -->
+  <!--A-->
   <string name="Airdate">Emitido</string>
   <string name="AlreadyDownloading">Já foi descarregado este video.</string>
+  <string name="All">Todos</string>
   <string name="Actions">Acções</string>
   <string name="Actors">Actores:</string>
   <string name="AddToMySites">Adicionar a Locais</string>
-  <string name="All">Todos</string>
-  <string name="AddToFavourites">Adicionar a Favoritos</string>  
-
-  <!-- B -->
+  <string name="AddToFavourites">Adicionar a Favoritos</string>
+  <!--B-->
   <string name="Broken">Danificado</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Category">Categoria</string>
-  <string name="Creator">Criador</string>  
-
-  <!-- D -->
+  <string name="Creator">Criador</string>
+  <!--D-->
   <string name="DateOfRelease">Adicionado em:</string>
   <string name="Download">Download</string>
   <string name="DownloadFailed">Erro ao descarregar: {0}</string>
@@ -28,82 +21,61 @@
   <string name="DownloadedVideos">Vídeos descarregados</string>
   <string name="Delete">Eliminar</string>
   <string name="Default">Por defeito</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">Erro</string>
   <string name="EnterPin">PIN</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">Favoritos</string>
   <string name="Filter">Filtrar</string>
   <string name="FullUpdate">Actualização completa</string>
-
-  <!-- G -->
+  <!--G-->
   <string name="Genre">Género:</string>
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LayoutList">Vista: Lista</string>
   <string name="LayoutIcons">Vista: Icones</string>
   <string name="LayoutBigIcons">Vista: Icones Grandes</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">Organizar Locais</string>
   <string name="MaxResults">Máx. Resultados</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="NextPage">Pág. Seguinte</string>
   <string name="None">Nada</string>
   <string name="NoVideoFound">Video não encontrado</string>
-  <string name="NewDllRequired">É necessário um novo DLL!</string>
-
-  <!-- O -->
-
-  <!-- P -->
+  <!--O-->
+  <!--P-->
   <string name="PlayAll">Reproduzir todos</string>
   <string name="PlotOutline">Sinópse:</string>
   <string name="PreviousPage">Pág. Anterior</string>
   <string name="PerformAutomaticUpdate">Actualizar automáticamente?</string>
-
-  <!-- R -->
+  <!--Q-->
+  <!--R-->
   <string name="RemoveFromFavorites">Eliminar de favoritos</string>
   <string name="Refresh">Actualizar</string>
   <string name="RelatedVideos">Vídeos similares</string>
   <string name="Reported">Reportado</string>
   <string name="Runtime">Duração:</string>
   <string name="RemoveFromMySites">Eliminar de Meus Locais</string>
-  <string name="RestartMediaPortalAndAutomaticUpdate">Reiniciar MediaPortal e actualizar automaticamente!</string>
-
-  <!-- S -->
+  <!--S-->
   <string name="SearchResults">Resultados da busca.</string>
   <string name="SelectSource">Seleccionar fonte</string>
-  <string name="SortOptions">Filtar</string>  
-  <string name="SortByName">Nome</string>
-  <string name="SortByLanguage">Idioma</string>
-  <string name="SortByUpdated">Actualizado</string>
+  <string name="SortOptions">Filtar</string>
   <string name="Search">Procurar</string>
   <string name="SetDownloadFolderInConfig">Configura a pasta de downloads!</string>
-
-  <!-- T -->
+  <!--T-->
   <string name="Timeframe">Timeframe</string>
   <string name="Timeout">Fora de tempo</string>
-
-  <!-- U -->  
+  <!--U-->
   <string name="Updatable">Actualizável</string>
   <string name="UpdateMySite">Actualizar Meus Locais</string>
   <string name="UpdateMySiteSkipCategories">Actualizar Meus Locais (excluir categorías)</string>
   <string name="UpdateAllYourSites">Actuakizará todos os seus sites.</string>
   <string name="UnableToPlayVideo">Impossivel reproduzir video. URL inexistente.</string>
   <string name="UnableToDownloadVideo">Impossivel descarregar video. URL inválida.</string>
-
-  <!-- V -->
-
-  <!-- W -->
+  <!--V-->
+  <!--W-->
   <string name="Working">Em processo</string>
-
-  <!-- Y -->
-
+  <!--Y-->
+  <!--Strings from the settings file-->
 </resources>

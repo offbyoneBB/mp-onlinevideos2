@@ -1,10 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- Czech -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<resources>  
-
-  <!-- A -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">Vysíláno</string>
   <string name="AlreadyDownloading">Tento soubor je již stahován.</string>
   <string name="All">Vše</string>
@@ -15,19 +11,16 @@
   <string name="AddingToFavorites">při přidávání k Oblíbeným.</string>
   <string name="AutomaticUpdate">Autom. aktualizace</string>
   <string name="AutomaticUpdateDisabled">Autom. aktualizace vypnuta.</string>
-
-  <!-- B -->
+  <!--B-->
   <string name="Broken">Nefunkční</string>
   <string name="Buffered">k dispozici</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Cancel">Zrušit</string>
   <string name="Category">Kategorie</string>
   <string name="Categories">kategorií</string>
   <string name="Creator">Autor</string>
   <string name="CheckingForPluginUpdate">Kontrolují se aktualizace ...</string>
-
-  <!-- D -->
+  <!--D-->
   <string name="Date">Datum</string>
   <string name="DateOfRelease">Premiéra</string>
   <string name="Directors">Režie</string>
@@ -39,24 +32,21 @@
   <string name="DownloadFailed">Stahování neúspěšné: {0}</string>
   <string name="DownloadCancelled">Stahování zrušeno</string>
   <string name="DownloadComplete">Stahování dokončeno</string>
-  <string name="DownloadStarted">Stahování zahájeno</string>  
+  <string name="DownloadStarted">Stahování zahájeno</string>
   <string name="DownloadedVideos">Uložené video</string>
   <string name="Delete">Odstranit</string>
   <string name="DeleteAll">Odstranit vše</string>
   <string name="Default">(výchozí)</string>
   <string name="Done">Dokončeno</string>
   <string name="DeletingOldThumbs">Odstraňují se staré náhledy ...</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">Nastala chyba</string>
   <string name="EnterPin">Vložení PIN</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">Oblíbené</string>
   <string name="Filter">Filtr</string>
   <string name="FullUpdate">Aktualizovat vše</string>
-
-  <!-- G -->
+  <!--G-->
   <string name="Genre">Žánr</string>
   <string name="GettingVideoDetails">při zobrazení detailů videa.</string>
   <string name="GettingCategoryVideos">při zobrazení kategorií videa.</string>
@@ -73,24 +63,19 @@
   <string name="GettingIcon">při stažení ikony stránky z webové služby.</string>
   <string name="GettingBanner">při stažení banneru z webové služby.</string>
   <string name="GettingDll">při získání DLL z webové služby.</string>
-  <string name="Groups">skupin</string>  
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <string name="Groups">skupin</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Je vyžadována poslední verze ({0}).</string>
   <string name="Language">Dle jazyka</string>
   <string name="LayoutList">Zobrazení: Seznam</string>
   <string name="LayoutIcons">Zobrazení: Ikony</string>
   <string name="LayoutBigIcons">Zobrazení: Velké ikony</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">Správa stránek</string>
   <string name="MaxResults">Max výsledků</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">Dle názvu</string>
   <string name="NextPage">Další strana</string>
   <string name="NewVideos">Nová videa</string>
@@ -99,19 +84,17 @@
   <string name="NoReportsForSite">Tato stránka nemá žádná oznámení.</string>
   <string name="NewDllDownloaded">Byly staženy nové DLL soubory.</string>
   <string name="NewSearch">(nový dotaz)</string>
-
-  <!-- O -->
+  <!--O-->
   <string name="Others">Ostatní</string>
-
-  <!-- P -->
+  <!--P-->
   <string name="PlayAll">Přehrát vše</string>
   <string name="PlayWith">Přehrát pomocí ...</string>
   <string name="PleaseEnterDescription">Zadejte prosím stručný popis.</string>
   <string name="PlotOutline">Stručný obsah</string>
   <string name="PreviousPage">Předchozí strana</string>
   <string name="PerformAutomaticUpdate">Zahájit automatickou aktualizaci?</string>
-
-  <!-- R -->
+  <!--Q-->
+  <!--R-->
   <string name="RemoveFromFavorites">Odstranit z Oblíbených</string>
   <string name="RemovingFromFavorites">Odstranění z Oblíbených ...</string>
   <string name="Refresh">Obnovit</string>
@@ -124,13 +107,12 @@
   <string name="RestartMediaPortal">Prosím restartujte MediaPortal.</string>
   <string name="RetrievingRemoteDlls">načítání vzdálených DLL ...</string>
   <string name="RetrievingRemoteSites">načítání vzdálených stránek ...</string>
-
-  <!-- S -->
+  <!--S-->
   <string name="SearchHistory">Historie hledání</string>
   <string name="SearchResults">Výsledky hledání</string>
   <string name="SelectSource">Zvolte zdroj</string>
   <string name="Sites">stránek</string>
-  <string name="Size">Velikost</string>  
+  <string name="Size">Velikost</string>
   <string name="SortOptions">Změnit řazení</string>
   <string name="Search">Hledat</string>
   <string name="SetDownloadFolderInConfig">Zvolte prosím složku ke stahování v konfiguraci.</string>
@@ -139,13 +121,11 @@
   <string name="ShowReports">Zobrazit oznámení autorů / uživatelů</string>
   <string name="StartingPlayback">při zahájení přehrávání.</string>
   <string name="Subscriptions">Odběry</string>
-  
-  <!-- T -->
+  <!--T-->
   <string name="Timeframe">Časový úsek</string>
   <string name="Timeout">Časový limit vypršel</string>
   <string name="Tags">Tagy</string>
-
-  <!-- U -->
+  <!--U-->
   <string name="Updated">Dle data</string>
   <string name="Updatable">Změněné</string>
   <string name="UpdateAll">Aktualizovat / Přidat vše</string>
@@ -156,15 +136,12 @@
   <string name="UnableToPlayVideo">Nelze přehrát video. Chybí URL.</string>
   <string name="UnableToDownloadVideo">Nelze stáhnout video. Chybné URL.</string>
   <string name="UploadsBy">Videa od</string>
-
-  <!-- V -->
+  <!--V-->
   <string name="Videos">videí</string>
   <string name="VideoQuality">Kvalita videa</string>
-
-  <!-- W -->
+  <!--W-->
   <string name="Working">Funkční</string>
   <string name="Writers">Scénář</string>
-
-  <!-- Y -->
-
+  <!--Y-->
+  <!--Strings from the settings file-->
 </resources>

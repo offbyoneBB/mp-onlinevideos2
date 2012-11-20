@@ -1,10 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
-<!-- Bulgarian -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<resources>  
-
-  <!-- A -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">Ефир</string>
   <string name="AlreadyDownloading">Вече сте свалили този файл.</string>
   <string name="All">Всичко</string>
@@ -15,19 +11,16 @@
   <string name="AddingToFavorites">добавяне към любими</string>
   <string name="AutomaticUpdate">Автоматичен ъпдейт</string>
   <string name="AutomaticUpdateDisabled">Автоматичният ъпдейт забранен.</string>
-
-  <!-- B -->
+  <!--B-->
   <string name="Broken">Прекъснат</string>
   <string name="Buffered">буфериране</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Cancel">Отмени</string>
   <string name="Category">Категория</string>
   <string name="Categories">Категории</string>
   <string name="Creator">Автор</string>
   <string name="CheckingForPluginUpdate">проверка за нова версия на плъгина</string>
-
-  <!-- D -->
+  <!--D-->
   <string name="Date">Дата</string>
   <string name="DateOfRelease">Дата на пускане</string>
   <string name="Directors">Режисьори</string>
@@ -37,24 +30,21 @@
   <string name="DownloadFailed">Изтеглянето провалено: {0}</string>
   <string name="DownloadCancelled">Изтеглянето отменено</string>
   <string name="DownloadComplete">Изтеглянето готово</string>
-  <string name="DownloadStarted">Начало на изтегляне</string>  
+  <string name="DownloadStarted">Начало на изтегляне</string>
   <string name="DownloadedVideos">Изтеглени видеа</string>
   <string name="Delete">Изтрий</string>
   <string name="DeleteAll">Изтрий всичко</string>
   <string name="Default">По подразбиране</string>
   <string name="Done">Готово</string>
   <string name="DeletingOldThumbs">Изтриване на старите thumbnails</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">Грешка</string>
   <string name="EnterPin">Въведи Pin</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">Любими</string>
   <string name="Filter">Филтър</string>
   <string name="FullUpdate">Пълен Ъпдейт</string>
-
-  <!-- G -->
+  <!--G-->
   <string name="Genre">Жанр</string>
   <string name="GettingVideoDetails">сваляне на инфо за видеото</string>
   <string name="GettingCategoryVideos">сваляне на видео категориите</string>
@@ -71,24 +61,19 @@
   <string name="GettingIcon">сваляне на сайт икона от интернет</string>
   <string name="GettingBanner">сваляне на сайт банер от интернет</string>
   <string name="GettingDll">сваляне на библиотеки dll от интернет</string>
-  <string name="Groups">Групи</string>  
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <string name="Groups">Групи</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Необходима е последната версия ({0})!</string>
   <string name="Language">Език</string>
   <string name="LayoutList">Интерфейс: Списък</string>
   <string name="LayoutIcons">Интерфейс: Икони</string>
   <string name="LayoutBigIcons">Интерфейс: Големи икони</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">Управление на сайтовете</string>
   <string name="MaxResults">Максимални резултати</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">Име</string>
   <string name="NextPage">Следваща страница</string>
   <string name="None">Няма</string>
@@ -96,17 +81,15 @@
   <string name="NoReportsForSite">Не са налични отчети за този сайт.</string>
   <string name="NewDllDownloaded">Новата dll библиотека е изтеглена!</string>
   <string name="NewSearch">Ново търсене</string>
-
-  <!-- O -->
+  <!--O-->
   <string name="Others">Други</string>
-
-  <!-- P -->
+  <!--P-->
   <string name="PlayAll">Пусни всички</string>
   <string name="PlotOutline">Сюжет</string>
   <string name="PreviousPage">Предишна страница</string>
   <string name="PerformAutomaticUpdate">Да започна ли автоматичен ъпдейт?</string>
-
-  <!-- R -->
+  <!--Q-->
+  <!--R-->
   <string name="RemoveFromFavorites">Премахни от любими</string>
   <string name="RemovingFromFavorites">премахване от любими</string>
   <string name="Refresh">Опресни</string>
@@ -118,13 +101,12 @@
   <string name="RestartMediaPortal">Рестарт на MediaPortal!</string>
   <string name="RetrievingRemoteDlls">Получаване на отдалечените dlls ...</string>
   <string name="RetrievingRemoteSites">Получаване на отдалечените сайтове ...</string>
-
-  <!-- S -->
+  <!--S-->
   <string name="SearchHistory">История на търсенето</string>
   <string name="SearchResults">Резултати от търсенето</string>
   <string name="SelectSource">Избери източник</string>
   <string name="Sites">Сайтове</string>
-  <string name="Size">Размер</string>  
+  <string name="Size">Размер</string>
   <string name="SortOptions">Опции за сортиране</string>
   <string name="Search">Търси</string>
   <string name="SetDownloadFolderInConfig">Моля, укажете директорията за сваляне в Configuration!</string>
@@ -133,13 +115,11 @@
   <string name="ShowReports">Покажи отчет за автора и потребителя</string>
   <string name="StartingPlayback">старт playback</string>
   <string name="Subscriptions">Подписки</string>
-  
-  <!-- T -->
+  <!--T-->
   <string name="Timeframe">Кадри</string>
   <string name="Timeout">Прекъсване</string>
   <string name="Tags">Тагове</string>
-
-  <!-- U -->
+  <!--U-->
   <string name="Updated">Ъпдейтнато</string>
   <string name="Updatable">Ъпдейтвам</string>
   <string name="UpdateMySite">Ъпдейтни моя сайт</string>
@@ -147,13 +127,10 @@
   <string name="UpdateAllYourSites">Това ще ъпдейтне всички твои текущи сайтове.</string>
   <string name="UnableToPlayVideo">Не може да се пусне видеото. Няма URL адрес.</string>
   <string name="UnableToDownloadVideo">Не може да се свали видеото. Невалиден URL адрес.</string>
-
-  <!-- V -->
+  <!--V-->
   <string name="Videos">Видеа</string>
-
-  <!-- W -->
+  <!--W-->
   <string name="Working">Работи</string>
-
-  <!-- Y -->
-
+  <!--Y-->
+  <!--Strings from the settings file-->
 </resources>

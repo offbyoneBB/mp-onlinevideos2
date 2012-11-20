@@ -1,178 +1,173 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- Danish translation created/maintained by Mediaportal forum users msj33/steffansp - Last updated Rev 1651-->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<resources> 
-
-<!-- A -->
-<string name="Airdate">Vist i TV</string>
-<string name="AlreadyDownloading">Fil downloades allerede</string>
-<string name="All">Alle</string>
-<string name="Actions">Handlinger</string>
-<string name="Actors">Skuespillere</string>
-<string name="AddToMySites">Tilføj til Mine Sider</string>
-<string name="AddToFavourites">Tilføj til Favoritter</string>
-<string name="AddingToFavorites">Tilføjer til Favoritter</string>
-<string name="AutomaticUpdate">Autoupdate aktiveret</string>
-<string name="AutomaticUpdateDisabled">Autoupdate deaktiveret</string>
-
-<!-- B -->
-<string name="Broken">Ude af funktion</string>
-<string name="Buffered">Indlæst</string>
-
-<!-- C -->
-<string name="Cancel">Annuller</string>
-<string name="Category">Kategori</string>
-<string name="Categories">Kategorier</string>
-<string name="Creator">Lavet af</string>
-<string name="CheckingForPluginUpdate">Søger efter ny version</string>
-<string name="Concurrent">sideløbende</string>
-
-<!-- D -->
-<string name="Date">Dato</string>
-<string name="DateOfRelease">Udgivelsesdato</string>
-<string name="Directors">Instruktører</string>
-<string name="Download">Download</string>
-<string name="DownloadUserdefined">Download til brugermappe</string>
-<string name="Downloading">Downloader</string>
-<string name="DownloadingDescription">Viser en liste over igangværende downloads</string>
-<string name="DownloadingSubtitle">Henter undertekster</string>
-<string name="DownloadFailed">Download fejlede</string>
-<string name="DownloadCancelled">Download annulleret</string>
-<string name="DownloadComplete">Download færdig</string>
-<string name="DownloadStarted">Download Startet</string>
-<string name="DownloadedVideos">Downloaded Videoer</string>
-<string name="DownloadsWillBeAborted">Downloads vil blive afbrudt.</string>
-<string name="Delete">Slet</string>
-<string name="DeleteAll">Slet Alle</string>
-<string name="Default">normal</string>
-<string name="Done">Færdig</string>
-<string name="DeletingOldThumbs">Slet gamle thumbnails</string>
-
-<!-- E -->
-<string name="Error">Fejl</string>
-<string name="EnterPin">Indtast kode</string>
-
-<!-- F -->
-<string name="Favourites">Favoritter</string>
-<string name="Filter">Filtrer</string>
-<string name="FullUpdate">Fuld opdatering</string>
-
-<!-- G -->
-<string name="Genre">Genre</string>
-<string name="GettingVideoDetails">Henter videodetaljer</string>
-<string name="GettingCategoryVideos">Henter kategoridetaljer</string>
-<string name="GettingFavoriteVideos">Henter favoritvideoer</string>
-<string name="GettingSearchResults">Henter søgeresultater</string>
-<string name="GettingRelatedVideos">Henter lignende videoer</string>
-<string name="GettingFilteredVideos">Henter filtrerede videoer</string>
-<string name="GettingNextPageVideos">Henter næste videoside</string>
-<string name="GettingPreviousPageVideos">Henter forrige videoside</string>
-<string name="GettingPlaybackUrlsForVideo">Henter video link</string>
-<string name="GettingDynamicCategories">Henter dynamiske kategorier</string>
-<string name="GettingReports">Henter rapport fra nettet</string>
-<string name="GettingSiteXml">Henter xml fra nettet</string>
-<string name="GettingIcon">Henter icon fra nettet</string>
-<string name="GettingBanner">Henter banner fra nettet</string>
-<string name="GettingDll">Henter DLL fra nettet</string>
-<string name="Groups">Grupper</string>
-
-<!-- H -->
-
-<!-- I -->
-
-<!-- L -->
-<string name="LatestVersionRequired">Nyeste version ({0}) påkrævet!</string>
-<string name="Language">Sprog</string>
-<string name="LayoutList">Listevisning</string>
-<string name="LayoutIcons">Ikonvisning</string>
-<string name="LayoutBigIcons">Ikonvisning stor</string>
-
-<!-- M -->
-<string name="ManageSites">Administrer sider</string>
-<string name="MaxResults">Max resultater</string>
-
-<!-- N -->
-<string name="Name">Navn</string>
-<string name="NextPage">Næste side</string>
-<string name="NewVideos">Næste vidoer</string>
-<string name="None">Ingen</string>
-<string name="NoVideoFound">Ingen video fundet</string>
-<string name="NoReportsForSite">Ingen rapporter fundet</string>
-<string name="NewDllDownloaded">Ny dll downloaded</string>
-<string name="NewSearch">Ny søgning</string>
-
-<!-- O -->
-<string name="Others">Andet</string>
-
-<!-- P -->
-<string name="PlayAll">Afspil alle</string>
-<string name="PlayWith">Afspil med ...</string>
-<string name="Playlists">Playlister</string>
-<string name="PlaybackWillBeStopped">Afspilningen vil blive stoppet.</string>
-<string name="PleaseEnterDescription">Giv venligst en kort beskrivelse.</string>
-<string name="PlotOutline">Handling</string>
-<string name="PreviousPage">Forrige side</string>
-<string name="PerformAutomaticUpdate">Skal der automatisk opdateres?</string>
-
-<!-- Q -->
-<string name="Queued">sat i kø</string>
-
-<!-- R -->
-<string name="Recommendations">Anbefalinger</string>
-<string name="RemoveFromFavorites">Fjern fra Favoritter</string>
-<string name="RemovingFromFavorites">Fjerner fra Favoritter</string>
-<string name="Refresh">Opdater</string>
-<string name="RelatedVideos">Lignede Videoer</string>
-<string name="ReportBroken">Reportér istykker</string>
-<string name="Reported">Rapporteret</string>
-<string name="Reports">Rapporter</string>
-<string name="Runtime">Spilletid</string>
-<string name="RemoveFromMySites">Fjern fra Mine sider</string>
-<string name="RestartMediaPortal">Genstart Mediaportal!</string>
-<string name="RetrievingRemoteDlls">Henter eksterne dll'er</string>
-<string name="RetrievingRemoteSites">Henter eksterne sider</string>
-
-<!-- S -->
-<string name="SearchHistory">Søgehistorik</string>
-<string name="SearchResults">Søgeresultater</string>
-<string name="SelectSource">Vælg kilde</string>
-<string name="Sites">Sider</string>
-<string name="Size">Størrelse</string>
-<string name="SortOptions">Sorterings muligheder</string>
-<string name="Search">Søg</string>
-<string name="SetDownloadFolderInConfig">Konfigurer download mappe i Mediaportal konfiguration</string>
-<string name="State">Status</string>
-<string name="SavingLocalSiteList">Gemmer lokal side liste</string>
-<string name="ShowReports">Vis rapporter fra Ejer/brugere</string>
-<string name="StartingPlayback">Starter afspilning</string>
-<string name="Subscriptions">Tilmeldinger</string>
-<string name="Success">Succesfuld</string>
-
-<!-- T -->
-<string name="Timeframe">Tidshorisont</string>
-<string name="Timeout">Timeout</string>
-<string name="Tags">Tags</string>
-
-<!-- U -->
-<string name="Updated">Opdateret</string>
-<string name="Updatable">Ny version tilgængelig</string>
-<string name="UpdateAll">Opdater/Tilføj alle</string>
-<string name="UpdateAllSkipCategories">Opdater/Tilføj alle (springer kategorier over</string>
-<string name="UpdateMySite">Opdater sider</string>
-<string name="UpdateMySiteSkipCategories">Opdater min siden(uden kategorier)</string>
-<string name="UpdateAllYourSites">Dette vil opdatere dine sider</string>
-<string name="UnableToPlayVideo">Kan ikke afspilles - Fejl i URL</string>
-<string name="UnableToDownloadVideo">Kan ikke downloades - Fejl i URL</string>
-<string name="UploadsBy">Oploadet af</string>
-
-<!-- V -->
-<string name="Videos">Videoer</string>
-<string name="VideoQuality">Video kvalitet</string>
-
-<!-- W -->
-<string name="Working">Arbejder</string>
-<string name="Writers">Forfattere</string>
-
-<!-- Y -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
+  <string name="Airdate">Vist i TV</string>
+  <string name="AlreadyDownloading">Fil downloades allerede</string>
+  <string name="All">Alle</string>
+  <string name="Actions">Handlinger</string>
+  <string name="Actors">Skuespillere</string>
+  <string name="AddComment">Tilføj kommentar</string>
+  <string name="AddToPlaylist">Tilføl til Playlist</string>
+  <string name="AddToMySites">Tilføj til Mine Sider</string>
+  <string name="AddToFavourites">Tilføj til Favoritter</string>
+  <string name="AddingToFavorites">Tilføjer til Favoritter</string>
+  <string name="AutomaticUpdate">Autoupdate aktiveret</string>
+  <string name="AutomaticUpdateDisabled">Autoupdate deaktiveret</string>
+  <!--B-->
+  <string name="Broken">Ude af funktion</string>
+  <string name="Buffered">Indlæst</string>
+  <!--C-->
+  <string name="Cancel">Annuller</string>
+  <string name="Category">Kategori</string>
+  <string name="CategoryNotFound">Kategori ikke fundet</string>
+  <string name="Categories">Kategorier</string>
+  <string name="Creator">Lavet af</string>
+  <string name="CreateNewPlaylist">Opret ny Playlist</string>
+  <string name="CheckingForPluginUpdate">Søger efter ny version</string>
+  <string name="Concurrent">sideløbende</string>
+  <!--D-->
+  <string name="Date">Dato</string>
+  <string name="DateOfRelease">Udgivelsesdato</string>
+  <string name="Directors">Instruktører</string>
+  <string name="Download">Download</string>
+  <string name="DownloadUserdefined">Download til brugermappe</string>
+  <string name="Downloading">Downloader</string>
+  <string name="DownloadingDescription">Viser en liste over igangværende downloads</string>
+  <string name="DownloadingSubtitle">Henter undertekster</string>
+  <string name="DownloadFailed">Download fejlede</string>
+  <string name="DownloadCancelled">Download annulleret</string>
+  <string name="DownloadComplete">Download færdig</string>
+  <string name="DownloadStarted">Download Startet</string>
+  <string name="DownloadedVideos">Downloaded Videoer</string>
+  <string name="DownloadsWillBeAborted">Downloads vil blive afbrudt.</string>
+  <string name="Delete">Slet</string>
+  <string name="DeletePlaylist">Slet Playlist</string>
+  <string name="DeleteAll">Slet Alle</string>
+  <string name="Default">normal</string>
+  <string name="Done">Færdig</string>
+  <string name="DeletingOldThumbs">Slet gamle thumbnails</string>
+  <!--E-->
+  <string name="Error">Fejl</string>
+  <string name="EnterPin">Indtast kode</string>
+  <!--F-->
+  <string name="Favourites">Favoritter</string>
+  <string name="Filter">Filtrer</string>
+  <string name="FullUpdate">Fuld opdatering</string>
+  <!--G-->
+  <string name="Genre">Genre</string>
+  <string name="GettingVideoDetails">Henter videodetaljer</string>
+  <string name="GettingCategoryVideos">Henter kategoridetaljer</string>
+  <string name="GettingFavoriteVideos">Henter favoritvideoer</string>
+  <string name="GettingSearchResults">Henter søgeresultater</string>
+  <string name="GettingRelatedVideos">Henter lignende videoer</string>
+  <string name="GettingFilteredVideos">Henter filtrerede videoer</string>
+  <string name="GettingNextPageVideos">Henter næste videoside</string>
+  <string name="GettingPreviousPageVideos">Henter forrige videoside</string>
+  <string name="GettingPlaybackUrlsForVideo">Henter video link</string>
+  <string name="GettingDynamicCategories">Henter dynamiske kategorier</string>
+  <string name="GettingReports">Henter rapport fra nettet</string>
+  <string name="GettingSiteXml">Henter xml fra nettet</string>
+  <string name="GettingIcon">Henter icon fra nettet</string>
+  <string name="GettingBanner">Henter banner fra nettet</string>
+  <string name="GettingDll">Henter DLL fra nettet</string>
+  <string name="Groups">Grupper</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="LatestVersionRequired">Nyeste version ({0}) påkrævet!</string>
+  <string name="Language">Sprog</string>
+  <string name="LayoutList">Listevisning</string>
+  <string name="LayoutIcons">Ikonvisning</string>
+  <string name="LayoutBigIcons">Ikonvisning stor</string>
+  <!--M-->
+  <string name="ManageSites">Administrer sider</string>
+  <string name="MaxResults">Max resultater</string>
+  <!--N-->
+  <string name="Name">Navn</string>
+  <string name="NextPage">Næste side</string>
+  <string name="NewVideos">Næste vidoer</string>
+  <string name="None">Ingen</string>
+  <string name="NoVideoFound">Ingen video fundet</string>
+  <string name="NoReportsForSite">Ingen rapporter fundet</string>
+  <string name="NewDllDownloaded">Ny dll downloaded</string>
+  <string name="NewSearch">Ny søgning</string>
+  <!--O-->
+  <string name="OnlyLocal">Kun lokal</string>
+  <string name="OnlyServer">Kun Server</string>
+  <string name="Others">Andet</string>
+  <!--P-->
+  <string name="PlayAll">Afspil alle</string>
+  <string name="PlayAllRandom">Afspil alle (tilfældig rækkefølge)</string>
+  <string name="PlayWith">Afspil med ...</string>
+  <string name="Playlists">Playlister</string>
+  <string name="PlaybackWillBeStopped">Afspilningen vil blive stoppet.</string>
+  <string name="PleaseEnterDescription">Giv venligst en kort beskrivelse.</string>
+  <string name="PlotOutline">Handling</string>
+  <string name="PreviousPage">Forrige side</string>
+  <string name="PerformAutomaticUpdate">Skal der automatisk opdateres?</string>
+  <!--Q-->
+  <string name="Queued">sat i kø</string>
+  <!--R-->
+  <string name="Recommendations">Anbefalinger</string>
+  <string name="RemoveFromFavorites">Fjern fra Favoritter</string>
+  <string name="RemoveFromPlaylist">Fjern fra Playlist</string>
+  <string name="RemovingFromFavorites">Fjerner fra Favoritter</string>
+  <string name="Refresh">Opdater</string>
+  <string name="RelatedVideos">Lignede Videoer</string>
+  <string name="ReportBroken">Reportér istykker</string>
+  <string name="Reported">Rapporteret</string>
+  <string name="Reports">Rapporter</string>
+  <string name="Runtime">Spilletid</string>
+  <string name="RemoveFromMySites">Fjern fra Mine sider</string>
+  <string name="RemoveAllFromMySites">Fjern alle fra min side</string>
+  <string name="RestartMediaPortal">Genstart Mediaportal!</string>
+  <string name="RetrievingRemoteDlls">Henter eksterne dll\'er</string>
+  <string name="RetrievingRemoteSites">Henter eksterne sider</string>
+  <!--S-->
+  <string name="SearchHistory">Søgehistorik</string>
+  <string name="SearchResults">Søgeresultater</string>
+  <string name="SelectSource">Vælg kilde</string>
+  <string name="Sites">Sider</string>
+  <string name="Size">Størrelse</string>
+  <string name="SortOptions">Sorterings muligheder</string>
+  <string name="Search">Søg</string>
+  <string name="SetDownloadFolderInConfig">Konfigurer download mappe i Mediaportal konfiguration</string>
+  <string name="State">Status</string>
+  <string name="SavingLocalSiteList">Gemmer lokal side liste</string>
+  <string name="ShowReports">Vis rapporter fra Ejer/brugere</string>
+  <string name="StartingPlayback">Starter afspilning</string>
+  <string name="Subscriptions">Tilmeldinger</string>
+  <string name="Success">Succesfuld</string>
+  <!--T-->
+  <string name="Timeframe">Tidshorisont</string>
+  <string name="Timeout">Timeout</string>
+  <string name="Tags">Tags</string>
+  <!--U-->
+  <string name="Updated">Opdateret</string>
+  <string name="Updatable">Ny version tilgængelig</string>
+  <string name="UpdateAll">Opdater/Tilføj alle</string>
+  <string name="UpdateAllSkipCategories">Opdater/Tilføj alle (springer kategorier over</string>
+  <string name="UpdateMySite">Opdater sider</string>
+  <string name="UpdateMySiteSkipCategories">Opdater min siden(uden kategorier)</string>
+  <string name="UpdateAllYourSites">Dette vil opdatere dine sider</string>
+  <string name="UnableToPlayVideo">Kan ikke afspilles - Fejl i URL</string>
+  <string name="UnableToDownloadVideo">Kan ikke downloades - Fejl i URL</string>
+  <string name="UploadsBy">Oploadet af</string>
+  <!--V-->
+  <string name="Videos">Videoer</string>
+  <string name="VideoQuality">Video kvalitet</string>
+  <!--W-->
+  <string name="Working">Arbejder</string>
+  <string name="Writers">Forfattere</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="Settings_Yes">Ja</string>
+  <string name="Settings_No">Nej</string>
+  <string name="Settings_SearchHistoryType_Off">Sluk</string>
+  <string name="Settings_SearchHistoryType_Simple">Enkel</string>
+  <string name="Settings_SearchHistoryType_Extended">Udvidet</string>
+  <string name="Settings_PluginEnabled">Plugin aktiveret</string>
+  <string name="Settings_AutoGroupByLang">Automatisk grupper alle sider via sprog</string>
+  <string name="Settings_SearchHistoryType">Søge historie</string>
+  <string name="Settings_StoreLayoutPerCategory">Husk layout pr side og kategori</string>
 </resources>

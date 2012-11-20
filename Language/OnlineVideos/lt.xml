@@ -1,25 +1,31 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- MediaPortal OnlineVideos plugin translation file -->
-<!-- Lithuanian translation by Marijus Luinys at 2011.09.30-->
-<!-- Note: English is the fallback for any strings not found in other languages -->
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
+  <!--A-->
   <string name="Airdate">Transliacija</string>
   <string name="AlreadyDownloading">Video siunciamas.</string>
   <string name="All">Visi</string>
   <string name="Actions">Veiksmai</string>
   <string name="Actors">Aktoriai</string>
+  <string name="AddComment">Pridėti komentarą...</string>
+  <string name="AddToPlaylist">Pridėti prie Grojaraščio...</string>
   <string name="AddToMySites">Itraukti i mano puslapius</string>
   <string name="AddToFavourites">Itrukti i megstamus</string>
   <string name="AddingToFavorites">ikelia i megstamus</string>
   <string name="AutomaticUpdate">Automatinis atnaujinimas</string>
   <string name="AutomaticUpdateDisabled">Automatinis atnaujinimas isjungtas.</string>
+  <!--B-->
   <string name="Broken">Pagedes</string>
   <string name="Buffered">ikelta</string>
+  <!--C-->
   <string name="Cancel">Nutraukti</string>
   <string name="Category">Kategorija</string>
+  <string name="CategoryNotFound">Nerasta kategorija</string>
   <string name="Categories">Kategorijos</string>
   <string name="Creator">Autorius</string>
+  <string name="CreateNewPlaylist">Sukurti naują Grojaraštį...</string>
   <string name="CheckingForPluginUpdate">ieskoma naujos iskiepio versijos</string>
+  <string name="Concurrent">kartu</string>
+  <!--D-->
   <string name="Date">Data</string>
   <string name="DateOfRelease">Isleista</string>
   <string name="Directors">Rezisieriai</string>
@@ -33,16 +39,21 @@
   <string name="DownloadComplete">Siuntimas baigtas</string>
   <string name="DownloadStarted">Siuntimas pradetas</string>
   <string name="DownloadedVideos">Parsiusti video</string>
+  <string name="DownloadsWillBeAborted">Siuntimai bus sustabdyti.</string>
   <string name="Delete">Trinti</string>
+  <string name="DeletePlaylist">Trinti Grojaraštį</string>
   <string name="DeleteAll">Trinti visus</string>
   <string name="Default">Standartinis</string>
   <string name="Done">Baigta</string>
   <string name="DeletingOldThumbs">Visos paveiksleliu miniatiuros bus panaikintos</string>
+  <!--E-->
   <string name="Error">Klaida</string>
   <string name="EnterPin">Iveskite PIN</string>
+  <!--F-->
   <string name="Favourites">Megstamiausi</string>
   <string name="Filter">Filtras</string>
   <string name="FullUpdate">Pilnas atnaujinimas</string>
+  <!--G-->
   <string name="Genre">Zanras</string>
   <string name="GettingVideoDetails">ikeliama informacija apie video</string>
   <string name="GettingCategoryVideos">ikeliami sios kategorijos video</string>
@@ -60,13 +71,18 @@
   <string name="GettingBanner">ikeliama serverio antraste</string>
   <string name="GettingDll">is serverio ikeliama DLL</string>
   <string name="Groups">Grupes</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Reikalinga naujausia ({0}) versija!</string>
   <string name="Language">Kalba</string>
   <string name="LayoutList">Isdestymas: sarasas</string>
   <string name="LayoutIcons">Isdestymas: mazi simboliai</string>
   <string name="LayoutBigIcons">Isdestymas: dideli simboliai</string>
+  <!--M-->
   <string name="ManageSites">Tvarkyti puslapius</string>
   <string name="MaxResults">Daugiausiai rezultatu</string>
+  <!--N-->
   <string name="Name">Vardas</string>
   <string name="NextPage">Sekantis puslapis</string>
   <string name="NewVideos">Nauji video</string>
@@ -75,14 +91,27 @@
   <string name="NoReportsForSite">Nerasta jokiu pranesimu apie si puslapi.</string>
   <string name="NewDllDownloaded">Parsiunciama nauja DLL!</string>
   <string name="NewSearch">Nauja paieska</string>
+  <!--O-->
+  <string name="OnlyLocal">Tik vietinis</string>
+  <string name="OnlyServer">Tik serveris</string>
   <string name="Others">Kiti</string>
+  <!--P-->
   <string name="PlayAll">Paleisti visus</string>
+  <string name="PlayAllRandom">Groti viską (kintama tvarka)</string>
   <string name="PlayWith">Paleisti per ...</string>
+  <string name="Playlists">Grojaraštis</string>
+  <string name="PlaybackWillBeStopped">Grojimas bus sustabdytas.</string>
   <string name="PleaseEnterDescription">Trumpai aprasykite!</string>
   <string name="PlotOutline">Veiksmas</string>
   <string name="PreviousPage">Ankstesnis puslapis</string>
   <string name="PerformAutomaticUpdate">Ar paleisti automatini atnaujinima?</string>
+  <!--Q-->
+  <string name="Queued">eilėje</string>
+  <!--R-->
+  <string name="RateVideo">Įvertinti video...</string>
+  <string name="Recommendations">Rekomendacijos</string>
   <string name="RemoveFromFavorites">Triti is megstamiausiu</string>
+  <string name="RemoveFromPlaylist">Išimti iš grojarščio</string>
   <string name="RemovingFromFavorites">trina is megstamiausiu</string>
   <string name="Refresh">Atnaujinti vaizda</string>
   <string name="RelatedVideos">Panasus video</string>
@@ -91,9 +120,11 @@
   <string name="Reports">Pranesimai</string>
   <string name="Runtime">Trukme</string>
   <string name="RemoveFromMySites">Trinti is mano puslapiu</string>
+  <string name="RemoveAllFromMySites">Išimti visus iš mano vietų</string>
   <string name="RestartMediaPortal">Paleiskite MediaPortal is naujo!</string>
-  <string name="RetrievingRemoteDlls">Is serverio ikelia DLL'us ...</string>
+  <string name="RetrievingRemoteDlls">Is serverio ikelia DLL\'us ...</string>
   <string name="RetrievingRemoteSites">Is serverio ikelia puslapius ...</string>
+  <!--S-->
   <string name="SearchHistory">Ankstesnes paieskos</string>
   <string name="SearchResults">Paieskos rezultatai</string>
   <string name="SelectSource">Pasirinkti saltini</string>
@@ -107,9 +138,12 @@
   <string name="ShowReports">Rodyti vortotoju ir kureju pranesimus</string>
   <string name="StartingPlayback">pasileidineja</string>
   <string name="Subscriptions">Prenumerata</string>
+  <string name="Success">Sekmingai</string>
+  <!--T-->
   <string name="Timeframe">Laikotarpis</string>
   <string name="Timeout">Uzstrigo</string>
   <string name="Tags">Dazniausiai pasitaikantys zodziai</string>
+  <!--U-->
   <string name="Updated">Atnaujinta</string>
   <string name="Updatable">Pasiruoses atnaujinimaui</string>
   <string name="UpdateAll">Viska atnaujinti/itraukti</string>
@@ -120,7 +154,37 @@
   <string name="UnableToPlayVideo">Nepavyksta paleisti video- nerasta nuoruodos.</string>
   <string name="UnableToDownloadVideo">Nepavyksta parsiusti video- neteisinga nuoruoda.</string>
   <string name="UploadsBy">Ikelti video nuo</string>
+  <!--V-->
   <string name="Videos">Video</string>
+  <string name="VideoQuality">Video kokybė</string>
+  <!--W-->
   <string name="Working">Veikiantis</string>
   <string name="Writers">Autoriai</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="Settings_Yes">Taip</string>
+  <string name="Settings_No">Ne</string>
+  <string name="Settings_SearchHistoryType_Off">Išjungti</string>
+  <string name="Settings_SearchHistoryType_Simple">Paprastas</string>
+  <string name="Settings_SearchHistoryType_Extended">Išplėstas</string>
+  <string name="Settings_BasicHomeName">Pagrindinio puslapio vardas</string>
+  <string name="Settings_PluginEnabled">Įskiepis įjungtas</string>
+  <string name="Settings_ListedInHome">Rodomas pagrindiniame</string>
+  <string name="Settings_ListedInPlugins">Rodomas Įskiepiuose</string>
+  <string name="Settings_AutoGroupByLang">Automatiškai grupuoti vietas pagal jų kalbą</string>
+  <string name="Settings_UseQuickSelect">Naudoti tekstinius klavišus greitam pasirinkimui pagala pirmąją raidę</string>
+  <string name="Settings_SearchHistoryType">Paieškos istorija</string>
+  <string name="Settings_ThumbAge">Maksimalus miniatiūros galiojimas (dienomis)</string>
+  <string name="Settings_CacheTimeout">Laikas (minutėmis) kešavimui iš web</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Laikas (minutėmis) po kurio kategorijos bus perkrautos iš web</string>
+  <string name="Settings_UtilTimeout">Web užklausų trukmė (sekundėmis)</string>
+  <string name="Settings_WmpBuffer">Windows Media Player buferis (milisekundėmis)</string>
+  <string name="Settings_PlayBuffer">Buferis procentais po kurio pradedamas grojimas</string>
+  <string name="Settings_AllowRefreshrateChange">Įjungti dinaminį ekrano skleistinės adaptavimą</string>
+  <string name="Settings_FavoritesFirst">Pateikti Mėgstamiausias ir Atsisiuntimo vietas sąrašo pradžioje</string>
+  <string name="Settings_LatestVideosMaxItems">Naujausių video kiekis atvaizdavimui</string>
+  <string name="Settings_LatestVideosRandomize">Sumaišyti visus paskutinius video prieš atvaizduojant</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Atnaujinti paskutinių video duomenis iš web kas x sekundžių</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Atnaujinti parodytų paskutinių video kas x sekundžių</string>
+  <string name="Settings_StoreLayoutPerCategory">Įsiminti Vietų ir Kategorijų atvaizdo išdėstymą</string>
 </resources>

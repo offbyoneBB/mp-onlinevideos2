@@ -1,116 +1,130 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- Dutch -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<strings>
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">Uitgezonden</string>
-  <string name="AlreadyDownloading">Al bezig met downloaden</string>
+  <string name="AlreadyDownloading">Al bezig met het downloaden van dit bestand.</string>
   <string name="All">Alle</string>
-  <string name="Actions">Akties</string>
+  <string name="Actions">Acties</string>
   <string name="Actors">Acteurs</string>
-  <string name="AddComment">Voeg opmerking toe</string>
-  <string name="AddToPlaylist">Voeg toe aan afspeellijst</string>
-  <string name="AddToMySites">Toevoegen aan mijn sites</string>
-  <string name="AddToFavourites">Toevoegen aan favorieten</string>
-  <string name="AddingToFavorites">bij het toevoegen aan favorieten</string>
+  <string name="AddComment">Opmerking toevoegen...</string>
+  <string name="AddToPlaylist">Voeg toe aan afspeellijst...</string>
+  <string name="AddToMySites">Voeg toe aan mijn sites</string>
+  <string name="AddToFavourites">Voeg toe aan favorieten</string>
+  <string name="AddingToFavorites">toevoegen aan favorieten</string>
   <string name="AutomaticUpdate">Automatische update</string>
-  <string name="AutomaticUpdateDisabled">Automatische update niet beschikbaar</string>
-  <string name="Broken">Kapot</string>
+  <string name="AutomaticUpdateDisabled">Automatische update uitgeschakeld.</string>
+  <!--B-->
+  <string name="Broken">Defect</string>
   <string name="Buffered">Gebufferd</string>
+  <!--C-->
   <string name="Cancel">Annuleren</string>
   <string name="Category">Categorie</string>
   <string name="CategoryNotFound">Categorie niet gevonden</string>
-  <string name="Categories">Categoriën</string>
+  <string name="Categories">Categorieën</string>
   <string name="Creator">Maker</string>
   <string name="CreateNewPlaylist">Maak nieuwe afspeellijst</string>
-  <string name="CheckingForPluginUpdate">Testen op geupdate plugin versie</string>
-  <string name="Concurrent">Tegelijkertijd</string>
+  <string name="CheckingForPluginUpdate">Controleren op bijgewerkte plug-in versie</string>
+  <string name="Concurrent">gelijktijdig</string>
+  <!--D-->
   <string name="Date">Datum</string>
-  <string name="DateOfRelease">Verschijningsdatum:</string>
+  <string name="DateOfRelease">Verschijningsdatum</string>
   <string name="Directors">Regisseurs</string>
   <string name="Download">Download</string>
-  <string name="DownloadUserdefined">Downloaden naar ingestelde directory</string>
+  <string name="DownloadUserdefined">Downloaden naar ingestelde map</string>
   <string name="Downloading">Downloaden</string>
-  <string name="DownloadingDescription">Toont lijst van huidige downloads</string>
+  <string name="DownloadingDescription">Toont een lijst van de huidige downloads.</string>
   <string name="DownloadingSubtitle">Ondertiteling downloaden</string>
   <string name="DownloadFailed">Download mislukt: {0}</string>
   <string name="DownloadCancelled">Download geannuleerd</string>
   <string name="DownloadComplete">Download gereed</string>
   <string name="DownloadStarted">Download begonnen</string>
-  <string name="DownloadedVideos">Gedownloade videos</string>
+  <string name="DownloadedVideos">Gedownloade video\'s</string>
   <string name="DownloadsWillBeAborted">De downloads worden geannuleerd</string>
   <string name="Delete">Verwijderen</string>
   <string name="DeletePlaylist">Verwijder afspeellijst</string>
   <string name="DeleteAll">Alles verwijderen</string>
   <string name="Default">Standaard</string>
   <string name="Done">Gereed</string>
-  <string name="DeletingOldThumbs">Wissen van oude thumbnails</string>
+  <string name="DeletingOldThumbs">Verwijderen van oude thumbnails</string>
+  <!--E-->
   <string name="Error">Fout</string>
   <string name="EnterPin">Voer pin-code in</string>
+  <!--F-->
   <string name="Favourites">Favorieten</string>
   <string name="Filter">Filter</string>
   <string name="FullUpdate">Volledige update</string>
+  <!--G-->
   <string name="Genre">Genre</string>
-  <string name="GettingVideoDetails">bij het opvragen van de video-details</string>
-  <string name="GettingCategoryVideos">bij het opvragen van de categoriën</string>
-  <string name="GettingFavoriteVideos">bij het opvragen van de favorieten</string>
-  <string name="GettingSearchResults">bij het opvragen van de zoekresultaten</string>
-  <string name="GettingRelatedVideos">bij het opvragen van de verwante videos</string>
-  <string name="GettingFilteredVideos">bij het opvragen van de gefilterde videos</string>
-  <string name="GettingNextPageVideos">bij het opvragen van de videos op de volgende pagina</string>
-  <string name="GettingPreviousPageVideos">bij het opvragen van de vorige pagina</string>
-  <string name="GettingPlaybackUrlsForVideo">bij het opvragen van de afspeel-url's van de video</string>
-  <string name="GettingDynamicCategories">bij het opvragen van de dynamische categoriën</string>
+  <string name="GettingVideoDetails">opvragen van de video-details</string>
+  <string name="GettingCategoryVideos">opvragen van de categorieën</string>
+  <string name="GettingFavoriteVideos">opvragen van de favorieten</string>
+  <string name="GettingSearchResults">opvragen van de zoekresultaten</string>
+  <string name="GettingRelatedVideos">opvragen van de verwante video\'s</string>
+  <string name="GettingFilteredVideos">opvragen van de gefilterde video\'s</string>
+  <string name="GettingNextPageVideos">opvragen van de video\'s op de volgende pagina</string>
+  <string name="GettingPreviousPageVideos">opvragen van de vorige pagina</string>
+  <string name="GettingPlaybackUrlsForVideo">opvragen van de afspeel-url\'s van de video</string>
+  <string name="GettingDynamicCategories">opvragen van de dynamische categorieën</string>
   <string name="GettingReports">Ontvangen van meldingen van de webservice</string>
   <string name="GettingSiteXml">Ontvangen van de site-xml van de webservice</string>
   <string name="GettingIcon">Ontvangen van het site-icoon van de webservice</string>
   <string name="GettingBanner">Ontvangen van de site-banner van de webservice</string>
   <string name="GettingDll">Ontvangen van de dll van de webservice</string>
   <string name="Groups">Groepen</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Laatste versie {0} benodigd!</string>
   <string name="Language">Taal</string>
   <string name="LayoutList">Weergave: Lijst</string>
   <string name="LayoutIcons">Weergave: Pictogrammen</string>
   <string name="LayoutBigIcons">Weergave: Grote pictogrammen</string>
+  <!--M-->
   <string name="ManageSites">Sites beheren</string>
   <string name="MaxResults">Max. aantal resultaten</string>
+  <!--N-->
   <string name="Name">Naam</string>
   <string name="NextPage">Volgende pagina</string>
-  <string name="NewVideos">Nieuwe videos</string>
-  <string name="None">Niets</string>
+  <string name="NewVideos">Nieuwe video\'s</string>
+  <string name="None">Geen</string>
   <string name="NoVideoFound">Geen video gevonden</string>
   <string name="NoReportsForSite">Geen meldingen van deze site beschikbaar</string>
   <string name="NewDllDownloaded">Nieuwe dll gedownload!</string>
   <string name="NewSearch">Nieuwe zoekopdracht</string>
+  <!--O-->
   <string name="OnlyLocal">Alleen van deze PC</string>
   <string name="OnlyServer">Alleen van de server</string>
   <string name="Others">Overige</string>
+  <!--P-->
   <string name="PlayAll">Alles afspelen</string>
   <string name="PlayAllRandom">Alles afspelen in willekeurige volgorde</string>
   <string name="PlayWith">Afspelen met...</string>
-  <string name="Playlists">Afspeellijst</string>
+  <string name="Playlists">Afspeellijsten</string>
   <string name="PlaybackWillBeStopped">Afspelen wordt gestopt</string>
   <string name="PleaseEnterDescription">Geef een korte beschrijving</string>
   <string name="PlotOutline">Samenvatting</string>
   <string name="PreviousPage">Vorige pagina</string>
   <string name="PerformAutomaticUpdate">Automatische update uitvoeren?</string>
+  <!--Q-->
   <string name="Queued">in de wachtrij</string>
+  <!--R-->
   <string name="RateVideo">Beoordeel video</string>
   <string name="Recommendations">Aanbevelingen</string>
   <string name="RemoveFromFavorites">Verwijderen uit favorieten</string>
   <string name="RemoveFromPlaylist">Verwijder van afspeellijst</string>
   <string name="RemovingFromFavorites">bij het verwijderen uit de favorieten</string>
   <string name="Refresh">Verversen</string>
-  <string name="RelatedVideos">Gerelateerde videos</string>
+  <string name="RelatedVideos">Gerelateerde video\'s</string>
   <string name="ReportBroken">Meld defect</string>
   <string name="Reported">Gemeld</string>
   <string name="Reports">Meldingen</string>
-  <string name="Runtime">Duur:</string>
+  <string name="Runtime">Duur</string>
   <string name="RemoveFromMySites">Verwijderen uit mijn sites</string>
   <string name="RemoveAllFromMySites">Alles uit mijn sites verwijderen</string>
-  <string name="RestartMediaPortal">Herstart Mediaportal!</string>
-  <string name="RetrievingRemoteDlls">Ophalen externe dll's...</string>
+  <string name="RestartMediaPortal">Herstart MediaPortal!</string>
+  <string name="RetrievingRemoteDlls">Ophalen externe dll\'s...</string>
   <string name="RetrievingRemoteSites">Ophalen externe sites...</string>
+  <!--S-->
   <string name="SearchHistory">Zoekgeschiedenis</string>
   <string name="SearchResults">Zoekresultaten</string>
   <string name="SelectSource">Kies bron</string>
@@ -122,26 +136,32 @@
   <string name="State">Status</string>
   <string name="SavingLocalSiteList">Opslaan lokale site-lijst...</string>
   <string name="ShowReports">Toon ontwikkelaars en gebruikers meldingen</string>
-  <string name="StartingPlayback">bij het starten van de video</string>
+  <string name="StartingPlayback">starten van de video</string>
   <string name="Subscriptions">Abonnementen</string>
   <string name="Success">Gelukt</string>
+  <!--T-->
   <string name="Timeframe">Periode</string>
   <string name="Timeout">Time-out</string>
   <string name="Tags">Kenmerken</string>
+  <!--U-->
   <string name="Updated">Bijgewerkt</string>
   <string name="Updatable">Bij te werken</string>
   <string name="UpdateAll">Alles bijwerken/toevoegen</string>
-  <string name="UpdateAllSkipCategories">Alles behalve categorieen bijwerken/toevoegen</string>
+  <string name="UpdateAllSkipCategories">Alles bijwerken/toevoegen (categorieën overslaan)</string>
   <string name="UpdateMySite">Mijn site bijwerken</string>
-  <string name="UpdateMySiteSkipCategories">Mijn site bijwerken (categorieen overslaan)</string>
+  <string name="UpdateMySiteSkipCategories">Mijn site bijwerken (categorieën overslaan)</string>
   <string name="UpdateAllYourSites">Dit zal de huidige sites bijwerken</string>
   <string name="UnableToPlayVideo">Kan video niet afspelen: Geen URL.</string>
   <string name="UnableToDownloadVideo">Kan video niet downloaden: Ongeldige URL.</string>
   <string name="UploadsBy">Geüpload door</string>
-  <string name="Videos">Videos</string>
+  <!--V-->
+  <string name="Videos">Video\'s</string>
   <string name="VideoQuality">Video kwaliteit</string>
+  <!--W-->
   <string name="Working">Bezig</string>
   <string name="Writers">Auteurs</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
   <string name="Settings_Yes">Ja</string>
   <string name="Settings_No">Nee</string>
   <string name="Settings_SearchHistoryType_Off">Uit</string>
@@ -155,16 +175,16 @@
   <string name="Settings_UseQuickSelect">Alfanumerieke toetsen gebruiken voor snelle selectie</string>
   <string name="Settings_SearchHistoryType">Zoek-geschiedenis</string>
   <string name="Settings_ThumbAge">Maximale ouderdom (in dagen) voor voorvertoningen</string>
-  <string name="Settings_CacheTimeout">Maximale ouderdom (in minuten) van gecachede web-data</string>
+  <string name="Settings_CacheTimeout">Maximale ouderdom (in minuten) van web-data cache</string>
   <string name="Settings_CategoryDiscoveryTimeout">Maximale ouderdom (in minuten) van categorie-data</string>
-  <string name="Settings_UtilTimeout">Timeout waarde voor web-aanvragen (in seconden)</string>
+  <string name="Settings_UtilTimeout">Time-out waarde voor web-aanvragen (in seconden)</string>
   <string name="Settings_WmpBuffer">Buffer-tijd (in milliseconden) voor afspelen met Windows Media Player</string>
   <string name="Settings_PlayBuffer">Buffer-percentage voor afspelen (overig)</string>
-  <string name="Settings_AllowRefreshrateChange">Gebruik "dynamic refresh rate" instelling</string>
+  <string name="Settings_AllowRefreshrateChange">Gebruik \"dynamic refresh rate\" instelling</string>
   <string name="Settings_FavoritesFirst">Favorieten en Downloads bovenaan in de lijst in plaats van onderaan</string>
-  <string name="Settings_LatestVideosMaxItems">Aantal weer te geven videos</string>
-  <string name="Settings_LatestVideosRandomize">Alle laatste videos in willekeurige volgorde laten zien</string>
-  <string name="Settings_LatestVideosOnlineDataRefresh">Tijd (in minuten) waarna opnieuw de laatste videos worden opgezocht</string>
-  <string name="Settings_LatestVideosGuiDataRefresh">Tijd (in seconden) waarna opnieuw de laatste videos worden getoond</string>
+  <string name="Settings_LatestVideosMaxItems">Aantal weer te geven video\'s</string>
+  <string name="Settings_LatestVideosRandomize">Alle laatste video\'s in willekeurige volgorde laten zien</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Tijd in minuten waarna opnieuw de laatste video\'s worden opgezocht</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Tijd in seconden waarna opnieuw de laatste video\'s worden getoond</string>
   <string name="Settings_StoreLayoutPerCategory">Onthoud weergave voor iedere site en categorie onthouden </string>
-</strings>
+</resources>
