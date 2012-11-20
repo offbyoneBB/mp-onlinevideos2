@@ -1,29 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- French -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
+  <!--A-->
   <string name="Airdate">Date de diffusion</string>
   <string name="AlreadyDownloading">Prêt pour le téléchargement de ce fichier.</string>
   <string name="All">Tous</string>
   <string name="Actions">Actions</string>
   <string name="Actors">Acteurs</string>
+  <string name="AddComment">Ajouter un commentaire ...</string>
+  <string name="AddToPlaylist">Ajouter à la Playlist</string>
   <string name="AddToMySites">Ajouter à mes sites</string>
   <string name="AddToFavourites">Ajouter aux favoris</string>
   <string name="AddingToFavorites">Ajouter aux favoris</string>
   <string name="AutomaticUpdate">Mise à jour auto</string>
   <string name="AutomaticUpdateDisabled">Mise à jour auto désactivée.</string>
+  <!--B-->
   <string name="Broken">Non actif</string>
   <string name="Buffered">en cache</string>
+  <!--C-->
   <string name="Cancel">Annuler</string>
   <string name="Category">Catégorie</string>
+  <string name="CategoryNotFound">Catégorie introuvable</string>
   <string name="Categories">Catégories</string>
   <string name="Creator">Créateur</string>
-  <string name="CheckingForPluginUpdate">Vérifier la mise à jour des plugins</string>
+  <string name="CreateNewPlaylist">Créer une nouvelle Playlist</string>
+  <string name="CheckingForPluginUpdate">Vérifier la mise à jour du plugin</string>
+  <string name="Concurrent">Simultané</string>
+  <!--D-->
   <string name="Date">Date</string>
   <string name="DateOfRelease">Date de sortie</string>
   <string name="Directors">Réalisateurs</string>
   <string name="Download">Télécharger</string>
+  <string name="DownloadUserdefined">Téléchargement du répertoire de l\'utilisateur</string>
   <string name="Downloading">Téléchargement</string>
   <string name="DownloadingDescription">Voir la liste des téléchargements en cours.</string>
   <string name="DownloadingSubtitle">Téléchargement des sous-titres</string>
@@ -32,64 +39,92 @@
   <string name="DownloadComplete">Téléchargement terminé</string>
   <string name="DownloadStarted">Téléchargement démarré</string>
   <string name="DownloadedVideos">Vidéos téléchargées</string>
+  <string name="DownloadsWillBeAborted">Les téléchargement seront annulés</string>
   <string name="Delete">Effacer</string>
+  <string name="DeletePlaylist">Effacer la Playlist</string>
   <string name="DeleteAll">Effacer tout</string>
   <string name="Default">Par défaut</string>
   <string name="Done">Effectué</string>
-  <string name="DeletingOldThumbs">Suppression d'anciennes vignettes</string>
+  <string name="DeletingOldThumbs">Suppression d\'anciennes vignettes</string>
+  <!--E-->
   <string name="Error">Erreur</string>
   <string name="EnterPin">Entrez le code PIN</string>
+  <!--F-->
   <string name="Favourites">Favoris</string>
   <string name="Filter">Tri par</string>
   <string name="FullUpdate">Mise à jour complète</string>
+  <!--G-->
   <string name="Genre">Genre</string>
-  <string name="GettingVideoDetails">Récupération des détails vidéo</string>
-  <string name="GettingCategoryVideos">Récupération des catégories</string>
+  <string name="GettingVideoDetails">Récupération des détails de la vidéo</string>
+  <string name="GettingCategoryVideos">Récupération des catégories de vidéos</string>
   <string name="GettingFavoriteVideos">Récupération des favoris</string>
   <string name="GettingSearchResults">Récupération des résultats de la recherche</string>
-  <string name="GettingRelatedVideos">Récupération des vidéos liées</string>
+  <string name="GettingRelatedVideos">Récupération des vidéos similaires</string>
   <string name="GettingFilteredVideos">Récupération des vidéos filtrées</string>
   <string name="GettingNextPageVideos">Récupération des vidéos de la page suivante</string>
   <string name="GettingPreviousPageVideos">Récupération des vidéos de la page précédente</string>
-  <string name="GettingPlaybackUrlsForVideo">Récupération de l'url pour lire la vidéo</string>
+  <string name="GettingPlaybackUrlsForVideo">Récupération de l\'url pour lire la vidéo</string>
   <string name="GettingDynamicCategories">Récupération des catégories dynamiques</string>
   <string name="GettingReports">Récupération des rapports depuis le webservice</string>
-  <string name="GettingSiteXml">Récupération de l'xml des sites depuis le webservice</string>
-  <string name="GettingIcon">Récupération des icônes des sites depuis le webservice</string>
-  <string name="GettingBanner">Récupération des bannières des sites depuis le webservice</string>
+  <string name="GettingSiteXml">Récupération de l\'xml des sites depuis le webservice</string>
+  <string name="GettingIcon">Récupération de l\'icône du site depuis le webservice</string>
+  <string name="GettingBanner">Récupération de la bannière du site depuis le webservice</string>
   <string name="GettingDll">Récupération des dll depuis le webservice</string>
   <string name="Groups">Groupes</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Dernière version ({0}) requise !</string>
-  <string name="Language">Par langage</string>
+  <string name="Language">Par langue</string>
   <string name="LayoutList">Disposition: Liste</string>
   <string name="LayoutIcons">Disposition: Icônes</string>
   <string name="LayoutBigIcons">Disposition: Grandes icônes</string>
+  <!--M-->
   <string name="ManageSites">Gérer les sites</string>
   <string name="MaxResults">Nombre de Résultats?</string>
+  <!--N-->
   <string name="Name">Par nom</string>
   <string name="NextPage">Page suivante</string>
+  <string name="NewVideos">Nouvelles Vidéos</string>
   <string name="None">Aucun</string>
   <string name="NoVideoFound">Aucune vidéo trouvée</string>
-  <string name="NoReportsForSite">Pas de rapport disponible pour ce site</string>
+  <string name="NoReportsForSite">Aucun rapport disponible pour ce site</string>
   <string name="NewDllDownloaded">Nouvelle DLL téléchargé!</string>
   <string name="NewSearch">Nouvelle recherche</string>
+  <!--O-->
+  <string name="OnlyLocal">Seulement en local</string>
+  <string name="OnlyServer">Seulement sur le serveur</string>
   <string name="Others">Autres</string>
+  <!--P-->
   <string name="PlayAll">Lecture de la totalité des vidéos</string>
+  <string name="PlayAllRandom">Lecture de la totalité des vidéos (ordre aléatoire)</string>
   <string name="PlayWith">Lire avec ...</string>
+  <string name="Playlists">Playlists</string>
+  <string name="PlaybackWillBeStopped">La lecture sera interrompue.</string>
+  <string name="PleaseEnterDescription">SVP, donner une petite description</string>
   <string name="PlotOutline">Aperçu</string>
   <string name="PreviousPage">Page précédente</string>
   <string name="PerformAutomaticUpdate">Effectuer la mise à jour automatique?</string>
+  <!--Q-->
+  <string name="Queued">Mettre en file d\'attente</string>
+  <!--R-->
+  <string name="RateVideo">Notez la vidéo</string>
+  <string name="Recommendations">Recommandation</string>
   <string name="RemoveFromFavorites">Supprimer le fichier des favoris</string>
+  <string name="RemoveFromPlaylist">Enlever de la Playlist</string>
   <string name="RemovingFromFavorites">Enlever des favoris</string>
   <string name="Refresh">Rafraîchir</string>
   <string name="RelatedVideos">Vidéos Similaires</string>
+  <string name="ReportBroken">Signaler un lien mort</string>
   <string name="Reported">En maintenance</string>
   <string name="Reports">Rapports</string>
-  <string name="Runtime">Durée</string>
+  <string name="Runtime">Temps d\'exécution</string>
   <string name="RemoveFromMySites">Retirer de mes sites</string>
+  <string name="RemoveAllFromMySites">Tout retirer de mes sites</string>
   <string name="RestartMediaPortal">Redémarrez MediaPortal!</string>
   <string name="RetrievingRemoteDlls">Récupération des DLL à distance ...</string>
   <string name="RetrievingRemoteSites">Récupération des sites distants ...</string>
+  <!--S-->
   <string name="SearchHistory">Historique de la recherche</string>
   <string name="SearchResults">Résultats de la recherche</string>
   <string name="SelectSource">Sélectionner une source</string>
@@ -97,22 +132,59 @@
   <string name="Size">Taille</string>
   <string name="SortOptions">Options de tri</string>
   <string name="Search">Recherche</string>
-  <string name="SetDownloadFolderInConfig">S'il vous plaît définissez le dossier pour le téléchargement dans le menu Configuration!</string>
+  <string name="SetDownloadFolderInConfig">S\'il vous plaît définissez le dossier pour le téléchargement dans le menu Configuration!</string>
   <string name="State">Situation</string>
   <string name="SavingLocalSiteList">Enregistrer la liste de site local ...</string>
-  <string name="ShowReports">Montrer les informations</string>
+  <string name="ShowReports">Afficher les informations des créateurs et des utilisateurs</string>
   <string name="StartingPlayback">Démarrage de la lecture</string>
   <string name="Subscriptions">Abonnements</string>
+  <string name="Success">Succès</string>
+  <!--T-->
   <string name="Timeframe">Calendrier</string>
   <string name="Timeout">Pause</string>
   <string name="Tags">Tags</string>
-  <string name="Updated">Mise à jour</string>
-  <string name="Updatable">Mise à niveau</string>
+  <!--U-->
+  <string name="Updated">Mis à jour</string>
+  <string name="Updatable">Actualisable</string>
+  <string name="UpdateAll">Mise à jour / Ajouter la totalité</string>
+  <string name="UpdateAllSkipCategories">Mise à jour / Ajouter la totalité (passer les catégories)</string>
   <string name="UpdateMySite">Mettre à jour mon site</string>
-  <string name="UpdateMySiteSkipCategories">Mettre à jour mon site (sans l'utilisation des filtres)</string>
+  <string name="UpdateMySiteSkipCategories">Mettre à jour mon site (sans l\'utilisation des filtres)</string>
   <string name="UpdateAllYourSites">Cela mettra à jour tous vos sites en cours.</string>
   <string name="UnableToPlayVideo">Impossible de lire la vidéo. Aucune URL.</string>
   <string name="UnableToDownloadVideo">Impossible de télécharger la vidéo. URL incorrecte.</string>
+  <string name="UploadsBy">Téléchargé par</string>
+  <!--V-->
   <string name="Videos">Vidéos</string>
+  <string name="VideoQuality">Qualité vidéo</string>
+  <!--W-->
   <string name="Working">Actif</string>
+  <string name="Writers">Auteurs</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="Settings_Yes">Oui</string>
+  <string name="Settings_No">Non</string>
+  <string name="Settings_SearchHistoryType_Off">Arrêté</string>
+  <string name="Settings_SearchHistoryType_Simple">Basique</string>
+  <string name="Settings_SearchHistoryType_Extended">Etendu</string>
+  <string name="Settings_BasicHomeName">Intitulé sur la page d\'accueil basique</string>
+  <string name="Settings_PluginEnabled">Plugin activé</string>
+  <string name="Settings_ListedInHome">Afficher sur la page d\'accueil</string>
+  <string name="Settings_ListedInPlugins">Afficher sur la page My Plugins</string>
+  <string name="Settings_AutoGroupByLang">Grouper automatiquement les sites en fonction de leurs langues</string>
+  <string name="Settings_UseQuickSelect">Utiliser les touches du clavier afin de sélectionner rapidement les éléments grâce à la premier lettre</string>
+  <string name="Settings_SearchHistoryType">Historique de la recherche</string>
+  <string name="Settings_ThumbAge">Durée maximum (en jours) pour les vignettes</string>
+  <string name="Settings_CacheTimeout">Temps (en minutes) pour mettre en cache les données provenant du du Web</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Temps (en minutes) au bout duquel les catégories sont rechargées à partir du Web</string>
+  <string name="Settings_UtilTimeout">Délai d\'attente (en secondes) concernant les requêtes lancées sur le Web</string>
+  <string name="Settings_WmpBuffer">Tampon (millisecondes) pour Windows Media Player</string>
+  <string name="Settings_PlayBuffer">Pourcentage de la mémoire tampon chargée avant de débuter la lecture</string>
+  <string name="Settings_AllowRefreshrateChange">Activer l\'\'adaptation dynamique du taux de rafraîchissement</string>
+  <string name="Settings_FavoritesFirst">Mettre les Favoris et Sites de Téléchargements, en  premier place dans la liste au lieu de la dernière</string>
+  <string name="Settings_LatestVideosMaxItems">Nombre des dernières vidéos à afficher</string>
+  <string name="Settings_LatestVideosRandomize">Mélanger les dernières vidéos avant de les afficher</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Actualiser les données concernant les  vidéos récentes à partir du web, toutes les x minutes</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Actualiser les dernières vidéos affichées, toutes les x secondes</string>
+  <string name="Settings_StoreLayoutPerCategory">Se souvenir de la configuration concernant les Sites et les Catégories</string>
 </resources>

@@ -1,8 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- German -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
+  <!--A-->
   <string name="Airdate">Ausstrahlung</string>
   <string name="AlreadyDownloading">Video lädt bereits herunter.</string>
   <string name="All">Alle</string>
@@ -15,8 +13,10 @@
   <string name="AddingToFavorites">beim Hinzufügen zu den Favoriten</string>
   <string name="AutomaticUpdate">Automatische Aktualisierung</string>
   <string name="AutomaticUpdateDisabled">Automatische Aktualisierung deaktiviert.</string>
+  <!--B-->
   <string name="Broken">Defekt</string>
   <string name="Buffered">gepuffert</string>
+  <!--C-->
   <string name="Cancel">Abbrechen</string>
   <string name="Category">Rubrik</string>
   <string name="CategoryNotFound">Rubrik nicht gefunden</string>
@@ -25,6 +25,7 @@
   <string name="CreateNewPlaylist">Neue Playlist erstellen ...</string>
   <string name="CheckingForPluginUpdate">beim Überprüfen auf aktuelle Version des Plugins</string>
   <string name="Concurrent">Gleichzeitig</string>
+  <!--D-->
   <string name="Date">Datum</string>
   <string name="DateOfRelease">Erscheinungsdatum</string>
   <string name="Directors">Regisseure</string>
@@ -45,11 +46,14 @@
   <string name="Default">Standard</string>
   <string name="Done">Fertig</string>
   <string name="DeletingOldThumbs">Alte Miniaturbilder werden gelöscht</string>
+  <!--E-->
   <string name="Error">Fehler</string>
   <string name="EnterPin">Pin eingeben</string>
+  <!--F-->
   <string name="Favourites">Favoriten</string>
   <string name="Filter">Filter</string>
   <string name="FullUpdate">Komplettaktualisierung</string>
+  <!--G-->
   <string name="Genre">Genre</string>
   <string name="GettingVideoDetails">beim Abrufen der Videodetails</string>
   <string name="GettingCategoryVideos">beim Abrufen der Videos dieser Rubrik</string>
@@ -67,13 +71,18 @@
   <string name="GettingBanner">beim Abrufen des Banners vom Server</string>
   <string name="GettingDll">beim Herunterladen der DLL vom Server</string>
   <string name="Groups">Gruppen</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Neueste Version ({0}) erforderlich!</string>
   <string name="Language">Sprache</string>
   <string name="LayoutList">Ansicht: Liste</string>
   <string name="LayoutIcons">Ansicht: Symbole klein</string>
   <string name="LayoutBigIcons">Ansicht: Symbole groß</string>
+  <!--M-->
   <string name="ManageSites">Sites verwalten</string>
   <string name="MaxResults">Max. Ergebnisse</string>
+  <!--N-->
   <string name="Name">Name</string>
   <string name="NextPage">Nächste Seite</string>
   <string name="NewVideos">Neue Videos</string>
@@ -82,9 +91,11 @@
   <string name="NoReportsForSite">Keine Meldungen für diese Site vorhanden.</string>
   <string name="NewDllDownloaded">Neue DLL heruntergeladen!</string>
   <string name="NewSearch">Neue Suche</string>
+  <!--O-->
   <string name="OnlyLocal">Nur Lokale</string>
   <string name="OnlyServer">Nur auf Server</string>
   <string name="Others">Sonstige</string>
+  <!--P-->
   <string name="PlayAll">Alle abspielen</string>
   <string name="PlayAllRandom">Alle abspielen (zufällige Reihenfolge)</string>
   <string name="PlayWith">Abspielen mit ...</string>
@@ -94,7 +105,9 @@
   <string name="PlotOutline">Handlung</string>
   <string name="PreviousPage">Vorherige Seite</string>
   <string name="PerformAutomaticUpdate">Automatische Aktualisierung ausführen?</string>
+  <!--Q-->
   <string name="Queued">Nacheinander</string>
+  <!--R-->
   <string name="RateVideo">Video bewerten ...</string>
   <string name="Recommendations">Empfehlungen</string>
   <string name="RemoveFromFavorites">Von den Favoriten entfernen</string>
@@ -111,6 +124,7 @@
   <string name="RestartMediaPortal">Bitte MediaPortal neu starten!</string>
   <string name="RetrievingRemoteDlls">Lade DLLs vom Server ...</string>
   <string name="RetrievingRemoteSites">Lade Sites vom Server ...</string>
+  <!--S-->
   <string name="SearchHistory">Suchverlauf</string>
   <string name="SearchResults">Suchergebnisse</string>
   <string name="SelectSource">Quelle wählen</string>
@@ -125,9 +139,11 @@
   <string name="StartingPlayback">beim Starten des Abspielens</string>
   <string name="Subscriptions">Abonnements</string>
   <string name="Success">Erfolg</string>
+  <!--T-->
   <string name="Timeframe">Zeitraum</string>
   <string name="Timeout">Zeitüberschreitung</string>
   <string name="Tags">Schlagworte</string>
+  <!--U-->
   <string name="Updated">Aktualisiert</string>
   <string name="Updatable">Aktualisierbar</string>
   <string name="UpdateAll">Alle aktualisieren/hinzufügen</string>
@@ -138,10 +154,14 @@
   <string name="UnableToPlayVideo">Video kann nicht wiedergegeben werden. Keine URL.</string>
   <string name="UnableToDownloadVideo">Video kann nicht heruntergeladen werden. Ungültige URL.</string>
   <string name="UploadsBy">Hochgeladene Videos von</string>
+  <!--V-->
   <string name="Videos">Videos</string>
   <string name="VideoQuality">Video Qualität</string>
+  <!--W-->
   <string name="Working">Funktionierend</string>
   <string name="Writers">Autoren</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
   <string name="Settings_Yes">Ja</string>
   <string name="Settings_No">Nein</string>
   <string name="Settings_SearchHistoryType_Off">Kein Verlauf</string>

@@ -1,10 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
-<!-- Chinese (Simplified) -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<resources>  
-
-  <!-- A -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">已发布的</string>
   <string name="AlreadyDownloading">已经下载此文件。</string>
   <string name="All">所有</string>
@@ -14,21 +10,17 @@
   <string name="AddToFavourites">添加到收藏夹</string>
   <string name="AddingToFavorites">添加到收藏夹中</string>
   <string name="AutomaticUpdate">自动更新</string>
-  <string name="AutomaticUpdateDisabled">自动更新已禁用。
-</string>
-
-  <!-- B -->
+  <string name="AutomaticUpdateDisabled">自动更新已禁用。\n</string>
+  <!--B-->
   <string name="Broken">中断</string>
   <string name="Buffered">已缓冲的</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Cancel">取消</string>
   <string name="Category">目录</string>
   <string name="Categories">目录</string>
   <string name="Creator">创建者</string>
   <string name="CheckingForPluginUpdate">检查已更新的插件版本</string>
-
-  <!-- D -->
+  <!--D-->
   <string name="Date">日期</string>
   <string name="DateOfRelease">发布日期</string>
   <string name="Directors">导演</string>
@@ -40,24 +32,21 @@
   <string name="DownloadFailed">下载失败： {0}</string>
   <string name="DownloadCancelled">下载已取消</string>
   <string name="DownloadComplete">下载完成</string>
-  <string name="DownloadStarted">下载已开始</string>  
+  <string name="DownloadStarted">下载已开始</string>
   <string name="DownloadedVideos">已下载的视频</string>
   <string name="Delete">删除</string>
   <string name="DeleteAll">删除所有</string>
   <string name="Default">默认</string>
   <string name="Done">完成</string>
   <string name="DeletingOldThumbs">删除旧的缩略图中</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">错误</string>
   <string name="EnterPin">输入 Pin</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">收藏夹</string>
   <string name="Filter">过滤器</string>
   <string name="FullUpdate">全部更新</string>
-
-  <!-- G -->
+  <!--G-->
   <string name="Genre">流派</string>
   <string name="GettingVideoDetails">获取视频详情中</string>
   <string name="GettingCategoryVideos">获取目录视频中</string>
@@ -74,24 +63,19 @@
   <string name="GettingIcon">从网页服务获取站点图标中</string>
   <string name="GettingBanner">从网页服务获取站点 banner 中</string>
   <string name="GettingDll">从网页服务获取 dll 中</string>
-  <string name="Groups">分组</string>  
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <string name="Groups">分组</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">最新版本 ({0}) 需要的！</string>
   <string name="Language">语言</string>
   <string name="LayoutList">布局：列表</string>
   <string name="LayoutIcons">布局：图标</string>
   <string name="LayoutBigIcons">布局：大图标</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">管理站点</string>
   <string name="MaxResults">最大结果</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">名称</string>
   <string name="NextPage">下页</string>
   <string name="NewVideos">新视频</string>
@@ -100,19 +84,17 @@
   <string name="NoReportsForSite">没有此站点可用的反馈。</string>
   <string name="NewDllDownloaded">新 dll 已下载！</string>
   <string name="NewSearch">新搜索</string>
-
-  <!-- O -->
+  <!--O-->
   <string name="Others">其它的</string>
-
-  <!-- P -->
+  <!--P-->
   <string name="PlayAll">其它的</string>
   <string name="PlayWith">播放使用......</string>
   <string name="PleaseEnterDescription">请给以一个简单说明。</string>
   <string name="PlotOutline">剧情简介</string>
   <string name="PreviousPage">前页</string>
   <string name="PerformAutomaticUpdate">执行自动更新吗？</string>
-
-  <!-- R -->
+  <!--Q-->
+  <!--R-->
   <string name="RemoveFromFavorites">从收藏夹中移除</string>
   <string name="RemovingFromFavorites">从收藏夹移除中</string>
   <string name="Refresh">刷新</string>
@@ -125,13 +107,12 @@
   <string name="RestartMediaPortal">重启 MediaPortal！</string>
   <string name="RetrievingRemoteDlls">重获远程 dll.....</string>
   <string name="RetrievingRemoteSites">重获远程站点......</string>
-
-  <!-- S -->
+  <!--S-->
   <string name="SearchHistory">搜索历史</string>
   <string name="SearchResults">搜索结果</string>
   <string name="SelectSource">选择源</string>
   <string name="Sites">站点</string>
-  <string name="Size">大小</string>  
+  <string name="Size">大小</string>
   <string name="SortOptions">排序选项</string>
   <string name="Search">搜索</string>
   <string name="SetDownloadFolderInConfig">请在配置中设置一个下载文件！</string>
@@ -140,13 +121,11 @@
   <string name="ShowReports">显示创建者和用户反馈</string>
   <string name="StartingPlayback">开始播放</string>
   <string name="Subscriptions">订阅</string>
-  
-  <!-- T -->
+  <!--T-->
   <string name="Timeframe">时间帧</string>
   <string name="Timeout">超时</string>
   <string name="Tags">标签</string>
-
-  <!-- U -->
+  <!--U-->
   <string name="Updated">已更新的</string>
   <string name="Updatable">可更新的</string>
   <string name="UpdateAll">更新/添加 所有</string>
@@ -157,14 +136,11 @@
   <string name="UnableToPlayVideo">不能播放视频。没有 URL。</string>
   <string name="UnableToDownloadVideo">不能下载视频。非法的 URL。</string>
   <string name="UploadsBy">上传者</string>
-
-  <!-- V -->
+  <!--V-->
   <string name="Videos">视频</string>
-
-  <!-- W -->
+  <!--W-->
   <string name="Working">工作中</string>
   <string name="Writers">编剧</string>
-
-  <!-- Y -->
-
+  <!--Y-->
+  <!--Strings from the settings file-->
 </resources>

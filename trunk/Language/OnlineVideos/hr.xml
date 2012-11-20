@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
+  <!--B-->
+  <!--C-->
+  <!--D-->
+  <!--E-->
+  <!--F-->
+  <!--G-->
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="LatestVersionRequired">Posljednja verzija ({0}) potrebna!</string>
+  <string name="Language">Jezik</string>
+  <!--M-->
+  <!--N-->
+  <!--O-->
+  <!--P-->
+  <!--Q-->
+  <!--R-->
+  <!--S-->
+  <string name="SelectSource">Izaberi izvor</string>
+  <string name="Subscriptions">Pretplate</string>
+  <!--T-->
+  <!--U-->
+  <!--V-->
+  <string name="VideoQuality">Video Kvaliteta</string>
+  <!--W-->
+  <!--Y-->
+  <!--Strings from the settings file-->
+</resources>

@@ -1,10 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
-<!-- Slovak -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<resources>  
-
-  <!-- A -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">Vysielané</string>
   <string name="AlreadyDownloading">Tento súbor sa už sťahuje.</string>
   <string name="All">Všetko</string>
@@ -17,12 +13,10 @@
   <string name="AddingToFavorites">pridávam k obľúbeným</string>
   <string name="AutomaticUpdate">Automatická aktualizácia</string>
   <string name="AutomaticUpdateDisabled">Automatická aktualizácia vypnutá.</string>
-
-  <!-- B -->
+  <!--B-->
   <string name="Broken">Nefungujúce</string>
   <string name="Buffered">načítané</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Cancel">Zrušiť</string>
   <string name="Category">Kategória</string>
   <string name="CategoryNotFound">Kategória nenájdená</string>
@@ -31,8 +25,7 @@
   <string name="CreateNewPlaylist">Vytvoriť nový zoznam na prehratie ...</string>
   <string name="CheckingForPluginUpdate">kontrolujem nové verzie modulov</string>
   <string name="Concurrent">naraz</string>
-
-  <!-- D -->
+  <!--D-->
   <string name="Date">Dátum</string>
   <string name="DateOfRelease">Dátum vydania</string>
   <string name="Directors">Režiséri</string>
@@ -44,7 +37,7 @@
   <string name="DownloadFailed">Sťahovanie neúspešné: {0}</string>
   <string name="DownloadCancelled">Sťahovanie zrušené</string>
   <string name="DownloadComplete">Sťahovanie skončené</string>
-  <string name="DownloadStarted">Sťahovanie začaté</string>  
+  <string name="DownloadStarted">Sťahovanie začaté</string>
   <string name="DownloadedVideos">Stiahnuté videá</string>
   <string name="DownloadsWillBeAborted">Sťahovanie bude zrušené.</string>
   <string name="Delete">Vymazať</string>
@@ -53,17 +46,14 @@
   <string name="Default">Predvolené</string>
   <string name="Done">Hotovo</string>
   <string name="DeletingOldThumbs">Vymazávam staré náhľady</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">Error</string>
   <string name="EnterPin">Zadaj Pin</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">Obľúbené</string>
   <string name="Filter">Filter</string>
   <string name="FullUpdate">Úplná aktualizácia</string>
-
-  <!-- G -->
+  <!--G-->
   <string name="Genre">Genre</string>
   <string name="GettingVideoDetails">getting video details</string>
   <string name="GettingCategoryVideos">getting category videos</string>
@@ -81,23 +71,18 @@
   <string name="GettingBanner">getting site banner from webservice</string>
   <string name="GettingDll">getting dll from webservice</string>
   <string name="Groups">Skupiny</string>
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Je potrebná najnovšia verzia ({0})!</string>
   <string name="Language">Jazyk</string>
   <string name="LayoutList">Vzhľad: Zoznam</string>
   <string name="LayoutIcons">Vzhľad: Ikony</string>
   <string name="LayoutBigIcons">Vzhľad: Veľké ikony</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">Spravovať videá</string>
   <string name="MaxResults">Počet výsledkov</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">Meno</string>
   <string name="NextPage">Ďalšia strana</string>
   <string name="NewVideos">Nové videá</string>
@@ -106,13 +91,11 @@
   <string name="NoReportsForSite">Žiadne recenzie pre túto stránku nie sú k dispozícii.</string>
   <string name="NewDllDownloaded">Nová DLL stiahnutá!</string>
   <string name="NewSearch">Nové hľadanie</string>
-
-  <!-- O -->
+  <!--O-->
   <string name="OnlyLocal">Len lokálne</string>
   <string name="OnlyServer">Len na serveri</string>
   <string name="Others">Iné</string>
-
-  <!-- P -->
+  <!--P-->
   <string name="PlayAll">Prehrať všetko</string>
   <string name="PlayAllRandom">Prehrať všetko (náhodne)</string>
   <string name="PlayWith">Prehrať s ...</string>
@@ -122,11 +105,9 @@
   <string name="PlotOutline">Obsah</string>
   <string name="PreviousPage">Predchádzajúca strana</string>
   <string name="PerformAutomaticUpdate">Uskutočniť automatickú aktualizáciu?</string>
-
-  <!-- Q -->
+  <!--Q-->
   <string name="Queued">zaradené</string>
-
-  <!-- R -->
+  <!--R-->
   <string name="RateVideo">Ohodnotiť video ...</string>
   <string name="Recommendations">Odporúčania</string>
   <string name="RemoveFromFavorites">Odstrániť z obľúbených</string>
@@ -143,13 +124,12 @@
   <string name="RestartMediaPortal">Reštaruj MediaPortal!</string>
   <string name="RetrievingRemoteDlls">Získavam vzdialené DLL ...</string>
   <string name="RetrievingRemoteSites">Získavam vzdialené stránky ...</string>
-
-  <!-- S -->
+  <!--S-->
   <string name="SearchHistory">História hľadania</string>
   <string name="SearchResults">Výsledky hľadania</string>
   <string name="SelectSource">Vyber zdroj</string>
   <string name="Sites">Stránky</string>
-  <string name="Size">Veľkosť</string>  
+  <string name="Size">Veľkosť</string>
   <string name="SortOptions">Trediť podľa</string>
   <string name="Search">Hľadať</string>
   <string name="SetDownloadFolderInConfig">Nastav v konfigurácii adresár pre sťahovanie!</string>
@@ -159,13 +139,11 @@
   <string name="StartingPlayback">spúšťam prehrávanie</string>
   <string name="Subscriptions">odoberania</string>
   <string name="Success">Úspech</string>
-
-  <!-- T -->
+  <!--T-->
   <string name="Timeframe">Časové obdobie</string>
   <string name="Timeout">Timeout</string>
   <string name="Tags">Tagy</string>
-
-  <!-- U -->
+  <!--U-->
   <string name="Updated">Aktualizované</string>
   <string name="Updatable">Aktualizovateľné</string>
   <string name="UpdateAll">Aktualizovať/Pridať všetky</string>
@@ -176,17 +154,14 @@
   <string name="UnableToPlayVideo">Nie je možné prehrať video. Žiadna adresa URL.</string>
   <string name="UnableToDownloadVideo">Nie je možné stiahnuť video. Nesprávna adresa URL.</string>
   <string name="UploadsBy">nahrané</string>
-
-  <!-- V -->
+  <!--V-->
   <string name="Videos">Videá</string>
   <string name="VideoQuality">Kvalita videa</string>
-
-  <!-- W -->
+  <!--W-->
   <string name="Working">Fungujúce</string>
-  <string name="Writers">Scenáristi</string>    
-
-  <!-- Y -->
-
+  <string name="Writers">Scenáristi</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
   <string name="Settings_Yes">Áno</string>
   <string name="Settings_No">Nie</string>
   <string name="Settings_SearchHistoryType_Off">Vypnutá</string>
@@ -212,5 +187,4 @@
   <string name="Settings_LatestVideosOnlineDataRefresh">Obnov najnovšie videá z internetu každých x minút</string>
   <string name="Settings_LatestVideosGuiDataRefresh">Obnov posledne zobrazené videá každých x sekúnd</string>
   <string name="Settings_StoreLayoutPerCategory">Zapamätať výzor pre stránku a kategóriu</string>
-
 </resources>

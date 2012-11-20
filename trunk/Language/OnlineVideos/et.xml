@@ -1,63 +1,62 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- Estonian -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<strings>  
-
-  <!-- A -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">Esmaesitus</string>
   <string name="AlreadyDownloading">Juba laen seda faili.</string>
   <string name="All">Kõik</string>
   <string name="Actions">Tegevused</string>
   <string name="Actors">Näitlejad</string>
+  <string name="AddComment">Lisa kommentaar</string>
+  <string name="AddToPlaylist">Lisa esitusnimekirja</string>
   <string name="AddToMySites">Lisa minu saitidele</string>
   <string name="AddToFavourites">Lisa lemmikutele</string>
   <string name="AddingToFavorites">lisan lemmikutele</string>
   <string name="AutomaticUpdate">Automaatne uuendus</string>
   <string name="AutomaticUpdateDisabled">Automaatne uuendus väljalülitatud.</string>
-
-  <!-- B -->
+  <!--B-->
   <string name="Broken">Rikutud</string>
   <string name="Buffered">Bufferdatud</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Cancel">Tühista</string>
   <string name="Category">Kategooria</string>
+  <string name="CategoryNotFound">Kategooriat ei leitud</string>
   <string name="Categories">Kategooriad</string>
   <string name="Creator">Valmistaja</string>
-  <string name="CheckingForPluginUpdate">kontrollin Lisa uuendusi</string>
-
-  <!-- D -->
+  <string name="CreateNewPlaylist">Uus esitusnimekiri</string>
+  <string name="CheckingForPluginUpdate">kontrollin lisade uuendusi</string>
+  <string name="Concurrent">samaaegne</string>
+  <!--D-->
   <string name="Date">Kuupäev</string>
   <string name="DateOfRelease">Väljalaskekuupäev</string>
   <string name="Directors">Rezisöörid</string>
   <string name="Download">Lae alla</string>
+  <string name="DownloadUserdefined">Lae kasutaja kataloogi</string>
   <string name="Downloading">Allalaadimine</string>
   <string name="DownloadingDescription">Näitab praegu allalaaditavat nimekirja.</string>
+  <string name="DownloadingSubtitle">Subtiitri allalaadimine</string>
   <string name="DownloadFailed">Allalaadimine ebaõnnestus: {0}</string>
   <string name="DownloadCancelled">Allalaadimine tühistatud</string>
   <string name="DownloadComplete">Allalaadimine lõpetatud</string>
-  <string name="DownloadStarted">Allalaadimine algas</string>  
+  <string name="DownloadStarted">Allalaadimine algas</string>
   <string name="DownloadedVideos">Allalaetud videod</string>
+  <string name="DownloadsWillBeAborted">Allalaadimised katkestatakse</string>
   <string name="Delete">Kustuta</string>
+  <string name="DeletePlaylist">Kustuta esitusnimekiri</string>
   <string name="DeleteAll">Kustuta kõik</string>
   <string name="Default">Vaikimisi</string>
   <string name="Done">Valmis</string>
   <string name="DeletingOldThumbs">Kustutan vanu pisipilte</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">Viga</string>
   <string name="EnterPin">Sisesta Pin</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">Lemmikud</string>
   <string name="Filter">Filter</string>
   <string name="FullUpdate">Täielik uuendus</string>
-
-  <!-- G -->
-  <string name="Genre">Zanr</string>
-  <string name="GettingVideoDetails">kogun video andmeid</string>
-  <string name="GettingCategoryVideos">kogun video kategooriaid</string>
+  <!--G-->
+  <string name="Genre">Žanr</string>
+  <string name="GettingVideoDetails">hangin video andmeid</string>
+  <string name="GettingCategoryVideos">hangin kategooria videod</string>
   <string name="GettingFavoriteVideos">kogun lemmik videosid</string>
   <string name="GettingSearchResults">kogun otsingu tulemusi</string>
   <string name="GettingRelatedVideos">kogun esitatud videosid</string>
@@ -72,56 +71,65 @@
   <string name="GettingBanner">kogun saidi bannereid weebiteenuselt</string>
   <string name="GettingDll">kogun dll-i weebiteenuselt</string>
   <string name="Groups">Grupid</string>
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Viimane versioon ({0}) on vajalik!</string>
   <string name="Language">Keel</string>
   <string name="LayoutList">Välimus: Nimekiri</string>
   <string name="LayoutIcons">Välimus: Ikoonid</string>
   <string name="LayoutBigIcons">Välimus: Suured ikoonid</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">Halda saite</string>
   <string name="MaxResults">Max tulemus</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">Nimi</string>
   <string name="NextPage">Järgmine leht</string>
+  <string name="NewVideos">Uued videod</string>
   <string name="None">Tühi</string>
   <string name="NoVideoFound">Videot ei leidnud</string>
   <string name="NoReportsForSite">Selle saidi raportit ei ole.</string>
   <string name="NewDllDownloaded">Uus dll alla laetud!</string>
   <string name="NewSearch">Uus otsing</string>
-  <!-- O -->
+  <!--O-->
+  <string name="OnlyLocal">Ainult kohalik</string>
+  <string name="OnlyServer">Ainult server</string>
   <string name="Others">Veel</string>
-  <!-- P -->
+  <!--P-->
   <string name="PlayAll">Esita kõik</string>
+  <string name="PlayAllRandom">Mängi kõik (suvalises järjekorras)</string>
+  <string name="PlayWith">Esita programmiga ...</string>
+  <string name="Playlists">Esitusnimekirjad</string>
+  <string name="PlaybackWillBeStopped">Esitus lõpetatakse</string>
+  <string name="PleaseEnterDescription">Palun andke lühikirjeldus</string>
   <string name="PlotOutline">Ei ole online</string>
   <string name="PreviousPage">Elmine leht</string>
   <string name="PerformAutomaticUpdate">Kinnitan automaatse uuenduse?</string>
-
-  <!-- R -->
+  <!--Q-->
+  <string name="Queued">järjekorras</string>
+  <!--R-->
+  <string name="RateVideo">Hinnake videot</string>
+  <string name="Recommendations">Soovitused</string>
   <string name="RemoveFromFavorites">Eemalda lemmikutest</string>
+  <string name="RemoveFromPlaylist">Eemalda nimekirjast</string>
   <string name="RemovingFromFavorites">eemaldan lemmikutest</string>
   <string name="Refresh">Värskenda</string>
   <string name="RelatedVideos">Esitatud videod</string>
+  <string name="ReportBroken">Teata mittetöötavast</string>
   <string name="Reported">Raporteeritud</string>
   <string name="Reports">Raportid</string>
   <string name="Runtime">Kestus</string>
   <string name="RemoveFromMySites">Eemalda minu saitidest</string>
+  <string name="RemoveAllFromMySites">Eemalda kõigilt minu veebilehtedelt</string>
   <string name="RestartMediaPortal">Restardi Minu Meedia!</string>
   <string name="RetrievingRemoteDlls">Võtan vastu võrgu dll-e ...</string>
   <string name="RetrievingRemoteSites">Võtan vastu võrgu saite ...</string>
-
-  <!-- S -->
+  <!--S-->
   <string name="SearchHistory">Ajalugu</string>
   <string name="SearchResults">Otsingu tulemus</string>
   <string name="SelectSource">Vali allikas</string>
   <string name="Sites">Saidid</string>
-  <string name="Size">Maht</string>  
+  <string name="Size">Maht</string>
   <string name="SortOptions">Sorteeri võimalused</string>
   <string name="Search">Otsi</string>
   <string name="SetDownloadFolderInConfig">Vali allalaadimiskaust Seadistustest!</string>
@@ -130,27 +138,53 @@
   <string name="ShowReports">Näita valmistaja ja kasutaja raporteid</string>
   <string name="StartingPlayback">alustan esitamist</string>
   <string name="Subscriptions">Alakirjeldused</string>
-  
-  <!-- T -->
+  <string name="Success">Õnnestus</string>
+  <!--T-->
   <string name="Timeframe">Ajaliin</string>
   <string name="Timeout">Aeg läbi</string>
   <string name="Tags">Tags</string>
-
-  <!-- U -->
+  <!--U-->
   <string name="Updated">Uuendatud</string>
   <string name="Updatable">Uuendatav</string>
+  <string name="UpdateAll">Täienda/Lisa kõik</string>
+  <string name="UpdateAllSkipCategories">Täienda/Lisa kõik (jäta kategooriad vahele)</string>
   <string name="UpdateMySite">Uuenda minu saite</string>
   <string name="UpdateMySiteSkipCategories">Uuenda minu saite (ilma kategooriateta)</string>
   <string name="UpdateAllYourSites">Seeuuendab kõik Sinu praegused saidid.</string>
   <string name="UnableToPlayVideo">Ei saa esitada videot. Puudub URL.</string>
   <string name="UnableToDownloadVideo">Ei saa videot alla laadida. Vigane URL.</string>
-
-  <!-- V -->
+  <string name="UploadsBy">üles laetud</string>
+  <!--V-->
   <string name="Videos">Videod</string>
-
-  <!-- W -->
+  <string name="VideoQuality">Video kvaliteet</string>
+  <!--W-->
   <string name="Working">Tegelen</string>
-
-  <!-- Y -->
-
-</strings>
+  <string name="Writers">Stsenaristid</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="Settings_Yes">Jah</string>
+  <string name="Settings_No">Ei</string>
+  <string name="Settings_SearchHistoryType_Off">Välja</string>
+  <string name="Settings_SearchHistoryType_Simple">Lihtne</string>
+  <string name="Settings_SearchHistoryType_Extended">Laiendatud</string>
+  <string name="Settings_BasicHomeName">Põhilehe nimi</string>
+  <string name="Settings_PluginEnabled">Lisa aktiveeritud</string>
+  <string name="Settings_ListedInHome">Põhilehel</string>
+  <string name="Settings_ListedInPlugins">Lisades</string>
+  <string name="Settings_AutoGroupByLang">Paiguta automaatselt keelte kaupa</string>
+  <string name="Settings_UseQuickSelect">Tähenuppudega esitähe järgi valimine</string>
+  <string name="Settings_SearchHistoryType">Otsinguajalugu</string>
+  <string name="Settings_ThumbAge">Pisipiltide säilitamise aeg (päevades)</string>
+  <string name="Settings_CacheTimeout">Puhvri aeg (minutites)</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Kategooriate uuendamise välp (minutites)</string>
+  <string name="Settings_UtilTimeout">Veebipäringute ooteaeg (sekundites)</string>
+  <string name="Settings_WmpBuffer">Windows Media Playeri puhver (millisekundites)</string>
+  <string name="Settings_PlayBuffer">Esitamiseks vajalik puhvri tase</string>
+  <string name="Settings_AllowRefreshrateChange">Luba muutuva värskendustiheduse sobitamine</string>
+  <string name="Settings_FavoritesFirst">Aseta Lemmikud ja Allalaadimised esimesteks mitte viimasteks</string>
+  <string name="Settings_LatestVideosMaxItems">Viimatiste videote loetelu pikkus</string>
+  <string name="Settings_LatestVideosRandomize">Näita viimatised videod juhuslikus järjekorras</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Värskenda uute videote andmeid igal x minutil</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Värskenda näidatud uued videod igal x minutil</string>
+  <string name="Settings_StoreLayoutPerCategory">Mäleta iga kategooria ja veebi vaateid </string>
+</resources>

@@ -1,29 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- Italian -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
+  <!--A-->
   <string name="Airdate">In onda</string>
   <string name="AlreadyDownloading">Download del file già in corso.</string>
   <string name="All">Tutti</string>
   <string name="Actions">Azioni</string>
   <string name="Actors">Attori</string>
+  <string name="AddComment">Aggiungi un commento</string>
+  <string name="AddToPlaylist">Aggiungi alla Playlist</string>
   <string name="AddToMySites">Aggiungi ai miei siti</string>
   <string name="AddToFavourites">Aggiungi ai favoriti</string>
   <string name="AddingToFavorites">aggiungendo ai preferiti</string>
   <string name="AutomaticUpdate">Aggiornamento automatico</string>
   <string name="AutomaticUpdateDisabled">Aggiornamento automatico disabilitato.</string>
+  <!--B-->
   <string name="Broken">Rovinato</string>
   <string name="Buffered">Bufferizzato</string>
+  <!--C-->
   <string name="Cancel">Cancellato</string>
   <string name="Category">Categoria</string>
+  <string name="CategoryNotFound">Categoria non trovata</string>
   <string name="Categories">Categorie</string>
   <string name="Creator">Autore</string>
+  <string name="CreateNewPlaylist">Crea nuova Playlist...</string>
   <string name="CheckingForPluginUpdate">controllo in corso per nuove versioni dei plugin</string>
+  <string name="Concurrent">concurrent</string>
+  <!--D-->
   <string name="Date">Data</string>
   <string name="DateOfRelease">Data di pubblicazione</string>
   <string name="Directors">Registi</string>
   <string name="Download">Download</string>
+  <string name="DownloadUserdefined">Download nella Cartella Utente</string>
   <string name="Downloading">Download in corso</string>
   <string name="DownloadingDescription">Elenco downloads in corso.</string>
   <string name="DownloadingSubtitle">Download sottotitoli</string>
@@ -32,16 +39,21 @@
   <string name="DownloadComplete">Download completato</string>
   <string name="DownloadStarted">Download cominciato</string>
   <string name="DownloadedVideos">Video scaricati</string>
+  <string name="DownloadsWillBeAborted">I downloads saranno cancellati</string>
   <string name="Delete">Cancella</string>
+  <string name="DeletePlaylist">Cancella Playlist</string>
   <string name="DeleteAll">Cancella tutto</string>
   <string name="Default">Default</string>
   <string name="Done">Fatto</string>
   <string name="DeletingOldThumbs">Cancellazione vecchie miniature</string>
+  <!--E-->
   <string name="Error">Errore</string>
   <string name="EnterPin">Inserire PIN</string>
+  <!--F-->
   <string name="Favourites">Favoriti</string>
   <string name="Filter">Filtro</string>
   <string name="FullUpdate">Aggiornamento completo</string>
+  <!--G-->
   <string name="Genre">Genere</string>
   <string name="GettingVideoDetails">caricando i dettagli dei filmati</string>
   <string name="GettingCategoryVideos">caricando le categorie dei filmati</string>
@@ -55,41 +67,64 @@
   <string name="GettingDynamicCategories">caricando le categorie dinamiche</string>
   <string name="GettingReports">caricando i reports dal webservice</string>
   <string name="GettingSiteXml">caricando il file xml del sito dal webservice</string>
-  <string name="GettingIcon">caricando l'icona del sito dal webservice</string>
+  <string name="GettingIcon">caricando l\'icona del sito dal webservice</string>
   <string name="GettingBanner">caricando il banner del sito dal webservice</string>
   <string name="GettingDll">caricando la dll dal webservice</string>
   <string name="Groups">Gruppi</string>
-  <string name="LatestVersionRequired">Richiesta l'ultima versione: {0}!</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="LatestVersionRequired">Richiesta l\'ultima versione: {0}!</string>
   <string name="Language">Lingua</string>
   <string name="LayoutList">Aspetto: lista</string>
   <string name="LayoutIcons">Aspetto: icone</string>
   <string name="LayoutBigIcons">Aspetto: icone grandi</string>
+  <!--M-->
   <string name="ManageSites">Gestione siti</string>
   <string name="MaxResults">Massimo numero di risultati</string>
+  <!--N-->
   <string name="Name">Nome</string>
   <string name="NextPage">Pagina successiva</string>
+  <string name="NewVideos">Nuovi Video</string>
   <string name="None">Nessuno</string>
   <string name="NoVideoFound">Nessun video trovato</string>
   <string name="NoReportsForSite">Nessun report disponibile per questo sito.</string>
   <string name="NewDllDownloaded">Nuova dll scaricata!</string>
   <string name="NewSearch">Nuova ricerca</string>
+  <!--O-->
+  <string name="OnlyLocal">Solo Local</string>
+  <string name="OnlyServer">Solo Server</string>
   <string name="Others">Altro</string>
+  <!--P-->
   <string name="PlayAll">Riproduci tutti</string>
+  <string name="PlayAllRandom">Play di tutti(ordine casuale)</string>
   <string name="PlayWith">Riproduci con ...</string>
+  <string name="Playlists">Playlist</string>
+  <string name="PlaybackWillBeStopped">Playback sarà fermato</string>
+  <string name="PleaseEnterDescription">Perfavore aggiungi una breve descrizione</string>
   <string name="PlotOutline">Trama</string>
   <string name="PreviousPage">Pagina precedente</string>
-  <string name="PerformAutomaticUpdate">Procedere con l'aggiornamento automatico ?</string>
+  <string name="PerformAutomaticUpdate">Procedere con l\'aggiornamento automatico ?</string>
+  <!--Q-->
+  <string name="Queued">accodato</string>
+  <!--R-->
+  <string name="RateVideo">Vota il video....</string>
+  <string name="Recommendations">Recommandazioni</string>
   <string name="RemoveFromFavorites">Rimuovi dai favoriti</string>
+  <string name="RemoveFromPlaylist">Rimuovi dalla Playlist</string>
   <string name="RemovingFromFavorites">in fase di rimozione dai preferiti</string>
   <string name="Refresh">Aggiorna</string>
   <string name="RelatedVideos">Video collegati</string>
+  <string name="ReportBroken">Report Guasto</string>
   <string name="Reported">Segnalato</string>
   <string name="Reports">Rapporto</string>
   <string name="Runtime">Durata</string>
   <string name="RemoveFromMySites">Rimuovi dai miei siti</string>
+  <string name="RemoveAllFromMySites">Rimuovi tutto dai miei Siti</string>
   <string name="RestartMediaPortal">Far ripartire MediaPortal!</string>
   <string name="RetrievingRemoteDlls">Download dlls da remoto...</string>
   <string name="RetrievingRemoteSites">Download siti da remoto...</string>
+  <!--S-->
   <string name="SearchHistory">Storico ricerche</string>
   <string name="SearchResults">Risultati ricerca</string>
   <string name="SelectSource">Selezionare sorgente</string>
@@ -103,16 +138,53 @@
   <string name="ShowReports">Mostra la reportistica utente e autore</string>
   <string name="StartingPlayback">inizio riproduzione</string>
   <string name="Subscriptions">Sottoscrizioni</string>
+  <string name="Success">Successo</string>
+  <!--T-->
   <string name="Timeframe">Arco di tempo</string>
   <string name="Timeout">Timeout</string>
   <string name="Tags">Etichette</string>
+  <!--U-->
   <string name="Updated">Aggiornato</string>
   <string name="Updatable">Aggiornabile</string>
+  <string name="UpdateAll">Update/Aggiunti tutti</string>
+  <string name="UpdateAllSkipCategories">Update/Aggiunti tutti (salta le categorie)</string>
   <string name="UpdateMySite">Aggiorna il mio sito</string>
   <string name="UpdateMySiteSkipCategories">Aggiorna il mio sito (salta le categorie)</string>
   <string name="UpdateAllYourSites">Aggiornamento di tutti i miei siti.</string>
   <string name="UnableToPlayVideo">Impossibile riprodurre il video. Nessuna URL.</string>
   <string name="UnableToDownloadVideo">Impossibile scaricare il video. URL invalida.</string>
+  <string name="UploadsBy">upload da</string>
+  <!--V-->
   <string name="Videos">Filmati</string>
+  <string name="VideoQuality">Qualità Video</string>
+  <!--W-->
   <string name="Working">In lavorazione</string>
+  <string name="Writers">Scrittori</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="Settings_Yes">Si</string>
+  <string name="Settings_No">No</string>
+  <string name="Settings_SearchHistoryType_Off">Off</string>
+  <string name="Settings_SearchHistoryType_Simple">Semplice</string>
+  <string name="Settings_SearchHistoryType_Extended">Estesa</string>
+  <string name="Settings_BasicHomeName">Nome Home di base</string>
+  <string name="Settings_PluginEnabled">Plugin Abilitato</string>
+  <string name="Settings_ListedInHome">Listato in Home</string>
+  <string name="Settings_ListedInPlugins">Listato in My Plugins</string>
+  <string name="Settings_AutoGroupByLang">Ragruppa automaticamente tutti i siti con il loro linguaggio</string>
+  <string name="Settings_UseQuickSelect">Usa chiave alfanumerica per selezionare velocemente gli items con la prima lettera</string>
+  <string name="Settings_SearchHistoryType">Storico ricerca</string>
+  <string name="Settings_ThumbAge">Massima età (in giorni) per le thumbnails</string>
+  <string name="Settings_CacheTimeout">Tempo (in minuti) per memorizzare i dati dal web</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Tempo (in minuti)  dopo il quale le categorie saranno ricaricate dal web</string>
+  <string name="Settings_UtilTimeout">Timeout (in secondi) per webrequests</string>
+  <string name="Settings_WmpBuffer">Buffer (in millisecondi) per Windows Media Player</string>
+  <string name="Settings_PlayBuffer">Percentuale di buffer per iniziare il playback</string>
+  <string name="Settings_AllowRefreshrateChange">Abilita l\'adattamento dinamico al refresh rate</string>
+  <string name="Settings_FavoritesFirst">Posiziona Siti Favoriti e Dawnloadcome primi invece che ultimi</string>
+  <string name="Settings_LatestVideosMaxItems">Ammontare degli ultimi video da mostrare</string>
+  <string name="Settings_LatestVideosRandomize">RAndomizza gli ultimi video prima di mostrarli</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Ricarica gli ultimi video dal web ogni x  minuti</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Ricarica gli ultimi video mostrati ogni x secondi</string>
+  <string name="Settings_StoreLayoutPerCategory">Ricorda la vista layout per Sito e Categoria</string>
 </resources>

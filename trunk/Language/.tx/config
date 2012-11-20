@@ -1,0 +1,8 @@
+[main]
+host=https://www.transifex.com
+[MP2_CommunityPlugins.onlinevideos]
+file_filter=OnlineVideos\<lang>.xml
+source_file=OnlineVideos\en-US.xml
+source_lang=en
+lang_map = en: en-US
+type=ANDROID

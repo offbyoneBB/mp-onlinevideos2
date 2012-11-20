@@ -1,154 +1,190 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- Finnish (FI) -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<resources>  
-
-  <!-- A -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">Lähetetty</string>
   <string name="AlreadyDownloading">Tiedostoa ladataan jo.</string>
   <string name="All">Kaikki</string>
   <string name="Actions">Toiminnot</string>
   <string name="Actors">Näyttelijät</string>
+  <string name="AddComment">Lisää kommentti...</string>
+  <string name="AddToPlaylist">Lisää soittolistalle...</string>
   <string name="AddToMySites">Lisää omiin sivuihin</string>
   <string name="AddToFavourites">Lisää suosikkeihin</string>
   <string name="AddingToFavorites">lisätään suosikkeihin</string>
   <string name="AutomaticUpdate">Automaattipäivitys</string>
   <string name="AutomaticUpdateDisabled">Automaattipäivitys pois.</string>
-
-  <!-- B -->
+  <!--B-->
   <string name="Broken">Rikki</string>
   <string name="Buffered">puskuroitu</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Cancel">Peruuta</string>
   <string name="Category">Kategoria</string>
+  <string name="CategoryNotFound">Kategoriaa ei löydy</string>
   <string name="Categories">Kategoriat</string>
-  <string name="Creator">Creator</string>
+  <string name="Creator">Luoja</string>
+  <string name="CreateNewPlaylist">Luo uusi soittolista...</string>
   <string name="CheckingForPluginUpdate">tarkistetaan lisäosan päivitykset</string>
-
-  <!-- D -->
+  <string name="Concurrent">samanaikainen</string>
+  <!--D-->
   <string name="Date">Pvm</string>
   <string name="DateOfRelease">Julkaisun pvm</string>
   <string name="Directors">Ohjaajat</string>
   <string name="Download">Lataa</string>
+  <string name="DownloadUserdefined">Lataa käyttäjän hakemistoon</string>
   <string name="Downloading">Lataa</string>
   <string name="DownloadingDescription">Näyttää nykyisten latausten listan.</string>
+  <string name="DownloadingSubtitle">ladataan tekstitystä</string>
   <string name="DownloadFailed">Lataus epäonnistui: {0}</string>
   <string name="DownloadCancelled">Lataus peruttu</string>
   <string name="DownloadComplete">Lataus valmis</string>
-  <string name="DownloadStarted">Lataus aloitettu</string>  
+  <string name="DownloadStarted">Lataus aloitettu</string>
   <string name="DownloadedVideos">Ladatut videot</string>
+  <string name="DownloadsWillBeAborted">Lataukset peruutetaan.</string>
   <string name="Delete">Poista</string>
+  <string name="DeletePlaylist">Poista soittolista</string>
   <string name="DeleteAll">Poista kaikki</string>
   <string name="Default">Oletus</string>
   <string name="Done">Valmis</string>
   <string name="DeletingOldThumbs">Poistetaan vanhat esikatselukuvat</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">Virhe</string>
   <string name="EnterPin">Syötä Pin</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">Suosikit</string>
   <string name="Filter">Suodata</string>
   <string name="FullUpdate">Täysi päivitys</string>
-
-  <!-- G -->
+  <!--G-->
   <string name="Genre">Genre</string>
   <string name="GettingVideoDetails">haetaan videon tiedot</string>
   <string name="GettingCategoryVideos">haetaan kategorian videot</string>
   <string name="GettingFavoriteVideos">haetaan suosikkivideot</string>
   <string name="GettingSearchResults">haetaan hakutulokset</string>
   <string name="GettingRelatedVideos">haetaan liittyvät videot</string>
-  <string name="GettingFilteredVideos">haetaan suodatetut vieot</string>
+  <string name="GettingFilteredVideos">haetaan suodatetut videot</string>
   <string name="GettingNextPageVideos">haetaan seuraavan sivun videot</string>
   <string name="GettingPreviousPageVideos">haetaan edellisen sivun videot</string>
   <string name="GettingPlaybackUrlsForVideo">haetaan url-osoitteet videoille</string>
   <string name="GettingDynamicCategories">haetaan dynaamiset kategoriat</string>
-  <string name="GettingReports">haetaan raportit nettipalvelusta</string>
-  <string name="GettingSiteXml">haetaan sivun xml nettipalvelusta</string>
-  <string name="GettingIcon">haetaan sivun kuvake nettipalvelusta</string>
-  <string name="GettingBanner">haetaan sivun banneri nettipalvelusta</string>
-  <string name="GettingDll">haetaan dll nettipalvelusta</string>
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <string name="GettingReports">haetaan raportit verkkopalvelusta</string>
+  <string name="GettingSiteXml">haetaan sivun xml verkkopalvelusta</string>
+  <string name="GettingIcon">haetaan sivun kuvake verkkopalvelusta</string>
+  <string name="GettingBanner">haetaan sivun banneri verkkopalvelusta</string>
+  <string name="GettingDll">haetaan dll verkkopalvelusta</string>
+  <string name="Groups">Ryhmät</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Tarvitaan viimeisin ({0}) versio!</string>
   <string name="Language">Kieli</string>
   <string name="LayoutList">Asettelu: Lista</string>
   <string name="LayoutIcons">Asettelu: ikonit</string>
   <string name="LayoutBigIcons">Asettelu: Isot ikonit</string>
-
-  <!-- M -->
-  <string name="ManageSites">Hallitse Sivuja</string>
+  <!--M-->
+  <string name="ManageSites">Hallitse sivuja</string>
   <string name="MaxResults">Max tuloksia</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">Nimi</string>
   <string name="NextPage">Seuraava sivu</string>
+  <string name="NewVideos">Uudet videot</string>
   <string name="None">Ei yhtään</string>
   <string name="NoVideoFound">Videota ei löydy</string>
   <string name="NoReportsForSite">Tälle sivulle ei raportteja saatavissa.</string>
   <string name="NewDllDownloaded">Uusi dll ladattu!</string>
-
-  <!-- O -->
-
-  <!-- P -->
+  <string name="NewSearch">Uusi haku</string>
+  <!--O-->
+  <string name="OnlyLocal">Vain paikalliset</string>
+  <string name="OnlyServer">Vain palvelin</string>
+  <string name="Others">Muut</string>
+  <!--P-->
   <string name="PlayAll">Toista kaikki</string>
+  <string name="PlayAllRandom">Toista kaikki (satunnainen järjestys)</string>
+  <string name="PlayWith">Toista ohjelmalla...</string>
+  <string name="Playlists">Soittolistat</string>
+  <string name="PlaybackWillBeStopped">Toisto pysäytetään.</string>
+  <string name="PleaseEnterDescription">Anna lyhyt kuvaus.</string>
   <string name="PlotOutline">Juonen kuvaus</string>
   <string name="PreviousPage">Edellinen sivu</string>
   <string name="PerformAutomaticUpdate">Suorita automaattipäivitys?</string>
-
-  <!-- R -->
+  <!--Q-->
+  <string name="Queued">jonossa</string>
+  <!--R-->
+  <string name="RateVideo">Arvostele video...</string>
+  <string name="Recommendations">Suositukset</string>
   <string name="RemoveFromFavorites">Poista suosikeista</string>
+  <string name="RemoveFromPlaylist">Poista soittolistalta</string>
   <string name="RemovingFromFavorites">poistetaan suosikeista</string>
   <string name="Refresh">Päivitä</string>
   <string name="RelatedVideos">Liittyvät videot</string>
+  <string name="ReportBroken">Raportoi toimimattomaksi</string>
   <string name="Reported">Raportoitu</string>
+  <string name="Reports">Raportit</string>
   <string name="Runtime">Toistoaika</string>
   <string name="RemoveFromMySites">Poista omista sivuista</string>
+  <string name="RemoveAllFromMySites">Poista kaikki omista sivuista</string>
   <string name="RestartMediaPortal">Uudelleenkäynnistä MediaPortal!</string>
   <string name="RetrievingRemoteDlls">Haetaan etä-dll:t ...</string>
   <string name="RetrievingRemoteSites">Haetaan etä-sivustot ...</string>
-
-  <!-- S -->
+  <!--S-->
+  <string name="SearchHistory">Hakuhistoria</string>
   <string name="SearchResults">Hakutulokset</string>
   <string name="SelectSource">Valitse lähde</string>
   <string name="Sites">Sivut</string>
-  <string name="Size">Koko</string>  
+  <string name="Size">Koko</string>
   <string name="SortOptions">Lajitteluasetukset</string>
   <string name="Search">Haku</string>
   <string name="SetDownloadFolderInConfig">Aseta latauskansio asetuksista!</string>
   <string name="State">Tila</string>
-  <string name="SavingLocalSiteList">Tallennetaan paikallisten sivujen lista ...</string>
+  <string name="SavingLocalSiteList">Tallennetaan paikallinen sivujen lista ...</string>
   <string name="ShowReports">Näytä tekijän ja käyttäjien raportit</string>
   <string name="StartingPlayback">aloitetaan toisto</string>
   <string name="Subscriptions">Tilaukset</string>
-  
-  <!-- T -->
+  <string name="Success">Onnistui</string>
+  <!--T-->
   <string name="Timeframe">Aikajakso</string>
   <string name="Timeout">Aikakatkaisu</string>
   <string name="Tags">Tagit</string>
-
-  <!-- U -->
+  <!--U-->
   <string name="Updated">Päivitetty</string>
   <string name="Updatable">Päivitettävissä</string>
+  <string name="UpdateAll">Päivitä/lisää kaikki</string>
+  <string name="UpdateAllSkipCategories">Päivitä/lisää kaikki (ohita kategoriat)</string>
   <string name="UpdateMySite">Päivitä sivuni</string>
   <string name="UpdateMySiteSkipCategories">Päivitä sivustoni (ohita kategoriat)</string>
   <string name="UpdateAllYourSites">Tämä päivittää kaikki nykyiset sivustosi.</string>
   <string name="UnableToPlayVideo">Toisto ei onnistu. Ei URL-osoitetta.</string>
   <string name="UnableToDownloadVideo">Lataus ei onnistu. Epäkelpo URL.</string>
-
-  <!-- V -->
+  <string name="UploadsBy">lataukset käyttäjältä</string>
+  <!--V-->
   <string name="Videos">Videot</string>
-
-  <!-- W -->
+  <string name="VideoQuality">Videon laatu</string>
+  <!--W-->
   <string name="Working">Toimii</string>
-
-  <!-- Y -->
-
+  <string name="Writers">Kirjoittajat</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="Settings_Yes">Kyllä</string>
+  <string name="Settings_No">Ei</string>
+  <string name="Settings_SearchHistoryType_Off">Pois</string>
+  <string name="Settings_SearchHistoryType_Simple">Yksinkertainen</string>
+  <string name="Settings_SearchHistoryType_Extended">Pidennetty</string>
+  <string name="Settings_BasicHomeName">Kotiruudun nimi</string>
+  <string name="Settings_PluginEnabled">Lisäosa käytössä</string>
+  <string name="Settings_ListedInHome">Listattu Kotiruudussa</string>
+  <string name="Settings_ListedInPlugins">Näytetään omissa lisäosissa</string>
+  <string name="Settings_AutoGroupByLang">Ryhmittele sivut automaattisesti kielen perusteella</string>
+  <string name="Settings_UseQuickSelect">Käytä numeronäppäimiä valitaksesi ensimmäisen kirjaimen perusteella</string>
+  <string name="Settings_SearchHistoryType">Hakuhistoria</string>
+  <string name="Settings_ThumbAge">Maksimi ikä (päiviä) kuvakkeille</string>
+  <string name="Settings_CacheTimeout">Aika (minuutteja) joka puskuroidaan</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Aika (minuuttia) jonka jälkeen katekoriat päivitetään webistä</string>
+  <string name="Settings_UtilTimeout">Aikakatkaisu verkkopyynnöille (sekunteina)</string>
+  <string name="Settings_WmpBuffer">Puskuroi (millisekuntia) Windows Media Playerille</string>
+  <string name="Settings_PlayBuffer">Puskuroi (prosenttia) ennen toiston aloittamista</string>
+  <string name="Settings_AllowRefreshrateChange">Ota käyttöön dynaaminen ruudunpäivityksen mukautus</string>
+  <string name="Settings_FavoritesFirst">Aseta suosikit ja lataukset listan ensimmäiseksi viimeisen sijaan</string>
+  <string name="Settings_LatestVideosMaxItems">Kuinka monta viimeisintä videota näytetään</string>
+  <string name="Settings_LatestVideosRandomize">Sekoita viimeksi lisätyt videot ennen näyttämistä</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Päivitä viimeisimpien videoiden tiedot palvelimelta x miinutin välein</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Päivitä näytettävät viimeisimmät videot x sekunnin välein</string>
+  <string name="Settings_StoreLayoutPerCategory">Muista näkymän layout sivua tai kategoriaa kohti</string>
 </resources>

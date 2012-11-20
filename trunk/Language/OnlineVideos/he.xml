@@ -1,58 +1,60 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
-<!-- Hebrew -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<resources>  
-
-  <!-- A -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">שודר</string>
   <string name="AlreadyDownloading">קובץ זה כבר בתהליך הורדה.</string>
   <string name="All">הכל</string>
   <string name="Actions">פעולות</string>
   <string name="Actors">שחקנים</string>
+  <string name="AddComment">הוסף הערה...</string>
+  <string name="AddToPlaylist">הוסף לרשימת ניגון...</string>
   <string name="AddToMySites">הוסף לאתרים שלי</string>
   <string name="AddToFavourites">הוסף למועדפים</string>
   <string name="AddingToFavorites">מוסיף למועדפים</string>
   <string name="AutomaticUpdate">עדכון אוטומטי</string>
   <string name="AutomaticUpdateDisabled">עדכון אוטומטי מבוטל.</string>
-
-  <!-- B -->
+  <!--B-->
   <string name="Broken">פגום</string>
   <string name="Buffered">בטעינה</string>
-
-  <!-- C -->
+  <!--C-->
+  <string name="Cancel">בטל</string>
   <string name="Category">קטגוריה</string>
+  <string name="CategoryNotFound">קטגוריה לא נמצאה</string>
   <string name="Categories">קטגוריות</string>
   <string name="Creator">יוצר</string>
+  <string name="CreateNewPlaylist">צור רשימת ניגון חדשה...</string>
   <string name="CheckingForPluginUpdate">בודק אם יש גירסת עדכון לתוסף</string>
-
-  <!-- D -->
+  <string name="Concurrent">מתאים</string>
+  <!--D-->
+  <string name="Date">תאריך</string>
   <string name="DateOfRelease">תאריך שחרור</string>
   <string name="Directors">במאים</string>
   <string name="Download">הורדה</string>
+  <string name="DownloadUserdefined">הורד לספריית מתשמש</string>
   <string name="Downloading">מוריד</string>
   <string name="DownloadingDescription">מציג רשימת הורדות פעילות.</string>
+  <string name="DownloadingSubtitle">מוריד כתוביות</string>
   <string name="DownloadFailed">הורדה נכשלה: {0}</string>
   <string name="DownloadCancelled">הורדה בוטלה</string>
   <string name="DownloadComplete">הורדה הושלמה</string>
-  <string name="DownloadStarted">הורדה התחילה</string>  
+  <string name="DownloadStarted">הורדה התחילה</string>
   <string name="DownloadedVideos">סרטים שהורדו</string>
+  <string name="DownloadsWillBeAborted">הורדות יבוטלו</string>
   <string name="Delete">מחק</string>
+  <string name="DeletePlaylist">מחק רשימת ניגון</string>
+  <string name="DeleteAll">מחק הכל</string>
   <string name="Default">ברירת מחדל</string>
   <string name="Done">הושלם</string>
   <string name="DeletingOldThumbs">מוחק תמונות ישנות</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">שגיאה</string>
   <string name="EnterPin">הכנסת קוד סודי</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">מועדפים</string>
   <string name="Filter">מסנן</string>
   <string name="FullUpdate">עדכון מלא</string>
-
-  <!-- G -->
-  <string name="Genre">ז'אנר</string>
+  <!--G-->
+  <string name="Genre">ז\'אנר</string>
   <string name="GettingVideoDetails">טעינת פרטי סרטים</string>
   <string name="GettingCategoryVideos">טעינת קטגוריות סרטים</string>
   <string name="GettingFavoriteVideos">טעינת סרטים מועדפים</string>
@@ -68,54 +70,66 @@
   <string name="GettingIcon">טעינת תמונת אתר משירות האינטרנט</string>
   <string name="GettingBanner">טעינת באנר אתר משירות האינטרנט</string>
   <string name="GettingDll">טעינת DLL משירות האינטרנט</string>
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <string name="Groups">קבוצות</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">הגרסה העדכנית ביותר ({0}) נדרשת!</string>
   <string name="Language">שפה</string>
   <string name="LayoutList">סידור: רשימה</string>
   <string name="LayoutIcons">סידור: תמונות</string>
   <string name="LayoutBigIcons">סידור: תמונות גדולות</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">ניהול אתרים</string>
   <string name="MaxResults">מקס. תוצאות</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">שם</string>
   <string name="NextPage">עמוד הבא</string>
+  <string name="NewVideos">וידאו חדש</string>
   <string name="None">ללא</string>
   <string name="NoVideoFound">לא נמצאו סרטים</string>
   <string name="NoReportsForSite">אין דיווחים זמינים עבור אתר זה.</string>
   <string name="NewDllDownloaded">קובץ DLL חדש הורד!</string>
-
-  <!-- O -->
-
-  <!-- P -->
+  <string name="NewSearch">חיפוש חדש</string>
+  <!--O-->
+  <string name="OnlyLocal">מקומי בלבד</string>
+  <string name="OnlyServer">על השרת בלבד</string>
+  <string name="Others">אחרים</string>
+  <!--P-->
   <string name="PlayAll">נגן הכל</string>
+  <string name="PlayAllRandom">נגן הכל (בסדר אקראי)</string>
+  <string name="PlayWith">נגן עם...</string>
+  <string name="Playlists">רשימות ניגון</string>
+  <string name="PlaybackWillBeStopped">ניגון יופסק</string>
+  <string name="PleaseEnterDescription">אנא הכנס תאור קצר.</string>
   <string name="PlotOutline">תקציר העלילה</string>
   <string name="PreviousPage">עמוד קודם</string>
   <string name="PerformAutomaticUpdate">בצע עדכון אוטומטי?</string>
-
-  <!-- R -->
+  <!--Q-->
+  <string name="Queued">נכנס לתור</string>
+  <!--R-->
+  <string name="RateVideo">דרג את הוידאו...</string>
+  <string name="Recommendations">המלצות</string>
   <string name="RemoveFromFavorites">הסר מרשימת המועדפים</string>
+  <string name="RemoveFromPlaylist">מחק מרשימת הניגון</string>
   <string name="RemovingFromFavorites">מסיר מרשימת המועדפים</string>
   <string name="Refresh">רענן</string>
   <string name="RelatedVideos">סרטים קשורים</string>
+  <string name="ReportBroken">דווח כשבור</string>
   <string name="Reported">דווח</string>
+  <string name="Reports">דווחים</string>
   <string name="Runtime">זמן ריצה</string>
   <string name="RemoveFromMySites">הסר מרשימת האתרים שלי</string>
+  <string name="RemoveAllFromMySites">מחק הכל מהאתרים שלי</string>
   <string name="RestartMediaPortal">הפעל מחדש את מדיה-פורטל!</string>
   <string name="RetrievingRemoteDlls">מקבל קבצי DLL מרוחקים ...</string>
   <string name="RetrievingRemoteSites">מקבל רשימת אתרים ...</string>
-
-  <!-- S -->
+  <!--S-->
+  <string name="SearchHistory">חפש בהיסטוריה</string>
   <string name="SearchResults">תוצאות חיפוש</string>
   <string name="SelectSource">בחר מקור</string>
   <string name="Sites">אתרים</string>
+  <string name="Size">גודל</string>
   <string name="SortOptions">אפשרויות מיון</string>
   <string name="Search">חיפוש</string>
   <string name="SetDownloadFolderInConfig">אנא הגדר ספריית הורדות מתוכנת ההגדרות!</string>
@@ -123,27 +137,44 @@
   <string name="SavingLocalSiteList">שומר רשימת אתרים מקומית ...</string>
   <string name="ShowReports">הצג דיווחי יוצר ומשתמשים</string>
   <string name="StartingPlayback">מתחיל לנגן</string>
-  
-  <!-- T -->
+  <string name="Subscriptions">מנויים</string>
+  <string name="Success">הצלחה</string>
+  <!--T-->
   <string name="Timeframe">מסגרת זמן</string>
   <string name="Timeout">חריגה מהזמן שהוקצה</string>
   <string name="Tags">תגיות</string>
-
-  <!-- U -->
+  <!--U-->
   <string name="Updated">מעודכנים</string>
   <string name="Updatable">ניתנים לעדכון</string>
+  <string name="UpdateAll">עדכן / הוסף הכל</string>
+  <string name="UpdateAllSkipCategories">עדכן / הוסף הכל (דלג על קטגוריות)</string>
   <string name="UpdateMySite">עדכן אתר שלי</string>
   <string name="UpdateMySiteSkipCategories">עדכן אתר שלי (דלג על קטגוריות)</string>
   <string name="UpdateAllYourSites">פעולה זו תעדכן את כל האתרים שלך.</string>
   <string name="UnableToPlayVideo">לא ניתן לנגן סרט. אין כתובת אינטרנט.</string>
   <string name="UnableToDownloadVideo">לא ניתן להוריד סרט. כתובת אינטרנט לא חוקית.</string>
-
-  <!-- V -->
+  <string name="UploadsBy">העלאה על ידי</string>
+  <!--V-->
   <string name="Videos">סרטים</string>
-
-  <!-- W -->
+  <string name="VideoQuality">איכות וידאו</string>
+  <!--W-->
   <string name="Working">עובד</string>
-
-  <!-- Y -->
-
+  <string name="Writers">כותבים</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="Settings_Yes">כן</string>
+  <string name="Settings_No">לא</string>
+  <string name="Settings_SearchHistoryType_Off">כבוי</string>
+  <string name="Settings_SearchHistoryType_Simple">פשוט</string>
+  <string name="Settings_SearchHistoryType_Extended">מורחב</string>
+  <string name="Settings_PluginEnabled">תוסף מופעל</string>
+  <string name="Settings_ListedInHome">מופיע בעמוד הראשי</string>
+  <string name="Settings_ListedInPlugins">מופיע ב-\"תוספים שלי\"</string>
+  <string name="Settings_AutoGroupByLang">קבץ אוטומטית את כל האתרים לפי שפה</string>
+  <string name="Settings_UseQuickSelect">השתמש במקלדת אלפאנומרית על מנת לבחור פריטים לפי האות הראשונה</string>
+  <string name="Settings_SearchHistoryType">היסטוריית חיפוש</string>
+  <string name="Settings_ThumbAge">מס\' (ימים) מקסימלי ל-thumbnails</string>
+  <string name="Settings_CacheTimeout">זמן (בדקות) לשמירה במטמון של מידע מהרשת</string>
+  <string name="Settings_CategoryDiscoveryTimeout">זמן (בדקות) לטעינה מחדש של קטגוריות מהרשת</string>
+  <string name="Settings_UtilTimeout">זמן המתנה (בשניות) לבקשות מהרשת</string>
 </resources>

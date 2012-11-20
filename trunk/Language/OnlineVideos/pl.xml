@@ -1,60 +1,55 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- Polish (PL) -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<resources>  
-
-  <!-- A -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">Emitowane</string>
   <string name="AlreadyDownloading">Już ściągam ten plik.</string>
   <string name="All">Wszystkie</string>
   <string name="Actions">Akcje</string>
   <string name="Actors">Aktorzy</string>
+  <string name="AddComment">Dodaj komentarz...</string>
+  <string name="AddToPlaylist">Dodaj do listy odtwarzania...</string>
   <string name="AddToMySites">Dodaj do moich witryn</string>
   <string name="AddToFavourites">Dodaj do ulubionych</string>
   <string name="AddingToFavorites">dodawanie do ulubionych</string>
   <string name="AutomaticUpdate">Automatyczna aktualizacja</string>
   <string name="AutomaticUpdateDisabled">Automatyczna aktualizacja jest nieaktywna.</string>
-
-  <!-- B -->
+  <!--B-->
   <string name="Broken">Nieaktualne</string>
   <string name="Buffered">zbuforowane</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Cancel">Anuluj</string>
   <string name="Category">Kategoria</string>
+  <string name="CategoryNotFound">Nie znaleziono kategorii</string>
   <string name="Categories">Kategorie</string>
   <string name="Creator">Kreator</string>
+  <string name="CreateNewPlaylist">Utwórz nową listę odtwarzania...</string>
   <string name="CheckingForPluginUpdate">sprawdzanie dostępności nowej wersji wtyczki</string>
-
-  <!-- D -->
+  <!--D-->
   <string name="Date">Data</string>
   <string name="DateOfRelease">Date wypuszczenia</string>
   <string name="Directors">Reżyserzy</string>
   <string name="Download">Ściągnij</string>
   <string name="Downloading">Ściąganie</string>
   <string name="DownloadingDescription">Pokazuje listę aktualnych ściągań.</string>
+  <string name="DownloadingSubtitle">ściągam napisy</string>
   <string name="DownloadFailed">Ściąganie nieudane: {0}</string>
   <string name="DownloadCancelled">Ściąganie nieudane</string>
   <string name="DownloadComplete">Ściąganie zakończone</string>
-  <string name="DownloadStarted">Ściąganie rozpoczęte</string>  
+  <string name="DownloadStarted">Ściąganie rozpoczęte</string>
   <string name="DownloadedVideos">Ściągnięte wideo</string>
   <string name="Delete">Usuń</string>
   <string name="DeleteAll">Usuń wszystkie</string>
   <string name="Default">Domyślne</string>
   <string name="Done">Gotowe</string>
   <string name="DeletingOldThumbs">Usuwanie starych miniatur</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">Błąd</string>
   <string name="EnterPin">Wpisz Pin</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">Ulubione</string>
   <string name="Filter">Filtr</string>
   <string name="FullUpdate">Pełna aktualizacja</string>
-
-  <!-- G -->
+  <!--G-->
   <string name="Genre">Rodzaj</string>
   <string name="GettingVideoDetails">uzyskiwanie szczegółów filmu</string>
   <string name="GettingCategoryVideos">uzyskiwanie kategorii filmów</string>
@@ -71,39 +66,32 @@
   <string name="GettingIcon">uzyskiwanie ikony witryny z sieci</string>
   <string name="GettingBanner">uzyskiwanie banera strony z sieci</string>
   <string name="GettingDll">uzyskiwanie biblioteki dll z sieci</string>
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Najnowsza wersja ({0}) jest niezbędna!</string>
   <string name="Language">Język</string>
   <string name="LayoutList">Widok: Lista</string>
   <string name="LayoutIcons">Widok: Ikony</string>
   <string name="LayoutBigIcons">Widok: Duże ikony</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">Zarządzaj stronami</string>
   <string name="MaxResults">Maksymalne wyniki</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">Nazwa</string>
   <string name="NextPage">Następna strona</string>
   <string name="None">Żaden</string>
   <string name="NoVideoFound">Nie znaleziono wideo</string>
   <string name="NoReportsForSite">Żadne raporty nie są dostępne dla tej strony.</string>
   <string name="NewDllDownloaded">Nowa biblioteka dll ściągnięta!</string>
-
-  <!-- O -->
-
-  <!-- P -->
+  <!--O-->
+  <!--P-->
   <string name="PlayAll">Odtwarzaj wszystko</string>
   <string name="PlotOutline">Skrót</string>
   <string name="PreviousPage">Poprzednia strona</string>
   <string name="PerformAutomaticUpdate">Przeprowadzić automatyczną aktualizację?</string>
-
-  <!-- R -->
+  <!--Q-->
+  <!--R-->
   <string name="RemoveFromFavorites">Usuń z ulubionych</string>
   <string name="RemovingFromFavorites">usuwanie z ulubionych</string>
   <string name="Refresh">Odśwież</string>
@@ -114,12 +102,11 @@
   <string name="RestartMediaPortal">Uruchom MediaPortal ponownie!</string>
   <string name="RetrievingRemoteDlls">Uzyskiwanie zdalnych bibliotek dll ...</string>
   <string name="RetrievingRemoteSites">Uzyskiwanie zdalnych stron ...</string>
-
-  <!-- S -->
+  <!--S-->
   <string name="SearchResults">Wyniki szukania</string>
   <string name="SelectSource">Wybierz źródło</string>
   <string name="Sites">Witryny</string>
-  <string name="Size">Rozmiar</string>  
+  <string name="Size">Rozmiar</string>
   <string name="SortOptions">Opcje sortowania</string>
   <string name="Search">Szukaj</string>
   <string name="SetDownloadFolderInConfig">Wybierz katalog ściągania w konfiguracji!</string>
@@ -128,13 +115,11 @@
   <string name="ShowReports">Pokaż raporty kreatorów i użytkowników</string>
   <string name="StartingPlayback">rozpoczynanie odtwarzania</string>
   <string name="Subscriptions">Subskrypcje</string>
-  
-  <!-- T -->
+  <!--T-->
   <string name="Timeframe">Rama czasowa</string>
   <string name="Timeout">Przekroczenie czasu</string>
   <string name="Tags">Tagi</string>
-
-  <!-- U -->
+  <!--U-->
   <string name="Updated">Zaktualizowane</string>
   <string name="Updatable">Możliwe do zaktualizowania</string>
   <string name="UpdateMySite">Aktualizuj moją stronę</string>
@@ -142,13 +127,10 @@
   <string name="UpdateAllYourSites">Zaktualizowane zostaną wszystkie twoje aktualne strony.</string>
   <string name="UnableToPlayVideo">Nie można odtworzyć. Brak adresu.</string>
   <string name="UnableToDownloadVideo">Nie można ściągnąć wideo. Nieprawidłowy adres.</string>
-
-  <!-- V -->
+  <!--V-->
   <string name="Videos">Wideo</string>
-
-  <!-- W -->
+  <!--W-->
   <string name="Working">Działa</string>
-
-  <!-- Y -->
-
+  <!--Y-->
+  <!--Strings from the settings file-->
 </resources>

@@ -1,10 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- Greek (EL) Created & Updated 27/10/10 (dd/mm/yy)-->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<resources>  
-
-  <!-- A -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">Προβλήθηκε</string>
   <string name="AlreadyDownloading">Αυτό το αρχείο μεταφορτώνεται ήδη.</string>
   <string name="All">Όλα</string>
@@ -15,19 +11,16 @@
   <string name="AddingToFavorites">Γίνεται προσθήκη στα αγαπημένα</string>
   <string name="AutomaticUpdate">Αυτόματη ενημέρωση</string>
   <string name="AutomaticUpdateDisabled">Αυτόματη ενημέρωση απενεργοποιημένη.</string>
-  
-  <!-- B -->
+  <!--B-->
   <string name="Broken">Μη ολοκληρωμένο</string>
   <string name="Buffered">προσωρινά αποθηκευμένο</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Cancel">Άκυρο</string>
   <string name="Category">Κατηγορία</string>
   <string name="Categories">Κατηγορίες</string>
-  <string name="Creator">Δημιουργός</string>  
+  <string name="Creator">Δημιουργός</string>
   <string name="CheckingForPluginUpdate">γίνεται έλεγχος για ενημερώσεις του πρόσθετου</string>
-
-  <!-- D -->
+  <!--D-->
   <string name="Date">Ημερομηνία</string>
   <string name="DateOfRelease">Ημερομηνία έκδοσης</string>
   <string name="Directors">Σκηνοθέτες</string>
@@ -37,24 +30,21 @@
   <string name="DownloadFailed">Αποτυχία μεταφόρτωσης: {0}</string>
   <string name="DownloadCancelled">Η μεταφόρτωση ακυρώθηκε</string>
   <string name="DownloadComplete">Η μεταφόρτωση ολοκληρώθηκε</string>
-  <string name="DownloadStarted">Η μεταφόρτωση ξεκίνησε</string>  
+  <string name="DownloadStarted">Η μεταφόρτωση ξεκίνησε</string>
   <string name="DownloadedVideos">Μεταφορτωμένα βίντεο</string>
   <string name="Delete">Διαγραφή</string>
   <string name="DeleteAll">Διαγραφή όλων</string>
   <string name="Default">Προκαθορισμένο</string>
   <string name="Done">Έγινε</string>
   <string name="DeletingOldThumbs">Διαγραφή παλαιών μικρογραφιών</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">Σφάλμα</string>
   <string name="EnterPin">Εισάγετε Pin</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">Αγαπημένα</string>
   <string name="Filter">Φίλτρο</string>
   <string name="FullUpdate">Πλήρης ενημέρωση</string>
-
-  <!-- G -->
+  <!--G-->
   <string name="Genre">Είδος</string>
   <string name="GettingVideoDetails">ανάκτηση λεπτομερειών του βίντεο</string>
   <string name="GettingCategoryVideos">ανάκτηση βίντεο για την κατηγορία</string>
@@ -71,39 +61,32 @@
   <string name="GettingIcon">ανάκτηση του εικονιδίου της ιστοσελίδας από την υπηρεσία web</string>
   <string name="GettingBanner">ανάκτηση του banner της ιστοσελίδας από την υπηρεσία web</string>
   <string name="GettingDll">ανάκτηση του dll από την υπηρεσία web</string>
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Απαιτείται η τελευταία έκδοση ({0})!</string>
   <string name="Language">Γλώσσα</string>
   <string name="LayoutList">Διάταξη: Λίστα</string>
   <string name="LayoutIcons">Διάταξη: Εικονίδια</string>
   <string name="LayoutBigIcons">Διάταξη: Μεγάλα εικονίδια</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">Διαχείριση ιστοσελίδων</string>
   <string name="MaxResults">Μέγιστος αριθμός αποτελεσμάτων</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">Όνομα</string>
   <string name="NextPage">Επόμενη σελίδα</string>
   <string name="None">Κανένα</string>
   <string name="NoVideoFound">Δεν βρέθηκαν βίντεο</string>
   <string name="NoReportsForSite">Δεν υπάρχουν διαθέσιμες αναφορές για αυτή την ιστοσελίδα.</string>
   <string name="NewDllDownloaded">Μεταφορτώθηκε νέο dll!</string>
-
-  <!-- O -->
-
-  <!-- P -->
+  <!--O-->
+  <!--P-->
   <string name="PlayAll">Αναπαραγωγή όλων</string>
   <string name="PlotOutline">Πλοκή</string>
   <string name="PreviousPage">Προηγούμενη σελίδα</string>
   <string name="PerformAutomaticUpdate">Να γίνει αυτόματη ενημέρωση;</string>
-
-  <!-- R -->
+  <!--Q-->
+  <!--R-->
   <string name="RemoveFromFavorites">Αφαίρεση από τα αγαπημένα</string>
   <string name="RemovingFromFavorites">Γίνεται αφαίρεση από τα αγαπημένα</string>
   <string name="Refresh">Ανανέωση</string>
@@ -114,8 +97,7 @@
   <string name="RestartMediaPortal">Επανεκκινήστε το MediaPortal!</string>
   <string name="RetrievingRemoteDlls">Ανάκτηση απομακρυσμένων dlls ...</string>
   <string name="RetrievingRemoteSites">Ανάκτηση απομακρυσμένων ιστοσελίδων ...</string>
-
-  <!-- S -->
+  <!--S-->
   <string name="SearchResults">Αποτελέσματα αναζήτησης</string>
   <string name="SelectSource">Επιλέξτε πηγή</string>
   <string name="Sites">Ιστοσελίδες</string>
@@ -128,13 +110,11 @@
   <string name="ShowReports">Προβολή αναφορών δημιουργού και χρηστών</string>
   <string name="StartingPlayback">εκκίνηση αναπαραγωγής</string>
   <string name="Subscriptions">Συνδρομές</string>
-  
-  <!-- T -->
+  <!--T-->
   <string name="Timeframe">Χρονοδιάγραμμα</string>
   <string name="Timeout">Εξάντληση χρονικού περιθωρίου</string>
   <string name="Tags">Ετικέτες</string>
-
-  <!-- U -->
+  <!--U-->
   <string name="Updated">Ενημερώθηκε</string>
   <string name="Updatable">Δυνατή η ενημέρωση</string>
   <string name="UpdateMySite">Ενημέρωση της ιστοσελίδας μου</string>
@@ -142,13 +122,10 @@
   <string name="UpdateAllYourSites">Θα γίνει ενημέρωση όλων των τρέχουσων ιστοσελίδων σας.</string>
   <string name="UnableToPlayVideo">Αδύνατη η αναπαραγωγή. Δεν βρέθηκε το URL.</string>
   <string name="UnableToDownloadVideo">Αδύνατη η μεταφόρτωση. Μη έγκυρο URL.</string>
-
-  <!-- V -->
+  <!--V-->
   <string name="Videos">Βίντεο</string>
-
-  <!-- W -->
+  <!--W-->
   <string name="Working">Περιμένετε</string>
-
-  <!-- Y -->
-
+  <!--Y-->
+  <!--Strings from the settings file-->
 </resources>

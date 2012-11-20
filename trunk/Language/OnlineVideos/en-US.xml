@@ -1,10 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
-<!-- English (US) -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<resources>  
-
-  <!-- A -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">Aired</string>
   <string name="AlreadyDownloading">Already downloading this file.</string>
   <string name="All">All</string>
@@ -17,12 +13,10 @@
   <string name="AddingToFavorites">adding to favorites</string>
   <string name="AutomaticUpdate">Automatic Update</string>
   <string name="AutomaticUpdateDisabled">Automatic Update disabled.</string>
-
-  <!-- B -->
+  <!--B-->
   <string name="Broken">Broken</string>
   <string name="Buffered">buffered</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Cancel">Cancel</string>
   <string name="Category">Category</string>
   <string name="CategoryNotFound">Category not found</string>
@@ -31,8 +25,7 @@
   <string name="CreateNewPlaylist">Create new Playlist ...</string>
   <string name="CheckingForPluginUpdate">checking for updated plugin version</string>
   <string name="Concurrent">concurrent</string>
-
-  <!-- D -->
+  <!--D-->
   <string name="Date">Date</string>
   <string name="DateOfRelease">Date of Release</string>
   <string name="Directors">Directors</string>
@@ -44,7 +37,7 @@
   <string name="DownloadFailed">Download failed: {0}</string>
   <string name="DownloadCancelled">Download Cancelled</string>
   <string name="DownloadComplete">Download Complete</string>
-  <string name="DownloadStarted">Download Started</string>  
+  <string name="DownloadStarted">Download Started</string>
   <string name="DownloadedVideos">Downloaded Videos</string>
   <string name="DownloadsWillBeAborted">Downloads will be aborted.</string>
   <string name="Delete">Delete</string>
@@ -53,17 +46,14 @@
   <string name="Default">Default</string>
   <string name="Done">Done</string>
   <string name="DeletingOldThumbs">Deleting old thumbnails</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">Error</string>
   <string name="EnterPin">Enter Pin</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">Favorites</string>
   <string name="Filter">Filter</string>
   <string name="FullUpdate">Full Update</string>
-
-  <!-- G -->
+  <!--G-->
   <string name="Genre">Genre</string>
   <string name="GettingVideoDetails">getting video details</string>
   <string name="GettingCategoryVideos">getting category videos</string>
@@ -80,24 +70,19 @@
   <string name="GettingIcon">getting site icon from webservice</string>
   <string name="GettingBanner">getting site banner from webservice</string>
   <string name="GettingDll">getting dll from webservice</string>
-  <string name="Groups">Groups</string>  
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <string name="Groups">Groups</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Latest version ({0}) required!</string>
   <string name="Language">Language</string>
   <string name="LayoutList">Layout: List</string>
   <string name="LayoutIcons">Layout: Icons</string>
   <string name="LayoutBigIcons">Layout: Big Icons</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">Manage Sites</string>
   <string name="MaxResults">Max Results</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">Name</string>
   <string name="NextPage">Next page</string>
   <string name="NewVideos">New Videos</string>
@@ -106,13 +91,11 @@
   <string name="NoReportsForSite">No reports for this site available.</string>
   <string name="NewDllDownloaded">New dll downloaded!</string>
   <string name="NewSearch">New search</string>
-
-  <!-- O -->
+  <!--O-->
   <string name="OnlyLocal">Only Local</string>
   <string name="OnlyServer">Only Server</string>
   <string name="Others">Others</string>
-
-  <!-- P -->
+  <!--P-->
   <string name="PlayAll">Play all</string>
   <string name="PlayAllRandom">Play all (random order)</string>
   <string name="PlayWith">Play with ...</string>
@@ -122,11 +105,9 @@
   <string name="PlotOutline">Plot outline</string>
   <string name="PreviousPage">Previous page</string>
   <string name="PerformAutomaticUpdate">Perform automatic update?</string>
-
-  <!-- Q -->
+  <!--Q-->
   <string name="Queued">queued</string>
-  
-  <!-- R -->
+  <!--R-->
   <string name="RateVideo">Rate the Video ...</string>
   <string name="Recommendations">Recommendations</string>
   <string name="RemoveFromFavorites">Remove from favorites</string>
@@ -143,29 +124,26 @@
   <string name="RestartMediaPortal">Restart MediaPortal!</string>
   <string name="RetrievingRemoteDlls">Retrieving remote dlls ...</string>
   <string name="RetrievingRemoteSites">Retrieving remote sites ...</string>
-
-  <!-- S -->
+  <!--S-->
   <string name="SearchHistory">Search history</string>
   <string name="SearchResults">Search results</string>
   <string name="SelectSource">Select source</string>
   <string name="Sites">Sites</string>
-  <string name="Size">Size</string>  
+  <string name="Size">Size</string>
   <string name="SortOptions">Sort options</string>
   <string name="Search">Search</string>
   <string name="SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>
   <string name="State">State</string>
   <string name="SavingLocalSiteList">Saving local site list ...</string>
-  <string name="ShowReports">Show creator's and user's reports</string>
+  <string name="ShowReports">Show creator\'s and user\'s reports</string>
   <string name="StartingPlayback">starting playback</string>
   <string name="Subscriptions">Subscriptions</string>
   <string name="Success">Success</string>
-
-  <!-- T -->
+  <!--T-->
   <string name="Timeframe">Timeframe</string>
   <string name="Timeout">Timeout</string>
   <string name="Tags">Tags</string>
-
-  <!-- U -->
+  <!--U-->
   <string name="Updated">Updated</string>
   <string name="Updatable">Updatable</string>
   <string name="UpdateAll">Update/Add all</string>
@@ -176,18 +154,14 @@
   <string name="UnableToPlayVideo">Unable to play the video. No URL.</string>
   <string name="UnableToDownloadVideo">Unable to download the video. Invalid URL.</string>
   <string name="UploadsBy">uploads by</string>
-
-  <!-- V -->
+  <!--V-->
   <string name="Videos">Videos</string>
   <string name="VideoQuality">Video Quality</string>
-
-  <!-- W -->
+  <!--W-->
   <string name="Working">Working</string>
   <string name="Writers">Writers</string>
-
-  <!-- Y -->
-
-  <!-- Strings from the settings file -->
+  <!--Y-->
+  <!--Strings from the settings file-->
   <string name="Settings_Yes">Yes</string>
   <string name="Settings_No">No</string>
   <string name="Settings_SearchHistoryType_Off">Off</string>
@@ -213,5 +187,4 @@
   <string name="Settings_LatestVideosOnlineDataRefresh">Refresh latest videos data from web every x minutes</string>
   <string name="Settings_LatestVideosGuiDataRefresh">Refresh displayed latest videos every x seconds</string>
   <string name="Settings_StoreLayoutPerCategory">Remember view layout per Site and Category</string>
-
 </resources>

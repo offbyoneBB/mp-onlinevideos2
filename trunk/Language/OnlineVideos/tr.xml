@@ -1,34 +1,32 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
-<!-- Turkish -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
-<resources>  
-
-  <!-- A -->
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
   <string name="Airdate">Aired</string>
   <string name="AlreadyDownloading">Dosya zaten indiriliyor.</string>
   <string name="All">Hepsi</string>
   <string name="Actions">Actions</string>
   <string name="Actors">Oyuncular</string>
+  <string name="AddComment">Yorum ekle</string>
+  <string name="AddToPlaylist">Çalmalistesine Ekle</string>
   <string name="AddToMySites">Sitelerime Ekle</string>
   <string name="AddToFavourites">Favorilerime Ekle</string>
   <string name="AddingToFavorites">Favorilere Ekleniyor</string>
   <string name="AutomaticUpdate">Automatik Güncelleme</string>
   <string name="AutomaticUpdateDisabled">Automatik Güncelleme Kapalı.</string>
-
-  <!-- B -->
+  <!--B-->
   <string name="Broken">Bozuk</string>
   <string name="Buffered">İndiriliyor</string>
-
-  <!-- C -->
+  <!--C-->
   <string name="Cancel">Vazgeç</string>
   <string name="Category">Kategori</string>
+  <string name="CategoryNotFound">Kategori bulunamadı</string>
   <string name="Categories">Kategoriler</string>
   <string name="Creator">Creator</string>
+  <string name="CreateNewPlaylist">Yeni Çalmalistesi Oluştur...</string>
   <string name="CheckingForPluginUpdate">Güncelleme Kontrol Ediliyor</string>
-
-  <!-- D -->
-    <string name="Date">Tarih</string>
+  <string name="Concurrent">eşzamanlı</string>
+  <!--D-->
+  <string name="Date">Tarih</string>
   <string name="DateOfRelease">Yükleme Tarihi</string>
   <string name="Directors">Yönetmenler</string>
   <string name="Download">İndir</string>
@@ -39,24 +37,23 @@
   <string name="DownloadFailed">İndirme Başarısız: {0}</string>
   <string name="DownloadCancelled">İndirme İptal Edildi</string>
   <string name="DownloadComplete">İndirme Tamamlandı</string>
-  <string name="DownloadStarted">İndirme Başladı</string>  
+  <string name="DownloadStarted">İndirme Başladı</string>
   <string name="DownloadedVideos">İndirilen Videolar</string>
+  <string name="DownloadsWillBeAborted">İndirmeler iptal edilecek.</string>
   <string name="Delete">Sil</string>
+  <string name="DeletePlaylist">Çalmalistesini Sil</string>
   <string name="DeleteAll">Tümünü Sil</string>
   <string name="Default">Öntanımlı</string>
   <string name="Done">Bitti</string>
   <string name="DeletingOldThumbs">Eski küçük resimler siliniyor</string>
-
-  <!-- E -->
+  <!--E-->
   <string name="Error">Error</string>
   <string name="EnterPin">Enter Pin</string>
-
-  <!-- F -->
+  <!--F-->
   <string name="Favourites">Favorites</string>
   <string name="Filter">Filter</string>
   <string name="FullUpdate">Full Update</string>
-
-  <!-- G -->
+  <!--G-->
   <string name="Genre">Genre</string>
   <string name="GettingVideoDetails">getting video details</string>
   <string name="GettingCategoryVideos">getting category videos</string>
@@ -73,24 +70,19 @@
   <string name="GettingIcon">getting site icon from webservice</string>
   <string name="GettingBanner">getting site banner from webservice</string>
   <string name="GettingDll">getting dll from webservice</string>
-  <string name="Groups">Groups</string>  
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <string name="Groups">Groups</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
   <string name="LatestVersionRequired">Latest version ({0}) required!</string>
   <string name="Language">Language</string>
   <string name="LayoutList">Layout: List</string>
   <string name="LayoutIcons">Layout: Icons</string>
   <string name="LayoutBigIcons">Layout: Big Icons</string>
-
-  <!-- M -->
+  <!--M-->
   <string name="ManageSites">Manage Sites</string>
   <string name="MaxResults">Max Results</string>
-
-  <!-- N -->
+  <!--N-->
   <string name="Name">İsim</string>
   <string name="NextPage">Sonraki sayfa</string>
   <string name="NewVideos">Yeni videolar</string>
@@ -99,20 +91,27 @@
   <string name="NoReportsForSite">Bu site için rapor yok.</string>
   <string name="NewDllDownloaded">Yeni dll indirildi!</string>
   <string name="NewSearch">Yeni Arama</string>
-
-  <!-- O -->
+  <!--O-->
+  <string name="OnlyLocal">Sadece Yerel</string>
+  <string name="OnlyServer">Sadece Sunucu</string>
   <string name="Others">Others</string>
-
-  <!-- P -->
+  <!--P-->
   <string name="PlayAll">Hepsini Oynat</string>
+  <string name="PlayAllRandom">Hepsini Çal (rastgele)</string>
   <string name="PlayWith">Şununla oynat ...</string>
+  <string name="Playlists">Çalma Listeleri</string>
+  <string name="PlaybackWillBeStopped">Çalma durdurulacak.</string>
   <string name="PleaseEnterDescription">Lütfen kısa bir tanımlama giriniz.</string>
   <string name="PlotOutline">Plot outline</string>
   <string name="PreviousPage">Önceki Sayfa</string>
   <string name="PerformAutomaticUpdate">Otomatik Güncelleştirme Yapılsın Mı?</string>
-
-  <!-- R -->
+  <!--Q-->
+  <string name="Queued">sıraya konuldu</string>
+  <!--R-->
+  <string name="RateVideo">Videoyu puanla ...</string>
+  <string name="Recommendations">Öneriler</string>
   <string name="RemoveFromFavorites">Favorilerden çıkart</string>
+  <string name="RemoveFromPlaylist">Çalma Listesinden çıkart</string>
   <string name="RemovingFromFavorites">favorilerden çıkartılıyor</string>
   <string name="Refresh">Yenile</string>
   <string name="RelatedVideos">Benzer Videolar</string>
@@ -121,32 +120,31 @@
   <string name="Reports">Raporlar</string>
   <string name="Runtime">Süre</string>
   <string name="RemoveFromMySites">Sitelerimden çıkart</string>
+  <string name="RemoveAllFromMySites">Tümünü sitelerimden çıkart</string>
   <string name="RestartMediaPortal">MediaPortalı yeniden başlat!</string>
   <string name="RetrievingRemoteDlls">Karşı taraftan ddl ler alınıyor ...</string>
   <string name="RetrievingRemoteSites">Karşı taraftan siteler alınıyor ...</string>
-
-  <!-- S -->
+  <!--S-->
   <string name="SearchHistory">Search history</string>
   <string name="SearchResults">Search results</string>
   <string name="SelectSource">Select source</string>
   <string name="Sites">Sites</string>
-  <string name="Size">Size</string>  
+  <string name="Size">Size</string>
   <string name="SortOptions">Sort options</string>
   <string name="Search">Search</string>
   <string name="SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>
   <string name="State">State</string>
   <string name="SavingLocalSiteList">Saving local site list ...</string>
-  <string name="ShowReports">Show creator's and user's reports</string>
+  <string name="ShowReports">Show creator\'s and user\'s reports</string>
   <string name="StartingPlayback">starting playback</string>
   <string name="Subscriptions">Subscriptions</string>
-  
-  <!-- T -->
+  <string name="Success">Başarılı</string>
+  <!--T-->
   <string name="Timeframe">Timeframe</string>
   <string name="Timeout">Timeout</string>
   <string name="Tags">Tags</string>
-
-  <!-- U -->
-   <string name="Updated">Güncellendi</string>
+  <!--U-->
+  <string name="Updated">Güncellendi</string>
   <string name="Updatable">Güncellenebilir</string>
   <string name="UpdateAll">Update/Add all</string>
   <string name="UpdateAllSkipCategories">Update/Add all (skip categories)</string>
@@ -156,15 +154,37 @@
   <string name="UnableToPlayVideo">Bu video oynatılamıyor. URL yok.</string>
   <string name="UnableToDownloadVideo"> Bu video oynatılamıyor. Hatalı URL.</string>
   <string name="UploadsBy">uploads by</string>
-
-  <!-- V -->
+  <!--V-->
   <string name="Videos">Videolar</string>
   <string name="VideoQuality">Video Kalitesi</string>
-
-  <!-- W -->
+  <!--W-->
   <string name="Working">Çalışıyor</string>
   <string name="Writers">Yazarlar</string>
-
-  <!-- Y -->
-
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="Settings_Yes">Evet</string>
+  <string name="Settings_No">Hayır</string>
+  <string name="Settings_SearchHistoryType_Off">Kapalı</string>
+  <string name="Settings_SearchHistoryType_Simple">Basit</string>
+  <string name="Settings_SearchHistoryType_Extended">Gelişmiş</string>
+  <string name="Settings_BasicHomeName">Basit Ana İsim</string>
+  <string name="Settings_PluginEnabled">Eklenti Aktif</string>
+  <string name="Settings_ListedInHome">Ana Menüde Listelendi</string>
+  <string name="Settings_ListedInPlugins">Eklentiler menüsünde Listelendi</string>
+  <string name="Settings_AutoGroupByLang">Tüm siteleri dillerine göre otomatik olarak grupla</string>
+  <string name="Settings_UseQuickSelect">Harf tuşlarıyla ilk harfe göre seçim yapma</string>
+  <string name="Settings_SearchHistoryType">Arama geçmişi</string>
+  <string name="Settings_ThumbAge">Küçük resimler en fazla kaç (gün) saklanacak</string>
+  <string name="Settings_CacheTimeout">Web üzerinden veri çekilecek süre (dakika)</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Web\'den yüklenecek kategorilerin yenilenme zamanlaması (dakika olarak)</string>
+  <string name="Settings_UtilTimeout">Web istekleri için zaman aşımı süresi (saniye)</string>
+  <string name="Settings_WmpBuffer">Windows Media Player için arabellek süresi (milisaniye)</string>
+  <string name="Settings_PlayBuffer">Çalmaya başlamadan önce arabelleğe alınması gereken yüzde</string>
+  <string name="Settings_AllowRefreshrateChange">Dinamik yenileme oranı adaptasyonu</string>
+  <string name="Settings_FavoritesFirst">Favoriler ve İndirilenler sitelerini listenin sonu yerine başına yerleştir</string>
+  <string name="Settings_LatestVideosMaxItems">Gösterilecek yeni video adedi</string>
+  <string name="Settings_LatestVideosRandomize">Yeni videoları göstermeden rastgele sırala</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Yeni videoları web\'den dakika olarak yenileme sıklığı </string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Gösterilen yeni videoların dakika olarak yenilenme sıklığı</string>
+  <string name="Settings_StoreLayoutPerCategory">Gösterim düzenini her Site ve Kategori\'ye göre ayrı sakla</string>
 </resources>

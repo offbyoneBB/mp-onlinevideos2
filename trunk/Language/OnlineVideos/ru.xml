@@ -1,137 +1,136 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- OnlineVideos translation file -->
-<!-- Russian -->
-<!-- Note: English is the fallback for any strings not found in other languages -->
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
-<!-- A -->
-<string name="Airdate">Эфир</string>
-<string name="AlreadyDownloading">Этот файл уже загружается.</string>
-<string name="All">Все</string>
-<string name="Actions">Действия</string>
-<string name="Actors">Актеры</string>
-<string name="AddToMySites">Добавить в Мои Сайты</string>
-<string name="AddToFavourites">Добавить в Избранное</string>
-<string name="AddingToFavorites">добавление в избранное</string>
-<string name="AutomaticUpdate">Автоматическое Обновление</string>
-<string name="AutomaticUpdateDisabled">Автоматическое обновление отключено.</string>
-<!-- B -->
-<string name="Broken">Испорчено</string>
-<string name="Buffered">буфферизовано</string>
-<!-- C -->
-<string name="Cancel">Отмена</string>
-<string name="Category">Категория</string>
-<string name="Categories">Категории</string>
-<string name="Creator">Создатель</string>
-<string name="CheckingForPluginUpdate">проверка обновленной версии плагина</string>
-<!-- D -->
-<string name="Date">Дата</string>
-<string name="DateOfRelease">Дата Релиза</string>
-<string name="Directors">Режиссеры</string>
-<string name="Download">Загрузка</string>
-<string name="Downloading">Загружается</string>
-<string name="DownloadingDescription">Показать список текущих загрузок.</string>
-<string name="DownloadFailed">Загрузка прервана: {0}</string>
-<string name="DownloadCancelled">Загрузка Отменена</string>
-<string name="DownloadComplete">Загрузка Завершана</string>
-<string name="DownloadStarted">Загрузка Начата</string>
-<string name="DownloadedVideos">Загруженное Видео</string>
-<string name="Delete">Удалить</string>
-<string name="DeleteAll">Удалить Все</string>
-<string name="Default">Стандарт</string>
-<string name="Done">Выполнено</string>
-<string name="DeletingOldThumbs">Удаление старых эскизов</string>
-<!-- E -->
-<string name="Error">Ошибка</string>
-<string name="EnterPin">Введите код</string>
-<!-- F -->
-<string name="Favourites">Избранное</string>
-<string name="Filter">Фильтр</string>  
-<string name="FullUpdate">Полное Обновление</string>
-<!-- G -->
-<string name="Genre">Жанр</string>
-<string name="GettingVideoDetails">получение деталей видео</string>
-<string name="GettingCategoryVideos">получение категории видео</string>
-<string name="GettingFavoriteVideos">получение избранного видео</string>
-<string name="GettingSearchResults">получение результатов поиска</string>
-<string name="GettingRelatedVideos">получение похожих видео</string>
-<string name="GettingFilteredVideos">получение отфильтрованных видео</string>
-<string name="GettingNextPageVideos">получение следующей страницы видео</string>
-<string name="GettingPreviousPageVideos">получение предыдущей страницы видео</string>
-<string name="GettingPlaybackUrlsForVideo">получениессылки на видео</string>
-<string name="GettingDynamicCategories">получение динамических категорий</string>
-<string name="GettingReports">получение ответа от вебсервисов</string>
-<string name="GettingSiteXml">получение xml сайта от вебсервиса</string>
-<string name="GettingIcon">получение значкоа сайта от вебсервиса</string>
-<string name="GettingBanner">получение баннера сайта от вебсервиса</string>
-<string name="GettingDll">получение dll от вебсервиса</string>
-<string name="Groups">Группы</string>
-<!-- H -->
-<!-- I -->
-<!-- L -->
-<string name="LatestVersionRequired">Необходима последняя версия ({0})!</string>
-<string name="Language">Язык</string>
-<string name="LayoutList">Вид: Список</string>
-<string name="LayoutIcons">Вид: Значки</string>
-<string name="LayoutBigIcons">Вид: Большие значки</string>
-<!-- M -->
-<string name="ManageSites">Управление сайтами</string>
-<string name="MaxResults">Максимально результатов</string>
-<!-- N -->
-<string name="Name">Имя</string>
-<string name="NextPage">Следующая страница</string>
-<string name="None">Никто</string>
-<string name="NoVideoFound">Видео не найдено</string>
-<string name="NoReportsForSite">Для этого сайта недоступны сообщения.</string>
-<string name="NewDllDownloaded">Новая dll Загружена!</string>
-<string name="NewSearch">Новый Поиск</string>
-<!-- O -->
-<string name="Others">Другие</string>
-<!-- P -->
-<string name="PlayAll">Играть Все</string>
-<string name="PlotOutline">Действие:</string>
-<string name="PreviousPage">Предыдущая страница</string>
-<string name="PerformAutomaticUpdate">Выполнять автоматическое обновление?</string>
-<!-- R -->
-<string name="RemoveFromFavorites">Удалить из Избранного</string>
-<string name="RemovingFromFavorites">удаляется из избранного</string>
-<string name="Refresh">Обновить</string>
-<string name="RelatedVideos">Похожие Видео Videos</string>
-<string name="Reported">Отмеченные</string>
-<string name="Reports">Отчеты</string>
-<string name="Runtime">Продолжительность</string>
-<string name="RemoveFromMySites">Удалить из Моих Сайтов</string>
-<string name="RestartMediaPortal">Перезапустить MediaPortal!</string>
-<string name="RetrievingRemoteDlls">Получение уделенных dlls ...</string>
-<string name="RetrievingRemoteSites">Получение удаленных сайтов ...</string>
-<!-- S -->
-<string name="SearchHistory">История Поиска</string>
-<string name="SearchResults">Результаты Поиска</string>
-<string name="SelectSource">Выбрать Источник</string>
-<string name="Sites">Сайты</string>
-<string name="Size">Размер</string>
-<string name="SortOptions">Опции Сортировки</string>
-<string name="Search">Поиск</string>
-<string name="SetDownloadFolderInConfig">Пожалуйста выберите папку сохранения в Настройках!</string>
-<string name="State">Страна</string>
-<string name="SavingLocalSiteList">Сохранение локального списка сайтов ...</string>
-<string name="ShowReports">Показывать комментарии создателя и пользователей</string>
-<string name="StartingPlayback">запуск проигрывания</string>
-<string name="Subscriptions">Подписки</string>
-<!-- T -->
-<string name="Timeframe">Временной промежуток</string>
-<string name="Timeout">Таймаут</string>
-<string name="Tags">Тэги</string>
-<!-- U -->
-<string name="Updated">Обновлено</string>
-<string name="Updatable">Доступно обновление</string>
-<string name="UpdateMySite">Обновить Мои Сайты</string>
-<string name="UpdateMySiteSkipCategories">Обновить Мои Сайты (пропустить категории)</string>
-<string name="UpdateAllYourSites">Это обновит все ваши текущие сайты.</string>
-<string name="UnableToPlayVideo">Невозможно проиграть видео. Нет URL.</string>
-<string name="UnableToDownloadVideo">Невозможно скачать видео. Неправильный URL.</string>
-<!-- V -->
-<string name="Videos">Видео</string>
-<!-- W -->
-<string name="Working">Работает</string>
-<!-- Y -->
+  <!--A-->
+  <string name="Airdate">Эфир</string>
+  <string name="AlreadyDownloading">Этот файл уже загружается.</string>
+  <string name="All">Все</string>
+  <string name="Actions">Действия</string>
+  <string name="Actors">Актеры</string>
+  <string name="AddToMySites">Добавить в Мои Сайты</string>
+  <string name="AddToFavourites">Добавить в Избранное</string>
+  <string name="AddingToFavorites">добавление в избранное</string>
+  <string name="AutomaticUpdate">Автоматическое Обновление</string>
+  <string name="AutomaticUpdateDisabled">Автоматическое обновление отключено.</string>
+  <!--B-->
+  <string name="Broken">Испорчено</string>
+  <string name="Buffered">буфферизовано</string>
+  <!--C-->
+  <string name="Cancel">Отмена</string>
+  <string name="Category">Категория</string>
+  <string name="Categories">Категории</string>
+  <string name="Creator">Создатель</string>
+  <string name="CheckingForPluginUpdate">проверка обновленной версии плагина</string>
+  <!--D-->
+  <string name="Date">Дата</string>
+  <string name="DateOfRelease">Дата Релиза</string>
+  <string name="Directors">Режиссеры</string>
+  <string name="Download">Загрузка</string>
+  <string name="Downloading">Загружается</string>
+  <string name="DownloadingDescription">Показать список текущих загрузок.</string>
+  <string name="DownloadFailed">Загрузка прервана: {0}</string>
+  <string name="DownloadCancelled">Загрузка Отменена</string>
+  <string name="DownloadComplete">Загрузка Завершана</string>
+  <string name="DownloadStarted">Загрузка Начата</string>
+  <string name="DownloadedVideos">Загруженное Видео</string>
+  <string name="Delete">Удалить</string>
+  <string name="DeleteAll">Удалить Все</string>
+  <string name="Default">Стандарт</string>
+  <string name="Done">Выполнено</string>
+  <string name="DeletingOldThumbs">Удаление старых эскизов</string>
+  <!--E-->
+  <string name="Error">Ошибка</string>
+  <string name="EnterPin">Введите код</string>
+  <!--F-->
+  <string name="Favourites">Избранное</string>
+  <string name="Filter">Фильтр</string>
+  <string name="FullUpdate">Полное Обновление</string>
+  <!--G-->
+  <string name="Genre">Жанр</string>
+  <string name="GettingVideoDetails">получение деталей видео</string>
+  <string name="GettingCategoryVideos">получение категории видео</string>
+  <string name="GettingFavoriteVideos">получение избранного видео</string>
+  <string name="GettingSearchResults">получение результатов поиска</string>
+  <string name="GettingRelatedVideos">получение похожих видео</string>
+  <string name="GettingFilteredVideos">получение отфильтрованных видео</string>
+  <string name="GettingNextPageVideos">получение следующей страницы видео</string>
+  <string name="GettingPreviousPageVideos">получение предыдущей страницы видео</string>
+  <string name="GettingPlaybackUrlsForVideo">получениессылки на видео</string>
+  <string name="GettingDynamicCategories">получение динамических категорий</string>
+  <string name="GettingReports">получение ответа от вебсервисов</string>
+  <string name="GettingSiteXml">получение xml сайта от вебсервиса</string>
+  <string name="GettingIcon">получение значкоа сайта от вебсервиса</string>
+  <string name="GettingBanner">получение баннера сайта от вебсервиса</string>
+  <string name="GettingDll">получение dll от вебсервиса</string>
+  <string name="Groups">Группы</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="LatestVersionRequired">Необходима последняя версия ({0})!</string>
+  <string name="Language">Язык</string>
+  <string name="LayoutList">Вид: Список</string>
+  <string name="LayoutIcons">Вид: Значки</string>
+  <string name="LayoutBigIcons">Вид: Большие значки</string>
+  <!--M-->
+  <string name="ManageSites">Управление сайтами</string>
+  <string name="MaxResults">Максимально результатов</string>
+  <!--N-->
+  <string name="Name">Имя</string>
+  <string name="NextPage">Следующая страница</string>
+  <string name="None">Никто</string>
+  <string name="NoVideoFound">Видео не найдено</string>
+  <string name="NoReportsForSite">Для этого сайта недоступны сообщения.</string>
+  <string name="NewDllDownloaded">Новая dll Загружена!</string>
+  <string name="NewSearch">Новый Поиск</string>
+  <!--O-->
+  <string name="Others">Другие</string>
+  <!--P-->
+  <string name="PlayAll">Играть Все</string>
+  <string name="PlotOutline">Действие:</string>
+  <string name="PreviousPage">Предыдущая страница</string>
+  <string name="PerformAutomaticUpdate">Выполнять автоматическое обновление?</string>
+  <!--Q-->
+  <!--R-->
+  <string name="RemoveFromFavorites">Удалить из Избранного</string>
+  <string name="RemovingFromFavorites">удаляется из избранного</string>
+  <string name="Refresh">Обновить</string>
+  <string name="RelatedVideos">Похожие Видео Videos</string>
+  <string name="Reported">Отмеченные</string>
+  <string name="Reports">Отчеты</string>
+  <string name="Runtime">Продолжительность</string>
+  <string name="RemoveFromMySites">Удалить из Моих Сайтов</string>
+  <string name="RestartMediaPortal">Перезапустить MediaPortal!</string>
+  <string name="RetrievingRemoteDlls">Получение уделенных dlls ...</string>
+  <string name="RetrievingRemoteSites">Получение удаленных сайтов ...</string>
+  <!--S-->
+  <string name="SearchHistory">История Поиска</string>
+  <string name="SearchResults">Результаты Поиска</string>
+  <string name="SelectSource">Выбрать Источник</string>
+  <string name="Sites">Сайты</string>
+  <string name="Size">Размер</string>
+  <string name="SortOptions">Опции Сортировки</string>
+  <string name="Search">Поиск</string>
+  <string name="SetDownloadFolderInConfig">Пожалуйста выберите папку сохранения в Настройках!</string>
+  <string name="State">Страна</string>
+  <string name="SavingLocalSiteList">Сохранение локального списка сайтов ...</string>
+  <string name="ShowReports">Показывать комментарии создателя и пользователей</string>
+  <string name="StartingPlayback">запуск проигрывания</string>
+  <string name="Subscriptions">Подписки</string>
+  <!--T-->
+  <string name="Timeframe">Временной промежуток</string>
+  <string name="Timeout">Таймаут</string>
+  <string name="Tags">Тэги</string>
+  <!--U-->
+  <string name="Updated">Обновлено</string>
+  <string name="Updatable">Доступно обновление</string>
+  <string name="UpdateMySite">Обновить Мои Сайты</string>
+  <string name="UpdateMySiteSkipCategories">Обновить Мои Сайты (пропустить категории)</string>
+  <string name="UpdateAllYourSites">Это обновит все ваши текущие сайты.</string>
+  <string name="UnableToPlayVideo">Невозможно проиграть видео. Нет URL.</string>
+  <string name="UnableToDownloadVideo">Невозможно скачать видео. Неправильный URL.</string>
+  <!--V-->
+  <string name="Videos">Видео</string>
+  <!--W-->
+  <string name="Working">Работает</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
 </resources>
