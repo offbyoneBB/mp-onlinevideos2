@@ -813,7 +813,7 @@ DecryptionResult CMPUrlSourceSplitter_Afhs_Decryption_Akamai::Supported(CAfhsDec
     }
     else if (state == AkamaiDecryptorState_Ready)
     {
-      this->logger->Log(LOGGER_ERROR, L"%s: %s: decryption plugin '%s' in ready state", PLUGIN_IMPLEMENTATION_NAME, METHOD_SUPPORTED_NAME, this->GetName());
+      this->logger->Log(LOGGER_INFO, L"%s: %s: decryption plugin '%s' in ready state", PLUGIN_IMPLEMENTATION_NAME, METHOD_SUPPORTED_NAME, this->GetName());
       result = DecryptionResult_Known;
     }
   }
