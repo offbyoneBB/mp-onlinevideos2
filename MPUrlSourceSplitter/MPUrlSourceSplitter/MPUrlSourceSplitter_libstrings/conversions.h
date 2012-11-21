@@ -75,4 +75,22 @@ uint8_t *HexToDecW(const wchar_t *input);
 #define HexToDec HexToDecW
 #endif
 
+// converts string to double
+// @param input : string to convert
+// @param defaultValue : default value
+// @return : converted string value or default value if error
+double GetValueDoubleA(const char *input, double defaultValue);
+
+// converts string to double
+// @param input : string to convert
+// @param defaultValue : default value
+// @return : converted string value or default value if error
+double GetValueDoubleW(const wchar_t *input, double defaultValue);
+
+#ifdef _MBCS
+#define GetValueDouble GetValueDoubleA
+#else
+#define GetValueDouble GetValueDoubleW
+#endif
+
 #endif

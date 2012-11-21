@@ -35,6 +35,7 @@ CF4MManifest::CF4MManifest(void)
   this->mediaCollection = new CF4MMediaCollection();
   this->deliveryType = new CF4MDeliveryType();
   this->baseUrl = new CF4MBaseUrl();
+  this->duration = new CF4MDuration();
 }
 
 /* get methods */
@@ -45,6 +46,7 @@ CF4MManifest::~CF4MManifest(void)
   FREE_MEM_CLASS(this->mediaCollection);
   FREE_MEM_CLASS(this->deliveryType);
   FREE_MEM_CLASS(this->baseUrl);
+  FREE_MEM_CLASS(this->duration);
 }
 
 CF4MBootstrapInfoCollection *CF4MManifest::GetBootstrapInfoCollection(void)
@@ -65,6 +67,11 @@ CF4MDeliveryType *CF4MManifest::GetDeliveryType(void)
 CF4MBaseUrl *CF4MManifest::GetBaseUrl(void)
 {
   return this->baseUrl;
+}
+
+CF4MDuration *CF4MManifest::GetDuration(void)
+{
+  return this->duration;
 }
 
 int CF4MManifest::GetParseError(void)
@@ -239,6 +246,18 @@ bool CF4MManifest::Parse(const char *buffer)
                     wchar_t *baseUrl = ConvertUtf8ToUnicode(child->GetText());
                     continueParsing &= this->baseUrl->SetBaseUrl(baseUrl);
                     FREE_MEM(baseUrl);
+                  }
+
+                  // manifest duration (in seconds)
+                  if (strcmp(child->Name(), F4M_ELEMENT_DURATION) == 0)
+                  {
+                    wchar_t *duration = ConvertUtf8ToUnicode(child->GetText());
+                    double val = GetValueDouble(duration, -1);
+                    if (val != -1)
+                    {
+                      this->duration->SetDuration((uint64_t)(val * 1000));
+                    }
+                    FREE_MEM(duration);
                   }
                 }
                 while (continueParsing && ((child = child->NextSiblingElement()) != NULL));
