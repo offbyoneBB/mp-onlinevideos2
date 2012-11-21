@@ -45,6 +45,9 @@
     <ClInclude Include="F4MBootstrapInfoCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="F4MDuration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -69,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="F4MBootstrapInfoCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="F4MDuration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

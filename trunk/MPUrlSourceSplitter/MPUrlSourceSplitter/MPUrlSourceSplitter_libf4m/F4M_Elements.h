@@ -48,6 +48,11 @@
 // within the manifest file. (Such URLs may include <media> URLs, <bootstrapInfo> URLs, and <drmAdditionalHeader> URLs.)
 #define F4M_ELEMENT_BASEURL                                       "baseURL"
 
+// The <duration> element represents the duration of the media, in seconds. It is assumed that all representations of the media
+// have the same duration, hence its placement under the document root. It is optional. For live or DVR content, the duration
+// represents the total expected time of the media, not the current duration of the media.
+#define F4M_ELEMENT_DURATION                                      "duration"
+
 // The <drmAdditionalHeader> element represents the DRM AdditionalHeader needed for DRM authentication. It contains either
 // a BASE64 encoded representation of, or a URL to, the DRM AdditionalHeader (including the serialized
 // "|AdditionalHeader" string). It is optional.

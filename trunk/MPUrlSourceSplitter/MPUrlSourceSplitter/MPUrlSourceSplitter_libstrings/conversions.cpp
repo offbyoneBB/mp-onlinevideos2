@@ -233,3 +233,43 @@ uint8_t *HexToDecW(const wchar_t *input)
 
   return result;
 }
+
+double GetValueDoubleA(const char *input, double defaultValue)
+{
+  if (!IsNullOrEmptyOrWhitespaceA(input))
+  {
+    char *end = NULL;
+    double valueDouble = strtod(input, &end);
+    if ((valueDouble == 0) && (input == end))
+    {
+      // error while converting
+      valueDouble = defaultValue;
+    }
+
+    return valueDouble;
+  }
+  else
+  {
+    return defaultValue;
+  }
+}
+
+double GetValueDoubleW(const wchar_t *input, double defaultValue)
+{
+  if (!IsNullOrEmptyOrWhitespaceW(input))
+  {
+    wchar_t *end = NULL;
+    double valueDouble = wcstod(input, &end);
+    if ((valueDouble == 0) && (input == end))
+    {
+      // error while converting
+      valueDouble = defaultValue;
+    }
+
+    return valueDouble;
+  }
+  else
+  {
+    return defaultValue;
+  }
+}

@@ -32,6 +32,7 @@
 #include "SegmentFragmentCollection.h"
 #include "ParameterCollection.h"
 #include "AfhsDecryptionHoster.h"
+#include "F4MManifest.h"
 
 #include <curl/curl.h>
 
@@ -256,6 +257,9 @@ protected:
 
   // specifies if ProcessSegmentsAndFragments() method can be called (mostly yes, but sometimes can decryption hoster return S_FALSE)
   bool canCallProcessSegmentsAndFragments;
+
+  // the F4M manifest associated with media
+  CF4MManifest *manifest;
 };
 
 #endif

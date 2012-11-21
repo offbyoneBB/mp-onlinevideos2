@@ -27,6 +27,7 @@
 #include "F4MMediaCollection.h"
 #include "F4MDeliveryType.h"
 #include "F4MBaseUrl.h"
+#include "F4MDuration.h"
 
 class CF4MManifest
 {
@@ -54,6 +55,10 @@ public:
   // gets base URL for all relative (HTTP-based) URLs in the manifest
   // @return : base URL for all relative (HTTP-based) URLs in the manifest
   CF4MBaseUrl *GetBaseUrl(void);
+
+  // gets media duration from manifest
+  // @return : media duration from manifest
+  CF4MDuration *GetDuration(void);
 
   // gets last parse error
   // @return : last parse error
@@ -83,6 +88,8 @@ private:
   CF4MDeliveryType *deliveryType;
   // stores base url
   CF4MBaseUrl *baseUrl;
+  // stores media duration
+  CF4MDuration *duration;
   // stores last parse error
   int parseError;
 };

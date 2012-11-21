@@ -116,6 +116,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->segmentFragmentProcessing = 0;
   this->segmentFragmentToDownload = UINT_MAX;
   this->canCallProcessSegmentsAndFragments = true;
+  this->manifest = NULL;
 
   this->decryptionHoster = new CAfhsDecryptionHoster(this->logger, this->configurationParameters);
   if (this->decryptionHoster != NULL)
@@ -166,6 +167,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::~CMPUrlSourceSplitter_Protocol_Afhs()
     this->lockCurlMutex = NULL;
   }
 
+  FREE_MEM_CLASS(this->manifest);
   FREE_MEM_CLASS(this->bootstrapInfoBox);
   FREE_MEM(this->storeFilePath);
 
@@ -288,26 +290,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
     if (!this->wholeStreamDownloaded)
     {
       bool forceDownload = false;
-
-      if (SUCCEEDED(result) && (!this->setLength) && (this->bytePosition != 0))
-      {
-        // adjust total length if not already set
-        if (this->streamLength == 0)
-        {
-          // error occured or stream duration is not set
-          // just make guess
-          this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-        }
-        else if ((this->bytePosition > (this->streamLength * 3 / 4)))
-        {
-          // it is time to adjust stream length, we are approaching to end but still we don't know total length
-          this->streamLength = this->bytePosition * 2;
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-        }
-      }
 
       if (SUCCEEDED(result) && (!this->shouldExit) && (this->canCallProcessSegmentsAndFragments) && (this->segmentsFragments->GetFirstNotProcessedSegmentFragment(0) != UINT_MAX))
       {
@@ -443,6 +425,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         FREE_MEM_CLASS(bufferForBoxProcessing);
       }
 
+      unsigned int lastFlvPacketTimestamp = 0;
+
       if (SUCCEEDED(result) && (!this->supressData) && (this->bufferForProcessing != NULL))
       {
         CFlvPacket *flvPacket = new CFlvPacket();
@@ -487,28 +471,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
 
             if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
             {
-              // set or adjust total length (if needed)
-              int64_t newBytePosition = this->bytePosition + flvPacket->GetSize();
-
-              if ((!this->setLength) && (newBytePosition != 0))
-              {
-                // adjust total length if not already set
-                if (this->streamLength == 0)
-                {
-                  // error occured or stream duration is not set
-                  // just make guess
-                  this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                  receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-                }
-                else if ((newBytePosition > (this->streamLength * 3 / 4)))
-                {
-                  // it is time to adjust stream length, we are approaching to end but still we don't know total length
-                  this->streamLength = newBytePosition * 2;
-                  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                  receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-                }
-              }
+              lastFlvPacketTimestamp = flvPacket->GetTimestamp();
 
               // create media packet
               // set values of media packet
@@ -532,6 +495,42 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
           }
 
           FREE_MEM_CLASS(flvPacket);
+        }
+      }
+
+      if (SUCCEEDED(result))
+      {
+        if ((!this->setLength) && (this->bytePosition != 0))
+        {
+          // adjust total length if not already set
+          if (this->manifest->GetDuration()->GetDuration() != F4M_DURATION_NOT_SPECIFIED)
+          {
+            if (lastFlvPacketTimestamp != 0)
+            {
+              // specified duration in manifest
+              this->streamLength = this->bytePosition * this->manifest->GetDuration()->GetDuration() / lastFlvPacketTimestamp;
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length (by time): %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+              receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+            }
+          }
+          else
+          {
+            if (this->streamLength == 0)
+            {
+              // error occured or stream duration is not set
+              // just make guess
+              this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+              receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+            }
+            else if ((this->bytePosition > (this->streamLength * 3 / 4)))
+            {
+              // it is time to adjust stream length, we are approaching to end but still we don't know total length
+              this->streamLength = this->bytePosition * 2;
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+              receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+            }
+          }
         }
       }
 
@@ -1025,6 +1024,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
       }
     }
 
+    // check if we have manifest
+    CHECK_POINTER_HRESULT(result, this->manifest, result, E_FAIL);
+
     if (SUCCEEDED(result))
     {
       // we have bootstrap info box successfully parsed
@@ -1239,6 +1241,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   this->segmentFragmentProcessing = 0;
   this->segmentFragmentToDownload = UINT_MAX;
   this->canCallProcessSegmentsAndFragments = true;
+  FREE_MEM_CLASS(this->manifest);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -1382,16 +1385,41 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(PluginConfiguration *conf
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
   this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
-  ALLOC_MEM_DEFINE_SET(decryptionPluginConfiguration, AfhsDecryptionPluginConfiguration, 1, 0);
-  HRESULT result = (decryptionPluginConfiguration == NULL) ? E_OUTOFMEMORY : S_OK;
+  HRESULT result = S_OK;
+  FREE_MEM_CLASS(this->manifest);
+  char *manifestContent = ConvertToMultiByteW(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_MANIFEST_CONTENT, true, NULL));
+  CHECK_POINTER_HRESULT(result, (((manifestContent != NULL) && (this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_MANIFEST_CONTENT, true, NULL) != NULL)) || (this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_MANIFEST_CONTENT, true, NULL) == NULL)), result, E_CONVERT_STRING_ERROR);
+
+  if (SUCCEEDED(result) && (this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_MANIFEST_CONTENT, true, NULL) != NULL))
+  {
+    this->manifest = new CF4MManifest();
+    CHECK_POINTER_HRESULT(result, this->manifest, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      result = (this->manifest->Parse(manifestContent)) ? result : E_FAIL;
+    }
+  }
+  FREE_MEM(manifestContent);
+
+  if (FAILED(result))
+  {
+    FREE_MEM_CLASS(this->manifest);
+  }
 
   if (SUCCEEDED(result))
   {
-    decryptionPluginConfiguration->configuration = this->configurationParameters;
-    result = this->decryptionHoster->Initialize(decryptionPluginConfiguration);
-  }
+    ALLOC_MEM_DEFINE_SET(decryptionPluginConfiguration, AfhsDecryptionPluginConfiguration, 1, 0);
+    CHECK_POINTER_HRESULT(result, decryptionPluginConfiguration, result, E_OUTOFMEMORY);
 
-  FREE_MEM(decryptionPluginConfiguration);
+    if (SUCCEEDED(result))
+    {
+      decryptionPluginConfiguration->configuration = this->configurationParameters;
+      result = this->decryptionHoster->Initialize(decryptionPluginConfiguration);
+    }
+
+    FREE_MEM(decryptionPluginConfiguration);
+  }
 
   return result;
 }
