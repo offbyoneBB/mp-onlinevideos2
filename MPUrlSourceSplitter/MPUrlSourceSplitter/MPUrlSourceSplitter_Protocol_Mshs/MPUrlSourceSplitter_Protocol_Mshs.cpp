@@ -396,26 +396,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if ((!this->setLength) && (this->bytePosition != 0))
-      {
-        // adjust total length if not already set
-        if (this->streamLength == 0)
-        {
-          // error occured or stream duration is not set
-          // just make guess
-          this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-        }
-        else if ((this->bytePosition > (this->streamLength * 3 / 4)))
-        {
-          // it is time to adjust stream length, we are approaching to end but still we don't know total length
-          this->streamLength = this->bytePosition * 2;
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-        }
-      }
-
       if (this->seekingActive && (!this->supressData) && (this->reconstructedHeader))
       {
         CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentProcessing);
@@ -438,6 +418,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
+      uint64_t lastTimestamp = 0;
       if ((!this->supressData) && (this->streamFragmentProcessing < this->streamFragments->Count()) && (this->reconstructedHeader))
       {
         CLinearBuffer *bufferForBoxProcessing = this->FillBufferForProcessing(this->streamFragments, this->streamFragmentProcessing, this->storeFilePath);
@@ -481,6 +462,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
 
           if (continueProcessing)
           {
+            CStreamFragment *currentFragment = this->streamFragments->GetItem(this->streamFragmentProcessing);
+            lastTimestamp = currentFragment->GetFragmentTime() + currentFragment->GetFragmentDuration() - 1;
+
             this->streamFragmentProcessing++;
 
             // check if stream fragment is downloaded
@@ -500,6 +484,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
         FREE_MEM_CLASS(bufferForBoxProcessing);
       }
 
+      int64_t lastPosition = 0;
       if ((!this->supressData) && (this->bufferForProcessing != NULL))
       {
         unsigned int length = this->bufferForProcessing->GetBufferOccupiedSpace();
@@ -510,29 +495,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
           if (buffer != NULL)
           {
             this->bufferForProcessing->CopyFromBuffer(buffer, length, 0, 0);
-
-            // set or adjust total length (if needed)
-            int64_t newBytePosition = this->bytePosition + length;
-
-            if ((!this->setLength) && (newBytePosition != 0))
-            {
-              // adjust total length if not already set
-              if (this->streamLength == 0)
-              {
-                // error occured or stream duration is not set
-                // just make guess
-                this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-              }
-              else if ((newBytePosition > (this->streamLength * 3 / 4)))
-              {
-                // it is time to adjust stream length, we are approaching to end but still we don't know total length
-                this->streamLength = newBytePosition * 2;
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-              }
-            }
 
             CMediaPacket *mediaPacket = new CMediaPacket();
             mediaPacket->GetBuffer()->InitializeBuffer(length);
@@ -546,12 +508,44 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
             }
 
             this->bytePosition += length;
-
+            lastPosition = this->bytePosition;
             this->seekingActive = false;
             this->bufferForProcessing->RemoveFromBufferAndMove(length);
           }
 
           FREE_MEM(buffer);
+        }
+      }
+
+      if ((!this->shouldExit) && (!this->setLength) && (this->bytePosition != 0))
+      {
+        if ((this->streamingMedia->GetDuration() != 0) && (this->streamingMedia->GetTimeScale() != 0))
+        {
+          if ((lastPosition != 0) && (lastTimestamp != 0))
+          {
+            this->streamLength = lastPosition * this->streamingMedia->GetDuration() / lastTimestamp;
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length (by time): %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+          }
+        }
+        else
+        {
+          // adjust total length if not already set
+          if (this->streamLength == 0)
+          {
+            // error occured or stream duration is not set
+            // just make guess
+            this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+          }
+          else if ((this->bytePosition > (this->streamLength * 3 / 4)))
+          {
+            // it is time to adjust stream length, we are approaching to end but still we don't know total length
+            this->streamLength = this->bytePosition * 2;
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+          }
         }
       }
 

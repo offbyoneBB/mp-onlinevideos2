@@ -229,6 +229,10 @@ protected:
 
   // holds additional correction after seeking to known start timestamp
   int additionalCorrection;
+
+  // holds duration of RTMP stream (used in total length guess)
+  // RTMP_DURATION_UNSPECIFIED if not specified
+  uint64_t duration;
 };
 
 #endif

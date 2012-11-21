@@ -21,6 +21,7 @@
 #include "StdAfx.h"
 
 #include "RtmpCurlInstance.h"
+#include "conversions.h"
 
 #include <librtmp/log.h>
 
@@ -29,6 +30,8 @@ CRtmpCurlInstance::CRtmpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_
 {
   this->rtmpDownloadRequest = dynamic_cast<CRtmpDownloadRequest *>(this->downloadRequest);
   this->rtmpDownloadResponse = dynamic_cast<CRtmpDownloadResponse *>(this->downloadResponse);
+
+  this->duration = RTMP_DURATION_UNSPECIFIED;
 }
 
 CRtmpCurlInstance::~CRtmpCurlInstance(void)
@@ -39,6 +42,7 @@ bool CRtmpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
   bool result = __super::Initialize(downloadRequest);
 
+  this->duration = RTMP_DURATION_UNSPECIFIED;
   this->rtmpDownloadRequest = dynamic_cast<CRtmpDownloadRequest  *>(this->downloadRequest);
   this->rtmpDownloadResponse = dynamic_cast<CRtmpDownloadResponse *>(this->downloadResponse);
   result &= (this->rtmpDownloadRequest != NULL) && (this->rtmpDownloadResponse != NULL);
@@ -191,6 +195,21 @@ void CRtmpCurlInstance::RtmpLogCallback(RTMP *r, int level, const char *format, 
     break;
   case RTMP_LOGINFO:
     loggerLevel = LOGGER_INFO;
+    if ((caller->duration == RTMP_DURATION_UNSPECIFIED) && (convertedBuffer != NULL))
+    {
+      // duration is not set
+      // parse message, if not contain duration
+      int index = IndexOf(convertedBuffer, RTMP_RESPONSE_DURATION);
+      if (index != (-1))
+      {
+        // duration tag found
+        double val = GetValueDouble(convertedBuffer + index + RTMP_RESPONSE_DURATION_LENGTH, -1);
+        if (val != (-1))
+        {
+          caller->duration = (uint64_t)(val * 1000);
+        }
+      }
+    }
     break;
   case RTMP_LOGDEBUG:
     loggerLevel = (caller->state == CURL_STATE_RECEIVING_DATA) ? LOGGER_DATA : LOGGER_VERBOSE;
@@ -299,4 +318,9 @@ CRtmpDownloadResponse *CRtmpCurlInstance::GetRtmpDownloadResponse(void)
 CDownloadResponse *CRtmpCurlInstance::GetNewDownloadResponse(void)
 {
   return new CRtmpDownloadResponse();
+}
+
+uint64_t CRtmpCurlInstance::GetDuration(void)
+{
+  return this->duration;
 }
