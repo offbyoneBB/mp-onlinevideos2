@@ -65,6 +65,10 @@
 // The escape encoding uses a backslash followed by two hexadecimal digits representing the ASCII value of the character.
 // E.g., spaces must be escaped as \20 and backslashes must be escaped as \5c.
 
+#define RTMP_RESPONSE_DURATION                              L"duration "
+#define RTMP_RESPONSE_DURATION_LENGTH                       9
+#define RTMP_DURATION_UNSPECIFIED                           UINT64_MAX
+
 class CRtmpCurlInstance :
   public CCurlInstance
 {
@@ -88,7 +92,15 @@ public:
   // @return : download respose
   virtual CRtmpDownloadResponse *GetRtmpDownloadResponse(void);
 
+  // gets duration of RTMP stream
+  // @return : duration of RTMP stream or RTMP_DURATION_UNSPECIFIED if duration of stream unspecified
+  uint64_t GetDuration(void);
+
 protected:
+
+  // holds duration of RTMP steam
+  // UINT64_MAX if not specified
+  uint64_t duration;
 
   // holds RTMP download request
   // never created and never destroyed

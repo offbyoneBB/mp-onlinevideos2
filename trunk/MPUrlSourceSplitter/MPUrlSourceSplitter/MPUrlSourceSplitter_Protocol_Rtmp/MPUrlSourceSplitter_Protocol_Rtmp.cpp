@@ -115,6 +115,7 @@ CMPUrlSourceSplitter_Protocol_Rtmp::CMPUrlSourceSplitter_Protocol_Rtmp(CParamete
   this->streamFragmentToDownload = UINT_MAX;
   this->ignoreKeyFrameTimestamp = 0;
   this->additionalCorrection = 0;
+  this->duration = RTMP_DURATION_UNSPECIFIED;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -267,26 +268,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
   {
     if (!this->wholeStreamDownloaded)
     {
-      if (SUCCEEDED(result) && (!this->shouldExit) && (!this->setLength) && (this->bytePosition != 0))
-      {
-        // adjust total length if not already set
-        if (this->streamLength == 0)
-        {
-          // error occured or stream duration is not set
-          // just make guess
-          this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-        }
-        else if ((this->bytePosition > (this->streamLength * 3 / 4)))
-        {
-          // it is time to adjust stream length, we are approaching to end but still we don't know total length
-          this->streamLength = this->bytePosition * 2;
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-        }
-      }
-
       if (SUCCEEDED(result) && (!this->shouldExit) && (this->mainCurlInstance != NULL))
       {
         if (this->mainCurlInstance->GetRtmpDownloadResponse()->GetResultCode() == CURLE_OK)
@@ -526,6 +507,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
+      unsigned int lastFlvPacketTimestamp = 0;
+
       if (SUCCEEDED(result) && (!this->shouldExit) && (!this->supressData) && (this->streamFragmentProcessing < this->rtmpStreamFragments->Count()))
       {
         CLinearBuffer *bufferForProcessing = this->FillBufferForProcessing(this->rtmpStreamFragments, this->streamFragmentProcessing, this->storeFilePath);
@@ -556,28 +539,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
 
               if ((flvPacket->GetType() != FLV_PACKET_HEADER) || (!this->seekingActive))
               {
-                // set or adjust total length (if needed)
-                int64_t newBytePosition = this->bytePosition + flvPacket->GetSize();
-
-                if ((!this->setLength) && (newBytePosition != 0))
-                {
-                  // adjust total length if not already set
-                  if (this->streamLength == 0)
-                  {
-                    // error occured or stream duration is not set
-                    // just make guess
-                    this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
-                    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                    receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-                  }
-                  else if ((newBytePosition > (this->streamLength * 3 / 4)))
-                  {
-                    // it is time to adjust stream length, we are approaching to end but still we don't know total length
-                    this->streamLength = newBytePosition * 2;
-                    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-                    receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
-                  }
-                }
+                lastFlvPacketTimestamp = flvPacket->GetTimestamp();
 
                 // create media packet
                 // set values of media packet
@@ -625,6 +587,44 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
         }
 
         FREE_MEM_CLASS(bufferForProcessing);
+      }
+
+      if (SUCCEEDED(result) && (!this->shouldExit) && (!this->setLength) && (this->bytePosition != 0))
+      {
+        if ((this->duration == RTMP_DURATION_UNSPECIFIED) && (this->mainCurlInstance != NULL))
+        {
+          this->duration = this->mainCurlInstance->GetDuration();
+        }
+
+        if (this->duration != RTMP_DURATION_UNSPECIFIED)
+        {
+          if (lastFlvPacketTimestamp != 0)
+          {
+            // specified duration in RTMP connect response
+            this->streamLength = this->bytePosition * this->duration / lastFlvPacketTimestamp;
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length (by time): %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+          }
+        }
+        else
+        {
+          // adjust total length if not already set
+          if (this->streamLength == 0)
+          {
+            // error occured or stream duration is not set
+            // just make guess
+            this->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+          }
+          else if ((this->bytePosition > (this->streamLength * 3 / 4)))
+          {
+            // it is time to adjust stream length, we are approaching to end but still we don't know total length
+            this->streamLength = this->bytePosition * 2;
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+            receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
+          }
+        }
       }
 
       if (SUCCEEDED(result) && (!this->shouldExit))
@@ -1044,6 +1044,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
   this->streamFragmentToDownload = UINT_MAX;
   this->ignoreKeyFrameTimestamp = 0;
   this->additionalCorrection = 0;
+  this->duration = UINT64_MAX;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
