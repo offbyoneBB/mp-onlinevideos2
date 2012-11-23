@@ -197,7 +197,7 @@ int CLAVInputPin::Read(void *opaque, uint8_t *buf, int buf_size)
   CAutoLock lock(pin);
 
   //pin->logger->Log(LOGGER_VERBOSE, L"%s: %s: position: %llu, size: %d", MODULE_NAME, METHOD_READ_NAME, pin->m_llBufferPosition, buf_size);
-  HRESULT hr = pin->SyncRead(pin->m_llBufferPosition, buf_size, buf);
+  HRESULT hr = pin->SyncRead(pin->m_llBufferPosition, buf_size, buf, true);
   if (FAILED(hr)) {
     return -1;
   }
@@ -205,7 +205,7 @@ int CLAVInputPin::Read(void *opaque, uint8_t *buf, int buf_size)
     // read single bytes, its internally buffered..
     int count = 0;
     do {
-      hr = pin->SyncRead(pin->m_llBufferPosition, 1, buf+count);
+      hr = pin->SyncRead(pin->m_llBufferPosition, 1, buf+count, true);
       pin->m_llBufferPosition++;
     } while(hr == S_OK && (++count) < buf_size);
 
@@ -1646,7 +1646,7 @@ wchar_t *CLAVInputPin::GetStoreFile(void)
   return result;
 }
 
-STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
+STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer, bool waitForData)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME);
 
@@ -1660,7 +1660,7 @@ STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
       // lock access to current read request
       CLockMutex lock(this->requestMutex, INFINITE);
 
-      result = this->Request(&this->currentReadRequest, position, length, buffer, NULL, true);
+      result = this->Request(&this->currentReadRequest, position, length, buffer, NULL, waitForData);
     }
 
     if (SUCCEEDED(result))
