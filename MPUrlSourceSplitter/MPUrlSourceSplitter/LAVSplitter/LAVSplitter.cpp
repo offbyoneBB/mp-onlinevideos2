@@ -865,8 +865,6 @@ DWORD CLAVSplitter::ThreadProc()
     }
 
     HRESULT hr = S_OK;
-    //bool demuxNextPacket = false;
-
     HRESULT result = S_OK;
     // alloc buffer for requests
     ALLOC_MEM_DEFINE_SET(buffer, BYTE, BUFFER_SIZE_REQUEST, 0);
