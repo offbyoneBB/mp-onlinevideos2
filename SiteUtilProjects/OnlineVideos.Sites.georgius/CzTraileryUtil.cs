@@ -401,7 +401,7 @@ namespace OnlineVideos.Sites.georgius
                                 endIndex = videoData.IndexOf(CzTraileryUtil.subtitlesUrlBlockEnd, startIndex + CzTraileryUtil.subtitlesUrlBlockStart.Length);
                                 if (endIndex >= 0)
                                 {
-                                    subtitleUrl = videoData.Substring(startIndex + CzTraileryUtil.subtitlesUrlBlockStart.Length, endIndex - startIndex - CzTraileryUtil.subtitlesUrlBlockStart.Length);
+                                    subtitleUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(HttpUtility.UrlDecode(videoData.Substring(startIndex + CzTraileryUtil.subtitlesUrlBlockStart.Length, endIndex - startIndex - CzTraileryUtil.subtitlesUrlBlockStart.Length))).ToString();
                                 }
                             }
 
@@ -411,7 +411,7 @@ namespace OnlineVideos.Sites.georgius
                                 endIndex = videoData.IndexOf(CzTraileryUtil.locationUrlBlockEnd, startIndex + CzTraileryUtil.locationUrlBlockStart.Length);
                                 if (endIndex >= 0)
                                 {
-                                    videoUrl = videoData.Substring(startIndex + CzTraileryUtil.locationUrlBlockStart.Length, endIndex - startIndex - CzTraileryUtil.locationUrlBlockStart.Length);
+                                    videoUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(HttpUtility.UrlDecode(videoData.Substring(startIndex + CzTraileryUtil.locationUrlBlockStart.Length, endIndex - startIndex - CzTraileryUtil.locationUrlBlockStart.Length))).ToString();
                                 }
                             }
                         }
@@ -485,7 +485,7 @@ namespace OnlineVideos.Sites.georgius
                                 endIndex = videoData.IndexOf(CzTraileryUtil.trailerAddictComFileUrlBlockEnd, startIndex + CzTraileryUtil.trailerAddictComFileUrlBlockStart.Length);
                                 if (endIndex >= 0)
                                 {
-                                    videoUrl = videoData.Substring(startIndex + CzTraileryUtil.trailerAddictComFileUrlBlockStart.Length, endIndex - startIndex - CzTraileryUtil.trailerAddictComFileUrlBlockStart.Length);
+                                    videoUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(HttpUtility.UrlDecode(videoData.Substring(startIndex + CzTraileryUtil.trailerAddictComFileUrlBlockStart.Length, endIndex - startIndex - CzTraileryUtil.trailerAddictComFileUrlBlockStart.Length))).ToString();
                                 }
                             }
                         }
@@ -515,7 +515,7 @@ namespace OnlineVideos.Sites.georgius
                         endIndex = videoObjectData.IndexOf(CzTraileryUtil.subtitlesUrlBlock3End, startIndex + CzTraileryUtil.subtitlesUrlBlock3Start.Length);
                         if (endIndex >= 0)
                         {
-                            subtitleUrl = videoObjectData.Substring(startIndex + CzTraileryUtil.subtitlesUrlBlock3Start.Length, endIndex - startIndex - CzTraileryUtil.subtitlesUrlBlock3Start.Length);
+                            subtitleUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(HttpUtility.UrlDecode(videoObjectData.Substring(startIndex + CzTraileryUtil.subtitlesUrlBlock3Start.Length, endIndex - startIndex - CzTraileryUtil.subtitlesUrlBlock3Start.Length))).ToString();
                         }
                     }
 
@@ -525,7 +525,7 @@ namespace OnlineVideos.Sites.georgius
                         endIndex = videoObjectData.IndexOf(CzTraileryUtil.locationUrlBlock3End, startIndex + CzTraileryUtil.locationUrlBlock3Start.Length);
                         if (endIndex >= 0)
                         {
-                            videoUrl = videoObjectData.Substring(startIndex + CzTraileryUtil.locationUrlBlock3Start.Length, endIndex - startIndex - CzTraileryUtil.locationUrlBlock3Start.Length);
+                            videoUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(HttpUtility.UrlDecode(videoObjectData.Substring(startIndex + CzTraileryUtil.locationUrlBlock3Start.Length, endIndex - startIndex - CzTraileryUtil.locationUrlBlock3Start.Length))).ToString();
                         }
                     }
 

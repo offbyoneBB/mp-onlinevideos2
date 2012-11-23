@@ -23,6 +23,10 @@ namespace OnlineVideos.Sites.georgius
 
         private static String episodeHqFileNameFormat = @"'hq_id':'(?<hqFileName>[^']*)";
         private static String episodeLqFileNameFormat = @"'lq_id':'(?<lqFileName>[^']*)";
+
+        private static String episodeAuthSectionStart = "embed['typeStream'] = 'vod';";
+        private static String episodeAuthSectionEnd = "}";
+
         private static String episodeAuthStart = @"auth='+""""+'";
         private static String episodeAuthEnd = @"'";
         private static String episodeZone = @"'zoneGEO':(?<zone>[^,]*)";
@@ -124,7 +128,16 @@ namespace OnlineVideos.Sites.georgius
                 Newtonsoft.Json.Linq.JArray data = (Newtonsoft.Json.Linq.JArray)jObject["data"];
                 long total = (long)((Newtonsoft.Json.Linq.JValue)jObject["pager"]["total"]).Value;
                 long to = (long)((Newtonsoft.Json.Linq.JValue)jObject["pager"]["to"]).Value;
-                int page = int.Parse((String)((Newtonsoft.Json.Linq.JValue)jObject["pager"]["page"]).Value);
+                long page = 0;
+
+                if (((Newtonsoft.Json.Linq.JValue)jObject["pager"]["page"]).Value is String)
+                {
+                    page = long.Parse((String)((Newtonsoft.Json.Linq.JValue)jObject["pager"]["page"]).Value);
+                }
+                else
+                {
+                    page = (long)((Newtonsoft.Json.Linq.JValue)jObject["pager"]["page"]).Value;
+                }
 
                 if (to < total)
                 {
@@ -252,13 +265,36 @@ namespace OnlineVideos.Sites.georgius
                 }
             }
 
-            startIndex = episodeJS.IndexOf(PrimaUtil.episodeAuthStart);
+            startIndex = episodeJS.IndexOf(PrimaUtil.episodeAuthSectionStart);
             if (startIndex >= 0)
             {
-                int endIndex = episodeJS.IndexOf(PrimaUtil.episodeAuthEnd, startIndex + PrimaUtil.episodeAuthStart.Length);
+                int endIndex = episodeJS.IndexOf(PrimaUtil.episodeAuthSectionEnd, startIndex + PrimaUtil.episodeAuthSectionStart.Length);
                 if (endIndex >= 0)
                 {
-                    auth = episodeJS.Substring(startIndex + PrimaUtil.episodeAuthStart.Length, endIndex - startIndex - PrimaUtil.episodeAuthStart.Length);
+                    String authSection = episodeJS.Substring(startIndex, endIndex - startIndex);
+
+                    while (true)
+                    {
+                        startIndex = authSection.IndexOf(PrimaUtil.episodeAuthStart);
+                        if (startIndex >= 0)
+                        {
+                            endIndex = authSection.IndexOf(PrimaUtil.episodeAuthEnd, startIndex + PrimaUtil.episodeAuthStart.Length);
+                            if (endIndex >= 0)
+                            {
+                                auth = authSection.Substring(startIndex + PrimaUtil.episodeAuthStart.Length, endIndex - startIndex - PrimaUtil.episodeAuthStart.Length);
+
+                                authSection = authSection.Substring(startIndex + PrimaUtil.episodeAuthStart.Length + auth.Length);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -274,7 +310,9 @@ namespace OnlineVideos.Sites.georgius
                     {
                         App = app,
                         TcUrl = tcUrl,
-                        PlayPath = playPath
+                        PlayPath = playPath,
+                        SwfUrl = String.Format("http://embed.livebox.cz/iprimaplay/flash/LiveboxPlayer.swf?nocache={0}", (UInt64)((DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds)),
+                        PageUrl = video.VideoUrl
                     };
 
                     video.PlaybackOptions.Add("Low quality", rtmpUrl.ToString());
@@ -287,7 +325,9 @@ namespace OnlineVideos.Sites.georgius
                     {
                         App = app,
                         TcUrl = tcUrl,
-                        PlayPath = playPath
+                        PlayPath = playPath,
+                        SwfUrl = String.Format("http://embed.livebox.cz/iprimaplay/flash/LiveboxPlayer.swf?nocache={0}", (UInt64)((DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds)),
+                        PageUrl = video.VideoUrl
                     };
 
                     video.PlaybackOptions.Add("High quality", rtmpUrl.ToString());
