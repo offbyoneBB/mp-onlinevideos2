@@ -26,7 +26,6 @@
 #include "InputPin.h"
 #include "VersionInfo.h"
 #include "ErrorCodes.h"
-#include "LockMutex.h"
 
 #include "BaseDemuxer.h"
 #include "LAVFDemuxer.h"
@@ -786,6 +785,7 @@ DWORD CLAVSplitter::ThreadProc()
   m_eEndFlush.Set();
   // last command is no command
   this->lastCommand = -1;
+  bool wasDemuxedPacket = false;
 
   for(DWORD cmd = (DWORD)-1; ; cmd = GetRequest())
   {
@@ -865,7 +865,7 @@ DWORD CLAVSplitter::ThreadProc()
     }
 
     HRESULT hr = S_OK;
-    bool demuxNextPacket = false;
+    //bool demuxNextPacket = false;
 
     HRESULT result = S_OK;
     // alloc buffer for requests
@@ -874,7 +874,6 @@ DWORD CLAVSplitter::ThreadProc()
 
     while(SUCCEEDED(hr) && !CheckRequest(&cmd))
     {
-      //if ((cmd == CMD_PAUSE) || (cmd == CMD_SEEK))
       if (cmd == CMD_PAUSE)
       {
         hr = S_OK;
@@ -882,62 +881,12 @@ DWORD CLAVSplitter::ThreadProc()
       }
       else
       {
-        demuxNextPacket = false;
-        result = S_OK;
+        result = (!wasDemuxedPacket) ? S_OK : this->m_pInput->SyncRead(this->m_pInput->m_llBufferPosition, BUFFER_SIZE_REQUEST, buffer, false);
 
-        if (SUCCEEDED(result))
-        {
-          CLockMutex lock(this->m_pInput->requestMutex, 100);
-          result = lock.IsLocked() ? S_OK : E_FAIL;
-
-          // if lock cannot be acquired, try it in next cycle
-
-          if (SUCCEEDED(result))
-          {
-            result = this->m_pInput->Request(&this->m_pInput->currentReadRequest, this->m_pInput->m_llBufferPosition, BUFFER_SIZE_REQUEST, buffer, NULL, false);
-          }
-        }
-
-        if (SUCCEEDED(result))
-        {
-          // wait until request is completed (request must be completed - with or without data)
-          while (true)
-          {
-            {
-              CLockMutex lock(this->m_pInput->requestMutex, INFINITE);
-
-              if ((this->m_pInput->currentReadRequest->GetState() == CAsyncRequest::Completed))
-              {
-                break;
-              }
-            }
-
-            Sleep(1);
-          }
-
-          result = this->m_pInput->currentReadRequest->GetErrorCode();
-
-          if (SUCCEEDED(result))
-          {
-            if ((this->m_pInput->currentReadRequest->GetBufferLength() == BUFFER_SIZE_REQUEST) ||
-              (this->m_pInput->allDataReceived))
-            {
-              // there are some data, we can proceed with demuxing
-              demuxNextPacket = true;
-            }
-          }
-
-          // delete current read request
-          {
-            CLockMutex lock(this->m_pInput->requestMutex, INFINITE);
-
-            FREE_MEM_CLASS(this->m_pInput->currentReadRequest);
-          }
-        }
-
-        if (demuxNextPacket)
+        if ((SUCCEEDED(result) && wasDemuxedPacket) || (!wasDemuxedPacket))
         {
           hr = DemuxNextPacket();
+          wasDemuxedPacket = true;
         }
       }
     }
