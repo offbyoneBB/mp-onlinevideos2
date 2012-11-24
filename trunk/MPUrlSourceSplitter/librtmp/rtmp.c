@@ -3803,7 +3803,7 @@ static int
 Read_1_Packet(RTMP *r, char *buf, unsigned int buflen)
 {
   uint32_t prevTagSize = 0;
-  int rtnGetNextMediaPacket = 0, ret = RTMP_READ_EOF;
+  int rtnGetNextMediaPacket = 0, ret = RTMP_READ_ERROR;
   RTMPPacket packet = { 0 };
   int recopy = FALSE;
   unsigned int size;
@@ -4386,7 +4386,7 @@ fail:
 
   if (size < 0)
     total += size;
-  return total;
+  return (r->m_read.status == RTMP_READ_ERROR) ? RTMP_READ_ERROR : total;
 }
 
 static const AVal av_setDataFrame = AVC("@setDataFrame");

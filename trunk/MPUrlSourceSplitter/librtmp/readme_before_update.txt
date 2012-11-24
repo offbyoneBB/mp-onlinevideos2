@@ -278,3 +278,17 @@ Comment: in HandleCtrl() method replace 'else if (r->Link.SWFSize)'
 Code:
 
 /*else*/ if (r->Link.SWFSize)
+
+--------------------------------------------
+
+Comment: in Read_1_Packet() method replace 'int rtnGetNextMediaPacket = 0, ret = RTMP_READ_EOF;'
+Code:
+
+int rtnGetNextMediaPacket = 0, ret = RTMP_READ_ERROR;
+
+--------------------------------------------
+
+Comment: in RTMP_Read() method replace 'return total;'
+Code:
+
+ return (r->m_read.status == RTMP_READ_ERROR) ? RTMP_READ_ERROR : total;
