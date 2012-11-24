@@ -287,6 +287,23 @@ DWORD WINAPI CCurlInstance::CurlWorker(LPVOID lpParam)
 
       if (runningHandles == 0)
       {
+        // process messages
+        int messageCount = 0;
+        CURLMsg *message = NULL;
+        do
+        {
+          message = curl_multi_info_read(caller->multi_curl, &messageCount);
+
+          if (message != NULL)
+          {
+            if (message->msg = CURLMSG::CURLMSG_DONE)
+            {
+              caller->downloadResponse->SetResultCode(message->data.result);
+            }
+          }
+
+        } while (messageCount != 0);
+
         // no running transfers, we can quit
         break;
       }
