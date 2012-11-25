@@ -197,20 +197,20 @@ int CLAVInputPin::Read(void *opaque, uint8_t *buf, int buf_size)
   CAutoLock lock(pin);
 
   //pin->logger->Log(LOGGER_VERBOSE, L"%s: %s: position: %llu, size: %d", MODULE_NAME, METHOD_READ_NAME, pin->m_llBufferPosition, buf_size);
-  HRESULT hr = pin->SyncRead(pin->m_llBufferPosition, buf_size, buf, true);
+  HRESULT hr = pin->SyncRead(pin->m_llBufferPosition, buf_size, buf);
   if (FAILED(hr)) {
     return -1;
   }
-  if (hr == S_FALSE) {
-    // read single bytes, its internally buffered..
-    int count = 0;
-    do {
-      hr = pin->SyncRead(pin->m_llBufferPosition, 1, buf+count, true);
-      pin->m_llBufferPosition++;
-    } while(hr == S_OK && (++count) < buf_size);
+  //if (hr == S_FALSE) {
+  //  // read single bytes, its internally buffered..
+  //  int count = 0;
+  //  do {
+  //    hr = pin->SyncRead(pin->m_llBufferPosition, 1, buf+count, true);
+  //    pin->m_llBufferPosition++;
+  //  } while(hr == S_OK && (++count) < buf_size);
 
-    return count;
-  }
+  //  return count;
+  //}
   pin->m_llBufferPosition += buf_size;
   return buf_size;
 }
@@ -1013,7 +1013,7 @@ HRESULT CLAVInputPin::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
   return result;
 }
 
-HRESULT CLAVInputPin::Request(CAsyncRequest **request, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData, bool waitForData)
+HRESULT CLAVInputPin::Request(CAsyncRequest **request, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData)
 {
   CheckPointer(request, E_POINTER);
 
@@ -1023,7 +1023,7 @@ HRESULT CLAVInputPin::Request(CAsyncRequest **request, int64_t position, LONG le
     return E_OUTOFMEMORY;
   }
 
-  HRESULT result = (*request)->Request(this->requestId++, position, length, buffer, userData, waitForData);
+  HRESULT result = (*request)->Request(this->requestId++, position, length, buffer, userData);
 
   if (FAILED(result))
   {
@@ -1217,7 +1217,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   // copy data from media packet to request buffer
                   caller->logger->Log(LOGGER_DATA, L"%s: %s: copy data from media packet '%u' to async request '%u', start: %u, data length: %u, request buffer position: %u, request buffer length: %lu", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, packetIndex, request->GetRequestId(), mediaPacketDataStart, mediaPacketDataLength, foundDataLength, request->GetBufferLength());
                   unsigned char *requestBuffer = request->GetBuffer() + foundDataLength;
-                  if (mediaPacket->IsStoredToFile())
+                  if (mediaPacket->IsStoredToFile() && (request->GetBuffer() != NULL))
                   {
                     // if media packet is stored to file
                     // than is need to read 'mediaPacketDataLength' bytes
@@ -1264,7 +1264,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                       hTempFile = INVALID_HANDLE_VALUE;
                     }
                   }
-                  else
+                  else if (request->GetBuffer() != NULL)
                   {
                     // media packet is stored in memory
                     mediaPacket->GetBuffer()->CopyFromBuffer(requestBuffer, mediaPacketDataLength, 0, mediaPacketDataStart);
@@ -1343,13 +1343,6 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                 request->Complete(result);
               }
             }
-          }
-
-          if ((packetIndex == UINT_MAX) && (request->GetState() == CAsyncRequest::Waiting) && (!request->IsWaitingForData()))
-          {
-            // return imidiatelly with filled data
-            request->SetBufferLength(foundDataLength);
-            request->Complete(S_OK);
           }
 
           if ((packetIndex == UINT_MAX) && (request->GetState() == CAsyncRequest::Waiting))
@@ -1646,7 +1639,7 @@ wchar_t *CLAVInputPin::GetStoreFile(void)
   return result;
 }
 
-STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer, bool waitForData)
+STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME);
 
@@ -1660,7 +1653,7 @@ STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer,
       // lock access to current read request
       CLockMutex lock(this->requestMutex, INFINITE);
 
-      result = this->Request(&this->currentReadRequest, position, length, buffer, NULL, waitForData);
+      result = this->Request(&this->currentReadRequest, position, length, buffer, NULL);
     }
 
     if (SUCCEEDED(result))
@@ -1697,8 +1690,8 @@ STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer,
 
             if (this->currentReadRequest->GetState() == CAsyncRequest::Completed)
             {
-              // request is completed
-              result = this->currentReadRequest->GetErrorCode();
+              // request is completed, return error or readed data length
+              result = SUCCEEDED(this->currentReadRequest->GetErrorCode()) ? this->currentReadRequest->GetBufferLength() : this->currentReadRequest->GetErrorCode();
               this->logger->Log(LOGGER_DATA, L"%s: %s: returned data length: %lu, result: 0x%08X", MODULE_NAME, METHOD_SYNC_READ_NAME, this->currentReadRequest->GetBufferLength(), result);
               break;
             }

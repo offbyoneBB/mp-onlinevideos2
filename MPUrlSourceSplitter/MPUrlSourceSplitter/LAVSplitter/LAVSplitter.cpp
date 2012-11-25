@@ -87,7 +87,8 @@ extern "C"
 #define METHOD_RUN_NAME                                           L"Run()"
 
 // common buffer size for requests
-#define BUFFER_SIZE_REQUEST                                       32768
+#define BUFFER_SIZE_REQUEST_COMMON                                32768
+#define BUFFER_SIZE_REQUEST_LARGE                                 1048576
 
 // if ffmpeg_log_callback_set is true than ffmpeg log callback will not be set
 // in that case we don't receive messages from ffmpeg
@@ -785,7 +786,6 @@ DWORD CLAVSplitter::ThreadProc()
   m_eEndFlush.Set();
   // last command is no command
   this->lastCommand = -1;
-  bool wasDemuxedPacket = false;
 
   for(DWORD cmd = (DWORD)-1; ; cmd = GetRequest())
   {
@@ -865,11 +865,6 @@ DWORD CLAVSplitter::ThreadProc()
     }
 
     HRESULT hr = S_OK;
-    HRESULT result = S_OK;
-    // alloc buffer for requests
-    ALLOC_MEM_DEFINE_SET(buffer, BYTE, BUFFER_SIZE_REQUEST, 0);
-    CHECK_POINTER_DEFAULT_HRESULT(result, buffer);
-
     while(SUCCEEDED(hr) && !CheckRequest(&cmd))
     {
       if (cmd == CMD_PAUSE)
@@ -879,17 +874,9 @@ DWORD CLAVSplitter::ThreadProc()
       }
       else
       {
-        result = (!wasDemuxedPacket) ? S_OK : this->m_pInput->SyncRead(this->m_pInput->m_llBufferPosition, BUFFER_SIZE_REQUEST, buffer, false);
-
-        if ((SUCCEEDED(result) && wasDemuxedPacket) || (!wasDemuxedPacket))
-        {
-          hr = DemuxNextPacket();
-          wasDemuxedPacket = true;
-        }
+        hr = DemuxNextPacket();
       }
     }
-
-    FREE_MEM(buffer);
 
     // If we didnt exit by request, deliver end-of-stream
     if(!CheckRequest(&cmd)) {

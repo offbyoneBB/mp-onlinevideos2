@@ -260,7 +260,7 @@ private:
   // @return : reference to variable holding collection of parameters or NULL if error
   CParameterCollection *ParseParameters(const wchar_t *parameters);
 
-  HRESULT Request(CAsyncRequest **request, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData, bool waitForData);
+  HRESULT Request(CAsyncRequest **request, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData);
 
   // handle for thread which makes relation between CMediaPacket and CAsyncRequest
   HANDLE hAsyncRequestProcessingThread;
@@ -292,9 +292,8 @@ private:
   // @param position : specifies the byte offset at which to begin reading, the method fails if this value is beyond the end of the stream
   // @param length : specifies the number of bytes to read
   // @param buffer : reference to a buffer that receives the data
-  // @param waitForData : specifies if request have to wait for data or have to be finished immediately
-  // @return : S_OK if successful, S_FALSE if retrieved fewer bytes than requested (probably the end of the stream was reached)
-  STDMETHODIMP SyncRead(int64_t position, LONG length, BYTE* buffer, bool waitForData);
+  // @return : S_OK if successful, error code or length of data
+  STDMETHODIMP SyncRead(int64_t position, LONG length, BYTE* buffer);
 
   // retrieves the total length of the stream
   // @param total : pointer to a variable that receives the length of the stream, in bytes

@@ -61,8 +61,6 @@ private:
   // specifies request ID
   unsigned int requestId;
 
-  // specifies if async request have to wait for data
-  bool waitForData;
 public:
   // init the parameters for this request
   // @param requestId :
@@ -70,7 +68,7 @@ public:
   // @param length :
   // @param buffer :
   // @return : S_OK if successful, E_POINTER if stream or buffer is NULL
-  HRESULT Request(unsigned int requestId, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData, bool waitForData);
+  HRESULT Request(unsigned int requestId, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData);
 
   // mark request as completed
   // @param errorCode : the error code of async request
@@ -110,10 +108,6 @@ public:
   // gets buffer for writing data
   // @return : buffer for writing data
   BYTE *GetBuffer(void);
-
-  // tests if async request is waiting for data
-  // @return : true if async request is waiting for data, false otherwise
-  bool IsWaitingForData(void);
 };
 
 #endif
