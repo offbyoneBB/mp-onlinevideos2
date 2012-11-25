@@ -816,8 +816,10 @@
     <Site name="spiegel.de" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Videos des deutschen Newsportals spiegel.de</Description>
       <Configuration>
-        <item key="fileUrlRegEx"><![CDATA[http://www.spiegel.de/video/video-(?<m0>[^\.]+)\.html]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://video.spiegel.de/flash/{0}_996x560_H264_1400.mp4]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[var\s+spMetadataAssetId\s+='(?<url>[^']+)';]]></item>
+        <item key="playlistUrlFormatString"><![CDATA[http://video.spiegel.de/flash/{0}.xml]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<filename>(?<m0>[^<]+)</filename>.*?<totalbitrate>(?<n0>\d+)</totalbitrate>]]></item>
+        <item key="fileUrlFormatString"><![CDATA[http://video.spiegel.de/flash/{0}]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Politik und Wirtschaft">http://www.spiegel.de/video/politik_wirtschaft/index.rss</Category>
