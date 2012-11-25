@@ -68,9 +68,11 @@ namespace OnlineVideos.Sites
                 return null;
             }
 
+            //copied from http://code.google.com/p/pydowntv/:
             //http://www.rtve.es/alacarta/videos/amar-en-tiempos-revueltos/amar-tiempos-revueltos-t6-capitulos-211-212/1137920/
             string[] parts = video.VideoUrl.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            string url = String.Format(@"http://www.rtve.es/swf/data/es/videos/video/{0}/{1}.xml",
+            return GetRedirectedUrl(String.Format(@"http://www.rtve.es/ztnr/consumer/xl/video/alta/{0}_es_292525252525111", parts[parts.Length - 1]));
+            /*string url = String.Format(@"http://www.rtve.es/swf/data/es/videos/video/{0}/{1}.xml",
                 hash(parts[parts.Length - 1]), parts[parts.Length - 1]);
             string webData = GetWebData(url);
             string assetId = GetSubString(webData, @"assetDataId::", @"""");
@@ -90,6 +92,7 @@ namespace OnlineVideos.Sites
                 return new Uri(new Uri(baseUrl), m.Groups["url"].Value).AbsoluteUri;
             }
             return null;
+             */
         }
 
 
