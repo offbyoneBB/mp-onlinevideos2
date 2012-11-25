@@ -37,18 +37,11 @@ namespace OnlineVideos.Sites
             XmlDocument doc = new XmlDocument();
             XmlNamespaceManager nsmRequest;
             string id;
-
-            System.Net.WebProxy proxyObj = null;// new System.Net.WebProxy("127.0.0.1", 8118);
-			if (!string.IsNullOrEmpty(proxy))
-			{
-				proxyObj = new System.Net.WebProxy(proxy);
-				if (!string.IsNullOrEmpty(proxyUsername) && !string.IsNullOrEmpty(proxyPassword))
-					proxyObj.Credentials = new System.Net.NetworkCredential(proxyUsername, proxyPassword);
-			}
+            System.Net.WebProxy proxyObj = getProxy();
 
             if (video.Other == "livestream")
             {
-                id = video.VideoUrl;
+                return getLiveUrls(video);//id = video.VideoUrl;
             }
             else
             {
@@ -160,6 +153,35 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
             }
             return lastUrl;
+        }
+
+        string getLiveUrls(VideoInfo video)
+        {
+            System.Net.WebProxy proxyObj = getProxy();
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/playlists/hds/pc/ak/" + video.VideoUrl, null, null, proxyObj));
+            SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
+            foreach (XmlElement mediaElem in doc.GetElementsByTagName("media"))
+            {
+                string url = null;
+                if(mediaElem.Attributes["href"] != null)
+                    url = mediaElem.Attributes["href"].Value;
+                string bitrate = "";
+                if (mediaElem.Attributes["bitrate"] != null)
+                    bitrate = mediaElem.Attributes["bitrate"].Value;
+                if (!string.IsNullOrEmpty(url))
+                    sortedPlaybackOptions.Add(bitrate + " kbps", new MPUrlSourceFilter.HttpUrl(url).ToString());
+            }
+
+            string lastUrl = "";
+            video.PlaybackOptions = new Dictionary<string, string>();
+            var enumer = sortedPlaybackOptions.GetEnumerator();
+            while (enumer.MoveNext())
+            {
+                lastUrl = enumer.Current.Value;
+                video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
+            }
+            return lastUrl; //"http://bbcfmhds.vo.llnwd.net/hds-live/livepkgr/_definst_/bbc1/bbc1_1500.f4m";
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -306,6 +328,17 @@ namespace OnlineVideos.Sites
 
         #endregion
 
+        System.Net.WebProxy getProxy()
+        {
+            System.Net.WebProxy proxyObj = null;// new System.Net.WebProxy("127.0.0.1", 8118);
+            if (!string.IsNullOrEmpty(proxy))
+            {
+                proxyObj = new System.Net.WebProxy(proxy);
+                if (!string.IsNullOrEmpty(proxyUsername) && !string.IsNullOrEmpty(proxyPassword))
+                    proxyObj.Credentials = new System.Net.NetworkCredential(proxyUsername, proxyPassword);
+            }
+            return proxyObj;
+        }
     }
 
 	class QualityComparer : IComparer<string>
