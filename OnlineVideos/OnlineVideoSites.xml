@@ -740,13 +740,13 @@
         <Category xsi:type="RssLink" name="BBC Alba" thumb="http://upload.wikimedia.org/wikipedia/en/thumb/a/a5/BBC_Alba.svg/200px-BBC_Alba.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_alba/list</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
-            <Channel name="BBC One" thumb="http://www.gtsat.be/images/uk/bbc_one.png">bbc_one_live?guideid=92</Channel>
-            <Channel name="BBC Two" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/b/b9/Bbctwo-logo2007.svg/200px-Bbctwo-logo2007.svg.png">bbc_two_live?guideid=105</Channel>
-            <Channel name="BBC Three" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/f/f2/Logo_BBC_Three.svg/200px-Logo_BBC_Three.svg.png">bbc_three_live?guideid=45</Channel>
-            <Channel name="BBC Four" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/BBC_Four.svg/200px-BBC_Four.svg.png">bbc_four_live?guideid=47</Channel>
-            <Channel name="BBC News" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/BBC_News.svg/200px-BBC_News.svg.png">journalism_bbc_news_channel?guideid=48</Channel>
-            <Channel name="BBC Parliament" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/7/7c/BBC_Parliament.svg/200px-BBC_Parliament.svg.png">bbc_parliament_live?guideid=49</Channel>
-            <Channel name="BBC ALBA" thumb="http://upload.wikimedia.org/wikipedia/en/thumb/a/a5/BBC_Alba.svg/200px-BBC_Alba.svg.png">bbc_alba_live?guideid=2098</Channel>
+            <Channel name="BBC One" thumb="http://www.gtsat.be/images/uk/bbc_one.png">bbc1.f4m?guideid=92</Channel>
+            <Channel name="BBC Two" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/b/b9/Bbctwo-logo2007.svg/200px-Bbctwo-logo2007.svg.png">bbc2.f4m?guideid=105</Channel>
+            <Channel name="BBC Three" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/f/f2/Logo_BBC_Three.svg/200px-Logo_BBC_Three.svg.png">bbc3.f4m?guideid=45</Channel>
+            <Channel name="BBC Four" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/BBC_Four.svg/200px-BBC_Four.svg.png">bbc4.f4m?guideid=47</Channel>
+            <Channel name="BBC News" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/BBC_News.svg/200px-BBC_News.svg.png">news_ch.f4m?guideid=48</Channel>
+            <Channel name="BBC Parliament" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/7/7c/BBC_Parliament.svg/200px-BBC_Parliament.svg.png">parliament.f4m?guideid=49</Channel>
+            <Channel name="BBC ALBA" thumb="http://upload.wikimedia.org/wikipedia/en/thumb/a/a5/BBC_Alba.svg/200px-BBC_Alba.svg.png">alba.f4m?guideid=2098</Channel>
           </Channels>
         </Category>
       </Categories>
