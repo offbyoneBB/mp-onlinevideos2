@@ -61,6 +61,24 @@ namespace OnlineVideos.Hoster.Base
             return String.Empty;
         }
 
+        private static string GetVal(string num, string[] pars)
+        {
+            int n = 0;
+            for (int i = 0; i < num.Length; i++)
+            {
+                n = n * 36;
+                char c = num[i];
+                if (Char.IsDigit(c))
+                    n += ((int)c) - 0x30;
+                else
+                    n += ((int)c) - 0x61 + 10;
+            }
+            if (n < 0 || n >= pars.Length)
+                return n.ToString();
+
+            return pars[n];
+        }
+
         public static string UnPack(string packed)
         {
             string res;
@@ -81,29 +99,25 @@ namespace OnlineVideos.Hoster.Base
                         else
                             pars[i] = (i - 26).ToString();
             res = String.Empty;
+            string num = "";
             for (int i = 0; i < pattern.Length; i++)
             {
                 char c = pattern[i];
-                int ind = -1;
-                if (Char.IsDigit(c))
+                if (Char.IsDigit(c) || Char.IsLower(c))
+                    num += c;
+                else
                 {
-                    if (i + 1 < pattern.Length && Char.IsDigit(pattern[i + 1]))
+                    if (num.Length > 0)
                     {
-                        ind = int.Parse(pattern.Substring(i, 2)) + 26;
-                        i++;
+                        res += GetVal(num, pars);
+                        num = "";
                     }
-                    else
-                        ind = int.Parse(pattern.Substring(i, 1));
-                }
-                else
-                    if (Char.IsLower(c))
-                        ind = ((int)c) - 0x61 + 10;
-
-                if (ind == -1 || ind >= pars.Length)
                     res += c;
-                else
-                    res += pars[ind];
+                }
             }
+            if (num.Length > 0)
+                res += GetVal(num, pars);
+
             return res;
         }
 
@@ -173,9 +187,9 @@ namespace OnlineVideos.Hoster.Base
             }
         }
 
-		[Category("OnlineVideosUserConfiguration"), Description("You can give every Hoster a Priority, to control where in the list they appear (the higher the earlier). -1 will hide this Hoster, 0 is the default.")]
-		protected int Priority = 0;
-		public int UserPriority { get { return Priority; } }
+        [Category("OnlineVideosUserConfiguration"), Description("You can give every Hoster a Priority, to control where in the list they appear (the higher the earlier). -1 will hide this Hoster, 0 is the default.")]
+        protected int Priority = 0;
+        public int UserPriority { get { return Priority; } }
 
         #region ICustomTypeDescriptor Members
 
@@ -305,17 +319,17 @@ namespace OnlineVideos.Hoster.Base
 
             public override int GetHashCode() { return _field.GetHashCode(); }
 
-			public override string DisplayName
-			{
-				get
-				{
-					var attr = _field.GetCustomAttributes(typeof(LocalizableDisplayNameAttribute), false);
-					if (attr.Length > 0)
-						return ((LocalizableDisplayNameAttribute)attr[0]).LocalizedDisplayName;
-					else
-						return base.DisplayName;
-				}
-			}
+            public override string DisplayName
+            {
+                get
+                {
+                    var attr = _field.GetCustomAttributes(typeof(LocalizableDisplayNameAttribute), false);
+                    if (attr.Length > 0)
+                        return ((LocalizableDisplayNameAttribute)attr[0]).LocalizedDisplayName;
+                    else
+                        return base.DisplayName;
+                }
+            }
 
             public override bool IsReadOnly { get { return false; } }
 
