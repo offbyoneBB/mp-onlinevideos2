@@ -659,6 +659,88 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Vidbull : HosterBase
+    {
+        public override string getHosterUrl()
+        {
+            return "vidbull.com";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            string webData = SiteUtilBase.GetWebData(url);
+            string sub = GetSubString(webData, "id='flvplayer'", null);
+            string packed = GetSubString(sub, @"return p}", @"</script>");
+            packed = packed.Replace(@"\'", @"'");
+            string unpacked = UnPack(packed);
+            string res = GetSubString(unpacked, @"'file','", @"'");
+
+            return res;
+        }
+
+        private string GetVal(string num, string[] pars)
+        {
+            int n = 0;
+            for (int i = 0; i < num.Length; i++)
+            {
+                n = n * 36;
+                char c = num[i];
+                if (Char.IsDigit(c))
+                    n += ((int)c) - 0x30;
+                else
+                    n += ((int)c) - 0x61 + 10;
+            }
+            if (n < 0 || n >= pars.Length)
+                return n.ToString();
+
+            return pars[n];
+        }
+
+        private string UnPack(string packed)
+        {
+            string res;
+            int p = packed.IndexOf('|');
+            if (p < 0) return null;
+            p = packed.LastIndexOf('\'', p);
+
+            string pattern = packed.Substring(0, p - 1);
+
+            string[] pars = packed.Substring(p).TrimStart('\'').Split('|');
+            for (int i = 0; i < pars.Length; i++)
+                if (String.IsNullOrEmpty(pars[i]))
+                    if (i < 10)
+                        pars[i] = i.ToString();
+                    else
+                        if (i < 36)
+                            pars[i] = ((char)(i + 0x61 - 10)).ToString();
+                        else
+                            pars[i] = (i - 26).ToString();
+            res = String.Empty;
+            string num = "";
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                char c = pattern[i];
+                if (Char.IsDigit(c) || Char.IsLower(c))
+                    num += c;
+                else
+                {
+                    if (num.Length > 0)
+                    {
+                        res += GetVal(num, pars);
+                        num = "";
+                    }
+                    res += c;
+                }
+            }
+            if (num.Length > 0)
+                res += GetVal(num, pars);
+
+            return res;
+        }
+
+
+    }
+
     public class Vidbux : HosterBase
     {
         public override string getHosterUrl()
