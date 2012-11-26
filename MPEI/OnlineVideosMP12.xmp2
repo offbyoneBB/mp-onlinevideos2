@@ -1574,20 +1574,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\bravo! fact.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{0a8d403a-824c-47f8-9796-aedb9404dbcc}-bravo! fact.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\bravo! fact.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\bravo!.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d55dc137-7bea-4897-83ed-e000fe3a2672}-bravo!.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\bravo!.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\ctv local news.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{09e9aa5b-b80d-43b5-a0a0-8e59a7e29063}-ctv local news.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctv local news.png</DestinationFilename>
@@ -2117,6 +2103,76 @@
               <ZipFileName>Installer{CopyFile}\{2bf9935e-0293-4593-aab2-fe9969ab3330}-_sfd.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Čsfd.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\AFL.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{86a7e82c-d550-4740-9066-f85248a4303a}-AFL.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\AFL.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\family.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5a43679c-cf89-44ae-b67b-ca6b39b9302e}-family.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\family.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\League of Legends Streams.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ad6d6d59-a553-4387-b262-31f3ada4a6e3}-League of Legends Streams.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\League of Legends Streams.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Twitch.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{81bba484-37d6-40ec-a2e4-291d26807357}-Twitch.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Twitch.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\zie.nl.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{7c0b57e3-8d5c-4e1a-a6c0-f49abf1b82ee}-zie.nl.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\zie.nl.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\AFL.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{39846469-ae74-478b-8ade-ff60c237d4b5}-AFL.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\AFL.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\family.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{57b2ed1f-2d30-43c1-991f-823aaf654b0a}-family.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\family.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\League of Legends Streams.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{09666a02-9539-4f50-96a6-56132cc3e9bc}-League of Legends Streams.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\League of Legends Streams.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Twitch.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{42f8340c-d52f-45e4-a52d-5584f7d0f8bc}-Twitch.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Twitch.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\zie.nl.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{96b9cf7f-7c79-45e4-8826-228b7450454a}-zie.nl.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\zie.nl.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2187,6 +2243,13 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.Dj_Moren.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{8c926e79-57e7-4f0f-af7e-1dfd302e3bc3}-OnlineVideos.Sites.Dj_Moren.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.Dj_Moren.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
@@ -2215,6 +2278,13 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{44c19a6b-28e0-4936-a000-edea70c11632}-OnlineVideos.Sites.rick164.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{88fba3b4-4209-4db5-9142-8329f8b13d25}-OnlineVideos.Sites.SilentException.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</DestinationFilename>
@@ -2232,13 +2302,6 @@
               <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-              <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{44c19a6b-28e0-4936-a000-edea70c11632}-OnlineVideos.Sites.rick164.dll</ZipFileName>
-              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2400,16 +2463,30 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Language\OnlineVideos\lt-LT.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c737d67b-1843-4a98-ab44-968906a8e697}-lt-LT.xml</ZipFileName>
-              <DestinationFilename>%Language%\OnlineVideos\lt-LT.xml</DestinationFilename>
+              <LocalFileName>..\Language\OnlineVideos\hi.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0a5603a3-cebb-4f28-8304-14b9f4c0c758}-hi.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\hi.xml</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Language\OnlineVideos\zh-CN.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{e9511df6-05e9-4f15-a08d-b3a748732a16}-zh-CN.xml</ZipFileName>
-              <DestinationFilename>%Language%\OnlineVideos\zh-CN.xml</DestinationFilename>
+              <LocalFileName>..\Language\OnlineVideos\hr.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{12660ea9-bf5a-441a-9a52-8eadee7b4e48}-hr.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\hr.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\lt.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d290cdb4-9410-45d4-b5ef-0c300d4a0371}-lt.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\lt.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\zh.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{df035f55-a543-4ccf-b8ee-611fed40c23d}-zh.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\zh.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2804,6 +2881,41 @@
               <ZipFileName>Installer{CopyFile}\{0a446649-f7b0-46e1-9660-ad77e8166b72}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{319a7a0c-cbd5-4d1c-b96a-b40e076252de}-MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_F4M.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{33b16db5-33eb-432d-ae75-2c5a8647fb81}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_MSHS.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{13bce747-5577-4179-8f5a-1d47a63359c0}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ecdac716-33fc-4994-9380-7972919b0952}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mshs.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{95bcad25-5d92-49ce-94ed-011e10f5910d}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -3126,7 +3238,7 @@ public class Script
               <Params>
                 <Items>
                   <SectionParam Name="Extension package">
-                    <Value>LAV\LAVFilters0.51.2.0.mpe1</Value>
+                    <Value>LAV\LAVFilters0.54.0.0.mpe1</Value>
                     <ValueType>File</ValueType>
                     <Description>Location of the extension package</Description>
                   </SectionParam>
@@ -3134,6 +3246,16 @@ public class Script
                     <Value>YES</Value>
                     <ValueType>Bool</ValueType>
                     <Description>Silent install, No wizard screen will be displayed </Description>
+                  </SectionParam>
+                  <SectionParam Name="Extension Id">
+                    <Value />
+                    <ValueType>String</ValueType>
+                    <Description>Global Id of the extension package - it will be downloaded when no file is set.</Description>
+                  </SectionParam>
+                  <SectionParam Name="Extension Version">
+                    <Value />
+                    <ValueType>String</ValueType>
+                    <Description>Minimum Version of the extension package - older versions will be updated (only used when downloading via Id).</Description>
                   </SectionParam>
                 </Items>
               </Params>
@@ -3151,6 +3273,16 @@ public class Script
                     <Value>YES</Value>
                     <ValueType>Bool</ValueType>
                     <Description>Silent install, No wizard screen will be displayed </Description>
+                  </SectionParam>
+                  <SectionParam Name="Extension Id">
+                    <Value />
+                    <ValueType>String</ValueType>
+                    <Description>Global Id of the extension package - it will be downloaded when no file is set.</Description>
+                  </SectionParam>
+                  <SectionParam Name="Extension Version">
+                    <Value />
+                    <ValueType>String</ValueType>
+                    <Description>Minimum Version of the extension package - older versions will be updated (only used when downloading via Id).</Description>
                   </SectionParam>
                 </Items>
               </Params>
@@ -3234,11 +3366,11 @@ public class Script
         </CompatibleVersion>
         <SubSystemsUsed>
           <Items>
-            <SubSystemItem Name="MP.SkinEngine" />
-            <SubSystemItem Name="MP.Players.Video" />
-            <SubSystemItem Name="MP.Input" />
-            <SubSystemItem Name="MP.Externals.SQLite" />
             <SubSystemItem Name="MP.Config" />
+            <SubSystemItem Name="MP.Externals.SQLite" />
+            <SubSystemItem Name="MP.Input" />
+            <SubSystemItem Name="MP.Players.Video" />
+            <SubSystemItem Name="MP.SkinEngine" />
           </Items>
         </SubSystemsUsed>
       </PluginDependencyItem>
@@ -3253,24 +3385,15 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>1</Major>
-      <Minor>3</Minor>
+      <Minor>4</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>fixed: SiteManager live filter for user crashes MP when you have local sites that have no online pendent
-fixed: playing a file from Downloaded Videos in MP1 did not use refresh rate adaption
-fixed: source filters rare freeze on seek, pause, stop and play
-fixed: source filter improved seeking and faster video starting
-fixed: incompatibility with latest LAV filters
-added: source filter ASX stream parser and MMS protocol
-added: source filter option for specifying cache folder
-added: support for png files for thumbs
-added: support for subtitles from text in addition to url
-changed: plugin settings xml for MPEI GUI plugin now split into sections and uses minvalue/maxvalue feature</VersionDescription>
+    <VersionDescription />
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.3.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2012-07-18T11:00:00</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.4.0.0.mpe1</OnlineLocation>
+    <ReleaseDate>2012-11-28T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -4871,20 +4994,6 @@ changed: plugin settings xml for MPEI GUI plugin now split into sections and use
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\bravo! fact.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{0a8d403a-824c-47f8-9796-aedb9404dbcc}-bravo! fact.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\bravo! fact.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\bravo!.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d55dc137-7bea-4897-83ed-e000fe3a2672}-bravo!.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\bravo!.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\ctv local news.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{09e9aa5b-b80d-43b5-a0a0-8e59a7e29063}-ctv local news.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctv local news.png</DestinationFilename>
@@ -5414,6 +5523,76 @@ changed: plugin settings xml for MPEI GUI plugin now split into sections and use
         <ZipFileName>Installer{CopyFile}\{2bf9935e-0293-4593-aab2-fe9969ab3330}-_sfd.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Čsfd.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\AFL.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{86a7e82c-d550-4740-9066-f85248a4303a}-AFL.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\AFL.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\family.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5a43679c-cf89-44ae-b67b-ca6b39b9302e}-family.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\family.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\League of Legends Streams.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ad6d6d59-a553-4387-b262-31f3ada4a6e3}-League of Legends Streams.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\League of Legends Streams.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Twitch.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{81bba484-37d6-40ec-a2e4-291d26807357}-Twitch.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Twitch.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\zie.nl.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7c0b57e3-8d5c-4e1a-a6c0-f49abf1b82ee}-zie.nl.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\zie.nl.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\AFL.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{39846469-ae74-478b-8ade-ff60c237d4b5}-AFL.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\AFL.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\family.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{57b2ed1f-2d30-43c1-991f-823aaf654b0a}-family.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\family.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\League of Legends Streams.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{09666a02-9539-4f50-96a6-56132cc3e9bc}-League of Legends Streams.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\League of Legends Streams.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Twitch.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{42f8340c-d52f-45e4-a52d-5584f7d0f8bc}-Twitch.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Twitch.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\zie.nl.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{96b9cf7f-7c79-45e4-8826-228b7450454a}-zie.nl.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\zie.nl.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -5466,6 +5645,13 @@ changed: plugin settings xml for MPEI GUI plugin now split into sections and use
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.Dj_Moren.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{8c926e79-57e7-4f0f-af7e-1dfd302e3bc3}-OnlineVideos.Sites.Dj_Moren.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.Dj_Moren.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
@@ -5494,6 +5680,13 @@ changed: plugin settings xml for MPEI GUI plugin now split into sections and use
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{44c19a6b-28e0-4936-a000-edea70c11632}-OnlineVideos.Sites.rick164.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{88fba3b4-4209-4db5-9142-8329f8b13d25}-OnlineVideos.Sites.SilentException.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</DestinationFilename>
@@ -5511,13 +5704,6 @@ changed: plugin settings xml for MPEI GUI plugin now split into sections and use
         <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{44c19a6b-28e0-4936-a000-edea70c11632}-OnlineVideos.Sites.rick164.dll</ZipFileName>
-        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5669,16 +5855,30 @@ changed: plugin settings xml for MPEI GUI plugin now split into sections and use
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Language\OnlineVideos\lt-LT.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c737d67b-1843-4a98-ab44-968906a8e697}-lt-LT.xml</ZipFileName>
-        <DestinationFilename>%Language%\OnlineVideos\lt-LT.xml</DestinationFilename>
+        <LocalFileName>..\Language\OnlineVideos\hi.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0a5603a3-cebb-4f28-8304-14b9f4c0c758}-hi.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\hi.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Language\OnlineVideos\zh-CN.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e9511df6-05e9-4f15-a08d-b3a748732a16}-zh-CN.xml</ZipFileName>
-        <DestinationFilename>%Language%\OnlineVideos\zh-CN.xml</DestinationFilename>
+        <LocalFileName>..\Language\OnlineVideos\hr.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{12660ea9-bf5a-441a-9a52-8eadee7b4e48}-hr.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\hr.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\lt.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d290cdb4-9410-45d4-b5ef-0c300d4a0371}-lt.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\lt.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\zh.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{df035f55-a543-4ccf-b8ee-611fed40c23d}-zh.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\zh.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -6023,6 +6223,41 @@ changed: plugin settings xml for MPEI GUI plugin now split into sections and use
         <ZipFileName>Installer{CopyFile}\{0a446649-f7b0-46e1-9660-ad77e8166b72}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
         <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{319a7a0c-cbd5-4d1c-b96a-b40e076252de}-MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_F4M.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{33b16db5-33eb-432d-ae75-2c5a8647fb81}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_MSHS.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{13bce747-5577-4179-8f5a-1d47a63359c0}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ecdac716-33fc-4994-9380-7972919b0952}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mshs.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{95bcad25-5d92-49ce-94ed-011e10f5910d}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
@@ -6033,8 +6268,8 @@ changed: plugin settings xml for MPEI GUI plugin now split into sections and use
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>LAV\LAVFilters0.51.2.0.mpe1</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{bf87ba97-6256-4de1-a678-87cf2759385a}-LAVFilters0.51.2.0.mpe1</ZipFileName>
+        <LocalFileName>LAV\LAVFilters0.54.0.0.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2d474718-dac4-4a54-9ef9-ceb2b8ef9e05}-LAVFilters0.54.0.0.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
@@ -6063,8 +6298,8 @@ changed: plugin settings xml for MPEI GUI plugin now split into sections and use
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName />
         <ZipFileName>Installer{CopyFile}\{cbad33a3-521c-4204-b0e2-a5f96fe0ff39}-</ZipFileName>
-        <DestinationFilename>%Language%\</DestinationFilename>
-        <Folder>..\Language</Folder>
+        <DestinationFilename>%Language%\OnlineVideos\</DestinationFilename>
+        <Folder>..\Language\OnlineVideos</Folder>
         <Group>Language</Group>
         <Recursive>true</Recursive>
       </FolderGroup>
