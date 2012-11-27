@@ -668,6 +668,14 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
+            string[] parts = url.Split('.');
+            string id = parts[parts.Length - 2];
+            if (!id.Contains("-"))
+                //probably http://www.vidbull.com/t9i14x2l8s0v.html, so work to http://vidbull.com/embed-t9i14x2l8s0v-650x328.html
+                //that way, there's no need for a delay+post
+                parts[parts.Length - 2] = id.Replace("com/", "com/embed-") + "-650x328";
+            url = String.Join(".", parts);
+
             string webData = SiteUtilBase.GetWebData(url);
             string sub = GetSubString(webData, "id='flvplayer'", null);
             string packed = GetSubString(sub, @"return p}", @"</script>");
