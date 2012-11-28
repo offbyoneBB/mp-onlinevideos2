@@ -54,64 +54,21 @@
         <Version>
           <Major>0</Major>
           <Minor>54</Minor>
-          <Build>0</Build>
+          <Build>1</Build>
           <Revision>0</Revision>
         </Version>
         <ExtensionDescription>The extension installs the LAV Filter package, which contains a splitter, audio and video decoder for the most common formats that are used around the web.</ExtensionDescription>
-        <VersionDescription>0.54.0 - 2012/11/24
-LAV Splitter
-- Subtitle selection in "Default" mode now properly takes the "Default Track" flag into account
-- Fixed an issue that could cause graph flush events to be send out of sync
+        <VersionDescription>LAV Splitter
+- Improved seeking in MP4 files created by Windows Live Movie Maker
 
 LAV Video
-- The DXVA2 Native decoder can now properly detect hardware support for video resolutions
-  - Allows 4K DXVA2 decoding on NVIDIA
-- New options to control which resolutions are being handled by the hardware decoder (SD, HD and 4K/UHD)
-- Added support for DVD menu overlays and DVD subtitles with DXVA2 Native
-- Improved DXVA2 Native support with madVR
-- Fixed a freeze when playing corrupted H.264 streams in DXVA2 Native
-- Fixed a few rare DVD menu issues when using the QuickSync decoder
-
-0.53.2 - 2012/11/11
-LAV Video
-- Fixed DVD menu still frames with DXVA2 Copy Back
-- Fixed Live TV playback with QuickSync
-
-0.53.1 - 2012/11/10
-LAV Video
-- Fixed initial media type when YADIF is active
-- Fixed an image corruption issue with DVD playback
-- Improved handling of DVD menus on some discs
-- Reduced decode latency with CUVID/DXVA2-CB on DVDs for smoother playback in some situations
-- Added an option to toggle HW decoding for DVDs
-
-0.53.0 - 2012/11/05
-LAV Splitter
-- Added support for reading image files (tiff, png, jpeg, tga, bmp)
-- Support for MPEG-4 ASP in MPEG-TS
-- Support for reading metadata using the IAMMediaContent interface
-- Fixed Aspect Ratio on some wmv/asf files
-
-LAV Video
-- Fixed a crash in the WMV9 DMO decoder on Windows 8
-- DVD improvements
-  - Subtitles are properly cleared from the screen, and won't be shown forever on some discs
-  - Improved subtitle/menu positioning on some PAL discs
-  - Improved handling of still frame DVD menus
-  - Fixed a deadlock that caused the player to freeze in some DVD menus
-  - Improved quality of blending subtitles/menus
-- QuickSync improvements
-  - Support using QuickSync in Fullscreen Exclusive mode (ie. in WMC)
-  - Improved fallback to software decoding if QuickSync is not available
-  - Support for DVD decoding
-- Added support for Avid DV
-- Properly indicate progressive video when YADIF deinterlacing is activated
-
-LAV Audio
-- Added proper DirectShow types and config options for AMR-NB, Nellymoser and various (AD)PCM variants</VersionDescription>
+- Improved H.264 DXVA on recent Intel GPUs (Sandy/Ivy Bridge and newer Atoms)
+  - Fixed corruption with high number of reference frames ( &gt; 11 )
+  - Fixed corruption in MBAFF interlaced content
+- Fixed an issue that caused DVD menus/subtitles to stop working in DXVA2 Native mode in some situations</VersionDescription>
         <DevelopmentStatus>Stable</DevelopmentStatus>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-        <ReleaseDate>2012-11-25T20:36:36</ReleaseDate>
+        <ReleaseDate>2012-11-28T20:36:36</ReleaseDate>
         <Tags>codec</Tags>
         <Location>.\LAVFilters[Version].mpe1</Location>
         <Params>
