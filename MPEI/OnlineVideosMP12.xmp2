@@ -3390,10 +3390,19 @@ public class Script
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription />
+    <VersionDescription>added support for dynamic HTTP streaming protocols from Adobe and Microsoft
+now showing error messages source filter to have more info for the user than "no url"
+changed format of translation xml files - now using Transifex
+fixed Configuration SitesGroup Thumbnail not saved
+added prompt to DownloadedVideos when selecting Delete or Delete All
+fixed some problems with downloading of videos
+fixed topbar showing up and keeping focus in fullscreen playback and pressing UP to do an instant skip step
+fixed WinXP problems: only call EVR functions in dshowhelper.dll when MP is using EVR
+fixed problems with playlist playback (and split videos)
+fixed url generation with relative Urls in GenericSiteUtil</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.4.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2012-11-28T11:00:00</ReleaseDate>
+    <ReleaseDate>2012-11-30T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
