@@ -3238,7 +3238,7 @@ public class Script
               <Params>
                 <Items>
                   <SectionParam Name="Extension package">
-                    <Value>LAV\LAVFilters0.54.0.0.mpe1</Value>
+                    <Value>LAV\LAVFilters0.54.1.0.mpe1</Value>
                     <ValueType>File</ValueType>
                     <Description>Location of the extension package</Description>
                   </SectionParam>
@@ -6268,8 +6268,8 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>LAV\LAVFilters0.54.0.0.mpe1</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2d474718-dac4-4a54-9ef9-ceb2b8ef9e05}-LAVFilters0.54.0.0.mpe1</ZipFileName>
+        <LocalFileName>LAV\LAVFilters0.54.1.0.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2d474718-dac4-4a54-9ef9-ceb2b8ef9e05}-LAVFilters0.54.1.0.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
