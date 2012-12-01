@@ -1007,7 +1007,7 @@ HRESULT CLAVInputPin::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
 
   if (this->parserHoster != NULL)
   {
-    result = this->parserHoster->QueryStreamProgress(total, current);
+    result = SUCCEEDED(this->parserHoster->GetParserHosterStatus()) ? this->parserHoster->QueryStreamProgress(total, current) : this->parserHoster->GetParserHosterStatus();
   }
 
   return result;
@@ -1904,7 +1904,7 @@ DWORD WINAPI CLAVInputPin::DemuxerWorker(LPVOID lpParam)
   CLAVInputPin *caller = (CLAVInputPin *)lpParam;
   caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DEMUXER_WORKER_NAME);
 
-  while ((!caller->demuxerWorkerShouldExit) && (!caller->createdDemuxer) && (!caller->allDataReceived))
+  while ((!caller->demuxerWorkerShouldExit) && (!caller->createdDemuxer) && (!caller->allDataReceived) && (caller->GetParserHosterStatus() >= STATUS_NONE))
   {
     if (!caller->createdDemuxer)
     {
