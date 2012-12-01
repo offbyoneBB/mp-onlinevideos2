@@ -24,6 +24,22 @@ You have to play with this to get some experience, because if you leave too much
 When manually editing the regex, note that these are the default settings:
 *_Compiled, !CultureInvariant, Multiline, Singleline, !IgnorePatternWhitespace, !ExplicitCapture_*
 
+For testing purposes there are two helpful checkboxes:
+
+*Only Selected (Real-time)*
+
+This is useful if you want to investigate a certain category or video isn't listed in the test result list.
+When checked, only the selected part of your regex is used to calculate the match, so you can start with a couple of characters and gradually select more until the category/video disappears from the list. Then you have a more accurate location in the regex which is causing the non-match.
+
+*Highlight Matches*
+
+To further investigate if your regex isn't matching exactly what you want, you can highlight the matches in the right pane (the html-text).
+Be aware that for this to work, the match is done on on the text as it's visible in the rigt pane, and not on the original html-data.
+ 
+However, as far as I noticed, the only differences were in whitespace (f.e. if a number of `<tab>`s is followed by a space in the original html-data, that space is not used when calculating the matches).
+Technical explanation: For some reason, the RichTextBox changes the contents of the .Text property while the .RTF getter is used
+
+
 = Regex-shortcuts =
 
 == For Categories/Subcategories: ==
