@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Newtonsoft.Json.Linq;
@@ -43,7 +44,7 @@ namespace OnlineVideos.Sites
                 VideoInfo video = new VideoInfo();
                 video.Title = j.Value<string>("title");
                 video.Description = j.Value<string>("description");
-                DateTime airDate = DateTime.Parse(j.Value<string>("date_added"));
+                DateTime airDate = DateTime.Parse(j.Value<string>("date_added"), CultureInfo.InvariantCulture);
                 video.Airdate = airDate.ToString();
 
                 video.Length = VideoInfo.GetDuration(j.Value<string>("duration"));
