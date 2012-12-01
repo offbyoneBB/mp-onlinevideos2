@@ -11,7 +11,6 @@ namespace OnlineVideos.Sites
     {
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Videos per Page"), Description("Defines the default number of videos to display per page.")]
         int pageSize = 26;
-        private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
         private Regex savedRegEx_dynamicSubCategories;
         private Regex regExChannel;
         private Regex regExSearchChannel;

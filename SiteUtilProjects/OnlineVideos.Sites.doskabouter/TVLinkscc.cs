@@ -27,7 +27,6 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Your login password"), PasswordPropertyText(true)]
         string password = string.Empty;
 
-        private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
         private RegexOptions defaultDataRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.ExplicitCapture;
 
         private string sRegexMovieDataAirdate = @"<div class=""tit"">{0}\s*?(?:&nbsp;)?\s*?\((?<Year>\d\d\d\d)\).*?</div>";

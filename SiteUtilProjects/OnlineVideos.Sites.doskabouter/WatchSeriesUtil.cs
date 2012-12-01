@@ -301,8 +301,7 @@ namespace OnlineVideos.Sites
         {
             List<ISearchResultItem> cats = new List<ISearchResultItem>();
 
-            Regex r = new Regex(@"<tr><td\svalign=""top"">\s*<a\shref=""(?<url>[^""]*)""[^>]*>\s<img\ssrc=""(?<thumb>[^""]*)""[^>]*></a>\s*</td>\s*<td\svalign=""top"">\s*<a[^>]*><b>(?<title>[^<]*)</b></a>\s*<br\s/>\s*<b>Description:</b>\s*(?<description>[^<]*)</td>",
-                RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+            Regex r = new Regex(@"<tr><td\svalign=""top"">\s*<a\shref=""(?<url>[^""]*)""[^>]*>\s<img\ssrc=""(?<thumb>[^""]*)""[^>]*></a>\s*</td>\s*<td\svalign=""top"">\s*<a[^>]*><b>(?<title>[^<]*)</b></a>\s*<br\s/>\s*<b>Description:</b>\s*(?<description>[^<]*)</td>", defaultRegexOptions);
 
             string webData = GetWebData(baseUrl + "/search/" + query);
             Match m = r.Match(webData);

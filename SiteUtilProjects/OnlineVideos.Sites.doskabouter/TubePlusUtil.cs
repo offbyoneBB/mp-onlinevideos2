@@ -27,7 +27,6 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("")]
         protected string moviesVideoListRegEx;
 
-        private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
         private Regex regex_Genres;
         private Regex regex_AZSubCategories;
         private Regex regex_SeriesSubCategories;
