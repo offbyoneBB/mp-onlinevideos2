@@ -117,7 +117,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CinemassacreUtil.cs" />
-    <Compile Include="HardwareInfoUtil.cs" />
     <Compile Include="MyHosters.cs" />
     <Compile Include="NOSUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
