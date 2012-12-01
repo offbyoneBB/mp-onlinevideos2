@@ -17,7 +17,6 @@ namespace OnlineVideos.Sites
         VideoFormat preferredFormat = VideoFormat.Wvc1_Std;
 
         private enum UgType { None, Recent, Omroepen, Genres, AtoZ, Type1, AtoZSub, Search };
-        private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
         private Regex savedRegEx_dynamicSubCategoriesNextPage;
 
         string matchaz = @"(?<=<ol\sclass=""letters"">.*)<li[^>]*>\s*<a\shref=""(?<url>[^""]*)""(?:\sclass="""")?\stitle=""(?<description>[^""]*)"">(?<title>[^<]*)</a>\s*</li>";

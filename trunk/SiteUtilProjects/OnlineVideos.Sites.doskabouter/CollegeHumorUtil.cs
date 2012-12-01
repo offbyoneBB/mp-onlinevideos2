@@ -6,7 +6,6 @@ namespace OnlineVideos.Sites
 {
     public class CollegeHumorUtil : GenericSiteUtil
     {
-        private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
         public override int DiscoverDynamicCategories()
         {
             if (Settings.Categories != null)

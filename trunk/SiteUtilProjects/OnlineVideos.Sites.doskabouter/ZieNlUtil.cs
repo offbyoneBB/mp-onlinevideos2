@@ -14,7 +14,6 @@ namespace OnlineVideos.Sites
     {
         Regex finalRegex;
         Regex jsonRegex;
-        private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
 
         public override void Initialize(SiteSettings siteSettings)
         {

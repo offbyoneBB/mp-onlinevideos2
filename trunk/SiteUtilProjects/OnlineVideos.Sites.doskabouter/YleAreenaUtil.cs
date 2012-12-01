@@ -15,7 +15,6 @@ namespace OnlineVideos.Sites
     {
         private string bareUrl;
         int newStart;
-        private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
 
         public override int DiscoverDynamicCategories()
         {

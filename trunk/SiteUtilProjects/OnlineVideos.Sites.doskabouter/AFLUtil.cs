@@ -8,7 +8,6 @@ namespace OnlineVideos.Sites
     public class AFLUtil : GenericSiteUtil
     {
         private enum Levels { Competition, Season, RoundVideos, VideoListTeam, Match };
-        RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
         Regex allVideosSubcats;
 
         Dictionary<string, string> squads = new Dictionary<string, string>();
