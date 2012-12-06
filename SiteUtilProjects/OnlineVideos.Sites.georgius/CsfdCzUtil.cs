@@ -5,11 +5,33 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace OnlineVideos.Sites.georgius
 {
     public sealed class CsfdCzUtil : SiteUtilBase
     {
+        private class CsfdCzVideo
+        {
+            public CsfdCzVideo()
+            {
+                this.Section = String.Empty;
+                this.Url = String.Empty;
+            }
+
+            public String Section { get; set; }
+
+            public String Url { get; set; }
+        }
+
+        private class CsfdCzVideoCollection : KeyedCollection<String, CsfdCzVideo>
+        {
+            protected override string GetKeyForItem(CsfdCzVideo item)
+            {
+                return item.Url;
+            }
+        }
+
         #region Private fields
 
         private static String baseUrl = "http://www.csfd.cz/videa/";
@@ -31,16 +53,24 @@ namespace OnlineVideos.Sites.georgius
         private static String showThumbUrl = @"<img src=""(?<showThumbUrl>[^""]+)";
         private static String showUrl = @"<a href=""(?<showUrl>[^""]+)"" class=""[^""]*"">(?<showTitle>[^<]+)";
 
-        private static String showEpisodesBlockStart = @"Vyber video:";
-        private static String showEpisodesBlockEnd = @"<input";
+        //private static String showEpisodesBlockStart = @"Vyber video:";
+        //private static String showEpisodesBlockEnd = @"<input";
 
-        private static String showEpisodeBlockStart = @"<option";
-        private static String showEpisodeBlockEnd = @"</option";
+        //private static String showEpisodeBlockStart = @"<option";
+        //private static String showEpisodeBlockEnd = @"</option";
 
-        private static String showEpisodeUrlAndTitleRegex = @"<option value=""(?<showUrl>[^""]+)"">(?<showTitle>[^<]+)";
+        //private static String showEpisodeUrlAndTitleRegex = @"<option value=""(?<showUrl>[^""]+)"">(?<showTitle>[^<]+)";
+
+        private static String showEpisodesUrlBlockStart = @"<h2 class=""header"">";
+        private static String showEpisodesUrlBlockEnd = @"</div>";
+
+        private static String showEpisodesUrlCategoryNameStart = @"<span class=""selected"">";
+        private static String showEpisodesUrlCategoryNameEnd = @"<";
+
+        private static String showEpisodesUrlCategoryUrlRegex = @"<a href=""(?<showEpisodesUrlCategoryUrl>[^""]*)"">(?<showEpisodesUrlCategoryName>[^<]*)";
 
         private static String videoUrlBlockStart = @"new VideoPlayer";
-        private static String videoUrlBlockEnd = @"!readCookie";
+        private static String videoUrlBlockEnd = @"player.create()";
         private static String videoUrlRegex = @"""src"":""(?<videoUrl>[^""]+)";
         private static String subtitleUrlRegex = @"<track src=""/subtitles-proxy/\?url=(?<subtitleUrl>[^""]+)";
 
@@ -227,58 +257,95 @@ namespace OnlineVideos.Sites.georgius
                 this.nextPageUrl = String.Empty;
                 String baseWebData = CsfdCzUtil.GetWebData(pageUrl, null, null, null, true);
 
-                int startIndex =baseWebData.IndexOf(CsfdCzUtil.showEpisodesBlockStart);
+                int startIndex = baseWebData.IndexOf(CsfdCzUtil.showEpisodesUrlBlockStart);
                 if (startIndex >= 0)
                 {
-                    int endIndex = baseWebData.IndexOf(CsfdCzUtil.showEpisodesBlockEnd, startIndex);
+                    int endIndex = baseWebData.IndexOf(CsfdCzUtil.showEpisodesUrlBlockEnd, startIndex);
                     if (endIndex >= 0)
                     {
                         baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                        while (true)
+                        startIndex = baseWebData.IndexOf(CsfdCzUtil.showEpisodesUrlCategoryNameStart);
+                        if (startIndex >= 0)
                         {
-                            startIndex = baseWebData.IndexOf(CsfdCzUtil.showEpisodeBlockStart);
-                            if (startIndex >=0)
+                            endIndex = baseWebData.IndexOf(CsfdCzUtil.showEpisodesUrlCategoryNameEnd, startIndex + CsfdCzUtil.showEpisodesUrlCategoryNameStart.Length);
+                            if (endIndex >= 0)
                             {
-                                endIndex = baseWebData.IndexOf(CsfdCzUtil.showEpisodeBlockEnd, startIndex);
-                                if (endIndex >= 0)
-                                {
-                                    String episodeData = baseWebData.Substring(startIndex, endIndex - startIndex);
-                                    String episodeTitle = String.Empty;
-                                    String episodeUrl = String.Empty;
-
-                                    Match match = Regex.Match(episodeData, CsfdCzUtil.showEpisodeUrlAndTitleRegex);
-                                    if (match.Success)
-                                    {
-                                        episodeTitle = OnlineVideos.Utils.PlainTextFromHtml(match.Groups["showTitle"].Value);
-                                        episodeUrl = Utils.FormatAbsoluteUrl(String.Format("filtr-{0}", match.Groups["showUrl"].Value), pageUrl);
-                                    }
-
-                                    if ((!String.IsNullOrEmpty(episodeUrl)) && (!String.IsNullOrEmpty(episodeTitle)))
-                                    {
-                                        VideoInfo videoInfo = new VideoInfo()
-                                        {
-                                            Title = episodeTitle,
-                                            VideoUrl = episodeUrl
-                                        };
-
-                                        pageVideos.Add(videoInfo);
-                                    }
-
-                                    baseWebData = baseWebData.Substring(endIndex);
-                                }
-                                else
-                                {
-                                    break;
-                                }
+                                pageVideos.Add(new VideoInfo() { Title = baseWebData.Substring(startIndex + CsfdCzUtil.showEpisodesUrlCategoryNameStart.Length, endIndex - startIndex - CsfdCzUtil.showEpisodesUrlCategoryNameStart.Length), VideoUrl = pageUrl });
                             }
-                            else
-                            {
-                                break;
-                            }
+                        }
+
+                        Match match = Regex.Match(baseWebData, CsfdCzUtil.showEpisodesUrlCategoryUrlRegex);
+                        while (match.Success)
+                        {
+                            String catName = match.Groups["showEpisodesUrlCategoryName"].Value;
+                            String catUrl = Utils.FormatAbsoluteUrl(match.Groups["showEpisodesUrlCategoryUrl"].Value, pageUrl);
+
+                            pageVideos.Add(new VideoInfo() { Title = catName, VideoUrl = catUrl });
+
+                            match = match.NextMatch();
                         }
                     }
                 }
+
+                //// serach for videos in each category
+                //foreach (var internalCategory in categories)
+                //{
+                //    baseWebData = CsfdCzUtil.GetWebData(internalCategory.Url, null, null, null, true);
+
+                //    startIndex = baseWebData.IndexOf(CsfdCzUtil.showEpisodesBlockStart);
+                //    if (startIndex >= 0)
+                //    {
+                //        endIndex = baseWebData.IndexOf(CsfdCzUtil.showEpisodesBlockEnd, startIndex);
+                //        if (endIndex >= 0)
+                //        {
+                //            baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
+
+                //            while (true)
+                //            {
+                //                startIndex = baseWebData.IndexOf(CsfdCzUtil.showEpisodeBlockStart);
+                //                if (startIndex >= 0)
+                //                {
+                //                    endIndex = baseWebData.IndexOf(CsfdCzUtil.showEpisodeBlockEnd, startIndex);
+                //                    if (endIndex >= 0)
+                //                    {
+                //                        String episodeData = baseWebData.Substring(startIndex, endIndex - startIndex);
+                //                        String episodeTitle = String.Empty;
+                //                        String episodeUrl = String.Empty;
+
+                //                        Match match = Regex.Match(episodeData, CsfdCzUtil.showEpisodeUrlAndTitleRegex);
+                //                        if (match.Success)
+                //                        {
+                //                            episodeTitle = OnlineVideos.Utils.PlainTextFromHtml(match.Groups["showTitle"].Value);
+                //                            episodeUrl = Utils.FormatAbsoluteUrl(String.Format("filtr-{0}", match.Groups["showUrl"].Value), pageUrl);
+                //                        }
+
+                //                        if ((!String.IsNullOrEmpty(episodeUrl)) && (!String.IsNullOrEmpty(episodeTitle)))
+                //                        {
+                //                            VideoInfo videoInfo = new VideoInfo()
+                //                            {
+                //                                Title = episodeTitle,
+                //                                VideoUrl = episodeUrl
+                //                            };
+
+                //                            pageVideos.Add(videoInfo);
+                //                        }
+
+                //                        baseWebData = baseWebData.Substring(endIndex);
+                //                    }
+                //                    else
+                //                    {
+                //                        break;
+                //                    }
+                //                }
+                //                else
+                //                {
+                //                    break;
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
             }
 
             return pageVideos;
@@ -336,54 +403,149 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
+            List<String> resultUrls = new List<string>();
+
+            CsfdCzVideoCollection videos = new CsfdCzVideoCollection();
+
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+            int index = 0;
 
-            if (video.PlaybackOptions == null)
+            while (true)
             {
-                video.PlaybackOptions = new Dictionary<string, string>();
-            }
-            video.PlaybackOptions.Clear();
-
-            int startIndex = baseWebData.IndexOf(CsfdCzUtil.videoUrlBlockStart);
-            if (startIndex >= 0)
-            {
-                int endIndex = baseWebData.IndexOf(CsfdCzUtil.videoUrlBlockEnd, startIndex);
-                if (endIndex >= 0)
+                int startIndex = baseWebData.IndexOf(CsfdCzUtil.videoUrlBlockStart);
+                if (startIndex >= 0)
                 {
-                    baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
-
-                    MatchCollection matches = Regex.Matches(baseWebData, CsfdCzUtil.videoUrlRegex);
-                    for (int i = 0; i < matches.Count; i++)
+                    int endIndex = baseWebData.IndexOf(CsfdCzUtil.videoUrlBlockEnd, startIndex);
+                    if (endIndex >= 0)
                     {
-                        String url = matches[i].Groups["videoUrl"].Value.Replace("\\/", "/");
-                        String extension = Path.GetExtension(url).Replace(".", "");
-                        String fileName = Path.GetFileNameWithoutExtension(url);
+                        String section = baseWebData.Substring(startIndex, endIndex - startIndex);
+                        String url = Utils.FormatAbsoluteUrl(index.ToString(), video.VideoUrl);
 
-                        if (!url.Contains("/ads/"))
-                        {
-                            video.PlaybackOptions.Add(String.Format("{0}p ({1})", fileName, extension), url);
-                        }
+                        videos.Add(new CsfdCzVideo() { Section = section, Url = url });
+                        resultUrls.Add(url);
+
+                        baseWebData = baseWebData.Substring(endIndex + CsfdCzUtil.videoUrlBlockEnd.Length);
+                        index++;
                     }
-
-                    Match subtitleMatch = Regex.Match(baseWebData, CsfdCzUtil.subtitleUrlRegex);
-                    if (subtitleMatch.Success)
+                    else
                     {
-                        video.SubtitleUrl = System.Web.HttpUtility.HtmlDecode(subtitleMatch.Groups["subtitleUrl"].Value).Replace(@"\/", "/");
+                        break;
                     }
+                }
+                else
+                {
+                    break;
                 }
             }
 
-            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+            // remember all videos with their quality
+            video.Other = videos;
+
+            if (resultUrls.Count == 1)
             {
-                var enumer = video.PlaybackOptions.GetEnumerator();
+                resultUrls.Clear();
+
+                String oldUrl = video.VideoUrl;
+                video.VideoUrl = videos[0].Url;
+
+                resultUrls.Add(this.getPlaylistItemUrl(video, "", false));
+
+                video.VideoUrl = oldUrl;
+            }
+
+            return resultUrls;
+        }
+
+        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
+        {
+            CsfdCzVideoCollection videos = (CsfdCzVideoCollection)clonedVideoInfo.Other;
+            CsfdCzVideo keyVideo = videos[clonedVideoInfo.VideoUrl];
+
+            if (clonedVideoInfo.PlaybackOptions == null)
+            {
+                clonedVideoInfo.PlaybackOptions = new Dictionary<string, string>();
+            }
+            clonedVideoInfo.PlaybackOptions.Clear();
+
+            MatchCollection matches = Regex.Matches(keyVideo.Section, CsfdCzUtil.videoUrlRegex);
+            for (int i = 0; i < matches.Count; i++)
+            {
+                String url = matches[i].Groups["videoUrl"].Value.Replace("\\/", "/");
+                String extension = Path.GetExtension(url).Replace(".", "");
+                String fileName = Path.GetFileNameWithoutExtension(url);
+
+                if (!url.Contains("/ads/"))
+                {
+                    clonedVideoInfo.PlaybackOptions.Add(String.Format("{0}p ({1})", fileName, extension), url);
+                }
+            }
+
+            Match subtitleMatch = Regex.Match(keyVideo.Section, CsfdCzUtil.subtitleUrlRegex);
+            if (subtitleMatch.Success)
+            {
+                clonedVideoInfo.SubtitleUrl = System.Web.HttpUtility.HtmlDecode(subtitleMatch.Groups["subtitleUrl"].Value).Replace(@"\/", "/");
+            }
+
+            if (clonedVideoInfo.PlaybackOptions.Count > 0)
+            {
+                var enumer = clonedVideoInfo.PlaybackOptions.GetEnumerator();
                 enumer.MoveNext();
                 return enumer.Current.Value;
             }
 
-            return String.Empty;
+            return clonedVideoInfo.VideoUrl;
         }
+
+        //public override string getUrl(VideoInfo video)
+        //{
+        //    String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+
+        //    if (video.PlaybackOptions == null)
+        //    {
+        //        video.PlaybackOptions = new Dictionary<string, string>();
+        //    }
+        //    video.PlaybackOptions.Clear();
+
+        //    int startIndex = baseWebData.IndexOf(CsfdCzUtil.videoUrlBlockStart);
+        //    if (startIndex >= 0)
+        //    {
+        //        int endIndex = baseWebData.IndexOf(CsfdCzUtil.videoUrlBlockEnd, startIndex);
+        //        if (endIndex >= 0)
+        //        {
+        //            baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
+
+        //            MatchCollection matches = Regex.Matches(baseWebData, CsfdCzUtil.videoUrlRegex);
+        //            for (int i = 0; i < matches.Count; i++)
+        //            {
+        //                String url = matches[i].Groups["videoUrl"].Value.Replace("\\/", "/");
+        //                String extension = Path.GetExtension(url).Replace(".", "");
+        //                String fileName = Path.GetFileNameWithoutExtension(url);
+
+        //                if (!url.Contains("/ads/"))
+        //                {
+        //                    video.PlaybackOptions.Add(String.Format("{0}p ({1})", fileName, extension), url);
+        //                }
+        //            }
+
+        //            Match subtitleMatch = Regex.Match(baseWebData, CsfdCzUtil.subtitleUrlRegex);
+        //            if (subtitleMatch.Success)
+        //            {
+        //                video.SubtitleUrl = System.Web.HttpUtility.HtmlDecode(subtitleMatch.Groups["subtitleUrl"].Value).Replace(@"\/", "/");
+        //            }
+        //        }
+        //    }
+
+        //    if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+        //    {
+        //        var enumer = video.PlaybackOptions.GetEnumerator();
+        //        enumer.MoveNext();
+        //        return enumer.Current.Value;
+        //    }
+
+        //    return String.Empty;
+        //}
 
         #endregion
     }
