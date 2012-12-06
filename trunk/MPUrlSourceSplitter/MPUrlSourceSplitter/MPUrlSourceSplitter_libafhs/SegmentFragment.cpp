@@ -66,7 +66,7 @@ int64_t CSegmentFragment::GetStoreFilePosition(void)
 
 unsigned int CSegmentFragment::GetLength(void)
 {
-  return (this->httpDownloadResponse->GetReceivedData()->GetBufferSize()  != 0) ? this->httpDownloadResponse->GetReceivedData()->GetBufferOccupiedSpace() : this->length;
+  return (this->length == 0) ? this->httpDownloadResponse->GetReceivedData()->GetBufferOccupiedSpace() : this->length;
 }
 
 CHttpDownloadRequest *CSegmentFragment::GetHttpDownloadRequest(void)
