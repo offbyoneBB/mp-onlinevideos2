@@ -31,15 +31,16 @@ CDecryptedDataCollection::~CDecryptedDataCollection(void)
 {
 }
 
-bool CDecryptedDataCollection::Add(uint8_t *decryptedData, unsigned int decryptedLength, uint32_t errorCode, const wchar_t *error)
+bool CDecryptedDataCollection::Add(uint8_t *decryptedData, unsigned int decryptedLength, uint32_t errorCode, char *error)
 {
   CDecryptedData *data = new CDecryptedData();
   bool result = (data != NULL);
   if (result)
   {
-    result &= data->SetDecryptedData(decryptedData, decryptedLength);
+    data->SetDecryptedData(decryptedData, decryptedLength);
     data->SetErrorCode(errorCode);
-    result &= data->SetError(error);
+    data->SetError(error);
+
     if (result)
     {
       result = __super::Add(data);
@@ -48,6 +49,9 @@ bool CDecryptedDataCollection::Add(uint8_t *decryptedData, unsigned int decrypte
 
   if (!result)
   {
+    data->SetDecryptedData(NULL, 0);
+    data->SetError(NULL);
+
     FREE_MEM_CLASS(data);
   }
   return result;

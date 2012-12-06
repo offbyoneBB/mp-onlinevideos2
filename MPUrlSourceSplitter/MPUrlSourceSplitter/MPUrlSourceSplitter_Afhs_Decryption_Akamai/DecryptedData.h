@@ -43,26 +43,24 @@ public:
   // @return : decryptor error code
   uint32_t GetErrorCode(void);
 
-  // gets decryptor error
-  // @return : decryptor error
-  const wchar_t *GetError(void);
+  // gets decryptor error (in UTF8)
+  // @return : decryptor error (in UTF8)
+  const char *GetError(void);
 
   /* set methods */
 
   // sets decrypted data
   // @param decryptedData : decrypted data to set
   // @param decryptedLength : length of decrypted data to set
-  // @return : true if successful, false otherwise
-  bool SetDecryptedData(uint8_t *decryptedData, unsigned int decryptedLength);
+  void SetDecryptedData(uint8_t *decryptedData, unsigned int decryptedLength);
 
   // sets decryptor error code
   // @param errorCode : decryptor error code to set
   void SetErrorCode(uint32_t errorCode);
 
-  // sets decryptor error
-  // @param error: decryptor error to set
-  // @return : true if successful, false otherwise
-  bool SetError(const wchar_t *error);
+  // sets decryptor error (in UTF8)
+  // @param error: decryptor error (in UTF8) to set
+  void SetError(char *error);
 
   /* other methods */
 
@@ -77,8 +75,8 @@ protected:
   // holds decryptor error code
   uint32_t errorCode;
 
-  // holds decryptor error
-  wchar_t *error;
+  // holds decryptor error in UTF8
+  char *error;
 };
 
 #endif

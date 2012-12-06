@@ -22,16 +22,26 @@
 
 #include "FlashWindow.h"
 
+#include <wchar.h>
+
+#define QUERY_RESULT_STRING_START                                             L"<string>"
+#define QUERY_RESULT_STRING_START_LENGTH                                      8
+
+#define QUERY_RESULT_STRING_END                                               L"</string>"
+#define QUERY_RESULT_STRING_END_LENGTH                                        9
+
 CFlashWindow::CFlashWindow(const wchar_t *swfFilePath)
   : COleContainerWindow()
 {
   m_lVersion = 0;
   this->swfFilePath = Duplicate(swfFilePath);
+  this->queryResultInternal = NULL;
 }
 
 CFlashWindow::~CFlashWindow(void)
 {
   FREE_MEM(this->swfFilePath);
+  FREE_MEM(this->queryResultInternal);
 }
 
 HRESULT CFlashWindow::Initialize(void)
@@ -46,18 +56,19 @@ wchar_t *CFlashWindow::GetResult(const wchar_t *query)
   {
     _bstr_t queryResult = this->m_lpControl->CallFunction(query);
 
-    result = Duplicate((const wchar_t *)queryResult);
-    if (result != NULL)
+    wchar_t *tempResult = Duplicate((const wchar_t *)queryResult);
+    unsigned int length = wcslen(tempResult) - QUERY_RESULT_STRING_START_LENGTH - QUERY_RESULT_STRING_END_LENGTH;
+
+    FREE_MEM(this->queryResultInternal);
+    this->queryResultInternal = ALLOC_MEM_SET(this->queryResultInternal, wchar_t, (length + 1), 0);
+    if ((this->queryResultInternal != NULL) && (length != 0))
     {
-      wchar_t *replaced1 = ReplaceString(result, L"<string>", L"");
-      wchar_t *replaced2 = ReplaceString(replaced1, L"</string>", L"");
-
-      FREE_MEM(replaced1);
-      FREE_MEM(result);
-      result = replaced2;
+      wmemcpy(this->queryResultInternal, tempResult + QUERY_RESULT_STRING_START_LENGTH, length);
     }
-  }
 
+    FREE_MEM(tempResult);
+    result = this->queryResultInternal;
+  }
   return result;
 }
 

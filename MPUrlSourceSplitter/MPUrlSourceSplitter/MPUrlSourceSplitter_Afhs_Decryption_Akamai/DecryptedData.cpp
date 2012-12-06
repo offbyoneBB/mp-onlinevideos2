@@ -53,27 +53,17 @@ uint32_t CDecryptedData::GetErrorCode(void)
   return this->errorCode;
 }
 
-const wchar_t *CDecryptedData::GetError(void)
+const char *CDecryptedData::GetError(void)
 {
   return this->error;
 }
 
 /* set methods */
 
-bool CDecryptedData::SetDecryptedData(uint8_t *decryptedData, unsigned int decryptedLength)
+void CDecryptedData::SetDecryptedData(uint8_t *decryptedData, unsigned int decryptedLength)
 {
-  FREE_MEM(this->decryptedData);
-  if (decryptedLength != 0)
-  {
-    this->decryptedData = ALLOC_MEM_SET(this->decryptedData, uint8_t, decryptedLength, 0);
-    if (this->decryptedData != NULL)
-    {
-      memcpy(this->decryptedData, decryptedData, decryptedLength);
-    }
-  }
-
-  this->decryptedLength = (this->decryptedData != NULL) ? decryptedLength : 0;
-  return (TEST_STRING_WITH_NULL(this->decryptedData, decryptedData) || (decryptedLength == 0));
+  this->decryptedData = decryptedData;
+  this->decryptedLength = decryptedLength;
 }
 
 void CDecryptedData::SetErrorCode(uint32_t errorCode)
@@ -81,9 +71,9 @@ void CDecryptedData::SetErrorCode(uint32_t errorCode)
   this->errorCode = errorCode;
 }
 
-bool CDecryptedData::SetError(const wchar_t *error)
+void CDecryptedData::SetError(char *error)
 {
-  SET_STRING_RETURN_WITH_NULL(this->error, error);
+  this->error = error;
 }
 
 /* other methods */

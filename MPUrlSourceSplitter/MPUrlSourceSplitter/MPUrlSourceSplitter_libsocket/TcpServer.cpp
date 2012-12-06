@@ -20,53 +20,24 @@
 
 #include "StdAfx.h"
 
-#include "EncryptedData.h"
+#include "TcpServer.h"
 
-CEncryptedData::CEncryptedData(void)
+CTcpServer::CTcpServer(void)
+  : CSimpleServer()
 {
-  this->encryptedData = NULL;
-  this->encryptedLength = 0;
-  this->flvPacket = NULL;
 }
 
-CEncryptedData::~CEncryptedData(void)
+CTcpServer::~CTcpServer(void)
 {
-  FREE_MEM_CLASS(this->flvPacket);
 }
 
 /* get methods */
 
-const uint8_t *CEncryptedData::GetEncryptedData(void)
-{
-  return this->encryptedData;
-}
-
-
-unsigned int CEncryptedData::GetEncryptedLength(void)
-{
-  return this->encryptedLength;
-}
-
-CAkamaiFlvPacket *CEncryptedData::GetAkamaiFlvPacket(void)
-{
-  return this->flvPacket;
-}
-
 /* set methods */
 
-void CEncryptedData::SetEncryptedData(uint8_t *encryptedData)
-{
-  this->encryptedData = encryptedData;
-}
-
-void CEncryptedData::SetEncryptedLength(unsigned int encryptedLength)
-{
-  this->encryptedLength = encryptedLength;
-}
-
-void CEncryptedData::SetAkamaiFlvPacket(CAkamaiFlvPacket *flvPacket)
-{
-  this->flvPacket = flvPacket;
-}
-
 /* other methods */
+
+HRESULT CTcpServer::Initialize(WORD port, int connections)
+{
+  return __super::Initialize(AF_UNSPEC, SOCK_STREAM, IPPROTO_TCP, port, connections);
+}

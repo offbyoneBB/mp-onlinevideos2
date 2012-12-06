@@ -35,7 +35,7 @@ public:
 
   // gets encrypted data
   // @return : encrypted data
-  const wchar_t *GetEncryptedData(void);
+  const uint8_t *GetEncryptedData(void);
 
   // gets encrypted data length
   // @return : encrypted data length
@@ -49,8 +49,7 @@ public:
 
   // sets encrypted data
   // @param encryptedData : encrypted data to set
-  // @return : true if successful, false otherwise
-  bool SetEncryptedData(const wchar_t *encryptedData);
+  void SetEncryptedData(uint8_t *encryptedData);
 
   // sets encrypted data length
   // @param length : encrypted data length to set
@@ -65,7 +64,7 @@ public:
 protected:
 
   // holds encrypted data
-  wchar_t *encryptedData;
+  uint8_t *encryptedData;
 
   // holds encrypted data length
   unsigned int encryptedLength;

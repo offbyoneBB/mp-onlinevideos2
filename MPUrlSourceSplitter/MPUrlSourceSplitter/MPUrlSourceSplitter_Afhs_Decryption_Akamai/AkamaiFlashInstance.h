@@ -26,6 +26,12 @@
 #include "FlashInstance.h"
 #include "EncryptedDataCollection.h"
 #include "DecryptedDataCollection.h"
+#include "TcpServer.h"
+
+#define COMMUNICATION_START_PORT                                              45000
+#define COMMUNICATION_STOP_PORT                                               46000
+#define COMMUNICATION_CLIENT_QUEUE                                            5
+#define COMMUNICATION_MAX_WAIT_TIME                                           1000
 
 enum AkamaiDecryptorState
 {
@@ -65,21 +71,17 @@ public:
   const wchar_t *GetDecryptorError(void);
 
   // gets decrypted data
-  // @param key : decryption key in BASE64 encoding
-  // @param encryptedData : encrypted data in BASE64 encoding
-  // @return : decrypted data in BASE64 encoding
-  wchar_t *GetDecryptedData(const wchar_t *key, const wchar_t *encryptedData);
-
-  // gets decrypted data
-  // @param key : decryption key in BASE64 encoding
-  // @param encryptedDataCollection : encrypted data collection in BASE64 encoding
-  // @return : decrypted data collection in BASE64 encoding
-  CDecryptedDataCollection *GetDecryptedData(const wchar_t *key, CEncryptedDataCollection *encryptedDataCollection);
+  // @param key : decryption key
+  // @param keyLength : the length of decryption key
+  // @param encryptedDataCollection : encrypted data collection
+  // @return : decrypted data collection
+  CDecryptedDataCollection *GetDecryptedData(const uint8_t *key, unsigned int keyLength, CEncryptedDataCollection *encryptedDataCollection);
 
   /* set methods */
 
   // sets decryption module url
   // @param url : decryption module url
+  // @param port : communication TCP port
   void SetDecryptionModuleUrl(const wchar_t *url);
 
   /* other methods */
@@ -91,11 +93,20 @@ public:
 protected:
   // holds error if instance is in AkamaiDecryptorState_Error state
   wchar_t *error;
-
   // holds decryptor error code after decryption
   uint32_t decryptorErrorCode;
   // holds decryptor error text after decryption
   wchar_t *decryptorError;
+  // holds TCP server for communication between filter and flash
+  CTcpServer *server;
+
+  // 
+  HRESULT InitializeTcpServer(unsigned int startPort, unsigned int endPort, unsigned int queueSize);
+
+  // sets communication TCP port between filter and flash
+  // @param port : port to set
+  // @return : S_OK if successful, error code otherwise
+  HRESULT SetCommPort(WORD port);
 };
 
 #endif

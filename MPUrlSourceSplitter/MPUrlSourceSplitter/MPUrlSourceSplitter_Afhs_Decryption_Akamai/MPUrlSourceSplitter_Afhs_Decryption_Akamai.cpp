@@ -26,7 +26,6 @@
 #include "formatUrl.h"
 #include "BoxFactory.h"
 #include "MediaDataBox.h"
-#include "base64.h"
 
 // AFHS decryption plugin implementation name
 #ifdef _DEBUG
@@ -79,7 +78,8 @@ CMPUrlSourceSplitter_Afhs_Decryption_Akamai::CMPUrlSourceSplitter_Afhs_Decryptio
   this->initializeAkamaiFlashInstanceResult = E_NOT_VALID_STATE;
   this->akamaiFlashInstance = NULL;
   this->lastKeyUrl = NULL;
-  this->lastKeyBase64 = NULL;
+  this->lastKey = NULL;
+  this->lastKeyLength = 0;
   this->akamaiGuid = NULL;
   this->keyRequestPending = false;
   this->akamaiSwfFile = NULL;
@@ -101,7 +101,7 @@ CMPUrlSourceSplitter_Afhs_Decryption_Akamai::~CMPUrlSourceSplitter_Afhs_Decrypti
   }
 
   FREE_MEM(this->lastKeyUrl);
-  FREE_MEM(this->lastKeyBase64);
+  FREE_MEM(this->lastKey);
   FREE_MEM(this->akamaiGuid);
   FREE_MEM_CLASS(this->configurationParameters);
   FREE_MEM(this->akamaiSwfFile);
@@ -160,7 +160,8 @@ HRESULT CMPUrlSourceSplitter_Afhs_Decryption_Akamai::ClearSession(void)
   this->keyRequestPending = false;
   this->initializeAkamaiFlashInstanceResult = E_NOT_VALID_STATE;
   FREE_MEM(this->lastKeyUrl);
-  FREE_MEM(this->lastKeyBase64);
+  FREE_MEM(this->lastKey);
+  this->lastKeyLength = 0;
   FREE_MEM(this->akamaiGuid);
   FREE_MEM(this->akamaiSwfFile);
   this->lastTimestamp = 0;
@@ -181,9 +182,9 @@ HRESULT CMPUrlSourceSplitter_Afhs_Decryption_Akamai::ProcessSegmentsAndFragments
     if (segmentFragment->IsDownloaded())
     {
       // decryption key received
-      FREE_MEM(this->lastKeyBase64);
-      this->lastKeyBase64 = this->GetDecryptionKeyFromSegmentFragment(segmentFragment);
-      CHECK_POINTER_HRESULT(result, this->lastKeyBase64, result, E_FAIL);
+      FREE_MEM(this->lastKey);
+      this->GetDecryptionKeyFromSegmentFragment(segmentFragment, &this->lastKey, &this->lastKeyLength);
+      CHECK_POINTER_HRESULT(result, this->lastKey, result, E_FAIL);
 
       this->keyRequestPending = false;
       context->GetSegmentsFragments()->Remove(context->GetSegmentsFragments()->Count() - 1);
@@ -222,7 +223,7 @@ HRESULT CMPUrlSourceSplitter_Afhs_Decryption_Akamai::ProcessSegmentsAndFragments
 
           if (packet->HasKey())
           {
-            if ((CompareWithNull(this->lastKeyUrl, packet->GetKeyUrl()) != 0) || (this->lastKeyBase64 == NULL))
+            if ((CompareWithNull(this->lastKeyUrl, packet->GetKeyUrl()) != 0) || (this->lastKey == NULL))
             {
               // download new decryption key from url
               CSegmentFragment *keyDecryptionSegmentFragment = new CSegmentFragment(UINT_MAX, UINT_MAX, UINT64_MAX);
@@ -297,37 +298,28 @@ HRESULT CMPUrlSourceSplitter_Afhs_Decryption_Akamai::ProcessSegmentsAndFragments
               // FLV packet content is 0x0F bytes smaller then whole FLV packet size
               // akamai content is from 11th byte of FLV packet
               unsigned int contentSize = akamaiFlvPacket->GetSize() - 0x0F;
-              ALLOC_MEM_DEFINE_SET(packetBuffer, uint8_t, contentSize, 0);
-              CHECK_POINTER_HRESULT(result, packetBuffer, result, E_OUTOFMEMORY);
 
               if (SUCCEEDED(result))
               {
-                memcpy(packetBuffer, akamaiFlvPacket->GetData() + 11, contentSize);
-
-                // decryptor needs data and key in BASE64 encoding
-                // key in BASE64 encoding is in this->lastKeyBase64
-                wchar_t *encryptedPacketBuffer = NULL;
-                unsigned int encryptedPacketBufferLength = 0;
-                result = base64_encode(packetBuffer, contentSize, &encryptedPacketBuffer, &encryptedPacketBufferLength);
-
-                if (SUCCEEDED(result))
-                {
-                  result = encryptedDataCollection->Add(encryptedPacketBuffer, encryptedPacketBufferLength, akamaiFlvPacket) ? S_OK : E_FAIL;
-                }
-
-                FREE_MEM(encryptedPacketBuffer);
+                result = encryptedDataCollection->Add((uint8_t *)(akamaiFlvPacket->GetData() + 11), contentSize, akamaiFlvPacket) ? S_OK : E_FAIL;
               }
 
-              FREE_MEM(packetBuffer);
+              if (FAILED(result))
+              {
+                FREE_MEM_CLASS(akamaiFlvPacket);
+              }
 
-              // remove processed akamai FLV packet from media data box
-              encryptedMediaDataBoxPayload->RemoveFromBuffer(akamaiFlvPacket->GetSize());
+              if (SUCCEEDED(result))
+              {
+                // remove processed akamai FLV packet from media data box
+                encryptedMediaDataBoxPayload->RemoveFromBuffer(akamaiFlvPacket->GetSize());
+              }
               // continue processing with next akamai FLV packet
             }
           }
 
           // call decryption methods
-          CDecryptedDataCollection *decryptedDataCollection = this->akamaiFlashInstance->GetDecryptedData(this->lastKeyBase64, encryptedDataCollection);
+          CDecryptedDataCollection *decryptedDataCollection = this->akamaiFlashInstance->GetDecryptedData(this->lastKey, this->lastKeyLength, encryptedDataCollection);
 
           if (encryptedDataCollection->Count() != decryptedDataCollection->Count())
           {
@@ -352,7 +344,10 @@ HRESULT CMPUrlSourceSplitter_Afhs_Decryption_Akamai::ProcessSegmentsAndFragments
                 break;
               default:
                 // unknown error code, log it and return error
-                this->logger->Log(LOGGER_INFO, L"%s: %s: unknown error code: %u, error: '%s'", PLUGIN_IMPLEMENTATION_NAME, METHOD_PROCESS_SEGMENTS_AND_FRAGMENTS_NAME, decryptedData->GetErrorCode(), decryptedData->GetError());
+                // error if in UTF8, convert to Unicode
+                wchar_t *error = ConvertUtf8ToUnicode(decryptedData->GetError());
+                this->logger->Log(LOGGER_ERROR, L"%s: %s: unknown error code: %u, error: '%s'", PLUGIN_IMPLEMENTATION_NAME, METHOD_PROCESS_SEGMENTS_AND_FRAGMENTS_NAME, decryptedData->GetErrorCode(), (error == NULL) ? L"NULL" : error);
+                FREE_MEM(error);
                 result = E_FAIL;
                 break;
               }
@@ -574,40 +569,28 @@ CParsedMediaDataBox *CMPUrlSourceSplitter_Afhs_Decryption_Akamai::ParseMediaData
   return result;
 }
 
-wchar_t *CMPUrlSourceSplitter_Afhs_Decryption_Akamai::GetDecryptionKeyFromSegmentFragment(CSegmentFragment *segmentFragment)
+void CMPUrlSourceSplitter_Afhs_Decryption_Akamai::GetDecryptionKeyFromSegmentFragment(CSegmentFragment *segmentFragment, uint8_t **key, unsigned int *keyLength)
 {
-  wchar_t *result = NULL;
-
   bool continueExtracting = (segmentFragment->GetHttpDownloadResponse()->GetResultCode() == CURLE_OK);
   if (continueExtracting)
   {
     // extract key, remove key segment and fragment and set appropriate segment and fragment to download
-    unsigned int lastKeyUsedLength = 0;
+    //unsigned int lastKeyUsedLength = 0;
 
-    lastKeyUsedLength = segmentFragment->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
-    continueExtracting &= (lastKeyUsedLength != 0);
+    *keyLength = segmentFragment->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
+    continueExtracting &= ((*keyLength) != 0);
 
     if (continueExtracting)
     {
-      ALLOC_MEM_DEFINE_SET(lastKeyUsed, uint8_t, lastKeyUsedLength, 0);
-      continueExtracting &= (lastKeyUsed != NULL);
+      *key = ALLOC_MEM_SET((*key), uint8_t, *keyLength, 0);
+      continueExtracting &= ((*key) != NULL);
 
       if (continueExtracting)
       {
-        continueExtracting &= (segmentFragment->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(lastKeyUsed, lastKeyUsedLength, 0, 0) == lastKeyUsedLength);
-
-        if (continueExtracting)
-        {
-          // convert key to BASE64 encoding
-
-          continueExtracting &= SUCCEEDED(base64_encode(lastKeyUsed, lastKeyUsedLength, &result));
-        }
+        continueExtracting &= (segmentFragment->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(*key, *keyLength, 0, 0) == (*keyLength));
       }
-      FREE_MEM(lastKeyUsed);
     }
   }
-
-  return result;
 }
 
 DecryptionResult CMPUrlSourceSplitter_Afhs_Decryption_Akamai::Supported(CAfhsDecryptionContext *context)
@@ -626,12 +609,12 @@ DecryptionResult CMPUrlSourceSplitter_Afhs_Decryption_Akamai::Supported(CAfhsDec
       // check status of download
       // if success then extract key, in another case report error
 
-      FREE_MEM(this->lastKeyBase64);
-      this->lastKeyBase64 = this->GetDecryptionKeyFromSegmentFragment(keySegmentFragment);
+      FREE_MEM(this->lastKey);
+      this->GetDecryptionKeyFromSegmentFragment(keySegmentFragment, &this->lastKey, &this->lastKeyLength);
 
-      if (this->lastKeyBase64 == NULL)
+      if (this->lastKey == NULL)
       {
-        FREE_MEM(this->lastKeyBase64);
+        FREE_MEM(this->lastKey);
         result = DecryptionResult_Error;
       }
       else
@@ -677,7 +660,7 @@ DecryptionResult CMPUrlSourceSplitter_Afhs_Decryption_Akamai::Supported(CAfhsDec
 
             if (packet->HasKey())
             {
-              if ((CompareWithNull(this->lastKeyUrl, packet->GetKeyUrl()) != 0) || (this->lastKeyBase64 == NULL))
+              if ((CompareWithNull(this->lastKeyUrl, packet->GetKeyUrl()) != 0) || (this->lastKey == NULL))
               {
                 // download new decryption key from url
                 CSegmentFragment *keyDecryptionSegmentFragment = new CSegmentFragment(UINT_MAX, UINT_MAX, UINT64_MAX);
@@ -815,6 +798,12 @@ DecryptionResult CMPUrlSourceSplitter_Afhs_Decryption_Akamai::Supported(CAfhsDec
     {
       this->logger->Log(LOGGER_INFO, L"%s: %s: decryption plugin '%s' in ready state", PLUGIN_IMPLEMENTATION_NAME, METHOD_SUPPORTED_NAME, this->GetName());
       result = DecryptionResult_Known;
+    }
+    else if (state == AkamaiDecryptorState_Undefined)
+    {
+      // decryptor in undefined state, decryption impossible
+      this->logger->Log(LOGGER_ERROR, L"%s: %s: decryption plugin '%s' in undefined state", PLUGIN_IMPLEMENTATION_NAME, METHOD_SUPPORTED_NAME, this->GetName());
+      result = DecryptionResult_Error;
     }
   }
 
