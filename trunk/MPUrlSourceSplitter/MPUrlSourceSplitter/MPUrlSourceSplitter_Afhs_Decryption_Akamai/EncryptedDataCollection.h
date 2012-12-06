@@ -37,7 +37,7 @@ public:
   // @param encryptedLength : encrypted data length to add
   // @param akamaiFlvPacket : akamai FLV packet
   // @return : true if successful, false otherwise
-  bool Add(const wchar_t *encryptedData, unsigned int encryptedLength, CAkamaiFlvPacket *akamaiFlvPacket);
+  bool Add(uint8_t *encryptedData, unsigned int encryptedLength, CAkamaiFlvPacket *akamaiFlvPacket);
 
 protected:
   // compare two item keys

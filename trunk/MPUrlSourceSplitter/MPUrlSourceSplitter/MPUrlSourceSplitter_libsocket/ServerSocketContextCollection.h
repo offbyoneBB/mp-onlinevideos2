@@ -20,43 +20,36 @@
 
 #pragma once
 
-#ifndef __DECRYPTED_DATA_COLLECTION_DEFINED
-#define __DECRYPTED_DATA_COLLECTION_DEFINED
+#ifndef __SERVER_SOCKET_CONTEXT_COLLECTION_DEFINED
+#define __SERVER_SOCKET_CONTEXT_COLLECTION_DEFINED
 
 #include "Collection.h"
-#include "DecryptedData.h"
+#include "ServerSocketContext.h"
 
-class CDecryptedDataCollection : public CCollection<CDecryptedData, const wchar_t *>
+class CServerSocketContextCollection : public CCollection<CServerSocketContext, WORD>
 {
 public:
-  CDecryptedDataCollection(void);
-  ~CDecryptedDataCollection(void);
-
-  // adds decrypted data to collection
-  // @param decryptedData : decrypted data to add
-  // @param decryptedLength : decrypted data length to add
-  // @param errorCode : decryptor error code
-  // @param error : decryptor error (int UTF8)
-  // @return : true if successful, false otherwise
-  bool Add(uint8_t *decryptedData, unsigned int decryptedLength, uint32_t errorCode, char *error);
+  CServerSocketContextCollection(void);
+  ~CServerSocketContextCollection(void);
 
 protected:
+
   // compare two item keys
   // @param firstKey : the first item key to compare
   // @param secondKey : the second item key to compare
   // @param context : the reference to user defined context
   // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
+  int CompareItemKeys(WORD firstKey, WORD secondKey, void *context);
 
   // gets key for item
   // @param item : the item to get key
   // @return : the key of item
-  const wchar_t *GetKey(CDecryptedData *item);
+  WORD GetKey(CServerSocketContext *item);
 
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CDecryptedData *Clone(CDecryptedData *item);
+  CServerSocketContext *Clone(CServerSocketContext *item);
 };
 
 #endif

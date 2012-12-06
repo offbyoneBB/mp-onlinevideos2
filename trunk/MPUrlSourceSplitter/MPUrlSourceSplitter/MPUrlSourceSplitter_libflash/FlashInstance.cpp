@@ -52,8 +52,6 @@ CFlashInstance::~CFlashInstance(void)
 
   this->DestroyFlashWorker();
   FREE_MEM(this->swfFilePath);
-  FREE_MEM(this->query);
-  FREE_MEM(this->queryResult);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, this->instanceName, METHOD_DESTRUCTOR_NAME);
   FREE_MEM(this->instanceName);
@@ -63,9 +61,7 @@ CFlashInstance::~CFlashInstance(void)
 
 wchar_t *CFlashInstance::GetResult(const wchar_t *query)
 {
-  FREE_MEM(this->queryResult);
-  FREE_MEM(this->query);
-  this->query = Duplicate(query);
+  this->query = (wchar_t *)query;
   this->resultRequested = true;
 
   while (!this->resultRequestFinished)
@@ -73,7 +69,7 @@ wchar_t *CFlashInstance::GetResult(const wchar_t *query)
     Sleep(10);
   }
 
-  wchar_t *result = Duplicate(this->queryResult);
+  wchar_t *result = this->queryResult;
   this->resultRequestFinished = false;
   return result;
 }
@@ -115,9 +111,9 @@ void CFlashInstance::ClearSession(void)
   this->initializeRequest = false;
   this->initializeRequestFinished = false;
   this->initializeResult = S_OK;
+  this->query = NULL;
+  this->queryResult = NULL;
 
-  FREE_MEM(this->query);
-  FREE_MEM(this->queryResult);
   this->resultRequested = false;
   this->resultRequestFinished = false;
 }

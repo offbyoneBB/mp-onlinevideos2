@@ -30,7 +30,7 @@ CEncryptedDataCollection::~CEncryptedDataCollection(void)
 {
 }
 
-bool CEncryptedDataCollection::Add(const wchar_t *encryptedData, unsigned int encryptedLength, CAkamaiFlvPacket *akamaiFlvPacket)
+bool CEncryptedDataCollection::Add(uint8_t *encryptedData, unsigned int encryptedLength, CAkamaiFlvPacket *akamaiFlvPacket)
 {
   CEncryptedData *data = new CEncryptedData();
   bool result = (data != NULL);
@@ -38,7 +38,8 @@ bool CEncryptedDataCollection::Add(const wchar_t *encryptedData, unsigned int en
   {
     data->SetAkamaiFlvPacket(akamaiFlvPacket);
     data->SetEncryptedLength(encryptedLength);
-    result = data->SetEncryptedData(encryptedData);
+    data->SetEncryptedData(encryptedData);
+
     if (result)
     {
       result = __super::Add(data);
@@ -47,6 +48,9 @@ bool CEncryptedDataCollection::Add(const wchar_t *encryptedData, unsigned int en
 
   if (!result)
   {
+    data->SetEncryptedData(NULL);
+    data->SetAkamaiFlvPacket(NULL);
+
     FREE_MEM_CLASS(data);
   }
   return result;
@@ -68,7 +72,7 @@ int CEncryptedDataCollection::CompareItemKeys(const wchar_t *firstKey, const wch
 
 const wchar_t *CEncryptedDataCollection::GetKey(CEncryptedData *item)
 {
-  return item->GetEncryptedData();
+  return L"";
 }
 
 CEncryptedData *CEncryptedDataCollection::Clone(CEncryptedData *item)

@@ -110,8 +110,10 @@ protected:
   // holds session ID (part of lastKeyUrl)
   wchar_t *sessionID;
 
-  // holds last key in BASE64 encoding
-  wchar_t *lastKeyBase64;
+  // holds last key
+  uint8_t *lastKey;
+  unsigned int lastKeyLength;
+
   // holds akamai swf file
   wchar_t *akamaiSwfFile;
   // holds last timestamp
@@ -163,8 +165,9 @@ protected:
 
   // gets decryption key from segment and fragment
   // @param segmentFragment : segment and fragment to get decryption key
-  // @return : decryption key in BASE64 encoding or NULL if error
-  wchar_t *GetDecryptionKeyFromSegmentFragment(CSegmentFragment *segmentFragment);
+  // @param key : reference to key variable
+  // @param keyLength : reference to key length variable
+  void GetDecryptionKeyFromSegmentFragment(CSegmentFragment *segmentFragment, uint8_t **key, unsigned int *keyLength);
 };
 
 #endif

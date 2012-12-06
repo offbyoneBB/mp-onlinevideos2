@@ -86,10 +86,6 @@ extern "C"
 #define METHOD_PAUSE_NAME                                         L"Pause()"
 #define METHOD_RUN_NAME                                           L"Run()"
 
-// common buffer size for requests
-#define BUFFER_SIZE_REQUEST_COMMON                                32768
-#define BUFFER_SIZE_REQUEST_LARGE                                 1048576
-
 // if ffmpeg_log_callback_set is true than ffmpeg log callback will not be set
 // in that case we don't receive messages from ffmpeg
 static volatile bool ffmpeg_log_callback_set = false;

@@ -90,7 +90,10 @@ protected:
 
   // holds swf file path
   wchar_t *swfFilePath;
-	
+
+  // holds internal copy of query result
+  // flash instance get only reference to this variable (can't free memory!)
+  wchar_t *queryResultInternal;
 };
 
 #endif

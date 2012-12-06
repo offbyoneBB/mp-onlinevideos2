@@ -43,7 +43,7 @@ public:
   // @return : S_OK if successful, error code otherwise
   virtual HRESULT Initialize(void);
 
-  // gets result from query to flash
+  // gets result from query to flash (make query shortest as possible, same for result)
   // @param query : query in flash format
   // @return : result or NULL if error
   virtual wchar_t *GetResult(const wchar_t *query);
@@ -81,7 +81,10 @@ protected:
   // request for result properties
   bool resultRequested;
   bool resultRequestFinished;
+
+  // holds query for worker (only reference to query - do not free memory)
   wchar_t *query;
+  // holds query result from worker (only reference to query result - do not free memory)
   wchar_t *queryResult;
 };
 
