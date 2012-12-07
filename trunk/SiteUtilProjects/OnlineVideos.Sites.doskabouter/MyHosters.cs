@@ -80,20 +80,11 @@ namespace OnlineVideos.Hoster
             string webData = SiteUtilBase.GetWebData(url.Replace(@"/swf/", @"/video/"), cc);
 
             Dictionary<string, string> res = new Dictionary<string, string>();
-            Match matchFileUrl = Regex.Match(webData, @"%22(?<n0>sd|hq)URL%22%3A(?<m0>%22.+?%22)");
+            Match matchFileUrl = Regex.Match(webData, @"""stream_(?<n0>[^_]*(?:_[^_]*)?)_url"":\s*""(?<m0>[^""]*)""");
             while (matchFileUrl.Success)
             {
                 string foundUrl = matchFileUrl.Groups["m0"].Value;
-                foundUrl = HttpUtility.UrlDecode(foundUrl);
-                if (foundUrl.StartsWith("\"") && foundUrl.EndsWith("\""))
-                {
-                    try
-                    {
-                        string deJSONified = JsonConvert.DeserializeObject<string>(foundUrl);
-                        if (!String.IsNullOrEmpty(deJSONified)) foundUrl = deJSONified;
-                    }
-                    catch { }
-                }
+                foundUrl = foundUrl.Replace(@"\/", @"/");
                 res.Add(matchFileUrl.Groups["n0"].Value, foundUrl);
                 matchFileUrl = matchFileUrl.NextMatch();
             }
