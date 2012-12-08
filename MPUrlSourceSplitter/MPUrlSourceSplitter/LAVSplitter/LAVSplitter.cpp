@@ -589,6 +589,16 @@ STDMETHODIMP CLAVSplitter::GetClassID(CLSID* pClsID)
   }
 }
 
+STDMETHODIMP CLAVSplitter::GetState(DWORD dwMSecs, __out FILTER_STATE *State)
+{
+  CheckPointer (State, E_POINTER);
+
+  HRESULT result = __super::GetState(dwMSecs, State);
+  result = (SUCCEEDED(result) && (m_State == State_Paused)) ? VFW_S_CANT_CUE : result;
+
+  return result;
+}
+
 CLAVOutputPin *CLAVSplitter::GetOutputPin(DWORD streamId, BOOL bActiveOnly)
 {
   CAutoLock lock(&m_csPins);
@@ -863,7 +873,7 @@ DWORD CLAVSplitter::ThreadProc()
     HRESULT hr = S_OK;
     while(SUCCEEDED(hr) && !CheckRequest(&cmd))
     {
-      if (cmd == CMD_PAUSE)
+      if ((cmd == CMD_PAUSE) || (cmd == CMD_SEEK))
       {
         hr = S_OK;
         Sleep(1);
