@@ -84,6 +84,7 @@ public:
   int GetPinCount();
   CBasePin *GetPin(int n);
   STDMETHODIMP GetClassID(CLSID* pClsID);
+  STDMETHODIMP GetState(DWORD dwMSecs, __out FILTER_STATE *State);
 
   STDMETHODIMP Stop();
   STDMETHODIMP Pause();
