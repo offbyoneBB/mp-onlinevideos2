@@ -157,6 +157,11 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            JToken videoInfo = GetWebData<JToken>(video.VideoUrl);
+            JArray subTitles = videoInfo["media"]["subtitles"] as JArray;
+            if (subTitles != null && subTitles.Count > 0)
+                video.SubtitleUrl = subTitles[0].Value<string>("url");
+
             string papiurl = base.getUrl(video);
 
             string data = GetWebData(papiurl);
