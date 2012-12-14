@@ -87,32 +87,79 @@
       <DependentUpon>IMDbUtil.cs</DependentUpon>
     </Compile>
     <Compile Include="IMDbUtil.cs" />
-    <Compile Include="IMDb\Json\IMDbBoxOfficeTitle.cs" />
-    <Compile Include="IMDb\Json\IMDbCash.cs" />
-    <Compile Include="IMDb\Json\IMDbTitleMobile.cs" />
-    <Compile Include="IMDb\Json\IMDbRankedObject.cs" />
-    <Compile Include="IMDb\Json\IMDbRuntime.cs" />
-    <Compile Include="IMDb\Json\IMDbTrailer.cs" />
+    <Compile Include="IMDb\DTO\Model.cs" />
+    <Compile Include="IMDb\Json\IMDbBoxOfficeTitle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbCash.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbCertificate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbImage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbName.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbNameListItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbPhoto.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbPlot.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbPrincipal.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbRankedObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbResults.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbRole.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbRuntime.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbStaff.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbTitle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbTitleDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbTitleListItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbTitleMobile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbTrailer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbVideo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMDb\Json\IMDbVideoFormat.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ITunes\Enumerations.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IMDb\IMDbAPI.cs" />
-    <Compile Include="IMDb\Json\IMDbCertificate.cs" />
-    <Compile Include="IMDb\Json\IMDbImage.cs" />
-    <Compile Include="IMDb\Json\IMDbList.cs" />
-    <Compile Include="IMDb\Json\IMDbName.cs" />
-    <Compile Include="IMDb\Json\IMDbNameListItem.cs" />
-    <Compile Include="IMDb\Json\IMDbPhoto.cs" />
-    <Compile Include="IMDb\Json\IMDbPlot.cs" />
-    <Compile Include="IMDb\Json\IMDbPrincipal.cs" />
-    <Compile Include="IMDb\Json\IMDbResponse.cs" />
-    <Compile Include="IMDb\Json\IMDbResults.cs" />
-    <Compile Include="IMDb\Json\IMDbRole.cs" />
-    <Compile Include="IMDb\Json\IMDbStaff.cs" />
-    <Compile Include="IMDb\Json\IMDbTitle.cs" />
-    <Compile Include="IMDb\Json\IMDbTitleDetails.cs" />
-    <Compile Include="IMDb\Json\IMDbTitleListItem.cs" />
-    <Compile Include="IMDb\Json\IMDbVideo.cs" />
-    <Compile Include="IMDb\Json\IMDbVideoFormat.cs" />
     <Compile Include="IMDb\Model\Certificate.cs" />
     <Compile Include="IMDb\Model\Character.cs" />
     <Compile Include="IMDb\Model\Enumerations.cs" />

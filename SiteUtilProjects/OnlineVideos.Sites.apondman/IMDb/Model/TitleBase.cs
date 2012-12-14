@@ -5,8 +5,9 @@ using System.Text;
 
 namespace OnlineVideos.Sites.Pondman.IMDb.Model
 {
-    using OnlineVideos.Sites.Pondman.IMDb.Json;
     using System.Web;
+    using OnlineVideos.Sites.apondman.IMDb.DTO;
+    using OnlineVideos.Sites.Pondman.IMDb.Json;
 
     public class TitleBase : Reference, IVideoDetails
     {
@@ -71,12 +72,46 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             }
         }
 
+
         internal virtual void FillFrom(IMDbTitleMobile dto)
         {
             this.ID = dto.URL.Replace("/title/", "").Replace("/", "").Trim();
 
             IMDbAPI.ParseDisplayStringToTitleBase(this, HttpUtility.HtmlDecode(dto.Title) + " " + dto.Extra);
             this.Image = IMDbAPI.ParseImageUrl(dto.Image.Url);
+        }
+        
+
+        internal virtual void FillFrom(Item dto)
+        {
+            this.ID = dto.display.titleId;
+            this.Title = dto.display.text;
+            this.Year = int.Parse(dto.display.year);
+
+            if (dto.display.poster != null)
+            {
+                Image = dto.display.poster.url;
+            }
+
+            switch (dto.display.type)
+            {
+                case "feature":
+                    Type = TitleType.Movie;
+                    break;
+                case "tv_series":
+                    Type = TitleType.TVSeries;
+                    break;
+                case "video_game":
+                    Type = TitleType.Game;
+                    break;
+                case "short":
+                    Type = TitleType.Short;
+                    break;
+                // todo: add more types
+                default:
+                    Type = TitleType.Unknown;
+                    break;
+            }
         }
 
         #endregion

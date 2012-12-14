@@ -5,7 +5,6 @@ using System.Text;
 
 namespace OnlineVideos.Sites.Pondman.IMDb.Model
 {
-    using OnlineVideos.Sites.Pondman.IMDb.Json;
 
     public class VideoReference : Reference, IVideoDetails
     {
@@ -30,6 +29,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
         #region internal members
 
+        /*
         internal virtual void FillFrom(IMDbVideo dto)
         {
             this.ID = dto.ID;
@@ -46,12 +46,13 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
                 this.Image = dto.Slates[0].Url;
             }
         }
+        */
 
         #endregion
 
         #region IVideoDetails Members
 
-        public virtual Dictionary<string, string> GetExtendedProperties()
+        public override Dictionary<string, string> GetExtendedProperties()
         {
             Dictionary<string, string> properties = new Dictionary<string, string>();
             properties.Add("Title", this.Title);

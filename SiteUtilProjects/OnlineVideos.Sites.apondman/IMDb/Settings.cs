@@ -188,7 +188,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             {
                 this.trailersTopHD = value;
             }
-        } private string trailersTopHD = "http://www.imdb.com/video/trailers/data/_json?list=top_hd";
+        } private string trailersTopHD = "http://www.imdb.com/video/trailers/data/_ajax/adapter/shoveler?list=top_hd";
 
         public string TrailersRecent
         {
@@ -200,7 +200,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             {
                 this.trailersRecent = value;
             }
-        } private string trailersRecent = "http://www.imdb.com/video/trailers/data/_json?list=recent";
+        } private string trailersRecent = "http://www.imdb.com/video/trailers/data/_ajax/adapter/shoveler?list=recent";
 
         public string TrailersPopular
         {
@@ -212,7 +212,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             {
                 this.trailersPopular = value;
             }
-        } private string trailersPopular = "http://www.imdb.com/video/trailers/data/_json?list=popular";
+        } private string trailersPopular = "http://www.imdb.com/video/trailers/data/_ajax/adapter/shoveler?list=popular";
 
         public string FullLengthMovies {
             get

@@ -2,9 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
-    using OnlineVideos.Sites.Pondman.IMDb.Json;
     using System.Text.RegularExpressions;
+    using OnlineVideos.Sites.apondman.IMDb.DTO;
 
     /// <summary>
     /// Summarized version of a title
@@ -27,6 +28,7 @@
             return IMDbAPI.GetTitle(this.session, this.ID);
         }
 
+        /*
         internal virtual void FillFrom(IMDbTitleListItem dto)
         {
             FillFrom(dto as IMDbTitle);
@@ -51,6 +53,29 @@
             this.Title = dto.Title;
             this.Type = TitleType.Movie;
             this.Image = dto.Image;
+        }
+        */
+
+        internal override void FillFrom(Item dto)
+        {
+            base.FillFrom(dto);
+
+            foreach(var name in dto.overview.stars) 
+            {
+                this.Principals.Add(new NameReference { Name = name });
+            }
+
+            if (dto.display.release_date != null) 
+            {
+                DateTime dt;
+                
+                if (DateTime.TryParseExact(dto.display.release_date, new string [] { "yyyy-MM-dd"}, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt) ) 
+                {
+                    this.ReleaseDate = dt;
+                }
+                
+                
+            }
         }
 
         public override Dictionary<string, string> GetExtendedProperties()

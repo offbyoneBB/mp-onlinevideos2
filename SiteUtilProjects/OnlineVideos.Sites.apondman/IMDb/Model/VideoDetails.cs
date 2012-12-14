@@ -1,7 +1,6 @@
 ﻿namespace OnlineVideos.Sites.Pondman.IMDb.Model
 {
     using System.Collections.Generic;
-    using OnlineVideos.Sites.Pondman.IMDb.Json;
         
     public class VideoDetails : VideoReference
     {
@@ -14,7 +13,7 @@
         public Dictionary<VideoFormat, string> Files { get; set; }
 
         #region internal members
-
+        /*
         internal override void FillFrom(IMDbVideo dto)
         {
             base.FillFrom(dto);
@@ -43,7 +42,7 @@
                 }
             }
         }
-
+        */
         #endregion
 
     }
