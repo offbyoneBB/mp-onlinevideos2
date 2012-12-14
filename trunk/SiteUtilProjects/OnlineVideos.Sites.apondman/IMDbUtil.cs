@@ -210,10 +210,10 @@ namespace OnlineVideos.Sites.Pondman
                     titles = IMDbAPI.GetTrailersTopHD(apiSession);
                     break;
                 case "3":
-                    titles = IMDbAPI.GetTrailersRecent(apiSession);
+                    titles = IMDbAPI.GetTrailersRecent(apiSession, 0);
                     break;
                 case "4":
-                    titles = IMDbAPI.GetTrailersPopular(apiSession);
+                    titles = IMDbAPI.GetTrailersPopular(apiSession, 0);
                     break;
                 case "5":
                     titles = IMDbAPI.GetPopularTV(apiSession);
