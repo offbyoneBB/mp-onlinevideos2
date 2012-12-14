@@ -6,7 +6,6 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 {
     using HtmlAgilityPack;
     using Newtonsoft.Json;
-    using OnlineVideos.Sites.Pondman.IMDb.Json;
 
     /// <summary>
     /// IMDb Title
@@ -87,6 +86,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
         #region Protected methods
 
+        /*
         protected virtual NameReference GetName(IMDbName dto)
         {
             NameReference name = new NameReference();
@@ -95,11 +95,12 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
             return name;
         }
-
+        */
         #endregion
 
         #region Internal methods
 
+        /*
         internal virtual void FillFrom(IMDbTitleDetails dto)
         {
             FillFrom(dto as IMDbTitle);
@@ -190,6 +191,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
                 this.Trailer = trailer;
             }
         }
+        */
 
         #endregion
 

@@ -5,8 +5,6 @@ using System.Text;
 
 namespace OnlineVideos.Sites.Pondman.IMDb.Model
 {
-    using OnlineVideos.Sites.Pondman.IMDb.Json;
-    
     public class NameReference : Reference
     {
         /// <summary>
@@ -28,7 +26,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
         public virtual string Image { get; internal set; }
 
         #region Fill from JSON object
-
+        /*
         internal void FillFrom(IMDbPrincipal dto)
         {
             ID = dto.NConst;
@@ -47,7 +45,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             FillFrom(dto as IMDbName);
             KnownFor = dto.KnownFor;
         }
-
+        */
         #endregion
     }
 }

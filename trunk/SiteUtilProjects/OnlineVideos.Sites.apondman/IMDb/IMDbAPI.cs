@@ -9,10 +9,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
     using HtmlAgilityPack;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
-    using OnlineVideos.Sites.Pondman.IMDb.Json;
     using OnlineVideos.Sites.Pondman.IMDb.Model;
     using System.Web;
-    using System.Globalization;    
+    using System.Globalization;
+    using OnlineVideos.Sites.apondman.IMDb.DTO;
+    using OnlineVideos.Sites.Pondman.IMDb.Json;    
 
     public static class IMDbAPI
     {
@@ -326,10 +327,15 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 {
                     foreach (HtmlNode node in nodes)
                     {
-                        HtmlNode v = node.FirstChild.SelectSingleNode("a/img[@class='video']");
+                        HtmlNode v = node.FirstChild.SelectSingleNode("a/img");
+
+                        if (v == null)
+                        {
+                            continue;
+                        }
 
                         // the src is url encode twice so we decode it twice before parsing
-                        string src = HttpUtility.UrlDecode(HttpUtility.UrlDecode(v.Attributes["src"].Value));
+                        string src = HttpUtility.UrlDecode(HttpUtility.UrlDecode(v.Attributes["loadlate"].Value));
                         Match m = videoTitleExpression.Match(src);
                         if (!m.Success) 
                         {
@@ -614,7 +620,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// <returns></returns>
         public static List<TitleReference> GetTrailersTopHD(Session session)
         {
-            return GetTrailers(session, session.Settings.TrailersTopHD);
+            return GetTrailers(session, session.Settings.TrailersTopHD, 0);
         }
 
         /// <summary>
@@ -622,9 +628,9 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// </summary>
         /// <param name="session"></param>
         /// <returns></returns>
-        public static List<TitleReference> GetTrailersRecent(Session session)
+        public static List<TitleReference> GetTrailersRecent(Session session, int page)
         {
-            return GetTrailers(session, session.Settings.TrailersRecent);
+            return GetTrailers(session, session.Settings.TrailersRecent, page);
         }
 
         /// <summary>
@@ -632,9 +638,9 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// </summary>
         /// <param name="session"></param>
         /// <returns></returns>
-        public static List<TitleReference> GetTrailersPopular(Session session)
+        public static List<TitleReference> GetTrailersPopular(Session session, int page)
         {
-            return GetTrailers(session, session.Settings.TrailersPopular);
+            return GetTrailers(session, session.Settings.TrailersPopular, page);
         }
 
         /// <summary>
@@ -701,6 +707,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
         // todo: not used because we don't own legit api key, move into seperate class / interface
 
+        /*
         /// <summary>
         /// Searches for titles and names matching the given keywords.
         /// </summary>
@@ -911,7 +918,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
             return titles;
         }
-
+        */
         #endregion
 
         #region internal methods
@@ -981,37 +988,31 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// <param name="session"></param>
         /// <param name="path">path to JSON feed</param>
         /// <returns>a collection of titles</returns>
-        internal static List<TitleReference> GetTrailers(Session session, string uri)
+        internal static List<TitleReference> GetTrailers(Session session, string uri, int token)
         {
+            string url = (token > 0) ? uri + "&token=" + token : uri;
+            
             List<TitleReference> titles = new List<TitleReference>();
-            string response = session.MakeRequest(uri);
-            JObject parsedResults = JObject.Parse(response);
+            string response = session.MakeRequest(url);
+            //JObject parsedResults = JObject.Parse(response);
 
-            IMDbTrailer[] trailerList = JsonConvert.DeserializeObject<IMDbTrailer[]>(parsedResults["videos"].ToString());
+            
+            var imdbResponse = JsonConvert.DeserializeObject<OnlineVideos.Sites.apondman.IMDb.DTO.IMDbResponse>(response);
 
             HashSet<string> duplicateFilter = new HashSet<string>();
-            foreach (IMDbTrailer item in trailerList)
+            foreach (var item in imdbResponse.model.items)
             {
-                if (duplicateFilter.Contains(item.TitleID))
+                var titleId = item.display.titleId;
+                if (duplicateFilter.Contains(titleId))
                 {
                     continue;
                 }
 
-                duplicateFilter.Add(item.TitleID);
+                duplicateFilter.Add(titleId);
                 
                 TitleReference title = new TitleReference();
                 title.session = session;
                 title.FillFrom(item);
-
-                Match match = trailerDataExpression.Match(item.PopupHTML);
-                if (match.Success)
-                {
-                    int year = int.MinValue;
-                    if (int.TryParse(match.Groups["year"].Value, out year))
-                    {
-                        title.Year = year;
-                    }
-                }
 
                 titles.Add(title);
             }
