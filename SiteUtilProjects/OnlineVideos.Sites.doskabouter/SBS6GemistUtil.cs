@@ -20,7 +20,7 @@ namespace OnlineVideos.Sites
                 {
                     cat.Name = m.Groups["title"].Value.Trim();
                     data = m.Groups["data"].Value;
-                    cat.Other = Parse(null, data);
+                    cat.Other = Parse(baseUrl, data);
                     cat.HasSubCategories = false;
                     dynamicCategories.Add(cat);
                 }
