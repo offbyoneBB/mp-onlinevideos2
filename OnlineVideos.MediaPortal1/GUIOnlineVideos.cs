@@ -2955,6 +2955,7 @@ namespace OnlineVideos.MediaPortal1
                     HideFilterButtons();
                     HideSearchButtons();
                     HideAndDisable(GUI_btnEnterPin.GetID);
+					GUIPropertyManager.SetProperty("#itemcount", (GUI_infoList.Count-1).ToString());
                     break;
             }
             GUIWindowManager.Process(); // required for the next statement to work correctly, so the skinengine has correct state for visibility and focus
