@@ -56,13 +56,13 @@ namespace OnlineVideos.Sites
             if (nextPageAvailable)
                 nextPageUrl = String.Format("{0}&{1}&view=pages&controller=&limitstart={2}&limit=",
                 category.ParentCategory.Other as String, category.Other as String, m.Groups["limitstart"].Value);
-            return Parse(null, data);
+            return Parse(baseUrl, data);
         }
 
         public override List<VideoInfo> getNextPageVideos()
         {
             string data = GetWebDataFromPost(baseUrl, nextPageUrl);
-            return Parse(null, data);
+            return Parse(baseUrl, data);
         }
     }
 }
