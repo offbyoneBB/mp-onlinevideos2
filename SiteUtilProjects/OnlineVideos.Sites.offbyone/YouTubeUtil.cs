@@ -30,7 +30,7 @@ namespace OnlineVideos.Sites
                 properties.Add("Uploader", YouTubeEntry.Uploader.Value.ToString());
                 if (YouTubeEntry.Rating != null)
                 {
-                    properties.Add("Rating", YouTubeEntry.Rating.Average.ToString("F1", OnlineVideoSettings.Instance.Locale));
+                    properties.Add("Rating", (YouTubeEntry.Rating.Average * 2).ToString("F1", OnlineVideoSettings.Instance.Locale));
                     properties.Add("NumRaters", YouTubeEntry.Rating.NumRaters.ToString("N0", OnlineVideoSettings.Instance.Locale));
                 }
                 if (YouTubeEntry.Statistics != null)
