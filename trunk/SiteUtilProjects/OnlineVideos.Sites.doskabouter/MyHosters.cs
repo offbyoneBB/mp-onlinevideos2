@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Threading;
 using System.Xml;
+using System.Linq;
 using Newtonsoft.Json;
 using OnlineVideos.MPUrlSourceFilter;
 
@@ -22,6 +23,14 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
+            var result = getPlaybackOptions(url);
+            if (result != null && result.Count > 0) return result.Last().Value;
+            else return String.Empty;
+        }
+
+        public override Dictionary<string, string> getPlaybackOptions(string url)
+        {
+            Dictionary<string, string> res = new Dictionary<string, string>();
             string s = HttpUtility.UrlDecode(SiteUtilBase.GetRedirectedUrl(url));
             int p = s.IndexOf("file=");
             if (p > -1)
@@ -33,13 +42,23 @@ namespace OnlineVideos.Hoster
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(rss);
                 var urlAttribute = xmlDoc.SelectSingleNode("//enclosure/@url");
-                if (urlAttribute != null) return urlAttribute.Value;
-                else return "";
+                if (urlAttribute != null) res.Add("video", urlAttribute.Value);
             }
             else
             {
-                return s;
+
+                string webData = SiteUtilBase.GetWebData(url);
+
+                Match matchFileUrl = Regex.Match(webData, @"data-blip(?<n0>[^=]*)=""(?<m0>[^""]*)""");
+                while (matchFileUrl.Success)
+                {
+                    string foundUrl = matchFileUrl.Groups["m0"].Value;
+                    res.Add(matchFileUrl.Groups["n0"].Value, foundUrl);
+                    matchFileUrl = matchFileUrl.NextMatch();
+                }
             }
+
+            return res;
         }
     }
 
