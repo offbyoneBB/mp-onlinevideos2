@@ -508,6 +508,7 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPackets(CMediaPacketColl
             {
               // stream is protected, unsupported
               this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, L"stream is protected, unsupported");
+              result = ParseResult_DrmProtected;
             }
           }
           else if (manifest->IsXml() && (manifest->GetParseError() != 0))
