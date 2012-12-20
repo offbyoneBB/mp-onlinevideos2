@@ -286,8 +286,6 @@ namespace OnlineVideos.MediaPortal1
 
         protected override void OnPageLoad()
         {
-            GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
-
             base.OnPageLoad(); // let animations run
 
             if (initializationBackgroundWorker.IsBusy)
@@ -2888,8 +2886,8 @@ namespace OnlineVideos.MediaPortal1
             switch (CurrentState)
             {
                 case State.groups:
-                    GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
-                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite("OnlineVideos"));
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", PluginConfiguration.Instance.BasicHomeScreenName);
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", GetImageForSite("OnlineVideos"));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     HideSearchButtons();
@@ -2902,8 +2900,8 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#itemtype", Translation.Instance.Groups);
                     break;
                 case State.sites:
-                    GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName + (selectedSitesGroup != null ? ": " + selectedSitesGroup.Label : ""));
-                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite("OnlineVideos"));
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", PluginConfiguration.Instance.BasicHomeScreenName + (selectedSitesGroup != null ? ": " + selectedSitesGroup.Label : ""));
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", GetImageForSite("OnlineVideos"));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     ShowOrderButtons();
@@ -2918,8 +2916,8 @@ namespace OnlineVideos.MediaPortal1
                     break;
                 case State.categories:
                     string cat_headerlabel = selectedCategory != null ? selectedCategory.RecursiveName() : SelectedSite.Settings.Name;
-                    GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
-                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", cat_headerlabel);
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
@@ -2931,14 +2929,14 @@ namespace OnlineVideos.MediaPortal1
                 case State.videos:
                     switch (currentVideosDisplayMode)
                     {
-                        case VideosMode.Search: GUIPropertyManager.SetProperty("#header.label", Translation.Instance.SearchResults + " [" + lastSearchQuery + "]"); break;
+						case VideosMode.Search: GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", Translation.Instance.SearchResults + " [" + lastSearchQuery + "]"); break;
                         default:
                             {
                                 string proposedLabel = SelectedSite.getCurrentVideosTitle();
-                                GUIPropertyManager.SetProperty("#header.label", proposedLabel != null ? proposedLabel : selectedCategory != null ? selectedCategory.RecursiveName() : ""); break;
+								GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", proposedLabel != null ? proposedLabel : selectedCategory != null ? selectedCategory.RecursiveName() : ""); break;
                             }
                     }
-                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
                     ShowAndEnable(GUI_facadeView.GetID);
                     if (SelectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
                     if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
@@ -2949,8 +2947,8 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#itemtype", Translation.Instance.Videos);
                     break;
                 case State.details:
-                    GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
-                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", selectedVideo.Title);
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImagee", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
                     HideAndDisable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     HideSearchButtons();

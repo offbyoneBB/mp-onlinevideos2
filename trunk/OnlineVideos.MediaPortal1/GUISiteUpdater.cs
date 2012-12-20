@@ -88,9 +88,9 @@ namespace OnlineVideos.MediaPortal1
             }
             SetFilterButtonOptions();
 
-            GUIPropertyManager.SetProperty("#header.label",
+			GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel",
 										   PluginConfiguration.Instance.BasicHomeScreenName + ": " + Translation.Instance.ManageSites);
-            GUIPropertyManager.SetProperty("#header.image",
+			GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage",
                                            GUIOnlineVideos.GetImageForSite("OnlineVideos"));
 
             GUIOnlineVideos ovGuiInstance = (GUIOnlineVideos)GUIWindowManager.GetWindow(GUIOnlineVideos.WindowId);
