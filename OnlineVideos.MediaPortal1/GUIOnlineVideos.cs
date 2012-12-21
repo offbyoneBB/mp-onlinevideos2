@@ -120,13 +120,8 @@ namespace OnlineVideos.MediaPortal1
         #region state variables
 
         #region Facade ViewModes
-#if MP11
-        protected GUIFacadeControl.ViewMode currentView = GUIFacadeControl.ViewMode.List;
-        protected GUIFacadeControl.ViewMode? suggestedView;
-#else
         protected GUIFacadeControl.Layout currentView = GUIFacadeControl.Layout.List;
         protected GUIFacadeControl.Layout? suggestedView;
-#endif
         #endregion
         #region CurrentState
         State currentState = State.sites;
@@ -691,11 +686,7 @@ namespace OnlineVideos.MediaPortal1
                     }
                     break;
                 case Action.ActionType.ACTION_KEY_PRESSED:
-#if MP11
-                    if (GUI_facadeView.CurrentView.Visible && GUI_facadeView.Focus)
-#else
                     if (GUI_facadeView.LayoutControl.Visible && GUI_facadeView.Focus)
-#endif
                     {
                         // search items (starting from current selected) by title and select first found one
                         char pressedChar = (char)action.m_key.KeyChar;
@@ -1492,11 +1483,7 @@ namespace OnlineVideos.MediaPortal1
                 }
 
                 if (imageHash.Count > 0) ImageDownloader.GetImages<Category>(categories);
-#if MP11
-                if ((GUI_facadeView.Count > 1 && imageHash.Count == 0) || (GUI_facadeView.Count > 2 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.ViewMode.List;
-#else
                 if ((GUI_facadeView.Count > 1 && imageHash.Count == 0) || (GUI_facadeView.Count > 2 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.Layout.List;
-#endif
                 // only set selected index when not doing an automatic dive up (MediaPortal would set the old selected index asynchroneously)
                 if (!(categories.Count == 1 && diveDownOrUpIfSingle == false)) GUI_facadeView.SelectedListItemIndex = categoryIndexToSelect;
             }
@@ -1892,11 +1879,7 @@ namespace OnlineVideos.MediaPortal1
             }
             // fall back to list view if there are no items with thumbs or more than one item and all have the same thumb
             suggestedView = null;
-#if MP11
-            if ((GUI_facadeView.Count > 1 && imageHash.Count == 0) || (GUI_facadeView.Count > 2 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.ViewMode.List;
-#else
             if ((GUI_facadeView.Count > 1 && imageHash.Count == 0) || (GUI_facadeView.Count > 2 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.Layout.List;
-#endif
 
             if (SelectedSite.HasNextPage)
             {
@@ -2058,9 +2041,6 @@ namespace OnlineVideos.MediaPortal1
             VirtualKeyboard keyBoard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
             if (keyBoard == null) return false;
             keyBoard.Reset();
-#if MP11
-            keyBoard.IsSearchKeyboard = true;
-#endif
             keyBoard.Text = sString;
             keyBoard.Password = password;
             keyBoard.DoModal(GUIWindowManager.ActiveWindow); // show it...
@@ -3063,21 +3043,12 @@ namespace OnlineVideos.MediaPortal1
         {
             switch (currentView)
             {
-#if MP11
-                case GUIFacadeControl.ViewMode.List:
-                    currentView = GUIFacadeControl.ViewMode.SmallIcons; break;
-                case GUIFacadeControl.ViewMode.SmallIcons:
-                    currentView = GUIFacadeControl.ViewMode.LargeIcons; break;
-                case GUIFacadeControl.ViewMode.LargeIcons:
-                    currentView = GUIFacadeControl.ViewMode.List; break;
-#else
                 case GUIFacadeControl.Layout.List:
                     currentView = GUIFacadeControl.Layout.SmallIcons; break;
                 case GUIFacadeControl.Layout.SmallIcons:
                     currentView = GUIFacadeControl.Layout.LargeIcons; break;
                 case GUIFacadeControl.Layout.LargeIcons:
                     currentView = GUIFacadeControl.Layout.List; break;
-#endif
             }
             switch (CurrentState)
             {
@@ -3096,17 +3067,6 @@ namespace OnlineVideos.MediaPortal1
             string strLine = String.Empty;
             switch (currentView)
             {
-#if MP11
-                case GUIFacadeControl.ViewMode.List:
-                    strLine = Translation.LayoutList;
-                    break;
-                case GUIFacadeControl.ViewMode.SmallIcons:
-                    strLine = Translation.LayoutIcons;
-                    break;
-                case GUIFacadeControl.ViewMode.LargeIcons:
-                    strLine = Translation.LayoutBigIcons;
-                    break;
-#else
                 case GUIFacadeControl.Layout.List:
                     strLine = Translation.Instance.LayoutList;
                     break;
@@ -3116,7 +3076,6 @@ namespace OnlineVideos.MediaPortal1
                 case GUIFacadeControl.Layout.LargeIcons:
                     strLine = Translation.Instance.LayoutBigIcons;
                     break;
-#endif
             }
             GUIControl.SetControlLabel(GetID, GUI_btnViewAs.GetID, strLine);
 
@@ -3131,11 +3090,7 @@ namespace OnlineVideos.MediaPortal1
 
             // keep track of the currently selected item (is lost when switching view)
             int rememberIndex = GUI_facadeView.SelectedListItemIndex;
-#if MP11
-            GUI_facadeView.View = currentView; // explicitly set the view (fixes bug that facadeView.list isn't working at startup
-#else
             GUI_facadeView.CurrentLayout = currentView; // explicitly set the view (fixes bug that facadeView.list isn't working at startup
-#endif
             if (rememberIndex > -1) GUIControl.SelectItemControl(GetID, GUI_facadeView.GetID, rememberIndex);
         }
 
