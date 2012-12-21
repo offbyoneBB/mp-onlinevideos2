@@ -59,11 +59,7 @@ namespace ExternalOSDLibrary
     /// <summary>
     /// List of all elements of the window
     /// </summary>
-#if MP11
-    protected UIElementCollection _controlList;
-#else
     protected GUIControlCollection _controlList;
-#endif
     #endregion
 
     #region protected methods
