@@ -2041,6 +2041,7 @@ namespace OnlineVideos.MediaPortal1
             VirtualKeyboard keyBoard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
             if (keyBoard == null) return false;
             keyBoard.Reset();
+			keyBoard.SetLabelAsInitialText(false); // set to false, otherwise our intial text is cleared
             keyBoard.Text = sString;
             keyBoard.Password = password;
             keyBoard.DoModal(GUIWindowManager.ActiveWindow); // show it...
