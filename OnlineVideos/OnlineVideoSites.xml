@@ -1314,6 +1314,11 @@
         <item key="baseUrl"><![CDATA[http://ondemand.tv3.co.nz/tabid/56/default.aspx]]></item>
       </Configuration>
     </Site>
+    <Site name="TVNPlayer" util="TVNPlayer" agecheck="false" enabled="true" lang="pl">
+      <Description>Oglądaj online najlepsze programy, seriale i filmy. Tylko u nas, jeszcze przed premierą w telewizji, obejrzysz serialowe nowości z oferty TVN. Przegapiłeś swój ulubiony program na antenie TVN, TVN Style czy TVN Turbo? W tvn player nie zabraknie najpopularniejszych programów i show z kanałów tematycznych tvn.</Description>
+      <Configuration>
+      </Configuration>
+    </Site>
     <Site name="Uitzending Gemist" util="UitzendingGemist" agecheck="false" enabled="true" lang="nl">
       <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
       <Configuration>
