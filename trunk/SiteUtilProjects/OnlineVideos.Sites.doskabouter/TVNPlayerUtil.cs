@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Xml;
-using System.Text;
 
 namespace OnlineVideos.Sites
 {
@@ -116,7 +115,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            videoPageNr = 1;
+            videoPageNr = 0;
             return Parse(((RssLink)category).Url, null);
         }
 
