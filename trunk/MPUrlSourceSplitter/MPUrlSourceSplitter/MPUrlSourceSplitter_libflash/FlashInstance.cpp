@@ -248,7 +248,7 @@ DWORD WINAPI CFlashInstance::FlashWorker(LPVOID lpParam)
       {
         flashWindow = new CFlashWindow(caller->swfFilePath);
         caller->initializeResult = flashWindow->Create(ShockwaveFlashObjects::CLSID_ShockwaveFlash,
-          WS_EX_LAYERED, WS_POPUP | WS_CLIPSIBLINGS,
+          WS_EX_LAYERED | WS_EX_NOACTIVATE, WS_POPUP | WS_CLIPSIBLINGS,
           NULL, NULL, className);
       }
       caller->initializeRequest = false;
