@@ -192,7 +192,7 @@ namespace OnlineVideos.Sites
                             string[] airdates = m.Groups["airdates"].Value.Replace(",", "||").Split(new[] { @"||" }, StringSplitOptions.RemoveEmptyEntries);
 
                             regEx_VideoList = regex_ShowVideoList;
-                            List<VideoInfo> videoList = Parse(null, m.Groups["urls"].Value);
+                            List<VideoInfo> videoList = Parse(baseUrl, m.Groups["urls"].Value);
 
                             for (int i = 0; i < videoList.Count && i + 1 < airdates.Length; i++)
                             {
