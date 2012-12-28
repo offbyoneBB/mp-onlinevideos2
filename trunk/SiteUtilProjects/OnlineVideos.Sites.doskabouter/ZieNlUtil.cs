@@ -89,7 +89,7 @@ namespace OnlineVideos.Sites
                 sb.AppendFormat(@"&transport[page]={0}", pageNr);
             nextPageUrl = sb.ToString();
             nextPageAvailable = true;
-            return base.Parse(null, content);
+            return base.Parse(baseUrl, content);
         }
 
         public override List<VideoInfo> getVideoList(Category category)
