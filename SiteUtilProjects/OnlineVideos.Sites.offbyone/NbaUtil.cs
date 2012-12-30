@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
         int itemsPerPage = 15;
 
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse logos from a html page for NBA teams. Groups need to be named 'logo' and 'teamname'.")]
-        string logosRegEx = @"<div\sclass=""thumbHolder"">\s*<a\shref='team.php[^']+'[^>]+><img\sclass='thumb'\ssrc='(?<logo>[^']+)'[^>]+></a><br\s/><a[^>]+>(?<teamname>[^<]+)</a>";
+        string logosRegEx = @"<li>\s*<a[^>]*>\s*<img\s+src=""(?<logo>[^""]+)"">\s*(?<teamname>[^<]*?)\s*</a>.*?</li>";
         [Category("OnlineVideosConfiguration"), Description("Url for a page that has links to all logos of the NBA teams")]
         string logosPage = "http://www.sportslogos.net/league.php?id=6";
         
@@ -37,7 +37,7 @@ namespace OnlineVideos.Sites
             Dictionary<string, string> teamLogos = GetTeamLogoUrls();
 
             string js = GetWebData("http://i.cdn.turner.com/nba/nba/z/.e/js/pkg/video/901.js");
-            string json = Regex.Match(js, @"var\snbaChannelConfig=(?<json>.+)").Groups["json"].Value;
+            string json = Regex.Match(js, @"var\snbaChannelConfig=(?<json>[^\;]+)").Groups["json"].Value;
 
             List<Category> categories = new List<Category>();
             foreach (var jsonToken in Newtonsoft.Json.Linq.JObject.Parse(json))
@@ -63,7 +63,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getVideoList(Category category)
         {
             currentPage = 1; pagesInCategory = 1; sectionBaseUrl = ((RssLink)category).Url; // reset next/prev fields
-            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=1&npp=" + itemsPerPage + "&" + ((RssLink)category).Url + "&season=1112&sort=recent");
+            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=1&npp=" + itemsPerPage + "&" + ((RssLink)category).Url + "&season=1213&sort=recent");
         }
 
         List<VideoInfo> getVideoList(string inUrl)
@@ -175,24 +175,12 @@ namespace OnlineVideos.Sites
         {
             get { return currentPage < pagesInCategory; }
         }
-                
-        public override bool HasPreviousPage
-        {
-            get { return currentPage > 1; }
-        }
 
         public override List<VideoInfo> getNextPageVideos()
         {
             currentPage++;
             int start = ((currentPage - 1) * itemsPerPage) + 1;
-            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + start.ToString() + "&npp=" + itemsPerPage + "&" + sectionBaseUrl + "&season=1112&sort=recent");
-        }
-
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            currentPage--;
-            int start = ((currentPage - 1) * itemsPerPage) + 1;
-            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + start.ToString() + "&npp=" + itemsPerPage + "&" + sectionBaseUrl + "&season=1112&sort=recent");
+            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + start.ToString() + "&npp=" + itemsPerPage + "&" + sectionBaseUrl + "&season=1213&sort=recent");
         }
 
         #endregion
