@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
+using System.Linq;
 using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
@@ -11,22 +11,9 @@ namespace OnlineVideos.Sites
 	/// </summary>
 	public class MsnbcUtil: SiteUtilBase
 	{
-        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the video id from an html page.")]
-        string idRegEx = @"(\[{""videos"":\[{""launch"":(?<id>\d+))|(<param\s+name=""FlashVars""\s+value=""launch=(?<id>\d+))";
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the video url of an item that was found in the rss.")]
         string videoUrlFormatString = "http://www.msnbc.msn.com/default.cdnx/id/{0}/displaymode/1157/?t=.flv";
         
-        //"http://www.msnbc.msn.com/id/{0}/displaymode/1157/?t=.flv";
-
-        Regex regEx_Id;
-
-        public override void Initialize(SiteSettings siteSettings)
-        {
-            base.Initialize(siteSettings);
-
-            regEx_Id = new Regex(idRegEx, RegexOptions.Compiled);
-        }
-
 		public override string getUrl(OnlineVideos.VideoInfo video)
 		{
             if (video.VideoUrl.Contains("/vp/"))
@@ -35,12 +22,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                string data = GetWebData(video.VideoUrl);
-                Match m = regEx_Id.Match(data);
-                if (m.Success)
-                    return String.Format(videoUrlFormatString, m.Groups["id"].Value);
-                else
-                    return "";
+                return String.Format(videoUrlFormatString, new Uri(video.VideoUrl).Segments.Last().Trim('/'));
             }
 		}
 
