@@ -1729,7 +1729,7 @@
         <item key="videoListRegEx"><![CDATA[<div\sid="video_i\d+"[^>]*>\s*
 <a\shref="(?<VideoUrl>[^"]+)">\s*
 <img\s(?:(?!\ssrc).)*\ssrc="(?<ImageUrl>[^"]+)".*?/></a>\s*
-<h2><a\shref="[^"]*"\stitle="(?<Title>[^"]+)">\s*
+.*?<a\shref="[^"]*"\stitle="(?<Title>[^"]+)">\s*
 (?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\sclass="button-pag[^"]*"><a\shref="(?<url>[^"]+)">NEXT]]></item>
         <item key="playlistUrlRegEx"><![CDATA[var\s+hash\s*=\s*"(?<hash>[^"]+)"\s*;\s*var\s*videoId\s*=\s*(?<id>[^;]+);]]></item>
