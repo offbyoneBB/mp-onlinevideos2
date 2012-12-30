@@ -3,8 +3,6 @@
   <id>4755</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <define>#header.label</define>
-  <define>#header.image</define>
   <define>#useSelectedFanart:Yes</define>
   <controls>
     
@@ -49,7 +47,7 @@
       <posY>12</posY>
       <width>210</width>
       <height>70</height>
-      <texture>#header.image</texture>
+      <texture>#OnlineVideos.HeaderImage</texture>
     </control>
     <control>
       <type>fadelabel</type>
@@ -57,7 +55,7 @@
       <posX>300</posX>
       <posY>30</posY>
       <width>820</width>
-      <label>#header.label</label>
+      <label>#OnlineVideos.HeaderLabel</label>
       <font>font14</font>
       <textcolor>White</textcolor>
     </control>
