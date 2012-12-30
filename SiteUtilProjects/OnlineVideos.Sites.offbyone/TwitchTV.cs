@@ -9,7 +9,7 @@ namespace OnlineVideos.Sites
 	/// <summary>
 	/// Twitch API docs can be found here: https://github.com/justintv/Twitch-API
 	/// </summary>
-	public class TwitchTV : SiteUtilBase
+    public class TwitchTVUtil : SiteUtilBase
 	{
 		string baseApiUrl = "https://api.twitch.tv/kraken";
 		string gamesUrl = "/games/top?limit=100";
