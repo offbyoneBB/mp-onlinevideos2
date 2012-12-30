@@ -168,9 +168,9 @@ namespace OnlineVideos.Sites
                 var htmlDoc = new HtmlAgilityPack.HtmlDocument();
                 htmlDoc.LoadHtml(data);
                 parentCategory.SubCategories = new List<Category>();
-                if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("alfabetisk"))
+                if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("program"))
                 {
-                    var divs = htmlDoc.DocumentNode.SelectNodes("//div[@class = 'playLetter']");
+                    var divs = htmlDoc.DocumentNode.SelectNodes("//div[@class = 'playAlphabeticLetter']");
                     if (divs != null)
                     {
                         foreach (var div in divs)
@@ -183,7 +183,7 @@ namespace OnlineVideos.Sites
                                 SubCategoriesDiscovered = true,
                                 SubCategories = new List<Category>()
                             };
-                            var li_a_s = div.Element("ul").Descendants("li").Select(li => li.FirstChild);
+                            var li_a_s = div.Element("ul").Descendants("li").Select(li => li.Element("a"));
                             if (li_a_s != null)
                             {
                                 foreach (var a in li_a_s)

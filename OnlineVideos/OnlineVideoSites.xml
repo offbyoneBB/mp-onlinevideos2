@@ -1012,8 +1012,8 @@
     <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sv">
       <Description>Se dina favoritprogram när du vill i SVT Play - fri television på nätet.</Description>
       <Categories>
-        <Category xsi:type="RssLink" name="Program A-Ö">http://svtplay.se/alfabetisk</Category>
-        <Category xsi:type="RssLink" name="Kategorier">http://svtplay.se/kategorier</Category>
+        <Category xsi:type="RssLink" name="Program A-Ö">http://www.svtplay.se/program</Category>
+        <Category xsi:type="RssLink" name="Kategorier">http://www.svtplay.se/kategorier</Category>
       </Categories>
     </Site>
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
