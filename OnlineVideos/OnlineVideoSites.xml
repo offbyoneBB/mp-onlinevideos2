@@ -1022,18 +1022,7 @@
     <Site name="TV4Play" util="TV4Play" agecheck="false" enabled="true" lang="sv">
       <Description>Videos from Swedish TV4 Play online offer.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.tv4play.se/]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="[^"\s]*">\s+<a\shref="(?<url>[^"]+)">(?<title>[^<]+)</a>\s*</li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(<a\s+href="/program_format_searches\?ids=(?<ids>[^"&]+)[^"]*">Alla</a>)|(<input\s+id="ids"\s+name="ids"\s+type="hidden"\s+value="(?<ids>[^"]*)".*?/>)]]></item>
-        <item key="dynamicSubCategoriesRegEx2"><![CDATA[<li\s+class="[^>]*>\s*<p[^>]*>\s*<a\s+href="(?<url>[^"]*)">\s*<img\s+alt="[^"]*"\s+height="[^"]*"\s+src="(?<thumb>[^"]*)"\s+width="[^"]*"\s*/>\s*</a>\s*</p>\s*<div[^>]*>\s*<h3[^>]*>\s*<a[^>]*>(?<title>[^<]+)</a>\s*</h3>\s*<p[^>]*>\s*(?<desc>[^<]+)</p>]]></item>
-        <item key="videoListRegEx"><![CDATA[<li\sclass="video-panel[^"]*">\s*
-<p[^>]*>\s*
-<a\shref="[^"]+=(?<url>\d+)">\s*
-<img\s+alt="(?<title>[^"]+)"\s+height="[^"]*"\s+src="(?<thumb>[^"]+)".*?/>\s*
-</a>\s*</p>
-(?:(?!<p\sclass="date").)*<p\sclass="date">(?<date>[^<]+)</p>
-(?:(?!<p\sclass='video-description'>).)*<p\sclass='video-description'>(?<Description>.*?)</p>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\s+href="(?<url>/search\?categoryids=[^"]+)"[^>]*>Visa\sfler</a>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.tv4play.se/program]]></item>
       </Configuration>
     </Site>
     <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true" lang="--">

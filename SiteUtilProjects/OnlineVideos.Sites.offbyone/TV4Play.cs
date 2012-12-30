@@ -2,28 +2,88 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 
 namespace OnlineVideos.Sites
 {
-	public class TV4Play : GenericSiteUtil
+    public class TV4Play : SiteUtilBase
 	{
-		protected string tv4VideolistDividingRegEx = @"<div\sclass=""module-center-wrapper"">.*?<h2[^>]*>.*?{0}.*?</h2>(?<data>.*?)</section>";
-		
-		[Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for dynamic categories. Group names: 'url', 'title', 'thumb', 'description'. Will be used on the web pages resulting from the links from the dynamicCategoriesRegEx. Will not be used if not set.")]
-		protected string dynamicSubCategoriesRegEx2;
+        [Category("OnlineVideosConfiguration"), Description("Url used for prepending relative links.")]
+        protected string baseUrl;
 
-		Regex regEx_dynamicSubCategories2;
+        protected string playbackMetadataUrl = "http://prima.tv4play.se/api/web/asset/{0}/play";
+        protected string playbackSwfUrl = "http://www.tv4play.se/flash/tv4play_sa.swf";
 
-		public override void Initialize(SiteSettings siteSettings)
-		{
-			base.Initialize(siteSettings);
+        protected string nextPageUrl = "";
 
-			if (!string.IsNullOrEmpty(dynamicSubCategoriesRegEx2)) regEx_dynamicSubCategories2 = new Regex(dynamicSubCategoriesRegEx2, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
-		}
+        public override int DiscoverDynamicCategories()
+        {
+            var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+            htmlDoc.LoadHtml(GetWebData(baseUrl));
+            var ul = htmlDoc.DocumentNode.SelectSingleNode("//ul[@id = 'program-categories']");
+            Settings.Categories.Clear();
+            foreach (var li in ul.Elements("li"))
+            {
+                var a = li.Element("a");
+                RssLink category = new RssLink()
+                {
+                    Name = HttpUtility.HtmlDecode(a.InnerText),
+                    Url = GetUrlForCategory(a.GetAttributeValue("href", "")),
+                    SubCategories = new List<Category>(),
+                    HasSubCategories = true
+                };
+                // do not use subcategories as there are only very few or zero items below each
+                /*var innerUl = li.Element("ul");
+                if (innerUl != null)
+                {
+                    foreach (var innerLi in innerUl.Elements("li"))
+                    {
+                        var innerA = innerLi.Element("a");
+                        category.SubCategories.Add(new RssLink()
+                        {
+                            Name = HttpUtility.HtmlDecode(innerA.InnerText),
+                            Url = GetUrlForCategory(innerA.GetAttributeValue("href", "")),
+                            ParentCategory = category,
+                            SubCategories = new List<Category>(),
+                            HasSubCategories = true
+                        });
+                    }
+                    category.SubCategoriesDiscovered = true;
+                    category.EstimatedVideoCount = (uint)category.SubCategories.Count;
+                }*/
+                Settings.Categories.Add(category);
+            }
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
+        }
+
+        string GetUrlForCategory(string category)
+        {
+            category = HttpUtility.HtmlDecode(category);
+            Uri uri = null;
+            if (!Uri.IsWellFormedUriString(category, UriKind.Absolute))
+            {
+                // workaround for .net bug when combining uri with a query only
+                if (category.StartsWith("?"))
+                {
+                    uri = new UriBuilder(baseUrl) { Query = category.Substring(1) }.Uri;
+                }
+                else
+                {
+                    if (Uri.TryCreate(new Uri(baseUrl), category, out uri))
+                    {
+                        category = uri.ToString();
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
+                }
+            }
+            // use : &is_geo_restricted=false to hide geoblocked
+            return uri.ToString() + (string.IsNullOrEmpty(uri.Query) ? "?" : "&") + "page=100&is_premium=false&content-type=senaste";
+        }
 
 		public override int DiscoverSubCategories(Category parentCategory)
 		{
@@ -31,76 +91,30 @@ namespace OnlineVideos.Sites
 			parentCategory.SubCategories = new List<Category>();
 			if (!string.IsNullOrEmpty(data))
 			{
-				if (parentCategory.ParentCategory == null)
-				{
-					string jsonUrl = "http://www.tv4play.se/program_format_searches.json?ids=";
-					bool found = false;
-					Match m = regEx_dynamicSubCategories.Match(data);
-					if (m.Success)
-					{
-						found = true;
-						jsonUrl += System.Web.HttpUtility.UrlDecode(m.Groups["ids"].Value) + "&rows=120";
-					}
-					if (found)
-					{
-						var json = Newtonsoft.Json.Linq.JArray.Parse(GetWebData(jsonUrl));
-						if (json != null)
-						{
-							foreach (var result in json)
-							{
-								RssLink cat = new RssLink();
-								cat.Url = result.Value<string>("url_category") + "/" + result.Value<string>("url_name");
-								if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
-								cat.Name = result.Value<string>("name");
-								cat.Thumb = result.Value<string>("image");
-								cat.Description = result.Value<string>("text");
-								cat.HasSubCategories = true;
-								parentCategory.SubCategories.Add(cat);
-								cat.ParentCategory = parentCategory;
-							}
-						}
-					}
-					else
-					{
-						Match m2 = regEx_dynamicSubCategories2.Match(data);
-						while (m2.Success)
-						{
-							RssLink cat = new RssLink();
-							cat.Url = m2.Groups["url"].Value;
-							if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
-							cat.Name = HttpUtility.HtmlDecode(m2.Groups["title"].Value.Trim().Replace('\n', ' '));
-							cat.Thumb = m2.Groups["thumb"].Value;
-							cat.Description = HttpUtility.HtmlDecode(m2.Groups["desc"].Value.Trim());
-							cat.HasSubCategories = true;
-							parentCategory.SubCategories.Add(cat);
-							cat.ParentCategory = parentCategory;
-							m2 = m2.NextMatch();
-						}
-					}
-				}
-				else
-				{
-					Match m3 = Regex.Match(data, @"<h2[^>]*><span>(?<title>[^<]+)</span></h2>");
-					while (m3.Success)
-					{
-						parentCategory.SubCategories.Add(new RssLink() 
-						{ 
-							Name = HttpUtility.HtmlDecode(m3.Groups["title"].Value), 
-							ParentCategory = parentCategory, 
-							Url = (parentCategory as RssLink).Url,
-							Other = m3.Groups["title"].Value
-						});
-						m3 = m3.NextMatch();
-					}
-				}
+                var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                htmlDoc.LoadHtml(data);
+                var ul = htmlDoc.DocumentNode.SelectSingleNode("//ul[@class = 'row js-show-more-content']");
+                if (ul != null)
+                {
+                    foreach (var li in ul.Elements("li"))
+                    {
+                        RssLink cat = new RssLink();
+                        cat.Url = HttpUtility.HtmlDecode(li.Element("div").Element("h3").Element("a").GetAttributeValue("href", ""));
+                        if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
+                        cat.Name = HttpUtility.HtmlDecode(li.Element("div").Element("h3").Element("a").InnerText);
+                        cat.Description = HttpUtility.HtmlDecode(li.Element("div").Element("p").InnerText);
+                        cat.Thumb = HttpUtility.ParseQueryString(new Uri(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(li.Element("p").Element("a").Element("img").GetAttributeValue("src", "")))).Query)["source"];
+                        parentCategory.SubCategories.Add(cat);
+                        cat.ParentCategory = parentCategory;
+                    }
+                }
+                (parentCategory as RssLink).EstimatedVideoCount = (uint)parentCategory.SubCategories.Count;
 			}
 
 			parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
 			return parentCategory.SubCategories.Count;
 		}
 
-		int currentStart = 0;
-		
 		public override List<VideoInfo> getNextPageVideos()
 		{
 			return getVideoList(new RssLink() { Url = nextPageUrl });
@@ -109,53 +123,31 @@ namespace OnlineVideos.Sites
 		public override List<VideoInfo> getVideoList(Category category)
 		{
 			List<VideoInfo> videos = new List<VideoInfo>();
-			string data = "";
-			if (category.ParentCategory != null)
-			{
-				currentStart = 0;
-				data = GetWebData((category.ParentCategory as RssLink).Url);
-				data = Regex.Match(data, string.Format(tv4VideolistDividingRegEx, ((string)category.Other).Replace(" ", "\\s")), RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture).Groups["data"].Value;
-			}
-			else
-			{
-				// called from getNextPageVideos()
-				data = GetWebData((category as RssLink).Url);
-			}
-			Match m = regEx_VideoList.Match(data);
-			while (m.Success)
-			{
+            var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+            htmlDoc.LoadHtml(GetWebData(((RssLink)category).Url));
+            var ul = htmlDoc.DocumentNode.SelectSingleNode("//ul[@class = 'row js-show-more-content']");
+            foreach (var li in ul.Elements("li"))
+            {
 				VideoInfo video = new VideoInfo();
-				video.Title = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim().Replace('\n', ' '));
-				video.Airdate = HttpUtility.HtmlDecode(m.Groups["date"].Value.Trim());
-				video.ImageUrl = m.Groups["thumb"].Value;
-				video.VideoUrl = m.Groups["url"].Value;
-				video.Description = m.Groups["Description"].Value;
+                video.Title = HttpUtility.HtmlDecode(li.Element("div").Element("h3").Element("a").InnerText);
+                video.Airdate = HttpUtility.HtmlDecode(li.Element("div").Element("div").Element("p").InnerText);
+                video.ImageUrl = HttpUtility.ParseQueryString(new Uri(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(li.Element("p").Element("a").Element("img").GetAttributeValue("src", "")))).Query)["source"];
+                video.VideoUrl = HttpUtility.HtmlDecode(li.Element("div").Element("h3").Element("a").GetAttributeValue("href", ""));
+                if (!Uri.IsWellFormedUriString(video.VideoUrl, System.UriKind.Absolute)) video.VideoUrl = new Uri(new Uri(baseUrl), video.VideoUrl).AbsoluteUri;
+                video.Description = HttpUtility.HtmlDecode(li.Element("div").Elements("p").First(p => p.GetAttributeValue("class", "") == "video-description").InnerText);
 				videos.Add(video);
-				m = m.NextMatch();
 			}
-			nextPageAvailable = false;
-			int currentMaxVideos = -1;
-			int.TryParse(Regex.Match(data, @"<p\sclass=""info"">Visar\s\d+\sav\s(?<max>\d+)</p>", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture).Groups["max"].Value, out currentMaxVideos);
-			if (currentMaxVideos > 0) (category as RssLink).EstimatedVideoCount = (uint)currentMaxVideos;
-			m = regEx_NextPage.Match(data);
-			if (m.Success)
-			{
-				nextPageUrl = HttpUtility.HtmlDecode(m.Groups["url"].Value);
-				if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute)) nextPageUrl = new Uri(new Uri(baseUrl), nextPageUrl).AbsoluteUri;
+            
+			HasNextPage = false;
+            nextPageUrl = "";
+            var nextPageLink = htmlDoc.DocumentNode.SelectSingleNode("//a[@class = 'js-show-more btn secondary full']");
+            if (nextPageLink != null)
+            {
+                nextPageUrl = HttpUtility.HtmlDecode(nextPageLink.GetAttributeValue("data-more-from", ""));
+                if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute)) nextPageUrl = new Uri(new Uri(((RssLink)category).Url), nextPageUrl).AbsoluteUri;
+                HasNextPage = true;
+            }
 
-				string rowsString = Regex.Match(nextPageUrl, @"rows=(\d+)").Groups[1].Value;
-				int rows = 15;
-				if (rowsString != "") int.TryParse(rowsString, out rows);
-
-				currentStart += rows;
-
-				if (currentStart < currentMaxVideos)
-				{
-					nextPageUrl += "&start=" + currentStart.ToString();
-
-					nextPageAvailable = true;
-				}
-			}
 			return videos;
 		}
 
@@ -163,7 +155,7 @@ namespace OnlineVideos.Sites
 		{
 			string result = string.Empty;
 			video.PlaybackOptions = new Dictionary<string, string>();
-			XmlDocument xDoc = GetWebData<XmlDocument>(string.Format("http://anytime.tv4.se/webtv/metafileFlash.smil?p={0}&bw=1000&emulate=true&sl=true", video.VideoUrl));
+			XmlDocument xDoc = GetWebData<XmlDocument>(string.Format(playbackMetadataUrl, HttpUtility.ParseQueryString(new Uri(video.VideoUrl).Query)["video_id"]));
 			var errorElements = xDoc.SelectNodes("//meta[@name = 'error']");
 			if (errorElements != null && errorElements.Count > 0)
 			{
@@ -171,11 +163,20 @@ namespace OnlineVideos.Sites
 			}
 			else
 			{
-				string host = xDoc.SelectSingleNode("//meta[@base]/@base").Value;
 				List<KeyValuePair<int, string>> urls = new List<KeyValuePair<int, string>>();
-				foreach (XmlElement videoElem in xDoc.SelectNodes("//video[@src]"))
+                foreach (XmlElement videoElem in xDoc.SelectNodes("//items/item"))
 				{
-					urls.Add(new KeyValuePair<int,string>(int.Parse(videoElem.GetAttribute("system-bitrate")) / 1000, new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = videoElem.GetAttribute("src") }.ToString()));
+                    if (videoElem.GetElementsByTagName("scheme")[0].InnerText.ToLower().StartsWith("rtmp"))
+                    {
+                        urls.Add(new KeyValuePair<int, string>(
+                            int.Parse(videoElem.GetElementsByTagName("bitrate")[0].InnerText),
+                            new MPUrlSourceFilter.RtmpUrl(videoElem.GetElementsByTagName("base")[0].InnerText) 
+                            {
+                                PlayPath = videoElem.GetElementsByTagName("url")[0].InnerText.Replace(".mp4", ""),
+                                SwfUrl = playbackSwfUrl,
+                                SwfVerify = true
+                            }.ToString()));
+                    }
 				}
 				foreach(var item in urls.OrderBy(u => u.Key))
 				{
