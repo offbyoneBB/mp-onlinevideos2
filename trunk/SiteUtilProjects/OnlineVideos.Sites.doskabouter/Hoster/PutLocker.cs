@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using OnlineVideos.Hoster.Base;
@@ -51,7 +49,15 @@ namespace OnlineVideos.Hoster
                     string webData = SiteUtilBase.GetWebData(tempLink, cc, referer);
                     if (!string.IsNullOrEmpty(webData))
                     {
-                        dlLink = getRegExData(@"media:content url=""(?<link>http://.*?)""", webData, "link");
+                        XmlDocument doc = new XmlDocument();
+                        doc.LoadXml(webData);
+                        XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+                        nsmgr.AddNamespace("media", "http://search.yahoo.com/mrss/");
+                        XmlNode node = doc.SelectSingleNode(@"rss/channel/item/media:content[starts-with(@type,""video"")]", nsmgr);
+                        if (node == null)
+                            node = doc.SelectSingleNode(@"rss/channel/item/media:content", nsmgr);
+                        dlLink = node.Attributes["url"].Value;
+
                         if (string.IsNullOrEmpty(dlLink))
                         {
                             dlLink = getRegExData(@"""(?<link>http://media-b\d+\.putlocker\.com/download/\d+/.*?)""", webData, "link");
@@ -76,11 +82,15 @@ namespace OnlineVideos.Hoster
             string webData = requestFileInformation(url, cc);
             if (string.IsNullOrEmpty(webData)) return string.Empty;
 
-            string hash = getRegExData(@"<input type=""hidden"" value=""(?<hash>[a-z0-9]+)"" name=""hash"">", webData, "hash");
-            if (string.IsNullOrEmpty(hash)) return string.Empty;
+            Match m = Regex.Match(webData, @"<form\smethod=""post"">\s*<input\stype=""hidden""\svalue=""(?<hashValue>[a-z0-9]+)""\sname=""(?<hashName>[^""]+)"">\s*<input\sname=""(?<confirmName>[^""]+)""\stype=""submit""\svalue=""(?<confirmValue>[^""]+)""[^>]*>\s*</form>", defaultRegexOptions);
+            if (!m.Success) return String.Empty;
+
+            string postData = String.Format(@"{0}={1}&{2}={3}",
+                HttpUtility.UrlEncode(m.Groups["hashName"].Value), HttpUtility.UrlEncode(m.Groups["hashValue"].Value),
+                HttpUtility.UrlEncode(m.Groups["confirmName"].Value), HttpUtility.UrlEncode(m.Groups["confirmValue"].Value));
 
             string sWaitTime = getRegExData(@"var countdownNum = (?<waittime>\d+);", webData, "waittime");
-            int iWaitTime = 10;
+            int iWaitTime = 1;
             if (!string.IsNullOrEmpty(sWaitTime))
             {
                 if (!int.TryParse(sWaitTime, out iWaitTime))
@@ -89,7 +99,7 @@ namespace OnlineVideos.Hoster
 
             Thread.Sleep(iWaitTime * 1001);
 
-            string webDataLink = SiteUtilBase.GetWebDataFromPost(url, "hash=" + HttpUtility.UrlEncode(hash) + "&confirm=Continue+as+Free+User", cc, url);
+            string webDataLink = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
 
             string dlLink = getDlLink(webDataLink, cc, url);
             if (string.IsNullOrEmpty(dlLink)) return string.Empty;
