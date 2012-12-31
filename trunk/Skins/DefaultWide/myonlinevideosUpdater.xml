@@ -3,8 +3,6 @@
   <id>4757</id>
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <define>#header.label</define>
-  <define>#header.image</define>
   <controls>
     
     <!-- *** WINDOW DEFAULTS *** -->
@@ -23,14 +21,14 @@
       <posY>12</posY>
       <width>210</width>
       <height>70</height>
-      <texture>#header.image</texture>
+      <texture>#OnlineVideos.HeaderImage</texture>
     </control>
     <control>
       <type>label</type>
       <posX>300</posX>
       <posY>30</posY>
       <width>820</width>
-      <label>#header.label</label>
+      <label>#OnlineVideos.HeaderLabel</label>
       <font>font14</font>
       <textcolor>White</textcolor>
     </control>
