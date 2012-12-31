@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
-using System.IO;
-using System.Xml;
+using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -15,6 +12,17 @@ namespace OnlineVideos.Sites
         private enum Specials { Live, LaatsteJournaal };
 
         private string currentPageTitle = null;
+
+        CookieContainer SiteConsent;
+
+        public override void Initialize(OnlineVideos.SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+            SiteConsent = new CookieContainer();
+            Cookie cookie = new Cookie("site_cookie_consent", "yes");
+            SiteConsent.Add(new Uri(baseUrl), cookie);
+        }
+
 
         public override int DiscoverDynamicCategories()
         {
@@ -56,7 +64,7 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            string webData = GetWebData(((RssLink)parentCategory).Url, null, null, null, true);
+            string webData = GetWebData(((RssLink)parentCategory).Url, SiteConsent, null, null, true);
             webData = GetSubString(webData, @"class=""active""", @"</ul>");
             webData = webData.Replace("><", String.Empty);
             return ParseSubCategories(parentCategory, webData);
@@ -68,7 +76,7 @@ namespace OnlineVideos.Sites
                 return ParseASX(video.VideoUrl)[0];
             if (Specials.LaatsteJournaal.Equals(video.Other))
             {
-                string webData = GetWebData(video.VideoUrl);
+                string webData = GetWebData(video.VideoUrl, SiteConsent);
                 JObject obj = JObject.Parse(webData);
                 return obj.Value<string>("videofile");
             }
@@ -114,7 +122,7 @@ namespace OnlineVideos.Sites
 
             //url = url.Replace("$DATE", day);
 
-            string webData = GetWebData(url, null, null, null, true);
+            string webData = GetWebData(url, SiteConsent, null, null, true);
             string title = GetSubString(webData, @"id=""article"">", "</h1>");
             title = title.Replace("<h1>", String.Empty);
             title = title.Replace("<span>", String.Empty);
@@ -154,5 +162,9 @@ namespace OnlineVideos.Sites
             return s.Substring(p, q - p);
         }
 
+        protected override CookieContainer GetCookie()
+        {
+            return SiteConsent;
+        }
     }
 }
