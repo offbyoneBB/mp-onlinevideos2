@@ -39,7 +39,7 @@
             <asp:BoundField HeaderText="Creator" DataField="Owner_FK" SortExpression="Owner_FK" ItemStyle-HorizontalAlign="Center"/>
             <asp:TemplateField HeaderText="Language" SortExpression="Language" ItemStyle-HorizontalAlign="Center">
 				<ItemTemplate>
-					<asp:Image runat="server" ImageUrl='<%# "/Langs/"+(string)Eval("Language")+".png" %>' Height="36" />
+					<asp:Image runat="server" ImageUrl='<%# "./Langs/"+(string)Eval("Language")+".png" %>' Height="36" />
                     <asp:Label runat="server" Text='<%# LanguageName((string)Eval("Language")) %>' style="display:block" />
 				</ItemTemplate>
             </asp:TemplateField>
