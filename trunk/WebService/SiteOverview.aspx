@@ -1,5 +1,16 @@
 ﻿<%@ Page Title="OnlineVideos Sites Overview" Language="C#" AutoEventWireup="true" MasterPageFile="~/OnlineVideos.Master" CodeBehind="SiteOverview.aspx.cs" Inherits="OnlineVideos.WebService.SiteOverview" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="body" runat="server">
+	<div style="font-style:italic; text-align:right; font-size:smaller; background-color:#006699; color:White; padding: 5px">
+		<asp:Label runat="server" ID="txtNumSitesTotal" CssClass="normal" Font-Bold="true" /> 
+		<asp:LinkButton runat="server" ID="btnFilterNone" Text="Sites" Font-Bold="true"
+			CssClass="normal" onclick="btnFilterNone_Click" ToolTip="Show all Sites" />&nbsp;: 
+		<asp:Label runat="server" ID="txtNumReportedSites" CssClass="reported" /> 
+		<asp:LinkButton runat="server" ID="btnFilterReported" Text="Reported" 
+			CssClass="reported" onclick="btnFilterReported_Click" ToolTip="Show only reported sites" />&nbsp;/ 
+		<asp:Label runat="server" ID="txtNumBrokenSites" CssClass="broken" /> 
+		<asp:LinkButton runat="server" ID="btnFilterBroken" Text="Broken" 
+			CssClass="broken" onclick="btnFilterBroken_Click" ToolTip="Show only broken Sites" />
+	</div>
     <div>        
         <asp:GridView ID="siteOverview" runat="server" AutoGenerateColumns="False" AllowSorting="True"
             CellPadding="3" 
@@ -25,14 +36,13 @@
                     <asp:Label ID="Label1" runat="server" Text='<%# Eval("Name") %>' Visible='<%# (uint)Eval("ReportCount") == 0 %>' />
                 </ItemTemplate>
             </asp:TemplateField>
-            <asp:BoundField HeaderText="Creator" DataField="Owner_FK" SortExpression="Owner_FK"
-                ItemStyle-HorizontalAlign="Center" >
-                <ItemStyle HorizontalAlign="Center"></ItemStyle>
-            </asp:BoundField>
-            <asp:BoundField HeaderText="Language" DataField="Language" SortExpression="Language"
-                ItemStyle-HorizontalAlign="Center" >
-                <ItemStyle HorizontalAlign="Center"></ItemStyle>
-            </asp:BoundField>
+            <asp:BoundField HeaderText="Creator" DataField="Owner_FK" SortExpression="Owner_FK" ItemStyle-HorizontalAlign="Center"/>
+            <asp:TemplateField HeaderText="Language" SortExpression="Language" ItemStyle-HorizontalAlign="Center">
+				<ItemTemplate>
+					<asp:Image runat="server" ImageUrl='<%# "/Langs/"+(string)Eval("Language")+".png" %>' Height="36" />
+                    <asp:Label runat="server" Text='<%# LanguageName((string)Eval("Language")) %>' style="display:block" />
+				</ItemTemplate>
+            </asp:TemplateField>
             <asp:BoundField HeaderText="Update" DataField="LastUpdated" DataFormatString="{0:g}" SortExpression="LastUpdated" />
             <asp:BoundField HeaderText="Description" DataField="Description" />            
         </Columns>

@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
+	<link href="Style.css" rel="stylesheet" type="text/css" />
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
@@ -13,7 +14,7 @@
     <table>
       <tr>
         <td rowspan="2">
-          <a href="SiteOverview.aspx"><img src="OnlineVideos.png" style="border-style: none"/></a>
+		  <asp:HyperLink runat="server" ID="imgLinkIcon" ImageUrl="~/OnlineVideos.png" NavigateUrl="~/SiteOverview.aspx" CssClass="headerImageLink" />
         </td>
         <td style="padding-left:20px; font-size:smaller">
           <asp:LoginView ID="LoginView1" runat="server">
@@ -21,14 +22,14 @@
               <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/Login.aspx">Login</asp:HyperLink>
             </AnonymousTemplate>
             <LoggedInTemplate>
-              <asp:LoginName ID="LoginName1" runat="server" />
+              <asp:LoginName ID="LoginName1" runat="server" Font-Italic="true" />
             </LoggedInTemplate>
           </asp:LoginView>
         </td>
       </tr>
     <tr>
       <td style="padding-left:20px;vertical-align:top">
-        <span style="font-size:32px; font-weight:bolder; font-family:Courier New">OnlineVideos</span>
+        <asp:Label runat="server" ID="lblHeader" Text="OnlineVideos" CssClass="headerLabel" />
       </td>
     </tr>
     </table>    

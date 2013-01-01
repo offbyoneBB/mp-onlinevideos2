@@ -261,9 +261,9 @@ namespace OnlineVideos.WebService
                         Type = type,
                         Site = site
                     };
-                    if (type == ReportType.Broken) site.State = SiteState.Reported;
+                    if (type == ReportType.Broken && site.State == SiteState.Working) site.State = SiteState.Reported;
                     else if (type == ReportType.ConfirmedBroken) site.State = SiteState.Broken;
-                    else if (type == ReportType.RejectedBroken || type == ReportType.Fixed) site.State = SiteState.Working;                    
+                    else if (type == ReportType.RejectedBroken || type == ReportType.Fixed) site.State = SiteState.Working;
                     dc.Report.InsertOnSubmit(report);
                     dc.SubmitChanges();
                     SendNewReportEmail(report);
