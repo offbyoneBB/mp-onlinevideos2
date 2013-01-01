@@ -1,0 +1,34 @@
+﻿.normal
+{
+	color:White;
+}
+.reported
+{
+	color:#FFF04F;
+}
+.broken
+{
+	color:Red;
+}
+.reportedCell
+{
+	background-color:#FFF04F;
+}
+.brokenCell
+{
+	background-color:Red;
+}
+.headerLabel
+{
+	font-size:32px; 
+	font-weight:bolder; 
+	font-family:Courier New;
+}
+.headerImageLink
+{
+}
+.headerImageLink img
+{
+	width:64px;
+	height:64px;
+}
