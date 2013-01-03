@@ -925,35 +925,6 @@
         </Category>
       </Categories>
     </Site>
-    <Site name="BUNCHTV" util="GenericSite" agecheck="false" enabled="true" lang="de">
-      <Description>Wir bringen dir die News aus der Musikszene, aus den Bereichen Games und Kino/Film, informieren dich über die neuesten Veröffentlichungen, sind für dich auf den wichtigsten Festivals, Events und Konzerten.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.bunch.tv]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\s+class="news-image.image">\s+<a\s+href="(?<VideoUrl>[^"]*)"[^>]*>\s*<img\s+src="(?<ImageUrl>[^"]*)"\s+alt="(?<Title>[^"]+)"[^/]*/>\s*</a>\s*</div>
-.*?<div\s+class="news-date">(?<Airdate>[^<]*)</div>\s*
-<div\s+class="news-text">(?<Description>.*?)</div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<span\s+class="pager-current">\d+</span>\s*\|\s*<span\s+class="pager-item"><a\s+href="(?<url>[^"]+)"]]></item>
-        <item key="videoUrlFormatString"><![CDATA[http://streaming04.exozet.com/bunchtv-streaming/{0}]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[true]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Music - Hiphop" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/music/mixery.jpg">http://www.bunch.tv/mixeryrawdeluxe?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Music - Reggae Funk n Soul" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/music/tunes.jpg">http://www.bunch.tv/tunes?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Music - Metal" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/music/metal.jpg">http://www.bunch.tv/metal?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Music - Independent" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/music/noise.jpg">http://www.bunch.tv/noise?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Music - Electronic" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/music/tronic.jpg">http://www.bunch.tv/tronic?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Music - Desperados Stagedive" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/specials/desperados-stagedive.jpg">http://www.bunch.tv/desperadosstagedive?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Festivals - 2010" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/festivals/festivals2010.png">http://www.bunch.tv/festivals-2010?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Festivals - 2009" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/festivals/festivals2009.png">http://www.bunch.tv/festivals-2009?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Festivals - 2008" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/festivals/festivals2008.png">http://www.bunch.tv/festivals-2008?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Games - Playd" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/games/playd.jpg">http://www.bunch.tv/playd?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Cinema - Seen" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/cinema/seen.jpg">http://www.bunch.tv/seen?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Travel - Boarding" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/travel/boarding.jpg">http://www.bunch.tv/boarding?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Sports - Ride" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/sports/travel.jpg">http://www.bunch.tv/ride?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Specials - Electronic Beats" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/specials/electronic-beats.jpg">http://www.bunch.tv/electronicbeats?ajax=true&amp;ajax=true</Category>
-        <Category xsi:type="RssLink" name="Specials - Night.Live TV" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/specials/virtual-nights.jpg">http://www.bunch.tv/virtualnights?ajax=true&amp;ajax=true</Category>
-      </Categories>
-    </Site>
     <Site name="YahooMusicVideos" util="YahooMusicVideos" agecheck="false" enabled="true" lang="en">
       <Description>Music videos hosted by Yahoo. Many videos are IP restricted to certain countries.</Description>
     </Site>
