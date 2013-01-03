@@ -110,6 +110,7 @@
     <Compile Include="TV3NZOnDemandUtil.cs" />
     <Compile Include="TVLinkscc.cs" />
     <Compile Include="TVNPlayerUtil.cs" />
+    <Compile Include="TweakersNetUtil.cs" />
     <Compile Include="UitzendingGemistUtil.cs" />
     <Compile Include="VimeoUtil.cs" />
     <Compile Include="Vimeo\AuthBase.cs" />

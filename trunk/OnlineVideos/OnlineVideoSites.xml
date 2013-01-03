@@ -1308,6 +1308,21 @@
       <Configuration>
       </Configuration>
     </Site>
+    <Site name="Tweakers.net" util="TweakersNet" agecheck="false" enabled="true" lang="nl">
+      <Description>Videos van tweakers.net</Description>
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[<tr>\s*<td\sclass="video-image">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*><img\ssrc="(?<ImageUrl>[^"]*)"\swidth=124\sheight=70\salt=""><span\sclass="playtime">(?<Duration>[^<]*)</span></a>\s*</td>\s*<td>\s*<p\sclass="title\sellipsis"><a[^>]*>(?<Title>[^<]*)</a></p>\s*<p\sclass="lead"><span\sclass="date">(?<Airdate>[^<]*)</span>(?<Description>[^<]*)</p>]]></item>
+        <item key="videoUrlRegEx"><![CDATA[http://tweakers\.net/video/(?<m0>[^/]*)/]]></item>
+        <item key="videoUrlFormatString"><![CDATA[http://tweakers.net/video/s1playlist/{0}/620/349/playlist.xspf]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="http://tweakers\.net/video/(?<url>[^"]*)"\stitle="Volgende\spagina">&raquo;</a>]]></item>
+        <item key="nextPageRegExUrlFormatString"><![CDATA[http://tweakers.net/video/zoeken/{0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<location\ss1:label="(?<n0>[^"]*)"\ss1:height="[^"]*">(?<m0>[^<]+)</location>]]></item>
+        <item key="baseUrl"><![CDATA[http://tweakers.net/]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Recente videos">http://tweakers.net/video/zoeken/</Category>
+      </Categories>
+    </Site>
     <Site name="Uitzending Gemist" util="UitzendingGemist" agecheck="false" enabled="true" lang="nl">
       <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
       <Configuration>
