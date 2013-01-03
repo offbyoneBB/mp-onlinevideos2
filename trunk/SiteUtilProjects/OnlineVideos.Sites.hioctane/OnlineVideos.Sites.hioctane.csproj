@@ -63,7 +63,6 @@
   <ItemGroup>
     <Compile Include="FiveMinUtil.cs" />
     <Compile Include="ArtePlus7Util.cs" />
-    <Compile Include="BildFilmeUtil.cs" />
     <Compile Include="BrUtil.cs" />
     <Compile Include="MdrUtil.cs" />
     <Compile Include="MSNMoviesUtil.cs" />

@@ -257,23 +257,6 @@
         <item key="episodenRegEx"><![CDATA[(?<!id_series_newest_movies_init.*)<a\s+href='(?<VideoUrl>[^']+)'\s+title='(?<Title>[^']+)'><img(?:(?!longdesc).)+longdesc='(?<ImageUrl>[^']+)'[^>]*><span[^>]*>(?<Duration>[^<]+)</span></a>]]></item>
       </Configuration>
     </Site>
-    <Site name="Bild.de Filme" util="BildFilme" agecheck="false" enabled="true" lang="de">
-      <Description>Ganze Filme des deutschen Bild.de Videoportals.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[category_id=("|')(?<url>[^("|')]+)("|')\s*category_name=("|')(?<title>[^("|')]+)("|')>]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://film.bild.de/nav.aspx?s=list&c={0}]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\s+class="naw_movieBoxT1_box_inner">\s*
-<a\shref="javascript:onGoToDetailPage\((?<VideoUrl>[^,]+).*?background-image:\surl\s*\((?<ImageUrl>[^\)]+)\);">
-.*?
-<div\s+class="naw_tipBox_movieTitle">(?<Title>.*?)</div>
-.*?
-<div\s+class="naw_tipBox_description">(?<Description>.*?)</div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\s+href="\#(?<url>[^"]+)"><div[^>]*>Weiter</div></a>]]></item>
-        <item key="nextPageRegExUrlFormatString"><![CDATA[/nav.aspx?{0}]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://film.bild.de/nav.aspx?s=movie&m={0}&pl=m]]></item>
-        <item key="baseUrl"><![CDATA[http://film.bild.de/]]></item>
-      </Configuration>
-    </Site>
     <Site name="mySpass" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>kostenlose TVShows von MySpass.de ansehen</Description>
       <Configuration>
