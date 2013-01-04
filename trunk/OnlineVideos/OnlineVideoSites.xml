@@ -246,10 +246,25 @@
         <item key="baseUrl"><![CDATA[http://tvthek.orf.at/]]></item>
       </Configuration>
     </Site>
-    <Site name="SF1" util="Sf1" agecheck="false" enabled="true" lang="de">
-      <Description>Videoportal des Schweizer Fernsehens (SF).</Description>
-    </Site>
-    <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
+		<Site name="SF1" util="Sf1" agecheck="false" enabled="true" lang="de">
+			<Description>Videoportal des Schweizer Fernsehens (SF).</Description>
+			<Configuration>
+				<item key="dynamicSubCategoriesRegEx"><![CDATA[<img\s+class="az_thumb"\s+src="(?<thumb>[^"]*)"[^>]*>\s*</a>\s*<a\s+class="sendung_name"\s+href="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*<p\s+class="az_description">(?<description>[^<]*)</p>]]></item>
+				<item key="videoListRegEx"><![CDATA[<div\s+class="sendung_logo">\s*
+<a\s+href="(?<VideoUrl>[^"]+)"[^>]*>\s*
+<img\s+src="(?<ImageUrl>[^"]+)".*?alt="(?<Title>[^"]+)"[^>]*>
+.*?<td\s+class=".*?duration.*?">(?<Duration>[^<]*)</td>]]></item>
+				<item key="videoUrlFormatString"><![CDATA[http://videoportal.sf.tv/cvis/segment/{0}/.json]]></item>
+				<item key="subCategoriesSplit"><![CDATA[<div\sclass="az_unit"[^>]*>]]></item>
+				<item key="subCategoriesName"><![CDATA[<div[^>]*>(?<title>[^<]+)</div>]]></item>
+				<item key="videoUrlRegex"><![CDATA["codec_video":"(?<video>[^"]+)","codec_audio":"(?<audio>[^"]+)","bitrate":(?<bitrate>[^,]+),"frame_width":\d*,"frame_height":\d*,"url":"(?<url>[^"]+)"]]></item>
+			</Configuration>
+			<Categories>
+				<Category xsi:type="RssLink" name="Alphabetisch">http://www.srf.ch/player/tv/sendungen</Category>
+				<Category xsi:type="RssLink" name="Thematisch">http://www.srf.ch/player/tv/sendungen?sort=topic</Category>
+			</Categories>
+		</Site>
+		<Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
       <Description>Auf MyVideo findest Du kostenlos die besten Videos und Clips. Werbespots, lustige Videos, funny Clips uvm.</Description>
       <Configuration>
         <item key="serienSenderRegEx"><![CDATA["<a\shref='(?<url>[^']+)'\sclass='sThumb'\starget='_top'\s*title='(?<title>[^']+)'>\s*<img\s+src='(?<thumb>[^']+)']]></item>
