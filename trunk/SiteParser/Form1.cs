@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -23,7 +24,7 @@ namespace SiteParser
             generic.Initialize(new SiteSettings());
             generic.Settings.Name = "please fill";
             generic.Settings.Description = "please fill";
-            generic.Settings.Language = "please fill";
+            generic.Settings.Language = "en";
             generic.Settings.UtilName = "GenericSite";
             foreach (PlayerType pt in Enum.GetValues(typeof(PlayerType)))
                 playerComboBox.Items.Add(pt);
@@ -36,6 +37,8 @@ namespace SiteParser
             FillDecodingCombo(nextPageUrlDecodingComboBox);
             FillDecodingCombo(videoListUrlDecodingComboBox);
             FillDecodingCombo(videoUrlDecodingComboBox);
+
+            FillLanguagesComboBox();
 
             UtilToGui(generic);
 #if !DEBUG
@@ -54,6 +57,49 @@ namespace SiteParser
             decodingCombo.SelectedIndex = 0;
         }
 
+        void FillLanguagesComboBox()
+        {
+            // language identifiers combobox
+            List<string> cultureNames = new List<string>();
+            foreach (System.Globalization.CultureInfo ci in System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.NeutralCultures))
+            {
+                if (!string.IsNullOrEmpty(ci.Name))
+                {
+                    string name = ci.Name.IndexOf('-') >= 0 ? ci.Name.Substring(0, ci.Name.IndexOf('-')) : ci.Name;
+                    if (!cultureNames.Contains(name)) cultureNames.Add(name);
+                }
+            }
+            cultureNames.Add("--");
+            var dict = new Dictionary<string, string>();
+            foreach (string lang in cultureNames)
+            {
+                dict.Add(lang, GetLanguageInUserLocale(lang));
+            }
+            dict = dict.OrderBy(d => d.Value).ToDictionary(d => d.Key, d => d.Value);
+            cbLanguages.DataSource = new BindingSource(dict, null);
+            cbLanguages.DisplayMember = "Value";
+            cbLanguages.ValueMember = "Key";
+        }
+
+        string GetLanguageInUserLocale(string aLang)
+        {
+            string name = aLang;
+            try
+            {
+                name = aLang != "--" ? System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag(aLang).DisplayName : "Global";
+            }
+            catch
+            {
+                var temp = System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.AllCultures).FirstOrDefault(
+                    ci => ci.IetfLanguageTag == aLang || ci.ThreeLetterISOLanguageName == aLang || ci.TwoLetterISOLanguageName == aLang || ci.ThreeLetterWindowsLanguageName == aLang);
+                if (temp != null)
+                {
+                    name = temp.DisplayName;
+                }
+            }
+            return name;
+        }
+
         private void UtilToGui(GenericSiteUtil util)
         {
             nameTextBox.Text = util.Settings.Name;
@@ -62,7 +108,7 @@ namespace SiteParser
             descriptionTextBox.Text = util.Settings.Description;
             playerComboBox.SelectedIndex = playerComboBox.Items.IndexOf(util.Settings.Player);
             ageCheckBox.Checked = util.Settings.ConfirmAge;
-            languageTextBox.Text = util.Settings.Language;
+            cbLanguages.SelectedValue = util.Settings.Language;
 
             categoryRegexTextbox.Text = GetRegex(util, "regEx_dynamicCategories");
             categoryUrlFormatTextBox.Text = (string)GetProperty(util, "dynamicCategoryUrlFormatString");
@@ -115,7 +161,7 @@ namespace SiteParser
             util.Settings.Description = descriptionTextBox.Text;
             util.Settings.Player = (PlayerType)playerComboBox.SelectedItem;
             util.Settings.ConfirmAge = ageCheckBox.Checked;
-            util.Settings.Language = languageTextBox.Text;
+            util.Settings.Language = cbLanguages.SelectedValue.ToString();
 
             SetRegex(util, "regEx_dynamicCategories", "dynamicCategoriesRegEx", categoryRegexTextbox.Text);
             SetProperty(util, "dynamicCategoryUrlFormatString", categoryUrlFormatTextBox.Text);
@@ -390,7 +436,7 @@ namespace SiteParser
                     video.CleanDescriptionAndTitle();
                     selected.Nodes.Add(video.Title).Tag = video;
                 }
-                selected.Text += ' ' + selected.Nodes.Count.ToString();
+                selected.Text = string.Format("{0} ({1})", parentCat.Name, selected.Nodes.Count);
 
                 if (generic.HasNextPage)
                 {

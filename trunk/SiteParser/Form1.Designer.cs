@@ -38,7 +38,7 @@
             this.label25 = new System.Windows.Forms.Label();
             this.descriptionTextBox = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
-            this.languageTextBox = new System.Windows.Forms.TextBox();
+            this.cbLanguages = new System.Windows.Forms.ComboBox();
             this.label23 = new System.Windows.Forms.Label();
             this.ageCheckBox = new System.Windows.Forms.CheckBox();
             this.baseUrlTextbox = new System.Windows.Forms.TextBox();
@@ -187,7 +187,7 @@
             this.generalTabPage.Controls.Add(this.label25);
             this.generalTabPage.Controls.Add(this.descriptionTextBox);
             this.generalTabPage.Controls.Add(this.label24);
-            this.generalTabPage.Controls.Add(this.languageTextBox);
+            this.generalTabPage.Controls.Add(this.cbLanguages);
             this.generalTabPage.Controls.Add(this.label23);
             this.generalTabPage.Controls.Add(this.ageCheckBox);
             this.generalTabPage.Controls.Add(this.baseUrlTextbox);
@@ -256,12 +256,13 @@
             // 
             // languageTextBox
             // 
-            this.languageTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.cbLanguages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.languageTextBox.Location = new System.Drawing.Point(3, 209);
-            this.languageTextBox.Name = "languageTextBox";
-            this.languageTextBox.Size = new System.Drawing.Size(451, 20);
-            this.languageTextBox.TabIndex = 6;
+            this.cbLanguages.Location = new System.Drawing.Point(3, 209);
+            this.cbLanguages.Name = "cbLanguages";
+            this.cbLanguages.Size = new System.Drawing.Size(451, 20);
+            this.cbLanguages.TabIndex = 6;
+            this.cbLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // label23
             // 
@@ -1454,7 +1455,7 @@
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox descriptionTextBox;
         private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.TextBox languageTextBox;
+        private System.Windows.Forms.ComboBox cbLanguages;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.CheckBox ageCheckBox;
         private System.Windows.Forms.TextBox baseUrlTextbox;

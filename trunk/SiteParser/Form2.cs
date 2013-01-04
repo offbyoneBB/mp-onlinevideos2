@@ -24,6 +24,17 @@ namespace SiteParser
         private string testData;
         bool cleanupValues = false;
 
+        private const int CP_NOCLOSE_BUTTON = 0x200;
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams myCp = base.CreateParams;
+                myCp.ClassStyle = myCp.ClassStyle | CP_NOCLOSE_BUTTON; // disable the close button (x) on top right corner, so user must chose OK or CANCEL
+                return myCp;
+            }
+        }
+
         public string Execute(string regexString, string url, string[] names, bool cleanupValues)
         {
             string webData = SiteUtilBase.GetWebData(url);
