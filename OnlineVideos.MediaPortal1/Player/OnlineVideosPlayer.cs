@@ -7,11 +7,8 @@ using MediaPortal.Player;
 using MediaPortal.Profile;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-
-#if !MP11
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Player.PostProcessing;
-#endif
 
 namespace OnlineVideos.MediaPortal1.Player
 {
@@ -548,7 +545,6 @@ namespace OnlineVideos.MediaPortal1.Player
 
             AdaptRefreshRateFromCacheFile();
 
-#if !MP11
             ISubEngine engine = SubEngine.GetInstance(true);
             if (!engine.LoadSubtitles(graphBuilder, string.IsNullOrEmpty(SubtitleFile) ? m_strCurrentFile : SubtitleFile))
             {
@@ -564,21 +560,9 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
             }
-#else
-            if (!string.IsNullOrEmpty(SubtitleFile))
-            {
-                MediaPortal.Player.Subtitles.ISubEngine engine = MediaPortal.Player.Subtitles.SubEngine.GetInstance();
-                if (engine != null)
-                {
-                    engine.Enable = engine.LoadSubtitles(graphBuilder, SubtitleFile);
-                }
-            }
-#endif
             AnalyseStreams();
-#if !MP11
             SelectSubtitles();
             SelectAudioLanguage();
-#endif
             OnInitialized();
 
             int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
