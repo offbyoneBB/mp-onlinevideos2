@@ -619,8 +619,9 @@
       <Description>Video site from cinemassacre productions.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.cinemassacre.com]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="video[^>]*>\s*<div\sclass="video-tnail">\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<img\s(?:width="[^"]*"\sheight="[^"]*"\s)?src="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*</div>\s*[^>]*>\s*[^>]*>[^>]*>(?<Title>[^<]*)[^>]*>[^>]*>[^>]*>(?<Airdate>[^<]*)]]></item>
+        <item key="videoListRegEx"><![CDATA[(<div\sid="featuredImg">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<img\swidth="[^"]*"\sheight="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\sclass="largethumb\swp-post-image"\salt="[^"]*"\s/>\s*</a>\s*<span\sid="archiveCaption"><a[^>]*>(?<Title>[^<]*)</a></span>\s*</div>)|(<div\sclass="archiveitem">\s*<a\shref="(?<VideoUrl>[^"]*)[^>]*>\s*<img\swidth="[^"]*"\sheight="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\sclass="mediumthumb\swp-post-image"\salt="[^"]*"\s/>\s*<div>(?<Title>[^<]*)</div></a>\s*</div>\s*)]]></item>
         <item key="fileUrlRegEx"><![CDATA[<iframe\s(?:width="[^"]*"\sheight="[^"]*"\s)?src="(?<m0>[^"]*)"|<param\sname="(movie|src)"\svalue="(?<m0>[^"]*)"|embed\s(?:type="[^"]*"\swidth="[^"]*"\sheight="[^"]*"\s)?src="(?<m0>[^"]*)"|<a\shref="(?<m0>(?:http://www.youtube.com/watch|http://www.spike.com/video-clips|http://www.gametrailers.com/(?:video|game))[^"]*)"\starget="_blank">|<iframe\sid="[^"]*"\ssrc="(?<m0>[^"]*)"]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\s>Next\s&raquo;</a>]]></item>
       </Configuration>
     </Site>
     <Site name="CollegeHumor" util="CollegeHumor" agecheck="false" enabled="true" lang="en">

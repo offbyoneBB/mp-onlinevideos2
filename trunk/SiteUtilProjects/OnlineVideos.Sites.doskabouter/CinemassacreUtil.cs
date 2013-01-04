@@ -49,13 +49,15 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             string data = GetWebData(baseUrl);
-            data = GetSubString(data, @"<!-- nav -->", @"<!-- /nav -->");
-            data = Regex.Replace(data, @"http://survey.cinemassacre[^""]*", String.Empty, RegexOptions.Multiline);
+
+            string[] subs = data.Split(new[] { @"class=""menu-item menu-item-type-custom menu-item-object-custom menu-item" }, StringSplitOptions.RemoveEmptyEntries);
+
+            data = GetSubString(data, @"<div id=""navArea"" class=""menu-main-menu-container"">", @"</div");
             data = @"<?xml version=""1.0"" encoding=""iso-8859-1""?>" + data;
 
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(data);
-            XmlNodeList cats = doc.SelectNodes(@"//div/ul[@id=""navlist""]/li");
+            XmlNodeList cats = doc.SelectNodes(@"//ul[@id=""menu-main-menu""]/li");
             foreach (XmlNode node in cats)
             {
                 RssLink cat = new RssLink();
@@ -186,6 +188,12 @@ namespace OnlineVideos.Sites
             if (thisUrl.IndexOf("springboardplatform.com") >= 0)
             {
                 string newUrl = GetRedirectedUrl(thisUrl);
+                if (newUrl == thisUrl)
+                {
+                    Match m = Regex.Match(GetWebData(thisUrl), @"property=""og:video""\s*content=""(?<url>[^""]*)""");
+                    if (m.Success)
+                        return m.Groups["url"].Value;
+                }
                 string[] parts = newUrl.Split(new[] { "%22" }, StringSplitOptions.RemoveEmptyEntries);
                 newUrl = parts[parts.Length - 2];
                 XmlDocument doc = new XmlDocument();
