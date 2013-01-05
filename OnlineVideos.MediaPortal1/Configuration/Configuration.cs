@@ -19,7 +19,6 @@ namespace OnlineVideos.MediaPortal1
     public partial class Configuration : Form
     {
         ConfigurationPlayer confPlayer;
-        Version versionOnline;
         OnlineVideosWebservice.Site[] onlineSites = null;
 
         public Configuration()
@@ -284,7 +283,7 @@ namespace OnlineVideos.MediaPortal1
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(ex.Message, Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }        
 
@@ -369,18 +368,18 @@ namespace OnlineVideos.MediaPortal1
                                     {
                                         if (data == null) data = System.IO.File.ReadAllBytes(location);
                                         success = ws.SubmitDll(PluginConfiguration.Instance.email, PluginConfiguration.Instance.password, dll, data, out msg);
-                                        MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+										MessageBox.Show(msg, success ? Translation.Instance.Success : Translation.Instance.Error, MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
                                     }
                                 }
                             }
                         }
                     }
                     success = ws.SubmitSite(PluginConfiguration.Instance.email, PluginConfiguration.Instance.password, siteXmlString, icon, banner, dll, out msg);
-                    MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+					MessageBox.Show(msg, success ? Translation.Instance.Success : Translation.Instance.Error, MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show(ex.Message, Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 // if the site was not submitted, restore old last updated date, so saving won't write the wrong value
                 if (!success) site.LastUpdated = lastUdpBkp;
@@ -389,18 +388,14 @@ namespace OnlineVideos.MediaPortal1
 
         private void btnReportSite_Click(object sender, EventArgs e)
         {
-            if (versionOnline == null)
+            if (OnlineVideos.Sites.Updater.VersionOnline == null)
             {
-                versionOnline = OnlineVideos.Sites.Updater.VersionOnline;
-            }
-            if (versionOnline == null)
-            {
-                MessageBox.Show("Could not retrieve latest version info from the internet!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not retrieve latest version info from the internet!", Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (versionOnline > new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version)
+			if (!OnlineVideos.Sites.Updater.VersionCompatible)
             {
-				MessageBox.Show(string.Format(Translation.Instance.LatestVersionRequired, versionOnline), "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				MessageBox.Show(string.Format(Translation.Instance.LatestVersionRequired, OnlineVideos.Sites.Updater.VersionOnline), Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return;
             }
             SiteSettings site = siteList.SelectedObject as SiteSettings;
@@ -471,7 +466,7 @@ namespace OnlineVideos.MediaPortal1
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show(ex.Message, Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
                 {

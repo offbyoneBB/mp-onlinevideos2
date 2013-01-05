@@ -102,6 +102,7 @@
   <string name="Playlists">Playlists</string>
   <string name="PlaybackWillBeStopped">Abspielen wird gestoppt.</string>
   <string name="PleaseEnterDescription">Bitte kurze Beschreibung eingeben!</string>
+  <string name="PleaseUpdateLocalSite">Bitte aktualisiere und teste deine lokale Site bevor du sie fehlerhaft meldest.</string>
   <string name="PlotOutline">Handlung</string>
   <string name="PreviousPage">Vorherige Seite</string>
   <string name="PerformAutomaticUpdate">Automatische Aktualisierung ausführen?</string>

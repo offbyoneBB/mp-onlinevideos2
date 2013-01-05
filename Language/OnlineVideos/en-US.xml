@@ -102,6 +102,7 @@
   <string name="Playlists">Playlists</string>
   <string name="PlaybackWillBeStopped">Playback will be stopped.</string>
   <string name="PleaseEnterDescription">Please give a short description.</string>
+  <string name="PleaseUpdateLocalSite">Please update and retest your local site before reporting it broken.</string>
   <string name="PlotOutline">Plot outline</string>
   <string name="PreviousPage">Previous page</string>
   <string name="PerformAutomaticUpdate">Perform automatic update?</string>

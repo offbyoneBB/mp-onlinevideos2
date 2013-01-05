@@ -48,7 +48,8 @@ namespace OnlineVideos.MediaPortal1
 
 				// When AutoUpdate of sites on startup is enabled and the last update was done earlier than configured run AutoUpdate and deletion of old thumbs
 				if (PluginConfiguration.Instance.updateOnStart == true &&
-					PluginConfiguration.Instance.lastFirstRun.AddHours(PluginConfiguration.Instance.updatePeriod) > DateTime.Now)
+					PluginConfiguration.Instance.lastFirstRun.AddHours(PluginConfiguration.Instance.updatePeriod) < DateTime.Now &&
+					OnlineVideos.Sites.Updater.VersionCompatible)
 				{
 					OnlineVideos.Sites.Updater.UpdateSites();
 					ImageDownloader.DeleteOldThumbs(PluginConfiguration.Instance.ThumbsAge, r => { return true; });
@@ -119,29 +120,39 @@ namespace OnlineVideos.MediaPortal1
 					{
 						GUIWaitCursor.Init(); GUIWaitCursor.Show();
 					}
-					GUISiteUpdater guiUpdater = (GUISiteUpdater)GUIWindowManager.GetWindow(GUISiteUpdater.WindowId);
 					new System.Threading.Thread(delegate()
 					{
-						if (doUpdate == true && guiUpdater != null)
+						if (doUpdate == true)
 						{
 							if (dlgPrgrs != null) dlgPrgrs.SetHeading(string.Format("{0} - {1}", PluginConfiguration.Instance.BasicHomeScreenName, Translation.Instance.AutomaticUpdate));
-							bool? updateResult = OnlineVideos.Sites.Updater.UpdateSites((m, p) =>
-								{
-									if (dlgPrgrs != null)
-									{
-										if (!string.IsNullOrEmpty(m)) dlgPrgrs.SetLine(1, m);
-										if (p != null) dlgPrgrs.SetPercentage(p.Value);
-										return dlgPrgrs.ShouldRenderLayer();
-									}
-									else return true;
-								}
-								);
-							if (updateResult == true && OnlineVideoSettings.Instance.SiteUtilsList.Count > 0) guiUpdater.ReloadDownloadedDlls();
-							else if (updateResult == null || OnlineVideoSettings.Instance.SiteUtilsList.Count > 0) OnlineVideoSettings.Instance.BuildSiteUtilsList();
-							if (updateResult != false)
+							if (OnlineVideos.Sites.Updater.VersionCompatible)
 							{
-								PluginConfiguration.Instance.BuildAutomaticSitesGroups();
-								GUIOnlineVideos.cachedImageForSite.Clear();
+								bool? updateResult = OnlineVideos.Sites.Updater.UpdateSites((m, p) =>
+									{
+										if (dlgPrgrs != null)
+										{
+											if (!string.IsNullOrEmpty(m)) dlgPrgrs.SetLine(1, m);
+											if (p != null) dlgPrgrs.SetPercentage(p.Value);
+											return dlgPrgrs.ShouldRenderLayer();
+										}
+										else return true;
+									}
+									);
+								if (updateResult == true && OnlineVideoSettings.Instance.SiteUtilsList.Count > 0) GUISiteUpdater.ReloadDownloadedDlls();
+								else if (updateResult == null || OnlineVideoSettings.Instance.SiteUtilsList.Count > 0) OnlineVideoSettings.Instance.BuildSiteUtilsList();
+								if (updateResult != false)
+								{
+									PluginConfiguration.Instance.BuildAutomaticSitesGroups();
+									GUIOnlineVideos.cachedImageForSite.Clear();
+								}
+							}
+							else
+							{
+								// inform the user that autoupdate is disabled due to outdated version!
+								dlgPrgrs.SetLine(1, Translation.Instance.AutomaticUpdateDisabled);
+								dlgPrgrs.SetLine(2, string.Format(Translation.Instance.LatestVersionRequired, Sites.Updater.VersionOnline.ToString()));
+								Thread.Sleep(5000);
+								dlgPrgrs.SetLine(2, string.Empty);
 							}
 						}
 						if (PluginConfiguration.Instance.ThumbsAge >= 0)
