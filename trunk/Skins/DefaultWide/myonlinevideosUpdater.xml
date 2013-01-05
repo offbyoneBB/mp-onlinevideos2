@@ -72,6 +72,7 @@
       <IconXOff>50</IconXOff>
       <textXOff>60</textXOff>
       <onleft>508</onleft>
+	  <playedColor>ffffcc00</playedColor>
       <animation effect="zoom" time="70" end="75" center="0,0">unfocus</animation>
       <animation effect="slide" time="70" end="185,0">unfocus</animation>
       <animation effect="zoom" time="70" start="75" center="0,0">focus</animation>
@@ -86,7 +87,7 @@
       <posY>553</posY>
       <width>219</width>
       <height>124</height>
-      <texture>Picture_cover.png</texture>      
+      <texture>Picturethumbframe.png</texture>
     </control>        
     <control>
       <type>image</type>

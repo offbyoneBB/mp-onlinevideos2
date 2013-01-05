@@ -181,6 +181,7 @@ namespace OnlineVideos
 		public string Playlists = "Playlists";
 		public string PlaybackWillBeStopped = "Playback will be stopped.";
         public string PleaseEnterDescription = "Please give a short description.";
+		public string PleaseUpdateLocalSite = "Please update and retest your local site before reporting it broken.";
         public string PlotOutline = "Plot outline";
         public string PreviousPage = "Previous page";
         public string PerformAutomaticUpdate = "Perform automatic update?";

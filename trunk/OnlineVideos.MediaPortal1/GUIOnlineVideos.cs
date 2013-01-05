@@ -258,6 +258,7 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.currentDownloads", "0");
+			GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", "OnlineVideos");
             CurrentState = State.sites;
             ExtendedVideoInfo = false;
             // get last active module settings  

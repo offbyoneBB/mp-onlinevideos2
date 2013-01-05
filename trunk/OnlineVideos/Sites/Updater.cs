@@ -22,6 +22,15 @@ namespace OnlineVideos.Sites
 		static Site[] onlineSites;
 		static Dll[] onlineDlls;
 
+		/// <summary>
+		/// Breaking API changes for Sites/Skin will change at least the minor version. 
+		/// Compatible are only versions with the same major and equal or higher minor number.
+		/// </summary>
+		public static bool VersionCompatible
+		{
+			get { return VersionOnline != null && versionLocal.Major == VersionOnline.Major && versionLocal.Minor >= VersionOnline.Minor; }
+		}
+
 		public static Version VersionLocal 
 		{ 
 			get { return versionLocal; } 
@@ -104,7 +113,7 @@ namespace OnlineVideos.Sites
 			try
 			{
 				if (progressCallback != null) progressCallback.Invoke(Translation.Instance.CheckingForPluginUpdate, 0);
-				if (VersionOnline == null || VersionOnline > VersionLocal) return false;
+				if (!VersionCompatible) return false;
 				if (progressCallback != null) progressCallback.Invoke(Translation.Instance.RetrievingRemoteSites, 2);
 				GetRemoteOverviews();
 				if (onlineSitesToUpdate == null && onlineSites != null) onlineSitesToUpdate = onlineSites.ToList();

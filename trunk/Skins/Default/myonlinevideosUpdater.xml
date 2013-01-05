@@ -82,6 +82,7 @@
       <IconXOff>50</IconXOff>
       <textXOff>60</textXOff>
       <onleft>508</onleft>
+	  <playedColor>ffffcc00</playedColor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
       <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
@@ -100,7 +101,7 @@
       <posY>446</posY>
       <width>122</width>
       <height>92</height>
-      <texture>Picture_cover.png</texture>
+      <texture>Picturethumbframe.png</texture>
       <visible>!Control.IsVisible(51)</visible>
     </control>
     <control>
