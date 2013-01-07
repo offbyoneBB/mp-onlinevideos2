@@ -275,6 +275,9 @@ namespace OnlineVideos.Sites.Pondman {
             return videos;
         }
 
+		public override string GetFileNameForDownload(VideoInfo video, Category category, string url) {
+			return video.Title + ".mov";
+		}
         #endregion
 
     }
