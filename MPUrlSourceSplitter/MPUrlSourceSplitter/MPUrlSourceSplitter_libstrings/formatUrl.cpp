@@ -24,6 +24,7 @@
 
 #include <WinInet.h>
 #include <stdio.h>
+#include <wchar.h>
 
 extern void ZeroURL(URL_COMPONENTS *url);
 
@@ -45,16 +46,32 @@ wchar_t *GetBaseUrl(const wchar_t *url)
       // if URL path is not specified, than whole URL is base URL
       if (urlComponents->dwUrlPathLength != 0)
       {
-        // find last '/'
-        // before it is base URL
-        const wchar_t *last = wcsrchr(url, L'/');
-        unsigned int length = (last - url);
+        wchar_t *temp = NULL;
+        unsigned int tempLength = wcslen(url) + 1;
 
-        result = ALLOC_MEM_SET(result, wchar_t, (length + 1), 0);
-        if (result != NULL)
+        if (urlComponents->dwExtraInfoLength != 0)
         {
-          wcsncpy_s(result, length + 1, url, length);
+          // there is some extra information, ignore it
+          tempLength -= urlComponents->dwExtraInfoLength;
         }
+
+        temp = ALLOC_MEM_SET(temp, wchar_t, tempLength, 0);
+        if ((temp != NULL) && (tempLength != 0))
+        {
+          wmemcpy(temp, url, tempLength - 1);
+
+          // find last '/'
+          // before it is base URL
+          const wchar_t *last = wcsrchr(temp, L'/');
+          unsigned int length = (last - temp);
+
+          result = ALLOC_MEM_SET(result, wchar_t, (length + 1), 0);
+          if (result != NULL)
+          {
+            wmemcpy(result, temp, length);
+          }
+        }
+        FREE_MEM(temp);
       }
     }
   }
