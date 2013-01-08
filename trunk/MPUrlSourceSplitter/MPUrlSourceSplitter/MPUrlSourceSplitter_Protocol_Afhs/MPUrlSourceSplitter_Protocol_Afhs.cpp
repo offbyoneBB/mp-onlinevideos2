@@ -659,6 +659,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
                     if (SUCCEEDED(result))
                     {
                       result = (segmentFragment->GetHttpDownloadRequest()->SetUrl(url)) ? result : E_OUTOFMEMORY;
+
+                      result = (segmentFragment->GetHttpDownloadRequest()->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_REFERER, true, NULL))) ? result : E_OUTOFMEMORY;
+                      result = (segmentFragment->GetHttpDownloadRequest()->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_USER_AGENT, true, NULL))) ? result : E_OUTOFMEMORY;
+                      result = (segmentFragment->GetHttpDownloadRequest()->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_COOKIE, true, NULL))) ? result : E_OUTOFMEMORY;
+
+                      segmentFragment->GetHttpDownloadRequest()->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_VERSION, true, HTTP_VERSION_DEFAULT));
+                      segmentFragment->GetHttpDownloadRequest()->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
                     }
                     FREE_MEM(url);
                   }
