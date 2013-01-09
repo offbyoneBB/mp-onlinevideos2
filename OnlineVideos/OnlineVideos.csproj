@@ -191,6 +191,7 @@
     <Compile Include="HtmlAgilityPack\NameValuePairList.cs" />
     <Compile Include="LocalizableDisplayNameAttribute.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="MPUrlSourceFilter\AfhsManifestUrl.cs" />
     <Compile Include="MPUrlSourceFilter\HttpUrl.cs" />
     <Compile Include="MPUrlSourceFilter\IDownload.cs" />
     <Compile Include="MPUrlSourceFilter\IDownloadCallback.cs" />

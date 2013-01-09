@@ -62,10 +62,22 @@ public:
   // @return : true if successful, false otherwise
   bool SetBaseUrl(const wchar_t *baseUrl);
 
+  // gets extra parameters for all segments and fragment
+  // @return : extra parameters for all segments and fragments or NULL if error
+  const wchar_t *GetExtraParameters(void);
+
+  // sets extra parameters for all segments and fragments
+  // @param extraParameters : extra parameters to set
+  // @return : true if successful, false otherwise
+  bool SetExtraParameters(const wchar_t *extraParameters);
+
 protected:
 
   // holds default base url for all segments and fragments
   wchar_t *defaultBaseUrl;
+
+  // holds extra parameters which are added to all segments and fragments
+  wchar_t *extraParameters;
 
   // compare two item keys
   // @param firstKey : the first item key to compare
