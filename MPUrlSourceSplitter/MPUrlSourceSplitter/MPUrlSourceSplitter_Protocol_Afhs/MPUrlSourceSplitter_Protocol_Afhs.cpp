@@ -503,7 +503,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         if ((!this->setLength) && (this->bytePosition != 0))
         {
           // adjust total length if not already set
-          if (this->manifest->GetDuration()->GetDuration() != F4M_DURATION_NOT_SPECIFIED)
+          if ((!this->live) && (this->manifest->GetDuration()->GetDuration() != F4M_DURATION_NOT_SPECIFIED))
           {
             if (lastFlvPacketTimestamp != 0)
             {
