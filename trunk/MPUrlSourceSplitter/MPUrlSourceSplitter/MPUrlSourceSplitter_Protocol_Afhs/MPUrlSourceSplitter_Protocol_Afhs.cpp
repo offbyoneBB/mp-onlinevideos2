@@ -1635,6 +1635,7 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
                 if (SUCCEEDED(result))
                 {
                   result = (segmentsFragments->SetBaseUrl(qualityUrl)) ? result : E_OUTOFMEMORY;
+                  result = (segmentsFragments->SetExtraParameters(configurationParameters->GetValue(PARAMETER_NAME_AFHS_EXTRA_PARAMETERS, true, NULL))) ? result : E_OUTOFMEMORY;
                 }
 
                 if (SUCCEEDED(result))
