@@ -551,6 +551,21 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit, CReceiv
   return S_OK;
 }
 
+CParameterCollection *CMPUrlSourceSplitter_Protocol_Mms::GetConnectionParameters(void)
+{
+  CParameterCollection *result = new CParameterCollection();
+
+  if (result != NULL)
+  {
+    if (!result->Append(this->configurationParameters))
+    {
+      FREE_MEM_CLASS(result);
+    }
+  }
+  
+  return result;
+}
+
 // ISimpleProtocol interface
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mms::GetReceiveDataTimeout(void)

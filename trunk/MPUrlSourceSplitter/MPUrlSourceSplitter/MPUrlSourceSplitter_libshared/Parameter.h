@@ -61,6 +61,4 @@ protected:
   wchar_t *value;
 };
 
-typedef CParameter* PCParameter;
-
 #endif

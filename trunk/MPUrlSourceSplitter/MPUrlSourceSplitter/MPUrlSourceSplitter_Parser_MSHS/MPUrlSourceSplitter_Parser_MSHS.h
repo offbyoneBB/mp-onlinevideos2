@@ -56,8 +56,9 @@ public:
 
   // parses media packets
   // @param mediaPackets : media packet collection to parse
+  // @param connectionParameters : current connection parameters
   // @return : one of ParseResult values
-  ParseResult ParseMediaPackets(CMediaPacketCollection *mediaPackets);
+  ParseResult ParseMediaPackets(CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters);
 
   // sets current connection url and parameters
   // @param parameters : the collection of url and connection parameters

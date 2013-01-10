@@ -58,8 +58,9 @@ struct IParserPlugin : public IPlugin
 
   // parses media packets
   // @param mediaPackets : media packet collection to parse
+  // @param connectionParameters : current connection parameters
   // @return : one of ParseResult values
-  virtual ParseResult ParseMediaPackets(CMediaPacketCollection *mediaPackets) = 0;
+  virtual ParseResult ParseMediaPackets(CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters) = 0;
 
   // sets current connection url and parameters
   // @param parameters : the collection of url and connection parameters

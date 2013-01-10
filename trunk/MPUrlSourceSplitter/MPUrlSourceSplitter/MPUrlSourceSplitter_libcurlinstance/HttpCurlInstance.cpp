@@ -26,6 +26,7 @@ CHttpCurlInstance::CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_
   : CCurlInstance(logger, mutex, protocolName, instanceName)
 {
   this->httpHeaders = NULL;
+  this->cookies = NULL;
 
   this->httpDownloadRequest = dynamic_cast<CHttpDownloadRequest *>(this->downloadRequest);
   this->httpDownloadResponse = dynamic_cast<CHttpDownloadResponse *>(this->downloadResponse);
@@ -33,6 +34,12 @@ CHttpCurlInstance::CHttpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_
 
 CHttpCurlInstance::~CHttpCurlInstance(void)
 {
+  if (this->cookies != NULL)
+  {
+    curl_slist_free_all(this->cookies);
+    this->cookies = NULL;
+  }
+
   this->ClearHeaders();
 }
 
@@ -82,6 +89,16 @@ bool CHttpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
           result = false;
         }
         FREE_MEM(curlCookie);
+      }
+      else if (this->cookies != NULL)
+      {
+        // set cookies in CURL instance to supplied cookies
+        errorCode = curl_easy_setopt(this->curl, CURLOPT_COOKIELIST, &this->cookies);
+        if (errorCode != CURLE_OK)
+        {
+          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting cookies", errorCode);
+          result = false;
+        }
       }
       else
       {
@@ -356,6 +373,74 @@ double CHttpCurlInstance::GetDownloadContentLength(void)
   {
     CURLcode errorCode = curl_easy_getinfo(this->curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &result);
     result = (errorCode == CURLE_OK) ? result : (-1);
+  }
+
+  return result;
+}
+
+CParameterCollection *CHttpCurlInstance::GetCurrentCookies(void)
+{
+  CParameterCollection *result = new CParameterCollection();
+
+  if (this->curl != NULL)
+  {
+    curl_slist *cookieList = NULL;
+    CURLcode errorCode = curl_easy_getinfo(this->curl, CURLINFO_COOKIELIST, &cookieList);
+
+    if ((errorCode == CURLE_OK) && (cookieList != NULL))
+    {
+      for (curl_slist *cookie = cookieList; cookie != NULL; cookie = cookie->next)
+      {
+        wchar_t *convertedValue = ConvertToUnicodeA(cookie->data);
+
+        if (convertedValue != NULL)
+        {
+          CParameter *parameter = new CParameter(L"", convertedValue);
+
+          if (!result->Add(parameter))
+          {
+            FREE_MEM_CLASS(parameter);
+          }
+        }
+        FREE_MEM(convertedValue);
+      }
+
+      curl_slist_free_all(cookieList);
+      cookieList = NULL;
+    }
+  }
+
+  return result;
+}
+
+bool CHttpCurlInstance::SetCurrentCookies(CParameterCollection *cookies)
+{
+  bool result = (cookies != NULL);
+
+  if (result)
+  {
+    // release previous cookies (if exist)
+    if (this->cookies != NULL)
+    {
+      curl_slist_free_all(this->cookies);
+      this->cookies = NULL;
+    }
+
+    // convert cookies collection to CURL list
+    for (unsigned int i = 0; (result && (i < cookies->Count())); i++)
+    {
+      CParameter *cookie = cookies->GetItem(i);
+
+      char *convertedValue = ConvertToMultiByteW(cookie->GetValue());
+      result &= (convertedValue != NULL);
+
+      if (result)
+      {
+        this->cookies = curl_slist_append(this->cookies, convertedValue);
+        result &= (this->cookies != NULL);
+      }
+      FREE_MEM(convertedValue);
+    }
   }
 
   return result;

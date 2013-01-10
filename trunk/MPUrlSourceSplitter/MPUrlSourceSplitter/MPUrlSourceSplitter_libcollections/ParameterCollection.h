@@ -51,16 +51,24 @@ public:
   // @return : true if parameter exists, false otherwise
   bool Contains(const wchar_t *name, bool invariant);
 
+  // updates value of parameter in collection
+  // if parameter doesn't exist, then is added to collection
+  // @param name : the name of parameter to update (add)
+  // @param invariant : specifies if parameter name shoud be find with invariant casing
+  // @param parameter : new parameter value
+  // @return : true if successful, false otherwise
+  bool Update(const wchar_t *name, bool invariant, CParameter *parameter);
+
   // get the parameter from collection with specified index
   // @param index : the index of parameter to find
   // @return : the reference to parameter or NULL if not find
-  PCParameter GetParameter(unsigned int index);
+  CParameter *GetParameter(unsigned int index);
 
   // get the parameter from collection with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing
   // @return : the reference to parameter or NULL if not find
-  PCParameter GetParameter(const wchar_t *name, bool invariant);
+  CParameter *GetParameter(const wchar_t *name, bool invariant);
 
   // get the string value of parameter with specified name
   // @param name : the name of parameter to find

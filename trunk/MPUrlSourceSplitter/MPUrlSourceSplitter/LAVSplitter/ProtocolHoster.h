@@ -62,6 +62,10 @@ public:
   // @result: S_OK if successful, error code otherwise
   HRESULT ReceiveData(bool *shouldExit, CReceiveData *receiveData);
 
+  // gets current connection parameters (can be different as supplied connection parameters)
+  // @return : current connection parameters or NULL if error
+  CParameterCollection *GetConnectionParameters(void);
+
   // ISimpleProtocol interface implementation
 
   // get timeout (in ms) for receiving data

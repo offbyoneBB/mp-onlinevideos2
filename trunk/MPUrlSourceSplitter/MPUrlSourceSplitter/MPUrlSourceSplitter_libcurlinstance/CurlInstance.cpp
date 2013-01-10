@@ -296,7 +296,7 @@ DWORD WINAPI CCurlInstance::CurlWorker(LPVOID lpParam)
 
           if (message != NULL)
           {
-            if (message->msg = CURLMSG::CURLMSG_DONE)
+            if (message->msg = CURLMSG_DONE)
             {
               caller->downloadResponse->SetResultCode(message->data.result);
             }

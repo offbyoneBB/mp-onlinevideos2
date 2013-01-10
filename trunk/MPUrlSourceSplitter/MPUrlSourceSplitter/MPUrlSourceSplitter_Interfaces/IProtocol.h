@@ -54,6 +54,10 @@ public:
   // @param receiveData : received data
   // @result: S_OK if successful, error code otherwise
   virtual HRESULT ReceiveData(bool *shouldExit, CReceiveData *receiveData) = 0;
+
+  // gets current connection parameters (can be different as supplied connection parameters)
+  // @return : current connection parameters or NULL if error
+  virtual CParameterCollection *GetConnectionParameters(void) = 0;
 };
 
 typedef IProtocol* PIProtocol;
