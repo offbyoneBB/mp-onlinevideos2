@@ -684,7 +684,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
                       }
 
                       FREE_MEM(cookieName);
-                      
                     }
 
                     result = (this->mainCurlInstance->SetCurrentCookies(curlCookies)) ? result : E_FAIL;
