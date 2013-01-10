@@ -41,7 +41,7 @@ namespace OnlineVideos.Sites
 
             string url = baseUrl + "_wsplayerxrm_/PlayerCrmApi.asmx/Login";
             string postData = @"data={""ul"":""" + emailAddress + @""",""p"":""" + password +
-                @"""}&context={""g"":""" + tld.ToUpper() + @""",""d"":""1"",""s"":""1"",""p"":""1"",""b"":""1"",""bp"":""""}";
+                @"""}&context={""g"":""" + tld.ToUpper() + @""",""d"":""1"",""s"":""1"",""p"":""1"",""b"":""Desktop"",""bp"":""""}";
 
             string cookies = @"ns_cookietest=true,ns_session=true";
             string[] myCookies = cookies.Split(',');
@@ -142,7 +142,7 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> GetVideoListFromLive(Category category)
         {
             string getData = GetWebData(((RssLink)category).Url, newcc);
-            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
+            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),rt=(?<rt>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
 
             string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
 <s:Body xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
@@ -215,7 +215,7 @@ namespace OnlineVideos.Sites
         private string GetUrlFromVideo(VideoInfo video)
         {
             string getData = GetWebData(video.VideoUrl, newcc);
-            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
+            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),rt=(?<rt>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
             string postData;
             bool catchUp = m.Groups["vidid"].Value == "-1";
             if (catchUp)
