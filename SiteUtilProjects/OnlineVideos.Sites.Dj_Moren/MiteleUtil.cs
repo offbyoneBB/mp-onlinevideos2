@@ -30,7 +30,7 @@ namespace OnlineVideos.Sites
         internal String temporadasARG = "/temporadasbrowser/getCapitulos/";
         internal String episodiosPaginaRegex = "{\"episodes\":\\[(?<episodios>[^]]*)],\"hasNext\":(?<hayMasPaginas>[^}]*)}";
         internal String episodiosRegex = "{(?<episodios>[^}]*)}";
-        internal String xmlURLRegex = "var\\sflashvars\\s=\\s{\"host\":\"(?<url>[^\\?]*)\\?";
+        internal String xmlURLRegex = "{\"host\":\"(?<url>[^\"]*)\"";
         internal String xmlDataRegex = "<duration>(?<Duration>[^<]*)</duration>\\s*<videoUrl\\sscrubbing=\"(?<Scrubbing>[^\"]*)\"\\smultipleDef=\"(?<MultipleDef>[^\"]*)\"\\srtmp=\"(?<rtmp>[^\"]*)\">\\s*<link\\sstart=\"(?<start>[^\"]*)\"\\send=\"(?<end>[^\"]*)\">(?<VideoURL>[^<]*)</link>\\s*</videoUrl>";
         internal String episodesData = "";
         internal String timeURL = "http://token.mitele.es/clock.php";
@@ -76,7 +76,7 @@ namespace OnlineVideos.Sites
             regexTemporadas = new Regex(temporadasRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             regexEpisodiosPagina = new Regex(episodiosPaginaRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             regexEpisodios = new Regex(episodiosRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexXmlURL = new Regex(xmlURLRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regexXmlURL = new Regex(xmlURLRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             regexXmlData = new Regex(xmlDataRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             regexFinalVideoURL = new Regex(finalVideoURLRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             
