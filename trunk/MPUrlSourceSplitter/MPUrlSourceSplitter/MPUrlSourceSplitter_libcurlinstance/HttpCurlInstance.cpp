@@ -93,11 +93,14 @@ bool CHttpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
       else if (this->cookies != NULL)
       {
         // set cookies in CURL instance to supplied cookies
-        errorCode = curl_easy_setopt(this->curl, CURLOPT_COOKIELIST, &this->cookies);
-        if (errorCode != CURLE_OK)
+        for (curl_slist *item = this->cookies; (result & (item != NULL)); item = item->next)
         {
-          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting cookies", errorCode);
-          result = false;
+          errorCode = curl_easy_setopt(this->curl, CURLOPT_COOKIELIST, item->data);
+          if (errorCode != CURLE_OK)
+          {
+            this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting cookies", errorCode);
+            result = false;
+          }
         }
       }
       else
