@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
@@ -17,19 +18,25 @@ namespace OnlineVideos.Sites
                                                      RegexOptions.Compiled);
         private static Regex episodeListRegex = new Regex(@"data-initialdata=""(?<episodeListInitialData>[^""]*)"">",
                                                         RegexOptions.Compiled);
-        private static Regex jsonOpenRegex = new Regex(@"^\[",
-                                                       RegexOptions.Compiled);
-        private static Regex jsonCloseRegex = new Regex(@"\]$",
+        private static Regex jsonOpenBracketRegex = new Regex(@"^\[",
                                                         RegexOptions.Compiled);
+        private static Regex jsonCloseBracketRegex = new Regex(@"\]$",
+                                                        RegexOptions.Compiled);
+        private static Regex jsonEndingCommaRegex = new Regex(@",$",
+                                                              RegexOptions.Compiled);
         private static Regex rtmpUrlRegex = new Regex(@"^(?<host>rtmp.*?)(\{break\}|\<break\>)(?<playPath>.*?)$",
             RegexOptions.Compiled);
         private static Regex singleVideoCategoryRegex = new Regex(@"<div\sclass=""emissionEpisode_containerContenuPub\s+clearfix"">\s+<div\sclass=""emissionEpisode_contenuEpisode"">\s+<div\sclass=""clearfix"">\s+<h1>(?<Title>[^<]*)</h1>\s+(<span\sclass=""codeAge\s[^""]*"">[^<]*</span>\s+)*</div>\s+(<div\sclass=""emissionEpisode_descriptionToggle""><p>[^<]*</p>\s+<div\sid=""facebookLikeEpisode""><fb:like.*?</fb:like></div>\s+</div>\s+<div\sclass=""emissionEpisode_containerBtn\s+clearfix"">\s+<span\sclass=""btnGeneral\sdescriptionFloat\sbtGeneralAvecFleche"">Description\s<span\sclass=""fleche""></span></span>\s+</div>\s+)*<span\sclass=""emissionEpisode_degrade""></span>\s+<div\sclass=""emissionEpisode_containerTxt"">\s+<div\sclass=""emissionEpisode_titreSaisonEpisode"">\s+<h2>[^<]*</h2>\s+<span\sclass=""codeAge\s[^""]*"">[^<]*</span>\s+</div>\s+<br\sclass=""clear""\s/>\s+<p>(?<Description>[^<]*)</p>\s+</div>\s+<div\sclass=""emissionEpisode_plusInfoToggle"">\s+<p\sID=""PDateEpisode""><small>Date\sde\sdiffusion\s:</small>\s<strong>(?<Airdate>[^<]*)</strong></p>",
             RegexOptions.Compiled);
         private static Regex singleVideoCategoryImageUrlRegex = new Regex(@"<meta\scontent=""(?<ImageUrl>[^""]*)""\sproperty=""og:image""",
                                                                           RegexOptions.Compiled);
+        private static Regex manifestRegex = new Regex(@"\((?<json>[^\)]*)\)",
+                                                       RegexOptions.Compiled);
         
         private static string baseUrlPrefix = @"http://www.tou.tv";
         private static string seasonListUrl = baseUrlPrefix + @"/Emisode/GetVignetteSeason?emissionId={0}&season={1}";
+        private static string userAgent = @"Mozilla/5.0 (Windows NT 5.1; rv:17.0) Gecko/20100101 Firefox/17.0";
+        private static string mainfestUrlFormat = @"{0}&g={1}";
 
         public override int DiscoverDynamicCategories()
         {
@@ -97,8 +104,8 @@ namespace OnlineVideos.Sites
                     if (json != null)
                     {
                         // replace opening and closing brackets [] with empty
-                        json = jsonOpenRegex.Replace(json, "");
-                        json = jsonCloseRegex.Replace(json, "");
+                        json = jsonOpenBracketRegex.Replace(json, "");
+                        json = jsonCloseBracketRegex.Replace(json, "");
                         
                         JToken episodeListInitialData = JToken.Parse(json);
                         
@@ -139,8 +146,8 @@ namespace OnlineVideos.Sites
                     if (json != null)
                     {
                         // replace opening and closing brackets [] with empty 
-                        json = jsonOpenRegex.Replace(json, "");
-                        json = jsonCloseRegex.Replace(json, "");
+                        json = jsonOpenBracketRegex.Replace(json, "");
+                        json = jsonCloseBracketRegex.Replace(json, "");
                         Log.Debug(@"JSON after brackets removed: {0}", json);
                         JToken episodeListInitialData = JToken.Parse(json);
 
@@ -194,8 +201,8 @@ namespace OnlineVideos.Sites
                 Log.Debug(@"No videos found, attempting JSON parsing for {0}", url);
                 
                 // replace opening and closing brackets [] with empty
-                string json = jsonOpenRegex.Replace(data, "");
-                json = jsonCloseRegex.Replace(json, "");
+                string json = jsonOpenBracketRegex.Replace(data, "");
+                json = jsonCloseBracketRegex.Replace(json, "");
                 
                 // treat contents as JSON
                 JToken episodeListInitialData = JToken.Parse(json);
@@ -226,70 +233,33 @@ namespace OnlineVideos.Sites
             Log.Debug(@"video: {0}", video.Title);
             string result = string.Empty;
 
-            video.PlaybackOptions = new Dictionary<string, string>();
-            // keep track of bitrates and URLs
-            Dictionary<int, string> urlsDictionary = new Dictionary<int, string>();
+            string data = GetWebData(playListUrl);
+            Log.Debug(@"Validation loaded from {0}", playListUrl);
 
-            XmlDocument xml = GetWebData<XmlDocument>(playListUrl);
-
-            Log.Debug(@"SMIL loaded");
-
-            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(xml.NameTable);
-            nsmRequest.AddNamespace("a", @"http://www.w3.org/2001/SMIL20/Language");
-
-            XmlNode metaBase = xml.SelectSingleNode(@"//a:meta", nsmRequest);
-            string metaBaseValue = metaBase.Attributes["base"].Value;
-
-            // base URL may be stored in the base attribute of <meta> tag
-            string baseRtmp = metaBaseValue.StartsWith("rtmp") ? metaBaseValue : String.Empty;
-
-            foreach (XmlNode node in xml.SelectNodes("//a:body/a:switch/a:video", nsmRequest))
+            if (!string.IsNullOrEmpty(data))
             {
-                int bitrate = int.Parse(node.Attributes["system-bitrate"].Value);
-                // do not bother unless bitrate is non-zero
-                if (bitrate == 0) continue;
-
-                string url = node.Attributes["src"].Value;
-                if (!string.IsNullOrEmpty(baseRtmp))
+                Match manifestMatch = manifestRegex.Match(data);
+                string jsonData = jsonEndingCommaRegex.Replace(manifestMatch.Groups["json"].Value, "");
+                JToken json = JToken.Parse(jsonData);
+                string manifestUrl = string.Format(mainfestUrlFormat, json.Value<string>("url"), GetRandomChars(12));
+                Log.Debug(@"Manifest URL: {0}", manifestUrl);
+                
+                if (!string.IsNullOrEmpty(manifestUrl))
                 {
-                    // prefix url with base (from <meta> tag) and artifical <break>
-                    url = baseRtmp + @"<break>" + url;
+                    result = new MPUrlSourceFilter.HttpUrl(manifestUrl) {
+                        UserAgent = userAgent,
+                    }.ToString();
                 }
-                Log.Debug(@"bitrate: {0}, url: {1}", bitrate / 1000, url);
-
-                if (url.StartsWith("rtmp"))
-                {
-                    Match rtmpUrlMatch = rtmpUrlRegex.Match(url);
-
-                    if (rtmpUrlMatch.Success && !urlsDictionary.ContainsKey(bitrate / 1000))
-                    {
-                        string host = rtmpUrlMatch.Groups["host"].Value;
-                        string playPath = rtmpUrlMatch.Groups["playPath"].Value;
-                        if (playPath.EndsWith(@".mp4") && !playPath.StartsWith(@"mp4:"))
-                        {
-                            // prepend with mp4:
-                            playPath = @"mp4:" + playPath;
-                        }
-                        else if (playPath.EndsWith(@".flv"))
-                        {
-                            // strip extension
-                            playPath = playPath.Substring(0, playPath.Length - 4);
-                        }
-                        Log.Debug(@"Host: {0}, PlayPath: {1}", host, playPath);
-                        MPUrlSourceFilter.RtmpUrl rtmpUrl = new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = playPath };
-                        urlsDictionary.Add(bitrate / 1000, rtmpUrl.ToString());
-                    }
-                }
-            }
-
-            // sort the URLs ascending by bitrate
-            foreach (var item in urlsDictionary.OrderBy(u => u.Key))
-            {
-                video.PlaybackOptions.Add(string.Format("{0} kbps", item.Key), item.Value);
-                // return last URL as the default (will be the highest bitrate)
-                result = item.Value;
             }
             return result;
+        }
+
+        string GetRandomChars(int amount)
+        {
+            var random = new Random();
+            var sb = new StringBuilder(amount);
+            for (int i = 0; i < amount;i++ ) sb.Append(Encoding.ASCII.GetString(new byte[] { (byte)random.Next(65, 90) }));
+            return sb.ToString();
         }
 
     }
