@@ -96,6 +96,14 @@ public:
   // @return : true if in internal buffer is enough space, false otherwise
   virtual bool EnsureEnoughSpace(unsigned int requestedCount);
 
+  // updates item in collection identified by key and context with item value
+  // if item is not in collection then item is added to collection
+  // @param key : the key of item to update
+  // @param context : reference to user defined context (used to find item to update)
+  // @param item : new item value
+  // @return : true if successfully updated or added, false otherwise
+  virtual bool Update(TItemKey key, void *context, TItem *item);
+
 protected:
   // pointer to array of pointers to items
   TItem **items;
@@ -329,6 +337,24 @@ template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Remove
   {
     return false;
   }
+}
+
+template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Update(TItemKey key, void *context, TItem *item)
+{
+  unsigned int index = this->GetItemIndex(key, context);
+  bool result = true;
+
+  if (index != UINT_MAX)
+  {
+    result = this->Remove(index);
+  }
+  
+  if (result)
+  {
+    result = this->Add(item);
+  }
+
+  return result;
 }
 
 #endif

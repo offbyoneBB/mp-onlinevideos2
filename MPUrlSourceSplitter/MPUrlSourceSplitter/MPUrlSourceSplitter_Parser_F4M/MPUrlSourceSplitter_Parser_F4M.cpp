@@ -100,7 +100,7 @@ HRESULT CMPUrlSourceSplitter_Parser_F4M::ClearSession(void)
   return S_OK;
 }
 
-ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketCollection *mediaPackets)
+ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters)
 {
   ParseResult result = ParseResult_NotKnown;
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME);
@@ -556,6 +556,66 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_VERSION, true, PARAMETER_NAME_AFHS_VERSION);
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_URL, true, PARAMETER_NAME_AFHS_MANIFEST_URL);
 
+                            // copy current cookies parameters
+                            if (connectionParameters != NULL)
+                            {
+                              unsigned int currentCookiesCount = connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
+
+                              if (currentCookiesCount != 0)
+                              {
+                                CParameter *httpCookiesCount = connectionParameters->GetParameter(PARAMETER_NAME_HTTP_COOKIES_COUNT, true);
+                                continueParsing &= (httpCookiesCount != NULL);
+
+                                if (continueParsing)
+                                {
+                                  CParameter *afhsCookiesCount = new CParameter(PARAMETER_NAME_AFHS_COOKIES_COUNT, httpCookiesCount->GetValue());
+                                  continueParsing &= (afhsCookiesCount != NULL);
+
+                                  if (continueParsing)
+                                  {
+                                    continueParsing &= this->connectionParameters->Update(PARAMETER_NAME_AFHS_COOKIES_COUNT, true, afhsCookiesCount);
+                                  }
+
+                                  if (!continueParsing)
+                                  {
+                                    FREE_MEM_CLASS(afhsCookiesCount);
+                                  }
+                                }
+                              }
+
+                              for (unsigned int i = 0; (continueParsing && (i < currentCookiesCount)); i++)
+                              {
+                                wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
+                                wchar_t *afhsCookieName = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
+                                continueParsing &= ((httpCookieName != NULL) && (afhsCookieName != NULL));
+
+                                if (continueParsing)
+                                {
+                                  CParameter *httpCookie = connectionParameters->GetParameter(httpCookieName, true);
+                                  continueParsing &= (httpCookie != NULL);
+
+                                  if (continueParsing)
+                                  {
+                                    CParameter *afhsCookie = new CParameter(afhsCookieName, httpCookie->GetValue());
+                                    continueParsing &= (afhsCookie != NULL);
+
+                                    if (continueParsing)
+                                    {
+                                      continueParsing &= this->connectionParameters->Update(afhsCookieName, true, afhsCookie);
+                                    }
+
+                                    if (!continueParsing)
+                                    {
+                                      FREE_MEM_CLASS(afhsCookie);
+                                    }
+                                  }
+                                }
+
+                                FREE_MEM(httpCookieName);
+                                FREE_MEM(afhsCookieName);
+                              }
+                            }
+
                             if (continueParsing)
                             {
                               wchar_t *content = ConvertToUnicodeA((const char *)buffer);
@@ -644,6 +704,8 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_VERSION, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MANIFEST_URL, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MANIFEST_CONTENT, (void *)&invariant);
+
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_COOKIES_COUNT, (void *)&invariant);
                   }
                   else
                   {

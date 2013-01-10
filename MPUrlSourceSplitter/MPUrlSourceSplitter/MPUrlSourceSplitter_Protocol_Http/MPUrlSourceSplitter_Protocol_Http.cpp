@@ -89,6 +89,7 @@ CMPUrlSourceSplitter_Protocol_Http::CMPUrlSourceSplitter_Protocol_Http(CParamete
   this->mainCurlInstance = NULL;
   this->supressData = false;
   this->shouldExit = false;
+  this->currentCookies = NULL;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -104,6 +105,7 @@ CMPUrlSourceSplitter_Protocol_Http::~CMPUrlSourceSplitter_Protocol_Http()
 
   FREE_MEM_CLASS(this->mainCurlInstance);
   FREE_MEM_CLASS(this->configurationParameters);
+  FREE_MEM_CLASS(this->currentCookies);
 
   if (this->lockMutex != NULL)
   {
@@ -292,6 +294,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit, CRecei
         {
           CLockMutex lockData(this->lockCurlMutex, INFINITE);
 
+          FREE_MEM_CLASS(this->currentCookies);
+          this->currentCookies = this->mainCurlInstance->GetCurrentCookies();
+
           unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
           if (bytesRead != 0)
           {
@@ -390,6 +395,81 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit, CRecei
   return S_OK;
 }
 
+CParameterCollection *CMPUrlSourceSplitter_Protocol_Http::GetConnectionParameters(void)
+{
+  CParameterCollection *result = new CParameterCollection();
+  bool retval = (result != NULL);
+
+  if (retval)
+  {
+    // add configuration parameters
+    retval &= result->Append(this->configurationParameters);
+  }
+
+  if (retval)
+  {
+    // add current cookies
+    if ((this->currentCookies != NULL) && (this->currentCookies->Count() != 0))
+    {
+      // first add count of cookies
+      wchar_t *cookiesCountValue = FormatString(L"%u", this->currentCookies->Count());
+      retval &= (cookiesCountValue != NULL);
+
+      if (retval)
+      {
+        CParameter *cookiesCount = new CParameter(PARAMETER_NAME_HTTP_COOKIES_COUNT, cookiesCountValue);
+        retval &= (cookiesCount != NULL);
+
+        if (retval)
+        {
+          retval &= result->Add(cookiesCount);
+        }
+
+        if (!retval)
+        {
+          FREE_MEM_CLASS(cookiesCount);
+        }
+      }
+
+      if (retval)
+      {
+        for (unsigned int i = 0; (retval && (i < this->currentCookies->Count())); i++)
+        {
+          CParameter *cookie = this->currentCookies->GetItem(i);
+          wchar_t *name = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
+          retval &= (name != NULL);
+
+          if (retval)
+          {
+            CParameter *cookieToAdd = new CParameter(name, cookie->GetValue());
+            retval = (cookieToAdd != NULL);
+
+            if (retval)
+            {
+              retval &= result->Add(cookieToAdd);
+            }
+
+            if (!retval)
+            {
+              FREE_MEM_CLASS(cookieToAdd);
+            }
+          }
+
+          FREE_MEM(name);
+        }
+      }
+      FREE_MEM(cookiesCountValue);
+    }
+  }
+
+  if (!retval)
+  {
+    FREE_MEM_CLASS(result);
+  }
+  
+  return result;
+}
+
 // ISimpleProtocol interface
 
 unsigned int CMPUrlSourceSplitter_Protocol_Http::GetReceiveDataTimeout(void)
@@ -429,6 +509,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(const CParameterC
   if (SUCCEEDED(result))
   {
     this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+    if (this->currentCookies != NULL)
+    {
+      result = (this->mainCurlInstance->SetCurrentCookies(this->currentCookies)) ? S_OK : E_FAIL;
+    }
 
     CHttpDownloadRequest *request = new CHttpDownloadRequest();
     CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
@@ -563,6 +647,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ClearSession(void)
   this->shouldExit = false;
 
   FREE_MEM_CLASS(this->receivedData);
+  FREE_MEM_CLASS(this->currentCookies);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;

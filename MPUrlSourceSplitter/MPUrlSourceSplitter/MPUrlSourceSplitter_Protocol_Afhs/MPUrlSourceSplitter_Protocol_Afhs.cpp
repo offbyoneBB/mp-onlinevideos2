@@ -647,6 +647,52 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
               {
                 this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
 
+                // set current cookies (passed from HTTP CURL manifest instance
+                if (this->mainCurlInstance->GetCurrentCookies()->Count() == 0)
+                {
+                  unsigned int currentCookiesCount = this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_AFHS_COOKIES_COUNT, true, 0);
+                  if (currentCookiesCount != 0)
+                  {
+                    CParameterCollection *curlCookies = new CParameterCollection();
+                    CHECK_POINTER_HRESULT(result, curlCookies, result, E_OUTOFMEMORY);
+
+                    for (unsigned int i = 0; (SUCCEEDED(result) & (i < currentCookiesCount)); i++)
+                    {
+                      wchar_t *cookieName = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
+                      CHECK_POINTER_HRESULT(result, cookieName, result, E_OUTOFMEMORY);
+
+                      if (SUCCEEDED(result))
+                      {
+                        const wchar_t *curlCookieValue = this->configurationParameters->GetValue(cookieName, true, NULL);
+                        CHECK_POINTER_HRESULT(result, curlCookieValue, result, E_OUTOFMEMORY);
+
+                        if (SUCCEEDED(result))
+                        {
+                          CParameter *curlCookie = new CParameter(L"", curlCookieValue);
+                          CHECK_POINTER_HRESULT(result, curlCookie, result, E_OUTOFMEMORY);
+
+                          if (SUCCEEDED(result))
+                          {
+                            result = (curlCookies->Add(curlCookie)) ? result : E_FAIL;
+                          }
+
+                          if (FAILED(result))
+                          {
+                            FREE_MEM_CLASS(curlCookie);
+                          }
+                        }
+                      }
+
+                      FREE_MEM(cookieName);
+                      
+                    }
+
+                    result = (this->mainCurlInstance->SetCurrentCookies(curlCookies)) ? result : E_FAIL;
+
+                    FREE_MEM_CLASS(curlCookies);
+                  }
+                }
+
                 if (segmentFragment->GetHttpDownloadRequest() == NULL)
                 {
                   result = (segmentFragment->CreateHttpDownloadRequest()) ? result : E_OUTOFMEMORY;
@@ -961,6 +1007,21 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
   }
 
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+  return result;
+}
+
+CParameterCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetConnectionParameters(void)
+{
+  CParameterCollection *result = new CParameterCollection();
+
+  if (result != NULL)
+  {
+    if (!result->Append(this->configurationParameters))
+    {
+      FREE_MEM_CLASS(result);
+    }
+  }
+  
   return result;
 }
 

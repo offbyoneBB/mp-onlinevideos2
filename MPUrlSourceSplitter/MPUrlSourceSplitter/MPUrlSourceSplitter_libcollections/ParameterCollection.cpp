@@ -50,17 +50,22 @@ bool CParameterCollection::Contains(const wchar_t *name, bool invariant)
   return __super::Contains(name, (void *)&invariant);
 }
 
+bool CParameterCollection::Update(const wchar_t *name, bool invariant, CParameter *parameter)
+{
+  return __super::Update(name, (void *)&invariant, parameter);
+}
+
 const wchar_t *CParameterCollection::GetKey(CParameter *item)
 {
   return item->GetName();
 }
 
-PCParameter CParameterCollection::GetParameter(unsigned int index)
+CParameter *CParameterCollection::GetParameter(unsigned int index)
 {
   return __super::GetItem(index);
 }
 
-PCParameter CParameterCollection::GetParameter(const wchar_t *name, bool invariant)
+CParameter *CParameterCollection::GetParameter(const wchar_t *name, bool invariant)
 {
   return this->GetItem(name, (void *)&invariant);
 }
@@ -78,7 +83,7 @@ void CParameterCollection::LogCollection(CLogger *logger, unsigned int loggerLev
   }
   for (unsigned int i = 0; i < count; i++)
   {
-    PCParameter parameter = this->GetParameter(i);
+    CParameter *parameter = this->GetParameter(i);
     if (protocolName == NULL)
     {
       logger->Log(loggerLevel, L"%s: parameter %u, name: '%s', value: '%s'", functionName, i + 1, parameter->GetName(), parameter->GetValue());
@@ -92,7 +97,7 @@ void CParameterCollection::LogCollection(CLogger *logger, unsigned int loggerLev
 
 const wchar_t *CParameterCollection::GetValue(const wchar_t *name, bool invariant, const wchar_t *defaultValue)
 {
-  PCParameter parameter = this->GetParameter(name, invariant);
+  CParameter *parameter = this->GetParameter(name, invariant);
   if (parameter != NULL)
   {
     return parameter->GetValue();

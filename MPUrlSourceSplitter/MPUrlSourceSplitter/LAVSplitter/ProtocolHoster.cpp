@@ -135,6 +135,16 @@ HRESULT CProtocolHoster::ReceiveData(bool *shouldExit, CReceiveData *receiveData
   return E_NO_ACTIVE_PROTOCOL;
 }
 
+CParameterCollection *CProtocolHoster::GetConnectionParameters(void)
+{
+  if (this->activeProtocol != NULL)
+  {
+    return this->activeProtocol->GetConnectionParameters();
+  }
+
+  return NULL;
+}
+
 // ISimpleProtocol interface implementation
 
 unsigned int CProtocolHoster::GetReceiveDataTimeout(void)

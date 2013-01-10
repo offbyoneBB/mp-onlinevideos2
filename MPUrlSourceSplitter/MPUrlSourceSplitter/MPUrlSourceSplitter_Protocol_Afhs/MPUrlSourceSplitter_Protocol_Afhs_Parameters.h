@@ -40,6 +40,9 @@
 #define PARAMETER_NAME_AFHS_MANIFEST_URL                                      L"AfhsManifestUrl"
 #define PARAMETER_NAME_AFHS_MANIFEST_CONTENT                                  L"AfhsManifestContent"
 
+#define PARAMETER_NAME_AFHS_COOKIES_COUNT                                     L"AfhsCookiesCount"
+#define AFHS_COOKIE_FORMAT_PARAMETER_NAME                                     L"AfhsCookie%08u"
+
 // we should get data in twenty seconds
 #define AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
 #define AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT                         3

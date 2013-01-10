@@ -61,7 +61,16 @@ public:
   // @return : download content length or -1 if error or unknown
   virtual double GetDownloadContentLength(void);
 
+  // gets current cookies in CURL instance
+  // @return : collecion of current cookies
+  virtual CParameterCollection *GetCurrentCookies(void);
+
   /* set methods */
+
+  // sets current cookies in CURL instance (must be done before calling Initialize() method)
+  // @param cookies : collection of cookies previously get by GetCurrentCookies() method
+  // @return : true if successful, false otherwise
+  virtual bool SetCurrentCookies(CParameterCollection *cookies);
 
   /* other methods */
 
@@ -80,6 +89,9 @@ protected:
   CHttpDownloadResponse *httpDownloadResponse;
 
   curl_slist *httpHeaders;
+
+  // holds cookies to initialize instance
+  curl_slist *cookies;
 
   // called when CURL debug message arives
   // @param type : CURL message type

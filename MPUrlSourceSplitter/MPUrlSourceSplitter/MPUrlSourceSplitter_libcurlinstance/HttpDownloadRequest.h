@@ -44,16 +44,16 @@ public:
   // @return : end position
   virtual uint64_t GetEndPosition(void);
 
-  // gets cookie
-  // @return : cookie or NULL if error
+  // gets cookie to send (overrides default cookies)
+  // @return : cookie or NULL if error or not specified
   virtual const wchar_t *GetCookie(void);
 
   // gets referer
-  // @return : referer or NULL if error
+  // @return : referer or NULL if error or not specified
   virtual const wchar_t *GetReferer(void);
 
   // gets user agent
-  // @return : user agent or NULL if error
+  // @return : user agent or NULL if error or not specified
   virtual const wchar_t *GetUserAgent(void);
 
   // gets HTTP version
@@ -78,7 +78,7 @@ public:
   // @param endPosition : end position to set
   virtual void SetEndPosition(uint64_t endPosition);
 
-  // sets cookie
+  // sets cookie to send (overrides default cookies)
   // @param cookie : cookie to set
   // @return : true if successful, false otherwise
   virtual bool SetCookie(const wchar_t *cookie);

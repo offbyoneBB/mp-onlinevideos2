@@ -92,7 +92,7 @@ HRESULT CMPUrlSourceSplitter_Parser_Asx::ClearSession(void)
   return S_OK;
 }
 
-ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPackets(CMediaPacketCollection *mediaPackets)
+ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPackets(CMediaPacketCollection *mediaPackets, CParameterCollection *connectionParameters)
 {
   ParseResult result = ParseResult_NotKnown;
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME);

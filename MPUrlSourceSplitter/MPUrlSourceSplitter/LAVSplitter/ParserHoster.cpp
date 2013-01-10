@@ -168,11 +168,15 @@ HRESULT CParserHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
     if (this->parsingPlugin != NULL)
     {
       // is there is plugin which returned ParseResult::Known result
-      this->parsingPlugin->ParseMediaPackets(mediaPackets);
+      CParameterCollection *currentConnectionParameters = this->protocolHoster->GetConnectionParameters();
+      this->parsingPlugin->ParseMediaPackets(mediaPackets, currentConnectionParameters);
+      FREE_MEM_CLASS(currentConnectionParameters);
       result = S_OK;
     }
     else 
     {
+      CParameterCollection *currentConnectionParameters = this->protocolHoster->GetConnectionParameters();
+
       // send received media packet to parsers
       for (unsigned int i = 0; (i < this->pluginImplementationsCount) && (this->parsingPlugin == NULL); i++)
       {
@@ -186,7 +190,7 @@ HRESULT CParserHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
           // if parser returned ParseResult::NotKnown result than parser surely 
           // doesn't recognize any pattern in stream
 
-          ParseResult pluginParseResult = plugin->ParseMediaPackets(mediaPackets);
+          ParseResult pluginParseResult = plugin->ParseMediaPackets(mediaPackets, currentConnectionParameters);
           implementation->result = pluginParseResult;
 
           switch(pluginParseResult)
@@ -215,6 +219,8 @@ HRESULT CParserHoster::PushMediaPackets(CMediaPacketCollection *mediaPackets)
           }
         }
       }
+
+      FREE_MEM_CLASS(currentConnectionParameters);
     }
 
     if ((!pendingPlugin) && (this->parsingPlugin == NULL) && (drmProtected))
