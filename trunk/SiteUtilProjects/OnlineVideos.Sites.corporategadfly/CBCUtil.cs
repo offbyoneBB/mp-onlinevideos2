@@ -16,8 +16,10 @@ namespace OnlineVideos.Sites
     public class CBCUtil : SiteUtilBase
     {
         private string feedPID;
-        private string platformRoot = @"http://cbc.feeds.theplatform.com/ps/JSON/PortalService/2.2/";
-        private string feedPIDUrl = @"http://www.cbc.ca/video/js/SWFVideoPlayer.js";
+        private static string platformRoot = @"http://cbc.feeds.theplatform.com/ps/JSON/PortalService/2.2/";
+        private static string feedPIDUrl = @"http://www.cbc.ca/video/js/SWFVideoPlayer.js";
+        private static string videoListUrl = platformRoot + @"/getReleaseList?PID={0}&query=CategoryIDs|{1}&sortDescending=true&endIndex=500";
+
         private static Regex feedPIDRegex = new Regex(@"{PID:\s""(?<feedPID>[^""]*)"",",
                                                       RegexOptions.Compiled);
 
@@ -80,7 +82,9 @@ namespace OnlineVideos.Sites
                         long air = item.Value<long>("airdate");
                         string Airdate = new DateTime((air * 10000) + 621355968000000000, DateTimeKind.Utc).ToString();
                         if (!String.IsNullOrEmpty(Airdate))
-                            video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + Airdate;
+                        {
+                            video.Airdate = Airdate;
+                        }
 
                         JArray assets = item["assets"] as JArray;
                         if (assets != null && assets.First != null)
@@ -95,8 +99,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            string url = platformRoot + @"/getReleaseList?PID=" + feedPID + "&query=CategoryIDs|" +
-                (string)category.Other + "&endIndex=500";
+            string url = string.Format(videoListUrl, feedPID, (string) category.Other);
             JObject contentData = GetWebData<JObject>(url);
             return getvideos(contentData);
         }
