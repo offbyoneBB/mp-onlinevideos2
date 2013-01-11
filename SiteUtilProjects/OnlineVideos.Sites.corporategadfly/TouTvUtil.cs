@@ -30,6 +30,8 @@ namespace OnlineVideos.Sites
             RegexOptions.Compiled);
         private static Regex singleVideoCategoryImageUrlRegex = new Regex(@"<meta\scontent=""(?<ImageUrl>[^""]*)""\sproperty=""og:image""",
                                                                           RegexOptions.Compiled);
+        private static Regex singleVideoCategoryDurationRegex = new Regex(@"<meta\scontent=""(?<Duration>[^""]*)""\sproperty=""video:duration""",
+                                                                          RegexOptions.Compiled);
         private static Regex manifestRegex = new Regex(@"\((?<json>[^\)]*)\)",
                                                        RegexOptions.Compiled);
         
@@ -187,6 +189,12 @@ namespace OnlineVideos.Sites
                     if (imageMatch.Success)
                     {
                         videoInfo.ImageUrl = imageMatch.Groups["ImageUrl"].Value;
+                    }
+                    
+                    Match durationMatch = singleVideoCategoryDurationRegex.Match(data);
+                    if (durationMatch.Success)
+                    {
+                        videoInfo.Length = durationMatch.Groups["Duration"].Value;
                     }
                     videoList.Add(videoInfo);
                 }
