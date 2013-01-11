@@ -85,7 +85,7 @@ namespace OnlineVideos.MediaPortal1
 
 		void DoSubsequentLoad()
 		{
-			if (PreviousWindowId != 4758 &&
+			if (PreviousWindowId != OnlineVideos.MediaPortal1.Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO &&
 				PluginConfiguration.Instance.updateOnStart != false &&
 				PluginConfiguration.Instance.lastFirstRun.AddHours(PluginConfiguration.Instance.updatePeriod) < DateTime.Now)
 			{
@@ -186,7 +186,7 @@ namespace OnlineVideos.MediaPortal1
 		void DoPageLoad()
 		{
 			// called everytime the plugin is shown, after some other window was shown (also after fullscreen playback)
-			if (PreviousWindowId != 4758)
+			if (PreviousWindowId != OnlineVideos.MediaPortal1.Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO)
 			{
 				// reload settings that can be modified with the MPEI plugin
 				PluginConfiguration.Instance.ReLoadRuntimeSettings();

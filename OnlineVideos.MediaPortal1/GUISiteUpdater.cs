@@ -59,48 +59,46 @@ namespace OnlineVideos.MediaPortal1
 			return PluginConfiguration.Instance.BasicHomeScreenName + ": " + Translation.Instance.ManageSites;
         }
 
-        protected override void OnPageLoad()
-        {
-            Translator.TranslateSkin();
+		protected override void OnPageLoad()
+		{
+			base.OnPageLoad();
 
-            base.OnPageLoad();
+			defaultLabelBtnSort = GUIPropertyManager.Parse(GUI_btnSort.Label);
+			defaultLabelBtnFilterState = GUIPropertyManager.Parse(GUI_btnFilterState.Label);
+			defaultLabelBtnFilterCreator = GUIPropertyManager.Parse(GUI_btnFilterCreator.Label);
+			defaultLabelBtnFilterLang = GUIPropertyManager.Parse(GUI_btnFilterLang.Label);
 
-            defaultLabelBtnSort = GUIPropertyManager.Parse(GUI_btnSort.Label);
-            defaultLabelBtnFilterState = GUIPropertyManager.Parse(GUI_btnFilterState.Label);
-            defaultLabelBtnFilterCreator = GUIPropertyManager.Parse(GUI_btnFilterCreator.Label);
-            defaultLabelBtnFilterLang = GUIPropertyManager.Parse(GUI_btnFilterLang.Label);
-
-            if (GUI_btnFilterState.SubItemCount == 0)
-            {
-                foreach (string aFilterOption in Enum.GetNames(typeof(FilterStateOption)))
-                {
-                    GUIControl.AddItemLabelControl(GetID, GUI_btnFilterState.GetID, Translation.Instance.GetByName(aFilterOption));
-                }
-            }
-            if (GUI_btnSort.SubItemCount == 0)
-            {
-                foreach (string aSortOption in Enum.GetNames(typeof(SortOption)))
-                {
-                    string[] singled = aSortOption.Split('_');
+			if (GUI_btnFilterState.SubItemCount == 0)
+			{
+				foreach (string aFilterOption in Enum.GetNames(typeof(FilterStateOption)))
+				{
+					GUIControl.AddItemLabelControl(GetID, GUI_btnFilterState.GetID, Translation.Instance.GetByName(aFilterOption));
+				}
+			}
+			if (GUI_btnSort.SubItemCount == 0)
+			{
+				foreach (string aSortOption in Enum.GetNames(typeof(SortOption)))
+				{
+					string[] singled = aSortOption.Split('_');
 					for (int i = 0; i < singled.Length; i++) singled[i] = Translation.Instance.GetByName(singled[i]);
-                    GUIControl.AddItemLabelControl(GetID, GUI_btnSort.GetID, string.Join(", ", singled));
-                }
-            }
-            SetFilterButtonOptions();
+					GUIControl.AddItemLabelControl(GetID, GUI_btnSort.GetID, string.Join(", ", singled));
+				}
+			}
+			SetFilterButtonOptions();
 
 			GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel",
 										   PluginConfiguration.Instance.BasicHomeScreenName + ": " + Translation.Instance.ManageSites);
 			GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage",
-                                           GUIOnlineVideos.GetImageForSite("OnlineVideos"));
+										   GUIOnlineVideos.GetImageForSite("OnlineVideos"));
 
-            GUIOnlineVideos ovGuiInstance = (GUIOnlineVideos)GUIWindowManager.GetWindow(GUIOnlineVideos.WindowId);
-            if (ovGuiInstance != null && ovGuiInstance.SelectedSite != null && ovGuiInstance.CurrentState != GUIOnlineVideos.State.sites)
-            {
-                selectedSite = ovGuiInstance.SelectedSite.Settings.Name;
-            }
+			GUIOnlineVideos ovGuiInstance = (GUIOnlineVideos)GUIWindowManager.GetWindow(GUIOnlineVideos.WindowId);
+			if (ovGuiInstance != null && ovGuiInstance.SelectedSite != null && ovGuiInstance.CurrentState != GUIOnlineVideos.State.sites)
+			{
+				selectedSite = ovGuiInstance.SelectedSite.Settings.Name;
+			}
 
-            RefreshDisplayedOnlineSites();
-        }
+			RefreshDisplayedOnlineSites();
+		}
 
 		public override bool OnMessage(GUIMessage message)
 		{
