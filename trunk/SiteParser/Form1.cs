@@ -428,21 +428,27 @@ namespace SiteParser
             Category parentCat = GetTreeViewSelectedNode() as Category;
             if (parentCat != null)
             {
+				List<VideoInfo> videos = null;
                 TreeNode selected = treeView1.SelectedNode;
-                if (parentCat is NextPageVideoCategory)
-                {
-                    selected = selected.Parent;
-                    selected.Nodes.RemoveAt(selected.Nodes.Count - 1);
-                }
-                else
-                    selected.Nodes.Clear();
-                List<VideoInfo> videos = generic.getVideoList(parentCat);
+				string nodeTitle = parentCat.Name;
+				if (parentCat is NextPageVideoCategory)
+				{
+					selected = selected.Parent;
+					nodeTitle = selected.Tag as string;
+					selected.Nodes.RemoveAt(selected.Nodes.Count - 1);
+					videos = generic.getNextPageVideos();
+				}
+				else
+				{
+					selected.Nodes.Clear();
+					videos = generic.getVideoList(parentCat);
+				}
                 foreach (VideoInfo video in videos)
                 {
                     video.CleanDescriptionAndTitle();
                     selected.Nodes.Add(video.Title).Tag = video;
                 }
-                selected.Text = string.Format("{0} ({1})", parentCat.Name, selected.Nodes.Count);
+				selected.Text = string.Format("{0} ({1})", nodeTitle, selected.Nodes.Count);
 
                 if (generic.HasNextPage)
                 {
@@ -473,10 +479,17 @@ namespace SiteParser
 			List<VideoInfo> videos = generic.Search(SearchQueryTextBox.Text);
 
 			TreeNode node = new TreeNode(string.Format("Search for '{0}' ({1})", SearchQueryTextBox.Text, videos.Count));
+			node.Tag = string.Format("Search for '{0}'", SearchQueryTextBox.Text);
 			foreach (VideoInfo video in videos)
 			{
 				video.CleanDescriptionAndTitle();
 				node.Nodes.Add(video.Title).Tag = video;
+			}
+			if (generic.HasNextPage)
+			{
+				NextPageVideoCategory npCat = new NextPageVideoCategory();
+				npCat.Url = (string)GetProperty(generic, "nextPageUrl");
+				node.Nodes.Add(npCat.Name).Tag = npCat;
 			}
 
 			treeView1.Nodes[0].Nodes.Add(node);
