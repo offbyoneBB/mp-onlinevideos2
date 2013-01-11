@@ -64,6 +64,9 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> getvideos(JToken contentData)
         {
             List<VideoInfo> res = new List<VideoInfo>();
+            
+            // keep track of contentIDs, since some videos have multiple bitrates
+            Dictionary<string, VideoInfo> videoDictionary = new Dictionary<string, VideoInfo>();
             if (contentData != null)
             {
                 JArray items = contentData["items"] as JArray;
@@ -71,8 +74,9 @@ namespace OnlineVideos.Sites
                 {
                     foreach (JToken item in items)
                     {
+                        string contentID = item.Value<string>("contentID");
+                        
                         VideoInfo video = new VideoInfo();
-                        video.Title = item.Value<string>("title");
                         video.Description = item.Value<string>("description");
                         video.VideoUrl = item.Value<string>("playerURL");
 
@@ -85,10 +89,34 @@ namespace OnlineVideos.Sites
                         {
                             video.Airdate = Airdate;
                         }
+                        long bitrate = item.Value<long>("bitrate");
+                        video.Other = (int) bitrate / 1000;
 
                         JArray assets = item["assets"] as JArray;
                         if (assets != null && assets.First != null)
                             video.ImageUrl = assets.First.Value<string>("URL");
+
+                        if (videoDictionary.ContainsKey(contentID))
+                        {
+                            // we have already seen this contentID earlier
+                            // so we must add bitrate to existing title
+                            VideoInfo existingVideo = videoDictionary[contentID];
+                            if (existingVideo.Other != null)
+                            {
+                                existingVideo.Title = string.Format("{0} ({1} kbps)", existingVideo.Title, (int) existingVideo.Other);
+                                // add the title only once
+                                existingVideo.Other = null;
+                            }
+                            
+                            // add new bitrate to title
+                            video.Title = string.Format("{0} ({1} kbps)", item.Value<string>("title"), (int) bitrate / 1000);
+                        }
+                        else
+                        {
+                            video.Title = item.Value<string>("title");
+                            videoDictionary.Add(contentID, video);
+                        }
+
                         res.Add(video);
                     }
                 }
