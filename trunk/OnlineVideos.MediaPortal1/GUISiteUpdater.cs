@@ -128,7 +128,12 @@ namespace OnlineVideos.MediaPortal1
 			return base.OnMessage(message);
 		}
 
-        void RefreshDisplayedOnlineSites()
+		void RefreshDisplayedOnlineSites()
+		{
+			RefreshDisplayedOnlineSites(-1);
+		}
+
+        void RefreshDisplayedOnlineSites(int indexToSelect)
         {
             Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
             {
@@ -136,12 +141,12 @@ namespace OnlineVideos.MediaPortal1
             },
             delegate(bool success, object result)
             {
-                DisplayOnlineSites(success && (bool)result);
+				DisplayOnlineSites(success && (bool)result, indexToSelect);
             }
 			, Translation.Instance.RetrievingRemoteSites + "/" + Translation.Instance.RetrievingRemoteDlls, true);
         }
 
-        void DisplayOnlineSites(bool newDataRetrieved)
+        void DisplayOnlineSites(bool newDataRetrieved, int indexToSelect)
         {
             GUIPropertyManager.SetProperty("#OnlineVideos.owner", String.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
@@ -176,7 +181,12 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
 					loListItem.IsPlayed = localSitesDic.ContainsKey(site.Name);// GetLocalSite(site.Name) != -1;
                     GUI_infoList.Add(loListItem);
-                    if ((selectedItem != null && selectedItem.Label == loListItem.Label) || selectedSite == loListItem.Label) GUI_infoList.SelectedListItemIndex = GUI_infoList.Count - 1;
+					if ((selectedItem != null && selectedItem.Label == loListItem.Label) ||
+						selectedSite == loListItem.Label ||
+						(indexToSelect > -1 && GUI_infoList.Count - 1 == indexToSelect))
+					{
+						GUI_infoList.SelectedListItemIndex = GUI_infoList.Count - 1;
+					}
                 }
             }
 
@@ -409,7 +419,7 @@ namespace OnlineVideos.MediaPortal1
 				OnlineVideoSettings.Instance.RemoveSiteAt(localSiteIndex);
                 OnlineVideoSettings.Instance.SaveSites();
                 newDataSaved = true;
-                RefreshDisplayedOnlineSites();
+				RefreshDisplayedOnlineSites(GUI_infoList.SelectedListItemIndex);
             }
 			else if (dlgSel.SelectedLabelText == Translation.Instance.RemoveAllFromMySites)
 			{
