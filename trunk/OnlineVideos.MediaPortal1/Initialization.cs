@@ -196,6 +196,10 @@ namespace OnlineVideos.MediaPortal1
 				{
 					// showing sites, but groups are enabled and no group is selected -> show groups
 					if (CurrentState == State.sites && selectedSitesGroup == null) CurrentState = State.groups;
+
+					// we might have to generate automatic groups if it is enabled now
+					if (PluginConfiguration.Instance.CachedAutomaticSitesGroups.Count == 0)
+						PluginConfiguration.Instance.BuildAutomaticSitesGroups();
 				}
 				else
 				{
