@@ -1635,11 +1635,11 @@
 <div\s+class="information">\s*
 <(div|h2)\s+class="duration[^"]*">(?<Duration>[^<]*)<]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\s+class="prev-next">\s*<a\s+href="(?<url>[^"]+)">[^<]*<span>&raquo;</span>\s*</a>\s*</li>]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="fileUrlRegEx"><![CDATA[(?<=<ul\s+class="downloadList">.*)<li[^>]*>\s*<span>[^<]*</span>\s*<a\s+href="(?<m0>[^"]+)">(?<n0>[^<]+)</a>(?<n1>[^<]*)</li>\s*]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
         <item key="fileUrlNameFormatString"><![CDATA[{0} {1}]]></item>
         <item key="fileUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="searchUrl"><![CDATA[http://www.youporn.com/search?type=straight&amp;query={0}]]></item>
+        <item key="searchUrl"><![CDATA[http://www.youporn.com/search/?query={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.youporn.com/categories/]]></item>
         <item key="cookies"><![CDATA[age_verified=1]]></item>
       </Configuration>
