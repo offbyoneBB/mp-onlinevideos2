@@ -134,6 +134,9 @@ namespace SiteParser
             videoListUrlDecodingComboBox.SelectedItem = (GenericSiteUtil.UrlDecoding)GetProperty(util, "videoListUrlDecoding");
             videoUrlDecodingComboBox.SelectedItem = (GenericSiteUtil.UrlDecoding)GetProperty(util, "videoUrlDecoding");
 
+			searchUrlTextBox.Text = GetProperty(util, "searchUrl") as string;
+			searchPostStringTextBox.Text = GetProperty(util, "searchPostString") as string;
+
             playlistUrlRegexTextBox.Text = GetRegex(util, "regEx_PlaylistUrl");
             playlistUrlFormatStringTextBox.Text = (string)GetProperty(util, "playlistUrlFormatString");
 
@@ -186,6 +189,9 @@ namespace SiteParser
             SetProperty(util, "videoUrlFormatString", videoUrlFormatStringTextBox.Text);
             SetProperty(util, "videoListUrlDecoding", videoListUrlDecodingComboBox.SelectedItem);
             SetProperty(util, "videoUrlDecoding", videoUrlDecodingComboBox.SelectedItem);
+			
+			SetProperty(util, "searchUrl", searchUrlTextBox.Text);
+			SetProperty(util, "searchPostString", searchPostStringTextBox.Text);
 
             SetRegex(util, "regEx_PlaylistUrl", "playlistUrlRegEx", playlistUrlRegexTextBox.Text);
             SetProperty(util, "playlistUrlFormatString", playlistUrlFormatStringTextBox.Text);
@@ -448,6 +454,35 @@ namespace SiteParser
             else
                 MessageBox.Show("no valid category selected");
         }
+
+		private void GetSearchResultsButton_Click(object sender, EventArgs e)
+		{
+			if (string.IsNullOrEmpty(SearchQueryTextBox.Text))
+			{
+				MessageBox.Show("You must enter a search term", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				return;
+			}
+			if (string.IsNullOrEmpty(searchUrlTextBox.Text))
+			{
+				MessageBox.Show("You must enter an URL for searching", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				return;
+			}
+
+			GuiToUtil(generic);
+
+			List<VideoInfo> videos = generic.Search(SearchQueryTextBox.Text);
+
+			TreeNode node = new TreeNode(string.Format("Search for '{0}' ({1})", SearchQueryTextBox.Text, videos.Count));
+			foreach (VideoInfo video in videos)
+			{
+				video.CleanDescriptionAndTitle();
+				node.Nodes.Add(video.Title).Tag = video;
+			}
+
+			treeView1.Nodes[0].Nodes.Add(node);
+			treeView1.Nodes[0].Expand();
+			treeView1.SelectedNode = node;
+		}
         #endregion
 
         #region NextPrevPage
@@ -791,6 +826,5 @@ namespace SiteParser
                 Name = Translation.Instance.NextPage;
             }
         }
-
     }
 }
