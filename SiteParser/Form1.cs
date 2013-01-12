@@ -154,7 +154,8 @@ namespace SiteParser
                 root.Nodes.Add(cat.Name).Tag = cat;
                 cat.HasSubCategories = true;
             }
-
+			if (root.Nodes.Count > 0)
+				root.Expand();
         }
 
         private void GuiToUtil(GenericSiteUtil util)
@@ -696,6 +697,8 @@ namespace SiteParser
                     staticList.Add(cat);
 
                 UtilToGui(generic);
+
+				LoadIconAndBanner();
             }
         }
 
@@ -750,6 +753,11 @@ namespace SiteParser
         {
             Process.Start(@"http://code.google.com/p/mp-onlinevideos2/wiki/SiteParser");
         }
+
+		private void regularExpressionsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Process.Start(@"http://www.regular-expressions.info/");
+		}
 
         private void copyValueToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -839,5 +847,73 @@ namespace SiteParser
                 Name = Translation.Instance.NextPage;
             }
         }
+
+		void LoadIconAndBanner()
+		{
+			pictureBoxSiteIcon.ImageLocation = null;
+			pictureBoxSiteBanner.ImageLocation = null;
+			if (!string.IsNullOrEmpty(nameTextBox.Text))
+			{
+				string ovThumbDir =
+					Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
+						+ @"\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\";
+				if (Directory.Exists(ovThumbDir + "Icons"))
+				{
+					string fileName = string.Format(@"{0}{1}\{2}.png", ovThumbDir, "Icons", nameTextBox.Text);
+					if (File.Exists(fileName))
+						pictureBoxSiteIcon.ImageLocation = fileName;
+				}
+				if (Directory.Exists(ovThumbDir + "Banners"))
+				{
+					string fileName = string.Format(@"{0}{1}\{2}.png", ovThumbDir, "Banners", nameTextBox.Text);
+					if (File.Exists(fileName))
+						pictureBoxSiteBanner.ImageLocation = fileName;
+				}
+			}
+		}
+
+		private void pictureBoxSiteIcon_Click(object sender, EventArgs e)
+		{
+			if (string.IsNullOrEmpty(nameTextBox.Text) || nameTextBox.Text == "please fill")
+			{
+				MessageBox.Show("Please set the Site's name first!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+			}
+			else
+			{
+				openPngDialog.Title = "Chose a a square PNG as Icon for " + nameTextBox.Text;
+				if (openPngDialog.ShowDialog() == DialogResult.OK)
+				{
+					pictureBoxSiteIcon.ImageLocation = openPngDialog.FileName;
+
+					string ovIconsDir =
+					Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
+						+ @"\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons";
+					if (!Directory.Exists(ovIconsDir)) Directory.CreateDirectory(ovIconsDir);
+					File.Copy(openPngDialog.FileName, Path.Combine(ovIconsDir, nameTextBox.Text + ".png"), true);
+				}
+			}
+		}
+
+		private void pictureBoxSiteBanner_Click(object sender, EventArgs e)
+		{
+			if (string.IsNullOrEmpty(nameTextBox.Text) || nameTextBox.Text == "please fill")
+			{
+				MessageBox.Show("Please set the Site's name first!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+			}
+			else
+			{
+				openPngDialog.Title = "Chose a PNG with 3:1 aspect ratio as Banner for " + nameTextBox.Text;
+				if (openPngDialog.ShowDialog() == DialogResult.OK)
+				{
+					pictureBoxSiteBanner.ImageLocation = openPngDialog.FileName;
+
+					string ovBannersDir =
+					Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
+						+ @"\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners";
+					if (!Directory.Exists(ovBannersDir)) Directory.CreateDirectory(ovBannersDir);
+					File.Copy(openPngDialog.FileName, Path.Combine(ovBannersDir, nameTextBox.Text + ".png"), true);
+				}
+			}
+		}
     }
 }
