@@ -11,7 +11,7 @@ namespace OnlineVideos.Sites
     {
         private static Regex mainCategoriesRegex = new Regex(@"<li>\s+<a\s+href=""(?<url>[^""]*)""[^>]*>(?<title>[^<]*)</a>",
                                                              RegexOptions.Compiled);
-        private static Regex videoListRegex = new Regex(@"clip\.id\s=\s(?<clipId>[^;]*);\s+clip\.title\s=\s""(?<title>[^""]*)"";\s+clip\.image\s=\s""(?<thumb>[^""]*)"";\s+clip\.description\s=\s""(?<description>[^""]*)"";",
+        private static Regex videoListRegex = new Regex(@"<img.*?src='(?<thumb>[^']*)'\s/>.*?clip\.id\s=\s(?<clipId>[^;]*);\s+clip\.title\s=\s""(?<title>[^""]*)"";.*?clip\.description\s=\s""(?<description>[^""]*)"";",
                                                         RegexOptions.Compiled | RegexOptions.Singleline);
         private static Regex manifestRegex = new Regex(@"Video\.Load\((?<json>[^\)]*)\)",
                                                        RegexOptions.Compiled);
