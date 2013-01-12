@@ -9,9 +9,9 @@ namespace OnlineVideos.Sites
 {
     public class CTVNewsUtil : GenericSiteUtil
     {
-        private static Regex mainCategoriesRegex = new Regex(@"<li\sclass=""video""\s+>\s+<a\s+href=""(?<url>[^""]*)""[^>]*>(?<title>[^<]*)</a>",
+        private static Regex mainCategoriesRegex = new Regex(@"<li>\s+<a\s+href=""(?<url>[^""]*)""[^>]*>(?<title>[^<]*)</a>",
                                                              RegexOptions.Compiled);
-        private static Regex videoListRegex = new Regex(@"<img.*?src='(?<thumb>[^']*)'\s/>.*?clip\.id\s=\s(?<clipId>[^;]*);\s+clip\.title\s=\sescape\(""(?<title>[^""]*)""\);.*?clip\.description\s=\sescape\(""(?<description>[^""]*)""\);",
+        private static Regex videoListRegex = new Regex(@"clip\.id\s=\s(?<clipId>[^;]*);\s+clip\.title\s=\s""(?<title>[^""]*)"";\s+clip\.image\s=\s""(?<thumb>[^""]*)"";\s+clip\.description\s=\s""(?<description>[^""]*)"";",
                                                         RegexOptions.Compiled | RegexOptions.Singleline);
         private static Regex manifestRegex = new Regex(@"Video\.Load\((?<json>[^\)]*)\)",
                                                        RegexOptions.Compiled);
@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
                                                        RegexOptions.Compiled);
         
         protected static string videoListUrlFormat = @"{0}/{1}?ot=example.AjaxPageLayout.ot&maxItemsPerPage=12&pageNum={2}";
-        private static string urlgenFormat = @"http://esi.ctv.ca/datafeed/flv/urlgenjs.aspx?formatid=18&timeZone=4&vid={0}";
+        private static string urlgenFormat = @"http://esi.ctv.ca/datafeed/flv/urlgenjsext.aspx?formatid=27&timeZone=4&vid={0}";
         private static string manifestUrlFormat = @"{0}?hdcore=";
             
         private Category currentCategory = null;
@@ -34,10 +34,12 @@ namespace OnlineVideos.Sites
             {
                 foreach (Match m in mainCategoriesRegex.Matches(webData))
                 {
+                    string url = m.Groups["url"].Value;
+                    
+                    if (url.IndexOf("binId") == -1) continue;
                     RssLink cat = new RssLink();
 
                     cat.Name = m.Groups["title"].Value;
-                    string url = m.Groups["url"].Value;
                     string binId = HttpUtility.ParseQueryString(new Uri(url).Query)["binId"];
                     cat.Url = string.Format(videoListUrlFormat, baseUrl, binId, "1");
                     cat.HasSubCategories = false;
