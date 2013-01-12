@@ -32,6 +32,10 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.generalTabPage = new System.Windows.Forms.TabPage();
+			this.pictureBoxSiteBanner = new System.Windows.Forms.PictureBox();
+			this.pictureBoxSiteIcon = new System.Windows.Forms.PictureBox();
+			this.label38 = new System.Windows.Forms.Label();
+			this.label37 = new System.Windows.Forms.Label();
 			this.nameTextBox = new System.Windows.Forms.TextBox();
 			this.label26 = new System.Windows.Forms.Label();
 			this.playerComboBox = new System.Windows.Forms.ComboBox();
@@ -41,9 +45,10 @@
 			this.cbLanguages = new System.Windows.Forms.ComboBox();
 			this.label23 = new System.Windows.Forms.Label();
 			this.ageCheckBox = new System.Windows.Forms.CheckBox();
+			this.categTabPage = new System.Windows.Forms.TabPage();
+			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.baseUrlTextbox = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.categTabPage = new System.Windows.Forms.TabPage();
 			this.label27 = new System.Windows.Forms.Label();
 			this.categoryUrlDecodingComboBox = new System.Windows.Forms.ComboBox();
 			this.CreateCategoryNextPageRegexButton = new System.Windows.Forms.Button();
@@ -71,28 +76,33 @@
 			this.label5 = new System.Windows.Forms.Label();
 			this.subcategoryRegexTextBox = new System.Windows.Forms.TextBox();
 			this.videoListTabPage = new System.Windows.Forms.TabPage();
-			this.GetSearchResultsButton = new System.Windows.Forms.Button();
-			this.searchPostStringTextBox = new System.Windows.Forms.TextBox();
-			this.label35 = new System.Windows.Forms.Label();
-			this.searchUrlTextBox = new System.Windows.Forms.TextBox();
-			this.label34 = new System.Windows.Forms.Label();
-			this.label32 = new System.Windows.Forms.Label();
-			this.nextPageUrlDecodingComboBox = new System.Windows.Forms.ComboBox();
-			this.label31 = new System.Windows.Forms.Label();
-			this.videoListUrlDecodingComboBox = new System.Windows.Forms.ComboBox();
-			this.CreateNextPageRegexButton = new System.Windows.Forms.Button();
-			this.CreateVideoListRegexButton = new System.Windows.Forms.Button();
-			this.nextPageRegExUrlFormatStringTextBox = new System.Windows.Forms.TextBox();
-			this.nextPageRegExTextBox = new System.Windows.Forms.TextBox();
-			this.label10 = new System.Windows.Forms.Label();
-			this.label9 = new System.Windows.Forms.Label();
-			this.videoThumbFormatStringTextBox = new System.Windows.Forms.TextBox();
-			this.label8 = new System.Windows.Forms.Label();
-			this.videoListRegexFormatTextBox = new System.Windows.Forms.TextBox();
-			this.label6 = new System.Windows.Forms.Label();
-			this.GetVideoListButton = new System.Windows.Forms.Button();
+			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.videoListRegexTextBox = new System.Windows.Forms.TextBox();
+			this.label6 = new System.Windows.Forms.Label();
+			this.label31 = new System.Windows.Forms.Label();
+			this.videoListRegexFormatTextBox = new System.Windows.Forms.TextBox();
+			this.videoListUrlDecodingComboBox = new System.Windows.Forms.ComboBox();
+			this.label8 = new System.Windows.Forms.Label();
+			this.CreateVideoListRegexButton = new System.Windows.Forms.Button();
+			this.videoThumbFormatStringTextBox = new System.Windows.Forms.TextBox();
+			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.label9 = new System.Windows.Forms.Label();
+			this.label10 = new System.Windows.Forms.Label();
+			this.label32 = new System.Windows.Forms.Label();
+			this.nextPageRegExTextBox = new System.Windows.Forms.TextBox();
+			this.nextPageUrlDecodingComboBox = new System.Windows.Forms.ComboBox();
+			this.nextPageRegExUrlFormatStringTextBox = new System.Windows.Forms.TextBox();
+			this.CreateNextPageRegexButton = new System.Windows.Forms.Button();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label34 = new System.Windows.Forms.Label();
+			this.label41 = new System.Windows.Forms.Label();
+			this.searchUrlTextBox = new System.Windows.Forms.TextBox();
+			this.SearchQueryTextBox = new System.Windows.Forms.TextBox();
+			this.label35 = new System.Windows.Forms.Label();
+			this.GetSearchResultsButton = new System.Windows.Forms.Button();
+			this.searchPostStringTextBox = new System.Windows.Forms.TextBox();
+			this.GetVideoListButton = new System.Windows.Forms.Button();
 			this.VideoUrlTabPage = new System.Windows.Forms.TabPage();
 			this.label33 = new System.Windows.Forms.Label();
 			this.videoUrlDecodingComboBox = new System.Windows.Forms.ComboBox();
@@ -115,7 +125,6 @@
 			this.play = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyUrl = new System.Windows.Forms.ToolStripMenuItem();
 			this.checkValid = new System.Windows.Forms.ToolStripMenuItem();
-			this.label21 = new System.Windows.Forms.Label();
 			this.CreateFileUrlRegexButton = new System.Windows.Forms.Button();
 			this.fileUrlFormatStringTextBox = new System.Windows.Forms.TextBox();
 			this.fileUrlRegexTextBox = new System.Windows.Forms.TextBox();
@@ -152,12 +161,29 @@
 			this.videoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.SearchQueryTextBox = new System.Windows.Forms.TextBox();
+			this.openPngDialog = new System.Windows.Forms.OpenFileDialog();
+			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.groupBox6 = new System.Windows.Forms.GroupBox();
+			this.groupBox7 = new System.Windows.Forms.GroupBox();
+			this.groupBox8 = new System.Windows.Forms.GroupBox();
+			this.groupBox9 = new System.Windows.Forms.GroupBox();
+			this.groupBox10 = new System.Windows.Forms.GroupBox();
+			this.groupBox11 = new System.Windows.Forms.GroupBox();
+			this.groupBox12 = new System.Windows.Forms.GroupBox();
+			this.label36 = new System.Windows.Forms.Label();
+			this.wikiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.regularExpressionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tabControl1.SuspendLayout();
 			this.generalTabPage.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBoxSiteBanner)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBoxSiteIcon)).BeginInit();
 			this.categTabPage.SuspendLayout();
+			this.groupBox4.SuspendLayout();
 			this.subCatTabPage.SuspendLayout();
 			this.videoListTabPage.SuspendLayout();
+			this.groupBox3.SuspendLayout();
+			this.groupBox2.SuspendLayout();
+			this.groupBox1.SuspendLayout();
 			this.VideoUrlTabPage.SuspendLayout();
 			this.playButtonContextMenuStrip.SuspendLayout();
 			this.CategoryViewContextMenuStrip.SuspendLayout();
@@ -168,6 +194,14 @@
 			this.splitContainer2.Panel2.SuspendLayout();
 			this.splitContainer2.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
+			this.groupBox5.SuspendLayout();
+			this.groupBox6.SuspendLayout();
+			this.groupBox7.SuspendLayout();
+			this.groupBox8.SuspendLayout();
+			this.groupBox9.SuspendLayout();
+			this.groupBox10.SuspendLayout();
+			this.groupBox11.SuspendLayout();
+			this.groupBox12.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tabControl1
@@ -187,6 +221,10 @@
 			// 
 			// generalTabPage
 			// 
+			this.generalTabPage.Controls.Add(this.pictureBoxSiteBanner);
+			this.generalTabPage.Controls.Add(this.pictureBoxSiteIcon);
+			this.generalTabPage.Controls.Add(this.label38);
+			this.generalTabPage.Controls.Add(this.label37);
 			this.generalTabPage.Controls.Add(this.nameTextBox);
 			this.generalTabPage.Controls.Add(this.label26);
 			this.generalTabPage.Controls.Add(this.playerComboBox);
@@ -196,8 +234,6 @@
 			this.generalTabPage.Controls.Add(this.cbLanguages);
 			this.generalTabPage.Controls.Add(this.label23);
 			this.generalTabPage.Controls.Add(this.ageCheckBox);
-			this.generalTabPage.Controls.Add(this.baseUrlTextbox);
-			this.generalTabPage.Controls.Add(this.label1);
 			this.generalTabPage.Location = new System.Drawing.Point(4, 22);
 			this.generalTabPage.Name = "generalTabPage";
 			this.generalTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -206,21 +242,64 @@
 			this.generalTabPage.Text = "General";
 			this.generalTabPage.UseVisualStyleBackColor = true;
 			// 
+			// pictureBoxSiteBanner
+			// 
+			this.pictureBoxSiteBanner.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.pictureBoxSiteBanner.Location = new System.Drawing.Point(81, 278);
+			this.pictureBoxSiteBanner.Name = "pictureBoxSiteBanner";
+			this.pictureBoxSiteBanner.Size = new System.Drawing.Size(300, 100);
+			this.pictureBoxSiteBanner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.pictureBoxSiteBanner.TabIndex = 17;
+			this.pictureBoxSiteBanner.TabStop = false;
+			this.pictureBoxSiteBanner.Click += new System.EventHandler(this.pictureBoxSiteBanner_Click);
+			// 
+			// pictureBoxSiteIcon
+			// 
+			this.pictureBoxSiteIcon.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.pictureBoxSiteIcon.Location = new System.Drawing.Point(81, 172);
+			this.pictureBoxSiteIcon.Name = "pictureBoxSiteIcon";
+			this.pictureBoxSiteIcon.Size = new System.Drawing.Size(100, 100);
+			this.pictureBoxSiteIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.pictureBoxSiteIcon.TabIndex = 16;
+			this.pictureBoxSiteIcon.TabStop = false;
+			this.pictureBoxSiteIcon.Click += new System.EventHandler(this.pictureBoxSiteIcon_Click);
+			// 
+			// label38
+			// 
+			this.label38.AutoSize = true;
+			this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label38.Location = new System.Drawing.Point(0, 280);
+			this.label38.Name = "label38";
+			this.label38.Size = new System.Drawing.Size(47, 13);
+			this.label38.TabIndex = 15;
+			this.label38.Text = "Banner";
+			// 
+			// label37
+			// 
+			this.label37.AutoSize = true;
+			this.label37.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label37.Location = new System.Drawing.Point(0, 174);
+			this.label37.Name = "label37";
+			this.label37.Size = new System.Drawing.Size(32, 13);
+			this.label37.TabIndex = 14;
+			this.label37.Text = "Icon";
+			// 
 			// nameTextBox
 			// 
 			this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.nameTextBox.Location = new System.Drawing.Point(3, 22);
+			this.nameTextBox.Location = new System.Drawing.Point(81, 3);
 			this.nameTextBox.Name = "nameTextBox";
-			this.nameTextBox.Size = new System.Drawing.Size(451, 20);
+			this.nameTextBox.Size = new System.Drawing.Size(373, 20);
 			this.nameTextBox.TabIndex = 12;
 			// 
 			// label26
 			// 
 			this.label26.AutoSize = true;
+			this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.label26.Location = new System.Drawing.Point(0, 6);
 			this.label26.Name = "label26";
-			this.label26.Size = new System.Drawing.Size(35, 13);
+			this.label26.Size = new System.Drawing.Size(39, 13);
 			this.label26.TabIndex = 11;
 			this.label26.Text = "Name";
 			// 
@@ -228,17 +307,18 @@
 			// 
 			this.playerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.playerComboBox.FormattingEnabled = true;
-			this.playerComboBox.Location = new System.Drawing.Point(3, 146);
+			this.playerComboBox.Location = new System.Drawing.Point(81, 122);
 			this.playerComboBox.Name = "playerComboBox";
-			this.playerComboBox.Size = new System.Drawing.Size(111, 21);
+			this.playerComboBox.Size = new System.Drawing.Size(168, 21);
 			this.playerComboBox.TabIndex = 10;
 			// 
 			// label25
 			// 
 			this.label25.AutoSize = true;
-			this.label25.Location = new System.Drawing.Point(0, 130);
+			this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label25.Location = new System.Drawing.Point(0, 125);
 			this.label25.Name = "label25";
-			this.label25.Size = new System.Drawing.Size(36, 13);
+			this.label25.Size = new System.Drawing.Size(42, 13);
 			this.label25.TabIndex = 9;
 			this.label25.Text = "Player";
 			// 
@@ -246,115 +326,138 @@
 			// 
 			this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.descriptionTextBox.Location = new System.Drawing.Point(3, 107);
+			this.descriptionTextBox.Location = new System.Drawing.Point(81, 29);
+			this.descriptionTextBox.Multiline = true;
 			this.descriptionTextBox.Name = "descriptionTextBox";
-			this.descriptionTextBox.Size = new System.Drawing.Size(451, 20);
+			this.descriptionTextBox.Size = new System.Drawing.Size(373, 60);
 			this.descriptionTextBox.TabIndex = 8;
 			// 
 			// label24
 			// 
 			this.label24.AutoSize = true;
-			this.label24.Location = new System.Drawing.Point(0, 91);
+			this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label24.Location = new System.Drawing.Point(0, 32);
 			this.label24.Name = "label24";
-			this.label24.Size = new System.Drawing.Size(60, 13);
+			this.label24.Size = new System.Drawing.Size(71, 13);
 			this.label24.TabIndex = 7;
 			this.label24.Text = "Description";
 			// 
 			// cbLanguages
 			// 
-			this.cbLanguages.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.cbLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbLanguages.Location = new System.Drawing.Point(3, 209);
+			this.cbLanguages.Location = new System.Drawing.Point(81, 95);
 			this.cbLanguages.Name = "cbLanguages";
-			this.cbLanguages.Size = new System.Drawing.Size(451, 21);
+			this.cbLanguages.Size = new System.Drawing.Size(168, 21);
 			this.cbLanguages.TabIndex = 6;
 			// 
 			// label23
 			// 
 			this.label23.AutoSize = true;
-			this.label23.Location = new System.Drawing.Point(0, 193);
+			this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label23.Location = new System.Drawing.Point(0, 98);
 			this.label23.Name = "label23";
-			this.label23.Size = new System.Drawing.Size(55, 13);
+			this.label23.Size = new System.Drawing.Size(63, 13);
 			this.label23.TabIndex = 5;
 			this.label23.Text = "Language";
 			// 
 			// ageCheckBox
 			// 
 			this.ageCheckBox.AutoSize = true;
-			this.ageCheckBox.Location = new System.Drawing.Point(3, 173);
+			this.ageCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.ageCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ageCheckBox.Location = new System.Drawing.Point(0, 149);
 			this.ageCheckBox.Name = "ageCheckBox";
-			this.ageCheckBox.Size = new System.Drawing.Size(79, 17);
+			this.ageCheckBox.Size = new System.Drawing.Size(95, 17);
 			this.ageCheckBox.TabIndex = 4;
-			this.ageCheckBox.Text = "Age Check";
+			this.ageCheckBox.Text = "Is Adult Site";
 			this.ageCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// baseUrlTextbox
-			// 
-			this.baseUrlTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.baseUrlTextbox.Location = new System.Drawing.Point(3, 64);
-			this.baseUrlTextbox.Name = "baseUrlTextbox";
-			this.baseUrlTextbox.Size = new System.Drawing.Size(451, 20);
-			this.baseUrlTextbox.TabIndex = 3;
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(0, 48);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(44, 13);
-			this.label1.TabIndex = 2;
-			this.label1.Text = "BaseUrl";
 			// 
 			// categTabPage
 			// 
-			this.categTabPage.Controls.Add(this.label27);
-			this.categTabPage.Controls.Add(this.categoryUrlDecodingComboBox);
-			this.categTabPage.Controls.Add(this.CreateCategoryNextPageRegexButton);
-			this.categTabPage.Controls.Add(this.categoryNextPageRegexTextBox);
-			this.categTabPage.Controls.Add(this.label30);
-			this.categTabPage.Controls.Add(this.makeStaticButton);
-			this.categTabPage.Controls.Add(this.manageStaticCategoriesButton);
-			this.categTabPage.Controls.Add(this.CreateCategoryRegexButton);
-			this.categTabPage.Controls.Add(this.categoryUrlFormatTextBox);
-			this.categTabPage.Controls.Add(this.label3);
+			this.categTabPage.Controls.Add(this.groupBox4);
 			this.categTabPage.Controls.Add(this.GetCategoriesButton);
-			this.categTabPage.Controls.Add(this.label2);
-			this.categTabPage.Controls.Add(this.categoryRegexTextbox);
+			this.categTabPage.Controls.Add(this.groupBox5);
+			this.categTabPage.Controls.Add(this.groupBox6);
 			this.categTabPage.Location = new System.Drawing.Point(4, 22);
 			this.categTabPage.Name = "categTabPage";
 			this.categTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.categTabPage.Size = new System.Drawing.Size(460, 555);
 			this.categTabPage.TabIndex = 0;
-			this.categTabPage.Text = "Category";
+			this.categTabPage.Text = "Categories";
 			this.categTabPage.UseVisualStyleBackColor = true;
+			// 
+			// groupBox4
+			// 
+			this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox4.Controls.Add(this.label1);
+			this.groupBox4.Controls.Add(this.baseUrlTextbox);
+			this.groupBox4.Controls.Add(this.categoryUrlDecodingComboBox);
+			this.groupBox4.Controls.Add(this.label27);
+			this.groupBox4.Controls.Add(this.label2);
+			this.groupBox4.Controls.Add(this.CreateCategoryRegexButton);
+			this.groupBox4.Controls.Add(this.categoryRegexTextbox);
+			this.groupBox4.Controls.Add(this.label3);
+			this.groupBox4.Controls.Add(this.categoryUrlFormatTextBox);
+			this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox4.Location = new System.Drawing.Point(1, 6);
+			this.groupBox4.Name = "groupBox4";
+			this.groupBox4.Size = new System.Drawing.Size(454, 166);
+			this.groupBox4.TabIndex = 61;
+			this.groupBox4.TabStop = false;
+			this.groupBox4.Text = "Dynamic Categories";
+			// 
+			// baseUrlTextbox
+			// 
+			this.baseUrlTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.baseUrlTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.baseUrlTextbox.Location = new System.Drawing.Point(80, 18);
+			this.baseUrlTextbox.Name = "baseUrlTextbox";
+			this.baseUrlTextbox.Size = new System.Drawing.Size(367, 20);
+			this.baseUrlTextbox.TabIndex = 59;
+			this.toolTip1.SetToolTip(this.baseUrlTextbox, "Define the Url where dynamic categories should be scraped.");
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label1.Location = new System.Drawing.Point(5, 21);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(47, 13);
+			this.label1.TabIndex = 58;
+			this.label1.Text = "Base Url";
 			// 
 			// label27
 			// 
 			this.label27.AutoSize = true;
-			this.label27.Location = new System.Drawing.Point(0, 175);
+			this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label27.Location = new System.Drawing.Point(5, 140);
 			this.label27.Name = "label27";
-			this.label27.Size = new System.Drawing.Size(149, 13);
+			this.label27.Size = new System.Drawing.Size(61, 13);
 			this.label27.TabIndex = 57;
-			this.label27.Text = "DynamicCategoryUrlDecoding";
+			this.label27.Text = "Url Decode";
 			// 
 			// categoryUrlDecodingComboBox
 			// 
 			this.categoryUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.categoryUrlDecodingComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.categoryUrlDecodingComboBox.FormattingEnabled = true;
-			this.categoryUrlDecodingComboBox.Location = new System.Drawing.Point(155, 172);
+			this.categoryUrlDecodingComboBox.Location = new System.Drawing.Point(80, 136);
 			this.categoryUrlDecodingComboBox.Name = "categoryUrlDecodingComboBox";
-			this.categoryUrlDecodingComboBox.Size = new System.Drawing.Size(66, 21);
+			this.categoryUrlDecodingComboBox.Size = new System.Drawing.Size(85, 21);
 			this.categoryUrlDecodingComboBox.TabIndex = 56;
+			this.toolTip1.SetToolTip(this.categoryUrlDecodingComboBox, "What type of decoding should be applied to the \'url\' match of the dynamic categor" +
+        "y Url after formatting.");
 			// 
 			// CreateCategoryNextPageRegexButton
 			// 
-			this.CreateCategoryNextPageRegexButton.Location = new System.Drawing.Point(3, 196);
+			this.CreateCategoryNextPageRegexButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.CreateCategoryNextPageRegexButton.Location = new System.Drawing.Point(8, 37);
 			this.CreateCategoryNextPageRegexButton.Name = "CreateCategoryNextPageRegexButton";
-			this.CreateCategoryNextPageRegexButton.Size = new System.Drawing.Size(80, 23);
+			this.CreateCategoryNextPageRegexButton.Size = new System.Drawing.Size(60, 21);
 			this.CreateCategoryNextPageRegexButton.TabIndex = 55;
-			this.CreateCategoryNextPageRegexButton.Text = "Create Regex";
+			this.CreateCategoryNextPageRegexButton.Text = "Create";
 			this.CreateCategoryNextPageRegexButton.UseVisualStyleBackColor = true;
 			this.CreateCategoryNextPageRegexButton.Click += new System.EventHandler(this.CreateCategoryNextPageRegexButton_Click);
 			// 
@@ -362,47 +465,58 @@
 			// 
 			this.categoryNextPageRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.categoryNextPageRegexTextBox.Location = new System.Drawing.Point(3, 238);
+			this.categoryNextPageRegexTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.categoryNextPageRegexTextBox.Location = new System.Drawing.Point(80, 18);
+			this.categoryNextPageRegexTextBox.Multiline = true;
 			this.categoryNextPageRegexTextBox.Name = "categoryNextPageRegexTextBox";
-			this.categoryNextPageRegexTextBox.Size = new System.Drawing.Size(451, 20);
+			this.categoryNextPageRegexTextBox.Size = new System.Drawing.Size(367, 60);
 			this.categoryNextPageRegexTextBox.TabIndex = 54;
+			this.toolTip1.SetToolTip(this.categoryNextPageRegexTextBox, "Regular Expression used to parse the data retrieved to get the dynamic categories" +
+        " for a link to another page with more categories. Group names: \'url\'. Will not b" +
+        "e used if not set.");
 			// 
 			// label30
 			// 
 			this.label30.AutoSize = true;
-			this.label30.Location = new System.Drawing.Point(0, 222);
+			this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label30.Location = new System.Drawing.Point(5, 21);
 			this.label30.Name = "label30";
-			this.label30.Size = new System.Drawing.Size(86, 13);
+			this.label30.Size = new System.Drawing.Size(38, 13);
 			this.label30.TabIndex = 53;
-			this.label30.Text = "NextPageRegEx";
+			this.label30.Text = "Regex";
 			// 
 			// makeStaticButton
 			// 
-			this.makeStaticButton.Location = new System.Drawing.Point(106, 264);
+			this.makeStaticButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.makeStaticButton.Location = new System.Drawing.Point(8, 50);
 			this.makeStaticButton.Name = "makeStaticButton";
-			this.makeStaticButton.Size = new System.Drawing.Size(99, 23);
+			this.makeStaticButton.Size = new System.Drawing.Size(100, 23);
 			this.makeStaticButton.TabIndex = 31;
 			this.makeStaticButton.Text = "Dynamic -> Static";
+			this.toolTip1.SetToolTip(this.makeStaticButton, "Convert dynamic Categories to Static ones.");
 			this.makeStaticButton.UseVisualStyleBackColor = true;
 			this.makeStaticButton.Click += new System.EventHandler(this.makeStaticButton_Click);
 			// 
 			// manageStaticCategoriesButton
 			// 
-			this.manageStaticCategoriesButton.Location = new System.Drawing.Point(3, 264);
+			this.manageStaticCategoriesButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.manageStaticCategoriesButton.Location = new System.Drawing.Point(8, 21);
 			this.manageStaticCategoriesButton.Name = "manageStaticCategoriesButton";
-			this.manageStaticCategoriesButton.Size = new System.Drawing.Size(97, 23);
+			this.manageStaticCategoriesButton.Size = new System.Drawing.Size(100, 23);
 			this.manageStaticCategoriesButton.TabIndex = 30;
-			this.manageStaticCategoriesButton.Text = "Static Categories";
+			this.manageStaticCategoriesButton.Text = "Manage";
+			this.toolTip1.SetToolTip(this.manageStaticCategoriesButton, "Add, Edit, Remove Static Categories for this Site.");
 			this.manageStaticCategoriesButton.UseVisualStyleBackColor = true;
 			this.manageStaticCategoriesButton.Click += new System.EventHandler(this.manageStaticCategoriesButton_Click);
 			// 
 			// CreateCategoryRegexButton
 			// 
-			this.CreateCategoryRegexButton.Location = new System.Drawing.Point(3, 3);
+			this.CreateCategoryRegexButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.CreateCategoryRegexButton.Location = new System.Drawing.Point(8, 63);
 			this.CreateCategoryRegexButton.Name = "CreateCategoryRegexButton";
-			this.CreateCategoryRegexButton.Size = new System.Drawing.Size(80, 23);
+			this.CreateCategoryRegexButton.Size = new System.Drawing.Size(60, 21);
 			this.CreateCategoryRegexButton.TabIndex = 29;
-			this.CreateCategoryRegexButton.Text = "Create Regex";
+			this.CreateCategoryRegexButton.Text = "Create";
 			this.CreateCategoryRegexButton.UseVisualStyleBackColor = true;
 			this.CreateCategoryRegexButton.Click += new System.EventHandler(this.CreateCategoryRegexButton_Click);
 			// 
@@ -410,63 +524,66 @@
 			// 
 			this.categoryUrlFormatTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.categoryUrlFormatTextBox.Location = new System.Drawing.Point(3, 147);
+			this.categoryUrlFormatTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.categoryUrlFormatTextBox.Location = new System.Drawing.Point(80, 110);
 			this.categoryUrlFormatTextBox.Name = "categoryUrlFormatTextBox";
-			this.categoryUrlFormatTextBox.Size = new System.Drawing.Size(451, 20);
+			this.categoryUrlFormatTextBox.Size = new System.Drawing.Size(367, 20);
 			this.categoryUrlFormatTextBox.TabIndex = 26;
+			this.toolTip1.SetToolTip(this.categoryUrlFormatTextBox, "Format string applied to the \'url\' match retrieved from the Dynamic Categories Re" +
+        "gex.");
 			// 
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(0, 131);
+			this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label3.Location = new System.Drawing.Point(5, 113);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(135, 13);
+			this.label3.Size = new System.Drawing.Size(55, 13);
 			this.label3.TabIndex = 25;
-			this.label3.Text = "DynamicCategoryUrlFormat";
+			this.label3.Text = "Url Format";
 			// 
 			// GetCategoriesButton
 			// 
-			this.GetCategoriesButton.Location = new System.Drawing.Point(89, 3);
+			this.GetCategoriesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.GetCategoriesButton.Location = new System.Drawing.Point(353, 526);
 			this.GetCategoriesButton.Name = "GetCategoriesButton";
-			this.GetCategoriesButton.Size = new System.Drawing.Size(75, 23);
+			this.GetCategoriesButton.Size = new System.Drawing.Size(95, 23);
 			this.GetCategoriesButton.TabIndex = 23;
-			this.GetCategoriesButton.Text = "GetCats";
+			this.GetCategoriesButton.Text = "Get Categories";
+			this.toolTip1.SetToolTip(this.GetCategoriesButton, "Scrape the dynamic categories from the base url using the dynamic categories rege" +
+        "x.");
 			this.GetCategoriesButton.UseVisualStyleBackColor = true;
 			this.GetCategoriesButton.Click += new System.EventHandler(this.GetCategoriesButton_Click);
 			// 
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(0, 32);
+			this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label2.Location = new System.Drawing.Point(5, 47);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(80, 13);
+			this.label2.Size = new System.Drawing.Size(38, 13);
 			this.label2.TabIndex = 21;
-			this.label2.Text = "CategoryRegex";
+			this.label2.Text = "Regex";
 			// 
 			// categoryRegexTextbox
 			// 
 			this.categoryRegexTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.categoryRegexTextbox.Location = new System.Drawing.Point(3, 48);
+			this.categoryRegexTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.categoryRegexTextbox.Location = new System.Drawing.Point(80, 44);
 			this.categoryRegexTextbox.Multiline = true;
 			this.categoryRegexTextbox.Name = "categoryRegexTextbox";
-			this.categoryRegexTextbox.Size = new System.Drawing.Size(451, 80);
+			this.categoryRegexTextbox.Size = new System.Drawing.Size(367, 60);
 			this.categoryRegexTextbox.TabIndex = 16;
+			this.toolTip1.SetToolTip(this.categoryRegexTextbox, "Regular Expression used to parse the baseUrl for dynamic categories. Group names:" +
+        " \'url\', \'title\', \'thumb\', \'description\'. Will not be used if not set.");
 			// 
 			// subCatTabPage
 			// 
-			this.subCatTabPage.Controls.Add(this.label29);
-			this.subCatTabPage.Controls.Add(this.subCategoryUrlDecodingComboBox);
-			this.subCatTabPage.Controls.Add(this.CreateSubcategoriesNextPageRegexButton);
-			this.subCatTabPage.Controls.Add(this.subcategoryNextPageRegexTextBox);
-			this.subCatTabPage.Controls.Add(this.label28);
-			this.subCatTabPage.Controls.Add(this.manageStaticSubCategoriesButton);
-			this.subCatTabPage.Controls.Add(this.CreateSubcategoriesRegexButton);
-			this.subCatTabPage.Controls.Add(this.subcategoryUrlFormatTextBox);
-			this.subCatTabPage.Controls.Add(this.label4);
+			this.subCatTabPage.Controls.Add(this.groupBox7);
 			this.subCatTabPage.Controls.Add(this.GetSubCategoriesButton);
-			this.subCatTabPage.Controls.Add(this.label5);
-			this.subCatTabPage.Controls.Add(this.subcategoryRegexTextBox);
+			this.subCatTabPage.Controls.Add(this.groupBox8);
+			this.subCatTabPage.Controls.Add(this.groupBox9);
 			this.subCatTabPage.Location = new System.Drawing.Point(4, 22);
 			this.subCatTabPage.Name = "subCatTabPage";
 			this.subCatTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -478,28 +595,33 @@
 			// label29
 			// 
 			this.label29.AutoSize = true;
-			this.label29.Location = new System.Drawing.Point(0, 175);
+			this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label29.Location = new System.Drawing.Point(5, 115);
 			this.label29.Name = "label29";
-			this.label29.Size = new System.Drawing.Size(168, 13);
+			this.label29.Size = new System.Drawing.Size(61, 13);
 			this.label29.TabIndex = 59;
-			this.label29.Text = "DynamicSubCategoryUrlDecoding";
+			this.label29.Text = "Url Decode";
 			// 
 			// subCategoryUrlDecodingComboBox
 			// 
 			this.subCategoryUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.subCategoryUrlDecodingComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.subCategoryUrlDecodingComboBox.FormattingEnabled = true;
-			this.subCategoryUrlDecodingComboBox.Location = new System.Drawing.Point(174, 172);
+			this.subCategoryUrlDecodingComboBox.Location = new System.Drawing.Point(80, 111);
 			this.subCategoryUrlDecodingComboBox.Name = "subCategoryUrlDecodingComboBox";
-			this.subCategoryUrlDecodingComboBox.Size = new System.Drawing.Size(66, 21);
+			this.subCategoryUrlDecodingComboBox.Size = new System.Drawing.Size(85, 21);
 			this.subCategoryUrlDecodingComboBox.TabIndex = 58;
+			this.toolTip1.SetToolTip(this.subCategoryUrlDecodingComboBox, "What type of decoding should be applied to the \'url\' match of the dynamicSubCateg" +
+        "oriesRegEx after formatting.");
 			// 
 			// CreateSubcategoriesNextPageRegexButton
 			// 
-			this.CreateSubcategoriesNextPageRegexButton.Location = new System.Drawing.Point(3, 196);
+			this.CreateSubcategoriesNextPageRegexButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.CreateSubcategoriesNextPageRegexButton.Location = new System.Drawing.Point(8, 37);
 			this.CreateSubcategoriesNextPageRegexButton.Name = "CreateSubcategoriesNextPageRegexButton";
-			this.CreateSubcategoriesNextPageRegexButton.Size = new System.Drawing.Size(80, 23);
+			this.CreateSubcategoriesNextPageRegexButton.Size = new System.Drawing.Size(60, 21);
 			this.CreateSubcategoriesNextPageRegexButton.TabIndex = 55;
-			this.CreateSubcategoriesNextPageRegexButton.Text = "Create Regex";
+			this.CreateSubcategoriesNextPageRegexButton.Text = "Create";
 			this.CreateSubcategoriesNextPageRegexButton.UseVisualStyleBackColor = true;
 			this.CreateSubcategoriesNextPageRegexButton.Click += new System.EventHandler(this.CreateSubcategoriesNextPageRegexButton_Click);
 			// 
@@ -507,37 +629,46 @@
 			// 
 			this.subcategoryNextPageRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.subcategoryNextPageRegexTextBox.Location = new System.Drawing.Point(3, 238);
+			this.subcategoryNextPageRegexTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.subcategoryNextPageRegexTextBox.Location = new System.Drawing.Point(80, 18);
+			this.subcategoryNextPageRegexTextBox.Multiline = true;
 			this.subcategoryNextPageRegexTextBox.Name = "subcategoryNextPageRegexTextBox";
-			this.subcategoryNextPageRegexTextBox.Size = new System.Drawing.Size(451, 20);
+			this.subcategoryNextPageRegexTextBox.Size = new System.Drawing.Size(367, 60);
 			this.subcategoryNextPageRegexTextBox.TabIndex = 54;
+			this.toolTip1.SetToolTip(this.subcategoryNextPageRegexTextBox, "Regular Expression used to parse the data retrieved to get the dynamic subcategor" +
+        "ies for a link to another page with more subcategories. Group names: \'url\'. Will" +
+        " not be used if not set.");
 			// 
 			// label28
 			// 
 			this.label28.AutoSize = true;
-			this.label28.Location = new System.Drawing.Point(0, 222);
+			this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label28.Location = new System.Drawing.Point(5, 21);
 			this.label28.Name = "label28";
-			this.label28.Size = new System.Drawing.Size(86, 13);
+			this.label28.Size = new System.Drawing.Size(38, 13);
 			this.label28.TabIndex = 53;
-			this.label28.Text = "NextPageRegEx";
+			this.label28.Text = "Regex";
 			// 
 			// manageStaticSubCategoriesButton
 			// 
-			this.manageStaticSubCategoriesButton.Location = new System.Drawing.Point(3, 264);
+			this.manageStaticSubCategoriesButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.manageStaticSubCategoriesButton.Location = new System.Drawing.Point(8, 21);
 			this.manageStaticSubCategoriesButton.Name = "manageStaticSubCategoriesButton";
-			this.manageStaticSubCategoriesButton.Size = new System.Drawing.Size(115, 23);
+			this.manageStaticSubCategoriesButton.Size = new System.Drawing.Size(100, 23);
 			this.manageStaticSubCategoriesButton.TabIndex = 34;
-			this.manageStaticSubCategoriesButton.Text = "Static Subcategories";
+			this.manageStaticSubCategoriesButton.Text = "Manage";
+			this.toolTip1.SetToolTip(this.manageStaticSubCategoriesButton, "Add, Edit, Remove Static Subcategories for the selected Static Category.");
 			this.manageStaticSubCategoriesButton.UseVisualStyleBackColor = true;
 			this.manageStaticSubCategoriesButton.Click += new System.EventHandler(this.manageStaticSubCategoriesButton_Click);
 			// 
 			// CreateSubcategoriesRegexButton
 			// 
-			this.CreateSubcategoriesRegexButton.Location = new System.Drawing.Point(3, 3);
+			this.CreateSubcategoriesRegexButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.CreateSubcategoriesRegexButton.Location = new System.Drawing.Point(8, 37);
 			this.CreateSubcategoriesRegexButton.Name = "CreateSubcategoriesRegexButton";
-			this.CreateSubcategoriesRegexButton.Size = new System.Drawing.Size(81, 23);
+			this.CreateSubcategoriesRegexButton.Size = new System.Drawing.Size(60, 21);
 			this.CreateSubcategoriesRegexButton.TabIndex = 33;
-			this.CreateSubcategoriesRegexButton.Text = "Create Regex";
+			this.CreateSubcategoriesRegexButton.Text = "Create";
 			this.CreateSubcategoriesRegexButton.UseVisualStyleBackColor = true;
 			this.CreateSubcategoriesRegexButton.Click += new System.EventHandler(this.CreateSubcategoriesRegexButton_Click);
 			// 
@@ -545,89 +676,370 @@
 			// 
 			this.subcategoryUrlFormatTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.subcategoryUrlFormatTextBox.Location = new System.Drawing.Point(3, 147);
+			this.subcategoryUrlFormatTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.subcategoryUrlFormatTextBox.Location = new System.Drawing.Point(80, 85);
 			this.subcategoryUrlFormatTextBox.Name = "subcategoryUrlFormatTextBox";
-			this.subcategoryUrlFormatTextBox.Size = new System.Drawing.Size(451, 20);
+			this.subcategoryUrlFormatTextBox.Size = new System.Drawing.Size(367, 20);
 			this.subcategoryUrlFormatTextBox.TabIndex = 31;
+			this.toolTip1.SetToolTip(this.subcategoryUrlFormatTextBox, "Format string applied to the \'url\' match retrieved from the Dynamic Subcategories" +
+        " Regex.");
 			// 
 			// label4
 			// 
 			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(0, 131);
+			this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label4.Location = new System.Drawing.Point(5, 88);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(154, 13);
+			this.label4.Size = new System.Drawing.Size(55, 13);
 			this.label4.TabIndex = 30;
-			this.label4.Text = "DynamicSubCategoryUrlFormat";
+			this.label4.Text = "Url Format";
 			// 
 			// GetSubCategoriesButton
 			// 
-			this.GetSubCategoriesButton.Location = new System.Drawing.Point(89, 3);
+			this.GetSubCategoriesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.GetSubCategoriesButton.Location = new System.Drawing.Point(328, 526);
 			this.GetSubCategoriesButton.Name = "GetSubCategoriesButton";
-			this.GetSubCategoriesButton.Size = new System.Drawing.Size(75, 23);
+			this.GetSubCategoriesButton.Size = new System.Drawing.Size(121, 23);
 			this.GetSubCategoriesButton.TabIndex = 29;
-			this.GetSubCategoriesButton.Text = "GetSubCats";
+			this.GetSubCategoriesButton.Text = "Get Subcategories";
+			this.toolTip1.SetToolTip(this.GetSubCategoriesButton, "Discover dynamic subcategories for the selected catgeory and scrape them with the" +
+        " dynamic subcategories regex.");
 			this.GetSubCategoriesButton.UseVisualStyleBackColor = true;
 			this.GetSubCategoriesButton.Click += new System.EventHandler(this.GetSubCategoriesButton_Click);
 			// 
 			// label5
 			// 
 			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(0, 32);
+			this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label5.Location = new System.Drawing.Point(5, 21);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(99, 13);
+			this.label5.Size = new System.Drawing.Size(38, 13);
 			this.label5.TabIndex = 28;
-			this.label5.Text = "SubCategoryRegex";
+			this.label5.Text = "Regex";
 			// 
 			// subcategoryRegexTextBox
 			// 
 			this.subcategoryRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.subcategoryRegexTextBox.Location = new System.Drawing.Point(3, 48);
+			this.subcategoryRegexTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.subcategoryRegexTextBox.Location = new System.Drawing.Point(80, 18);
 			this.subcategoryRegexTextBox.Multiline = true;
 			this.subcategoryRegexTextBox.Name = "subcategoryRegexTextBox";
-			this.subcategoryRegexTextBox.Size = new System.Drawing.Size(451, 80);
+			this.subcategoryRegexTextBox.Size = new System.Drawing.Size(367, 60);
 			this.subcategoryRegexTextBox.TabIndex = 27;
+			this.toolTip1.SetToolTip(this.subcategoryRegexTextBox, resources.GetString("subcategoryRegexTextBox.ToolTip"));
 			// 
 			// videoListTabPage
 			// 
-			this.videoListTabPage.Controls.Add(this.SearchQueryTextBox);
-			this.videoListTabPage.Controls.Add(this.GetSearchResultsButton);
-			this.videoListTabPage.Controls.Add(this.searchPostStringTextBox);
-			this.videoListTabPage.Controls.Add(this.label35);
-			this.videoListTabPage.Controls.Add(this.searchUrlTextBox);
-			this.videoListTabPage.Controls.Add(this.label34);
-			this.videoListTabPage.Controls.Add(this.label32);
-			this.videoListTabPage.Controls.Add(this.nextPageUrlDecodingComboBox);
-			this.videoListTabPage.Controls.Add(this.label31);
-			this.videoListTabPage.Controls.Add(this.videoListUrlDecodingComboBox);
-			this.videoListTabPage.Controls.Add(this.CreateNextPageRegexButton);
-			this.videoListTabPage.Controls.Add(this.CreateVideoListRegexButton);
-			this.videoListTabPage.Controls.Add(this.nextPageRegExUrlFormatStringTextBox);
-			this.videoListTabPage.Controls.Add(this.nextPageRegExTextBox);
-			this.videoListTabPage.Controls.Add(this.label10);
-			this.videoListTabPage.Controls.Add(this.label9);
-			this.videoListTabPage.Controls.Add(this.videoThumbFormatStringTextBox);
-			this.videoListTabPage.Controls.Add(this.label8);
-			this.videoListTabPage.Controls.Add(this.videoListRegexFormatTextBox);
-			this.videoListTabPage.Controls.Add(this.label6);
+			this.videoListTabPage.Controls.Add(this.groupBox3);
+			this.videoListTabPage.Controls.Add(this.groupBox2);
+			this.videoListTabPage.Controls.Add(this.groupBox1);
 			this.videoListTabPage.Controls.Add(this.GetVideoListButton);
-			this.videoListTabPage.Controls.Add(this.label7);
-			this.videoListTabPage.Controls.Add(this.videoListRegexTextBox);
 			this.videoListTabPage.Location = new System.Drawing.Point(4, 22);
 			this.videoListTabPage.Name = "videoListTabPage";
 			this.videoListTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.videoListTabPage.Size = new System.Drawing.Size(460, 555);
 			this.videoListTabPage.TabIndex = 2;
-			this.videoListTabPage.Text = "VideoList";
+			this.videoListTabPage.Text = "Videos";
 			this.videoListTabPage.UseVisualStyleBackColor = true;
+			// 
+			// groupBox3
+			// 
+			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox3.Controls.Add(this.label7);
+			this.groupBox3.Controls.Add(this.videoListRegexTextBox);
+			this.groupBox3.Controls.Add(this.label6);
+			this.groupBox3.Controls.Add(this.label31);
+			this.groupBox3.Controls.Add(this.videoListRegexFormatTextBox);
+			this.groupBox3.Controls.Add(this.videoListUrlDecodingComboBox);
+			this.groupBox3.Controls.Add(this.label8);
+			this.groupBox3.Controls.Add(this.CreateVideoListRegexButton);
+			this.groupBox3.Controls.Add(this.videoThumbFormatStringTextBox);
+			this.groupBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox3.Location = new System.Drawing.Point(1, 6);
+			this.groupBox3.Name = "groupBox3";
+			this.groupBox3.Size = new System.Drawing.Size(454, 168);
+			this.groupBox3.TabIndex = 71;
+			this.groupBox3.TabStop = false;
+			this.groupBox3.Text = "VideoList";
+			// 
+			// label7
+			// 
+			this.label7.AutoSize = true;
+			this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label7.Location = new System.Drawing.Point(5, 21);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(38, 13);
+			this.label7.TabIndex = 34;
+			this.label7.Text = "Regex";
+			// 
+			// videoListRegexTextBox
+			// 
+			this.videoListRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.videoListRegexTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.videoListRegexTextBox.Location = new System.Drawing.Point(80, 18);
+			this.videoListRegexTextBox.Multiline = true;
+			this.videoListRegexTextBox.Name = "videoListRegexTextBox";
+			this.videoListRegexTextBox.Size = new System.Drawing.Size(367, 60);
+			this.videoListRegexTextBox.TabIndex = 33;
+			this.toolTip1.SetToolTip(this.videoListRegexTextBox, "Regular Expression used to parse a html page for videos. Group names: \'VideoUrl\'," +
+        " \'ImageUrl\', \'Title\', \'Duration\', \'Description\', \'Airdate\'.");
+			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label6.Location = new System.Drawing.Point(5, 88);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(55, 13);
+			this.label6.TabIndex = 36;
+			this.label6.Text = "Url Format";
+			// 
+			// label31
+			// 
+			this.label31.AutoSize = true;
+			this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label31.Location = new System.Drawing.Point(5, 115);
+			this.label31.Name = "label31";
+			this.label31.Size = new System.Drawing.Size(61, 13);
+			this.label31.TabIndex = 59;
+			this.label31.Text = "Url Decode";
+			// 
+			// videoListRegexFormatTextBox
+			// 
+			this.videoListRegexFormatTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.videoListRegexFormatTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.videoListRegexFormatTextBox.Location = new System.Drawing.Point(80, 85);
+			this.videoListRegexFormatTextBox.Name = "videoListRegexFormatTextBox";
+			this.videoListRegexFormatTextBox.Size = new System.Drawing.Size(367, 20);
+			this.videoListRegexFormatTextBox.TabIndex = 37;
+			this.toolTip1.SetToolTip(this.videoListRegexFormatTextBox, "Format string applied to the \'url\' match retrieved from the VideoList Regex.");
+			// 
+			// videoListUrlDecodingComboBox
+			// 
+			this.videoListUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.videoListUrlDecodingComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.videoListUrlDecodingComboBox.FormattingEnabled = true;
+			this.videoListUrlDecodingComboBox.Location = new System.Drawing.Point(80, 111);
+			this.videoListUrlDecodingComboBox.Name = "videoListUrlDecodingComboBox";
+			this.videoListUrlDecodingComboBox.Size = new System.Drawing.Size(85, 21);
+			this.videoListUrlDecodingComboBox.TabIndex = 58;
+			this.toolTip1.SetToolTip(this.videoListUrlDecodingComboBox, "What type of decoding should be applied to the \'url\' match of the VideoList Regex" +
+        " after Formatting.");
+			// 
+			// label8
+			// 
+			this.label8.AutoSize = true;
+			this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label8.Location = new System.Drawing.Point(5, 141);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(75, 13);
+			this.label8.TabIndex = 38;
+			this.label8.Text = "Thumb Format";
+			// 
+			// CreateVideoListRegexButton
+			// 
+			this.CreateVideoListRegexButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.CreateVideoListRegexButton.Location = new System.Drawing.Point(8, 37);
+			this.CreateVideoListRegexButton.Name = "CreateVideoListRegexButton";
+			this.CreateVideoListRegexButton.Size = new System.Drawing.Size(60, 21);
+			this.CreateVideoListRegexButton.TabIndex = 50;
+			this.CreateVideoListRegexButton.Text = "Create";
+			this.CreateVideoListRegexButton.UseVisualStyleBackColor = true;
+			this.CreateVideoListRegexButton.Click += new System.EventHandler(this.CreateVideoListRegexButton_Click);
+			// 
+			// videoThumbFormatStringTextBox
+			// 
+			this.videoThumbFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.videoThumbFormatStringTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.videoThumbFormatStringTextBox.Location = new System.Drawing.Point(80, 138);
+			this.videoThumbFormatStringTextBox.Name = "videoThumbFormatStringTextBox";
+			this.videoThumbFormatStringTextBox.Size = new System.Drawing.Size(367, 20);
+			this.videoThumbFormatStringTextBox.TabIndex = 39;
+			this.toolTip1.SetToolTip(this.videoThumbFormatStringTextBox, "Format string applied to the \'ImageUrl\' match of the VideoList Regex.");
+			// 
+			// groupBox2
+			// 
+			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox2.Controls.Add(this.label9);
+			this.groupBox2.Controls.Add(this.label10);
+			this.groupBox2.Controls.Add(this.label32);
+			this.groupBox2.Controls.Add(this.nextPageRegExTextBox);
+			this.groupBox2.Controls.Add(this.nextPageUrlDecodingComboBox);
+			this.groupBox2.Controls.Add(this.nextPageRegExUrlFormatStringTextBox);
+			this.groupBox2.Controls.Add(this.CreateNextPageRegexButton);
+			this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox2.Location = new System.Drawing.Point(1, 180);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(454, 141);
+			this.groupBox2.TabIndex = 70;
+			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "Next Page";
+			// 
+			// label9
+			// 
+			this.label9.AutoSize = true;
+			this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label9.Location = new System.Drawing.Point(5, 21);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(38, 13);
+			this.label9.TabIndex = 40;
+			this.label9.Text = "Regex";
+			// 
+			// label10
+			// 
+			this.label10.AutoSize = true;
+			this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label10.Location = new System.Drawing.Point(5, 88);
+			this.label10.Name = "label10";
+			this.label10.Size = new System.Drawing.Size(55, 13);
+			this.label10.TabIndex = 41;
+			this.label10.Text = "Url Format";
+			// 
+			// label32
+			// 
+			this.label32.AutoSize = true;
+			this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label32.Location = new System.Drawing.Point(5, 115);
+			this.label32.Name = "label32";
+			this.label32.Size = new System.Drawing.Size(61, 13);
+			this.label32.TabIndex = 61;
+			this.label32.Text = "Url Decode";
+			// 
+			// nextPageRegExTextBox
+			// 
+			this.nextPageRegExTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.nextPageRegExTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.nextPageRegExTextBox.Location = new System.Drawing.Point(80, 18);
+			this.nextPageRegExTextBox.Multiline = true;
+			this.nextPageRegExTextBox.Name = "nextPageRegExTextBox";
+			this.nextPageRegExTextBox.Size = new System.Drawing.Size(367, 60);
+			this.nextPageRegExTextBox.TabIndex = 42;
+			this.toolTip1.SetToolTip(this.nextPageRegExTextBox, "Regular Expression used to parse a html page for a next page link. Group should b" +
+        "e named \'url\'.");
+			// 
+			// nextPageUrlDecodingComboBox
+			// 
+			this.nextPageUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.nextPageUrlDecodingComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.nextPageUrlDecodingComboBox.FormattingEnabled = true;
+			this.nextPageUrlDecodingComboBox.Location = new System.Drawing.Point(80, 111);
+			this.nextPageUrlDecodingComboBox.Name = "nextPageUrlDecodingComboBox";
+			this.nextPageUrlDecodingComboBox.Size = new System.Drawing.Size(85, 21);
+			this.nextPageUrlDecodingComboBox.TabIndex = 60;
+			this.toolTip1.SetToolTip(this.nextPageUrlDecodingComboBox, "What type of decoding should be applied to the \'url\' match of the NextPage Regex " +
+        "after Formatting.");
+			// 
+			// nextPageRegExUrlFormatStringTextBox
+			// 
+			this.nextPageRegExUrlFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.nextPageRegExUrlFormatStringTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.nextPageRegExUrlFormatStringTextBox.Location = new System.Drawing.Point(80, 85);
+			this.nextPageRegExUrlFormatStringTextBox.Name = "nextPageRegExUrlFormatStringTextBox";
+			this.nextPageRegExUrlFormatStringTextBox.Size = new System.Drawing.Size(367, 20);
+			this.nextPageRegExUrlFormatStringTextBox.TabIndex = 43;
+			this.toolTip1.SetToolTip(this.nextPageRegExUrlFormatStringTextBox, "Format string applied to the \'url\' match retrieved from the NextPage Regex.");
+			// 
+			// CreateNextPageRegexButton
+			// 
+			this.CreateNextPageRegexButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.CreateNextPageRegexButton.Location = new System.Drawing.Point(8, 37);
+			this.CreateNextPageRegexButton.Name = "CreateNextPageRegexButton";
+			this.CreateNextPageRegexButton.Size = new System.Drawing.Size(60, 21);
+			this.CreateNextPageRegexButton.TabIndex = 51;
+			this.CreateNextPageRegexButton.Text = "Create";
+			this.CreateNextPageRegexButton.UseVisualStyleBackColor = true;
+			this.CreateNextPageRegexButton.Click += new System.EventHandler(this.CreateNextPageRegexButton_Click);
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.label34);
+			this.groupBox1.Controls.Add(this.label41);
+			this.groupBox1.Controls.Add(this.searchUrlTextBox);
+			this.groupBox1.Controls.Add(this.SearchQueryTextBox);
+			this.groupBox1.Controls.Add(this.label35);
+			this.groupBox1.Controls.Add(this.GetSearchResultsButton);
+			this.groupBox1.Controls.Add(this.searchPostStringTextBox);
+			this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox1.Location = new System.Drawing.Point(1, 327);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(454, 101);
+			this.groupBox1.TabIndex = 69;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Search";
+			// 
+			// label34
+			// 
+			this.label34.AutoSize = true;
+			this.label34.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label34.Location = new System.Drawing.Point(5, 21);
+			this.label34.Name = "label34";
+			this.label34.Size = new System.Drawing.Size(20, 13);
+			this.label34.TabIndex = 62;
+			this.label34.Text = "Url";
+			// 
+			// label41
+			// 
+			this.label41.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.label41.AutoSize = true;
+			this.label41.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label41.Location = new System.Drawing.Point(176, 73);
+			this.label41.Name = "label41";
+			this.label41.Size = new System.Drawing.Size(28, 13);
+			this.label41.TabIndex = 68;
+			this.label41.Text = "Test";
+			// 
+			// searchUrlTextBox
+			// 
+			this.searchUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.searchUrlTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.searchUrlTextBox.Location = new System.Drawing.Point(80, 18);
+			this.searchUrlTextBox.Name = "searchUrlTextBox";
+			this.searchUrlTextBox.Size = new System.Drawing.Size(367, 20);
+			this.searchUrlTextBox.TabIndex = 63;
+			this.toolTip1.SetToolTip(this.searchUrlTextBox, "Format string used as Url for getting the results of a search. {0} will be replac" +
+        "ed with the query.");
+			// 
+			// SearchQueryTextBox
+			// 
+			this.SearchQueryTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.SearchQueryTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.SearchQueryTextBox.Location = new System.Drawing.Point(210, 70);
+			this.SearchQueryTextBox.Name = "SearchQueryTextBox";
+			this.SearchQueryTextBox.Size = new System.Drawing.Size(120, 20);
+			this.SearchQueryTextBox.TabIndex = 67;
+			this.toolTip1.SetToolTip(this.SearchQueryTextBox, "Enter your search string for testing here");
+			// 
+			// label35
+			// 
+			this.label35.AutoSize = true;
+			this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label35.Location = new System.Drawing.Point(5, 47);
+			this.label35.Name = "label35";
+			this.label35.Size = new System.Drawing.Size(54, 13);
+			this.label35.TabIndex = 64;
+			this.label35.Text = "Post Data";
 			// 
 			// GetSearchResultsButton
 			// 
-			this.GetSearchResultsButton.Location = new System.Drawing.Point(3, 458);
+			this.GetSearchResultsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.GetSearchResultsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.GetSearchResultsButton.Location = new System.Drawing.Point(336, 68);
 			this.GetSearchResultsButton.Name = "GetSearchResultsButton";
 			this.GetSearchResultsButton.Size = new System.Drawing.Size(111, 23);
 			this.GetSearchResultsButton.TabIndex = 66;
 			this.GetSearchResultsButton.Text = "Get Search Results";
+			this.toolTip1.SetToolTip(this.GetSearchResultsButton, "Execute a search with your query and get the video using the VideoList Regex.");
 			this.GetSearchResultsButton.UseVisualStyleBackColor = true;
 			this.GetSearchResultsButton.Click += new System.EventHandler(this.GetSearchResultsButton_Click);
 			// 
@@ -635,284 +1047,89 @@
 			// 
 			this.searchPostStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.searchPostStringTextBox.Location = new System.Drawing.Point(3, 432);
+			this.searchPostStringTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.searchPostStringTextBox.Location = new System.Drawing.Point(80, 44);
 			this.searchPostStringTextBox.Name = "searchPostStringTextBox";
-			this.searchPostStringTextBox.Size = new System.Drawing.Size(454, 20);
+			this.searchPostStringTextBox.Size = new System.Drawing.Size(367, 20);
 			this.searchPostStringTextBox.TabIndex = 65;
 			this.toolTip1.SetToolTip(this.searchPostStringTextBox, "Format string that should be sent as post data for getting the results of a searc" +
         "h. {0} will be replaced with the query. If this is not set, search will be execu" +
         "ted normal as GET.");
 			// 
-			// label35
-			// 
-			this.label35.AutoSize = true;
-			this.label35.Location = new System.Drawing.Point(0, 416);
-			this.label35.Name = "label35";
-			this.label35.Size = new System.Drawing.Size(89, 13);
-			this.label35.TabIndex = 64;
-			this.label35.Text = "SearchPostString";
-			// 
-			// searchUrlTextBox
-			// 
-			this.searchUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.searchUrlTextBox.Location = new System.Drawing.Point(3, 391);
-			this.searchUrlTextBox.Name = "searchUrlTextBox";
-			this.searchUrlTextBox.Size = new System.Drawing.Size(454, 20);
-			this.searchUrlTextBox.TabIndex = 63;
-			this.toolTip1.SetToolTip(this.searchUrlTextBox, "Format string used as Url for getting the results of a search. {0} will be replac" +
-        "ed with the query.");
-			// 
-			// label34
-			// 
-			this.label34.AutoSize = true;
-			this.label34.Location = new System.Drawing.Point(0, 375);
-			this.label34.Name = "label34";
-			this.label34.Size = new System.Drawing.Size(54, 13);
-			this.label34.TabIndex = 62;
-			this.label34.Text = "SearchUrl";
-			// 
-			// label32
-			// 
-			this.label32.AutoSize = true;
-			this.label32.Location = new System.Drawing.Point(0, 314);
-			this.label32.Name = "label32";
-			this.label32.Size = new System.Drawing.Size(113, 13);
-			this.label32.TabIndex = 61;
-			this.label32.Text = "NextPageUrlDecoding";
-			// 
-			// nextPageUrlDecodingComboBox
-			// 
-			this.nextPageUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.nextPageUrlDecodingComboBox.FormattingEnabled = true;
-			this.nextPageUrlDecodingComboBox.Location = new System.Drawing.Point(119, 311);
-			this.nextPageUrlDecodingComboBox.Name = "nextPageUrlDecodingComboBox";
-			this.nextPageUrlDecodingComboBox.Size = new System.Drawing.Size(66, 21);
-			this.nextPageUrlDecodingComboBox.TabIndex = 60;
-			// 
-			// label31
-			// 
-			this.label31.AutoSize = true;
-			this.label31.Location = new System.Drawing.Point(0, 137);
-			this.label31.Name = "label31";
-			this.label31.Size = new System.Drawing.Size(109, 13);
-			this.label31.TabIndex = 59;
-			this.label31.Text = "VideoListUrlDecoding";
-			// 
-			// videoListUrlDecodingComboBox
-			// 
-			this.videoListUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.videoListUrlDecodingComboBox.FormattingEnabled = true;
-			this.videoListUrlDecodingComboBox.Location = new System.Drawing.Point(115, 134);
-			this.videoListUrlDecodingComboBox.Name = "videoListUrlDecodingComboBox";
-			this.videoListUrlDecodingComboBox.Size = new System.Drawing.Size(66, 21);
-			this.videoListUrlDecodingComboBox.TabIndex = 58;
-			// 
-			// CreateNextPageRegexButton
-			// 
-			this.CreateNextPageRegexButton.Location = new System.Drawing.Point(3, 205);
-			this.CreateNextPageRegexButton.Name = "CreateNextPageRegexButton";
-			this.CreateNextPageRegexButton.Size = new System.Drawing.Size(80, 23);
-			this.CreateNextPageRegexButton.TabIndex = 51;
-			this.CreateNextPageRegexButton.Text = "Create Regex";
-			this.CreateNextPageRegexButton.UseVisualStyleBackColor = true;
-			this.CreateNextPageRegexButton.Click += new System.EventHandler(this.CreateNextPageRegexButton_Click);
-			// 
-			// CreateVideoListRegexButton
-			// 
-			this.CreateVideoListRegexButton.Location = new System.Drawing.Point(3, 3);
-			this.CreateVideoListRegexButton.Name = "CreateVideoListRegexButton";
-			this.CreateVideoListRegexButton.Size = new System.Drawing.Size(80, 23);
-			this.CreateVideoListRegexButton.TabIndex = 50;
-			this.CreateVideoListRegexButton.Text = "Create Regex";
-			this.CreateVideoListRegexButton.UseVisualStyleBackColor = true;
-			this.CreateVideoListRegexButton.Click += new System.EventHandler(this.CreateVideoListRegexButton_Click);
-			// 
-			// nextPageRegExUrlFormatStringTextBox
-			// 
-			this.nextPageRegExUrlFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.nextPageRegExUrlFormatStringTextBox.Location = new System.Drawing.Point(3, 286);
-			this.nextPageRegExUrlFormatStringTextBox.Name = "nextPageRegExUrlFormatStringTextBox";
-			this.nextPageRegExUrlFormatStringTextBox.Size = new System.Drawing.Size(454, 20);
-			this.nextPageRegExUrlFormatStringTextBox.TabIndex = 43;
-			// 
-			// nextPageRegExTextBox
-			// 
-			this.nextPageRegExTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.nextPageRegExTextBox.Location = new System.Drawing.Point(3, 247);
-			this.nextPageRegExTextBox.Name = "nextPageRegExTextBox";
-			this.nextPageRegExTextBox.Size = new System.Drawing.Size(451, 20);
-			this.nextPageRegExTextBox.TabIndex = 42;
-			// 
-			// label10
-			// 
-			this.label10.AutoSize = true;
-			this.label10.Location = new System.Drawing.Point(0, 270);
-			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(158, 13);
-			this.label10.TabIndex = 41;
-			this.label10.Text = "NextPageRegExUrlFormatString";
-			// 
-			// label9
-			// 
-			this.label9.AutoSize = true;
-			this.label9.Location = new System.Drawing.Point(0, 231);
-			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(86, 13);
-			this.label9.TabIndex = 40;
-			this.label9.Text = "NextPageRegEx";
-			// 
-			// videoThumbFormatStringTextBox
-			// 
-			this.videoThumbFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.videoThumbFormatStringTextBox.Location = new System.Drawing.Point(3, 179);
-			this.videoThumbFormatStringTextBox.Name = "videoThumbFormatStringTextBox";
-			this.videoThumbFormatStringTextBox.Size = new System.Drawing.Size(451, 20);
-			this.videoThumbFormatStringTextBox.TabIndex = 39;
-			// 
-			// label8
-			// 
-			this.label8.AutoSize = true;
-			this.label8.Location = new System.Drawing.Point(0, 163);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(126, 13);
-			this.label8.TabIndex = 38;
-			this.label8.Text = "VideoThumbFormatString";
-			// 
-			// videoListRegexFormatTextBox
-			// 
-			this.videoListRegexFormatTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.videoListRegexFormatTextBox.Location = new System.Drawing.Point(3, 102);
-			this.videoListRegexFormatTextBox.Name = "videoListRegexFormatTextBox";
-			this.videoListRegexFormatTextBox.Size = new System.Drawing.Size(451, 20);
-			this.videoListRegexFormatTextBox.TabIndex = 37;
-			// 
-			// label6
-			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(0, 86);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(114, 13);
-			this.label6.TabIndex = 36;
-			this.label6.Text = "VideoListRegExFormat";
-			// 
 			// GetVideoListButton
 			// 
-			this.GetVideoListButton.Location = new System.Drawing.Point(89, 3);
+			this.GetVideoListButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.GetVideoListButton.Location = new System.Drawing.Point(367, 526);
 			this.GetVideoListButton.Name = "GetVideoListButton";
-			this.GetVideoListButton.Size = new System.Drawing.Size(75, 23);
+			this.GetVideoListButton.Size = new System.Drawing.Size(81, 23);
 			this.GetVideoListButton.TabIndex = 35;
-			this.GetVideoListButton.Text = "GetVideoList";
+			this.GetVideoListButton.Text = "GetVideos";
+			this.toolTip1.SetToolTip(this.GetVideoListButton, "Gets the videos for the selected (sub)category or next page item.");
 			this.GetVideoListButton.UseVisualStyleBackColor = true;
 			this.GetVideoListButton.Click += new System.EventHandler(this.GetVideoListButton_Click);
 			// 
-			// label7
-			// 
-			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(0, 34);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(81, 13);
-			this.label7.TabIndex = 34;
-			this.label7.Text = "VideoListRegex";
-			// 
-			// videoListRegexTextBox
-			// 
-			this.videoListRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.videoListRegexTextBox.Location = new System.Drawing.Point(3, 50);
-			this.videoListRegexTextBox.Multiline = true;
-			this.videoListRegexTextBox.Name = "videoListRegexTextBox";
-			this.videoListRegexTextBox.Size = new System.Drawing.Size(451, 33);
-			this.videoListRegexTextBox.TabIndex = 33;
-			// 
 			// VideoUrlTabPage
 			// 
-			this.VideoUrlTabPage.Controls.Add(this.label33);
-			this.VideoUrlTabPage.Controls.Add(this.videoUrlDecodingComboBox);
-			this.VideoUrlTabPage.Controls.Add(this.fileUrlNameFormatStringTextBox);
-			this.VideoUrlTabPage.Controls.Add(this.label12);
-			this.VideoUrlTabPage.Controls.Add(this.label11);
-			this.VideoUrlTabPage.Controls.Add(this.comboBoxResolving);
-			this.VideoUrlTabPage.Controls.Add(this.fileUrlPostStringTextBox);
-			this.VideoUrlTabPage.Controls.Add(this.label18);
-			this.VideoUrlTabPage.Controls.Add(this.getRedirectedFileUrlCheckBox);
-			this.VideoUrlTabPage.Controls.Add(this.ResultUrlComboBox);
-			this.VideoUrlTabPage.Controls.Add(this.getFileUrlButton);
-			this.VideoUrlTabPage.Controls.Add(this.playListUrlResultTextBox);
-			this.VideoUrlTabPage.Controls.Add(this.label15);
-			this.VideoUrlTabPage.Controls.Add(this.GetPlayListUrlButton);
-			this.VideoUrlTabPage.Controls.Add(this.videoUrlResultTextBox);
-			this.VideoUrlTabPage.Controls.Add(this.label22);
-			this.VideoUrlTabPage.Controls.Add(this.btnPlay);
-			this.VideoUrlTabPage.Controls.Add(this.label21);
-			this.VideoUrlTabPage.Controls.Add(this.CreateFileUrlRegexButton);
-			this.VideoUrlTabPage.Controls.Add(this.fileUrlFormatStringTextBox);
-			this.VideoUrlTabPage.Controls.Add(this.fileUrlRegexTextBox);
-			this.VideoUrlTabPage.Controls.Add(this.label19);
-			this.VideoUrlTabPage.Controls.Add(this.label20);
-			this.VideoUrlTabPage.Controls.Add(this.CreatePlayListRegexButton);
-			this.VideoUrlTabPage.Controls.Add(this.playlistUrlFormatStringTextBox);
-			this.VideoUrlTabPage.Controls.Add(this.playlistUrlRegexTextBox);
-			this.VideoUrlTabPage.Controls.Add(this.label16);
-			this.VideoUrlTabPage.Controls.Add(this.label17);
-			this.VideoUrlTabPage.Controls.Add(this.CreateVideoUrlRegexButton);
-			this.VideoUrlTabPage.Controls.Add(this.videoUrlFormatStringTextBox);
-			this.VideoUrlTabPage.Controls.Add(this.label13);
-			this.VideoUrlTabPage.Controls.Add(this.GetVideoUrlButton);
-			this.VideoUrlTabPage.Controls.Add(this.label14);
-			this.VideoUrlTabPage.Controls.Add(this.videoUrlRegExTextBox);
+			this.VideoUrlTabPage.Controls.Add(this.groupBox10);
+			this.VideoUrlTabPage.Controls.Add(this.groupBox11);
+			this.VideoUrlTabPage.Controls.Add(this.groupBox12);
 			this.VideoUrlTabPage.Location = new System.Drawing.Point(4, 22);
 			this.VideoUrlTabPage.Name = "VideoUrlTabPage";
 			this.VideoUrlTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.VideoUrlTabPage.Size = new System.Drawing.Size(460, 555);
 			this.VideoUrlTabPage.TabIndex = 3;
-			this.VideoUrlTabPage.Text = "VideoUrl";
+			this.VideoUrlTabPage.Text = "Playback";
 			this.VideoUrlTabPage.UseVisualStyleBackColor = true;
 			// 
 			// label33
 			// 
 			this.label33.AutoSize = true;
-			this.label33.Location = new System.Drawing.Point(0, 117);
+			this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label33.Location = new System.Drawing.Point(5, 105);
 			this.label33.Name = "label33";
-			this.label33.Size = new System.Drawing.Size(93, 13);
+			this.label33.Size = new System.Drawing.Size(61, 13);
 			this.label33.TabIndex = 89;
-			this.label33.Text = "VideoUrlDecoding";
+			this.label33.Text = "Url Decode";
 			// 
 			// videoUrlDecodingComboBox
 			// 
 			this.videoUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.videoUrlDecodingComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.videoUrlDecodingComboBox.FormattingEnabled = true;
-			this.videoUrlDecodingComboBox.Location = new System.Drawing.Point(99, 114);
+			this.videoUrlDecodingComboBox.Location = new System.Drawing.Point(80, 101);
 			this.videoUrlDecodingComboBox.Name = "videoUrlDecodingComboBox";
-			this.videoUrlDecodingComboBox.Size = new System.Drawing.Size(66, 21);
+			this.videoUrlDecodingComboBox.Size = new System.Drawing.Size(85, 21);
 			this.videoUrlDecodingComboBox.TabIndex = 88;
+			this.toolTip1.SetToolTip(this.videoUrlDecodingComboBox, "What type of decoding should be applied to the \'m0\', \'m1\', ... match of the video" +
+        "UrlRegEx.");
 			// 
 			// fileUrlNameFormatStringTextBox
 			// 
 			this.fileUrlNameFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.fileUrlNameFormatStringTextBox.Location = new System.Drawing.Point(3, 480);
+			this.fileUrlNameFormatStringTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.fileUrlNameFormatStringTextBox.Location = new System.Drawing.Point(80, 101);
 			this.fileUrlNameFormatStringTextBox.Name = "fileUrlNameFormatStringTextBox";
-			this.fileUrlNameFormatStringTextBox.Size = new System.Drawing.Size(451, 20);
+			this.fileUrlNameFormatStringTextBox.Size = new System.Drawing.Size(367, 20);
 			this.fileUrlNameFormatStringTextBox.TabIndex = 87;
+			this.toolTip1.SetToolTip(this.fileUrlNameFormatStringTextBox, "Format string used with the groups (n0, n1, ..) of the regex matches of the fileU" +
+        "rlRegEx to create the Name for a playback choice.");
 			// 
 			// label12
 			// 
 			this.label12.AutoSize = true;
-			this.label12.Location = new System.Drawing.Point(0, 464);
+			this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label12.Location = new System.Drawing.Point(5, 104);
 			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(123, 13);
+			this.label12.Size = new System.Drawing.Size(70, 13);
 			this.label12.TabIndex = 86;
-			this.label12.Text = "FileUrlNameFormatString";
+			this.label12.Text = "Name Format";
 			// 
 			// label11
 			// 
 			this.label11.AutoSize = true;
-			this.label11.Location = new System.Drawing.Point(300, 332);
+			this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label11.Location = new System.Drawing.Point(5, 157);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(77, 13);
 			this.label11.TabIndex = 85;
@@ -921,38 +1138,47 @@
 			// comboBoxResolving
 			// 
 			this.comboBoxResolving.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBoxResolving.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.comboBoxResolving.FormattingEnabled = true;
-			this.comboBoxResolving.Location = new System.Drawing.Point(383, 329);
+			this.comboBoxResolving.Location = new System.Drawing.Point(80, 153);
 			this.comboBoxResolving.Name = "comboBoxResolving";
-			this.comboBoxResolving.Size = new System.Drawing.Size(58, 21);
+			this.comboBoxResolving.Size = new System.Drawing.Size(85, 21);
 			this.comboBoxResolving.TabIndex = 84;
+			this.toolTip1.SetToolTip(this.comboBoxResolving, "Enables checking if the video\'s url or data from the url can be resolved via know" +
+        "n hosters.");
 			// 
 			// fileUrlPostStringTextBox
 			// 
 			this.fileUrlPostStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.fileUrlPostStringTextBox.Location = new System.Drawing.Point(3, 366);
+			this.fileUrlPostStringTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.fileUrlPostStringTextBox.Location = new System.Drawing.Point(80, 127);
 			this.fileUrlPostStringTextBox.Name = "fileUrlPostStringTextBox";
-			this.fileUrlPostStringTextBox.Size = new System.Drawing.Size(451, 20);
+			this.fileUrlPostStringTextBox.Size = new System.Drawing.Size(367, 20);
 			this.fileUrlPostStringTextBox.TabIndex = 82;
+			this.toolTip1.SetToolTip(this.fileUrlPostStringTextBox, "Post data which is send for getting the fileUrl for playback. If empty normal GET" +
+        " is used, if set POST is used.");
 			// 
 			// label18
 			// 
 			this.label18.AutoSize = true;
-			this.label18.Location = new System.Drawing.Point(0, 353);
+			this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label18.Location = new System.Drawing.Point(5, 130);
 			this.label18.Name = "label18";
-			this.label18.Size = new System.Drawing.Size(84, 13);
+			this.label18.Size = new System.Drawing.Size(54, 13);
 			this.label18.TabIndex = 81;
-			this.label18.Text = "FileUrlPostString";
+			this.label18.Text = "Post Data";
 			// 
 			// getRedirectedFileUrlCheckBox
 			// 
 			this.getRedirectedFileUrlCheckBox.AutoSize = true;
-			this.getRedirectedFileUrlCheckBox.Location = new System.Drawing.Point(170, 331);
+			this.getRedirectedFileUrlCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.getRedirectedFileUrlCheckBox.Location = new System.Drawing.Point(171, 156);
 			this.getRedirectedFileUrlCheckBox.Name = "getRedirectedFileUrlCheckBox";
-			this.getRedirectedFileUrlCheckBox.Size = new System.Drawing.Size(124, 17);
+			this.getRedirectedFileUrlCheckBox.Size = new System.Drawing.Size(114, 17);
 			this.getRedirectedFileUrlCheckBox.TabIndex = 80;
-			this.getRedirectedFileUrlCheckBox.Text = "GetRedirectedFileUrl";
+			this.getRedirectedFileUrlCheckBox.Text = "Get Redirected Url";
+			this.toolTip1.SetToolTip(this.getRedirectedFileUrlCheckBox, "Enables getting the redirected url instead of the given url for playback.");
 			this.getRedirectedFileUrlCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// ResultUrlComboBox
@@ -960,19 +1186,21 @@
 			this.ResultUrlComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ResultUrlComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.ResultUrlComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.ResultUrlComboBox.FormattingEnabled = true;
-			this.ResultUrlComboBox.Location = new System.Drawing.Point(3, 528);
+			this.ResultUrlComboBox.Location = new System.Drawing.Point(171, 181);
 			this.ResultUrlComboBox.Name = "ResultUrlComboBox";
-			this.ResultUrlComboBox.Size = new System.Drawing.Size(407, 21);
+			this.ResultUrlComboBox.Size = new System.Drawing.Size(233, 21);
 			this.ResultUrlComboBox.TabIndex = 79;
 			// 
 			// getFileUrlButton
 			// 
-			this.getFileUrlButton.Location = new System.Drawing.Point(89, 327);
+			this.getFileUrlButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.getFileUrlButton.Location = new System.Drawing.Point(80, 180);
 			this.getFileUrlButton.Name = "getFileUrlButton";
-			this.getFileUrlButton.Size = new System.Drawing.Size(75, 23);
+			this.getFileUrlButton.Size = new System.Drawing.Size(85, 23);
 			this.getFileUrlButton.TabIndex = 78;
-			this.getFileUrlButton.Text = "GetFileUrl";
+			this.getFileUrlButton.Text = "Get File Url";
 			this.getFileUrlButton.UseVisualStyleBackColor = true;
 			this.getFileUrlButton.Click += new System.EventHandler(this.getFileUrlButton_Click);
 			// 
@@ -980,28 +1208,32 @@
 			// 
 			this.playListUrlResultTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.playListUrlResultTextBox.Location = new System.Drawing.Point(3, 302);
+			this.playListUrlResultTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.playListUrlResultTextBox.Location = new System.Drawing.Point(171, 101);
 			this.playListUrlResultTextBox.Name = "playListUrlResultTextBox";
 			this.playListUrlResultTextBox.ReadOnly = true;
-			this.playListUrlResultTextBox.Size = new System.Drawing.Size(451, 20);
+			this.playListUrlResultTextBox.Size = new System.Drawing.Size(276, 20);
 			this.playListUrlResultTextBox.TabIndex = 77;
 			// 
 			// label15
 			// 
 			this.label15.AutoSize = true;
-			this.label15.Location = new System.Drawing.Point(0, 286);
+			this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label15.ForeColor = System.Drawing.Color.SteelBlue;
+			this.label15.Location = new System.Drawing.Point(5, 107);
 			this.label15.Name = "label15";
-			this.label15.Size = new System.Drawing.Size(86, 13);
+			this.label15.Size = new System.Drawing.Size(43, 13);
 			this.label15.TabIndex = 76;
-			this.label15.Text = "PlayListUrlResult";
+			this.label15.Text = "Result";
 			// 
 			// GetPlayListUrlButton
 			// 
-			this.GetPlayListUrlButton.Location = new System.Drawing.Point(89, 177);
+			this.GetPlayListUrlButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.GetPlayListUrlButton.Location = new System.Drawing.Point(80, 99);
 			this.GetPlayListUrlButton.Name = "GetPlayListUrlButton";
 			this.GetPlayListUrlButton.Size = new System.Drawing.Size(85, 23);
 			this.GetPlayListUrlButton.TabIndex = 75;
-			this.GetPlayListUrlButton.Text = "GetPlayListUrl";
+			this.GetPlayListUrlButton.Text = "Get Playlist Url";
 			this.GetPlayListUrlButton.UseVisualStyleBackColor = true;
 			this.GetPlayListUrlButton.Click += new System.EventHandler(this.GetPlayListUrlButton_Click);
 			// 
@@ -1009,28 +1241,32 @@
 			// 
 			this.videoUrlResultTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.videoUrlResultTextBox.Location = new System.Drawing.Point(3, 151);
+			this.videoUrlResultTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.videoUrlResultTextBox.Location = new System.Drawing.Point(171, 132);
 			this.videoUrlResultTextBox.Name = "videoUrlResultTextBox";
 			this.videoUrlResultTextBox.ReadOnly = true;
-			this.videoUrlResultTextBox.Size = new System.Drawing.Size(451, 20);
+			this.videoUrlResultTextBox.Size = new System.Drawing.Size(276, 20);
 			this.videoUrlResultTextBox.TabIndex = 74;
 			// 
 			// label22
 			// 
 			this.label22.AutoSize = true;
-			this.label22.Location = new System.Drawing.Point(0, 135);
+			this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label22.ForeColor = System.Drawing.Color.SteelBlue;
+			this.label22.Location = new System.Drawing.Point(5, 136);
 			this.label22.Name = "label22";
-			this.label22.Size = new System.Drawing.Size(77, 13);
+			this.label22.Size = new System.Drawing.Size(43, 13);
 			this.label22.TabIndex = 73;
-			this.label22.Text = "VideoUrlResult";
+			this.label22.Text = "Result";
 			// 
 			// btnPlay
 			// 
 			this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnPlay.ContextMenuStrip = this.playButtonContextMenuStrip;
-			this.btnPlay.Location = new System.Drawing.Point(416, 527);
+			this.btnPlay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnPlay.Location = new System.Drawing.Point(410, 180);
 			this.btnPlay.Name = "btnPlay";
-			this.btnPlay.Size = new System.Drawing.Size(38, 23);
+			this.btnPlay.Size = new System.Drawing.Size(37, 23);
 			this.btnPlay.TabIndex = 72;
 			this.btnPlay.Text = "Play";
 			this.toolTip1.SetToolTip(this.btnPlay, "Right-click for more options");
@@ -1067,22 +1303,14 @@
 			this.checkValid.Text = "Check Validity";
 			this.checkValid.Click += new System.EventHandler(this.checkValid_Click);
 			// 
-			// label21
-			// 
-			this.label21.AutoSize = true;
-			this.label21.Location = new System.Drawing.Point(0, 514);
-			this.label21.Name = "label21";
-			this.label21.Size = new System.Drawing.Size(50, 13);
-			this.label21.TabIndex = 70;
-			this.label21.Text = "ResultUrl";
-			// 
 			// CreateFileUrlRegexButton
 			// 
-			this.CreateFileUrlRegexButton.Location = new System.Drawing.Point(3, 327);
+			this.CreateFileUrlRegexButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.CreateFileUrlRegexButton.Location = new System.Drawing.Point(8, 37);
 			this.CreateFileUrlRegexButton.Name = "CreateFileUrlRegexButton";
-			this.CreateFileUrlRegexButton.Size = new System.Drawing.Size(80, 23);
+			this.CreateFileUrlRegexButton.Size = new System.Drawing.Size(60, 21);
 			this.CreateFileUrlRegexButton.TabIndex = 68;
-			this.CreateFileUrlRegexButton.Text = "Create Regex";
+			this.CreateFileUrlRegexButton.Text = "Create";
 			this.CreateFileUrlRegexButton.UseVisualStyleBackColor = true;
 			this.CreateFileUrlRegexButton.Click += new System.EventHandler(this.CreateFileUrlRegexButton_Click);
 			// 
@@ -1090,43 +1318,52 @@
 			// 
 			this.fileUrlFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.fileUrlFormatStringTextBox.Location = new System.Drawing.Point(3, 441);
+			this.fileUrlFormatStringTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.fileUrlFormatStringTextBox.Location = new System.Drawing.Point(80, 75);
 			this.fileUrlFormatStringTextBox.Name = "fileUrlFormatStringTextBox";
-			this.fileUrlFormatStringTextBox.Size = new System.Drawing.Size(451, 20);
+			this.fileUrlFormatStringTextBox.Size = new System.Drawing.Size(367, 20);
 			this.fileUrlFormatStringTextBox.TabIndex = 67;
+			this.toolTip1.SetToolTip(this.fileUrlFormatStringTextBox, "Format string used with the groups (m0, m1, ..) of the regex matches of the fileU" +
+        "rlRegEx to create the Url for playback.");
 			// 
 			// fileUrlRegexTextBox
 			// 
 			this.fileUrlRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.fileUrlRegexTextBox.Location = new System.Drawing.Point(3, 402);
+			this.fileUrlRegexTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.fileUrlRegexTextBox.Location = new System.Drawing.Point(80, 18);
+			this.fileUrlRegexTextBox.Multiline = true;
 			this.fileUrlRegexTextBox.Name = "fileUrlRegexTextBox";
-			this.fileUrlRegexTextBox.Size = new System.Drawing.Size(451, 20);
+			this.fileUrlRegexTextBox.Size = new System.Drawing.Size(367, 50);
 			this.fileUrlRegexTextBox.TabIndex = 66;
+			this.toolTip1.SetToolTip(this.fileUrlRegexTextBox, resources.GetString("fileUrlRegexTextBox.ToolTip"));
 			// 
 			// label19
 			// 
 			this.label19.AutoSize = true;
-			this.label19.Location = new System.Drawing.Point(0, 425);
+			this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label19.Location = new System.Drawing.Point(5, 78);
 			this.label19.Name = "label19";
-			this.label19.Size = new System.Drawing.Size(95, 13);
+			this.label19.Size = new System.Drawing.Size(55, 13);
 			this.label19.TabIndex = 65;
-			this.label19.Text = "FileUrlFormatString";
+			this.label19.Text = "Url Format";
 			// 
 			// label20
 			// 
 			this.label20.AutoSize = true;
-			this.label20.Location = new System.Drawing.Point(0, 386);
+			this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label20.Location = new System.Drawing.Point(5, 21);
 			this.label20.Name = "label20";
-			this.label20.Size = new System.Drawing.Size(68, 13);
+			this.label20.Size = new System.Drawing.Size(38, 13);
 			this.label20.TabIndex = 64;
-			this.label20.Text = "FileUrlRegEx";
+			this.label20.Text = "Regex";
 			// 
 			// CreatePlayListRegexButton
 			// 
-			this.CreatePlayListRegexButton.Location = new System.Drawing.Point(3, 177);
+			this.CreatePlayListRegexButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.CreatePlayListRegexButton.Location = new System.Drawing.Point(8, 37);
 			this.CreatePlayListRegexButton.Name = "CreatePlayListRegexButton";
-			this.CreatePlayListRegexButton.Size = new System.Drawing.Size(80, 23);
+			this.CreatePlayListRegexButton.Size = new System.Drawing.Size(60, 21);
 			this.CreatePlayListRegexButton.TabIndex = 62;
 			this.CreatePlayListRegexButton.Text = "Create Regex";
 			this.CreatePlayListRegexButton.UseVisualStyleBackColor = true;
@@ -1136,45 +1373,54 @@
 			// 
 			this.playlistUrlFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.playlistUrlFormatStringTextBox.Location = new System.Drawing.Point(3, 263);
+			this.playlistUrlFormatStringTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.playlistUrlFormatStringTextBox.Location = new System.Drawing.Point(80, 75);
 			this.playlistUrlFormatStringTextBox.Name = "playlistUrlFormatStringTextBox";
-			this.playlistUrlFormatStringTextBox.Size = new System.Drawing.Size(451, 20);
+			this.playlistUrlFormatStringTextBox.Size = new System.Drawing.Size(367, 20);
 			this.playlistUrlFormatStringTextBox.TabIndex = 61;
+			this.toolTip1.SetToolTip(this.playlistUrlFormatStringTextBox, "Format string used with the \'url\' match of the playlistUrlRegEx to create the Url" +
+        " for the playlist request.");
 			// 
 			// playlistUrlRegexTextBox
 			// 
 			this.playlistUrlRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.playlistUrlRegexTextBox.Location = new System.Drawing.Point(3, 224);
+			this.playlistUrlRegexTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.playlistUrlRegexTextBox.Location = new System.Drawing.Point(80, 18);
+			this.playlistUrlRegexTextBox.Multiline = true;
 			this.playlistUrlRegexTextBox.Name = "playlistUrlRegexTextBox";
-			this.playlistUrlRegexTextBox.Size = new System.Drawing.Size(451, 20);
+			this.playlistUrlRegexTextBox.Size = new System.Drawing.Size(367, 50);
 			this.playlistUrlRegexTextBox.TabIndex = 60;
+			this.toolTip1.SetToolTip(this.playlistUrlRegexTextBox, resources.GetString("playlistUrlRegexTextBox.ToolTip"));
 			// 
 			// label16
 			// 
 			this.label16.AutoSize = true;
-			this.label16.Location = new System.Drawing.Point(0, 247);
+			this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label16.Location = new System.Drawing.Point(5, 78);
 			this.label16.Name = "label16";
-			this.label16.Size = new System.Drawing.Size(111, 13);
+			this.label16.Size = new System.Drawing.Size(55, 13);
 			this.label16.TabIndex = 59;
-			this.label16.Text = "PlaylistUrlFormatString";
+			this.label16.Text = "Url Format";
 			// 
 			// label17
 			// 
 			this.label17.AutoSize = true;
-			this.label17.Location = new System.Drawing.Point(0, 208);
+			this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label17.Location = new System.Drawing.Point(5, 21);
 			this.label17.Name = "label17";
-			this.label17.Size = new System.Drawing.Size(83, 13);
+			this.label17.Size = new System.Drawing.Size(38, 13);
 			this.label17.TabIndex = 58;
-			this.label17.Text = "PlaylistUrlRegex";
+			this.label17.Text = "Regex";
 			// 
 			// CreateVideoUrlRegexButton
 			// 
-			this.CreateVideoUrlRegexButton.Location = new System.Drawing.Point(3, 3);
+			this.CreateVideoUrlRegexButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.CreateVideoUrlRegexButton.Location = new System.Drawing.Point(8, 37);
 			this.CreateVideoUrlRegexButton.Name = "CreateVideoUrlRegexButton";
-			this.CreateVideoUrlRegexButton.Size = new System.Drawing.Size(80, 23);
+			this.CreateVideoUrlRegexButton.Size = new System.Drawing.Size(60, 21);
 			this.CreateVideoUrlRegexButton.TabIndex = 56;
-			this.CreateVideoUrlRegexButton.Text = "Create Regex";
+			this.CreateVideoUrlRegexButton.Text = "Create";
 			this.CreateVideoUrlRegexButton.UseVisualStyleBackColor = true;
 			this.CreateVideoUrlRegexButton.Click += new System.EventHandler(this.CreateVideoUrlRegexButton_Click);
 			// 
@@ -1182,48 +1428,58 @@
 			// 
 			this.videoUrlFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.videoUrlFormatStringTextBox.Location = new System.Drawing.Point(3, 89);
+			this.videoUrlFormatStringTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.videoUrlFormatStringTextBox.Location = new System.Drawing.Point(80, 75);
 			this.videoUrlFormatStringTextBox.Name = "videoUrlFormatStringTextBox";
-			this.videoUrlFormatStringTextBox.Size = new System.Drawing.Size(451, 20);
+			this.videoUrlFormatStringTextBox.Size = new System.Drawing.Size(367, 20);
 			this.videoUrlFormatStringTextBox.TabIndex = 55;
+			this.toolTip1.SetToolTip(this.videoUrlFormatStringTextBox, "Format string applied to the video url of an item that was found in the rss. If v" +
+        "ideoUrlRegEx is set those groups will be taken as parameters.");
 			// 
 			// label13
 			// 
 			this.label13.AutoSize = true;
-			this.label13.Location = new System.Drawing.Point(0, 73);
+			this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label13.Location = new System.Drawing.Point(5, 78);
 			this.label13.Name = "label13";
-			this.label13.Size = new System.Drawing.Size(106, 13);
+			this.label13.Size = new System.Drawing.Size(55, 13);
 			this.label13.TabIndex = 54;
-			this.label13.Text = "VideoUrlFormatString";
+			this.label13.Text = "Url Format";
 			// 
 			// GetVideoUrlButton
 			// 
-			this.GetVideoUrlButton.Location = new System.Drawing.Point(89, 3);
+			this.GetVideoUrlButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.GetVideoUrlButton.Location = new System.Drawing.Point(80, 129);
 			this.GetVideoUrlButton.Name = "GetVideoUrlButton";
-			this.GetVideoUrlButton.Size = new System.Drawing.Size(75, 23);
+			this.GetVideoUrlButton.Size = new System.Drawing.Size(85, 23);
 			this.GetVideoUrlButton.TabIndex = 53;
-			this.GetVideoUrlButton.Text = "GetVideoUrl";
+			this.GetVideoUrlButton.Text = "Get Video Url";
 			this.GetVideoUrlButton.UseVisualStyleBackColor = true;
 			this.GetVideoUrlButton.Click += new System.EventHandler(this.GetVideoUrlButton_Click);
 			// 
 			// label14
 			// 
 			this.label14.AutoSize = true;
-			this.label14.Location = new System.Drawing.Point(0, 33);
+			this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label14.Location = new System.Drawing.Point(5, 21);
 			this.label14.Name = "label14";
-			this.label14.Size = new System.Drawing.Size(78, 13);
+			this.label14.Size = new System.Drawing.Size(38, 13);
 			this.label14.TabIndex = 52;
-			this.label14.Text = "VideoUrlRegex";
+			this.label14.Text = "Regex";
 			// 
 			// videoUrlRegExTextBox
 			// 
 			this.videoUrlRegExTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.videoUrlRegExTextBox.Location = new System.Drawing.Point(3, 49);
+			this.videoUrlRegExTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.videoUrlRegExTextBox.Location = new System.Drawing.Point(80, 18);
 			this.videoUrlRegExTextBox.Multiline = true;
 			this.videoUrlRegExTextBox.Name = "videoUrlRegExTextBox";
-			this.videoUrlRegExTextBox.Size = new System.Drawing.Size(451, 20);
+			this.videoUrlRegExTextBox.Size = new System.Drawing.Size(367, 50);
 			this.videoUrlRegExTextBox.TabIndex = 51;
+			this.toolTip1.SetToolTip(this.videoUrlRegExTextBox, "Regular Expression used to match on the video url retrieved as a result of the \'V" +
+        "ideoUrl\' match of the videoListRegEx. Groups should be named \'m0\', \'m1\' and so o" +
+        "n. Only used if set.");
 			// 
 			// categoryInfoListView
 			// 
@@ -1367,11 +1623,12 @@
 			// 
 			// helpToolStripMenuItem
 			// 
+			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.wikiToolStripMenuItem,
+            this.regularExpressionsToolStripMenuItem});
 			this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
 			this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 23);
 			this.helpToolStripMenuItem.Text = "Help";
-			this.helpToolStripMenuItem.ToolTipText = "Open the WIKI in your browser.";
-			this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
 			// 
 			// debugToolStripMenuItem
 			// 
@@ -1401,15 +1658,182 @@
 			this.openFileDialog1.FileName = "OnlineVideoSites.xml";
 			this.openFileDialog1.Filter = "xml-Files|*.xml";
 			// 
-			// SearchQueryTextBox
+			// openPngDialog
 			// 
-			this.SearchQueryTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.openPngDialog.Filter = "png-Files|*png";
+			// 
+			// groupBox5
+			// 
+			this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.SearchQueryTextBox.Location = new System.Drawing.Point(120, 460);
-			this.SearchQueryTextBox.Name = "SearchQueryTextBox";
-			this.SearchQueryTextBox.Size = new System.Drawing.Size(338, 20);
-			this.SearchQueryTextBox.TabIndex = 67;
-			this.toolTip1.SetToolTip(this.SearchQueryTextBox, "Enter your search string here");
+			this.groupBox5.Controls.Add(this.label30);
+			this.groupBox5.Controls.Add(this.CreateCategoryNextPageRegexButton);
+			this.groupBox5.Controls.Add(this.categoryNextPageRegexTextBox);
+			this.groupBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox5.Location = new System.Drawing.Point(1, 178);
+			this.groupBox5.Name = "groupBox5";
+			this.groupBox5.Size = new System.Drawing.Size(454, 87);
+			this.groupBox5.TabIndex = 62;
+			this.groupBox5.TabStop = false;
+			this.groupBox5.Text = "Next Page";
+			// 
+			// groupBox6
+			// 
+			this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox6.Controls.Add(this.manageStaticCategoriesButton);
+			this.groupBox6.Controls.Add(this.makeStaticButton);
+			this.groupBox6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox6.Location = new System.Drawing.Point(1, 271);
+			this.groupBox6.Name = "groupBox6";
+			this.groupBox6.Size = new System.Drawing.Size(454, 81);
+			this.groupBox6.TabIndex = 63;
+			this.groupBox6.TabStop = false;
+			this.groupBox6.Text = "Static Categories";
+			// 
+			// groupBox7
+			// 
+			this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox7.Controls.Add(this.label5);
+			this.groupBox7.Controls.Add(this.CreateSubcategoriesRegexButton);
+			this.groupBox7.Controls.Add(this.subCategoryUrlDecodingComboBox);
+			this.groupBox7.Controls.Add(this.label29);
+			this.groupBox7.Controls.Add(this.subcategoryRegexTextBox);
+			this.groupBox7.Controls.Add(this.label4);
+			this.groupBox7.Controls.Add(this.subcategoryUrlFormatTextBox);
+			this.groupBox7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox7.Location = new System.Drawing.Point(1, 6);
+			this.groupBox7.Name = "groupBox7";
+			this.groupBox7.Size = new System.Drawing.Size(454, 142);
+			this.groupBox7.TabIndex = 61;
+			this.groupBox7.TabStop = false;
+			this.groupBox7.Text = "Dynamic Subcategories";
+			// 
+			// groupBox8
+			// 
+			this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox8.Controls.Add(this.label28);
+			this.groupBox8.Controls.Add(this.subcategoryNextPageRegexTextBox);
+			this.groupBox8.Controls.Add(this.CreateSubcategoriesNextPageRegexButton);
+			this.groupBox8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox8.Location = new System.Drawing.Point(1, 154);
+			this.groupBox8.Name = "groupBox8";
+			this.groupBox8.Size = new System.Drawing.Size(454, 88);
+			this.groupBox8.TabIndex = 62;
+			this.groupBox8.TabStop = false;
+			this.groupBox8.Text = "Next Page";
+			// 
+			// groupBox9
+			// 
+			this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox9.Controls.Add(this.manageStaticSubCategoriesButton);
+			this.groupBox9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox9.Location = new System.Drawing.Point(1, 248);
+			this.groupBox9.Name = "groupBox9";
+			this.groupBox9.Size = new System.Drawing.Size(454, 54);
+			this.groupBox9.TabIndex = 63;
+			this.groupBox9.TabStop = false;
+			this.groupBox9.Text = "Static Subcategories";
+			// 
+			// groupBox10
+			// 
+			this.groupBox10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox10.Controls.Add(this.label14);
+			this.groupBox10.Controls.Add(this.videoUrlDecodingComboBox);
+			this.groupBox10.Controls.Add(this.label33);
+			this.groupBox10.Controls.Add(this.videoUrlRegExTextBox);
+			this.groupBox10.Controls.Add(this.label13);
+			this.groupBox10.Controls.Add(this.videoUrlFormatStringTextBox);
+			this.groupBox10.Controls.Add(this.CreateVideoUrlRegexButton);
+			this.groupBox10.Controls.Add(this.GetVideoUrlButton);
+			this.groupBox10.Controls.Add(this.label22);
+			this.groupBox10.Controls.Add(this.videoUrlResultTextBox);
+			this.groupBox10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox10.Location = new System.Drawing.Point(1, 6);
+			this.groupBox10.Name = "groupBox10";
+			this.groupBox10.Size = new System.Drawing.Size(454, 160);
+			this.groupBox10.TabIndex = 90;
+			this.groupBox10.TabStop = false;
+			this.groupBox10.Text = "Video Url";
+			// 
+			// groupBox11
+			// 
+			this.groupBox11.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox11.Controls.Add(this.label17);
+			this.groupBox11.Controls.Add(this.CreatePlayListRegexButton);
+			this.groupBox11.Controls.Add(this.playlistUrlRegexTextBox);
+			this.groupBox11.Controls.Add(this.label16);
+			this.groupBox11.Controls.Add(this.playlistUrlFormatStringTextBox);
+			this.groupBox11.Controls.Add(this.label15);
+			this.groupBox11.Controls.Add(this.GetPlayListUrlButton);
+			this.groupBox11.Controls.Add(this.playListUrlResultTextBox);
+			this.groupBox11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox11.Location = new System.Drawing.Point(1, 171);
+			this.groupBox11.Name = "groupBox11";
+			this.groupBox11.Size = new System.Drawing.Size(454, 130);
+			this.groupBox11.TabIndex = 91;
+			this.groupBox11.TabStop = false;
+			this.groupBox11.Text = "Playlist Url";
+			// 
+			// groupBox12
+			// 
+			this.groupBox12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox12.Controls.Add(this.label36);
+			this.groupBox12.Controls.Add(this.btnPlay);
+			this.groupBox12.Controls.Add(this.ResultUrlComboBox);
+			this.groupBox12.Controls.Add(this.label20);
+			this.groupBox12.Controls.Add(this.CreateFileUrlRegexButton);
+			this.groupBox12.Controls.Add(this.getRedirectedFileUrlCheckBox);
+			this.groupBox12.Controls.Add(this.getFileUrlButton);
+			this.groupBox12.Controls.Add(this.comboBoxResolving);
+			this.groupBox12.Controls.Add(this.label11);
+			this.groupBox12.Controls.Add(this.fileUrlNameFormatStringTextBox);
+			this.groupBox12.Controls.Add(this.fileUrlRegexTextBox);
+			this.groupBox12.Controls.Add(this.fileUrlPostStringTextBox);
+			this.groupBox12.Controls.Add(this.label12);
+			this.groupBox12.Controls.Add(this.label18);
+			this.groupBox12.Controls.Add(this.label19);
+			this.groupBox12.Controls.Add(this.fileUrlFormatStringTextBox);
+			this.groupBox12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.groupBox12.Location = new System.Drawing.Point(1, 306);
+			this.groupBox12.Name = "groupBox12";
+			this.groupBox12.Size = new System.Drawing.Size(454, 212);
+			this.groupBox12.TabIndex = 92;
+			this.groupBox12.TabStop = false;
+			this.groupBox12.Text = "File Url";
+			// 
+			// label36
+			// 
+			this.label36.AutoSize = true;
+			this.label36.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label36.ForeColor = System.Drawing.Color.SteelBlue;
+			this.label36.Location = new System.Drawing.Point(5, 185);
+			this.label36.Name = "label36";
+			this.label36.Size = new System.Drawing.Size(43, 13);
+			this.label36.TabIndex = 78;
+			this.label36.Text = "Result";
+			// 
+			// wikiToolStripMenuItem
+			// 
+			this.wikiToolStripMenuItem.Name = "wikiToolStripMenuItem";
+			this.wikiToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+			this.wikiToolStripMenuItem.Text = "Wiki";
+			this.wikiToolStripMenuItem.ToolTipText = "Open the WIKI in your browser.";
+			this.wikiToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
+			// 
+			// regularExpressionsToolStripMenuItem
+			// 
+			this.regularExpressionsToolStripMenuItem.Name = "regularExpressionsToolStripMenuItem";
+			this.regularExpressionsToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+			this.regularExpressionsToolStripMenuItem.Text = "Regular Expressions";
+			this.regularExpressionsToolStripMenuItem.ToolTipText = "Open a Regex Help Website in the Browser.";
+			this.regularExpressionsToolStripMenuItem.Click += new System.EventHandler(this.regularExpressionsToolStripMenuItem_Click);
 			// 
 			// Form1
 			// 
@@ -1425,14 +1849,20 @@
 			this.tabControl1.ResumeLayout(false);
 			this.generalTabPage.ResumeLayout(false);
 			this.generalTabPage.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBoxSiteBanner)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBoxSiteIcon)).EndInit();
 			this.categTabPage.ResumeLayout(false);
-			this.categTabPage.PerformLayout();
+			this.groupBox4.ResumeLayout(false);
+			this.groupBox4.PerformLayout();
 			this.subCatTabPage.ResumeLayout(false);
-			this.subCatTabPage.PerformLayout();
 			this.videoListTabPage.ResumeLayout(false);
-			this.videoListTabPage.PerformLayout();
+			this.groupBox3.ResumeLayout(false);
+			this.groupBox3.PerformLayout();
+			this.groupBox2.ResumeLayout(false);
+			this.groupBox2.PerformLayout();
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox1.PerformLayout();
 			this.VideoUrlTabPage.ResumeLayout(false);
-			this.VideoUrlTabPage.PerformLayout();
 			this.playButtonContextMenuStrip.ResumeLayout(false);
 			this.CategoryViewContextMenuStrip.ResumeLayout(false);
 			this.splitContainer1.Panel1.ResumeLayout(false);
@@ -1443,6 +1873,20 @@
 			this.splitContainer2.ResumeLayout(false);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
+			this.groupBox5.ResumeLayout(false);
+			this.groupBox5.PerformLayout();
+			this.groupBox6.ResumeLayout(false);
+			this.groupBox7.ResumeLayout(false);
+			this.groupBox7.PerformLayout();
+			this.groupBox8.ResumeLayout(false);
+			this.groupBox8.PerformLayout();
+			this.groupBox9.ResumeLayout(false);
+			this.groupBox10.ResumeLayout(false);
+			this.groupBox10.PerformLayout();
+			this.groupBox11.ResumeLayout(false);
+			this.groupBox11.PerformLayout();
+			this.groupBox12.ResumeLayout(false);
+			this.groupBox12.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -1499,8 +1943,7 @@
         private System.Windows.Forms.TextBox playlistUrlFormatStringTextBox;
         private System.Windows.Forms.TextBox playlistUrlRegexTextBox;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label label21;
+		private System.Windows.Forms.Label label17;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.MenuStrip menuStrip1;
@@ -1535,9 +1978,7 @@
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.ComboBox cbLanguages;
         private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.CheckBox ageCheckBox;
-        private System.Windows.Forms.TextBox baseUrlTextbox;
-        private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.CheckBox ageCheckBox;
         private System.Windows.Forms.TextBox nameTextBox;
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
@@ -1573,6 +2014,29 @@
 		private System.Windows.Forms.TextBox searchPostStringTextBox;
 		private System.Windows.Forms.Button GetSearchResultsButton;
 		private System.Windows.Forms.TextBox SearchQueryTextBox;
+		private System.Windows.Forms.TextBox baseUrlTextbox;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label label38;
+		private System.Windows.Forms.Label label37;
+		private System.Windows.Forms.PictureBox pictureBoxSiteBanner;
+		private System.Windows.Forms.PictureBox pictureBoxSiteIcon;
+		private System.Windows.Forms.OpenFileDialog openPngDialog;
+		private System.Windows.Forms.Label label41;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.GroupBox groupBox3;
+		private System.Windows.Forms.GroupBox groupBox4;
+		private System.Windows.Forms.GroupBox groupBox5;
+		private System.Windows.Forms.GroupBox groupBox6;
+		private System.Windows.Forms.GroupBox groupBox7;
+		private System.Windows.Forms.GroupBox groupBox8;
+		private System.Windows.Forms.GroupBox groupBox9;
+		private System.Windows.Forms.GroupBox groupBox10;
+		private System.Windows.Forms.GroupBox groupBox11;
+		private System.Windows.Forms.GroupBox groupBox12;
+		private System.Windows.Forms.Label label36;
+		private System.Windows.Forms.ToolStripMenuItem wikiToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem regularExpressionsToolStripMenuItem;
     }
 }
 
