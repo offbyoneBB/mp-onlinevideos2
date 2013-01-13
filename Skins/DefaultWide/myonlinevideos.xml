@@ -2,7 +2,7 @@
 <window>
   <id>4755</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <allowoverlay>no</allowoverlay>
   <define>#useSelectedFanart:Yes</define>
   <controls>
     
@@ -108,9 +108,11 @@
     <import>myonlinevideos.details.xml</import>
     
     <!-- *** Bottom part *** -->
-        
+	
+	<import>myonlinevideos.overlay.xml</import>
+	
     <control>
-      <description>video rectangle</description>
+      <description>selected item thumb / video border</description>
       <type>image</type>
       <id>0</id>
       <posX>78</posX>
@@ -118,25 +120,10 @@
       <width>219</width>
       <height>124</height>
       <texture>Picturethumbframe.png</texture>
-      <visible>!videoplayer.usingoverlays + !player.hasmedia + !Control.IsVisible(51)</visible>
+      <visible>player.HasVideo | !Control.IsVisible(51)</visible>
     </control>
     <control>
-      <description>video preview window</description>
-      <type>videowindow</type>
-      <id>99</id>
-      <posX>86</posX>
-      <posY>558</posY>
-      <width>203</width>
-      <height>115</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
-      <visible>player.hasmedia | videoplayer.usingoverlays</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-    </control>
-    <control>
-      <id>500</id>
+      <id>0</id>
       <type>image</type>
       <posX>80</posX>
       <posY>555</posY>
@@ -145,14 +132,12 @@
       <centered>yes</centered>
       <texture diffuse="Thumb_Mask.png">#selectedthumb</texture>
       <keepaspectratio>yes</keepaspectratio>
-      <visible>!videoplayer.usingoverlays + !player.hasmedia + !Control.IsVisible(51)</visible>
-      <animation effect="fade" time="250" reversible="false">visible</animation>
+      <visible>!player.HasVideo + !Control.IsVisible(51)</visible>
     </control>
-    
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
-      <id>1</id>
+      <id>0</id>
       <posX>300</posX>
       <posY>551</posY>
       <width>780</width>
