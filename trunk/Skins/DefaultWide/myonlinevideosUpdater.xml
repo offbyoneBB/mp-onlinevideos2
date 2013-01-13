@@ -2,7 +2,7 @@
 <window>
   <id>4757</id>
   <defaultcontrol>50</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <allowoverlay>no</allowoverlay>
   <controls>
     
     <!-- *** WINDOW DEFAULTS *** -->
@@ -78,7 +78,11 @@
       <animation effect="zoom" time="70" start="75" center="0,0">focus</animation>
       <animation effect="slide" time="70" start="185,0">focus</animation>
     </control>
-
+	
+	<!-- *** Bottom part *** -->
+	
+	<import>myonlinevideos.overlay.xml</import>
+	
     <control>
       <description>selected thumb border</description>
       <type>image</type>
