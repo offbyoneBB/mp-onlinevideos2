@@ -1480,8 +1480,8 @@
     <Site name="History Television" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>History Television captivates Canadian audiences with gripping stories about the people and events that have shaped our world.</Description>
 	  <Configuration>
-		<item key="feedPIDUrl"><![CDATA[http://www.history.ca/video/default.aspx]]></item>
-		<item key="feedPIDRegexString"><![CDATA[PID:\s"(?<feedPID>[^"]*)",]]></item>
+		<item key="feedPIDUrl"><![CDATA[http://www.history.ca/video/shawconnect_dynamic_assets__2362.js?id=31&id=32&id=84&id=85&id=4&id=1&id=2&id=86&id=19&id=20&id=21&id=7&id=83&id=46&id=77&id=28&&sitename=ShawHistory]]></item>
+		<item key="feedPIDRegexString"><![CDATA[H\.PID=H\.PID\|\|"(?<feedPID>[^"]*)"]]></item>
 		<item key="playerTag"><![CDATA[z/History Player - Video Center]]></item>
 	  </Configuration>
     </Site>
