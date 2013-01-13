@@ -7,8 +7,6 @@ The DefaultWide skinfiles that are installed with the plugin are always kept upd
 
 The plugin comes with its own localization, so skinners are encouraged to use the provided properties for their labels.
 
-The xml for the window 4755 and 4757 should set `allowoverlay` to yes, because external players (WindowsMediaPlayer, VLC Media Player) will be used for some clips.
-
 ----
 
 = Window IDs =
