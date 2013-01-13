@@ -2173,6 +2173,34 @@
               <ZipFileName>Installer{CopyFile}\{96b9cf7f-7c79-45e4-8826-228b7450454a}-zie.nl.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\zie.nl.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TVNPlayer.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{578ec50b-7f37-4124-883e-b043e15b31d8}-TVNPlayer.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVNPlayer.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Tweakers.net.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6e784bd3-b796-4719-b8ac-012349a9b03f}-Tweakers.net.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tweakers.net.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\TVNPlayer.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{a856cb97-d8d9-4d66-ad31-37e3e5849648}-TVNPlayer.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVNPlayer.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Tweakers.net.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{338b6edb-88fe-4a03-af57-4e463b499547}-Tweakers.net.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Tweakers.net.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2746,6 +2774,13 @@
               <ZipFileName>Installer{CopyFile}\{608daa63-eb94-4a6c-baba-26f26d7413ba}-myonlinevideos.extended.youtube.xml</ZipFileName>
               <DestinationFilename>%Skin%\DefaultWide\myonlinevideos.extended.youtube.xml</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\DefaultWide\myonlinevideos.overlay.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{83078431-fd56-4e6b-9321-2434732bbe16}-myonlinevideos.overlay.xml</ZipFileName>
+              <DestinationFilename>%Skin%\DefaultWide\myonlinevideos.overlay.xml</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -3238,7 +3273,7 @@ public class Script
               <Params>
                 <Items>
                   <SectionParam Name="Extension package">
-                    <Value>LAV\LAVFilters0.54.1.0.mpe1</Value>
+                    <Value>LAV\LAVFilters0.55.1.0.mpe1</Value>
                     <ValueType>File</ValueType>
                     <Description>Location of the extension package</Description>
                   </SectionParam>
@@ -3265,7 +3300,7 @@ public class Script
               <Params>
                 <Items>
                   <SectionParam Name="Extension package">
-                    <Value>Extensions.1.0.8.180.mpe1</Value>
+                    <Value>Extensions.1.0.9.185.mpe1</Value>
                     <ValueType>File</ValueType>
                     <Description>Location of the extension package</Description>
                   </SectionParam>
@@ -3385,26 +3420,17 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>1</Major>
-      <Minor>4</Minor>
+      <Minor>5</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>added support for dynamic HTTP streaming protocols from Adobe and Microsoft
-now showing error messages source filter to have more info for the user than "no url"
-changed format of translation xml files - now using Transifex
-fixed Configuration SitesGroup Thumbnail not saved
-added prompt to DownloadedVideos when selecting Delete or Delete All
-fixed some problems with downloading of videos
-fixed topbar showing up and keeping focus in fullscreen playback and pressing UP to do an instant skip step
-fixed WinXP problems: only call EVR functions in dshowhelper.dll when MP is using EVR
-fixed problems with playlist playback (and split videos)
-fixed url generation with relative Urls in GenericSiteUtil</VersionDescription>
+    <VersionDescription />
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.4.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2012-11-30T11:00:00</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/[Name][Version].mpe1</OnlineLocation>
+    <ReleaseDate>2013-01-25T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
-    <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
+    <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
       <Items>
         <SectionParam Name="Icon">
@@ -5602,6 +5628,34 @@ fixed url generation with relative Urls in GenericSiteUtil</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{96b9cf7f-7c79-45e4-8826-228b7450454a}-zie.nl.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\zie.nl.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TVNPlayer.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{578ec50b-7f37-4124-883e-b043e15b31d8}-TVNPlayer.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVNPlayer.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Tweakers.net.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6e784bd3-b796-4719-b8ac-012349a9b03f}-Tweakers.net.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tweakers.net.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\TVNPlayer.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{a856cb97-d8d9-4d66-ad31-37e3e5849648}-TVNPlayer.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVNPlayer.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Tweakers.net.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{338b6edb-88fe-4a03-af57-4e463b499547}-Tweakers.net.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Tweakers.net.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -6127,6 +6181,13 @@ fixed url generation with relative Urls in GenericSiteUtil</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{608daa63-eb94-4a6c-baba-26f26d7413ba}-myonlinevideos.extended.youtube.xml</ZipFileName>
         <DestinationFilename>%Skin%\DefaultWide\myonlinevideos.extended.youtube.xml</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\DefaultWide\myonlinevideos.overlay.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{83078431-fd56-4e6b-9321-2434732bbe16}-myonlinevideos.overlay.xml</ZipFileName>
+        <DestinationFilename>%Skin%\DefaultWide\myonlinevideos.overlay.xml</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
@@ -6277,15 +6338,15 @@ fixed url generation with relative Urls in GenericSiteUtil</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>LAV\LAVFilters0.54.1.0.mpe1</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2d474718-dac4-4a54-9ef9-ceb2b8ef9e05}-LAVFilters0.54.1.0.mpe1</ZipFileName>
+        <LocalFileName>LAV\LAVFilters0.55.1.0.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5a11e16a-6644-4415-88b5-5762ca86f83c}-LAVFilters0.55.1.0.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>Extensions.1.0.8.180.mpe1</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{32ccb45a-d734-46c5-9e83-38ecac610f60}-Extensions.1.0.8.180.mpe1</ZipFileName>
+        <LocalFileName>Extensions.1.0.9.185.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{71c5cdcb-7050-4ca4-966a-75420b389a93}-Extensions.1.0.9.185.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>

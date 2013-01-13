@@ -53,22 +53,53 @@
         <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=52</UpdateUrl>
         <Version>
           <Major>0</Major>
-          <Minor>54</Minor>
+          <Minor>55</Minor>
           <Build>1</Build>
           <Revision>0</Revision>
         </Version>
         <ExtensionDescription>The extension installs the LAV Filter package, which contains a splitter, audio and video decoder for the most common formats that are used around the web.</ExtensionDescription>
-        <VersionDescription>LAV Splitter
-- Improved seeking in MP4 files created by Windows Live Movie Maker
+        <VersionDescription>V0.55.1 - 2013/01/11
+General
+- Clicking the Tray Icon with a Property Page already active brings it back to the front
+
+LAV Splitter
+- Added an option to disable quality-based audio stream selection (selects the first stream matching the language preferences)
+- Removed Bitrate from audio quality criterias, because its too unreliable at this point.
 
 LAV Video
-- Improved H.264 DXVA on recent Intel GPUs (Sandy/Ivy Bridge and newer Atoms)
-  - Fixed corruption with high number of reference frames ( &gt; 11 )
-  - Fixed corruption in MBAFF interlaced content
-- Fixed an issue that caused DVD menus/subtitles to stop working in DXVA2 Native mode in some situations</VersionDescription>
+- Fixed YADIF deinterlacing (broken after a ffmpeg update on 0.55)
+
+LAV Audio
+- Switched to Triangular Dithering for 16-bit Integer conversions
+
+0.55.0 - 2013/01/09
+General
+- All Filters now have an optional tray icon which can open the property sheet when clicked (disabled by default)
+
+LAV Splitter
+- Improved FPS detection for interlaced H.264 streams in Matroska
+- Fixed H.264 in Ogg and PMP
+- Fixed seeking in RMVB files with AAC audio
+- Improved support for AAC in MPEG-TS (especially in ISDB-T)
+- Fixed Key-Frame seeking for AVI and added support for MP4
+
+LAV Video
+- Improved handling of raw RGB video with LAV Splitter (Video was upside-down in some cases)
+- Improved support for the Overlay Mixer renderer
+- Fixed decoding of non-mod16 video with CUVID
+- Fixed DXVA2 decoding of H.264 MBAFF content with &gt;= 16px cropping
+- Support for fade in/out animations in DVD subtitles
+- Fixed DVD menu overlays showing too early on some discs
+- Fixed forced DVD subtitles being stuck on the screen until the next subtitle line
+- Improved playback of MPEG-1 in MKV with Haali Splitter
+
+LAV Audio
+- Fixed 6.1 to 7.1 upmixing when the standard channel layout option is turned off
+- Dithering when converting audio to 16-bit Integer
+- Fallback to DTS "Core" bitstreaming if DTS-HD failsA2 Native mode in some situations</VersionDescription>
         <DevelopmentStatus>Stable</DevelopmentStatus>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-        <ReleaseDate>2012-11-28T20:36:36</ReleaseDate>
+        <ReleaseDate>2013-01-11T20:36:36</ReleaseDate>
         <Tags>codec</Tags>
         <Location>.\LAVFilters[Version].mpe1</Location>
         <Params>
