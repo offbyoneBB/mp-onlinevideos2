@@ -1504,8 +1504,8 @@
     <Site name="Showcase" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>Big. Bold. Hits. With a top-rated line-up of hit series, breakout cable exclusives and big-ticket movies, Showcase is a powerhouse of TV’s best. From the off-beat characters in House, the unconventional storylines of Weeds and the chemistry-fuelled Bones, to Hollywood heavy-hitters Superbad and I Am Legend, Showcase delivers the best and most colourful collection of television.</Description>
 	  <Configuration>
-		<item key="feedPIDUrl"><![CDATA[http://www.showcase.ca/CommonUI/Scripts/video/cwpShowcaseVC.js]]></item>
-		<item key="feedPIDRegexString"><![CDATA[data.PID\s=\sdata\.PID\s\|\|\s"(?<feedPID>[^"]*)";]]></item>
+		<item key="feedPIDUrl"><![CDATA[http://www.showcase.ca/shawconnect_dynamic_assets__2580.js?id=7&id=8&id=9&id=74&id=14&id=15&id=10&id=82&id=83&id=26&id=25&id=94&id=90&id=70&id=100&id=80&id=92&id=75&id=76&id=4&id=1&id=2&id=77&sitename=Showcase]]></item>
+		<item key="feedPIDRegexString"><![CDATA[G\.PID=G\.PID\|\|"(?<feedPID>[^"]*)"]]></item>
 		<item key="playerTag"><![CDATA[z/Showcase Video Centre]]></item>
 		<item key="swfUrl"><![CDATA[http://www.showcase.ca/video/swf/flvPlayer.swf]]></item>
 	  </Configuration>
