@@ -129,7 +129,6 @@
     <Compile Include="TVEUtil.cs" />
     <Compile Include="TVNZOnDemandUtil.cs" />
     <Compile Include="TvTuttiUtil.cs" />
-    <Compile Include="WatchSeriesUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

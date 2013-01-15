@@ -46,17 +46,17 @@ namespace OnlineVideos.Sites
                 int year = -1;
 
                 Match trackingInfoMatch = Regex.Match(video.Length, @"Episode(?:n)?:\s*?(?<season>\d\d)(?<episode>\d\d)", RegexOptions.IgnoreCase);
-                WatchSeriesUtil.FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
+                TubePlusUtil.FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
                 name = "South Park";
 
-                if (!WatchSeriesUtil.GotTrackingInfoData(name, season, episode, year))
+                if (!TubePlusUtil.GotTrackingInfoData(name, season, episode, year))
                 {
                     trackingInfoMatch = Regex.Match(video.VideoUrl, @"\/S(?<season>\d{1,3})E(?<episode>\d{1,3})-", RegexOptions.IgnoreCase);
-                    WatchSeriesUtil.FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
+                    TubePlusUtil.FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
                     name = "South Park";
                 }
 
-                if (WatchSeriesUtil.GotTrackingInfoData(name, season, episode, year))
+                if (TubePlusUtil.GotTrackingInfoData(name, season, episode, year))
                 {
                     TrackingInfo tInfo = new TrackingInfo();
                     tInfo.Title = name;

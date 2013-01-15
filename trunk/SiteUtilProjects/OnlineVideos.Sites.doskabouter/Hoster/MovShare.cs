@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using OnlineVideos.Hoster.Base;
 using OnlineVideos.Sites;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace OnlineVideos.Hoster
 {
     public class MovShare : HosterBase
     {
-        private string HUMAN = "We need you to prove you're human";
-        
         public override string getHosterUrl()
         {
             return "Movshare.net";
@@ -19,28 +15,18 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
-            //string page = SiteUtilBase.GetWebData(url.Substring(0, url.LastIndexOf("/")));
             string page = SiteUtilBase.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
-                if (page.IndexOf(HUMAN, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                Match m = Regex.Match(page, @"flashvars\.file=""(?<fileid>[^""]*)"";\s*flashvars\.filekey=""(?<filekey>[^""]*)"";");
+                if (m.Success)
                 {
-                    page = SiteUtilBase.GetWebDataFromPost(url, "ndl=1&submit.x=1&submit.y=1");
-                }
-
-                //divx
-                string link = DivxProvider(url, page);
-                if (!string.IsNullOrEmpty(link))
-                {
-                    videoType = VideoType.divx;
-                    return link;
-                }
-                //flv
-                link = FlashProvider(url, page);
-                if (!string.IsNullOrEmpty(link))
-                {
-                    videoType = VideoType.flv;
-                    return link;
+                    page = SiteUtilBase.GetWebData(
+                        String.Format("http://www.movshare.net/api/player.api.php?pass=undefined&codes=undefined&user=undefined&file={0}&key={1}",
+                        m.Groups["fileid"].Value, HttpUtility.UrlEncode(m.Groups["filekey"].Value)));
+                    m = Regex.Match(page, @"url=(?<url>[^&]*)&");
+                    if (m.Success)
+                        return m.Groups["url"].Value;
                 }
             }
             return String.Empty;
