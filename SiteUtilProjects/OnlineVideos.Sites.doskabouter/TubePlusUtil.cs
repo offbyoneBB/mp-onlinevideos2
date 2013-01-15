@@ -4,11 +4,18 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.IO;
+using OnlineVideos.Subtitles;
 
 namespace OnlineVideos.Sites
 {
     public class TubePlusUtil : DeferredResolveUtil
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle source")]
+        string subtitleSource = "";
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated)")]
+        string subtitleLanguages = "";
+
+
         [Category("OnlineVideosConfiguration"), Description("")]
         protected string genresRegEx;
 
@@ -33,6 +40,7 @@ namespace OnlineVideos.Sites
         private Regex regex_SeasonCategories;
         private Regex regex_ShowVideoList;
         private Regex regex_MoviesVideoList;
+        private SubtitleHandler sh = null;
 
         private enum Mode
         {
@@ -62,6 +70,8 @@ namespace OnlineVideos.Sites
             regex_SeasonCategories = new Regex(seasonCategoriesRegEx, defaultRegexOptions);
             regex_ShowVideoList = new Regex(showVideoListRegEx, defaultRegexOptions);
             regex_MoviesVideoList = new Regex(moviesVideoListRegEx, defaultRegexOptions);
+
+            sh = new SubtitleHandler(subtitleSource, subtitleLanguages);
         }
 
         public override int DiscoverDynamicCategories()
@@ -191,8 +201,7 @@ namespace OnlineVideos.Sites
 
                             string[] airdates = m.Groups["airdates"].Value.Replace(",", "||").Split(new[] { @"||" }, StringSplitOptions.RemoveEmptyEntries);
 
-                            regEx_VideoList = regex_ShowVideoList;
-                            List<VideoInfo> videoList = Parse(baseUrl, m.Groups["urls"].Value);
+                            List<VideoInfo> videoList = GetSeriesVideoList(baseUrl, m.Groups["urls"].Value, parentCategory);
 
                             for (int i = 0; i < videoList.Count && i + 1 < airdates.Length; i++)
                             {
@@ -229,6 +238,47 @@ namespace OnlineVideos.Sites
             return 0;
         }
 
+        private List<VideoInfo> GetSeriesVideoList(string url, string data, Category parentCategory)
+        {
+            List<VideoInfo> videoList = new List<VideoInfo>();
+            if (data.Length > 0)
+            {
+                Match m = regex_ShowVideoList.Match(data);
+                while (m.Success)
+                {
+                    TubeVideoInfo videoInfo = new TubeVideoInfo();
+                    videoInfo.parent = this;
+                    //DeferredResolveVideoInfo videoInfo = new DeferredResolveVideoInfo();
+                    videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+                    // get, format and if needed absolutify the video url
+                    videoInfo.VideoUrl = FormatDecodeAbsolutifyUrl(url, m.Groups["VideoUrl"].Value, videoListRegExFormatString, videoListUrlDecoding);
+
+                    try
+                    {
+                        string id = m.Groups["id"].Value;
+                        Match mid = Regex.Match(id, "s(?<season>[^e]*)e(?<episode>.*)");
+                        if (mid.Success)
+                        {
+                            TrackingInfo tInfo = new TrackingInfo();
+                            tInfo.Title = parentCategory.Name;
+                            tInfo.Season = Convert.ToUInt32(mid.Groups["season"].Value);
+                            tInfo.Episode = Convert.ToUInt32(mid.Groups["episode"].Value);
+                            tInfo.VideoKind = VideoKind.TvSeries;
+                            videoInfo.Other = tInfo;
+                        }
+                    }
+                    catch { };
+                    videoList.Add(videoInfo);
+
+                    m = m.NextMatch();
+                }
+            }
+
+            return videoList;
+        }
+
+
+
         public override List<VideoInfo> getVideoList(Category category)
         {
             if (category.Other is List<VideoInfo>) //tvshows
@@ -257,7 +307,11 @@ namespace OnlineVideos.Sites
 
             if (hoster == "youtube") return "http://youtube.com/v/" + id;
             if (hoster == "putlocker.com" || hoster == "sockshare.com")
-                return String.Format(@"http://www.{0}/file/{1}", hoster, id);
+                return String.Format(@"http://www.{0}/embed/{1}", hoster, id);
+            if (hoster == "videoweed.es")
+                return @"http://embed.videoweed.es/embed.php?v=" + id;
+            if (hoster == "movshare.net")
+                return @"http://embed.movshare.net/embed.php?v=" + id;
             return name;
         }
 
@@ -286,7 +340,6 @@ namespace OnlineVideos.Sites
                 return Utils.GetSaveFilename(name);
             }
         }
-
 
         #region search
         public override bool CanSearch
@@ -322,5 +375,53 @@ namespace OnlineVideos.Sites
         }
         #endregion
 
+        #region subtitles
+        private System.Threading.Thread subtitleThread;
+        public override string getUrl(VideoInfo video)
+        {
+            sh.SetSubtitleText(video, out subtitleThread);
+            return base.getUrl(video);
+        }
+
+
+        public class TubeVideoInfo : DeferredResolveVideoInfo
+        {
+            public TubePlusUtil parent;
+
+            public override string GetPlaybackOptionUrl(string url)
+            {
+                string newUrl = base.GetPlaybackOptionUrl(url);
+                if (parent.subtitleThread != null)
+                    parent.subtitleThread.Join();
+                return newUrl;
+            }
+
+        }
+        #endregion
+
+        public static bool GotTrackingInfoData(string name, int season, int episode, int year)
+        {
+            return (!string.IsNullOrEmpty(name) && ((season > -1 && episode > -1) || (year > 1900)));
+        }
+
+        public static void FillTrackingInfoData(Match trackingInfoMatch, ref string name, ref int season, ref int episode, ref int year)
+        {
+            if (trackingInfoMatch != null && trackingInfoMatch.Success)
+            {
+                name = trackingInfoMatch.Groups["name"].Value.Trim();
+                if (!int.TryParse(trackingInfoMatch.Groups["season"].Value, out season))
+                {
+                    season = -1;
+                }
+                if (!int.TryParse(trackingInfoMatch.Groups["episode"].Value, out episode))
+                {
+                    episode = -1;
+                }
+                if (!int.TryParse(trackingInfoMatch.Groups["year"].Value, out year))
+                {
+                    year = -1;
+                }
+            }
+        }
     }
 }
