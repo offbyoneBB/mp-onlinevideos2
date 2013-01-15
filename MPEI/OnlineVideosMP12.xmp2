@@ -3425,7 +3425,16 @@ public class Script
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription />
+    <VersionDescription>changed Skin Properties: #header.label -&gt; #OnlineVideos.HeaderLabel / #header.image -&gt; #OnlineVideos.HeaderImage
+SiteParser: enhanced Layout, added ToolTips, allow to select Icon and Banner, fixed NextPage Videos, added ability to specify and test searching
+MpUrlSourceSplitter: fixed compatibility with MPAR, allow sending cookies, improved AFHS protocol
+fixed: VideoScreen switching between Fullscreen and MiniWindow not working in MP1.3 
+fixed: VolumeOverlay shown incorrectly in MP1.3 in FullScreenVideo
+fixed: extended search useless, because the text is not set as initial in the VirtualKeyboard
+fixed: show correct number of Videos in details view
+fixed: changing "auto group by language" settings to yes via MPEI plugin and going back to OV has only Other group - groups needed to be build
+fixed: SiteManager after deleting a site - cursor is placed on first site, not the one below (when "only local" are shown)
+improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/[Name][Version].mpe1</OnlineLocation>
     <ReleaseDate>2013-01-25T11:00:00</ReleaseDate>
