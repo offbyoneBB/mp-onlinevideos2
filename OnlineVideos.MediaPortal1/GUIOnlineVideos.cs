@@ -274,10 +274,13 @@ namespace OnlineVideos.MediaPortal1
             return result;
         }
 
+		/// <summary>
+		/// Called when MediaPortal is closed.
+		/// </summary>
         public override void DeInit()
         {
+			// Make sure all runtime changeable properties are persisted
             PluginConfiguration.Instance.Save(true);
-            base.DeInit();
         }
 
         protected override void OnPageLoad()
