@@ -312,6 +312,10 @@ namespace OnlineVideos.Sites
                 return @"http://embed.videoweed.es/embed.php?v=" + id;
             if (hoster == "movshare.net")
                 return @"http://embed.movshare.net/embed.php?v=" + id;
+            if (hoster == "novamov.com")
+                return @"http://embed.novamov.com/embed.php?width=653&height=525&px=1&v=" + id;
+            if (hoster == "vidbull.com")
+                return String.Format(@"http://vidbull.com/embed-{0}-650x328.html", id);
             return name;
         }
 
