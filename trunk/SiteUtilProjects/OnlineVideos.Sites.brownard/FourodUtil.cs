@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 using OnlineVideos.Hoster.Base;
+using OnlineVideos.Sites.Brownard;
 
 namespace OnlineVideos.Sites
 {
@@ -137,7 +138,10 @@ namespace OnlineVideos.Sites
             if (!streamUri.StartsWith("rtmp"))
             {
                 Log.Info("The format of the 4od video is not supported, searching youtube for alternate stream");
-                return getYouTubeUrl(video);
+                video.PlaybackOptions = YouTubeShowHandler.GetYouTubePlaybackOptions(video.Other as EpisodeInfo);
+                if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+                    return video.PlaybackOptions.Last().Value;
+                return null;
             }
 
             string token = new Regex("<token>(.*?)</token>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
@@ -402,88 +406,6 @@ namespace OnlineVideos.Sites
         #endregion
 
         #region YouTube Handling
-
-        string getYouTubeUrl(VideoInfo video)
-        {
-            if (!HosterFactory.ContainsName("youtube"))
-            {
-                Log.Warn("youtube hoster was not found");
-                return null;
-            }
-            EpisodeInfo info = video.Other as EpisodeInfo;
-            if (info == null || 
-                string.IsNullOrEmpty(info.SeriesTitle) || 
-                string.IsNullOrEmpty(info.SeriesNumber) || 
-                (string.IsNullOrEmpty(info.EpisodeNumber) && string.IsNullOrEmpty(info.AirDate))
-                )
-            {
-                Log.Warn("Not enough info to locate video");
-                return null;
-            }
-
-            string youtubeTitle = Regex.Replace(info.SeriesTitle, "[^A-z0-9]", "").ToLower();
-            //retrieve list of any special title changes
-            if (youtubeTitleChanges == null)
-                getYoutubeTitleChanges();
-            //update title
-            if (youtubeTitleChanges.ContainsKey(youtubeTitle))
-                youtubeTitle = youtubeTitleChanges[youtubeTitle];
-
-            Log.Debug("Searching for youtube video: Show: {0}, Season: {1}, {2}", youtubeTitle, info.SeriesNumber, string.IsNullOrEmpty(info.AirDate) ? "Episode: " + info.EpisodeNumber : "Air Date: " + info.AirDate);
-
-            string html = GetWebData("http://www.youtube.com/show/" + youtubeTitle);
-
-            //look for season
-            string seriesReg = string.Format(@"<a class=""yt-uix-tile-link"" href=""([^""]*)"">[\s\n]*Season {0} Episodes", info.SeriesNumber);
-            Match m = Regex.Match(html, seriesReg);
-            if (m.Success)
-            {
-                //found specified season
-                string playlist = GetWebData("http://www.youtube.com" + m.Groups[1].Value);
-                string url = null; 
-                string episodeReg;
-
-                //look for specified episode
-                if (!string.IsNullOrEmpty(info.AirDate))
-                {
-                    episodeReg = string.Format(@"<a href=""(/watch[^""]*)"".*?>[\s\n]*<span.*?>[^\d]*{0}", info.AirDate);
-                    m = Regex.Match(playlist, episodeReg);
-                    if (m.Success)
-                    {
-                        video.PlaybackOptions = HosterFactory.GetHoster("youtube").getPlaybackOptions("http://youtube.com" + m.Groups[1].Value);
-                        if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
-                            url = video.PlaybackOptions.Last().Value;
-                    }
-                    return url;
-                }
-
-                episodeReg = string.Format(@"<span class=""video-index"">{0}</span>.*?<a href=""(/watch[^""]*)""", info.EpisodeNumber);
-                m = Regex.Match(playlist, episodeReg, RegexOptions.Singleline);
-                if (m.Success)
-                {
-                    if (verifyYoutubePage(m.Groups[1].Value, info.SeriesNumber, info.EpisodeNumber))
-                    {
-                        video.PlaybackOptions = HosterFactory.GetHoster("youtube").getPlaybackOptions("http://youtube.com" + m.Groups[1].Value);
-                        if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
-                            url = video.PlaybackOptions.Last().Value;
-                        return url;
-                    }
-                }
-                //didn't find specified episode directly, loop through all videos and see if we get a match
-                foreach (Match ep in Regex.Matches(playlist, @"<a href=""(/watch[^""]*)"""))
-                {
-                    if (verifyYoutubePage(ep.Groups[1].Value, info.SeriesNumber, info.EpisodeNumber))
-                    {
-                        video.PlaybackOptions = HosterFactory.GetHoster("youtube").getPlaybackOptions("http://youtube.com" + ep.Groups[1].Value);
-                        if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
-                            url = video.PlaybackOptions.Last().Value;
-                        return url;
-                    }
-                }
-            }
-            Log.Warn("Unable to locate 4od video on youtube");
-            return null;
-        }
 
         bool verifyYoutubePage(string url, string targetSeries, string targetEpisode)
         {

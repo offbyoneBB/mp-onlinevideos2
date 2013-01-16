@@ -71,6 +71,7 @@
     <Compile Include="Utils\SubCatHolder.cs" />
     <Compile Include="Utils\SubtitleReader.cs" />
     <Compile Include="Utils\TVGuideGrabber.cs" />
+    <Compile Include="Utils\YouTubeShowHandler.cs" />
     <Compile Include="WiziwigUtil.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

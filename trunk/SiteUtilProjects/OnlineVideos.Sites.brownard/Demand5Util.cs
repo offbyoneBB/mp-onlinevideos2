@@ -7,6 +7,8 @@ using System.Linq;
 using System.IO;
 using System.Web;
 using OnlineVideos.AMF;
+using OnlineVideos.Hoster.Base;
+using OnlineVideos.Sites.Brownard;
 
 namespace OnlineVideos.Sites
 {
@@ -187,20 +189,55 @@ namespace OnlineVideos.Sites
         {
             string webdata = GetWebData(video.VideoUrl);
             //Match m = new Regex(@"playerID=(\d+).*?videoPlayer=ref:(C\d+)").Match(webdata);
-            Match m = new Regex(@"videoPlayer=ref:(C\d+)").Match(webdata);
+            EpisodeInfo info = new EpisodeInfo();
+            Match m;
+            if ((m = Regex.Match(webdata, @"<div class=""secondary_nav_header"".*?>.*?<h\d><span.*?>(.*?)<", RegexOptions.Singleline)).Success)
+                info.SeriesTitle = m.Groups[1].Value;
+            if ((m = Regex.Match(webdata, @"<h3 class=""episode_header""><span.*?>(.*?)<")).Success)
+            {
+                string result = m.Groups[1].Value;
+                if ((m = Regex.Match(result, @"Series (\d+)")).Success)
+                    info.SeriesNumber = m.Groups[1].Value;
+                if ((m = Regex.Match(result, @"Episode (\d+)")).Success)
+                    info.EpisodeNumber = m.Groups[1].Value;
+            }
+            if ((m = Regex.Match(webdata, @"<p>First broadcast at (.*?)</p>")).Success)
+            {
+                DateTime airDate;
+                if (DateTime.TryParse(m.Groups[1].Value, out airDate))
+                {
+                    info.AirDate = airDate.ToString("d MMMM");
+                    if (string.IsNullOrEmpty(info.SeriesNumber))
+                        info.SeriesNumber = airDate.Year.ToString();
+                }
+            }
+
+            video.Other = info;
+
+            m = new Regex(@"videoPlayer=ref:(C\d+)").Match(webdata);
             if (!m.Success)
                 return String.Empty;
 
-            AMFArray renditions = GetResultsFromViewerExperienceRequest(m, video);
+            AMFObject viewerExperience = getViewerExperience(m.Groups[1].Value, video.VideoUrl);
+            AMFObject mediaDTO = viewerExperience.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO");
+            if (!string.IsNullOrEmpty(mediaDTO.GetStringProperty("drmMetadataURL")))
+            {
+                video.PlaybackOptions = YouTubeShowHandler.GetYouTubePlaybackOptions(video.Other as EpisodeInfo);
+                if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+                    return video.PlaybackOptions.Last().Value;
+                return null;
+            }
+
+            AMFArray renditions = mediaDTO.GetArray("renditions");
             return FillPlaybackOptions(video, renditions);
         }
 
-        private AMFArray GetResultsFromViewerExperienceRequest(Match m, VideoInfo video)
+        AMFObject getViewerExperience(string contentRefId, string videoUrl)
         {
-            OnlineVideos.AMF.AMFObject contentOverride = new AMFObject("com.brightcove.experience.ContentOverride");
+            AMFObject contentOverride = new AMFObject("com.brightcove.experience.ContentOverride");
             contentOverride.Add("contentId", double.NaN);
             contentOverride.Add("target", "videoPlayer");
-            contentOverride.Add("contentRefId", m.Groups[1].Value);
+            contentOverride.Add("contentRefId", contentRefId);
             contentOverride.Add("featuredRefId", null);
             contentOverride.Add("contentRefIds", null);
             contentOverride.Add("featuredId", double.NaN);
@@ -214,7 +251,7 @@ namespace OnlineVideos.Sites
             ViewerExperienceRequest.Add("playerKey", String.Empty);
             ViewerExperienceRequest.Add("deliveryType", double.NaN);
             ViewerExperienceRequest.Add("contentOverrides", array);
-            ViewerExperienceRequest.Add("URL", video.VideoUrl);
+            ViewerExperienceRequest.Add("URL", videoUrl);
 
             ViewerExperienceRequest.Add("experienceId", playerId);
 
@@ -223,9 +260,7 @@ namespace OnlineVideos.Sites
 
             string requestUrl = "http://c.brightcove.com/services/messagebroker/amf?playerid=" + playerId;
 
-            AMFObject response = GetResponse(requestUrl, data);
-
-            return response.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
+            return GetResponse(requestUrl, data);
         }
 
         private string FillPlaybackOptions(VideoInfo video, AMFArray renditions)
@@ -299,7 +334,6 @@ namespace OnlineVideos.Sites
                     responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
                 else
                     responseStream = response.GetResponseStream();
-
 
                 AMFDeserializer des = new AMFDeserializer(responseStream);
                 AMFObject obj = des.Deserialize();
