@@ -1591,13 +1591,23 @@
         <item key="tvGuideFormatString"><![CDATA[Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="A - Z" thumb="">http://www.itv.com/_data/xml/CatchUpData/CatchUp360/CatchUpMenu.xml</Category>
-        <Category xsi:type="RssLink" name="ITV 1" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv1.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=ITV1</Category>
-        <Category xsi:type="RssLink" name="ITV 2" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv2.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=ITV2</Category>
-        <Category xsi:type="RssLink" name="ITV 3" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv3.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=ITV3</Category>
-        <Category xsi:type="RssLink" name="ITV 4" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv4.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=ITV4</Category>
-        <Category xsi:type="RssLink" name="CITV" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/citv.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=CITV</Category>
-        <Category xsi:type="Group" name="Live" thumb="http://www.itv.com/_devpacks/itvglobal/img/nav/itv-logo.png" desc="Live TV">
+        <Category xsi:type="RssLink" name="A - Z" thumb="http://s1.postimage.org/dkj7fvx5r/ITV1_logo.png">http://www.itv.com/_data/xml/CatchUpData/CatchUp360/CatchUpMenu.xml</Category>
+        <Category xsi:type="RssLink" name="Children" thumb="http://www.itv.com/itvplayer/sites/itvplayer/files/styles/player_image_thumb_standard/public/images/hash/8b/4b/8b4b71971449ea7bcd1fac8d0ec4c848.png">http://www.itv.com/itvplayer/categories/children/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="Comedy" thumb="http://www.itv.com/itvplayer/sites/itvplayer/files/styles/player_image_thumb_standard/public/images/hash/09/47/0947f1fd9e21f2ec81b13b1d4c9060c2.png">http://www.itv.com/itvplayer/categories/comedy/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="Drama &amp; soaps" thumb="http://www.itv.com/itvplayer/sites/itvplayer/files/styles/player_image_thumb_standard/public/images/hash/7b/67/7b67e6a1e1d34f28d7379e16a1a4ac4c.png">http://www.itv.com/itvplayer/categories/drama-soaps/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="Entertainment" thumb="http://www.itv.com/itvplayer/sites/itvplayer/files/styles/player_image_thumb_standard/public/images/hash/b8/19/b81967e375819a3e7a35a2f174b3e5d3.png">http://www.itv.com/itvplayer/categories/entertainment/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="Factual" thumb="http://www.itv.com/itvplayer/sites/itvplayer/files/styles/player_image_thumb_standard/public/images/hash/ff/d9/ffd9ba64e2529d1ccc4a6cded05d70c1.png">http://www.itv.com/itvplayer/categories/factual/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="Films" thumb="http://www.itv.com/itvplayer/sites/itvplayer/files/styles/player_image_thumb_standard/public/images/hash/dd/ad/ddad3d5c27e771a8d04cea8f22e17996.jpg">http://www.itv.com/itvplayer/categories/films/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="Lifestyle" thumb="http://www.itv.com/itvplayer/sites/itvplayer/files/styles/player_image_thumb_standard/public/images/hash/ee/83/ee83e4e692fa4e50cbf126e0119a7f86.png">http://www.itv.com/itvplayer/categories/lifestyle/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="Music" thumb="http://www.itv.com/itvplayer/sites/itvplayer/files/styles/player_image_thumb_standard/public/images/hash/5a/11/5a119d7537f32aa9b55d861add1f92d6.png">http://www.itv.com/itvplayer/categories/music/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="News &amp; weather" thumb="http://www.itv.com/itvplayer/sites/itvplayer/files/styles/player_image_thumb_standard/public/images/hash/35/15/3515a45c650a4d993d9948d06f0b9123.png">http://www.itv.com/itvplayer/categories/news-weather/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="Sport" thumb="http://www.itv.com/itvplayer/sites/itvplayer/files/styles/player_image_thumb_standard/public/images/hash/95/ff/95ff28105e6e83b9c8c2c3eeb8556831.png">http://www.itv.com/itvplayer/categories/sport/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="ITV 1" thumb="http://s1.postimage.org/dkj7fvx5r/ITV1_logo.png">http://www.itv.com/itvplayer/categories/itv1/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="ITV 2" thumb="http://s1.postimage.org/bu06eefmn/ITV2_logo.png">http://www.itv.com/itvplayer/categories/itv2/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="ITV 3" thumb="http://s1.postimage.org/cxkaqd09r/ITV3_logo.png">http://www.itv.com/itvplayer/categories/itv3/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="ITV 4" thumb="http://s1.postimage.org/izrxguopr/ITV4_logo.png">http://www.itv.com/itvplayer/categories/itv4/latest/catch-up</Category>
+        <Category xsi:type="RssLink" name="CITV" thumb="http://s1.postimage.org/oiugy2lr3/CITV_logo.png">http://www.itv.com/itvplayer/categories/citv/latest/catch-up</Category>
+        <Category xsi:type="Group" name="Live" thumb="http://s1.postimage.org/dkj7fvx5r/ITV1_logo.png" desc="Live TV">
           <Channels>
             <Channel name="ITV1" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv1.jpg">sim1?guideid=26</Channel>
             <Channel name="ITV2" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv2.jpg">sim2?guideid=185</Channel>
