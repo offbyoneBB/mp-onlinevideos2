@@ -1456,9 +1456,15 @@
     <Site name="TSN" util="TSN" agecheck="false" enabled="true" lang="en">
       <Description>TSN is Canada's leading English language sports TV channel.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://watch.tsn.ca]]></item>
-		<item key="swfUrl"><![CDATA[http://watch.tsn.ca/Flash/player.swf?themeURL=http://watch.ctv.ca/themes/TSN/player/theme.aspx]]></item>
+        <item key="baseUrl"><![CDATA[http://video.tsn.ca]]></item>
       </Configuration>
+      <Categories>
+        <Category xsi:type="Group" name="Current Sports">
+          <Channels>
+            <Channel name="Australian Open 2013">http://www.tsn.ca/www2_webservices/VideoProjectLoader.ashx?name=AustralianOpen</Channel>
+          </Channels>
+        </Category>
+      </Categories>
     </Site>
     <Site name="BNN" util="BNN" agecheck="false" enabled="true" lang="en">
       <Description>Business News Network is Canada’s only all business and financial news channel.</Description>
