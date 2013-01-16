@@ -206,9 +206,14 @@ namespace OnlineVideos.Sites
                     if (m.Success)
                     {
                         string rtmpUrl = String.Format(@"rtmpe://{0}/ondemand?{1}", m.Groups["host"], m.Groups["params"]);
-                        string playPath = String.Format(@"mp4:{0}", m.Groups["file"]);
-						result = new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = playPath, SwfUrl = swfUrl, SwfVerify = true }.ToString();
-						Log.Debug(@"RTMP URL (after): {0}", result);
+                        string file = m.Groups["file"].Value;
+                        string playPath =
+                            file.Contains(@"secure")
+                            ? file.Replace(".flv", string.Empty)    // replace trailing .flv
+                            : String.Format(@"mp4:{0}", file);      // prepend mp4:
+                        Log.Debug(@"RTMP URL partial: {0} playPath: {1}", rtmpUrl, playPath);
+                        result = new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = playPath, SwfUrl = swfUrl, SwfVerify = true }.ToString();
+                        Log.Debug(@"RTMP URL(MPUrlSourceFilter after): {0}", result);
                     }
                     else
                     {
@@ -219,7 +224,7 @@ namespace OnlineVideos.Sites
                         {
                             string rtmpUrl = String.Format(@"rtmpe://{0}/{1}?{2}", m.Groups["host"], m.Groups["app"], m.Groups["params"]);
                             string playPath = String.Format(@"mp4:{0}?{1}", m.Groups["file"], m.Groups["params"]);
-							result = new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = playPath, SwfUrl = swfUrl, SwfVerify = true }.ToString();
+                            result = new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = playPath, SwfUrl = swfUrl, SwfVerify = true }.ToString();
                             Log.Debug(@"RTMP URL Secondary Option (after): {0}", result);
                         }
                         else
