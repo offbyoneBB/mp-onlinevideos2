@@ -165,12 +165,12 @@ namespace OnlineVideos.Sites
             {
                 string url = null;
                 if(mediaElem.Attributes["href"] != null)
-                    url = mediaElem.Attributes["href"].Value;
+                    url = mediaElem.Attributes["href"].Value + "?live=true";
                 string bitrate = "";
                 if (mediaElem.Attributes["bitrate"] != null)
                     bitrate = mediaElem.Attributes["bitrate"].Value;
                 if (!string.IsNullOrEmpty(url))
-                    sortedPlaybackOptions.Add(bitrate + " kbps", new MPUrlSourceFilter.HttpUrl(url).ToString());
+                    sortedPlaybackOptions.Add(bitrate + " kbps", url);
             }
 
             string lastUrl = "";
