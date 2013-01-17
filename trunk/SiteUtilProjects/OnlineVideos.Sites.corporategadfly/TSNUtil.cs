@@ -220,6 +220,11 @@ namespace OnlineVideos.Sites
                         result = new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = playPath }.ToString();
                         Log.Debug(@"RTMP URL (after): {0}", result);
                     }
+                    else if (rtmpFromScraper.Contains("manifest.f4m"))
+                    {
+                        result = new MPUrlSourceFilter.HttpUrl(string.Format("{0}?hdcore=2.11.3", rtmpFromScraper)).ToString();
+                        Log.Debug("Manifest URL found: ", result);
+                    }
                 }
             }
 
