@@ -56,7 +56,8 @@ namespace OnlineVideos.Sites
                 {                    
                     Settings.Categories.Add(new RssLink() {
                                                 Name = item.SelectSingleNode("text").InnerText,
-                                                HasSubCategories = true
+                                                HasSubCategories = true,
+                                                Other = item.SelectSingleNode("tag").InnerText
                                             });
                 }
             }
@@ -77,13 +78,21 @@ namespace OnlineVideos.Sites
                     {
                         // type="special" means item has subcategories
                         XmlAttribute type = item.Attributes["type"];
+                        XmlNode tag = item.SelectSingleNode("tag");
+                        
+                        if (type != null && type.Value.Equals("icon"))
+                        {
+                            // "icon" nodes should be from the same item tree hieararchy
+                            if (tag != null && !tag.InnerText.StartsWith(parentCategory.Other as string)) continue;
+                        }
                         XmlNode urlLatest = item.SelectSingleNode("urlLatest");
                         
                         RssLink rssLink = new RssLink() {
                             Name = item.SelectSingleNode("text").InnerText,
                             Url = urlLatest != null ? item.SelectSingleNode("urlLatest").InnerText.Trim() : string.Empty,
-                            HasSubCategories = type != null ? type.Value.Equals("special") : false,
-                            ParentCategory = parentCategory
+                            HasSubCategories = type != null && type.Value.Equals("special"),
+                            ParentCategory = parentCategory,
+                            Other = parentCategory.Other
                         };
                         Log.Debug(@"Subcategory: {0}", rssLink.Name);
 
