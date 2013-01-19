@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Reflection;
 using System.Xml;
-using System.Collections.Specialized;
 
 namespace OnlineVideos.Sites
 {
     /// <summary>
-    /// The abstract base class for all utilities.
+    /// The abstract base class for all sites. 
+	/// It might be hosted in a seperate AppDomain than the main application, so it can be unloaded at runtime.
     /// </summary>
 	public abstract class SiteUtilBase : MarshalByRefObject, ICustomTypeDescriptor
     {

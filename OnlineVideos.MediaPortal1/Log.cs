@@ -8,7 +8,9 @@ using log4net.Appender;
 namespace OnlineVideos.MediaPortal1
 {    
     /// <summary>
-    /// This static class simply delegates Log calls to the MediaPortal Logging facility and prefixes the Output with [OnlineVideos].
+	/// This class implements the <see cref="ILog"/> interface using log4net. 
+	/// It will create its own logfile named OnlineVideos.log in the configured MediaPortal folder for log files using the verbosity configured in MediaPortal.
+	/// Messages with level Error are send to MediaPortal's error.log file.
     /// </summary>
     public class Log : MarshalByRefObject, ILog
     {

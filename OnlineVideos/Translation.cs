@@ -8,9 +8,8 @@ using System.IO;
 namespace OnlineVideos
 {
     /// <summary>
-    /// These will be loaded with the language files content
-    /// if the selected lang file is not found, it will first try to load en(us).xml as a backup
-    /// if that also fails it will use the hardcoded strings as a last resort.
+    /// All public strings of this class should be used for localized display.
+    /// The will be loaded with the translated version of their content at startup.
     /// </summary>
 	public class Translation : CrossDomanSingletonBase<Translation>
     {
@@ -280,10 +279,20 @@ namespace OnlineVideos
 		public string Settings_StoreLayoutPerCategory = "Remember view layout per Site and Category";
     }
 
+	/// <summary>
+	/// Helper class to load a localization xml file into the <see cref="Translation"/> class strings.
+	/// </summary>
 	public static class TranslationLoader
 	{
 		static Dictionary<string, string> TranslatedStrings = new Dictionary<string, string>();
 
+		/// <summary>
+		/// Load a localization. If the given <paramref name="language"/> file is not found, it will first try to load en-us.xml as a backup
+		/// If that also fails the hardcoded english strings are used.
+		/// </summary>
+		/// <param name="language">The language ISO code to load.</param>
+		/// <param name="translationFilesPath">The path where to look for localization xml files.</param>
+		/// <returns></returns>
 		public static string LoadTranslations(string language, string translationFilesPath)
 		{
 			XmlDocument doc = new XmlDocument();
@@ -332,6 +341,10 @@ namespace OnlineVideos
 			return language;
 		}
 
+		/// <summary>
+		/// The <see cref="Translation"/> class live in a sperate <see cref="AppDomain"/> than the main application.
+		/// This method re-sets all string fields with the previously loaded translation after the Domain was reloaded at runtime.
+		/// </summary>
 		public static void SetTranslationsToSingleton()
 		{
 			Type TransType = typeof(Translation);

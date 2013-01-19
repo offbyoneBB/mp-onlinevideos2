@@ -1,18 +1,13 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using MediaPortal.Common.Utils;
+
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OnlineVideos.MediaPortal1")]
+[assembly: AssemblyTitle("OnlineVideos MediaPortal1 GUI")]
 [assembly: AssemblyDescription("OnlineVideos GUI FrontEnd for MediaPortal 1")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("OnlineVideos")]
-[assembly: AssemblyCopyright("Copyright ©  2011")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -22,7 +17,10 @@ using MediaPortal.Common.Utils;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("09b42e26-4a7f-46a7-b0a9-adda8a5099b0")]
 
+// Define that our plugin is compatible with MediaPortal 1.2 and designed for 1.3
 [assembly: CompatibleVersion("1.2.100.0", "1.1.6.27644")]
+
+// Tell MediaPortal which subsystems this plugin will use, so it can check for campatiblity
 [assembly: UsesSubsystem("MP.SkinEngine")]
 [assembly: UsesSubsystem("MP.Players.Video")]
 [assembly: UsesSubsystem("MP.Input")]

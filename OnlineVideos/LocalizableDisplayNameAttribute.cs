@@ -5,6 +5,9 @@ using System.Text;
 
 namespace OnlineVideos
 {
+	/// <summary>
+	/// This attribute allows setting a DisplayName for a field with optional localization support.
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Field)]
 	public class LocalizableDisplayNameAttribute : System.Attribute
 	{
@@ -13,7 +16,7 @@ namespace OnlineVideos
 		protected string displayName = null;
 
 		/// <summary>
-		/// This attribute allows settings a DisplayName for a field with optional localization support.
+		/// Instantiate the Attribute class to set a human readable name.
 		/// </summary>
 		/// <param name="displayName">The name that should be displayed instead of the field name.</param>
 		public LocalizableDisplayNameAttribute(string displayName = null)
