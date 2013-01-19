@@ -216,6 +216,15 @@ namespace OnlineVideos.Sites
             return new ContextMenuExecutionResult() { RefreshCurrentItems = true };
         }
 
+		public override bool isPossibleVideo(string fsUrl)
+		{
+			if (string.IsNullOrEmpty(fsUrl)) return false; // empty string is not a video
+			string extension = Path.GetExtension(fsUrl);
+			if (string.IsNullOrEmpty(extension)) return false; // can't be a video file if empty extension
+			extension = extension.ToLower();
+			return OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension);
+		}
+
         #region Search
 
         public override bool CanSearch { get { return true; } }
