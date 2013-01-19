@@ -97,7 +97,6 @@
     <Compile Include="Hoster\VideoWeed.cs" />
     <Compile Include="Hoster\Vimeo.cs" />
     <Compile Include="Hoster\Xtream.cs" />
-    <Compile Include="Hoster\zShare.cs" />
     <Compile Include="KhanAcademyUtil.cs" />
     <Compile Include="LeagueOfLegendsUtil.cs" />
     <Compile Include="MuzuTV.cs" />
