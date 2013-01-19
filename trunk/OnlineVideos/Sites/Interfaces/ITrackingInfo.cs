@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos
 {
@@ -17,7 +15,7 @@ namespace OnlineVideos
         string ID_TVDB { get; set; }
     }
 
-	[Serializable]
+    [Serializable]
     public class TrackingInfo : ITrackingInfo
     {
         public VideoKind VideoKind { get; set; }
@@ -28,5 +26,56 @@ namespace OnlineVideos
         public string ID_IMDB { get; set; }
         public string ID_TMDB { get; set; }
         public string ID_TVDB { get; set; }
+
+        public static TrackingInfo CreateFromRegex(Match trackingInfoMatch)
+        {
+            if (trackingInfoMatch != null && trackingInfoMatch.Success)
+            {
+                TrackingInfo result = new TrackingInfo();
+
+                System.Text.RegularExpressions.Group grp;
+
+                if ((grp = trackingInfoMatch.Groups["VideoKind"]).Success)
+                    try
+                    {
+                        result.VideoKind = (VideoKind)Enum.Parse(typeof(VideoKind), grp.Value);
+                    }
+                    catch { };
+
+                if ((grp = trackingInfoMatch.Groups["Title"]).Success)
+                    result.Title = grp.Value;
+
+                uint? v;
+                if ((v = getuintFomGroup(trackingInfoMatch.Groups["Season"])).HasValue)
+                    result.Season = v.Value;
+                if ((v = getuintFomGroup(trackingInfoMatch.Groups["Episode"])).HasValue)
+                    result.Episode = v.Value;
+                if ((v = getuintFomGroup(trackingInfoMatch.Groups["Year"])).HasValue)
+                    result.Year = v.Value;
+
+                if ((grp = trackingInfoMatch.Groups["ID_IMDB"]).Success)
+                    result.ID_IMDB = grp.Value;
+
+                if ((grp = trackingInfoMatch.Groups["ID_TMDB"]).Success)
+                    result.ID_IMDB = grp.Value;
+
+                if ((grp = trackingInfoMatch.Groups["ID_TVDB"]).Success)
+                    result.ID_IMDB = grp.Value;
+
+                return result;
+            }
+            else
+                return null;
+        }
+
+        private static uint? getuintFomGroup(System.Text.RegularExpressions.Group grp)
+        {
+            int value;
+            if (grp.Success && int.TryParse(grp.Value, out value))
+                return (uint)value;
+            return null;
+        }
+
+
     }
 }
