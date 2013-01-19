@@ -84,7 +84,7 @@ namespace OnlineVideos.AMF
                                  Name,
                                  Properties.Aggregate(new StringBuilder(), (sb, kvp) => sb.AppendFormat("{0}='{1}' ", kvp.Key, kvp.Value)).ToString());
         }
-                
+
         public AMFObject GetObject(string key)
         {
             if (Properties.ContainsKey(key))
@@ -185,7 +185,7 @@ namespace OnlineVideos.AMF
 
     }
 
-    public class AMFArray
+    public class AMFArray : IEnumerable<AMFObject>
     {
         private List<object> objs;
         private Dictionary<string, object> strs;
@@ -229,12 +229,25 @@ namespace OnlineVideos.AMF
                 return objs.Count;
             }
         }
-        
+
         public override string ToString()
         {
             return string.Format("[AMFArray Objs={0}, Strs={1}]",
                                  objs != null ? objs.Aggregate(new StringBuilder(), (sb, item) => sb.AppendFormat("{0}, ", item)).ToString() : "",
                                  strs != null ? strs.Aggregate(new StringBuilder(), (sb, kvp) => sb.AppendFormat("{0}='{1}' ", kvp.Key, kvp.Value)).ToString() : "");
+        }
+
+        public IEnumerator<AMFObject> GetEnumerator()
+        {
+            foreach (AMFObject o in objs)
+            {
+                yield return o;
+            }
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 

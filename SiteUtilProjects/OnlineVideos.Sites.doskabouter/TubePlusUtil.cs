@@ -316,6 +316,8 @@ namespace OnlineVideos.Sites
                 return @"http://embed.novamov.com/embed.php?width=653&height=525&px=1&v=" + id;
             if (hoster == "vidbull.com")
                 return String.Format(@"http://vidbull.com/embed-{0}-650x328.html", id);
+            if (hoster == "divxstage.eu")
+                return @"http://embed.divxstage.eu/embed.php?&width=653&height=438&v=" + id;
             return name;
         }
 

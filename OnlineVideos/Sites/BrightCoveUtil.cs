@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using OnlineVideos.AMF;
-using System.Net;
 using System.Linq;
-using System.IO;
 using System.Web;
 
 namespace OnlineVideos.Sites
@@ -125,9 +123,9 @@ namespace OnlineVideos.Sites
         private string FillPlaybackOptions(VideoInfo video, AMFArray renditions)
         {
             video.PlaybackOptions = new Dictionary<string, string>();
-            for (int i = 0; i < renditions.Count; i++)
+
+            foreach (AMFObject rendition in renditions.OrderBy(u => u.GetIntProperty("encodingRate")))
             {
-                AMFObject rendition = renditions.GetObject(i);
                 string nm = String.Format("{0}x{1} {2}K",
                     rendition.GetIntProperty("frameWidth"), rendition.GetIntProperty("frameHeight"),
                     rendition.GetIntProperty("encodingRate") / 1024);
