@@ -102,6 +102,7 @@
   <string name="Playlists">Spellistor</string>
   <string name="PlaybackWillBeStopped">Uppspelning kommer att stoppas.</string>
   <string name="PleaseEnterDescription">Ge en kort beskrivning, tack.</string>
+  <string name="PleaseUpdateLocalSite">Uppdatera och testa igen innan du rapporterar sidan som trasig.</string>
   <string name="PlotOutline">Handlingen i korthet</string>
   <string name="PreviousPage">Föregående sida</string>
   <string name="PerformAutomaticUpdate">Uppdatera automatiskt nu?</string>

@@ -102,6 +102,7 @@
   <string name="Playlists">Zoznamy na prehratie</string>
   <string name="PlaybackWillBeStopped">Prehrávanie bude zastavené.</string>
   <string name="PleaseEnterDescription">Prosím zadajte krátky popis.</string>
+  <string name="PleaseUpdateLocalSite">Aktualizujte a znovu otestuje vašu lokalitu, než bude nahlásená ako nefunkčná.</string>
   <string name="PlotOutline">Obsah</string>
   <string name="PreviousPage">Predchádzajúca strana</string>
   <string name="PerformAutomaticUpdate">Uskutočniť automatickú aktualizáciu?</string>

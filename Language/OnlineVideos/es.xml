@@ -102,6 +102,7 @@
   <string name="Playlists">Listas de reproducción</string>
   <string name="PlaybackWillBeStopped">La reproducción será detenida.</string>
   <string name="PleaseEnterDescription">Por favor, ponga una breve descripción</string>
+  <string name="PleaseUpdateLocalSite">Por favor, actualiza y vuelve a comprobar tu sitio local antes de reportarlo como estropeado.</string>
   <string name="PlotOutline">Sinopsis:</string>
   <string name="PreviousPage">Página anterior</string>
   <string name="PerformAutomaticUpdate">¿Actualizar automáticamente?</string>
