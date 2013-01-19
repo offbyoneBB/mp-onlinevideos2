@@ -30,7 +30,7 @@
   <string name="DateOfRelease">Date de sortie</string>
   <string name="Directors">Réalisateurs</string>
   <string name="Download">Télécharger</string>
-  <string name="DownloadUserdefined">Téléchargement du répertoire de l\'utilisateur</string>
+  <string name="DownloadUserdefined">Téléchargement vers le répertoire de l\'utilisateur</string>
   <string name="Downloading">Téléchargement</string>
   <string name="DownloadingDescription">Voir la liste des téléchargements en cours.</string>
   <string name="DownloadingSubtitle">Téléchargement des sous-titres</string>
@@ -61,12 +61,12 @@
   <string name="GettingSearchResults">Récupération des résultats de la recherche</string>
   <string name="GettingRelatedVideos">Récupération des vidéos similaires</string>
   <string name="GettingFilteredVideos">Récupération des vidéos filtrées</string>
-  <string name="GettingNextPageVideos">Récupération des vidéos de la page suivante</string>
-  <string name="GettingPreviousPageVideos">Récupération des vidéos de la page précédente</string>
+  <string name="GettingNextPageVideos">Récupération des vidéos contenus dans la page suivante</string>
+  <string name="GettingPreviousPageVideos">Récupération des vidéos contenus dans la page précédente</string>
   <string name="GettingPlaybackUrlsForVideo">Récupération de l\'url pour lire la vidéo</string>
   <string name="GettingDynamicCategories">Récupération des catégories dynamiques</string>
   <string name="GettingReports">Récupération des rapports depuis le webservice</string>
-  <string name="GettingSiteXml">Récupération de l\'xml des sites depuis le webservice</string>
+  <string name="GettingSiteXml">Récupération de l\'xml du site depuis le webservice</string>
   <string name="GettingIcon">Récupération de l\'icône du site depuis le webservice</string>
   <string name="GettingBanner">Récupération de la bannière du site depuis le webservice</string>
   <string name="GettingDll">Récupération des dll depuis le webservice</string>
@@ -102,6 +102,7 @@
   <string name="Playlists">Playlists</string>
   <string name="PlaybackWillBeStopped">La lecture sera interrompue.</string>
   <string name="PleaseEnterDescription">SVP, donner une petite description</string>
+  <string name="PleaseUpdateLocalSite">Merci de tester votre site en local avant de le reporter comme non fonctionnel.</string>
   <string name="PlotOutline">Aperçu</string>
   <string name="PreviousPage">Page précédente</string>
   <string name="PerformAutomaticUpdate">Effectuer la mise à jour automatique?</string>

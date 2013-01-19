@@ -55,13 +55,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\BUNCHTV.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{e4f6acd6-ff84-48e8-994e-911d95233fec}-BUNCHTV.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\BUNCHTV.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\cinemassacre.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{7ff0816a-3e6c-45e3-a3d2-508959bfd651}-cinemassacre.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\cinemassacre.png</DestinationFilename>
@@ -114,13 +107,6 @@
               <LocalFileName>..\SiteImages\Icons\Hardwareinfo.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{21d963dc-cd21-46b5-8cb1-ea714dbd84fa}-Hardwareinfo.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Hardwareinfo.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\JustinTV.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{da0176ad-a0c9-486d-b58b-0359ffcb9f25}-JustinTV.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\JustinTV.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -335,13 +321,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\tvgorge.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{686b5668-d04e-41f3-8624-5e6f29d69dda}-tvgorge.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvgorge.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\tvtutti.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{8c99fb92-ee71-4309-a495-233c0e24b70a}-tvtutti.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvtutti.png</DestinationFilename>
@@ -468,13 +447,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\BUNCHTV.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{92dd855b-72e4-424f-bd6b-55897540c3de}-BUNCHTV.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BUNCHTV.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\cinemassacre.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{78e0560b-5a99-49c0-9218-f441378bb713}-cinemassacre.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\cinemassacre.png</DestinationFilename>
@@ -527,13 +499,6 @@
               <LocalFileName>..\SiteImages\Banners\Hardwareinfo.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{cc6f5ccd-c68f-4f41-9588-fe5743921cd6}-Hardwareinfo.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Hardwareinfo.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\JustinTV.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{46d9121d-f2f9-4cb2-bd94-54e0cfbee4f5}-JustinTV.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\JustinTV.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -751,13 +716,6 @@
               <LocalFileName>..\SiteImages\Banners\TVGemist.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{FBFC6CB6-E70B-45BF-92EB-88DEE21E00C5}-TVGemist.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVGemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\tvgorge.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{2d848627-676b-4a9b-8412-5315b4addd0c}-tvgorge.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tvgorge.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1028,20 +986,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Bild.de Filme.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9ce11d0e-0a54-4ff7-b65d-af4fe40a3ed8}-Bild.de Filme.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Bild.de Filme.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\MSN Movies.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{88a5c1b9-14c1-4b28-8956-84258403276b}-MSN Movies.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MSN Movies.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\SouthParkDE.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{15ac0a4a-582b-4061-bcdd-b0aad1293573}-SouthParkDE.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkDE.png</DestinationFilename>
@@ -1059,20 +1003,6 @@
               <LocalFileName>..\SiteImages\Icons\SouthParkWORLD.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{cd4fc2f4-0e88-4996-acf5-44712c7266bb}-SouthParkWORLD.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkWORLD.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Bild.de Filme.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{f46f6bf6-5dfc-4ca0-9af1-d20b6ff0c5d2}-Bild.de Filme.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Bild.de Filme.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\MSN Movies.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{21dd8111-dab2-4642-a391-7db7ad62a19e}-MSN Movies.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MSN Movies.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -2238,7 +2168,7 @@
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.3.0.0\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.5.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -3383,7 +3313,7 @@ public class Script
           <Revision>27644</Revision>
         </MaxVersion>
         <WarnOnly>false</WarnOnly>
-        <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or Final or higher!</Message>
+        <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or newer!</Message>
         <Name>MediaPortal</Name>
       </DependencyItem>
     </Items>
@@ -3519,13 +3449,6 @@ improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionD
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\BUNCHTV.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e4f6acd6-ff84-48e8-994e-911d95233fec}-BUNCHTV.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\BUNCHTV.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\cinemassacre.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{7ff0816a-3e6c-45e3-a3d2-508959bfd651}-cinemassacre.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\cinemassacre.png</DestinationFilename>
@@ -3578,13 +3501,6 @@ improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionD
         <LocalFileName>..\SiteImages\Icons\Hardwareinfo.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{21d963dc-cd21-46b5-8cb1-ea714dbd84fa}-Hardwareinfo.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Hardwareinfo.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\JustinTV.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{da0176ad-a0c9-486d-b58b-0359ffcb9f25}-JustinTV.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\JustinTV.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3799,13 +3715,6 @@ improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionD
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\tvgorge.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{686b5668-d04e-41f3-8624-5e6f29d69dda}-tvgorge.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvgorge.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\tvtutti.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{8c99fb92-ee71-4309-a495-233c0e24b70a}-tvtutti.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvtutti.png</DestinationFilename>
@@ -3932,13 +3841,6 @@ improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionD
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\BUNCHTV.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{92dd855b-72e4-424f-bd6b-55897540c3de}-BUNCHTV.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BUNCHTV.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\cinemassacre.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{78e0560b-5a99-49c0-9218-f441378bb713}-cinemassacre.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\cinemassacre.png</DestinationFilename>
@@ -3991,13 +3893,6 @@ improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionD
         <LocalFileName>..\SiteImages\Banners\Hardwareinfo.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{cc6f5ccd-c68f-4f41-9588-fe5743921cd6}-Hardwareinfo.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Hardwareinfo.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\JustinTV.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{46d9121d-f2f9-4cb2-bd94-54e0cfbee4f5}-JustinTV.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\JustinTV.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4215,13 +4110,6 @@ improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionD
         <LocalFileName>..\SiteImages\Banners\TVGemist.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{FBFC6CB6-E70B-45BF-92EB-88DEE21E00C5}-TVGemist.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVGemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\tvgorge.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2d848627-676b-4a9b-8412-5315b4addd0c}-tvgorge.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tvgorge.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4492,20 +4380,6 @@ improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionD
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Bild.de Filme.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9ce11d0e-0a54-4ff7-b65d-af4fe40a3ed8}-Bild.de Filme.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Bild.de Filme.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\MSN Movies.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{88a5c1b9-14c1-4b28-8956-84258403276b}-MSN Movies.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MSN Movies.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\SouthParkDE.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{15ac0a4a-582b-4061-bcdd-b0aad1293573}-SouthParkDE.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkDE.png</DestinationFilename>
@@ -4523,20 +4397,6 @@ improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionD
         <LocalFileName>..\SiteImages\Icons\SouthParkWORLD.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{cd4fc2f4-0e88-4996-acf5-44712c7266bb}-SouthParkWORLD.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkWORLD.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Bild.de Filme.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f46f6bf6-5dfc-4ca0-9af1-d20b6ff0c5d2}-Bild.de Filme.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Bild.de Filme.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\MSN Movies.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{21dd8111-dab2-4642-a391-7db7ad62a19e}-MSN Movies.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MSN Movies.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5684,7 +5544,7 @@ improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionD
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.3.0.0\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.5.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />

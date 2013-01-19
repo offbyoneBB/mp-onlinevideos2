@@ -102,6 +102,7 @@
   <string name="Playlists">Afspeellijsten</string>
   <string name="PlaybackWillBeStopped">Afspelen wordt gestopt</string>
   <string name="PleaseEnterDescription">Geef een korte beschrijving</string>
+  <string name="PleaseUpdateLocalSite">Werk je lokale site bij en test het voordat je het rapporteerd als niet werkend.</string>
   <string name="PlotOutline">Samenvatting</string>
   <string name="PreviousPage">Vorige pagina</string>
   <string name="PerformAutomaticUpdate">Automatische update uitvoeren?</string>

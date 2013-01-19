@@ -102,6 +102,7 @@
   <string name="Playlists">Grojaraštis</string>
   <string name="PlaybackWillBeStopped">Grojimas bus sustabdytas.</string>
   <string name="PleaseEnterDescription">Trumpai aprasykite!</string>
+  <string name="PleaseUpdateLocalSite">Prieš raportuojant klaidas, prašome atnaujinti ir patikrinti jas savo pusėje</string>
   <string name="PlotOutline">Veiksmas</string>
   <string name="PreviousPage">Ankstesnis puslapis</string>
   <string name="PerformAutomaticUpdate">Ar paleisti automatini atnaujinima?</string>
