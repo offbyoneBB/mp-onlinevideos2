@@ -98,12 +98,15 @@
     <Compile Include="Hoster\Vimeo.cs" />
     <Compile Include="Hoster\Xtream.cs" />
     <Compile Include="KhanAcademyUtil.cs" />
+    <Compile Include="KijkUtil.cs" />
     <Compile Include="LeagueOfLegendsUtil.cs" />
     <Compile Include="MuzuTV.cs" />
     <Compile Include="NickelodeonNLUtil.cs" />
     <Compile Include="RTEPlayerUtil.cs" />
     <Compile Include="RtmpUtil.cs" />
-    <Compile Include="SBS6GemistUtil.cs" />
+    <Compile Include="SBS6GemistUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SubtitleHandler.cs" />
     <Compile Include="TubePlusUtil.cs" />
     <Compile Include="TV3NZOnDemandUtil.cs" />
