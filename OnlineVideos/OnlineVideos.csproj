@@ -105,7 +105,6 @@
   <ItemGroup>
     <Compile Include="Configuration\OnlineVideoSettings.cs" />
     <Compile Include="Configuration\SiteSettings.cs" />
-    <Compile Include="CookieHelper.cs" />
     <Compile Include="CrossDomain\OnlineVideosAppDomain.cs" />
     <Compile Include="CrossDomain\PluginLoader.cs" />
     <Compile Include="CrossDomain\CrossDomanSingletonBase.cs" />
