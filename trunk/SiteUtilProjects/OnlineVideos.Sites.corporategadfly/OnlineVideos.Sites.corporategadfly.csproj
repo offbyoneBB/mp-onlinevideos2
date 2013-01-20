@@ -48,6 +48,7 @@
     <Compile Include="CTVUtil.cs" />
     <Compile Include="FamilyUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RDSUtil.cs" />
     <Compile Include="TouTvUtil.cs" />
     <Compile Include="TreehouseTVUtil.cs" />
     <Compile Include="TSNUtil.cs" />
