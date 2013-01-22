@@ -104,9 +104,7 @@
     <Compile Include="NickelodeonNLUtil.cs" />
     <Compile Include="RTEPlayerUtil.cs" />
     <Compile Include="RtmpUtil.cs" />
-    <Compile Include="SBS6GemistUtil.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="SBS6GemistUtil.cs" />
     <Compile Include="SubtitleHandler.cs" />
     <Compile Include="TubePlusUtil.cs" />
     <Compile Include="TV3NZOnDemandUtil.cs" />
@@ -118,8 +116,6 @@
     <Compile Include="Vimeo\AuthBase.cs" />
     <Compile Include="YleAreenaUtil.cs" />
     <Compile Include="ZieNlUtil.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="CinemassacreUtil.cs" />
     <Compile Include="MyHosters.cs" />
     <Compile Include="NOSUtil.cs" />
@@ -132,6 +128,7 @@
     <Compile Include="TVNZOnDemandUtil.cs" />
     <Compile Include="TvTuttiUtil.cs" />
     <Compile Include="WatchSeriesUtil.cs" />
+    <Compile Include="Properties\VersionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -156,7 +153,13 @@
       <Name>OnlineVideos</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\VersionInfo.cs.tmpl" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
