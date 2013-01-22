@@ -26,46 +26,45 @@ namespace OnlineVideos
         public string ID_IMDB { get; set; }
         public string ID_TMDB { get; set; }
         public string ID_TVDB { get; set; }
+        public Match Regex
+        {
+            set { FillFromRegex(value); }
+        }
 
-        public static TrackingInfo CreateFromRegex(Match trackingInfoMatch)
+        private void FillFromRegex(Match trackingInfoMatch)
         {
             if (trackingInfoMatch != null && trackingInfoMatch.Success)
             {
-                TrackingInfo result = new TrackingInfo();
-
                 System.Text.RegularExpressions.Group grp;
 
                 if ((grp = trackingInfoMatch.Groups["VideoKind"]).Success)
                     try
                     {
-                        result.VideoKind = (VideoKind)Enum.Parse(typeof(VideoKind), grp.Value);
+                        VideoKind = (VideoKind)Enum.Parse(typeof(VideoKind), grp.Value);
                     }
                     catch { };
 
                 if ((grp = trackingInfoMatch.Groups["Title"]).Success)
-                    result.Title = grp.Value;
+                    Title = grp.Value;
 
                 uint? v;
                 if ((v = getuintFomGroup(trackingInfoMatch.Groups["Season"])).HasValue)
-                    result.Season = v.Value;
+                    Season = v.Value;
                 if ((v = getuintFomGroup(trackingInfoMatch.Groups["Episode"])).HasValue)
-                    result.Episode = v.Value;
+                    Episode = v.Value;
                 if ((v = getuintFomGroup(trackingInfoMatch.Groups["Year"])).HasValue)
-                    result.Year = v.Value;
+                    Year = v.Value;
 
                 if ((grp = trackingInfoMatch.Groups["ID_IMDB"]).Success)
-                    result.ID_IMDB = grp.Value;
+                    ID_IMDB = grp.Value;
 
                 if ((grp = trackingInfoMatch.Groups["ID_TMDB"]).Success)
-                    result.ID_IMDB = grp.Value;
+                    ID_IMDB = grp.Value;
 
                 if ((grp = trackingInfoMatch.Groups["ID_TVDB"]).Success)
-                    result.ID_IMDB = grp.Value;
+                    ID_IMDB = grp.Value;
 
-                return result;
             }
-            else
-                return null;
         }
 
         private static uint? getuintFomGroup(System.Text.RegularExpressions.Group grp)

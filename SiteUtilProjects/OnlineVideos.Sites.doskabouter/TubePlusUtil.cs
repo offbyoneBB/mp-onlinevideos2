@@ -4,17 +4,11 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.IO;
-using OnlineVideos.Subtitles;
 
 namespace OnlineVideos.Sites
 {
     public class TubePlusUtil : DeferredResolveUtil
     {
-        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle source")]
-        string subtitleSource = "";
-        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated)")]
-        string subtitleLanguages = "";
-
 
         [Category("OnlineVideosConfiguration"), Description("")]
         protected string genresRegEx;
@@ -40,7 +34,6 @@ namespace OnlineVideos.Sites
         private Regex regex_SeasonCategories;
         private Regex regex_ShowVideoList;
         private Regex regex_MoviesVideoList;
-        private SubtitleHandler sh = null;
 
         private enum Mode
         {
@@ -70,8 +63,6 @@ namespace OnlineVideos.Sites
             regex_SeasonCategories = new Regex(seasonCategoriesRegEx, defaultRegexOptions);
             regex_ShowVideoList = new Regex(showVideoListRegEx, defaultRegexOptions);
             regex_MoviesVideoList = new Regex(moviesVideoListRegEx, defaultRegexOptions);
-
-            sh = new SubtitleHandler(subtitleSource, subtitleLanguages);
         }
 
         public override int DiscoverDynamicCategories()
@@ -246,9 +237,7 @@ namespace OnlineVideos.Sites
                 Match m = regex_ShowVideoList.Match(data);
                 while (m.Success)
                 {
-                    TubeVideoInfo videoInfo = new TubeVideoInfo();
-                    videoInfo.parent = this;
-                    //DeferredResolveVideoInfo videoInfo = new DeferredResolveVideoInfo();
+                    VideoInfo videoInfo = CreateVideoInfo();
                     videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                     // get, format and if needed absolutify the video url
                     videoInfo.VideoUrl = FormatDecodeAbsolutifyUrl(url, m.Groups["VideoUrl"].Value, videoListRegExFormatString, videoListUrlDecoding);
@@ -347,6 +336,7 @@ namespace OnlineVideos.Sites
             }
         }
 
+
         #region search
         public override bool CanSearch
         {
@@ -378,30 +368,6 @@ namespace OnlineVideos.Sites
         private string encodeQuery(string query)
         {
             return HttpUtility.UrlEncode(query.Replace(' ', '_'));
-        }
-        #endregion
-
-        #region subtitles
-        private System.Threading.Thread subtitleThread;
-        public override string getUrl(VideoInfo video)
-        {
-            sh.SetSubtitleText(video, out subtitleThread);
-            return base.getUrl(video);
-        }
-
-
-        public class TubeVideoInfo : DeferredResolveVideoInfo
-        {
-            public TubePlusUtil parent;
-
-            public override string GetPlaybackOptionUrl(string url)
-            {
-                string newUrl = base.GetPlaybackOptionUrl(url);
-                if (parent.subtitleThread != null)
-                    parent.subtitleThread.Join();
-                return newUrl;
-            }
-
         }
         #endregion
 
