@@ -438,6 +438,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="SVTPlayUtil.cs" />
     <Compile Include="TEDTalksUtil.cs" />
     <Compile Include="Tube8Util.cs" />
@@ -582,8 +583,13 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Properties\VersionInfo.cs.tmpl" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
