@@ -1014,6 +1014,9 @@
         <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
       </Categories>
     </Site>
+    <Site name="Первый канал" util="PervyjKanalRu" agecheck="false" enabled="true" lang="ru">
+      <Description>Официальный сайт. Новости. Премьеры. Вещание.</Description>
+    </Site>
     <Site name="ABC iView" util="ABCiView" agecheck="false" enabled="true" lang="en">
       <Description>iview is catch-up and more from ABC TV</Description>
     </Site>
