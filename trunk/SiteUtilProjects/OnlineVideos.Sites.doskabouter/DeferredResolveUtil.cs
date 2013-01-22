@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
 using OnlineVideos.Hoster.Base;
+using OnlineVideos.Subtitles;
 
 namespace OnlineVideos.Sites
 {
@@ -25,15 +24,30 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Show hosters for which no provider exists.")]
         protected bool showUnknownHosters = false;
 
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle source")]
+        protected string subtitleSource = "";
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated)")]
+        protected string subtitleLanguages = "";
+
+        private SubtitleHandler sh = null;
+        private System.Threading.Thread subtitleThread;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+            sh = new SubtitleHandler(subtitleSource, subtitleLanguages);
+        }
+
         public override string getUrl(VideoInfo video)
         {
+            sh.SetSubtitleText(video, out subtitleThread);
             string tmp = base.getUrl(video);
             return SortPlaybackOptions(video, baseUrl, tmp, limitUrlsPerHoster, showUnknownHosters);
         }
 
         public override VideoInfo CreateVideoInfo()
         {
-            return new DeferredResolveVideoInfo();
+            return new DeferredResolveVideoInfo() { parent = this };
         }
 
         /// <summary>
@@ -132,6 +146,11 @@ namespace OnlineVideos.Sites
             return tmp;
         }
 
+        public virtual string ResolveVideoUrl(string url)
+        {
+            return GetVideoUrl(url);
+        }
+
         private static int IntComparer(int i1, int i2)
         {
             if (i1 == i2) return 0;
@@ -178,9 +197,15 @@ namespace OnlineVideos.Sites
 
         public class DeferredResolveVideoInfo : VideoInfo
         {
+            public DeferredResolveUtil parent;
+
             public override string GetPlaybackOptionUrl(string url)
             {
-                return GetVideoUrl(base.PlaybackOptions[url]);
+                string result = parent.ResolveVideoUrl(PlaybackOptions[url]);
+                if (parent.subtitleThread != null)
+                    parent.subtitleThread.Join();
+                return result;
+
             }
         }
 
