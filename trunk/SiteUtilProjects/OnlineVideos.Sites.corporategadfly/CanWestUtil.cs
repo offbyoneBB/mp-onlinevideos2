@@ -55,50 +55,64 @@ namespace OnlineVideos.Sites
 
                     Log.Debug(@"Feed PID: {0}", feedPID);
 
-                    JObject json = GetWebData<JObject>(String.Format(categoriesJsonUrl, feedPID, playerTag));
-                    if (json != null)
-                    {
-                        JArray allItems = json["items"] as JArray;
-                        if (allItems != null)
-                        {
-                            JToken itemToFetchChildrenFor = null;
-                            foreach (JToken item in allItems)
-                            {
-                                // find first element with root depth - 1 (which also has children)
-                                if (item.Value<int>("depth") == rootDepth - 1 && item.Value<bool>("hasChildren"))
-                                {
-                                    itemToFetchChildrenFor = item;
-                                    break;
-                                }
-                            }
-
-                            if (itemToFetchChildrenFor != null)
-                            {
-                                // fetch all children (which have releases) for a particular item
-                                JArray childItemsWithReleases = FetchChildItemsWithReleases(itemToFetchChildrenFor, allItems, itemToFetchChildrenFor.Value<int>("depth"));
-
-                                foreach (JToken item in childItemsWithReleases)
-                                {
-                                    // populate category
-                                    RssLink cat = new RssLink();
-                                    cat.Name = item.Value<string>("title");
-                                    bool hasChildren = item.Value<bool>("hasChildren");
-                                    cat.Other = hasChildren
-                                        ?
-                                        item.Value<string>("depth") + @"|" + item.Value<string>("fullTitle")
-                                        :
-                                        item.Value<string>("ID");
-                                    cat.HasSubCategories = hasChildren;
-                                    Settings.Categories.Add(cat);
-                                }
-                            }
-                        }
-                    }
+                    DiscoverDynamicCategoriesUsingJson(null);
                 }
             }
 
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
+        }
+        
+        protected void DiscoverDynamicCategoriesUsingJson(Category parentCategory)
+        {
+            JObject json = GetWebData<JObject>(String.Format(categoriesJsonUrl, feedPID, playerTag));
+            if (json != null)
+            {
+                JArray allItems = json["items"] as JArray;
+                if (allItems != null)
+                {
+                    JToken itemToFetchChildrenFor = null;
+                    foreach (JToken item in allItems)
+                    {
+                        // find first element with root depth - 1 (which also has children)
+                        if (item.Value<int>("depth") == rootDepth - 1 && item.Value<bool>("hasChildren"))
+                        {
+                            itemToFetchChildrenFor = item;
+                            break;
+                        }
+                    }
+
+                    if (itemToFetchChildrenFor != null)
+                    {
+                        // fetch all children (which have releases) for a particular item
+                        JArray childItemsWithReleases = FetchChildItemsWithReleases(itemToFetchChildrenFor, allItems, itemToFetchChildrenFor.Value<int>("depth"));
+
+                        foreach (JToken item in childItemsWithReleases)
+                        {
+                            bool hasChildren = item.Value<bool>("hasChildren");
+
+                            // populate category
+                            RssLink cat = new RssLink() {
+                                Name = item.Value<string>("title"),
+                                Other =  hasChildren
+                                    ?
+                                    item.Value<string>("depth") + @"|" + item.Value<string>("fullTitle")
+                                    :
+                                    item.Value<string>("ID"),
+                                HasSubCategories = hasChildren
+                            };
+                            if (parentCategory == null)
+                            {
+                                Settings.Categories.Add(cat);
+                            }
+                            else
+                            {
+                                parentCategory.SubCategories.Add(cat);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /*
