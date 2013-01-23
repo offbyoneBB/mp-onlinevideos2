@@ -548,8 +548,8 @@ namespace OnlineVideos.Sites
 				// build a CRC of the url and all headers + proxy + cookies for caching
 				string requestCRC = Utils.EncryptLine(
 					string.Format("{0}{1}{2}{3}", 
-					url, 
-					string.Join("&", (from item in headers.AllKeys select string.Format("{0}={1}", item, headers[item])).ToArray()), 
+					url,
+					headers != null ? string.Join("&", (from item in headers.AllKeys select string.Format("{0}={1}", item, headers[item])).ToArray()) : "", 
 					proxy != null ? proxy.GetProxy(new Uri(url)).AbsoluteUri : "", 
 					cc != null ? cc.GetCookieHeader(new Uri(url)) : ""));
 				
@@ -562,11 +562,10 @@ namespace OnlineVideos.Sites
                 if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(true);
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return "";
-				request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; // turn on automatic decompression of both formats so we can say we accept them
-                request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate"); // we accept compressed content
+				request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; // turn on automatic decompression of both formats (adds header "AcceptEncoding: gzip,deflate" to the request)
                 if (cc != null) request.CookieContainer = cc; // set cookies if given
                 if (proxy != null) request.Proxy = proxy; // send the request over a proxy if given
-				if (headers != null) // add user defined headers
+				if (headers != null) // set user defined headers
 				{
 					foreach (var headerName in headers.AllKeys)
 					{
