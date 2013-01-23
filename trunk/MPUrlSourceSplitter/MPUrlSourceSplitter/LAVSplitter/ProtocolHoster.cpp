@@ -159,7 +159,7 @@ HRESULT CProtocolHoster::StartReceivingData(const CParameterCollection *paramete
 
   if (SUCCEEDED(result))
   {
-    result = this->activeProtocol->StartReceivingData(NULL);
+    result = this->activeProtocol->StartReceivingData(parameters);
   }
 
   return result;

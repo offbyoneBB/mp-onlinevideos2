@@ -156,13 +156,54 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
             // parse bootstrap info
             // bootstrap info should have information about segments, fragments and seeking information
 
+            // extract cookies from connection parameters
+            CParameterCollection *usedCookies = new CParameterCollection();
+            bool continueParsing = (usedCookies != NULL);
+
+            if (connectionParameters != NULL)
+            {
+              unsigned int currentCookiesCount = connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
+
+              for (unsigned int i = 0; (continueParsing && (i < currentCookiesCount)); i++)
+              {
+                wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
+                continueParsing &= (httpCookieName != NULL);
+
+                if (continueParsing)
+                {
+                  const wchar_t *cookieValue = connectionParameters->GetValue(httpCookieName, true, NULL);
+                  continueParsing &= (cookieValue != NULL);
+
+                  if (continueParsing)
+                  {
+                    CParameter *cookie = new CParameter(L"", cookieValue);
+                    continueParsing &= (cookie != NULL);
+
+                    if (continueParsing)
+                    {
+                      continueParsing &= usedCookies->Add(cookie);
+                    }
+
+                    if (!continueParsing)
+                    {
+                      FREE_MEM_CLASS(cookie);
+                    }
+                  }
+                }
+
+                FREE_MEM(httpCookieName);
+              }
+            }
+
             wchar_t *baseUrl = GetBaseUrl(this->connectionParameters->GetValue(PARAMETER_NAME_URL, true, NULL));
+            continueParsing &= (baseUrl != NULL);
             
-            bool continueParsing = (baseUrl != NULL);
             CF4MBootstrapInfoCollection *bootstrapInfoCollection = new CF4MBootstrapInfoCollection();
             CMediaCollection *mediaCollection = new CMediaCollection();
 
-            if ((bootstrapInfoCollection != NULL) && (mediaCollection != NULL))
+            continueParsing &= ((bootstrapInfoCollection != NULL) && (mediaCollection != NULL));
+
+            if (continueParsing)
             {
               // bootstrap info profile have to be 'named' (F4M_ELEMENT_BOOTSTRAPINFO_ATTRIBUTE_PROFILE_VALUE_NAMED)
               for (unsigned int i = 0; i < manifest->GetBootstrapInfoCollection()->Count(); i++)
@@ -407,7 +448,8 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
                             this->connectionParameters->GetValueLong(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT),
                             this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL),
                             this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL),
-                            this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL)
+                            this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL),
+                            usedCookies
                             );
 
                           this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info download result: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, downloadResult);
@@ -557,63 +599,56 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_URL, true, PARAMETER_NAME_AFHS_MANIFEST_URL);
 
                             // copy current cookies parameters
-                            if (connectionParameters != NULL)
+                            if ((usedCookies != NULL) && (usedCookies->Count() != 0))
                             {
-                              unsigned int currentCookiesCount = connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_COOKIES_COUNT, true, 0);
+                              // first add count of cookies
+                              wchar_t *cookiesCountValue = FormatString(L"%u", usedCookies->Count());
+                              continueParsing &= (cookiesCountValue != NULL);
 
-                              if (currentCookiesCount != 0)
+                              if (continueParsing)
                               {
-                                CParameter *httpCookiesCount = connectionParameters->GetParameter(PARAMETER_NAME_HTTP_COOKIES_COUNT, true);
-                                continueParsing &= (httpCookiesCount != NULL);
+                                CParameter *cookiesCount = new CParameter(PARAMETER_NAME_AFHS_COOKIES_COUNT, cookiesCountValue);
+                                continueParsing &= (cookiesCount != NULL);
 
                                 if (continueParsing)
                                 {
-                                  CParameter *afhsCookiesCount = new CParameter(PARAMETER_NAME_AFHS_COOKIES_COUNT, httpCookiesCount->GetValue());
-                                  continueParsing &= (afhsCookiesCount != NULL);
+                                  continueParsing &= this->connectionParameters->Update(PARAMETER_NAME_AFHS_COOKIES_COUNT, true, cookiesCount);
+                                }
 
-                                  if (continueParsing)
-                                  {
-                                    continueParsing &= this->connectionParameters->Update(PARAMETER_NAME_AFHS_COOKIES_COUNT, true, afhsCookiesCount);
-                                  }
-
-                                  if (!continueParsing)
-                                  {
-                                    FREE_MEM_CLASS(afhsCookiesCount);
-                                  }
+                                if (!continueParsing)
+                                {
+                                  FREE_MEM_CLASS(cookiesCount);
                                 }
                               }
 
-                              for (unsigned int i = 0; (continueParsing && (i < currentCookiesCount)); i++)
+                              if (continueParsing)
                               {
-                                wchar_t *httpCookieName = FormatString(HTTP_COOKIE_FORMAT_PARAMETER_NAME, i);
-                                wchar_t *afhsCookieName = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
-                                continueParsing &= ((httpCookieName != NULL) && (afhsCookieName != NULL));
-
-                                if (continueParsing)
+                                for (unsigned int i = 0; (continueParsing && (i < usedCookies->Count())); i++)
                                 {
-                                  CParameter *httpCookie = connectionParameters->GetParameter(httpCookieName, true);
-                                  continueParsing &= (httpCookie != NULL);
+                                  CParameter *cookie = usedCookies->GetItem(i);
+                                  wchar_t *name = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
+                                  continueParsing &= (name != NULL);
 
                                   if (continueParsing)
                                   {
-                                    CParameter *afhsCookie = new CParameter(afhsCookieName, httpCookie->GetValue());
-                                    continueParsing &= (afhsCookie != NULL);
+                                    CParameter *cookieToAdd = new CParameter(name, cookie->GetValue());
+                                    continueParsing = (cookieToAdd != NULL);
 
                                     if (continueParsing)
                                     {
-                                      continueParsing &= this->connectionParameters->Update(afhsCookieName, true, afhsCookie);
+                                      continueParsing &= this->connectionParameters->Update(name, true, cookieToAdd);
                                     }
 
                                     if (!continueParsing)
                                     {
-                                      FREE_MEM_CLASS(afhsCookie);
+                                      FREE_MEM_CLASS(cookieToAdd);
                                     }
                                   }
-                                }
 
-                                FREE_MEM(httpCookieName);
-                                FREE_MEM(afhsCookieName);
+                                  FREE_MEM(name);
+                                }
                               }
+                              FREE_MEM(cookiesCountValue);
                             }
 
                             if (continueParsing)

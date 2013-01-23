@@ -117,6 +117,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->segmentFragmentToDownload = UINT_MAX;
   this->canCallProcessSegmentsAndFragments = true;
   this->manifest = NULL;
+  this->cookies = NULL;
 
   this->decryptionHoster = new CAfhsDecryptionHoster(this->logger, this->configurationParameters);
   if (this->decryptionHoster != NULL)
@@ -572,6 +573,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
 
       if (SUCCEEDED(result) && (this->segmentFragmentDownloading != UINT_MAX) && (this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
       {
+        // we received data, remember cookies and continue
+        CParameterCollection *mainCurlCookies = this->mainCurlInstance->GetCurrentCookies();
+        if (mainCurlCookies != NULL)
+        {
+          // NULL means error, so at least leave current cookies
+          FREE_MEM_CLASS(this->cookies);
+          this->cookies = mainCurlCookies;
+        }
+
         if (this->mainCurlInstance->GetHttpDownloadResponse()->GetResultCode() == CURLE_OK)
         {
           // in CURL instance is HTTP download response, all data are stored in CURL instance
@@ -647,50 +657,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
               {
                 this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
 
-                // set current cookies (passed from HTTP CURL manifest instance
-                if (this->mainCurlInstance->GetCurrentCookies()->Count() == 0)
-                {
-                  unsigned int currentCookiesCount = this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_AFHS_COOKIES_COUNT, true, 0);
-                  if (currentCookiesCount != 0)
-                  {
-                    CParameterCollection *curlCookies = new CParameterCollection();
-                    CHECK_POINTER_HRESULT(result, curlCookies, result, E_OUTOFMEMORY);
-
-                    for (unsigned int i = 0; (SUCCEEDED(result) & (i < currentCookiesCount)); i++)
-                    {
-                      wchar_t *cookieName = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
-                      CHECK_POINTER_HRESULT(result, cookieName, result, E_OUTOFMEMORY);
-
-                      if (SUCCEEDED(result))
-                      {
-                        const wchar_t *curlCookieValue = this->configurationParameters->GetValue(cookieName, true, NULL);
-                        CHECK_POINTER_HRESULT(result, curlCookieValue, result, E_OUTOFMEMORY);
-
-                        if (SUCCEEDED(result))
-                        {
-                          CParameter *curlCookie = new CParameter(L"", curlCookieValue);
-                          CHECK_POINTER_HRESULT(result, curlCookie, result, E_OUTOFMEMORY);
-
-                          if (SUCCEEDED(result))
-                          {
-                            result = (curlCookies->Add(curlCookie)) ? result : E_FAIL;
-                          }
-
-                          if (FAILED(result))
-                          {
-                            FREE_MEM_CLASS(curlCookie);
-                          }
-                        }
-                      }
-
-                      FREE_MEM(cookieName);
-                    }
-
-                    result = (this->mainCurlInstance->SetCurrentCookies(curlCookies)) ? result : E_FAIL;
-
-                    FREE_MEM_CLASS(curlCookies);
-                  }
-                }
+                // set current cookies (passed from HTTP CURL manifest instance, bootstrap info or from last download)
+                result = (this->mainCurlInstance->SetCurrentCookies(this->cookies)) ? result : E_FAIL;
 
                 if (segmentFragment->GetHttpDownloadRequest() == NULL)
                 {
@@ -748,6 +716,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
 
         if ((this->bootstrapInfoCurlInstance != NULL) && (this->bootstrapInfoCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
         {
+          // we received data, remember cookies and continue
+          CParameterCollection *bootstrapInfoCookies = this->bootstrapInfoCurlInstance->GetCurrentCookies();
+          if (bootstrapInfoCookies != NULL)
+          {
+            // NULL means error, so at least leave current cookies
+            FREE_MEM_CLASS(this->cookies);
+            this->cookies = bootstrapInfoCookies;
+          }
+
           if (this->bootstrapInfoCurlInstance->GetHttpDownloadResponse()->GetResultCode() == CURLE_OK)
           {
             unsigned int length = this->bootstrapInfoCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
@@ -858,8 +835,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
           FREE_MEM_CLASS(this->bootstrapInfoCurlInstance);
         }
 
-        if ((this->bootstrapInfoCurlInstance == NULL) && (GetTickCount() > (this->lastBootstrapInfoRequestTime + LAST_REQUEST_BOOTSTRAP_INFO_DELAY)))
+        // because of cookies, we cannot download bootstrap info before download in mainCurlInstance is finished
+        if ((this->segmentFragmentDownloading == UINT_MAX) && (this->segmentFragmentToDownload == UINT_MAX) && (this->bootstrapInfoCurlInstance == NULL) && (GetTickCount() > (this->lastBootstrapInfoRequestTime + LAST_REQUEST_BOOTSTRAP_INFO_DELAY)))
         {
+          // no segment and fragment is downloading
+          // no segment and fragment is scheduled for download
+          // bootstrap info CURL instance doesn't exist
+          // it's time to update bootstrap info
           const wchar_t *url = this->configurationParameters->GetValue(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, true, NULL);
           if (url != NULL)
           {
@@ -871,7 +853,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
             if (continueWithBootstrapInfo)
             {
               this->bootstrapInfoCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+              continueWithBootstrapInfo &= this->bootstrapInfoCurlInstance->SetCurrentCookies(this->cookies);
+            }
 
+            if (continueWithBootstrapInfo)
+            {
               CHttpDownloadRequest *request = new CHttpDownloadRequest();
               if (request != NULL)
               {
@@ -1048,6 +1034,49 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
   this->streamLength = 0;
   this->setLength = false;
   this->setEndOfStream = false;
+
+  if (this->cookies == NULL)
+  {
+    this->cookies = new CParameterCollection();
+    CHECK_POINTER_HRESULT(result, this->cookies, result, E_OUTOFMEMORY);
+
+    if (SUCCEEDED(result))
+    {
+      unsigned int currentCookiesCount = this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_AFHS_COOKIES_COUNT, true, 0);
+      if (currentCookiesCount != 0)
+      {
+        for (unsigned int i = 0; (SUCCEEDED(result) & (i < currentCookiesCount)); i++)
+        {
+          wchar_t *cookieName = FormatString(AFHS_COOKIE_FORMAT_PARAMETER_NAME, i);
+          CHECK_POINTER_HRESULT(result, cookieName, result, E_OUTOFMEMORY);
+
+          if (SUCCEEDED(result))
+          {
+            const wchar_t *curlCookieValue = this->configurationParameters->GetValue(cookieName, true, NULL);
+            CHECK_POINTER_HRESULT(result, curlCookieValue, result, E_OUTOFMEMORY);
+
+            if (SUCCEEDED(result))
+            {
+              CParameter *curlCookie = new CParameter(L"", curlCookieValue);
+              CHECK_POINTER_HRESULT(result, curlCookie, result, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(result))
+              {
+                result = (this->cookies->Add(curlCookie)) ? result : E_FAIL;
+              }
+
+              if (FAILED(result))
+              {
+                FREE_MEM_CLASS(curlCookie);
+              }
+            }
+          }
+
+          FREE_MEM(cookieName);
+        }
+      }
+    }
+  }
 
   if (this->segmentsFragments == NULL)
   {
@@ -1309,6 +1338,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   this->segmentFragmentToDownload = UINT_MAX;
   this->canCallProcessSegmentsAndFragments = true;
   FREE_MEM_CLASS(this->manifest);
+  FREE_MEM_CLASS(this->cookies);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;

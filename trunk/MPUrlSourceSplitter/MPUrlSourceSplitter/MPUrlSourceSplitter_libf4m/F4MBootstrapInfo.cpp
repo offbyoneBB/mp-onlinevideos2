@@ -159,7 +159,7 @@ bool CF4MBootstrapInfo::HasValue(void)
   return (this->value != NULL);
 }
 
-HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int receiveDataTimeout, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie)
+HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int receiveDataTimeout, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie, CParameterCollection *cookies)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, logger);
@@ -181,6 +181,11 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
 
         CHttpDownloadRequest *request = new CHttpDownloadRequest();
         CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+
+        if (SUCCEEDED(result) && (cookies != NULL))
+        {
+          result = (curlInstance->SetCurrentCookies(cookies)) ? result : E_FAIL;
+        }
 
         if (SUCCEEDED(result))
         {
@@ -236,6 +241,29 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
             // sleep some time
             Sleep(10);
           }
+
+          // copy cookies from CURL instance to passed cookies
+          CParameterCollection *currentCookies = curlInstance->GetCurrentCookies();
+          if (SUCCEEDED(result) && (currentCookies != NULL))
+          {
+            cookies->Clear();
+            for (unsigned int i = 0; (SUCCEEDED(result) && (i < currentCookies->Count())); i++)
+            {
+              CParameter *clone = currentCookies->GetItem(i)->Clone();
+              CHECK_POINTER_HRESULT(result, clone, result, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(result))
+              {
+                result = (cookies->Add(clone)) ? result : E_OUTOFMEMORY;
+              }
+
+              if (FAILED(result))
+              {
+                FREE_MEM_CLASS(clone);
+              }
+            }
+          }
+          FREE_MEM_CLASS(currentCookies);
 
           result = (curlInstance->GetHttpDownloadResponse()->GetResultCode() != CURLE_OK) ? HRESULT_FROM_WIN32(ERROR_INVALID_DATA) : result;
         }
