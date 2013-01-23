@@ -22,6 +22,8 @@ namespace OnlineVideos.Sites
 		static Site[] onlineSites;
 		static Dll[] onlineDlls;
 
+		static MD5 md5Service = new MD5CryptoServiceProvider();
+
 		/// <summary>
 		/// Breaking API changes for Sites/Skin will change at least the minor version. 
 		/// Compatible are only versions with the same major and equal or higher minor number.
@@ -45,10 +47,7 @@ namespace OnlineVideos.Sites
 					if (DateTime.Now - lastOnlineVersionCheck > TimeSpan.FromHours(4)) // only check every 4 hours
 					{
 						lastOnlineVersionCheck = DateTime.Now;
-						string tempFile = Path.GetTempFileName();
-						new System.Net.WebClient().DownloadFile("http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml", tempFile);
-						XmlDocument xDoc = new XmlDocument();
-						xDoc.Load(tempFile);
+						XmlDocument xDoc = SiteUtilBase.GetWebData<XmlDocument>("http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml", null, null, null, false, false, null, false);
 						var versionNode = xDoc.SelectNodes("//PackageClass/GeneralInfo/Version");
 						List<Version> versions = new List<Version>();
 						foreach (XmlElement versionNodee in versionNode)
@@ -59,7 +58,6 @@ namespace OnlineVideos.Sites
 									int.Parse(versionNodee.SelectSingleNode("Build").InnerText),
 										int.Parse(versionNodee.SelectSingleNode("Revision").InnerText)));
 						}
-						File.Delete(tempFile);
 						versions.Sort();
 						versionOnline = versions.LastOrDefault();
 					}
@@ -200,8 +198,7 @@ namespace OnlineVideos.Sites
 							{
 								byte[] data = null;
 								data = File.ReadAllBytes(location);
-								MD5 md5 = new MD5CryptoServiceProvider();
-								string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
+								string md5LocalDll = BitConverter.ToString(md5Service.ComputeHash(data)).Replace("-", "").ToLower();
 								if (md5LocalDll == anOnlineDll.MD5) download = false;
 							}
 							if (download)
@@ -243,7 +240,7 @@ namespace OnlineVideos.Sites
 		{
 			try
 			{
-				if (ws == null) ws = new OnlineVideosService() { Timeout = 30000 };
+				if (ws == null) ws = new OnlineVideosService() { Timeout = 30000, EnableDecompression = true };
 				string siteXml = ws.GetSiteXml(siteName);
 				if (siteXml.Length > 0)
 				{
@@ -253,8 +250,13 @@ namespace OnlineVideos.Sites
 						// Download images
 						try
 						{
-							byte[] icon = ws.GetSiteIcon(siteName);
-							if (icon != null && icon.Length > 0) File.WriteAllBytes(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + siteName + ".png"), icon);
+							string iconPath = Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + siteName + ".png");
+							byte[] icon = ws.GetSiteIconIfChanged(siteName,
+								File.Exists(iconPath) ?
+									BitConverter.ToString(md5Service.ComputeHash(File.ReadAllBytes(iconPath))).Replace("-", "").ToLower()
+									:
+									null);
+							if (icon != null && icon.Length > 0) File.WriteAllBytes(iconPath, icon);
 						}
 						catch (Exception ex)
 						{
@@ -262,9 +264,13 @@ namespace OnlineVideos.Sites
 						}
 						try
 						{
-							byte[] banner = ws.GetSiteBanner(siteName);
-							if (banner != null && banner.Length > 0) File.WriteAllBytes(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Banners\" + siteName + ".png"), banner);
-
+							string bannerPath = Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Banners\" + siteName + ".png");
+							byte[] banner = ws.GetSiteBannerIfChanged(siteName,
+								File.Exists(bannerPath) ?
+									BitConverter.ToString(md5Service.ComputeHash(File.ReadAllBytes(bannerPath))).Replace("-", "").ToLower()
+									:
+									null);
+							if (banner != null && banner.Length > 0) File.WriteAllBytes(bannerPath, banner);
 						}
 						catch (Exception ex)
 						{
@@ -293,7 +299,7 @@ namespace OnlineVideos.Sites
 			if (DateTime.Now - lastOverviewsRetrieved > TimeSpan.FromMinutes(10) || force) // only get overviews every 10 minutes
 			{
 				bool newData = false;
-				OnlineVideosService ws = new OnlineVideosService() { Timeout = 30000 };
+				OnlineVideosService ws = new OnlineVideosService() { Timeout = 30000, EnableDecompression = true };
 				try 
 				{ 
 					onlineSites = ws.GetSitesOverview(); 
@@ -322,7 +328,7 @@ namespace OnlineVideos.Sites
 		{
 			try
 			{
-				OnlineVideosService ws = new OnlineVideosService() { Timeout = 30000 };
+				OnlineVideosService ws = new OnlineVideosService() { Timeout = 30000, EnableDecompression = true };
 				byte[] onlineDllData = ws.GetDll(dllName);
 				if (onlineDllData != null && onlineDllData.Length > 0) File.WriteAllBytes(localPath, onlineDllData);
 				return true;

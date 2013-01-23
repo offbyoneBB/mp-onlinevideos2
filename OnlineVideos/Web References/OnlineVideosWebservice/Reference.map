@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Results>
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.DiscoveryDocumentReference" url="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx?disco" filename="OnlineVideos.disco" />
     <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx?wsdl" filename="OnlineVideos.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.DiscoveryDocumentReference" url="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx?disco" filename="OnlineVideos.disco" />
   </Results>
 </DiscoveryClientResultsFile>
