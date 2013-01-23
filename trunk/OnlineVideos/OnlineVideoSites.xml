@@ -1465,10 +1465,11 @@
         <item key="baseUrl"><![CDATA[http://video.tsn.ca]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="Group" name="Current Sports">
-          <Channels>
-            <Channel name="Australian Open 2013">http://www.tsn.ca/www2_webservices/VideoProjectLoader.ashx?name=AustralianOpen</Channel>
-          </Channels>
+        <Category xsi:type="RssLink" name="Current Sports">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Australian Open 2013">http://www.tsn.ca/www2_webservices/VideoProjectLoader.ashx?name=AustralianOpen</Category>
+            <Category xsi:type="RssLink" name="NFL Playoffs 2013">http://www.tsn.ca/www2_webservices/VideoProjectLoader.ashx?name=nflplayoffs2013</Category>
+          </SubCategories>
         </Category>
       </Categories>
     </Site>
