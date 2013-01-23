@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Text;
 using System.Diagnostics;
@@ -35,9 +36,9 @@ namespace SiteParser
             }
         }
 
-        public string Execute(string regexString, string url, string[] names, bool cleanupValues)
+        public string Execute(string regexString, string url, string[] names, bool cleanupValues, bool forceUTF8, CookieContainer cc)
         {
-            string webData = SiteUtilBase.GetWebData(url);
+            string webData = SiteUtilBase.GetWebData(url, forceUTF8: forceUTF8, cc: cc);
             return Execute(regexString, webData, url, names, cleanupValues);
         }
 
