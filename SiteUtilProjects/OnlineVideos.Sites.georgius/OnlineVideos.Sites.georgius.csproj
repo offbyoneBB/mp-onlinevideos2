@@ -63,7 +63,9 @@
     <Compile Include="PohadkarUtil.cs" />
     <Compile Include="PrimaUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Properties\VersionInfo.cs.tmpl" />
     <None Include="PublicTvUtil.cs" />
+    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="ShowEpisodesRegex.cs" />
     <Compile Include="SlovenskaTeleviziaUtil.cs" />
     <Compile Include="StreamCzUtil.cs" />
@@ -82,6 +84,9 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
