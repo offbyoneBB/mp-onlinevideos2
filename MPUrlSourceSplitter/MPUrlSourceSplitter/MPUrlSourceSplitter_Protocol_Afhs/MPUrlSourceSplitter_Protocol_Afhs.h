@@ -264,6 +264,9 @@ protected:
 
   // the F4M manifest associated with media
   CF4MManifest *manifest;
+
+  // holds all cookies
+  CParameterCollection *cookies;
 };
 
 #endif

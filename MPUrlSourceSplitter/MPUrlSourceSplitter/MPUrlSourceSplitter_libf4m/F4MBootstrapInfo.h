@@ -24,6 +24,7 @@
 #define __F4M_BOOTSTRAP_INFO_DEFINED
 
 #include "Logger.h"
+#include "ParameterCollection.h"
 
 class CF4MBootstrapInfo
 {
@@ -116,8 +117,9 @@ public:
   // @param referer : referer for HTTP request
   // @param userAgent : user agent for HTTP request
   // @param cookie : cookie for HTTP request
+  // @param cookies : cookies for HTTP request, collection of cookies is updated after receving response
   // @return : S_OK if successfully downloaded, error code otherwise
-  HRESULT DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int receiveDataTimeout, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie);
+  HRESULT DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int receiveDataTimeout, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie, CParameterCollection *cookies);
 
 private:
   // stores bootstrap info ID
