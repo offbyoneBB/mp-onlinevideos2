@@ -199,7 +199,19 @@ namespace OnlineVideos.Sites
 								byte[] data = null;
 								data = File.ReadAllBytes(location);
 								string md5LocalDll = BitConverter.ToString(md5Service.ComputeHash(data)).Replace("-", "").ToLower();
-								if (md5LocalDll == anOnlineDll.MD5) download = false;
+								if (md5LocalDll == anOnlineDll.MD5)
+								{
+									download = false;
+								}
+								else
+								{
+									// MD5 is different - check compile time of local dll vs. LastUpdated of remote dll
+									if (Utils.RetrieveLinkerTimestamp(location) > anOnlineDll.LastUpdated)
+									{
+										download = false; // local dll is most likely self-compiled - do not download server dll
+										Log.Debug("Local '{0}.dll' was compiled later that online version - skipping download", anOnlineDll.Name);
+									}
+								}
 							}
 							if (download)
 							{
@@ -328,6 +340,7 @@ namespace OnlineVideos.Sites
 		{
 			try
 			{
+				Log.Debug("Downloading '{0}.dll'", dllName);
 				OnlineVideosService ws = new OnlineVideosService() { Timeout = 30000, EnableDecompression = true };
 				byte[] onlineDllData = ws.GetDll(dllName);
 				if (onlineDllData != null && onlineDllData.Length > 0) File.WriteAllBytes(localPath, onlineDllData);
@@ -335,7 +348,7 @@ namespace OnlineVideos.Sites
 			}
 			catch (Exception ex)
 			{
-				Log.Warn("Error getting remote DLL '{0}': {1}", dllName, ex.ToString());
+				Log.Warn("Error getting remote DLL '{0}.dll': {1}", dllName, ex.ToString());
 				return false;
 			}
 		}

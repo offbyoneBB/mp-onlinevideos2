@@ -173,7 +173,7 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.TVTag = site;
                     loListItem.Label2 = site.Language;
                     loListItem.Label3 = site.LastUpdated.ToString("g", OnlineVideoSettings.Instance.Locale);
-                    string image = GUIOnlineVideos.GetImageForSite(site.Name, "", "Icon");
+                    string image = GUIOnlineVideos.GetImageForSite(site.Name, "", "Icon", false);
                     if (!string.IsNullOrEmpty(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
                     if (!string.IsNullOrEmpty(site.Owner_FK)) loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
                     loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
