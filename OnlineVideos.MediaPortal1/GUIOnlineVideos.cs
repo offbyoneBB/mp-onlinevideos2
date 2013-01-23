@@ -3151,7 +3151,7 @@ namespace OnlineVideos.MediaPortal1
         }
 
         internal static Dictionary<string, string> cachedImageForSite = new Dictionary<string, string>();
-        internal static string GetImageForSite(string siteName, string utilName = "", string type = "Banner")
+        internal static string GetImageForSite(string siteName, string utilName = "", string type = "Banner", bool logIfNotfound = true)
         {
             string image = null;
             if (!cachedImageForSite.TryGetValue(string.Format("{0}{1}", siteName, type), out image))
@@ -3173,7 +3173,7 @@ namespace OnlineVideos.MediaPortal1
                         }
                     }
                 }
-                if (string.IsNullOrEmpty(image)) Log.Instance.Debug("{0} for site '{1}' not found!", type, siteName);
+				if (logIfNotfound && string.IsNullOrEmpty(image)) Log.Instance.Debug("{0} for site '{1}' not found!", type, siteName);
                 cachedImageForSite[string.Format("{0}{1}", siteName, type)] = image;
             }
             return image;
