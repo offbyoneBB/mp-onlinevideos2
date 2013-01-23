@@ -1832,29 +1832,57 @@ CBaseDemuxer *CLAVSplitter::GetDemuxer(void)
   return this->m_pDemuxer;
 }
 
+void InvalidParameterHandler(const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line, uintptr_t pReserved)
+{
+#ifdef _DEBUG
+  if (ffmpeg_log_callback_set)
+  {
+    ffmpeg_logger_instance.Log(LOGGER_VERBOSE, L"%s: %s: invalid parameter detected in function '%s', file '%s', line %d.\nExpression: %s", MODULE_NAME, L"InvalidParameterHandler()", function, file, line, expression);
+  }
+#endif
+}
+
+
 void CLAVSplitter::ffmpeg_log_callback(void *ptr, int log_level, const char *format, va_list vl)
 {
+  // supress error messages while logging messages from ffmpeg
+  // error messages are written to log file in Debug
+
+  int warnReportMode = _CrtSetReportMode(_CRT_WARN, 0);
+  int errorReportMode = _CrtSetReportMode(_CRT_ERROR, 0);
+  int assertReportMode = _CrtSetReportMode(_CRT_ASSERT, 0);
+
+  _invalid_parameter_handler previousHandler = _set_invalid_parameter_handler(InvalidParameterHandler);
+
   int length = _vscprintf(format, vl) + 1;
   ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
   if (buffer != NULL)
   {
-    vsprintf_s(buffer, length, format, vl);
-
-    char *trimmed = TrimA(buffer);
-    if (trimmed != NULL)
+    if (vsprintf_s(buffer, length, format, vl) != (-1))
     {
-      wchar_t *logLine = ConvertToUnicodeA(trimmed);
-      if (logLine != NULL)
+      char *trimmed = TrimA(buffer);
+      if (trimmed != NULL)
       {
-        ffmpeg_logger_instance.Log(LOGGER_VERBOSE, L"%s: %s: log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", log_level, logLine);
-      }
+        wchar_t *logLine = ConvertToUnicodeA(trimmed);
+        if (logLine != NULL)
+        {
+          ffmpeg_logger_instance.Log(LOGGER_VERBOSE, L"%s: %s: log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", log_level, logLine);
+        }
 
-      FREE_MEM(logLine);
+        FREE_MEM(logLine);
+      }
+      FREE_MEM(trimmed);
     }
-    FREE_MEM(trimmed);
   }
 
   FREE_MEM(buffer);
+
+  // set original values for error messages back
+  _set_invalid_parameter_handler(previousHandler);
+
+  _CrtSetReportMode(_CRT_WARN, warnReportMode);
+  _CrtSetReportMode(_CRT_ERROR, errorReportMode);
+  _CrtSetReportMode(_CRT_ASSERT, assertReportMode);
 }
 
 // IFilter interface
