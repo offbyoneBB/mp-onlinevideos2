@@ -32,15 +32,13 @@ namespace OnlineVideos.Sites.Utils.NaviX
             }
         }
 
-        public void Reset(string rType = null)
+        public void Reset(bool scrapeOnly = false)
         {
-            if (rType == "scrape")
+            if (scrapeOnly)
             {
                 foreach (string ke in new string[] { "s_method", "s_action", "s_agent", "s_referer", "s_cookie", "s_postdata" })
                     vars[ke] = defaults[ke];
             }
-            else if (rType == "hard")
-                vars = initDefaults();
             else
             {
                 foreach (string ke in defaults.Keys)

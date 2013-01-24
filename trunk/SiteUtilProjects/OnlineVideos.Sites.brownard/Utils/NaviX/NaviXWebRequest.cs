@@ -13,88 +13,90 @@ namespace OnlineVideos.Sites.Utils.NaviX
             this.RequestUrl = url;
         }
 
-        public bool GetWebData(string action)
+        public bool GetWebData()
         {
             if (string.IsNullOrEmpty(RequestUrl))
                 return false;
 
+            Log.Debug("NaviX: Processor: Web Request");
+            Log.Debug("NaviX: Processor:\t Action: {0}", Action);
+            Log.Debug("NaviX: Processor:\t Url: {0}", RequestUrl);
+            Log.Debug("NaviX: Processor:\t Referer: {0}", Referer);
+            Log.Debug("NaviX: Processor:\t Cookies: {0}", RequestCookies);
+            Log.Debug("NaviX: Processor:\t Method: {0}", Method);
+            Log.Debug("NaviX: Processor:\t Useragent: {0}", UserAgent);
+            Log.Debug("NaviX: Processor:\t Post Data: {0}", PostData);
+
             responseHeaders = new Dictionary<string, string>();
             responseCookies = new Dictionary<string, string>();
-
+            //Log.Debug("NaviX: Processor: "
             try
             {
                 Uri uri = new Uri(RequestUrl);
-                HttpWebRequest req = WebRequest.Create(uri) as HttpWebRequest;
-                if (req == null)
+                HttpWebRequest request = WebRequest.Create(uri) as HttpWebRequest;
+                if (request == null)
                     return false;
 
-                if (!string.IsNullOrEmpty(Referer))
-                    req.Referer = Referer;
-
-                CookieContainer cookieJar = new CookieContainer();
+                if (!string.IsNullOrEmpty(Referer)) request.Referer = Referer;
+                if (!string.IsNullOrEmpty(UserAgent)) request.UserAgent = UserAgent;
                 if (!string.IsNullOrEmpty(RequestCookies))
-                    foreach (string cook in RequestCookies.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        string[] cookKeyVal = cook.Split('=');
-                        if (cookKeyVal.Length > 1)
-                            cookieJar.Add(new Cookie(cookKeyVal[0].Trim(), cookKeyVal[1].Trim(), uri.AbsolutePath, uri.Host));
-                    }
-                req.CookieContainer = cookieJar;
-
-                if (!string.IsNullOrEmpty(UserAgent))
-                    req.UserAgent = UserAgent;
-
-                req.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
-
-                if (RequestHeaders != null)
-                    foreach (string header in RequestHeaders.Keys)
-                        req.Headers[header] = RequestHeaders[header];
-
-                if (action.ToLower() == "headers")
-                    req.Method = "HEAD";
-                else if (Method != null && Method.ToLower() == "post")
                 {
-                    req.Method = "POST";
-                    req.ContentType = "application/x-www-form-urlencoded";
-                    byte[] data = Encoding.UTF8.GetBytes(PostData);
-                    req.ContentLength = data.Length;
-
-                    System.IO.Stream requestStream = req.GetRequestStream();
-                    requestStream.Write(data, 0, data.Length);
-                    requestStream.Close();
+                    request.CookieContainer = new CookieContainer();
+                    foreach (string cookie in RequestCookies.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        string[] cookKeyVal = cookie.Split('=');
+                        if (cookKeyVal.Length > 1)
+                            request.CookieContainer.Add(new Cookie(cookKeyVal[0].Trim(), cookKeyVal[1].Trim(), uri.AbsolutePath, uri.Host));
+                    }
                 }
 
-                using (HttpWebResponse res = req.GetResponse() as HttpWebResponse)
+                request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+                if (RequestHeaders != null)
+                    foreach (string header in RequestHeaders.Keys)
+                        request.Headers[header] = RequestHeaders[header];
+
+                if (Action != null && Action.ToLower() == "headers")
+                    request.Method = "HEAD";
+                else if (Method != null && Method.ToLower() == "post")
                 {
-                    if (req.RequestUri.Equals(res.ResponseUri))
+                    request.Method = "POST";
+                    request.ContentType = "application/x-www-form-urlencoded";
+                    byte[] data = Encoding.UTF8.GetBytes(PostData);
+                    request.ContentLength = data.Length;
+                    using (System.IO.Stream requestStream = request.GetRequestStream())
+                        requestStream.Write(data, 0, data.Length);
+                }
+
+                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                {
+                    if (request.RequestUri.Equals(response.ResponseUri))
                     {
-                        if (res.ContentLength > 0 && res.ContentLength < 1024)
+                        if (response.ContentLength > 0 && response.ContentLength < 1024)
                         {
-                            getUrl = res.ResponseUri.ToString();
+                            getUrl = response.ResponseUri.ToString();
                         }
                         else
                             getUrl = RequestUrl;
                     }
                     else
-                        getUrl = res.ResponseUri.OriginalString;
+                        getUrl = response.ResponseUri.OriginalString;
 
                     System.IO.Stream responseStream;
-                    if (res.ContentEncoding.ToLower().Contains("gzip"))
-                        responseStream = new System.IO.Compression.GZipStream(res.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
-                    else if (res.ContentEncoding.ToLower().Contains("deflate"))
-                        responseStream = new System.IO.Compression.DeflateStream(res.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                    if (response.ContentEncoding.ToLower().Contains("gzip"))
+                        responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                    else if (response.ContentEncoding.ToLower().Contains("deflate"))
+                        responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
                     else
-                        responseStream = res.GetResponseStream();
+                        responseStream = response.GetResponseStream();
 
-                    foreach (string s in res.Headers.AllKeys)
-                        responseHeaders[s] = res.Headers[s];
-
-                    foreach (Cookie cookie in res.Cookies)
+                    foreach (string s in response.Headers.AllKeys)
+                        responseHeaders[s] = response.Headers[s];
+                    foreach (Cookie cookie in response.Cookies)
                         responseCookies[cookie.Name] = cookie.Value;
 
                     Encoding responseEncoding = Encoding.UTF8;
-                    if (!String.IsNullOrEmpty(res.CharacterSet.Trim()))
-                        responseEncoding = Encoding.GetEncoding(res.CharacterSet.Trim(new char[] { ' ', '"' }));
+                    if (!String.IsNullOrEmpty(response.CharacterSet.Trim()))
+                        responseEncoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
 
                     using (System.IO.StreamReader reader = new System.IO.StreamReader(responseStream, responseEncoding, true))
                         content = reader.ReadToEnd().Trim();
@@ -146,6 +148,8 @@ namespace OnlineVideos.Sites.Utils.NaviX
         }
 
         public string RequestUrl { get; set; }
+
+        public string Action { get; set; }
 
         public string Referer { get; set; }
 

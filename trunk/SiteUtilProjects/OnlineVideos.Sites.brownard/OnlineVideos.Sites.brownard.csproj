@@ -64,6 +64,7 @@
     <Compile Include="Utils\NaviX\NaviXNookie.cs" />
     <Compile Include="Utils\NaviX\NaviXPlaylist.cs" />
     <Compile Include="Utils\NaviX\NaviXProcessor.cs" />
+    <Compile Include="Utils\NaviX\NaviXProcessorCache.cs" />
     <Compile Include="Utils\NaviX\NaviXStringEvaluator.cs" />
     <Compile Include="Utils\NaviX\NaviXVars.cs" />
     <Compile Include="Utils\NaviX\NaviXWebRequest.cs" />

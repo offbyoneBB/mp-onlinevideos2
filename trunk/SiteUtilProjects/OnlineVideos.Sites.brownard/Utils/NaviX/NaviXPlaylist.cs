@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
 
 namespace OnlineVideos.Sites.Utils.NaviX
 {
     class NaviXPlaylist
     {
-        bool ready = false;
-        public bool Ready { get { return ready; } }
+        static System.Text.RegularExpressions.Regex colorTagReg = new System.Text.RegularExpressions.Regex(@"\[/?COLOR[^\]]*\]", System.Text.RegularExpressions.RegexOptions.Compiled);
 
         double version = 0;
         public double Version { get { return version; } }
@@ -21,68 +21,80 @@ namespace OnlineVideos.Sites.Utils.NaviX
 
         string description = "";
         public string Description { get { return description; } }
-
-        string url = "";
-        public string URL { get { return url; } }
-
+        
         List<NaviXMediaItem> items = new List<NaviXMediaItem>();
         public List<NaviXMediaItem> Items { get { return items; } }
-
-        public NaviXPlaylist(string url)
+        
+        public static NaviXPlaylist Load(string url, string nxId)
         {
-            this.url = url;
-            string plTxt = OnlineVideos.Sites.SiteUtilBase.GetWebData(url);
-            parsePlaylist(plTxt);
+            CookieContainer cc = null;
+            if (url.StartsWith("http://www.navixtreme.com") && !string.IsNullOrEmpty(nxId))
+            {
+                cc = new CookieContainer();
+                cc.Add(new Cookie("nxid", nxId, "/", "www.navixtreme.com"));
+            }
+
+            string playlistText = OnlineVideos.Sites.SiteUtilBase.GetWebData(url, cc);
+            if (!string.IsNullOrEmpty(playlistText))
+                return new NaviXPlaylist(playlistText);
+            return null;
         }
 
-        void parsePlaylist(string plTxt)
+        public NaviXPlaylist(string playlistText)
         {
-            string[] plData = plTxt.Split("\r\n".ToCharArray());
-            if (plData.Length < 1)
+            parsePlaylist(playlistText);
+        }
+
+        void parsePlaylist(string playlistText)
+        {
+            string[] lines = playlistText.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length < 1)
                 return;
 
-            int state = 0;
-            int prevState = 0;
+            ParseState state = ParseState.PlaylistInfo;
+            ParseState prevState = ParseState.PlaylistInfo;
             NaviXMediaItem currentItem = null;
 
-            foreach (string m in plData)
+            for (int x = 0; x < lines.Length; x++)
             {
+                string m = lines[x];
                 int index;
                 switch (state)
                 {
-                    case 2: //Parsing playlist description
+                    case ParseState.PlaylistDescription: //Parsing playlist description
                         index = m.IndexOf("/description");
                         if (index > -1)
                         {
                             description += "\n" + m.Remove(index);
-                            state = 0;
+                            state = ParseState.PlaylistInfo;
                         }
                         else
                             description += "\n" + m;
                         continue;
-                    case 3: //Parsing item description
+                    case ParseState.ItemDescription: //Parsing item description
                         index = m.IndexOf("/description");
                         if (index > -1)
                         {
-                            description += "\n" + m.Remove(index);
-                            state = 1;
+                            currentItem.Description += "\n" + m.Remove(index);
+                            state = ParseState.ItemInfo;
                         }
                         else
-                            description += "\n" + m;
+                            currentItem.Description += "\n" + m;
                         continue;
-                    case 4: //multiline comment
+                    case ParseState.Comment: //multiline comment
                         if (m.StartsWith("\"\"\""))
                             state = prevState;
                         continue;
                 }
 
-                if (m.Length < 1 || m[0] == '#')
+                m = m.Trim();
+                if (m.Length < 1 || m.StartsWith("#"))
                     continue;
 
                 if (m.StartsWith("\"\"\"")) //Start of multiline comment
                 {
                     prevState = state;
-                    state = 4;
+                    state = ParseState.Comment;
                     continue;
                 }
 
@@ -93,7 +105,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                 string key = m.Remove(index);
                 string value = m.Substring(index + 1);
 
-                if (state == 0)
+                if (state == ParseState.PlaylistInfo)
                 {
                     switch (key)
                     {
@@ -115,17 +127,17 @@ namespace OnlineVideos.Sites.Utils.NaviX
                             else
                             { //Multi-line description
                                 description = value;
-                                state = 2;
+                                state = ParseState.PlaylistDescription;
                             }
                             continue;
                         case "type":
                             currentItem = new NaviXMediaItem();
                             currentItem.Type = value;
-                            state = 1;
+                            state = ParseState.ItemInfo;
                             continue;
                     }
                 }
-                else if (state == 1)
+                else if (state == ParseState.ItemInfo)
                 {
                     switch (key)
                     {
@@ -135,7 +147,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                                 currentItem.Version = lVersion;
                             continue;
                         case "type":
-                            items.Add(currentItem);
+                            addItem(currentItem);
                             currentItem = new NaviXMediaItem();
                             currentItem.Type = value;
                             continue;
@@ -194,16 +206,35 @@ namespace OnlineVideos.Sites.Utils.NaviX
                             else
                             {
                                 currentItem.Description = value;
-                                state = 3;
+                                state = ParseState.ItemDescription;
                             }
                             continue;
                     }
                 }
             }
 
-            if (state == 1 || prevState == 1)
-                items.Add(currentItem);
-            ready = items.Count > 0;
+            if (state == ParseState.ItemInfo || prevState == ParseState.ItemInfo)
+            {
+                addItem(currentItem);
+            }
+        }
+
+        void addItem(NaviXMediaItem item)
+        {
+            if (!string.IsNullOrEmpty(item.Name))
+                item.Name = colorTagReg.Replace(item.Name, "");
+            if (!string.IsNullOrEmpty(item.Description))
+                item.Description = colorTagReg.Replace(item.Description, "");
+            items.Add(item);
+        }
+
+        enum ParseState
+        {
+            PlaylistInfo,
+            PlaylistDescription,
+            ItemInfo,
+            ItemDescription,
+            Comment
         }
     }
 }
