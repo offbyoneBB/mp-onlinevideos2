@@ -34,6 +34,15 @@
 
 #define AKAMAI_IV_SIZE                                                        16
 
+#define FLV_PARSE_RESULT_ERROR_COUNT_AKAMAI                                   (FLV_PARSE_RESULT_ERROR_COUNT + 6)
+
+#define FLV_PARSE_RESULT_NOT_AKAMAI_PACKET                                    (-FLV_PARSE_RESULT_ERROR_COUNT - 1)
+#define FLV_PARSE_RESULT_NOT_ENOUGH_DATA_FOR_AKAMAI_HEADER                    (-FLV_PARSE_RESULT_ERROR_COUNT - 2)
+#define FLV_PARSE_RESULT_NOT_ENOUGH_DATA_FOR_AKAMAI_PACKET                    (-FLV_PARSE_RESULT_ERROR_COUNT - 3)
+#define FLV_PARSE_RESULT_NOT_FOUND_KEY_END                                    (-FLV_PARSE_RESULT_ERROR_COUNT - 4)
+#define FLV_PARSE_RESULT_CANNOT_GET_KEY_URL                                   (-FLV_PARSE_RESULT_ERROR_COUNT - 5)
+#define FLV_PARSE_RESULT_CANNOT_GET_SESSION_ID                                (-FLV_PARSE_RESULT_ERROR_COUNT - 6)
+
 class CAkamaiFlvPacket : public CFlvPacket
 {
 public:
@@ -89,13 +98,13 @@ public:
   // parses buffer for FLV packet
   // @param buffer : buffer to parse
   // @param length : length of buffer
-  // @return : true if FLV packet found, false otherwise
-  virtual bool ParsePacket(const unsigned char *buffer, unsigned int length);
+  // @return : 0 if FLV packet found, FLV_PARSE_RESULT value otherwise
+  virtual int ParsePacket(const unsigned char *buffer, unsigned int length);
 
   // parses buffer for FLV packet
   // @param buffer : linear buffer to parse
-  // @return : true if FLV packet found, false otherwise
-  virtual bool ParsePacket(CLinearBuffer *buffer);
+  // @return : 0 if FLV packet found, FLV_PARSE_RESULT value otherwise
+  virtual int ParsePacket(CLinearBuffer *buffer);
 
   // tests if current instance has initialization vector
   // @return : true if current instance has IV, false otherwise

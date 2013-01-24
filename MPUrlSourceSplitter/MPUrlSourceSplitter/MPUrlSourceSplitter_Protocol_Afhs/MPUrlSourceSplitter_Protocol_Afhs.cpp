@@ -433,7 +433,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
         CFlvPacket *flvPacket = new CFlvPacket();
         if (flvPacket != NULL)
         {
-          while (SUCCEEDED(result) && (flvPacket->ParsePacket(this->bufferForProcessing)))
+          while (SUCCEEDED(result) && (flvPacket->ParsePacket(this->bufferForProcessing) == FLV_PARSE_RESULT_OK))
           {
             // FLV packet parsed correctly
             // push FLV packet to filter

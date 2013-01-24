@@ -899,7 +899,7 @@ CAkamaiFlvPacket *CMPUrlSourceSplitter_Afhs_Decryption_Akamai::GetAkamaiFlvPacke
   CAkamaiFlvPacket *flvPacket = new CAkamaiFlvPacket();
   if (flvPacket != NULL)
   {
-    if (flvPacket->ParsePacket(buffer))
+    if (flvPacket->ParsePacket(buffer) == FLV_PARSE_RESULT_OK)
     {
       if (!flvPacket->IsAkamaiFlvPacket())
       {

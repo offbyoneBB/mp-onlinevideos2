@@ -54,6 +54,25 @@
 #define FLV_CODECID_REALH263                                                  8
 #define FLV_CODECID_MPEG4                                                     9
 
+#define FLV_PARSE_RESULT_ERROR_COUNT                                          4
+
+#define FLV_PARSE_RESULT_OK                                                   0
+
+#define FLV_PARSE_RESULT_NOT_ENOUGH_DATA_FOR_HEADER                           -1
+#define FLV_PARSE_RESULT_NOT_ENOUGH_DATA_FOR_PACKET                           -2
+#define FLV_PARSE_RESULT_NOT_ENOUGH_MEMORY                                    -3
+#define FLV_PARSE_RESULT_CHECK_SIZE_INCORRECT                                 -4
+
+#define FLV_FIND_RESULT_ERROR_COUNT                                           4
+
+#define FLV_FIND_RESULT_NOT_FOUND                                             -1
+#define FLV_FIND_RESULT_NOT_ENOUGH_DATA_FOR_HEADER                            -2
+#define FLV_FIND_RESULT_NOT_ENOUGH_MEMORY                                     -3
+#define FLV_FIND_RESULT_NOT_FOUND_MINIMUM_PACKETS                             -4
+
+#define FLV_PACKET_MINIMUM_CHECKED_UNSPECIFIED                                 0
+#define FLV_PACKET_MINIMUM_CHECKED                                             5
+
 class CFlvPacket
 {
 public:
@@ -79,14 +98,14 @@ public:
 
   // parses buffer for FLV packet
   // @param buffer : linear buffer to parse
-  // @return : true if FLV packet found, false otherwise
-  virtual bool ParsePacket(CLinearBuffer *buffer);
+  // @return : 0 if FLV packet found, FLV_PARSE_RESULT value otherwise
+  virtual int ParsePacket(CLinearBuffer *buffer);
 
   // parses buffer for FLV packet
   // @param buffer : buffer to parse
   // @param length : length of buffer
-  // @return : true if FLV packet found, false otherwise
-  virtual bool ParsePacket(const unsigned char *buffer, unsigned int length);
+  // @return : 0 if FLV packet found, FLV_PARSE_RESULT value otherwise
+  virtual int ParsePacket(const unsigned char *buffer, unsigned int length);
 
   // creates FLV packet and fill it with data from buffer
   // @param packetType : type of FLV packet (FLV_PACKET_AUDIO, FLV_PACKET_VIDEO, FLV_PACKET_META)
@@ -134,6 +153,23 @@ public:
 
   // tests if FLV packet is key frame
   virtual bool IsKeyFrame(void);
+
+  // try to find FLV packet in buffer
+  // @param buffer : buffer to try to find FLV packet
+  // @param length : length of buffer
+  // @param minimumFlvPacketsToCheck : 
+  //  minimum FLV packets to check, if not found such sequence, than FLV_FIND_RESULT_NOT_FOUND_MINIMUM_PACKETS returned
+  //  if FLV_PACKET_MINIMUM_CHECKED_UNSPECIFIED passed, than FLV_PACKET_MINIMUM_CHECKED is used
+  // @return : equal or greater to zero is position of FLV packet in buffer, FLV_FIND_RESULT value if error
+  virtual int FindPacket(const unsigned char *buffer, unsigned int length, unsigned int minimumFlvPacketsToCheck);
+
+  // try to find FLV packet in buffer
+  // @param buffer : linear buffer to parse
+  // @param minimumFlvPacketsToCheck : 
+  //  minimum FLV packets to check, if not found such sequence, than FLV_FIND_RESULT_NOT_FOUND_MINIMUM_PACKETS returned
+  //  if FLV_PACKET_MINIMUM_CHECKED_UNSPECIFIED passed, than FLV_PACKET_MINIMUM_CHECKED is used
+  // @return : equal or greater to zero is position of FLV packet in buffer, FLV_FIND_RESULT value if error
+  virtual int FindPacket(CLinearBuffer *buffer, unsigned int minimumFlvPacketsToCheck);
 
 protected:
   // holds packet type (AUDIO, VIDEO, META or HEADER)

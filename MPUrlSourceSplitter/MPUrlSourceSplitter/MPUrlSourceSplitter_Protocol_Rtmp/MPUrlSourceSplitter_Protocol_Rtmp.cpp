@@ -276,16 +276,55 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
           CRtmpStreamFragment *fragment = this->rtmpStreamFragments->GetItem(this->streamFragmentDownloading);
           CFlvPacket *flvPacket = new CFlvPacket();
 
-          bool parsedPacket = true;
-          while (SUCCEEDED(result) && (!this->shouldExit) && (this->streamFragmentDownloading != UINT_MAX) && parsedPacket)
+          int parsedPacket = FLV_PARSE_RESULT_OK;
+          while (SUCCEEDED(result) && (!this->shouldExit) && (this->streamFragmentDownloading != UINT_MAX) && (parsedPacket == FLV_PARSE_RESULT_OK))
           {
             {
               CLockMutex lockData(this->lockCurlMutex, INFINITE);
 
               parsedPacket = flvPacket->ParsePacket(this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData());
+
+              if ((this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace() != 0) && (parsedPacket == FLV_PARSE_RESULT_CHECK_SIZE_INCORRECT))
+              {
+                // we have received data, it seems that we have FLV packet, but with incorrect check size = malformed FLV packet
+
+                int findResult = flvPacket->FindPacket(this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData(), FLV_PACKET_MINIMUM_CHECKED_UNSPECIFIED);
+
+                if (findResult >= 0)
+                {
+                  // found sequence of correct FLV packets
+                  // just remove malformed data from buffer and continue
+                  this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove((unsigned int)findResult);
+                }
+                else
+                {
+                  // error returned
+                  switch (findResult)
+                  {
+                  case FLV_FIND_RESULT_NOT_FOUND:
+                    // in case of small amount of data it is not relevant
+                    break;
+                  case FLV_FIND_RESULT_NOT_ENOUGH_DATA_FOR_HEADER:
+                    // too small amount of data
+                    break;
+                  case FLV_FIND_RESULT_NOT_ENOUGH_MEMORY:
+                    // bad - not enough memory
+                    result = E_OUTOFMEMORY;
+                    this->logger->Log(LOGGER_ERROR, L"%s: %s: malformed FLV packet detected, not enough memory, buffer size: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace());
+                    break;
+                  case FLV_FIND_RESULT_NOT_FOUND_MINIMUM_PACKETS:
+                    // wait for more data
+                    break;
+                  default:
+                    this->logger->Log(LOGGER_ERROR, L"%s: %s: malformed FLV packet detected, unknown find result: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, findResult);
+                    result = E_FAIL;
+                    break;
+                  }
+                }
+              }
             }
 
-            if (parsedPacket)
+            if (SUCCEEDED(result) && (parsedPacket == FLV_PARSE_RESULT_OK))
             {
               // FLV packet parsed correctly
 
@@ -518,7 +557,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
           CFlvPacket *flvPacket = new CFlvPacket();
           if (flvPacket != NULL)
           {
-            while (SUCCEEDED(result) && (!this->shouldExit) && (flvPacket->ParsePacket(bufferForProcessing)))
+            while (SUCCEEDED(result) && (!this->shouldExit) && (flvPacket->ParsePacket(bufferForProcessing) == FLV_PARSE_RESULT_OK))
             {
               // FLV packet parsed correctly
               // push FLV packet to filter
@@ -1335,7 +1374,7 @@ CLinearBuffer *CMPUrlSourceSplitter_Protocol_Rtmp::FillBufferForProcessing(CRtmp
 
           while (correct && (position < bufferLength))
           {
-            correct = (flvPacket->ParsePacket(buffer + position, bufferLength - position));
+            correct = (flvPacket->ParsePacket(buffer + position, bufferLength - position) == FLV_PARSE_RESULT_OK);
 
             if (correct)
             {
