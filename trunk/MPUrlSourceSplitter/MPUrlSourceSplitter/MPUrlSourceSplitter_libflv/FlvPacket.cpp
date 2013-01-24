@@ -55,15 +55,17 @@ unsigned int CFlvPacket::GetType(void)
   return this->type;
 }
 
-bool CFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
+int CFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
 {
-  bool result = false;
+  int result = FLV_PARSE_RESULT_NOT_ENOUGH_DATA_FOR_HEADER;
   this->Clear();
 
   if ((buffer != NULL) && (length >= FLV_PACKET_HEADER_LENGTH))
   {
     // at least size for FLV header
     this->packet = ALLOC_MEM_SET(this->packet, unsigned char, FLV_PACKET_HEADER_LENGTH, 0);
+    result = (this->packet != NULL) ? result : FLV_PARSE_RESULT_NOT_ENOUGH_MEMORY;
+
     if (this->packet != NULL)
     {
       memcpy(this->packet, buffer, FLV_PACKET_HEADER_LENGTH);
@@ -73,7 +75,7 @@ bool CFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
       {
         this->size = FLV_PACKET_HEADER_LENGTH;
         this->type = FLV_PACKET_HEADER;
-        result = true;
+        result = FLV_PARSE_RESULT_OK;
       }
       else
       {
@@ -86,10 +88,14 @@ bool CFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
         this->size <<= 8;
         this->size += ((unsigned char)this->packet[3]) + 0x0F;
 
+        result = (length >= this->size) ? result : FLV_PARSE_RESULT_NOT_ENOUGH_DATA_FOR_PACKET;
+
         if (length >= this->size)
         {
           FREE_MEM(this->packet);
           this->packet = ALLOC_MEM_SET(this->packet, unsigned char, this->size, 0);
+          result = (this->packet != NULL) ? result : FLV_PARSE_RESULT_NOT_ENOUGH_MEMORY;
+
           if (this->packet != NULL)
           {
             memcpy(this->packet, buffer, this->size);
@@ -101,18 +107,16 @@ bool CFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
             checkSize <<= 8;
             checkSize += ((unsigned char)this->packet[this->size - 1]) + 4;
 
-            if (this->size == checkSize)
-            {
-              // FLV packet has correct size
-              result = true;
-            }
+            // FLV packet has correct size return FLV_PARSE_RESULT_OK
+            // FLV packet has incorrect size return FLV_PARSE_RESULT_CHECK_SIZE_INCORRECT
+            result = (this->size == checkSize) ? FLV_PARSE_RESULT_OK : FLV_PARSE_RESULT_CHECK_SIZE_INCORRECT;
           }
         }
       }
     }
   }
 
-  if (!result)
+  if (result != FLV_PARSE_RESULT_OK)
   {
     this->Clear();
   }
@@ -145,9 +149,9 @@ unsigned int CFlvPacket::GetPossiblePacketSize(const unsigned char *buffer, unsi
   return result;
 }
 
-bool CFlvPacket::ParsePacket(CLinearBuffer *buffer)
+int CFlvPacket::ParsePacket(CLinearBuffer *buffer)
 {
-  bool result = false;
+  int result = FLV_PARSE_RESULT_NOT_ENOUGH_DATA_FOR_HEADER;
   this->Clear();
 
   if ((buffer != NULL) && (buffer->GetBufferOccupiedSpace() >= FLV_PACKET_HEADER_LENGTH))
@@ -155,6 +159,8 @@ bool CFlvPacket::ParsePacket(CLinearBuffer *buffer)
     unsigned int possibleSize = UINT_MAX;
     // first get possible FLV packet size
     ALLOC_MEM_DEFINE_SET(sizeBuffer, unsigned char, FLV_PACKET_HEADER_LENGTH, 0);
+    result = (sizeBuffer != NULL) ? result : FLV_PARSE_RESULT_NOT_ENOUGH_MEMORY;
+
     if (sizeBuffer != NULL)
     {
       buffer->CopyFromBuffer(sizeBuffer, FLV_PACKET_HEADER_LENGTH, 0, 0);
@@ -162,10 +168,14 @@ bool CFlvPacket::ParsePacket(CLinearBuffer *buffer)
     }
     FREE_MEM(sizeBuffer);
 
+    result = (possibleSize != UINT_MAX) ? result : FLV_PARSE_RESULT_NOT_ENOUGH_MEMORY;
+
     if (possibleSize != UINT_MAX)
     {
       // at least size for FLV header
       ALLOC_MEM_DEFINE_SET(buf, unsigned char, possibleSize, 0);
+      result = (buf != NULL) ? result : FLV_PARSE_RESULT_NOT_ENOUGH_MEMORY;
+
       if (buf != NULL)
       {
         buffer->CopyFromBuffer(buf, possibleSize, 0, 0);
@@ -175,7 +185,7 @@ bool CFlvPacket::ParsePacket(CLinearBuffer *buffer)
     }
   }
 
-  if (!result)
+  if (result != FLV_PARSE_RESULT_OK)
   {
     this->Clear();
   }
@@ -315,4 +325,154 @@ void CFlvPacket::Clear(void)
 bool CFlvPacket::IsKeyFrame(void)
 {
   return ((this->type == FLV_PACKET_VIDEO) && (this->GetFrameType() == FLV_FRAME_KEY));
+}
+
+int CFlvPacket::FindPacket(const unsigned char *buffer, unsigned int length, unsigned int minimumFlvPacketsToCheck)
+{
+  int result = FLV_FIND_RESULT_NOT_ENOUGH_DATA_FOR_HEADER;
+
+  if ((buffer != NULL) && (length >= FLV_PACKET_HEADER_LENGTH))
+  {
+    result = FLV_FIND_RESULT_NOT_FOUND;
+    minimumFlvPacketsToCheck = (minimumFlvPacketsToCheck == FLV_PACKET_MINIMUM_CHECKED_UNSPECIFIED) ? FLV_PACKET_MINIMUM_CHECKED : minimumFlvPacketsToCheck;
+
+    int firstFlvPacketPosition = -1;    // position of first FLV packet
+    int packetsChecked  = 0;            // checked FLV packets count
+    int processedBytes = 0;             // processed bytes for correct seek position value
+
+    while ((processedBytes < length) && ((firstFlvPacketPosition < 0) || (packetsChecked <= minimumFlvPacketsToCheck)))
+    {
+      // repeat until first FLV packet is found and verified by at least (minimumFlvPacketsToCheck + 1) another FLV packet
+
+      // try to find flv packets in buffer
+
+      int i = 0;
+      int flvPacketLength = 0;
+
+      while (i < length)
+      {
+        // we have to check bytes in whole buffer
+
+        if (((buffer[i] == FLV_PACKET_AUDIO) || (buffer[i] == FLV_PACKET_VIDEO) || (buffer[i] == FLV_PACKET_META)) && (firstFlvPacketPosition == (-1)))
+        {
+          flvPacketLength = 0;
+          // possible audio, video or meta tag
+
+          if ((i + 3) < length)
+          {
+            // in buffer have to be at least 3 next bytes for FLV packet length
+            // remember FLV packet length and possible first FLV packet postion
+            flvPacketLength = (buffer[i + 1] << 8 | buffer[i + 2]) << 8 | buffer[i + 3];
+            if (flvPacketLength > (length - i))
+            {
+              // FLV packet length has wrong value, it's after valid data
+              firstFlvPacketPosition = -1;
+              packetsChecked = 0;
+              i++;
+              continue;
+            }
+            // the FLV packet length is in valid range
+            // remeber first FLV packet position and skip to possible next packet
+            firstFlvPacketPosition = i;
+            i += flvPacketLength + 15;
+            continue;
+          }
+          else
+          {
+            // clear first FLV packet position and go to next byte in buffer
+            firstFlvPacketPosition = -1;
+            packetsChecked = 0;
+            i++;
+            continue;
+          }
+        }
+        else if (((buffer[i] == FLV_PACKET_AUDIO) || (buffer[i] == FLV_PACKET_VIDEO) || (buffer[i] == FLV_PACKET_META)) && (firstFlvPacketPosition != (-1)))
+        {
+          // possible next packet, verify
+          int previousLength = -1;
+          int nextLength = -1;
+
+          if ((i - 3) >= 0)
+          {
+            // valid range for previous FLV packet length
+            previousLength = (buffer[i - 3] << 8 | buffer[i - 2]) << 8 | buffer[i - 1];
+          }
+
+          if ((i + 3) < length)
+          {
+            // valid range for previous FLV packet length
+            nextLength = (buffer[i + 1] << 8 | buffer[i + 2]) << 8 | buffer[i + 3];
+          }
+
+          if ((previousLength != (-1)) && (nextLength != (-1)))
+          {
+            if (previousLength == (flvPacketLength + 11))
+            {
+              // correct value of previous FLV packet length
+              // skip to next possible FLV packet
+              packetsChecked++;
+              i += nextLength + 15;
+              flvPacketLength = nextLength;
+              continue;
+            }
+          }
+
+          // bad FLV packet
+          i = firstFlvPacketPosition + 1;
+          firstFlvPacketPosition = -1;
+          packetsChecked = 0;
+          continue;
+        }
+        else if (firstFlvPacketPosition != (-1))
+        {
+          // FLV packet after first FLV packet not found
+          // first FLV packet is not FLV packet
+          i = firstFlvPacketPosition + 1;
+          firstFlvPacketPosition = -1;
+          packetsChecked = 0;
+          continue;
+        }
+
+        // go to next byte in buffer
+        i++;
+      }
+
+      if (firstFlvPacketPosition < 0)
+      {
+        processedBytes += length;
+      }
+      else if ((firstFlvPacketPosition >= 0) && (packetsChecked <= minimumFlvPacketsToCheck))
+      {
+        processedBytes += length;
+        result = FLV_FIND_RESULT_NOT_FOUND_MINIMUM_PACKETS;
+      }
+      else if ((firstFlvPacketPosition >= 0) && (packetsChecked > minimumFlvPacketsToCheck))
+      {
+        result = firstFlvPacketPosition;
+      }
+    }
+  }
+
+  return result;
+}
+
+int CFlvPacket::FindPacket(CLinearBuffer *buffer, unsigned int minimumFlvPacketsToCheck)
+{
+  int result = FLV_FIND_RESULT_NOT_ENOUGH_DATA_FOR_HEADER;
+
+  if ((buffer != NULL) && (buffer->GetBufferOccupiedSpace() >= FLV_PACKET_HEADER_LENGTH))
+  {
+    // at least size for FLV header
+    ALLOC_MEM_DEFINE_SET(buf, unsigned char, buffer->GetBufferOccupiedSpace(), 0);
+    result = (buf != NULL) ? result : FLV_FIND_RESULT_NOT_ENOUGH_MEMORY;
+
+    if (buf != NULL)
+    {
+      buffer->CopyFromBuffer(buf, buffer->GetBufferOccupiedSpace(), 0, 0);
+      result = this->FindPacket(buf, buffer->GetBufferOccupiedSpace(), minimumFlvPacketsToCheck);
+    }
+    FREE_MEM(buf);
+  }
+
+  return result;
 }

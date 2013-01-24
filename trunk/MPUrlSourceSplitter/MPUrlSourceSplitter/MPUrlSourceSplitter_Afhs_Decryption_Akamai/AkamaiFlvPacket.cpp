@@ -101,14 +101,16 @@ bool CAkamaiFlvPacket::IsAkamaiFlvPacket(void)
   return ((this->type & 0x00000002) != 0);
 }
 
-bool CAkamaiFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
+int CAkamaiFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int length)
 {
-  bool result = __super::ParsePacket(buffer, length);
+  int result = __super::ParsePacket(buffer, length);
 
-  if (result)
+  if (result == FLV_PARSE_RESULT_OK)
   {
     // correctly parsed FLV packet
     // it doesn't mean that packet is also akamai FLV packet
+
+    result = FLV_PARSE_RESULT_NOT_ENOUGH_DATA_FOR_AKAMAI_HEADER;
 
     if (this->size >= (AKAMAI_PACKET_DATA_START + AKAMAI_PACKET_HEADER_MINIMUM_SIZE))
     {
@@ -127,7 +129,7 @@ bool CAkamaiFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int len
       {
       case AKAMAI_VERSION_12:
         {
-          result = true;
+          result = FLV_PARSE_RESULT_OK;
 
           RBE32INC(buf, position, this->ecmId);
           RBE32INC(buf, position, this->ecmTimestamp);
@@ -146,9 +148,9 @@ bool CAkamaiFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int len
             // next 16 bytes is IV
             this->ivSize = AKAMAI_IV_SIZE;
             this->iv = ALLOC_MEM_SET(this->iv, uint8_t, AKAMAI_IV_SIZE, 0);
-            result &= (this->iv != NULL);
+            result = (this->iv != NULL) ? result : FLV_PARSE_RESULT_NOT_ENOUGH_MEMORY;
 
-            if (result)
+            if (result == FLV_PARSE_RESULT_OK)
             {
               for (unsigned int i = 0; i < AKAMAI_IV_SIZE; i++)
               {
@@ -179,13 +181,14 @@ bool CAkamaiFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int len
                 break;
               }
             }
-            result &= foundEnd;
+            result = (foundEnd) ? result : FLV_PARSE_RESULT_NOT_FOUND_KEY_END;
 
-            if ((result) && (size > 0))
+            if ((result == FLV_PARSE_RESULT_OK) && (size > 0))
             {
               ALLOC_MEM_DEFINE_SET(tempKeyUrl, char, (size + 1), 0);
-              result &= (tempKeyUrl != NULL);
-              if (result)
+              result = (tempKeyUrl != NULL) ? result : FLV_PARSE_RESULT_NOT_ENOUGH_MEMORY;
+
+              if (result == FLV_PARSE_RESULT_OK)
               {
                 for (unsigned int i = 0; i < size; i++)
                 {
@@ -193,16 +196,16 @@ bool CAkamaiFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int len
                 }
 
                 this->keyUrl = ConvertToUnicodeA(tempKeyUrl);
-                result &= (this->keyUrl != NULL);
+                result = (this->keyUrl != NULL) ? result : FLV_PARSE_RESULT_CANNOT_GET_KEY_URL;
 
-                if (result)
+                if (result == FLV_PARSE_RESULT_OK)
                 {
                   // set session ID
                   int sessionIdIndex = IndexOf(this->keyUrl, L"/key_");
                   if (sessionIdIndex != (-1))
                   {
                     this->sessionId = Substring(this->keyUrl, sessionIdIndex + 5);
-                    result &= (this->sessionId != NULL);
+                    result = (this->sessionId != NULL) ? result : FLV_PARSE_RESULT_CANNOT_GET_SESSION_ID;
                   }
                 }
               }
@@ -210,7 +213,7 @@ bool CAkamaiFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int len
             }
           }
 
-          if (!result)
+          if (result != FLV_PARSE_RESULT_OK)
           {
             this->Clear();
           }
@@ -219,7 +222,7 @@ bool CAkamaiFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int len
       default:
         // bad packet version
         this->Clear();
-        result = false;
+        result = FLV_PARSE_RESULT_NOT_AKAMAI_PACKET;
         break;
       }
     }
@@ -228,7 +231,7 @@ bool CAkamaiFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int len
   return result;
 }
 
-bool CAkamaiFlvPacket::ParsePacket(CLinearBuffer *buffer)
+int CAkamaiFlvPacket::ParsePacket(CLinearBuffer *buffer)
 {
   return __super::ParsePacket(buffer);
 }
