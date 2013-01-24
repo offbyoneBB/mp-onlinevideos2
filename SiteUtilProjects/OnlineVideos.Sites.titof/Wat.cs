@@ -12,7 +12,7 @@ namespace OnlineVideos.Sites
         {
             string webData = GetWebData(@"http://www.wat.tv/chaines");
                        
-            Regex r = new Regex(@"<a\sid=""themeItem[^""]*""\sclass=""""\shref=""(?<url>[^""]*)""><span\sclass=""curseurChoice"">&nbsp;</span>(?<title>[^<]*)</a>",
+            Regex r = new Regex(@"<a\srel=""nofollow""\sid=""themeItem[^""]*""\sclass=""""\shref=""(?<url>[^""]*)""><span\sclass=""curseurChoice"">&nbsp;</span>(?<title>[^<]*)</a>",
                 RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
 
             Match m = r.Match(webData);
