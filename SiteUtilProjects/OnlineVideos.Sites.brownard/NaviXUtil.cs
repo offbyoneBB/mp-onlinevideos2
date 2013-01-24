@@ -12,6 +12,12 @@ namespace OnlineVideos.Sites
 {
     public class NaviXUtil : SiteUtilBase
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Navi Xtreme username.")]
+        string Username = null;
+        [Category("OnlineVideosUserConfiguration"), Description("Navi Xtreme password.")]
+        string Password = null;
+        string nxId = null;
+
         Dictionary<string, string> searchableCats = null;        
         DateTime lastUpdate = DateTime.MinValue;
         public override int DiscoverDynamicCategories()
@@ -107,19 +113,24 @@ namespace OnlineVideos.Sites
             NaviXMediaItem item = video.Other as NaviXMediaItem;
             if (item == null)
                 return video.VideoUrl;
-            string urlStr;
+            
             if (item.Type == "video" && !string.IsNullOrEmpty(item.Processor))
             {
-                NaviXProcessor proc = new NaviXProcessor(item);
+                NaviXProcessor proc = new NaviXProcessor(item.Processor, item.URL, item.Version, nxId);
                 if (proc.Process())
-                    urlStr = proc.Data;
+                {
+                    item.URL = proc.Data;
+                    item.Processor = null;
+                }
                 else
-                    return "";
+                {
+                    string message = string.IsNullOrEmpty(proc.LastError) ? "Error retrieving url" : proc.LastError;
+                    throw new OnlineVideosException("Navi-X says: " + message);
+                }
             }
-            else
-                urlStr = item.URL;
-            
-            if (urlStr.ToLower().StartsWith("rtmp"))
+
+            string urlStr = item.URL;            
+            if (urlStr != null && urlStr.ToLower().StartsWith("rtmp"))
             {
                 MPUrlSourceFilter.RtmpUrl url = getRTMPUrl(urlStr);
                 return url.ToString();
@@ -160,19 +171,22 @@ namespace OnlineVideos.Sites
             SubCatHolder holder = new SubCatHolder();
             holder.SubCategories = new List<Category>();
             holder.SearchableCategories = new Dictionary<string, string>();
-            NaviXPlaylist pl = new NaviXPlaylist(playlistUrl);
-            if (pl.Ready)
+
+            if (playlistUrl.StartsWith("http://www.navixtreme.com"))
+                login();
+
+            NaviXPlaylist pl = NaviXPlaylist.Load(playlistUrl, nxId);
+            if (pl != null)
             {
                 foreach (NaviXMediaItem item in pl.Items)
                 {
-                    if (string.IsNullOrEmpty(item.Type))
-                        continue;
                     RssLink cat;
-                    if (System.Text.RegularExpressions.Regex.IsMatch(item.URL, @"[?&]page=\d+"))
+                    if (!string.IsNullOrEmpty(item.URL) && System.Text.RegularExpressions.Regex.IsMatch(item.URL, @"[?&]page=\d+"))
                         cat = new NextPageCategory();
                     else
                         cat = new RssLink();
-                    cat.Name = System.Text.RegularExpressions.Regex.Replace(item.Name, @"\[/?COLOR[^\]]*\]", "");
+
+                    cat.Name = item.Name;
                     if (!string.IsNullOrEmpty(item.InfoTag))
                         cat.Name += string.Format(" ({0})", item.InfoTag);
                     cat.Description = string.IsNullOrEmpty(item.Description) ? pl.Description : item.Description;
@@ -192,6 +206,14 @@ namespace OnlineVideos.Sites
                 }
             }
             return holder;
+        }
+
+        void login()
+        {
+            if (nxId != null || string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
+                return;
+            string postData = string.Format("username={0}&password={1}", System.Web.HttpUtility.UrlEncode(Username), System.Web.HttpUtility.UrlEncode(Password));
+            nxId = GetWebDataFromPost("http://www.navixtreme.com/login/", postData);
         }
 
         MPUrlSourceFilter.RtmpUrl getRTMPUrl(string naviXRTMPUrl)

@@ -18,6 +18,10 @@ namespace OnlineVideos.Sites
         string proxyUsername = null;
         [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a password, set it here.")]
         string proxyPassword = null;
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used on a video thumbnail for matching a string to be replaced for higher quality")]
+        protected string thumbReplaceRegExPattern;
+        [Category("OnlineVideosConfiguration"), Description("The string used to replace the match if the pattern from the thumbReplaceRegExPattern matched")]
+        protected string thumbReplaceString;
         [Category("OnlineVideosUserConfiguration"), Description("Whether to download subtitles")]
         protected bool RetrieveSubtitles = false;
         [Category("OnlineVideosUserConfiguration"), Description("Select stream automatically?")]
@@ -73,7 +77,10 @@ namespace OnlineVideos.Sites
                 cat.Other = parentCategory.Other;
                 cat.Url = "http://www.itv.com" + match.Groups[2].Value;
                 cat.Name = cleanString(match.Groups[3].Value);
-                cat.Thumb = match.Groups[1].Value;
+                string thumb = match.Groups[1].Value;
+                if(!string.IsNullOrEmpty(thumbReplaceRegExPattern))
+                    thumb = Regex.Replace(thumb, thumbReplaceRegExPattern, thumbReplaceString);
+                cat.Thumb = thumb;
                 cat.EstimatedVideoCount = uint.Parse(match.Groups[4].Value);
                 subCats.Add(cat);
             }
@@ -151,7 +158,11 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo vid = new VideoInfo();
                 vid.VideoUrl = match.Groups[1].Value;
-                vid.ImageUrl = match.Groups[2].Value;
+
+                string thumb = match.Groups[2].Value;
+                if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
+                    thumb = Regex.Replace(thumb, thumbReplaceRegExPattern, thumbReplaceString);
+                vid.ImageUrl = thumb;
                 vid.Title = cleanString(match.Groups[3].Value);
                 vid.Airdate = match.Groups[4].Value;
                 vid.Description = cleanString(match.Groups[10].Value);
