@@ -232,7 +232,7 @@ namespace OnlineVideos.Sites
                     }
                     else if (rtmpFromScraper.Contains("manifest.f4m"))
                     {
-                        result = new MPUrlSourceFilter.HttpUrl(string.Format("{0}&hdcore=2.11.3&g={1}", rtmpFromScraper, GetRandomChars(12))) {
+                        result = new MPUrlSourceFilter.HttpUrl(string.Format("{0}?hdcore=2.11.3&g={1}", rtmpFromScraper, GetRandomChars(12))) {
                             Referer = @"http://esi2.ctv.ca/players/mediaplayer/builds/ets_3.1/etsmediaplayer/etsmediaplayer_3.0.55.4.QOS.swf",
                             UserAgent = @"Mozilla/5.0 (Windows NT 5.1; rv:17.0) Gecko/20100101 Firefox/17.0"
                         }.ToString();
