@@ -30,7 +30,7 @@ namespace OnlineVideos.Sites.georgius
         private static String showEpisodeVideoStart = @"LBX.init";
         private static String showEpisodeVideoEnd = @");";
         private static String showEpisodeVideoRegex = @"year=(?<year>[0-9]*),week=(?<week>[0-9]*)";
-        private static String showEpisodeUrlFormat = @"http://bcaste.livebox.cz/UP_Smooth/AS/{0}/{1:00}{0}/{1:00}{0}.ism/Manifest"; // 0 - year, 1 - week
+        private static String showEpisodeUrlFormat = @"http://bcasthw.livebox.cz/AS/_definst_/AS/smil:{1:00}{0}.smil/Manifest"; // 0 - year, 1 - week
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -233,8 +233,8 @@ namespace OnlineVideos.Sites.georgius
                     Match match = Regex.Match(data, AutosalonUtil.showEpisodeVideoRegex);
                     if (match.Success)
                     {
-                        String year = match.Groups["year"].Value;
-                        String week = match.Groups["week"].Value;
+                        int year = int.Parse(match.Groups["year"].Value);
+                        int week = int.Parse(match.Groups["week"].Value);
 
                         videoUrl = String.Format(AutosalonUtil.showEpisodeUrlFormat, year, week);
                     }

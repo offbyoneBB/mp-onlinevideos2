@@ -69,7 +69,7 @@ namespace OnlineVideos.Sites.georgius
 
         private static String showEpisodesUrlCategoryUrlRegex = @"<a href=""(?<showEpisodesUrlCategoryUrl>[^""]*)"">(?<showEpisodesUrlCategoryName>[^<]*)";
 
-        private static String videoUrlBlockStart = @"new VideoPlayer";
+        private static String videoUrlBlockStart = @"new CSFD.VideoPlayer";
         private static String videoUrlBlockEnd = @"player.create()";
         private static String videoUrlRegex = @"""src"":""(?<videoUrl>[^""]+)";
         private static String subtitleUrlRegex = @"<track src=""/subtitles-proxy/\?url=(?<subtitleUrl>[^""]+)";
