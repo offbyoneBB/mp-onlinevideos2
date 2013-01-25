@@ -4,7 +4,9 @@ using System.Reflection;
 using System.Linq;
 using System.IO;
 using System.Threading;
+#if SUBTITLE
 using SubtitleDownloader.Core;
+#endif
 
 namespace OnlineVideos.Subtitles
 {
@@ -36,7 +38,9 @@ namespace OnlineVideos.Subtitles
             {
                 if (tryLoadSubtitles)
                 {
+#if SUBTITLE
                     tryLoadSubtitles = tryLoad(className);
+#endif
                 }
                 else
                     Log.Debug("SubtitleDownloader: classname empty");
@@ -59,7 +63,9 @@ namespace OnlineVideos.Subtitles
                 if (sdObject != null && it != null && String.IsNullOrEmpty(video.SubtitleText))
                     try
                     {
+#if SUBTITLE
                         setSubtitleText(video, it);
+#endif
                     }
                     catch (Exception e)
                     {
@@ -81,7 +87,9 @@ namespace OnlineVideos.Subtitles
                         {
                             try
                             {
+#if SUBTITLE
                                 setSubtitleText(video, it);
+#endif
                             }
                             catch (Exception e)
                             {
@@ -98,6 +106,8 @@ namespace OnlineVideos.Subtitles
             if (thread != null)
                 thread.Join();
         }
+
+#if SUBTITLE
 
         // keep all references to subtitledownloader in separate methods, so that methods that are called from siteutil don't throw an ecxeption
         private bool tryLoad(string className)
@@ -163,6 +173,6 @@ namespace OnlineVideos.Subtitles
                     fi.Delete();
             }
         }
-
+#endif
     }
 }
