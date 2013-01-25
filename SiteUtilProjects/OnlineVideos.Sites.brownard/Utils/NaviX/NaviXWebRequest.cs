@@ -29,7 +29,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
 
             responseHeaders = new Dictionary<string, string>();
             responseCookies = new Dictionary<string, string>();
-            //Log.Debug("NaviX: Processor: "
+            
             try
             {
                 Uri uri = new Uri(RequestUrl);
@@ -39,9 +39,10 @@ namespace OnlineVideos.Sites.Utils.NaviX
 
                 if (!string.IsNullOrEmpty(Referer)) request.Referer = Referer;
                 if (!string.IsNullOrEmpty(UserAgent)) request.UserAgent = UserAgent;
+
+                request.CookieContainer = new CookieContainer();
                 if (!string.IsNullOrEmpty(RequestCookies))
                 {
-                    request.CookieContainer = new CookieContainer();
                     foreach (string cookie in RequestCookies.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
                     {
                         string[] cookKeyVal = cookie.Split('=');
