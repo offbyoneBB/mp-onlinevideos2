@@ -46,13 +46,17 @@ namespace OnlineVideos.Sites
                     searchableCats = holder.SearchableCategories;
                     return holder.SubCategories.Count;
                 }
-                NaviXMediaItem naviXItem = holder.Other as NaviXMediaItem;
+            }
+            else
+            {
+                NaviXMediaItem naviXItem = parentCategory.Other as NaviXMediaItem;
                 if (naviXItem != null)
                 {
                     if (naviXItem.Type == "search")
                         throw new OnlineVideosException("To search specify search category and use OnlineVideos search feature");
                 }
             }
+
             string plUrl = (parentCategory as RssLink).Url;
             holder = getCats(plUrl, parentCategory);
             parentCategory.SubCategories = holder.SubCategories;
@@ -113,14 +117,14 @@ namespace OnlineVideos.Sites
             NaviXMediaItem item = video.Other as NaviXMediaItem;
             if (item == null)
                 return video.VideoUrl;
-            
+
+            string urlStr = item.URL;
             if (item.Type == "video" && !string.IsNullOrEmpty(item.Processor))
             {
                 NaviXProcessor proc = new NaviXProcessor(item.Processor, item.URL, item.Version, nxId);
                 if (proc.Process())
                 {
-                    item.URL = proc.Data;
-                    item.Processor = null;
+                    urlStr = proc.Data;
                 }
                 else
                 {
@@ -128,8 +132,7 @@ namespace OnlineVideos.Sites
                     throw new OnlineVideosException("Navi-X says: " + message);
                 }
             }
-
-            string urlStr = item.URL;            
+           
             if (urlStr != null && urlStr.ToLower().StartsWith("rtmp"))
             {
                 MPUrlSourceFilter.RtmpUrl url = getRTMPUrl(urlStr);
@@ -153,6 +156,7 @@ namespace OnlineVideos.Sites
 
         public override List<ISearchResultItem> DoSearch(string query, string category)
         {
+            searchableCats = null;
             List<ISearchResultItem> results = new List<ISearchResultItem>();
             foreach (Category cat in getCats(category + query).SubCategories)
                 results.Add(cat);
@@ -201,7 +205,7 @@ namespace OnlineVideos.Sites
                     cat.ParentCategory = parentCategory;
                     cat.Other = item;
                     holder.SubCategories.Add(cat);
-                    if (item.Type == "search" && searchableCats != null)
+                    if (item.Type == "search")
                         holder.SearchableCategories[cat.Name] = cat.Url;
                 }
             }
