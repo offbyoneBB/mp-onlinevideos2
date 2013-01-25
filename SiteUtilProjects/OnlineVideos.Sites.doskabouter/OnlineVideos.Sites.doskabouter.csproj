@@ -38,7 +38,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SUBTITLE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
