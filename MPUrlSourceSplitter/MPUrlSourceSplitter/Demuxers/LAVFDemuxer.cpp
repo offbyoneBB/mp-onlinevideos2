@@ -252,7 +252,7 @@ STDMETHODIMP CLAVFDemuxer::OpenInputStream(AVIOContext *byteContext, LPCOLESTR p
   DbgLog((LOG_TRACE, 10, TEXT("::OpenInputStream(): avformat_open_input opened file of type '%S' (took %I64d seconds)"), m_avFormat->iformat->name, time(NULL) - m_timeOpening));
   m_timeOpening = 0;
 
-  CHECK_HR(hr = InitAVFormat(pszFileName));
+  CHECK_HR(ret = InitAVFormat(pszFileName));
 
   return S_OK;
 done:
@@ -363,9 +363,13 @@ STDMETHODIMP CLAVFDemuxer::InitAVFormat(LPCOLESTR pszFileName)
 
   const char *format = NULL;
   lavf_get_iformat_infos(m_avFormat->iformat, &format, NULL);
-  if (!format || !m_pSettings->IsFormatEnabled(format)) {
-    DbgLog((LOG_TRACE, 20, L"::InitAVFormat() - format of type '%S' disabled, failing", format ? format : m_avFormat->iformat->name));
-    return E_FAIL;
+  if (!format || !m_pSettings->IsFormatEnabled(format))
+  {
+    if ((m_avFormat->iformat == NULL) || (strcmp(m_avFormat->iformat->name, "mjpeg")))
+    {
+      DbgLog((LOG_TRACE, 20, L"::InitAVFormat() - format of type '%S' disabled, failing", format ? format : m_avFormat->iformat->name));
+      return E_FAIL;
+    }
   }
 
   m_pszInputFormat = format ? format : m_avFormat->iformat->name;
