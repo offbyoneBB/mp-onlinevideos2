@@ -237,16 +237,10 @@ namespace OnlineVideos.Sites
 
             }
 
-            string regex_Type1 = @"<li\sclass=""teaser[^""]*""><a\shref=""(?<url>[^""]*)""\sclass=""[^""]*""\stitle=""[^""]*""><span\sclass=""[^""]*""><img\ssrc=""(?<thumb>[^""]*)""\salt=""[^""]*"".*?>.*?<span\sclass=""[^""]*"">.*?class=""[^""]*"">(?<duree>[^<]*)</span><strong\sclass=""[^""]*"">(?<title>[^<]*)</strong><span\sclass=""[^""]*"">(?<description>[^<]*)</span><span\sclass=""[^""]*""><img\ssrc=""[^""]*""\salt="""">[^<]*</span></span></a></li>";
-            string regex_Type2 = @"rel=""nofollow"">.*?<img\ssrc=""(?<thumb>[^""]*)""\scp=""[^""]*""\salt=""[^""]*""\sclass=""[^""]*"">.*?</a>\s<a\sonmousedown=""[^""]*""\shref=""\#""\s*class=""duree.*?""\srel=""nofollow"">(?<duree>[^<]*)<span\sclass=""[^""]*"">[^<]*</span></a>\s</div>\s<div\sclass=""[^""]*"">\s<div\sclass=""[^""]*"">\s<span\sclass=""[^""]*""\sstyle=""[^""]*"">[^<]*</span>.*?</span>.*?<h3\sclass=""[^""]*"">.*?<a\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a>.*?</h3>\s<p\sclass=""[^""]*"">(?<description>[^<]*)</p>";
+            string regex_Type1 = @"<li\sclass=""teaser[^""]*""><a[^>]*><img\ssrc=""(?<thumb>[^""]*)""[^>]*>(<span\sclass=""[^""]*"">.*?</span>)?</a><div\sclass=""description""><div\sclass=""[^""]*"">(?<duree>[^<]*)</div><h2\sclass=""[^""]*""><a\shref=""(?<url>[^""]*)""\sclass=""[^""]*"">(?<title>[^<]*)</a></h2><p\sclass=""[^""]*"">(?<description>[^<]*)</p>";
             
             Regex r = new Regex(regex_Type1,
                 RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
-            if (!r.IsMatch(webData))
-            {
-                r = new Regex(regex_Type2,
-                RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
-            }
             Match m = r.Match(webData);
              
             while (m.Success)
