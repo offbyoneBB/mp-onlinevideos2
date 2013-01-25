@@ -30,7 +30,9 @@ namespace OnlineVideos.Sites.georgius
         private static String showEpisodeVideoStart = @"LBX.init";
         private static String showEpisodeVideoEnd = @");";
         private static String showEpisodeVideoRegex = @"year=(?<year>[0-9]*),week=(?<week>[0-9]*)";
-        private static String showEpisodeUrlFormat = @"http://bcasthw.livebox.cz/AS/_definst_/AS/smil:{1:00}{0}.smil/Manifest"; // 0 - year, 1 - week
+
+        private static String smoothServer = "http://assmooth.livebox.cz/UP_Smooth/AS/{0}/{1:00}{0}/{1:00}{0}.ism/Manifest";
+        private static String smoothServerWowza = "http://bcasthw.livebox.cz:80/AS/_definst_/AS/smil:{1:00}{0}.smil/Manifest";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -236,7 +238,28 @@ namespace OnlineVideos.Sites.georgius
                         int year = int.Parse(match.Groups["year"].Value);
                         int week = int.Parse(match.Groups["week"].Value);
 
-                        videoUrl = String.Format(AutosalonUtil.showEpisodeUrlFormat, year, week);
+                        if (year < 2012)
+                        {
+                            videoUrl = String.Format(AutosalonUtil.smoothServer, year, week);
+                        }
+                        else
+                        {
+                            if (year == 2012)
+                            {
+                                if (week >= 46)
+                                {
+                                    videoUrl = String.Format(AutosalonUtil.smoothServerWowza, year, week);
+                                }
+                                else
+                                {
+                                    videoUrl = String.Format(AutosalonUtil.smoothServer, year, week);
+                                }
+                            }
+                            else
+                            {
+                                videoUrl = String.Format(AutosalonUtil.smoothServerWowza, year, week);
+                            }
+                        }
                     }
                 }
             }
