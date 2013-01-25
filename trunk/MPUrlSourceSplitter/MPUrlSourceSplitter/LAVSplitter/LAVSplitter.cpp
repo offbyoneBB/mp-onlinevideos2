@@ -648,7 +648,7 @@ STDMETHODIMP CLAVSplitter::CreateDemuxer(const wchar_t *pszFileName)
       }
       else
       {
-        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_NAME, L"OpenInputStream() returned error");
+        this->logger->Log(LOGGER_ERROR, L"%s: %s; OpenInputStream() returned error: 0x%08X", MODULE_NAME, METHOD_CREATE_DEMUXER_NAME, result);
         SAFE_DELETE(pDemux);
       }
     }
