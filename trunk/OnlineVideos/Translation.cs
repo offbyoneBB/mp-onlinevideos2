@@ -328,7 +328,8 @@ namespace OnlineVideos
 				{
 					try
 					{
-						TranslatedStrings.Add(stringEntry.Attributes.GetNamedItem("name").Value, stringEntry.InnerText);
+						// Android String Resources Format Has Escaped apostrophes
+						TranslatedStrings.Add(stringEntry.Attributes.GetNamedItem("name").Value, stringEntry.InnerText.Replace(@"\'", "'"));
 					}
 					catch (Exception ex)
 					{
