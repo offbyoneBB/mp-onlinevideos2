@@ -6,6 +6,8 @@
   <string name="All">Все</string>
   <string name="Actions">Действия</string>
   <string name="Actors">Актеры</string>
+  <string name="AddComment">Добавить комментарий...</string>
+  <string name="AddToPlaylist">Добавить к списку воспроизведения</string>
   <string name="AddToMySites">Добавить в Мои Сайты</string>
   <string name="AddToFavourites">Добавить в Избранное</string>
   <string name="AddingToFavorites">добавление в избранное</string>
@@ -17,8 +19,10 @@
   <!--C-->
   <string name="Cancel">Отмена</string>
   <string name="Category">Категория</string>
+  <string name="CategoryNotFound">Категория не найдена</string>
   <string name="Categories">Категории</string>
   <string name="Creator">Создатель</string>
+  <string name="CreateNewPlaylist">создать новый список воспроизведения</string>
   <string name="CheckingForPluginUpdate">проверка обновленной версии плагина</string>
   <!--D-->
   <string name="Date">Дата</string>
@@ -32,7 +36,9 @@
   <string name="DownloadComplete">Загрузка Завершана</string>
   <string name="DownloadStarted">Загрузка Начата</string>
   <string name="DownloadedVideos">Загруженное Видео</string>
+  <string name="DownloadsWillBeAborted">Скачивание будет прервано.</string>
   <string name="Delete">Удалить</string>
+  <string name="DeletePlaylist">Удалить список воспроизведения</string>
   <string name="DeleteAll">Удалить Все</string>
   <string name="Default">Стандарт</string>
   <string name="Done">Выполнено</string>
@@ -85,12 +91,19 @@
   <string name="Others">Другие</string>
   <!--P-->
   <string name="PlayAll">Играть Все</string>
+  <string name="PlayAllRandom">Воспроизвести всё в случайном порядке</string>
+  <string name="Playlists">Списки воспроизведения</string>
+  <string name="PlaybackWillBeStopped">Воспроизведение будет остановлено.</string>
+  <string name="PleaseEnterDescription">Дайте краткое описание</string>
   <string name="PlotOutline">Действие:</string>
   <string name="PreviousPage">Предыдущая страница</string>
   <string name="PerformAutomaticUpdate">Выполнять автоматическое обновление?</string>
   <!--Q-->
+  <string name="Queued">в очереди</string>
   <!--R-->
+  <string name="Recommendations">Рекомендации</string>
   <string name="RemoveFromFavorites">Удалить из Избранного</string>
+  <string name="RemoveFromPlaylist">Удалить из списка воспроизведения</string>
   <string name="RemovingFromFavorites">удаляется из избранного</string>
   <string name="Refresh">Обновить</string>
   <string name="RelatedVideos">Похожие Видео Videos</string>
@@ -98,6 +111,7 @@
   <string name="Reports">Отчеты</string>
   <string name="Runtime">Продолжительность</string>
   <string name="RemoveFromMySites">Удалить из Моих Сайтов</string>
+  <string name="RemoveAllFromMySites">Удалить всё из моих сайтов</string>
   <string name="RestartMediaPortal">Перезапустить MediaPortal!</string>
   <string name="RetrievingRemoteDlls">Получение уделенных dlls ...</string>
   <string name="RetrievingRemoteSites">Получение удаленных сайтов ...</string>
@@ -129,8 +143,22 @@
   <string name="UnableToDownloadVideo">Невозможно скачать видео. Неправильный URL.</string>
   <!--V-->
   <string name="Videos">Видео</string>
+  <string name="VideoQuality">Качество видео</string>
   <!--W-->
   <string name="Working">Работает</string>
   <!--Y-->
   <!--Strings from the settings file-->
+  <string name="Settings_Yes">Да</string>
+  <string name="Settings_No">Нет</string>
+  <string name="Settings_BasicHomeName">Название в Простом меню</string>
+  <string name="Settings_PluginEnabled">Модуль активен</string>
+  <string name="Settings_ListedInHome">в Главном меню</string>
+  <string name="Settings_ListedInPlugins">в \"Моих плагинах\"</string>
+  <string name="Settings_AutoGroupByLang">Автоматически сгруппировать сайты по языку</string>
+  <string name="Settings_SearchHistoryType">Поиск в истории</string>
+  <string name="Settings_ThumbAge">Срок хранения миниатюр (в днях) </string>
+  <string name="Settings_UtilTimeout">Таймаут (в секундах) для Web-запросов</string>
+  <string name="Settings_WmpBuffer">Буферизация (в мс) для Windows Media Player</string>
+  <string name="Settings_PlayBuffer">Буферизация (в %) перед началом проигрывания</string>
+  <string name="Settings_StoreLayoutPerCategory">Запоминать вид для сайта и категории</string>
 </resources>
