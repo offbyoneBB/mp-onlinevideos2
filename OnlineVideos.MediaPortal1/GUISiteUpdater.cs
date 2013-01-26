@@ -89,7 +89,7 @@ namespace OnlineVideos.MediaPortal1
 			GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel",
 										   PluginConfiguration.Instance.BasicHomeScreenName + ": " + Translation.Instance.ManageSites);
 			GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage",
-										   GUIOnlineVideos.GetImageForSite("OnlineVideos"));
+										   SiteImageExistenceCache.GetImageForSite("OnlineVideos"));
 
 			GUIOnlineVideos ovGuiInstance = (GUIOnlineVideos)GUIWindowManager.GetWindow(GUIOnlineVideos.WindowId);
 			if (ovGuiInstance != null && ovGuiInstance.SelectedSite != null && ovGuiInstance.CurrentState != GUIOnlineVideos.State.sites)
@@ -105,7 +105,6 @@ namespace OnlineVideos.MediaPortal1
 			switch (message.Message)
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-					GUIOnlineVideos.cachedImageForSite.Clear();
 					if (newDllsDownloaded)
 					{
 						newDllsDownloaded = false;
@@ -173,7 +172,7 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.TVTag = site;
                     loListItem.Label2 = site.Language;
                     loListItem.Label3 = site.LastUpdated.ToString("g", OnlineVideoSettings.Instance.Locale);
-                    string image = GUIOnlineVideos.GetImageForSite(site.Name, "", "Icon", false);
+					string image = SiteImageExistenceCache.GetImageForSite(site.Name, "", "Icon", false);
                     if (!string.IsNullOrEmpty(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
                     if (!string.IsNullOrEmpty(site.Owner_FK)) loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
                     loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
@@ -300,6 +299,7 @@ namespace OnlineVideos.MediaPortal1
 						});
 						if (updateResult == true) newDllsDownloaded = true;
 						else if (updateResult == null) newDataSaved = true;
+						if (updateResult != false) SiteImageExistenceCache.ClearCache();
 						if (dlgPrgrs != null) dlgPrgrs.Close();
 						GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
 					}) { Name = "OVAutoUpdate", IsBackground = true }.Start();
@@ -382,7 +382,11 @@ namespace OnlineVideos.MediaPortal1
 						},
 						(success, result) =>
 						{
-							if (success && (bool)result) RefreshDisplayedOnlineSites();
+							if (success && (bool)result)
+							{
+								SiteImageExistenceCache.UnCacheImageForSite(site.Name);
+								RefreshDisplayedOnlineSites();
+							}
 						},
 						Translation.Instance.GettingSiteXml, true);
 				}
@@ -407,6 +411,7 @@ namespace OnlineVideos.MediaPortal1
 						}, GUI_infoList.ListItems.Select(g => g.TVTag as OnlineVideosWebservice.Site).ToList(), dlgSel.SelectedLabelText == Translation.Instance.UpdateAllSkipCategories);
 						if (updateResult == true) newDllsDownloaded = true;
 						else if (updateResult == null) newDataSaved = true;
+						if (updateResult != false) SiteImageExistenceCache.ClearCache();
 						if (dlgPrgrs != null) dlgPrgrs.Close();
 						GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
 					}) { Name = "OVSelectUpdate", IsBackground = true }.Start();
@@ -458,7 +463,7 @@ namespace OnlineVideos.MediaPortal1
 								if (dlg != null)
 								{
 									dlg.Reset();
-									dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+									dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
 									dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
 									dlg.SetText(Translation.Instance.NoReportsForSite);
 									dlg.DoModal(GUIWindowManager.ActiveWindow);

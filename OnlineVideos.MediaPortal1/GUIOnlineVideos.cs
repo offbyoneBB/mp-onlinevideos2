@@ -367,7 +367,7 @@ namespace OnlineVideos.MediaPortal1
                                 {
                                     cachedFavoritedCategoriesOfSelectedSite = default(KeyValuePair<string, List<string>>);
                                     selectedItem.IsPlayed = true;
-                                    selectedItem.PinImage = GetImageForSite(Translation.Instance.Favourites, type: "Icon");
+									selectedItem.PinImage = SiteImageExistenceCache.GetImageForSite(Translation.Instance.Favourites, type: "Icon");
                                 }
                             }
                             else if (dlgCat.SelectedLabelText == Translation.Instance.RemoveFromFavorites)
@@ -509,7 +509,7 @@ namespace OnlineVideos.MediaPortal1
                                     if (dlg != null)
                                     {
                                         dlg.Reset();
-                                        dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+										dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                                         dlg.SetHeading(successAddingToFavs ? Translation.Instance.Success : Translation.Instance.Error);
                                         dlg.SetText(Translation.Instance.AddingToFavorites);
                                         dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -600,7 +600,7 @@ namespace OnlineVideos.MediaPortal1
                                 if (dlg_notify != null)
                                 {
                                     dlg_notify.Reset();
-                                    dlg_notify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+									dlg_notify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                                     dlg_notify.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                                     dlg_notify.SetText(cmer.ExecutionResultMessage);
                                     dlg_notify.DoModal(GUIWindowManager.ActiveWindow);
@@ -907,7 +907,7 @@ namespace OnlineVideos.MediaPortal1
                                                 if (dlg_error != null)
                                                 {
                                                     dlg_error.Reset();
-                                                    dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+													dlg_error.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                                                     dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                                                     dlg_error.SetText(string.Format("{0}: {1}", Translation.Instance.Error, Translation.Instance.CategoryNotFound));
                                                     dlg_error.DoModal(GUIWindowManager.ActiveWindow);
@@ -1475,7 +1475,7 @@ namespace OnlineVideos.MediaPortal1
                             if (FavoritedCategoriesOfSelectedSite.Contains(loCat.RecursiveName("|")))
                             {
                                 loListItem.IsPlayed = true;
-                                loListItem.PinImage = GetImageForSite(Translation.Instance.Favourites, type: "Icon");
+								loListItem.PinImage = SiteImageExistenceCache.GetImageForSite(Translation.Instance.Favourites, type: "Icon");
                             }
                         }
                         if (!string.IsNullOrEmpty(loCat.Thumb)) imageHash[loCat.Thumb] = true;
@@ -1745,7 +1745,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg_error != null)
                 {
                     dlg_error.Reset();
-                    dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+					dlg_error.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                     dlg_error.SetText(Translation.Instance.NoVideoFound);
                     dlg_error.DoModal(GUIWindowManager.ActiveWindow);
@@ -1830,7 +1830,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg_error != null)
                 {
                     dlg_error.Reset();
-                    dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+					dlg_error.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                     dlg_error.SetText(Translation.Instance.NoVideoFound);
                     dlg_error.DoModal(GUIWindowManager.ActiveWindow);
@@ -2181,7 +2181,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg != null)
                 {
                     dlg.Reset();
-                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+					dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg.SetHeading(Translation.Instance.Error);
                     dlg.SetText(Translation.Instance.UnableToPlayVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -2272,7 +2272,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg != null)
                 {
                     dlg.Reset();
-                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+					dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg.SetHeading(Translation.Instance.Error);
                     dlg.SetText(Translation.Instance.UnableToPlayVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -2335,7 +2335,7 @@ namespace OnlineVideos.MediaPortal1
                         if (dlg != null)
                         {
                             dlg.Reset();
-                            dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+							dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                             dlg.SetHeading(Translation.Instance.Error);
                             dlg.SetText(Translation.Instance.UnableToPlayVideo);
                             dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -2357,7 +2357,7 @@ namespace OnlineVideos.MediaPortal1
                     if (dlg != null)
                     {
                         dlg.Reset();
-                        dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+						dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                         dlg.SetHeading(Translation.Instance.Error);
                         dlg.SetText(Translation.Instance.UnableToPlayVideo);
                         dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -2476,7 +2476,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg != null)
                 {
                     dlg.Reset();
-                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+					dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg.SetHeading(Translation.Instance.Error);
                     dlg.SetText(Translation.Instance.SetDownloadFolderInConfig);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -2492,7 +2492,7 @@ namespace OnlineVideos.MediaPortal1
                     if (dlg != null)
                     {
                         dlg.Reset();
-                        dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+						dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                         dlg.SetHeading(Translation.Instance.Error);
                         dlg.SetText(Translation.Instance.AlreadyDownloading);
                         dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -2543,7 +2543,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg != null)
                 {
                     dlg.Reset();
-                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+					dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg.SetHeading(Translation.Instance.Error);
                     dlg.SetText(Translation.Instance.UnableToDownloadVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -2615,7 +2615,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg != null)
                 {
                     dlg.Reset();
-                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+					dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg.SetHeading(Translation.Instance.Error);
                     dlg.SetText(Translation.Instance.UnableToDownloadVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -2698,7 +2698,7 @@ namespace OnlineVideos.MediaPortal1
             if (dlgNotify != null)
             {
                 dlgNotify.Reset();
-                dlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+				dlgNotify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                 dlgNotify.SetHeading(Translation.Instance.DownloadStarted);
                 dlgNotify.SetText(saveItems.CurrentItem.Title);
                 dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
@@ -2730,7 +2730,7 @@ namespace OnlineVideos.MediaPortal1
                     if (loDlgNotify != null)
                     {
                         loDlgNotify.Reset();
-                        loDlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+						loDlgNotify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                         loDlgNotify.SetHeading(Translation.Instance.Error);
                         loDlgNotify.SetText(string.Format(Translation.Instance.DownloadFailed, saveItems.CurrentItem.Title));
                         loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
@@ -2779,7 +2779,7 @@ namespace OnlineVideos.MediaPortal1
                     if (loDlgNotify != null)
                     {
                         loDlgNotify.Reset();
-                        loDlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+						loDlgNotify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
                         if (saveItems.CurrentItem.Downloader.Cancelled)
                             loDlgNotify.SetHeading(Translation.Instance.DownloadCancelled);
                         else
@@ -2872,7 +2872,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 case State.groups:
 					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", PluginConfiguration.Instance.BasicHomeScreenName);
-					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", GetImageForSite("OnlineVideos"));
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", SiteImageExistenceCache.GetImageForSite("OnlineVideos"));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     HideSearchButtons();
@@ -2886,7 +2886,7 @@ namespace OnlineVideos.MediaPortal1
                     break;
                 case State.sites:
 					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", PluginConfiguration.Instance.BasicHomeScreenName + (selectedSitesGroup != null ? ": " + selectedSitesGroup.Label : ""));
-					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", GetImageForSite("OnlineVideos"));
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", SiteImageExistenceCache.GetImageForSite("OnlineVideos"));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     ShowOrderButtons();
@@ -2902,7 +2902,7 @@ namespace OnlineVideos.MediaPortal1
                 case State.categories:
                     string cat_headerlabel = selectedCategory != null ? selectedCategory.RecursiveName() : SelectedSite.Settings.Name;
 					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", cat_headerlabel);
-					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", SiteImageExistenceCache.GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
@@ -2921,7 +2921,7 @@ namespace OnlineVideos.MediaPortal1
 								GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", proposedLabel != null ? proposedLabel : selectedCategory != null ? selectedCategory.RecursiveName() : ""); break;
                             }
                     }
-					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImage", SiteImageExistenceCache.GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
                     ShowAndEnable(GUI_facadeView.GetID);
                     if (SelectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
                     if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
@@ -2933,7 +2933,7 @@ namespace OnlineVideos.MediaPortal1
                     break;
                 case State.details:
 					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", selectedVideo.Title);
-					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImagee", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
+					GUIPropertyManager.SetProperty("#OnlineVideos.HeaderImagee", SiteImageExistenceCache.GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
                     HideAndDisable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     HideSearchButtons();
@@ -3150,35 +3150,6 @@ namespace OnlineVideos.MediaPortal1
             return true;
         }
 
-        internal static Dictionary<string, string> cachedImageForSite = new Dictionary<string, string>();
-        internal static string GetImageForSite(string siteName, string utilName = "", string type = "Banner", bool logIfNotfound = true)
-        {
-            string image = null;
-            if (!cachedImageForSite.TryGetValue(string.Format("{0}{1}", siteName, type), out image))
-            {
-                // use png with the same name as the Site - first check subfolder of current skin (allows skinners to use custom icons)
-                image = string.Format(@"{0}\Media\OnlineVideos\{1}s\{2}.png", GUIGraphicsContext.Skin, type, siteName);
-                if (!File.Exists(image))
-                {
-                    // use png with the same name as the Site
-                    image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, siteName);
-                    if (!File.Exists(image))
-                    {
-                        image = string.Empty;
-                        // if that does not exist, try image with the same name as the Util
-                        if (!string.IsNullOrEmpty(utilName))
-                        {
-                            image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, utilName);
-                            if (!File.Exists(image)) image = string.Empty;
-                        }
-                    }
-                }
-				if (logIfNotfound && string.IsNullOrEmpty(image)) Log.Instance.Debug("{0} for site '{1}' not found!", type, siteName);
-                cachedImageForSite[string.Format("{0}{1}", siteName, type)] = image;
-            }
-            return image;
-        }
-
         internal void SetGuiProperties_PlayingVideo(PlayListItem playItem)
         {
             // first reset our own properties
@@ -3215,7 +3186,7 @@ namespace OnlineVideos.MediaPortal1
 
                     if (site != null)
                     {
-                        GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", GetImageForSite(site.Settings.Name, site.Settings.UtilName, "Icon"));
+						GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", SiteImageExistenceCache.GetImageForSite(site.Settings.Name, site.Settings.UtilName, "Icon"));
                         GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteName", site.Settings.Name);
                     }
                 }

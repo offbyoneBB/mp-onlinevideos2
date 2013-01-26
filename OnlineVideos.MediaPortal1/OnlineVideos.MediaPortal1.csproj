@@ -340,6 +340,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\VersionInfo.cs" />
+    <Compile Include="SiteImageExistenceCache.cs" />
     <Compile Include="SitesGroup.cs" />
     <Compile Include="SiteUserSettingsDialog.cs" />
     <Compile Include="SmsT9Filter.cs" />
