@@ -34,7 +34,7 @@ namespace OnlineVideos.MediaPortal1
             IsFolder = true;
             Item = item;
             // use Icon with the same name as the Site
-            string image = GUIOnlineVideos.GetImageForSite(item.Settings.Name, item.Settings.UtilName, "Icon");
+			string image = SiteImageExistenceCache.GetImageForSite(item.Settings.Name, item.Settings.UtilName, "Icon");
             if (!string.IsNullOrEmpty(image))
             {
                 ThumbnailImage = image;

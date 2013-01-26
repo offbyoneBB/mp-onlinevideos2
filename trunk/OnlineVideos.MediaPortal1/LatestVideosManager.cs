@@ -123,9 +123,9 @@ namespace OnlineVideos.MediaPortal1
 		void SetLatestVideoGuiProperties(KeyValuePair<string, VideoInfo> video, int index)
 		{
 			GUIPropertyManager.SetProperty(string.Format("#OnlineVideos.LatestVideo{0}.Site", index), video.Key);
-			
-			string siteIcon = GUIOnlineVideos.GetImageForSite(video.Key, null, "Icon");
-			if (string.IsNullOrEmpty(siteIcon)) siteIcon = GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon");
+
+			string siteIcon = SiteImageExistenceCache.GetImageForSite(video.Key, null, "Icon");
+			if (string.IsNullOrEmpty(siteIcon)) siteIcon = SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon");
 			if (siteIcon == null) siteIcon = string.Empty;
 			GUIPropertyManager.SetProperty(string.Format("#OnlineVideos.LatestVideo{0}.SiteIcon", index), siteIcon);
 

@@ -143,7 +143,7 @@ namespace OnlineVideos.MediaPortal1
 								if (updateResult != false)
 								{
 									PluginConfiguration.Instance.BuildAutomaticSitesGroups();
-									GUIOnlineVideos.cachedImageForSite.Clear();
+									SiteImageExistenceCache.ClearCache();
 								}
 							}
 							else
