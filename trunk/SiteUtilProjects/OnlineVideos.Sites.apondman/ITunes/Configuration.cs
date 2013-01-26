@@ -66,6 +66,8 @@ namespace OnlineVideos.Sites.Pondman.ITunes {
             set { _movieUri = value; }
         } string _movieUri = "/moviesxml/s/";
 
+		public const string HtmlMovieTrailersUri = "includes/playlists/web.inc";
+
         public string FeaturedJustAddedUri {
             get { return FeedsUri + "just_added.json"; }
         }

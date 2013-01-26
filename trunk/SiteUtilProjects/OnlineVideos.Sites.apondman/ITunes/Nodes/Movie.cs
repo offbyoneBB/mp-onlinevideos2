@@ -90,6 +90,8 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
             }
         } List<Video> _videos;
 
+		public System.Uri OriginalLocation;
+
         protected HashSet<string> GetPossibleIndexLocations() {
             HashSet<string> alternatives = new HashSet<string>();
             alternatives.Add(Uri);
@@ -187,10 +189,10 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
                 }
 
                 // if we exhausted all alternatives and we still don't 
-                // have some valid result return failed
+                // have some valid result try scraping from the OriginalLocation
                 if (verificationNode == null)
                 {
-                    return NodeResult.Failed;
+					return UpdateFromOriginalLocation();
                 }
             }
 
@@ -334,6 +336,71 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
             return NodeResult.Success;
         }
 
+		NodeResult UpdateFromOriginalLocation()
+		{
+			// get trailers from web.inc
+			var trailersHtml = SiteUtilBase.GetWebData<HtmlDocument>(new Uri(OriginalLocation, Configuration.HtmlMovieTrailersUri).ToString());
+
+			var trailerList = trailersHtml.DocumentNode.SelectSingleNode("//ul[@class = 'trailers-dropdown']");
+			if (trailerList != null)
+			{
+				// clear videos
+				Videos.Clear();
+				// add new videos
+				foreach (var trailerListItem in trailerList.Elements("li"))
+				{
+					Video video = this.session.Get<Video>("");
+					video.Title = trailerListItem.Element("div").Element("div").Element("h3").InnerText;
+					foreach (var text in trailerListItem.Element("div").Element("div").Element("p").Elements("#text"))
+					{
+						if (text.InnerText.Trim().StartsWith("Posted:"))
+						{
+							DateTime dt;
+							if (System.DateTime.TryParse(text.InnerText.Replace("Posted:", "").Trim(), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dt))
+							{
+								video.Published = dt;
+							}
+						}
+						else if (text.InnerText.Trim().StartsWith("Runtime:"))
+						{
+							TimeSpan ts;
+							if (TimeSpan.TryParse("00:" + text.InnerText.Replace("Runtime:", "").Trim(), out ts))
+							{
+								video.Duration = ts;
+							}
+						}
+					}
+					var secondDiv = trailerListItem.Element("div").Elements("div").Last();
+					video.ThumbUrl = secondDiv.Element("a").Element("img").GetAttributeValue("src", "");
+
+					var trailerFilesDiv = secondDiv.Elements("div").FirstOrDefault(d => d.GetAttributeValue("class", "") == "dropdown-list");
+					if (trailerFilesDiv == null)
+						trailerFilesDiv = trailersHtml.DocumentNode.SelectSingleNode("//div[@class = 'dropdown-list']");
+					if (trailerFilesDiv != null)
+					{
+						var downloadLi = trailerFilesDiv.Element("ul").Elements("li").FirstOrDefault(li => li.InnerText.Trim() == "Download");
+						while (downloadLi != null)
+						{
+							if (downloadLi.Name == "li" && downloadLi.GetAttributeValue("class", "") == "hd")
+							{
+								string uri = downloadLi.Element("a").GetAttributeValue("href","");
+								if (!string.IsNullOrEmpty(uri))
+								{
+									VideoQuality vq = Video.ParseVideoQuality(downloadLi.Element("a").InnerText);
+									if (vq != VideoQuality.Unknown)
+										video.Files.Add(vq, new System.Uri(uri));
+								}
+							}
+							downloadLi = downloadLi.NextSibling;
+						}
+					}
+
+					if (video.Files.Count > 0)
+						Videos.Add(video);
+				}
+			}
+			return Videos.Count > 0 ? NodeResult.Success : NodeResult.Failed;
+		}
         /// <summary>
         /// Parses a JSON feed with movies
         /// </summary>
@@ -368,6 +435,8 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
             {
                 return null;
             }
+
+			System.Uri.TryCreate(new System.Uri(session.Config.BaseUri), movieItem.location, out movie.OriginalLocation);
 
             movie.Title = HttpUtility.HtmlDecode(movieItem.title);
             movie.ReleaseDate = movieItem.releasedate;

@@ -171,17 +171,14 @@ namespace OnlineVideos.Sites.Pondman {
             }
 
             NodeResult result = movie.Update();
-            if (movie.State != NodeState.Complete)
-            {
-                return clips;
-            }
-
-            // complete movie metadata
-            video.Description = movie.Plot;
-            video.Length = movie.ReleaseDate != DateTime.MinValue ? movie.ReleaseDate.ToShortDateString() : "Coming Soon";
-            video.ImageUrl = movie.Poster != null ? movie.Poster.Large : string.Empty;
-            video.VideoUrl = movie.Uri;
-
+			if (movie.State == NodeState.Complete)
+			{
+				// complete movie metadata
+				video.Description = movie.Plot;
+				video.Length = movie.ReleaseDate != DateTime.MinValue ? movie.ReleaseDate.ToShortDateString() : "Coming Soon";
+				video.ImageUrl = movie.Poster != null ? movie.Poster.Large : string.Empty;
+				video.VideoUrl = movie.Uri;
+			}
             // get initial video list
             foreach (Video clip in movie.Videos) {
                 VideoInfo vid = new VideoInfo();
@@ -191,8 +188,8 @@ namespace OnlineVideos.Sites.Pondman {
                 vid.Description = movie.Plot;
                 //vid.Length = clip.Duration.ToString();
                 vid.Length = clip.Published != DateTime.MinValue ? clip.Published.ToShortDateString() : "N/A";
-                vid.ImageUrl = movie.Poster != null ? movie.Poster.Uri : string.Empty;
-                vid.ThumbnailImage = video.ThumbnailImage;
+                vid.ImageUrl = !string.IsNullOrEmpty(clip.ThumbUrl) ? clip.ThumbUrl : (movie.Poster != null ? movie.Poster.Uri : string.Empty);
+                //vid.ThumbnailImage = video.ThumbnailImage;
                 vid.VideoUrl = clip.Uri;
                 clips.Add(vid);
             }
@@ -221,7 +218,7 @@ namespace OnlineVideos.Sites.Pondman {
                 clip = apiSession.Get<Video>(video.VideoUrl);
                 video.Other = clip;
             }
-            else 
+            else if (!string.IsNullOrEmpty(video.VideoUrl))
             {
                 clip = apiSession.Get<Video>(video.VideoUrl);
             }

@@ -14,6 +14,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
         public string Title {get; set;}
         public DateTime Published { get; set; }
         public TimeSpan Duration { get; set; }
+		public string ThumbUrl { get; set; }
 
         public Dictionary<VideoQuality, Uri> Files {
             get {
@@ -35,6 +36,19 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
         public override NodeResult Update()
         {
             Video video = this;
+
+			if (string.IsNullOrEmpty(video.Uri)) // if no Uri is set, we cannot update data
+			{
+				if (video.Files.Count > 0) // data was alread discovered in an earlier step
+				{
+					if (video.State == NodeState.Initial) video.state = NodeState.Complete; // mark this video as complete
+					return NodeResult.Success;
+				}
+				else
+				{
+					return NodeResult.Failed;
+				}
+			}
 
             string url = video.Uri;
             string data = this.session.MakeRequest(video.Uri);
@@ -144,6 +158,24 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
                 quality = VideoQuality.Unknown;
             }
         }
+
+		public static VideoQuality ParseVideoQuality(string text)
+		{
+			if (text.ToLowerInvariant().Contains("480p"))
+				return VideoQuality.HD480;
+			if (text.ToLowerInvariant().Contains("720p"))
+				return VideoQuality.HD720;
+			if (text.ToLowerInvariant().Contains("1080p"))
+				return VideoQuality.FullHD;
+			if (text.ToLowerInvariant().Contains("small") || text.ToLowerInvariant().Contains("iphone"))
+				return VideoQuality.Small;
+			if (text.ToLowerInvariant().Contains("medium"))
+				return VideoQuality.Medium;
+			if (text.ToLowerInvariant().Contains("large"))
+				return VideoQuality.Large;
+
+			return VideoQuality.Unknown;
+		}
 
         #region IVideoDetails Members
 
