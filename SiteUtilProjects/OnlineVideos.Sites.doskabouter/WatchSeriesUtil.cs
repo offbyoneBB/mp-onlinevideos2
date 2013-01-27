@@ -14,12 +14,12 @@ namespace OnlineVideos.Sites
         private string nextVideoListPageUrl = null;
         private Category currCategory = null;
 
-        public void GetBaseCookie()
+        /*public void GetBaseCookie()
         {
             HttpWebRequest request = WebRequest.Create(baseUrl) as HttpWebRequest;
             if (request == null) return;
             request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-            request.Accept = "*/*";
+            request.Accept = "* /*";
             request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
             request.CookieContainer = new CookieContainer();
             HttpWebResponse response = null;
@@ -37,10 +37,11 @@ namespace OnlineVideos.Sites
             foreach (Cookie c in ccol)
                 cc.Add(c);
         }
+        */
 
         public override int DiscoverDynamicCategories()
         {
-            GetBaseCookie();
+            //GetBaseCookie();
 
             base.DiscoverDynamicCategories();
             int i = 0;
@@ -355,8 +356,8 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            GetBaseCookie();
-            string dummy = GetWebData(video.VideoUrl, cc); //needed for getting results in getplaybackoptions
+            //GetBaseCookie();
+            //string dummy = GetWebData(video.VideoUrl, cc); //needed for getting results in getplaybackoptions
             string oldUrl = video.VideoUrl;
             Match m2 = Regex.Match(video.VideoUrl, @"-(?<id>\d+).html");
             if (m2.Success)
