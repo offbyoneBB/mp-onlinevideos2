@@ -41,38 +41,40 @@ namespace OnlineVideos.Sites
                 Settings.Categories.Add(cat);
             }
 
-            foreach (string aDir in Directory.GetDirectories(OnlineVideoSettings.Instance.DownloadDir))
-            {
-                SiteUtilBase util = null;
-                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Path.GetFileName(aDir), out util))
-                {
-                    DirectoryInfo dirInfo = new DirectoryInfo(aDir);
-					FileInfo[] files = dirInfo.GetFiles();
-					if (files.Length == 0)
-                    {
-                        try { Directory.Delete(aDir); } catch {} // try to delete empty directories
-                    }
-                    else
-                    {
-                        SiteSettings aSite = util.Settings;
-                        if (aSite.IsEnabled &&
-                           (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
-                        {
-							if (!cachedCategories.TryGetValue(aSite.Name + " - " + Translation.Instance.DownloadedVideos, out cat))
-                            {
-                                cat = new RssLink();
-								cat.Name = aSite.Name + " - " + Translation.Instance.DownloadedVideos;
-                                cat.Description = aSite.Description;
-                                ((RssLink)cat).Url = aDir;
-                                cat.Thumb = Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + aSite.Name + ".png");
-                                cachedCategories.Add(cat.Name, cat);
-                            }
-							cat.EstimatedVideoCount = (uint)files.Count(f => isPossibleVideo(f.Name));
-                            Settings.Categories.Add(cat);
-                        }
-                    }
-                }
-            }
+			foreach (string aDir in Directory.GetDirectories(OnlineVideoSettings.Instance.DownloadDir))
+			{
+				// try to find a SiteUtil according to the directory name
+				string siteName = Path.GetFileName(aDir);
+				SiteUtilBase util = null;
+				OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(siteName, out util);
+
+				DirectoryInfo dirInfo = new DirectoryInfo(aDir);
+				FileInfo[] files = dirInfo.GetFiles();
+				if (files.Length == 0)
+				{
+					try { Directory.Delete(aDir); }
+					catch { } // try to delete empty directories
+				}
+				else
+				{
+					// treat folders without a corresponding site as adult site
+					if ((util == null && (!OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed)) ||
+						((util != null && !util.Settings.ConfirmAge) || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
+					{
+						if (!cachedCategories.TryGetValue(siteName + " - " + Translation.Instance.DownloadedVideos, out cat))
+						{
+							cat = new RssLink();
+							cat.Name = siteName + " - " + Translation.Instance.DownloadedVideos;
+							cat.Description = util != null ? util.Settings.Description : "";
+							((RssLink)cat).Url = aDir;
+							cat.Thumb = Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + siteName + ".png");
+							cachedCategories.Add(cat.Name, cat);
+						}
+						cat.EstimatedVideoCount = (uint)files.Count(f => isPossibleVideo(f.Name));
+						Settings.Categories.Add(cat);
+					}
+				}
+			}
 
             // need to always get the categories, because when adding new fav video from a new site, a removing the last one for a site, the categories must be refreshed 
             Settings.DynamicCategoriesDiscovered = false;
@@ -296,7 +298,7 @@ namespace OnlineVideos.Sites
                 }
             }
             catch { }
-            return true;
+            return false;
         }
     }
 }
