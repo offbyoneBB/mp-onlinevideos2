@@ -63,6 +63,7 @@ namespace OnlineVideos.Sites
                         HtmlNode image = anchor.SelectSingleNode("./img");
                         string name = image.GetAttributeValue("alt", string.Empty);
                         string url = anchor.GetAttributeValue("href", string.Empty);
+                        if (!url.StartsWith("http") && url.StartsWith("/")) url = string.Format(@"{0}{1}", baseUrl, url);
                         string thumb = string.Format("{0}{1}", baseUrl, image.GetAttributeValue("src", string.Empty));
                         parentCategory.SubCategories.Add(new RssLink() {
                                                              ParentCategory = parentCategory,
@@ -136,66 +137,79 @@ namespace OnlineVideos.Sites
             // keep track of bitrates and URLs
             Dictionary<int, string> urlsDictionary = new Dictionary<int, string>();
 
-            string data = GetWebData(video.VideoUrl);
-            if (!string.IsNullOrEmpty(data))
+            string pid = string.Empty;
+            
+            // must find pid before proceeding
+            if (video.VideoUrl.Contains(@"pid="))
             {
+                pid = HttpUtility.ParseQueryString(new Uri(video.VideoUrl).Query)["pid"];
+
+            }
+            else
+            {
+                string data = GetWebData(video.VideoUrl);
+                
                 Match pidMatch = pidRegex.Match(data);
                 if (pidMatch.Success)
                 {
-                    string pid = pidMatch.Groups["pid"].Value;
-                    XmlDocument xml = GetWebData<XmlDocument>(string.Format(thePlatformUrlFormat, pid));
-                    Log.Debug(@"SMIL loaded from {0}", string.Format(thePlatformUrlFormat, pid));
-        
-                    XmlNamespaceManager nsmRequest = new XmlNamespaceManager(xml.NameTable);
-                    nsmRequest.AddNamespace("a", @"http://www.w3.org/2005/SMIL21/Language");
-        
-                    XmlNode metaBase = xml.SelectSingleNode(@"//a:meta", nsmRequest);
-                    // base URL may be stored in the base attribute of <meta> tag
-                    string url = metaBase != null ? metaBase.Attributes["base"].Value : string.Empty;
-        
-                    foreach (XmlNode node in xml.SelectNodes("//a:body/a:switch/a:video", nsmRequest))
+                    pid = pidMatch.Groups["pid"].Value;
+                }
+            }
+            
+            if (!string.IsNullOrEmpty(pid))
+            {
+                XmlDocument xml = GetWebData<XmlDocument>(string.Format(thePlatformUrlFormat, pid));
+                Log.Debug(@"SMIL loaded from {0}", string.Format(thePlatformUrlFormat, pid));
+    
+                XmlNamespaceManager nsmRequest = new XmlNamespaceManager(xml.NameTable);
+                nsmRequest.AddNamespace("a", @"http://www.w3.org/2005/SMIL21/Language");
+    
+                XmlNode metaBase = xml.SelectSingleNode(@"//a:meta", nsmRequest);
+                // base URL may be stored in the base attribute of <meta> tag
+                string url = metaBase != null ? metaBase.Attributes["base"].Value : string.Empty;
+    
+                foreach (XmlNode node in xml.SelectNodes("//a:body/a:switch/a:video", nsmRequest))
+                {
+                    int bitrate = int.Parse(node.Attributes["system-bitrate"].Value);
+                    // do not bother unless bitrate is non-zero
+                    if (bitrate == 0) continue;
+    
+                    if (url.StartsWith("rtmp") && !urlsDictionary.ContainsKey(bitrate / 1000))
                     {
-                        int bitrate = int.Parse(node.Attributes["system-bitrate"].Value);
-                        // do not bother unless bitrate is non-zero
-                        if (bitrate == 0) continue;
-        
-                        if (url.StartsWith("rtmp") && !urlsDictionary.ContainsKey(bitrate / 1000))
+                        string playPath = node.Attributes["src"].Value;
+                        if (playPath.EndsWith(@".mp4") && !playPath.StartsWith(@"mp4:"))
                         {
-                            string playPath = node.Attributes["src"].Value;
-                            if (playPath.EndsWith(@".mp4") && !playPath.StartsWith(@"mp4:"))
-                            {
-                                // prepend with mp4:
-                                playPath = @"mp4:" + playPath;
-                            }
-                            else if (playPath.EndsWith(@".flv"))
-                            {
-                                // strip extension
-                                playPath = playPath.Replace(@".flv", string.Empty);
-                            }
-                            Log.Debug(@"bitrate: {0}, url: {1}, PlayPath: {2}", bitrate / 1000, url, playPath);
-                            urlsDictionary.Add(bitrate / 1000, new MPUrlSourceFilter.RtmpUrl(url) { PlayPath = playPath }.ToString());
+                            // prepend with mp4:
+                            playPath = @"mp4:" + playPath;
                         }
-                    }
-        
-                    // sort the URLs ascending by bitrate
-                    foreach (var item in urlsDictionary.OrderBy(u => u.Key))
-                    {
-                        video.PlaybackOptions.Add(string.Format("{0} kbps", item.Key), item.Value);
-                        // return last URL as the default (will be the highest bitrate)
-                        result = item.Value;
-                    }
-                    
-                    // if result is still empty then perhaps we are geo-locked
-                    if (string.IsNullOrEmpty(result))
-                    {
-                        XmlNode geolockReference = xml.SelectSingleNode(@"//a:seq/a:ref", nsmRequest);
-                        if (geolockReference != null)
+                        else if (playPath.EndsWith(@".flv"))
                         {
-                            Log.Error(@"This content is not available in your location.");
-                            result = string.Format(@"{0}{1}",
-                                                   url,
-                                                   geolockReference.Attributes["src"].Value);
+                            // strip extension
+                            playPath = playPath.Replace(@".flv", string.Empty);
                         }
+                        Log.Debug(@"bitrate: {0}, url: {1}, PlayPath: {2}", bitrate / 1000, url, playPath);
+                        urlsDictionary.Add(bitrate / 1000, new MPUrlSourceFilter.RtmpUrl(url) { PlayPath = playPath }.ToString());
+                    }
+                }
+    
+                // sort the URLs ascending by bitrate
+                foreach (var item in urlsDictionary.OrderBy(u => u.Key))
+                {
+                    video.PlaybackOptions.Add(string.Format("{0} kbps", item.Key), item.Value);
+                    // return last URL as the default (will be the highest bitrate)
+                    result = item.Value;
+                }
+                
+                // if result is still empty then perhaps we are geo-locked
+                if (string.IsNullOrEmpty(result))
+                {
+                    XmlNode geolockReference = xml.SelectSingleNode(@"//a:seq/a:ref", nsmRequest);
+                    if (geolockReference != null)
+                    {
+                        Log.Error(@"This content is not available in your location.");
+                        result = string.Format(@"{0}{1}",
+                                               url,
+                                               geolockReference.Attributes["src"].Value);
                     }
                 }
             }
