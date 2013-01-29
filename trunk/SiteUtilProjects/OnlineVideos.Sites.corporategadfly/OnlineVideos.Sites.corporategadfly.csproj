@@ -43,6 +43,7 @@
     <Compile Include="CanWestUtil.cs" />
     <Compile Include="CartoonNetworkUtil.cs" />
     <Compile Include="CBCUtil.cs" />
+    <Compile Include="CBSUtil.cs" />
     <Compile Include="CTVLocalNewsUtil.cs" />
     <Compile Include="CTVNewsUtil.cs" />
     <Compile Include="CTVUtil.cs" />
