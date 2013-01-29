@@ -66,7 +66,7 @@ namespace OnlineVideos.Sites
                         string thumb = string.Format("{0}{1}", baseUrl, image.GetAttributeValue("src", string.Empty));
                         parentCategory.SubCategories.Add(new RssLink() {
                                                              ParentCategory = parentCategory,
-                                                             Name = name,
+                                                             Name = HttpUtility.HtmlDecode(name),
                                                              Url = url,
                                                              Thumb = thumb,
                                                              Other = CAROUSEL,
