@@ -2,6 +2,7 @@
 using DirectShowLib;
 using MediaPortal.UI.Players.Video;
 using MediaPortal.UI.Players.Video.Tools;
+using System.IO;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -14,16 +15,33 @@ namespace OnlineVideos.MediaPortal2
             string sourceFilterName = getSourceFilterName();
             if (!string.IsNullOrEmpty(sourceFilterName))
             {
-                IBaseFilter sourceFilter = FilterGraphTools.AddFilterByName(_graphBuilder, FilterCategory.LegacyAmFilterCategory, sourceFilterName);
+				IBaseFilter sourceFilter = null;
+				if (sourceFilterName == MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName)
+				{
+					sourceFilter = FilterLoader.LoadFilterFromDll(
+						Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), @"MPUrlSourceSplitter\MPUrlSourceSplitter.ax"), 
+						new Guid(MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterCLSID), false);
+					if (sourceFilter != null)
+					{
+						_graphBuilder.AddFilter(sourceFilter, MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName);
+					}
+				}
+				else
+				{
+					sourceFilter = FilterGraphTools.AddFilterByName(_graphBuilder, FilterCategory.LegacyAmFilterCategory, sourceFilterName);
+				}
                 int result = ((IFileSourceFilter)sourceFilter).Load(_resourceAccessor.ResourcePathName, null);
 
-                OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
-                if (filterState != null) 
-                    while(!filterState.IsFilterReadyToConnectPins()) 
-                        System.Threading.Thread.Sleep(50); // no need to do this more often than 20 times per second
+				if (sourceFilter != null)
+				{
+					OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
+					if (filterState != null)
+						while (!filterState.IsFilterReadyToConnectPins())
+							System.Threading.Thread.Sleep(50); // no need to do this more often than 20 times per second
 
-                FilterGraphTools.RenderOutputPins(_graphBuilder, sourceFilter);
-                FilterGraphTools.TryRelease(ref sourceFilter);
+					FilterGraphTools.RenderOutputPins(_graphBuilder, sourceFilter);
+					FilterGraphTools.TryRelease(ref sourceFilter);
+				}
             }
             else
             {

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Shortcut DescriptorVersion="1.0">
+  <WorkflowActions>
+    <!-- Name="Home->OnlineVideos" -->
+    <Shortcut Key="P:O" WorkflowAction="C33E39CC-910E-41C8-BFFD-9ECCD340B569" />
+  </WorkflowActions>
+</Shortcut>
