@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration.cs" />
+    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="LogDelegator.cs" />
@@ -116,6 +117,7 @@
     <Content Include="Skin\default\images\LanguageFlags\uz.png" />
     <Content Include="Skin\default\images\LanguageFlags\zh.png" />
     <Content Include="Skin\default\images\NextPage.png" />
+    <Content Include="Skin\default\shortcuts\OnlineVideos-shortcuts.xml" />
     <Content Include="Skin\default\workflow\onlinevideos-actions.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -168,6 +170,9 @@
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\VersionInfo.cs.tmpl" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language"
@@ -177,7 +182,11 @@ robocopy "$(ProjectDir)Skin" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2
 xcopy /Y "$(TargetDir)$(ProjectName).*" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
 xcopy /Y "$(TargetDir)OnlineVideos.*" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
 xcopy /Y "$(ProjectDir)plugin.xml" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos"
-</PostBuildEvent>
+mkdir "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\MPUrlSourceSplitter"
+xcopy /Y "$(SolutionDir)MPUrlSourceSplitter\bin_Win32\*.*" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\MPUrlSourceSplitter"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
