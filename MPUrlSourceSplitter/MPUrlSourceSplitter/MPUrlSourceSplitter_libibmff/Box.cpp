@@ -256,7 +256,7 @@ wchar_t *CBox::GetParsedHumanReadable(const wchar_t *indent)
       , 
       
       indent, this->type, 
-      indent, this->length, 
+      indent, this->GetSize(), 
       indent, this->HasExtendedHeader() ? L"true" : L"false",
       indent, this->IsSizeUnspecifed() ? L"true" : L"false",
       indent, (this->GetBoxes()->Count() == 0) ? L"" : L"\n",
@@ -347,7 +347,7 @@ bool CBox::ParseInternal(const unsigned char *buffer, uint32_t length, bool proc
     }
 
     // set length of box
-    // if size == 0 then box is the last one in and its contents extend to the end of the file
+    // if size == 0 then box is the last one in buffer and its content extends to the end of the file (buffer)
     this->length = (size == 0) ? length : size;
     this->hasUnspecifiedSize = (size == 0);
 
@@ -388,7 +388,7 @@ uint32_t CBox::GetBoxInternal(uint8_t *buffer, uint32_t length, bool processAddi
 
     FREE_MEM(type);
 
-    if ((position != 0) && processAdditionalBoxes)
+    if ((position != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
     {
       uint32_t boxSizes = this->GetAdditionalBoxes(buffer + position, length - position);
       position = (boxSizes != 0) ? (position + boxSizes) : 0;
@@ -416,4 +416,11 @@ uint32_t CBox::GetAdditionalBoxes(uint8_t *buffer, uint32_t length)
   }
 
   return processed;
+}
+
+void CBox::ResetSize(void)
+{
+  this->length = 0;
+  this->hasExtendedHeader = false;
+  this->hasUnspecifiedSize = false;
 }
