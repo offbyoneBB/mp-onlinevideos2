@@ -656,7 +656,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
 
                   if (SUCCEEDED(result))
                   {
-                    inputPosition += box->GetSize();
+                    inputPosition += (unsigned int)box->GetSize();
 
                     if (box->IsType(MOVIE_FRAGMENT_BOX_TYPE))
                     {
@@ -708,7 +708,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
                     }
 
                     // increase output buffer length by required box size
-                    outputLength += box->GetSize();
+                    outputLength += (unsigned int)box->GetSize();
                   }
 
                   FREE_MEM_CLASS(box);
@@ -733,7 +733,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
 
                     if (SUCCEEDED(result))
                     {
-                      inputPosition += box->GetSize();
+                      inputPosition += (unsigned int)box->GetSize();
 
                       if (box->IsType(MOVIE_FRAGMENT_BOX_TYPE))
                       {
@@ -785,7 +785,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
 
                       // copy box to output buffer
                       result = (box->GetBox(outputBuffer + outputPosition, outputLength - outputPosition)) ? result : E_FAIL;
-                      outputPosition += box->GetSize();
+                      outputPosition += (unsigned int)box->GetSize();
                     }
 
                     FREE_MEM_CLASS(box);
