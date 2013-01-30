@@ -206,10 +206,11 @@ namespace OnlineVideos.Sites
                     XmlNode geolockReference = xml.SelectSingleNode(@"//a:seq/a:ref", nsmRequest);
                     if (geolockReference != null)
                     {
-                        Log.Error(@"This content is not available in your location.");
-                        result = string.Format(@"{0}{1}",
-                                               url,
-                                               geolockReference.Attributes["src"].Value);
+                        string message = geolockReference.Attributes["abstract"] != null ?
+                            geolockReference.Attributes["abstract"].Value :
+                            @"This content is not available in your location.";
+                        Log.Error(message);
+                        throw new OnlineVideosException(message, true);
                     }
                 }
             }
