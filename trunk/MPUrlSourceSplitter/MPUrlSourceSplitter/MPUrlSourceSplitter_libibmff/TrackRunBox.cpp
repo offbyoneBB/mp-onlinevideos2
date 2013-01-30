@@ -28,6 +28,8 @@ CTrackRunBox::CTrackRunBox(void)
 {
   this->type = Duplicate(TRACK_RUN_BOX_TYPE);
   this->samples = new CSampleCollection();
+  this->dataOffset = 0;
+  this->firstSampleFlags = 0;
 }
 
 CTrackRunBox::~CTrackRunBox(void)
@@ -109,7 +111,7 @@ wchar_t *CTrackRunBox::GetParsedHumanReadable(const wchar_t *indent)
     result = FormatString(
       L"%s\n" \
       L"%sData offset: present: %s value: %d\n" \
-      L"%sFirst sample flags: present: %s 0x%08X\n" \
+      L"%sFirst sample flags: present: %s value: 0x%08X\n" \
       L"%sSamples:%s" \
       L"%s"
       ,
