@@ -75,7 +75,7 @@ public:
   // @return : true if box size is unspecifed, false otherwise
   virtual bool IsSizeUnspecifed(void);
 
-  // tests if box has extended header (extra 16 bytes for int(64) size)
+  // tests if box has extended header (extra 8 bytes for int(64) size)
   // @return : true if box has extended header, false otherwise
   virtual bool HasExtendedHeader(void);
 
@@ -94,6 +94,9 @@ public:
   // @param type : the requested box type
   // @return : true if box is specified type, false otherwise
   virtual bool IsType(const wchar_t *type);
+
+  // reset box size to acquire correct box size
+  virtual void ResetSize(void);
 
 protected:
   // stores the length of box

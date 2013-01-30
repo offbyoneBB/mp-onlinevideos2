@@ -278,8 +278,9 @@ protected:
 
   // gets track fragment header box from linear buffer (video or audio CURL instance)
   // @param buffer : buffer to get track fragment header box
+  // @param trackID : the track ID to set to track fragment, if UINT_MAX than track ID is not changed
   // @return : track fragment header box or NULL if error
-  CTrackFragmentHeaderBox *GetTrackFragmentHeaderBox(CLinearBuffer *buffer);
+  CTrackFragmentHeaderBox *GetTrackFragmentHeaderBox(CLinearBuffer *buffer, unsigned int trackID);
 
   // stores box into buffer
   // @param box : box to store in buffer
@@ -339,6 +340,9 @@ protected:
   // @param storeFile : the name of store file
   // @return : buffer for processing with filled data, NULL otherwise
   CLinearBuffer *FillBufferForProcessing(CStreamFragmentCollection *streamFragments, unsigned int streamFragmentProcessing, wchar_t *storeFile);
+
+  // holds last used track ID
+  unsigned int lastTrackID;
 };
 
 #endif

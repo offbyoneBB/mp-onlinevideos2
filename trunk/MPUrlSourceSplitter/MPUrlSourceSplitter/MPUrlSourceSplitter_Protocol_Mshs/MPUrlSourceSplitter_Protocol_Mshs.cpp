@@ -36,6 +36,9 @@
 #include "TrackFragmentHeaderBox.h"
 #include "BoxCollection.h"
 #include "MovieHeaderBox.h"
+#include "BoxFactory.h"
+#include "TrackRunBox.h"
+#include "BoxConstants.h"
 
 // protocol implementation name
 #ifdef _DEBUG
@@ -111,6 +114,7 @@ CMPUrlSourceSplitter_Protocol_Mshs::CMPUrlSourceSplitter_Protocol_Mshs(CParamete
   this->streamFragmentDownloading = UINT_MAX;
   this->streamFragmentProcessing = 0;
   this->streamFragmentToDownload = UINT_MAX;
+  this->lastTrackID = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -259,6 +263,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   this->shouldExit = *shouldExit;
+  HRESULT result = S_OK;
 
   CLockMutex lock(this->lockMutex, INFINITE);
 
@@ -273,16 +278,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
           (this->audioTrackFragmentHeaderBox != NULL))
         {
           // we need to reconstruct header
-          bool continueReconstructing = true;
           CLinearBuffer *header = new CLinearBuffer();
-          continueReconstructing &= (header != NULL);
+          CHECK_POINTER_HRESULT(result, header, result, E_OUTOFMEMORY);
 
-          if (continueReconstructing)
+          if (SUCCEEDED(result))
           {
-            continueReconstructing &= header->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
+            result = (header->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER)) ? result : E_FAIL;
           }
 
-          if (continueReconstructing)
+          if (SUCCEEDED(result))
           {
             wchar_t *videoData = this->videoTrackFragmentHeaderBox->GetParsedHumanReadable(L"");
             wchar_t *audioData = this->audioTrackFragmentHeaderBox->GetParsedHumanReadable(L"");
@@ -295,38 +299,38 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
 
             // create file type box
             CFileTypeBox *fileTypeBox = this->CreateFileTypeBox();
-            continueReconstructing &= (fileTypeBox != NULL);
-            if (continueReconstructing)
+            CHECK_POINTER_HRESULT(result, fileTypeBox, result, E_OUTOFMEMORY);
+            if (SUCCEEDED(result))
             {
-              continueReconstructing &= this->PutBoxIntoBuffer(fileTypeBox, header);
+              result = (this->PutBoxIntoBuffer(fileTypeBox, header)) ? result : E_FAIL;
             }
             FREE_MEM_CLASS(fileTypeBox);
 
             // create movie box
             CMovieBox *movieBox = this->GetMovieBox(this->streamingMedia, this->videoTrackFragmentHeaderBox, this->audioTrackFragmentHeaderBox);
-            continueReconstructing &= (movieBox != NULL);
-            if (movieBox != NULL)
+            CHECK_POINTER_HRESULT(result, movieBox, result, E_OUTOFMEMORY);
+            if (SUCCEEDED(result))
             {
-              continueReconstructing &= this->PutBoxIntoBuffer(movieBox, header);
+              result = (this->PutBoxIntoBuffer(movieBox, header)) ? result : E_FAIL;
             }
             FREE_MEM_CLASS(movieBox);
 
             // if reconstructing is correct, put all data to output buffer
-            if (continueReconstructing)
+            if (SUCCEEDED(result))
             {
               unsigned int length = header->GetBufferOccupiedSpace();
-              continueReconstructing &= (length != 0);
+              result = (length != 0) ? result : E_FAIL;
 
-              if (continueReconstructing)
+              if (SUCCEEDED(result))
               {
                 ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                continueReconstructing &= (buffer != NULL);
-                if (continueReconstructing)
+                CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+                if (SUCCEEDED(result))
                 {
-                  continueReconstructing &= (header->CopyFromBuffer(buffer, length, 0, 0) == length);
-                  if (continueReconstructing)
+                  result = (header->CopyFromBuffer(buffer, length, 0, 0) == length) ? result : E_FAIL;
+                  if (SUCCEEDED(result))
                   {
-                    continueReconstructing &= (this->bufferForProcessing->AddToBufferWithResize(buffer, length) == length);
+                    result = (this->bufferForProcessing->AddToBufferWithResize(buffer, length) == length) ? result : E_FAIL;
                   }
                 }
                 FREE_MEM(buffer);
@@ -335,7 +339,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
           }
           FREE_MEM_CLASS(header);
 
-          if (continueReconstructing)
+          if (SUCCEEDED(result))
           {
             // successfully reconstructed header
             // start processing of stream fragments from start
@@ -345,7 +349,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if ((!this->shouldExit) && (this->streamFragmentDownloading != UINT_MAX) && (this->mainCurlInstance != NULL))
+      if (SUCCEEDED(result) && (!this->shouldExit) && (this->streamFragmentDownloading != UINT_MAX) && (this->mainCurlInstance != NULL))
       {
         {
           CLockMutex lockData(this->lockCurlMutex, INFINITE);
@@ -396,7 +400,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if (this->seekingActive && (!this->supressData) && (this->reconstructedHeader))
+      if (SUCCEEDED(result) && this->seekingActive && (!this->supressData) && (this->reconstructedHeader))
       {
         CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentProcessing);
 
@@ -419,7 +423,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
       }
 
       uint64_t lastTimestamp = 0;
-      if ((!this->supressData) && (this->streamFragmentProcessing < this->streamFragments->Count()) && (this->reconstructedHeader))
+      if (SUCCEEDED(result) && (!this->supressData) && (this->streamFragmentProcessing < this->streamFragments->Count()) && (this->reconstructedHeader))
       {
         CLinearBuffer *bufferForBoxProcessing = this->FillBufferForProcessing(this->streamFragments, this->streamFragmentProcessing, this->storeFilePath);
         if (bufferForBoxProcessing != NULL)
@@ -485,7 +489,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
       }
 
       int64_t lastPosition = 0;
-      if ((!this->supressData) && (this->bufferForProcessing != NULL))
+      if (SUCCEEDED(result) && (!this->supressData) && (this->bufferForProcessing != NULL))
       {
         unsigned int length = this->bufferForProcessing->GetBufferOccupiedSpace();
 
@@ -517,14 +521,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if ((!this->shouldExit) && (!this->setLength) && (this->bytePosition != 0))
+      if (SUCCEEDED(result) && (!this->shouldExit) && (!this->setLength) && (this->bytePosition != 0))
       {
         if ((this->streamingMedia->GetDuration() != 0) && (this->streamingMedia->GetTimeScale() != 0))
         {
-          if ((lastPosition != 0) && (lastTimestamp != 0))
+          if ((lastPosition != 0))
           {
-            this->streamLength = lastPosition * this->streamingMedia->GetDuration() / lastTimestamp;
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length (by time): %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+            this->streamLength = (lastTimestamp != 0) ? (lastPosition * this->streamingMedia->GetDuration() / lastTimestamp) : lastPosition;
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length (by time%s): %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, (lastTimestamp != 0) ? L"" : L" and last position", this->streamLength);
             receiveData->GetTotalLength()->SetTotalLength(this->streamLength, true);
           }
         }
@@ -549,7 +553,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if ((this->streamFragmentProcessing >= this->streamFragments->Count()) &&
+      if (SUCCEEDED(result) &&
+        (this->streamFragmentProcessing >= this->streamFragments->Count()) &&
         (this->streamFragmentToDownload == UINT_MAX) &&
         (this->streamFragmentDownloading == UINT_MAX))
       {
@@ -560,7 +565,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
         FREE_MEM_CLASS(this->mainCurlInstance);
       }
 
-      if (this->streamFragmentProcessing >= this->streamFragments->Count())
+      if (SUCCEEDED(result) && (this->streamFragmentProcessing >= this->streamFragments->Count()))
       {
         // all stream fragments processed
         // set stream length and report end of stream
@@ -584,7 +589,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if ((this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+      if (SUCCEEDED(result) && (this->mainCurlInstance != NULL) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
       {
         if (this->mainCurlInstance->GetHttpDownloadResponse()->GetResultCode() == CURLE_OK)
         {
@@ -608,12 +613,197 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
             // process first video stream fragment or first audio stream fragment (if necessary)
             if ((this->videoTrackFragmentHeaderBox == NULL) && (streamFragment->GetFragmentType() == FRAGMENT_TYPE_VIDEO))
             {
-              this->videoTrackFragmentHeaderBox = this->GetTrackFragmentHeaderBox(streamFragment->GetBuffer());
+              this->videoTrackFragmentHeaderBox = this->GetTrackFragmentHeaderBox(streamFragment->GetBuffer(), ++this->lastTrackID);
             }
 
             if ((this->audioTrackFragmentHeaderBox == NULL) && (streamFragment->GetFragmentType() == FRAGMENT_TYPE_AUDIO))
             {
-              this->audioTrackFragmentHeaderBox = this->GetTrackFragmentHeaderBox(streamFragment->GetBuffer());
+              this->audioTrackFragmentHeaderBox = this->GetTrackFragmentHeaderBox(streamFragment->GetBuffer(), ++this->lastTrackID);
+            }
+
+            // process stream fragment data
+            // in track fragment header box we need to set track ID
+            // in track run box we need to set flasg and data offset
+
+            unsigned int inputLength = streamFragment->GetBuffer()->GetBufferOccupiedSpace();
+            unsigned int inputPosition = 0;
+
+            unsigned int outputLength = 0;
+            unsigned int outputPosition = 0;
+            unsigned int movieFragmentSize  = 0;
+
+            if (inputLength > 0)
+            {
+              // we must process data twice - first we get size for output buffer, second we put processed data to output buffer
+              ALLOC_MEM_DEFINE_SET(inputBuffer, uint8_t, inputLength, 0);
+              CHECK_POINTER_HRESULT(result, inputBuffer, result, E_OUTOFMEMORY);
+
+              CBoxFactory *boxFactory = new CBoxFactory();
+              CHECK_POINTER_HRESULT(result, boxFactory, result, E_OUTOFMEMORY);
+
+              if (SUCCEEDED(result))
+              {
+                result = (streamFragment->GetBuffer()->CopyFromBuffer(inputBuffer, inputLength, 0, 0) == inputLength) ? result : E_FAIL;
+              }
+
+              // first processing - get size for output buffer
+              if (SUCCEEDED(result))
+              {
+                while (SUCCEEDED(result) && (inputPosition < inputLength))
+                {
+                  CBox *box = boxFactory->CreateBox(inputBuffer + inputPosition, inputLength - inputPosition);
+                  CHECK_POINTER_HRESULT(result, box, result, E_FAIL);
+
+                  if (SUCCEEDED(result))
+                  {
+                    inputPosition += box->GetSize();
+
+                    if (box->IsType(MOVIE_FRAGMENT_BOX_TYPE))
+                    {
+                      // movie fragment box, it is root box for ther boxes
+
+                      CMovieFragmentBox *movieFragmentBox = dynamic_cast<CMovieFragmentBox *>(box);
+                      // reset its size to get correct size after changes
+                      movieFragmentBox->ResetSize();
+
+                      for (unsigned int i = 0; (SUCCEEDED(result) && (i < movieFragmentBox->GetBoxes()->Count())); i++)
+                      {
+                        CBox *innerMovieFragmentBox = movieFragmentBox->GetBoxes()->GetItem(i);
+                        // reset its size to get correct size after changes
+                        innerMovieFragmentBox->ResetSize();
+
+                        if (innerMovieFragmentBox->IsType(TRACK_FRAGMENT_BOX_TYPE))
+                        {
+                          CTrackFragmentBox *trackFragmentBox = dynamic_cast<CTrackFragmentBox *>(innerMovieFragmentBox);
+
+                          for (unsigned int j = 0; (SUCCEEDED(result) && (j < trackFragmentBox->GetBoxes()->Count())); j++)
+                          {
+                            CBox *innerTrackFragmentBox = trackFragmentBox->GetBoxes()->GetItem(j);
+                            innerTrackFragmentBox->ResetSize();
+
+                            if (innerTrackFragmentBox->IsType(TRACK_FRAGMENT_HEADER_BOX_TYPE))
+                            {
+                              // replace track ID in track fragment header with track ID in corresponding track fragment header (video, audio)
+                              // remove base data offset flag from track fragment header box
+                              CTrackFragmentHeaderBox *trackFragmentHeaderBox = dynamic_cast<CTrackFragmentHeaderBox *>(innerTrackFragmentBox);
+
+                              trackFragmentHeaderBox->SetFlags(trackFragmentHeaderBox->GetFlags() & (~FLAGS_BASE_DATA_OFFSET_PRESENT));
+                              trackFragmentHeaderBox->SetTrackId((streamFragment->GetFragmentType() == FRAGMENT_TYPE_VIDEO) ? this->videoTrackFragmentHeaderBox->GetTrackId() : this->audioTrackFragmentHeaderBox->GetTrackId());
+                            }
+
+                            if (innerTrackFragmentBox->IsType(TRACK_RUN_BOX_TYPE))
+                            {
+                              CTrackRunBox *trackRunBox = dynamic_cast<CTrackRunBox *>(innerTrackFragmentBox);
+
+                              // add to flags that we specify data offset present
+                              // we can't now set data offset, because not all boxes are processed
+
+                              trackRunBox->SetFlags(trackRunBox->GetFlags() | FLAGS_DATA_OFFSET_PRESENT);
+                            }
+                          }
+                        }
+                      }
+
+                      movieFragmentSize = (unsigned int)movieFragmentBox->GetSize();
+                    }
+
+                    // increase output buffer length by required box size
+                    outputLength += box->GetSize();
+                  }
+
+                  FREE_MEM_CLASS(box);
+                }
+              }
+
+              result = (outputLength != 0) ? result : E_FAIL;
+              if (SUCCEEDED(result))
+              {
+                ALLOC_MEM_DEFINE_SET(outputBuffer, uint8_t, outputLength, 0);
+                CHECK_POINTER_HRESULT(result, outputBuffer, result, E_OUTOFMEMORY);
+
+                // second processing - process data and put processed data to output buffer
+                if (SUCCEEDED(result))
+                {
+                  inputPosition = 0;
+
+                  while (SUCCEEDED(result) && (inputPosition < inputLength))
+                  {
+                    CBox *box = boxFactory->CreateBox(inputBuffer + inputPosition, inputLength - inputPosition);
+                    CHECK_POINTER_HRESULT(result, box, result, E_FAIL);
+
+                    if (SUCCEEDED(result))
+                    {
+                      inputPosition += box->GetSize();
+
+                      if (box->IsType(MOVIE_FRAGMENT_BOX_TYPE))
+                      {
+                        // movie fragment box, it is root box for ther boxes
+
+                        CMovieFragmentBox *movieFragmentBox = dynamic_cast<CMovieFragmentBox *>(box);
+                        // reset its size to get correct size after changes
+                        movieFragmentBox->ResetSize();
+
+                        for (unsigned int i = 0; (SUCCEEDED(result) && (i < movieFragmentBox->GetBoxes()->Count())); i++)
+                        {
+                          CBox *innerMovieFragmentBox = movieFragmentBox->GetBoxes()->GetItem(i);
+                          // reset its size to get correct size after changes
+                          innerMovieFragmentBox->ResetSize();
+
+                          if (innerMovieFragmentBox->IsType(TRACK_FRAGMENT_BOX_TYPE))
+                          {
+                            CTrackFragmentBox *trackFragmentBox = dynamic_cast<CTrackFragmentBox *>(innerMovieFragmentBox);
+
+                            for (unsigned int j = 0; (SUCCEEDED(result) && (j < trackFragmentBox->GetBoxes()->Count())); j++)
+                            {
+                              CBox *innerTrackFragmentBox = trackFragmentBox->GetBoxes()->GetItem(j);
+                              innerTrackFragmentBox->ResetSize();
+
+                              if (innerTrackFragmentBox->IsType(TRACK_FRAGMENT_HEADER_BOX_TYPE))
+                              {
+                                // replace track ID in track fragment header with track ID in corresponding track fragment header (video, audio)
+                                // remove base data offset flag from track fragment header box
+                                CTrackFragmentHeaderBox *trackFragmentHeaderBox = dynamic_cast<CTrackFragmentHeaderBox *>(innerTrackFragmentBox);
+
+                                trackFragmentHeaderBox->SetFlags(trackFragmentHeaderBox->GetFlags() & (~FLAGS_BASE_DATA_OFFSET_PRESENT));
+                                trackFragmentHeaderBox->SetTrackId((streamFragment->GetFragmentType() == FRAGMENT_TYPE_VIDEO) ? this->videoTrackFragmentHeaderBox->GetTrackId() : this->audioTrackFragmentHeaderBox->GetTrackId());
+                              }
+
+                              if (innerTrackFragmentBox->IsType(TRACK_RUN_BOX_TYPE))
+                              {
+                                CTrackRunBox *trackRunBox = dynamic_cast<CTrackRunBox *>(innerTrackFragmentBox);
+
+                                // add to flags that we specify data offset present
+                                // set data offset to movieFragmentSize + BOX_HEADER_LENGTH (length and type of media data box)
+
+                                trackRunBox->SetFlags(trackRunBox->GetFlags() | FLAGS_DATA_OFFSET_PRESENT);
+                                trackRunBox->SetDataOffset(movieFragmentSize + BOX_HEADER_LENGTH);
+                              }
+                            }
+                          }
+                        }
+                      }
+
+                      // copy box to output buffer
+                      result = (box->GetBox(outputBuffer + outputPosition, outputLength - outputPosition)) ? result : E_FAIL;
+                      outputPosition += box->GetSize();
+                    }
+
+                    FREE_MEM_CLASS(box);
+                  }
+
+                  if (SUCCEEDED(result))
+                  {
+                    // we have processed fragment, store it to stream fragment
+                    streamFragment->GetBuffer()->DeleteBuffer();
+                    result = (streamFragment->GetBuffer()->AddToBufferWithResize(outputBuffer, outputLength) == outputLength) ? result : E_OUTOFMEMORY;
+                  }
+                }
+
+                FREE_MEM(outputBuffer);
+              }
+
+              FREE_MEM_CLASS(boxFactory);
+              FREE_MEM(inputBuffer);
             }
           }
         }
@@ -627,7 +817,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
         }
       }
 
-      if (this->mainCurlInstance == NULL)
+      if (SUCCEEDED(result) && (this->mainCurlInstance == NULL))
       {
         // no CURL instance exists, we finished download
         // start another one download
@@ -681,7 +871,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
           CStreamFragment *streamFragment = this->streamFragments->GetItem(this->streamFragmentToDownload);
           if (streamFragment != NULL)
           {
-            HRESULT result = S_OK;
             // clear stream fragment buffer
             // there can be some data from previous unfinished download
             streamFragment->GetBuffer()->ClearBuffer();
@@ -752,8 +941,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
     }
   }
 
-  // store stream fragments to temporary file
-  if ((GetTickCount() - this->lastStoreTime) > 1000)
+  // store stream fragments to temporary file, do not store any data until video and audio track fragment header box are created
+  if (((GetTickCount() - this->lastStoreTime) > 1000) && (this->videoTrackFragmentHeaderBox != NULL) && (this->audioTrackFragmentHeaderBox != NULL))
   {
     this->lastStoreTime = GetTickCount();
 
@@ -824,7 +1013,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
   }
 
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-  return S_OK;
+  return result;
 }
 
 CParameterCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetConnectionParameters(void)
@@ -1078,6 +1267,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ClearSession(void)
   FREE_MEM_CLASS(this->videoTrackFragmentHeaderBox);
   FREE_MEM_CLASS(this->audioTrackFragmentHeaderBox);
   this->reconstructedHeader = false;
+  this->lastTrackID = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -1514,7 +1704,7 @@ CFileTypeBox *CMPUrlSourceSplitter_Protocol_Mshs::CreateFileTypeBox(void)
   return fileTypeBox;
 }
 
-CTrackFragmentHeaderBox *CMPUrlSourceSplitter_Protocol_Mshs::GetTrackFragmentHeaderBox(CLinearBuffer *buffer)
+CTrackFragmentHeaderBox *CMPUrlSourceSplitter_Protocol_Mshs::GetTrackFragmentHeaderBox(CLinearBuffer *buffer, unsigned int trackID)
 {
   CTrackFragmentHeaderBox *result = NULL;
   unsigned int bytesRead = buffer->GetBufferOccupiedSpace();
@@ -1564,6 +1754,11 @@ CTrackFragmentHeaderBox *CMPUrlSourceSplitter_Protocol_Mshs::GetTrackFragmentHea
                           {
                             FREE_MEM_CLASS(result);
                           }
+                        }
+
+                        if ((result != NULL) && (trackID != UINT_MAX))
+                        {
+                          result->SetTrackId(trackID);
                         }
                       }
                     }
@@ -1632,10 +1827,8 @@ CMovieBox *CMPUrlSourceSplitter_Protocol_Mshs::GetMovieBox(CMSHSSmoothStreamingM
         // set time scale by manifest
         movieHeaderBox->SetTimeScale((uint32_t)media->GetTimeScale());
 
-        // set next track ID to higher value from video and audio
-        movieHeaderBox->SetNextTrackId(
-          (videoFragmentHeaderBox->GetTrackId() < audioFragmentHeaderBox->GetTrackId()) ?
-          audioFragmentHeaderBox->GetTrackId() : videoFragmentHeaderBox->GetTrackId());
+        // set next track ID to last used track ID + 1
+        movieHeaderBox->SetNextTrackId(this->lastTrackID + 1);
 
         movieHeaderBox->GetRate()->SetIntegerPart(1);
         movieHeaderBox->GetVolume()->SetIntegerPart(1);
@@ -1722,7 +1915,7 @@ CMovieBox *CMPUrlSourceSplitter_Protocol_Mshs::GetMovieBox(CMSHSSmoothStreamingM
       CMovieExtendsBox *movieExtendsBox = new CMovieExtendsBox();
       continueCreating &= (movieExtendsBox != NULL);
 
-      // add track extends box (video or audio - depends on tack ID)
+      // add track extends box (video or audio - depends on track ID)
       if (continueCreating)
       {
         CTrackExtendsBox *trackExtendsBox = new CTrackExtendsBox();
@@ -1748,7 +1941,7 @@ CMovieBox *CMPUrlSourceSplitter_Protocol_Mshs::GetMovieBox(CMSHSSmoothStreamingM
         }
       }
 
-      // add track extends box (video or audio - depends on tack ID)
+      // add track extends box (video or audio - depends on track ID)
       if (continueCreating)
       {
         CTrackExtendsBox *trackExtendsBox = new CTrackExtendsBox();
