@@ -336,24 +336,24 @@ int CFlvPacket::FindPacket(const unsigned char *buffer, unsigned int length, uns
     result = FLV_FIND_RESULT_NOT_FOUND;
     minimumFlvPacketsToCheck = (minimumFlvPacketsToCheck == FLV_PACKET_MINIMUM_CHECKED_UNSPECIFIED) ? FLV_PACKET_MINIMUM_CHECKED : minimumFlvPacketsToCheck;
 
-    int firstFlvPacketPosition = -1;    // position of first FLV packet
-    int packetsChecked  = 0;            // checked FLV packets count
-    int processedBytes = 0;             // processed bytes for correct seek position value
+    unsigned int firstFlvPacketPosition = UINT_MAX;   // position of first FLV packet
+    unsigned int packetsChecked  = 0;                 // checked FLV packets count
+    unsigned int processedBytes = 0;                  // processed bytes for correct seek position value
 
-    while ((processedBytes < length) && ((firstFlvPacketPosition < 0) || (packetsChecked <= minimumFlvPacketsToCheck)))
+    while ((processedBytes < length) && ((firstFlvPacketPosition == UINT_MAX) || (packetsChecked <= minimumFlvPacketsToCheck)))
     {
       // repeat until first FLV packet is found and verified by at least (minimumFlvPacketsToCheck + 1) another FLV packet
 
       // try to find flv packets in buffer
 
-      int i = 0;
-      int flvPacketLength = 0;
+      unsigned int i = 0;
+      unsigned int flvPacketLength = 0;
 
       while (i < length)
       {
         // we have to check bytes in whole buffer
 
-        if (((buffer[i] == FLV_PACKET_AUDIO) || (buffer[i] == FLV_PACKET_VIDEO) || (buffer[i] == FLV_PACKET_META)) && (firstFlvPacketPosition == (-1)))
+        if (((buffer[i] == FLV_PACKET_AUDIO) || (buffer[i] == FLV_PACKET_VIDEO) || (buffer[i] == FLV_PACKET_META)) && (firstFlvPacketPosition == UINT_MAX))
         {
           flvPacketLength = 0;
           // possible audio, video or meta tag
@@ -366,7 +366,7 @@ int CFlvPacket::FindPacket(const unsigned char *buffer, unsigned int length, uns
             if (flvPacketLength > (length - i))
             {
               // FLV packet length has wrong value, it's after valid data
-              firstFlvPacketPosition = -1;
+              firstFlvPacketPosition = UINT_MAX;
               packetsChecked = 0;
               i++;
               continue;
@@ -380,19 +380,19 @@ int CFlvPacket::FindPacket(const unsigned char *buffer, unsigned int length, uns
           else
           {
             // clear first FLV packet position and go to next byte in buffer
-            firstFlvPacketPosition = -1;
+            firstFlvPacketPosition = UINT_MAX;
             packetsChecked = 0;
             i++;
             continue;
           }
         }
-        else if (((buffer[i] == FLV_PACKET_AUDIO) || (buffer[i] == FLV_PACKET_VIDEO) || (buffer[i] == FLV_PACKET_META)) && (firstFlvPacketPosition != (-1)))
+        else if (((buffer[i] == FLV_PACKET_AUDIO) || (buffer[i] == FLV_PACKET_VIDEO) || (buffer[i] == FLV_PACKET_META)) && (firstFlvPacketPosition != UINT_MAX))
         {
           // possible next packet, verify
-          int previousLength = -1;
-          int nextLength = -1;
+          unsigned int previousLength = UINT_MAX;
+          unsigned int nextLength = UINT_MAX;
 
-          if ((i - 3) >= 0)
+          if (i >= 3)
           {
             // valid range for previous FLV packet length
             previousLength = (buffer[i - 3] << 8 | buffer[i - 2]) << 8 | buffer[i - 1];
@@ -404,7 +404,7 @@ int CFlvPacket::FindPacket(const unsigned char *buffer, unsigned int length, uns
             nextLength = (buffer[i + 1] << 8 | buffer[i + 2]) << 8 | buffer[i + 3];
           }
 
-          if ((previousLength != (-1)) && (nextLength != (-1)))
+          if ((previousLength != UINT_MAX) && (nextLength != UINT_MAX))
           {
             if (previousLength == (flvPacketLength + 11))
             {
@@ -419,16 +419,16 @@ int CFlvPacket::FindPacket(const unsigned char *buffer, unsigned int length, uns
 
           // bad FLV packet
           i = firstFlvPacketPosition + 1;
-          firstFlvPacketPosition = -1;
+          firstFlvPacketPosition = UINT_MAX;
           packetsChecked = 0;
           continue;
         }
-        else if (firstFlvPacketPosition != (-1))
+        else if (firstFlvPacketPosition != UINT_MAX)
         {
           // FLV packet after first FLV packet not found
           // first FLV packet is not FLV packet
           i = firstFlvPacketPosition + 1;
-          firstFlvPacketPosition = -1;
+          firstFlvPacketPosition = UINT_MAX;
           packetsChecked = 0;
           continue;
         }
@@ -437,16 +437,16 @@ int CFlvPacket::FindPacket(const unsigned char *buffer, unsigned int length, uns
         i++;
       }
 
-      if (firstFlvPacketPosition < 0)
+      if (firstFlvPacketPosition == UINT_MAX)
       {
         processedBytes += length;
       }
-      else if ((firstFlvPacketPosition >= 0) && (packetsChecked <= minimumFlvPacketsToCheck))
+      else if ((firstFlvPacketPosition != UINT_MAX) && (packetsChecked <= minimumFlvPacketsToCheck))
       {
         processedBytes += length;
         result = FLV_FIND_RESULT_NOT_FOUND_MINIMUM_PACKETS;
       }
-      else if ((firstFlvPacketPosition >= 0) && (packetsChecked > minimumFlvPacketsToCheck))
+      else if ((firstFlvPacketPosition != UINT_MAX) && (packetsChecked > minimumFlvPacketsToCheck))
       {
         result = firstFlvPacketPosition;
       }
