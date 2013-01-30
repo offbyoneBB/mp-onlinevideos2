@@ -141,10 +141,10 @@ uint32_t CMovieFragmentHeaderBox::GetBoxInternal(uint8_t *buffer, uint32_t lengt
 
   if (result != 0)
   {
+    WBE32INC(buffer, result, this->GetSequenceNumber());
+
     if ((result != 0) && processAdditionalBoxes && (this->GetBoxes()->Count() != 0))
     {
-      WBE32INC(buffer, result, this->GetSequenceNumber());
-
       uint32_t boxSizes = this->GetAdditionalBoxes(buffer + result, length - result);
       result = (boxSizes != 0) ? (result + boxSizes) : 0;
     }
