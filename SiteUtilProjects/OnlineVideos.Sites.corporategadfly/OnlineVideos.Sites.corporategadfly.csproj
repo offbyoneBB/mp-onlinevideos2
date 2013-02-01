@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ABCUtil.cs" />
+    <Compile Include="BiographyUtil.cs" />
     <Compile Include="BNNUtil.cs" />
     <Compile Include="CanadaBrightCoveUtilBase.cs" />
     <Compile Include="CanWestUtil.cs" />
