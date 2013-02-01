@@ -4,9 +4,9 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Xml;
 
 using HtmlAgilityPack;
-using OnlineVideos.AMF;
 
 namespace OnlineVideos.Sites
 {
@@ -15,15 +15,10 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class BiographyUtil : GenericSiteUtil
     {
-        // following were found by using AMFParser as an inspector in Fiddler2
-        private static string hashValue = @"95333ebe36672a53f8f07f648022c66273340325";
-        private static string experienceId = @"1835242367001";
-        private static string brightcoveUrl = @"http://c.brightcove.com/services/messagebroker/amf";
-
         private static Regex alphabeticalCategoriesRegex = new Regex(@"Full Bios|Full Episodes|Mini Bios",
                                                                      RegexOptions.Compiled);
-        private static Regex contentIdRegex = new Regex(@"embedPlayer\(""[^""]*"",\s""(?<contentId>[^""]*)""",
-                                                        RegexOptions.Compiled);
+        private static Regex playListRegex = new Regex(@"playList\.push\({\s+'videoID':'[^']*',\s+'videoURLs':{\s+releaseURL:\s'(?<releaseURL>[^']*)',.*?'siteUrl':'(?<siteUrl>[^']*)'",
+                                                       RegexOptions.Singleline | RegexOptions.Compiled);
         private Category currentCategory = null;
 
         public override int DiscoverDynamicCategories()
@@ -191,74 +186,89 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string result = string.Empty;
-            AMFArray renditions = null;
+            video.PlaybackOptions = new Dictionary<string, string>();
+            // keep track of bitrates and URLs
+            Dictionary<int, string> urlsDictionary = new Dictionary<int, string>();
             
             string data = GetWebData(video.VideoUrl);
             if (!string.IsNullOrEmpty(data))
             {
-                Match contentIdMatch = contentIdRegex.Match(data);
-                if (contentIdMatch.Success)
+                Match playListMatch = playListRegex.Match(data);
+                if (playListMatch.Success)
                 {
-                    // content override
-                    AMFObject contentOverride = new AMFObject(@"com.brightcove.experience.ContentOverride");
-                    contentOverride.Add("contentId", contentIdMatch.Groups["contentId"].Value);
-                    contentOverride.Add("contentIds", null);
-                    contentOverride.Add("contentRefId", null);
-                    contentOverride.Add("contentRefIds", null);
-                    contentOverride.Add("contentType", 0);
-                    contentOverride.Add("featuredId", double.NaN);
-                    contentOverride.Add("featuredRefId", null);
-                    contentOverride.Add("target", "videoPlayer");
-                    AMFArray contentOverrideArray = new AMFArray();
-                    contentOverrideArray.Add(contentOverride);
-    
-                    // viewer experience request
-                    AMFObject viewerExperenceRequest = new AMFObject(@"com.brightcove.experience.ViewerExperienceRequest");
-                    viewerExperenceRequest.Add("contentOverrides", contentOverrideArray);
-                    viewerExperenceRequest.Add("experienceId", experienceId);
-                    viewerExperenceRequest.Add("deliveryType", null);
-                    viewerExperenceRequest.Add("playerKey", string.Empty);
-                    viewerExperenceRequest.Add("URL", video.VideoUrl);
-                    viewerExperenceRequest.Add("TTLToken", string.Empty);
-    
-                    //Log.Debug("About to make AMF call: {0}", viewerExperenceRequest.ToString());
-                    AMFSerializer serializer = new AMFSerializer();
-                    AMFObject response = AMFObject.GetResponse(brightcoveUrl, serializer.Serialize(viewerExperenceRequest, hashValue));
-                    //Log.Debug("AMF Response: {0}", response.ToString());
-    
-                    renditions = response.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
-
-                    video.PlaybackOptions = new Dictionary<string, string>();
-                    // keep track of sizes and URLs
-                    Dictionary<double, string> urlsDictionary = new Dictionary<double, string>();
+                    string releaseURL = string.Empty;
                     
-                    for (int i = 0; i < renditions.Count; i++)
+                    foreach (Match m in playListRegex.Matches(data))
                     {
-                        AMFObject rendition = renditions.GetObject(i);
-                        
-                        double size = rendition.GetDoubleProperty("size");
-                        string url = HttpUtility.UrlDecode(rendition.GetStringProperty("defaultURL"));
-                        string[] urlParts = url.Split(new string[] { @"mp4:" }, StringSplitOptions.None);
-                        string rtmpUrl = urlParts[0];
-                        string playPath = string.Format(@"mp4:{0}", urlParts[1]);
-                        Log.Debug(@"Size: {0}", size);
-
-                        if (!urlsDictionary.ContainsKey(size))
+                        if (video.VideoUrl.Contains(m.Groups["siteUrl"].Value))
                         {
-                            urlsDictionary.Add(size, new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = playPath }.ToString());
+                            releaseURL = m.Groups["releaseURL"].Value;
+                            break;
                         }
                     }
                     
-                    // sort the URLs ascending by size
-                    foreach (var item in urlsDictionary.OrderBy(u => u.Key))
+                    if (!string.IsNullOrEmpty(releaseURL))
                     {
-                        video.PlaybackOptions.Add(string.Format("Total Size: {0:N2}MiB", item.Key / 1048576), item.Value);
-                        // return last URL as the default (will be the highest bitrate)
-                        result = item.Value;
+                        XmlDocument xml = GetWebData<XmlDocument>(releaseURL);
+
+                        XmlNamespaceManager nsmRequest = new XmlNamespaceManager(xml.NameTable);
+                        nsmRequest.AddNamespace("a", @"http://www.w3.org/2005/SMIL21/Language");
+            
+                        XmlNode metaBase = xml.SelectSingleNode(@"//a:meta", nsmRequest);
+                        // base URL may be stored in the base attribute of <meta> tag
+                        string url = metaBase != null ? metaBase.Attributes["base"].Value : string.Empty;
+            
+                        foreach (XmlNode node in xml.SelectNodes("//a:body/a:switch/a:video", nsmRequest))
+                        {
+                            int bitrate = int.Parse(node.Attributes["system-bitrate"].Value);
+                            // do not bother unless bitrate is non-zero
+                            if (bitrate == 0) continue;
+            
+                            if (url.StartsWith("rtmp") && !urlsDictionary.ContainsKey(bitrate / 1000))
+                            {
+                                string src = node.Attributes["src"].Value;
+                                string[] srcParts = src.Split('?');
+                                string playPath = srcParts[0];
+                                if (playPath.EndsWith(@".mp4") && !playPath.StartsWith(@"mp4:"))
+                                {
+                                    // prepend with mp4:
+                                    playPath = @"mp4:" + playPath;
+                                }
+                                else if (playPath.EndsWith(@".flv"))
+                                {
+                                    // strip extension
+                                    playPath = playPath.Replace(@".flv", string.Empty);
+                                }
+                                string rtmpUrl = string.Format(@"{0}?{1}", url, srcParts[1]);
+                                Log.Debug(@"bitrate: {0}, rtmpUrl: {1}, PlayPath: {2}", bitrate / 1000, rtmpUrl, playPath);
+                                urlsDictionary.Add(bitrate / 1000, new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = playPath }.ToString());
+                            }
+                        }
+
+                        // sort the URLs ascending by bitrate
+                        foreach (var item in urlsDictionary.OrderBy(u => u.Key))
+                        {
+                            video.PlaybackOptions.Add(string.Format("{0} kbps", item.Key), item.Value);
+                            // return last URL as the default (will be the highest bitrate)
+                            result = item.Value;
+                        }
+                        
+                        // if result is still empty then perhaps we are geo-locked
+                        if (string.IsNullOrEmpty(result))
+                        {
+                            XmlNode geolockReference = xml.SelectSingleNode(@"//a:seq/a:ref", nsmRequest);
+                            if (geolockReference != null)
+                            {
+                                string message = geolockReference.Attributes["abstract"] != null ?
+                                    geolockReference.Attributes["abstract"].Value :
+                                    @"This content is not available in your location.";
+                                Log.Error(message);
+                                throw new OnlineVideosException(message, true);
+                            }
+                        }
                     }
                 }
             }
-            if (renditions == null) return result;
             
             return result;
         }
