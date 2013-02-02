@@ -24,6 +24,37 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
+            if (true.Equals(parentCategory.Other))// from ohjelmat AddSubSubcats
+            {
+                //add jaksot and viihde for http://www.ruutu.fi/ohjelmat/alaston-piilokamera
+                string[] subs2 = splitVideoList2(GetWebData(((RssLink)parentCategory).Url));
+
+                parentCategory.SubCategories = new List<Category>();
+                parentCategory.HasSubCategories = true;
+                int cnt = 0;
+                foreach (string sub in subs2)
+                {
+                    Match m = Regex.Match(sub, @">(?<title>[^<]*)</h2>");
+                    if (m.Success)
+                    {
+                        if (m.Index == 1)
+                        {
+                            Category subc = new Category()
+                            {
+                                Name = HttpUtility.HtmlDecode(m.Groups["title"].Value),
+                                ParentCategory = parentCategory,
+                                Other = cnt.ToString() + sub
+                            };
+                            parentCategory.SubCategories.Add(subc);
+                        }
+                        cnt++;
+                    }
+                }
+
+                parentCategory.SubCategoriesDiscovered = true;
+                return parentCategory.SubCategories.Count;
+            }
+
             if (parentCategory.SubCategories != null && parentCategory.SubCategories.Count > 0)
             {
                 foreach (Category subcat in parentCategory.SubCategories)
@@ -74,6 +105,11 @@ namespace OnlineVideos.Sites
             return webData.Split(new[] { "quicktabs-tabpage quicktabs-hide" }, StringSplitOptions.RemoveEmptyEntries);
         }
 
+        private string[] splitVideoList2(string webData)
+        {
+            return webData.Split(new[] { "block-title theme-color theme-after-background" }, StringSplitOptions.RemoveEmptyEntries);
+        }
+
         public override List<VideoInfo> getVideoList(Category category)
         {
             string webData = category.Other as string;
@@ -90,14 +126,21 @@ namespace OnlineVideos.Sites
         {
             char last = url[url.Length - 1];
             string webData = GetWebData(url.Substring(0, url.Length - 1));
-            string[] lists = splitVideoList(webData);
+            string[] lists;
+            if (last == '0' || last == '1' || last == '2')
+                lists = splitVideoList2(webData);
+            else
+                lists = splitVideoList(webData);
 
             nextPageRegExUrlFormatString = "{0}" + last;
 
             switch (last)
             {
-                case 'K': return myParse(lists[0]);
-                case 'U': return myParse(lists[1]);
+                case 'K':
+                case '0': return myParse(lists[0]);
+                case 'U':
+                case '1': return myParse(lists[1]);
+                case '2': return myParse(lists[2]);
                 default: return myParse(webData);
             }
         }
@@ -198,9 +241,11 @@ namespace OnlineVideos.Sites
             {
                 RssLink cat = new RssLink()
                 { //Villa helena etc
-                    Url = FormatDecodeAbsolutifyUrl(baseUrl, m.Groups["url"].Value, "{0}Z", dynamicCategoryUrlDecoding),
+                    Url = FormatDecodeAbsolutifyUrl(baseUrl, m.Groups["url"].Value, "{0}", dynamicCategoryUrlDecoding),
                     Name = HttpUtility.HtmlDecode(m.Groups["title"].Value),
-                    ParentCategory = parentCat
+                    ParentCategory = parentCat,
+                    HasSubCategories = true,
+                    Other = true
                 };
                 parentCat.SubCategories.Add(cat);
                 m = m.NextMatch();
