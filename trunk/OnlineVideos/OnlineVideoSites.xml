@@ -1277,6 +1277,7 @@
         <item key="nextPageRegEx"><![CDATA[pager-browse-next\slast"><a\shref="(?<url>[^"]*)">]]></item>
         <item key="playlistUrlRegEx"><![CDATA[ruutuplayer\("mediaplayer",\s[^,]*,\s[^,]*,\s"[^"]*",\s"(?<url>[^"]*)",\s[^,]*,\s[^\)]*\)]]></item>
         <item key="fileUrlRegEx"><![CDATA[<SourceFile>(?<m0>[^<]*)</SourceFile>]]></item>
+        <item key="searchUrl"><![CDATA[http://www.ruutu.fi/hakutulokset/{0}Z]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/</Category>
