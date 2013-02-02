@@ -62,6 +62,7 @@
     <Compile Include="TVOParentsUtil.cs" />
     <Compile Include="TVOUtil.cs" />
     <Compile Include="UnivisionUtil.cs" />
+    <Compile Include="VTeleUtil.cs" />
     <Compile Include="YTVUtil.cs" />
     <Compile Include="ZTeleUtil.cs" />
   </ItemGroup>
