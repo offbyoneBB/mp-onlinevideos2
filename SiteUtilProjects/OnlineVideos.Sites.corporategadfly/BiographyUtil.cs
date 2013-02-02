@@ -163,10 +163,12 @@ namespace OnlineVideos.Sites
                 HtmlNode pageNumberIncrease = document.DocumentNode.SelectSingleNode(@"//a[@class = 'form-page-number-increase']");
                 if (pageNumberIncrease != null)
                 {
-                    NameValueCollection parameters = HttpUtility.ParseQueryString(new Uri(url).Query);
+                    UriBuilder builder = new UriBuilder(url);
+                    NameValueCollection parameters = HttpUtility.ParseQueryString(builder.Query);
                     int nextPageNumber = int.Parse(parameters["page-number"]) + 1;
                     parameters["page-number"] = Convert.ToString(nextPageNumber);
-                    Uri nextPageUri = new UriBuilder(url) { Query = parameters.ToString() }.Uri;
+                    builder.Query = parameters.ToString();
+                    Uri nextPageUri = builder.Uri;
                     Log.Debug("Next Page URL: {0}", nextPageUri);
                     nextPageUrl = nextPageUri.ToString();
                 }
