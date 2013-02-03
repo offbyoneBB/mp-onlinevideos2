@@ -218,7 +218,7 @@ namespace OnlineVideos.Sites.Pondman {
                 clip = apiSession.Get<Video>(video.VideoUrl);
                 video.Other = clip;
             }
-            else if (!string.IsNullOrEmpty(video.VideoUrl))
+            else if (!string.IsNullOrEmpty(video.VideoUrl) && !video.VideoUrl.StartsWith("file://")) // todo : test with favorites!
             {
                 clip = apiSession.Get<Video>(video.VideoUrl);
             }
@@ -233,7 +233,7 @@ namespace OnlineVideos.Sites.Pondman {
 
             Dictionary<string, string> files = new Dictionary<string, string>();
 
-            foreach (KeyValuePair<VideoQuality, Uri> file in clip.Files) {
+            foreach (var file in clip.Files) {
 				var uri = new OnlineVideos.MPUrlSourceFilter.HttpUrl(file.Value);
 				uri.UserAgent = QuickTimeUserAgent;
 				files[file.Key.ToTitleString()] = uri.ToString();
@@ -273,7 +273,10 @@ namespace OnlineVideos.Sites.Pondman {
         }
 
 		public override string GetFileNameForDownload(VideoInfo video, Category category, string url) {
-			return video.Title + ".mov";
+			if (url == null)
+				return video.Title; // called when adding to favorites
+			else
+				return video.Title + ".mov"; // called when downloading
 		}
         #endregion
 

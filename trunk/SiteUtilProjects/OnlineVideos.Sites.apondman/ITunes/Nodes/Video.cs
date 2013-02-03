@@ -8,25 +8,19 @@ using OnlineVideos.Sites.Pondman.Nodes;
 
 namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 
+    [Serializable]
     public class Video : ExternalContentNodeBase, IVideoDetails
     {
-
-        public string Title {get; set;}
+        public string Title { get; set; }
         public DateTime Published { get; set; }
         public TimeSpan Duration { get; set; }
 		public string ThumbUrl { get; set; }
+		public SerializableDictionary<VideoQuality, string> Files { get; set; }
 
-        public Dictionary<VideoQuality, Uri> Files {
-            get {
-                
-                if (this.files == null) 
-                {
-                    this.files = new Dictionary<VideoQuality, Uri>();
-                }
-
-                return this.files;
-            }
-        } Dictionary<VideoQuality, Uri> files;
+		public Video()
+		{
+			Files = new SerializableDictionary<VideoQuality, string>();
+		}
 
         /// <summary>
         /// Updates the video information with the available qualities
@@ -37,7 +31,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
         {
             Video video = this;
 
-			if (string.IsNullOrEmpty(video.Uri)) // if no Uri is set, we cannot update data
+			if (string.IsNullOrEmpty(video.Uri) || video.Uri.StartsWith("file://")) // if no Uri (or our special uri) is set, we cannot update data
 			{
 				if (video.Files.Count > 0) // data was alread discovered in an earlier step
 				{
@@ -89,7 +83,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
                         Video.ParseAppleVideoTitle(title, out label, out quality);
 
                         // Add the current quality to the video
-                        video.Files[quality] = new Uri(videourl);
+                        video.Files[quality] = videourl;
 
                         //  Update the metadata (only one time)
                         if (metadata)
