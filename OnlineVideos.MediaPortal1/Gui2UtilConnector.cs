@@ -68,6 +68,12 @@ namespace OnlineVideos.MediaPortal1
         /// <returns>true, if the task could be successfully started in the background</returns>
         internal bool ExecuteInBackgroundAndCallback(Func<object> task, Action<bool, object> resultHandler, string taskDescription, bool timeout)
         {
+			if (Thread.CurrentThread.ManagedThreadId != 1)
+			{
+				Log.Instance.Error("OnlineVideos not called on the MPMain thread - not executing any background action!");
+				return false;
+			}
+
             // make sure only one background task can be executed at a time
             if (!IsBusy && Monitor.TryEnter(this))
             {
