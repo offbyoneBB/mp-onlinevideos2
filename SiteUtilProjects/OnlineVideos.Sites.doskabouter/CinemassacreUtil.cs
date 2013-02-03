@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Web;
@@ -102,6 +103,28 @@ namespace OnlineVideos.Sites
                 }
             }
 
+            if (String.IsNullOrEmpty(thisUrl))
+            {
+                Match m = Regex.Match(data2, @"<script\stype='text/javascript'\ssrc='(?<url>http://player\.screenwavemedia\.com/play/embed[^']*)'></script>", defaultRegexOptions);
+                if (m.Success)
+                {
+                    data2 = GetWebData(m.Groups["url"].Value);
+                    video.PlaybackOptions = new Dictionary<string, string>();
+                    m = Regex.Match(data2, @"'streamer':\s'(?<url>[^']*)',", defaultRegexOptions);
+                    if (m.Success)
+                    {
+                        string streamer = m.Groups["url"].Value;
+                        m = Regex.Match(data2, @"{\sbitrate:\s(?<bitrate>[^,]*),\sfile:\s""(?<file>[^""]*)"",\swidth:\s(?<width>[^\s]*)\s}", defaultRegexOptions);
+                        while (m.Success)
+                        {
+                            MPUrlSourceFilter.RtmpUrl rtmpUrl = new MPUrlSourceFilter.RtmpUrl(streamer + '/' + m.Groups["file"].Value);
+                            video.PlaybackOptions.Add("Bitrate:" + m.Groups["bitrate"].Value, rtmpUrl.ToString());
+                            m = m.NextMatch();
+                        }
+                        return video.PlaybackOptions.Last().Value;
+                    }
+                }
+            }
             if (String.IsNullOrEmpty(thisUrl)) return null;
 
             if (thisUrl.StartsWith("http://www.youtube.com"))
