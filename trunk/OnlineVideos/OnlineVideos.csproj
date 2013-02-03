@@ -1065,6 +1065,7 @@
     <Compile Include="RTMP_LIB\BouncyCastle\util\Strings.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SerializableDictionary.cs" />
     <Compile Include="Sites\AMF.cs" />
     <Compile Include="Sites\Base\ContextMenu.cs" />
     <Compile Include="Sites\BrightCoveUtil.cs" />
