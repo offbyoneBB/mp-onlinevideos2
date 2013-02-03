@@ -388,7 +388,10 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 								{
 									VideoQuality vq = Video.ParseVideoQuality(downloadLi.Element("a").InnerText);
 									if (vq != VideoQuality.Unknown)
-										video.Files.Add(vq, new System.Uri(uri));
+									{
+										video.Files.Add(vq, uri);
+										video.Uri = uri.Replace("http://", "file://"); // we have to set an url so Onlinevideos downloader can distinguish clips, set one we can filter later
+									}
 								}
 							}
 							downloadLi = downloadLi.NextSibling;
