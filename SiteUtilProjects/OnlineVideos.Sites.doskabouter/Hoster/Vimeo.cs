@@ -26,7 +26,7 @@ namespace OnlineVideos.Hoster
         public override Dictionary<string, string> getPlaybackOptions(string url)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
-            Match u = Regex.Match(url, @"http://www.vimeo.com/moogaloop.swf\?clip_id=(?<url>[^&]*)&");
+            Match u = Regex.Match(url, @"http://(?:www\.)?vimeo.com/moogaloop.swf\?clip_id=(?<url>[^&]*)&");
             if (u.Success)
                 url = @"http://www.vimeo.com/" + u.Groups["url"].Value;
             string page = SiteUtilBase.GetWebData(url);
