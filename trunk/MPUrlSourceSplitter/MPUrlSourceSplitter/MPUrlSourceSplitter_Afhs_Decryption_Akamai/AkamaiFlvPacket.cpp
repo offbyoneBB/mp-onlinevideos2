@@ -159,7 +159,7 @@ int CAkamaiFlvPacket::ParsePacket(const unsigned char *buffer, unsigned int leng
             }
           }
 
-          if (result && (this->hasKey))
+          if ((result == FLV_PARSE_RESULT_OK) && (this->hasKey))
           {
             // everything until zero byte is key url
             // get key url size, than read it
