@@ -17,6 +17,8 @@ namespace OnlineVideos.Sites
     {
         private static string dispatchUrl = @"http://vtele.ca/videos/includes/librairie/dispatch.inc.php";
         private static string brightCoveUrlFormat = @"http://api.brightcove.com/services/library?command=find_video_by_id&token=2sgr1KCsKKJXcqUFQdti_mXZAhdNB-wCFwCbGW6lz5atwI1QTrElxQ..&media_delivery=http&video_id={0}";
+        private static string LIVE_STREAMING = @"En Direct";
+        private static string liveEpisodeUrl = @"http://vtele.ca/en-direct/includes/retreiveEmiV3.inc.php";
 
         private static Regex contentIdRegex = new Regex(@"var\sidBC\s=\s(?<contentId>[^;]*);",
                                                         RegexOptions.Compiled);
@@ -53,6 +55,11 @@ namespace OnlineVideos.Sites
                     }
                 }
                 
+                // Add live category
+                Settings.Categories.Add(new RssLink() {
+                                            Name = LIVE_STREAMING,
+                                            HasSubCategories = false
+                                        });
                 foreach (var item in categories.OrderBy(cat => cat.Key))
                 {
                     Settings.Categories.Add(item.Value);
@@ -97,6 +104,41 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> getVideoListForSinglePage(Category category, string url)
         {
             List<VideoInfo> result = new List<VideoInfo>();
+
+            if (LIVE_STREAMING.Equals(category.Name))
+            {
+                JObject json = GetWebData<JObject>(liveEpisodeUrl);
+                string name = json.Value<string>("emiCourNom");
+                string image = string.Format(@"http://image-v.com/tele/en-direct/large/{0}", json.Value<string>("imgSuiv"));
+
+                if (!string.IsNullOrEmpty(name))
+                {
+                    result.Add(new VideoInfo() {
+                                   Title = @"En direct actuellement",
+                                   Description = name,
+                                   ImageUrl = image,
+                                   Other = LIVE_STREAMING,
+                                   VideoUrl = new MPUrlSourceFilter.RtmpUrl(@"rtmp://cp101680.live.edgefcs.net/live/livev_1@50832") {
+                                       SwfUrl = @"http://admin.brightcove.com/viewer/us20121128.1314/federatedVideoUI/BrightcovePlayer.swf",
+                                       PageUrl = @"http://vtele.ca/en-direct/",
+                                       App = @"live",
+                                       SwfVerify = true,
+                                       Live = true }.ToString()
+                               });
+                }
+                else
+                {
+                    result.Add(new VideoInfo() {
+                                   Title = @"Rien en direct en ce moment.",
+                                   Description = string.Format(@"{0} à {1}", json.Value<string>("nomEmiSuiv"), json.Value<string>("dateSuiv")),
+                                   ImageUrl = image,
+                                   VideoUrl = string.Empty
+                               });
+                }
+                return result;
+            }
+
+
             nextPageUrl = string.Empty;
             currentCategory = category;
 
@@ -143,6 +185,8 @@ namespace OnlineVideos.Sites
         
         public override string getUrl(VideoInfo video)
         {
+            if (LIVE_STREAMING.Equals(video.Other as string)) return video.VideoUrl;
+
             string result = string.Empty;
             video.PlaybackOptions = new Dictionary<string, string>();
             // keep track of bitrates and URLs
