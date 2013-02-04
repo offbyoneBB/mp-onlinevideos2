@@ -1,0 +1,5 @@
+C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.bw_fotoart.dll
+C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.bw_fotoart.pdb
+C:\OnlineVideos.Sites.bw_fotoart\OnlineVideos.Sites.bw_fotoart\obj\Release\ResolveAssemblyReference.cache
+C:\OnlineVideos.Sites.bw_fotoart\OnlineVideos.Sites.bw_fotoart\obj\Release\OnlineVideos.Sites.bw_fotoart.dll
+C:\OnlineVideos.Sites.bw_fotoart\OnlineVideos.Sites.bw_fotoart\obj\Release\OnlineVideos.Sites.bw_fotoart.pdb

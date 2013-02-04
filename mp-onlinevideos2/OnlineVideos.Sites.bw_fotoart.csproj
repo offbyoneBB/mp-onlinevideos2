@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{92D26D2F-3408-481F-AB6F-4485B40A114B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OnlineVideos.Sites.bw_fotoart</RootNamespace>
+    <AssemblyName>OnlineVideos.Sites.bw_fotoart</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\..\..\..\..\Program Files %28x86%29\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\..\..\..\..\Program Files %28x86%29\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="OnlineVideos">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Hoster\180upload.cs" />
+    <Compile Include="Hoster\FlashX.cs" />
+    <Compile Include="Hoster\GinBig.cs" />
+    <Compile Include="Hoster\FileNuke.cs" />
+    <Compile Include="Hoster\HostingBulk.cs" />
+    <Compile Include="Hoster\FlashStream.cs" />
+    <Compile Include="Hoster\HDFree.cs" />
+    <Compile Include="Hoster\BitShare.cs" />
+    <Compile Include="Hoster\PrimeShare.cs" />
+    <Compile Include="Hoster\NowVideo.cs" />
+    <Compile Include="Hoster\XvidStage.cs" />
+    <Compile Include="Hoster\ZinWa.cs" />
+    <Compile Include="Hoster\StreamCloud.cs" />
+    <Compile Include="Hoster\UploadC.cs" />
+    <Compile Include="Hoster\RapidVideo.cs" />
+    <Compile Include="Hoster\ShareFiles4u.cs" />
+    <Compile Include="iStream.cs" />
+    <Compile Include="Movie2KFilmUtil.cs" />
+    <Compile Include="Movie2KSerienUtil.cs" />
+    <Compile Include="MyTainmentUtil.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
