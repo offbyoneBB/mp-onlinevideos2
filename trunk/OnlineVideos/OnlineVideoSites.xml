@@ -1123,6 +1123,22 @@
         <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerId=1029272630001]]></item>
       </Configuration>
     </Site>
+    <Site name="Katsomo" util="Katsomo" agecheck="false" enabled="true" lang="fi" player="VLC">
+      <Description>MTV3:n, Subin ja Avan sarjat sekä MTV3 MAX, Max Sport 1 ja Max Sport 2 urheilu Katsomossa - katso TV-ohjelmia silloin kun haluat!</Description>
+      <Configuration>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li\sdata-id="(?<url>[^"]*)">(?<title>[^<]*)</li>]]></item>
+        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://m.katsomo.fi/katsomo/?treeId={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://m.katsomo.fi/katsomo/]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="program">\s*<a\shref="(?<VideoUrl>[^"]*)"\sclass="program-link">\s*<img\ssrc="(?<ImageUrl>[^"]*)"\swidth="[^"]*"\sheight="[^"]*"\sonerror="this\.style\.visibility\s=\s'hidden'"/>\s*<p\sclass="timestamp">(?<Airdate>[^<]*)</p>\s*<span\sclass="[^"]*"></span>\s*<p\sclass="program-name">(?<Title>[^<]*)</p>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<source\stype="video/mp4"\ssrc="(?<m0>[^"]*)"/>]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Uutiset">http://m.katsomo.fi/katsomo/?treeId=33001</Category>
+        <Category xsi:type="RssLink" name="Urheilu">http://m.katsomo.fi/katsomo/?treeId=33002</Category>
+        <Category xsi:type="RssLink" name="Lapset">http://m.katsomo.fi/katsomo/?treeId=33003</Category>
+        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://m.katsomo.fi/katsomo/programs</Category>
+      </Categories>
+    </Site>
     <Site name="Khan Academy" util="KhanAcademy" agecheck="false" enabled="true" lang="en">
       <Description>Khan Academy is on a mission to provide a free world-class education to anyone anywhere. With over 2,600 videos covering everything from arithmetic to physics, finance, and history and 200 practice exercises, we're helping students learn whatever they want, whenever they want, at their own pace.</Description>
       <Configuration>
