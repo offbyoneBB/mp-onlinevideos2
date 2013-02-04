@@ -334,10 +334,17 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                             continue;
                         }
 
-                        // the src is url encode twice so we decode it twice before parsing
-                        string src = HttpUtility.UrlDecode(HttpUtility.UrlDecode(v.Attributes["loadlate"].Value));
-                        Match m = videoTitleExpression.Match(src);
-                        if (!m.Success) 
+                        var attr = v.Attributes["src"];
+                        Match m = Match.Empty;
+
+                        if (attr != null) 
+                        {
+                            // the src is url encode twice so we decode it twice before parsing
+                            string src = HttpUtility.UrlDecode(HttpUtility.UrlDecode(attr.Value));
+                            m = videoTitleExpression.Match(src);
+                        }
+
+                        if (!m.Success)
                         {
                             continue;
                         }
