@@ -1090,6 +1090,7 @@
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[(?<=selector.*)<li><a\shref="(?<url>[^"]*)"><span>(?<title>[^<]*)</span></a></li>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<span\sclass="titulo-tooltip"><a\shref="(?<url>[^"]*)"\stitle="Ver\sprograma\sseleccionado">(?<title>[^<]*)</a></span>\s*<span\sclass="fecha">(?<last>[^<]*)</span>\s*<span\sclass="detalle">(?<description>[^<]*)</span>\s*<span\sclass="miga">]]></item>
+        <item key="generosRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\stitle="[^"]*"><span>(?<title>[^<]*)</span></a>|<li><a\stitle="[^"]*"\shref="(?<url>[^"]*)"><span>(?<title>[^<]*)</span></a></li>]]></item>
         <item key="videoListRegEx"><![CDATA[(<span\sclass="col_tit"\sid="(?<id>[^"]*)"\sname="progname">\s*<a\shref="(?<VideoUrl>[^"]*)">(?:<em>[^<]*</em>&nbsp;)?(?<Title>[^<]*)</a>\s*</span>\s*<span\sclass="col_tip">\s*Completo</span>\s*<span\sclass="col_dur">(?<Duration>[^<]*)</span>\s*<span\sclass="col_pop"><[^>]*><em><strong><span>[^<]*</span></strong></em></span></span>\s*<span\sclass="col_fec">(?<Airdate>[^<]*)</span>\s*<div[^>]*>\s*<span\sid="progToolTip"\sclass="tooltip\scurved">\s*<span\sclass="pointer"></span>\s*<span[^>]*></span>\s*<span\sclass="titulo-tooltip"><a[^>]*>[^<]*</a></span>\s*<span\sclass="fecha">[^<]*</span>\s*<span\sclass="detalle">(?<Description>[^<]*)</span>\s*<span\sclass="miga">\s*<ul>\s*<li>)
         |
         (<dt>[^<]*</dt>\s*<dd>\s*<a\srel="[^"]*"\stitle="[^"]*"\shref="(?<VideoUrl>[^"]*)"><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*><cite>(?<Title>[^<]*)</cite></a><em><span>(?<Description>[^<]*)</span></em>\s*</dd>)]]></item>
@@ -1104,12 +1105,13 @@
         <Category xsi:type="RssLink" name="Canal 24 horas">http://www.rtve.es/alacarta/programas/24-horas/todos/1/</Category>
         <Category xsi:type="RssLink" name="Teledeporte">http://www.rtve.es/alacarta/programas/teledeporte/todos/1/</Category>
         <Category xsi:type="RssLink" name="Clan TVE">http://www.rtve.es/alacarta/programas/clan/todos/1/</Category>
+        <Category xsi:type="RssLink" name="Generos">http://www.rtve.es/alacarta/programas/tve/todos/1/</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
-            <Channel name="La 1" thumb="http://img.irtve.es/imagenes/jpg/1331812793943.jpg" desc="">http://www.rtve.es/noticias/directo-la-1/</Channel>
-            <Channel name="La 2" thumb="http://img.irtve.es/imagenes/jpg/1331812807613.jpg" desc="">http://www.rtve.es/television/la-2-directo/</Channel>
-            <Channel name="24h" thumb="http://img.irtve.es/imagenes/jpg/1331812821628.jpg" desc="">http://www.rtve.es/noticias/directo/canal-24h/</Channel>
-            <Channel name="TDP" thumb="http://img.irtve.es/imagenes/jpg/1331812833746.jpg" desc="">http://www.rtve.es/deportes/directo/teledeporte/</Channel>
+            <Channel name="La 1" thumb="http://img.irtve.es/imagenes/jpg/1331812793943.jpg">http://www.rtve.es/noticias/directo-la-1/</Channel>
+            <Channel name="La 2" thumb="http://img.irtve.es/imagenes/jpg/1331812807613.jpg">http://www.rtve.es/television/la-2-directo/</Channel>
+            <Channel name="24h" thumb="http://img.irtve.es/imagenes/jpg/1331812821628.jpg">http://www.rtve.es/noticias/directo/canal-24h/</Channel>
+            <Channel name="TDP" thumb="http://img.irtve.es/imagenes/jpg/1331812833746.jpg">http://www.rtve.es/deportes/directo/teledeporte/</Channel>
           </Channels>
         </Category>
       </Categories>

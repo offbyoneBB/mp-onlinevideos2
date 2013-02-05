@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
@@ -10,8 +11,12 @@ namespace OnlineVideos.Sites
 {
     public class TVEUtil : GenericSiteUtil
     {
+        [Category("OnlineVideosConfiguration")]
+        protected string generosRegEx;
+
         private Regex regEx_SubCategory;
         private Regex regEx_SubSubCategory;
+        private Regex regEx_Generos;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -19,14 +24,18 @@ namespace OnlineVideos.Sites
             regEx_SubSubCategory = regEx_dynamicSubCategories;
             regEx_SubCategory = regEx_dynamicCategories;
             regEx_dynamicCategories = null;
+            regEx_Generos = new Regex(generosRegEx, defaultRegexOptions);
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            if (parentCategory.ParentCategory == null)
-                regEx_dynamicSubCategories = regEx_SubCategory;
+            if (parentCategory.Name == "Generos")
+                regEx_dynamicSubCategories = regEx_Generos;
             else
-                regEx_dynamicSubCategories = regEx_SubSubCategory;
+                if (parentCategory.ParentCategory == null)
+                    regEx_dynamicSubCategories = regEx_SubCategory;
+                else
+                    regEx_dynamicSubCategories = regEx_SubSubCategory;
 
             int res = base.DiscoverSubCategories(parentCategory);
 
