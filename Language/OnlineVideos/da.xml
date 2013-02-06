@@ -108,6 +108,7 @@
   <!--Q-->
   <string name="Queued">sat i kø</string>
   <!--R-->
+  <string name="RateVideo">Bedøm videoen ...</string>
   <string name="Recommendations">Anbefalinger</string>
   <string name="RemoveFromFavorites">Fjern fra Favoritter</string>
   <string name="RemoveFromPlaylist">Fjern fra Playlist</string>
@@ -167,7 +168,20 @@
   <string name="Settings_SearchHistoryType_Simple">Enkel</string>
   <string name="Settings_SearchHistoryType_Extended">Udvidet</string>
   <string name="Settings_PluginEnabled">Plugin aktiveret</string>
+  <string name="Settings_ListedInPlugins">Anført i mine Plugins</string>
   <string name="Settings_AutoGroupByLang">Automatisk grupper alle sider via sprog</string>
+  <string name="Settings_UseQuickSelect">Brug alfanumeriske taster for hurtigt at vælge elementer vha. første bogstav</string>
   <string name="Settings_SearchHistoryType">Søge historie</string>
+  <string name="Settings_CacheTimeout">Tid (minutter) data bufferes fra Internettet</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Tid (minutter) hvorefter kategorier genindlæses fra Internettet</string>
+  <string name="Settings_UtilTimeout">Timeout (sekunder) for internetforespørgsler</string>
+  <string name="Settings_WmpBuffer">Buffer (millisekunder) til Windows Media Player</string>
+  <string name="Settings_PlayBuffer">Procentdel der bufferes før afspilning starter</string>
+  <string name="Settings_AllowRefreshrateChange">Aktiver dynamisk opdateringshastigheds tilpasning</string>
+  <string name="Settings_FavoritesFirst">Placer favoritter og download steder øverst i listen istedet for nederst</string>
+  <string name="Settings_LatestVideosMaxItems">Antal der skal vises af seneste videoer</string>
+  <string name="Settings_LatestVideosRandomize">Bland alle seneste videoer før visning</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Opdater seneste videoers data fra Internettet for hver x minutter</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Opdater seneste viste videoer for hver x sekunder</string>
   <string name="Settings_StoreLayoutPerCategory">Husk layout pr side og kategori</string>
 </resources>

@@ -102,6 +102,7 @@
   <string name="Playlists">Soittolistat</string>
   <string name="PlaybackWillBeStopped">Toisto pysäytetään.</string>
   <string name="PleaseEnterDescription">Anna lyhyt kuvaus.</string>
+  <string name="PleaseUpdateLocalSite">Päivitä ja testaa uudelleen sivusi ennenkuin raportoit sen olevan hajalla.</string>
   <string name="PlotOutline">Juonen kuvaus</string>
   <string name="PreviousPage">Edellinen sivu</string>
   <string name="PerformAutomaticUpdate">Suorita automaattipäivitys?</string>
