@@ -57,6 +57,10 @@ namespace OnlineVideos.Sites
 
                     DiscoverDynamicCategoriesUsingJson(null);
                 }
+                else
+                {
+                    Log.Warn(@"Feed PID not found at {0}", feedPIDUrl);
+                }
             }
 
             Settings.DynamicCategoriesDiscovered = true;
