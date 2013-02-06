@@ -1017,6 +1017,16 @@
     <Site name="Первый канал" util="PervyjKanalRu" agecheck="false" enabled="true" lang="ru">
       <Description>Официальный сайт. Новости. Премьеры. Вещание.</Description>
     </Site>
+    <Site name="3voor12" util="DrieVoor12" agecheck="false" enabled="true" lang="nl">
+      <Description>3voor12 - Concerten & festivals</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sitemscope\sitemtype="http://schema\.org/MusicPlaylist"\sdata-urn="urn:vpro:media:group:[^"]*"\sclass="groupItem">\s*<a\shref="(?<url>[^"]*)">\s*<figure>\s*<img\sitemprop="image"\ssrc="(?<thumb>[^"]*)"\salt=""\sclass="animate\splayListImg\sotherColumn"\s/>\s*<div\sclass="album-type">video</div>\s*</figure>\s*</a>\s*<div\sclass="albumoverview-links">\s*<a[^>]*></a>\s*<a[^>]*></a>\s*</div>\s*<a[^>]*>\s*<hgroup>\s*<h1\sitemprop="name">(?<title>[^<]*)</h1>\s*<h4\sitemprop="keywords">(?<description>[^<]*)</h4>\s*</hgroup>\s*</a>\s*</li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="track"\sdata-urn="urn:vpro:media:program:[^"]*"\sitemscope\sitemtype="http://schema\.org/MusicRecording">\s*<div\sclass="image\sanimate\simage-block">\s*<img\sitemprop="image"\swidth="[^"]*"\sheight="[^"]*"\s*src="(?<ImageUrl>[^"]*)"\s/>\s*<div\sclass="overlay\simage-block">\s*<div\sclass="track-links">\s*<a[^>]*></a>\s*<a[^>]*></a>\s*</div>\s*<div\sclass="track-duration">video\s</div>\s*</div>\s*</div>\s*<div\sclass="description">\s*<div\sclass="track-data">\s*<h2\sitemprop="type"\sitemscope\sclass="track-type">(?<Description>[^<]*)</h2>\s*<h1\sitemprop="name"\sitemscope\sclass="track-title">\s*<a\sclass="program-player-link"\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>\s*</h1>\s*<p\sitemprop="description"\sitemscope\sclass="track-description">(?<Airdate>[^<]*)</p>\s*</div>\s*</div>\s*</div>]]></item>
+        <item key="baseUrl"><![CDATA[http://3voor12.vpro.nl/video.html]]></item>
+        <item key="fileUrlRegEx"><![CDATA["url":(?<m0>[^}]*)}]]></item>
+        <item key="cookies"><![CDATA[site_cookie_consent=yes]]></item>
+      </Configuration>
+    </Site>
     <Site name="ABC iView" util="ABCiView" agecheck="false" enabled="true" lang="en">
       <Description>iview is catch-up and more from ABC TV</Description>
     </Site>
