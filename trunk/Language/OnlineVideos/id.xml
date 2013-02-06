@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
+  <string name="Airdate">Mengudara</string>
+  <string name="AlreadyDownloading">Sudah mengunduh file ini.</string>
+  <string name="All">Semua</string>
+  <string name="Actions">Aksi</string>
+  <string name="Actors">Aktor</string>
+  <string name="AddComment">Tambah Komentar ...</string>
+  <string name="AddToPlaylist">Tambah ke Daftar main ...</string>
+  <string name="AddToMySites">Tambah ke situs saya</string>
+  <string name="AddToFavourites">Tambah ke favorit</string>
+  <string name="AddingToFavorites">tambahkan ke favorit</string>
+  <string name="AutomaticUpdate">Perbaruan Otomatis</string>
+  <string name="AutomaticUpdateDisabled">Perbaruan Otomatis dinonaktifkan.</string>
+  <!--B-->
+  <string name="Broken">Rusak</string>
+  <string name="Buffered">buffered</string>
+  <!--C-->
+  <string name="Cancel">Batal</string>
+  <string name="Category">Kategori</string>
+  <string name="CategoryNotFound">Kategori tidak ada</string>
+  <string name="Categories">Kategori</string>
+  <string name="Creator">Pembuat</string>
+  <string name="CreateNewPlaylist">Buat Daftar main baru ...</string>
+  <string name="CheckingForPluginUpdate">memeriksa perbaruan versi plugin</string>
+  <string name="Concurrent">bersamaan</string>
+  <!--D-->
+  <string name="Date">Tanggal</string>
+  <string name="DateOfRelease">Tanggal Rilis</string>
+  <string name="Directors">Sutradara</string>
+  <string name="Download">Unduh</string>
+  <string name="DownloadUserdefined">Unduh ke Direktori Pengguna</string>
+  <string name="Downloading">Mengunduh</string>
+  <string name="DownloadingDescription">Tampilkan daftar unduh yang berjalan saat ini.</string>
+  <string name="DownloadingSubtitle">mengunduh subtitel</string>
+  <string name="DownloadFailed">Pengunduhan gagal: {0}</string>
+  <string name="DownloadCancelled">Pengunduhan Dibatalkan</string>
+  <string name="DownloadComplete">Pengunduhan Selesai</string>
+  <string name="DownloadStarted">Mulai Pengunduhan</string>
+  <string name="DownloadedVideos">Video Diunduh</string>
+  <string name="DownloadsWillBeAborted">Pengunduhan akan dihentikan.</string>
+  <string name="Delete">Hapus</string>
+  <string name="DeletePlaylist">Hapus Daftar main</string>
+  <string name="DeleteAll">Hapus Semua</string>
+  <string name="Default">Baku</string>
+  <string name="Done">Selesai</string>
+  <string name="DeletingOldThumbs">Menghapus thumbnail lama</string>
+  <!--E-->
+  <string name="Error">Galat</string>
+  <string name="EnterPin">Masukkan Pin</string>
+  <!--F-->
+  <string name="Favourites">Favorit</string>
+  <string name="Filter">Saring</string>
+  <string name="FullUpdate">Perbaruan Penuh</string>
+  <!--G-->
+  <string name="Genre">Genre</string>
+  <string name="GettingVideoDetails">mengambil rincian video</string>
+  <string name="GettingCategoryVideos">mengambil kategori video</string>
+  <string name="GettingFavoriteVideos">mengambil video favorit</string>
+  <string name="GettingSearchResults">mengambil hasil pencarian</string>
+  <string name="GettingRelatedVideos">mengambil video terkait</string>
+  <string name="GettingFilteredVideos">mengambil video tersaring</string>
+  <string name="GettingNextPageVideos">mengambil video halaman berikutnya</string>
+  <string name="GettingPreviousPageVideos">mengambil video halaman sebelumnya</string>
+  <string name="GettingPlaybackUrlsForVideo">mengambil url playback untuk video</string>
+  <string name="GettingDynamicCategories">mengambil kategori dinamis</string>
+  <string name="GettingReports">mengambil laporan dari layanan web</string>
+  <string name="GettingSiteXml">mengambil xml situs dari layanan web</string>
+  <string name="GettingIcon">mengambil icon situs dari layanan web</string>
+  <string name="GettingBanner">mengambil banner situs dari layanan web</string>
+  <string name="GettingDll">mengambil dll dari layanan web</string>
+  <string name="Groups">Grup</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="LatestVersionRequired">Versi terakhir ({0}) dibutuhkan!</string>
+  <string name="Language">Bahasa</string>
+  <string name="LayoutList">Susunan: Daftar</string>
+  <string name="LayoutIcons">Susunan: Icon</string>
+  <string name="LayoutBigIcons">Susunan: Icon Besar</string>
+  <!--M-->
+  <string name="ManageSites">Kelola Situs</string>
+  <string name="MaxResults">Hasil Maks</string>
+  <!--N-->
+  <string name="Name">Nama</string>
+  <string name="NextPage">Halaman berikutnya</string>
+  <string name="NewVideos">Video Baru</string>
+  <string name="None">Nihil</string>
+  <string name="NoVideoFound">Tidak ada video</string>
+  <string name="NoReportsForSite">Tidak ada laporan untuk situs ini.</string>
+  <string name="NewDllDownloaded">dll baru telah diunduh!</string>
+  <string name="NewSearch">Pencarian baru</string>
+  <!--O-->
+  <string name="OnlyLocal">Hanya Lokal</string>
+  <string name="OnlyServer">Hanya Server</string>
+  <string name="Others">Lainnya</string>
+  <!--P-->
+  <string name="PlayAll">Mainkan semua</string>
+  <string name="PlayAllRandom">Mainkan semua (secara acak)</string>
+  <string name="PlayWith">Mainkan dengan ...</string>
+  <string name="Playlists">Daftar main</string>
+  <string name="PlaybackWillBeStopped">Playback akan dihentikan.</string>
+  <string name="PleaseEnterDescription">Silahkan berikan deskripsi singkat.</string>
+  <string name="PleaseUpdateLocalSite">Silahkan perbarui dan uji ulang situs lokal anda sebelum melaporkan masalahnya.</string>
+  <string name="PlotOutline">Skema cerita</string>
+  <string name="PreviousPage">Halaman sebelumnya</string>
+  <string name="PerformAutomaticUpdate">Jalankan perbaruan otomatis?</string>
+  <!--Q-->
+  <string name="Queued">antrian</string>
+  <!--R-->
+  <string name="RateVideo">Beri Nilai Video ...</string>
+  <string name="Recommendations">Rekomendasi</string>
+  <string name="RemoveFromFavorites">Hapus dari favorit</string>
+  <string name="RemoveFromPlaylist">Hapus dari Daftar main</string>
+  <string name="RemovingFromFavorites">menghapus dari favorit</string>
+  <string name="Refresh">Segarkan</string>
+  <string name="RelatedVideos">Video Terkait</string>
+  <string name="ReportBroken">Laporan Kerusakan</string>
+  <string name="Reported">Dilaporkan</string>
+  <string name="Reports">Laporan</string>
+  <string name="Runtime">Lama tayang</string>
+  <string name="RemoveFromMySites">Hapus dari situs saya</string>
+  <string name="RemoveAllFromMySites">Hapus semua dari situs saya</string>
+  <string name="RestartMediaPortal">Restart MediaPortal!</string>
+  <string name="RetrievingRemoteDlls">Menerima dll terkendali ...</string>
+  <string name="RetrievingRemoteSites">Menerima situs terkendali ...</string>
+  <!--S-->
+  <string name="SearchHistory">Riwayat pencarian</string>
+  <string name="SearchResults">Hasil pencarian</string>
+  <string name="SelectSource">Pilih sumber</string>
+  <string name="Sites">Situs</string>
+  <string name="Size">Ukuran</string>
+  <string name="SortOptions">Opsi pengurutan</string>
+  <string name="Search">Cari</string>
+  <string name="SetDownloadFolderInConfig">Silahkah setel folder pengunduhan pada Konfigurasi!</string>
+  <string name="State">Kondisi</string>
+  <string name="SavingLocalSiteList">Menyimpan daftar situs lokal ...</string>
+  <string name="ShowReports">Tampilkan pembuat dan pengguna laporannya</string>
+  <string name="StartingPlayback">memulai playback</string>
+  <string name="Subscriptions">Berlangganan</string>
+  <string name="Success">Sukses</string>
+  <!--T-->
+  <string name="Timeframe">Timeframe</string>
+  <string name="Timeout">Timeout</string>
+  <string name="Tags">Tag</string>
+  <!--U-->
+  <string name="Updated">Diperbarui</string>
+  <string name="Updatable">Dapat diperbarui</string>
+  <string name="UpdateAll">Perbarui/Tambah semua</string>
+  <string name="UpdateAllSkipCategories">Perbarui/Tambah semua (lewati kategori)</string>
+  <string name="UpdateMySite">Perbarui situs saya</string>
+  <string name="UpdateMySiteSkipCategories">Perbarui situs saya (lewati kategori)</string>
+  <string name="UpdateAllYourSites">Ini akan memperbarui semua situs anda saat ini.</string>
+  <string name="UnableToPlayVideo">Tidak bisa memainkan video tersebut. Tidak ada URL.</string>
+  <string name="UnableToDownloadVideo">Tidak bisa mengunduh video. URL cacat.</string>
+  <string name="UploadsBy">diunduh oleh</string>
+  <!--V-->
+  <string name="Videos">Video</string>
+  <string name="VideoQuality">Kualitas Video</string>
+  <!--W-->
+  <string name="Working">Bekerja</string>
+  <string name="Writers">Penulis</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="Settings_Yes">Ya</string>
+  <string name="Settings_No">Tidak</string>
+  <string name="Settings_SearchHistoryType_Off">Off</string>
+  <string name="Settings_SearchHistoryType_Simple">Sederhana</string>
+  <string name="Settings_SearchHistoryType_Extended">Lanjutan</string>
+  <string name="Settings_BasicHomeName">Nama Basis Beranda</string>
+  <string name="Settings_PluginEnabled">Plugin Aktif</string>
+  <string name="Settings_ListedInHome">Terdaftar di Beranda</string>
+  <string name="Settings_ListedInPlugins">Terdaftar di Plugin Saya</string>
+  <string name="Settings_AutoGroupByLang">Otomatis grupkan semua situs berdasarkan bahasanya</string>
+  <string name="Settings_UseQuickSelect">Gunakan kunci alfanumerik untuk pilih cepat item berdasarkan huruf pertamanya</string>
+  <string name="Settings_SearchHistoryType">Riwayat pencarian</string>
+  <string name="Settings_ThumbAge">Usia maksimal (hari) untuk thumbnail</string>
+  <string name="Settings_CacheTimeout">Waktu (menit) untuk cache data dari web</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Waktu (menit) setelah kategori dimuatkan dari web</string>
+  <string name="Settings_UtilTimeout">Timeout (detik) untuk webrequest</string>
+  <string name="Settings_WmpBuffer">Buffer (milidetik) untuk Windows Media Player</string>
+  <string name="Settings_PlayBuffer">Persentase buffer sebelum memulai playback</string>
+  <string name="Settings_AllowRefreshrateChange">Aktifkan adaptasi taksiran penyegaran dinamis</string>
+  <string name="Settings_FavoritesFirst">Letakkan situs Favorit dan Unduhan lebih dulu dalam daftar daripada terakhir</string>
+  <string name="Settings_LatestVideosMaxItems">Jumlah video terbaru untuk ditampilkan</string>
+  <string name="Settings_LatestVideosRandomize">Acak semua video terbaru sebelum ditayangkan</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Segarkan data video terbaru dari web setiap x menit</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Segarkan video terbaru yang ditampilkan setiap x menit</string>
+  <string name="Settings_StoreLayoutPerCategory">Riwayatkan susunan tampilan per Situs dan Kategori</string>
+</resources>
