@@ -1567,8 +1567,8 @@
     <Site name="Slice" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>With highly addictive, must-see entertainment, Slice™ is the juicy channel women have been waiting for. Targeting viewers with an attitude found nowhere else in the lifestyle television landscape, Slice™ brings an unapologetic attitude to topics that matter to women – family, fashion, relationships, celebrity, finances and gossip – to name just a few.</Description>
 	  <Configuration>
-		<item key="feedPIDUrl"><![CDATA[http://www.slice.ca/Slice/Watch/Default.aspx?ID=v]]></item>
-		<item key="feedPIDRegexString"><![CDATA[var\scwpPid\s+=\s"(?<feedPID>[^"]*)";]]></item>
+		<item key="feedPIDUrl"><![CDATA[http://www.slice.ca/includes/vc_20/js/cwpSliceVC.js]]></item>
+		<item key="feedPIDRegexString"><![CDATA[data.PID\s=\sdata\.PID\s\|\|\s"(?<feedPID>[^"]*)";]]></item>
 		<item key="playerTag"><![CDATA[z/Slice Player - New Video Center]]></item>
 	  </Configuration>
     </Site>
