@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.rick164"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.Dj_Moren", "SiteUtilProjects\OnlineVideos.Sites.Dj_Moren\OnlineVideos.Sites.Dj_Moren.csproj", "{968E5881-C9E0-499C-BF04-01AB1DF49FBB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.bw_fotoart", "SiteUtilProjects\OnlineVideos.Sites.bw_fotoart\OnlineVideos.Sites.bw_fotoart.csproj", "{92D26D2F-3408-481F-AB6F-4485B40A114B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -255,6 +257,18 @@ Global
 		{968E5881-C9E0-499C-BF04-01AB1DF49FBB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{968E5881-C9E0-499C-BF04-01AB1DF49FBB}.Release|Win32.ActiveCfg = Release|Any CPU
 		{968E5881-C9E0-499C-BF04-01AB1DF49FBB}.Release|x86.ActiveCfg = Release|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Release|Win32.ActiveCfg = Release|Any CPU
+		{92D26D2F-3408-481F-AB6F-4485B40A114B}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -274,5 +288,6 @@ Global
 		{5E8191F0-FE55-4A22-B3B0-CB9D252B58E4} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{F66C55CD-EF36-470E-AAA7-EC62D5DCFF36} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{968E5881-C9E0-499C-BF04-01AB1DF49FBB} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
+		{92D26D2F-3408-481F-AB6F-4485B40A114B} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 	EndGlobalSection
 EndGlobal
