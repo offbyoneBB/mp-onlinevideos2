@@ -38,9 +38,16 @@ namespace OnlineVideos
 				{
 					domain = AppDomain.CreateDomain("OnlineVideosSiteUtilDlls", null, null, null, true);
 
-					pluginLoader = (PluginLoader)domain.CreateInstanceAndUnwrap(
-					  typeof(PluginLoader).Assembly.FullName,
+					// we need to subscribe to AssemblyResolve on the MP2 AppDomain because OnlineVideos.dll is loaded in the LoadFrom Context
+					// and when unwrapping transparent proxy from our AppDomain, resolving types will fail because it looks only in the default Load context
+					// we simply help .Net by returning the already loaded assembly from the LoadFrom context
+					AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
+
+					pluginLoader = (PluginLoader)domain.CreateInstanceFromAndUnwrap(
+					  Assembly.GetExecutingAssembly().Location,
 					  typeof(PluginLoader).FullName);
+
+					AppDomain.CurrentDomain.AssemblyResolve -= AssemblyResolve;
 
 					domain.SetData(typeof(PluginLoader).FullName, pluginLoader);
 				}
@@ -55,6 +62,14 @@ namespace OnlineVideos
 				domain = AppDomain.CurrentDomain;
 				pluginLoader = (PluginLoader)AppDomain.CurrentDomain.GetData(typeof(PluginLoader).FullName);
 			}
+		}
+
+		static Assembly AssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			// this should only be called to resolve OnlineVideos.dll -> return it regardless of the version, only the name "OnlineVideos"
+			AssemblyName an = new AssemblyName(args.Name);
+			var asm = (sender as AppDomain).GetAssemblies().FirstOrDefault(a => a.GetName().Name == an.Name);
+			return asm;
 		}
 
 		internal static object GetCrossDomainSingleton(Type type)
