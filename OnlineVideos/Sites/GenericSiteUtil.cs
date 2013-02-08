@@ -162,6 +162,10 @@ namespace OnlineVideos.Sites
             return 0; // coming here means no dynamic categories were discovered
         }
 
+        protected virtual void ExtraCategoryMatch(RssLink category, GroupCollection matchGroups)
+        {
+        }
+
         public virtual int ParseCategories(string data)
         {
             List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a separate list
@@ -175,6 +179,7 @@ namespace OnlineVideos.Sites
                 if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
                 cat.Description = m.Groups["description"].Value;
                 if (regEx_dynamicSubCategories != null) cat.HasSubCategories = true;
+                ExtraCategoryMatch(cat, m.Groups);
                 dynamicCategories.Add(cat);
                 m = m.NextMatch();
             }
@@ -201,6 +206,11 @@ namespace OnlineVideos.Sites
             return ParseSubCategories(parentCategory, null);
         }
 
+        protected virtual void ExtraSubCategoryMatch(RssLink category, GroupCollection matchGroups)
+        {
+        }
+
+
         public virtual int ParseSubCategories(Category parentCategory, string data)
         {
             if (parentCategory is RssLink && regEx_dynamicSubCategories != null)
@@ -220,6 +230,7 @@ namespace OnlineVideos.Sites
                         if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
                         cat.Description = m.Groups["description"].Value;
                         cat.ParentCategory = parentCategory;
+                        ExtraSubCategoryMatch(cat, m.Groups);
                         dynamicSubCategories.Add(cat);
                         m = m.NextMatch();
                     }
@@ -620,6 +631,10 @@ namespace OnlineVideos.Sites
             return url;
         }
 
+        protected virtual void ExtraVideoMatch(VideoInfo video, GroupCollection matchGroups)
+        {
+        }
+
         protected virtual List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
@@ -641,6 +656,7 @@ namespace OnlineVideos.Sites
                         videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
                         videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
                         videoInfo.Description = m.Groups["Description"].Value;
+                        ExtraVideoMatch(videoInfo, m.Groups);
                         videoList.Add(videoInfo);
                         m = m.NextMatch();
                     }
