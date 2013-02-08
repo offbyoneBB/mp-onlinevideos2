@@ -82,7 +82,8 @@ namespace OnlineVideos.Hoster
             string webData = requestFileInformation(url, cc);
             if (string.IsNullOrEmpty(webData)) return string.Empty;
 
-            Match m = Regex.Match(webData, @"<form\smethod=""post"">\s*<input\stype=""hidden""\svalue=""(?<hashValue>[a-z0-9]+)""\sname=""(?<hashName>[^""]+)"">\s*<input\sname=""(?<confirmName>[^""]+)""\stype=""submit""\svalue=""(?<confirmValue>[^""]+)""[^>]*>\s*</form>", defaultRegexOptions);
+            Match m = Regex.Match(webData, @"<input\stype=""hidden""\svalue=""(?<hashValue>[a-z0-9]+)""\sname=""(?<hashName>[^""]+)"">\s*<input\sname=""(?<confirmName>[^""]+)""\stype=""submit""\svalue=""(?<confirmValue>[^""]+)""[^>]*>\s*</form>", defaultRegexOptions);
+
             if (!m.Success) return String.Empty;
 
             string postData = String.Format(@"{0}={1}&{2}={3}",
