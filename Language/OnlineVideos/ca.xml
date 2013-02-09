@@ -1,131 +1,191 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
   <!--A-->
-  <string name="Airdate">Transmès</string>
-  <string name="AlreadyDownloading">Ja s\'està baixant l\'arxiu</string>
+  <string name="Airdate">Emès</string>
+  <string name="AlreadyDownloading">Ja s\'està baixant l\'arxiu.</string>
   <string name="All">Tot</string>
   <string name="Actions">Accions</string>
   <string name="Actors">Actors</string>
-  <string name="AddToMySites">Afegeix als meus arxius</string>
-  <string name="AddToFavourites">Afegeis a favorits</string>
-  <string name="AddingToFavorites">Afegint a favorits</string>
+  <string name="AddComment">Afegeix un Comentari...</string>
+  <string name="AddToPlaylist">Afegeix a una Llista...</string>
+  <string name="AddToMySites">Afegeix als meus llocs</string>
+  <string name="AddToFavourites">Afegeix a preferits</string>
+  <string name="AddingToFavorites">S\'està afegint a preferits</string>
   <string name="AutomaticUpdate">Actualització Automàtica</string>
   <string name="AutomaticUpdateDisabled">Actualització Automàtica desactivada</string>
   <!--B-->
-  <string name="Broken">Trencat</string>
-  <string name="Buffered">buferitzat</string>
+  <string name="Broken">No vàlid</string>
+  <string name="Buffered">al buffer</string>
   <!--C-->
   <string name="Cancel">Cancel·la</string>
   <string name="Category">Categoria</string>
+  <string name="CategoryNotFound">No s\'ha trobat la categoria</string>
   <string name="Categories">Categories</string>
   <string name="Creator">Creador</string>
-  <string name="CheckingForPluginUpdate">Comprovant la versió actualitzada dels afegits</string>
+  <string name="CreateNewPlaylist">Crea una Llista...</string>
+  <string name="CheckingForPluginUpdate">S\'està cercant una versió actualitzada del connector</string>
+  <string name="Concurrent">simultani</string>
   <!--D-->
   <string name="Date">Data</string>
-  <string name="DateOfRelease">Data de Creació</string>
+  <string name="DateOfRelease">Data de Llançament</string>
   <string name="Directors">Directors</string>
-  <string name="Download">Descarregat</string>
-  <string name="Downloading">Descarregant</string>
-  <string name="DownloadingDescription">Mostra una llista de descarregues actualment en execucíó</string>
-  <string name="DownloadFailed">Descàrrega fallida: {0}</string>
-  <string name="DownloadCancelled">Descarregar Cancel·lat</string>
-  <string name="DownloadComplete">Descàrrega Completa</string>
-  <string name="DownloadStarted">Descàrrega Iniciada</string>
-  <string name="DownloadedVideos">Videos Descarregats</string>
-  <string name="Delete">Eliminar</string>
-  <string name="DeleteAll">Eliminar Tot</string>
-  <string name="Default">Defecte</string>
+  <string name="Download">Baixada</string>
+  <string name="DownloadUserdefined">Baixa al Directori d\'Usuari</string>
+  <string name="Downloading">S\'està baixant</string>
+  <string name="DownloadingDescription">Mostra una llista de les baixades en actiu.</string>
+  <string name="DownloadingSubtitle">s\'està baixant el subtítol</string>
+  <string name="DownloadFailed">La baixada ha fallat: {0}</string>
+  <string name="DownloadCancelled">La baixada s\'ha Cancel·lat</string>
+  <string name="DownloadComplete">La baixada s\'ha Completat</string>
+  <string name="DownloadStarted">La baixada s\'ha Iniciat</string>
+  <string name="DownloadedVideos">Vídeos baixats</string>
+  <string name="DownloadsWillBeAborted">S\'interrompran les baixades.</string>
+  <string name="Delete">Suprimeix</string>
+  <string name="DeletePlaylist">Suprimeix la Llista</string>
+  <string name="DeleteAll">Supremeix-ho Tot</string>
+  <string name="Default">Per defecte</string>
   <string name="Done">Fet</string>
-  <string name="DeletingOldThumbs">Eliminant miniatures antigues</string>
+  <string name="DeletingOldThumbs">S\'estan suprimint miniatures antigues</string>
   <!--E-->
   <string name="Error">Error</string>
-  <string name="EnterPin">Introdueix PIN</string>
+  <string name="EnterPin">Introduïu el PIN</string>
   <!--F-->
-  <string name="Favourites">Favorits</string>
-  <string name="Filter">Filtre</string>
+  <string name="Favourites">Preferits</string>
+  <string name="Filter">Filtra</string>
   <string name="FullUpdate">Actualització Completa</string>
   <!--G-->
   <string name="Genre">Gènere</string>
-  <string name="GettingVideoDetails">aconseguint detalls del video</string>
-  <string name="GettingCategoryVideos">aconseguint la categoria dels vídeos</string>
-  <string name="GettingFavoriteVideos">aconseguint vídeos favorits</string>
-  <string name="GettingSearchResults">aconseguint resultats de cerca</string>
-  <string name="GettingRelatedVideos">aconseguint vídeos relacionats</string>
-  <string name="GettingFilteredVideos">aconseguint vídeos filtrats</string>
-  <string name="GettingNextPageVideos">aconseguint la següent pàgina dels vídeos</string>
-  <string name="GettingPreviousPageVideos">aconseguint la pàgina següent dels vídeos</string>
-  <string name="GettingPlaybackUrlsForVideo">aconseguint urls de reproducció de vídeo</string>
-  <string name="GettingDynamicCategories">aconseguint categories dinàmiques</string>
-  <string name="GettingReports">aconseguint informes del servei web</string>
-  <string name="GettingSiteXml">aconseguint xml del servei web</string>
-  <string name="GettingIcon">aconseguint icona del servei web</string>
-  <string name="GettingBanner">aconseguint cartell del servei web</string>
-  <string name="GettingDll">aconseguint dll del servei web</string>
+  <string name="GettingVideoDetails">s\'està rebent detalls del vídeo</string>
+  <string name="GettingCategoryVideos">s\'està rebent la categoria dels vídeos</string>
+  <string name="GettingFavoriteVideos">s\'està rebent vídeos preferits</string>
+  <string name="GettingSearchResults">s\'està rebent resultats de cerca</string>
+  <string name="GettingRelatedVideos">s\'està rebent vídeos relacionats</string>
+  <string name="GettingFilteredVideos">s\'està rebent vídeos filtrats</string>
+  <string name="GettingNextPageVideos">s\'està rebent la pàgina següent dels vídeos</string>
+  <string name="GettingPreviousPageVideos">s\'està rebent la pàgina anterior dels vídeos</string>
+  <string name="GettingPlaybackUrlsForVideo">s\'està rebent urls de reproducció de vídeo</string>
+  <string name="GettingDynamicCategories">s\'està rebent categories dinàmiques</string>
+  <string name="GettingReports">s\'està rebent informes del servei web</string>
+  <string name="GettingSiteXml">s\'està rebent xml del servei web</string>
+  <string name="GettingIcon">s\'està rebent icones del servei web</string>
+  <string name="GettingBanner">s\'està rebent bàner del servei web</string>
+  <string name="GettingDll">s\'està rebent dll del servei web</string>
+  <string name="Groups">Grups</string>
   <!--H-->
   <!--I-->
   <!--L-->
-  <string name="LatestVersionRequired">Es necessita la última versió! {0}</string>
+  <string name="LatestVersionRequired">Cal la última versió ({0}) !</string>
   <string name="Language">Idioma</string>
-  <string name="LayoutList">Disseny: Llista</string>
-  <string name="LayoutIcons">Disseny: Icones</string>
-  <string name="LayoutBigIcons">Disseny: Icones Grans</string>
+  <string name="LayoutList">Disposició: Llista</string>
+  <string name="LayoutIcons">Disposició: Icones</string>
+  <string name="LayoutBigIcons">Disposició: Icones Grans</string>
   <!--M-->
   <string name="ManageSites">Administra Llocs</string>
-  <string name="MaxResults">Nomvre Màxims de Resultats</string>
+  <string name="MaxResults">Nombre Màxim de Resultats</string>
   <!--N-->
   <string name="Name">Nom</string>
   <string name="NextPage">Pàgina següent</string>
+  <string name="NewVideos">Vídeos nous</string>
   <string name="None">Cap</string>
-  <string name="NoVideoFound">No s\'ha trobat el video</string>
-  <string name="NoReportsForSite">No hi ha informes disponibles per aquest lloc.</string>
-  <string name="NewDllDownloaded">Nova dll descarregada!</string>
+  <string name="NoVideoFound">No s\'ha trobat cap video</string>
+  <string name="NoReportsForSite">No hi ha informes disponibles d\'aquest lloc.</string>
+  <string name="NewDllDownloaded">S\'ha baixat la dll nova!</string>
+  <string name="NewSearch">Cerca nova</string>
   <!--O-->
+  <string name="OnlyLocal">Només en Local</string>
+  <string name="OnlyServer">Només Servidor</string>
+  <string name="Others">Altres</string>
   <!--P-->
-  <string name="PlayAll">Reproduir tot</string>
-  <string name="PlotOutline">Argument</string>
+  <string name="PlayAll">Reprodueix-ho tot</string>
+  <string name="PlayAllRandom">Reprodueix-ho tot (aleatòriament)</string>
+  <string name="PlayWith">Reprodueix al...</string>
+  <string name="Playlists">Llistes</string>
+  <string name="PlaybackWillBeStopped">S\'aturarà la reproducció.</string>
+  <string name="PleaseEnterDescription">Describiu-lo breument.</string>
+  <string name="PleaseUpdateLocalSite">Actualitzeu i comproveu el lloc abans d\'informar-ne com a no vàlid.</string>
+  <string name="PlotOutline">Resum de l\'argument</string>
   <string name="PreviousPage">Pàgina anterior</string>
-  <string name="PerformAutomaticUpdate">Fer una actualització automàtica?</string>
+  <string name="PerformAutomaticUpdate">Voleu fer una actualització automàtica?</string>
   <!--Q-->
+  <string name="Queued">a la cua</string>
   <!--R-->
-  <string name="RemoveFromFavorites">Eliminar de favorits</string>
-  <string name="RemovingFromFavorites">Eliminant de favorits</string>
-  <string name="Refresh">Carregar</string>
+  <string name="RateVideo">Valora el Vídeo...</string>
+  <string name="Recommendations">Recomanacions</string>
+  <string name="RemoveFromFavorites">Elimina de preferits</string>
+  <string name="RemoveFromPlaylist">Elimina de la Llista</string>
+  <string name="RemovingFromFavorites">S\'està eliminant de prefirits</string>
+  <string name="Refresh">Actualitza</string>
   <string name="RelatedVideos">Vídeos Relacionats</string>
-  <string name="Reported">Informat</string>
-  <string name="Runtime">Duració</string>
-  <string name="RemoveFromMySites">Eliminar dels meus llocs</string>
-  <string name="RestartMediaPortal">Reiniciar MediaPortal!</string>
-  <string name="RetrievingRemoteDlls">Recuperant dlls remots ...</string>
-  <string name="RetrievingRemoteSites">Recuperant llocs remots ...</string>
+  <string name="ReportBroken">Informa que no és vàlid</string>
+  <string name="Reported">S\'ha informat</string>
+  <string name="Reports">Informes</string>
+  <string name="Runtime">Durada</string>
+  <string name="RemoveFromMySites">Elimina dels meus llocs</string>
+  <string name="RemoveAllFromMySites">Elimina-ho tot dels meus llocs</string>
+  <string name="RestartMediaPortal">Reinicia el MediaPortal!</string>
+  <string name="RetrievingRemoteDlls">S\'està recuperant dlls remots...</string>
+  <string name="RetrievingRemoteSites">S\'està recuperant llocs remots...</string>
   <!--S-->
+  <string name="SearchHistory">Historial de cerca</string>
   <string name="SearchResults">Resultats de cerca</string>
-  <string name="SelectSource">Tria font</string>
+  <string name="SelectSource">Trieu la font</string>
   <string name="Sites">Llocs</string>
   <string name="Size">Mida</string>
   <string name="SortOptions">Opcions d\'ordenació</string>
   <string name="Search">Cerca</string>
-  <string name="SetDownloadFolderInConfig">Si us plau estableix una carpeta a la Configuració!</string>
+  <string name="SetDownloadFolderInConfig">Definiu a la Configuració una carpeta per baixades!</string>
   <string name="State">Estat</string>
-  <string name="SavingLocalSiteList">Guarda la llista de llocs locals</string>
-  <string name="ShowReports">Mostra informes dels usuaris i creadors</string>
-  <string name="StartingPlayback">començant reproducció</string>
+  <string name="SavingLocalSiteList">S\'està desant la llista de llocs...</string>
+  <string name="ShowReports">Mostra informes de creadors i usuaris </string>
+  <string name="StartingPlayback">s\'està iniciant la reproducció</string>
   <string name="Subscriptions">Subscripcions</string>
+  <string name="Success">Amb èxit</string>
   <!--T-->
-  <string name="Timeframe">Termini</string>
-  <string name="Timeout">Timeout</string>
+  <string name="Timeframe">Marge</string>
+  <string name="Timeout">Temps d\'espera</string>
   <string name="Tags">Etiquetes</string>
   <!--U-->
   <string name="Updated">Actualitzat</string>
   <string name="Updatable">Actualitzable</string>
+  <string name="UpdateAll">Actualitza/Afegeix tot</string>
+  <string name="UpdateAllSkipCategories">Actualitza/Afegeix tot (omet categories)</string>
   <string name="UpdateMySite">Actualitza el meu lloc</string>
-  <string name="UpdateMySiteSkipCategories">Actualitza el meu lloc (ignora categories)</string>
-  <string name="UpdateAllYourSites">Això actualitzarà tots els teus llocs actuals</string>
-  <string name="UnableToPlayVideo">No es pot reproduir el vídeo. No hi ha URL</string>
-  <string name="UnableToDownloadVideo">No es pot descarregar el vídeo. URL no vàlida</string>
+  <string name="UpdateMySiteSkipCategories">Actualitza el meu lloc (omet categories)</string>
+  <string name="UpdateAllYourSites">Això actualitzarà tots els llocs actuals</string>
+  <string name="UnableToPlayVideo">No es pot reproduïr el vídeo. No hi ha URL.</string>
+  <string name="UnableToDownloadVideo">No es pot baixar el vídeo. URL no vàlida</string>
+  <string name="UploadsBy">penjats per</string>
   <!--V-->
   <string name="Videos">Vídeos</string>
+  <string name="VideoQuality">Qualitat de Vídeo</string>
   <!--W-->
   <string name="Working">Treballant</string>
+  <string name="Writers">Escrit per</string>
   <!--Y-->
   <!--Strings from the settings file-->
+  <string name="Settings_Yes">Sí</string>
+  <string name="Settings_No">No</string>
+  <string name="Settings_SearchHistoryType_Off">Apagat</string>
+  <string name="Settings_SearchHistoryType_Simple">Senzill</string>
+  <string name="Settings_SearchHistoryType_Extended">Ampliat</string>
+  <string name="Settings_BasicHomeName">Nom de l\'Inici Bàsic</string>
+  <string name="Settings_PluginEnabled">Connector Activat</string>
+  <string name="Settings_ListedInHome">Exposat a Inici</string>
+  <string name="Settings_ListedInPlugins">Exposat a Els Meus Connectors</string>
+  <string name="Settings_AutoGroupByLang">Agrupa automàticament els llocs web per idioma</string>
+  <string name="Settings_UseQuickSelect">Utilitza el teclat per a la selecció ràpida dels elements per la lletra inicial</string>
+  <string name="Settings_SearchHistoryType">Historial de cerca</string>
+  <string name="Settings_ThumbAge">Temps màxim (dies) de les miniatures</string>
+  <string name="Settings_CacheTimeout">Temps (minuts) per a mantenir dades del web</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Temps (minuts) fins que es carreguin de nou les categories del web</string>
+  <string name="Settings_UtilTimeout">Temps d\'espera (segons) de les sol·licituds al web</string>
+  <string name="Settings_WmpBuffer">Buffer (milisegons) pel Windows Media Player</string>
+  <string name="Settings_PlayBuffer">Percentatge del buffer per a iniciar la reproducció</string>
+  <string name="Settings_AllowRefreshrateChange">Activa l\'ajust dinàmic de la velocitat de refresc</string>
+  <string name="Settings_FavoritesFirst">Sitúa primers a la llista els llocs Preferits i Baixades</string>
+  <string name="Settings_LatestVideosMaxItems">Nombre de vídeos nous a mostrar</string>
+  <string name="Settings_LatestVideosRandomize">Barreja tots els vídeos nous abans de mostrar-los</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Actualitza del web cada x minuts les dades de vídeos nous</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Actualitza cada x segons els vídeos nous mostrats</string>
+  <string name="Settings_StoreLayoutPerCategory">Recorda la disposició de la visualització per Lloc i Categoria</string>
 </resources>
