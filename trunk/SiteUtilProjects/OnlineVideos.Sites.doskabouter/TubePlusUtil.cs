@@ -242,21 +242,15 @@ namespace OnlineVideos.Sites
                     // get, format and if needed absolutify the video url
                     videoInfo.VideoUrl = FormatDecodeAbsolutifyUrl(url, m.Groups["VideoUrl"].Value, videoListRegExFormatString, videoListUrlDecoding);
 
-                    try
-                    {
-                        string id = m.Groups["id"].Value;
-                        Match mid = Regex.Match(id, "s(?<season>[^e]*)e(?<episode>.*)");
-                        if (mid.Success)
+                    string id = m.Groups["id"].Value;
+                    TrackingInfo tInfo = new TrackingInfo()
                         {
-                            TrackingInfo tInfo = new TrackingInfo();
-                            tInfo.Title = parentCategory.Name;
-                            tInfo.Season = Convert.ToUInt32(mid.Groups["season"].Value);
-                            tInfo.Episode = Convert.ToUInt32(mid.Groups["episode"].Value);
-                            tInfo.VideoKind = VideoKind.TvSeries;
-                            videoInfo.Other = tInfo;
-                        }
-                    }
-                    catch { };
+                            Title = parentCategory.Name,
+                            Regex = Regex.Match(id, "s(?<Season>[^e]*)e(?<Episode>.*)"),
+                            VideoKind = VideoKind.TvSeries
+                        };
+                    if (tInfo.Season != 0)
+                        videoInfo.Other = tInfo;
                     videoList.Add(videoInfo);
 
                     m = m.NextMatch();
@@ -371,29 +365,5 @@ namespace OnlineVideos.Sites
         }
         #endregion
 
-        public static bool GotTrackingInfoData(string name, int season, int episode, int year)
-        {
-            return (!string.IsNullOrEmpty(name) && ((season > -1 && episode > -1) || (year > 1900)));
-        }
-
-        public static void FillTrackingInfoData(Match trackingInfoMatch, ref string name, ref int season, ref int episode, ref int year)
-        {
-            if (trackingInfoMatch != null && trackingInfoMatch.Success)
-            {
-                name = trackingInfoMatch.Groups["name"].Value.Trim();
-                if (!int.TryParse(trackingInfoMatch.Groups["season"].Value, out season))
-                {
-                    season = -1;
-                }
-                if (!int.TryParse(trackingInfoMatch.Groups["episode"].Value, out episode))
-                {
-                    episode = -1;
-                }
-                if (!int.TryParse(trackingInfoMatch.Groups["year"].Value, out year))
-                {
-                    year = -1;
-                }
-            }
-        }
     }
 }

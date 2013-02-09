@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Linq;
-using System.Web;
 
 namespace OnlineVideos.Sites
 {
@@ -231,17 +229,13 @@ namespace OnlineVideos.Sites
 
                     if (!string.IsNullOrEmpty(sName) && iEpisode > 0 && iSeason > 0)
                     {
-                        try
+                        video.Other = new TrackingInfo()
                         {
-                            video.Other = new TrackingInfo()
-                            {
-                                Episode = iEpisode,
-                                Season = iSeason,
-                                Title = sName,
-                                VideoKind = VideoKind.TvSeries
-                            };
-                        }
-                        catch { }
+                            Episode = iEpisode,
+                            Season = iSeason,
+                            Title = sName,
+                            VideoKind = VideoKind.TvSeries
+                        };
                     }
 
                     result.Add(video);
@@ -342,16 +336,12 @@ namespace OnlineVideos.Sites
 
                 if (!string.IsNullOrEmpty(video.Title) && year > 1900)
                 {
-                    try
+                    video.Other = new TrackingInfo()
                     {
-                        video.Other = new TrackingInfo()
-                        {
-                            Title = video.Title,
-                            Year = year,
-                            VideoKind = OnlineVideos.VideoKind.Movie
-                        };
-                    }
-                    catch { }
+                        Title = video.Title,
+                        Year = year,
+                        VideoKind = OnlineVideos.VideoKind.Movie
+                    };
                 }
 
                 string webData = GetWebData(video.VideoUrl + "/play.htm");

@@ -297,7 +297,7 @@
         <item key="baseUrl"><![CDATA[http://www.southparkstudios.com/full-episodes]]></item>
         <item key="dynamicCategoriesRegEx"><![CDATA[href="http://www.southparkstudios.com/full-episodes/(?<url>se[^"]*)">(?<title>[^<]+)<]]></item>
         <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.southparkstudios.com/guide/episodes/{0}]]></item>
-        <item key="videoListRegEx"><![CDATA[<li\sclass="grid_item">\s*<div\sclass="image">\s*(?:(?!<img).)*<img.*?(?:width="320")?.*?src="(?<ImageUrl>[^"]*)"(?:(?!<a).)*<a\sclass="overlay"\shref="http://www.southparkstudios.com/guide/episodes/(?<VideoUrl>[^("|\?)]*)[^"]*">\s*<span\sclass="epnumber">(?<Duration>[^<]*)</span>\s*<span\sclass="title\septitle">(?<Title>[^<]*)</span>\s*<span\sclass="epdate">(?<Airdate>[^<]*)</span>\s*<span\sclass="epdesc">(?<Description>[^<]*)</span>\s*</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<li\sclass="grid_item">\s*<div\sclass="image">\s*(?:(?!<img).)*<img.*?(?:width="320")?.*?src="(?<ImageUrl>[^"]*)"(?:(?!<a).)*<a\sclass="overlay"\shref="http://www.southparkstudios.com/guide/episodes/(?<VideoUrl>[^("|\?)]*)[^"]*">\s*<span\sclass="epnumber">(?<Episode>[^<]*)</span>\s*<span\sclass="title\septitle">(?<Title>[^<]*)</span>\s*<span\sclass="epdate">(?<Airdate>[^<]*)</span>\s*<span\sclass="epdesc">(?<Description>[^<]*)</span>\s*</a>]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www.southparkstudios.com/full-episodes/{0}]]></item>
       </Configuration>
     </Site>
