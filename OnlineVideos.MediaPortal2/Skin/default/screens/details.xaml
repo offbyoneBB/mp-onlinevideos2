@@ -22,15 +22,15 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <Image Stretch="Uniform" SkinNeutralAR="True" Height="300" Source="{Binding SelectedVideo.ThumbnailImage}" Margin="0,0,0,10"/>
-                    <Label Content="{Binding Path=SelectedVideo.VideoInfo.Other, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=ReleaseDate}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}"/>
-                    <Label Content="{Binding Path=SelectedVideo.VideoInfo.Other, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Genres}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Scroll="Auto"/>
-                    <Label Content="{Binding Path=SelectedVideo.VideoInfo.Other, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Certificate}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Scroll="Auto"/>
+                    <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=ReleaseDate}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}"/>
+                    <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Genres}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Scroll="Auto"/>
+                    <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Certificate}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Scroll="Auto"/>
                 </StackPanel>
                 <DockPanel Grid.Column="1" Margin="10,0,0,0" LastChildFill="True">
                     <StackPanel DockPanel.Dock="Top">
-                        <Label Content="{Binding Path=SelectedVideo.VideoInfo.Other, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Actors}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true"/>
-                        <Label Content="{Binding Path=SelectedVideo.VideoInfo.Other, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Directors}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true"/>
-                        <Label Content="{Binding Path=SelectedVideo.VideoInfo.Other, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Plot}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true" Scroll="Auto" MaxHeight="150"/>
+                        <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Actors}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true"/>
+                        <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Directors}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true"/>
+                        <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Plot}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true" Scroll="Auto" MaxHeight="150"/>
                     </StackPanel>
                     <ListView Style="{ThemeResource MenuListViewStyle}" ItemsSource="{Binding Path=DetailsVideosList,Mode=OneTime}" SetFocus="true">
                         <ListView.Resources>

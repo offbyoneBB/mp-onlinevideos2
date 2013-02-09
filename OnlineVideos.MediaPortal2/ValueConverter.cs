@@ -76,12 +76,12 @@ namespace OnlineVideos.MediaPortal2
         public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
         {
             result = string.Empty;
-            IVideoDetails vd = value as IVideoDetails;
+            var model = value as VideoInfoViewModel;
             string param = parameter as string;
-            if (vd != null && !string.IsNullOrEmpty(param))
+            if (model != null && model.VideoInfo != null && !string.IsNullOrEmpty(param))
             {
                 string myValue;
-                if (vd.GetExtendedProperties().TryGetValue(param, out myValue)) 
+				if (model.VideoInfo.GetExtendedProperties().TryGetValue(param, out myValue)) 
                 {
                     result = myValue;
                     return true;

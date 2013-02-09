@@ -10,6 +10,8 @@ namespace OnlineVideos.MediaPortal2
 {
     public class CategoryViewModel : ListItem
     {
+		protected PropertyChangedDelegator eventDelegator = null;
+
         protected AbstractProperty _nameProperty;
         public AbstractProperty NameProperty { get { return _nameProperty; } }
         public string Name
@@ -66,9 +68,22 @@ namespace OnlineVideos.MediaPortal2
             _estimatedChildrenProperty = new WProperty(typeof(uint?), CalculateChildrenCount());
 			_focusPrio = new WProperty(typeof(SetFocusPriority), SetFocusPriority.None);
 
-            _category.PropertyChanged += (sender, e) => { if (e.PropertyName == "ThumbnailImage") Thumb = Category.ThumbnailImage; };
-
-            if (Category is NextPageCategory) Thumb = "NextPage.png";
+			if (Category is NextPageCategory)
+			{
+				Thumb = "NextPage.png";
+			}
+			else
+			{
+				eventDelegator = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(PropertyChangedDelegator).Assembly.FullName, typeof(PropertyChangedDelegator).FullName) as PropertyChangedDelegator;
+				eventDelegator.InvokeTarget = new PropertyChangedExecutor()
+				{
+					InvokeHandler = (s, e) =>
+					{
+						if (e.PropertyName == "ThumbnailImage") Thumb = (s as Category).ThumbnailImage;
+					}
+				};
+				_category.PropertyChanged += eventDelegator.EventDelegate;
+			}
         }
 
         uint? CalculateChildrenCount()

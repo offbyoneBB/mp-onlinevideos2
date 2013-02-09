@@ -23,6 +23,8 @@ namespace OnlineVideos.MediaPortal2
     {
         public OnlineVideosWorkflowModel()
         {
+			OnlineVideosAppDomain.UseSeperateDomain = true;
+
             Configuration.Settings settings = ServiceRegistration.Get<ISettingsManager>().Load<Configuration.Settings>();
             string ovConfigPath = ServiceRegistration.Get<IPathManager>().GetPath(string.Format(@"<CONFIG>\{0}\", Environment.UserName));
             string ovDataPath = ServiceRegistration.Get<IPathManager>().GetPath(@"<DATA>\OnlineVideos");
@@ -73,6 +75,7 @@ namespace OnlineVideos.MediaPortal2
         public ItemsList VideosList { get; protected set; }
         public List<VideoInfoViewModel> DetailsVideosList { get; protected set; }
         public VideoInfoViewModel SelectedVideo { get; protected set; }
+		public VideoInfoViewModel SelectedDetailsVideo { get; protected set; }
         /// <summary>The MP2 simple dialog requires Items to be of type <see cref="ListItem"/> and have a Name to show a label in the GUI.</summary>
         public ItemsList PlaybackOptions { get; protected set; }
         
@@ -311,8 +314,8 @@ namespace OnlineVideos.MediaPortal2
         public void SelectDetailsVideo(object selectedItem)
         {
             if (currentBackgroundTask != null) return;
-            VideoInfoViewModel detailsVideo = selectedItem as VideoInfoViewModel;
-            if (detailsVideo != null)
+            SelectedDetailsVideo = selectedItem as VideoInfoViewModel;
+			if (SelectedDetailsVideo != null)
             {
                 List<string> urls = null;
                 ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
@@ -321,7 +324,7 @@ namespace OnlineVideos.MediaPortal2
                 {
                     try
                     {
-                        urls = SelectedSite.getMultipleVideoUrls(detailsVideo.VideoInfo);
+						urls = SelectedSite.getMultipleVideoUrls(SelectedDetailsVideo.VideoInfo);
                     }
                     catch (Exception ex)
                     {
@@ -333,13 +336,13 @@ namespace OnlineVideos.MediaPortal2
                     ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
                     currentBackgroundTask = null;
 
-                    if (detailsVideo.VideoInfo.PlaybackOptions != null && detailsVideo.VideoInfo.PlaybackOptions.Count > 1)
+					if (SelectedDetailsVideo.VideoInfo.PlaybackOptions != null && SelectedDetailsVideo.VideoInfo.PlaybackOptions.Count > 1)
                     {
-                        ShowPlaybackOptions(detailsVideo.VideoInfo, urls[0]);
+						ShowPlaybackOptions(SelectedDetailsVideo.VideoInfo, urls[0]);
                     }
                     else
                     {
-                        Play(detailsVideo, urls);
+						Play(SelectedDetailsVideo, urls);
                     }
                 });
             }
@@ -347,9 +350,11 @@ namespace OnlineVideos.MediaPortal2
 
         public void SelectPlaybackOption(ListItem selectedItem)
         {
+			IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
+			var video = (workflowManager.CurrentNavigationContext.WorkflowState.StateId == Guids.WorkflowStateVideos) ? SelectedVideo : SelectedDetailsVideo;
             // resolve playback option
-            string resolvedUrl = SelectedVideo.VideoInfo.GetPlaybackOptionUrl(((KeyValuePair<string,string>)selectedItem.AdditionalProperties[Consts.KEY_MEDIA_ITEM]).Key);
-            Play(SelectedVideo, resolvedUrl);
+			string resolvedUrl = video.VideoInfo.GetPlaybackOptionUrl(((KeyValuePair<string, string>)selectedItem.AdditionalProperties[Consts.KEY_MEDIA_ITEM]).Key);
+			Play(video, resolvedUrl);
         }
 
         public void StartSearch()
