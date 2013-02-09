@@ -3364,10 +3364,15 @@ fixed: extended search useless, because the text is not set as initial in the Vi
 fixed: show correct number of Videos in details view
 fixed: changing "auto group by language" settings to yes via MPEI plugin and going back to OV has only Other group - groups needed to be build
 fixed: SiteManager after deleting a site - cursor is placed on first site, not the one below (when "only local" are shown)
+fixed: incorrect reading of translation xml files (escaped apostrophes)
+fixed: unable to view videos from deleted sites in Downloadeds
+added: sorting in Favorites Site (by Name, Airdate, Duration)
+added: downloading subtitles when videos are downloaded
+improved: conflict resolution for SiteUtils and Hosters with equal names: Use the Type defined in the assembly with the latest compile time
 improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/[Name][Version].mpe1</OnlineLocation>
-    <ReleaseDate>2013-01-25T11:00:00</ReleaseDate>
+    <ReleaseDate>2013-02-09T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
