@@ -54,6 +54,9 @@ Right-click on that button will give more options, like "copy to clipboard" and 
 == Cookies ==
 If a website require static cookies, you can enter these in the "Cookies" box. The format is <name>=<value>, and if multiple cookies are required, enter each on a separate line
 
+== Force Utf8 Encoding ==
+Check this if a website's html isn't recognized as having UTF8 Encoding.
+
 = Menu Items =
 
  * File, Load Sites: Opens an existing OnlineVideoSites.xml for further testing/editing
