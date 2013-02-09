@@ -132,10 +132,10 @@ namespace OnlineVideos.Sites
         {
             return getVideoListForSinglePage(currentCategory, nextPageUrl);
         }
-
-        public override string getUrl(VideoInfo video)
+        
+        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist)
         {
-            string result = string.Empty;
+            List<string> result = new List<string>();
             video.PlaybackOptions = new Dictionary<string, string>();
             // keep track of bitrates and URLs
             Dictionary<int, string> urlsDictionary = new Dictionary<int, string>();
@@ -145,19 +145,27 @@ namespace OnlineVideos.Sites
             
             if (xml != null)
             {
-                string videoId = xml.SelectSingleNode(@"//playlist//videoid").InnerText;
-                url = string.Format(@"http://intl.esperanto.mtvi.com/www/xml/media/mediaGen.jhtml?uri=mgid:uma:video:mtv.ca:{0}", videoId);
-                
-                xml = GetWebData<XmlDocument>(url);
-                if (xml != null)
+                string firstVideoId = string.Empty;
+                foreach (XmlNode videoId in xml.SelectNodes(@"//playlist//videoid"))
                 {
-                    foreach (XmlNode rendition in xml.SelectNodes(@"//video/item/rendition"))
+                    if (string.IsNullOrEmpty(firstVideoId)) firstVideoId = videoId.InnerText;
+                    result.Add(string.Format(@"http://intl.esperanto.mtvi.com/www/xml/media/mediaGen.jhtml?uri=mgid:uma:video:mtv.ca:{0}", videoId.InnerText));
+                }
+                
+                if (!string.IsNullOrEmpty(firstVideoId))
+                {
+                    xml = GetWebData<XmlDocument>(
+                        string.Format(@"http://intl.esperanto.mtvi.com/www/xml/media/mediaGen.jhtml?uri=mgid:uma:video:mtv.ca:{0}", firstVideoId));
+                    if (xml != null)
                     {
-                        int bitrate = int.Parse(rendition.Attributes["bitrate"].Value);
-                        XmlNode src = rendition.SelectSingleNode(@"./src");
-                        if (!urlsDictionary.ContainsKey(bitrate))
+                        foreach (XmlNode rendition in xml.SelectNodes(@"//video/item/rendition"))
                         {
-                            urlsDictionary.Add(bitrate, new MPUrlSourceFilter.RtmpUrl(src.InnerText).ToString());
+                            int bitrate = int.Parse(rendition.Attributes["bitrate"].Value);
+                            XmlNode src = rendition.SelectSingleNode(@"./src");
+                            if (!urlsDictionary.ContainsKey(bitrate))
+                            {
+                                urlsDictionary.Add(bitrate, new MPUrlSourceFilter.RtmpUrl(src.InnerText).ToString());
+                            }
                         }
                     }
                 }
@@ -167,10 +175,28 @@ namespace OnlineVideos.Sites
             foreach (var item in urlsDictionary.OrderBy(u => u.Key))
             {
                 video.PlaybackOptions.Add(string.Format("{0} kbps", item.Key), item.Value);
-                // return last URL as the default (will be the highest bitrate)
-                result = item.Value;
             }
 
+            return result;
+        }
+        
+        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist)
+        {
+            string result = string.Empty;
+            XmlDocument xml = GetWebData<XmlDocument>(clonedVideoInfo.VideoUrl);
+            if (xml != null)
+            {
+                foreach (XmlNode rendition in xml.SelectNodes(@"//video/item/rendition"))
+                {
+                    int bitrate = int.Parse(rendition.Attributes["bitrate"].Value);
+                    XmlNode src = rendition.SelectSingleNode(@"./src");
+                    if (string.Format("{0} kbps", bitrate).Equals(chosenPlaybackOption))
+                    {
+                        result = new MPUrlSourceFilter.RtmpUrl(src.InnerText).ToString();
+                    }
+                }
+            }
+            
             return result;
         }
     }
