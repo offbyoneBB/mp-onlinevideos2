@@ -4,8 +4,16 @@ using MediaPortal.Common;
 
 namespace OnlineVideos.MediaPortal2
 {
-    public class LogDelegator : ILog
+	public class LogDelegator : MarshalByRefObject, ILog
     {
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
+
         const string PREFIX = "[OnlineVideos] ";
 
         public void Debug(string format, params object[] arg)
