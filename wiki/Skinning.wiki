@@ -63,8 +63,8 @@ The listcontrol (id 50) also sets the PinIcon for each listitem to an image file
 
 = Properties set in the code =
  * Global
-  * `#header.label` - changes according to the name of the current site/category, ...
-  * `#header.image` - banner style image (3:1 AR) that changes according to the current site the user is browsing
+  * `#OnlineVideos.HeaderLabel` - changes according to the name of the current site/category, ...
+  * `#OnlineVideos.HeaderImage` - banner style image (3:1 AR) that changes according to the current site the user is browsing
   * `#OnlineVideos.Translation.ManageSites.Label` - can be used for the button that calls the site manager window
   * `#OnlineVideos.currentDownloads` - number of downloads currently running in the background
 
