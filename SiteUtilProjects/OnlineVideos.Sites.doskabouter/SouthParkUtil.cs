@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections.Specialized;
 using System.Xml;
-using System.Web;
 using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
@@ -21,52 +18,28 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        protected override void ExtraVideoMatch(VideoInfo video, GroupCollection matchGroups)
         {
-            List<VideoInfo> res = base.getVideoList(category);
-            foreach (VideoInfo video in res)
+
+            TrackingInfo ti = new TrackingInfo();
+
+            // for southpark world
+            System.Text.RegularExpressions.Group epGroup = matchGroups["Episode"];
+            if (epGroup.Success)
+                ti.Regex = Regex.Match(epGroup.Value, @"(?<Season>\d\d)(?<Episode>\d\d)");
+
+            // for nl and de
+            if (ti.Season == 0)
+                ti.Regex = Regex.Match(video.VideoUrl, @"\/S(?<Season>\d{1,3})E(?<Episode>\d{1,3})-", RegexOptions.IgnoreCase);
+
+            if (ti.Season != 0)
             {
-                video.Other = new VideoInfoOtherHelper();
-
-                string[] tmp = video.Length.Split('|');
-                if (tmp.Length == 2)
-                {
-                    video.Length = tmp[1];
-                    video.Title = tmp[0] + ": " + video.Title;
-                }
-
-                //Do two way parsing for TrackingInfo
-                //1. using Length containing string like Episode: 1501 or German Episoden: 1501
-                //2. using VideoUrl containing common SXXEXX string
-                //I'm hoping this will suffice for other SouthPark site out there (DE, NL) as I only checked WORLD one
-
-                string name = string.Empty;
-                int season = -1;
-                int episode = -1;
-                int year = -1;
-
-                Match trackingInfoMatch = Regex.Match(video.Length, @"Episode(?:n)?:\s*?(?<season>\d\d)(?<episode>\d\d)", RegexOptions.IgnoreCase);
-                TubePlusUtil.FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
-                name = "South Park";
-
-                if (!TubePlusUtil.GotTrackingInfoData(name, season, episode, year))
-                {
-                    trackingInfoMatch = Regex.Match(video.VideoUrl, @"\/S(?<season>\d{1,3})E(?<episode>\d{1,3})-", RegexOptions.IgnoreCase);
-                    TubePlusUtil.FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
-                    name = "South Park";
-                }
-
-                if (TubePlusUtil.GotTrackingInfoData(name, season, episode, year))
-                {
-                    TrackingInfo tInfo = new TrackingInfo();
-                    tInfo.Title = name;
-                    tInfo.Season = (uint)season;
-                    tInfo.Episode = (uint)episode;
-                    tInfo.VideoKind = VideoKind.TvSeries;
-                    (video.Other as VideoInfoOtherHelper).TI = tInfo;
-                }
+                ti.Title = "South Park";
+                ti.VideoKind = VideoKind.TvSeries;
+                video.Other = new VideoInfoOtherHelper() { TI = ti };
             }
-            return res;
+
+            video.Other = new VideoInfoOtherHelper();
         }
 
         private enum SouthParkCountry { Unknown, World, Nl, De };
