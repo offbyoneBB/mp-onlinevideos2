@@ -51,6 +51,9 @@ Also you can enable parsing redirected urls with getRedirectedFileUrl, and fill 
 Next to it is a "play" button, which opens the selected url in Windows Media Player.
 Right-click on that button will give more options, like "copy to clipboard" and "check if url is valid"
 
+== Cookies ==
+If a website require static cookies, you can enter these in the "Cookies" box. The format is <name>=<value>, and if multiple cookies are required, enter each on a separate line
+
 = Menu Items =
 
  * File, Load Sites: Opens an existing OnlineVideoSites.xml for further testing/editing
