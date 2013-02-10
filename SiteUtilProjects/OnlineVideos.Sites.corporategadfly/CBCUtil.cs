@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,7 +14,7 @@ using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
-    public class CBCUtil : SiteUtilBase
+    public class CBCUtil : GenericSiteUtil
     {
         private string feedPID;
         private static string platformRoot = @"http://cbc.feeds.theplatform.com/ps/JSON/PortalService/2.2/";
@@ -61,9 +62,10 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        private List<VideoInfo> getvideos(JToken contentData)
+        private List<VideoInfo> getVideosForUrl(string url)
         {
-            List<VideoInfo> res = new List<VideoInfo>();
+            List<VideoInfo> result = new List<VideoInfo>();
+            JObject contentData = GetWebData<JObject>(url);
             
             // keep track of contentIDs, since some videos have multiple bitrates
             Dictionary<string, VideoInfo> videoDictionary = new Dictionary<string, VideoInfo>();
@@ -76,9 +78,10 @@ namespace OnlineVideos.Sites
                     {
                         string contentID = item.Value<string>("contentID");
                         
-                        VideoInfo video = new VideoInfo();
+                        VideoInfo video = CreateVideoInfo();
                         video.Description = item.Value<string>("description");
                         video.VideoUrl = item.Value<string>("playerURL");
+                        video.Title = item.Value<string>("title");
 
                         long len = item.Value<long>("length");
                         video.Length = VideoInfo.GetDuration((len / 1000).ToString());
@@ -89,9 +92,6 @@ namespace OnlineVideos.Sites
                         {
                             video.Airdate = Airdate;
                         }
-                        long bitrate = item.Value<long>("bitrate");
-                        video.Other = (int) bitrate / 1000;
-
                         JArray assets = item["assets"] as JArray;
                         if (assets != null && assets.First != null)
                             video.ImageUrl = assets.First.Value<string>("URL");
@@ -99,37 +99,29 @@ namespace OnlineVideos.Sites
                         if (videoDictionary.ContainsKey(contentID))
                         {
                             // we have already seen this contentID earlier
-                            // so we must add bitrate to existing title
+                            // so we must mark this video as having multiple playback options
                             VideoInfo existingVideo = videoDictionary[contentID];
-                            if (existingVideo.Other != null)
+                            if (existingVideo.Other == null)
                             {
-                                existingVideo.Title = string.Format("{0} ({1} kbps)", existingVideo.Title, (int) existingVideo.Other);
-                                // add the title only once
-                                existingVideo.Other = null;
+                                existingVideo.Other = url;
                             }
-                            
-                            // add new bitrate to title
-                            video.Title = string.Format("{0} ({1} kbps)", item.Value<string>("title"), (int) bitrate / 1000);
                         }
                         else
                         {
-                            video.Title = item.Value<string>("title");
                             videoDictionary.Add(contentID, video);
+                            result.Add(video);
                         }
-
-                        res.Add(video);
                     }
                 }
             }
 
-            return res;
+            return result;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
             string url = string.Format(videoListUrl, feedPID, (string) category.Other);
-            JObject contentData = GetWebData<JObject>(url);
-            return getvideos(contentData);
+            return getVideosForUrl(url);
         }
 
         private List<Category> getChildren(string parentID)
@@ -158,15 +150,74 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            string result = string.Empty;
+
+            string url = video.Other as string;
+            if (!string.IsNullOrEmpty(url))
+            {
+                // we have multiple video playback options to consider for this video
+                video.PlaybackOptions = new Dictionary<string, string>();
+                // keep track of bitrates and URLs
+                Dictionary<int, string> urlsDictionary = new Dictionary<int, string>();
+                    
+                // first re-examine the JSON data to get the contentID for this video
+                JObject contentData = GetWebData<JObject>(url);
+                if (contentData != null)
+                {
+                    JArray items = contentData["items"] as JArray;
+                    if (items != null)
+                    {
+                        string contentId = string.Empty;
+                        foreach (JToken item in items)
+                        {
+                            string playerUrl = item.Value<string>("playerURL");
+                            if (video.VideoUrl.Equals(playerUrl))
+                            {
+                                contentId = item.Value<string>("contentID");
+                                break;
+                            }
+                        }
+                        
+                        // once the contentID is found, look for other videos with same contentID
+                        foreach (JToken item in items) {
+                            if (contentId.Equals(item.Value<string>("contentID")))
+                            {
+                                int bitrate = (int) item.Value<long>("bitrate") / 1000;
+                                if (!urlsDictionary.ContainsKey(bitrate))
+                                {
+                                    urlsDictionary.Add(bitrate, item.Value<string>("playerURL"));
+                                }
+                            }
+                        }
+                        
+                        // sort the URLs ascending by bitrate
+                        foreach (var item in urlsDictionary.OrderBy(u => u.Key))
+                        {
+                            video.PlaybackOptions.Add(string.Format("{0} kbps", item.Key), item.Value);
+                            // return last URL as the default (will be the highest bitrate)
+                            result = item.Value;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                result = createRtmpUrl(video.VideoUrl);
+            }
+            return result;
+        }
+        
+        public static string createRtmpUrl(string url)
+        {
+            string result = url;
             // cannot use GetWebData to figure out VideoUrl as the URL responds with
             // HTTP/1.1 302 Found
             // with a Location header containing the rtmp:// URL
-            Log.Debug(@"getUrl() entered: {0}", video.VideoUrl);
-            HttpWebRequest request = WebRequest.Create(video.VideoUrl) as HttpWebRequest;
-            if (request == null) return "";
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
             request.AllowAutoRedirect = false;
+            Log.Debug(@"Making manual HttpWebRequest for {0}", url);
+
             HttpWebResponse response = (HttpWebResponse) request.GetResponse();
-            
             if (response.StatusCode == HttpStatusCode.Redirect)
             {
                 // retrieve the RTMP URL from the Location header
@@ -189,13 +240,22 @@ namespace OnlineVideos.Sites
                     playPath = playPath.Substring(0, playPath.Length - 4);
                 }
                 Log.Debug(@"Host: {0}, PlayPath: {1}", host, playPath);
-                MPUrlSourceFilter.RtmpUrl rtmpUrl = new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = playPath };
-                return rtmpUrl.ToString();
+                result = new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = playPath }.ToString();
             }
-            else
+            return result;
+        }
+        
+        public override VideoInfo CreateVideoInfo()
+        {
+            return new CBCVideoInfo();
+        }
+
+        private class CBCVideoInfo : VideoInfo {
+            // class created solely for the purpose of overriding GetPlaybackOptionUrl
+            public override string GetPlaybackOptionUrl(string option)
             {
-                return video.VideoUrl;
+                return CBCUtil.createRtmpUrl(PlaybackOptions[option]);
             }
         }
-    }
+    }    
 }
