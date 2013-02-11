@@ -140,6 +140,7 @@
   <string name="StartingPlayback">beim Starten des Abspielens</string>
   <string name="Subscriptions">Abonnements</string>
   <string name="Success">Erfolg</string>
+  <string name="SearchRelatedKeywords">Suche nach Schlüsselwörtern</string>
   <!--T-->
   <string name="Timeframe">Zeitraum</string>
   <string name="Timeout">Zeitüberschreitung</string>

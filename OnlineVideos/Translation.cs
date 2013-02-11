@@ -221,6 +221,7 @@ namespace OnlineVideos
         public string Subscriptions = "Subscriptions";
         public string SearchHistory = "Search history";
         public string Success = "Success";
+        public string SearchRelatedKeywords = "Search related keywords";
 
         // T
         public string Timeframe = "Timeframe";
