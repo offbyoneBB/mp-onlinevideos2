@@ -246,7 +246,6 @@ namespace OnlineVideos.MediaPortal1
 					}
 					if (SelectedSite != null && SelectedSite.CanSearch && !string.IsNullOrEmpty(loadParamInfo.Search))
 					{
-						lastSearchQuery = loadParamInfo.Search;
 						Display_SearchResults(loadParamInfo.Search);
 						return;
 					}
