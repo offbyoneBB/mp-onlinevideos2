@@ -865,32 +865,6 @@
         <Category xsi:type="RssLink" name="Search">http://blip.tv/?1=1&amp;search={0};page=1;s=posts&amp;skin=rss</Category>
       </Categories>
     </Site>
-    <Site name="Revision3" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <Description>Revision3 is the leading television network for the internet generation. We create and produce all-original episodic community driven programs watched by a super-committed and passionate fan base.</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="Best of" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/bestof/bestof.jpg">http://revision3.com/bestof/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="AppJudgment" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/appjudgment/appjudgment.jpg">http://revision3.com/appjudgment/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Bytejacker" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/bytejacker/bytejacker.jpg">http://revision3.com/bytejacker/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="CO-OP" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/coop/coop.jpg">http://revision3.com/coop/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Digg Dialogg" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/diggdialogg/diggdialogg.jpg">http://revision3.com/diggdialogg/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="The Digg Reel" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/diggreel/diggreel.jpg">http://revision3.com/diggreel/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Diggnation" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/diggnation/diggnation.jpg">http://revision3.com/diggnation/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Film Riot" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/filmriot/filmriot.jpg">http://revision3.com/filmriot/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Hak5" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/hak5/hak5.jpg">http://revision3.com/hak5/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="HD Nation" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/hdnation/hdnation.jpg">http://revision3.com/hdnation/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="iFanboy" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/ifanboy/ifanboy.jpg">http://revision3.com/ifanboy/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="INST MSGS" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/instmsgs/instmsgs.jpg">http://revision3.com/instmsgs/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="LandlineTV" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/landlinetv/landlinetv.jpg">http://revision3.com/landlinetv/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Pixel Perfect" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/pixelperfect/pixelperfect.jpg">http://revision3.com/pixelperfect/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="ROFL" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/rofl/rofl.jpg">http://revision3.com/rofl/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Scam School" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/scamschool/scamschool.jpg">http://revision3.com/scamschool/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Systm" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/systm/systm.jpg">http://revision3.com/systm/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Tekzilla" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/tekzilla/tekzilla.jpg">http://revision3.com/tekzilla/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="The Totally Rad Show" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/trs/trs.jpg">http://revision3.com/trs/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Web Zeroes" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/webzeroes/webzeroes.jpg">http://revision3.com/webzeroes/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="XLR8R TV" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/xlr8rtv/xlr8rtv.jpg">http://revision3.com/xlr8rtv/feed/quicktime-large/</Category>
-      </Categories>
-    </Site>
     <Site name="Discovery Channel" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>American TV Channel dedicated to documentaries about popular science, technology, and history.</Description>
       <Categories>
