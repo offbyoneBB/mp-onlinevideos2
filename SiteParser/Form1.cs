@@ -116,6 +116,8 @@ namespace SiteParser
                 string[] cookies = cookieString.Split(',');
                 cookiesTextBox.Text = String.Join(Environment.NewLine, cookies);
             }
+            else
+                cookiesTextBox.Text = String.Empty;
             cbLanguages.SelectedValue = util.Settings.Language;
 
             categoryRegexTextbox.Text = GetRegex(util, "regEx_dynamicCategories");
