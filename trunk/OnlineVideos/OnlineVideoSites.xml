@@ -1297,12 +1297,19 @@
     <Site name="TV3NZ" util="TV3NZOnDemand" agecheck="false" enabled="true" lang="en">
       <Description>Television New Zealand: TV3, TV four</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="item"\s*><a\shref="(?<url>[^"]*)"\s*(?:title="[^"]*")?\srel="nofollow">(?<title>[^<]*)</a></li>\s]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="left">(?<Description>[^<]*)</div>\s*</div>\s*<img\ssrc="(?<ImageUrl>[^"]*)"\swidth="145px"\sheight="96px"\stitle="[^"]*"\sclass="imgPadRight"\s*alt="[^"]*"/>\s</div>\s*<h4><a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a></h4>\s*<span\sclass="title">[^<]*</span><br/>\s*<span\sclass="dateAdded"><strong>Air\sDate:</strong>(?<Airdate>[^&]*)&[^\(]*\((?<Duration>[^\)]*)\)</span><br\s/>\s*<[^>]*>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[var\svideo\s="\*(?<m0>[^\*]*)\*(?<m1>[^\*]*)\*(?<m2>[^"]*)";]]></item>
+        <item key="baseUrl"><![CDATA[http://www.tv3.co.nz/]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass="grid_2[^"]*">\s*<a\shref="(?<url>[^"]*)"><img\sclass="tsrImgBlkBorder"\ssrc="(?<thumb>[^"]*)"[^>]*></a>\s*<p\sclass="artTitle">(?<title>[^<]*)</p>\s*</div>]]></item>
+        <item key="videoListRegEx"><![CDATA[((?#front page)<div\sclass="grid_2[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)"><img\sclass="tsrImgBlkBorder"\ssrc="(?<ImageUrl>[^"]*)"\salt="(?<Description>[^"]*)"\swidth="138"\sheight="91"\sborder="0"\s/></a>\s*<div\sclass="artTitle">(?<Title>[^<]*)</div>\s*<p\sclass="MiniHeading\sgreyHead">(?<Airdate>[^<]*)</p>\s*(?:<div\sclass="MiniHeading\sredHead"><time\sclass="fixtimeago"\sdatetime="[^"]*">(?<ViewTime>[^<]*)</time></div>)?\s*</div>
+)|(?#one show)
+(<div\sclass="grid_8\salpha\somega\smargin_b10">\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*<h2\sclass="title"><a[^>]*>(?<Title>[^<]*)</a></h2>\s*<p>(?<Description>[^<]*)</p>\s*<div\sclass="clr"></div>\s*</div>)]]></item>
+        <item key="fileUrlRegEx"><![CDATA[var\svideo\s="/(?<m0>[^/]*)/(?<m1>[^/]*)/(?<m2>[^"]*)";]]></item>
         <item key="fileUrlFormatString"><![CDATA[rtmpe://nzcontent.mediaworks.co.nz/@@/_definst_/mp4:/{0}/{1}/{2}_]]></item>
-        <item key="baseUrl"><![CDATA[http://ondemand.tv3.co.nz/tabid/56/default.aspx]]></item>
       </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Expiring soon">http://www.tv3.co.nz/OnDemand/ExpiringSoon.aspx</Category>
+        <Category xsi:type="RssLink" name="Recently Added">http://www.tv3.co.nz/OnDemand/RecentlyAdded.aspx</Category>
+        <Category xsi:type="RssLink" name="A-Z">http://www.tv3.co.nz/OnDemand/TitleAZ.aspx</Category>
+      </Categories>
     </Site>
     <Site name="TVNPlayer" util="TVNPlayer" agecheck="false" enabled="true" lang="pl">
       <Description>Oglądaj online najlepsze programy, seriale i filmy. Tylko u nas, jeszcze przed premierą w telewizji, obejrzysz serialowe nowości z oferty TVN. Przegapiłeś swój ulubiony program na antenie TVN, TVN Style czy TVN Turbo? W tvn player nie zabraknie najpopularniejszych programów i show z kanałów tematycznych tvn.</Description>

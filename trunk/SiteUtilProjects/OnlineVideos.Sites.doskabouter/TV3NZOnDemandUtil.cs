@@ -9,6 +9,18 @@ namespace OnlineVideos.Sites
 {
     public class TV3NZOnDemandUtil : GenericSiteUtil
     {
+        public override int DiscoverDynamicCategories()
+        {
+            int res = base.DiscoverDynamicCategories();
+            foreach (Category cat in Settings.Categories)
+            {
+                if (cat.Name != "A-Z")
+                    cat.HasSubCategories = false;
+            }
+
+            return res;
+        }
+
         public override string getUrl(VideoInfo video)
         {
             string res = base.getUrl(video);
