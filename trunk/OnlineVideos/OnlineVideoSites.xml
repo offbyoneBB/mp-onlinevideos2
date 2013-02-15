@@ -1045,18 +1045,6 @@
         <item key="baseUrl"><![CDATA[http://www.onsnet.tv/corp/?site=4]]></item>
       </Configuration>
     </Site>
-    <Site name="EscapistMagazine" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <Description>The mouthpiece of the gaming generation, The Escapist aims to capture and celebrate the contemporary video gaming lifestyle and the diverse global video game culture by way of in-depth features, thought provoking articles and relevant columns authored by leading video game authorities, as well as cutting-edge video shorts, engaging forums and robust social media elements that incorporate the video gaming experience.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass='folders_container\scol_[^']*'\sid='folder_[^']*'><div\sclass='folders_title_card'><a\shref='(?<url>[^']*)'><img\ssrc='(?<thumb>[^']*)'\swidth='310'\sheight='90'></a></div><a\shref[^>]*>(?<title>[^:]*):\s(?:(?!folder_desc').)*folder_desc'\sstyle='display:none'><p\sstyle='padding:\s10px;'>(?<description>[^<]*)<]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass='filmstrip_video'><a\shref='(?<VideoUrl>[^']*)'><img\ssrc='(?<ImageUrl>[^']*)'></a><div\sclass='title'>(?<Title>[^<]*)</div><div\sclass='date'>Date:\s(?<Airdate>[^<]*)</div><div\sclass='comments'><a\shref='[^']*'>[^<]*</a></div></div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='next_page'>Next</a>]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[<meta\sproperty="og:video"\scontent="http://cdn2\.themis-media\.com/media/global/movies/player/flowplayer\.commercial-\d\.\d\.\d\.swf\?config=(?<url>.*?)%3Fembed%3D1%26fb%3D1">]]></item>
-        <item key="playlistUrlFormatString"><![CDATA[{0}?playerId=player_api&host=escapistmagazine.com]]></item>
-        <item key="fileUrlRegEx"><![CDATA[,{'url':'(?<m0>[^']*)','a]]></item>
-        <item key="baseUrl"><![CDATA[http://www.escapistmagazine.com/videos/galleries]]></item>
-      </Configuration>
-    </Site>
     <Site name="EuroSport" util="EuroSport" agecheck="false" enabled="true" lang="en" player="WMP">
       <Description>Eurosport live streams and videos</Description>
     </Site>
@@ -1152,7 +1140,7 @@
     <Site name="League of Legends Streams" util="LeagueOfLegends" agecheck="false" enabled="true" lang="en">
       <Description>League of Legends Streams</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[<tr\sheight="32px"\sstyle="cursor:pointer;"\sonclick="view_stream\('(?<VideoUrl>[^']*)','[^,]*,'(?<hoster>[^']*)'\);"\sonMouseOver="show_preview\('[^']*',(?<ImageUrl>[^,]*),[^,]*,'[^']*','(?<Description>[^']*)'\);"[^>]*>\s<a\shref="[^"]*"\sstyle="display:none;">[^<]*</a>\s<td\sclass="live-td"><img[^>]*></td>\s<td\sclass="stream-name-td">(?<Title>[^<]*)<div[^>]*></div></td>\s<td\sclass="current-viewers-td"><font\scolor="green">(?<viewers>[^<]*)</font></td>\s<td\sclass="region-td"><img\ssrc="[^"]*"\stitle="(?<country>[^"]*)"\salt="[^"]*"/></td>\s</tr>]]></item>
+        <item key="videoListRegEx"><![CDATA[<tr\sstyle="cursor:pointer;"\s*onclick="view_stream\('(?<VideoUrl>[^']*)','[^,]*,'(?<hoster>[^']*)'\);"\s*onMouseOver="show_preview\('[^']*',(?<ImageUrl>[^,]*),[^,]*,'[^']*','(?<Description>[^']*)'\);"[^>]*>\s<a\shref="[^"]*"\sstyle="display:none;">[^<]*</a>\s<td\sclass="live-td"><img[^>]*></td>\s<td\sclass="stream-name-td">(?<Title>[^<]*)<div[^>]*></div></td>\s<td\sclass="current-viewers-td"><font\scolor="green">(?<viewers>[^<]*)</font></td>\s<td\sclass="region-td"><img\ssrc="[^"]*"\stitle="(?<country>[^"]*)"\salt="[^"]*"\s*/></td>\s</tr>]]></item>
         <item key="baseUrl"><![CDATA[http://www.leagueoflegendsstreams.com/]]></item>
       </Configuration>
       <Categories>
