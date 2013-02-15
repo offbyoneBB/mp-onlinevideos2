@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Xml;
@@ -80,6 +79,7 @@ namespace OnlineVideos.Sites
                         string s2 = Regex.Replace(webdata, @"<((?:/)?)(\d)", "<$1a$2");
                         // fix illegal <number items
                         doc.LoadXml(s2);
+                        SortedDictionary<int, string> urls = new SortedDictionary<int, string>();
                         foreach (XmlNode stream in doc.SelectSingleNode("nodes").ChildNodes)
                         {
                             string node = stream.SelectSingleNode("node").InnerText;
@@ -92,24 +92,20 @@ namespace OnlineVideos.Sites
                             {
                                 Jtv = token,
                                 Live = true,
-                                PlayPath = play
+                                PlayPath = play,
+                                SwfUrl = @"http://www-cdn.jtvnw.net/widgets/live_embed_player.r9c27c302ba389b0ff3a9f34a7a0cb495dfc3e424.swf"
                             };
-                            string label = br.ToString() + "b/s";
-
-                            if (!video.PlaybackOptions.ContainsKey(label))
-                                video.PlaybackOptions.Add(label, theUrl.ToString());
+                            if (!urls.ContainsKey(br))
+                                urls.Add(br, theUrl.ToString());
                         }
+                        video.PlaybackOptions = urls.ToDictionary(u => u.Key.ToString() + "b/s", u => u.Value);
                     }; break;
             }
 
             string resultUrl;
             if (video.PlaybackOptions.Count == 0) return String.Empty;
             else
-            {
-                var enumer = video.PlaybackOptions.GetEnumerator();
-                enumer.MoveNext();
-                resultUrl = enumer.Current.Value;
-            }
+                resultUrl = video.PlaybackOptions.Last().Value;
             if (video.PlaybackOptions.Count == 1) video.PlaybackOptions = null;
             return resultUrl;
 
