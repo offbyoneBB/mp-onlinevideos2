@@ -177,7 +177,7 @@ namespace OnlineVideos.Sites
                         {
                             RssLink letterCategory = new RssLink()
                             {
-                                Name = HttpUtility.HtmlDecode(div.Element("h2").InnerText.Trim().Replace('\n', ' ')),
+                                Name = HttpUtility.HtmlDecode(div.Element("h3").InnerText.Trim().Replace('\n', ' ')),
                                 HasSubCategories = true,
                                 ParentCategory = parentCategory,
                                 SubCategoriesDiscovered = true,
@@ -212,7 +212,7 @@ namespace OnlineVideos.Sites
 										}
                                     }
                                 }
-								if (splitByLetter)
+								if (splitByLetter && letterCategory.SubCategories.Count > 0)
 								{
 									letterCategory.EstimatedVideoCount = (uint)letterCategory.SubCategories.Count;
 									parentCategory.SubCategories.Add(letterCategory);
