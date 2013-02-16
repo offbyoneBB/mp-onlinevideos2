@@ -334,7 +334,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                             continue;
                         }
 
-                        var attr = v.Attributes["src"];
+						var attr = v.Attributes["loadlate"];
                         Match m = Match.Empty;
 
                         if (attr != null) 
