@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using ZDFMediathek2009.Code;
 using ZDFMediathek2009.Code.DTO;
@@ -168,24 +169,35 @@ namespace OnlineVideos.Sites
         {
             if (video.PlaybackOptions == null)
             {
-                video.PlaybackOptions = new Dictionary<string, string>();
                 video videoInfo = Agent.BeitragsDetail(ConfigurationHelper.GetBeitragsDetailsServiceUrl(RestAgent.Configuration), video.VideoUrl, video.Other.ToString());
+				var sortedPlaybackOptions = new SortedDictionary<uint, KeyValuePair<string, string>>();
                 foreach (var vid in videoInfo.formitaeten)
-                {                    
-                    if (vid.url.StartsWith("http://") && vid.url.EndsWith(".asx"))
+                {
+					if (vid.url.StartsWith("http://") && (vid.url.EndsWith(".asx") || (vid.url.EndsWith(".mp4") && !vid.url.Contains("hbbtv"))))
                     {
-                        video.PlaybackOptions.Add(string.Format("{2} | mms:// | {0}x{1}", vid.width, vid.height, vid.quality.ToString().Replace("OBSOLETE_", "")), SiteUtilBase.ParseASX(vid.url)[0]);
+						if (vid.facets != null && vid.facets.Any(s => s == "restriction_useragent"))
+							continue;
+						string myUrl = vid.url.EndsWith(".asx") ? SiteUtilBase.ParseASX(vid.url)[0] : vid.url;
+						uint bitrate = vid.bruttoBitrateSpecified ? vid.bruttoBitrate : vid.audioBitrate + vid.videoBitrate;
+						sortedPlaybackOptions.Add(bitrate, 
+							new KeyValuePair<string,string>(
+								string.Format("{0} | {1,3:d}x{2,3:d} | {3,4:d} kbps | {4}:// | {5}", vid.quality.ToString().Replace("OBSOLETE_", "").PadLeft(8,' '), vid.width, vid.height, bitrate / 1024, myUrl.Substring(0, myUrl.IndexOf("://")), myUrl.Substring(myUrl.LastIndexOf('.'))), myUrl));
                     }
                 }
+				video.PlaybackOptions = sortedPlaybackOptions.ToDictionary(e => e.Value.Key, e => e.Value.Value);
             }
-            string firstUrl = "";
-            var enumer = video.PlaybackOptions.GetEnumerator();
-            while (enumer.MoveNext())
-            {
-                if (firstUrl == "") firstUrl = enumer.Current.Value;
-                if (enumer.Current.Key.StartsWith(videoQuality.ToString().Replace("OBSOLETE_", ""))) return enumer.Current.Value;
-            }
-            return firstUrl;
+
+			if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
+				return string.Empty;
+			else if (video.PlaybackOptions.Count == 1)
+				return video.PlaybackOptions.First().Value;
+			else
+			{
+				string qualitytoMatch = videoQuality.ToString().Replace("OBSOLETE_", "");
+				string firstUrl = video.PlaybackOptions.FirstOrDefault(p => p.Key.Contains(qualitytoMatch)).Value;
+				if (!string.IsNullOrEmpty(firstUrl)) return firstUrl;
+				else return video.PlaybackOptions.First().Value;
+			}
         }
 
         List<VideoInfo> GetVideos(Teaser[] teaserlist)
