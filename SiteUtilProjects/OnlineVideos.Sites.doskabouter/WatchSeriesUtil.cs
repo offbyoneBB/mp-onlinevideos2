@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Net;
@@ -9,10 +10,25 @@ namespace OnlineVideos.Sites
 {
     public class WatchSeriesUtil : DeferredResolveUtil
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests. Define like this: 83.84.85.86:8116")]
+        string proxy = null;
+
         private enum Depth { MainMenu = 0, Alfabet = 1, Series = 2, Seasons = 3, BareList = 4 };
         public CookieContainer cc = null;
         private string nextVideoListPageUrl = null;
         private Category currCategory = null;
+
+        private WebProxy webProxy = null;
+        #region singleton
+        private WebProxy GetProxy()
+        {
+            if (webProxy == null && !String.IsNullOrEmpty(proxy))
+                webProxy = new WebProxy(proxy);
+            return webProxy;
+        }
+        #endregion
+
+
 
         /*public void GetBaseCookie()
         {
@@ -336,7 +352,7 @@ namespace OnlineVideos.Sites
         public override string ResolveVideoUrl(string url)
         {
 
-            string webData = GetWebData(url, cc, forceUTF8: true);
+            string webData = GetWebData(url, cc, forceUTF8: true, proxy: GetProxy());
 
             url = Regex.Match(webData, @"<a\sclass=""myButton""\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay").Groups["url"].Value;
             url = GetRedirectedUrl(url);
@@ -344,7 +360,6 @@ namespace OnlineVideos.Sites
                 return String.Empty;
             return GetVideoUrl(url);
         }
-
 
         private static string GetSubString(string s, string start, string until)
         {
