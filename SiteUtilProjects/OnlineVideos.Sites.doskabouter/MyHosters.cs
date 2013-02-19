@@ -41,8 +41,25 @@ namespace OnlineVideos.Hoster
                 string rss = SiteUtilBase.GetWebData(s);
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(rss);
-                var urlAttribute = xmlDoc.SelectSingleNode("//enclosure/@url");
-                if (urlAttribute != null) res.Add("video", urlAttribute.Value);
+
+                XmlNamespaceManager nsmgr = new XmlNamespaceManager(xmlDoc.NameTable);
+                nsmgr.AddNamespace("a", "http://search.yahoo.com/mrss/");
+                XmlNodeList nodes = xmlDoc.SelectNodes("//a:group/a:content", nsmgr);
+                foreach (XmlNode node in nodes)
+                {
+                    string videoUrl = node.Attributes["url"].Value;
+                    string w = node.Attributes["width"].Value;
+                    string h = node.Attributes["height"].Value;
+                    if (!String.IsNullOrEmpty(w) && !String.IsNullOrEmpty(h) && !String.IsNullOrEmpty(videoUrl))
+                    {
+                        try
+                        {
+                            res.Add(String.Format("{0}x{1}", w, h), videoUrl);
+                        }
+                        catch { }
+                    }
+
+                }
             }
             else
             {
