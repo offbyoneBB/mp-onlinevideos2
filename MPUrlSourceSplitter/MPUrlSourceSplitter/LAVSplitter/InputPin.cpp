@@ -104,6 +104,7 @@ CLAVInputPin::CLAVInputPin(CLogger *logger, TCHAR *pName, CLAVSplitter *pFilter,
   this->downloadFileName = NULL;
   this->asyncDownloadFinished = false;
   this->allDataReceived = false;
+  this->totalLengthReceived = false;
   this->downloadCallbackCalled = false;
   this->asyncDownloadResult = S_OK;
   this->asyncDownloadCallback = NULL;
@@ -728,6 +729,7 @@ HRESULT CLAVInputPin::EndOfStreamReached(int64_t streamPosition)
           startPosition = 0;
           endPosition = 0;
           mediaPacketIndex = this->mediaPacketCollection->GetMediaPacketIndexBetweenPositions(startPosition);
+          this->totalLengthReceived = true;
           this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, L"searching for gap in media packets from beginning");
         }
         else
@@ -1311,7 +1313,8 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   {
                     // we are receiving data, wait for all requested data
                   }
-                  else if (!caller->estimate)
+                  //else if (!caller->estimate)
+                  else if ((caller->allDataReceived) || ((caller->totalLengthReceived) && (!caller->estimate) && (caller->totalLength <= (request->GetStart() + request->GetBufferLength()))))
                   {
                     // we are not receiving more data
                     // finish request

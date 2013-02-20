@@ -248,6 +248,8 @@ private:
 
   // specifies if all data are received (all data from stream has been received - it doesn't mean that has been stored to file)
   bool allDataReceived;
+  // specifies if total length data are received (that means that we received end of stream, but not all data - there can be still gaps in stream)
+  bool totalLengthReceived;
 
   CParserHoster *parserHoster;
 
