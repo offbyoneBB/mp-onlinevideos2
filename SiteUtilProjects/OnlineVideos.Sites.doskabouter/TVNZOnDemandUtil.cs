@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Xml;
-using System.Web;
 
 namespace OnlineVideos.Sites
 {
@@ -118,6 +118,24 @@ namespace OnlineVideos.Sites
                 }
             }
             return res;
+        }
+
+        public override string getUrl(VideoInfo video)
+        {
+            string url = base.getUrl(video);
+            if (String.IsNullOrEmpty(url))
+            {
+                string webData = GetWebData(video.VideoUrl);
+                Match m = Regex.Match(webData,
+                    @"<a\shref=""(?<url>[^""]*)""\sclass=""title-link\swatch-ondemand-link\smedia"">",
+                    defaultRegexOptions);
+                if (m.Success)
+                {
+                    video.VideoUrl = @"http://tvnz.co.nz" + m.Groups["url"].Value;
+                    return base.getUrl(video);
+                }
+            }
+            return url;
         }
 
     }
