@@ -101,6 +101,19 @@ namespace OnlineVideos.Sites
                         video.Title += ": " + subTitle;
                     video.Description = episode.InnerText;
                     video.VideoUrl = String.Format(@"http://tvnz.co.nz/content/{0}.xhtml", episode.Attributes["href"].Value);
+                    XmlAttribute epNode = episode.Attributes["episode"];
+                    if (epNode != null)
+                    {
+                        string epValue = epNode.Value;
+                        Match m = Regex.Match(epValue, @"Series\s(?<series>[^,]*),\sEpisode\s(?<episode>[^\s]*)\s");
+                        if (m.Success)
+                        {
+                            video.Other = String.Format(@"http://tvnz.co.nz/{0}/s{1}-ep{2}-video-{3}",
+                                episode.Attributes["title"].Value.ToLowerInvariant().Replace(' ', '-'),
+                                m.Groups["series"].Value, m.Groups["episode"].Value,
+                                episode.Attributes["href"].Value);
+                        }
+                    }
                     video.ImageUrl = episode.Attributes["src"].Value;
                     string[] epinfo = episode.Attributes["episode"].Value.Split('|');
                     if (epinfo.Length == 1)
@@ -123,17 +136,10 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string url = base.getUrl(video);
-            if (String.IsNullOrEmpty(url))
+            if (String.IsNullOrEmpty(url) && video.Other != null)
             {
-                string webData = GetWebData(video.VideoUrl);
-                Match m = Regex.Match(webData,
-                    @"<a\shref=""(?<url>[^""]*)""\sclass=""title-link\swatch-ondemand-link\smedia"">",
-                    defaultRegexOptions);
-                if (m.Success)
-                {
-                    video.VideoUrl = @"http://tvnz.co.nz" + m.Groups["url"].Value;
-                    return base.getUrl(video);
-                }
+                video.VideoUrl = video.Other as string;
+                return base.getUrl(video);
             }
             return url;
         }
