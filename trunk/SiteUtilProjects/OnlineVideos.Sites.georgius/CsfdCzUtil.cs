@@ -72,7 +72,7 @@ namespace OnlineVideos.Sites.georgius
         private static String videoUrlBlockStart = @"new CSFD.VideoPlayer";
         private static String videoUrlBlockEnd = @"player.create()";
         private static String videoUrlRegex = @"""src"":""(?<videoUrl>[^""]+)";
-        private static String subtitleUrlRegex = @"<track src=""/subtitles-proxy/\?url=(?<subtitleUrl>[^""]+)";
+        private static String subtitleUrlRegex = @"subtitles"":\[\{""src"":""(?<subtitleUrl>[^""]+)";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
