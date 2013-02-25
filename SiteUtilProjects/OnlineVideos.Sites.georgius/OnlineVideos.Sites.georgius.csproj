@@ -58,6 +58,7 @@
     <Compile Include="JojUtil.cs" />
     <Compile Include="MarkizaUtil.cs" />
     <Compile Include="MixerCzUtil.cs" />
+    <Compile Include="MuviCzUtil.cs" />
     <Compile Include="NovaUtil.cs" />
     <Compile Include="OckoTvUtil.cs" />
     <Compile Include="PohadkarUtil.cs" />
