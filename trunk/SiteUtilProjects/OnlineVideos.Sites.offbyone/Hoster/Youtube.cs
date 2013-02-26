@@ -25,7 +25,11 @@ namespace OnlineVideos.Hoster
 		static readonly byte[] fmtOptions3D = new byte[] { 82, 83, 84, 85, 100, 101, 102 };
 		static readonly byte[] fmtOptionsMobile = new byte[] { 13, 17 };
 		static readonly byte[] fmtOptionsQualitySorted = new byte[] { 38, 85, 46, 37, 102, 84, 45, 22, 101, 83, 44, 35, 100, 82, 43, 18, 34, 6, 5, 0, 17, 13 };
-        static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS'|swf)\s*(?:=|\:)\s((""\s*(?<html>.*)"";)|(?<json>\{.+\})|(?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|(flashvars=""(?<params>[^""]+)""))", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS'|swf)\s*(?:=|\:)\s((""\s*(?<html>.*)"";)|
+(?<json>\{.+\})|
+(?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|
+(flashvars=""(?<params>[^""]+)""))|
+(yt\.playerConfig\s*=\s*\{.+""args""\:\s*(?<json>\{[^\}]+\}))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace);
         static Regex unicodeFinder = new Regex(@"\\[uU]([0-9A-F]{4})", RegexOptions.Compiled);
 
         public override Dictionary<string, string> getPlaybackOptions(string url)
@@ -68,7 +72,7 @@ namespace OnlineVideos.Hoster
                             Items.Clear();
                             foreach (var z in Newtonsoft.Json.Linq.JObject.Parse(m.Groups["json"].Value))
                             {
-                                Items.Add(z.Key, z.Value.Value<string>(z.Key));
+                                Items.Add(z.Key, z.Value.ToString());
                             }
                         }
                         else if (m.Groups["html"].Success)
