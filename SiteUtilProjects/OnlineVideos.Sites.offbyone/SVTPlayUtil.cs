@@ -170,7 +170,7 @@ namespace OnlineVideos.Sites
                 parentCategory.SubCategories = new List<Category>();
                 if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("program"))
                 {
-                    var divs = htmlDoc.DocumentNode.SelectNodes("//div[@class = 'playAlphabeticLetter']");
+					var divs = htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'playAlphabeticLetter')]");
                     if (divs != null)
                     {
                         foreach (var div in divs)
@@ -229,12 +229,12 @@ namespace OnlineVideos.Sites
                         foreach (var li in lis)
                         {
                             RssLink cat = new RssLink();
-                            cat.Url = li.Elements("a").Select(a => a.GetAttributeValue("href", "")).FirstOrDefault();
+							cat.Url = li.Descendants("a").Select(a => a.GetAttributeValue("href", "")).FirstOrDefault();
                             if (!string.IsNullOrEmpty(cat.Url))
                             {
                                 if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
 
-                                cat.Name = HttpUtility.HtmlDecode((li.Descendants("h2").Select(h => h.InnerText).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
+                                cat.Name = HttpUtility.HtmlDecode((li.Descendants("h3").Select(h => h.InnerText).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
 
                                 cat.Thumb = li.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
                                 if (!string.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(categoryUrl), cat.Thumb).AbsoluteUri;
