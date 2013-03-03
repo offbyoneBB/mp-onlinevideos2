@@ -83,14 +83,14 @@ namespace OnlineVideos.Sites
             //Replace Regexp with search friendly regexp
             if (url.StartsWith(searchBase))
             {
-                strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""http://www\.gametrailers\.com/[^/]*/(?<tmpTitle>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">";
+                strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""http://www\.gametrailers\.com/[^""]*/(?<tmpTitle>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnailUrl""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">";
                 regEx_VideoListTmp = new Regex(strRegEx_VideoList);
             }
 
             //Hardcode regexp as we probably need to add workaround later (when GT changes their per-category layout once again)
             else
             {
-                strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""http://www\.gametrailers\.com/[^/]*/(?<tmpTitle>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnail""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">";
+                strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""http://www\.gametrailers\.com/[^""]*/(?<tmpTitle>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnailUrl""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">";
                 regEx_VideoListTmp = new Regex(strRegEx_VideoList);
 
                 //Full video title regexp
@@ -139,7 +139,7 @@ namespace OnlineVideos.Sites
                             videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                             videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                             videoInfo.Airdate = m.Groups["Airdate"].Value;
-                            videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Trim();
+                            videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Replace("T","").Trim();
 
                             //Log.Debug("Desc: " + m.Groups["Description"].Value);
                             //Encoding by GT is reported as UTF-8 but it's not in most cases, temporary fix added for "'" character
@@ -276,7 +276,7 @@ namespace OnlineVideos.Sites
             // if an override Encoding was specified, we need to UrlEncode the search string with that encoding
             if (encodingOverride != null) query = HttpUtility.UrlEncode(encodingOverride.GetBytes(query));
 
-            searchUrl = "http://www.gametrailers.com/feeds/search/child/" + promotionID + "/?tabName=videos&platforms=&sortBy=most_recent&keywords=" + query;
+            searchUrl = "http://www.gametrailers.com/feeds/search/child/" + promotionID + "/?keywords=" + query + "&tabName=videos&platforms=&sortBy=most_recent";
 
             return getVideoList(searchUrl);
         }
