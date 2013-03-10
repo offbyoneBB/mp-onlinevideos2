@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Web;
+using OnlineVideos.Hoster.Base;
 
 namespace OnlineVideos.Sites
 {
@@ -76,6 +77,24 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
+        private string GetUrlFromHosters(string url, VideoInfo video)
+        {
+            Uri uri = new Uri(url);
+            foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
+                if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                {
+                    Dictionary<string, string> options = hosterUtil.getPlaybackOptions(url);
+                    if (options != null && options.Count > 0)
+                    {
+                        if (options.Count > 1) video.PlaybackOptions = options;
+                        return options.Last().Value;
+                    }
+                    else
+                        return String.Empty;
+                }
+            return String.Empty;
+        }
+
         public override string getUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
@@ -128,10 +147,10 @@ namespace OnlineVideos.Sites
             if (String.IsNullOrEmpty(thisUrl)) return null;
 
             if (thisUrl.StartsWith("http://www.youtube.com"))
-                return GetVideoUrl(thisUrl);
+                return GetUrlFromHosters(thisUrl, video);
 
             if (thisUrl.StartsWith("http://blip.tv/play"))
-                return GetVideoUrl(thisUrl);
+                return GetUrlFromHosters(thisUrl, video);
 
             if (thisUrl.StartsWith("http://v.giantrealm.com"))
             {
