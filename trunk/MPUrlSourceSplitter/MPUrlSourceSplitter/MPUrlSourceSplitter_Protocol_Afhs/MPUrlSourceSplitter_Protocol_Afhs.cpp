@@ -689,7 +689,10 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
                   result = (segmentFragment->CreateHttpDownloadResponse()) ? result : E_OUTOFMEMORY;
                 }
 
-                result = (this->mainCurlInstance->Initialize(segmentFragment->GetHttpDownloadRequest())) ? S_OK : E_FAIL;
+                if (SUCCEEDED(result))
+                {
+                  result = (this->mainCurlInstance->Initialize(segmentFragment->GetHttpDownloadRequest())) ? result : E_FAIL;
+                }
 
                 if (SUCCEEDED(result))
                 {
@@ -1746,8 +1749,10 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
                       for (unsigned int k = 0; (SUCCEEDED(result) && (k < totalFragmentsPerSegment)); k++)
                       {
                         // choose fragment and get its timestamp
-                        uint64_t timestamp = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragmentTimestamp();
-                        unsigned int firstFragment = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1))->GetFirstFragment();
+                        CFragmentRunEntry *fragmentRunEntry = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1));
+
+                        uint64_t timestamp = fragmentRunEntry->GetFirstFragmentTimestamp();
+                        unsigned int firstFragment = fragmentRunEntry->GetFirstFragment();
 
                         if (fragmentRunEntryTableIndex >= fragmentRunEntryTable->Count())
                         {
@@ -1757,17 +1762,24 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
                         }
                         fragmentRunEntryTableIndex++;
 
-                        CSegmentFragment *segmentFragment = new CSegmentFragment(j, firstFragment, timestamp * 1000 / timeScale);
-                        CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
-
-                        if (SUCCEEDED(result))
+                        if (fragmentRunEntry->GetFragmentDuration() != 0)
                         {
-                          result = (segmentsFragments->Add(segmentFragment)) ? result : E_FAIL;
-                        }
+                          // in some special live session can be some fragments with zero duration
+                          // these fragments can get HTTP 503 error, which disables playback
+                          // just skip these fragments and continue with next fragment
 
-                        if (FAILED(result))
-                        {
-                          FREE_MEM_CLASS(segmentFragment);
+                          CSegmentFragment *segmentFragment = new CSegmentFragment(j, firstFragment, timestamp * 1000 / timeScale);
+                          CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
+
+                          if (SUCCEEDED(result))
+                          {
+                            result = (segmentsFragments->Add(segmentFragment)) ? result : E_FAIL;
+                          }
+
+                          if (FAILED(result))
+                          {
+                            FREE_MEM_CLASS(segmentFragment);
+                          }
                         }
                       }
                     }
