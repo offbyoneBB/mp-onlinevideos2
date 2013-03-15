@@ -279,6 +279,149 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
           int parsedPacket = FLV_PARSE_RESULT_OK;
           while (SUCCEEDED(result) && (!this->shouldExit) && (this->streamFragmentDownloading != UINT_MAX) && (parsedPacket == FLV_PARSE_RESULT_OK))
           {
+            if ((this->firstTimestamp == (-1)) || (this->firstVideoTimestamp == (-1)))
+            {
+              // we don't have video correction
+              // we must find META, VIDEO and AUDIO packet and compare their timestamps
+
+              unsigned int bufferSize = 0;
+              unsigned int processed  = 0;
+              uint8_t *buffer = NULL;
+
+              int firstTimestamp = -1;
+              int videoTimestamp = -1;
+              int audioTimestamp = -1;
+
+              {
+                CLockMutex lockData(this->lockCurlMutex, INFINITE);
+
+                bufferSize = this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
+                buffer = ALLOC_MEM_SET(buffer, uint8_t, bufferSize, 0);
+                CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+
+                if (SUCCEEDED(result))
+                {
+                  this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bufferSize, 0, 0);
+                }
+              }
+
+              while (SUCCEEDED(result) && (!this->shouldExit) && (parsedPacket == FLV_PARSE_RESULT_OK))
+              {
+                parsedPacket = flvPacket->ParsePacket(buffer + processed, bufferSize - processed);
+
+                if (((bufferSize - processed) != 0) && (parsedPacket == FLV_PARSE_RESULT_CHECK_SIZE_INCORRECT))
+                {
+                  // we have received data, it seems that we have FLV packet, but with incorrect check size = malformed FLV packet
+                  int findResult = flvPacket->FindPacket(buffer + processed, bufferSize - processed, FLV_PACKET_MINIMUM_CHECKED_UNSPECIFIED);
+
+                  if (findResult >= 0)
+                  {
+                    // found sequence of correct FLV packets
+                    // just remove malformed data from buffer and continue
+                    processed += (unsigned int)findResult;
+                  }
+                  else
+                  {
+                    // error returned
+                    switch (findResult)
+                    {
+                    case FLV_FIND_RESULT_NOT_FOUND:
+                      // in case of small amount of data it is not relevant
+                      break;
+                    case FLV_FIND_RESULT_NOT_ENOUGH_DATA_FOR_HEADER:
+                      // too small amount of data
+                      break;
+                    case FLV_FIND_RESULT_NOT_ENOUGH_MEMORY:
+                      // bad - not enough memory
+                      result = E_OUTOFMEMORY;
+                      this->logger->Log(LOGGER_ERROR, L"%s: %s: malformed FLV packet detected, not enough memory, buffer size: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace());
+                      break;
+                    case FLV_FIND_RESULT_NOT_FOUND_MINIMUM_PACKETS:
+                      // wait for more data
+                      break;
+                    default:
+                      this->logger->Log(LOGGER_ERROR, L"%s: %s: malformed FLV packet detected, unknown find result: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, findResult);
+                      result = E_FAIL;
+                      break;
+                    }
+                  }
+                }
+
+                if (SUCCEEDED(result) && (parsedPacket == FLV_PARSE_RESULT_OK))
+                {
+                  // FLV packet parsed correctly
+
+                  if ((flvPacket->GetType() != FLV_PACKET_HEADER) && (firstTimestamp == (-1)))
+                  {
+                    firstTimestamp = flvPacket->GetTimestamp();
+                  }
+
+                  if ((flvPacket->GetType() == FLV_PACKET_VIDEO) && (videoTimestamp == (-1)))
+                  {
+                    videoTimestamp = flvPacket->GetTimestamp();
+                  }
+
+                  if ((flvPacket->GetType() == FLV_PACKET_AUDIO) && (audioTimestamp == (-1)))
+                  {
+                    audioTimestamp = flvPacket->GetTimestamp();
+                  }
+                }
+
+                if ((firstTimestamp != (-1)) && (videoTimestamp != (-1)) && (audioTimestamp != (-1)))
+                {
+                  // we have first FLV packet, video and audio timestamps
+                  // stop searching and calculate video correction
+                  break;
+                }
+
+                processed += flvPacket->GetSize();
+                flvPacket->Clear();
+              }
+
+              if ((firstTimestamp != (-1)) && (videoTimestamp != (-1)) && (audioTimestamp != (-1)))
+              {
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: first timestamp: %d, video timestamp: %d, audio timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, firstTimestamp, videoTimestamp, audioTimestamp);
+
+                int diffFirstVideo = abs(firstTimestamp - videoTimestamp);
+                int diffFirstAudio = abs(firstTimestamp - audioTimestamp);
+                int diffVideoAudio = abs(videoTimestamp - audioTimestamp);
+
+                // choose smallest difference
+                int index = 0;                  // 0 = first - video, 1 = first - audio, 2 = video - audio
+                int value = diffFirstVideo;
+
+                if (diffFirstAudio < value)
+                {
+                  index = 1;
+                  value = diffFirstAudio;
+                }
+
+                if (diffVideoAudio < value)
+                {
+                  index = 2;
+                  value = diffVideoAudio;
+                }
+
+                // remember correct timestamp values
+                if ((index == 0) || (index == 1))
+                {
+                  this->firstTimestamp = firstTimestamp;
+                  this->firstVideoTimestamp = videoTimestamp;
+                }
+                else if (index == 2)
+                {
+                  this->firstTimestamp = videoTimestamp;
+                  this->firstVideoTimestamp = videoTimestamp;
+                }
+
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstTimestamp);
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first video timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstVideoTimestamp);
+              }
+
+              FREE_MEM(buffer);
+            }
+
+            if (SUCCEEDED(result) && (this->firstTimestamp != (-1)) && (this->firstVideoTimestamp != (-1)))
             {
               CLockMutex lockData(this->lockCurlMutex, INFINITE);
 
@@ -324,27 +467,14 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
               }
             }
 
-            if (SUCCEEDED(result) && (parsedPacket == FLV_PARSE_RESULT_OK))
+            if (SUCCEEDED(result) && (this->firstTimestamp != (-1)) && (this->firstVideoTimestamp != (-1)) && (parsedPacket == FLV_PARSE_RESULT_OK))
             {
               // FLV packet parsed correctly
 
-              // remember correct timestamp values
-              if (SUCCEEDED(result) && (flvPacket->GetType() != FLV_PACKET_HEADER) && (this->firstTimestamp == (-1)))
-              {
-                this->firstTimestamp = flvPacket->GetTimestamp();
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstTimestamp);
-              }
-
-              if (SUCCEEDED(result) && (flvPacket->GetType() == FLV_PACKET_VIDEO) && (this->firstVideoTimestamp == (-1)))
-              {
-                this->firstVideoTimestamp = flvPacket->GetTimestamp();
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: set first video timestamp: %d", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->firstVideoTimestamp);
-              }
-
               if (SUCCEEDED(result) && (fragment->IsSeeked()) && (fragment->IsStartTimestampSet()) && (fragment->GetBuffer()->GetBufferOccupiedSpace() == 0))
               {
-                // seeked to fragment which was downloaded, but interrupted
-                // actually we have to be fragment before
+                // seeked to fragment which was downloading, but interrupted
+                // actually we are in fragment before
                 // ignore everything to second key frame (first key frame is key frame for previous fragment)
 
                 // activate ignoring packets
