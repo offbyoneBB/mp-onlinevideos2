@@ -12,9 +12,26 @@ namespace OnlineVideos.Sites.georgius
     public class SlovenskaTeleviziaUtil : SiteUtilBase
     {
         #region Private fields
+        
+        //if(type=='live')
+        //{
+        //    if(videoID.match(/^rtmp:\/\/.*/i))
+        //        return videoID;
+        //    else
+        //        return 'rtmp://e3.stv.livebox.sk:80/stv-tv-arch/_definst_/'+videoID+''+quality+'.smil/livebox-rtmp.smil?auth=b64:X2FueV98MTM2MzI5OTEyM3w3ZjI1NTdmY2ZmOTM3YzZhNTM3MDc5YTJkYmYyMDlmZDdkMzRjYzM0'
+        //}
+        //else
+        //{
+        //    if(videoID.match(/^rtmp:\/\/.*/i) || videoID.match(/^http:\/\/.*/i))
+        //        return videoID;
+        //    else
+        //        return 'rtmp://e3.stv.livebox.sk:80/stv-tv-arch/_definst_/mp4:'+videoID+'?auth=b64:X2FueV98MTM2MzI5OTEyM3w3ZjI1NTdmY2ZmOTM3YzZhNTM3MDc5YTJkYmYyMDlmZDdkMzRjYzM0'
+        //}
+    
 
         private static String baseUrl = @"http://www.stv.sk";
         private static String showsBaseUrl = @"http://www.stv.sk/online/archiv/";
+        private static String playerJsUrl = @"http://embed.stv.livebox.sk/v1/tv-arch.js";
 
         private static String dynamicCategoryStartRegex = @"<ul id=""[^""]+"" class=""(arch-list)|(arch-list last)"">";
         private static String dynamicCategoryEnd = @"</ul>";
@@ -27,7 +44,15 @@ namespace OnlineVideos.Sites.georgius
 
         private static String nextPageUrlRegex = @"<a href=""(?<nextPageUrl>[^""]*)"" class=""prew"">";
         
-        private static String flashVarsRegex = @"so.addParam\('flashvars','playlistfile=(?<playListFile>[^\&]+)&";
+        //private static String flashVarsRegex = @"so.addParam\('flashvars','playlistfile=(?<playListFile>[^\&]+)&";
+
+        private static String videoStart = @"LiveboxPlayer.flash";
+        private static String videoEnd = @"</script>";
+        private static String videoStreamRegex = @"stream_id: ""(?<streamId>[^""]*)";
+
+        private static String videoUrlFormatStart = @"getRTMPSource";
+        private static String videoUrlFormatEnd = @"};";
+        private static String videoUrlFormatRegex = @"return '(?<videoUrlPart1>[^']+)'\+videoID\+'(?<videoUrlPart2>[^']+)'";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -234,46 +259,93 @@ namespace OnlineVideos.Sites.georgius
         public override string getUrl(VideoInfo video)
         {
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+            String playerJs = SiteUtilBase.GetWebData(SlovenskaTeleviziaUtil.playerJsUrl, null, video.VideoUrl, null, true);
+
             video.PlaybackOptions = new Dictionary<string, string>();
-            Match match = Regex.Match(baseWebData, SlovenskaTeleviziaUtil.flashVarsRegex);
-            if (match.Success)
+
+            int startIndex = baseWebData.IndexOf(SlovenskaTeleviziaUtil.videoStart);
+            if (startIndex >= 0)
             {
-                baseWebData = SiteUtilBase.GetWebData(match.Groups["playListFile"].Value.Replace("%26", "&"), null, null, null, true).Replace("xmlns=\"http://xspf.org/ns/0/\"", "");
-                XmlDocument movieData = new XmlDocument();
-                movieData.LoadXml(baseWebData);
-
-                XmlNode location = movieData.SelectSingleNode("//location");
-                XmlNode stream = movieData.SelectSingleNode("//meta[@rel = \"streamer\"]");
-
-                if ((location != null) && (stream != null))
+                int endIndex = baseWebData.IndexOf(SlovenskaTeleviziaUtil.videoEnd, startIndex);
+                if (endIndex >= 0)
                 {
-                    String movieUrl = stream.InnerText + "/" + location.InnerText;
+                    String videoData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                    string host = String.Empty;
-                    string port = "1935";
-                    string firstSlash = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf("/", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
-
-                    String[] parts = firstSlash.Split(':');
-                    if (parts.Length == 2)
+                    Match match = Regex.Match(videoData, SlovenskaTeleviziaUtil.videoStreamRegex);
+                    if (match.Success)
                     {
-                        // host name and port
-                        host = parts[0];
-                        port = parts[1];
+                        String streamId = match.Groups["streamId"].Value;
+
+                        startIndex = playerJs.IndexOf(SlovenskaTeleviziaUtil.videoUrlFormatStart);
+                        if (startIndex >= 0)
+                        {
+                            endIndex = playerJs.IndexOf(SlovenskaTeleviziaUtil.videoUrlFormatEnd, startIndex);
+                            if (endIndex >= 0)
+                            {
+                                String playerData = playerJs.Substring(startIndex, endIndex - startIndex);
+
+                                match = Regex.Match(playerData, SlovenskaTeleviziaUtil.videoUrlFormatRegex);
+                                if (match.Success)
+                                {
+                                    String videoUrlPart1 = match.Groups["videoUrlPart1"].Value;
+                                    String videoUrlPart2 = match.Groups["videoUrlPart2"].Value;
+
+                                    String rtmpUrl = videoUrlPart1 + streamId + videoUrlPart2;
+                                    String streamPart = "mp4:" + streamId;
+
+                                    String playPath = rtmpUrl.Substring(rtmpUrl.IndexOf(streamPart));
+                                    String tcUrl = rtmpUrl.Remove(rtmpUrl.IndexOf(streamPart) - 1, streamPart.Length + 1);
+                                    String app = tcUrl.Substring(tcUrl.IndexOf("/", tcUrl.IndexOf("/") + 2) + 1);
+
+                                    String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
+
+                                    video.PlaybackOptions.Add(video.Title, resultUrl);
+                                }
+                            }
+                        }
                     }
-                    else
-                    {
-                        host = firstSlash;
-                    }
-
-                    string app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
-                    string tcUrl = "rtmp://" + host + "/" + app;
-                    string playPath = "mp4:" + movieUrl.Substring(movieUrl.IndexOf(app) + app.Length + 1);
-
-                    string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(movieUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
-
-                    video.PlaybackOptions.Add(video.Title, resultUrl);
                 }
             }
+
+            //Match match = Regex.Match(baseWebData, SlovenskaTeleviziaUtil.flashVarsRegex);
+            //if (match.Success)
+            //{
+            //    baseWebData = SiteUtilBase.GetWebData(match.Groups["playListFile"].Value.Replace("%26", "&"), null, null, null, true).Replace("xmlns=\"http://xspf.org/ns/0/\"", "");
+            //    XmlDocument movieData = new XmlDocument();
+            //    movieData.LoadXml(baseWebData);
+
+            //    XmlNode location = movieData.SelectSingleNode("//location");
+            //    XmlNode stream = movieData.SelectSingleNode("//meta[@rel = \"streamer\"]");
+
+            //    if ((location != null) && (stream != null))
+            //    {
+            //        String movieUrl = stream.InnerText + "/" + location.InnerText;
+
+            //        string host = String.Empty;
+            //        string port = "1935";
+            //        string firstSlash = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf("/", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
+
+            //        String[] parts = firstSlash.Split(':');
+            //        if (parts.Length == 2)
+            //        {
+            //            // host name and port
+            //            host = parts[0];
+            //            port = parts[1];
+            //        }
+            //        else
+            //        {
+            //            host = firstSlash;
+            //        }
+
+            //        string app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
+            //        string tcUrl = "rtmp://" + host + "/" + app;
+            //        string playPath = "mp4:" + movieUrl.Substring(movieUrl.IndexOf(app) + app.Length + 1);
+
+            //        string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(movieUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
+
+            //        video.PlaybackOptions.Add(video.Title, resultUrl);
+            //    }
+            //}
 
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
