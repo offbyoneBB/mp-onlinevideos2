@@ -381,16 +381,18 @@ namespace OnlineVideos.Sites.georgius
                         baseWebData = baseWebData.Substring(endIndex);
 
                         MatchCollection matches = Regex.Matches(videoData, MuviCzUtil.videoUrlRegex);
-                        if (matches.Count == 2)
+                        if (matches.Count > 0)
                         {
                             foreach (Match match in matches)
                             {
                                 String quality = match.Groups["videoQuality"].Value;
                                 String url = match.Groups["videoUrl"].Value;
 
-                                video.PlaybackOptions.Add((quality == "file") ? "Medium quality" : "High quality", url);
+                                if (quality.Contains("file"))
+                                {
+                                    video.PlaybackOptions.Add((quality == "file") ? "Medium quality" : "High quality", url);
+                                }
                             }
-                            break;
                         }
                     }
                 }

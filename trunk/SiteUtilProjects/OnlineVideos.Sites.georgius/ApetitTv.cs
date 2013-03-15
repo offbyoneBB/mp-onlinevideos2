@@ -221,7 +221,8 @@ namespace OnlineVideos.Sites.georgius
                 match = Regex.Match(baseWebData, ApetitTvUtil.showVideoUrlsRegex);
                 if (match.Success)
                 {
-                    return Utils.FormatAbsoluteUrl(match.Groups["showVideoUrl"].Value, ApetitTvUtil.videoBaseUrl);
+                    String url = Utils.FormatAbsoluteUrl(match.Groups["showVideoUrl"].Value, ApetitTvUtil.videoBaseUrl);
+                    return new MPUrlSourceFilter.HttpUrl(url) { UserAgent = "Mozilla/5.0 (Windows NT 6.1; rv:19.0) Gecko/20100101 Firefox/19.0" }.ToString();
                 }
             }
 
