@@ -215,7 +215,7 @@ namespace OnlineVideos.Sites
                     String label = match.Groups["label"].Value;
                     String url = match.Groups["url"].Value;
                     String name = label.Length < 3 ? "Temporada " + label : label;
-                    result.Add(CreateCategory(name, url, String.Empty, CategoryType.None,""));
+                    result.Add(CreateCategory(name, url, String.Empty, CategoryType.None,"", parentCategory));
                     Log.Debug("antena3: season {0} added.", name);
                 }
             }
@@ -232,7 +232,7 @@ namespace OnlineVideos.Sites
                 String name = match.Groups["title"].Value;
                 String url = match.Groups["url"].Value;
                 String thumbUrl = antena3BaseUrl + match.Groups["thumb"].Value;
-                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.SeriesSeason,""));
+                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.SeriesSeason,"", parentCategory));
                 Log.Debug("antena3: series {0} added.", name);
                 match = match.NextMatch();
             }
@@ -253,7 +253,7 @@ namespace OnlineVideos.Sites
                     String name = FormatMonthLabel(match.Groups["label"].Value);
                     String url = match.Groups["url"].Value;
                     String thumbUrl = antena3BaseUrl + match.Groups["img"].Value;
-                    result.Add(CreateCategory(name, url, thumbUrl, CategoryType.None,""));
+                    result.Add(CreateCategory(name, url, thumbUrl, CategoryType.None,"", parentCategory));
                     Log.Debug("antena3: program month {0} added.", name);
                 }
             }
@@ -274,7 +274,7 @@ namespace OnlineVideos.Sites
                     String name = match.Groups["label"].Value;
                     String url = match.Groups["url"].Value;
                     String thumbUrl = antena3BaseUrl + match.Groups["img"].Value;
-                    result.Add(CreateCategory(name, url, thumbUrl, CategoryType.ProgramMonth,""));
+                    result.Add(CreateCategory(name, url, thumbUrl, CategoryType.ProgramMonth,"", parentCategory));
                     Log.Debug("antena3: program year {0} added.", name);
                 }
             }
@@ -292,7 +292,7 @@ namespace OnlineVideos.Sites
                 String url = match.Groups["url"].Value;
                 String thumbUrl = antena3BaseUrl + match.Groups["thumb"].Value;
                 String description = match.Groups["description"].Value;
-                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.ProgramYear, description));
+                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.ProgramYear, description, parentCategory));
                 Log.Debug("antena3: program {0} added.", name);
                 match = match.NextMatch();
             }
@@ -330,7 +330,7 @@ namespace OnlineVideos.Sites
             return parentCategory.HasSubCategories ? subCategories.Count : 0;
         }
 
-        internal RssLink CreateCategory(String name, String url, String thumbUrl, CategoryType categoryType, String description)
+        internal RssLink CreateCategory(String name, String url, String thumbUrl, CategoryType categoryType, String description, Category parentCategory)
         {
             RssLink category = new RssLink();
 
@@ -341,6 +341,7 @@ namespace OnlineVideos.Sites
             category.Description = description;
             category.HasSubCategories = categoryType != CategoryType.None;
             category.SubCategoriesDiscovered = false;
+            category.ParentCategory = parentCategory;
 
             return category;
         }
@@ -348,9 +349,9 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            Settings.Categories.Add(CreateCategory("Series", "/videos/series.html", String.Empty, CategoryType.Series,""));
-            Settings.Categories.Add(CreateCategory("Noticias", "/videos/noticias.html", String.Empty, CategoryType.Program,""));
-            Settings.Categories.Add(CreateCategory("Programas", "/videos/programas.html", String.Empty, CategoryType.Program,""));
+            Settings.Categories.Add(CreateCategory("Series", "/videos/series.html", String.Empty, CategoryType.Series,"", null));
+            Settings.Categories.Add(CreateCategory("Noticias", "/videos/noticias.html", String.Empty, CategoryType.Program,"", null));
+            Settings.Categories.Add(CreateCategory("Programas", "/videos/programas.html", String.Empty, CategoryType.Program,"", null));
             Settings.DynamicCategoriesDiscovered = true;
 
             return Settings.Categories.Count;
