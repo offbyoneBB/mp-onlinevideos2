@@ -85,9 +85,9 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
+            Settings.Categories.Add(CreateCategory("Programas", miteleBaseUrl + "/programas-tv/", String.Empty, CategoryType.Programas, "", null));
             Settings.Categories.Add(CreateCategory("Series", miteleBaseUrl+"/series-online/", String.Empty, CategoryType.Series, "", null));
             Settings.Categories.Add(CreateCategory("TV Movies", miteleBaseUrl + "/tv-movies/", String.Empty, CategoryType.TVMovies, "", null));
-            Settings.Categories.Add(CreateCategory("Programas", miteleBaseUrl + "/programas-tv/", String.Empty, CategoryType.Programas, "", null));
             Settings.Categories.Add(CreateCategory("Infantil", miteleBaseUrl + "/tv-infantil/", String.Empty, CategoryType.Infantil, "", null));
             Settings.Categories.Add(CreateCategory("V.O.", miteleBaseUrl + "/mitele-vo/", String.Empty, CategoryType.VO, "", null));
             Settings.DynamicCategoriesDiscovered = true;

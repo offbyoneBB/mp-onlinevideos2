@@ -358,10 +358,10 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            Settings.Categories.Add(CreateCategory("Series", "/videos/series.html", String.Empty, CategoryType.Series, "", null));
-            Settings.Categories.Add(CreateCategory("Noticias", "/videos/noticias.html", String.Empty, CategoryType.Program, "", null));
             Settings.Categories.Add(CreateCategory("Programas", "/videos/programas.html", String.Empty, CategoryType.Program, "", null));
             Settings.Categories.Add(CreateCategory("Xplora", "/videos/videos-xplora.html", String.Empty, CategoryType.Program, "", null));
+            Settings.Categories.Add(CreateCategory("Series", "/videos/series.html", String.Empty, CategoryType.Series, "", null));
+            Settings.Categories.Add(CreateCategory("Noticias", "/videos/noticias.html", String.Empty, CategoryType.Program, "", null));
             Settings.DynamicCategoriesDiscovered = true;
 
             return Settings.Categories.Count;
