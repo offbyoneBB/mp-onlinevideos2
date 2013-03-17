@@ -85,17 +85,17 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            Settings.Categories.Add(CreateCategory("Series", miteleBaseUrl+"/series-online/", String.Empty, CategoryType.Series, ""));
-            Settings.Categories.Add(CreateCategory("TV Movies", miteleBaseUrl+"/tv-movies/", String.Empty, CategoryType.TVMovies, ""));
-            Settings.Categories.Add(CreateCategory("Programas", miteleBaseUrl+"/programas-tv/", String.Empty, CategoryType.Programas, ""));
-            Settings.Categories.Add(CreateCategory("Infantil", miteleBaseUrl+"/tv-infantil/", String.Empty, CategoryType.Infantil, ""));
-            Settings.Categories.Add(CreateCategory("V.O.", miteleBaseUrl+"/mitele-vo/", String.Empty, CategoryType.VO, ""));
+            Settings.Categories.Add(CreateCategory("Series", miteleBaseUrl+"/series-online/", String.Empty, CategoryType.Series, "", null));
+            Settings.Categories.Add(CreateCategory("TV Movies", miteleBaseUrl + "/tv-movies/", String.Empty, CategoryType.TVMovies, "", null));
+            Settings.Categories.Add(CreateCategory("Programas", miteleBaseUrl + "/programas-tv/", String.Empty, CategoryType.Programas, "", null));
+            Settings.Categories.Add(CreateCategory("Infantil", miteleBaseUrl + "/tv-infantil/", String.Empty, CategoryType.Infantil, "", null));
+            Settings.Categories.Add(CreateCategory("V.O.", miteleBaseUrl + "/mitele-vo/", String.Empty, CategoryType.VO, "", null));
             Settings.DynamicCategoriesDiscovered = true;
 
             return Settings.Categories.Count;
         }
 
-        internal RssLink CreateCategory(String name, String url, String thumbUrl, CategoryType categoryType, String description)
+        internal RssLink CreateCategory(String name, String url, String thumbUrl, CategoryType categoryType, String description, Category parentCategory)
         {
             RssLink category = new RssLink();
 
@@ -106,6 +106,7 @@ namespace OnlineVideos.Sites
             category.Description = description;
             category.HasSubCategories = categoryType != CategoryType.None;
             category.SubCategoriesDiscovered = false;
+            category.ParentCategory = parentCategory;
 
             return category;
         }
@@ -155,7 +156,7 @@ namespace OnlineVideos.Sites
                 String name = match.Groups["title"].Value;
                 String url = miteleBaseUrl + match.Groups["url"].Value;
                 String thumbUrl = match.Groups["thumb"].Value;
-                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.Temporadas, ""));
+                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.Temporadas, "", parentCategory));
                 Log.Debug("mitele: serie {0} added.", name);
                 match = match.NextMatch();
             }
@@ -175,7 +176,7 @@ namespace OnlineVideos.Sites
                 String name = (String)temporada.SelectToken("post_title");
                 String idTemporada = (String)temporada.SelectToken("ID");
                 String url = miteleBaseUrl + temporadasARG + idTemporada;
-                result.Add(CreateCategory(name, url, "", CategoryType.None, ""));
+                result.Add(CreateCategory(name, url, "", CategoryType.None, "", parentCategory));
                 Log.Debug("Mitele: temporada {0} added.", name);
             }
             return result;
