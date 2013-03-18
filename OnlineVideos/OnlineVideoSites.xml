@@ -1230,6 +1230,15 @@
         <Category xsi:type="RssLink" name="Page 2">http://www.redbull.tv/cs/Satellite?_=1315253035003&amp;pagename=RBWebTV%2FRBTV_P%2FRBWTVShowContainer&amp;orderby=latest&amp;p=1242970775246&amp;start=9</Category>
       </Categories>
     </Site>
+    <Site name="Rockpalast" util="Rockpalast" agecheck="false" enabled="true" lang="de">
+      <Description>Rockpalast, das Kult-Programm mit festem wöchentlichen Sendeplatz und regelmäßigen zusätzlichen Rocknächten</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"\s*title="(?<description>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<li><a\s*href="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>(?:&nbsp;\s<font\scolor="red">(?<Description>[^<]*)</font>)?</li>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<param\sname="flashvars"\svalue="startPicture=[^;]*;dslSrc=(?<m0>[^&]*)&amp|<span\sclass="videoLink">\s*<a\shref="\?startMedium=[^;]*;[^;]*;dslSrc=(?<m0>[^&]*)&]]></item>
+        <item key="baseUrl"><![CDATA[http://www.wdr.de/tv/rockpalast/videos/uebersicht.jsp]]></item>
+      </Configuration>
+    </Site>
     <Site name="RTE.ie" util="RTEPlayer" agecheck="false" enabled="true" lang="en">
       <Description>RTÉ news brings you the latest Irish news, world news, international news and up to the minute reports on breaking Irish news stories and news from around the world. Watch and listen to Irish news stories on our video and audio streams.</Description>
       <Configuration>
