@@ -8,6 +8,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Collections.Specialized;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -26,9 +28,7 @@ namespace OnlineVideos.Sites
         string lastPageIndexRegex = @"Showing page \d+ of (?<lastpageindex>\d+)";
         string nextPageUrlRegex = @"<li><a class=""next"" href=""(?<url>[^""]+)"">Next <span class=""bull"">&raquo;</span></a></li>";
         string videosRegex = @"<img alt=""[^""]*"" src=""(?<thumb>[^""]+)"".*?<h\d[^>]*>\s*<a.*?href=""(?<url>[^""]+)"">(?<title>[^<]*)</a>\s*</h\d>.*?<em[^>]*>\s*(<span[^>]*>)?(?<length>\d+\:\d+)(</span>)?\s+Posted\:\s*(?<aired>.*?)</em>";
-        string downloadPageUrlRegex = @"(download_dialog.load\('(?<url>[^']+)')|(<iframe src=""(?<youtubeurl>https?://www.youtube.com/[^&]+)&)";
-        string downloadOptionsRegex = @"<input name=""download_quality"" id=""[^""]+"" type=""radio"" data-name=""[^""]+"" value=""(?<value>[^""]*)"".*?/> <label for=""[^""]*"">(?<label>[^<]*)</label>";
-		string downloadFileUrlRegex = @"var url = '(?<url>[^{]+{quality}{lang}.mp4)[^']*'";
+        string talkDetailsRegex = @"<script\s+type\s*=\s*""text/javascript"">var\s+talkDetails\s*=\s*(?<json>{.*?})\s*</script>";
 
         string nextPageUrl;
 
@@ -154,30 +154,13 @@ namespace OnlineVideos.Sites
         {
             video.PlaybackOptions = new Dictionary<string, string>();
             string data = GetWebData(video.VideoUrl);
-            var downloadUrlMatch = Regex.Match(data, downloadPageUrlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
-            if (downloadUrlMatch.Success)
+            var talkDetailsMatch = Regex.Match(data, talkDetailsRegex, RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+            if (talkDetailsMatch.Success)
             {
-                if (downloadUrlMatch.Groups["youtubeurl"].Success)
+                JObject talkDetails = JsonConvert.DeserializeObject(talkDetailsMatch.Groups["json"].Value) as JObject;
+                foreach (var htmlStream in talkDetails["htmlStreams"])
                 {
-                    var youtubeHoster = Hoster.Base.HosterFactory.GetHoster("Youtube");
-                    video.PlaybackOptions = youtubeHoster.getPlaybackOptions(downloadUrlMatch.Groups["youtubeurl"].Value);
-                }
-                else
-                {
-                    data = GetWebData(new Uri(new Uri(video.VideoUrl), downloadUrlMatch.Groups["url"].Value).AbsoluteUri);
-                    var optionMatch = Regex.Match(data, downloadOptionsRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
-                    var dlUrlMatch = Regex.Match(data, downloadFileUrlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
-                    if (optionMatch.Success && dlUrlMatch.Success)
-                    {
-                        while (optionMatch.Success)
-                        {
-                            string dlUrl = dlUrlMatch.Groups["url"].Value;
-                            dlUrl = dlUrl.Replace("{quality}", optionMatch.Groups["value"].Value);
-                            dlUrl = dlUrl.Replace("{lang}", "");
-                            video.PlaybackOptions.Add(optionMatch.Groups["label"].Value, dlUrl);
-                            optionMatch = optionMatch.NextMatch();
-                        }
-                    }
+                    video.PlaybackOptions.Add(htmlStream.Value<string>("id"), htmlStream.Value<string>("file"));
                 }
             }
             return video.PlaybackOptions.Count > 0 ? video.PlaybackOptions.Last().Value : "";
