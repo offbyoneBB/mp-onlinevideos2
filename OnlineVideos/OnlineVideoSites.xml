@@ -1671,7 +1671,7 @@
       <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="cat_pic">\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*<img\s+src="(?<thumb>[^"]+)"[^>]*>\s*<span[^>]*>[^<]*</span>\s*</a>\s*<div>\s*<a[^>]*>\s*<strong>(?<title>[^<]*)</strong>\s*</a>\s*</div>]]></item>
-        <item key="videoListRegEx"><![CDATA[<li\s+class="videoBox"[^>]*>\s*<div\s+class="wrapping-video-box">\s*
+        <item key="videoListRegEx"><![CDATA[<li\s+class="videoBox[^>]*>\s*<div\s+class="wrapping-video-box">\s*
 <a[^>]+>\s*<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>\s*</a>\s*
 <a\s+class="videoTitle"\s+href="(?<VideoUrl>/watch/[^"]+)">(?<Title>[^<]+)</a>\s*</div>\s*
 <div\s+class="information">\s*
@@ -1694,36 +1694,23 @@
     <Site name="RedTube" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>The home of free porn videos.</Description>
       <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li>\s*<div\s+class="video">\s*<a\s+href="(?<url>[^"]+)"\s+title="(?<title>[^"]+)">\s*<img.*?src="(?<thumb>[^"]*)"]]></item>
         <item key="videoListRegEx"><![CDATA[<div\sclass="video">\s*
-<a\shref="[^"]*/(?<VideoUrl>\d{1,})"\stitle="(?<Title>[^"]*)"[^>]*>\s*
+<a\shref="(?<VideoUrl>[^"]+)"\stitle="(?<Title>[^"]*)"[^>]*>\s*
 <img\s(?:(?!src).)*src="(?<ImageUrl>[^"]*)"
 (?:(?!<div\sclass="time">).)*<div\sclass="time">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<]]></item>
         <item key="nextPageRegEx"><![CDATA[title="Next\s*Page\s*"\s+href="(?<url>[^"]*page=\d{1,})">]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\stitle="Previous\spage"\shref="(?<url>[^"]*page=\d{1,})">Prev</a>]]></item>
         <item key="fileUrlRegEx"><![CDATA[&(?<n0>[a-zA-Z0-9_]+)_url=(?<m0>[^&"]+)]]></item>
         <item key="searchUrl"><![CDATA[http://www.redtube.com/?search={0}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.redtube.com]]></item>
+        <item key="baseUrl"><![CDATA[http://www.redtube.com/channels]]></item>
         <item key="cookies"><![CDATA[pp=1]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="New">http://www.redtube.com/new</Category>
-        <Category xsi:type="RssLink" name="Top">http://www.redtube.com/top</Category>
-        <Category xsi:type="RssLink" name="Amateur">http://www.redtube.com/redtube/amateur</Category>
-        <Category xsi:type="RssLink" name="Anal">http://www.redtube.com/redtube/anal</Category>
-        <Category xsi:type="RssLink" name="Asian">http://www.redtube.com/redtube/asian</Category>
-        <Category xsi:type="RssLink" name="Bigtits">http://www.redtube.com/redtube/bigtits</Category>
-        <Category xsi:type="RssLink" name="Blowjob">http://www.redtube.com/redtube/blowjob</Category>
-        <Category xsi:type="RssLink" name="Cumshot">http://www.redtube.com/redtube/cumshot</Category>
-        <Category xsi:type="RssLink" name="Ebony">http://www.redtube.com/redtube/ebony</Category>
-        <Category xsi:type="RssLink" name="Fetish">http://www.redtube.com/redtube/fetish</Category>
-        <Category xsi:type="RssLink" name="Gay">http://www.redtube.com/redtube/gay</Category>
-        <Category xsi:type="RssLink" name="Group">http://www.redtube.com/redtube/group</Category>
-        <Category xsi:type="RssLink" name="Hentai">http://www.redtube.com/redtube/hentai</Category>
-        <Category xsi:type="RssLink" name="Lesbian">http://www.redtube.com/redtube/lesbian</Category>
-        <Category xsi:type="RssLink" name="Mature">http://www.redtube.com/redtube/mature</Category>
-        <Category xsi:type="RssLink" name="Public">http://www.redtube.com/redtube/public</Category>
-        <Category xsi:type="RssLink" name="Teens">http://www.redtube.com/redtube/teens</Category>
-        <Category xsi:type="RssLink" name="Wildcrazy">http://www.redtube.com/redtube/wildcrazy</Category>
+        <Category xsi:type="RssLink" name="Newest Videos">http://www.redtube.com/</Category>
+        <Category xsi:type="RssLink" name="Top Rated">http://www.redtube.com/top</Category>
+        <Category xsi:type="RssLink" name="Most Viewed">http://www.redtube.com/mostviewed</Category>
+        <Category xsi:type="RssLink" name="Most Favored">http://www.redtube.com/mostfavored</Category>
       </Categories>
     </Site>
     <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
