@@ -133,10 +133,8 @@ namespace OnlineVideos.Sites
                 if (subtitle.Success)
                     video.SubtitleText = Utils.SubtitleReader.SAMI2SRT(GetWebData("http://ais.channel4.com" + subtitle.Groups[1].Value));
             }
-            string uriData = new Regex("<uriData>(.*?)</uriData>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
-
-            string streamUri = new Regex("<streamUri>(.*?)</streamUri>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
-            if (!streamUri.StartsWith("rtmp"))
+            string siteSection = new Regex("<siteSectionId>(.*?)</siteSectionId>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
+            if (!siteSection.StartsWith("ps3"))
             {
                 Log.Info("This video is encrypted and cannot be played, looking for alternate PS3 stream");
                 string seriesTitle = new Regex("<webSafeBrandTitle>(.*?)</webSafeBrandTitle>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
@@ -156,6 +154,8 @@ namespace OnlineVideos.Sites
                 return null;
             }
 
+            string uriData = new Regex("<uriData>(.*?)</uriData>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
+            string streamUri = new Regex("<streamUri>(.*?)</streamUri>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
             string token = new Regex("<token>(.*?)</token>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
             string cdn = new Regex("<cdn>(.*?)</cdn>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
             string decryptedToken = new FourodDecrypter().Decode4odToken(token);
