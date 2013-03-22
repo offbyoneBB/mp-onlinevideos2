@@ -74,7 +74,6 @@ namespace OnlineVideos.Sites
             {
                 RssLink cat = new RssLink();
                 cat.ParentCategory = parentCategory;
-                cat.Other = parentCategory.Other;
                 cat.Url = "http://www.itv.com" + match.Groups[2].Value;
                 cat.Name = cleanString(match.Groups[3].Value);
                 string thumb = match.Groups[1].Value;
@@ -101,7 +100,6 @@ namespace OnlineVideos.Sites
             {
                 RssLink cat = new RssLink();
                 cat.ParentCategory = parentCategory;
-                cat.Other = parentCategory.Other;
                 cat.Url = node.SelectSingleNode("ProgrammeId").InnerText;
                 cat.Name = cleanString(node.SelectSingleNode("ProgrammeTitle").InnerText);
                 cat.Thumb = node.SelectSingleNode("ProgrammeMediaUrl").InnerText;
@@ -319,14 +317,26 @@ namespace OnlineVideos.Sites
             using (StreamReader r = new StreamReader(stm))
             {
                 string ret = r.ReadToEnd();
-                //Log.Debug("ITV Response:\r\n\t {0}", ret);
+                Log.Debug("ITV Response:\r\n\t {0}", ret);
                 return ret;
             }
         }
 
         string getLiveUrl(VideoInfo video)
         {
-            string xml = getPlaylist(video.VideoUrl);
+            bool loadMultiple = false;            
+            string xml;
+            //hack for ITV1
+            if (video.VideoUrl == "sim1")
+            {
+                xml = GetWebData("http://www.itv.com/ukonly/mediaplayer/xml/channels.itv1.xml");
+                loadMultiple = true;
+            }
+            else
+            {
+                xml = getPlaylist(video.VideoUrl);
+            }
+
             video.PlaybackOptions = new Dictionary<string, string>();
 
             string res = new Regex("<ClosedCaptioningURIs.+", RegexOptions.Singleline).Match(xml).Groups[0].Value;
@@ -369,7 +379,8 @@ namespace OnlineVideos.Sites
                     video.PlaybackOptions.Add(title, url);
                 lastUrl = url;
 
-                break; //hack, only lowest quality stream seems to play
+                if (!loadMultiple)
+                    break; //hack, only lowest quality stream seems to play
             }
 
             return lastUrl;

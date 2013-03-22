@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.ComponentModel;
 using OnlineVideos.Hoster.Base;
 using OnlineVideos.Sites.Brownard;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -137,7 +138,18 @@ namespace OnlineVideos.Sites
             string streamUri = new Regex("<streamUri>(.*?)</streamUri>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
             if (!streamUri.StartsWith("rtmp"))
             {
-                Log.Info("The format of the 4od video is not supported, searching youtube for alternate stream");
+                Log.Info("This video is encrypted and cannot be played, looking for alternate PS3 stream");
+                string seriesTitle = new Regex("<webSafeBrandTitle>(.*?)</webSafeBrandTitle>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
+                string id = new Regex("<fwAssetId>(.*?)</fwAssetId>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
+                string newAsset = getPS3AssetId(seriesTitle, id);
+                if (!string.IsNullOrEmpty(newAsset) && newAsset != epId)
+                {
+                    Log.Info("Found possible PS3 stream, new id {0}", newAsset);
+                    video.VideoUrl = newAsset;
+                    return getUrl(video);
+                }
+
+                Log.Info("No PS3 stream found, searching youtube for alternate stream");
                 video.PlaybackOptions = YouTubeShowHandler.GetYouTubePlaybackOptions(video.Other as EpisodeInfo);
                 if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
                     return video.PlaybackOptions.Last().Value;
@@ -173,6 +185,32 @@ namespace OnlineVideos.Sites
                 SwfVerify = true,
                 Live = false
             }.ToString();
+        }
+
+        string getPS3AssetId(string seriesTitle, string id)
+        {
+            JObject json = GetWebData<JObject>(string.Format("http://ps3.channel4.com/pmlsd/{0}/4od.json?platform=ps3", seriesTitle));
+            JToken link = json["feed"];
+            JToken entries = link["entry"];
+            switch (entries.Type)
+            {
+                case JTokenType.Array:
+                    foreach (JObject entry in entries as JArray)
+                    {
+                        if ((string)entry["dc:relation.programmeId"] == id)
+                        {
+                            return ((string)entry["group"]["player"]["@url"]).Replace("http://ais.channel4.com/asset/", "");
+                        }
+                    }
+                    break;
+                case JTokenType.Object:
+                    if ((string)entries["dc:relation.programmeId"] == id)
+                    {
+                        return ((string)entries["group"]["player"]["@url"]).Replace("http://ais.channel4.com/asset/", "");
+                    }
+                    break;
+            }
+            return null;
         }
 
         #region Default Categories
