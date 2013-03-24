@@ -107,8 +107,11 @@ namespace OnlineVideos.Sites
                 video.VideoUrl = url;
                 return String.Empty;
             }
-
-            MethodInfo methodInfo = typeof(BrightCoveUtil).GetMethod("GetResultsFromViewerExperienceRequest", BindingFlags.NonPublic | BindingFlags.Instance);
+            Type[] types = new Type[2];
+            types[0] = typeof(Match);
+            types[1] = typeof(VideoInfo);
+            MethodInfo methodInfo = typeof(BrightCoveUtil).GetMethod("GetResultsFromViewerExperienceRequest",
+                BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
             if (methodInfo != null)
             {
                 object[] parameters = new object[2];
@@ -116,24 +119,20 @@ namespace OnlineVideos.Sites
                 parameters[1] = video;
                 AMFArray renditions = (AMFArray)methodInfo.Invoke(this, parameters);
 
+                video.VideoUrl = url;
+
                 methodInfo = typeof(BrightCoveUtil).GetMethod("FillPlaybackOptions", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (methodInfo == null)
-                {
-                    video.VideoUrl = url;
                     return String.Empty;
-                }
 
                 parameters[0] = video;
                 parameters[1] = renditions;
 
                 string result = (String)methodInfo.Invoke(this, parameters);
-                video.VideoUrl = url;
                 return result;
             }
-            {
-                video.VideoUrl = url;
-                return String.Empty;
-            }
+            video.VideoUrl = url;
+            return String.Empty;
 
         }
     }

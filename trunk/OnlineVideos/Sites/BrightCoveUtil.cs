@@ -26,21 +26,33 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string webdata = GetWebData(video.VideoUrl);
-            Match m = regEx_FileUrl.Match(webdata);
+            return GetFileUrl(video, webdata);
+        }
+
+        protected string GetFileUrl(VideoInfo video, string data)
+        {
+            Match m = regEx_FileUrl.Match(data);
 
             if (!m.Success)
                 return String.Empty;
 
             AMFArray renditions;
             if (requestType == RequestType.ViewerExperienceRequest)
-                renditions = GetResultsFromViewerExperienceRequest(m, video);
+                renditions = GetResultsFromViewerExperienceRequest(m, video.VideoUrl);
             else
-                renditions = GetResultsFromFindByMediaId(m, video);
+                renditions = GetResultsFromFindByMediaId(m);
 
             return FillPlaybackOptions(video, renditions);
         }
 
+        [Obsolete("Use other GetResultsFromViewerExperienceRequest", true)]
         private AMFArray GetResultsFromViewerExperienceRequest(Match m, VideoInfo video)
+        {
+            return GetResultsFromViewerExperienceRequest(m, video.VideoUrl);
+        }
+
+
+        protected AMFArray GetResultsFromViewerExperienceRequest(Match m, string videoUrl)
         {
             AMFObject contentOverride = new AMFObject("com.brightcove.experience.ContentOverride");
             System.Text.RegularExpressions.Group g;
@@ -79,7 +91,8 @@ namespace OnlineVideos.Sites
                 ViewerExperienceRequest.Add("playerKey", String.Empty);
             ViewerExperienceRequest.Add("deliveryType", double.NaN);
             ViewerExperienceRequest.Add("contentOverrides", array);
-            ViewerExperienceRequest.Add("URL", video.VideoUrl);
+            ViewerExperienceRequest.Add("URL", videoUrl);
+            Log.Debug("param URL=" + videoUrl);
 
             if ((g = m.Groups["experienceId"]).Success)
             {
@@ -88,26 +101,15 @@ namespace OnlineVideos.Sites
             }
             else
                 ViewerExperienceRequest.Add("experienceId", double.NaN);
-            Log.Debug("param URL=" + video.VideoUrl);
 
             AMFSerializer ser = new AMFSerializer();
             byte[] data = ser.Serialize(ViewerExperienceRequest, hashValue);
 
-            /*
-            using (Stream s = new FileStream(@"E:\request.bin", FileMode.Create, FileAccess.Write))
-            {
-                BinaryWriter sw = new BinaryWriter(s);
-                sw.Write(data);
-            }*/
-
             AMFObject response = AMFObject.GetResponse(requestUrl, data);
-            //Stream stream = new FileStream(@"E:\ztele.txt", FileMode.Open, FileAccess.Read);
-            //AMF3Deserializer des = new AMF3Deserializer(stream);
-            //AMF3Object response = des.Deserialize();
             return response.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
         }
 
-        private AMFArray GetResultsFromFindByMediaId(Match m, VideoInfo video)
+        protected AMFArray GetResultsFromFindByMediaId(Match m)
         {
             AMFSerializer ser = new AMFSerializer();
             object[] values = new object[4];
@@ -120,7 +122,7 @@ namespace OnlineVideos.Sites
             return obj.GetArray("renditions");
         }
 
-        private string FillPlaybackOptions(VideoInfo video, AMFArray renditions)
+        protected string FillPlaybackOptions(VideoInfo video, AMFArray renditions)
         {
             video.PlaybackOptions = new Dictionary<string, string>();
 
