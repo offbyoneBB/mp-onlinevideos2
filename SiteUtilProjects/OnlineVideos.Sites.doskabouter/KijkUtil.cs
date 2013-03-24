@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using OnlineVideos.AMF;
 
 namespace OnlineVideos.Sites
 {
@@ -89,6 +92,49 @@ namespace OnlineVideos.Sites
                     return Parse(baseUrl, parts[nr.Value + 1]);
             }
             return base.getVideoList(category);
+        }
+
+        public override string getUrl(VideoInfo video)
+        {
+            string url = video.VideoUrl;
+            string[] parts = url.Split('/');
+            video.VideoUrl = @"http://embed.kijk.nl/?width=868&height=491&video=" + parts[parts.Length - 1];
+            string webdata = GetWebData(video.VideoUrl, referer: url);
+            Match m = regEx_FileUrl.Match(webdata);
+
+            if (!m.Success)
+            {
+                video.VideoUrl = url;
+                return String.Empty;
+            }
+
+            MethodInfo methodInfo = typeof(BrightCoveUtil).GetMethod("GetResultsFromViewerExperienceRequest", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (methodInfo != null)
+            {
+                object[] parameters = new object[2];
+                parameters[0] = m;
+                parameters[1] = video;
+                AMFArray renditions = (AMFArray)methodInfo.Invoke(this, parameters);
+
+                methodInfo = typeof(BrightCoveUtil).GetMethod("FillPlaybackOptions", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (methodInfo == null)
+                {
+                    video.VideoUrl = url;
+                    return String.Empty;
+                }
+
+                parameters[0] = video;
+                parameters[1] = renditions;
+
+                string result = (String)methodInfo.Invoke(this, parameters);
+                video.VideoUrl = url;
+                return result;
+            }
+            {
+                video.VideoUrl = url;
+                return String.Empty;
+            }
+
         }
     }
 
