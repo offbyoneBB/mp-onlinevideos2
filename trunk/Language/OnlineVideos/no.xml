@@ -102,6 +102,7 @@
   <string name="Playlists">Spillelister</string>
   <string name="PlaybackWillBeStopped">Avspilling vil bli stoppet.</string>
   <string name="PleaseEnterDescription">Gi en kort beskrivelse.</string>
+  <string name="PleaseUpdateLocalSite">Vennligst oppdater og test din lokale side på nytt før du rapporterer den som feil.</string>
   <string name="PlotOutline">Handling</string>
   <string name="PreviousPage">Forrige side</string>
   <string name="PerformAutomaticUpdate">Utfør automatiske oppdateringer?</string>
@@ -139,6 +140,7 @@
   <string name="StartingPlayback">starter avspilling</string>
   <string name="Subscriptions">Abonnement</string>
   <string name="Success">Suksess</string>
+  <string name="SearchRelatedKeywords">Søk etter relaterte nøkkelord</string>
   <!--T-->
   <string name="Timeframe">Tidsramme</string>
   <string name="Timeout">Tidsavbrudd</string>

@@ -140,6 +140,7 @@
   <string name="StartingPlayback">starten van de video</string>
   <string name="Subscriptions">Abonnementen</string>
   <string name="Success">Gelukt</string>
+  <string name="SearchRelatedKeywords">Zoek in gerelateerde zoektermen</string>
   <!--T-->
   <string name="Timeframe">Periode</string>
   <string name="Timeout">Time-out</string>

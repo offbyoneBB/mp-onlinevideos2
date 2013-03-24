@@ -140,6 +140,7 @@
   <string name="StartingPlayback">aloitetaan toisto</string>
   <string name="Subscriptions">Tilaukset</string>
   <string name="Success">Onnistui</string>
+  <string name="SearchRelatedKeywords">Etsi liittyviä avainsanoja</string>
   <!--T-->
   <string name="Timeframe">Aikajakso</string>
   <string name="Timeout">Aikakatkaisu</string>

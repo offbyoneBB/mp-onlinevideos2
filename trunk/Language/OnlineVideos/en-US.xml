@@ -97,6 +97,7 @@
   <string name="Others">Others</string>
   <!--P-->
   <string name="PlayAll">Play all</string>
+  <string name="PlayAllFromHere">Play all (from here)</string>
   <string name="PlayAllRandom">Play all (random order)</string>
   <string name="PlayWith">Play with ...</string>
   <string name="Playlists">Playlists</string>

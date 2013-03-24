@@ -140,6 +140,7 @@
   <string name="StartingPlayback">s\'està iniciant la reproducció</string>
   <string name="Subscriptions">Subscripcions</string>
   <string name="Success">Amb èxit</string>
+  <string name="SearchRelatedKeywords">Cerca paraules clau relacionades</string>
   <!--T-->
   <string name="Timeframe">Marge</string>
   <string name="Timeout">Temps d\'espera</string>
