@@ -1130,11 +1130,11 @@
 |
 (?#Gemist/dag)
 <div\sdata-channel="[^"]*"\sclass="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<div\sclass="figure">\s*<span\sclass="icon\sicon-play">\(bekijken\)</span>\s*<img\ssrc="(?<ImageUrl>[^"]*)"\salt=""\s/>\s*</div>\s*<p>\s*<span\sclass="title">(?<Title>[^<]*)</span>\s*</p>\s*</a>\s*</div>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<object\sid="myExperience[^"]*"\sclass="BrightcoveExperience">\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param\sname="playerID"\svalue="(?<experienceId>[^"]*)"\s/>\s*<param\sname="playerKey"\svalue="(?<playerKey>[^"]*)"\s/>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param\sname="@videoPlayer"\svalue="(?<contentId>[^"]*)"\s/>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<object\sid=\\"myExperience[^"]*"\sclass=\\"BrightcoveExperience\\">"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param\sname=\\"playerID\\"\svalue=\\"(?<experienceId>[^\\]*)\\"\s/>"\s*\+\s"<param\sname=\\"playerKey\\"\svalue=\\"(?<playerKey>[^\\]*)\\"\s/>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param\sname=\\"@videoPlayer\\"\svalue=\\"(?<contentId>[^\\]*)\\"\s/>]]></item>
         <item key="baseUrl"><![CDATA[http://www.kijk.nl]]></item>
         <item key="forceUTF8Encoding"><![CDATA[true]]></item>
         <item key="hashValue"><![CDATA[0a2b91ec0fdb48c5dd5239d3e796d6f543974c33]]></item>
-        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAAiDenBUk~,YtnxvBxGO03cFbppbu4WMwYU3A_v2BT8]]></item>
+        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAAiDenBUk~,YtnxvBxGO012li9YJqNYbzn7j1MkRsgk]]></item>
       </Configuration>
     </Site>
     <Site name="League of Legends Streams" util="LeagueOfLegends" agecheck="false" enabled="true" lang="en">
