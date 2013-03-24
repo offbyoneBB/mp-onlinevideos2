@@ -357,7 +357,7 @@ namespace OnlineVideos.MediaPortal1
 					dlgSel.Add(Translation.Instance.UpdateAllSkipCategories);
                 }
 
-                if (!string.IsNullOrEmpty(site.Owner_FK)) // only local
+                if (!string.IsNullOrEmpty(site.Owner_FK) && localSiteIndex >= 0) // !only local && ! only global
                 {
                     dlgSel.Add(Translation.Instance.ShowReports);
                     if (site.State != OnlineVideosWebservice.SiteState.Broken) dlgSel.Add(Translation.Instance.ReportBroken);
@@ -500,7 +500,7 @@ namespace OnlineVideos.MediaPortal1
 			{
 				if (CheckOnlineVideosVersion())
 				{
-					if (site.LastUpdated > localSite.LastUpdated)
+					if ((site.LastUpdated - localSite.LastUpdated).TotalMinutes > 1)
 					{
 						GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 						if (dlg != null)
