@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
+  <string name="Airdate">Predvajano</string>
+  <string name="AlreadyDownloading">Ta datoteka se že prenaša.</string>
+  <string name="All">Vse</string>
+  <string name="Actions">Dejanja</string>
+  <string name="Actors">Igralci</string>
+  <string name="AddComment">Dodaj komentar ...</string>
+  <string name="AddToPlaylist">Dodaj seznam predvajanja ...</string>
+  <string name="AddToMySites">Dodaj k mojim stranem</string>
+  <string name="AddToFavourites">Dodaj k priljubljenim</string>
+  <string name="AddingToFavorites">dodajanje k priljubljenim</string>
+  <string name="AutomaticUpdate">Samodejna posodobitev</string>
+  <string name="AutomaticUpdateDisabled">Samodejna posodobitev je onemogočena.</string>
+  <!--B-->
+  <string name="Broken">Pokvarjeno</string>
+  <string name="Buffered">medpomnjeno</string>
+  <!--C-->
+  <string name="Cancel">Prekliči</string>
+  <string name="Category">Kategorija</string>
+  <string name="CategoryNotFound">Kategorija ni najdena</string>
+  <string name="Categories">Kategorije</string>
+  <string name="Creator">Ustvarjalec</string>
+  <string name="CreateNewPlaylist">Ustvari nov seznam predvajanja ...</string>
+  <string name="CheckingForPluginUpdate">Preverjanje nove različice vtičnika</string>
+  <string name="Concurrent">sočasno</string>
+  <!--D-->
+  <string name="Date">Datum</string>
+  <string name="DateOfRelease">Datum izida</string>
+  <string name="Directors">Režiserji</string>
+  <string name="Download">Prenos</string>
+  <string name="DownloadUserdefined">Prenesi v imenik uporabnika</string>
+  <string name="Downloading">Prenašanje</string>
+  <string name="DownloadingDescription">Prikaže seznam prenosov, ki trenutno potekajo.</string>
+  <string name="DownloadingSubtitle">prenašanje podnapisa</string>
+  <string name="DownloadFailed">Prenos je spodletel: {0}</string>
+  <string name="DownloadCancelled">Prenos je preklican</string>
+  <string name="DownloadComplete">Prenos je končan</string>
+  <string name="DownloadStarted">Prenos se je začel</string>
+  <string name="DownloadedVideos">Preneseni videi</string>
+  <string name="DownloadsWillBeAborted">Prenosi bodo prekinjeni.</string>
+  <string name="Delete">Izbriši</string>
+  <string name="DeletePlaylist">Izbriši seznam predvajanja</string>
+  <string name="DeleteAll">Izbriši vse</string>
+  <string name="Default">Privzeto</string>
+  <string name="Done">Končano</string>
+  <string name="DeletingOldThumbs">Brisanje starih sličic</string>
+  <!--E-->
+  <string name="Error">Napaka</string>
+  <string name="EnterPin">Vnesite Pin</string>
+  <!--F-->
+  <string name="Favourites">Priljubljene</string>
+  <string name="Filter">Filter</string>
+  <string name="FullUpdate">Polna posodobitev</string>
+  <!--G-->
+  <string name="Genre">Žanr</string>
+  <string name="GettingVideoDetails">pridobivanje podrobnosti videa</string>
+  <string name="GettingCategoryVideos">pridobivanje videov kategorije</string>
+  <string name="GettingFavoriteVideos">pridobivanje priljubljenih videov</string>
+  <string name="GettingSearchResults">pridobivanje rezultatov iskanja</string>
+  <string name="GettingRelatedVideos">pridobivanje sorodnih videov</string>
+  <string name="GettingFilteredVideos">pridobivanje filtriranih videov</string>
+  <string name="GettingNextPageVideos">pridobivanje naslednje strani videov</string>
+  <string name="GettingPreviousPageVideos">pridobivanje prejšnje strani videov</string>
+  <string name="GettingPlaybackUrlsForVideo">pridobivanje predvajalnega url za video</string>
+  <string name="GettingDynamicCategories">pridobivanje dinamičnih kategorij</string>
+  <string name="GettingReports">pridobivanje poročil od spletnega servisa</string>
+  <string name="GettingSiteXml">pridobivanje xml strani od spletnega servisa</string>
+  <string name="GettingIcon">pridobivanje ikone strani od spletnega servisa</string>
+  <string name="GettingBanner">pridobivanje banerja strani od spletnega servisa</string>
+  <string name="GettingDll">pridobivanje dll od spletnega servisa</string>
+  <string name="Groups">Skupine</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="LatestVersionRequired">Zahtevana je najnovejša različica ({0}) !</string>
+  <string name="Language">Jezik</string>
+  <string name="LayoutList">Izgled: Seznam</string>
+  <string name="LayoutIcons">Izgled: Ikone</string>
+  <string name="LayoutBigIcons">Izgled: Velike ikone</string>
+  <!--M-->
+  <string name="ManageSites">Uredi strani</string>
+  <string name="MaxResults">Maksimalno rezultatov</string>
+  <!--N-->
+  <string name="Name">Ime</string>
+  <string name="NextPage">Naslednja stran</string>
+  <string name="NewVideos">Novi videi</string>
+  <string name="None">Brez</string>
+  <string name="NoVideoFound">Ni najdenih videov</string>
+  <string name="NoReportsForSite">Za to stran poročila niso na voljo.</string>
+  <string name="NewDllDownloaded">Prenesen je nov dll!</string>
+  <string name="NewSearch">Novo iskanje</string>
+  <!--O-->
+  <string name="OnlyLocal">Samo lokalno</string>
+  <string name="OnlyServer">Samo strežnik</string>
+  <string name="Others">Drugo</string>
+  <!--P-->
+  <string name="PlayAll">Predvajaj vse</string>
+  <string name="PlayAllRandom">Predvajaj vse (naključno)</string>
+  <string name="PlayWith">Predvajaj z ...</string>
+  <string name="Playlists">Seznam predvajanja</string>
+  <string name="PlaybackWillBeStopped">Predvajanje bo ustavljeno.</string>
+  <string name="PleaseEnterDescription">Prosimo, podajte kratek opis.</string>
+  <string name="PleaseUpdateLocalSite">Prosimo posodobite in ponovno testirajte vašo lokalno stran, predej jo prijavite kot pokvarjeno.</string>
+  <string name="PlotOutline">Plot oris</string>
+  <string name="PreviousPage">Prejšnja stran</string>
+  <string name="PerformAutomaticUpdate">Izvedem samodejno posodobitev?</string>
+  <!--Q-->
+  <string name="Queued">zahtevano</string>
+  <!--R-->
+  <string name="RateVideo">Oceni video ...</string>
+  <string name="Recommendations">Priporočila</string>
+  <string name="RemoveFromFavorites">Odstrani iz priljubljenih</string>
+  <string name="RemoveFromPlaylist">Odstrani s seznama predvajanja</string>
+  <string name="RemovingFromFavorites">odstranjevanje iz priljubljenih</string>
+  <string name="Refresh">Osveži</string>
+  <string name="RelatedVideos">Sorodni videi</string>
+  <string name="ReportBroken">Prijavi pokvarjeno</string>
+  <string name="Reported">Prijavljeno</string>
+  <string name="Reports">Poročila</string>
+  <string name="Runtime">Čas delovanja</string>
+  <string name="RemoveFromMySites">Odstrani iz mojih strani</string>
+  <string name="RemoveAllFromMySites">Odstrani vse iz mojih strani</string>
+  <string name="RestartMediaPortal">Ponovno zaženi MediaPortal!</string>
+  <string name="RetrievingRemoteDlls">Pridobivanje oddaljenih dll-jev ...</string>
+  <string name="RetrievingRemoteSites">Pridobivanje oddaljenih strani ...</string>
+  <!--S-->
+  <string name="SearchHistory">Zgodovina iskanja</string>
+  <string name="SearchResults">Rezultati iskanja</string>
+  <string name="SelectSource">Izberi izvor</string>
+  <string name="Sites">Strani</string>
+  <string name="Size">Velikost</string>
+  <string name="SortOptions">Možnosti sortiranja</string>
+  <string name="Search">Iskanje</string>
+  <string name="SetDownloadFolderInConfig">V nastavitvah izberite mapo za prenos!</string>
+  <string name="State">Država</string>
+  <string name="SavingLocalSiteList">Shranjevanje seznama lokalnih strani ...</string>
+  <string name="ShowReports">Prikaži poročila ustvarjalca in uporabnika</string>
+  <string name="StartingPlayback">začetek predvajanja</string>
+  <string name="Subscriptions">Naročnine</string>
+  <string name="Success">Uspešno</string>
+  <string name="SearchRelatedKeywords">Ključne besede navezane na iskanje</string>
+  <!--T-->
+  <string name="Timeframe">Časovni okvir</string>
+  <string name="Timeout">Čas poteka</string>
+  <string name="Tags">Oznake</string>
+  <!--U-->
+  <string name="Updated">Posodobljeno</string>
+  <string name="Updatable">Se da posodobiti</string>
+  <string name="UpdateAll">Posodobi/Dodaj vse</string>
+  <string name="UpdateAllSkipCategories">Posodobi/Dodaj vse (izpusti kategorije)</string>
+  <string name="UpdateMySite">Posodobi mojo stran</string>
+  <string name="UpdateMySiteSkipCategories">Posodobi mojo stran (izpusti kategorije)</string>
+  <string name="UpdateAllYourSites">To bo posodobilo vse vaše trenutne strani.</string>
+  <string name="UnableToPlayVideo">Ni mogoče predvajati videa. Ni URL-ja.</string>
+  <string name="UnableToDownloadVideo">Ni mogoče prenesti videa. Neveljaven URL.</string>
+  <string name="UploadsBy">naložil</string>
+  <!--V-->
+  <string name="Videos">Videi</string>
+  <string name="VideoQuality">Kvaliteta videa</string>
+  <!--W-->
+  <string name="Working">Obdelovanje</string>
+  <string name="Writers">Pisci</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="Settings_Yes">Da</string>
+  <string name="Settings_No">Ne</string>
+  <string name="Settings_SearchHistoryType_Off">Izklopljeno</string>
+  <string name="Settings_SearchHistoryType_Simple">Enostavno</string>
+  <string name="Settings_SearchHistoryType_Extended">Razširjeno</string>
+  <string name="Settings_BasicHomeName">Preprosto domače ime</string>
+  <string name="Settings_PluginEnabled">Vtičnik je omogočen</string>
+  <string name="Settings_ListedInHome">Prikazano v Home</string>
+  <string name="Settings_ListedInPlugins">Prikazano v mojih vtičnikih</string>
+  <string name="Settings_AutoGroupByLang">Samodejno združi strani po njihovih jezikih</string>
+  <string name="Settings_UseQuickSelect">Uporabi alfa numerične tipke za hiter izbor elementov po prvi črki</string>
+  <string name="Settings_SearchHistoryType">Zgodovina iskanja</string>
+  <string name="Settings_ThumbAge">Maksimalna starost (dnevi) za sličice</string>
+  <string name="Settings_CacheTimeout">Čas (minute) za medpomnjenje podatkov s spleta</string>
+  <string name="Settings_CategoryDiscoveryTimeout">Čas (minute) po katerem se kategorije ponovno naložijo s spleta</string>
+  <string name="Settings_UtilTimeout">Potek časa (sekunde) za spletne zahtevke</string>
+  <string name="Settings_WmpBuffer">Predpomnilnik (milisekunde) za Windows Media Player</string>
+  <string name="Settings_PlayBuffer">Procenti za predpomnjenje preden se začne predvajanje</string>
+  <string name="Settings_AllowRefreshrateChange">Uporabi prilagoditev za dinamično osvežitev zaslona</string>
+  <string name="Settings_FavoritesFirst">Dodaj priljubljene in prenose strani prve na seznam namesto zadnje</string>
+  <string name="Settings_LatestVideosMaxItems">Število najnovejših videov za prikaz</string>
+  <string name="Settings_LatestVideosRandomize">Premešaj vse najnovejše videe preden jih prikažeš</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">Osveži podatke najnovejših videov s spleta vsakih x minut</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">Osveži prikazane najnovejše videe vsakih x sekund</string>
+  <string name="Settings_StoreLayoutPerCategory">Pomni zadnji izgled za stran in kategorijo</string>
+</resources>

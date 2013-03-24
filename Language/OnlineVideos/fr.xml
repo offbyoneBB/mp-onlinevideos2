@@ -89,7 +89,7 @@
   <string name="None">Aucun</string>
   <string name="NoVideoFound">Aucune vidéo trouvée</string>
   <string name="NoReportsForSite">Aucun rapport disponible pour ce site</string>
-  <string name="NewDllDownloaded">Nouvelle DLL téléchargé!</string>
+  <string name="NewDllDownloaded">Nouvelle DLL téléchargée!</string>
   <string name="NewSearch">Nouvelle recherche</string>
   <!--O-->
   <string name="OnlyLocal">Seulement en local</string>
@@ -140,6 +140,7 @@
   <string name="StartingPlayback">Démarrage de la lecture</string>
   <string name="Subscriptions">Abonnements</string>
   <string name="Success">Succès</string>
+  <string name="SearchRelatedKeywords">Recherche par mots clés</string>
   <!--T-->
   <string name="Timeframe">Calendrier</string>
   <string name="Timeout">Pause</string>

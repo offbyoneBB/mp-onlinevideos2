@@ -140,6 +140,7 @@
   <string name="StartingPlayback">påbörjar uppspelning</string>
   <string name="Subscriptions">Prenumerationer</string>
   <string name="Success">Succé</string>
+  <string name="SearchRelatedKeywords">Sök på relaterade nyckelord</string>
   <!--T-->
   <string name="Timeframe">Tidsram</string>
   <string name="Timeout">Timeout</string>

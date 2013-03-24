@@ -140,6 +140,7 @@
   <string name="StartingPlayback">při spuštění přehrávání</string>
   <string name="Subscriptions">Odběry</string>
   <string name="Success">Úspěšně</string>
+  <string name="SearchRelatedKeywords">Hledat související klíčová slova</string>
   <!--T-->
   <string name="Timeframe">Časový rámec</string>
   <string name="Timeout">Časový limit</string>

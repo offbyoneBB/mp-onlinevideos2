@@ -420,6 +420,8 @@ namespace OnlineVideos.MediaPortal1
                             {
                                 dlgSel.Add(Translation.Instance.PlayAll);
                                 dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAll", null));
+								dlgSel.Add(Translation.Instance.PlayAllFromHere);
+								dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAllFromHere", null));
                                 dlgSel.Add(Translation.Instance.PlayAllRandom);
                                 dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAllRandom", null));
                             }
@@ -506,6 +508,9 @@ namespace OnlineVideos.MediaPortal1
                                 case "PlayAll":
                                     PlayAll();
                                     break;
+								case "PlayAllFromHere":
+									PlayAll(false, aVideo);
+									break;
                                 case "PlayAllRandom":
                                     PlayAll(true);
                                     break;
@@ -2502,11 +2507,12 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        private void PlayAll(bool random = false)
+        private void PlayAll(bool random = false, VideoInfo startWith = null)
         {
             currentPlaylist = new Player.PlayList() { IsPlayAll = true };
             currentPlayingItem = null;
             List<VideoInfo> loVideoList = (SelectedSite is IChoice && currentState == State.details) ? currentTrailerList : currentVideoList;
+			bool startVideoFound = startWith == null;
             foreach (VideoInfo video in loVideoList)
             {
                 // when not in details view of a site with details view only include videos that don't have details
@@ -2515,6 +2521,9 @@ namespace OnlineVideos.MediaPortal1
                 // filter out by the current filter
                 if (!currentFilter.Matches(video.Title) || FilterOut(video.Title) || FilterOut(video.Description)) continue;
                 if (!string.IsNullOrEmpty(videosVKfilter) && !video.Title.ToLower().Contains(videosVKfilter.ToLower())) continue;
+
+				if (!startVideoFound && video != startWith) continue;
+				else startVideoFound = true;
 
                 currentPlaylist.Add(new Player.PlayListItem(video.Title, null)
                 {

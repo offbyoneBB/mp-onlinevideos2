@@ -140,6 +140,7 @@
   <string name="StartingPlayback">spúšťam prehrávanie</string>
   <string name="Subscriptions">odoberania</string>
   <string name="Success">Úspech</string>
+  <string name="SearchRelatedKeywords">Hľadať súvisiace slová</string>
   <!--T-->
   <string name="Timeframe">Časové obdobie</string>
   <string name="Timeout">Timeout</string>
