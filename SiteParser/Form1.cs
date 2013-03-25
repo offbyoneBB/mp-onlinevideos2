@@ -433,7 +433,16 @@ namespace SiteParser
                     new string[] { "Title", "VideoUrl", "ImageUrl", "Description", "Duration", "Airdate" }, true);
             }
             else
-                MessageBox.Show("no valid category selected");
+            {
+                string searchUrl = GetTreeViewSelectedNode() as String;
+                if (searchUrl != null)
+                {
+                    videoListRegexTextBox.Text = F2Execute(videoListRegexTextBox.Text, searchUrl,
+                        new string[] { "Title", "VideoUrl", "ImageUrl", "Description", "Duration", "Airdate" }, true);
+                }
+                else
+                    MessageBox.Show("no valid category selected");
+            }
         }
 
         private void GetVideoListButton_Click(object sender, EventArgs e)
@@ -495,7 +504,7 @@ namespace SiteParser
             List<VideoInfo> videos = generic.Search(SearchQueryTextBox.Text);
 
             TreeNode node = new TreeNode(string.Format("Search for '{0}' ({1})", SearchQueryTextBox.Text, videos.Count));
-            node.Tag = string.Format("Search for '{0}'", SearchQueryTextBox.Text);
+            node.Tag = string.Format(searchUrlTextBox.Text, SearchQueryTextBox.Text);
             foreach (VideoInfo video in videos)
             {
                 video.CleanDescriptionAndTitle();
