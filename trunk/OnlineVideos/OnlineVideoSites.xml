@@ -1048,6 +1048,23 @@
     <Site name="EuroSport" util="EuroSport" agecheck="false" enabled="true" lang="en" player="WMP">
       <Description>Eurosport live streams and videos</Description>
     </Site>
+    <Site name="EventCaster" util="EventCaster" agecheck="false" enabled="true" lang="nl">
+      <Description>Uitzendingen van EventCaster</Description>
+      <Configuration>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<td\sclass='portal_station_item'\sid='(?<id>[^']*)'>\s*<div\sclass='caption'>\s*<a\shref="(?<url>[^"]*)"><div\sclass='line'>(?<title>[^<]*)</div>\s*<div\sclass='line'>(?<description>[^<]*)</div>\s*</a></div>\s*<div\sclass='logo'>\s*<a[^>]*><img\salt="[^"]*"\ssrc="(?<thumb>[^"]*)"\s/>]]></item>
+        <item key="videoListRegEx"><![CDATA[<tr[^>]*><td\sclass="date">(?<date>[^<]*)</td>\s*<td\sclass="time">(?<time>[^<]*)</td>\s*<td\sclass="icon"><a[^>]*><img\salt="Zoom"\ssrc="[^>]*></a></td>\s*<td\sclass="link"><a[^>]*>(?<Title>[^<]*)</a></td>\s*(?:<td>(?<Description>[^<]*)</td>\s*)?<td\sclass="video\splay_button"><a\shref="(?<VideoUrl>[^"]*)"><img\salt="Play"\sclass="play_icon"\ssrc="/images/video_portal/play\.png[^>]*></a>\s*</td>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="next_page"\srel="next">[^\s]*\s&raquo;</a>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[a\shref="\#"\sonclick="new\sAjax\.Request\('(?<m0>[^']*)',\s{asynchronous:true,\sevalScripts:true,\smethod:'get',\sparameters:'authenticity_token='\s\+\sencodeURIComponent\('(?<m1>[^']*)'\)}\);\sreturn\sfalse;"><]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}{1}]]></item>
+        <item key="searchUrl"><![CDATA[https://eventcaster.streamit.eu/content?search={0}&x=0&y=0]]></item>
+        <item key="baseUrl"><![CDATA[https://eventcaster.streamit.eu/portal_stations/]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Nu live">https://eventcaster.streamit.eu/portal_stations/live</Category>
+        <Category xsi:type="RssLink" name="Kerken">https://eventcaster.streamit.eu/portal_stations/churches</Category>
+        <Category xsi:type="RssLink" name="Alle stations">https://eventcaster.streamit.eu/portal_stations/</Category>
+      </Categories>
+    </Site>
     <Site name="NrkBrowser" util="NrkBrowser" agecheck="false" enabled="true" lang="no">
       <Description>NRK er Norges største tilbud på nett; nyheter, radio- og tv-programmer live, nett-tv og podcast.</Description>
     </Site>
