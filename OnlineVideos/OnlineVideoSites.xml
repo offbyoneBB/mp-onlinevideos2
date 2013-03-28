@@ -1540,7 +1540,7 @@
 		<item key="playerTag"><![CDATA[z/FOODNET Player - Video Centre]]></item>
 	  </Configuration>
     </Site>
-    <Site name="HGTV" util="CanWest" agecheck="false" enabled="true" lang="en">
+    <Site name="HGTV Canada" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>www.HGTV.ca is the online destination for home and garden information. The website is home to helpful articles, do-it-yourself project plans, expert advice, interactive quizzes, time-saving etools, information about HGTV programs and hosts, and much more. Informative, interesting, fun, and interactive, HGTV.ca is a must-click destination for home and garden enthusiasts. As well, the website offers a popular biweekly newsletter filled with advice, promotional opportunities and more.</Description>
 	  <Configuration>
 		<item key="feedPIDUrl"><![CDATA[http://www.hgtv.ca/video/]]></item>
