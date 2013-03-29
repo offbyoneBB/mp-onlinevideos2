@@ -54,27 +54,23 @@
         <Version>
           <Major>0</Major>
           <Minor>55</Minor>
-          <Build>2</Build>
+          <Build>3</Build>
           <Revision>0</Revision>
         </Version>
         <ExtensionDescription>The extension installs the LAV Filter package, which contains a splitter, audio and video decoder for the most common formats that are used around the web.</ExtensionDescription>
-        <VersionDescription>0.55.2 - 2013/01/25
+        <VersionDescription>0.55.3 - 2013/02/10
 LAV Splitter
-- Improved support for MP4-style H.264 in AVI
-- Further improvements for AAC in MPEG-TS
-- Small improvements to handling Blu-rays with odd stream configurations
-- Improved handling of Ogg Vorbis streams
+- Improved handling of Annex B H.264 in many containers
+- Improved support for external source filters without seeking ability (live sources)
+- Fixed duration in some MP4/MOV files
+- Fixed stream program assignment for some MPEG-TS files (resulted in some streams not visible)
 
 LAV Video
-- Basic support for playing DVDs in different playback rates
-- Fixed DXVA2 resource cleanup which may have caused a crash in some situations with DXVA2-Native
-- Fixed A/V Sync when using the WMV9 DMO decoder (especially noticable after seeking)
-
-LAV Audio
-- Improved AC3 decoding quality (thanks to madshi for the patch in ffmpeg)</VersionDescription>
+- Added support for TSCC2
+- Fixed a crash when playing certain H.264 files with QuickSync or CUVID</VersionDescription>
         <DevelopmentStatus>Stable</DevelopmentStatus>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-        <ReleaseDate>2013-01-26T20:36:36</ReleaseDate>
+        <ReleaseDate>2013-03-29T20:36:36</ReleaseDate>
         <Tags>codec</Tags>
         <Location>.\LAVFilters[Version].mpe1</Location>
         <Params>
