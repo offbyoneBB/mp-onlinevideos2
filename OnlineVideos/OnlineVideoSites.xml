@@ -1325,7 +1325,7 @@
 )|(?#one show)
 (<div\sclass="grid_8\salpha\somega\smargin_b10">\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*<h2\sclass="title"><a[^>]*>(?<Title>[^<]*)</a></h2>\s*<p>(?<Description>[^<]*)</p>\s*<div\sclass="clr"></div>\s*</div>)]]></item>
         <item key="fileUrlRegEx"><![CDATA[var\svideo\s="/(?<m0>[^/]*)/(?<m1>[^/]*)/(?<m2>[^"]*)";]]></item>
-        <item key="fileUrlFormatString"><![CDATA[rtmpe://nzcontent.mediaworks.co.nz/@@/_definst_/mp4:/{0}/{1}/{2}_]]></item>
+        <item key="fileUrlFormatString"><![CDATA[rtmpe://nzcontent.mediaworks.co.nz:80/@@/_definst_/mp4:/{0}/{1}/{2}_]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Expiring soon">http://www.tv3.co.nz/OnDemand/ExpiringSoon.aspx</Category>
