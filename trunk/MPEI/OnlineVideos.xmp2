@@ -1588,13 +1588,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\hgtv.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{446349dc-a800-4877-a8e0-ddc1f7c0f9bb}-hgtv.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\hgtv.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\history television.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4af491bb-02a7-4b65-b6e0-228bf6fc1755}-history television.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\history television.png</DestinationFilename>
@@ -2214,6 +2207,27 @@
               <LocalFileName>..\SiteImages\Banners\Первый канал.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{05eab295-6238-4454-971f-c912fcad66d4}-______ _____.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Первый канал.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\EventCaster.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2350cd75-6ed0-4093-a5e6-4a8878b820b5}-EventCaster.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\EventCaster.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\hgtv canada.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{57d82cba-40f0-4f9a-a995-df72dcd3a003}-hgtv canada.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\hgtv canada.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\EventCaster.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ad672493-8c96-41be-b4f8-a40fb7c1f151}-EventCaster.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\EventCaster.png</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2945,7 +2959,6 @@ Click Next to continue or Cancel to exit Setup.</Value>
           <string>Default</string>
           <string>DefaultWide</string>
           <string>GenericSiteTool</string>
-          <string>TrailerButton</string>
           <string>LAVFilters</string>
           <string>ExtensionsPlugin</string>
         </IncludedGroups>
@@ -3170,7 +3183,7 @@ public class Script
                     <Description>Global Id of the extension package - it will be downloaded when no file is set.</Description>
                   </SectionParam>
                   <SectionParam Name="Extension Version">
-                    <Value>0.55.2.0</Value>
+                    <Value>0.55.3.0</Value>
                     <ValueType>String</ValueType>
                     <Description>Minimum Version of the extension package - older versions will be updated (only used when downloading via Id).</Description>
                   </SectionParam>
@@ -4944,13 +4957,6 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\hgtv.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{446349dc-a800-4877-a8e0-ddc1f7c0f9bb}-hgtv.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\hgtv.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\history television.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{4af491bb-02a7-4b65-b6e0-228bf6fc1755}-history television.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\history television.png</DestinationFilename>
@@ -5570,6 +5576,27 @@ public class Script
         <LocalFileName>..\SiteImages\Banners\Первый канал.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{05eab295-6238-4454-971f-c912fcad66d4}-______ _____.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Первый канал.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\EventCaster.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2350cd75-6ed0-4093-a5e6-4a8878b820b5}-EventCaster.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\EventCaster.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\hgtv canada.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{57d82cba-40f0-4f9a-a995-df72dcd3a003}-hgtv canada.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\hgtv canada.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\EventCaster.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ad672493-8c96-41be-b4f8-a40fb7c1f151}-EventCaster.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\EventCaster.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
