@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageClass xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Version>2.0</Version>
+  <Groups>
+    <Items>
+      <GroupItem Name="Default">
+        <ParentGroup />
+        <DisplayName>Source Filter</DisplayName>
+        <DefaulChecked>true</DefaulChecked>
+        <Description>All required Files of the Filter.</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{90a0566c-fc3b-48d6-9651-719fafc2186f}-avcodec-mpurlsourcesplitter-54.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-54.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-54.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{779bc64a-ca97-4178-b40d-b9badd69bef7}-avformat-mpurlsourcesplitter-54.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-54.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{a6734bcb-0e18-4f3e-aa83-a9c8091a1d51}-avutil-mpurlsourcesplitter-51.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-51.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\libcurl.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{df2539ca-575f-441a-a62d-7e814bc34fbd}-libcurl.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\libcurl.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter.ax</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{738c72c3-9f3f-47c1-8f97-6595556c9f6c}-MPUrlSourceSplitter.ax</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9bf974c6-b837-445c-b489-949cfc2a51f8}-MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_Asx.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e2351de7-4395-4b6e-9f5c-7e9bc89f4fb0}-MPUrlSourceSplitter_Parser_Asx.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Asx.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_F4M.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{bc543143-d457-40b7-b56f-fe91c0151e58}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_MSHS.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{02720dd8-ad15-49be-89c4-e5ba0562946d}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4a9ea108-0a2b-4f78-a9ae-5dbff5f54fb3}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e835646f-5b83-4b27-8695-5cb9b1ef3142}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mms.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{784b5535-6a9f-409b-a0e0-8650df5193df}-MPUrlSourceSplitter_Protocol_Mms.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mms.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mshs.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3941506a-0d21-4fa0-a3bc-40537ed84c73}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{286d9ae6-9ec4-4461-b195-ebe3b22f9360}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
+    </Items>
+  </Groups>
+  <Sections>
+    <Items>
+      <SectionItem Guid="17b74bbc-4985-42d9-b109-bb7481179087" Name="Welcome Screen" ConditionGroup="">
+        <Params>
+          <Items>
+            <SectionParam Name="Header text">
+              <Value>Welcome to the Extension Installer for [Name]</Value>
+              <ValueType>String</ValueType>
+              <Description />
+            </SectionParam>
+            <SectionParam Name="Description">
+              <Value>This will install [Name] version [Version] on your computer.
+It is recommended that you close all other applications before continuing.
+Click Next to continue or Cancel to exit Setup.</Value>
+              <ValueType>String</ValueType>
+              <Description />
+            </SectionParam>
+            <SectionParam Name="Left part image">
+              <Value />
+              <ValueType>File</ValueType>
+              <Description />
+            </SectionParam>
+            <SectionParam Name="Header image">
+              <Value />
+              <ValueType>File</ValueType>
+              <Description>Image in upper right part</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+        <Actions>
+          <Items />
+        </Actions>
+        <IncludedGroups />
+        <PanelName>Welcome Screen</PanelName>
+        <WizardButtonsEnum>NextCancel</WizardButtonsEnum>
+      </SectionItem>
+      <SectionItem Guid="70e410d3-0934-461f-89df-1e5dbbbc336d" Name="Install Section" ConditionGroup="">
+        <Params>
+          <Items>
+            <SectionParam Name="Header Title">
+              <Value />
+              <ValueType>String</ValueType>
+              <Description>Header title</Description>
+            </SectionParam>
+            <SectionParam Name="Header description">
+              <Value />
+              <ValueType>String</ValueType>
+              <Description>Description of section, shown in under section title</Description>
+            </SectionParam>
+            <SectionParam Name="Header image">
+              <Value />
+              <ValueType>File</ValueType>
+              <Description>Image in upper right part</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+        <Actions>
+          <Items>
+            <ActionItem Name="InstallFiles" ActionType="InstallFiles" ConditionGroup="">
+              <Params>
+                <Items />
+              </Params>
+              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
+            </ActionItem>
+            <ActionItem Name="FilterRegistration" ActionType="RunApplication" ConditionGroup="Default">
+              <Params>
+                <Items>
+                  <SectionParam Name="Path to application">
+                    <Value>%System%\regsvr32.exe</Value>
+                    <ValueType>Template</ValueType>
+                    <Description>Path to the application like 
+ %Base%\MediaPortal.exe</Description>
+                  </SectionParam>
+                  <SectionParam Name="Parameters for application">
+                    <Value>/s "%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"</Value>
+                    <ValueType>String</ValueType>
+                    <Description>Command line parameters</Description>
+                  </SectionParam>
+                  <SectionParam Name="Wait for exit">
+                    <Value>YES</Value>
+                    <ValueType>Bool</ValueType>
+                    <Description>Wait for exit </Description>
+                  </SectionParam>
+                  <SectionParam Name="Don't run when silent install">
+                    <Value>NO</Value>
+                    <ValueType>Bool</ValueType>
+                    <Description>If set to Yes the aplication don't run when the istalation is silent </Description>
+                  </SectionParam>
+                  <SectionParam Name="Path to uninstall application">
+                    <Value>%System%\regsvr32.exe</Value>
+                    <ValueType>Template</ValueType>
+                    <Description>Path to the application which should be executed when uninstall</Description>
+                  </SectionParam>
+                  <SectionParam Name="Parameters for uninstall application">
+                    <Value>/s /u "%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax"</Value>
+                    <ValueType>String</ValueType>
+                    <Description>Command line parameters for uninstall app</Description>
+                  </SectionParam>
+                  <SectionParam Name="Wait for exit on uninstall">
+                    <Value>YES</Value>
+                    <ValueType>Bool</ValueType>
+                    <Description>Wait for exit on uninstall </Description>
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
+            </ActionItem>
+          </Items>
+        </Actions>
+        <IncludedGroups />
+        <PanelName>Install Section</PanelName>
+        <WizardButtonsEnum>Next</WizardButtonsEnum>
+      </SectionItem>
+      <SectionItem Guid="8304f610-94be-4bd6-99a7-c477a04c25bc" Name="Setup Complete" ConditionGroup="">
+        <Params>
+          <Items>
+            <SectionParam Name="Header text">
+              <Value>The Extension Installer Wizard has successfully installed [Name].</Value>
+              <ValueType>String</ValueType>
+              <Description />
+            </SectionParam>
+            <SectionParam Name="Left part image">
+              <Value />
+              <ValueType>File</ValueType>
+              <Description />
+            </SectionParam>
+            <SectionParam Name="Show radio buttons">
+              <Value />
+              <ValueType>Bool</ValueType>
+              <Description>Use radiobutton in place of combobox</Description>
+            </SectionParam>
+            <SectionParam Name="Header image">
+              <Value />
+              <ValueType>File</ValueType>
+              <Description>Image in upper right part</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+        <Actions>
+          <Items />
+        </Actions>
+        <IncludedGroups />
+        <PanelName>Setup Complete</PanelName>
+        <WizardButtonsEnum>Finish</WizardButtonsEnum>
+      </SectionItem>
+    </Items>
+  </Sections>
+  <Dependencies>
+    <Items>
+      <DependencyItem>
+        <Type>MediaPortal</Type>
+        <Id />
+        <MinVersion>
+          <Major>1</Major>
+          <Minor>1</Minor>
+          <Build>6</Build>
+          <Revision>27644</Revision>
+        </MinVersion>
+        <MaxVersion>
+          <Major>1</Major>
+          <Minor>1</Minor>
+          <Build>6</Build>
+          <Revision>27644</Revision>
+        </MaxVersion>
+        <WarnOnly>false</WarnOnly>
+        <Message>requires MediaPortal 1.2 or newer.</Message>
+        <Name>MediaPortal</Name>
+      </DependencyItem>
+    </Items>
+  </Dependencies>
+  <PluginDependencies>
+    <Items />
+  </PluginDependencies>
+  <GeneralInfo>
+    <Name>MediaPortalUrlSourceSplitter</Name>
+    <Id>b3e6e01a-4fa3-4cf0-8d2a-b0b8c1eba78b</Id>
+    <Author>georgius</Author>
+    <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
+    <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
+    <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/MPUrlSourceSplitter/update.xml</UpdateUrl>
+    <Version>
+      <Major>1</Major>
+      <Minor>0</Minor>
+      <Build>0</Build>
+      <Revision>2761</Revision>
+    </Version>
+    <ExtensionDescription>The MediaPortal Url Source Splitter is a directshow source filter that enables direct playback for many protocols and filetypes used in online video sources in the internet.
+Supported protocols:
+- HTTP
+- Adobe Real-Time Messaging Protocol (RTMP)
+- Adobe HTTP Dynamic Streaming (HDS)
+- Microsoft Media Server (MMS)
+- Microsoft Smooth Streaming</ExtensionDescription>
+    <VersionDescription />
+    <DevelopmentStatus>Stable</DevelopmentStatus>
+    <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=271&amp;cf_id=24</OnlineLocation>
+    <ReleaseDate>2013-03-29T12:58:38</ReleaseDate>
+    <Tags>codec</Tags>
+    <Location>.\MPUrlSourceSplitter[Version].mpe1</Location>
+    <Params>
+      <Items>
+        <SectionParam Name="Icon">
+          <Value />
+          <ValueType>File</ValueType>
+          <Description>The icon file of the package (jpg,png,bmp)</Description>
+        </SectionParam>
+        <SectionParam Name="Online Icon">
+          <Value />
+          <ValueType>String</ValueType>
+          <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
+        </SectionParam>
+        <SectionParam Name="Configuration file">
+          <Value />
+          <ValueType>Template</ValueType>
+          <Description>The file used to configure the extension.
+ If it has .exe extension the will be executed.
+ If it has .dll extension it's started like MP plugin configuration.</Description>
+        </SectionParam>
+        <SectionParam Name="Online Screenshots">
+          <Value />
+          <ValueType>String</ValueType>
+          <Description>Online stored screenshot urls separated by ; </Description>
+        </SectionParam>
+        <SectionParam Name="Force to uninstall on update">
+          <Value>YES</Value>
+          <ValueType>Bool</ValueType>
+          <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
+        </SectionParam>
+      </Items>
+    </Params>
+  </GeneralInfo>
+  <UniqueFileList>
+    <Items>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{90a0566c-fc3b-48d6-9651-719fafc2186f}-avcodec-mpurlsourcesplitter-54.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-54.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-54.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{779bc64a-ca97-4178-b40d-b9badd69bef7}-avformat-mpurlsourcesplitter-54.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\avformat-mpurlsourcesplitter-54.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{a6734bcb-0e18-4f3e-aa83-a9c8091a1d51}-avutil-mpurlsourcesplitter-51.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\avutil-mpurlsourcesplitter-51.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\libcurl.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{df2539ca-575f-441a-a62d-7e814bc34fbd}-libcurl.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\libcurl.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter.ax</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{738c72c3-9f3f-47c1-8f97-6595556c9f6c}-MPUrlSourceSplitter.ax</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter.ax</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9bf974c6-b837-445c-b489-949cfc2a51f8}-MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_Asx.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e2351de7-4395-4b6e-9f5c-7e9bc89f4fb0}-MPUrlSourceSplitter_Parser_Asx.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Asx.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_F4M.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bc543143-d457-40b7-b56f-fe91c0151e58}-MPUrlSourceSplitter_Parser_F4M.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_MSHS.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{02720dd8-ad15-49be-89c4-e5ba0562946d}-MPUrlSourceSplitter_Parser_MSHS.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MSHS.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4a9ea108-0a2b-4f78-a9ae-5dbff5f54fb3}-MPUrlSourceSplitter_Protocol_Afhs.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e835646f-5b83-4b27-8695-5cb9b1ef3142}-MPUrlSourceSplitter_Protocol_Http.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mms.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{784b5535-6a9f-409b-a0e0-8650df5193df}-MPUrlSourceSplitter_Protocol_Mms.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mms.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mshs.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3941506a-0d21-4fa0-a3bc-40537ed84c73}-MPUrlSourceSplitter_Protocol_Mshs.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{286d9ae6-9ec4-4461-b195-ebe3b22f9360}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
+      </FileItem>
+    </Items>
+  </UniqueFileList>
+  <ProjectSettings>
+    <FolderGroups>
+      <FolderGroup InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName />
+        <ZipFileName>Installer{CopyFile}\{b8526d08-1684-47ea-b3bb-490ae083038a}-</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSourceSplitter</DestinationFilename>
+        <Folder>..\..\MPUrlSourceSplitter\bin_Win32</Folder>
+        <Group>Default</Group>
+        <Recursive>false</Recursive>
+      </FolderGroup>
+    </FolderGroups>
+    <ProjectFilename>MPUrlSourceSplitter.xmp2</ProjectFilename>
+    <UpdatePath1>.\update.xml</UpdatePath1>
+    <UpdatePath2 />
+    <UpdatePath3 />
+  </ProjectSettings>
+  <IsSkin>false</IsSkin>
+</PackageClass>
