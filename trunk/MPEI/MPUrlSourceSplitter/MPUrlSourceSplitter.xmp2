@@ -315,7 +315,7 @@ Supported protocols:
     <Params>
       <Items>
         <SectionParam Name="Icon">
-          <Value />
+          <Value>MPUrlSourceSplitter.png</Value>
           <ValueType>File</ValueType>
           <Description>The icon file of the package (jpg,png,bmp)</Description>
         </SectionParam>
@@ -443,6 +443,13 @@ Supported protocols:
         <LocalFileName>..\..\MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{286d9ae6-9ec4-4461-b195-ebe3b22f9360}-MPUrlSourceSplitter_Protocol_Rtmp.dll</ZipFileName>
         <DestinationFilename>%Base%\MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>MPUrlSourceSplitter.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{700d6d22-7efe-4591-ac90-99ad9cfae368}-MPUrlSourceSplitter.png</ZipFileName>
+        <DestinationFilename />
       </FileItem>
     </Items>
   </UniqueFileList>
