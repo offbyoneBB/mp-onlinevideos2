@@ -66,14 +66,14 @@ Supported protocols:
 - Microsoft Smooth Streaming</ExtensionDescription>
         <VersionDescription />
         <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/MPUrlSourceSplitter/MPUrlSourceSplitter1.0.0.2761.mpe1</OnlineLocation>
+        <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=271&amp;cf_id=24</OnlineLocation>
         <ReleaseDate>2013-03-29T12:58:38</ReleaseDate>
         <Tags>codec</Tags>
         <Location>.\MPUrlSourceSplitter[Version].mpe1</Location>
         <Params>
           <Items>
             <SectionParam Name="Online Icon">
-              <Value />
+              <Value>https://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/MPUrlSourceSplitter/MPUrlSourceSplitter.png</Value>
               <ValueType>String</ValueType>
               <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
             </SectionParam>

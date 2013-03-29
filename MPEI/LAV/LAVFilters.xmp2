@@ -207,7 +207,7 @@ LAV Video
           <Description>The icon file of the package (jpg,png,bmp)</Description>
         </SectionParam>
         <SectionParam Name="Online Icon">
-          <Value />
+          <Value>https://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/LAV/LAV.png</Value>
           <ValueType>String</ValueType>
           <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
         </SectionParam>
