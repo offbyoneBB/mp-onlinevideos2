@@ -1,0 +1,357 @@
+<window>
+	<controls>
+
+		<control>
+			<id>1</id>
+			<type>image</type>
+			<posX>0</posX>
+			<posY>440</posY>
+			<width>64</width>
+			<height>199</height>
+			<texture>hiddenmenu_tab.png</texture>
+			<visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+Control.HasFocus(50)</visible>
+			<animation effect="slide" start="-60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
+			<animation effect="slide" start="0,0" end="-60,0" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
+		</control>
+
+		<control>
+			<type>actiongroup</type>
+			<description>action menu</description>
+			<defaultcontrol>3</defaultcontrol>
+			<onexit>50</onexit>
+			<dimColor>00ffffff</dimColor>
+			<buttonX>0</buttonX>
+			<buttonY>0</buttonY>
+			<buttonwidth>521</buttonwidth>
+			<buttonheight>1080</buttonheight>
+
+			<control>
+				<type>image</type>
+				<id>0</id>
+				<width>1920</width>
+				<height>1080</height>
+				<texture>semi_trans_back_hidden_menu.png</texture>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<animation effect="fade" time="450">visible</animation>
+				<animation effect="fade" time="400">hidden</animation>
+			</control>
+
+			<control>
+				<type>image</type>
+				<id>0</id>
+				<posY>0</posY>
+				<posX>0</posX>
+				<width>612</width>
+				<height>1074</height>
+				<texture>menu_bg.png</texture>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<animation effect="fade" time="0">WindowClose</animation>
+				<animation effect="slide" start="-150,0" time="100">visible</animation>
+				<animation effect="fade" time="50">visible</animation>
+				<animation effect="fade" time="0">hidden</animation>
+			</control>
+
+			<control>
+				<type>image</type>
+				<id>0</id>
+				<posY>237</posY>
+				<posX>116</posX>
+				<width>376</width>
+				<height>1</height>
+				<texture>hiddenmenu_separator.png</texture>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<animation effect="fade" time="0">WindowClose</animation>
+				<animation effect="slide" start="-150,0" time="100">visible</animation>
+				<animation effect="fade" time="50">visible</animation>
+				<animation effect="fade" time="0">hidden</animation>
+			</control>
+			<control>
+				<type>image</type>
+				<id>0</id>
+				<posY>651</posY>
+				<posX>116</posX>
+				<width>376</width>
+				<height>1</height>
+				<texture>hiddenmenu_separator.png</texture>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<animation effect="fade" time="0">WindowClose</animation>
+				<animation effect="slide" start="-150,0" time="100">visible</animation>
+				<animation effect="fade" time="50">visible</animation>
+				<animation effect="fade" time="0">hidden</animation>
+			</control>
+			<control>
+				<description>Menu label</description>
+				<type>label</type>
+				<id>1</id>
+				<posX>116</posX>
+				<posY>100</posY>
+				<label>924</label>
+				<font>fontB16</font>
+				<textcolor>393939</textcolor>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<animation effect="fade" time="0">WindowClose</animation>
+				<animation effect="slide" start="-150,0" time="100">visible</animation>
+				<animation effect="fade" time="50">visible</animation>
+				<animation effect="fade" time="0">hidden</animation>
+			</control>
+			<control>
+				<description>Filters label</description>
+				<type>label</type>
+				<id>1</id>
+				<posX>116</posX>
+				<posY>247</posY>
+				<label>19149</label>
+				<font>fontB12</font>
+				<textcolor>393939</textcolor>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<animation effect="fade" time="0">WindowClose</animation>
+				<animation effect="slide" start="-150,0" time="100">visible</animation>
+				<animation effect="fade" time="50">visible</animation>
+				<animation effect="fade" time="0">hidden</animation>
+			</control>
+			<control>
+				<description>Options label</description>
+				<type>label</type>
+				<id>1</id>
+				<posX>116</posX>
+				<posY>661</posY>
+				<label>496</label>
+				<font>fontB12</font>
+				<textcolor>393939</textcolor>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+				<animation effect="fade" time="0">WindowClose</animation>
+				<animation effect="slide" start="-150,0" time="100">visible</animation>
+				<animation effect="fade" time="50">visible</animation>
+				<animation effect="fade" time="0">hidden</animation>
+			</control>
+			<control>
+				<type>group</type>
+				<description>group element</description>
+				<visible>!Control.HasFocus(50)</visible>
+				<animation effect="fade" time="0">WindowClose</animation>
+				<animation effect="slide" start="-150,0" time="100">visible</animation>
+				<animation effect="fade" time="50">visible</animation>
+				<animation effect="fade" time="0">hidden</animation>
+				<posX>53</posX>
+				<posY>155</posY>
+				<layout>StackLayout(0, Vertical, true)</layout>		
+
+				<control>
+					<description>View-As</description>
+					<type>button</type>
+					<id>2</id>
+					<label>#OnlineVideos.Translation.LayoutList.Label</label>          
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>13</onup>
+					<ondown>8</ondown>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>69</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>
+				</control>
+
+				<control>
+					<description>Empty button</description>
+					<type>button</type>
+					<id>0</id>
+					<textureFocus>-</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>69</height>
+					<label>-</label>
+					<visible>true</visible>
+				</control>
+
+				<control>
+					<type>button</type>
+					<description>Update button</description>
+					<id>8</id>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>2</onup>
+					<ondown>9</ondown>
+					<label>#OnlineVideos.Translation.Refresh.Label</label>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>69</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>
+				</control>
+
+				<control>
+					<description>select category</description>
+					<type>selectbutton</type>
+					<id>9</id>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>8</onup>
+					<ondown>5</ondown>
+					<label>#OnlineVideos.Translation.Category.Label</label>
+					<width>499</width>
+					<height>69</height>
+					<textXOff>42</textXOff>
+					<textYOff>16</textYOff>
+					<textXOff2>62</textXOff2>
+					<textYOff2>16</textYOff2>
+					<textureFocus>-</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<textcolorNoFocus>FF393939</textcolorNoFocus>
+					<textcolor>FFFFFFFF</textcolor>
+					<texturebg>hiddenmenu_item_selected.png</texturebg>
+				</control>
+
+				<control>
+					<type>selectbutton</type>
+					<description>Max Results</description>
+					<id>5</id>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>9</onup>
+					<ondown>6</ondown>
+					<label>#OnlineVideos.Translation.MaxResults.Label</label>
+					<width>499</width>
+					<height>69</height>
+					<textXOff>42</textXOff>
+					<textYOff>16</textYOff>
+					<textXOff2>62</textXOff2>
+					<textYOff2>16</textYOff2>
+					<textureFocus>-</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<textcolorNoFocus>FF393939</textcolorNoFocus>
+					<textcolor>FFFFFFFF</textcolor>
+					<texturebg>hiddenmenu_item_selected.png</texturebg>
+				</control>
+
+				<control>
+					<type>selectbutton</type>
+					<description>Order By</description>
+					<id>6</id>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>5</onup>
+					<ondown>7</ondown>
+					<label>#OnlineVideos.Translation.SortOptions.Label</label>
+					<width>499</width>
+					<height>69</height>
+					<textXOff>42</textXOff>
+					<textYOff>16</textYOff>
+					<textXOff2>62</textXOff2>
+					<textYOff2>16</textYOff2>
+					<textureFocus>-</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<textcolorNoFocus>FF393939</textcolorNoFocus>
+					<textcolor>FFFFFFFF</textcolor>
+					<texturebg>hiddenmenu_item_selected.png</texturebg>
+				</control>
+
+				<control>
+					<type>selectbutton</type>
+					<description>TimeFrame button</description>
+					<id>7</id>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<ondown>10</ondown>
+					<onup>6</onup>
+					<label>#OnlineVideos.Translation.Timeframe.Label</label>
+					<width>499</width>
+					<height>69</height>
+					<textXOff>42</textXOff>
+					<textYOff>16</textYOff>
+					<textXOff2>62</textXOff2>
+					<textYOff2>16</textYOff2>
+					<textureFocus>-</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<textcolorNoFocus>FF393939</textcolorNoFocus>
+					<textcolor>FFFFFFFF</textcolor>
+					<texturebg>hiddenmenu_item_selected.png</texturebg>
+				</control>
+
+				<control>
+					<description>Empty button</description>
+					<type>button</type>
+					<id>0</id>
+					<textureFocus>-</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>69</height>
+					<label>-</label>
+					<visible>true</visible>
+				</control>  
+
+				<control>
+					<type>button</type>
+					<description>Search</description>
+					<id>10</id>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>7</onup>
+					<ondown>12</ondown>
+					<label>#OnlineVideos.Translation.Search.Label</label>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>69</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>
+				</control>
+
+				<control>
+					<type>button</type>
+					<description>Do Age Check</description>
+					<id>12</id>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>10</onup>
+					<ondown>13</ondown>
+					<label>#OnlineVideos.Translation.EnterPin.Label</label>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>69</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>
+				</control> 
+
+				<control>
+					<type>button</type>
+					<description>Update Sites</description>
+					<id>13</id>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>12</onup>
+					<ondown>14</ondown>
+					<label>#OnlineVideos.Translation.ManageSites.Label</label>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>69</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>
+					<hyperlink>4757</hyperlink>
+				</control>
+
+				<control>
+					<type>button</type>
+					<description>MPEICONFIGURE:269bd257_7ce5_450a_b786_1c2834c81849</description>
+					<id>14</id>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>13</onup>
+					<ondown>2</ondown>
+					<label>5</label>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>69</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>
+					<visible>plugin.isenabled(OnlineVideos) + plugin.isenabled(Extensions) + string.equals(#mpei.269bd257_7ce5_450a_b786_1c2834c81849.isinstalled, true)</visible>
+				</control>
+			</control>      
+		</control>
+	</controls>
+</window>
