@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<controls>
+
+
+		<!--            :: Count ::            -->
+
+		<control>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+			<animation effect="fade" start="0" end="100" time="300" delay="350" reversible="false">visible</animation>
+			<description>Moviecount</description>
+			<type>label</type>
+			<label>#itemtype: #itemcount</label>
+			<id>0</id>
+			<posX>96</posX>
+			<posY>998</posY>
+			<align>left</align>
+			<font>TitanLight12</font>
+			<textcolor>000000</textcolor>
+			<visible>control.isvisible(50)</visible>
+		</control>
+
+		<!--            :: Listview Lines ::            -->
+
+		<control>
+			<description>List Lines</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>800</posX>
+			<posY>385</posY>
+			<width>1029</width>
+			<height>506</height>
+			<texture>list_lines_wide.png</texture>
+			<visible>facadeview.list + !string.equals(#OnlineVideos.state, details) + control.isvisible(50)</visible>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control>
+
+		<control>
+			<description>group element</description>
+			<type>group</type>
+			<animation effect="fade" start="0" end="100" time="300" delay="350">WindowOpen</animation>
+			<animation effect="fade" start="100" end="0" time="0" delay="0">WindowClose</animation>
+			<control>
+				<description>composite control consisting of a list control and a thumbnail panel</description>
+				<type>facadeview</type>
+				<id>50</id>
+				<control>
+					<description>listcontrol</description>
+					<type>listcontrol</type>
+					<id>50</id>
+					<onleft>2</onleft>
+					<onright>50</onright>
+					<scrollOffset>1</scrollOffset>
+					<posX>745</posX>
+					<posY>331</posY>
+					<width>1113</width>
+					<height>700</height>
+					<textXOff>2</textXOff>
+					<spinCanFocus>no</spinCanFocus>
+					<textureFocus>listcontrol_item_selected_wide.png</textureFocus>
+					<dimColor>ffffffff</dimColor>
+					<spinPosX>1828</spinPosX>
+					<spinPosY>1000</spinPosY>
+					<PinIconWidth>40</PinIconWidth>
+					<PinIconHeight>40</PinIconHeight>
+					<PinIconXOff>1040</PinIconXOff>
+					<PinIconYOff>6</PinIconYOff>
+					<IconXOff>4</IconXOff>
+					<IconYOff>2</IconYOff>
+					<itemWidth>54</itemWidth>
+					<itemHeight>54</itemHeight>
+					<keepaspectratio>yes</keepaspectratio>
+				</control>
+				<control>
+					<description>Thumbnail Panel</description>
+					<type>thumbnailpanel</type>
+					<id>50</id>
+					<posX>108</posX>
+					<posY>328</posY>
+					<width>870</width>
+					<height>700</height>
+					<onleft>2</onleft>
+					<onright>50</onright>       
+					<imageFolder>-</imageFolder>          
+					<imageFolderFocus>-</imageFolderFocus>  
+					<showFrame>true</showFrame>          
+					<dimColor>90ffffff</dimColor> 
+					<enableFocusZoom>no</enableFocusZoom>        
+					<hideUnfocusTexture>no</hideUnfocusTexture>          
+					<renderFocusText>no</renderFocusText>
+					<renderUnfocusText>no</renderUnfocusText>                    
+					<thumbZoom>no</thumbZoom>
+					<keepaspectratio>yes</keepaspectratio>
+					<frameNoFocus>-</frameNoFocus>
+					<frameFocus>onlinevideos_thumb_focus.png</frameFocus>
+					<textureMask>onlinevideos_thumb_mask.png</textureMask>
+					<imageFolderFocus>OnlineVideos\FolderThumbBkg.png</imageFolderFocus>
+					<itemWidth>210</itemWidth>
+					<itemHeight>120</itemHeight>
+					<textureWidth>210</textureWidth>
+					<textureHeight>120</textureHeight>
+					<thumbWidth>210</thumbWidth>
+					<thumbHeight>120</thumbHeight>
+					<thumbPosX>0</thumbPosX>
+					<thumbPosY>0</thumbPosY>
+					<itemWidthBig>275</itemWidthBig>
+					<itemHeightBig>160</itemHeightBig>
+					<thumbWidthBig>275</thumbWidthBig>
+					<thumbHeightBig>160</thumbHeightBig>
+					<textureWidthBig>275</textureWidthBig>
+					<textureHeightBig>160</textureHeightBig>
+					<thumbPosXBig>0</thumbPosXBig>
+					<thumbPosYBig>0</thumbPosYBig>
+					<zoomXPixels>40</zoomXPixels>
+					<zoomYPixels>28</zoomYPixels>
+					<spinPosX>1828</spinPosX>
+					<spinPosY>1000</spinPosY>
+				</control>        
+			</control>
+		</control>
+	</controls>
+</window>

@@ -2833,7 +2833,150 @@
           </Items>
         </Files>
       </GroupItem>
-      <GroupItem Name="GenericSiteTool">
+      <GroupItem Name="Titan">
+        <ParentGroup>Skins</ParentGroup>
+        <DisplayName>Titan</DisplayName>
+        <DefaulChecked>true</DefaulChecked>
+        <Description>Skin files for Titan Skin</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\myonlinevideos.details.imdb.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{920f79d1-6bfb-4555-b418-adc297abe06a}-myonlinevideos.details.imdb.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\myonlinevideos.details.imdb.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\myonlinevideos.details.ITMovieTrailers.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{a861f2bf-ab59-4d6a-9b27-7b612148ef0b}-myonlinevideos.details.ITMovieTrailers.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\myonlinevideos.details.ITMovieTrailers.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\myonlinevideos.details.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d6258d71-d639-457d-9cf5-783f3c2151df}-myonlinevideos.details.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\myonlinevideos.details.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\myonlinevideos.details.youtube.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{906d9027-ea80-4ff6-aacd-238f15c0af0f}-myonlinevideos.details.youtube.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\myonlinevideos.details.youtube.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\myonlinevideos.DialogMenu.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{76398ff7-8229-4056-a135-8d325f197cfd}-myonlinevideos.DialogMenu.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\myonlinevideos.DialogMenu.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\myonlinevideos.facade.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{303c2c08-938a-4dd9-8e47-bc7c1c4f3ee3}-myonlinevideos.facade.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\myonlinevideos.facade.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\myonlinevideos.hiddenmenu.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{393aa1bf-c505-4c24-852b-f049bcdb3383}-myonlinevideos.hiddenmenu.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\myonlinevideos.hiddenmenu.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\myonlinevideos.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9704c667-19e9-42a8-9253-40ef674e8834}-myonlinevideos.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\myonlinevideos.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\myonlinevideosFullScreen.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{90044978-6213-4495-a26b-48b22d3f623d}-myonlinevideosFullScreen.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\myonlinevideosFullScreen.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\myonlinevideosOSD.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{937e7641-0267-4fbf-9418-4e4ef32cb5b0}-myonlinevideosOSD.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\myonlinevideosOSD.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\myonlinevideosUpdater.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d930a8e2-3a9b-4c1e-86c7-8966af8ab722}-myonlinevideosUpdater.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\myonlinevideosUpdater.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\Media\onlinevideos_thumb_focus.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ae337bac-878a-4e4b-9a0e-d2cfe18e7c2e}-onlinevideos_thumb_focus.png</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\Media\onlinevideos_thumb_focus.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\Media\onlinevideos_thumb_mask.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{627033af-146a-4492-ac28-7af18fa064ef}-onlinevideos_thumb_mask.png</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\Media\onlinevideos_thumb_mask.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\Media\OnlineVideos\Broken.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d89b992c-c89d-4a3a-b59e-c18a3653094e}-Broken.png</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\Broken.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\Media\OnlineVideos\disk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{eced619e-b6af-4057-bc6f-5ccea281476c}-disk.png</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\disk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\Media\OnlineVideos\FolderThumbBkg.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f05dbbc7-76a9-4e06-a69e-19357b7cda25}-FolderThumbBkg.png</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\FolderThumbBkg.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\Media\OnlineVideos\NextPage.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b6de473e-905f-476f-b21b-3cea6694762e}-NextPage.png</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\NextPage.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\Media\OnlineVideos\Reported.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c03d87d1-68b8-4fb3-bd88-d8c2f1c7d3a0}-Reported.png</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\Reported.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\Titan\Media\OnlineVideos\Working.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3b2212ef-eced-4c76-9b8f-0f6f245ae96b}-Working.png</ZipFileName>
+              <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\Working.png</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
+	  <GroupItem Name="GenericSiteTool">
         <ParentGroup />
         <DisplayName>Site Creation Tool</DisplayName>
         <DefaulChecked>true</DefaulChecked>
@@ -2958,6 +3101,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
           <string>Skins</string>
           <string>Default</string>
           <string>DefaultWide</string>
+		  <string>Titan</string>
           <string>GenericSiteTool</string>
           <string>LAVFilters</string>
           <string>ExtensionsPlugin</string>
@@ -6165,6 +6309,139 @@ public class Script
         <ZipFileName>Installer{CopyFile}\{2d84aca5-6979-4182-a582-20406d244f20}-app.config</ZipFileName>
         <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe.config</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\myonlinevideos.details.imdb.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{920f79d1-6bfb-4555-b418-adc297abe06a}-myonlinevideos.details.imdb.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\myonlinevideos.details.imdb.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\myonlinevideos.details.ITMovieTrailers.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{a861f2bf-ab59-4d6a-9b27-7b612148ef0b}-myonlinevideos.details.ITMovieTrailers.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\myonlinevideos.details.ITMovieTrailers.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\myonlinevideos.details.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d6258d71-d639-457d-9cf5-783f3c2151df}-myonlinevideos.details.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\myonlinevideos.details.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\myonlinevideos.details.youtube.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{906d9027-ea80-4ff6-aacd-238f15c0af0f}-myonlinevideos.details.youtube.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\myonlinevideos.details.youtube.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\myonlinevideos.DialogMenu.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{76398ff7-8229-4056-a135-8d325f197cfd}-myonlinevideos.DialogMenu.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\myonlinevideos.DialogMenu.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\myonlinevideos.facade.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{303c2c08-938a-4dd9-8e47-bc7c1c4f3ee3}-myonlinevideos.facade.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\myonlinevideos.facade.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\myonlinevideos.hiddenmenu.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{393aa1bf-c505-4c24-852b-f049bcdb3383}-myonlinevideos.hiddenmenu.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\myonlinevideos.hiddenmenu.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\myonlinevideos.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9704c667-19e9-42a8-9253-40ef674e8834}-myonlinevideos.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\myonlinevideos.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\myonlinevideosFullScreen.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{90044978-6213-4495-a26b-48b22d3f623d}-myonlinevideosFullScreen.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\myonlinevideosFullScreen.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\myonlinevideosOSD.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{937e7641-0267-4fbf-9418-4e4ef32cb5b0}-myonlinevideosOSD.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\myonlinevideosOSD.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\myonlinevideosUpdater.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d930a8e2-3a9b-4c1e-86c7-8966af8ab722}-myonlinevideosUpdater.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\myonlinevideosUpdater.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\Media\onlinevideos_thumb_focus.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ae337bac-878a-4e4b-9a0e-d2cfe18e7c2e}-onlinevideos_thumb_focus.png</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\Media\onlinevideos_thumb_focus.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\Media\onlinevideos_thumb_mask.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{627033af-146a-4492-ac28-7af18fa064ef}-onlinevideos_thumb_mask.png</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\Media\onlinevideos_thumb_mask.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\Media\OnlineVideos\Broken.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d89b992c-c89d-4a3a-b59e-c18a3653094e}-Broken.png</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\Broken.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\Media\OnlineVideos\disk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{eced619e-b6af-4057-bc6f-5ccea281476c}-disk.png</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\disk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\Media\OnlineVideos\FolderThumbBkg.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f05dbbc7-76a9-4e06-a69e-19357b7cda25}-FolderThumbBkg.png</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\FolderThumbBkg.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\Media\OnlineVideos\NextPage.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b6de473e-905f-476f-b21b-3cea6694762e}-NextPage.png</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\NextPage.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\Media\OnlineVideos\Reported.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c03d87d1-68b8-4fb3-bd88-d8c2f1c7d3a0}-Reported.png</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\Reported.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\Titan\Media\OnlineVideos\Working.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3b2212ef-eced-4c76-9b8f-0f6f245ae96b}-Working.png</ZipFileName>
+        <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\Working.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
@@ -6214,6 +6491,16 @@ public class Script
         <DestinationFilename>%Skin%\DefaultWide\</DestinationFilename>
         <Folder>..\Skins\DefaultWide</Folder>
         <Group>DefaultWide</Group>
+        <Recursive>true</Recursive>
+      </FolderGroup>
+      <FolderGroup InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName />
+        <ZipFileName>Installer{CopyFile}\{de9ce0bb-01bc-49e7-ae10-23304aa1eee5}-</ZipFileName>
+        <DestinationFilename>%Skin%\Titan</DestinationFilename>
+        <Folder>..\Skins\Titan</Folder>
+        <Group>Titan</Group>
         <Recursive>true</Recursive>
       </FolderGroup>
     </FolderGroups>
