@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -34,18 +35,35 @@ namespace OnlineVideos.Sites
             HasNextPage = false;
 
             string url = (category as RssLink).Url;
-            string data = GetWebData(url);
-            if (data.Length > 0)
-            {
-                var htmlDoc = new HtmlAgilityPack.HtmlDocument();
-                htmlDoc.LoadHtml(data);
+			string data = GetWebData(url);
+			if (data.Length > 0)
+			{
+				var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+				htmlDoc.LoadHtml(data);
 
-                if (category.Name == "Live")
-                {
-                    return VideosForLiveCategory(htmlDoc.DocumentNode, url);
-                }
-                else
-                {
+				if (category.Name == "Live")
+				{
+					return VideosForLiveCategory(htmlDoc.DocumentNode, url);
+				}
+				else if (category.ParentCategory.Name == "Live")
+				{
+					VideoInfo video = new VideoInfo();
+
+					var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playVideoBox')]");
+					video.ImageUrl = node.Element("a").Element("img").GetAttributeValue("data-imagename", "");
+
+					node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playChannelSchedule')]");
+					node = node.Descendants("article").First();
+
+					video.Title = node.GetAttributeValue("data-title", "");
+					video.Description = node.GetAttributeValue("data-description", "");
+
+					video.VideoUrl = url + "?output=json";
+
+					return new List<VideoInfo>() { video };
+				}
+				else
+				{
 					string tabName = category.Name == "Hela program" ? "episodes" : "clips";
 					var containerDiv = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class, 'playBoxBody') and contains(@data-tabname, '" + tabName + "')]");
 					if (containerDiv != null)
@@ -65,8 +83,8 @@ namespace OnlineVideos.Sites
 						}
 						return VideosForCurrentCategory(containerDiv, url);
 					}
-                }
-            }
+				}
+			}
 
             return null;
         }
@@ -246,26 +264,45 @@ namespace OnlineVideos.Sites
                         }
                     }
                 }
-                else
-                {
+				else if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("kanaler"))
+				{
+					var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playChannelMenu')]");
+					foreach (var li in node.Element("ul").Elements("li"))
+					{
+						RssLink cat = new RssLink();
+						cat.Url = li.Element("a").GetAttributeValue("href", "");
+						if (!string.IsNullOrEmpty(cat.Url) && !Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
+
+						var img = li.Element("a").Element("div").Element("img");
+						cat.Name = img.GetAttributeValue("alt", "");
+
+						cat.Thumb = img.GetAttributeValue("src", "");
+						if (!string.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(categoryUrl), cat.Thumb).AbsoluteUri;
+
+						cat.ParentCategory = parentCategory;
+						parentCategory.SubCategories.Add(cat);
+					}
+				}
+				else
+				{
 					var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playBoxBody') and contains(@class,'svtTab-Active')]");
 					CategoriesFromArticles(node, parentCategory);
 
 					// categories are spread over pages - remember the last page on the parent category, so we know when to stop adding a NextPageCategory
 					var lastPageNode = node.Descendants("div").Where(d => d.GetAttributeValue("class", "") == "playBoxContainer").FirstOrDefault();
 					if (lastPageNode != null) lastPageNode = lastPageNode.Element("a");
-                    if (lastPageNode != null)
-                    {
-                        int maxPages = lastPageNode.GetAttributeValue("data-lastpage", 0);
-                        if (maxPages > 1)
-                        {
-                            parentCategory.Other = maxPages;
+					if (lastPageNode != null)
+					{
+						int maxPages = lastPageNode.GetAttributeValue("data-lastpage", 0);
+						if (maxPages > 1)
+						{
+							parentCategory.Other = maxPages;
 							string url = HttpUtility.HtmlDecode(lastPageNode.GetAttributeValue("data-baseurl", "")) + lastPageNode.GetAttributeValue("data-name", "") + "=" + lastPageNode.GetAttributeValue("data-nextpage", "");
-                            if (!Uri.IsWellFormedUriString(url, System.UriKind.Absolute)) url = new Uri(new Uri(categoryUrl), url).AbsoluteUri;
-                            parentCategory.SubCategories.Add(new NextPageCategory() { Url = url, ParentCategory = parentCategory });
-                        }
-                    }
-                }
+							if (!Uri.IsWellFormedUriString(url, System.UriKind.Absolute)) url = new Uri(new Uri(categoryUrl), url).AbsoluteUri;
+							parentCategory.SubCategories.Add(new NextPageCategory() { Url = url, ParentCategory = parentCategory });
+						}
+					}
+				}
 
                 parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0; // only set to true if actually discovered (forces re-discovery until found)
 
@@ -335,7 +372,7 @@ namespace OnlineVideos.Sites
             string bestMatchUrl = "";
             List<String> result = new List<string>();
 
-            string jsonUrl = video.VideoUrl.Substring(0, video.VideoUrl.LastIndexOf("/")) + "?output=json";
+            string jsonUrl = video.VideoUrl.EndsWith("?output=json") ? video.VideoUrl : video.VideoUrl.Substring(0, video.VideoUrl.LastIndexOf("/")) + "?output=json";
             var json = GetWebData<Newtonsoft.Json.Linq.JObject>(jsonUrl);
 
             var sortedPlaybackOptions = json["video"]["videoReferences"].Where(vr => (string)vr["playerType"] != "ios" && (((string)vr["url"]).StartsWith("http") || ((string)vr["url"]).StartsWith("rtmp"))).OrderBy(vr => (int)vr["bitrate"]);
@@ -353,7 +390,7 @@ namespace OnlineVideos.Sites
 				}
 				else if (url.StartsWith("http://") && url.EndsWith(".f4m"))
 				{
-					url = url + "?hdcore=2.10.3&g=" + GetRandomChars(12);
+					url = url + "?hdcore=2.11.3&g=" + GetRandomChars(12);
 				}
 				else if (url.StartsWith("http://geoip.api"))
 					url = HttpUtility.ParseQueryString(new Uri(url).Query)["vurl"];
