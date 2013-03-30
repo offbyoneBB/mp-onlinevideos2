@@ -370,20 +370,18 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
                         if (title.ToLower().Trim() == movieTitle.ToLower().Trim())
                         {
-                            // if the title is the same as the movie title we will use the video type as the title
-                            title = HttpUtility.UrlDecode(m.Groups["title"].Value);
-                        }
-                        else
-                        {
-                            // clean up the video title
-                            i = title.IndexOf(" -- ");
-                            if (i >= 0)
-                            {
-                                title = title.Substring(i + 4);
-                            }
+                            // if the title is the same as the movie title try the image's title
+							title = v.GetAttributeValue("title", title);
+                        }                        
 
-                            title = title.Replace(movieTitle + ":", string.Empty).Trim();
-                         }
+                        // clean up the video title
+                        i = title.IndexOf(" -- ");
+                        if (i >= 0)
+                        {
+                            title = title.Substring(i + 4);
+                        }
+
+                        title = title.Replace(movieTitle + ":", string.Empty).Trim();
 
                         video.ID = vconst;
                         video.Title = HttpUtility.HtmlDecode(title);
