@@ -52,11 +52,13 @@ namespace OnlineVideos.Sites
 					var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playVideoBox')]");
 					video.ImageUrl = node.Element("a").Element("img").GetAttributeValue("data-imagename", "");
 
-					node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playChannelSchedule')]");
+					node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playJsSchedule') and contains(@class,'svtTab-Active')]");
 					node = node.Descendants("article").First();
 
 					video.Title = node.GetAttributeValue("data-title", "");
 					video.Description = node.GetAttributeValue("data-description", "");
+					video.Length = node.GetAttributeValue("data-length", "");
+					video.Airdate = node.Descendants("time").First().InnerText;
 
 					video.VideoUrl = url + "?output=json";
 
