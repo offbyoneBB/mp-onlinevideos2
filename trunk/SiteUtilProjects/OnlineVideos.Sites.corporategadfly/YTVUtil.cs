@@ -15,11 +15,13 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class YTVUtil : GenericSiteUtil
     {
+        protected virtual string landingPageUrl { get { return @"http://www.ytv.com/videos/"; } }
+        protected virtual string iframeXpath { get { return @"(//iframe)[2]"; } }
+        protected virtual int itemsPerPage { get { return 8; } }
+
         private static string byCategories;
         private static string player;
         private static string feedsServiceUrl;
-        
-        private static int JSON_ITEMS_PER_PAGE = 8;
         
         private Category currentCategory = null;
 
@@ -27,11 +29,11 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
             
-            HtmlDocument html = GetWebData<HtmlDocument>(@"http://www.ytv.com/videos/");
+            HtmlDocument html = GetWebData<HtmlDocument>(landingPageUrl);
             if (html != null)
             {
                 // retrieve Main-Player URL
-                HtmlNode iframe = html.DocumentNode.SelectSingleNode(@"(//iframe)[2]");
+                HtmlNode iframe = html.DocumentNode.SelectSingleNode(iframeXpath);
                 if (iframe != null)
                 {
                     string mainPlayerUrl = iframe.GetAttributeValue(@"src", string.Empty);
@@ -132,7 +134,7 @@ namespace OnlineVideos.Sites
             NameValueCollection parameters = HttpUtility.ParseQueryString(string.Empty);
             parameters[@"byCategories"] = @"All".Equals(category.Name) ? byCategories : string.Format(@"{0},{1}", byCategories, category.Name);
             parameters[@"fields"] = @"author,content,defaultThumbnailUrl,description,pubDate,title";
-            parameters[@"range"] = @"1-8";
+            parameters[@"range"] = string.Format(@"{0}-{1}", 1, itemsPerPage);
             parameters[@"validFeed"] = @"false";
             parameters[@"count"] = @"true";
             parameters[@"form"] = @"json";
@@ -208,8 +210,8 @@ namespace OnlineVideos.Sites
                     UriBuilder builder = new UriBuilder(url);
                     NameValueCollection parameters = HttpUtility.ParseQueryString(builder.Query);
                     string[] rangeParts = parameters["range"].Split('-');
-                    int lowerRange = int.Parse(rangeParts[0]) + JSON_ITEMS_PER_PAGE;
-                    int upperRange = int.Parse(rangeParts[1]) + JSON_ITEMS_PER_PAGE;
+                    int lowerRange = int.Parse(rangeParts[0]) + itemsPerPage;
+                    int upperRange = int.Parse(rangeParts[1]) + itemsPerPage;
                     // modify range parameter for next page URL
                     parameters["range"] = string.Format(@"{0}-{1}", lowerRange, upperRange);
                     builder.Query = parameters.ToString();
@@ -258,8 +260,8 @@ namespace OnlineVideos.Sites
                 XmlNamespaceManager namespaceManager = new XmlNamespaceManager(xml.NameTable);
                 namespaceManager.AddNamespace("a", @"http://www.w3.org/2005/SMIL21/Language");
                 XmlNode src = xml.SelectSingleNode(@"//a:video/@src", namespaceManager);
-    
-                return new MPUrlSourceFilter.HttpUrl(string.Format(@"{0}hdcore=2.11.3", src.InnerText)).ToString();
+                string manifestUrl = src.InnerText.EndsWith("?") ? src.InnerText : string.Format("{0}?", src.InnerText);
+                return new MPUrlSourceFilter.HttpUrl(string.Format(@"{0}hdcore=2.11.3", manifestUrl)).ToString();
             }
         }
     }
