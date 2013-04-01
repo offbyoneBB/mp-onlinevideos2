@@ -22,6 +22,10 @@ namespace OnlineVideos.Hoster.Base
         {
             return new Dictionary<string, string>() { { GetType().Name, getVideoUrls(url) } };
         }
+		/*public virtual Dictionary<string, string> getPlaybackOptions(string url, System.Net.IWebProxy proxy)
+		{
+			return new Dictionary<string, string>() { { GetType().Name, getVideoUrls(url) } };
+		}*/
         public abstract string getVideoUrls(string url);
         public abstract string getHosterUrl();
         public virtual VideoType getVideoType() { return videoType; }
