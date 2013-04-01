@@ -114,6 +114,11 @@ namespace OnlineVideos.Sites
 		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Localize"), Description("Try to retrieve data specific for your region.")]
         bool localize = false;
 
+		/*[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Proxy"), Description("Proxy address to use. Define like this: ip:port;user:pass (;user:pass is optional)")]
+		string proxy = null;
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Proxy Enabled"), Description("Enable proxy (if Proxy is set).")]
+		bool proxyEnabled = false;*/
+
         [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
         bool useDynamicCategories = true;
 
@@ -142,8 +147,26 @@ namespace OnlineVideos.Sites
                                                             {"View Count", "viewCount"},
                                                             {"Rating", "rating"}};
             foreach (string name in Enum.GetNames(typeof(YouTubeQuery.UploadTime))) timeFrameList.Add(Utils.ToFriendlyCase(name), name);
-            service = new YouTubeService("OnlineVideos", DEVELOPER_KEY);
-            request = new YouTubeRequest(new YouTubeRequestSettings("OnlineVideos", DEVELOPER_KEY, login, password));
+            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
+				request = new YouTubeRequest(new YouTubeRequestSettings("OnlineVideos", DEVELOPER_KEY));
+			else
+				request = new YouTubeRequest(new YouTubeRequestSettings("OnlineVideos", DEVELOPER_KEY, login, password));
+			service = request.Service;
+			service.RequestFactory.UseGZip = true;
+
+			/*if (!string.IsNullOrEmpty(proxy) && proxyEnabled)
+			{
+				string[] splits = proxy.Split(';');
+				if (splits.Length > 1)
+				{
+					string[] userPassSplits = splits[1].Split(':');
+					request.Proxy = new System.Net.WebProxy(splits[0], true, new string[0], new System.Net.NetworkCredential(userPassSplits[0], userPassSplits[1]));
+				}
+				else
+				{
+					request.Proxy = new System.Net.WebProxy(splits[0]);
+				}
+			}*/
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -158,7 +181,11 @@ namespace OnlineVideos.Sites
 
         public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(video.VideoUrl);
+			if (request.Proxy == null)
+				video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(video.VideoUrl);
+			else
+				video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(video.VideoUrl/*, request.Proxy*/);
+
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
 				if (video.PlaybackOptions.Count == 1)

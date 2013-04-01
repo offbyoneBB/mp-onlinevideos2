@@ -7,6 +7,7 @@ using OnlineVideos.Hoster.Base;
 using System.Web;
 using System.Globalization;
 using System.ComponentModel;
+using System.Net;
 
 namespace OnlineVideos.Hoster
 {
@@ -29,11 +30,12 @@ namespace OnlineVideos.Hoster
 (?<json>\{.+\})|
 (?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|
 (flashvars=""(?<params>[^""]+)""))|
-(yt\.playerConfig\s*=\s*\{.+""args""\:\s*(?<json>\{[^\}]+\}))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace);
+(yt\.?player\.?Config\s*=\s*\{.*?""args""\:\s*(?<json>\{[^\}]+\}))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
         static Regex unicodeFinder = new Regex(@"\\[uU]([0-9A-F]{4})", RegexOptions.Compiled);
 
-        public override Dictionary<string, string> getPlaybackOptions(string url)
-        {
+		public override Dictionary<string, string> getPlaybackOptions(string url)
+		{
+			IWebProxy proxy = null;
             Dictionary<string, string> PlaybackOptions = null;
 
             string videoId = url;
@@ -55,11 +57,18 @@ namespace OnlineVideos.Hoster
             string contents = "";
             try
             {
-                contents = Sites.SiteUtilBase.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}&has_verified=1", videoId));
+				try
+				{
+					contents = Sites.SiteUtilBase.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}&has_verified=1", videoId), proxy: proxy);
+				}
+				catch
+				{
+					if (contents == null) contents = "";
+				}
                 Items = System.Web.HttpUtility.ParseQueryString(contents);
-                if (Items["status"] == "fail")
+                if (Items.Count == 0 || Items["status"] == "fail")
                 {
-                    contents = Sites.SiteUtilBase.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId));
+					contents = Sites.SiteUtilBase.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxy);
                     Match m = swfJsonArgs.Match(contents);
                     if (m.Success)
                     {
