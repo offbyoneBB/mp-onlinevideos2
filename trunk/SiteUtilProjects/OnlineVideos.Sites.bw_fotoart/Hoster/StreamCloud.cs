@@ -17,7 +17,7 @@ namespace OnlineVideos.Hoster
 
         private string requestFileInformation(string url, CookieContainer cc)
         {
-            string webData = SiteUtilBase.GetWebData(url, cc);
+            string webData = SiteUtilBase.GetWebData(url, cc);            
             if (!string.IsNullOrEmpty(webData))
             {
                 if (!string.IsNullOrEmpty(getRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
@@ -37,10 +37,14 @@ namespace OnlineVideos.Hoster
             {
                 //Extract op value from HTML form
                 string op = Regex.Match(webData, @"op""\svalue=""(?<value>[^""]*)").Groups["value"].Value;
+                //Extract usr_login value from HTML form
+                string usrlogin = Regex.Match(webData, @"usr_login""\svalue=""(?<value>[^""]*)").Groups["value"].Value;
                 //Extract id value from HTML form
                 string id = Regex.Match(webData, @"id""\svalue=""(?<value>[^""]*)").Groups["value"].Value;
                 //Extract fname value from HTML form
-                string fname = Regex.Match(webData, @"fname""\svalue=""(?<value>[^""]*)").Groups["value"].Value;                
+                string fname = Regex.Match(webData, @"fname""\svalue=""(?<value>[^""]*)").Groups["value"].Value;
+                //Extract referer value from HTML form
+                string referer = Regex.Match(webData, @"referer""\svalue=""(?<value>[^""]*)").Groups["value"].Value;  
                 //Extract hash value from HTML form
                 string hash = Regex.Match(webData, @"hash""\svalue=""(?<value>[^""]*)").Groups["value"].Value;
                 //Extract hash value from HTML form
@@ -50,8 +54,8 @@ namespace OnlineVideos.Hoster
                 System.Threading.Thread.Sleep(10000);
 
                 //Send Postdata (simulates a button click)
-                string postData = @"op=" + op + "&usr_login=&id=" + id + "&fname=" + fname + "&referer=&hash=" + hash + "&imhuman=" + imhuman;
-                string webData2 = GenericSiteUtil.GetWebDataFromPost(url, postData, cc);
+                string postData = @"op=" + op + "&usr_login=" + usrlogin + "&id=" + id + "&fname=" + fname + "&referer=" + referer + "&hash=" + hash + "&imhuman=" + imhuman;
+                string webData2 = GenericSiteUtil.GetWebDataFromPost(url, postData, cc, url, null, false, false, OnlineVideoSettings.Instance.UserAgent, null);
 
                 //Extract file url from HTML
                 Match n = Regex.Match(webData2, @"file: ""(?<url>[^""]*)");
