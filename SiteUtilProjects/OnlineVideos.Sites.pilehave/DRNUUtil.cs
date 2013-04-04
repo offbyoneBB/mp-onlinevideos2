@@ -71,13 +71,15 @@ namespace OnlineVideos.Sites
     private List<VideoInfo> getlivestreams()
     {
       List<VideoInfo> res = new List<VideoInfo>();
-      string[] channels = new string[6] { "DR1", "DR2", "DR Update", "DR K", "DR Ramasjang", "DR HD" };
+      string[] channels = new string[6] { "DR1", "DR2", "DR Ultra", "DR K", "DR Ramasjang", "DR 3" };
       string[] paths = new string[6] { "astream3", "astream3", "astream3", "astream3", "astream3", "bstream3" };
       for (int i = 0; i < 6; i++)
       {
         VideoInfo video = new VideoInfo();
         video.Title = channels[i];
-        video.VideoUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://rtmplive.dr.dk/live/livedr0" + (i + 1) + paths[i]) { Live = true }.ToString();
+        //New URL: rtmp://livetv.gss.dr.dk/live/livedr0
+        //Old URL: rtmp://rtmplive.dr.dk/live/livedr0
+        video.VideoUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://livetv.gss.dr.dk/live/livedr0" + (i + 1) + paths[i]) { Live = true }.ToString();
         res.Add(video);
       }
       return res;
@@ -99,7 +101,22 @@ namespace OnlineVideos.Sites
             VideoInfo video = new VideoInfo();
             video.Title = subContentData.Value<string>("title");
             video.Description = subContentData.Value<string>("description");
-            video.VideoUrl = redirectUrl.Replace("rtmp://vod.dr.dk/", "rtmp://vod.dr.dk/cms/");
+
+            //Nyt
+
+            // ('(rtmp://vod.dr.dk/cms)/([^\?]+)(\?.*)', rtmpUrl)
+
+            Match match = Regex.Match(redirectUrl, @"(rtmp://vod.dr.dk/cms)/([^\?]+)(\?.*)", RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+              Log.Info("videosti fundet");
+              video.VideoUrl = match.Groups[1].Value + match.Groups[3].Value + " playpath=" + match.Groups[2].Value + match.Groups[3].Value + " app=cms" + match.Groups[3].Value;
+              Log.Info("Her: " + video.VideoUrl);
+            }
+            //Nyt slut
+
+
+            //video.VideoUrl = redirectUrl.Replace("rtmp://vod.dr.dk/", "rtmp://vod.dr.dk/cms/");
             video.ImageUrl = baseUrlDrNu + "/videos/" + item.Value<string>("id") + "/images/400x225.jpg";
             video.Length = subContentData.Value<string>("duration");
             video.Airdate = subContentData.Value<string>("formattedBroadcastTime");
@@ -222,7 +239,7 @@ namespace OnlineVideos.Sites
         Name = "Live TV",
         HasSubCategories = false,
         SubCategoriesDiscovered = false,
-        Description = "Se de 6 danske TV-kanaler DR1, DR2, DR K, DR Ramasjang, DR Update og DR HD.",
+        Description = "Se de 6 danske TV-kanaler DR1, DR2, DR3, DR Ramasjang, DR Update og DR Ultra.",
         Url = "http://www.dr.dk/live",
         Other = "drlive,",
         EstimatedVideoCount = 6
