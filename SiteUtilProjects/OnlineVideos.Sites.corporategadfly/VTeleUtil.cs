@@ -206,6 +206,12 @@ namespace OnlineVideos.Sites
             return result;
         }
         
+        public override string getUrl(VideoInfo video)
+        {
+            if (LIVE_STREAMING.Equals(video.Other as string)) return video.VideoUrl;
+            return base.getUrl(video);
+        }
+        
         public override string getBrightCoveVideoIdForViewerExperienceRequest(string videoUrl)
         {
             string videoId = string.Empty;
