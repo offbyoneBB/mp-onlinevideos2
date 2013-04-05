@@ -13,16 +13,19 @@ namespace OnlineVideos.Sites
     /// <summary>
     /// site util for V Télé.
     /// </summary>
-    public class VTeleUtil : GenericSiteUtil
+    public class VTeleUtil : CanadaBrightCoveUtilBase
     {
         private static string dispatchUrl = @"http://vtele.ca/videos/includes/librairie/dispatch.inc.php";
-        private static string brightCoveUrlFormat = @"http://api.brightcove.com/services/library?command=find_video_by_id&token=2sgr1KCsKKJXcqUFQdti_mXZAhdNB-wCFwCbGW6lz5atwI1QTrElxQ..&media_delivery=http&video_id={0}";
         private static string LIVE_STREAMING = @"En Direct";
         private static string liveEpisodeUrl = @"http://vtele.ca/en-direct/includes/retreiveEmiV3.inc.php";
 
-        private static Regex contentIdRegex = new Regex(@"var\sidBC\s=\s(?<contentId>[^;]*);",
+        private static Regex contentIdRegex = new Regex(@"bcMPlayer\.initialize\('(?<contentId>[^']*)'",
                                                         RegexOptions.Compiled);
         private Category currentCategory = null;
+        
+        protected override string hashValue { get { return @"099ae4e0dbd840ae8ad566f6d49884e1f180d748"; } }
+        protected override string playerId { get { return @"2193241261001"; } }
+        protected override string publisherId { get { return string.Empty; } }
 
         public override int DiscoverDynamicCategories()
         {
@@ -183,43 +186,6 @@ namespace OnlineVideos.Sites
             return getVideoListForSinglePage(currentCategory, nextPageUrl);
         }
         
-        public override string getUrl(VideoInfo video)
-        {
-            if (LIVE_STREAMING.Equals(video.Other as string)) return video.VideoUrl;
-
-            string result = string.Empty;
-            video.PlaybackOptions = new Dictionary<string, string>();
-            // keep track of bitrates and URLs
-            Dictionary<int, string> urlsDictionary = new Dictionary<int, string>();
-           
-            string data = GetWebData(video.VideoUrl);
-            if (!string.IsNullOrEmpty(data))
-            {
-                Match contentIdMatch = contentIdRegex.Match(data);
-                if (contentIdMatch.Success)
-                {
-                    JObject json = GetWebData<JObject>(string.Format(brightCoveUrlFormat, contentIdMatch.Groups["contentId"].Value));
-                    foreach (JToken rendition in json["renditions"] as JArray)
-                    {
-                        int bitrate = rendition.Value<int>("encodingRate");
-                        if (!urlsDictionary.ContainsKey(bitrate / 1000))
-                        {
-                            urlsDictionary.Add(bitrate / 1000, new MPUrlSourceFilter.HttpUrl(rendition.Value<string>("url")).ToString());
-                        }
-                    }
-                }
-            }
-           
-            // sort the URLs ascending by bitrate
-            foreach (var item in urlsDictionary.OrderBy(u => u.Key))
-            {
-                video.PlaybackOptions.Add(string.Format("{0} kbps", item.Key), item.Value);
-                // return last URL as the default (will be the highest bitrate)
-                result = item.Value;
-            }
-            return result;
-        }
-
         private static string retrieveDispatchUrl(string dataLib)
         {
             string result = string.Empty;
@@ -238,6 +204,25 @@ namespace OnlineVideos.Sites
                 result = builder.Uri.ToString();
             }
             return result;
+        }
+        
+        public override string getBrightCoveVideoIdForViewerExperienceRequest(string videoUrl)
+        {
+            string videoId = string.Empty;
+            string data = GetWebData(videoUrl);
+            if (!string.IsNullOrEmpty(data))
+            {
+                Match contentIdMatch = contentIdRegex.Match(data);
+                if (contentIdMatch.Success)
+                {
+                    videoId = contentIdMatch.Groups["contentId"].Value;
+                }
+                else
+                {
+                    Log.Warn("Failed to find contentId {0}", videoUrl);
+                }
+            }
+            return videoId;
         }
     }
 }

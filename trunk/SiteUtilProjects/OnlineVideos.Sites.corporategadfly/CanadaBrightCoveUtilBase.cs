@@ -88,14 +88,9 @@ namespace OnlineVideos.Sites
                              "externalizable":false,
                              "dynamic":false}}]}]
                 */
-                HtmlDocument document = GetWebData<HtmlDocument>(video.VideoUrl);
-    
-                if (document != null)
+                videoId = getBrightCoveVideoIdForViewerExperienceRequest(video.VideoUrl);
+                if (!string.IsNullOrEmpty(videoId))
                 {
-                    HtmlNode brightcoveExperience = document.DocumentNode.SelectSingleNode(@"//object[@class='BrightcoveExperience']");
-                    videoId = brightcoveExperience.SelectSingleNode(@"./param[@name='@videoPlayer']").GetAttributeValue("value", "");
-                    Log.Debug("VideoId: {0}", videoId);
-                    
                     // content override
                     AMFObject contentOverride = new AMFObject(@"com.brightcove.experience.ContentOverride");
                     contentOverride.Add("contentId", videoId);
@@ -196,6 +191,27 @@ namespace OnlineVideos.Sites
                 result = item.Value;
             }
             return result;
+        }
+        
+        public virtual string getBrightCoveVideoIdForViewerExperienceRequest(string videoUrl)
+        {
+            string videoId = string.Empty;
+            HtmlDocument document = GetWebData<HtmlDocument>(videoUrl);
+
+            if (document != null)
+            {
+                HtmlNode brightcoveExperience = document.DocumentNode.SelectSingleNode(@"//object[@class='BrightcoveExperience']");
+                if (brightcoveExperience != null)
+                {
+                    videoId = brightcoveExperience.SelectSingleNode(@"./param[@name='@videoPlayer']").GetAttributeValue("value", "");                    
+                }
+                else
+                {
+                    Log.Warn("BrightcoveExperience object not found");
+                }
+                Log.Debug("VideoId: {0}", videoId);
+            }
+            return videoId;
         }
     }
     
