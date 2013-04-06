@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">שודר</string>
+  <string name="OnlineVideos.AlreadyDownloading">קובץ זה כבר בתהליך הורדה.</string>
+  <string name="OnlineVideos.All">הכל</string>
+  <string name="OnlineVideos.Actions">פעולות</string>
+  <string name="OnlineVideos.Actors">שחקנים</string>
+  <string name="OnlineVideos.AddComment">הוסף הערה...</string>
+  <string name="OnlineVideos.AddToPlaylist">הוסף לרשימת ניגון...</string>
+  <string name="OnlineVideos.AddToMySites">הוסף לאתרים שלי</string>
+  <string name="OnlineVideos.AddToFavourites">הוסף למועדפים</string>
+  <string name="OnlineVideos.AddingToFavorites">מוסיף למועדפים</string>
+  <string name="OnlineVideos.AutomaticUpdate">עדכון אוטומטי</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">עדכון אוטומטי מבוטל.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">פגום</string>
+  <string name="OnlineVideos.Buffered">בטעינה</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">בטל</string>
+  <string name="OnlineVideos.Category">קטגוריה</string>
+  <string name="OnlineVideos.CategoryNotFound">קטגוריה לא נמצאה</string>
+  <string name="OnlineVideos.Categories">קטגוריות</string>
+  <string name="OnlineVideos.Creator">יוצר</string>
+  <string name="OnlineVideos.CreateNewPlaylist">צור רשימת ניגון חדשה...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">בודק אם יש גירסת עדכון לתוסף</string>
+  <string name="OnlineVideos.Concurrent">מתאים</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">תאריך</string>
+  <string name="OnlineVideos.DateOfRelease">תאריך שחרור</string>
+  <string name="OnlineVideos.Directors">במאים</string>
+  <string name="OnlineVideos.Download">הורדה</string>
+  <string name="OnlineVideos.DownloadUserdefined">הורד לספריית מתשמש</string>
+  <string name="OnlineVideos.Downloading">מוריד</string>
+  <string name="OnlineVideos.DownloadingDescription">מציג רשימת הורדות פעילות.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">מוריד כתוביות</string>
+  <string name="OnlineVideos.DownloadFailed">הורדה נכשלה: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">הורדה בוטלה</string>
+  <string name="OnlineVideos.DownloadComplete">הורדה הושלמה</string>
+  <string name="OnlineVideos.DownloadStarted">הורדה התחילה</string>
+  <string name="OnlineVideos.DownloadedVideos">סרטים שהורדו</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">הורדות יבוטלו</string>
+  <string name="OnlineVideos.Delete">מחק</string>
+  <string name="OnlineVideos.DeletePlaylist">מחק רשימת ניגון</string>
+  <string name="OnlineVideos.DeleteAll">מחק הכל</string>
+  <string name="OnlineVideos.Default">ברירת מחדל</string>
+  <string name="OnlineVideos.Done">הושלם</string>
+  <string name="OnlineVideos.DeletingOldThumbs">מוחק תמונות ישנות</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">שגיאה</string>
+  <string name="OnlineVideos.EnterPin">הכנסת קוד סודי</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">מועדפים</string>
+  <string name="OnlineVideos.Filter">מסנן</string>
+  <string name="OnlineVideos.FullUpdate">עדכון מלא</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">ז\'אנר</string>
+  <string name="OnlineVideos.GettingVideoDetails">טעינת פרטי סרטים</string>
+  <string name="OnlineVideos.GettingCategoryVideos">טעינת קטגוריות סרטים</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">טעינת סרטים מועדפים</string>
+  <string name="OnlineVideos.GettingSearchResults">טעינת תוצאות חיפוש</string>
+  <string name="OnlineVideos.GettingRelatedVideos">טעינת סרטים קשורים</string>
+  <string name="OnlineVideos.GettingFilteredVideos">טעינת סרטים מסוננים</string>
+  <string name="OnlineVideos.GettingNextPageVideos">טעינת דף הסרטים הבא</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">טעינת דף הסרטים הקודם</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">טעינת כתובות ניגון עבור הסרט</string>
+  <string name="OnlineVideos.GettingDynamicCategories">טעינת קטגוריות דינאמיות</string>
+  <string name="OnlineVideos.GettingReports">טעינת דיווחים משירות האינטרנט</string>
+  <string name="OnlineVideos.GettingSiteXml">טעינת XML של האתר משירות האינטרנט</string>
+  <string name="OnlineVideos.GettingIcon">טעינת תמונת אתר משירות האינטרנט</string>
+  <string name="OnlineVideos.GettingBanner">טעינת באנר אתר משירות האינטרנט</string>
+  <string name="OnlineVideos.GettingDll">טעינת DLL משירות האינטרנט</string>
+  <string name="OnlineVideos.Groups">קבוצות</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">הגרסה העדכנית ביותר ({0}) נדרשת!</string>
+  <string name="OnlineVideos.Language">שפה</string>
+  <string name="OnlineVideos.LayoutList">סידור: רשימה</string>
+  <string name="OnlineVideos.LayoutIcons">סידור: תמונות</string>
+  <string name="OnlineVideos.LayoutBigIcons">סידור: תמונות גדולות</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">ניהול אתרים</string>
+  <string name="OnlineVideos.MaxResults">מקס. תוצאות</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">שם</string>
+  <string name="OnlineVideos.NextPage">עמוד הבא</string>
+  <string name="OnlineVideos.NewVideos">וידאו חדש</string>
+  <string name="OnlineVideos.None">ללא</string>
+  <string name="OnlineVideos.NoVideoFound">לא נמצאו סרטים</string>
+  <string name="OnlineVideos.NoReportsForSite">אין דיווחים זמינים עבור אתר זה.</string>
+  <string name="OnlineVideos.NewDllDownloaded">קובץ DLL חדש הורד!</string>
+  <string name="OnlineVideos.NewSearch">חיפוש חדש</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">מקומי בלבד</string>
+  <string name="OnlineVideos.OnlyServer">על השרת בלבד</string>
+  <string name="OnlineVideos.Others">אחרים</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">נגן הכל</string>
+  <string name="OnlineVideos.PlayAllRandom">נגן הכל (בסדר אקראי)</string>
+  <string name="OnlineVideos.PlayWith">נגן עם...</string>
+  <string name="OnlineVideos.Playlists">רשימות ניגון</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">ניגון יופסק</string>
+  <string name="OnlineVideos.PleaseEnterDescription">אנא הכנס תאור קצר.</string>
+  <string name="OnlineVideos.PlotOutline">תקציר העלילה</string>
+  <string name="OnlineVideos.PreviousPage">עמוד קודם</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">בצע עדכון אוטומטי?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">נכנס לתור</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">דרג את הוידאו...</string>
+  <string name="OnlineVideos.Recommendations">המלצות</string>
+  <string name="OnlineVideos.RemoveFromFavorites">הסר מרשימת המועדפים</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">מחק מרשימת הניגון</string>
+  <string name="OnlineVideos.RemovingFromFavorites">מסיר מרשימת המועדפים</string>
+  <string name="OnlineVideos.Refresh">רענן</string>
+  <string name="OnlineVideos.RelatedVideos">סרטים קשורים</string>
+  <string name="OnlineVideos.ReportBroken">דווח כשבור</string>
+  <string name="OnlineVideos.Reported">דווח</string>
+  <string name="OnlineVideos.Reports">דווחים</string>
+  <string name="OnlineVideos.Runtime">זמן ריצה</string>
+  <string name="OnlineVideos.RemoveFromMySites">הסר מרשימת האתרים שלי</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">מחק הכל מהאתרים שלי</string>
+  <string name="OnlineVideos.RestartMediaPortal">הפעל מחדש את מדיה-פורטל!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">מקבל קבצי DLL מרוחקים ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">מקבל רשימת אתרים ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">חפש בהיסטוריה</string>
+  <string name="OnlineVideos.SearchResults">תוצאות חיפוש</string>
+  <string name="OnlineVideos.SelectSource">בחר מקור</string>
+  <string name="OnlineVideos.Sites">אתרים</string>
+  <string name="OnlineVideos.Size">גודל</string>
+  <string name="OnlineVideos.SortOptions">אפשרויות מיון</string>
+  <string name="OnlineVideos.Search">חיפוש</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">אנא הגדר ספריית הורדות מתוכנת ההגדרות!</string>
+  <string name="OnlineVideos.State">מצב</string>
+  <string name="OnlineVideos.SavingLocalSiteList">שומר רשימת אתרים מקומית ...</string>
+  <string name="OnlineVideos.ShowReports">הצג דיווחי יוצר ומשתמשים</string>
+  <string name="OnlineVideos.StartingPlayback">מתחיל לנגן</string>
+  <string name="OnlineVideos.Subscriptions">מנויים</string>
+  <string name="OnlineVideos.Success">הצלחה</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">מסגרת זמן</string>
+  <string name="OnlineVideos.Timeout">חריגה מהזמן שהוקצה</string>
+  <string name="OnlineVideos.Tags">תגיות</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">מעודכנים</string>
+  <string name="OnlineVideos.Updatable">ניתנים לעדכון</string>
+  <string name="OnlineVideos.UpdateAll">עדכן / הוסף הכל</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">עדכן / הוסף הכל (דלג על קטגוריות)</string>
+  <string name="OnlineVideos.UpdateMySite">עדכן אתר שלי</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">עדכן אתר שלי (דלג על קטגוריות)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">פעולה זו תעדכן את כל האתרים שלך.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">לא ניתן לנגן סרט. אין כתובת אינטרנט.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">לא ניתן להוריד סרט. כתובת אינטרנט לא חוקית.</string>
+  <string name="OnlineVideos.UploadsBy">העלאה על ידי</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">סרטים</string>
+  <string name="OnlineVideos.VideoQuality">איכות וידאו</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">עובד</string>
+  <string name="OnlineVideos.Writers">כותבים</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">כן</string>
+  <string name="OnlineVideos.Settings_No">לא</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">כבוי</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">פשוט</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">מורחב</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">תוסף מופעל</string>
+  <string name="OnlineVideos.Settings_ListedInHome">מופיע בעמוד הראשי</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">מופיע ב-\"תוספים שלי\"</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">קבץ אוטומטית את כל האתרים לפי שפה</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">השתמש במקלדת אלפאנומרית על מנת לבחור פריטים לפי האות הראשונה</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">היסטוריית חיפוש</string>
+  <string name="OnlineVideos.Settings_ThumbAge">מס\' (ימים) מקסימלי ל-thumbnails</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">זמן (בדקות) לשמירה במטמון של מידע מהרשת</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">זמן (בדקות) לטעינה מחדש של קטגוריות מהרשת</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">זמן המתנה (בשניות) לבקשות מהרשת</string>
+</resources>

@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Lähetetty</string>
+  <string name="OnlineVideos.AlreadyDownloading">Tiedostoa ladataan jo.</string>
+  <string name="OnlineVideos.All">Kaikki</string>
+  <string name="OnlineVideos.Actions">Toiminnot</string>
+  <string name="OnlineVideos.Actors">Näyttelijät</string>
+  <string name="OnlineVideos.AddComment">Lisää kommentti...</string>
+  <string name="OnlineVideos.AddToPlaylist">Lisää soittolistalle...</string>
+  <string name="OnlineVideos.AddToMySites">Lisää omiin sivuihin</string>
+  <string name="OnlineVideos.AddToFavourites">Lisää suosikkeihin</string>
+  <string name="OnlineVideos.AddingToFavorites">lisätään suosikkeihin</string>
+  <string name="OnlineVideos.AutomaticUpdate">Automaattipäivitys</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Automaattipäivitys pois.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Rikki</string>
+  <string name="OnlineVideos.Buffered">puskuroitu</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Peruuta</string>
+  <string name="OnlineVideos.Category">Kategoria</string>
+  <string name="OnlineVideos.CategoryNotFound">Kategoriaa ei löydy</string>
+  <string name="OnlineVideos.Categories">Kategoriat</string>
+  <string name="OnlineVideos.Creator">Luoja</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Luo uusi soittolista...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">tarkistetaan lisäosan päivitykset</string>
+  <string name="OnlineVideos.Concurrent">samanaikainen</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Pvm</string>
+  <string name="OnlineVideos.DateOfRelease">Julkaisun pvm</string>
+  <string name="OnlineVideos.Directors">Ohjaajat</string>
+  <string name="OnlineVideos.Download">Lataa</string>
+  <string name="OnlineVideos.DownloadUserdefined">Lataa käyttäjän hakemistoon</string>
+  <string name="OnlineVideos.Downloading">Lataa</string>
+  <string name="OnlineVideos.DownloadingDescription">Näyttää nykyisten latausten listan.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">ladataan tekstitystä</string>
+  <string name="OnlineVideos.DownloadFailed">Lataus epäonnistui: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Lataus peruttu</string>
+  <string name="OnlineVideos.DownloadComplete">Lataus valmis</string>
+  <string name="OnlineVideos.DownloadStarted">Lataus aloitettu</string>
+  <string name="OnlineVideos.DownloadedVideos">Ladatut videot</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Lataukset peruutetaan.</string>
+  <string name="OnlineVideos.Delete">Poista</string>
+  <string name="OnlineVideos.DeletePlaylist">Poista soittolista</string>
+  <string name="OnlineVideos.DeleteAll">Poista kaikki</string>
+  <string name="OnlineVideos.Default">Oletus</string>
+  <string name="OnlineVideos.Done">Valmis</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Poistetaan vanhat esikatselukuvat</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Virhe</string>
+  <string name="OnlineVideos.EnterPin">Syötä Pin</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Suosikit</string>
+  <string name="OnlineVideos.Filter">Suodata</string>
+  <string name="OnlineVideos.FullUpdate">Täysi päivitys</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Genre</string>
+  <string name="OnlineVideos.GettingVideoDetails">haetaan videon tiedot</string>
+  <string name="OnlineVideos.GettingCategoryVideos">haetaan kategorian videot</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">haetaan suosikkivideot</string>
+  <string name="OnlineVideos.GettingSearchResults">haetaan hakutulokset</string>
+  <string name="OnlineVideos.GettingRelatedVideos">haetaan liittyvät videot</string>
+  <string name="OnlineVideos.GettingFilteredVideos">haetaan suodatetut videot</string>
+  <string name="OnlineVideos.GettingNextPageVideos">haetaan seuraavan sivun videot</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">haetaan edellisen sivun videot</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">haetaan url-osoitteet videoille</string>
+  <string name="OnlineVideos.GettingDynamicCategories">haetaan dynaamiset kategoriat</string>
+  <string name="OnlineVideos.GettingReports">haetaan raportit verkkopalvelusta</string>
+  <string name="OnlineVideos.GettingSiteXml">haetaan sivun xml verkkopalvelusta</string>
+  <string name="OnlineVideos.GettingIcon">haetaan sivun kuvake verkkopalvelusta</string>
+  <string name="OnlineVideos.GettingBanner">haetaan sivun banneri verkkopalvelusta</string>
+  <string name="OnlineVideos.GettingDll">haetaan dll verkkopalvelusta</string>
+  <string name="OnlineVideos.Groups">Ryhmät</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Tarvitaan viimeisin ({0}) versio!</string>
+  <string name="OnlineVideos.Language">Kieli</string>
+  <string name="OnlineVideos.LayoutList">Asettelu: Lista</string>
+  <string name="OnlineVideos.LayoutIcons">Asettelu: ikonit</string>
+  <string name="OnlineVideos.LayoutBigIcons">Asettelu: Isot ikonit</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Hallitse sivuja</string>
+  <string name="OnlineVideos.MaxResults">Max tuloksia</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Nimi</string>
+  <string name="OnlineVideos.NextPage">Seuraava sivu</string>
+  <string name="OnlineVideos.NewVideos">Uudet videot</string>
+  <string name="OnlineVideos.None">Ei yhtään</string>
+  <string name="OnlineVideos.NoVideoFound">Videota ei löydy</string>
+  <string name="OnlineVideos.NoReportsForSite">Tälle sivulle ei raportteja saatavissa.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Uusi dll ladattu!</string>
+  <string name="OnlineVideos.NewSearch">Uusi haku</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Vain paikalliset</string>
+  <string name="OnlineVideos.OnlyServer">Vain palvelin</string>
+  <string name="OnlineVideos.Others">Muut</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Toista kaikki</string>
+  <string name="OnlineVideos.PlayAllRandom">Toista kaikki (satunnainen järjestys)</string>
+  <string name="OnlineVideos.PlayWith">Toista ohjelmalla...</string>
+  <string name="OnlineVideos.Playlists">Soittolistat</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Toisto pysäytetään.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Anna lyhyt kuvaus.</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Päivitä ja testaa uudelleen sivusi ennenkuin raportoit sen olevan hajalla.</string>
+  <string name="OnlineVideos.PlotOutline">Juonen kuvaus</string>
+  <string name="OnlineVideos.PreviousPage">Edellinen sivu</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Suorita automaattipäivitys?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">jonossa</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Arvostele video...</string>
+  <string name="OnlineVideos.Recommendations">Suositukset</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Poista suosikeista</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Poista soittolistalta</string>
+  <string name="OnlineVideos.RemovingFromFavorites">poistetaan suosikeista</string>
+  <string name="OnlineVideos.Refresh">Päivitä</string>
+  <string name="OnlineVideos.RelatedVideos">Liittyvät videot</string>
+  <string name="OnlineVideos.ReportBroken">Raportoi toimimattomaksi</string>
+  <string name="OnlineVideos.Reported">Raportoitu</string>
+  <string name="OnlineVideos.Reports">Raportit</string>
+  <string name="OnlineVideos.Runtime">Toistoaika</string>
+  <string name="OnlineVideos.RemoveFromMySites">Poista omista sivuista</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Poista kaikki omista sivuista</string>
+  <string name="OnlineVideos.RestartMediaPortal">Uudelleenkäynnistä MediaPortal!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Haetaan etä-dll:t ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Haetaan etä-sivustot ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Hakuhistoria</string>
+  <string name="OnlineVideos.SearchResults">Hakutulokset</string>
+  <string name="OnlineVideos.SelectSource">Valitse lähde</string>
+  <string name="OnlineVideos.Sites">Sivut</string>
+  <string name="OnlineVideos.Size">Koko</string>
+  <string name="OnlineVideos.SortOptions">Lajitteluasetukset</string>
+  <string name="OnlineVideos.Search">Haku</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Aseta latauskansio asetuksista!</string>
+  <string name="OnlineVideos.State">Tila</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Tallennetaan paikallinen sivujen lista ...</string>
+  <string name="OnlineVideos.ShowReports">Näytä tekijän ja käyttäjien raportit</string>
+  <string name="OnlineVideos.StartingPlayback">aloitetaan toisto</string>
+  <string name="OnlineVideos.Subscriptions">Tilaukset</string>
+  <string name="OnlineVideos.Success">Onnistui</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Etsi liittyviä avainsanoja</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Aikajakso</string>
+  <string name="OnlineVideos.Timeout">Aikakatkaisu</string>
+  <string name="OnlineVideos.Tags">Tagit</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Päivitetty</string>
+  <string name="OnlineVideos.Updatable">Päivitettävissä</string>
+  <string name="OnlineVideos.UpdateAll">Päivitä/lisää kaikki</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Päivitä/lisää kaikki (ohita kategoriat)</string>
+  <string name="OnlineVideos.UpdateMySite">Päivitä sivuni</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Päivitä sivustoni (ohita kategoriat)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Tämä päivittää kaikki nykyiset sivustosi.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Toisto ei onnistu. Ei URL-osoitetta.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Lataus ei onnistu. Epäkelpo URL.</string>
+  <string name="OnlineVideos.UploadsBy">lataukset käyttäjältä</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Videot</string>
+  <string name="OnlineVideos.VideoQuality">Videon laatu</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Toimii</string>
+  <string name="OnlineVideos.Writers">Kirjoittajat</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Kyllä</string>
+  <string name="OnlineVideos.Settings_No">Ei</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Pois</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Yksinkertainen</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Pidennetty</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Kotiruudun nimi</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Lisäosa käytössä</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Listattu Kotiruudussa</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">Näytetään omissa lisäosissa</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Ryhmittele sivut automaattisesti kielen perusteella</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Käytä numeronäppäimiä valitaksesi ensimmäisen kirjaimen perusteella</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Hakuhistoria</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Maksimi ikä (päiviä) kuvakkeille</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Aika (minuutteja) joka puskuroidaan</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Aika (minuuttia) jonka jälkeen katekoriat päivitetään webistä</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Aikakatkaisu verkkopyynnöille (sekunteina)</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Puskuroi (millisekuntia) Windows Media Playerille</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Puskuroi (prosenttia) ennen toiston aloittamista</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Ota käyttöön dynaaminen ruudunpäivityksen mukautus</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">Aseta suosikit ja lataukset listan ensimmäiseksi viimeisen sijaan</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Kuinka monta viimeisintä videota näytetään</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Sekoita viimeksi lisätyt videot ennen näyttämistä</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Päivitä viimeisimpien videoiden tiedot palvelimelta x miinutin välein</string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Päivitä näytettävät viimeisimmät videot x sekunnin välein</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Muista näkymän layout sivua tai kategoriaa kohti</string>
+</resources>

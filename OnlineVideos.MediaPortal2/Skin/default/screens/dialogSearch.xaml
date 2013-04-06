@@ -7,7 +7,7 @@
     <Include.Resources>
 
         <!-- Header -->
-        <ResourceWrapper x:Key="Dialog_Header_Text" Resource="Search"/>
+		<ResourceWrapper x:Key="Dialog_Header_Text" Resource="[OnlineVideos.Search]"/>
 
         <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
 

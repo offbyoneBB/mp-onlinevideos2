@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Ausstrahlung</string>
+  <string name="OnlineVideos.AlreadyDownloading">Video lädt bereits herunter.</string>
+  <string name="OnlineVideos.All">Alle</string>
+  <string name="OnlineVideos.Actions">Aktionen</string>
+  <string name="OnlineVideos.Actors">Darsteller</string>
+  <string name="OnlineVideos.AddComment">Kommentar abgeben ...</string>
+  <string name="OnlineVideos.AddToPlaylist">Zu Playlist hinzufügen ...</string>
+  <string name="OnlineVideos.AddToMySites">Zu meinen Sites hinzufügen</string>
+  <string name="OnlineVideos.AddToFavourites">Zu den Favoriten hinzufügen</string>
+  <string name="OnlineVideos.AddingToFavorites">beim Hinzufügen zu den Favoriten</string>
+  <string name="OnlineVideos.AutomaticUpdate">Automatische Aktualisierung</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Automatische Aktualisierung deaktiviert.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Defekt</string>
+  <string name="OnlineVideos.Buffered">gepuffert</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Abbrechen</string>
+  <string name="OnlineVideos.Category">Rubrik</string>
+  <string name="OnlineVideos.CategoryNotFound">Rubrik nicht gefunden</string>
+  <string name="OnlineVideos.Categories">Rubriken</string>
+  <string name="OnlineVideos.Creator">Ersteller</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Neue Playlist erstellen ...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">beim Überprüfen auf aktuelle Version des Plugins</string>
+  <string name="OnlineVideos.Concurrent">Gleichzeitig</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Datum</string>
+  <string name="OnlineVideos.DateOfRelease">Erscheinungsdatum</string>
+  <string name="OnlineVideos.Directors">Regisseure</string>
+  <string name="OnlineVideos.Download">Herunterladen</string>
+  <string name="OnlineVideos.DownloadUserdefined">Herunterladen (spezieller Ordner)</string>
+  <string name="OnlineVideos.Downloading">Ladend</string>
+  <string name="OnlineVideos.DownloadingDescription">Liste der aktuell herunterladenden Videos.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">Untertitel herunterladen</string>
+  <string name="OnlineVideos.DownloadFailed">Herunterladen fehlgeschlagen: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Herunterladen abgebrochen</string>
+  <string name="OnlineVideos.DownloadComplete">Herunterladen beendet</string>
+  <string name="OnlineVideos.DownloadStarted">Herunterladen begonnen</string>
+  <string name="OnlineVideos.DownloadedVideos">Heruntergeladene Videos</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Downloads werden abgebrochen.</string>
+  <string name="OnlineVideos.Delete">Löschen</string>
+  <string name="OnlineVideos.DeletePlaylist">Playlist löschen</string>
+  <string name="OnlineVideos.DeleteAll">Alle Löschen</string>
+  <string name="OnlineVideos.Default">Standard</string>
+  <string name="OnlineVideos.Done">Fertig</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Alte Miniaturbilder werden gelöscht</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Fehler</string>
+  <string name="OnlineVideos.EnterPin">Pin eingeben</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Favoriten</string>
+  <string name="OnlineVideos.Filter">Filter</string>
+  <string name="OnlineVideos.FullUpdate">Komplettaktualisierung</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Genre</string>
+  <string name="OnlineVideos.GettingVideoDetails">beim Abrufen der Videodetails</string>
+  <string name="OnlineVideos.GettingCategoryVideos">beim Abrufen der Videos dieser Rubrik</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">beim Abrufen der Favoriten</string>
+  <string name="OnlineVideos.GettingSearchResults">beim Abrufen der Suchergebnisse</string>
+  <string name="OnlineVideos.GettingRelatedVideos">beim Abrufen der ähnlichen Videos</string>
+  <string name="OnlineVideos.GettingFilteredVideos">beim Abrufen der gefilterten Ergebnisse</string>
+  <string name="OnlineVideos.GettingNextPageVideos">beim Abrufen der Videos der nächsten Seite</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">beim Abrufen der Videos der vorherigen Seite</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">beim Abrufen der Abspieladressen</string>
+  <string name="OnlineVideos.GettingDynamicCategories">beim Abrufen der dynamischen Rubriken</string>
+  <string name="OnlineVideos.GettingReports">beim Abrufen der Meldungen</string>
+  <string name="OnlineVideos.GettingSiteXml">beim Abrufen der Site vom Server</string>
+  <string name="OnlineVideos.GettingIcon">beim Abrufen des Icons vom Server</string>
+  <string name="OnlineVideos.GettingBanner">beim Abrufen des Banners vom Server</string>
+  <string name="OnlineVideos.GettingDll">beim Herunterladen der DLL vom Server</string>
+  <string name="OnlineVideos.Groups">Gruppen</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Neueste Version ({0}) erforderlich!</string>
+  <string name="OnlineVideos.Language">Sprache</string>
+  <string name="OnlineVideos.LayoutList">Ansicht: Liste</string>
+  <string name="OnlineVideos.LayoutIcons">Ansicht: Symbole klein</string>
+  <string name="OnlineVideos.LayoutBigIcons">Ansicht: Symbole groß</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Sites verwalten</string>
+  <string name="OnlineVideos.MaxResults">Max. Ergebnisse</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Name</string>
+  <string name="OnlineVideos.NextPage">Nächste Seite</string>
+  <string name="OnlineVideos.NewVideos">Neue Videos</string>
+  <string name="OnlineVideos.None">None</string>
+  <string name="OnlineVideos.NoVideoFound">Keine Videos gefunden</string>
+  <string name="OnlineVideos.NoReportsForSite">Keine Meldungen für diese Site vorhanden.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Neue DLL heruntergeladen!</string>
+  <string name="OnlineVideos.NewSearch">Neue Suche</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Nur Lokale</string>
+  <string name="OnlineVideos.OnlyServer">Nur auf Server</string>
+  <string name="OnlineVideos.Others">Sonstige</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Alle abspielen</string>
+  <string name="OnlineVideos.PlayAllFromHere">Alle abspielen (hier beginnen)</string>
+  <string name="OnlineVideos.PlayAllRandom">Alle abspielen (zufällige Reihenfolge)</string>
+  <string name="OnlineVideos.PlayWith">Abspielen mit ...</string>
+  <string name="OnlineVideos.Playlists">Playlists</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Abspielen wird gestoppt.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Bitte kurze Beschreibung eingeben!</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Bitte aktualisiere und teste deine lokale Site bevor du sie fehlerhaft meldest.</string>
+  <string name="OnlineVideos.PlotOutline">Handlung</string>
+  <string name="OnlineVideos.PreviousPage">Vorherige Seite</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Automatische Aktualisierung ausführen?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">Nacheinander</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Video bewerten ...</string>
+  <string name="OnlineVideos.Recommendations">Empfehlungen</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Von den Favoriten entfernen</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Von Playlist entfernen</string>
+  <string name="OnlineVideos.RemovingFromFavorites">beim Entfernen von den Favoriten</string>
+  <string name="OnlineVideos.Refresh">Ansicht aktualisieren</string>
+  <string name="OnlineVideos.RelatedVideos">Ähnliche Videos</string>
+  <string name="OnlineVideos.ReportBroken">Als fehlerhaft melden</string>
+  <string name="OnlineVideos.Reported">Gemeldet</string>
+  <string name="OnlineVideos.Reports">Meldungen</string>
+  <string name="OnlineVideos.Runtime">Laufzeit</string>
+  <string name="OnlineVideos.RemoveFromMySites">Aus meinen Sites entfernen</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Alle aus meinen Sites entfernen</string>
+  <string name="OnlineVideos.RestartMediaPortal">Bitte MediaPortal neu starten!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Lade DLLs vom Server ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Lade Sites vom Server ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Suchverlauf</string>
+  <string name="OnlineVideos.SearchResults">Suchergebnisse</string>
+  <string name="OnlineVideos.SelectSource">Quelle wählen</string>
+  <string name="OnlineVideos.Sites">Sites</string>
+  <string name="OnlineVideos.Size">Größe</string>
+  <string name="OnlineVideos.SortOptions">Sortierung</string>
+  <string name="OnlineVideos.Search">Suchen</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Bitte einen Ordner für Downloads in der Konfiguration wählen!</string>
+  <string name="OnlineVideos.State">Status</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Speichere lokale Sites ...</string>
+  <string name="OnlineVideos.ShowReports">Meldungen von Benutzern und Ersteller anzeigen</string>
+  <string name="OnlineVideos.StartingPlayback">beim Starten des Abspielens</string>
+  <string name="OnlineVideos.Subscriptions">Abonnements</string>
+  <string name="OnlineVideos.Success">Erfolg</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Suche nach Schlüsselwörtern</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Zeitraum</string>
+  <string name="OnlineVideos.Timeout">Zeitüberschreitung</string>
+  <string name="OnlineVideos.Tags">Schlagworte</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Aktualisiert</string>
+  <string name="OnlineVideos.Updatable">Aktualisierbar</string>
+  <string name="OnlineVideos.UpdateAll">Alle aktualisieren/hinzufügen</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Alle aktualisieren/hinzufügen (Rubriken überspringen)</string>
+  <string name="OnlineVideos.UpdateMySite">Diese Site aktualisieren</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Diese Site aktualisieren (Rubriken überspringen)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Es werden nur vorhandene Sites aktualisiert.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Video kann nicht wiedergegeben werden. Keine URL.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Video kann nicht heruntergeladen werden. Ungültige URL.</string>
+  <string name="OnlineVideos.UploadsBy">Hochgeladene Videos von</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Videos</string>
+  <string name="OnlineVideos.VideoQuality">Video Qualität</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Funktionierend</string>
+  <string name="OnlineVideos.Writers">Autoren</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Ja</string>
+  <string name="OnlineVideos.Settings_No">Nein</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Kein Verlauf</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Letzte Suche</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Liste der letzten</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Name im BasicHome Fenster</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Erweiterung Aktiviert</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Aufgelisted im Home Menü</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">Aufgelisted im Erweiterungen Menü</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Automatisch alle Sites nach Sprache gruppieren</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Buchstaben- und Zahlentasten zum Springen in Auflistungen verwenden</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Suchverlauf</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Maximales Alter (Tage) bevor Miniaturbilder gelöscht werden</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Dauer (Minuten) für die Internetdaten zwischengespeichert werden</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Dauer (Minuten) nach der Rubriken neu geladen werden</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Dauer (Sekunden) nach welcher Internetaufrufe abgebrochen werden</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Puffer (Millisekunden) für abzuspielenden Dateien mit WindowsMediaPlayer</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Puffer (Prozent) für abzuspielende Dateien</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Nutze dynamische Anpassung der Bildwiederholfrequenz</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">Favorites und Downloads am Start der Liste</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Anzahl Videos die als neu angezeigt werden sollen</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Zufällige Anordnung der neuesten Videos</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Aktualisierung (Minuten) der neuesten Videos aus dem Internet</string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Aktualisierung (Sekunden) der Anzeige der neuesten Videos</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Ansicht für jede Rubrik und Site speichern</string>
+</resources>

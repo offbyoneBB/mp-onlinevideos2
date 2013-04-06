@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Προβλήθηκε</string>
+  <string name="OnlineVideos.AlreadyDownloading">Αυτό το αρχείο μεταφορτώνεται ήδη.</string>
+  <string name="OnlineVideos.All">Όλα</string>
+  <string name="OnlineVideos.Actions">Ενέργειες</string>
+  <string name="OnlineVideos.Actors">Ηθοποιοί</string>
+  <string name="OnlineVideos.AddToMySites">Προσθήκη στις ιστοσελίδες μου</string>
+  <string name="OnlineVideos.AddToFavourites">Προσθήκη στα αγαπημένα</string>
+  <string name="OnlineVideos.AddingToFavorites">Γίνεται προσθήκη στα αγαπημένα</string>
+  <string name="OnlineVideos.AutomaticUpdate">Αυτόματη ενημέρωση</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Αυτόματη ενημέρωση απενεργοποιημένη.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Μη ολοκληρωμένο</string>
+  <string name="OnlineVideos.Buffered">προσωρινά αποθηκευμένο</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Άκυρο</string>
+  <string name="OnlineVideos.Category">Κατηγορία</string>
+  <string name="OnlineVideos.Categories">Κατηγορίες</string>
+  <string name="OnlineVideos.Creator">Δημιουργός</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">γίνεται έλεγχος για ενημερώσεις του πρόσθετου</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Ημερομηνία</string>
+  <string name="OnlineVideos.DateOfRelease">Ημερομηνία έκδοσης</string>
+  <string name="OnlineVideos.Directors">Σκηνοθέτες</string>
+  <string name="OnlineVideos.Download">Μεταφόρτωση</string>
+  <string name="OnlineVideos.Downloading">Γίνεται μεταφόρτωση</string>
+  <string name="OnlineVideos.DownloadingDescription">Προβολή λίστας με τις τρέχουσες μεταφορτώσεις.</string>
+  <string name="OnlineVideos.DownloadFailed">Αποτυχία μεταφόρτωσης: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Η μεταφόρτωση ακυρώθηκε</string>
+  <string name="OnlineVideos.DownloadComplete">Η μεταφόρτωση ολοκληρώθηκε</string>
+  <string name="OnlineVideos.DownloadStarted">Η μεταφόρτωση ξεκίνησε</string>
+  <string name="OnlineVideos.DownloadedVideos">Μεταφορτωμένα βίντεο</string>
+  <string name="OnlineVideos.Delete">Διαγραφή</string>
+  <string name="OnlineVideos.DeleteAll">Διαγραφή όλων</string>
+  <string name="OnlineVideos.Default">Προκαθορισμένο</string>
+  <string name="OnlineVideos.Done">Έγινε</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Διαγραφή παλαιών μικρογραφιών</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Σφάλμα</string>
+  <string name="OnlineVideos.EnterPin">Εισάγετε Pin</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Αγαπημένα</string>
+  <string name="OnlineVideos.Filter">Φίλτρο</string>
+  <string name="OnlineVideos.FullUpdate">Πλήρης ενημέρωση</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Είδος</string>
+  <string name="OnlineVideos.GettingVideoDetails">ανάκτηση λεπτομερειών του βίντεο</string>
+  <string name="OnlineVideos.GettingCategoryVideos">ανάκτηση βίντεο για την κατηγορία</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">ανάκτηση αγαπημένων βίντεο</string>
+  <string name="OnlineVideos.GettingSearchResults">ανάκτηση αποτελεσμάτων αναζήτησης</string>
+  <string name="OnlineVideos.GettingRelatedVideos">ανάκτηση σχετικών βίντεο</string>
+  <string name="OnlineVideos.GettingFilteredVideos">ανάκτηση φιλτραρισμένων βίντεο</string>
+  <string name="OnlineVideos.GettingNextPageVideos">ανάκτηση βίντεο της επόμενης σελίδας</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">ανάκτηση βίντεο της προηγούμενης σελίδας</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">ανάκτηση urls αναπαραγωγής για το βίντεο</string>
+  <string name="OnlineVideos.GettingDynamicCategories">ανάκτηση δυναμικών κατηγοριών</string>
+  <string name="OnlineVideos.GettingReports">ανάκτηση αναφορών από την υπηρεσία web</string>
+  <string name="OnlineVideos.GettingSiteXml">ανάκτηση του xml της ιστοσελίδας από την υπηρεσία web</string>
+  <string name="OnlineVideos.GettingIcon">ανάκτηση του εικονιδίου της ιστοσελίδας από την υπηρεσία web</string>
+  <string name="OnlineVideos.GettingBanner">ανάκτηση του banner της ιστοσελίδας από την υπηρεσία web</string>
+  <string name="OnlineVideos.GettingDll">ανάκτηση του dll από την υπηρεσία web</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Απαιτείται η τελευταία έκδοση ({0})!</string>
+  <string name="OnlineVideos.Language">Γλώσσα</string>
+  <string name="OnlineVideos.LayoutList">Διάταξη: Λίστα</string>
+  <string name="OnlineVideos.LayoutIcons">Διάταξη: Εικονίδια</string>
+  <string name="OnlineVideos.LayoutBigIcons">Διάταξη: Μεγάλα εικονίδια</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Διαχείριση ιστοσελίδων</string>
+  <string name="OnlineVideos.MaxResults">Μέγιστος αριθμός αποτελεσμάτων</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Όνομα</string>
+  <string name="OnlineVideos.NextPage">Επόμενη σελίδα</string>
+  <string name="OnlineVideos.None">Κανένα</string>
+  <string name="OnlineVideos.NoVideoFound">Δεν βρέθηκαν βίντεο</string>
+  <string name="OnlineVideos.NoReportsForSite">Δεν υπάρχουν διαθέσιμες αναφορές για αυτή την ιστοσελίδα.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Μεταφορτώθηκε νέο dll!</string>
+  <!--O-->
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Αναπαραγωγή όλων</string>
+  <string name="OnlineVideos.PlotOutline">Πλοκή</string>
+  <string name="OnlineVideos.PreviousPage">Προηγούμενη σελίδα</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Να γίνει αυτόματη ενημέρωση;</string>
+  <!--Q-->
+  <!--R-->
+  <string name="OnlineVideos.RemoveFromFavorites">Αφαίρεση από τα αγαπημένα</string>
+  <string name="OnlineVideos.RemovingFromFavorites">Γίνεται αφαίρεση από τα αγαπημένα</string>
+  <string name="OnlineVideos.Refresh">Ανανέωση</string>
+  <string name="OnlineVideos.RelatedVideos">Σχετικά βίντεο</string>
+  <string name="OnlineVideos.Reported">Αναφέρθηκαν</string>
+  <string name="OnlineVideos.Runtime">Διάρκεια</string>
+  <string name="OnlineVideos.RemoveFromMySites">Αφαίρεση από τις ιστοσελίδες μου</string>
+  <string name="OnlineVideos.RestartMediaPortal">Επανεκκινήστε το MediaPortal!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Ανάκτηση απομακρυσμένων dlls ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Ανάκτηση απομακρυσμένων ιστοσελίδων ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchResults">Αποτελέσματα αναζήτησης</string>
+  <string name="OnlineVideos.SelectSource">Επιλέξτε πηγή</string>
+  <string name="OnlineVideos.Sites">Ιστοσελίδες</string>
+  <string name="OnlineVideos.Size">Μέγεθος</string>
+  <string name="OnlineVideos.SortOptions">Επιλογές ταξινόμησης</string>
+  <string name="OnlineVideos.Search">Αναζήτηση</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Παρακαλώ ορίστε φάκελο για τις μεταφορτώσεις στις ρυθμίσεις!</string>
+  <string name="OnlineVideos.State">Κατάσταση</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Αποθήκευση λίστας ιστοσελίδων τοπικά ...</string>
+  <string name="OnlineVideos.ShowReports">Προβολή αναφορών δημιουργού και χρηστών</string>
+  <string name="OnlineVideos.StartingPlayback">εκκίνηση αναπαραγωγής</string>
+  <string name="OnlineVideos.Subscriptions">Συνδρομές</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Χρονοδιάγραμμα</string>
+  <string name="OnlineVideos.Timeout">Εξάντληση χρονικού περιθωρίου</string>
+  <string name="OnlineVideos.Tags">Ετικέτες</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Ενημερώθηκε</string>
+  <string name="OnlineVideos.Updatable">Δυνατή η ενημέρωση</string>
+  <string name="OnlineVideos.UpdateMySite">Ενημέρωση της ιστοσελίδας μου</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Ενημέρωση της ιστοσελίδας μου (παράληψη κατηγοριών)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Θα γίνει ενημέρωση όλων των τρέχουσων ιστοσελίδων σας.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Αδύνατη η αναπαραγωγή. Δεν βρέθηκε το URL.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Αδύνατη η μεταφόρτωση. Μη έγκυρο URL.</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Βίντεο</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Περιμένετε</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+</resources>

@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Vysielané</string>
+  <string name="OnlineVideos.AlreadyDownloading">Tento súbor sa už sťahuje.</string>
+  <string name="OnlineVideos.All">Všetko</string>
+  <string name="OnlineVideos.Actions">Akcie</string>
+  <string name="OnlineVideos.Actors">Herci</string>
+  <string name="OnlineVideos.AddComment">Pridať poznámku ...</string>
+  <string name="OnlineVideos.AddToPlaylist">Pridať do zoznamu na prehratie ...</string>
+  <string name="OnlineVideos.AddToMySites">Pridať k mojim stránkám</string>
+  <string name="OnlineVideos.AddToFavourites">Pridať k obľúbeným</string>
+  <string name="OnlineVideos.AddingToFavorites">pridávam k obľúbeným</string>
+  <string name="OnlineVideos.AutomaticUpdate">Automatická aktualizácia</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Automatická aktualizácia vypnutá.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Nefungujúce</string>
+  <string name="OnlineVideos.Buffered">načítané</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Zrušiť</string>
+  <string name="OnlineVideos.Category">Kategória</string>
+  <string name="OnlineVideos.CategoryNotFound">Kategória nenájdená</string>
+  <string name="OnlineVideos.Categories">Kategórie</string>
+  <string name="OnlineVideos.Creator">Autor</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Vytvoriť nový zoznam na prehratie ...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">kontrolujem nové verzie modulov</string>
+  <string name="OnlineVideos.Concurrent">naraz</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Dátum</string>
+  <string name="OnlineVideos.DateOfRelease">Dátum vydania</string>
+  <string name="OnlineVideos.Directors">Režiséri</string>
+  <string name="OnlineVideos.Download">Stiahnuť</string>
+  <string name="OnlineVideos.DownloadUserdefined">Stiahnuť do užívateľovho adresára</string>
+  <string name="OnlineVideos.Downloading">Sťahujem</string>
+  <string name="OnlineVideos.DownloadingDescription">Zobrazí zoznam momentálne sťahovaných videí.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">sťahujem titulky</string>
+  <string name="OnlineVideos.DownloadFailed">Sťahovanie neúspešné: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Sťahovanie zrušené</string>
+  <string name="OnlineVideos.DownloadComplete">Sťahovanie skončené</string>
+  <string name="OnlineVideos.DownloadStarted">Sťahovanie začaté</string>
+  <string name="OnlineVideos.DownloadedVideos">Stiahnuté videá</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Sťahovanie bude zrušené.</string>
+  <string name="OnlineVideos.Delete">Vymazať</string>
+  <string name="OnlineVideos.DeletePlaylist">Vymazať zoznam na prehratie</string>
+  <string name="OnlineVideos.DeleteAll">Vymazať všetko</string>
+  <string name="OnlineVideos.Default">Predvolené</string>
+  <string name="OnlineVideos.Done">Hotovo</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Vymazávam staré náhľady</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Error</string>
+  <string name="OnlineVideos.EnterPin">Zadaj Pin</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Obľúbené</string>
+  <string name="OnlineVideos.Filter">Filter</string>
+  <string name="OnlineVideos.FullUpdate">Úplná aktualizácia</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Genre</string>
+  <string name="OnlineVideos.GettingVideoDetails">getting video details</string>
+  <string name="OnlineVideos.GettingCategoryVideos">getting category videos</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">getting favorite videos</string>
+  <string name="OnlineVideos.GettingSearchResults">getting search results</string>
+  <string name="OnlineVideos.GettingRelatedVideos">getting related videos</string>
+  <string name="OnlineVideos.GettingFilteredVideos">getting filtered videos</string>
+  <string name="OnlineVideos.GettingNextPageVideos">getting next page videos</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">getting previous page videos</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">getting playback urls for video</string>
+  <string name="OnlineVideos.GettingDynamicCategories">getting dynamic categories</string>
+  <string name="OnlineVideos.GettingReports">getting reports from webservice</string>
+  <string name="OnlineVideos.GettingSiteXml">getting site xml from webservice</string>
+  <string name="OnlineVideos.GettingIcon">getting site icon from webservice</string>
+  <string name="OnlineVideos.GettingBanner">getting site banner from webservice</string>
+  <string name="OnlineVideos.GettingDll">getting dll from webservice</string>
+  <string name="OnlineVideos.Groups">Skupiny</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Je potrebná najnovšia verzia ({0})!</string>
+  <string name="OnlineVideos.Language">Jazyk</string>
+  <string name="OnlineVideos.LayoutList">Vzhľad: Zoznam</string>
+  <string name="OnlineVideos.LayoutIcons">Vzhľad: Ikony</string>
+  <string name="OnlineVideos.LayoutBigIcons">Vzhľad: Veľké ikony</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Spravovať videá</string>
+  <string name="OnlineVideos.MaxResults">Počet výsledkov</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Meno</string>
+  <string name="OnlineVideos.NextPage">Ďalšia strana</string>
+  <string name="OnlineVideos.NewVideos">Nové videá</string>
+  <string name="OnlineVideos.None">Nič</string>
+  <string name="OnlineVideos.NoVideoFound">Žiadne video nebolo nájdené</string>
+  <string name="OnlineVideos.NoReportsForSite">Žiadne recenzie pre túto stránku nie sú k dispozícii.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Nová DLL stiahnutá!</string>
+  <string name="OnlineVideos.NewSearch">Nové hľadanie</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Len lokálne</string>
+  <string name="OnlineVideos.OnlyServer">Len na serveri</string>
+  <string name="OnlineVideos.Others">Iné</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Prehrať všetko</string>
+  <string name="OnlineVideos.PlayAllRandom">Prehrať všetko (náhodne)</string>
+  <string name="OnlineVideos.PlayWith">Prehrať s ...</string>
+  <string name="OnlineVideos.Playlists">Zoznamy na prehratie</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Prehrávanie bude zastavené.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Prosím zadajte krátky popis.</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Aktualizujte a znovu otestuje vašu lokalitu, než bude nahlásená ako nefunkčná.</string>
+  <string name="OnlineVideos.PlotOutline">Obsah</string>
+  <string name="OnlineVideos.PreviousPage">Predchádzajúca strana</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Uskutočniť automatickú aktualizáciu?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">zaradené</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Ohodnotiť video ...</string>
+  <string name="OnlineVideos.Recommendations">Odporúčania</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Odstrániť z obľúbených</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Odstrániť zo zoznamu na prehratie</string>
+  <string name="OnlineVideos.RemovingFromFavorites">odstraňujem z obľúbených</string>
+  <string name="OnlineVideos.Refresh">Obnoviť</string>
+  <string name="OnlineVideos.RelatedVideos">Príbuzné videá</string>
+  <string name="OnlineVideos.ReportBroken">Oznámiť pokazené</string>
+  <string name="OnlineVideos.Reported">Recenzované</string>
+  <string name="OnlineVideos.Reports">Reporty</string>
+  <string name="OnlineVideos.Runtime">Dĺžka</string>
+  <string name="OnlineVideos.RemoveFromMySites">Odstrániť z mojich stránok</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Odstrániť všetko z mojich stránok</string>
+  <string name="OnlineVideos.RestartMediaPortal">Reštaruj MediaPortal!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Získavam vzdialené DLL ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Získavam vzdialené stránky ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">História hľadania</string>
+  <string name="OnlineVideos.SearchResults">Výsledky hľadania</string>
+  <string name="OnlineVideos.SelectSource">Vyber zdroj</string>
+  <string name="OnlineVideos.Sites">Stránky</string>
+  <string name="OnlineVideos.Size">Veľkosť</string>
+  <string name="OnlineVideos.SortOptions">Trediť podľa</string>
+  <string name="OnlineVideos.Search">Hľadať</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Nastav v konfigurácii adresár pre sťahovanie!</string>
+  <string name="OnlineVideos.State">Stav</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Ukladám zoznam lokálnych stránok ...</string>
+  <string name="OnlineVideos.ShowReports">Zobraz autorské a užívateľské recenzie</string>
+  <string name="OnlineVideos.StartingPlayback">spúšťam prehrávanie</string>
+  <string name="OnlineVideos.Subscriptions">odoberania</string>
+  <string name="OnlineVideos.Success">Úspech</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Hľadať súvisiace slová</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Časové obdobie</string>
+  <string name="OnlineVideos.Timeout">Timeout</string>
+  <string name="OnlineVideos.Tags">Tagy</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Aktualizované</string>
+  <string name="OnlineVideos.Updatable">Aktualizovateľné</string>
+  <string name="OnlineVideos.UpdateAll">Aktualizovať/Pridať všetky</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Aktualizovať/Pridať všetky (preskočiť kategórie)</string>
+  <string name="OnlineVideos.UpdateMySite">Aktualizovať stránku</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Aktualizovať stránku (preskočiť kategórie)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Toto aktualizuje všetky tvoje stránky.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Nie je možné prehrať video. Žiadna adresa URL.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Nie je možné stiahnuť video. Nesprávna adresa URL.</string>
+  <string name="OnlineVideos.UploadsBy">nahrané</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Videá</string>
+  <string name="OnlineVideos.VideoQuality">Kvalita videa</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Fungujúce</string>
+  <string name="OnlineVideos.Writers">Scenáristi</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Áno</string>
+  <string name="OnlineVideos.Settings_No">Nie</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Vypnutá</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Jednoduchá</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Rozšírená</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Názov v hlavnom menu</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Doplnok zapnutý</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Zobrazený v hlavnom menu</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">Zobrazený v doplnkoch</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Automaticky združovať všetky stránky podľa ich jazyka</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Použiť alfanumerické klávesy na rýchly výber položiek pomocou prvého písmena</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">História hľadania</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Maximálny čas (dni) pre uloženie náhľadov</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Čas (minúty) pre dočasné uloženie dát z internetu</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Čas (minúty), po ktorom sú kategórie znova načítané z internetu</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Časový limit (sekundy) pre webové požiadavky</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Veľkosť vyrovnávacej pamäte (milisekundy) pre Windows Media Player</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Percento stiahnutých dát pred začatím prehrávania</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Povoliť dynamické zmeny obnovovacej frekvencie</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">Dať Obľúbené a Stiahnuté videá na prvé miesta</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Počet zobrazených najnovších videí</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Náhodne zoradiť najnovšie videá pred zobrazením</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Obnov najnovšie videá z internetu každých x minút</string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Obnov posledne zobrazené videá každých x sekúnd</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Zapamätať výzor pre stránku a kategóriu</string>
+</resources>

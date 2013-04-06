@@ -82,7 +82,33 @@
     <Compile Include="ViewModels\VideoViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Language\strings_bg.xml" />
+    <Content Include="Language\strings_ca.xml" />
+    <Content Include="Language\strings_cs.xml" />
+    <Content Include="Language\strings_da.xml" />
+    <Content Include="Language\strings_de.xml" />
+    <Content Include="Language\strings_el.xml" />
     <Content Include="Language\strings_en.xml" />
+    <Content Include="Language\strings_es.xml" />
+    <Content Include="Language\strings_et.xml" />
+    <Content Include="Language\strings_fi.xml" />
+    <Content Include="Language\strings_fr.xml" />
+    <Content Include="Language\strings_he.xml" />
+    <Content Include="Language\strings_hi.xml" />
+    <Content Include="Language\strings_hr.xml" />
+    <Content Include="Language\strings_id.xml" />
+    <Content Include="Language\strings_is.xml" />
+    <Content Include="Language\strings_it.xml" />
+    <Content Include="Language\strings_lt.xml" />
+    <Content Include="Language\strings_nl.xml" />
+    <Content Include="Language\strings_no.xml" />
+    <Content Include="Language\strings_pl.xml" />
+    <Content Include="Language\strings_ru.xml" />
+    <Content Include="Language\strings_sk.xml" />
+    <Content Include="Language\strings_sl.xml" />
+    <Content Include="Language\strings_sv.xml" />
+    <Content Include="Language\strings_tr.xml" />
+    <Content Include="Language\strings_zh.xml" />
     <Content Include="plugin.xml">
       <SubType>Designer</SubType>
     </Content>

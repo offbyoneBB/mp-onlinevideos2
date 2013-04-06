@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <!--B-->
+  <!--C-->
+  <!--D-->
+  <!--E-->
+  <!--F-->
+  <!--G-->
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Posljednja verzija ({0}) potrebna!</string>
+  <string name="OnlineVideos.Language">Jezik</string>
+  <!--M-->
+  <!--N-->
+  <!--O-->
+  <!--P-->
+  <!--Q-->
+  <!--R-->
+  <!--S-->
+  <string name="OnlineVideos.SelectSource">Izaberi izvor</string>
+  <string name="OnlineVideos.Subscriptions">Pretplate</string>
+  <!--T-->
+  <!--U-->
+  <!--V-->
+  <string name="OnlineVideos.VideoQuality">Video Kvaliteta</string>
+  <!--W-->
+  <!--Y-->
+  <!--Strings from the settings file-->
+</resources>

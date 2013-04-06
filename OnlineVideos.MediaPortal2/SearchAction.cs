@@ -11,7 +11,7 @@ namespace OnlineVideos.MediaPortal2
 
         public SearchAction()
         {
-            _displayTitle = LocalizationHelper.CreateResourceString("Search");
+			_displayTitle = LocalizationHelper.CreateResourceString("[OnlineVideos.Search]");
         }
 
         #region IWorkflowContributor Member

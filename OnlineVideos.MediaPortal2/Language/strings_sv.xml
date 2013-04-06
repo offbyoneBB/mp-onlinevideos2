@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Sändningsdatum</string>
+  <string name="OnlineVideos.AlreadyDownloading">Filen laddas redan ned.</string>
+  <string name="OnlineVideos.All">Alla</string>
+  <string name="OnlineVideos.Actions">Händelser</string>
+  <string name="OnlineVideos.Actors">Skådespelare</string>
+  <string name="OnlineVideos.AddComment">Kommentera ...</string>
+  <string name="OnlineVideos.AddToPlaylist">Lägg till i spellista ...</string>
+  <string name="OnlineVideos.AddToMySites">Lägg till bland egna sidor</string>
+  <string name="OnlineVideos.AddToFavourites">Lägg till bland favoriter</string>
+  <string name="OnlineVideos.AddingToFavorites">lägger till bland favoriter</string>
+  <string name="OnlineVideos.AutomaticUpdate">Automatisk uppdatering</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Automatisk uppdatering är inte aktiv.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Trasig</string>
+  <string name="OnlineVideos.Buffered">buffrat</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Avbryt</string>
+  <string name="OnlineVideos.Category">Kategori</string>
+  <string name="OnlineVideos.CategoryNotFound">Kategorin saknas</string>
+  <string name="OnlineVideos.Categories">Kategorier</string>
+  <string name="OnlineVideos.Creator">Skapad av</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Skapa ny Spellista ...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">söker efter uppdaterad plugin-version</string>
+  <string name="OnlineVideos.Concurrent">samtidig</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Datum</string>
+  <string name="OnlineVideos.DateOfRelease">Utkomstdatum</string>
+  <string name="OnlineVideos.Directors">Regi</string>
+  <string name="OnlineVideos.Download">Ladda ner</string>
+  <string name="OnlineVideos.DownloadUserdefined">Ladda ner till förvald katalog</string>
+  <string name="OnlineVideos.Downloading">Laddar ner</string>
+  <string name="OnlineVideos.DownloadingDescription">Visar en lista över pågående nerladdningar</string>
+  <string name="OnlineVideos.DownloadingSubtitle">hämtar undertext</string>
+  <string name="OnlineVideos.DownloadFailed">Nerladdning misslyckades: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Nerladdning avbröts</string>
+  <string name="OnlineVideos.DownloadComplete">Nerladdning färdig</string>
+  <string name="OnlineVideos.DownloadStarted">Nerladdning påbörjad</string>
+  <string name="OnlineVideos.DownloadedVideos">Nerladdade videor</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Nerladdningar kommer att avbrytas.</string>
+  <string name="OnlineVideos.Delete">Ta bort</string>
+  <string name="OnlineVideos.DeletePlaylist">Ta bort spellista</string>
+  <string name="OnlineVideos.DeleteAll">Ta bort samtliga</string>
+  <string name="OnlineVideos.Default">Förvald</string>
+  <string name="OnlineVideos.Done">Färdig</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Tar bort gamla tumnagelbilder</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Fel</string>
+  <string name="OnlineVideos.EnterPin">Skriv in lösen</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Favoriter</string>
+  <string name="OnlineVideos.Filter">Filter</string>
+  <string name="OnlineVideos.FullUpdate">Fullständig uppdatering</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Genre</string>
+  <string name="OnlineVideos.GettingVideoDetails">hämtar videodetaljer</string>
+  <string name="OnlineVideos.GettingCategoryVideos">hämtar kategorins videor</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">hämtar favoritvideor</string>
+  <string name="OnlineVideos.GettingSearchResults">hämtar sökresultat</string>
+  <string name="OnlineVideos.GettingRelatedVideos">hämtar relaterade videor</string>
+  <string name="OnlineVideos.GettingFilteredVideos">hämtar filtrerade videor</string>
+  <string name="OnlineVideos.GettingNextPageVideos">hämtar nästa sida med videor</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">hämtar föregående sida med videor</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">hämtar uppspelningsadresser för videor</string>
+  <string name="OnlineVideos.GettingDynamicCategories">hämtar dynamiska kategorier</string>
+  <string name="OnlineVideos.GettingReports">hämtar rapporter från webtjänst</string>
+  <string name="OnlineVideos.GettingSiteXml">hämtar sidans xml från webtjänst</string>
+  <string name="OnlineVideos.GettingIcon">hämtar sidans ikon från webtjänst</string>
+  <string name="OnlineVideos.GettingBanner">hämtar sidans banner från webtjänst</string>
+  <string name="OnlineVideos.GettingDll">hämtar dll från webtjänst</string>
+  <string name="OnlineVideos.Groups">Grupper</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Senaste versionen ({0}) krävs!</string>
+  <string name="OnlineVideos.Language">Språk</string>
+  <string name="OnlineVideos.LayoutList">Layout: Lista</string>
+  <string name="OnlineVideos.LayoutIcons">Layout: Ikoner</string>
+  <string name="OnlineVideos.LayoutBigIcons">Layout: Stora ikoner</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Hantera websidor</string>
+  <string name="OnlineVideos.MaxResults">Högsta antal träffar</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Namn</string>
+  <string name="OnlineVideos.NextPage">Nästa sida</string>
+  <string name="OnlineVideos.NewVideos">Nya videor</string>
+  <string name="OnlineVideos.None">Inga</string>
+  <string name="OnlineVideos.NoVideoFound">Ingen video funnen</string>
+  <string name="OnlineVideos.NoReportsForSite">Inga rapporter är tillgängliga för denna sida.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Ny dll är hämtad!</string>
+  <string name="OnlineVideos.NewSearch">Ny sökning</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Endast lokalt</string>
+  <string name="OnlineVideos.OnlyServer">Endast server</string>
+  <string name="OnlineVideos.Others">Övriga</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Spela samtliga</string>
+  <string name="OnlineVideos.PlayAllFromHere">Spela alla (härifrån)</string>
+  <string name="OnlineVideos.PlayAllRandom">Spela samtliga (slumpa ordning)</string>
+  <string name="OnlineVideos.PlayWith">Spela med ...</string>
+  <string name="OnlineVideos.Playlists">Spellistor</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Uppspelning kommer att stoppas.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Ge en kort beskrivning, tack.</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Uppdatera och testa igen innan du rapporterar sidan som trasig.</string>
+  <string name="OnlineVideos.PlotOutline">Handlingen i korthet</string>
+  <string name="OnlineVideos.PreviousPage">Föregående sida</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Uppdatera automatiskt nu?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">köad</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Betygsätt videon ...</string>
+  <string name="OnlineVideos.Recommendations">Rekommendationer</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Ta bort från favoriter</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Ta bort från spellistan</string>
+  <string name="OnlineVideos.RemovingFromFavorites">tar bort från favoriter</string>
+  <string name="OnlineVideos.Refresh">Uppdatera</string>
+  <string name="OnlineVideos.RelatedVideos">Relaterade videor</string>
+  <string name="OnlineVideos.ReportBroken">Rapportera som trasig</string>
+  <string name="OnlineVideos.Reported">Rapporterad</string>
+  <string name="OnlineVideos.Reports">Rapporter</string>
+  <string name="OnlineVideos.Runtime">Speltid</string>
+  <string name="OnlineVideos.RemoveFromMySites">Ta bort från egna sidor</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Ta bort alla från egna sidor</string>
+  <string name="OnlineVideos.RestartMediaPortal">Starta om MediaPortal!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Hämtar dll från Internet ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Hämtar sidinformation från Internet ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Sökhistorik</string>
+  <string name="OnlineVideos.SearchResults">Sökresultat</string>
+  <string name="OnlineVideos.SelectSource">Välj källa</string>
+  <string name="OnlineVideos.Sites">Sidor</string>
+  <string name="OnlineVideos.Size">Storlek</string>
+  <string name="OnlineVideos.SortOptions">Sorteringsval</string>
+  <string name="OnlineVideos.Search">Sök</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Välj först en destinationsfolder under inställningar!</string>
+  <string name="OnlineVideos.State">Läge</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Sparar lista med lokala sidor ...</string>
+  <string name="OnlineVideos.ShowReports">Visa rapporter av skapare och användare</string>
+  <string name="OnlineVideos.StartingPlayback">påbörjar uppspelning</string>
+  <string name="OnlineVideos.Subscriptions">Prenumerationer</string>
+  <string name="OnlineVideos.Success">Succé</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Sök på relaterade nyckelord</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Tidsram</string>
+  <string name="OnlineVideos.Timeout">Timeout</string>
+  <string name="OnlineVideos.Tags">Taggar</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Uppdaterade</string>
+  <string name="OnlineVideos.Updatable">Uppdatering tillgänglig</string>
+  <string name="OnlineVideos.UpdateAll">Uppdatera/Lägg till alla</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Uppdatera/Lägg till alla (skippa kategorier)</string>
+  <string name="OnlineVideos.UpdateMySite">Uppdatera egen sida</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Uppdatera egna sidor (skippa kategorier)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Detta kommer att uppdatera alla eget valda sidor.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Kan inte spela videon. Saknar URL.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Kan inte ladda ner videon. Ogiltig URL.</string>
+  <string name="OnlineVideos.UploadsBy">uppladdningar av</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Videor</string>
+  <string name="OnlineVideos.VideoQuality">Videokvalitet</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Arbetar</string>
+  <string name="OnlineVideos.Writers">Skrivet av</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Ja</string>
+  <string name="OnlineVideos.Settings_No">Nej</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Av</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Enkel</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Utökad</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Basic Home-namn</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Plugin Aktiv</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Visas i Home-skärmen</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">Visas i Plugins</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Gruppera automatiskt alla sidor efter språk</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Använd alfanumeriska knapptryckningar för att navigera snabbare i listor</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Sökhistorik</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Max antal dagar att behålla tumnagelbilder</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Tid (minuter) innan cache laddas om från Internet</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Tid (minuter) innan kategorier laddas om från Internet</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Timeout (sekunder) för begäran mot Internet</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Buffring (millisekunder) för Windows Media Player</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Procent att buffra innan uppspelning startar</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Tillåt dynamisk refresh rate-tillämpning</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">Lägg favoriter samt nerladdningar längst upp i listan istället för längst ner</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Andel av de senste videorna som ska visas</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Slumpa alla nya videor innan de visas</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Uppdatera senaste video-datan från Internet varje x minuter</string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Uppdatera visad lista över senaste videor varje x antal minuter</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Kom ihåg vy-layout för sidor och kategorier</string>
+</resources>

@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Ефир</string>
+  <string name="OnlineVideos.AlreadyDownloading">Вече сте свалили този файл.</string>
+  <string name="OnlineVideos.All">Всичко</string>
+  <string name="OnlineVideos.Actions">Действия</string>
+  <string name="OnlineVideos.Actors">Актьори</string>
+  <string name="OnlineVideos.AddToMySites">Добави към моите сайтове</string>
+  <string name="OnlineVideos.AddToFavourites">Добави към любими</string>
+  <string name="OnlineVideos.AddingToFavorites">добавяне към любими</string>
+  <string name="OnlineVideos.AutomaticUpdate">Автоматичен ъпдейт</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Автоматичният ъпдейт забранен.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Прекъснат</string>
+  <string name="OnlineVideos.Buffered">буфериране</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Отмени</string>
+  <string name="OnlineVideos.Category">Категория</string>
+  <string name="OnlineVideos.Categories">Категории</string>
+  <string name="OnlineVideos.Creator">Автор</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">проверка за нова версия на плъгина</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Дата</string>
+  <string name="OnlineVideos.DateOfRelease">Дата на пускане</string>
+  <string name="OnlineVideos.Directors">Режисьори</string>
+  <string name="OnlineVideos.Download">Изтегли</string>
+  <string name="OnlineVideos.Downloading">Изтегляне</string>
+  <string name="OnlineVideos.DownloadingDescription">Списък на текущите изтегляния.</string>
+  <string name="OnlineVideos.DownloadFailed">Изтеглянето провалено: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Изтеглянето отменено</string>
+  <string name="OnlineVideos.DownloadComplete">Изтеглянето готово</string>
+  <string name="OnlineVideos.DownloadStarted">Начало на изтегляне</string>
+  <string name="OnlineVideos.DownloadedVideos">Изтеглени видеа</string>
+  <string name="OnlineVideos.Delete">Изтрий</string>
+  <string name="OnlineVideos.DeleteAll">Изтрий всичко</string>
+  <string name="OnlineVideos.Default">По подразбиране</string>
+  <string name="OnlineVideos.Done">Готово</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Изтриване на старите thumbnails</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Грешка</string>
+  <string name="OnlineVideos.EnterPin">Въведи Pin</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Любими</string>
+  <string name="OnlineVideos.Filter">Филтър</string>
+  <string name="OnlineVideos.FullUpdate">Пълен Ъпдейт</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Жанр</string>
+  <string name="OnlineVideos.GettingVideoDetails">сваляне на инфо за видеото</string>
+  <string name="OnlineVideos.GettingCategoryVideos">сваляне на видео категориите</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">сваляне на любими видея</string>
+  <string name="OnlineVideos.GettingSearchResults">сваляне на резултатие от търсенето</string>
+  <string name="OnlineVideos.GettingRelatedVideos">сваляне на подобни видеа</string>
+  <string name="OnlineVideos.GettingFilteredVideos">сваляне на филтрирани видеа</string>
+  <string name="OnlineVideos.GettingNextPageVideos">сваляне на следващата страница с видеа</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">сваляне на предишната страница с видеа</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">сваляне на url адреси за видеата</string>
+  <string name="OnlineVideos.GettingDynamicCategories">сваляне на динамични категории</string>
+  <string name="OnlineVideos.GettingReports">сваляне на отчети от интернет страница</string>
+  <string name="OnlineVideos.GettingSiteXml">сваляне на xml от интернет</string>
+  <string name="OnlineVideos.GettingIcon">сваляне на сайт икона от интернет</string>
+  <string name="OnlineVideos.GettingBanner">сваляне на сайт банер от интернет</string>
+  <string name="OnlineVideos.GettingDll">сваляне на библиотеки dll от интернет</string>
+  <string name="OnlineVideos.Groups">Групи</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Необходима е последната версия ({0})!</string>
+  <string name="OnlineVideos.Language">Език</string>
+  <string name="OnlineVideos.LayoutList">Интерфейс: Списък</string>
+  <string name="OnlineVideos.LayoutIcons">Интерфейс: Икони</string>
+  <string name="OnlineVideos.LayoutBigIcons">Интерфейс: Големи икони</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Управление на сайтовете</string>
+  <string name="OnlineVideos.MaxResults">Максимални резултати</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Име</string>
+  <string name="OnlineVideos.NextPage">Следваща страница</string>
+  <string name="OnlineVideos.None">Няма</string>
+  <string name="OnlineVideos.NoVideoFound">Не е намерено видео</string>
+  <string name="OnlineVideos.NoReportsForSite">Не са налични отчети за този сайт.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Новата dll библиотека е изтеглена!</string>
+  <string name="OnlineVideos.NewSearch">Ново търсене</string>
+  <!--O-->
+  <string name="OnlineVideos.Others">Други</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Пусни всички</string>
+  <string name="OnlineVideos.PlotOutline">Сюжет</string>
+  <string name="OnlineVideos.PreviousPage">Предишна страница</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Да започна ли автоматичен ъпдейт?</string>
+  <!--Q-->
+  <!--R-->
+  <string name="OnlineVideos.RemoveFromFavorites">Премахни от любими</string>
+  <string name="OnlineVideos.RemovingFromFavorites">премахване от любими</string>
+  <string name="OnlineVideos.Refresh">Опресни</string>
+  <string name="OnlineVideos.RelatedVideos">Подобни видеа</string>
+  <string name="OnlineVideos.Reported">Докладван</string>
+  <string name="OnlineVideos.Reports">Доклади</string>
+  <string name="OnlineVideos.Runtime">Времетраене</string>
+  <string name="OnlineVideos.RemoveFromMySites">Изтрий от моите сайтове</string>
+  <string name="OnlineVideos.RestartMediaPortal">Рестарт на MediaPortal!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Получаване на отдалечените dlls ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Получаване на отдалечените сайтове ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">История на търсенето</string>
+  <string name="OnlineVideos.SearchResults">Резултати от търсенето</string>
+  <string name="OnlineVideos.SelectSource">Избери източник</string>
+  <string name="OnlineVideos.Sites">Сайтове</string>
+  <string name="OnlineVideos.Size">Размер</string>
+  <string name="OnlineVideos.SortOptions">Опции за сортиране</string>
+  <string name="OnlineVideos.Search">Търси</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Моля, укажете директорията за сваляне в Configuration!</string>
+  <string name="OnlineVideos.State">Състояние</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Записване на локалния списък със сайтове...</string>
+  <string name="OnlineVideos.ShowReports">Покажи отчет за автора и потребителя</string>
+  <string name="OnlineVideos.StartingPlayback">старт playback</string>
+  <string name="OnlineVideos.Subscriptions">Подписки</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Кадри</string>
+  <string name="OnlineVideos.Timeout">Прекъсване</string>
+  <string name="OnlineVideos.Tags">Тагове</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Ъпдейтнато</string>
+  <string name="OnlineVideos.Updatable">Ъпдейтвам</string>
+  <string name="OnlineVideos.UpdateMySite">Ъпдейтни моя сайт</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Ъпдейтни моя сайт (пропусни категориите)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Това ще ъпдейтне всички твои текущи сайтове.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Не може да се пусне видеото. Няма URL адрес.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Не може да се свали видеото. Невалиден URL адрес.</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Видеа</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Работи</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+</resources>

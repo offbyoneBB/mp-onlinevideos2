@@ -14,11 +14,11 @@
 
 		<!-- Menu -->
 		<ResourceWrapper x:Key="Menu_Items" EnableBindings="True">
-			<Binding Source="{StaticResource OnlineVideosModel}" Path="PlaybackOptions" Mode="OneTime"/>
+			<Binding Source="{StaticResource OnlineVideosModel}" Path="FocusedSite.ContextMenuEntries"/>
 		</ResourceWrapper>
 
 		<!-- Command -->
-		<CommandStencil x:Key="Execute_Command_Stencil" Source="{StaticResource OnlineVideosModel}" Path="SelectPlaybackOption"/>
+		<CommandStencil x:Key="Execute_Command_Stencil" Source="{StaticResource OnlineVideosModel}" Path="FocusedSite.ExecuteContextMenuEntry"/>
 
 	</Include.Resources>
 </Include>

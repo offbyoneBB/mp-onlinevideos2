@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Emès</string>
+  <string name="OnlineVideos.AlreadyDownloading">Ja s\'està baixant l\'arxiu.</string>
+  <string name="OnlineVideos.All">Tot</string>
+  <string name="OnlineVideos.Actions">Accions</string>
+  <string name="OnlineVideos.Actors">Actors</string>
+  <string name="OnlineVideos.AddComment">Afegeix un Comentari...</string>
+  <string name="OnlineVideos.AddToPlaylist">Afegeix a una Llista...</string>
+  <string name="OnlineVideos.AddToMySites">Afegeix als meus llocs</string>
+  <string name="OnlineVideos.AddToFavourites">Afegeix a preferits</string>
+  <string name="OnlineVideos.AddingToFavorites">S\'està afegint a preferits</string>
+  <string name="OnlineVideos.AutomaticUpdate">Actualització Automàtica</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Actualització Automàtica desactivada</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">No vàlid</string>
+  <string name="OnlineVideos.Buffered">al buffer</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Cancel·la</string>
+  <string name="OnlineVideos.Category">Categoria</string>
+  <string name="OnlineVideos.CategoryNotFound">No s\'ha trobat la categoria</string>
+  <string name="OnlineVideos.Categories">Categories</string>
+  <string name="OnlineVideos.Creator">Creador</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Crea una Llista...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">S\'està cercant una versió actualitzada del connector</string>
+  <string name="OnlineVideos.Concurrent">simultani</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Data</string>
+  <string name="OnlineVideos.DateOfRelease">Data de Llançament</string>
+  <string name="OnlineVideos.Directors">Directors</string>
+  <string name="OnlineVideos.Download">Baixada</string>
+  <string name="OnlineVideos.DownloadUserdefined">Baixa al Directori d\'Usuari</string>
+  <string name="OnlineVideos.Downloading">S\'està baixant</string>
+  <string name="OnlineVideos.DownloadingDescription">Mostra una llista de les baixades en actiu.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">s\'està baixant el subtítol</string>
+  <string name="OnlineVideos.DownloadFailed">La baixada ha fallat: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">La baixada s\'ha Cancel·lat</string>
+  <string name="OnlineVideos.DownloadComplete">La baixada s\'ha Completat</string>
+  <string name="OnlineVideos.DownloadStarted">La baixada s\'ha Iniciat</string>
+  <string name="OnlineVideos.DownloadedVideos">Vídeos baixats</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">S\'interrompran les baixades.</string>
+  <string name="OnlineVideos.Delete">Suprimeix</string>
+  <string name="OnlineVideos.DeletePlaylist">Suprimeix la Llista</string>
+  <string name="OnlineVideos.DeleteAll">Supremeix-ho Tot</string>
+  <string name="OnlineVideos.Default">Per defecte</string>
+  <string name="OnlineVideos.Done">Fet</string>
+  <string name="OnlineVideos.DeletingOldThumbs">S\'estan suprimint miniatures antigues</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Error</string>
+  <string name="OnlineVideos.EnterPin">Introduïu el PIN</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Preferits</string>
+  <string name="OnlineVideos.Filter">Filtra</string>
+  <string name="OnlineVideos.FullUpdate">Actualització Completa</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Gènere</string>
+  <string name="OnlineVideos.GettingVideoDetails">s\'està rebent detalls del vídeo</string>
+  <string name="OnlineVideos.GettingCategoryVideos">s\'està rebent la categoria dels vídeos</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">s\'està rebent vídeos preferits</string>
+  <string name="OnlineVideos.GettingSearchResults">s\'està rebent resultats de cerca</string>
+  <string name="OnlineVideos.GettingRelatedVideos">s\'està rebent vídeos relacionats</string>
+  <string name="OnlineVideos.GettingFilteredVideos">s\'està rebent vídeos filtrats</string>
+  <string name="OnlineVideos.GettingNextPageVideos">s\'està rebent la pàgina següent dels vídeos</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">s\'està rebent la pàgina anterior dels vídeos</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">s\'està rebent urls de reproducció de vídeo</string>
+  <string name="OnlineVideos.GettingDynamicCategories">s\'està rebent categories dinàmiques</string>
+  <string name="OnlineVideos.GettingReports">s\'està rebent informes del servei web</string>
+  <string name="OnlineVideos.GettingSiteXml">s\'està rebent xml del servei web</string>
+  <string name="OnlineVideos.GettingIcon">s\'està rebent icones del servei web</string>
+  <string name="OnlineVideos.GettingBanner">s\'està rebent bàner del servei web</string>
+  <string name="OnlineVideos.GettingDll">s\'està rebent dll del servei web</string>
+  <string name="OnlineVideos.Groups">Grups</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Cal la última versió ({0}) !</string>
+  <string name="OnlineVideos.Language">Idioma</string>
+  <string name="OnlineVideos.LayoutList">Disposició: Llista</string>
+  <string name="OnlineVideos.LayoutIcons">Disposició: Icones</string>
+  <string name="OnlineVideos.LayoutBigIcons">Disposició: Icones Grans</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Administra Llocs</string>
+  <string name="OnlineVideos.MaxResults">Nombre Màxim de Resultats</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Nom</string>
+  <string name="OnlineVideos.NextPage">Pàgina següent</string>
+  <string name="OnlineVideos.NewVideos">Vídeos nous</string>
+  <string name="OnlineVideos.None">Cap</string>
+  <string name="OnlineVideos.NoVideoFound">No s\'ha trobat cap video</string>
+  <string name="OnlineVideos.NoReportsForSite">No hi ha informes disponibles d\'aquest lloc.</string>
+  <string name="OnlineVideos.NewDllDownloaded">S\'ha baixat la dll nova!</string>
+  <string name="OnlineVideos.NewSearch">Cerca nova</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Només en Local</string>
+  <string name="OnlineVideos.OnlyServer">Només Servidor</string>
+  <string name="OnlineVideos.Others">Altres</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Reprodueix-ho tot</string>
+  <string name="OnlineVideos.PlayAllRandom">Reprodueix-ho tot (aleatòriament)</string>
+  <string name="OnlineVideos.PlayWith">Reprodueix al...</string>
+  <string name="OnlineVideos.Playlists">Llistes</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">S\'aturarà la reproducció.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Describiu-lo breument.</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Actualitzeu i comproveu el lloc abans d\'informar-ne com a no vàlid.</string>
+  <string name="OnlineVideos.PlotOutline">Resum de l\'argument</string>
+  <string name="OnlineVideos.PreviousPage">Pàgina anterior</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Voleu fer una actualització automàtica?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">a la cua</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Valora el Vídeo...</string>
+  <string name="OnlineVideos.Recommendations">Recomanacions</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Elimina de preferits</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Elimina de la Llista</string>
+  <string name="OnlineVideos.RemovingFromFavorites">S\'està eliminant de prefirits</string>
+  <string name="OnlineVideos.Refresh">Actualitza</string>
+  <string name="OnlineVideos.RelatedVideos">Vídeos Relacionats</string>
+  <string name="OnlineVideos.ReportBroken">Informa que no és vàlid</string>
+  <string name="OnlineVideos.Reported">S\'ha informat</string>
+  <string name="OnlineVideos.Reports">Informes</string>
+  <string name="OnlineVideos.Runtime">Durada</string>
+  <string name="OnlineVideos.RemoveFromMySites">Elimina dels meus llocs</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Elimina-ho tot dels meus llocs</string>
+  <string name="OnlineVideos.RestartMediaPortal">Reinicia el MediaPortal!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">S\'està recuperant dlls remots...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">S\'està recuperant llocs remots...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Historial de cerca</string>
+  <string name="OnlineVideos.SearchResults">Resultats de cerca</string>
+  <string name="OnlineVideos.SelectSource">Trieu la font</string>
+  <string name="OnlineVideos.Sites">Llocs</string>
+  <string name="OnlineVideos.Size">Mida</string>
+  <string name="OnlineVideos.SortOptions">Opcions d\'ordenació</string>
+  <string name="OnlineVideos.Search">Cerca</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Definiu a la Configuració una carpeta per baixades!</string>
+  <string name="OnlineVideos.State">Estat</string>
+  <string name="OnlineVideos.SavingLocalSiteList">S\'està desant la llista de llocs...</string>
+  <string name="OnlineVideos.ShowReports">Mostra informes de creadors i usuaris </string>
+  <string name="OnlineVideos.StartingPlayback">s\'està iniciant la reproducció</string>
+  <string name="OnlineVideos.Subscriptions">Subscripcions</string>
+  <string name="OnlineVideos.Success">Amb èxit</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Cerca paraules clau relacionades</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Marge</string>
+  <string name="OnlineVideos.Timeout">Temps d\'espera</string>
+  <string name="OnlineVideos.Tags">Etiquetes</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Actualitzat</string>
+  <string name="OnlineVideos.Updatable">Actualitzable</string>
+  <string name="OnlineVideos.UpdateAll">Actualitza/Afegeix tot</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Actualitza/Afegeix tot (omet categories)</string>
+  <string name="OnlineVideos.UpdateMySite">Actualitza el meu lloc</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Actualitza el meu lloc (omet categories)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Això actualitzarà tots els llocs actuals</string>
+  <string name="OnlineVideos.UnableToPlayVideo">No es pot reproduïr el vídeo. No hi ha URL.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">No es pot baixar el vídeo. URL no vàlida</string>
+  <string name="OnlineVideos.UploadsBy">penjats per</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Vídeos</string>
+  <string name="OnlineVideos.VideoQuality">Qualitat de Vídeo</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Treballant</string>
+  <string name="OnlineVideos.Writers">Escrit per</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Sí</string>
+  <string name="OnlineVideos.Settings_No">No</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Apagat</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Senzill</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Ampliat</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Nom de l\'Inici Bàsic</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Connector Activat</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Exposat a Inici</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">Exposat a Els Meus Connectors</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Agrupa automàticament els llocs web per idioma</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Utilitza el teclat per a la selecció ràpida dels elements per la lletra inicial</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Historial de cerca</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Temps màxim (dies) de les miniatures</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Temps (minuts) per a mantenir dades del web</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Temps (minuts) fins que es carreguin de nou les categories del web</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Temps d\'espera (segons) de les sol·licituds al web</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Buffer (milisegons) pel Windows Media Player</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Percentatge del buffer per a iniciar la reproducció</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Activa l\'ajust dinàmic de la velocitat de refresc</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">Sitúa primers a la llista els llocs Preferits i Baixades</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Nombre de vídeos nous a mostrar</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Barreja tots els vídeos nous abans de mostrar-los</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Actualitza del web cada x minuts les dades de vídeos nous</string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Actualitza cada x segons els vídeos nous mostrats</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Recorda la disposició de la visualització per Lloc i Categoria</string>
+</resources>

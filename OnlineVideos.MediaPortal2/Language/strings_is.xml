@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Sjónvarpað</string>
+  <string name="OnlineVideos.AlreadyDownloading">Er að sækja þessa skrá.</string>
+  <string name="OnlineVideos.All">Allt</string>
+  <string name="OnlineVideos.Actions">Aðgerðir</string>
+  <string name="OnlineVideos.Actors">Leikarar</string>
+  <string name="OnlineVideos.AddComment">Bætið við athugasemd ...</string>
+  <string name="OnlineVideos.AddToPlaylist">Bæta við í spilunarlista</string>
+  <string name="OnlineVideos.AddToMySites">Bæta við í mínar síður</string>
+  <string name="OnlineVideos.AddToFavourites">Bæta við í uppáhald</string>
+  <string name="OnlineVideos.AddingToFavorites">bæti við í uppáhald</string>
+  <string name="OnlineVideos.AutomaticUpdate">Sjálfvirk uppfærsla</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Sjálfvirk uppfærsla óvirk</string>
+  <!--B-->
+  <!--C-->
+  <string name="OnlineVideos.Category">Flokkun</string>
+  <string name="OnlineVideos.Creator">Höfundur</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Búa til nýjan spilunarlista</string>
+  <string name="OnlineVideos.Concurrent">samtíma</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Dags.</string>
+  <string name="OnlineVideos.DateOfRelease">Útgáfudagsetning</string>
+  <string name="OnlineVideos.Directors">Leikstjórar</string>
+  <string name="OnlineVideos.Download">Niðurhal</string>
+  <string name="OnlineVideos.DownloadCancelled">Hætt við niðurhal</string>
+  <string name="OnlineVideos.DownloadComplete">Niðurhali lokið</string>
+  <string name="OnlineVideos.DownloadStarted">Niðurhal hafið</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Hætt verður við niðurhal</string>
+  <string name="OnlineVideos.Delete">Eyða</string>
+  <string name="OnlineVideos.DeletePlaylist">Eyða spilunarlista</string>
+  <string name="OnlineVideos.DeleteAll">Eyða öllu</string>
+  <string name="OnlineVideos.Done">Lokið</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Villa</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Uppáhald</string>
+  <string name="OnlineVideos.Filter">Sía</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Flokkun</string>
+  <string name="OnlineVideos.GettingVideoDetails">næ í ítarupplýsingar myndbands</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">næ í uppáhalds myndbönd</string>
+  <string name="OnlineVideos.GettingSearchResults">næ í niðurstöðu leitar</string>
+  <string name="OnlineVideos.GettingDll">næ í dll frá vefþjónustu</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Þörf á nýjustu útgáfu ([0})!</string>
+  <string name="OnlineVideos.Language">Tungumál</string>
+  <string name="OnlineVideos.LayoutList">Útlist: Listi</string>
+  <string name="OnlineVideos.LayoutIcons">Útlit: Íkon</string>
+  <string name="OnlineVideos.LayoutBigIcons">Útlist: Stór íkon</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Umsjón vefsíðna</string>
+  <string name="OnlineVideos.MaxResults">Hámarks niðurstöður</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Nafn</string>
+  <string name="OnlineVideos.NextPage">Næsta síða</string>
+  <string name="OnlineVideos.NewVideos">Ný myndbönd</string>
+  <string name="OnlineVideos.None">Ekkert</string>
+  <string name="OnlineVideos.NoVideoFound">Fundust engin myndbönd</string>
+  <string name="OnlineVideos.NewDllDownloaded">Nýr dll sóttur!</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Aðeins af biðlara</string>
+  <string name="OnlineVideos.OnlyServer">Aðeins af miðlara</string>
+  <string name="OnlineVideos.Others">Annað</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Spila allt</string>
+  <string name="OnlineVideos.PlayAllRandom">Spila allt (handahófskennd röðun)</string>
+  <string name="OnlineVideos.PlayWith">Spila með ...</string>
+  <string name="OnlineVideos.Playlists">Spilunarlistar</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Spilun verður stöðvuð</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Vinsamlegast gefið stutta lýsingu</string>
+  <string name="OnlineVideos.PreviousPage">Fyrri síða</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Framkvæma sjálfvirka uppfærslu?</string>
+  <!--Q-->
+  <!--R-->
+  <string name="OnlineVideos.Recommendations">Mælt með</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Eyða úr uppáhaldi</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Eyða úr spilunarlista</string>
+  <string name="OnlineVideos.RemovingFromFavorites">eyði úr uppáhaldi</string>
+  <string name="OnlineVideos.RemoveFromMySites">Eyða úr mínum síðum</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Eyða öllum mínum síðum</string>
+  <string name="OnlineVideos.RestartMediaPortal">Endurræsa MediaPortal!</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Leitunarsaga</string>
+  <string name="OnlineVideos.SearchResults">Niðurstaða leitar</string>
+  <string name="OnlineVideos.Sites">Síður</string>
+  <string name="OnlineVideos.Size">Stærð</string>
+  <string name="OnlineVideos.Search">Leita</string>
+  <string name="OnlineVideos.StartingPlayback">byrja spilun</string>
+  <string name="OnlineVideos.Subscriptions">Áskrift</string>
+  <string name="OnlineVideos.Success">Tókst</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Tímarammi</string>
+  <string name="OnlineVideos.Tags">Tög</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Uppfært</string>
+  <string name="OnlineVideos.Updatable">Möguleiki á uppfærslu</string>
+  <string name="OnlineVideos.UpdateMySite">Uppfæra mínar síður</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Get ekki spilað þessa miðilsskrá. Engin URL.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Get ekki sótt þetta myndband.  Ólögleg URL.</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Myndbönd</string>
+  <string name="OnlineVideos.VideoQuality">Gæði myndbands</string>
+  <!--W-->
+  <string name="OnlineVideos.Writers">Handritshöfundar</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Já</string>
+  <string name="OnlineVideos.Settings_No">Nei</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Af</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Einfalt</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Viðbætur virkar</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Sett í Home</string>
+</resources>
