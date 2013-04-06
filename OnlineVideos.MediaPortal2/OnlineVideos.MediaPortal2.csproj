@@ -79,7 +79,7 @@
     <Compile Include="SearchAction.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
     <Compile Include="ValueConverter.cs" />
-    <Compile Include="ViewModels\VideoInfoViewModel.cs" />
+    <Compile Include="ViewModels\VideoViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Language\strings_en.xml" />
@@ -88,33 +88,23 @@
     </Content>
     <Content Include="Skin\default\images\C33E39CC-910E-41C8-BFFD-9ECCD340B569.jpg" />
     <Content Include="Skin\default\images\LanguageFlags\--.png" />
-    <Content Include="Skin\default\images\LanguageFlags\bg.png" />
     <Content Include="Skin\default\images\LanguageFlags\cs.png" />
     <Content Include="Skin\default\images\LanguageFlags\da.png" />
     <Content Include="Skin\default\images\LanguageFlags\de.png" />
+    <Content Include="Skin\default\images\LanguageFlags\el.png" />
     <Content Include="Skin\default\images\LanguageFlags\en.png" />
     <Content Include="Skin\default\images\LanguageFlags\es.png" />
     <Content Include="Skin\default\images\LanguageFlags\fi.png" />
     <Content Include="Skin\default\images\LanguageFlags\fr.png" />
     <Content Include="Skin\default\images\LanguageFlags\hr.png" />
-    <Content Include="Skin\default\images\LanguageFlags\hu.png" />
     <Content Include="Skin\default\images\LanguageFlags\it.png" />
-    <Content Include="Skin\default\images\LanguageFlags\ja.png" />
-    <Content Include="Skin\default\images\LanguageFlags\ko.png" />
-    <Content Include="Skin\default\images\LanguageFlags\lv.png" />
+    <Content Include="Skin\default\images\LanguageFlags\lt.png" />
     <Content Include="Skin\default\images\LanguageFlags\nl.png" />
     <Content Include="Skin\default\images\LanguageFlags\no.png" />
     <Content Include="Skin\default\images\LanguageFlags\pl.png" />
-    <Content Include="Skin\default\images\LanguageFlags\pt.png" />
-    <Content Include="Skin\default\images\LanguageFlags\ro.png" />
     <Content Include="Skin\default\images\LanguageFlags\ru.png" />
     <Content Include="Skin\default\images\LanguageFlags\sk.png" />
-    <Content Include="Skin\default\images\LanguageFlags\sr.png" />
     <Content Include="Skin\default\images\LanguageFlags\sv.png" />
-    <Content Include="Skin\default\images\LanguageFlags\th.png" />
-    <Content Include="Skin\default\images\LanguageFlags\tr.png" />
-    <Content Include="Skin\default\images\LanguageFlags\uk.png" />
-    <Content Include="Skin\default\images\LanguageFlags\uz.png" />
     <Content Include="Skin\default\images\LanguageFlags\zh.png" />
     <Content Include="Skin\default\images\NextPage.png" />
     <Content Include="Skin\default\shortcuts\OnlineVideos-shortcuts.xml" />
@@ -181,6 +171,11 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Skin\Titanium\screens\videos.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\dialogSiteContextMenu.xaml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>

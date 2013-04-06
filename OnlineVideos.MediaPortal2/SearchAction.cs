@@ -40,7 +40,7 @@ namespace OnlineVideos.MediaPortal2
                 {
                     if (context.WorkflowState.Name == Guids.WorkflowStateCategoriesName || context.WorkflowState.StateId == Guids.WorkflowStateVideos)
                     {
-                        return ((OnlineVideosWorkflowModel)context.Models[context.WorkflowModelId.Value]).SelectedSite.CanSearch;
+                        return ((OnlineVideosWorkflowModel)context.Models[context.WorkflowModelId.Value]).SelectedSite.Site.CanSearch;
                     }
                 }
             }

@@ -9,7 +9,7 @@ using MediaPortal.UI.SkinEngine.ScreenManagement;
 
 namespace OnlineVideos.MediaPortal2
 {
-    public class VideoInfoViewModel : ListItem
+    public class VideoViewModel : ListItem
     {
 		protected PropertyChangedDelegator eventDelegator = null;
 
@@ -61,28 +61,20 @@ namespace OnlineVideos.MediaPortal2
             set { _thumbnailImageProperty.SetValue(value); }
         }
 
-		protected AbstractProperty _focusPrio;
-		public AbstractProperty FocusPrioProperty { get { return _focusPrio; } }
-		public SetFocusPriority FocusPrio
-		{
-			get { return (SetFocusPriority)_focusPrio.GetValue(); }
-			set { _focusPrio.SetValue(value); }
-		}
-        
         protected VideoInfo _videoInfo;
         public VideoInfo VideoInfo
         {
             get { return _videoInfo; }
         }
 
-        public VideoInfoViewModel(string title, string thumbImage)
+        public VideoViewModel(string title, string thumbImage)
+			: base(Consts.KEY_NAME, title)
         {
             _titleProperty = new WProperty(typeof(string), title);
             _thumbnailImageProperty = new WProperty(typeof(string), thumbImage);
-			_focusPrio = new WProperty(typeof(SetFocusPriority), SetFocusPriority.None);
         }
 
-        public VideoInfoViewModel(VideoInfo videoInfo)
+        public VideoViewModel(VideoInfo videoInfo)
             : base(Consts.KEY_NAME, !string.IsNullOrEmpty(videoInfo.Title2) ? videoInfo.Title2 : videoInfo.Title)
         {
             _videoInfo = videoInfo;
@@ -93,7 +85,6 @@ namespace OnlineVideos.MediaPortal2
             _lengthProperty = new WProperty(typeof(string), videoInfo.Length);
 			_airdateProperty = new WProperty(typeof(string), videoInfo.Airdate);
             _thumbnailImageProperty = new WProperty(typeof(string), videoInfo.ThumbnailImage);
-			_focusPrio = new WProperty(typeof(SetFocusPriority), SetFocusPriority.None);
 
 			eventDelegator = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(PropertyChangedDelegator).Assembly.FullName, typeof(PropertyChangedDelegator).FullName) as PropertyChangedDelegator;
 			eventDelegator.InvokeTarget = new PropertyChangedExecutor()
