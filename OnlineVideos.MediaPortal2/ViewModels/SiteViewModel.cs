@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MediaPortal.Common;
+using MediaPortal.Common.Commands;
 using MediaPortal.Common.General;
-using MediaPortal.UI.SkinEngine.ScreenManagement;
+using MediaPortal.Common.Localization;
 using MediaPortal.UI.Presentation.DataObjects;
+using MediaPortal.UI.Presentation.Screens;
+using MediaPortal.UI.Presentation.Workflow;
+using MediaPortal.UI.SkinEngine.ScreenManagement;
 using MediaPortal.UiComponents.Media.General;
 
 namespace OnlineVideos.MediaPortal2
@@ -49,29 +54,63 @@ namespace OnlineVideos.MediaPortal2
 			_nameProperty = new WProperty(typeof(string), site.Settings.Name);
 			_languageProperty = new WProperty(typeof(string), site.Settings.Language);
 			_descriptionProperty = new WProperty(typeof(string), site.Settings.Description);
-			_contextMenuEntriesProperty = new WProperty(typeof(ItemsList), GetInitialContextEntries());
+			_contextMenuEntriesProperty = new WProperty(typeof(ItemsList), null);
         }
 
+		#region Context Menu
 
 		protected AbstractProperty _contextMenuEntriesProperty;
-		public AbstractProperty ContextMenuEntriesProperty { get { return _contextMenuEntriesProperty; } }
+		public AbstractProperty ContextMenuEntriesProperty 
+		{ 
+			get 
+			{
+				if (!_contextMenuEntriesProperty.HasValue()) // create entries upon first use
+					_contextMenuEntriesProperty.SetValue(CreateContextMenuEntries());
+				return _contextMenuEntriesProperty; 
+			} 
+		}
 		public ItemsList ContextMenuEntries
 		{
 			get { return (ItemsList)_contextMenuEntriesProperty.GetValue(); }
 			set { _contextMenuEntriesProperty.SetValue(value); }
 		}
 
-		ItemsList GetInitialContextEntries()
+		ItemsList CreateContextMenuEntries()
 		{
 			var ctxEntries = new ItemsList();
-			ctxEntries.Add(new ListItem(Consts.KEY_NAME, new MediaPortal.Common.Localization.StringId("[OnlineVideos.RemoveFromMySites]")));
+			ctxEntries.Add(
+				new ListItem(Consts.KEY_NAME, new StringId("[OnlineVideos.RemoveFromMySites]")) 
+				{ 
+					Command = new MethodDelegateCommand(() => RemoveSite()) 
+				});
 			if (Site.GetUserConfigurationProperties().Count > 0)
-				ctxEntries.Add(new ListItem(Consts.KEY_NAME, "Change Settings"));
+				ctxEntries.Add(
+					new ListItem(Consts.KEY_NAME, "Change Settings") 
+					{
+						Command = new MethodDelegateCommand(() => ConfigureSite()) 
+					});
 			return ctxEntries;
 		}
 
-		public void ExecuteContextMenuEntry(ListItem entry)
+		void RemoveSite()
 		{
+			var model = ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModel) as OnlineVideosWorkflowModel;
+			// remove from displayed list
+			model.SitesList.Remove(this);
+			model.SitesList.FireChange();
+			// remove from persisted list and save
+			if (OnlineVideoSettings.Instance.RemoveSite(Name))
+				OnlineVideoSettings.Instance.SaveSites();
+
+			ServiceRegistration.Get<IScreenManager>().CloseTopmostDialog();
 		}
-    }
+
+		void ConfigureSite()
+		{
+			ServiceRegistration.Get<IScreenManager>().CloseTopmostDialog();
+			// todo : new screen
+		}
+
+		#endregion
+	}
 }

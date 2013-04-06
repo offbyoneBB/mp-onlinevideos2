@@ -4,114 +4,114 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
     Source="screens\master_menu.xaml">
-    <Include.Resources>
+  <Include.Resources>
 
-		<Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
-		
-		<ovs:BoolFocusPrioConverter x:Key="BoolFocusPrioConverter"/>
+    <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
 
-        <Storyboard x:Key="GrowAnimation">
-            <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX" To="1.2" Duration="0:0:0.1" />
-            <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" To="1.2" Duration="0:0:0.1" />
-        </Storyboard>
+    <ovs:BoolFocusPrioConverter x:Key="BoolFocusPrioConverter"/>
 
-		<!-- Header -->
-		<ResourceWrapper x:Key="Header_Text" EnableBindings="True" Resource="{Binding Source={StaticResource OnlineVideosModel}, Path=SelectedSite.Name, Mode=OneTime}"/>
+    <Storyboard x:Key="GrowAnimation">
+      <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX" To="1.2" Duration="0:0:0.1" />
+      <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" To="1.2" Duration="0:0:0.1" />
+    </Storyboard>
 
-		<!-- Contents -->
-        <ControlTemplate x:Key="Contents_Template">
-            <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
-                <ListView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" Style="{ThemeResource EmptyStyle}"
-                           ItemsSource="{Binding Path=CategoriesList}">
-                    <ListView.Template>
-                        <ControlTemplate TargetType="{x:Type ListView}">
-                            <ScrollViewer Style="{ThemeResource DefaultScrollViewerStyle}" CanContentScroll="True" HorizontalScrollBarVisibility="Disabled"
-                                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                <ItemsPresenter VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-                            </ScrollViewer>
-                        </ControlTemplate>
-                    </ListView.Template>
+    <!-- Header -->
+    <ResourceWrapper x:Key="Header_Text" EnableBindings="True" Resource="{Binding Source={StaticResource OnlineVideosModel}, Path=SelectedSite.Name, Mode=OneTime}"/>
 
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel x:Name="ListItemsHost" IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="30,10,10,10"/>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
+    <!-- Contents -->
+    <ControlTemplate x:Key="Contents_Template">
+      <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
+        <ListView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" Style="{ThemeResource EmptyStyle}"
+                   ItemsSource="{Binding Path=CategoriesList}">
+          <ListView.Template>
+            <ControlTemplate TargetType="{x:Type ListView}">
+              <ScrollViewer Style="{ThemeResource DefaultScrollViewerStyle}" CanContentScroll="True" HorizontalScrollBarVisibility="Disabled"
+                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ItemsPresenter VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+              </ScrollViewer>
+            </ControlTemplate>
+          </ListView.Template>
 
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-										<Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" Style="{ThemeResource EmptyStyle}" SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource BoolFocusPrioConverter}}">
-                                            <Button.RenderTransform>
-                                                <TransformGroup>
-                                                    <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1"/>
-                                                </TransformGroup>
-                                            </Button.RenderTransform>
-                                            <Button.Command>
-                                                <Command Source="{Binding Source={StaticResource OnlineVideosModel}}" Path="SelectCategory" Parameters="{LateBoundValue BindingValue={Binding}}"/>
-                                            </Button.Command>
-                                            <Button.Triggers>
-                                                <Trigger Property="HasFocus" Value="True">
-                                                    <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
-													<Trigger.EnterActions>
-														<BeginStoryboard x:Name="Focused_BeginStoryboardGrow" Storyboard="{StaticResource GrowAnimation}"/>
-														<SoundPlayerAction Source="button12.wav" DisableOnAudioOutput="True"/>
-														<BeginStoryboard x:Name="Focused_BeginStoryboardColor" Storyboard="{ThemeResource FocusedButtonStoryboard}"/>
-													</Trigger.EnterActions>
-													<Trigger.ExitActions>
-														<StopStoryboard BeginStoryboardName="Focused_BeginStoryboardGrow"/>
-														<StopStoryboard BeginStoryboardName="Focused_BeginStoryboardColor"/>
-													</Trigger.ExitActions>
-												</Trigger>
-                                            </Button.Triggers>
-                                            <Button.TemplateControl>
-                                                <ContentPresenter/>
-                                            </Button.TemplateControl>
-                                        </Button>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="Selected" Value="True">
-                                                <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListView.ItemContainerStyle>
+          <ListView.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel x:Name="ListItemsHost" IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="30,10,10,10"/>
+            </ItemsPanelTemplate>
+          </ListView.ItemsPanel>
 
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Width="255" Height="90" Margin="2">
-								<Rectangle x:Name="ButtonControlRectangle" StrokeThickness="1" Stroke="{ThemeResource ButtonStrokeColor}" RadiusX="7" RadiusY="7" Width="255" Height="90">
-									<Rectangle.Fill>
-										<RadialGradientBrush GradientOrigin="0.85,0.82">
-											<RadialGradientBrush.RelativeTransform>
-												<TransformGroup>
-													<ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.335" ScaleY="1.582"/>
-													<TranslateTransform X="0.027" Y="-0.006"/>
-												</TransformGroup>
-											</RadialGradientBrush.RelativeTransform>
-											<GradientStop Color="#00000000" Offset="0"/>
-											<GradientStop Color="#00000000" Offset="1"/>
-										</RadialGradientBrush>
-									</Rectangle.Fill>
-								</Rectangle>
-                                <DockPanel>
-                                    <Image DockPanel.Dock="Left" x:Name="thumb" Stretch="Uniform" Margin="8" Source="{Binding Path=Thumb}"/>
-                                    <Label DockPanel.Dock="Right" x:Name="ItemLabel" VerticalAlignment="Center" Wrap="true" FontSize="{ThemeResource SmallerFontSize}" Content="{Binding Path=Name}" Color="{ThemeResource TextColor}"/>
-                                </DockPanel>
-                                <Label VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="11" Margin="0,0,2,2" Content="{Binding Path=EstimatedChildren}" Color="{ThemeResource TextColor}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
+          <ListView.ItemContainerStyle>
+            <Style TargetType="{x:Type ListViewItem}">
+              <Setter Property="Template">
+                <Setter.Value>
+                  <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" Style="{ThemeResource EmptyStyle}" SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource BoolFocusPrioConverter}}">
+                      <Button.RenderTransform>
+                        <TransformGroup>
+                          <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1"/>
+                        </TransformGroup>
+                      </Button.RenderTransform>
+                      <Button.Command>
+                        <Command Source="{Binding Source={StaticResource OnlineVideosModel}}" Path="SelectCategory" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+                      </Button.Command>
+                      <Button.Triggers>
+                        <Trigger Property="HasFocus" Value="True">
+                          <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+                          <Trigger.EnterActions>
+                            <BeginStoryboard x:Name="Focused_BeginStoryboardGrow" Storyboard="{StaticResource GrowAnimation}"/>
+                            <SoundPlayerAction Source="button12.wav" DisableOnAudioOutput="True"/>
+                            <BeginStoryboard x:Name="Focused_BeginStoryboardColor" Storyboard="{ThemeResource FocusedButtonStoryboard}"/>
+                          </Trigger.EnterActions>
+                          <Trigger.ExitActions>
+                            <StopStoryboard BeginStoryboardName="Focused_BeginStoryboardGrow"/>
+                            <StopStoryboard BeginStoryboardName="Focused_BeginStoryboardColor"/>
+                          </Trigger.ExitActions>
+                        </Trigger>
+                      </Button.Triggers>
+                      <Button.TemplateControl>
+                        <ContentPresenter/>
+                      </Button.TemplateControl>
+                    </Button>
+                    <ControlTemplate.Triggers>
+                      <Trigger Property="Selected" Value="True">
+                        <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+                      </Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </Setter.Value>
+              </Setter>
+            </Style>
+          </ListView.ItemContainerStyle>
 
-                </ListView>
+          <ListView.ItemTemplate>
+            <DataTemplate>
+              <Grid Width="255" Height="90" Margin="2">
+                <Rectangle x:Name="ButtonControlRectangle" StrokeThickness="1" Stroke="{ThemeResource ButtonStrokeColor}" RadiusX="7" RadiusY="7" Width="255" Height="90">
+                  <Rectangle.Fill>
+                    <RadialGradientBrush GradientOrigin="0.85,0.82">
+                      <RadialGradientBrush.RelativeTransform>
+                        <TransformGroup>
+                          <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.335" ScaleY="1.582"/>
+                          <TranslateTransform X="0.027" Y="-0.006"/>
+                        </TransformGroup>
+                      </RadialGradientBrush.RelativeTransform>
+                      <GradientStop Color="#00000000" Offset="0"/>
+                      <GradientStop Color="#00000000" Offset="1"/>
+                    </RadialGradientBrush>
+                  </Rectangle.Fill>
+                </Rectangle>
+                <DockPanel>
+                  <Image DockPanel.Dock="Left" x:Name="thumb" Stretch="Uniform" Margin="8" Source="{Binding Path=Thumb}"/>
+                  <Label DockPanel.Dock="Right" x:Name="ItemLabel" VerticalAlignment="Center" Wrap="true" FontSize="{ThemeResource SmallerFontSize}" Content="{Binding Path=Name}" Color="{ThemeResource TextColor}"/>
+                </DockPanel>
+                <Label VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="11" Margin="0,0,2,2" Content="{Binding Path=EstimatedChildren}" Color="{ThemeResource TextColor}"/>
+              </Grid>
+            </DataTemplate>
+          </ListView.ItemTemplate>
 
-            </DockPanel>
+        </ListView>
 
-        </ControlTemplate>
+      </DockPanel>
 
-    </Include.Resources>
+    </ControlTemplate>
+
+  </Include.Resources>
 </Include>

@@ -236,6 +236,19 @@ namespace OnlineVideos
 			SiteSettingsList.Add(settings);
 		}
 
+		public bool RemoveSite(string name)
+		{
+			for (int i = 0; i < SiteSettingsList.Count; i++)
+			{
+				if (SiteSettingsList[i].Name == name)
+				{
+					SiteSettingsList.RemoveAt(i);
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public void RemoveSiteAt(int index)
 		{
 			SiteSettingsList.RemoveAt(index);
