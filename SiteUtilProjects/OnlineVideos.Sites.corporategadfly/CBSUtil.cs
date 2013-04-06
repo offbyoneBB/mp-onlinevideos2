@@ -64,7 +64,10 @@ namespace OnlineVideos.Sites
                         HtmlNode image = anchor.SelectSingleNode("./img");
                         string name = image.GetAttributeValue("alt", string.Empty);
                         string url = anchor.GetAttributeValue("href", string.Empty);
-                        if (!url.StartsWith("http") && url.StartsWith("/")) url = string.Format(@"{0}{1}", baseUrl, url);
+                        // make sure url starts with http://
+                        if (!url.StartsWith("http://") && url.StartsWith("/")) url = string.Format(@"{0}{1}", baseUrl, url);
+                        // make sure url ends with video/
+                        if (!url.Contains("/video")) url = string.Format(@"{0}{1}", url, @"video/");
                         string thumb = string.Format("{0}{1}", baseUrl, image.GetAttributeValue("src", string.Empty));
                         parentCategory.SubCategories.Add(new RssLink() {
                                                              ParentCategory = parentCategory,
