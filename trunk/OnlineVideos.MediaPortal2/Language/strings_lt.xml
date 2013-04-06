@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Transliacija</string>
+  <string name="OnlineVideos.AlreadyDownloading">Video siunciamas.</string>
+  <string name="OnlineVideos.All">Visi</string>
+  <string name="OnlineVideos.Actions">Veiksmai</string>
+  <string name="OnlineVideos.Actors">Aktoriai</string>
+  <string name="OnlineVideos.AddComment">Pridėti komentarą...</string>
+  <string name="OnlineVideos.AddToPlaylist">Pridėti prie Grojaraščio...</string>
+  <string name="OnlineVideos.AddToMySites">Itraukti i mano puslapius</string>
+  <string name="OnlineVideos.AddToFavourites">Itrukti i megstamus</string>
+  <string name="OnlineVideos.AddingToFavorites">ikelia i megstamus</string>
+  <string name="OnlineVideos.AutomaticUpdate">Automatinis atnaujinimas</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Automatinis atnaujinimas isjungtas.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Pagedes</string>
+  <string name="OnlineVideos.Buffered">ikelta</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Nutraukti</string>
+  <string name="OnlineVideos.Category">Kategorija</string>
+  <string name="OnlineVideos.CategoryNotFound">Nerasta kategorija</string>
+  <string name="OnlineVideos.Categories">Kategorijos</string>
+  <string name="OnlineVideos.Creator">Autorius</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Sukurti naują Grojaraštį...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">ieskoma naujos iskiepio versijos</string>
+  <string name="OnlineVideos.Concurrent">kartu</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Data</string>
+  <string name="OnlineVideos.DateOfRelease">Isleista</string>
+  <string name="OnlineVideos.Directors">Rezisieriai</string>
+  <string name="OnlineVideos.Download">Parsiusti</string>
+  <string name="OnlineVideos.DownloadUserdefined">Parsiusti (kitas aplankas)</string>
+  <string name="OnlineVideos.Downloading">Siunciasi</string>
+  <string name="OnlineVideos.DownloadingDescription">Naujai parsiustu video sarasas.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">Parsiusti subtitrus</string>
+  <string name="OnlineVideos.DownloadFailed">Parsiuntimas nepavyko: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Siuntimas nutrauktas</string>
+  <string name="OnlineVideos.DownloadComplete">Siuntimas baigtas</string>
+  <string name="OnlineVideos.DownloadStarted">Siuntimas pradetas</string>
+  <string name="OnlineVideos.DownloadedVideos">Parsiusti video</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Siuntimai bus sustabdyti.</string>
+  <string name="OnlineVideos.Delete">Trinti</string>
+  <string name="OnlineVideos.DeletePlaylist">Trinti Grojaraštį</string>
+  <string name="OnlineVideos.DeleteAll">Trinti visus</string>
+  <string name="OnlineVideos.Default">Standartinis</string>
+  <string name="OnlineVideos.Done">Baigta</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Visos paveiksleliu miniatiuros bus panaikintos</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Klaida</string>
+  <string name="OnlineVideos.EnterPin">Iveskite PIN</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Megstamiausi</string>
+  <string name="OnlineVideos.Filter">Filtras</string>
+  <string name="OnlineVideos.FullUpdate">Pilnas atnaujinimas</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Zanras</string>
+  <string name="OnlineVideos.GettingVideoDetails">ikeliama informacija apie video</string>
+  <string name="OnlineVideos.GettingCategoryVideos">ikeliami sios kategorijos video</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">ikeliami megstamiausi</string>
+  <string name="OnlineVideos.GettingSearchResults">ikeliami paieskos rezultatai</string>
+  <string name="OnlineVideos.GettingRelatedVideos">ikeliami panasus video</string>
+  <string name="OnlineVideos.GettingFilteredVideos">ikeliami perfiltruoti video</string>
+  <string name="OnlineVideos.GettingNextPageVideos">ikeliami sekancio puslapio video</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">ikeliami ankstesnio puslapio video</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">ikeliamos nuorodos i video</string>
+  <string name="OnlineVideos.GettingDynamicCategories">ikeliamos dinamiskos kategorijos</string>
+  <string name="OnlineVideos.GettingReports">laukiama tinklo serviso atsakymo</string>
+  <string name="OnlineVideos.GettingSiteXml">is serverio ikeliams puslapis</string>
+  <string name="OnlineVideos.GettingIcon">emblemu ikelimas is serverio</string>
+  <string name="OnlineVideos.GettingBanner">ikeliama serverio antraste</string>
+  <string name="OnlineVideos.GettingDll">is serverio ikeliama DLL</string>
+  <string name="OnlineVideos.Groups">Grupes</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Reikalinga naujausia ({0}) versija!</string>
+  <string name="OnlineVideos.Language">Kalba</string>
+  <string name="OnlineVideos.LayoutList">Isdestymas: sarasas</string>
+  <string name="OnlineVideos.LayoutIcons">Isdestymas: mazi simboliai</string>
+  <string name="OnlineVideos.LayoutBigIcons">Isdestymas: dideli simboliai</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Tvarkyti puslapius</string>
+  <string name="OnlineVideos.MaxResults">Daugiausiai rezultatu</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Vardas</string>
+  <string name="OnlineVideos.NextPage">Sekantis puslapis</string>
+  <string name="OnlineVideos.NewVideos">Nauji video</string>
+  <string name="OnlineVideos.None">Nieko</string>
+  <string name="OnlineVideos.NoVideoFound">Nerasta jokiu video</string>
+  <string name="OnlineVideos.NoReportsForSite">Nerasta jokiu pranesimu apie si puslapi.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Parsiunciama nauja DLL!</string>
+  <string name="OnlineVideos.NewSearch">Nauja paieska</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Tik vietinis</string>
+  <string name="OnlineVideos.OnlyServer">Tik serveris</string>
+  <string name="OnlineVideos.Others">Kiti</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Paleisti visus</string>
+  <string name="OnlineVideos.PlayAllFromHere">Groti visus (pradėti čia)</string>
+  <string name="OnlineVideos.PlayAllRandom">Groti viską (kintama tvarka)</string>
+  <string name="OnlineVideos.PlayWith">Paleisti per ...</string>
+  <string name="OnlineVideos.Playlists">Grojaraštis</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Grojimas bus sustabdytas.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Trumpai aprasykite!</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Prieš raportuojant klaidas, prašome atnaujinti ir patikrinti jas savo pusėje</string>
+  <string name="OnlineVideos.PlotOutline">Veiksmas</string>
+  <string name="OnlineVideos.PreviousPage">Ankstesnis puslapis</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Ar paleisti automatini atnaujinima?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">eilėje</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Įvertinti video...</string>
+  <string name="OnlineVideos.Recommendations">Rekomendacijos</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Triti is megstamiausiu</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Išimti iš grojarščio</string>
+  <string name="OnlineVideos.RemovingFromFavorites">trina is megstamiausiu</string>
+  <string name="OnlineVideos.Refresh">Atnaujinti vaizda</string>
+  <string name="OnlineVideos.RelatedVideos">Panasus video</string>
+  <string name="OnlineVideos.ReportBroken">Pranesti apie klaida</string>
+  <string name="OnlineVideos.Reported">Pranesta</string>
+  <string name="OnlineVideos.Reports">Pranesimai</string>
+  <string name="OnlineVideos.Runtime">Trukme</string>
+  <string name="OnlineVideos.RemoveFromMySites">Trinti is mano puslapiu</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Išimti visus iš mano vietų</string>
+  <string name="OnlineVideos.RestartMediaPortal">Paleiskite MediaPortal is naujo!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Is serverio ikelia DLL\'us ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Is serverio ikelia puslapius ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Ankstesnes paieskos</string>
+  <string name="OnlineVideos.SearchResults">Paieskos rezultatai</string>
+  <string name="OnlineVideos.SelectSource">Pasirinkti saltini</string>
+  <string name="OnlineVideos.Sites">Puslapiai</string>
+  <string name="OnlineVideos.Size">Dydis</string>
+  <string name="OnlineVideos.SortOptions">Rusiavimo nustatymai</string>
+  <string name="OnlineVideos.Search">Paieska</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Reikia nustatymuose pasirinkti aplanka parsiuntimui!</string>
+  <string name="OnlineVideos.State">Salis</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Issaugomas puslapiu sarasas ...</string>
+  <string name="OnlineVideos.ShowReports">Rodyti vortotoju ir kureju pranesimus</string>
+  <string name="OnlineVideos.StartingPlayback">pasileidineja</string>
+  <string name="OnlineVideos.Subscriptions">Prenumerata</string>
+  <string name="OnlineVideos.Success">Sekmingai</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Ieškoti susijusių raktažodžių</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Laikotarpis</string>
+  <string name="OnlineVideos.Timeout">Uzstrigo</string>
+  <string name="OnlineVideos.Tags">Dazniausiai pasitaikantys zodziai</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Atnaujinta</string>
+  <string name="OnlineVideos.Updatable">Pasiruoses atnaujinimaui</string>
+  <string name="OnlineVideos.UpdateAll">Viska atnaujinti/itraukti</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Viska atnaujinti/itraukti (kategorijas praleisti)</string>
+  <string name="OnlineVideos.UpdateMySite">Atnaujinti si puslapi</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Atnaujinti si puslapi (kategorijas praleisti)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Visi puslapiai bus atnaujinti.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Nepavyksta paleisti video- nerasta nuoruodos.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Nepavyksta parsiusti video- neteisinga nuoruoda.</string>
+  <string name="OnlineVideos.UploadsBy">Ikelti video nuo</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Video</string>
+  <string name="OnlineVideos.VideoQuality">Video kokybė</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Veikiantis</string>
+  <string name="OnlineVideos.Writers">Autoriai</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Taip</string>
+  <string name="OnlineVideos.Settings_No">Ne</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Išjungti</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Paprastas</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Išplėstas</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Pagrindinio puslapio vardas</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Įskiepis įjungtas</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Rodomas pagrindiniame</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">Rodomas Įskiepiuose</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Automatiškai grupuoti vietas pagal jų kalbą</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Naudoti tekstinius klavišus greitam pasirinkimui pagala pirmąją raidę</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Paieškos istorija</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Maksimalus miniatiūros galiojimas (dienomis)</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Laikas (minutėmis) kešavimui iš web</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Laikas (minutėmis) po kurio kategorijos bus perkrautos iš web</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Web užklausų trukmė (sekundėmis)</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Windows Media Player buferis (milisekundėmis)</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Buferis procentais po kurio pradedamas grojimas</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Įjungti dinaminį ekrano skleistinės adaptavimą</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">Pateikti Mėgstamiausias ir Atsisiuntimo vietas sąrašo pradžioje</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Naujausių video kiekis atvaizdavimui</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Sumaišyti visus paskutinius video prieš atvaizduojant</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Atnaujinti paskutinių video duomenis iš web kas x sekundžių</string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Atnaujinti parodytų paskutinių video kas x sekundžių</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Įsiminti Vietų ir Kategorijų atvaizdo išdėstymą</string>
+</resources>

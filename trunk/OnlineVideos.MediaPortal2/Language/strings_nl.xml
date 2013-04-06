@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Uitgezonden</string>
+  <string name="OnlineVideos.AlreadyDownloading">Al bezig met het downloaden van dit bestand.</string>
+  <string name="OnlineVideos.All">Alle</string>
+  <string name="OnlineVideos.Actions">Acties</string>
+  <string name="OnlineVideos.Actors">Acteurs</string>
+  <string name="OnlineVideos.AddComment">Opmerking toevoegen...</string>
+  <string name="OnlineVideos.AddToPlaylist">Voeg toe aan afspeellijst...</string>
+  <string name="OnlineVideos.AddToMySites">Voeg toe aan mijn sites</string>
+  <string name="OnlineVideos.AddToFavourites">Voeg toe aan favorieten</string>
+  <string name="OnlineVideos.AddingToFavorites">toevoegen aan favorieten</string>
+  <string name="OnlineVideos.AutomaticUpdate">Automatische update</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Automatische update uitgeschakeld.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Defect</string>
+  <string name="OnlineVideos.Buffered">Gebufferd</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Annuleren</string>
+  <string name="OnlineVideos.Category">Categorie</string>
+  <string name="OnlineVideos.CategoryNotFound">Categorie niet gevonden</string>
+  <string name="OnlineVideos.Categories">Categorieën</string>
+  <string name="OnlineVideos.Creator">Maker</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Maak nieuwe afspeellijst</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">Controleren op bijgewerkte plug-in versie</string>
+  <string name="OnlineVideos.Concurrent">gelijktijdig</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Datum</string>
+  <string name="OnlineVideos.DateOfRelease">Verschijningsdatum</string>
+  <string name="OnlineVideos.Directors">Regisseurs</string>
+  <string name="OnlineVideos.Download">Download</string>
+  <string name="OnlineVideos.DownloadUserdefined">Downloaden naar ingestelde map</string>
+  <string name="OnlineVideos.Downloading">Downloaden</string>
+  <string name="OnlineVideos.DownloadingDescription">Toont een lijst van de huidige downloads.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">Ondertiteling downloaden</string>
+  <string name="OnlineVideos.DownloadFailed">Download mislukt: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Download geannuleerd</string>
+  <string name="OnlineVideos.DownloadComplete">Download gereed</string>
+  <string name="OnlineVideos.DownloadStarted">Download begonnen</string>
+  <string name="OnlineVideos.DownloadedVideos">Gedownloade video\'s</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">De downloads worden geannuleerd</string>
+  <string name="OnlineVideos.Delete">Verwijderen</string>
+  <string name="OnlineVideos.DeletePlaylist">Verwijder afspeellijst</string>
+  <string name="OnlineVideos.DeleteAll">Alles verwijderen</string>
+  <string name="OnlineVideos.Default">Standaard</string>
+  <string name="OnlineVideos.Done">Gereed</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Verwijderen van oude thumbnails</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Fout</string>
+  <string name="OnlineVideos.EnterPin">Voer pin-code in</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Favorieten</string>
+  <string name="OnlineVideos.Filter">Filter</string>
+  <string name="OnlineVideos.FullUpdate">Volledige update</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Genre</string>
+  <string name="OnlineVideos.GettingVideoDetails">opvragen van de video-details</string>
+  <string name="OnlineVideos.GettingCategoryVideos">opvragen van de categorieën</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">opvragen van de favorieten</string>
+  <string name="OnlineVideos.GettingSearchResults">opvragen van de zoekresultaten</string>
+  <string name="OnlineVideos.GettingRelatedVideos">opvragen van de verwante video\'s</string>
+  <string name="OnlineVideos.GettingFilteredVideos">opvragen van de gefilterde video\'s</string>
+  <string name="OnlineVideos.GettingNextPageVideos">opvragen van de video\'s op de volgende pagina</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">opvragen van de vorige pagina</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">opvragen van de afspeel-url\'s van de video</string>
+  <string name="OnlineVideos.GettingDynamicCategories">opvragen van de dynamische categorieën</string>
+  <string name="OnlineVideos.GettingReports">Ontvangen van meldingen van de webservice</string>
+  <string name="OnlineVideos.GettingSiteXml">Ontvangen van de site-xml van de webservice</string>
+  <string name="OnlineVideos.GettingIcon">Ontvangen van het site-icoon van de webservice</string>
+  <string name="OnlineVideos.GettingBanner">Ontvangen van de site-banner van de webservice</string>
+  <string name="OnlineVideos.GettingDll">Ontvangen van de dll van de webservice</string>
+  <string name="OnlineVideos.Groups">Groepen</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Laatste versie {0} benodigd!</string>
+  <string name="OnlineVideos.Language">Taal</string>
+  <string name="OnlineVideos.LayoutList">Weergave: Lijst</string>
+  <string name="OnlineVideos.LayoutIcons">Weergave: Pictogrammen</string>
+  <string name="OnlineVideos.LayoutBigIcons">Weergave: Grote pictogrammen</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Sites beheren</string>
+  <string name="OnlineVideos.MaxResults">Max. aantal resultaten</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Naam</string>
+  <string name="OnlineVideos.NextPage">Volgende pagina</string>
+  <string name="OnlineVideos.NewVideos">Nieuwe video\'s</string>
+  <string name="OnlineVideos.None">Geen</string>
+  <string name="OnlineVideos.NoVideoFound">Geen video gevonden</string>
+  <string name="OnlineVideos.NoReportsForSite">Geen meldingen van deze site beschikbaar</string>
+  <string name="OnlineVideos.NewDllDownloaded">Nieuwe dll gedownload!</string>
+  <string name="OnlineVideos.NewSearch">Nieuwe zoekopdracht</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Alleen van deze PC</string>
+  <string name="OnlineVideos.OnlyServer">Alleen van de server</string>
+  <string name="OnlineVideos.Others">Overige</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Alles afspelen</string>
+  <string name="OnlineVideos.PlayAllFromHere">Alles afspelen (vanaf hier)</string>
+  <string name="OnlineVideos.PlayAllRandom">Alles afspelen in willekeurige volgorde</string>
+  <string name="OnlineVideos.PlayWith">Afspelen met...</string>
+  <string name="OnlineVideos.Playlists">Afspeellijsten</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Afspelen wordt gestopt</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Geef een korte beschrijving</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Werk je lokale site bij en test het voordat je het rapporteerd als niet werkend.</string>
+  <string name="OnlineVideos.PlotOutline">Samenvatting</string>
+  <string name="OnlineVideos.PreviousPage">Vorige pagina</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Automatische update uitvoeren?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">in de wachtrij</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Beoordeel video</string>
+  <string name="OnlineVideos.Recommendations">Aanbevelingen</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Verwijderen uit favorieten</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Verwijder van afspeellijst</string>
+  <string name="OnlineVideos.RemovingFromFavorites">bij het verwijderen uit de favorieten</string>
+  <string name="OnlineVideos.Refresh">Verversen</string>
+  <string name="OnlineVideos.RelatedVideos">Gerelateerde video\'s</string>
+  <string name="OnlineVideos.ReportBroken">Meld defect</string>
+  <string name="OnlineVideos.Reported">Gemeld</string>
+  <string name="OnlineVideos.Reports">Meldingen</string>
+  <string name="OnlineVideos.Runtime">Duur</string>
+  <string name="OnlineVideos.RemoveFromMySites">Verwijderen uit mijn sites</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Alles uit mijn sites verwijderen</string>
+  <string name="OnlineVideos.RestartMediaPortal">Herstart MediaPortal!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Ophalen externe dll\'s...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Ophalen externe sites...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Zoekgeschiedenis</string>
+  <string name="OnlineVideos.SearchResults">Zoekresultaten</string>
+  <string name="OnlineVideos.SelectSource">Kies bron</string>
+  <string name="OnlineVideos.Sites">Sites</string>
+  <string name="OnlineVideos.Size">Grootte</string>
+  <string name="OnlineVideos.SortOptions">Sorteeropties</string>
+  <string name="OnlineVideos.Search">Zoek</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Kies eerst een download-map in de instellingen!</string>
+  <string name="OnlineVideos.State">Status</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Opslaan lokale site-lijst...</string>
+  <string name="OnlineVideos.ShowReports">Toon ontwikkelaars en gebruikers meldingen</string>
+  <string name="OnlineVideos.StartingPlayback">starten van de video</string>
+  <string name="OnlineVideos.Subscriptions">Abonnementen</string>
+  <string name="OnlineVideos.Success">Gelukt</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Zoek in gerelateerde zoektermen</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Periode</string>
+  <string name="OnlineVideos.Timeout">Time-out</string>
+  <string name="OnlineVideos.Tags">Kenmerken</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Bijgewerkt</string>
+  <string name="OnlineVideos.Updatable">Bij te werken</string>
+  <string name="OnlineVideos.UpdateAll">Alles bijwerken/toevoegen</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Alles bijwerken/toevoegen (categorieën overslaan)</string>
+  <string name="OnlineVideos.UpdateMySite">Mijn site bijwerken</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Mijn site bijwerken (categorieën overslaan)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Dit zal de huidige sites bijwerken</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Kan video niet afspelen: Geen URL.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Kan video niet downloaden: Ongeldige URL.</string>
+  <string name="OnlineVideos.UploadsBy">Geüpload door</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Video\'s</string>
+  <string name="OnlineVideos.VideoQuality">Video kwaliteit</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Bezig</string>
+  <string name="OnlineVideos.Writers">Auteurs</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Ja</string>
+  <string name="OnlineVideos.Settings_No">Nee</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Uit</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Eenvoudig</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Uitgebreid</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Basic Home naam</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Plugin ingeschakeld</string>
+  <string name="OnlineVideos.Settings_ListedInHome">In Home-lijst</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">In Plugin-lijst</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Sites automatisch groeperen per taal</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Alfanumerieke toetsen gebruiken voor snelle selectie</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Zoek-geschiedenis</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Maximale ouderdom (in dagen) voor voorvertoningen</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Maximale ouderdom (in minuten) van web-data cache</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Maximale ouderdom (in minuten) van categorie-data</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Time-out waarde voor web-aanvragen (in seconden)</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Buffer-tijd (in milliseconden) voor afspelen met Windows Media Player</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Buffer-percentage voor afspelen (overig)</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Gebruik \"dynamic refresh rate\" instelling</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">Favorieten en Downloads bovenaan in de lijst in plaats van onderaan</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Aantal weer te geven video\'s</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Alle laatste video\'s in willekeurige volgorde laten zien</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Tijd in minuten waarna opnieuw de laatste video\'s worden opgezocht</string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Tijd in seconden waarna opnieuw de laatste video\'s worden getoond</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Onthoud weergave voor iedere site en categorie onthouden </string>
+</resources>

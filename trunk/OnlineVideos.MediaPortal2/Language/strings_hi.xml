@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">प्रसारित</string>
+  <string name="OnlineVideos.AlreadyDownloading">पहले से ही यह फाइल डाउनलोड हो रही है.</string>
+  <string name="OnlineVideos.All">सभी</string>
+  <string name="OnlineVideos.Actions">क्रियाएं</string>
+  <string name="OnlineVideos.Actors">अभिनेताओं</string>
+  <string name="OnlineVideos.AddComment">टिप्णी जोड़ें ...</string>
+  <string name="OnlineVideos.AddToPlaylist">गीत-सूची में जोड़ें ...</string>
+  <string name="OnlineVideos.AddToMySites">मेरे साइट में जोड़े</string>
+  <string name="OnlineVideos.AddToFavourites">पसंदीदा में जोड़ें</string>
+  <string name="OnlineVideos.AddingToFavorites">पसंदीदा में जुड़ रहा है</string>
+  <string name="OnlineVideos.AutomaticUpdate">स्वचालित अद्यतन</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">स्वचालित अद्यतन निष्क्रिय</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">खंडित</string>
+  <string name="OnlineVideos.Buffered">बफ़र</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">रद्द करें</string>
+  <string name="OnlineVideos.Category">श्रेणी: </string>
+  <string name="OnlineVideos.CategoryNotFound">श्रेणी: नहीं मिला</string>
+  <string name="OnlineVideos.Categories">श्रेणी</string>
+  <string name="OnlineVideos.Creator">निर्माता</string>
+  <string name="OnlineVideos.CreateNewPlaylist">नई गीत-सूची बनाएँ ...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">अद्यतनीकृत प्लगइन संस्करण के लिए जाँच रहा है</string>
+  <string name="OnlineVideos.Concurrent">समवर्ती</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">तारीख़</string>
+  <string name="OnlineVideos.DateOfRelease">रिलीज की तारीख</string>
+  <string name="OnlineVideos.Directors">निदेशक</string>
+  <string name="OnlineVideos.Download">डाउनलोड</string>
+  <string name="OnlineVideos.DownloadUserdefined">प्रयोक्ता निर्देशिका में डाउनलोड करें</string>
+  <string name="OnlineVideos.Downloading">डाउनलोड कर रहा है</string>
+  <string name="OnlineVideos.DownloadingDescription">वर्तमान में चल रहे डाउनलोड की एक सूची दिखाता है.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">उपशीर्षक डाउनलोड कर रहा है</string>
+  <string name="OnlineVideos.DownloadFailed">डाउनलोड विफल: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">डाउनलोड रद्द</string>
+  <string name="OnlineVideos.DownloadComplete">डाउनलोड पूर्ण</string>
+  <string name="OnlineVideos.DownloadStarted">डाउनलोड आरंभ</string>
+  <string name="OnlineVideos.DownloadedVideos">डाउनलोड किये गए वीडियो</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">डाउनलोड रद्द हो जाएगा.</string>
+  <string name="OnlineVideos.Delete">मिटाएँ</string>
+  <string name="OnlineVideos.DeletePlaylist">गीत-सूची मिटाएँ</string>
+  <string name="OnlineVideos.DeleteAll">सभी मिटाएँ</string>
+  <string name="OnlineVideos.Default">तयशुदा</string>
+  <string name="OnlineVideos.Done">संपन्न</string>
+  <string name="OnlineVideos.DeletingOldThumbs">पूर्व लघु छवि मिटाए जा रहा है</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">त्रुटि</string>
+  <string name="OnlineVideos.EnterPin">पिन दर्ज करे</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">पसंदीदा</string>
+  <string name="OnlineVideos.Filter">फ़िल्टर</string>
+  <string name="OnlineVideos.FullUpdate">अधिकतम अद्यतन</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">घराना</string>
+  <string name="OnlineVideos.GettingVideoDetails">वीडियो विवरण पा रहा है</string>
+  <string name="OnlineVideos.GettingCategoryVideos">श्रेणी वीडियो पा रहा है </string>
+  <string name="OnlineVideos.GettingFavoriteVideos">पसंदीदा वीडियो पा रहा है</string>
+  <string name="OnlineVideos.GettingSearchResults">परिणाम खोजें पा रहा है</string>
+  <string name="OnlineVideos.GettingRelatedVideos">संबंधित वीडियो पा रहा है</string>
+  <string name="OnlineVideos.GettingFilteredVideos">फ़िल्टर्ड वीडियो पा रहा है</string>
+  <string name="OnlineVideos.GettingNextPageVideos">अगले पृष्ठ की वीडियो पा रही है</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">पिछले पृष्ठ की वीडियो पा रही है</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">वीडियो के लिए प्लेबैक यूआरएल पा रहा है </string>
+  <string name="OnlineVideos.GettingDynamicCategories">गतिशील श्रेणियों पा रहे है</string>
+  <string name="OnlineVideos.GettingReports">वेबसर्विस से रिपोर्टस पा रहे है </string>
+  <string name="OnlineVideos.GettingSiteXml">वेबसर्विस से साइट xml पा रहा है </string>
+  <string name="OnlineVideos.GettingIcon">वेब सेवा से साइट प्रतीक पा रहे है</string>
+  <string name="OnlineVideos.GettingBanner">वेब सेवा से साइट बैनर पा रहे है</string>
+  <string name="OnlineVideos.GettingDll">वेब सेवा से dll पा रहे है</string>
+  <string name="OnlineVideos.Groups">समूह</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">नवीनतम संस्करण ({0}) की आवश्यकता!</string>
+  <string name="OnlineVideos.Language">भाषा</string>
+  <string name="OnlineVideos.LayoutList">ख़ाका: सूची</string>
+  <string name="OnlineVideos.LayoutIcons">ख़ाका: प्रतीक</string>
+  <string name="OnlineVideos.LayoutBigIcons">ख़ाका: बड़ा प्रतीक</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">साइटें प्रबंधित करें</string>
+  <string name="OnlineVideos.MaxResults">अधिकतम परिणाम</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">नाम</string>
+  <string name="OnlineVideos.NextPage">अगला पृष्ठ</string>
+  <string name="OnlineVideos.NewVideos">नई वीडियो</string>
+  <string name="OnlineVideos.None">कोई नहीं</string>
+  <string name="OnlineVideos.NoVideoFound">कोई वीडियो नहीं मिला</string>
+  <string name="OnlineVideos.NoReportsForSite">इस साइट के लिए कोई रिपोर्ट उपलब्ध नहीं है.</string>
+  <string name="OnlineVideos.NewDllDownloaded">नया dll डाउनलोड हो चूका है!</string>
+  <string name="OnlineVideos.NewSearch">नई खोज</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">सिर्फ स्थानीय</string>
+  <string name="OnlineVideos.OnlyServer">केवल सर्वर</string>
+  <string name="OnlineVideos.Others">अन्य</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">सभी बजाएँ</string>
+  <string name="OnlineVideos.PlayAllRandom">सभी बजाएँ (बेतरतीब क्रम)</string>
+  <string name="OnlineVideos.PlayWith">के साथ बजाये ...</string>
+  <string name="OnlineVideos.Playlists">गीत-सूचियाँ</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">प्लेबैक बंद कर दिया जाएगा.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">कृपया एक संक्षिप्त विवरण दे.</string>
+  <string name="OnlineVideos.PlotOutline">रूपरेखा प्लॉट करे </string>
+  <string name="OnlineVideos.PreviousPage">पिछला पृष्ठ</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">स्वचालित अद्यतन संचालन ?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">पंक्तिबद्ध</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">वीडियो को मूल्याकंन करे ...</string>
+  <string name="OnlineVideos.Recommendations">अनुशंसाएँ</string>
+  <string name="OnlineVideos.RemoveFromFavorites">मनपसंद से हटाएं</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">गीत सूची से मिटाएँ</string>
+  <string name="OnlineVideos.RemovingFromFavorites">मनपसंद से हटा रहा है</string>
+  <string name="OnlineVideos.Refresh">ताज़ा करे</string>
+  <string name="OnlineVideos.RelatedVideos">संबधित वीडियो</string>
+  <string name="OnlineVideos.ReportBroken">खंडित रिपोर्ट करें</string>
+  <string name="OnlineVideos.Reported">रिपोर्टेड</string>
+  <string name="OnlineVideos.Reports">संसाधन </string>
+  <string name="OnlineVideos.Runtime">कार्यसमय</string>
+  <string name="OnlineVideos.RemoveFromMySites">मेरे साइटों से हटाएँ</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">मेरे साइटों से सभी हटाएँ</string>
+  <string name="OnlineVideos.RestartMediaPortal">MediaPortal पुनरारंभ करें!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">दूरस्थ dlls प्राप्त कर रहा है ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">दूरस्थ साइटों प्राप्त कर रहा है ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">इतिहास खोजें</string>
+  <string name="OnlineVideos.SearchResults">परिणाम खोजें</string>
+  <string name="OnlineVideos.SelectSource">स्रोत चयन करे</string>
+  <string name="OnlineVideos.Sites">साइटों</string>
+  <string name="OnlineVideos.Size">आकार</string>
+  <string name="OnlineVideos.SortOptions">छंटाई के विकल्प</string>
+  <string name="OnlineVideos.Search">खोजें</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">विन्यास में एक डाउनलोड फ़ोल्डर सेट करें!</string>
+  <string name="OnlineVideos.State">स्थिति</string>
+  <string name="OnlineVideos.SavingLocalSiteList">स्थानीय साइट सूची सहेजा जा रहा है ...</string>
+  <string name="OnlineVideos.ShowReports">निर्माता और उपयोगकर्ता के रिपोर्टों को दिखाए</string>
+  <string name="OnlineVideos.StartingPlayback">प्लेबैक शुरू हो रहा है</string>
+  <string name="OnlineVideos.Subscriptions">सदस्यता</string>
+  <string name="OnlineVideos.Success">सफल</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">समय सीमा</string>
+  <string name="OnlineVideos.Timeout">समय समाप्त</string>
+  <string name="OnlineVideos.Tags">टैग</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">अद्यतन</string>
+  <string name="OnlineVideos.Updatable">अद्यतन के योग्य</string>
+  <string name="OnlineVideos.UpdateAll">अद्यतन/सभी जोड़ें</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">अद्यतन/सभी जोड़ें (श्रेणियों छोड़ें)</string>
+  <string name="OnlineVideos.UpdateMySite">मेरी साइट अद्यतन करे</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">मेरी साइट अद्यतन करे (श्रेणियों छोड़ें)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">यह अपने सभी मौजूदा साइट का अद्यतन करेगा.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">वीडियो चलाने में असमर्थ. कोई यूआरएल नहीं है.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">वीडियो डाउनलोड करने में असमर्थ है. अमान्य URL.</string>
+  <string name="OnlineVideos.UploadsBy">द्वारा अपलोड</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">वीडियो</string>
+  <string name="OnlineVideos.VideoQuality">विडियो की गुणवत्ता</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">कार्य हो रहा है</string>
+  <string name="OnlineVideos.Writers">लेखकों</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">हाँ</string>
+  <string name="OnlineVideos.Settings_No">नहीं</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">बंद</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">सरल</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">विस्तारण</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">मूल घर का नाम</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">प्लगिन सक्रिय</string>
+  <string name="OnlineVideos.Settings_ListedInHome">घर में सूचीबद्ध</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">मेरे प्लगइन में सूचीबद्ध</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">सभी साइटों को अपनी भाषा के अनुसार स्वचालित समूह करे</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">आइटम को पहले अक्षर के द्वारा जल्दी से चयन के लिए अक्षरांकीय कुंजी का प्रयोग करे</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">इतिहास खोजें</string>
+  <string name="OnlineVideos.Settings_ThumbAge">लघु छवि के लिए अधिकतम आयु (दिन)</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">वेब से आकडे को कैश करने का समय (मिनट)</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">समय (मिनट) जिसके बाद श्रेणियों वेब से पुनः लोड की जाएगी</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">webrequests के लिए समय समाप्ति (सेकण्ड)</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">विंडोज मीडिया प्लेयर के लिए बफर (मिली सेकण्ड्स)</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">प्लेबैक शुरू करने से पहले बफर प्रतिशत</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">गतिशील ताज़ा दर रूपांतरण सक्रिय करें</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">पसंदीदा और डाउनलोड साइटों सूची में पिछे रखने के बजाय पहले रखे</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">प्रदर्शित करने के लिए नवीनतम वीडियो की मात्रा</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">प्रदर्शित होने से पहले सभी नवीनतम वीडियो को बेतरतीब करें</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">प्रत्येक x मिनट में वेब से नवीनतम वीडियो डाटा को ताज़ा करें</string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">प्रत्येक x सेकंड्स में प्रदर्शित नवीनतम वीडियो को ताज़ा करे</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">साइट और श्रेणी के लिए दृश्य ख़ाका याद रखें</string>
+</resources>

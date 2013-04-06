@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Predvajano</string>
+  <string name="OnlineVideos.AlreadyDownloading">Ta datoteka se že prenaša.</string>
+  <string name="OnlineVideos.All">Vse</string>
+  <string name="OnlineVideos.Actions">Dejanja</string>
+  <string name="OnlineVideos.Actors">Igralci</string>
+  <string name="OnlineVideos.AddComment">Dodaj komentar ...</string>
+  <string name="OnlineVideos.AddToPlaylist">Dodaj seznam predvajanja ...</string>
+  <string name="OnlineVideos.AddToMySites">Dodaj k mojim stranem</string>
+  <string name="OnlineVideos.AddToFavourites">Dodaj k priljubljenim</string>
+  <string name="OnlineVideos.AddingToFavorites">dodajanje k priljubljenim</string>
+  <string name="OnlineVideos.AutomaticUpdate">Samodejna posodobitev</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Samodejna posodobitev je onemogočena.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Pokvarjeno</string>
+  <string name="OnlineVideos.Buffered">medpomnjeno</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Prekliči</string>
+  <string name="OnlineVideos.Category">Kategorija</string>
+  <string name="OnlineVideos.CategoryNotFound">Kategorija ni najdena</string>
+  <string name="OnlineVideos.Categories">Kategorije</string>
+  <string name="OnlineVideos.Creator">Ustvarjalec</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Ustvari nov seznam predvajanja ...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">Preverjanje nove različice vtičnika</string>
+  <string name="OnlineVideos.Concurrent">sočasno</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Datum</string>
+  <string name="OnlineVideos.DateOfRelease">Datum izida</string>
+  <string name="OnlineVideos.Directors">Režiserji</string>
+  <string name="OnlineVideos.Download">Prenos</string>
+  <string name="OnlineVideos.DownloadUserdefined">Prenesi v imenik uporabnika</string>
+  <string name="OnlineVideos.Downloading">Prenašanje</string>
+  <string name="OnlineVideos.DownloadingDescription">Prikaže seznam prenosov, ki trenutno potekajo.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">prenašanje podnapisa</string>
+  <string name="OnlineVideos.DownloadFailed">Prenos je spodletel: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Prenos je preklican</string>
+  <string name="OnlineVideos.DownloadComplete">Prenos je končan</string>
+  <string name="OnlineVideos.DownloadStarted">Prenos se je začel</string>
+  <string name="OnlineVideos.DownloadedVideos">Preneseni videi</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Prenosi bodo prekinjeni.</string>
+  <string name="OnlineVideos.Delete">Izbriši</string>
+  <string name="OnlineVideos.DeletePlaylist">Izbriši seznam predvajanja</string>
+  <string name="OnlineVideos.DeleteAll">Izbriši vse</string>
+  <string name="OnlineVideos.Default">Privzeto</string>
+  <string name="OnlineVideos.Done">Končano</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Brisanje starih sličic</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Napaka</string>
+  <string name="OnlineVideos.EnterPin">Vnesite Pin</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Priljubljene</string>
+  <string name="OnlineVideos.Filter">Filter</string>
+  <string name="OnlineVideos.FullUpdate">Polna posodobitev</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Žanr</string>
+  <string name="OnlineVideos.GettingVideoDetails">pridobivanje podrobnosti videa</string>
+  <string name="OnlineVideos.GettingCategoryVideos">pridobivanje videov kategorije</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">pridobivanje priljubljenih videov</string>
+  <string name="OnlineVideos.GettingSearchResults">pridobivanje rezultatov iskanja</string>
+  <string name="OnlineVideos.GettingRelatedVideos">pridobivanje sorodnih videov</string>
+  <string name="OnlineVideos.GettingFilteredVideos">pridobivanje filtriranih videov</string>
+  <string name="OnlineVideos.GettingNextPageVideos">pridobivanje naslednje strani videov</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">pridobivanje prejšnje strani videov</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">pridobivanje predvajalnega url za video</string>
+  <string name="OnlineVideos.GettingDynamicCategories">pridobivanje dinamičnih kategorij</string>
+  <string name="OnlineVideos.GettingReports">pridobivanje poročil od spletnega servisa</string>
+  <string name="OnlineVideos.GettingSiteXml">pridobivanje xml strani od spletnega servisa</string>
+  <string name="OnlineVideos.GettingIcon">pridobivanje ikone strani od spletnega servisa</string>
+  <string name="OnlineVideos.GettingBanner">pridobivanje banerja strani od spletnega servisa</string>
+  <string name="OnlineVideos.GettingDll">pridobivanje dll od spletnega servisa</string>
+  <string name="OnlineVideos.Groups">Skupine</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Zahtevana je najnovejša različica ({0}) !</string>
+  <string name="OnlineVideos.Language">Jezik</string>
+  <string name="OnlineVideos.LayoutList">Izgled: Seznam</string>
+  <string name="OnlineVideos.LayoutIcons">Izgled: Ikone</string>
+  <string name="OnlineVideos.LayoutBigIcons">Izgled: Velike ikone</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Uredi strani</string>
+  <string name="OnlineVideos.MaxResults">Maksimalno rezultatov</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Ime</string>
+  <string name="OnlineVideos.NextPage">Naslednja stran</string>
+  <string name="OnlineVideos.NewVideos">Novi videi</string>
+  <string name="OnlineVideos.None">Brez</string>
+  <string name="OnlineVideos.NoVideoFound">Ni najdenih videov</string>
+  <string name="OnlineVideos.NoReportsForSite">Za to stran poročila niso na voljo.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Prenesen je nov dll!</string>
+  <string name="OnlineVideos.NewSearch">Novo iskanje</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Samo lokalno</string>
+  <string name="OnlineVideos.OnlyServer">Samo strežnik</string>
+  <string name="OnlineVideos.Others">Drugo</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Predvajaj vse</string>
+  <string name="OnlineVideos.PlayAllRandom">Predvajaj vse (naključno)</string>
+  <string name="OnlineVideos.PlayWith">Predvajaj z ...</string>
+  <string name="OnlineVideos.Playlists">Seznam predvajanja</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Predvajanje bo ustavljeno.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Prosimo, podajte kratek opis.</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Prosimo posodobite in ponovno testirajte vašo lokalno stran, predej jo prijavite kot pokvarjeno.</string>
+  <string name="OnlineVideos.PlotOutline">Plot oris</string>
+  <string name="OnlineVideos.PreviousPage">Prejšnja stran</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Izvedem samodejno posodobitev?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">zahtevano</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Oceni video ...</string>
+  <string name="OnlineVideos.Recommendations">Priporočila</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Odstrani iz priljubljenih</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Odstrani s seznama predvajanja</string>
+  <string name="OnlineVideos.RemovingFromFavorites">odstranjevanje iz priljubljenih</string>
+  <string name="OnlineVideos.Refresh">Osveži</string>
+  <string name="OnlineVideos.RelatedVideos">Sorodni videi</string>
+  <string name="OnlineVideos.ReportBroken">Prijavi pokvarjeno</string>
+  <string name="OnlineVideos.Reported">Prijavljeno</string>
+  <string name="OnlineVideos.Reports">Poročila</string>
+  <string name="OnlineVideos.Runtime">Čas delovanja</string>
+  <string name="OnlineVideos.RemoveFromMySites">Odstrani iz mojih strani</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Odstrani vse iz mojih strani</string>
+  <string name="OnlineVideos.RestartMediaPortal">Ponovno zaženi MediaPortal!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Pridobivanje oddaljenih dll-jev ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Pridobivanje oddaljenih strani ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Zgodovina iskanja</string>
+  <string name="OnlineVideos.SearchResults">Rezultati iskanja</string>
+  <string name="OnlineVideos.SelectSource">Izberi izvor</string>
+  <string name="OnlineVideos.Sites">Strani</string>
+  <string name="OnlineVideos.Size">Velikost</string>
+  <string name="OnlineVideos.SortOptions">Možnosti sortiranja</string>
+  <string name="OnlineVideos.Search">Iskanje</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">V nastavitvah izberite mapo za prenos!</string>
+  <string name="OnlineVideos.State">Država</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Shranjevanje seznama lokalnih strani ...</string>
+  <string name="OnlineVideos.ShowReports">Prikaži poročila ustvarjalca in uporabnika</string>
+  <string name="OnlineVideos.StartingPlayback">začetek predvajanja</string>
+  <string name="OnlineVideos.Subscriptions">Naročnine</string>
+  <string name="OnlineVideos.Success">Uspešno</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Ključne besede navezane na iskanje</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Časovni okvir</string>
+  <string name="OnlineVideos.Timeout">Čas poteka</string>
+  <string name="OnlineVideos.Tags">Oznake</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Posodobljeno</string>
+  <string name="OnlineVideos.Updatable">Se da posodobiti</string>
+  <string name="OnlineVideos.UpdateAll">Posodobi/Dodaj vse</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Posodobi/Dodaj vse (izpusti kategorije)</string>
+  <string name="OnlineVideos.UpdateMySite">Posodobi mojo stran</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Posodobi mojo stran (izpusti kategorije)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">To bo posodobilo vse vaše trenutne strani.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Ni mogoče predvajati videa. Ni URL-ja.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Ni mogoče prenesti videa. Neveljaven URL.</string>
+  <string name="OnlineVideos.UploadsBy">naložil</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Videi</string>
+  <string name="OnlineVideos.VideoQuality">Kvaliteta videa</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Obdelovanje</string>
+  <string name="OnlineVideos.Writers">Pisci</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Da</string>
+  <string name="OnlineVideos.Settings_No">Ne</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Izklopljeno</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Enostavno</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Razširjeno</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Preprosto domače ime</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Vtičnik je omogočen</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Prikazano v Home</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">Prikazano v mojih vtičnikih</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Samodejno združi strani po njihovih jezikih</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Uporabi alfa numerične tipke za hiter izbor elementov po prvi črki</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Zgodovina iskanja</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Maksimalna starost (dnevi) za sličice</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Čas (minute) za medpomnjenje podatkov s spleta</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Čas (minute) po katerem se kategorije ponovno naložijo s spleta</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Potek časa (sekunde) za spletne zahtevke</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Predpomnilnik (milisekunde) za Windows Media Player</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Procenti za predpomnjenje preden se začne predvajanje</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Uporabi prilagoditev za dinamično osvežitev zaslona</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">Dodaj priljubljene in prenose strani prve na seznam namesto zadnje</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Število najnovejših videov za prikaz</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Premešaj vse najnovejše videe preden jih prikažeš</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Osveži podatke najnovejših videov s spleta vsakih x minut</string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Osveži prikazane najnovejše videe vsakih x sekund</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Pomni zadnji izgled za stran in kategorijo</string>
+</resources>

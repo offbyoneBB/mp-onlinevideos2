@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Vist</string>
+  <string name="OnlineVideos.AlreadyDownloading">Filen lastes allerede ned.</string>
+  <string name="OnlineVideos.All">Alle</string>
+  <string name="OnlineVideos.Actions">Oppgaver</string>
+  <string name="OnlineVideos.Actors">Skuespillere</string>
+  <string name="OnlineVideos.AddComment">Legg igjen en kommentar</string>
+  <string name="OnlineVideos.AddToPlaylist">Legg til spilleliste</string>
+  <string name="OnlineVideos.AddToMySites">Legg til favorittsider</string>
+  <string name="OnlineVideos.AddToFavourites">Legg til favoritter</string>
+  <string name="OnlineVideos.AddingToFavorites">Legger til favoritter</string>
+  <string name="OnlineVideos.AutomaticUpdate">Automatisk oppdatering</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Automatisk oppdatering deaktivert.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Ødelagt</string>
+  <string name="OnlineVideos.Buffered">bufret</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Avbryt</string>
+  <string name="OnlineVideos.Category">Kategori</string>
+  <string name="OnlineVideos.CategoryNotFound">Kategorien ble ikke funnet</string>
+  <string name="OnlineVideos.Categories">Kategorier</string>
+  <string name="OnlineVideos.Creator">Lagd av</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Lag ny spilleliste</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">ser etter oppdatert plugin versjon</string>
+  <string name="OnlineVideos.Concurrent">samtidig</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Dato</string>
+  <string name="OnlineVideos.DateOfRelease">Utgivelse dato</string>
+  <string name="OnlineVideos.Directors">Regissører</string>
+  <string name="OnlineVideos.Download">Last ned</string>
+  <string name="OnlineVideos.DownloadUserdefined">Last ned til brukerdefinert mappe</string>
+  <string name="OnlineVideos.Downloading">Laster ned</string>
+  <string name="OnlineVideos.DownloadingDescription">Vis listen med aktive nedlastinger.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">laster ned undertekst</string>
+  <string name="OnlineVideos.DownloadFailed">Nedlasting feilet: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Nedlasting avbrutt</string>
+  <string name="OnlineVideos.DownloadComplete">Nedlasting ferdig</string>
+  <string name="OnlineVideos.DownloadStarted">Nedlasting startet</string>
+  <string name="OnlineVideos.DownloadedVideos">Nedlastede videoer</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Nedlastinger vil bli avbrutt.</string>
+  <string name="OnlineVideos.Delete">Slett</string>
+  <string name="OnlineVideos.DeletePlaylist">Slett spilleliste</string>
+  <string name="OnlineVideos.DeleteAll">Slett alle</string>
+  <string name="OnlineVideos.Default">Standard</string>
+  <string name="OnlineVideos.Done">Ferdig</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Sletter gamle miniatyrbilder</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Feil</string>
+  <string name="OnlineVideos.EnterPin">Skriv inn pinkode</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Favoritter</string>
+  <string name="OnlineVideos.Filter">Filter</string>
+  <string name="OnlineVideos.FullUpdate">Full oppdatering</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Sjanger</string>
+  <string name="OnlineVideos.GettingVideoDetails">henter video detaljer</string>
+  <string name="OnlineVideos.GettingCategoryVideos">henter kategori videoer</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">henter favoritt videoer</string>
+  <string name="OnlineVideos.GettingSearchResults">henter søke resultater</string>
+  <string name="OnlineVideos.GettingRelatedVideos">henter relaterte videoer</string>
+  <string name="OnlineVideos.GettingFilteredVideos">henter filtrerte videoer</string>
+  <string name="OnlineVideos.GettingNextPageVideos">henter neste sides videoer</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">henter forrige sides videoer</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">henter avspillings url\'er for video</string>
+  <string name="OnlineVideos.GettingDynamicCategories">henter dynamiske kategorier</string>
+  <string name="OnlineVideos.GettingReports">henter rapporter fra webservice</string>
+  <string name="OnlineVideos.GettingSiteXml">henter side xml fra webservice</string>
+  <string name="OnlineVideos.GettingIcon">henter side ikoner fra webservice</string>
+  <string name="OnlineVideos.GettingBanner">henter side banner fra webservice</string>
+  <string name="OnlineVideos.GettingDll">henter dll fra webservice</string>
+  <string name="OnlineVideos.Groups">Grupper</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Siste versjon ({0}) er nødvendig!</string>
+  <string name="OnlineVideos.Language">Språk</string>
+  <string name="OnlineVideos.LayoutList">Visning: Liste</string>
+  <string name="OnlineVideos.LayoutIcons">Visning: Ikoner</string>
+  <string name="OnlineVideos.LayoutBigIcons">Visning: Store Ikoner</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Konfigurer sider</string>
+  <string name="OnlineVideos.MaxResults">Maks resultater</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Navn</string>
+  <string name="OnlineVideos.NextPage">Neste side</string>
+  <string name="OnlineVideos.NewVideos">Nye Videoer</string>
+  <string name="OnlineVideos.None">Ingen</string>
+  <string name="OnlineVideos.NoVideoFound">Ingen video funnet</string>
+  <string name="OnlineVideos.NoReportsForSite">Rapporter for denne side er utilgjengelig.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Ny dll lastet ned!</string>
+  <string name="OnlineVideos.NewSearch">Nytt søk</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Bare lokal</string>
+  <string name="OnlineVideos.OnlyServer">Bare server</string>
+  <string name="OnlineVideos.Others">Andre</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Spill alle</string>
+  <string name="OnlineVideos.PlayAllRandom">Spill alle (tilfeldig rekkefølge)</string>
+  <string name="OnlineVideos.PlayWith">Spill av med ...</string>
+  <string name="OnlineVideos.Playlists">Spillelister</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Avspilling vil bli stoppet.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Gi en kort beskrivelse.</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Vennligst oppdater og test din lokale side på nytt før du rapporterer den som feil.</string>
+  <string name="OnlineVideos.PlotOutline">Handling</string>
+  <string name="OnlineVideos.PreviousPage">Forrige side</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Utfør automatiske oppdateringer?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">Lagt i kø</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Ranger denne videoen...</string>
+  <string name="OnlineVideos.Recommendations">Anbefalinger</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Fjern fra favoritter</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Fjern fra spilleliste</string>
+  <string name="OnlineVideos.RemovingFromFavorites">fjerner fra favoritter</string>
+  <string name="OnlineVideos.Refresh">Oppdater</string>
+  <string name="OnlineVideos.RelatedVideos">Relaterte videoer</string>
+  <string name="OnlineVideos.ReportBroken">Rapporter ødelagte</string>
+  <string name="OnlineVideos.Reported">Rapporterte</string>
+  <string name="OnlineVideos.Reports">Rapporter</string>
+  <string name="OnlineVideos.Runtime">Spilletid</string>
+  <string name="OnlineVideos.RemoveFromMySites">Fjern fra mine sider</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Fjern alle fra mine steder</string>
+  <string name="OnlineVideos.RestartMediaPortal">Omstart MediaPortal!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Mottar dlls ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Mottar sider ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Søkelogg</string>
+  <string name="OnlineVideos.SearchResults">Søkeresultater</string>
+  <string name="OnlineVideos.SelectSource">Velg kilde</string>
+  <string name="OnlineVideos.Sites">Sider</string>
+  <string name="OnlineVideos.Size">Størrelse</string>
+  <string name="OnlineVideos.SortOptions">Sortering</string>
+  <string name="OnlineVideos.Search">Søk</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Angi en nedlastingsmappe under konfigurasjon!</string>
+  <string name="OnlineVideos.State">Tilstand</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Lagrer lokal liste ...</string>
+  <string name="OnlineVideos.ShowReports">Vis skaper og bruker rapporter</string>
+  <string name="OnlineVideos.StartingPlayback">starter avspilling</string>
+  <string name="OnlineVideos.Subscriptions">Abonnement</string>
+  <string name="OnlineVideos.Success">Suksess</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Søk etter relaterte nøkkelord</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Tidsramme</string>
+  <string name="OnlineVideos.Timeout">Tidsavbrudd</string>
+  <string name="OnlineVideos.Tags">Tagg</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Oppdatert</string>
+  <string name="OnlineVideos.Updatable">Oppdaterbar</string>
+  <string name="OnlineVideos.UpdateAll">Oppdater/Legg til alt</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Oppdater/Legg til alt (hopp over kategorier)</string>
+  <string name="OnlineVideos.UpdateMySite">Oppdater min side</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Oppdater min side(hopp over kategorier)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Dette vil oppdatere alle dine sider.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Kan ikke spille av video. Ingen URL.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Kan ikke laste ned. Ugyldig URL.</string>
+  <string name="OnlineVideos.UploadsBy">opplastet av</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Videoer</string>
+  <string name="OnlineVideos.VideoQuality">Videokvalitet</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Arbeider</string>
+  <string name="OnlineVideos.Writers">Forfattere</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Ja</string>
+  <string name="OnlineVideos.Settings_No">Nei</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Av</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Enkel</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Utvidet</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">\"Basic Home\" navn</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Plugin aktivert</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Listet i \"Home\"</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">Listet i \"Plugins\"</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Automatisk grupper alle sider etter språk</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Bruk alfanumeriske taster for rask å velge elementer etter første bokstav</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Søkehistorikk</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Maksimal alder for miniatyrbilder (i dager)</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Tid for å cache data fra nettet (i minutter)</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Tid før kategorier lastes fra nett (i minutter)</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Tidsavbrudd for nettforespørsler (i sekunder)</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Buffer for Windows Media Player (i millisekunder)</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Prosent som skal buffres før avspilling</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Aktiver adoptering av dynamisk oppfriskningsrate</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">sett nedlasting- og favorittsider først i stedet for sist</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Mengde av siste video som skal vises</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Tilfeldiggjør alle siste videoer før visning </string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Oppfrisk data for siste videoer fra nett hver x minutter </string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Oppfrisk viste siste videoer hver x minutt</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Husk visning av layout for hver side og kategori</string>
+</resources>

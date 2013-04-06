@@ -6,9 +6,6 @@
     Source="screens\master_bare.xaml">
     <Include.Resources>
 
-        <!-- Header -->
-        <ResourceWrapper x:Key="Header_Text" Resource="[OnlineVideos.MenuEntry]"/>
-
         <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
 
         <ovs:ExtendedInfoConverter x:Key="ExtendedInfoConverter"/>

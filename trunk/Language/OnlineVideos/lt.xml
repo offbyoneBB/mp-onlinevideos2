@@ -97,6 +97,7 @@
   <string name="Others">Kiti</string>
   <!--P-->
   <string name="PlayAll">Paleisti visus</string>
+  <string name="PlayAllFromHere">Groti visus (pradėti čia)</string>
   <string name="PlayAllRandom">Groti viską (kintama tvarka)</string>
   <string name="PlayWith">Paleisti per ...</string>
   <string name="Playlists">Grojaraštis</string>

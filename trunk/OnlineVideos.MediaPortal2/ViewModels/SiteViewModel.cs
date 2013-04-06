@@ -49,6 +49,29 @@ namespace OnlineVideos.MediaPortal2
 			_nameProperty = new WProperty(typeof(string), site.Settings.Name);
 			_languageProperty = new WProperty(typeof(string), site.Settings.Language);
 			_descriptionProperty = new WProperty(typeof(string), site.Settings.Description);
+			_contextMenuEntriesProperty = new WProperty(typeof(ItemsList), GetInitialContextEntries());
         }
+
+
+		protected AbstractProperty _contextMenuEntriesProperty;
+		public AbstractProperty ContextMenuEntriesProperty { get { return _contextMenuEntriesProperty; } }
+		public ItemsList ContextMenuEntries
+		{
+			get { return (ItemsList)_contextMenuEntriesProperty.GetValue(); }
+			set { _contextMenuEntriesProperty.SetValue(value); }
+		}
+
+		ItemsList GetInitialContextEntries()
+		{
+			var ctxEntries = new ItemsList();
+			ctxEntries.Add(new ListItem(Consts.KEY_NAME, new MediaPortal.Common.Localization.StringId("[OnlineVideos.RemoveFromMySites]")));
+			if (Site.GetUserConfigurationProperties().Count > 0)
+				ctxEntries.Add(new ListItem(Consts.KEY_NAME, "Change Settings"));
+			return ctxEntries;
+		}
+
+		public void ExecuteContextMenuEntry(ListItem entry)
+		{
+		}
     }
 }

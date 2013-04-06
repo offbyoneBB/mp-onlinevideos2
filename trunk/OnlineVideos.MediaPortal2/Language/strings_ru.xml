@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Эфир</string>
+  <string name="OnlineVideos.AlreadyDownloading">Этот файл уже загружается.</string>
+  <string name="OnlineVideos.All">Все</string>
+  <string name="OnlineVideos.Actions">Действия</string>
+  <string name="OnlineVideos.Actors">Актеры</string>
+  <string name="OnlineVideos.AddComment">Добавить комментарий...</string>
+  <string name="OnlineVideos.AddToPlaylist">Добавить к списку воспроизведения</string>
+  <string name="OnlineVideos.AddToMySites">Добавить в Мои Сайты</string>
+  <string name="OnlineVideos.AddToFavourites">Добавить в Избранное</string>
+  <string name="OnlineVideos.AddingToFavorites">добавление в избранное</string>
+  <string name="OnlineVideos.AutomaticUpdate">Автоматическое Обновление</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Автоматическое обновление отключено.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Испорчено</string>
+  <string name="OnlineVideos.Buffered">буфферизовано</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Отмена</string>
+  <string name="OnlineVideos.Category">Категория</string>
+  <string name="OnlineVideos.CategoryNotFound">Категория не найдена</string>
+  <string name="OnlineVideos.Categories">Категории</string>
+  <string name="OnlineVideos.Creator">Создатель</string>
+  <string name="OnlineVideos.CreateNewPlaylist">создать новый список воспроизведения</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">проверка обновленной версии плагина</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Дата</string>
+  <string name="OnlineVideos.DateOfRelease">Дата Релиза</string>
+  <string name="OnlineVideos.Directors">Режиссеры</string>
+  <string name="OnlineVideos.Download">Загрузка</string>
+  <string name="OnlineVideos.Downloading">Загружается</string>
+  <string name="OnlineVideos.DownloadingDescription">Показать список текущих загрузок.</string>
+  <string name="OnlineVideos.DownloadFailed">Загрузка прервана: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Загрузка Отменена</string>
+  <string name="OnlineVideos.DownloadComplete">Загрузка Завершана</string>
+  <string name="OnlineVideos.DownloadStarted">Загрузка Начата</string>
+  <string name="OnlineVideos.DownloadedVideos">Загруженное Видео</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Скачивание будет прервано.</string>
+  <string name="OnlineVideos.Delete">Удалить</string>
+  <string name="OnlineVideos.DeletePlaylist">Удалить список воспроизведения</string>
+  <string name="OnlineVideos.DeleteAll">Удалить Все</string>
+  <string name="OnlineVideos.Default">Стандарт</string>
+  <string name="OnlineVideos.Done">Выполнено</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Удаление старых эскизов</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Ошибка</string>
+  <string name="OnlineVideos.EnterPin">Введите код</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Избранное</string>
+  <string name="OnlineVideos.Filter">Фильтр</string>
+  <string name="OnlineVideos.FullUpdate">Полное Обновление</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Жанр</string>
+  <string name="OnlineVideos.GettingVideoDetails">получение деталей видео</string>
+  <string name="OnlineVideos.GettingCategoryVideos">получение категории видео</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">получение избранного видео</string>
+  <string name="OnlineVideos.GettingSearchResults">получение результатов поиска</string>
+  <string name="OnlineVideos.GettingRelatedVideos">получение похожих видео</string>
+  <string name="OnlineVideos.GettingFilteredVideos">получение отфильтрованных видео</string>
+  <string name="OnlineVideos.GettingNextPageVideos">получение следующей страницы видео</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">получение предыдущей страницы видео</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">получениессылки на видео</string>
+  <string name="OnlineVideos.GettingDynamicCategories">получение динамических категорий</string>
+  <string name="OnlineVideos.GettingReports">получение ответа от вебсервисов</string>
+  <string name="OnlineVideos.GettingSiteXml">получение xml сайта от вебсервиса</string>
+  <string name="OnlineVideos.GettingIcon">получение значкоа сайта от вебсервиса</string>
+  <string name="OnlineVideos.GettingBanner">получение баннера сайта от вебсервиса</string>
+  <string name="OnlineVideos.GettingDll">получение dll от вебсервиса</string>
+  <string name="OnlineVideos.Groups">Группы</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Необходима последняя версия ({0})!</string>
+  <string name="OnlineVideos.Language">Язык</string>
+  <string name="OnlineVideos.LayoutList">Вид: Список</string>
+  <string name="OnlineVideos.LayoutIcons">Вид: Значки</string>
+  <string name="OnlineVideos.LayoutBigIcons">Вид: Большие значки</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Управление сайтами</string>
+  <string name="OnlineVideos.MaxResults">Максимально результатов</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Имя</string>
+  <string name="OnlineVideos.NextPage">Следующая страница</string>
+  <string name="OnlineVideos.None">Никто</string>
+  <string name="OnlineVideos.NoVideoFound">Видео не найдено</string>
+  <string name="OnlineVideos.NoReportsForSite">Для этого сайта недоступны сообщения.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Новая dll Загружена!</string>
+  <string name="OnlineVideos.NewSearch">Новый Поиск</string>
+  <!--O-->
+  <string name="OnlineVideos.Others">Другие</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Играть Все</string>
+  <string name="OnlineVideos.PlayAllRandom">Воспроизвести всё в случайном порядке</string>
+  <string name="OnlineVideos.Playlists">Списки воспроизведения</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Воспроизведение будет остановлено.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Дайте краткое описание</string>
+  <string name="OnlineVideos.PlotOutline">Действие:</string>
+  <string name="OnlineVideos.PreviousPage">Предыдущая страница</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Выполнять автоматическое обновление?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">в очереди</string>
+  <!--R-->
+  <string name="OnlineVideos.Recommendations">Рекомендации</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Удалить из Избранного</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Удалить из списка воспроизведения</string>
+  <string name="OnlineVideos.RemovingFromFavorites">удаляется из избранного</string>
+  <string name="OnlineVideos.Refresh">Обновить</string>
+  <string name="OnlineVideos.RelatedVideos">Похожие Видео Videos</string>
+  <string name="OnlineVideos.Reported">Отмеченные</string>
+  <string name="OnlineVideos.Reports">Отчеты</string>
+  <string name="OnlineVideos.Runtime">Продолжительность</string>
+  <string name="OnlineVideos.RemoveFromMySites">Удалить из Моих Сайтов</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Удалить всё из моих сайтов</string>
+  <string name="OnlineVideos.RestartMediaPortal">Перезапустить MediaPortal!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Получение уделенных dlls ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Получение удаленных сайтов ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">История Поиска</string>
+  <string name="OnlineVideos.SearchResults">Результаты Поиска</string>
+  <string name="OnlineVideos.SelectSource">Выбрать Источник</string>
+  <string name="OnlineVideos.Sites">Сайты</string>
+  <string name="OnlineVideos.Size">Размер</string>
+  <string name="OnlineVideos.SortOptions">Опции Сортировки</string>
+  <string name="OnlineVideos.Search">Поиск</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Пожалуйста выберите папку сохранения в Настройках!</string>
+  <string name="OnlineVideos.State">Страна</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Сохранение локального списка сайтов ...</string>
+  <string name="OnlineVideos.ShowReports">Показывать комментарии создателя и пользователей</string>
+  <string name="OnlineVideos.StartingPlayback">запуск проигрывания</string>
+  <string name="OnlineVideos.Subscriptions">Подписки</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Временной промежуток</string>
+  <string name="OnlineVideos.Timeout">Таймаут</string>
+  <string name="OnlineVideos.Tags">Тэги</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Обновлено</string>
+  <string name="OnlineVideos.Updatable">Доступно обновление</string>
+  <string name="OnlineVideos.UpdateMySite">Обновить Мои Сайты</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Обновить Мои Сайты (пропустить категории)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Это обновит все ваши текущие сайты.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Невозможно проиграть видео. Нет URL.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Невозможно скачать видео. Неправильный URL.</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Видео</string>
+  <string name="OnlineVideos.VideoQuality">Качество видео</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Работает</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Да</string>
+  <string name="OnlineVideos.Settings_No">Нет</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Название в Простом меню</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Модуль активен</string>
+  <string name="OnlineVideos.Settings_ListedInHome">в Главном меню</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">в \"Моих плагинах\"</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Автоматически сгруппировать сайты по языку</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Поиск в истории</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Срок хранения миниатюр (в днях) </string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Таймаут (в секундах) для Web-запросов</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Буферизация (в мс) для Windows Media Player</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Буферизация (в %) перед началом проигрывания</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Запоминать вид для сайта и категории</string>
+</resources>

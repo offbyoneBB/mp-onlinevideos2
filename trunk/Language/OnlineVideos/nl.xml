@@ -97,6 +97,7 @@
   <string name="Others">Overige</string>
   <!--P-->
   <string name="PlayAll">Alles afspelen</string>
+  <string name="PlayAllFromHere">Alles afspelen (vanaf hier)</string>
   <string name="PlayAllRandom">Alles afspelen in willekeurige volgorde</string>
   <string name="PlayWith">Afspelen met...</string>
   <string name="Playlists">Afspeellijsten</string>

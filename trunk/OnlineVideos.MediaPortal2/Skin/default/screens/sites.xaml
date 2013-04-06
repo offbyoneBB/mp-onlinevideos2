@@ -17,9 +17,6 @@
             <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" To="1.28" Duration="0:0:0.1" />
         </Storyboard>
 
-		<!-- Header -->
-		<ResourceWrapper x:Key="Header_Text" Resource="[OnlineVideos.MenuEntry]"/>
-
 		<!-- Contents -->
         <ControlTemplate x:Key="Client_Template">
 			<DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" LastChildFill="true">

@@ -97,6 +97,7 @@
   <string name="Others">Övriga</string>
   <!--P-->
   <string name="PlayAll">Spela samtliga</string>
+  <string name="PlayAllFromHere">Spela alla (härifrån)</string>
   <string name="PlayAllRandom">Spela samtliga (slumpa ordning)</string>
   <string name="PlayWith">Spela med ...</string>
   <string name="Playlists">Spellistor</string>

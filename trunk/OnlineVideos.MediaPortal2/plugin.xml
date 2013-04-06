@@ -37,7 +37,7 @@
   <Register Location="/Workflow/States">
     <WorkflowState Id="F9D7500D-EC5C-4FEF-8FAE-E4DED8A22CE0"
         Name="OnlineVideosSites" MainScreen="sites" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
-        DisplayLabel="[OnlineVideos.MenuEntry]"/>
+        DisplayLabel="OnlineVideos"/>
 
     <WorkflowState Id="FF474A1A-CA39-4247-BFEA-4E7B578F482B"
         Name="OnlineVideosVideos" MainScreen="videos" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
@@ -49,7 +49,7 @@
 
     <DialogState Id="F068C0DE-3763-4BA1-A59F-24435DBF0227"
         Name="OnlineVideosSearch" DialogScreen="dialogSearch" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
-        DisplayLabel="Search" />
+        DisplayLabel="[OnlineVideos.Search]" />
   </Register>
   
   <!-- Registration of our skin directory -->
@@ -75,7 +75,7 @@
     <ConfigSection
         Id="OnlineVideos"
         Redundant="true"
-        Text="[OnlineVideos.MenuEntry]"/>
+        Text="OnlineVideos"/>
   </Register>
 
   <!-- Contents of '/Plugins/OnlineVideos' section -->
@@ -92,12 +92,12 @@
         ClassName="OnlineVideos.MediaPortal2.Configuration.AgeConfirmationPin"/>
     <ConfigSetting
         Id="OnlineVideosUtilTimeout"
-        Text="Timeout for Webrequests (sec)"
+        Text="[OnlineVideos.Settings_UtilTimeout]"
         HelpText="After how many seconds should a request for online data be aborted?"
         ClassName="OnlineVideos.MediaPortal2.Configuration.UtilTimeout"/>
     <ConfigSetting
         Id="OnlineVideosCacheTimeout"
-        Text="Timeout for cached http data (min)"
+        Text="[OnlineVideos.Settings_CacheTimeout]"
         HelpText="After how many minutes should http data be invalidated in the cache?"
         ClassName="OnlineVideos.MediaPortal2.Configuration.CacheTimeout"/>
   </Register>

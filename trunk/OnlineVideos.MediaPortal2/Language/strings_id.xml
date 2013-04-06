@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Mengudara</string>
+  <string name="OnlineVideos.AlreadyDownloading">Sudah mengunduh file ini.</string>
+  <string name="OnlineVideos.All">Semua</string>
+  <string name="OnlineVideos.Actions">Aksi</string>
+  <string name="OnlineVideos.Actors">Aktor</string>
+  <string name="OnlineVideos.AddComment">Tambah Komentar ...</string>
+  <string name="OnlineVideos.AddToPlaylist">Tambah ke Daftar main ...</string>
+  <string name="OnlineVideos.AddToMySites">Tambah ke situs saya</string>
+  <string name="OnlineVideos.AddToFavourites">Tambah ke favorit</string>
+  <string name="OnlineVideos.AddingToFavorites">tambahkan ke favorit</string>
+  <string name="OnlineVideos.AutomaticUpdate">Perbaruan Otomatis</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Perbaruan Otomatis dinonaktifkan.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Rusak</string>
+  <string name="OnlineVideos.Buffered">buffered</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Batal</string>
+  <string name="OnlineVideos.Category">Kategori</string>
+  <string name="OnlineVideos.CategoryNotFound">Kategori tidak ada</string>
+  <string name="OnlineVideos.Categories">Kategori</string>
+  <string name="OnlineVideos.Creator">Pembuat</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Buat Daftar main baru ...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">memeriksa perbaruan versi plugin</string>
+  <string name="OnlineVideos.Concurrent">bersamaan</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Tanggal</string>
+  <string name="OnlineVideos.DateOfRelease">Tanggal Rilis</string>
+  <string name="OnlineVideos.Directors">Sutradara</string>
+  <string name="OnlineVideos.Download">Unduh</string>
+  <string name="OnlineVideos.DownloadUserdefined">Unduh ke Direktori Pengguna</string>
+  <string name="OnlineVideos.Downloading">Mengunduh</string>
+  <string name="OnlineVideos.DownloadingDescription">Tampilkan daftar unduh yang berjalan saat ini.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">mengunduh subtitel</string>
+  <string name="OnlineVideos.DownloadFailed">Pengunduhan gagal: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Pengunduhan Dibatalkan</string>
+  <string name="OnlineVideos.DownloadComplete">Pengunduhan Selesai</string>
+  <string name="OnlineVideos.DownloadStarted">Mulai Pengunduhan</string>
+  <string name="OnlineVideos.DownloadedVideos">Video Diunduh</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Pengunduhan akan dihentikan.</string>
+  <string name="OnlineVideos.Delete">Hapus</string>
+  <string name="OnlineVideos.DeletePlaylist">Hapus Daftar main</string>
+  <string name="OnlineVideos.DeleteAll">Hapus Semua</string>
+  <string name="OnlineVideos.Default">Baku</string>
+  <string name="OnlineVideos.Done">Selesai</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Menghapus thumbnail lama</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Galat</string>
+  <string name="OnlineVideos.EnterPin">Masukkan Pin</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Favorit</string>
+  <string name="OnlineVideos.Filter">Saring</string>
+  <string name="OnlineVideos.FullUpdate">Perbaruan Penuh</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Genre</string>
+  <string name="OnlineVideos.GettingVideoDetails">mengambil rincian video</string>
+  <string name="OnlineVideos.GettingCategoryVideos">mengambil kategori video</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">mengambil video favorit</string>
+  <string name="OnlineVideos.GettingSearchResults">mengambil hasil pencarian</string>
+  <string name="OnlineVideos.GettingRelatedVideos">mengambil video terkait</string>
+  <string name="OnlineVideos.GettingFilteredVideos">mengambil video tersaring</string>
+  <string name="OnlineVideos.GettingNextPageVideos">mengambil video halaman berikutnya</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">mengambil video halaman sebelumnya</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">mengambil url playback untuk video</string>
+  <string name="OnlineVideos.GettingDynamicCategories">mengambil kategori dinamis</string>
+  <string name="OnlineVideos.GettingReports">mengambil laporan dari layanan web</string>
+  <string name="OnlineVideos.GettingSiteXml">mengambil xml situs dari layanan web</string>
+  <string name="OnlineVideos.GettingIcon">mengambil icon situs dari layanan web</string>
+  <string name="OnlineVideos.GettingBanner">mengambil banner situs dari layanan web</string>
+  <string name="OnlineVideos.GettingDll">mengambil dll dari layanan web</string>
+  <string name="OnlineVideos.Groups">Grup</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Versi terakhir ({0}) dibutuhkan!</string>
+  <string name="OnlineVideos.Language">Bahasa</string>
+  <string name="OnlineVideos.LayoutList">Susunan: Daftar</string>
+  <string name="OnlineVideos.LayoutIcons">Susunan: Icon</string>
+  <string name="OnlineVideos.LayoutBigIcons">Susunan: Icon Besar</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Kelola Situs</string>
+  <string name="OnlineVideos.MaxResults">Hasil Maks</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Nama</string>
+  <string name="OnlineVideos.NextPage">Halaman berikutnya</string>
+  <string name="OnlineVideos.NewVideos">Video Baru</string>
+  <string name="OnlineVideos.None">Nihil</string>
+  <string name="OnlineVideos.NoVideoFound">Tidak ada video</string>
+  <string name="OnlineVideos.NoReportsForSite">Tidak ada laporan untuk situs ini.</string>
+  <string name="OnlineVideos.NewDllDownloaded">dll baru telah diunduh!</string>
+  <string name="OnlineVideos.NewSearch">Pencarian baru</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Hanya Lokal</string>
+  <string name="OnlineVideos.OnlyServer">Hanya Server</string>
+  <string name="OnlineVideos.Others">Lainnya</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Mainkan semua</string>
+  <string name="OnlineVideos.PlayAllRandom">Mainkan semua (secara acak)</string>
+  <string name="OnlineVideos.PlayWith">Mainkan dengan ...</string>
+  <string name="OnlineVideos.Playlists">Daftar main</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Playback akan dihentikan.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Silahkan berikan deskripsi singkat.</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Silahkan perbarui dan uji ulang situs lokal anda sebelum melaporkan masalahnya.</string>
+  <string name="OnlineVideos.PlotOutline">Skema cerita</string>
+  <string name="OnlineVideos.PreviousPage">Halaman sebelumnya</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Jalankan perbaruan otomatis?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">antrian</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Beri Nilai Video ...</string>
+  <string name="OnlineVideos.Recommendations">Rekomendasi</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Hapus dari favorit</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Hapus dari Daftar main</string>
+  <string name="OnlineVideos.RemovingFromFavorites">menghapus dari favorit</string>
+  <string name="OnlineVideos.Refresh">Segarkan</string>
+  <string name="OnlineVideos.RelatedVideos">Video Terkait</string>
+  <string name="OnlineVideos.ReportBroken">Laporan Kerusakan</string>
+  <string name="OnlineVideos.Reported">Dilaporkan</string>
+  <string name="OnlineVideos.Reports">Laporan</string>
+  <string name="OnlineVideos.Runtime">Lama tayang</string>
+  <string name="OnlineVideos.RemoveFromMySites">Hapus dari situs saya</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Hapus semua dari situs saya</string>
+  <string name="OnlineVideos.RestartMediaPortal">Restart MediaPortal!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Menerima dll terkendali ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Menerima situs terkendali ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Riwayat pencarian</string>
+  <string name="OnlineVideos.SearchResults">Hasil pencarian</string>
+  <string name="OnlineVideos.SelectSource">Pilih sumber</string>
+  <string name="OnlineVideos.Sites">Situs</string>
+  <string name="OnlineVideos.Size">Ukuran</string>
+  <string name="OnlineVideos.SortOptions">Opsi pengurutan</string>
+  <string name="OnlineVideos.Search">Cari</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Silahkah setel folder pengunduhan pada Konfigurasi!</string>
+  <string name="OnlineVideos.State">Kondisi</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Menyimpan daftar situs lokal ...</string>
+  <string name="OnlineVideos.ShowReports">Tampilkan pembuat dan pengguna laporannya</string>
+  <string name="OnlineVideos.StartingPlayback">memulai playback</string>
+  <string name="OnlineVideos.Subscriptions">Berlangganan</string>
+  <string name="OnlineVideos.Success">Sukses</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Timeframe</string>
+  <string name="OnlineVideos.Timeout">Timeout</string>
+  <string name="OnlineVideos.Tags">Tag</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Diperbarui</string>
+  <string name="OnlineVideos.Updatable">Dapat diperbarui</string>
+  <string name="OnlineVideos.UpdateAll">Perbarui/Tambah semua</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Perbarui/Tambah semua (lewati kategori)</string>
+  <string name="OnlineVideos.UpdateMySite">Perbarui situs saya</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Perbarui situs saya (lewati kategori)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Ini akan memperbarui semua situs anda saat ini.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Tidak bisa memainkan video tersebut. Tidak ada URL.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Tidak bisa mengunduh video. URL cacat.</string>
+  <string name="OnlineVideos.UploadsBy">diunduh oleh</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Video</string>
+  <string name="OnlineVideos.VideoQuality">Kualitas Video</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Bekerja</string>
+  <string name="OnlineVideos.Writers">Penulis</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Ya</string>
+  <string name="OnlineVideos.Settings_No">Tidak</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Off</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Sederhana</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Lanjutan</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Nama Basis Beranda</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Plugin Aktif</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Terdaftar di Beranda</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">Terdaftar di Plugin Saya</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Otomatis grupkan semua situs berdasarkan bahasanya</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Gunakan kunci alfanumerik untuk pilih cepat item berdasarkan huruf pertamanya</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Riwayat pencarian</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Usia maksimal (hari) untuk thumbnail</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Waktu (menit) untuk cache data dari web</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Waktu (menit) setelah kategori dimuatkan dari web</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Timeout (detik) untuk webrequest</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Buffer (milidetik) untuk Windows Media Player</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Persentase buffer sebelum memulai playback</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Aktifkan adaptasi taksiran penyegaran dinamis</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">Letakkan situs Favorit dan Unduhan lebih dulu dalam daftar daripada terakhir</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Jumlah video terbaru untuk ditampilkan</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Acak semua video terbaru sebelum ditayangkan</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Segarkan data video terbaru dari web setiap x menit</string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Segarkan video terbaru yang ditampilkan setiap x menit</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Riwayatkan susunan tampilan per Situs dan Kategori</string>
+</resources>

@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Esmaesitus</string>
+  <string name="OnlineVideos.AlreadyDownloading">Juba laen seda faili.</string>
+  <string name="OnlineVideos.All">Kõik</string>
+  <string name="OnlineVideos.Actions">Tegevused</string>
+  <string name="OnlineVideos.Actors">Näitlejad</string>
+  <string name="OnlineVideos.AddComment">Lisa kommentaar</string>
+  <string name="OnlineVideos.AddToPlaylist">Lisa esitusnimekirja</string>
+  <string name="OnlineVideos.AddToMySites">Lisa minu saitidele</string>
+  <string name="OnlineVideos.AddToFavourites">Lisa lemmikutele</string>
+  <string name="OnlineVideos.AddingToFavorites">lisan lemmikutele</string>
+  <string name="OnlineVideos.AutomaticUpdate">Automaatne uuendus</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Automaatne uuendus väljalülitatud.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Rikutud</string>
+  <string name="OnlineVideos.Buffered">Bufferdatud</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Tühista</string>
+  <string name="OnlineVideos.Category">Kategooria</string>
+  <string name="OnlineVideos.CategoryNotFound">Kategooriat ei leitud</string>
+  <string name="OnlineVideos.Categories">Kategooriad</string>
+  <string name="OnlineVideos.Creator">Valmistaja</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Uus esitusnimekiri</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">kontrollin lisade uuendusi</string>
+  <string name="OnlineVideos.Concurrent">samaaegne</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Kuupäev</string>
+  <string name="OnlineVideos.DateOfRelease">Väljalaskekuupäev</string>
+  <string name="OnlineVideos.Directors">Rezisöörid</string>
+  <string name="OnlineVideos.Download">Lae alla</string>
+  <string name="OnlineVideos.DownloadUserdefined">Lae kasutaja kataloogi</string>
+  <string name="OnlineVideos.Downloading">Allalaadimine</string>
+  <string name="OnlineVideos.DownloadingDescription">Näitab praegu allalaaditavat nimekirja.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">Subtiitri allalaadimine</string>
+  <string name="OnlineVideos.DownloadFailed">Allalaadimine ebaõnnestus: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Allalaadimine tühistatud</string>
+  <string name="OnlineVideos.DownloadComplete">Allalaadimine lõpetatud</string>
+  <string name="OnlineVideos.DownloadStarted">Allalaadimine algas</string>
+  <string name="OnlineVideos.DownloadedVideos">Allalaetud videod</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Allalaadimised katkestatakse</string>
+  <string name="OnlineVideos.Delete">Kustuta</string>
+  <string name="OnlineVideos.DeletePlaylist">Kustuta esitusnimekiri</string>
+  <string name="OnlineVideos.DeleteAll">Kustuta kõik</string>
+  <string name="OnlineVideos.Default">Vaikimisi</string>
+  <string name="OnlineVideos.Done">Valmis</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Kustutan vanu pisipilte</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Viga</string>
+  <string name="OnlineVideos.EnterPin">Sisesta Pin</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Lemmikud</string>
+  <string name="OnlineVideos.Filter">Filter</string>
+  <string name="OnlineVideos.FullUpdate">Täielik uuendus</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Žanr</string>
+  <string name="OnlineVideos.GettingVideoDetails">hangin video andmeid</string>
+  <string name="OnlineVideos.GettingCategoryVideos">hangin kategooria videod</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">kogun lemmik videosid</string>
+  <string name="OnlineVideos.GettingSearchResults">kogun otsingu tulemusi</string>
+  <string name="OnlineVideos.GettingRelatedVideos">kogun esitatud videosid</string>
+  <string name="OnlineVideos.GettingFilteredVideos">kogun filtreeritud videosid</string>
+  <string name="OnlineVideos.GettingNextPageVideos">kogun järgmise lehe videosid</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">kogun eelmise lehe videosid</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">kogun videole URL-i</string>
+  <string name="OnlineVideos.GettingDynamicCategories">kogun dünaamilisi kategooriaid</string>
+  <string name="OnlineVideos.GettingReports">kogun veebiteenuse raportit</string>
+  <string name="OnlineVideos.GettingSiteXml">kogun saidi xml-i weebiteenuselt</string>
+  <string name="OnlineVideos.GettingIcon">kogun saidi ikoone weebiteenuselt</string>
+  <string name="OnlineVideos.GettingBanner">kogun saidi bannereid weebiteenuselt</string>
+  <string name="OnlineVideos.GettingDll">kogun dll-i weebiteenuselt</string>
+  <string name="OnlineVideos.Groups">Grupid</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Viimane versioon ({0}) on vajalik!</string>
+  <string name="OnlineVideos.Language">Keel</string>
+  <string name="OnlineVideos.LayoutList">Välimus: Nimekiri</string>
+  <string name="OnlineVideos.LayoutIcons">Välimus: Ikoonid</string>
+  <string name="OnlineVideos.LayoutBigIcons">Välimus: Suured ikoonid</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Halda saite</string>
+  <string name="OnlineVideos.MaxResults">Max tulemus</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Nimi</string>
+  <string name="OnlineVideos.NextPage">Järgmine leht</string>
+  <string name="OnlineVideos.NewVideos">Uued videod</string>
+  <string name="OnlineVideos.None">Tühi</string>
+  <string name="OnlineVideos.NoVideoFound">Videot ei leidnud</string>
+  <string name="OnlineVideos.NoReportsForSite">Selle saidi raportit ei ole.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Uus dll alla laetud!</string>
+  <string name="OnlineVideos.NewSearch">Uus otsing</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Ainult kohalik</string>
+  <string name="OnlineVideos.OnlyServer">Ainult server</string>
+  <string name="OnlineVideos.Others">Veel</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Esita kõik</string>
+  <string name="OnlineVideos.PlayAllRandom">Mängi kõik (suvalises järjekorras)</string>
+  <string name="OnlineVideos.PlayWith">Esita programmiga ...</string>
+  <string name="OnlineVideos.Playlists">Esitusnimekirjad</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Esitus lõpetatakse</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Palun andke lühikirjeldus</string>
+  <string name="OnlineVideos.PlotOutline">Ei ole online</string>
+  <string name="OnlineVideos.PreviousPage">Elmine leht</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Kinnitan automaatse uuenduse?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">järjekorras</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Hinnake videot</string>
+  <string name="OnlineVideos.Recommendations">Soovitused</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Eemalda lemmikutest</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Eemalda nimekirjast</string>
+  <string name="OnlineVideos.RemovingFromFavorites">eemaldan lemmikutest</string>
+  <string name="OnlineVideos.Refresh">Värskenda</string>
+  <string name="OnlineVideos.RelatedVideos">Esitatud videod</string>
+  <string name="OnlineVideos.ReportBroken">Teata mittetöötavast</string>
+  <string name="OnlineVideos.Reported">Raporteeritud</string>
+  <string name="OnlineVideos.Reports">Raportid</string>
+  <string name="OnlineVideos.Runtime">Kestus</string>
+  <string name="OnlineVideos.RemoveFromMySites">Eemalda minu saitidest</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Eemalda kõigilt minu veebilehtedelt</string>
+  <string name="OnlineVideos.RestartMediaPortal">Restardi Minu Meedia!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Võtan vastu võrgu dll-e ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Võtan vastu võrgu saite ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Ajalugu</string>
+  <string name="OnlineVideos.SearchResults">Otsingu tulemus</string>
+  <string name="OnlineVideos.SelectSource">Vali allikas</string>
+  <string name="OnlineVideos.Sites">Saidid</string>
+  <string name="OnlineVideos.Size">Maht</string>
+  <string name="OnlineVideos.SortOptions">Sorteeri võimalused</string>
+  <string name="OnlineVideos.Search">Otsi</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Vali allalaadimiskaust Seadistustest!</string>
+  <string name="OnlineVideos.State">Riik</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Salvestan oma saitide nimekirja ...</string>
+  <string name="OnlineVideos.ShowReports">Näita valmistaja ja kasutaja raporteid</string>
+  <string name="OnlineVideos.StartingPlayback">alustan esitamist</string>
+  <string name="OnlineVideos.Subscriptions">Alakirjeldused</string>
+  <string name="OnlineVideos.Success">Õnnestus</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Ajaliin</string>
+  <string name="OnlineVideos.Timeout">Aeg läbi</string>
+  <string name="OnlineVideos.Tags">Tags</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Uuendatud</string>
+  <string name="OnlineVideos.Updatable">Uuendatav</string>
+  <string name="OnlineVideos.UpdateAll">Täienda/Lisa kõik</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Täienda/Lisa kõik (jäta kategooriad vahele)</string>
+  <string name="OnlineVideos.UpdateMySite">Uuenda minu saite</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Uuenda minu saite (ilma kategooriateta)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Seeuuendab kõik Sinu praegused saidid.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Ei saa esitada videot. Puudub URL.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">Ei saa videot alla laadida. Vigane URL.</string>
+  <string name="OnlineVideos.UploadsBy">üles laetud</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Videod</string>
+  <string name="OnlineVideos.VideoQuality">Video kvaliteet</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Tegelen</string>
+  <string name="OnlineVideos.Writers">Stsenaristid</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Jah</string>
+  <string name="OnlineVideos.Settings_No">Ei</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Välja</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Lihtne</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Laiendatud</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Põhilehe nimi</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Lisa aktiveeritud</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Põhilehel</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">Lisades</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Paiguta automaatselt keelte kaupa</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Tähenuppudega esitähe järgi valimine</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Otsinguajalugu</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Pisipiltide säilitamise aeg (päevades)</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Puhvri aeg (minutites)</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Kategooriate uuendamise välp (minutites)</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Veebipäringute ooteaeg (sekundites)</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Windows Media Playeri puhver (millisekundites)</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Esitamiseks vajalik puhvri tase</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Luba muutuva värskendustiheduse sobitamine</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">Aseta Lemmikud ja Allalaadimised esimesteks mitte viimasteks</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Viimatiste videote loetelu pikkus</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Näita viimatised videod juhuslikus järjekorras</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Värskenda uute videote andmeid igal x minutil</string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Värskenda näidatud uued videod igal x minutil</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Mäleta iga kategooria ja veebi vaateid </string>
+</resources>

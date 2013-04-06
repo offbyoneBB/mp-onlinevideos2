@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Aired</string>
+  <string name="OnlineVideos.AlreadyDownloading">Dosya zaten indiriliyor.</string>
+  <string name="OnlineVideos.All">Hepsi</string>
+  <string name="OnlineVideos.Actions">Actions</string>
+  <string name="OnlineVideos.Actors">Oyuncular</string>
+  <string name="OnlineVideos.AddComment">Yorum ekle</string>
+  <string name="OnlineVideos.AddToPlaylist">Çalmalistesine Ekle</string>
+  <string name="OnlineVideos.AddToMySites">Sitelerime Ekle</string>
+  <string name="OnlineVideos.AddToFavourites">Favorilerime Ekle</string>
+  <string name="OnlineVideos.AddingToFavorites">Favorilere Ekleniyor</string>
+  <string name="OnlineVideos.AutomaticUpdate">Automatik Güncelleme</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Automatik Güncelleme Kapalı.</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Bozuk</string>
+  <string name="OnlineVideos.Buffered">İndiriliyor</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Vazgeç</string>
+  <string name="OnlineVideos.Category">Kategori</string>
+  <string name="OnlineVideos.CategoryNotFound">Kategori bulunamadı</string>
+  <string name="OnlineVideos.Categories">Kategoriler</string>
+  <string name="OnlineVideos.Creator">Creator</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Yeni Çalmalistesi Oluştur...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">Güncelleme Kontrol Ediliyor</string>
+  <string name="OnlineVideos.Concurrent">eşzamanlı</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Tarih</string>
+  <string name="OnlineVideos.DateOfRelease">Yükleme Tarihi</string>
+  <string name="OnlineVideos.Directors">Yönetmenler</string>
+  <string name="OnlineVideos.Download">İndir</string>
+  <string name="OnlineVideos.DownloadUserdefined">Kullanıcı tanımlı klasöre kaydet</string>
+  <string name="OnlineVideos.Downloading">İndiriliyor</string>
+  <string name="OnlineVideos.DownloadingDescription">Şu an indirilenleri görüntüle.</string>
+  <string name="OnlineVideos.DownloadingSubtitle">Altyazı indiriliyor</string>
+  <string name="OnlineVideos.DownloadFailed">İndirme Başarısız: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">İndirme İptal Edildi</string>
+  <string name="OnlineVideos.DownloadComplete">İndirme Tamamlandı</string>
+  <string name="OnlineVideos.DownloadStarted">İndirme Başladı</string>
+  <string name="OnlineVideos.DownloadedVideos">İndirilen Videolar</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">İndirmeler iptal edilecek.</string>
+  <string name="OnlineVideos.Delete">Sil</string>
+  <string name="OnlineVideos.DeletePlaylist">Çalmalistesini Sil</string>
+  <string name="OnlineVideos.DeleteAll">Tümünü Sil</string>
+  <string name="OnlineVideos.Default">Öntanımlı</string>
+  <string name="OnlineVideos.Done">Bitti</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Eski küçük resimler siliniyor</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Error</string>
+  <string name="OnlineVideos.EnterPin">Enter Pin</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Favorites</string>
+  <string name="OnlineVideos.Filter">Filter</string>
+  <string name="OnlineVideos.FullUpdate">Full Update</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Genre</string>
+  <string name="OnlineVideos.GettingVideoDetails">getting video details</string>
+  <string name="OnlineVideos.GettingCategoryVideos">getting category videos</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">getting favorite videos</string>
+  <string name="OnlineVideos.GettingSearchResults">getting search results</string>
+  <string name="OnlineVideos.GettingRelatedVideos">getting related videos</string>
+  <string name="OnlineVideos.GettingFilteredVideos">getting filtered videos</string>
+  <string name="OnlineVideos.GettingNextPageVideos">getting next page videos</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">getting previous page videos</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">getting playback urls for video</string>
+  <string name="OnlineVideos.GettingDynamicCategories">getting dynamic categories</string>
+  <string name="OnlineVideos.GettingReports">getting reports from webservice</string>
+  <string name="OnlineVideos.GettingSiteXml">getting site xml from webservice</string>
+  <string name="OnlineVideos.GettingIcon">getting site icon from webservice</string>
+  <string name="OnlineVideos.GettingBanner">getting site banner from webservice</string>
+  <string name="OnlineVideos.GettingDll">getting dll from webservice</string>
+  <string name="OnlineVideos.Groups">Groups</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Latest version ({0}) required!</string>
+  <string name="OnlineVideos.Language">Language</string>
+  <string name="OnlineVideos.LayoutList">Layout: List</string>
+  <string name="OnlineVideos.LayoutIcons">Layout: Icons</string>
+  <string name="OnlineVideos.LayoutBigIcons">Layout: Big Icons</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Manage Sites</string>
+  <string name="OnlineVideos.MaxResults">Max Results</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">İsim</string>
+  <string name="OnlineVideos.NextPage">Sonraki sayfa</string>
+  <string name="OnlineVideos.NewVideos">Yeni videolar</string>
+  <string name="OnlineVideos.None">Hiçbiri</string>
+  <string name="OnlineVideos.NoVideoFound">Video Bulunamadı</string>
+  <string name="OnlineVideos.NoReportsForSite">Bu site için rapor yok.</string>
+  <string name="OnlineVideos.NewDllDownloaded">Yeni dll indirildi!</string>
+  <string name="OnlineVideos.NewSearch">Yeni Arama</string>
+  <!--O-->
+  <string name="OnlineVideos.OnlyLocal">Sadece Yerel</string>
+  <string name="OnlineVideos.OnlyServer">Sadece Sunucu</string>
+  <string name="OnlineVideos.Others">Others</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">Hepsini Oynat</string>
+  <string name="OnlineVideos.PlayAllRandom">Hepsini Çal (rastgele)</string>
+  <string name="OnlineVideos.PlayWith">Şununla oynat ...</string>
+  <string name="OnlineVideos.Playlists">Çalma Listeleri</string>
+  <string name="OnlineVideos.PlaybackWillBeStopped">Çalma durdurulacak.</string>
+  <string name="OnlineVideos.PleaseEnterDescription">Lütfen kısa bir tanımlama giriniz.</string>
+  <string name="OnlineVideos.PlotOutline">Plot outline</string>
+  <string name="OnlineVideos.PreviousPage">Önceki Sayfa</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">Otomatik Güncelleştirme Yapılsın Mı?</string>
+  <!--Q-->
+  <string name="OnlineVideos.Queued">sıraya konuldu</string>
+  <!--R-->
+  <string name="OnlineVideos.RateVideo">Videoyu puanla ...</string>
+  <string name="OnlineVideos.Recommendations">Öneriler</string>
+  <string name="OnlineVideos.RemoveFromFavorites">Favorilerden çıkart</string>
+  <string name="OnlineVideos.RemoveFromPlaylist">Çalma Listesinden çıkart</string>
+  <string name="OnlineVideos.RemovingFromFavorites">favorilerden çıkartılıyor</string>
+  <string name="OnlineVideos.Refresh">Yenile</string>
+  <string name="OnlineVideos.RelatedVideos">Benzer Videolar</string>
+  <string name="OnlineVideos.ReportBroken">Bozuk link bildir</string>
+  <string name="OnlineVideos.Reported">Raporlandı</string>
+  <string name="OnlineVideos.Reports">Raporlar</string>
+  <string name="OnlineVideos.Runtime">Süre</string>
+  <string name="OnlineVideos.RemoveFromMySites">Sitelerimden çıkart</string>
+  <string name="OnlineVideos.RemoveAllFromMySites">Tümünü sitelerimden çıkart</string>
+  <string name="OnlineVideos.RestartMediaPortal">MediaPortalı yeniden başlat!</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">Karşı taraftan ddl ler alınıyor ...</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">Karşı taraftan siteler alınıyor ...</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">Search history</string>
+  <string name="OnlineVideos.SearchResults">Search results</string>
+  <string name="OnlineVideos.SelectSource">Select source</string>
+  <string name="OnlineVideos.Sites">Sites</string>
+  <string name="OnlineVideos.Size">Size</string>
+  <string name="OnlineVideos.SortOptions">Sort options</string>
+  <string name="OnlineVideos.Search">Search</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>
+  <string name="OnlineVideos.State">State</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Saving local site list ...</string>
+  <string name="OnlineVideos.ShowReports">Show creator\'s and user\'s reports</string>
+  <string name="OnlineVideos.StartingPlayback">starting playback</string>
+  <string name="OnlineVideos.Subscriptions">Subscriptions</string>
+  <string name="OnlineVideos.Success">Başarılı</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">Timeframe</string>
+  <string name="OnlineVideos.Timeout">Timeout</string>
+  <string name="OnlineVideos.Tags">Tags</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">Güncellendi</string>
+  <string name="OnlineVideos.Updatable">Güncellenebilir</string>
+  <string name="OnlineVideos.UpdateAll">Update/Add all</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">Update/Add all (skip categories)</string>
+  <string name="OnlineVideos.UpdateMySite">Sitemi güncelle</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">Sitemi güncelle (kategorileri esgeç)</string>
+  <string name="OnlineVideos.UpdateAllYourSites">Mevcut sitelerinizin tamamını güncelleyecek.</string>
+  <string name="OnlineVideos.UnableToPlayVideo">Bu video oynatılamıyor. URL yok.</string>
+  <string name="OnlineVideos.UnableToDownloadVideo"> Bu video oynatılamıyor. Hatalı URL.</string>
+  <string name="OnlineVideos.UploadsBy">uploads by</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">Videolar</string>
+  <string name="OnlineVideos.VideoQuality">Video Kalitesi</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">Çalışıyor</string>
+  <string name="OnlineVideos.Writers">Yazarlar</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+  <string name="OnlineVideos.Settings_Yes">Evet</string>
+  <string name="OnlineVideos.Settings_No">Hayır</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Off">Kapalı</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Basit</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Gelişmiş</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Basit Ana İsim</string>
+  <string name="OnlineVideos.Settings_PluginEnabled">Eklenti Aktif</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Ana Menüde Listelendi</string>
+  <string name="OnlineVideos.Settings_ListedInPlugins">Eklentiler menüsünde Listelendi</string>
+  <string name="OnlineVideos.Settings_AutoGroupByLang">Tüm siteleri dillerine göre otomatik olarak grupla</string>
+  <string name="OnlineVideos.Settings_UseQuickSelect">Harf tuşlarıyla ilk harfe göre seçim yapma</string>
+  <string name="OnlineVideos.Settings_SearchHistoryType">Arama geçmişi</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Küçük resimler en fazla kaç (gün) saklanacak</string>
+  <string name="OnlineVideos.Settings_CacheTimeout">Web üzerinden veri çekilecek süre (dakika)</string>
+  <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Web\'den yüklenecek kategorilerin yenilenme zamanlaması (dakika olarak)</string>
+  <string name="OnlineVideos.Settings_UtilTimeout">Web istekleri için zaman aşımı süresi (saniye)</string>
+  <string name="OnlineVideos.Settings_WmpBuffer">Windows Media Player için arabellek süresi (milisaniye)</string>
+  <string name="OnlineVideos.Settings_PlayBuffer">Çalmaya başlamadan önce arabelleğe alınması gereken yüzde</string>
+  <string name="OnlineVideos.Settings_AllowRefreshrateChange">Dinamik yenileme oranı adaptasyonu</string>
+  <string name="OnlineVideos.Settings_FavoritesFirst">Favoriler ve İndirilenler sitelerini listenin sonu yerine başına yerleştir</string>
+  <string name="OnlineVideos.Settings_LatestVideosMaxItems">Gösterilecek yeni video adedi</string>
+  <string name="OnlineVideos.Settings_LatestVideosRandomize">Yeni videoları göstermeden rastgele sırala</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Yeni videoları web\'den dakika olarak yenileme sıklığı </string>
+  <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Gösterilen yeni videoların dakika olarak yenilenme sıklığı</string>
+  <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Gösterim düzenini her Site ve Kategori\'ye göre ayrı sakla</string>
+</resources>

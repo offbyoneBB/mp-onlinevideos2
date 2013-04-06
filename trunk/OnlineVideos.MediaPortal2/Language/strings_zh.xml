@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">已发布的</string>
+  <string name="OnlineVideos.AlreadyDownloading">已经下载此文件。</string>
+  <string name="OnlineVideos.All">所有</string>
+  <string name="OnlineVideos.Actions">行为</string>
+  <string name="OnlineVideos.Actors">演员</string>
+  <string name="OnlineVideos.AddToMySites">添加到我的站点</string>
+  <string name="OnlineVideos.AddToFavourites">添加到收藏夹</string>
+  <string name="OnlineVideos.AddingToFavorites">添加到收藏夹中</string>
+  <string name="OnlineVideos.AutomaticUpdate">自动更新</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">自动更新已禁用。\n</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">中断</string>
+  <string name="OnlineVideos.Buffered">已缓冲的</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">取消</string>
+  <string name="OnlineVideos.Category">目录</string>
+  <string name="OnlineVideos.Categories">目录</string>
+  <string name="OnlineVideos.Creator">创建者</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">检查已更新的插件版本</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">日期</string>
+  <string name="OnlineVideos.DateOfRelease">发布日期</string>
+  <string name="OnlineVideos.Directors">导演</string>
+  <string name="OnlineVideos.Download">下载</string>
+  <string name="OnlineVideos.DownloadUserdefined">下载到用户目录</string>
+  <string name="OnlineVideos.Downloading">下载中</string>
+  <string name="OnlineVideos.DownloadingDescription">显示当前正在运行的下载列表</string>
+  <string name="OnlineVideos.DownloadingSubtitle">下载字幕中</string>
+  <string name="OnlineVideos.DownloadFailed">下载失败： {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">下载已取消</string>
+  <string name="OnlineVideos.DownloadComplete">下载完成</string>
+  <string name="OnlineVideos.DownloadStarted">下载已开始</string>
+  <string name="OnlineVideos.DownloadedVideos">已下载的视频</string>
+  <string name="OnlineVideos.Delete">删除</string>
+  <string name="OnlineVideos.DeleteAll">删除所有</string>
+  <string name="OnlineVideos.Default">默认</string>
+  <string name="OnlineVideos.Done">完成</string>
+  <string name="OnlineVideos.DeletingOldThumbs">删除旧的缩略图中</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">错误</string>
+  <string name="OnlineVideos.EnterPin">输入 Pin</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">收藏夹</string>
+  <string name="OnlineVideos.Filter">过滤器</string>
+  <string name="OnlineVideos.FullUpdate">全部更新</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">流派</string>
+  <string name="OnlineVideos.GettingVideoDetails">获取视频详情中</string>
+  <string name="OnlineVideos.GettingCategoryVideos">获取目录视频中</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">获取收藏夹视频中</string>
+  <string name="OnlineVideos.GettingSearchResults">获取搜索结果中</string>
+  <string name="OnlineVideos.GettingRelatedVideos">获取相关的视频中</string>
+  <string name="OnlineVideos.GettingFilteredVideos">获取过滤后的视频中</string>
+  <string name="OnlineVideos.GettingNextPageVideos">获取下页视频中</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">获取前页视频中</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">获取视频播放 urls 路径中</string>
+  <string name="OnlineVideos.GettingDynamicCategories">获取动态目录中</string>
+  <string name="OnlineVideos.GettingReports">获取网页服务反馈中</string>
+  <string name="OnlineVideos.GettingSiteXml">从网页服务获取站点 xml 中</string>
+  <string name="OnlineVideos.GettingIcon">从网页服务获取站点图标中</string>
+  <string name="OnlineVideos.GettingBanner">从网页服务获取站点 banner 中</string>
+  <string name="OnlineVideos.GettingDll">从网页服务获取 dll 中</string>
+  <string name="OnlineVideos.Groups">分组</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">最新版本 ({0}) 需要的！</string>
+  <string name="OnlineVideos.Language">语言</string>
+  <string name="OnlineVideos.LayoutList">布局：列表</string>
+  <string name="OnlineVideos.LayoutIcons">布局：图标</string>
+  <string name="OnlineVideos.LayoutBigIcons">布局：大图标</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">管理站点</string>
+  <string name="OnlineVideos.MaxResults">最大结果</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">名称</string>
+  <string name="OnlineVideos.NextPage">下页</string>
+  <string name="OnlineVideos.NewVideos">新视频</string>
+  <string name="OnlineVideos.None">无</string>
+  <string name="OnlineVideos.NoVideoFound">没有找到视频</string>
+  <string name="OnlineVideos.NoReportsForSite">没有此站点可用的反馈。</string>
+  <string name="OnlineVideos.NewDllDownloaded">新 dll 已下载！</string>
+  <string name="OnlineVideos.NewSearch">新搜索</string>
+  <!--O-->
+  <string name="OnlineVideos.Others">其它的</string>
+  <!--P-->
+  <string name="OnlineVideos.PlayAll">其它的</string>
+  <string name="OnlineVideos.PlayWith">播放使用......</string>
+  <string name="OnlineVideos.PleaseEnterDescription">请给以一个简单说明。</string>
+  <string name="OnlineVideos.PlotOutline">剧情简介</string>
+  <string name="OnlineVideos.PreviousPage">前页</string>
+  <string name="OnlineVideos.PerformAutomaticUpdate">执行自动更新吗？</string>
+  <!--Q-->
+  <!--R-->
+  <string name="OnlineVideos.RemoveFromFavorites">从收藏夹中移除</string>
+  <string name="OnlineVideos.RemovingFromFavorites">从收藏夹移除中</string>
+  <string name="OnlineVideos.Refresh">刷新</string>
+  <string name="OnlineVideos.RelatedVideos">相关视频</string>
+  <string name="OnlineVideos.ReportBroken">反馈中断</string>
+  <string name="OnlineVideos.Reported">已反馈的</string>
+  <string name="OnlineVideos.Reports">反馈</string>
+  <string name="OnlineVideos.Runtime">运行时间</string>
+  <string name="OnlineVideos.RemoveFromMySites">从我的站点移除</string>
+  <string name="OnlineVideos.RestartMediaPortal">重启 MediaPortal！</string>
+  <string name="OnlineVideos.RetrievingRemoteDlls">重获远程 dll.....</string>
+  <string name="OnlineVideos.RetrievingRemoteSites">重获远程站点......</string>
+  <!--S-->
+  <string name="OnlineVideos.SearchHistory">搜索历史</string>
+  <string name="OnlineVideos.SearchResults">搜索结果</string>
+  <string name="OnlineVideos.SelectSource">选择源</string>
+  <string name="OnlineVideos.Sites">站点</string>
+  <string name="OnlineVideos.Size">大小</string>
+  <string name="OnlineVideos.SortOptions">排序选项</string>
+  <string name="OnlineVideos.Search">搜索</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">请在配置中设置一个下载文件！</string>
+  <string name="OnlineVideos.State">状态</string>
+  <string name="OnlineVideos.SavingLocalSiteList">保存本地站点列表中......</string>
+  <string name="OnlineVideos.ShowReports">显示创建者和用户反馈</string>
+  <string name="OnlineVideos.StartingPlayback">开始播放</string>
+  <string name="OnlineVideos.Subscriptions">订阅</string>
+  <!--T-->
+  <string name="OnlineVideos.Timeframe">时间帧</string>
+  <string name="OnlineVideos.Timeout">超时</string>
+  <string name="OnlineVideos.Tags">标签</string>
+  <!--U-->
+  <string name="OnlineVideos.Updated">已更新的</string>
+  <string name="OnlineVideos.Updatable">可更新的</string>
+  <string name="OnlineVideos.UpdateAll">更新/添加 所有</string>
+  <string name="OnlineVideos.UpdateAllSkipCategories">更新/添加 所有（省略目录）</string>
+  <string name="OnlineVideos.UpdateMySite">更新我的站点</string>
+  <string name="OnlineVideos.UpdateMySiteSkipCategories">更新我的站点（省略目录）</string>
+  <string name="OnlineVideos.UpdateAllYourSites">这将更新你所有当前站点。</string>
+  <string name="OnlineVideos.UnableToPlayVideo">不能播放视频。没有 URL。</string>
+  <string name="OnlineVideos.UnableToDownloadVideo">不能下载视频。非法的 URL。</string>
+  <string name="OnlineVideos.UploadsBy">上传者</string>
+  <!--V-->
+  <string name="OnlineVideos.Videos">视频</string>
+  <!--W-->
+  <string name="OnlineVideos.Working">工作中</string>
+  <string name="OnlineVideos.Writers">编剧</string>
+  <!--Y-->
+  <!--Strings from the settings file-->
+</resources>
