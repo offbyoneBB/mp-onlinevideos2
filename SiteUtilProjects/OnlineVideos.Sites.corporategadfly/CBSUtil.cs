@@ -16,12 +16,12 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class CBSUtil : GenericSiteUtil
     {
-        private static Regex carouselRegex = new Regex(@"loadUpCarousel\('(?<title>[^,]*)','(?<section>[^,]*)',\s'(?<hash>[^,]*)',\s(?<showId>[^,]*),\strue,\sstored",
+        private static Regex carouselRegex = new Regex(@"""id-carousel-(?<carouselId>[^""]*)""",
                                                        RegexOptions.Compiled);
         private static Regex pidRegex = new Regex(@"video\.settings\.pid\s=\s'(?<pid>[^']*)';",
                                                   RegexOptions.Compiled);
 
-        private static string CAROUSEL = @"carousel";
+        private static string TOP_LEVEL_TABS = @"topleveltabs";
         private static string thePlatformUrlFormat = @"http://link.theplatform.com/s/dJ5BDC/{0}?format=SMIL&Tracking=true&mbr=true";
 
         public override int DiscoverDynamicCategories()
@@ -50,8 +50,9 @@ namespace OnlineVideos.Sites
         {
             parentCategory.SubCategories = new List<Category>();
             
-            if (!CAROUSEL.Equals(parentCategory.Other as string))
+            if (!TOP_LEVEL_TABS.Equals(parentCategory.Other as string))
             {
+                // this section takes care of shows within top-subcategories like primetime, daytime, latenight, classics, originals, specials
                 HtmlDocument document = GetWebData<HtmlDocument>(string.Format(@"{0}/video/", baseUrl));
                 if (document != null)
                 {
@@ -70,7 +71,7 @@ namespace OnlineVideos.Sites
                                                              Name = HttpUtility.HtmlDecode(name),
                                                              Url = url,
                                                              Thumb = thumb,
-                                                             Other = CAROUSEL,
+                                                             Other = TOP_LEVEL_TABS,
                                                              HasSubCategories = true
                                                          });
                     }
@@ -78,21 +79,18 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                Log.Debug(@"Trying new carousel");
+                // this section takes care of subcatories for a particular show
                 string webData = GetWebData((parentCategory as RssLink).Url);
                 
                 if (!string.IsNullOrEmpty(webData))
                 {
                     foreach (Match m in carouselRegex.Matches(webData))
                     {
-                        // URL is formatted as /carousels/#showId#/video/#section#/#hash#/#begin#/#size#/
+                        string url = string.Format("http://www.cbs.com/carousels/videosBySection/{0}/0/40/", m.Groups["carouselId"].Value);
+                        JObject json = GetWebData<JObject>(url);
                         parentCategory.SubCategories.Add(new RssLink() {
-                                                             Url = string.Format(@"{0}/carousels/{1}/video/{2}/{3}/0/400",
-                                                                                 baseUrl,
-                                                                                 m.Groups["showId"].Value,
-                                                                                 m.Groups["section"].Value,
-                                                                                 m.Groups["hash"].Value),
-                                                             Name = Regex.Unescape(m.Groups["title"].Value),
+                                                             Url = url,
+                                                             Name = json.Value<JObject>("result").Value<string>("title"),
                                                              HasSubCategories = false
                                                          });
                     }
@@ -110,17 +108,12 @@ namespace OnlineVideos.Sites
             JObject json = GetWebData<JObject>((category as RssLink).Url);
             if (json != null)
             {
-                foreach (JToken item in json["itemList"] as JArray)
+                foreach (JToken item in json["result"]["videos"] as JArray)
                 {
-                    long epochSeconds = item.Value<long>("airDate") / 1000;
                     result.Add(new VideoInfo() {
                                    Title = item.Value<string>("title"),
-                                   Description = item.Value<string>("description"),
-                                   VideoUrl = item.Value<string>("url"),
-                                   Length = TimeSpan.FromSeconds(item.Value<int>("duration")).ToString(),
-                                   ImageUrl = item.Value<string>("thumbnail"),
-                                   // convert epoch (seconds since unix time) to a date string
-                                   Airdate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(epochSeconds).ToShortDateString()
+                                   VideoUrl = string.Format(@"{0}{1}", baseUrl, item.Value<string>("url")),
+                                   ImageUrl = item.Value<JObject>("thumb").Value<string>("large")
                                });
                 }
             }
