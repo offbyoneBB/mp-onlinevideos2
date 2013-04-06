@@ -56,6 +56,19 @@ namespace OnlineVideos.Sites
                 HtmlDocument document = GetWebData<HtmlDocument>(string.Format(@"{0}/video/", baseUrl));
                 if (document != null)
                 {
+                    List<RssLink> subCategories = new List<RssLink>();
+                    
+                    if (@"primetime".Equals((parentCategory.Other) as string))
+                    {
+                        // Golden Boy is missing from http://www.cbs.com/video/, so add it manually
+                        subCategories.Add(new RssLink() {
+                                              ParentCategory = parentCategory,
+                                              Name = @"Golden Boy",
+                                              Url = @"http://www.cbs.com/shows/golden_boy/video/",
+                                              Other = TOP_LEVEL_TABS,
+                                              HasSubCategories = true
+                                          });
+                    }
                     foreach (HtmlNode anchor in document.DocumentNode.SelectNodes(string.Format(@"//div[@id = '{0}']//a", parentCategory.Other as string)))
                     {
                         string clazz = anchor.GetAttributeValue("class", string.Empty);
@@ -69,14 +82,23 @@ namespace OnlineVideos.Sites
                         // make sure url ends with video/
                         if (!url.Contains("/video")) url = string.Format(@"{0}{1}", url, @"video/");
                         string thumb = string.Format("{0}{1}", baseUrl, image.GetAttributeValue("src", string.Empty));
-                        parentCategory.SubCategories.Add(new RssLink() {
-                                                             ParentCategory = parentCategory,
-                                                             Name = HttpUtility.HtmlDecode(name),
-                                                             Url = url,
-                                                             Thumb = thumb,
-                                                             Other = TOP_LEVEL_TABS,
-                                                             HasSubCategories = true
-                                                         });
+                        subCategories.Add(new RssLink() {
+                                              ParentCategory = parentCategory,
+                                              Name = HttpUtility.HtmlDecode(name),
+                                              Url = url,
+                                              Thumb = thumb,
+                                              Other = TOP_LEVEL_TABS,
+                                              HasSubCategories = true
+                                          });
+                    }
+                    
+                    // sort subcategories by category name but remove "The" during sort
+                    foreach (RssLink category in subCategories.OrderBy(s => 
+                                                                       s.Name.StartsWith("The ", StringComparison.OrdinalIgnoreCase) ?
+                                                                       s.Name.Substring(s.Name.IndexOf(" ") + 1) :
+                                                                       s.Name))
+                    {
+                        parentCategory.SubCategories.Add(category);
                     }
                 }
             }
