@@ -9,8 +9,7 @@
         <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
         
         <ovs:SiteUtilIconConverter x:Key="SiteUtilIconConverter"/>
-        <ovs:LanguageConverter x:Key="LanguageConverter"/>
-        <ovs:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
+		<ovs:LanguageIconConverter x:Key="LanguageIconConverter"/>
 		
         <Storyboard x:Key="GrowAnimation">
             <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX" To="1.28" Duration="0:0:0.1" />
@@ -109,9 +108,9 @@
 									</Rectangle.Fill>
 								</Rectangle>
 								<Image x:Name="thumb" Stretch="Uniform" Margin="8" Source="{Binding Path=Site, Converter={StaticResource SiteUtilIconConverter}}"/>
-								<Image Width="20" Stretch="Uniform" Margin="0,2,3,0" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding Path=Language, Converter={StaticResource LanguageConverter}}"/>
-                                <Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Content="{Binding Path=Name}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}}" Color="{ThemeResource TextColor}"/>
-								<Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding Path=Name}" FontSize="{ThemeResource LittleFontSize}" IsVisible="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}, ConverterParameter=inverted}" Color="{ThemeResource TextColor}"/>
+								<Image Width="20" Stretch="Uniform" Margin="0,2,3,0" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding Path=Language, Converter={StaticResource LanguageIconConverter}}"/>
+								<Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Content="{Binding Path=Name}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
+								<Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding Path=Name}" FontSize="{ThemeResource LittleFontSize}" IsVisible="{Binding ElementName=thumb, Path=HasImage}" Color="{ThemeResource TextColor}"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>

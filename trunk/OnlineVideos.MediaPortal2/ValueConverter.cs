@@ -32,7 +32,7 @@ namespace OnlineVideos.MediaPortal2
         }
     }
 
-    public class LanguageConverter : IValueConverter
+    public class LanguageIconConverter : IValueConverter
     {
         public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
         {
@@ -46,21 +46,6 @@ namespace OnlineVideos.MediaPortal2
                 return true;
             }
             return false;
-        }
-
-        public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class NullVisibilityConverter : IValueConverter
-    {
-        public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
-        {
-            result = string.IsNullOrEmpty(value as string);
-            if (parameter != null) result = !(bool)result;
-            return true;
         }
 
         public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
