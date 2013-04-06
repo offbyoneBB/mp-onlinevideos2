@@ -2,123 +2,25 @@
 <Include
     xmlns="www.team-mediaportal.com/2008/mpf/directx"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
     Source="screens\master_bare.xaml">
     <Include.Resources>
 
         <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
-        
-        <ovs:SiteUtilIconConverter x:Key="SiteUtilIconConverter"/>
-		<ovs:LanguageIconConverter x:Key="LanguageIconConverter"/>
-		
-        <Storyboard x:Key="GrowAnimation">
-            <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX" To="1.28" Duration="0:0:0.1" />
-            <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" To="1.28" Duration="0:0:0.1" />
-        </Storyboard>
 
 		<!-- Contents -->
         <ControlTemplate x:Key="Client_Template">
 			<DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" LastChildFill="true">
-
+				
 				<Label Color="{ThemeResource HintTextColor}" DockPanel.Dock="Bottom" Height="40" Margin="100,0,100,1"
 					  HorizontalAlignment="Stretch" VerticalAlignment="Center" Wrap="True" Scroll="Auto" FontSize="{ThemeResource SmallerFontSize}"
 					  DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"
 					  Content="{Binding Description}" />
-				
-				<ListView x:Name="siteslist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" Style="{ThemeResource EmptyStyle}"
-							CurrentItem="{Binding Source={StaticResource OnlineVideosModel}, Path=FocusedSite, Mode=OneWayToSource}"
-							ItemsSource="{Binding Path=SitesList}" SetFocusPrio="RestoreState">
-                    <ListView.Template>
-                        <ControlTemplate TargetType="{x:Type ListView}">
-                            <ScrollViewer Style="{ThemeResource DefaultScrollViewerStyle}" CanContentScroll="true" HorizontalScrollBarVisibility="Disabled"
-                                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                <ItemsPresenter VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-                            </ScrollViewer>
-                        </ControlTemplate>
-                    </ListView.Template>
 
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel x:Name="ListItemsHost" IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,20,20,0"/>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                        <Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" Style="{ThemeResource EmptyStyle}">
-                                            <Button.RenderTransform>
-                                                <TransformGroup>
-                                                    <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1"/>
-                                                </TransformGroup>
-                                            </Button.RenderTransform>
-                                            <Button.Command>
-                                                <Command Source="{Binding Source={StaticResource OnlineVideosModel}}" Path="SelectSite" Parameters="{LateBoundValue BindingValue={Binding}}"/>
-                                            </Button.Command>
-											<Button.ContextMenuCommand>
-												<Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="dialogSiteContextMenu"/>
-											</Button.ContextMenuCommand>
-											<Button.Triggers>
-                                                <Trigger Property="HasFocus" Value="True">
-                                                    <Setter TargetName="ItemLabelBig" Property="Scroll" Value="Auto"/>
-                                                    <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
-                                                    <Trigger.EnterActions>
-														<BeginStoryboard x:Name="Focused_BeginStoryboardGrow" Storyboard="{StaticResource GrowAnimation}"/>
-														<SoundPlayerAction Source="button12.wav" DisableOnAudioOutput="True"/>
-														<BeginStoryboard x:Name="Focused_BeginStoryboardColor" Storyboard="{ThemeResource FocusedButtonStoryboard}"/>
-                                                    </Trigger.EnterActions>
-                                                    <Trigger.ExitActions>
-														<StopStoryboard BeginStoryboardName="Focused_BeginStoryboardGrow"/>
-														<StopStoryboard BeginStoryboardName="Focused_BeginStoryboardColor"/>
-                                                    </Trigger.ExitActions>
-                                                </Trigger>
-                                            </Button.Triggers>
-                                            <Button.TemplateControl>
-                                                <ContentPresenter/>
-                                            </Button.TemplateControl>
-                                        </Button>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="Selected" Value="True">
-                                                <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Width="127" Height="127" Margin="4">
-								<Rectangle x:Name="ButtonControlRectangle" StrokeThickness="1" Stroke="{ThemeResource ButtonStrokeColor}" Width="127" Height="127" RadiusX="7" RadiusY="7">
-									<Rectangle.Fill>
-										<RadialGradientBrush GradientOrigin="0.85,0.82">
-											<RadialGradientBrush.RelativeTransform>
-												<TransformGroup>
-													<ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.335" ScaleY="1.582"/>
-													<TranslateTransform X="0.027" Y="-0.006"/>
-												</TransformGroup>
-											</RadialGradientBrush.RelativeTransform>
-											<GradientStop Color="#00000000" Offset="0"/>
-											<GradientStop Color="#00000000" Offset="1"/>
-										</RadialGradientBrush>
-									</Rectangle.Fill>
-								</Rectangle>
-								<Image x:Name="thumb" Stretch="Uniform" Margin="8" Source="{Binding Path=Site, Converter={StaticResource SiteUtilIconConverter}}"/>
-								<Image Width="20" Stretch="Uniform" Margin="0,2,3,0" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding Path=Language, Converter={StaticResource LanguageIconConverter}}"/>
-								<Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Content="{Binding Path=Name}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
-								<Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding Path=Name}" FontSize="{ThemeResource LittleFontSize}" IsVisible="{Binding ElementName=thumb, Path=HasImage}" Color="{ThemeResource TextColor}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
-
+				<ListView x:Name="siteslist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
+							Style="{ThemeResource ovsSitesListViewStyle}"
+							CurrentItem="{Binding Path=FocusedSite, Mode=OneWayToSource}"
+							ItemsSource="{Binding Path=SitesList}" SetFocusPrio="RestoreState"/>
             </DockPanel>
-
         </ControlTemplate>
 
     </Include.Resources>
