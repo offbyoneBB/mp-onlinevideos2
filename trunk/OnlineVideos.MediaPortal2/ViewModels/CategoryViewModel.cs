@@ -5,6 +5,7 @@ using System.Text;
 using MediaPortal.Common.General;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.SkinEngine.ScreenManagement;
+using MediaPortal.UiComponents.Media.General;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -44,14 +45,6 @@ namespace OnlineVideos.MediaPortal2
             set { _estimatedChildrenProperty.SetValue(value); }
         }
 
-        protected AbstractProperty _focusPrio;
-        public AbstractProperty FocusPrioProperty { get { return _focusPrio; } }
-        public SetFocusPriority FocusPrio
-        {
-            get { return (SetFocusPriority)_focusPrio.GetValue(); }
-            set { _focusPrio.SetValue(value); }
-        }
-
         protected Category _category;
         public Category Category
         {
@@ -59,6 +52,7 @@ namespace OnlineVideos.MediaPortal2
         }
 
         public CategoryViewModel(Category category)
+			: base(Consts.KEY_NAME, category.Name)
         {
             _category = category;
 
@@ -66,7 +60,6 @@ namespace OnlineVideos.MediaPortal2
             _descriptionProperty = new WProperty(typeof(string), category.Description);
             _thumbProperty = new WProperty(typeof(string), null);
             _estimatedChildrenProperty = new WProperty(typeof(uint?), CalculateChildrenCount());
-			_focusPrio = new WProperty(typeof(SetFocusPriority), SetFocusPriority.None);
 
 			if (Category is NextPageCategory)
 			{

@@ -5,17 +5,17 @@ using MediaPortal.Common;
 using MediaPortal.Common.General;
 using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.MediaManagement.DefaultItemAspects;
-using MediaPortal.Common.SystemResolver;
-using MediaPortal.Common.Settings;
-using MediaPortal.Common.Threading;
 using MediaPortal.Common.PathManager;
+using MediaPortal.Common.Settings;
+using MediaPortal.Common.SystemResolver;
+using MediaPortal.Common.Threading;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
-using OnlineVideos.Sites;
-using MediaPortal.UiComponents.Media.General;
 using MediaPortal.UI.SkinEngine.ScreenManagement;
+using MediaPortal.UiComponents.Media.General;
+using OnlineVideos.Sites;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -44,8 +44,6 @@ namespace OnlineVideos.MediaPortal2
             OnlineVideoSettings.Instance.CacheTimeout = settings.CacheTimeout;
             OnlineVideoSettings.Instance.UtilTimeout = settings.UtilTimeout;
 
-            OnlineVideoSettings.Instance.LoadSites();
-            OnlineVideoSettings.Instance.BuildSiteUtilsList();
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asf")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asf", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asx")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asx", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".flv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".flv", false);
@@ -55,10 +53,19 @@ namespace OnlineVideos.MediaPortal2
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mp4")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mp4", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".wmv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".wmv", false);
 
-            SitesList = new List<SiteViewModel>();
+			OnlineVideoSettings.Instance.LoadSites();
+			OnlineVideoSettings.Instance.BuildSiteUtilsList();
 
-			OnlineVideoSettings.Instance.SiteUtilsList.Values.ToList().ForEach(s => SitesList.Add(new SiteViewModel(s) { FocusPrio = SitesList.Count == 0 ? SetFocusPriority.Highest : SetFocusPriority.None }));
+            SitesList = new ItemsList();
+			OnlineVideoSettings.Instance.SiteUtilsList.Values.ToList().ForEach(s => SitesList.Add(new SiteViewModel(s)));
         }
+
+		SiteViewModel _focusedSite;
+		public SiteViewModel FocusedSite
+		{
+			get { return _focusedSite; }
+			set { if (value != null) _focusedSite = value; }
+		}
 
         protected AbstractProperty _searchStringProperty = new WProperty(typeof(string), string.Empty);
         public AbstractProperty SearchStringProperty { get { return _searchStringProperty; } }
@@ -68,14 +75,16 @@ namespace OnlineVideos.MediaPortal2
             set { _searchStringProperty.SetValue(value); }
         }
 
-        public List<SiteViewModel> SitesList { get; protected set; }
-        public SiteUtilBase SelectedSite { get; protected set; }
-        public Category SelectedCategory { get; protected set; }
-        public ItemsList CategoriesList { get; protected set; }
+		public SiteViewModel SelectedSite { get; protected set; }
+        public CategoryViewModel SelectedCategory { get; protected set; }
+		public VideoViewModel SelectedVideo { get; protected set; }
+		public VideoViewModel SelectedDetailsVideo { get; protected set; }
+
+		public ItemsList SitesList { get; protected set; }
+		public ItemsList CategoriesList { get; protected set; }
         public ItemsList VideosList { get; protected set; }
-        public List<VideoInfoViewModel> DetailsVideosList { get; protected set; }
-        public VideoInfoViewModel SelectedVideo { get; protected set; }
-		public VideoInfoViewModel SelectedDetailsVideo { get; protected set; }
+        public List<VideoViewModel> DetailsVideosList { get; protected set; }
+
         /// <summary>The MP2 simple dialog requires Items to be of type <see cref="ListItem"/> and have a Name to show a label in the GUI.</summary>
         public ItemsList PlaybackOptions { get; protected set; }
         
@@ -85,10 +94,10 @@ namespace OnlineVideos.MediaPortal2
         public void SelectSite(object selectedItem)
         {
             if (currentBackgroundTask != null) return;
-            SiteViewModel sub = selectedItem as SiteViewModel;
-            if (sub != null)
+            SiteViewModel siteModel = selectedItem as SiteViewModel;
+            if (siteModel != null)
             {
-                if (!sub.Settings.DynamicCategoriesDiscovered)
+                if (!siteModel.Site.Settings.DynamicCategoriesDiscovered)
                 {
                     ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
                     currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
@@ -96,7 +105,7 @@ namespace OnlineVideos.MediaPortal2
                         {
                             try
                             {
-                                sub.Site.DiscoverDynamicCategories();
+                                siteModel.Site.DiscoverDynamicCategories();
                             }
                             catch (Exception ex)
                             {
@@ -106,15 +115,15 @@ namespace OnlineVideos.MediaPortal2
                         (args) =>
                         {
                             ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                            SelectedSite = sub.Site;
-                            ShowCategories(sub.Settings.Categories, SelectedSite.Settings.Name);
+                            SelectedSite = siteModel;
+                            ShowCategories(siteModel.Site.Settings.Categories, SelectedSite.Name);
                             currentBackgroundTask = null;
                         });
                 }
                 else
                 {
-                    SelectedSite = sub.Site;
-                    ShowCategories(sub.Settings.Categories, SelectedSite.Settings.Name);
+                    SelectedSite = siteModel;
+                    ShowCategories(siteModel.Site.Settings.Categories, SelectedSite.Name);
                 }
             }
         }
@@ -122,11 +131,10 @@ namespace OnlineVideos.MediaPortal2
         public void SelectCategory(object selectedItem)
         {
             if (currentBackgroundTask != null) return;
-            CategoryViewModel catProxy = selectedItem as CategoryViewModel;
-            if (catProxy != null)
+            CategoryViewModel categoryModel = selectedItem as CategoryViewModel;
+            if (categoryModel != null)
             {
-                Category cat = catProxy.Category;
-                if (cat is NextPageCategory)
+				if (categoryModel.Category is NextPageCategory)
                 {
                     // append next page categories
                     ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
@@ -135,7 +143,7 @@ namespace OnlineVideos.MediaPortal2
                     {
                         try
                         {
-                            SelectedSite.DiscoverNextPageCategories(cat as NextPageCategory);
+							SelectedSite.Site.DiscoverNextPageCategories(categoryModel.Category as NextPageCategory);
                         }
                         catch (Exception ex)
                         {
@@ -148,17 +156,17 @@ namespace OnlineVideos.MediaPortal2
                         currentBackgroundTask = null;
                         int selectNr = CategoriesList.Count - 1;
                         CategoriesList.Clear();
-                        IList<Category> catList = cat.ParentCategory == null ? (IList<Category>)SelectedSite.Settings.Categories : cat.ParentCategory.SubCategories;
-						foreach (Category c in catList) CategoriesList.Add(new CategoryViewModel(c) { FocusPrio = CategoriesList.Count == selectNr ? SetFocusPriority.Highest : SetFocusPriority.None });
+						IList<Category> catList = categoryModel.Category.ParentCategory == null ? (IList<Category>)SelectedSite.Site.Settings.Categories : categoryModel.Category.ParentCategory.SubCategories;
+						foreach (Category c in catList) CategoriesList.Add(new CategoryViewModel(c) { Selected = CategoriesList.Count == selectNr });
                         ImageDownloader.GetImages<Category>(catList);
                         CategoriesList.FireChange();
                     });
                 }
                 else
                 {
-                    if (cat.HasSubCategories)
+					if (categoryModel.Category.HasSubCategories)
                     {
-                        if (!cat.SubCategoriesDiscovered)
+						if (!categoryModel.Category.SubCategoriesDiscovered)
                         {
                             ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
                             currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
@@ -166,7 +174,7 @@ namespace OnlineVideos.MediaPortal2
                                 {
                                     try
                                     {
-                                        SelectedSite.DiscoverSubCategories(cat);
+										SelectedSite.Site.DiscoverSubCategories(categoryModel.Category);
                                     }
                                     catch (Exception ex)
                                     {
@@ -176,15 +184,15 @@ namespace OnlineVideos.MediaPortal2
                                 (args) =>
                                 {
                                     ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                                    SelectedCategory = cat;
-                                    ShowCategories(cat.SubCategories, cat.Name);
+									SelectedCategory = categoryModel;
+									ShowCategories(categoryModel.Category.SubCategories, categoryModel.Name);
                                     currentBackgroundTask = null;
                                 });
                         }
                         else
                         {
-                            SelectedCategory = cat;
-                            ShowCategories(cat.SubCategories, cat.Name);
+							SelectedCategory = categoryModel;
+							ShowCategories(categoryModel.Category.SubCategories, categoryModel.Name);
                         }
                     }
                     else
@@ -196,7 +204,7 @@ namespace OnlineVideos.MediaPortal2
                             {
                                 try
                                 {
-                                    videos = SelectedSite.getVideoList(cat);
+									videos = SelectedSite.Site.getVideoList(categoryModel.Category);
                                 }
                                 catch (Exception ex)
                                 {
@@ -206,7 +214,7 @@ namespace OnlineVideos.MediaPortal2
                             (args) =>
                             {
                                 ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                                ShowVideos(cat, videos);
+								ShowVideos(categoryModel, videos);
                                 currentBackgroundTask = null;
                             });
                     }
@@ -217,7 +225,7 @@ namespace OnlineVideos.MediaPortal2
         public void SelectVideo(object selectedItem)
         {
             if (currentBackgroundTask != null) return;
-            SelectedVideo = selectedItem as VideoInfoViewModel;
+            SelectedVideo = selectedItem as VideoViewModel;
             if (SelectedVideo != null)
             {
                 if (SelectedVideo.VideoInfo == null)
@@ -230,7 +238,7 @@ namespace OnlineVideos.MediaPortal2
                         {
                             try
                             {
-                                nextPageVideos = SelectedSite.getNextPageVideos();
+                                nextPageVideos = SelectedSite.Site.getNextPageVideos();
                             }
                             catch (Exception ex)
                             {
@@ -242,17 +250,16 @@ namespace OnlineVideos.MediaPortal2
                             ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
                             currentBackgroundTask = null;
                             VideosList.Remove(SelectedVideo);
-                            int selectNr = VideosList.Count;
-                            foreach (VideoInfoViewModel video in VideosList) video.FocusPrio = SetFocusPriority.None;
-							nextPageVideos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoInfoViewModel(r) { FocusPrio = VideosList.Count == selectNr ? SetFocusPriority.Highest : SetFocusPriority.None }); });
-                            if (SelectedSite.HasNextPage) VideosList.Add(new VideoInfoViewModel(Translation.Instance.NextPage, "NextPage.png"));
+							int selectNr = VideosList.Count;
+							nextPageVideos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r) { Selected = VideosList.Count == selectNr }); });
+                            if (SelectedSite.Site.HasNextPage) VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
                             VideosList.FireChange();
                             ImageDownloader.GetImages<VideoInfo>(nextPageVideos);
                         });
                 }
                 else
                 {
-                    if (SelectedSite is IChoice && SelectedVideo.VideoInfo.HasDetails)
+                    if (SelectedSite.Site is IChoice && SelectedVideo.VideoInfo.HasDetails)
                     {
                         // show details view
                         List<VideoInfo> choices = null;
@@ -262,7 +269,7 @@ namespace OnlineVideos.MediaPortal2
                             {
                                 try
                                 {
-                                    choices = ((IChoice)SelectedSite).getVideoChoices(SelectedVideo.VideoInfo);
+                                    choices = ((IChoice)SelectedSite.Site).getVideoChoices(SelectedVideo.VideoInfo);
                                 }
                                 catch (Exception ex)
                                 {
@@ -285,7 +292,7 @@ namespace OnlineVideos.MediaPortal2
                             {
                                 try
                                 {
-                                    urls = SelectedSite.getMultipleVideoUrls(SelectedVideo.VideoInfo);
+                                    urls = SelectedSite.Site.getMultipleVideoUrls(SelectedVideo.VideoInfo);
                                 }
                                 catch (Exception ex)
                                 {
@@ -314,7 +321,7 @@ namespace OnlineVideos.MediaPortal2
         public void SelectDetailsVideo(object selectedItem)
         {
             if (currentBackgroundTask != null) return;
-            SelectedDetailsVideo = selectedItem as VideoInfoViewModel;
+            SelectedDetailsVideo = selectedItem as VideoViewModel;
 			if (SelectedDetailsVideo != null)
             {
                 List<string> urls = null;
@@ -324,7 +331,7 @@ namespace OnlineVideos.MediaPortal2
                 {
                     try
                     {
-						urls = SelectedSite.getMultipleVideoUrls(SelectedDetailsVideo.VideoInfo);
+						urls = SelectedSite.Site.getMultipleVideoUrls(SelectedDetailsVideo.VideoInfo);
                     }
                     catch (Exception ex)
                     {
@@ -366,7 +373,7 @@ namespace OnlineVideos.MediaPortal2
             {
                 try
                 {
-                    result = SelectedSite.DoSearch(SearchString);
+                    result = SelectedSite.Site.DoSearch(SearchString);
                 }
                 catch (Exception ex)
                 {
@@ -381,7 +388,7 @@ namespace OnlineVideos.MediaPortal2
                         // pop all states up to the site state from the current navigation stack
                         IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
                         while (!(workflowManager.NavigationContextStack.Peek().WorkflowState.Name == Guids.WorkflowStateCategoriesName &&
-                            workflowManager.NavigationContextStack.Peek().WorkflowState.DisplayLabel == SelectedSite.Settings.Name))
+                            workflowManager.NavigationContextStack.Peek().WorkflowState.DisplayLabel == SelectedSite.Name))
                         {
                             workflowManager.NavigationContextStack.Pop();
                         }
@@ -403,13 +410,13 @@ namespace OnlineVideos.MediaPortal2
                 });
         }
 
-        void Play(VideoInfoViewModel videoInfo, List<string> urls)
+        void Play(VideoViewModel videoInfo, List<string> urls)
         {
             // todo : if more than one url, playlist
             Play(videoInfo, urls[0]);
         }
 
-        void Play(VideoInfoViewModel videoInfo, string url)
+        void Play(VideoViewModel videoInfo, string url)
         {
             IDictionary<Guid, MediaItemAspect> aspects = new Dictionary<Guid, MediaItemAspect>();
 
@@ -437,7 +444,7 @@ namespace OnlineVideos.MediaPortal2
         void ShowCategories(IList<Category> categories, string navigationLabel)
         {
             CategoriesList = new ItemsList();
-			foreach (Category c in categories) CategoriesList.Add(new CategoryViewModel(c) { FocusPrio = CategoriesList.Count == 0 ? SetFocusPriority.Highest : SetFocusPriority.None });
+			foreach (Category c in categories) CategoriesList.Add(new CategoryViewModel(c));
             ImageDownloader.GetImages<Category>(categories);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
 			workflowManager.NavigatePushTransientAsync(
@@ -445,13 +452,13 @@ namespace OnlineVideos.MediaPortal2
 				new NavigationContextConfig());
         }
 
-        void ShowVideos(Category category, List<VideoInfo> videos)
+        void ShowVideos(CategoryViewModel category, List<VideoInfo> videos)
         {
             SelectedCategory = category;
             VideosList = new ItemsList();
-			videos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoInfoViewModel(r) { FocusPrio = VideosList.Count == 0 ? SetFocusPriority.Highest : SetFocusPriority.None }); });
+			videos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r)); });
 
-            if (SelectedSite.HasNextPage) VideosList.Add(new VideoInfoViewModel(Translation.Instance.NextPage, "NextPage.png"));
+            if (SelectedSite.Site.HasNextPage) VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
 
             ImageDownloader.GetImages<VideoInfo>(videos);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
@@ -470,8 +477,8 @@ namespace OnlineVideos.MediaPortal2
 
         void ShowDetails(List<VideoInfo> choices)
         {
-            DetailsVideosList = new List<VideoInfoViewModel>();
-            choices.ForEach(r => { r.CleanDescriptionAndTitle(); DetailsVideosList.Add(new VideoInfoViewModel(r)); });
+            DetailsVideosList = new List<VideoViewModel>();
+            choices.ForEach(r => { r.CleanDescriptionAndTitle(); DetailsVideosList.Add(new VideoViewModel(r)); });
             ImageDownloader.GetImages<VideoInfo>(choices);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
             workflowManager.NavigatePushAsync(Guids.WorkflowStateDetails, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedVideo.Title });
@@ -502,7 +509,6 @@ namespace OnlineVideos.MediaPortal2
             {
                 SelectedCategory = null;
                 CategoriesList = null;
-				SitesList.ForEach(s => s.FocusPrio = s.Site == SelectedSite ? SetFocusPriority.Highest : SetFocusPriority.None);
             }
             // going from categories to categories view
 			else if (newContext.WorkflowState.Name == Guids.WorkflowStateCategoriesName && oldContext.WorkflowState.Name == Guids.WorkflowStateCategoriesName)
@@ -511,18 +517,18 @@ namespace OnlineVideos.MediaPortal2
                 if (oldContext.Predecessor == newContext)
                 {
                     CategoriesList = new ItemsList();
-                    if (SelectedCategory.ParentCategory != null)
+                    if (SelectedCategory.Category.ParentCategory != null)
                     {
-                        SelectedCategory.ParentCategory.SubCategories.ForEach(c => CategoriesList.Add(new CategoryViewModel(c) { FocusPrio = c.Name == SelectedCategory.Name ? SetFocusPriority.Highest : SetFocusPriority.None }));
-                        ImageDownloader.GetImages<Category>(SelectedCategory.ParentCategory.SubCategories);
+                        SelectedCategory.Category.ParentCategory.SubCategories.ForEach(c => CategoriesList.Add(new CategoryViewModel(c)));
+                        ImageDownloader.GetImages<Category>(SelectedCategory.Category.ParentCategory.SubCategories);
+						SelectedCategory = new CategoryViewModel(SelectedCategory.Category.ParentCategory);
                     }
                     else
                     {
-                        foreach (Category c in SelectedSite.Settings.Categories) CategoriesList.Add(new CategoryViewModel(c) { FocusPrio = c.Name == SelectedCategory.Name ? SetFocusPriority.Highest : SetFocusPriority.None });
-                        ImageDownloader.GetImages<Category>(SelectedSite.Settings.Categories);
+                        foreach (Category c in SelectedSite.Site.Settings.Categories) CategoriesList.Add(new CategoryViewModel(c));
+                        ImageDownloader.GetImages<Category>(SelectedSite.Site.Settings.Categories);
+						SelectedCategory = null;
                     }
-
-                    SelectedCategory = SelectedCategory.ParentCategory;
                 }
             }
             // going from videos to categories view
@@ -531,24 +537,26 @@ namespace OnlineVideos.MediaPortal2
                 VideosList = null;
                 CategoriesList = new ItemsList();
 
-                if (SelectedCategory != null && SelectedCategory.ParentCategory != null)
+                if (SelectedCategory != null && SelectedCategory.Category.ParentCategory != null)
                 {
-					SelectedCategory.ParentCategory.SubCategories.ForEach(c => CategoriesList.Add(new CategoryViewModel(c) { FocusPrio = c.Name == SelectedCategory.Name ? SetFocusPriority.Highest : SetFocusPriority.None }));
-                    ImageDownloader.GetImages<Category>(SelectedCategory.ParentCategory.SubCategories);
+					SelectedCategory.Category.ParentCategory.SubCategories.ForEach(c => CategoriesList.Add(new CategoryViewModel(c)));
+                    ImageDownloader.GetImages<Category>(SelectedCategory.Category.ParentCategory.SubCategories);
                 }
                 else
                 {
-                    foreach (Category c in SelectedSite.Settings.Categories) CategoriesList.Add(new CategoryViewModel(c) { FocusPrio = SelectedCategory != null && c.Name == SelectedCategory.Name ? SetFocusPriority.Highest : SetFocusPriority.None });
-                    ImageDownloader.GetImages<Category>(SelectedSite.Settings.Categories);
+                    foreach (Category c in SelectedSite.Site.Settings.Categories) CategoriesList.Add(new CategoryViewModel(c));
+                    ImageDownloader.GetImages<Category>(SelectedSite.Site.Settings.Categories);
                 }
 
-                if (SelectedCategory != null) SelectedCategory = SelectedCategory.ParentCategory;
+				if (SelectedCategory != null && SelectedCategory.Category.ParentCategory != null)
+					SelectedCategory = new CategoryViewModel(SelectedCategory.Category.ParentCategory);
+				else
+					SelectedCategory = null;
             }
             // going from details to videos view
             else if (newContext.WorkflowState.StateId == Guids.WorkflowStateVideos && oldContext.WorkflowState.StateId == Guids.WorkflowStateDetails)
             {
                 DetailsVideosList = null;
-				foreach (VideoInfoViewModel vip in VideosList) vip.FocusPrio = vip == SelectedVideo ? SetFocusPriority.Highest : SetFocusPriority.None;
             }
         }
 

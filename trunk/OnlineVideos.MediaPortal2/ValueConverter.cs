@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using MediaPortal.UI.SkinEngine.MarkupExtensions;
+using MediaPortal.UI.SkinEngine.ScreenManagement;
 using OnlineVideos.Sites;
 
 namespace OnlineVideos.MediaPortal2
@@ -76,7 +74,7 @@ namespace OnlineVideos.MediaPortal2
         public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
         {
             result = string.Empty;
-            var model = value as VideoInfoViewModel;
+            var model = value as VideoViewModel;
             string param = parameter as string;
             if (model != null && model.VideoInfo != null && !string.IsNullOrEmpty(param))
             {
@@ -95,5 +93,19 @@ namespace OnlineVideos.MediaPortal2
             throw new NotImplementedException();
         }
     }
+
+	public class BoolFocusPrioConverter : IValueConverter
+	{
+		public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+		{
+			result = (bool)value ? SetFocusPriority.Highest : SetFocusPriority.Default;
+			return true;
+		}
+
+		public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+		{
+			throw new NotImplementedException();
+		}
+	}
 
 }
