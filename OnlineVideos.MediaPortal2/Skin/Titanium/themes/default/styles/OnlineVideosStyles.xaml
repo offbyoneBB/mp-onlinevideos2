@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
+    DependsOnStyleResources="Buttons,Colors,Consts">
+
+	<ovs:SiteUtilIconConverter x:Key="ovsSiteUtilIconConverter"/>
+	<ovs:LanguageIconConverter x:Key="ovsLanguageIconConverter"/>
+
+	<DataTemplate x:Key="ovsSiteItemDataTemplate" DataType="{x:Type ovs:SiteViewModel}">
+		<Grid Margin="4">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="50"/>
+				<ColumnDefinition Width="200"/>
+				<ColumnDefinition Width="50"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="50"/>
+				<RowDefinition Height="100"/>
+				<RowDefinition Height="50"/>
+			</Grid.RowDefinitions>
+
+			<Image Grid.Column="2" Grid.Row="0" Width="50" Margin="0,3,3,0" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding Path=Language, Converter={ThemeResource ovsLanguageIconConverter}}"/>
+			<Image Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="3"  x:Name="thumb" Stretch="Uniform" Source="{Binding Path=Site, Converter={ThemeResource ovsSiteUtilIconConverter}}"/>
+			<Label Grid.Column="1" Grid.Row="2" x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Bottom" Wrap="true" Content="{Binding Path=Name}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
+			<Label Grid.Column="1" Grid.Row="2" x:Name="ItemLabel" FontSize="{ThemeResource SmallFontSize}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding Path=Name}"  IsVisible="{Binding ElementName=thumb, Path=HasImage}" Color="{ThemeResource TextColor}"/>
+		</Grid>
+	</DataTemplate>
+
+	<DataTemplate x:Key="ovsCategoryItemDataTemplate" DataType="{x:Type ovs:CategoryViewModel}">
+		<Grid  Width="300" Height="130" Margin="5">
+			<DockPanel>
+				<Image DockPanel.Dock="Left" x:Name="thumb" Stretch="Uniform" Margin="8" MaxWidth="180" Source="{Binding Path=Thumb}"/>
+				<Label DockPanel.Dock="Right" x:Name="ItemLabel" VerticalAlignment="Center" Wrap="true" FontSize="{ThemeResource SmallFontSize}" Content="{Binding Path=Name}" Color="{ThemeResource TextColor}"/>
+			</DockPanel>
+			<Label VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="11" Margin="0,0,2,2" Content="{Binding Path=EstimatedChildren}" Color="{ThemeResource TextColor}"/>
+		</Grid>
+	</DataTemplate>
+
+	<DataTemplate x:Key="ovsVideoItemDataTemplate" DataType="{x:Type ovs:VideoViewModel}">
+		<DockPanel Width="270" Height="220" Margin="14">
+			<Image x:Name="thumb" Stretch="Uniform" DockPanel.Dock="Top" Margin="6" MaxHeight="140" Source="{Binding Path=ThumbnailImage}"/>
+			<Label x:Name="ItemLabelBig" Margin="4"  DockPanel.Dock="Center" Wrap="true" Content="{Binding Path=Title}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
+			<Label x:Name="ItemLabel" DockPanel.Dock="Bottom" Wrap="true" Content="{Binding Path=Title}" FontSize="{ThemeResource TinyFontSize}" IsVisible="{Binding ElementName=thumb, Path=HasImage}" Color="{ThemeResource TextColor}"/>
+		</DockPanel>
+	</DataTemplate>
+
+	<Style x:Key="ovsSiteItemContainerStyle" TargetType="{x:Type ListViewItem}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ListViewItem}">
+					<Button Margin="5,10,5,0" Style="{ThemeResource ButtonWideStyle}" x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5">
+						<Button.Command>
+							<Command Source="{DynamicResource OnlineVideosModel}" Path="SelectSite" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+						</Button.Command>
+					</Button>
+					<ControlTemplate.Triggers>
+						<Trigger Property="Selected" Value="True">
+							<Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="ovsCategoryItemContainerStyle" TargetType="{x:Type ListViewItem}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ListViewItem}">
+					<Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" SetFocusPrio="{Binding Path=FocusPrio,Mode=OneTime}" Style="{ThemeResource ButtonWideStyle}">
+						<Button.Command>
+							<Command Source="{DynamicResource OnlineVideosModel}" Path="SelectCategory" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+						</Button.Command>
+					</Button>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="ovsVideoItemContainerStyle" TargetType="{x:Type ListViewItem}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ListViewItem}">
+					<Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" SetFocusPrio="{Binding Path=FocusPrio,Mode=OneTime}" Style="{ThemeResource ButtonWideStyle}">
+						<Button.Command>
+							<Command Source="{DynamicResource OnlineVideosModel}" Path="SelectVideo" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+						</Button.Command>
+					</Button>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+</ResourceDictionary>
