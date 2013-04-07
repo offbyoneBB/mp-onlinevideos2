@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
+    DependsOnStyleResources="Buttons,Colors,Consts">
+
+	<ovs:SiteUtilIconConverter x:Key="ovsSiteUtilIconConverter"/>
+	<ovs:LanguageIconConverter x:Key="ovsLanguageIconConverter"/>
+
+	<Storyboard x:Key="ovsSiteItemGrowAnimation">
+		<DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX" To="1.15" Duration="0:0:0.1" />
+		<DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" To="1.15" Duration="0:0:0.1" />
+	</Storyboard>
+
+	<Storyboard x:Key="ovsCategoryItemGrowAnimation">
+		<DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX" To="1.15" Duration="0:0:0.1" />
+		<DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" To="1.15" Duration="0:0:0.1" />
+	</Storyboard>
+
+	<Storyboard x:Key="ovsVideoItemGrowAnimation">
+		<DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX" To="1.15" Duration="0:0:0.1" />
+		<DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" To="1.15" Duration="0:0:0.1" />
+	</Storyboard>
+
+	<DataTemplate x:Key="ovsSiteItemDataTemplate" DataType="{x:Type ovs:SiteViewModel}">
+		<Control Style="{ThemeResource SmallGlassBorder}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="14">
+			<Control.Resources>
+				<ResourceWrapper x:Key="ControlWidth" Resource="270"/>
+				<ResourceWrapper x:Key="ControlHeight" Resource="250"/>
+				<ControlTemplate x:Key="MakeGlass">
+
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="50"/>
+							<ColumnDefinition Width="150"/>
+							<ColumnDefinition Width="50"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="50"/>
+							<RowDefinition Height="100"/>
+							<RowDefinition Height="50"/>
+						</Grid.RowDefinitions>
+
+						<Image Grid.Column="2" Grid.Row="0" Width="50" Margin="0,3,3,0" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding Path=Language, Converter={ThemeResource ovsLanguageIconConverter}}"/>
+						<Image Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="3"  x:Name="thumb" Stretch="Uniform" Source="{Binding Path=Site, Converter={ThemeResource ovsSiteUtilIconConverter}}"/>
+						<Label Grid.Column="1" Grid.Row="2" x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Bottom" Wrap="true" Content="{Binding Path=Name}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
+						<Label Grid.Column="1" Grid.Row="2" x:Name="ItemLabel" FontSize="{ThemeResource SmallFontSize}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding Path=Name}" IsVisible="{Binding ElementName=thumb, Path=HasImage}" Color="{ThemeResource TextColor}"/>
+					</Grid>
+				</ControlTemplate>
+			</Control.Resources>
+		</Control>
+	</DataTemplate>
+
+	<DataTemplate x:Key="ovsCategoryItemDataTemplate" DataType="{x:Type ovs:CategoryViewModel}">
+		<Control Style="{ThemeResource SmallGlassBorder}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="14">
+			<Control.Resources>
+				<ResourceWrapper x:Key="ControlWidth" Resource="300"/>
+				<ResourceWrapper x:Key="ControlHeight" Resource="130"/>
+				<ControlTemplate x:Key="MakeGlass">
+
+					<Grid Margin="5">
+						<DockPanel>
+							<Image DockPanel.Dock="Left" x:Name="thumb" Stretch="Uniform" Margin="8" Source="{Binding Path=Thumb}"/>
+							<Label DockPanel.Dock="Right" x:Name="ItemLabel" VerticalAlignment="Center" Wrap="true" FontSize="{ThemeResource SmallerFontSize}" Content="{Binding Path=Name}" Color="{ThemeResource TextColor}"/>
+						</DockPanel>
+						<Label VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="11" Margin="0,0,2,2" Content="{Binding Path=EstimatedChildren}" Color="{ThemeResource TextColor}"/>
+					</Grid>
+				</ControlTemplate>
+			</Control.Resources>
+		</Control>
+	</DataTemplate>
+
+	<DataTemplate x:Key="ovsVideoItemDataTemplate" DataType="{x:Type ovs:VideoViewModel}">
+		<Control Style="{ThemeResource SmallGlassBorder}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="14">
+			<Control.Resources>
+				<ResourceWrapper x:Key="ControlWidth" Resource="270"/>
+				<ResourceWrapper x:Key="ControlHeight" Resource="250"/>
+				<ControlTemplate x:Key="MakeGlass">
+					<DockPanel>
+						<Image x:Name="thumb" Stretch="Uniform" DockPanel.Dock="Top" Margin="6" MaxHeight="150" Source="{Binding Path=ThumbnailImage}"/>
+						<Label x:Name="ItemLabelBig" Margin="4"  DockPanel.Dock="Center" Wrap="true" Content="{Binding Path=Title}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
+						<Label x:Name="ItemLabel" DockPanel.Dock="Bottom" Wrap="true" Content="{Binding Path=Title}" FontSize="{ThemeResource TinyFontSize}" IsVisible="{Binding ElementName=thumb, Path=HasImage}" Color="{ThemeResource TextColor}"/>
+					</DockPanel>
+				</ControlTemplate>
+			</Control.Resources>
+		</Control>
+	</DataTemplate>
+
+</ResourceDictionary>

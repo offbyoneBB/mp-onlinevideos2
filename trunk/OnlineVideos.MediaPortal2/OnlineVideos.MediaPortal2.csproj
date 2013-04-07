@@ -176,29 +176,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Skin\Reflexion\screens\categories.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\Reflexion\screens\sites.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\Reflexion\screens\videos.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Properties\VersionInfo.cs.tmpl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\Titanium\screens\categories.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\Titanium\screens\sites.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\Titanium\screens\videos.xaml">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\dialogSiteContextMenu.xaml">
@@ -207,6 +185,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\themes\default\styles\OnlineVideosStyles.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\Reflexion\themes\default\styles\OnlineVideosStyles.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Skin\Titanium\themes\default\styles\OnlineVideosStyles.xaml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
