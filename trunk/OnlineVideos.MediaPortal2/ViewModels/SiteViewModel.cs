@@ -45,6 +45,14 @@ namespace OnlineVideos.MediaPortal2
         {
             get { return _site; }
         }
+
+		public void RecreateSite()
+		{
+			var newUtilInstance = SiteUtilFactory.CloneFreshSiteFromExisting(Site);
+			OnlineVideoSettings.Instance.SiteUtilsList[Name] = newUtilInstance;
+			_site = newUtilInstance;
+			UserSettingsChanged = false;
+		}
         
         public SiteViewModel(Sites.SiteUtilBase site) 
 			: base(Consts.KEY_NAME, site.Settings.Name)
@@ -55,6 +63,7 @@ namespace OnlineVideos.MediaPortal2
 			_languageProperty = new WProperty(typeof(string), site.Settings.Language);
 			_descriptionProperty = new WProperty(typeof(string), site.Settings.Description);
 			_contextMenuEntriesProperty = new WProperty(typeof(ItemsList), null);
+			_settingsListProperty = new WProperty(typeof(ItemsList), null);
         }
 
 		#region Context Menu
@@ -108,8 +117,46 @@ namespace OnlineVideos.MediaPortal2
 		void ConfigureSite()
 		{
 			ServiceRegistration.Get<IScreenManager>().CloseTopmostDialog();
-			// todo : new screen
+			// go to settings screen
+			IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
+            workflowManager.NavigatePush(Guids.WorkflowStateSiteSettings, new NavigationContextConfig() 
+			{ 
+				NavigationContextDisplayLabel = string.Format("{0} {1}", Name, LocalizationHelper.Translate("[Configuration.Name]"))
+			});
 		}
+
+		#endregion
+
+		#region Site User Setting
+
+		protected AbstractProperty _settingsListProperty;
+		public AbstractProperty SettingsListProperty
+		{
+			get
+			{
+				if (!_settingsListProperty.HasValue()) // create entries upon first use
+					_settingsListProperty.SetValue(CreateSettingsList());
+				return _settingsListProperty;
+			}
+		}
+		public ItemsList SettingsList
+		{
+			get { return (ItemsList)_settingsListProperty.GetValue(); }
+			set { _settingsListProperty.SetValue(value); }
+		}
+
+		ItemsList CreateSettingsList()
+		{
+			var list = new ItemsList();
+
+			foreach (var propDef in Site.GetUserConfigurationProperties())
+			{
+				list.Add(new SiteSettingViewModel(this, propDef));
+			}
+			return list;
+		}
+
+		public bool UserSettingsChanged { get; set; }
 
 		#endregion
 	}

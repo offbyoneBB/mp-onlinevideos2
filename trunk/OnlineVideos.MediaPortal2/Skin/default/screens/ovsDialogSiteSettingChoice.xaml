@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Source="screens\master_dialog_bare.xaml"
+    >
+    <Include.Resources>
+
+        <!-- Header -->
+		<ResourceWrapper x:Key="Dialog_Header_Text" EnableBindings="True" Resource="{Binding Source={Service ScreenManager}, Path=FocusedScreen.FocusedElement.VisualParent.Context.Name}"/>
+
+        <ControlTemplate x:Key="Contents_Template">
+			<DockPanel Width="500" Height="210" LastChildFill="true">
+
+				<Label DockPanel.Dock="Bottom" Color="{ThemeResource HintTextColor}" FontSize="{ThemeResource SmallerFontSize}"
+						HorizontalAlignment="Stretch" VerticalAlignment="Center" Wrap="True" Scroll="Auto" Height="40"
+						Content="{Binding Source={Service ScreenManager}, Path=FocusedScreen.FocusedElement.VisualParent.Context.Description}" />
+
+				<ListView Style="{ThemeResource MenuListViewStyle}" SetFocusPrio="Default"
+						  ItemsSource="{Binding Source={Service ScreenManager}, Path=FocusedScreen.FocusedElement.VisualParent.Context.PossibleValues}">
+					<ListView.Resources>
+						<CommandList x:Key="Menu_Command">
+							<Command Source="{Binding Source={Service ScreenManager}, Path=FocusedScreen.FocusedElement.VisualParent.Context}" Path="SetNewChoiceValue">
+								<Command.Parameters>
+									<LateBoundValue BindingValue="{Binding}"/>
+								</Command.Parameters>
+							</Command>
+							<Command Source="{Service ScreenManager}" Path="CloseTopmostDialog"/>
+						</CommandList>
+					</ListView.Resources>
+				</ListView>
+				
+            </DockPanel>
+        </ControlTemplate>
+
+	</Include.Resources>
+</Include>

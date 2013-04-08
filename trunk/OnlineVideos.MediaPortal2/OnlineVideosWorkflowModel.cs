@@ -30,6 +30,7 @@ namespace OnlineVideos.MediaPortal2
             string ovDataPath = ServiceRegistration.Get<IPathManager>().GetPath(@"<DATA>\OnlineVideos");
 
             OnlineVideoSettings.Instance.Logger = new LogDelegator();
+			OnlineVideoSettings.Instance.UserStore = new Configuration.UserSiteSettingsStore();
 
             OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES(X86)") ?? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\");
             if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DllsDir)) OnlineVideoSettings.Instance.DllsDir = System.IO.Path.GetDirectoryName(this.GetType().Assembly.Location);
@@ -504,6 +505,10 @@ namespace OnlineVideos.MediaPortal2
 
         public void ChangeModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext, bool push)
         {
+			// reload a site when going away from configuring it and settings were changed
+			if (oldContext.WorkflowState.StateId == Guids.WorkflowStateSiteSettings && FocusedSite.UserSettingsChanged)
+				FocusedSite.RecreateSite();
+
             // going to sites view
             if (newContext.WorkflowState.StateId == Guids.WorkflowStateSites)
             {
@@ -565,6 +570,11 @@ namespace OnlineVideos.MediaPortal2
             //
         }
 
+		public void Reactivate(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+		{
+			//
+		}
+
         public void EnterModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
         {
             //
@@ -572,17 +582,13 @@ namespace OnlineVideos.MediaPortal2
 
         public void ExitModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
         {
-            //
+            // save Site Settings that might have changed at runtime
+			(OnlineVideoSettings.Instance.UserStore as Configuration.UserSiteSettingsStore).SaveAll();
         }
 
         public Guid ModelId
         {
             get { return Guids.WorkFlowModel; }
-        }
-
-        public void Reactivate(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
-        {
-            //
         }
 
         public void UpdateMenuActions(MediaPortal.UI.Presentation.Workflow.NavigationContext context, IDictionary<Guid, MediaPortal.UI.Presentation.Workflow.WorkflowAction> actions)

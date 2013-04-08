@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Source="screens\master_bare.xaml">
+	<Include.Resources>
+
+		<Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+
+		<!-- Contents -->
+		<ControlTemplate x:Key="Client_Template">
+			<DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" LastChildFill="true">
+
+				<Label Color="{ThemeResource HintTextColor}" DockPanel.Dock="Bottom" Height="40" Margin="100,0,100,1"
+						HorizontalAlignment="Stretch" VerticalAlignment="Center" Wrap="True" Scroll="Auto" FontSize="{ThemeResource SmallerFontSize}"
+						DataContext="{Binding ElementName=settingsList,Path=CurrentItem}"
+						Content="{Binding Description}" />
+
+				<ListView x:Name="settingsList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" SetFocusPrio="RestoreState" Margin="40,20,40,0"
+							Style="{ThemeResource ovsSiteSettingsListViewStyle}"
+							ItemsSource="{Binding Source={StaticResource OnlineVideosModel}, Path=FocusedSite.SettingsList}">
+					<ListView.Resources>
+						<CommandBridge x:Key="Menu_Command" Command="{Binding Path=Command,Mode=OneTime}"/>
+					</ListView.Resources>
+				</ListView>
+			</DockPanel>
+		</ControlTemplate>
+
+	</Include.Resources>
+</Include>
