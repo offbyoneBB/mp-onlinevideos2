@@ -181,7 +181,7 @@
     <None Include="Properties\VersionInfo.cs.tmpl" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Skin\default\screens\dialogSiteContextMenu.xaml">
+    <Content Include="Skin\default\screens\ovsDialogItemContextMenu.xaml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
