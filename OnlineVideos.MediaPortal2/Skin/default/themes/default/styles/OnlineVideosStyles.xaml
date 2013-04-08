@@ -241,5 +241,24 @@
     <Setter Property="ItemContainerStyle" Value="{ThemeResource ovsVideoItemContainerStyle}"/>
     <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
   </Style>
-  
+
+	<DataTemplate x:Key="ovsSiteSettingsItemDataTemplate" DataType="{x:Type ovs:SiteSettingViewModel}">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*"/>
+				<ColumnDefinition Width="1*"/>
+			</Grid.ColumnDefinitions>
+			<Label Grid.Column="0" Content="{Binding [Name]}"
+					HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"
+					Color="{ThemeResource TextColor}"/>
+			<Label Grid.Column="1" Content="{Binding Value}"
+					HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"
+					Color="{ThemeResource TextColor}"/>
+		</Grid>
+	</DataTemplate>
+
+	<Style x:Key="ovsSiteSettingsListViewStyle" BasedOn="{ThemeResource ContentsMenuListViewStyle}">
+		<Setter Property="ItemTemplate" Value="{ThemeResource ovsSiteSettingsItemDataTemplate}"/>
+	</Style>
+
 </ResourceDictionary>
