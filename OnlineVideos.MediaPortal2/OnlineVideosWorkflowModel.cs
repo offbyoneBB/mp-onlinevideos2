@@ -507,7 +507,11 @@ namespace OnlineVideos.MediaPortal2
         {
 			// reload a site when going away from configuring it and settings were changed
 			if (oldContext.WorkflowState.StateId == Guids.WorkflowStateSiteSettings && FocusedSite.UserSettingsChanged)
+			{
 				FocusedSite.RecreateSite();
+				// save Site Settings
+				(OnlineVideoSettings.Instance.UserStore as Configuration.UserSiteSettingsStore).SaveAll();
+			}
 
             // going to sites view
             if (newContext.WorkflowState.StateId == Guids.WorkflowStateSites)
@@ -582,8 +586,7 @@ namespace OnlineVideos.MediaPortal2
 
         public void ExitModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
         {
-            // save Site Settings that might have changed at runtime
-			(OnlineVideoSettings.Instance.UserStore as Configuration.UserSiteSettingsStore).SaveAll();
+            //
         }
 
         public Guid ModelId
