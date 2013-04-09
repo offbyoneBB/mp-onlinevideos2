@@ -18,6 +18,9 @@ namespace OnlineVideos.Sites
     {
         protected int indexPage = 1;
         protected List<string> listPages = new List<string>();
+        
+        private static Regex videoIdRegex = new Regex(@"nIc0K11(?<videoId>.*)$",
+                                                      RegexOptions.Compiled);
 
         public override int DiscoverDynamicCategories()
         {           
@@ -310,10 +313,10 @@ namespace OnlineVideos.Sites
             List<string> listUrls = new List<string>();
 
             string webData = GetWebData(video.VideoUrl);
-            string id = Regex.Match(webData, regexId).Groups["url"].Value;
+            string url = Regex.Match(webData, regexId).Groups["url"].Value;
 
             //Découpage de la chaine pour récuperer l'id
-            id = id.Substring(id.Length - 7, 7);
+            string id = videoIdRegex.Match(url).Groups["videoId"].Value;
 
             //Récupération du json
             webData = GetWebData("http://www.wat.tv/interface/contentv3/" + id);
