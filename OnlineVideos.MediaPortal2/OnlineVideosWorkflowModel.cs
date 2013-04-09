@@ -301,19 +301,20 @@ namespace OnlineVideos.MediaPortal2
                                 }
                             },
                             (args) =>
-                            {
-                                ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                                currentBackgroundTask = null;
+							{
+								ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
+								currentBackgroundTask = null;
 
-                                if (SelectedVideo.VideoInfo.PlaybackOptions != null && SelectedVideo.VideoInfo.PlaybackOptions.Count > 1)
-                                {
-                                    ShowPlaybackOptions(SelectedVideo.VideoInfo, urls[0]);
-                                }
-                                else
-                                {
-                                    Play(SelectedVideo, urls);
-                                }
-                            });
+								// when no PlaybackOptions are set, directly go to playing the result
+								if (SelectedVideo.VideoInfo.PlaybackOptions == null || SelectedVideo.VideoInfo.PlaybackOptions.Count == 0)
+								{
+									Play(SelectedVideo, urls);
+								}
+								else
+								{
+									ShowPlaybackOptions(SelectedVideo, urls);
+								}
+							});
                     }
                 }
             }
@@ -346,7 +347,7 @@ namespace OnlineVideos.MediaPortal2
 
 					if (SelectedDetailsVideo.VideoInfo.PlaybackOptions != null && SelectedDetailsVideo.VideoInfo.PlaybackOptions.Count > 1)
                     {
-						ShowPlaybackOptions(SelectedDetailsVideo.VideoInfo, urls[0]);
+						ShowPlaybackOptions(SelectedDetailsVideo, urls);
                     }
                     else
                     {
@@ -361,8 +362,28 @@ namespace OnlineVideos.MediaPortal2
 			IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
 			var video = (workflowManager.CurrentNavigationContext.WorkflowState.StateId == Guids.WorkflowStateVideos) ? SelectedVideo : SelectedDetailsVideo;
             // resolve playback option
-			string resolvedUrl = video.VideoInfo.GetPlaybackOptionUrl(((KeyValuePair<string, string>)selectedItem.AdditionalProperties[Consts.KEY_MEDIA_ITEM]).Key);
-			Play(video, resolvedUrl);
+			string resolvedUrl = null;
+			ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
+			currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
+				=>
+			{
+				try
+				{
+					resolvedUrl = video.VideoInfo.GetPlaybackOptionUrl(((KeyValuePair<string, string>)selectedItem.AdditionalProperties[Consts.KEY_MEDIA_ITEM]).Key);
+				}
+				catch (Exception ex)
+				{
+					currentBackgroundTask.Exception = ex;
+				}
+			},
+			(args) =>
+			{
+				ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
+				currentBackgroundTask = null;
+				var urls = (List<string>)selectedItem.AdditionalProperties[Constants.KEY_PLAYBACK_URLS];
+				urls[(int)selectedItem.AdditionalProperties[Consts.KEY_INDEX]] = resolvedUrl;
+				Play(video, urls);
+			});
         }
 
         public void StartSearch()
@@ -413,35 +434,17 @@ namespace OnlineVideos.MediaPortal2
 
         void Play(VideoViewModel videoInfo, List<string> urls)
         {
-            // todo : if more than one url, playlist
-            Play(videoInfo, urls[0]);
+			if (urls.Count == 1)
+				MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayItem(new PlaylistItem(videoInfo, urls[0]));
+			else
+				MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayItems(
+					new MediaPortal.UiComponents.Media.Models.GetMediaItemsDlgt(() => 
+					{
+						return new List<MediaItem>(urls.ConvertAll<MediaItem>(u => new PlaylistItem(videoInfo, u)));
+					}), 
+					MediaPortal.UI.Presentation.Players.AVType.Video);
         }
 
-        void Play(VideoViewModel videoInfo, string url)
-        {
-            IDictionary<Guid, MediaItemAspect> aspects = new Dictionary<Guid, MediaItemAspect>();
-
-            MediaItemAspect providerResourceAspect;
-            aspects[ProviderResourceAspect.ASPECT_ID] = providerResourceAspect = new MediaItemAspect(ProviderResourceAspect.Metadata);
-            MediaItemAspect mediaAspect;
-            aspects[MediaAspect.ASPECT_ID] = mediaAspect = new MediaItemAspect(MediaAspect.Metadata);
-            MediaItemAspect videoAspect;
-            aspects[VideoAspect.ASPECT_ID] = videoAspect = new MediaItemAspect(VideoAspect.Metadata);
-
-            providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, RawUrlMediaProvider.ToProviderResourcePath(url).Serialize());
-            providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_SYSTEM_ID, ServiceRegistration.Get<ISystemResolver>().LocalSystemId);
-
-            mediaAspect.SetAttribute(MediaAspect.ATTR_MIME_TYPE, OnlineVideosPlayer.ONLINEVIDEOS_MIMETYPE);
-            mediaAspect.SetAttribute(MediaAspect.ATTR_TITLE, videoInfo.Title);
-            videoAspect.SetAttribute(VideoAspect.ATTR_STORYPLOT, videoInfo.Description);
-            DateTime parsedAirDate;
-            if (DateTime.TryParse(videoInfo.VideoInfo.Airdate, out parsedAirDate)) mediaAspect.SetAttribute(MediaAspect.ATTR_RECORDINGTIME, parsedAirDate);
-
-            MediaItem mediaItem = new MediaItem(Guid.Empty, aspects);
-
-            MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayItem(mediaItem);
-        }
-        
         void ShowCategories(IList<Category> categories, string navigationLabel)
         {
             CategoriesList = new ItemsList();
@@ -485,17 +488,46 @@ namespace OnlineVideos.MediaPortal2
             workflowManager.NavigatePushAsync(Guids.WorkflowStateDetails, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedVideo.Title });
         }
 
-		void ShowPlaybackOptions(VideoInfo videoInfo, string defaultUrl)
+		void ShowPlaybackOptions(VideoViewModel video, List<string> urls)
 		{
-			PlaybackOptions = new ItemsList();
-			foreach (var item in videoInfo.PlaybackOptions)
+			// if just one option set, resolve it and play that one
+			if (video.VideoInfo.PlaybackOptions.Count == 1)
 			{
-				var listItem = new ListItem(Consts.KEY_NAME, item.Key);
-				listItem.AdditionalProperties.Add(Consts.KEY_MEDIA_ITEM, item);
-                listItem.Selected = item.Value == defaultUrl;
-				PlaybackOptions.Add(listItem);
+				ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
+				currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
+					=>
+				{
+					try
+					{
+						urls[0] = video.VideoInfo.GetPlaybackOptionUrl(video.VideoInfo.PlaybackOptions.First().Key);
+					}
+					catch (Exception ex)
+					{
+						currentBackgroundTask.Exception = ex;
+					}
+				},
+				(args) =>
+				{
+					ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
+					currentBackgroundTask = null;
+					Play(video, urls);
+				});
 			}
-			ServiceRegistration.Get<IScreenManager>().ShowDialog("dialogPlaybackOptions");
+			else
+			{
+				string defaultUrl = urls[0];
+				PlaybackOptions = new ItemsList();
+				foreach (var item in video.VideoInfo.PlaybackOptions)
+				{
+					var listItem = new ListItem(Consts.KEY_NAME, item.Key);
+					listItem.AdditionalProperties.Add(Consts.KEY_MEDIA_ITEM, item);
+					listItem.AdditionalProperties.Add(Consts.KEY_INDEX, 0);
+					listItem.AdditionalProperties.Add(Constants.KEY_PLAYBACK_URLS, urls);
+					listItem.Selected = item.Value == defaultUrl;
+					PlaybackOptions.Add(listItem);
+				}
+				ServiceRegistration.Get<IScreenManager>().ShowDialog("dialogPlaybackOptions");
+			}
 		}
 
         public bool CanEnterState(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
