@@ -5,10 +5,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
+using HtmlAgilityPack;
+
 namespace OnlineVideos.Sites
 {
     public class Wat : TF1Util
     {
+        private static string baseVideos = @"http://www.wat.tv";
+
         public override int DiscoverDynamicCategories()
         {
             string webData = GetWebData(@"http://www.wat.tv/chaines");
@@ -35,7 +39,6 @@ namespace OnlineVideos.Sites
         {
             parentCategory.SubCategories = new List<Category>();
 
-            string baseVideos = "http://www.wat.tv";
             string url = (parentCategory as RssLink).Url;
             url = baseVideos + url;
            
@@ -100,7 +103,6 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            string baseVideos = "http://www.wat.tv";
             List<VideoInfo> listVideos = new List<VideoInfo>();
 
             string webData = GetWebData((category as RssLink).Url);
@@ -120,23 +122,32 @@ namespace OnlineVideos.Sites
                 }
 
             }
-
-            Regex r = new Regex(@"</div>.*?<a\sdata-zone=""[^""]*""\shref=""(?<VideoUrl>[^""]*)""\sclass=""[^""]*""\s*title=""[^""]*"">(?<Title>[^<]*)</a>",
-                RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
-
-            Match m = r.Match(webData);
-            while (m.Success)
+            HtmlDocument html = new HtmlDocument();
+            html.LoadHtml(webData);
+            HtmlNodeCollection divs = html.DocumentNode.SelectNodes(@"//div[@id = 'contentChannel']//ul/li//div[@class = 'block_lib_media']");
+            
+            if (divs != null)
             {
-                VideoInfo video = new VideoInfo();
-                video.VideoUrl = baseVideos + m.Groups["VideoUrl"].Value;
-                video.Title = Utils.PlainTextFromHtml(m.Groups["Title"].Value);
-                video.Length = m.Groups["Duration"].Value;
-                video.Description = Utils.PlainTextFromHtml(m.Groups["Description"].Value);
-                video.ImageUrl = m.Groups["ImageUrl"].Value;
-
-                listVideos.Add(video);
-                m = m.NextMatch();
+                foreach (HtmlNode div in divs)
+                {
+                    HtmlNode img = div.SelectSingleNode(@"./div/a/img");
+                    HtmlNode duration = div.SelectSingleNode(@".//div[@class = 'txtTime']");
+                    HtmlNode title = div.SelectSingleNode(@"./div/h4/a");
+                    HtmlNode airdate = div.SelectSingleNode(@"./div/p/span");
+                    listVideos.Add(new VideoInfo() {
+                                      Title = title.InnerText,
+                                      VideoUrl = string.Format(@"{0}{1}", baseVideos, title.GetAttributeValue(@"href", string.Empty)),
+                                      ImageUrl = img.GetAttributeValue(@"src", string.Empty),
+                                      Length = duration.InnerText,
+                                      Airdate = airdate.GetAttributeValue(@"title", string.Empty)
+                                   });
+                }
             }
+            else
+            {
+                Log.Warn("No videos found");
+            }
+
             return listVideos;
         }
         
