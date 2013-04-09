@@ -78,6 +78,7 @@
     <Compile Include="RawUrlMediaProvider.cs" />
     <Compile Include="RawUrlResourceAccessor.cs" />
     <Compile Include="SearchAction.cs" />
+    <Compile Include="ViewModels\PlaylistItem.cs" />
     <Compile Include="ViewModels\SiteSettingViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
     <Compile Include="ValueConverter.cs" />

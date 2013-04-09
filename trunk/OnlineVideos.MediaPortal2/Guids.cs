@@ -15,4 +15,9 @@ namespace OnlineVideos.MediaPortal2
         public static readonly Guid WorkflowStateDetails = new Guid("F7DF593E-A606-4096-B8E1-BE702C43A325");
         public static readonly Guid DialogStateSearch = new Guid("F068C0DE-3763-4BA1-A59F-24435DBF0227");
     }
+
+	public static class Constants
+	{
+		public const string KEY_PLAYBACK_URLS = "ovsPlaybackUrls";
+	}
 }
