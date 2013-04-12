@@ -328,7 +328,7 @@ namespace OnlineVideos.Sites
             if (string.IsNullOrEmpty(id))
             {
                 // if videoId is still empty, log warning and return
-                Log.Warn(@"Could not find videoId for {0}", video.Title);                
+                Log.Warn(@"Could not find videoId for {0} at URL: {1}", video.Title, video.VideoUrl);                
                 return listUrls;
             }
 
