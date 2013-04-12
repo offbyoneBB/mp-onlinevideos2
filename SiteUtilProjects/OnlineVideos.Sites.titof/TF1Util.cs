@@ -18,6 +18,8 @@ namespace OnlineVideos.Sites
                                                         RegexOptions.Compiled);
         private static Regex videoIdByMediaIdRegex = new Regex(@"mediaId\s*:\s*(?<videoId>[^,]*),",
                                                                RegexOptions.Compiled);
+        private static Regex videoIdByToolbarRegex = new Regex(@"new\sNewtoolbar\(""entry"",""(?<videoId>[^""]*)""",
+                                                               RegexOptions.Compiled);
 
         public override int DiscoverDynamicCategories()
         {           
@@ -323,6 +325,14 @@ namespace OnlineVideos.Sites
                 // mediaId : 2283580,
                 Match byMediaId = videoIdByMediaIdRegex.Match(webData);
                 if (byMediaId.Success) { id = byMediaId.Groups["videoId"].Value; }
+            }
+            
+            if (string.IsNullOrEmpty(id))
+            {
+                // if videoId is still empty, check if videoId is in following format
+                // new Newtoolbar("entry","9986091"
+                Match byToolbar = videoIdByToolbarRegex.Match(webData);
+                if (byToolbar.Success) { id = byToolbar.Groups["videoId"].Value; }
             }
             
             if (string.IsNullOrEmpty(id))
