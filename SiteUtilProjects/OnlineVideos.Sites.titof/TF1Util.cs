@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
-using System.Web;
-using System.Net;
-using System.Xml;
-using System.Text.RegularExpressions;
-using System.Collections;
-using System.ComponentModel;
-using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
+
 using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
@@ -19,7 +14,7 @@ namespace OnlineVideos.Sites
         protected int indexPage = 1;
         protected List<string> listPages = new List<string>();
         
-        private static Regex videoIdRegex = new Regex(@"nIc0K11(?<videoId>.*)$",
+        private static Regex videoIdRegex = new Regex(@"(nIc0K11|DziPBgQ)(?<videoId>.*)$",
                                                       RegexOptions.Compiled);
 
         public override int DiscoverDynamicCategories()
@@ -368,7 +363,7 @@ namespace OnlineVideos.Sites
 
         private static string getFinalUrl(string token, string url, string timeToken, string id)
         {
-            string webData = GetWebData(url + "?domain=videos.tf1.fr&country=FR&getURL=1&version=LNX 10,0,45,2&token=" + token + "/" + timeToken, null, null, null, false, false, "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3");
+            string webData = GetWebData(url + "?domain=videos.tf1.fr&country=FR&getURL=1&version=LNX%2010,0,45,2&token=" + token + "/" + timeToken, null, null, null, false, false, "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3");
             if (webData.Contains("rtmpte://"))
             {
                 webData = webData.Replace(webData.Substring(0, webData.IndexOf("://")), "rtmpe");
