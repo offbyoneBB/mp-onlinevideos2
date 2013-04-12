@@ -14,8 +14,10 @@ namespace OnlineVideos.Sites
         protected int indexPage = 1;
         protected List<string> listPages = new List<string>();
         
-        private static Regex videoIdRegex = new Regex(@"(nIc0K11|DziPBgQ)(?<videoId>.*)$",
-                                                      RegexOptions.Compiled);
+        private static Regex videoIdByMediaRegex = new Regex(@"id=""media""\svalue=""(?<videoId>[^""]*)""",
+                                                        RegexOptions.Compiled);
+        private static Regex videoIdByMediaIdRegex = new Regex(@"mediaId\s*:\s*(?<videoId>[^,]*),",
+                                                               RegexOptions.Compiled);
 
         public override int DiscoverDynamicCategories()
         {           
@@ -303,15 +305,32 @@ namespace OnlineVideos.Sites
             return _getVideosUrl(video);
         }
 
-        public static List<string> _getVideosUrl(VideoInfo video, string regexId = @"baseURL\s:\s""http://www\.wat\.tv"",url\s:\s""(?<url>[^""]*)""")
+        public static List<string> _getVideosUrl(VideoInfo video)
         {
             List<string> listUrls = new List<string>();
 
             string webData = GetWebData(video.VideoUrl);
-            string url = Regex.Match(webData, regexId).Groups["url"].Value;
-
-            //Découpage de la chaine pour récuperer l'id
-            string id = videoIdRegex.Match(url).Groups["videoId"].Value;
+            string id = string.Empty;
+            
+            // check to see if videoId is in following format
+            // <input type="hidden" id="media" value="10151643" />
+            Match byMedia = videoIdByMediaRegex.Match(webData);
+            if (byMedia.Success) { id = byMedia.Groups["videoId"].Value; }
+            
+            if (string.IsNullOrEmpty(id))
+            {
+                // if videoId is still empty, check if videoId is in following format
+                // mediaId : 2283580,
+                Match byMediaId = videoIdByMediaIdRegex.Match(webData);
+                if (byMediaId.Success) { id = byMediaId.Groups["videoId"].Value; }
+            }
+            
+            if (string.IsNullOrEmpty(id))
+            {
+                // if videoId is still empty, log warning and return
+                Log.Warn(@"Could not find videoId for {0}", video.Title);                
+                return listUrls;
+            }
 
             //Récupération du json
             webData = GetWebData("http://www.wat.tv/interface/contentv3/" + id);

@@ -98,7 +98,7 @@ namespace OnlineVideos.Sites
 
         public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {            
-            return _getVideosUrl(video, @"url\s:\s""(?<url>[^""]*)""");
+            return _getVideosUrl(video);
         }
 
         public override List<VideoInfo> getVideoList(Category category)
