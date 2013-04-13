@@ -16,16 +16,13 @@ namespace OnlineVideos.Sites
 {
     public class W9ReplayUtil : M6ReplayUtil
     {
-        [Category("OnlineVideosConfiguration"), Description("CatalogueWeb")]
-        string W9catalogueWeb = "http://www.w9replay.fr/catalogue/4398.xml";
-        [Category("OnlineVideosConfiguration"), Description("ThumbURL")]
-        string W9thumbURL = "http://images.w9replay.fr";
+        [Category("OnlineVideosConfiguration"), Description("site identifier")]
+        string w9SiteIdentifier = "w9";
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            base.catalogueWeb = W9catalogueWeb;
-            base.thumbURL = W9thumbURL;
+            base.siteIdentifier = w9SiteIdentifier;
         }
     }
 }
