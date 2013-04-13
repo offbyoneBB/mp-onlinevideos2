@@ -1,172 +1,147 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using System.Web;
-using System.Net;
-using System.Xml;
-using System.Text.RegularExpressions;
-using System.Collections;
 using System.ComponentModel;
-using System.Security.Cryptography;
-using System.IO;
-using System.Text;
+using System.Linq;
+using System.Xml;
+
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
     public class M6ReplayUtil : SiteUtilBase
     {
-        [Category("OnlineVideosConfiguration"), Description("CatalogueWeb")]
-        protected string catalogueWeb = "http://www.m6replay.fr/catalogue/catalogueWeb3.xml";
-        [Category("OnlineVideosConfiguration"), Description("ThumbURL")]
-        protected string thumbURL = "http://images.m6replay.fr";
-        [Category("OnlineVideosConfiguration"), Description("ServerURL1")]
-        protected string serverURL1 = "rtmpe://groupemsix.fcod.llnwd.net/a2883/d1/";
-        [Category("OnlineVideosConfiguration"), Description("ServerURL2")]
-        protected string serverURL2 = "rtmpe://m6replayfs.fplive.net/m6replay/streaming/";
-        [Category("OnlineVideosConfiguration"), Description("ServerURL3")]
-        protected string serverURL3 = "rtmpe://m6dev.fcod.llnwd.net:443/a3100/d1/";
-        [Category("OnlineVideosConfiguration"), Description("PlayerURL")]
-        protected string playerURL = "http://groupemsix.vo.llnwd.net/o24/u/players/ReplayPlayerV2Hds.swf";
-        [Category("OnlineVideosConfiguration"), Description("PlayerSize")]
-        protected string playerSize = "1854813";
-        [Category("OnlineVideosConfiguration"), Description("PlayerSHA")]
-        protected string playerSHA = "9de62bb8db4eccec47f6433381ab0728daec808ca591cf79a5bc9a27647ff356";
+        [Category("OnlineVideosConfiguration"), Description("site identifier")]
+        protected string siteIdentifier = "m6";
         
+        private static string catalogUrlFormat = @"http://static.m6replay.fr/catalog/m6group_web/{0}replay/catalogue.json";
+        private static string imageUrlFormat = @"http://static.m6replay.fr/images/{0}";
+        private static string videoListUrlFormat = @"http://static.m6replay.fr/catalog/m6group_web/{0}replay/program/getvideos-{1}.json";
+        private static string videoUrlFormat = @"http://backstage-video.m6replay.fr/rest-replay-v2/?ws=get_video_info&service={0}replay&serviceref={0}replay&platform=m6group_web&idvideo={1}";
+        
+        private static List<JProperty> genres = new List<JProperty>();
+        private static List<JProperty> programs = new List<JProperty>();
 
-        private XmlDocument doc = new XmlDocument();
-            
         public override int DiscoverDynamicCategories()
         {
-            string pageEmissions = GetWebData(catalogueWeb);
-
-            //Si le fichier est crypté (cas M6, pas W9)
-            if (!pageEmissions.Contains(@"<?xml version=""1.0"" encoding=""UTF-8""?>"))
+            Settings.Categories.Clear();
+            
+            JObject json = GetWebData<JObject>(string.Format(catalogUrlFormat, siteIdentifier));
+            if (json != null)
             {
-                pageEmissions = Decrypt(pageEmissions, "ElFsg.Ot");
-            }           
-            
-            doc = new XmlDocument();
-            doc.LoadXml(pageEmissions);
-            
-            XmlNodeList listCat = doc.SelectNodes("/template_exchange_WEB/categorie");
-            
-            Settings.Categories = new BindingList<Category>();
-            foreach (XmlNode n in listCat)
-            {
-                RssLink cat = new RssLink();
-                cat.Name = n.SelectSingleNode("nom").InnerText;
-                cat.Thumb = thumbURL + n.Attributes["big_img_url"].Value;
-                cat.HasSubCategories = true;
-                cat.Other = n;
-                Settings.Categories.Add(cat);
+                foreach (JProperty property in (json["gnrList"] as JObject).Properties())
+                {
+                    genres.Add(property);
 
+                    JToken genre = property.Value;
+                    string id = property.Name;
+                    string idParent = genre.Value<string>("idParent");
+                    string name = genre.Value<string>("name");
+
+                    Log.Debug("id: {0} idParent: {1} name: {2}", id, idParent, name);
+
+                    // only get main genres (which have no parent)
+                    if (string.IsNullOrEmpty(idParent)) {
+                        Settings.Categories.Add(new RssLink() {
+                                                    Name = name,
+                                                    HasSubCategories = true,
+                                                    Thumb = string.Format(imageUrlFormat, genre["img"]["vignette"]),
+                                                    Other = id
+                                                });
+                    }
+                }
+                
+                // get programs
+                foreach (JProperty property in (json["pgmList"] as JObject).Properties())
+                {
+                    programs.Add(property);
+                }
             }
             
             Settings.DynamicCategoriesDiscovered = true;
-
-            return listCat.Count;
+            return Settings.Categories.Count;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategories = new List<Category>();
-
-            XmlNodeList list = ((XmlNode)parentCategory.Other).SelectNodes("categorie");
-            foreach (XmlNode n in list)
-            {
-                RssLink cat = new RssLink();
-                cat.Name = n.SelectSingleNode("nom").InnerText;
-                cat.Thumb = thumbURL + n.Attributes["big_img_url"].Value;
-                cat.ParentCategory = parentCategory;
-                cat.Other = n;
-                parentCategory.SubCategories.Add(cat);
-            }
-           
-            return list.Count;
             
+            string genreId = (parentCategory.Other) as string;
+            foreach (JProperty property in programs)
+            {
+                string programId = property.Name;
+                JToken program = property.Value;
+                if (genreId.Equals(program.Value<string>("idGnr")) || getGenresForId(genreId).Contains(program.Value<string>("idGnr")))
+                {
+                    parentCategory.SubCategories.Add(new RssLink() {
+                                                         ParentCategory = parentCategory,
+                                                         Name = program.Value<string>("name"),
+                                                         Description = program.Value<string>("desc"),
+                                                         Thumb = string.Format(imageUrlFormat, program["img"]["vignette"]),
+                                                         Other = programId,
+                                                         HasSubCategories = false
+                                                     });
+                }
+            }
+            parentCategory.SubCategoriesDiscovered = true;
+            return parentCategory.SubCategories.Count;
+        }
+        
+        private List<string> getGenresForId(string id)
+        {
+            // traverse all genres to find all subgenres associated with this parent genre
+            List<string> result = new List<string>();
+            foreach (JProperty property in genres)
+            {
+                if (id.Equals(property.Value.Value<string>("idParent"))) { result.Add(property.Name); }
+            }
+            return result;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            List<VideoInfo> listVideos = new List<VideoInfo>();
-                
-            XmlNodeList list = ((XmlNode)category.Other).SelectNodes("produit");
-            foreach (XmlNode n in list)
+            List<VideoInfo> result = new List<VideoInfo>();
+            JObject json = GetWebData<JObject>(string.Format(videoListUrlFormat, siteIdentifier, category.Other));
+            if (json != null)
             {
-                VideoInfo video = new VideoInfo();
-
-                video.PlaybackOptions = new Dictionary<string, string>();
-
-                foreach (XmlNode media in n.SelectNodes("fichemedia"))
+                foreach (JProperty property in json.Properties())
                 {
-                    video.PlaybackOptions.Add(media.Attributes["langue"].Value + " : Serveur 1", 
-                        new MPUrlSourceFilter.RtmpUrl(serverURL1 + media.Attributes["video_url"].Value) { SwfUrl = playerURL, SwfVerify = true }.ToString());
-
-                    video.PlaybackOptions.Add(media.Attributes["langue"].Value + " : Serveur 2",
-                        new MPUrlSourceFilter.RtmpUrl(serverURL2 + media.Attributes["video_url"].Value) { SwfUrl = playerURL, SwfVerify = true }.ToString());
-
-                    video.PlaybackOptions.Add(media.Attributes["langue"].Value + " : Serveur 3",
-                        new MPUrlSourceFilter.RtmpUrl(serverURL3 + media.Attributes["video_url"].Value) { SwfUrl = playerURL, SwfVerify = true }.ToString());
+                    JToken video = property.Value;
+                    result.Add(new VideoInfo() {
+                                   Title = video.Value<string>("clpName"),
+                                   Description = video.Value<string>("desc"),
+                                   ImageUrl = string.Format(imageUrlFormat, video["img"]["vignette"]),
+                                   Length = video.Value<string>("duration"),
+                                   Other = property.Name
+                               });
                 }
-
-                video.VideoUrl = "";
-                video.Title = n.SelectSingleNode("nom").InnerText;
-                video.Description = n.SelectSingleNode("resume").InnerText;
-                video.ImageUrl = thumbURL + n.Attributes["big_img_url"].Value;
-                video.Length = n.SelectSingleNode("fichemedia").Attributes["duree"].Value;
-                listVideos.Add(video);
             }
-            return listVideos;
+            return result;
         }
 
         public override string getUrl(VideoInfo video)
         {
-            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
-            {
-                var enumer = video.PlaybackOptions.GetEnumerator();
-                enumer.MoveNext();
-                return enumer.Current.Value;
-            }
-            return "";
-        }
-
-        /// <summary>
-        /// Décrypte une chaine cryptée à partir d'un chiffreur symétrique
-        /// </summary>
-        /// <param name="base64String">chaine cryptée</param>
-        /// <param name="pass">Mot de passe utilisé pour dériver la clé</param>
-        /// <returns>Chaine décryptée</returns>
-        private static string Decrypt(string base64String, string pass)
-        {
             string result = string.Empty;
-
-            System.Security.Cryptography.DESCryptoServiceProvider des =
-                new System.Security.Cryptography.DESCryptoServiceProvider();
-            des.Mode = CipherMode.ECB;
-            des.IV = new byte[8];
-            System.Security.Cryptography.PasswordDeriveBytes pdb =
-                new System.Security.Cryptography.PasswordDeriveBytes(pass, new byte[0]);
-            System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
-
-            des.Key = encoding.GetBytes(pass);
-            byte[] encryptedBytes = Convert.FromBase64String(base64String);
-
-            using (MemoryStream ms = new MemoryStream(base64String.Length))
+            video.PlaybackOptions = new Dictionary<string, string>();
+            XmlDocument xml = GetWebData<XmlDocument>(string.Format(videoUrlFormat, siteIdentifier, video.Other));
+            if (xml != null)
             {
-                using (System.Security.Cryptography.CryptoStream decStream =
-                    new System.Security.Cryptography.CryptoStream(ms, des.CreateDecryptor(),
-                        System.Security.Cryptography.CryptoStreamMode.Write))
+                string url = string.Empty;
+                XmlNode sd = xml.SelectSingleNode(@"//item/url_video_sd");
+                if (sd != null)
                 {
-                    decStream.Write(encryptedBytes, 0, encryptedBytes.Length);
-                    decStream.FlushFinalBlock();
-                    byte[] plainBytes = new byte[ms.Length];
-                    ms.Position = 0;
-                    ms.Read(plainBytes, 0, (int)ms.Length);
-                    result = Encoding.UTF8.GetString(plainBytes);
+                    url = new MPUrlSourceFilter.HttpUrl(sd.InnerText).ToString();
+                    video.PlaybackOptions.Add("SD", url);
+                    result = url;
+                }
+                XmlNode hd = xml.SelectSingleNode(@"//item/url_video_hd");
+                if (hd != null)
+                {
+                    url = new MPUrlSourceFilter.HttpUrl(hd.InnerText).ToString();
+                    video.PlaybackOptions.Add("HD", url);
+                    result = url;
                 }
             }
             return result;
-        }      
+        }
     }
 }
