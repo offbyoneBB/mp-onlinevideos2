@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web;
 
+using HtmlAgilityPack;
+
 namespace OnlineVideos.Sites
 {
     /// <summary>
@@ -17,8 +19,6 @@ namespace OnlineVideos.Sites
                                                           RegexOptions.Compiled);
         private static Regex subcategoryEntriesRegex = new Regex(@"<li>\s+<a\s+href=""(?<url>[^""]*)""[^>]*>(?<title>[^<]*)</a>\s+</li>",
                                                                  RegexOptions.Compiled);
-        private static Regex videoListRegex = new Regex(@"<li>\s+<div\sclass=""picture"">\s+<a\shref=""(?<url>[^""]*)""\stitle=""[^""]*""><img.*?src='(?<imageUrl>[^']*)'\s/></a>\s+</div>\s+<div\sclass=""txt"">\s+<h2>.*?</h2>\s+<p>(?<title>[^<]*)</p>\s+</div>\s+</li>",
-                                                        RegexOptions.Compiled);
         
         protected override string hashValue { get { return @"faf1b90dbe278e370da5a43bde59b6efcf841d9d"; } }
         protected override string playerId { get { return @"1381361288001"; } }
@@ -81,17 +81,24 @@ namespace OnlineVideos.Sites
         {
             List<VideoInfo> result = new List<VideoInfo>();
 
-            string webData = GetWebData(((RssLink) category).Url);
+            HtmlDocument html = GetWebData<HtmlDocument>(((RssLink) category).Url);
             
-            if (webData != null)
+            if (html != null)
             {
-                foreach (Match m in videoListRegex.Matches(webData))
+                HtmlNodeCollection items = html.DocumentNode.SelectNodes(@"//ul[@id = 'gallerie_0']/li");
+                if (items != null)
                 {
-                    result.Add(new VideoInfo() {
-                                   VideoUrl = string.Format(@"{0}{1}", baseUrlPrefix, m.Groups["url"].Value),
-                                   Title = HttpUtility.HtmlDecode(m.Groups["title"].Value),
-                                   ImageUrl = string.Format(@"{0}{1}", baseUrlPrefix, m.Groups["imageUrl"].Value)
-                               });
+                    foreach (HtmlNode item in items)
+                    {
+                        HtmlNode anchor = item.SelectSingleNode(@"./div[@class = 'picture']/a");
+                        HtmlNode img = anchor.SelectSingleNode(@"./img");
+                        HtmlNode paragraph = item.SelectSingleNode(@"./div[@class = 'txt']/p");
+                        result.Add(new VideoInfo() {
+                                       VideoUrl = string.Format(@"{0}{1}", baseUrlPrefix, anchor.GetAttributeValue(@"href", string.Empty)),
+                                       Title = HttpUtility.HtmlDecode(paragraph.InnerText),
+                                       ImageUrl = string.Format(@"{0}{1}", baseUrlPrefix, img.GetAttributeValue(@"src", string.Empty))
+                                   });
+                    }
                 }
             }
             
