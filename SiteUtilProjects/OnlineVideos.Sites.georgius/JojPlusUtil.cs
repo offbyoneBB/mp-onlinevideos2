@@ -17,21 +17,25 @@ namespace OnlineVideos.Sites.georgius
 
         private static String baseUrl = @"http://plus.joj.sk/plus-archiv.html";
 
-        private static String dynamicCategoryStart = @"<div class=""j-filter-item"">";
-        private static String showStart = @"<div class=""j-filter-item"">";
-        private static String showUrlRegex = @"<li class=""trailer""><a href=""(?<showUrl>[^""]+)""";
-        private static String showTitleRegex = @"<strong><a href=""[^""]+"" title=""[^""]+"" >(?<showTitle>[^<]+)";
+        private static String dynamicCategoryStart = @"<div class=""archiveList preloader";
 
-        private static String showEpisodesStart = @"<div class=""b b-table";
-        private static String showEpisodeStart = @"<tr>";
-        private static String showEpisodeDateRegex = @"<td><b>(?<showEpisodeDate>[^<]*)";
-        private static String showEpisodeUrlAndTitleRegex = @"<a title=""[^""]+"" href=""(?<showEpisodeUrl>[^""]+)"">(?<showEpisodeTitle>[^<]+)";
+        private static String showStart = @"<ul class=""clearfix";
+        private static String showEnd = @"</ul>";
 
-        private static String showEpisodeNextPageRegex = @"<a title=""Nasledujúce"" href=""(?<nextPageUrl>[^""]+)""";
+        private static String showUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]+)""[^>]*>(?<showTitle>[^<]+)";
 
-        private static String pageIdRegex = @"pageId: ""(?<pageId>[^""]+)";
-        private static String videoIdRegex = @"videoId: ""(?<videoId>[^""]+)";
-        private static String servicesUrlFormat = @"http://www.joj.sk/services/Video.php?clip={0}&pageId={1}";
+        private static String showEpisodesStart = @"<div class=""box-carousel"">";
+        private static String showEpisodesEnd = @"</div>";
+
+        private static String showEpisodeStart = @"<li";
+        private static String showEpisodeEnd = @"</li>";
+
+        private static String showEpisodeUrlRegex = @"<a href=""(?<showEpisodeUrl>[^""]+)";
+        private static String showEpisodeDateRegex = @"<span class=""date"">(?<showEpisodeDate>[^<]+)";
+        private static String showEpisodeTitleRegex = @"<span class=""title"">(?<showEpisodeTitle>[^<]+)";
+
+        private static String videoIdRegex = @"(videoId: ""(?<videoId>[^""]+))|(videoId=(?<videoId>[^&]+))";
+        private static String servicesUrlWithoutPageIdFormat = @"/services/Video.php?clip={0}";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -79,29 +83,28 @@ namespace OnlineVideos.Sites.georgius
 
                     if (index >= 0)
                     {
-                        int nextIndex = baseWebData.IndexOf(JojPlusUtil.showStart, index + JojPlusUtil.showStart.Length);
+                        int endIndex = baseWebData.IndexOf(JojPlusUtil.showEnd, index);
 
-                        String webData = (nextIndex > 0) ? baseWebData.Substring(index, nextIndex - index) : baseWebData;
-                        
-                        String showUrl = String.Empty;
-                        String showTitle = String.Empty;
-
-                        Match match = Regex.Match(webData, JojPlusUtil.showTitleRegex);
-                        if (match.Success)
+                        if (endIndex >= 0)
                         {
-                            showTitle = match.Groups["showTitle"].Value;
-                            webData = webData.Substring(match.Index + match.Length);
-                        }
+                            String showData = baseWebData.Substring(index, endIndex - index);
 
-                        match = Regex.Match(webData, JojPlusUtil.showUrlRegex);
-                        if (match.Success)
-                        {
-                            showUrl = match.Groups["showUrl"].Value;
-                            webData = webData.Substring(match.Index + match.Length);
-                        }
+                            String showUrl = String.Empty;
+                            String showTitle = String.Empty;
 
-                        if ((!String.IsNullOrEmpty(showUrl)) && (!String.IsNullOrEmpty(showTitle)))
-                        {
+                            Match match = Regex.Match(showData, JojPlusUtil.showUrlAndTitleRegex);
+                            if (match.Success)
+                            {
+                                showTitle = match.Groups["showTitle"].Value;
+                                showUrl = match.Groups["showUrl"].Value;
+                                showData = showData.Substring(match.Index + match.Length);
+                            }
+
+                            if ((String.IsNullOrEmpty(showUrl)) && (String.IsNullOrEmpty(showTitle)))
+                            {
+                                break;
+                            }
+
                             categories.Add(
                                 new RssLink()
                                 {
@@ -109,9 +112,13 @@ namespace OnlineVideos.Sites.georgius
                                     Url = Utils.FormatAbsoluteUrl(showUrl, JojPlusUtil.baseUrl)
                                 });
                             dynamicCategoriesCount++;
-                        }
 
-                        baseWebData = (nextIndex > 0) ? baseWebData.Substring(nextIndex) : baseWebData.Substring(index + JojPlusUtil.showStart.Length);
+                            baseWebData = baseWebData.Substring(endIndex);
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                     else
                     {
@@ -138,61 +145,75 @@ namespace OnlineVideos.Sites.georgius
                 this.nextPageUrl = String.Empty;
                 String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
 
-                int index = baseWebData.IndexOf(JojPlusUtil.showEpisodesStart);
-                if (index > 0)
+                int startIndex = baseWebData.IndexOf(JojPlusUtil.showEpisodesStart);
+                if (startIndex >= 0)
                 {
-                    baseWebData = baseWebData.Substring(index);
-
-                    while (true)
+                    int endIndex = baseWebData.IndexOf(JojPlusUtil.showEpisodesEnd, startIndex);
+                    if (endIndex >= 0)
                     {
-                        index = baseWebData.IndexOf(JojPlusUtil.showEpisodeStart);
+                        String showEpisodesData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                        if (index > 0)
+                        while (true)
                         {
-                            baseWebData = baseWebData.Substring(index);
-
-                            String showEpisodeUrl = String.Empty;
-                            String showEpisodeTitle = String.Empty;
-                            String showEpisodeDate = String.Empty;
-
-                            Match match = Regex.Match(baseWebData, JojPlusUtil.showEpisodeDateRegex);
-                            if (match.Success)
+                            startIndex = showEpisodesData.IndexOf(JojPlusUtil.showEpisodeStart);
+                            if (startIndex >= 0)
                             {
-                                showEpisodeDate = match.Groups["showEpisodeDate"].Value;
-                                baseWebData = baseWebData.Substring(match.Index + match.Length);
-                            }
+                                endIndex = showEpisodesData.IndexOf(JojPlusUtil.showEpisodeEnd, startIndex);
+                                if (endIndex >= 0)
+                                {
+                                    String showEpisodeUrl = String.Empty;
+                                    String showEpisodeTitle = String.Empty;
+                                    String showEpisodeDate = String.Empty;
 
-                            match = Regex.Match(baseWebData, JojPlusUtil.showEpisodeUrlAndTitleRegex);
-                            if (match.Success)
-                            {
-                                showEpisodeUrl = match.Groups["showEpisodeUrl"].Value;
-                                showEpisodeTitle = match.Groups["showEpisodeTitle"].Value;
-                                baseWebData = baseWebData.Substring(match.Index + match.Length);
-                            }
+                                    String showEpisodeData = showEpisodesData.Substring(startIndex, endIndex - startIndex);
 
-                            if ((String.IsNullOrEmpty(showEpisodeUrl)) && (String.IsNullOrEmpty(showEpisodeTitle)) && (String.IsNullOrEmpty(showEpisodeDate)))
+                                    Match match = Regex.Match(showEpisodeData, JojPlusUtil.showEpisodeUrlRegex);
+                                    if (match.Success)
+                                    {
+                                        showEpisodeUrl = match.Groups["showEpisodeUrl"].Value;
+                                        showEpisodeData = showEpisodeData.Substring(match.Index + match.Length);
+                                    }
+
+                                    match = Regex.Match(showEpisodeData, JojPlusUtil.showEpisodeDateRegex);
+                                    if (match.Success)
+                                    {
+                                        showEpisodeDate = match.Groups["showEpisodeDate"].Value;
+                                        showEpisodeData = showEpisodeData.Substring(match.Index + match.Length);
+                                    }
+
+                                    match = Regex.Match(showEpisodeData, JojPlusUtil.showEpisodeTitleRegex);
+                                    if (match.Success)
+                                    {
+                                        showEpisodeTitle = match.Groups["showEpisodeTitle"].Value;
+                                        showEpisodeData = showEpisodeData.Substring(match.Index + match.Length);
+                                    }
+
+                                    if (!((String.IsNullOrEmpty(showEpisodeUrl) || String.IsNullOrEmpty(showEpisodeTitle) || String.IsNullOrEmpty(showEpisodeDate))))
+                                    {
+                                        pageVideos.Add(new VideoInfo()
+                                        {
+                                            VideoUrl = showEpisodeUrl,
+                                            Title = showEpisodeTitle,
+                                            Airdate = showEpisodeDate
+                                        });
+                                    }
+
+                                    showEpisodesData = showEpisodesData.Substring(endIndex);
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            else
                             {
                                 break;
                             }
-
-                            VideoInfo videoInfo = new VideoInfo()
-                            {
-                                Description = showEpisodeDate,
-                                Title = showEpisodeTitle,
-                                VideoUrl = Utils.FormatAbsoluteUrl(showEpisodeUrl, JojPlusUtil.baseUrl)
-                            };
-
-                            pageVideos.Add(videoInfo);
-                        }
-                        else
-                        {
-                            break;
                         }
                     }
-
-                    Match nextPageMatch = Regex.Match(baseWebData, JojPlusUtil.showEpisodeNextPageRegex);
-                    this.nextPageUrl = nextPageMatch.Groups["nextPageUrl"].Value;
                 }
+
+                this.nextPageUrl = String.Empty;
             }
 
             return pageVideos;
@@ -255,61 +276,31 @@ namespace OnlineVideos.Sites.georgius
         {
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
 
-            Match pageId = Regex.Match(baseWebData, JojPlusUtil.pageIdRegex);
             Match videoId = Regex.Match(baseWebData, JojPlusUtil.videoIdRegex);
 
             video.PlaybackOptions = new Dictionary<string, string>();
-            if (pageId.Success && videoId.Success)
+            if (videoId.Success)
             {
-                String servicesUrl = String.Format(JojPlusUtil.servicesUrlFormat, videoId.Groups["videoId"].Value, pageId.Groups["pageId"].Value);
+                String safeVideoId = videoId.Groups["videoId"].Value.Replace("-", "%2D");
+                String servicesUrl = String.Format(JojPlusUtil.servicesUrlWithoutPageIdFormat, safeVideoId);
+                servicesUrl = Utils.FormatAbsoluteUrl(servicesUrl, video.VideoUrl);
 
                 XmlDocument videoData = new XmlDocument();
                 videoData.LoadXml(SiteUtilBase.GetWebData(servicesUrl));
 
-                XmlNode highQuality = videoData.SelectSingleNode("//file[@type = \"rtmp-archiv\"]");
-                XmlNode lowQuality = videoData.SelectSingleNode("//file[@type = \"flv-archiv\"]");
-
-                String highQualityUrl = String.Empty;
-                String lowQualityUrl = String.Empty;
-
-                if ((highQuality != null) && (lowQuality != null))
+                XmlNodeList files = videoData.SelectNodes("//file[@type=\"rtmp-archiv\"]");
+                foreach (XmlNode file in files)
                 {
-                    highQualityUrl = "rtmp://n15.joj.sk/" + highQuality.Attributes["path"].Value;
-                    lowQualityUrl = "http://n15.joj.sk/" + lowQuality.Attributes["path"].Value;
-                }
-                else if (highQuality != null)
-                {
-                    highQualityUrl = "rtmp://n15.joj.sk/" + highQuality.Attributes["path"].Value;
-                }
-                else if (lowQuality != null)
-                {
-                    lowQualityUrl = "http://n15.joj.sk/" + lowQuality.Attributes["path"].Value;
-                }
+                    String videoQualityUrl = "rtmp://n15.joj.sk/" + file.Attributes["path"].Value;
 
-                if (!String.IsNullOrEmpty(lowQualityUrl))
-                {
-                    //string host = lowQualityUrl.Substring(lowQualityUrl.IndexOf(":") + 3, lowQualityUrl.IndexOf("/", lowQualityUrl.IndexOf(":") + 3) - (lowQualityUrl.IndexOf(":") + 3));
-                    //string app = "";
-                    //string tcUrl = "rtmp://" + host;
-                    //string playPath = lowQualityUrl.Substring(lowQualityUrl.IndexOf(tcUrl) + tcUrl.Length + 1);
-
-                    //string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(lowQualityUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
-
-                    //video.PlaybackOptions.Add("Low quality", resultUrl);
-                    string resultUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(lowQualityUrl).ToString();
-
-                    video.PlaybackOptions.Add("Low quality", resultUrl);
-                }
-                if (!String.IsNullOrEmpty(highQualityUrl))
-                {
-                    string host = highQualityUrl.Substring(highQualityUrl.IndexOf(":") + 3, highQualityUrl.IndexOf("/", highQualityUrl.IndexOf(":") + 3) - (highQualityUrl.IndexOf(":") + 3));
+                    string host = videoQualityUrl.Substring(videoQualityUrl.IndexOf(":") + 3, videoQualityUrl.IndexOf("/", videoQualityUrl.IndexOf(":") + 3) - (videoQualityUrl.IndexOf(":") + 3));
                     string app = "";
                     string tcUrl = "rtmp://" + host;
-                    string playPath = highQualityUrl.Substring(highQualityUrl.IndexOf(tcUrl) + tcUrl.Length + 1);
+                    string playPath = videoQualityUrl.Substring(videoQualityUrl.IndexOf(tcUrl) + tcUrl.Length + 1);
 
-                    string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(highQualityUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
+                    string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(videoQualityUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
 
-                    video.PlaybackOptions.Add("High quality", resultUrl);
+                    video.PlaybackOptions.Add(file.Attributes["label"].Value, resultUrl);
                 }
             }
 
