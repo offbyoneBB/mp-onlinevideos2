@@ -17,9 +17,8 @@ namespace OnlineVideos.Sites
         private static Regex jsonCloseBracketRegex = new Regex(@"\]$",
                                                         RegexOptions.Compiled);
 
-        private static string mainCategoryXpath = @"//div[@id='playlist-menu']/ul[@class='ul-parent']/li";
-        private static string videoListUrlFormat = @"http://www.rds.ca/zone-video/cache/menus/{1}_{2}.json";
-        private static string videoListUrlSecondaryFormat = @"http://www.rds.ca/videos/zonevideo/menuitemvideos?id={0}&page={1}";
+        private static string mainCategoryXpath = @"//div[@id = 'listOfPlaylistsSection']//div[@class = 'groupVideos']/div[@class = 'lining']";
+        private static string videoListUrlFormat = @"http://services.videos.rds.ca/zonevideo/menuitemvideos/?id={0}&page={1}&no_flv=false";
         private static string videoUrlFormat = @"http://www.rds.ca/videos/zonevideo?id={0}&format=json";
         
         private Category currentCategory = null;
@@ -33,32 +32,18 @@ namespace OnlineVideos.Sites
             
             if (html != null)
             {
-                foreach (HtmlNode lineItem in html.DocumentNode.SelectNodes(mainCategoryXpath))
+                foreach (HtmlNode div in html.DocumentNode.SelectNodes(mainCategoryXpath))
                 {
-                    HtmlNode anchor = lineItem.SelectSingleNode(@"./a");
-                    string anchorClass = anchor.GetAttributeValue("class", "");
+                    HtmlNode h2 = div.SelectSingleNode(@"./h2[@class = 'sh1']");
+                    HtmlNode anchor = div.SelectSingleNode(@"./a");
                     
                     RssLink category = new RssLink() {
-                        Name = anchor.InnerText,
-                        Url = string.Format(videoListUrlFormat, baseUrl, anchor.GetAttributeValue("rel", ""), "1"),
+                        Name = h2.InnerText,
+                        Url = string.Format(videoListUrlFormat, anchor.GetAttributeValue("rel", ""), "1"),
                         Other = anchor.GetAttributeValue("rel", ""),
                         HasSubCategories = false
                     };
                     Settings.Categories.Add(category);
-
-                    if (anchorClass.Contains(@"hasChildren"))
-                    {
-                        foreach (HtmlNode subAnchor in lineItem.SelectNodes(@"./ul/li/a[@class='menu-child']"))
-                        {
-                            Settings.Categories.Add(new RssLink() {
-                                                        Name = string.Format(@"{0} - {1}", anchor.InnerText, subAnchor.InnerText),
-                                                        Url = string.Format(videoListUrlFormat, baseUrl, subAnchor.GetAttributeValue("rel", ""), "1"),
-                                                        Other = subAnchor.GetAttributeValue("rel", ""),
-                                                        HasSubCategories = false
-                                                    });
-                        }
-                    }
-                    
                 }
             }
             
@@ -78,7 +63,7 @@ namespace OnlineVideos.Sites
             nextPageUrl = string.Empty;
             currentCategory = category;
             
-            JObject json = GetWebData<JObject>((category as RssLink).Url);
+            JObject json = GetWebData<JObject>(url);
             JArray videos = json["videos"] as JArray;
             
             if (videos != null)
@@ -100,8 +85,7 @@ namespace OnlineVideos.Sites
             
             if (currentPage < totalPages)
             {
-                nextPageUrl = string.Format(currentPage == 1 ? videoListUrlSecondaryFormat : videoListUrlSecondaryFormat,
-                                            category.Other as string, currentPage + 1);
+                nextPageUrl = string.Format(videoListUrlFormat, category.Other as string, currentPage + 1);
             }
             
             return result;
