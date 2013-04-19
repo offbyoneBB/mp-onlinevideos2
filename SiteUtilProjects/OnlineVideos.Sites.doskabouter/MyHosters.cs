@@ -708,8 +708,7 @@ namespace OnlineVideos.Hoster
             string packed = GetSubString(sub, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = UnPack(packed);
-            string res = GetSubString(unpacked, @"'file','", @"'");
-
+            string res = GetSubString(unpacked, @"{file:""", @"""");
             return res;
         }
 
