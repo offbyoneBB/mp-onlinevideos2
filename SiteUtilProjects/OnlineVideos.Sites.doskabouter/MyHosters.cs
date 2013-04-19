@@ -715,6 +715,79 @@ namespace OnlineVideos.Hoster
 
     }
 
+    public class Videomega : HosterBase
+    {
+        public override string getHosterUrl()
+        {
+            return "videomega.tv";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            int p = url.IndexOf('?');
+            string url2 = url.Insert(p, "iframe.php");
+            string webData = SiteUtilBase.GetWebData(url2);
+            Match m = Regex.Match(webData, @"document\.write\(unescape\(""(?<data>[^""]*)""\)\);");
+            if (m.Success)
+            {
+                string data = HttpUtility.UrlDecode(m.Groups["data"].Value);
+                m = Regex.Match(data, @"file:\s""(?<url>[^""]*)"",");
+                if (m.Success)
+                    return m.Groups["url"].Value;
+            }
+            return String.Empty;
+        }
+    }
+
+
+    public class VidTo : HosterBase
+    {
+        public override string getHosterUrl()
+        {
+            return "vidto.me";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            var result = getPlaybackOptions(url);
+            if (result != null && result.Count > 0) return result.First().Value;
+            else return String.Empty;
+        }
+
+        public override Dictionary<string, string> getPlaybackOptions(string url)
+        {
+            Dictionary<string, string> res = new Dictionary<string, string>();
+            string webData = SiteUtilBase.GetWebData(url);
+            string postData = String.Empty;
+            Match m = Regex.Match(webData, @"<input\stype=""hidden""\sname=""(?<m0>[^""]*)""\svalue=""(?<m1>[^""]*)");
+            while (m.Success)
+            {
+                if (!String.IsNullOrEmpty(postData))
+                    postData += "&";
+                postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
+                m = m.NextMatch();
+            }
+            if (String.IsNullOrEmpty(postData))
+                return null;
+
+            string timeToWait = Regex.Match(webData, @"<span\sid=""countdown_str"">[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
+            if (Convert.ToInt32(timeToWait) < 10)
+                Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
+
+            webData = SiteUtilBase.GetWebDataFromPost(url, postData);
+            string packed = GetSubString(webData, @"return p}", @"</script>");
+            packed = packed.Replace(@"\'", @"'");
+            string unpacked = UnPack(packed);
+            m = Regex.Match(unpacked, @"{label:""(?<n0>[^""]*)"",file:""(?<m0>[^""]*)""}");
+            while (m.Success)
+            {
+                res.Add(m.Groups["n0"].Value, m.Groups["m0"].Value);
+                m = m.NextMatch();
+            }
+            return res;
+        }
+    }
+
     public class Vureel : HosterBase
     {
         public override string getHosterUrl()
