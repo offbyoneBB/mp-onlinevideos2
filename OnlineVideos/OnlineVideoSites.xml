@@ -1734,9 +1734,14 @@
     <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>xHamster - just porn, no bullshit.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref='(?<url>[^']*)'>(?<title>[^<]*)</a></li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass='hRotator'\s>\s*<img\ssrc='(?<ImageUrl>[^']*)'\s(?:(?!alt).)*alt="(?<Title>[^"]*)"/>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='last'>Next</a>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[(?<!All\sCategories.*)(?<=<div\s+class="head">Categories</div>.*)<a\s+href='(?<url>[^']+)'>(?<title>[^<]*)</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\s+class='video'>\s*
+<a\s+href='(?<VideoUrl>[^']+)'[^>]*>\s*
+<img\s+src='(?<ImageUrl>[^']+)'[^>]*>\s*
+<img[^>]*>\s*
+<b>(?<Duration>[^<]*)</b>\s*
+<u[^>]*>(?<Title>[^<]*)</u>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'[^>]*>\s*<div[^>]*>[^<]*</div>Next</a>]]></item>
         <item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
         <item key="fileUrlRegEx"><![CDATA['srv':\s'(?<m0>[^']*)',\s*'file':\s'(?<m1>[^']*)',\s*'image']]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}/key={1}]]></item>
