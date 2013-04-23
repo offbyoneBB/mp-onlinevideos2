@@ -164,7 +164,8 @@ namespace OnlineVideos.Sites
                     {
                         if (!Uri.IsWellFormedUriString(video.VideoUrl, System.UriKind.Absolute)) video.VideoUrl = new Uri(new Uri(url), video.VideoUrl).AbsoluteUri;
 
-                        video.Title = HttpUtility.HtmlDecode((article.Descendants("h5").Select(h => h.InnerText).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
+                        video.Title = HttpUtility.HtmlDecode((article.GetAttributeValue("data-title", "") ?? "").Trim().Replace('\n', ' '));
+                        video.Description = HttpUtility.HtmlDecode((article.GetAttributeValue("data-description", "") ?? "").Trim().Replace('\n', ' '));
 
                         video.ImageUrl = article.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
                         if (!string.IsNullOrEmpty(video.ImageUrl) && !Uri.IsWellFormedUriString(video.ImageUrl, System.UriKind.Absolute)) video.ImageUrl = new Uri(new Uri(url), video.ImageUrl).AbsoluteUri;
@@ -350,7 +351,8 @@ namespace OnlineVideos.Sites
                     {
                         if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
 
-                        cat.Name = HttpUtility.HtmlDecode((article.Descendants("h5").Select(h => h.InnerText).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
+                        cat.Name = HttpUtility.HtmlDecode((article.GetAttributeValue("data-title", "") ?? "").Trim().Replace('\n', ' '));
+                        cat.Description = HttpUtility.HtmlDecode((article.GetAttributeValue("data-description", "") ?? "").Trim().Replace('\n', ' '));
 
                         cat.Thumb = article.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
                         if (!string.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(categoryUrl), cat.Thumb).AbsoluteUri;
