@@ -959,6 +959,7 @@
         <Category xsi:type="RssLink" name="Program A-Ö">http://www.svtplay.se/program</Category>
         <Category xsi:type="RssLink" name="Kategorier">http://www.svtplay.se/kategorier</Category>
         <Category xsi:type="RssLink" name="Live">http://www.svtplay.se/kanaler</Category>
+        <Category xsi:type="RssLink" name="Öppet arkiv">http://www.oppetarkiv.se/kategori/titel</Category>
       </Categories>
     </Site>
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">

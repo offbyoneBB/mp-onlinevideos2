@@ -64,6 +64,10 @@ namespace OnlineVideos.Sites
 
 					return new List<VideoInfo>() { video };
 				}
+                else if (category.ParentCategory.Name == "Öppet arkiv" || (category.ParentCategory.ParentCategory != null && category.ParentCategory.ParentCategory.Name == "Öppet arkiv"))
+                {
+                    return VideosForOppetArkivCategory(htmlDoc.DocumentNode, url);
+                }
 				else
 				{
 					string tabName = category.Name == "Hela program" ? "episodes" : "clips";
@@ -180,6 +184,29 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
+        private List<VideoInfo> VideosForOppetArkivCategory(HtmlAgilityPack.HtmlNode node, string url)
+        {
+            List<VideoInfo> videoList = new List<VideoInfo>();
+            var div = node.SelectSingleNode("//div[contains(@class,'svtGridBlock')]");
+            foreach (var article in div.Elements("article"))
+            {
+                VideoInfo video = new VideoInfo();
+                video.VideoUrl = article.Descendants("a").Select(a => a.GetAttributeValue("href", "")).FirstOrDefault();
+                if (!string.IsNullOrEmpty(video.VideoUrl))
+                {
+                    if (!Uri.IsWellFormedUriString(video.VideoUrl, System.UriKind.Absolute)) video.VideoUrl = new Uri(new Uri(url), video.VideoUrl).AbsoluteUri;
+
+                    video.Title = HttpUtility.HtmlDecode((article.Descendants("a").Select(a => a.GetAttributeValue("title", "")).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
+                    video.ImageUrl = article.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
+                    video.Airdate = article.Descendants("time").Select(t => t.GetAttributeValue("datetime", "")).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(video.Airdate)) video.Airdate = DateTime.Parse(video.Airdate).ToString("g", OnlineVideoSettings.Instance.Locale);
+                    videoList.Add(video);
+                }
+
+
+            }
+            return videoList;
+        }
         public override int DiscoverSubCategories(Category parentCategory)
         {
             string categoryUrl = (parentCategory as RssLink).Url;
@@ -286,8 +313,57 @@ namespace OnlineVideos.Sites
 						parentCategory.SubCategories.Add(cat);
 					}
 				}
-				else
-				{
+                else if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("oppetarkiv"))
+                {
+                    var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@role,'main')]");
+                    foreach (var section in node.Elements("section"))
+                    {
+                        RssLink letterCategory = new RssLink()
+                        {
+                            Name = HttpUtility.HtmlDecode(section.Element("h2").Element("a").GetAttributeValue("id", "")),
+                            HasSubCategories = true,
+                            ParentCategory = parentCategory,
+                            SubCategoriesDiscovered = true,
+                            SubCategories = new List<Category>()
+                        };
+                        var li_a_s = section.Element("ul").Descendants("li").Select(li => li.Element("a"));
+                        if (li_a_s != null)
+                        {
+                            foreach (var a in li_a_s)
+                            {
+                                RssLink cat = new RssLink();
+                                cat.Url = a.GetAttributeValue("href", "");
+                                if (!string.IsNullOrEmpty(cat.Url))
+                                {
+                                    if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
+
+                                    cat.Name = HttpUtility.HtmlDecode(a.InnerText.Trim().Replace('\n', ' '));
+
+                                    cat.HasSubCategories = false;
+                                    cat.SubCategoriesDiscovered = false;
+
+                                    if (splitByLetter)
+                                    {
+                                        letterCategory.SubCategories.Add(cat);
+                                        cat.ParentCategory = letterCategory;
+                                    }
+				                    else
+				                    {
+                                        parentCategory.SubCategories.Add(cat);
+                                        cat.ParentCategory = parentCategory;
+                                    }
+                                }
+                            }
+                            if (splitByLetter && letterCategory.SubCategories.Count > 0)
+                            {
+                                letterCategory.EstimatedVideoCount = (uint)letterCategory.SubCategories.Count;
+                                parentCategory.SubCategories.Add(letterCategory);
+                            }
+                        }
+                    }
+                }
+                else
+                {
 					var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playBoxBody') and contains(@class,'svtTab-Active')]");
 					CategoriesFromArticles(node, parentCategory);
 
