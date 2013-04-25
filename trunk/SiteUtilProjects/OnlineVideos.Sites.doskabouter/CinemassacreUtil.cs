@@ -35,7 +35,7 @@ namespace OnlineVideos.Sites
                 RssLink subcat = new RssLink();
                 XmlNode a = sub.SelectSingleNode("a");
                 subcat.Name = a.InnerText;
-                subcat.Url = a.Attributes["href"].Value;
+                subcat.Url = FormatDecodeAbsolutifyUrl(baseUrl, a.Attributes["href"].Value, null, UrlDecoding.None);
                 subcat.ParentCategory = parentCategory;
                 parentCategory.SubCategories.Add(subcat);
 
@@ -98,11 +98,15 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
+            string thisUrl = base.getUrl(video);
+            if (!String.IsNullOrEmpty(thisUrl))
+                return thisUrl;
+
             string data2 = GetSubString(data, @"<div id=""video-content""", @"<div\sid=""video-details""");
             if (String.IsNullOrEmpty(data2))
                 data2 = data;
-            Match matchFileUrl = regEx_FileUrl.Match(data2);
-            string thisUrl = null;
+            Match matchFileUrl = Regex.Match(data2, @"<iframe\s(?:width=""[^""]*""\sheight=""[^""]*""\s)?src=""(?<m0>[^""]*)""|<param\sname=""(movie|src)""\svalue=""(?<m0>[^""]*)""|embed\s(?:type=""[^""]*""\swidth=""[^""]*""\sheight=""[^""]*""\s)?src=""(?<m0>[^""]*)""|<a\shref=""(?<m0>(?:http://www.youtube.com/watch|http://www.spike.com/video-clips|http://www.gametrailers.com/(?:video|game))[^""]*)""\starget=""_blank"">|<iframe\sid=""[^""]*""\ssrc=""(?<m0>[^""]*)""", defaultRegexOptions);
+            thisUrl = null;
             while (matchFileUrl.Success && thisUrl == null)
             {
                 thisUrl = matchFileUrl.Groups["m0"].Value;
@@ -122,28 +126,7 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            if (String.IsNullOrEmpty(thisUrl))
-            {
-                Match m = Regex.Match(data2, @"<script\stype='text/javascript'\ssrc='(?<url>http://player\.screenwavemedia\.com/play/embed[^']*)'></script>", defaultRegexOptions);
-                if (m.Success)
-                {
-                    data2 = GetWebData(m.Groups["url"].Value);
-                    video.PlaybackOptions = new Dictionary<string, string>();
-                    m = Regex.Match(data2, @"'streamer':\s'(?<url>[^']*)',", defaultRegexOptions);
-                    if (m.Success)
-                    {
-                        string streamer = m.Groups["url"].Value;
-                        m = Regex.Match(data2, @"{\sbitrate:\s(?<bitrate>[^,]*),\sfile:\s""(?<file>[^""]*)"",\swidth:\s(?<width>[^\s]*)\s}", defaultRegexOptions);
-                        while (m.Success)
-                        {
-                            MPUrlSourceFilter.RtmpUrl rtmpUrl = new MPUrlSourceFilter.RtmpUrl(streamer + '/' + m.Groups["file"].Value);
-                            video.PlaybackOptions.Add("Bitrate:" + m.Groups["bitrate"].Value, rtmpUrl.ToString());
-                            m = m.NextMatch();
-                        }
-                        return video.PlaybackOptions.Last().Value;
-                    }
-                }
-            }
+
             if (String.IsNullOrEmpty(thisUrl)) return null;
 
             if (thisUrl.StartsWith("http://www.youtube.com"))
@@ -184,8 +167,10 @@ namespace OnlineVideos.Sites
                     video.PlaybackOptions = new Dictionary<string, string>();
                     foreach (XmlNode rendition in doc2.SelectNodes("//rendition"))
                     {
-                        video.PlaybackOptions.Add(rendition.Attributes["bitrate"].Value,
-                            rendition.SelectSingleNode("src").InnerText);
+                        string bitRate = rendition.Attributes["bitrate"].Value;
+                        if (!video.PlaybackOptions.ContainsKey(bitRate))
+                            video.PlaybackOptions.Add(bitRate,
+                                rendition.SelectSingleNode("src").InnerText);
                     }
                     string resultUrl;
                     if (video.PlaybackOptions.Count == 0) return String.Empty;
