@@ -37,9 +37,10 @@ namespace OnlineVideos.MediaPortal1.Player
 						}
 						return;
 					}
-					else if (action.wID == Action.ActionType.ACTION_SHOW_GUI)
+					else if (action.wID == Action.ActionType.ACTION_SHOW_GUI ||
+							 action.wID == Action.ActionType.ACTION_NEXT_SUBTITLE)
 					{
-						return;
+						return; // already handled by base class, but get's sent here again as keypress, so when we map it we must make sure not to handle it again
 					}
 					else if (action.wID == Action.ActionType.ACTION_VOLUME_UP ||
 							 action.wID == Action.ActionType.ACTION_VOLUME_DOWN ||
