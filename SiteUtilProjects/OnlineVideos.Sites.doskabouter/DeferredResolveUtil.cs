@@ -24,9 +24,9 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Show hosters for which no provider exists.")]
         protected bool showUnknownHosters = false;
 
-        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle source")]
+		[Category("OnlineVideosUserConfiguration"), Description("Select subtitle source, for example: TvSubtitles")]
         protected string subtitleSource = "";
-        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated)")]
+		[Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
         protected string subtitleLanguages = "";
 
         private SubtitleHandler sh = null;

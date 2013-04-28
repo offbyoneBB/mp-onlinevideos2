@@ -113,7 +113,7 @@ namespace OnlineVideos.Subtitles
         private bool tryLoad(string className)
         {
             Assembly subAssembly = Assembly.GetAssembly(typeof(ISubtitleDownloader));
-            Type tt = subAssembly.GetType(String.Format("SubtitleDownloader.Implementations.{0}.{0}Downloader", className));
+            Type tt = subAssembly.GetType(String.Format("SubtitleDownloader.Implementations.{0}.{0}Downloader", className), false, true);
             if (tt == null)
             {
                 Log.Debug("Subtitlehandler for " + className + " cannot be created");
