@@ -17,7 +17,7 @@ namespace OnlineVideos.Sites
 		string streamsUrl = "/streams?limit=100&game={0}";
 		string searchUrl = "/search/streams?limit=100&query={0}";
 		string metaInfoUrl = "http://usher.twitch.tv/find/{0}.json?type=any&private_code=null&group=&";
-		string swfUrl = "http://www-cdn.jtvnw.net/widgets/live_site_player.rc64c906b559598ad2bdc14e9deef3b5e8df97e6b.swf";
+		string swfUrl = "http://www-cdn.jtvnw.net/widgets/live_site_player.reecf0cca00fdb5cb6edc8e227c91702545504613.swf";
 		string pageUrlBase = "http://de.twitch.tv/";
 
 		string nextPageUrl;
