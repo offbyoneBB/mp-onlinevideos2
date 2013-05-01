@@ -251,7 +251,7 @@
     <Compile Include="Player\ExternalOSDLibrary\Elements\ProgressControlElement.cs" />
     <Compile Include="Player\ExternalOSDLibrary\Elements\SliderElement.cs" />
     <Compile Include="Player\ExternalOSDLibrary\Elements\TextScrollUpElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\ToggleButtonElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\CheckButtonElement.cs" />
     <Compile Include="Player\ExternalOSDLibrary\Elements\VerticalScrollbarElement.cs" />
     <Compile Include="Player\ExternalOSDLibrary\Elements\VolumeBarElement.cs" />
     <Compile Include="Player\ExternalOSDLibrary\FloatingWindow.cs" />

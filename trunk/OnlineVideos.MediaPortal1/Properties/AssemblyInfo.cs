@@ -17,13 +17,13 @@ using MediaPortal.Common.Utils;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("09b42e26-4a7f-46a7-b0a9-adda8a5099b0")]
 
-// Define that our plugin is compatible with MediaPortal 1.2 and designed for 1.3
-[assembly: CompatibleVersion("1.2.100.0", "1.1.6.27644")]
+// Define that our plugin is designed for 1.4 and compatible with MediaPortal 1.4
+[assembly: CompatibleVersion("1.3.100.0", "1.3.100.0")]
 
-// Tell MediaPortal which subsystems this plugin will use, so it can check for campatiblity
+// Tell MediaPortal which subsystems this plugin will use, so it can check for compatiblity
 [assembly: UsesSubsystem("MP.SkinEngine")]
 [assembly: UsesSubsystem("MP.Players.Video")]
 [assembly: UsesSubsystem("MP.Input")]
 [assembly: UsesSubsystem("MP.Externals.SQLite")]
-//[assembly: UsesSubsystem("MP.Externals.Log4Net")] todo : add when doing a MP 1.4 compatible version
+[assembly: UsesSubsystem("MP.Externals.Log4Net")]
 [assembly: UsesSubsystem("MP.Config")]
