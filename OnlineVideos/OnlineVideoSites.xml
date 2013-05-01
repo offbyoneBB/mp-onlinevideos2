@@ -955,12 +955,21 @@
         <Category xsi:type="RssLink" name="BOARDRIDERS TV" thumb="http://img40.imageshack.us/img40/5083/quiksilvernew.jpg">http://www.boardriderstv.com/podcast/index.php</Category>
       </Categories>
     </Site>
-    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sv">
+	<Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sv">
       <Description>Se dina favoritprogram när du vill i SVT Play - fri television på nätet.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Program A-Ö">http://www.svtplay.se/program</Category>
         <Category xsi:type="RssLink" name="Kategorier">http://www.svtplay.se/kategorier</Category>
-        <Category xsi:type="RssLink" name="Live">http://www.svtplay.se/kanaler</Category>
+        <Category xsi:type="RssLink" name="Live">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="SVT1">http://www.svtplay.se/kanaler/svt1</Category>
+            <Category xsi:type="RssLink" name="SVT2">http://www.svtplay.se/kanaler/svt2</Category>
+            <Category xsi:type="RssLink" name="Barnkanalen">http://www.svtplay.se/kanaler/barnkanalen</Category>
+            <Category xsi:type="RssLink" name="SVT24">http://www.svtplay.se/kanaler/svt24</Category>
+            <Category xsi:type="RssLink" name="Kunskapskanalen">http://www.svtplay.se/kanaler/kunskapskanalen</Category>
+            <Category xsi:type="RssLink" name="Livesändningar">http://www.svtplay.se/ajax/live</Category>
+          </SubCategories>
+        </Category>
         <Category xsi:type="RssLink" name="Öppet arkiv">http://www.oppetarkiv.se/kategori/titel</Category>
       </Categories>
     </Site>
