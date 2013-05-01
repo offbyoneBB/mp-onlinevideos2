@@ -167,9 +167,9 @@ namespace ExternalOSDLibrary
       {
         return new ButtonElement(control);
       }
-      if (control.GetType() == typeof(GUIToggleButtonControl))
+      if (control.GetType() == typeof(GUICheckButton))
       {
-        return new ToggleButtonElement(control);
+        return new CheckButtonElement(control);
       }
       if (control.GetType() == typeof(GUISliderControl))
       {

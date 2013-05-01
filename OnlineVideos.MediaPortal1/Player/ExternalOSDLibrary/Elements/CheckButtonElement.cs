@@ -31,13 +31,13 @@ namespace ExternalOSDLibrary
   /// <summary>
   /// This class represents a GUIToggleButtonElement
   /// </summary>
-  public class ToggleButtonElement : BaseElement
+  public class CheckButtonElement : BaseElement
   {
     #region variables
     /// <summary>
     /// GUIToggleButton
     /// </summary>
-    private readonly GUIToggleButtonControl _button;
+    private readonly GUICheckButton _button;
 
     /// <summary>
     /// Focus bitmap
@@ -48,16 +48,6 @@ namespace ExternalOSDLibrary
     /// Non focus bitmap
     /// </summary>
     private readonly Bitmap _noFocusBitmap;
-
-    /// <summary>
-    /// Alternative focus bitmap
-    /// </summary>
-    private readonly Bitmap _altFocusBitmap;
-
-    /// <summary>
-    /// Alternative non focus bitmap
-    /// </summary>
-    private readonly Bitmap _altNoFocusBitmap;
 
     /// <summary>
     /// Font
@@ -95,17 +85,15 @@ namespace ExternalOSDLibrary
     /// Creates the element and retrieves all information from the control
     /// </summary>
     /// <param name="control">GUIControl</param>
-    public ToggleButtonElement(GUIControl control)
+    public CheckButtonElement(GUIControl control)
       : base(control)
     {
-      _button = control as GUIToggleButtonControl;
+      _button = control as GUICheckButton;
       if (_button != null)
       {
         _font = getFont(_button.FontName);
         _focusBitmap = loadBitmap(_button.TexutureFocusName);
         _noFocusBitmap = loadBitmap(_button.TexutureNoFocusName);
-        _altFocusBitmap = loadBitmap(_button.AltTexutureFocusName);
-        _altNoFocusBitmap = loadBitmap(_button.AltTexutureNoFocusName);
         _textColor = GetColor(_button.TextColor);
         _disabledColor = GetColor(_button.DisabledColor);
         _focus = _button.Focus;
@@ -133,13 +121,6 @@ namespace ExternalOSDLibrary
               graph.DrawImage(_focusBitmap, (float)_button.Location.X, (float)_button.Location.Y, (float)_button.Size.Width, (float)_button.Size.Height);
             }
           }
-          else
-          {
-            if (_altFocusBitmap != null)
-            {
-              graph.DrawImage(_altFocusBitmap, (float)_button.Location.X, (float)_button.Location.Y, (float)_button.Size.Width, (float)_button.Size.Height);
-            }
-          }
         }
         else
         {
@@ -148,13 +129,6 @@ namespace ExternalOSDLibrary
             if (_noFocusBitmap != null)
             {
               graph.DrawImage(_noFocusBitmap, (float)_button.Location.X, (float)_button.Location.Y, (float)_button.Size.Width, (float)_button.Size.Height);
-            }
-          }
-          else
-          {
-            if (_altNoFocusBitmap != null)
-            {
-              graph.DrawImage(_altNoFocusBitmap, (float)_button.Location.X, (float)_button.Location.Y, (float)_button.Size.Width, (float)_button.Size.Height);
             }
           }
         }
