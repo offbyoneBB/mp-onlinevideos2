@@ -97,6 +97,7 @@
   <string name="OnlineVideos.Others">Muut</string>
   <!--P-->
   <string name="OnlineVideos.PlayAll">Toista kaikki</string>
+  <string name="OnlineVideos.PlayAllFromHere">Toista kaikki (täältä)</string>
   <string name="OnlineVideos.PlayAllRandom">Toista kaikki (satunnainen järjestys)</string>
   <string name="OnlineVideos.PlayWith">Toista ohjelmalla...</string>
   <string name="OnlineVideos.Playlists">Soittolistat</string>

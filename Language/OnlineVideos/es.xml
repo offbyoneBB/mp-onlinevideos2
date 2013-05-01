@@ -97,6 +97,7 @@
   <string name="Others">Otros</string>
   <!--P-->
   <string name="PlayAll">Reproducir todos</string>
+  <string name="PlayAllFromHere">Reproducir todos (desde aquí)</string>
   <string name="PlayAllRandom">Reproducir todos (orden aleatorio)</string>
   <string name="PlayWith">Reproducir con...</string>
   <string name="Playlists">Listas de reproducción</string>

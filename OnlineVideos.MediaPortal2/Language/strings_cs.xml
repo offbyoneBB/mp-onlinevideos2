@@ -6,8 +6,8 @@
   <string name="OnlineVideos.All">Vše</string>
   <string name="OnlineVideos.Actions">Akce</string>
   <string name="OnlineVideos.Actors">Hrají</string>
-  <string name="OnlineVideos.AddComment">Přidat komentář...</string>
-  <string name="OnlineVideos.AddToPlaylist">Přidat do seznamu stop...</string>
+  <string name="OnlineVideos.AddComment">Přidat komentář ...</string>
+  <string name="OnlineVideos.AddToPlaylist">Přidat do seznamu stop ...</string>
   <string name="OnlineVideos.AddToMySites">Přidat do mých stránek</string>
   <string name="OnlineVideos.AddToFavourites">Přidat do oblíbených</string>
   <string name="OnlineVideos.AddingToFavorites">přidávání do oblíbených</string>
@@ -15,22 +15,22 @@
   <string name="OnlineVideos.AutomaticUpdateDisabled">Automatická aktualizace vypnuta.</string>
   <!--B-->
   <string name="OnlineVideos.Broken">Nefunkční</string>
-  <string name="OnlineVideos.Buffered">ve vzrovnávací paměti</string>
+  <string name="OnlineVideos.Buffered">ve vyrovnávací paměti</string>
   <!--C-->
   <string name="OnlineVideos.Cancel">Zrušit</string>
   <string name="OnlineVideos.Category">Kategorie</string>
   <string name="OnlineVideos.CategoryNotFound">Kategorie nebyla nalezena</string>
   <string name="OnlineVideos.Categories">Kategorie</string>
   <string name="OnlineVideos.Creator">Autor</string>
-  <string name="OnlineVideos.CreateNewPlaylist">Vytvořit nový seznam stop...</string>
-  <string name="OnlineVideos.CheckingForPluginUpdate">kontrola aktualizovaných verzí doplňků...</string>
-  <string name="OnlineVideos.Concurrent">souběžný</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Vytvořit nový seznam stop ...</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">Kontrolují se aktualizace ...</string>
+  <string name="OnlineVideos.Concurrent">okamžitě</string>
   <!--D-->
   <string name="OnlineVideos.Date">Datum</string>
   <string name="OnlineVideos.DateOfRelease">Premiéra</string>
   <string name="OnlineVideos.Directors">Režie</string>
   <string name="OnlineVideos.Download">Stáhnout</string>
-  <string name="OnlineVideos.DownloadUserdefined">Stáhnout do uživatelského adresáře</string>
+  <string name="OnlineVideos.DownloadUserdefined">Stáhnout do uživatelské složky</string>
   <string name="OnlineVideos.Downloading">Stahování</string>
   <string name="OnlineVideos.DownloadingDescription">Zobrazí seznam aktuálně spuštěných stahování.</string>
   <string name="OnlineVideos.DownloadingSubtitle">stahování titulků</string>
@@ -39,7 +39,7 @@
   <string name="OnlineVideos.DownloadComplete">Stahování dokončeno</string>
   <string name="OnlineVideos.DownloadStarted">Stahování spuštěno</string>
   <string name="OnlineVideos.DownloadedVideos">Stažená videa</string>
-  <string name="OnlineVideos.DownloadsWillBeAborted">Stahování bude přerušeno.</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Stahování bude zrušeno.</string>
   <string name="OnlineVideos.Delete">Odstranit</string>
   <string name="OnlineVideos.DeletePlaylist">Odstranit seznam stop</string>
   <string name="OnlineVideos.DeleteAll">Odstranit vše</string>
@@ -74,7 +74,7 @@
   <!--H-->
   <!--I-->
   <!--L-->
-  <string name="OnlineVideos.LatestVersionRequired">Je vyžadována nejnovější verze ({0})!</string>
+  <string name="OnlineVideos.LatestVersionRequired">Je vyžadována nejnovější verze ({0}).</string>
   <string name="OnlineVideos.Language">Jazyk</string>
   <string name="OnlineVideos.LayoutList">Rozložení: Seznam</string>
   <string name="OnlineVideos.LayoutIcons">Rozložení: Ikony</string>
@@ -89,7 +89,7 @@
   <string name="OnlineVideos.None">Žádné</string>
   <string name="OnlineVideos.NoVideoFound">Nenalezeno žádné video.</string>
   <string name="OnlineVideos.NoReportsForSite">Nejsou dostupná žádná hlášení pro tuto stránku.</string>
-  <string name="OnlineVideos.NewDllDownloaded">Byly staženy nové DLL!</string>
+  <string name="OnlineVideos.NewDllDownloaded">Byly staženy nové DLL soubory.</string>
   <string name="OnlineVideos.NewSearch">Nové hledání</string>
   <!--O-->
   <string name="OnlineVideos.OnlyLocal">Pouze místní</string>
@@ -98,7 +98,7 @@
   <!--P-->
   <string name="OnlineVideos.PlayAll">Přehrát vše</string>
   <string name="OnlineVideos.PlayAllRandom">Přehrát vše (náhodné pořadí)</string>
-  <string name="OnlineVideos.PlayWith">Přehrát pomocí...</string>
+  <string name="OnlineVideos.PlayWith">Přehrát pomocí ...</string>
   <string name="OnlineVideos.Playlists">Seznamy stop</string>
   <string name="OnlineVideos.PlaybackWillBeStopped">Přehrávání bude zastaveno.</string>
   <string name="OnlineVideos.PleaseEnterDescription">Zadejte krátký popis.</string>
@@ -122,7 +122,7 @@
   <string name="OnlineVideos.Runtime">Délka</string>
   <string name="OnlineVideos.RemoveFromMySites">Odebrat z mých stránek</string>
   <string name="OnlineVideos.RemoveAllFromMySites">Odebrat vše z mých stránek</string>
-  <string name="OnlineVideos.RestartMediaPortal">Restartujte MediaPortal!</string>
+  <string name="OnlineVideos.RestartMediaPortal">Prosím restartujte MediaPortal.</string>
   <string name="OnlineVideos.RetrievingRemoteDlls">Načítání vzdálených DLL...</string>
   <string name="OnlineVideos.RetrievingRemoteSites">Načítání vzdálených stránek...</string>
   <!--S-->
@@ -133,9 +133,9 @@
   <string name="OnlineVideos.Size">Velikost</string>
   <string name="OnlineVideos.SortOptions">Možnosti řazení</string>
   <string name="OnlineVideos.Search">Hledat</string>
-  <string name="OnlineVideos.SetDownloadFolderInConfig">Nastavte složku stahování v konfiguraci!</string>
+  <string name="OnlineVideos.SetDownloadFolderInConfig">Zvolte prosím složku ke stahování v konfiguraci.</string>
   <string name="OnlineVideos.State">Stav</string>
-  <string name="OnlineVideos.SavingLocalSiteList">Ukládání seznamu místních stránek...</string>
+  <string name="OnlineVideos.SavingLocalSiteList">Ukládání místního seznamu stránek...</string>
   <string name="OnlineVideos.ShowReports">Zobrazit hlášení autorů a uživatelů</string>
   <string name="OnlineVideos.StartingPlayback">při spuštění přehrávání</string>
   <string name="OnlineVideos.Subscriptions">Odběry</string>

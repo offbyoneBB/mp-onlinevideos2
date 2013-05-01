@@ -97,6 +97,7 @@
   <string name="OnlineVideos.Others">Autres</string>
   <!--P-->
   <string name="OnlineVideos.PlayAll">Lecture de la totalité des vidéos</string>
+  <string name="OnlineVideos.PlayAllFromHere">Lecture de la totalité ( à partir d\'ici)</string>
   <string name="OnlineVideos.PlayAllRandom">Lecture de la totalité des vidéos (ordre aléatoire)</string>
   <string name="OnlineVideos.PlayWith">Lire avec ...</string>
   <string name="OnlineVideos.Playlists">Playlists</string>
