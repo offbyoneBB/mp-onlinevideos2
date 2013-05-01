@@ -97,11 +97,13 @@
   <string name="Others">Andet</string>
   <!--P-->
   <string name="PlayAll">Afspil alle</string>
+  <string name="PlayAllFromHere">Afspil alle (startende her)</string>
   <string name="PlayAllRandom">Afspil alle (tilfældig rækkefølge)</string>
   <string name="PlayWith">Afspil med ...</string>
   <string name="Playlists">Playlister</string>
   <string name="PlaybackWillBeStopped">Afspilningen vil blive stoppet.</string>
   <string name="PleaseEnterDescription">Giv venligst en kort beskrivelse.</string>
+  <string name="PleaseUpdateLocalSite">Vær venlig at opdatere og teste dit lokale website før du anmelder det som defekt.</string>
   <string name="PlotOutline">Handling</string>
   <string name="PreviousPage">Forrige side</string>
   <string name="PerformAutomaticUpdate">Skal der automatisk opdateres?</string>
@@ -139,6 +141,7 @@
   <string name="StartingPlayback">Starter afspilning</string>
   <string name="Subscriptions">Tilmeldinger</string>
   <string name="Success">Succesfuld</string>
+  <string name="SearchRelatedKeywords">Søg relaterede søgeord</string>
   <!--T-->
   <string name="Timeframe">Tidshorisont</string>
   <string name="Timeout">Timeout</string>
@@ -167,11 +170,14 @@
   <string name="Settings_SearchHistoryType_Off">Sluk</string>
   <string name="Settings_SearchHistoryType_Simple">Enkel</string>
   <string name="Settings_SearchHistoryType_Extended">Udvidet</string>
+  <string name="Settings_BasicHomeName">Basis hjemme navn</string>
   <string name="Settings_PluginEnabled">Plugin aktiveret</string>
+  <string name="Settings_ListedInHome">Vis i Hjem</string>
   <string name="Settings_ListedInPlugins">Anført i mine Plugins</string>
   <string name="Settings_AutoGroupByLang">Automatisk grupper alle sider via sprog</string>
   <string name="Settings_UseQuickSelect">Brug alfanumeriske taster for hurtigt at vælge elementer vha. første bogstav</string>
   <string name="Settings_SearchHistoryType">Søge historie</string>
+  <string name="Settings_ThumbAge">Maximum alder (dage) for thumbnails</string>
   <string name="Settings_CacheTimeout">Tid (minutter) data bufferes fra Internettet</string>
   <string name="Settings_CategoryDiscoveryTimeout">Tid (minutter) hvorefter kategorier genindlæses fra Internettet</string>
   <string name="Settings_UtilTimeout">Timeout (sekunder) for internetforespørgsler</string>

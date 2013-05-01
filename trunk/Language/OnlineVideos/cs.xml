@@ -6,8 +6,8 @@
   <string name="All">Vše</string>
   <string name="Actions">Akce</string>
   <string name="Actors">Hrají</string>
-  <string name="AddComment">Přidat komentář...</string>
-  <string name="AddToPlaylist">Přidat do seznamu stop...</string>
+  <string name="AddComment">Přidat komentář ...</string>
+  <string name="AddToPlaylist">Přidat do seznamu stop ...</string>
   <string name="AddToMySites">Přidat do mých stránek</string>
   <string name="AddToFavourites">Přidat do oblíbených</string>
   <string name="AddingToFavorites">přidávání do oblíbených</string>
@@ -15,22 +15,22 @@
   <string name="AutomaticUpdateDisabled">Automatická aktualizace vypnuta.</string>
   <!--B-->
   <string name="Broken">Nefunkční</string>
-  <string name="Buffered">ve vzrovnávací paměti</string>
+  <string name="Buffered">ve vyrovnávací paměti</string>
   <!--C-->
   <string name="Cancel">Zrušit</string>
   <string name="Category">Kategorie</string>
   <string name="CategoryNotFound">Kategorie nebyla nalezena</string>
   <string name="Categories">Kategorie</string>
   <string name="Creator">Autor</string>
-  <string name="CreateNewPlaylist">Vytvořit nový seznam stop...</string>
-  <string name="CheckingForPluginUpdate">kontrola aktualizovaných verzí doplňků...</string>
-  <string name="Concurrent">souběžný</string>
+  <string name="CreateNewPlaylist">Vytvořit nový seznam stop ...</string>
+  <string name="CheckingForPluginUpdate">Kontrolují se aktualizace ...</string>
+  <string name="Concurrent">okamžitě</string>
   <!--D-->
   <string name="Date">Datum</string>
   <string name="DateOfRelease">Premiéra</string>
   <string name="Directors">Režie</string>
   <string name="Download">Stáhnout</string>
-  <string name="DownloadUserdefined">Stáhnout do uživatelského adresáře</string>
+  <string name="DownloadUserdefined">Stáhnout do uživatelské složky</string>
   <string name="Downloading">Stahování</string>
   <string name="DownloadingDescription">Zobrazí seznam aktuálně spuštěných stahování.</string>
   <string name="DownloadingSubtitle">stahování titulků</string>
@@ -39,7 +39,7 @@
   <string name="DownloadComplete">Stahování dokončeno</string>
   <string name="DownloadStarted">Stahování spuštěno</string>
   <string name="DownloadedVideos">Stažená videa</string>
-  <string name="DownloadsWillBeAborted">Stahování bude přerušeno.</string>
+  <string name="DownloadsWillBeAborted">Stahování bude zrušeno.</string>
   <string name="Delete">Odstranit</string>
   <string name="DeletePlaylist">Odstranit seznam stop</string>
   <string name="DeleteAll">Odstranit vše</string>
@@ -74,7 +74,7 @@
   <!--H-->
   <!--I-->
   <!--L-->
-  <string name="LatestVersionRequired">Je vyžadována nejnovější verze ({0})!</string>
+  <string name="LatestVersionRequired">Je vyžadována nejnovější verze ({0}).</string>
   <string name="Language">Jazyk</string>
   <string name="LayoutList">Rozložení: Seznam</string>
   <string name="LayoutIcons">Rozložení: Ikony</string>
@@ -89,7 +89,7 @@
   <string name="None">Žádné</string>
   <string name="NoVideoFound">Nenalezeno žádné video.</string>
   <string name="NoReportsForSite">Nejsou dostupná žádná hlášení pro tuto stránku.</string>
-  <string name="NewDllDownloaded">Byly staženy nové DLL!</string>
+  <string name="NewDllDownloaded">Byly staženy nové DLL soubory.</string>
   <string name="NewSearch">Nové hledání</string>
   <!--O-->
   <string name="OnlyLocal">Pouze místní</string>
@@ -98,7 +98,7 @@
   <!--P-->
   <string name="PlayAll">Přehrát vše</string>
   <string name="PlayAllRandom">Přehrát vše (náhodné pořadí)</string>
-  <string name="PlayWith">Přehrát pomocí...</string>
+  <string name="PlayWith">Přehrát pomocí ...</string>
   <string name="Playlists">Seznamy stop</string>
   <string name="PlaybackWillBeStopped">Přehrávání bude zastaveno.</string>
   <string name="PleaseEnterDescription">Zadejte krátký popis.</string>
@@ -122,7 +122,7 @@
   <string name="Runtime">Délka</string>
   <string name="RemoveFromMySites">Odebrat z mých stránek</string>
   <string name="RemoveAllFromMySites">Odebrat vše z mých stránek</string>
-  <string name="RestartMediaPortal">Restartujte MediaPortal!</string>
+  <string name="RestartMediaPortal">Prosím restartujte MediaPortal.</string>
   <string name="RetrievingRemoteDlls">Načítání vzdálených DLL...</string>
   <string name="RetrievingRemoteSites">Načítání vzdálených stránek...</string>
   <!--S-->
@@ -133,9 +133,9 @@
   <string name="Size">Velikost</string>
   <string name="SortOptions">Možnosti řazení</string>
   <string name="Search">Hledat</string>
-  <string name="SetDownloadFolderInConfig">Nastavte složku stahování v konfiguraci!</string>
+  <string name="SetDownloadFolderInConfig">Zvolte prosím složku ke stahování v konfiguraci.</string>
   <string name="State">Stav</string>
-  <string name="SavingLocalSiteList">Ukládání seznamu místních stránek...</string>
+  <string name="SavingLocalSiteList">Ukládání místního seznamu stránek...</string>
   <string name="ShowReports">Zobrazit hlášení autorů a uživatelů</string>
   <string name="StartingPlayback">při spuštění přehrávání</string>
   <string name="Subscriptions">Odběry</string>

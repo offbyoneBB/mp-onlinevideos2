@@ -97,11 +97,13 @@
   <string name="OnlineVideos.Others">Andet</string>
   <!--P-->
   <string name="OnlineVideos.PlayAll">Afspil alle</string>
+  <string name="OnlineVideos.PlayAllFromHere">Afspil alle (startende her)</string>
   <string name="OnlineVideos.PlayAllRandom">Afspil alle (tilfældig rækkefølge)</string>
   <string name="OnlineVideos.PlayWith">Afspil med ...</string>
   <string name="OnlineVideos.Playlists">Playlister</string>
   <string name="OnlineVideos.PlaybackWillBeStopped">Afspilningen vil blive stoppet.</string>
   <string name="OnlineVideos.PleaseEnterDescription">Giv venligst en kort beskrivelse.</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Vær venlig at opdatere og teste dit lokale website før du anmelder det som defekt.</string>
   <string name="OnlineVideos.PlotOutline">Handling</string>
   <string name="OnlineVideos.PreviousPage">Forrige side</string>
   <string name="OnlineVideos.PerformAutomaticUpdate">Skal der automatisk opdateres?</string>
@@ -139,6 +141,7 @@
   <string name="OnlineVideos.StartingPlayback">Starter afspilning</string>
   <string name="OnlineVideos.Subscriptions">Tilmeldinger</string>
   <string name="OnlineVideos.Success">Succesfuld</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Søg relaterede søgeord</string>
   <!--T-->
   <string name="OnlineVideos.Timeframe">Tidshorisont</string>
   <string name="OnlineVideos.Timeout">Timeout</string>
@@ -167,11 +170,14 @@
   <string name="OnlineVideos.Settings_SearchHistoryType_Off">Sluk</string>
   <string name="OnlineVideos.Settings_SearchHistoryType_Simple">Enkel</string>
   <string name="OnlineVideos.Settings_SearchHistoryType_Extended">Udvidet</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">Basis hjemme navn</string>
   <string name="OnlineVideos.Settings_PluginEnabled">Plugin aktiveret</string>
+  <string name="OnlineVideos.Settings_ListedInHome">Vis i Hjem</string>
   <string name="OnlineVideos.Settings_ListedInPlugins">Anført i mine Plugins</string>
   <string name="OnlineVideos.Settings_AutoGroupByLang">Automatisk grupper alle sider via sprog</string>
   <string name="OnlineVideos.Settings_UseQuickSelect">Brug alfanumeriske taster for hurtigt at vælge elementer vha. første bogstav</string>
   <string name="OnlineVideos.Settings_SearchHistoryType">Søge historie</string>
+  <string name="OnlineVideos.Settings_ThumbAge">Maximum alder (dage) for thumbnails</string>
   <string name="OnlineVideos.Settings_CacheTimeout">Tid (minutter) data bufferes fra Internettet</string>
   <string name="OnlineVideos.Settings_CategoryDiscoveryTimeout">Tid (minutter) hvorefter kategorier genindlæses fra Internettet</string>
   <string name="OnlineVideos.Settings_UtilTimeout">Timeout (sekunder) for internetforespørgsler</string>

@@ -97,6 +97,7 @@
   <string name="Others">Muut</string>
   <!--P-->
   <string name="PlayAll">Toista kaikki</string>
+  <string name="PlayAllFromHere">Toista kaikki (täältä)</string>
   <string name="PlayAllRandom">Toista kaikki (satunnainen järjestys)</string>
   <string name="PlayWith">Toista ohjelmalla...</string>
   <string name="Playlists">Soittolistat</string>

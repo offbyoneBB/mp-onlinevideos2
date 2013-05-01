@@ -97,6 +97,7 @@
   <string name="Others">Autres</string>
   <!--P-->
   <string name="PlayAll">Lecture de la totalité des vidéos</string>
+  <string name="PlayAllFromHere">Lecture de la totalité ( à partir d\'ici)</string>
   <string name="PlayAllRandom">Lecture de la totalité des vidéos (ordre aléatoire)</string>
   <string name="PlayWith">Lire avec ...</string>
   <string name="Playlists">Playlists</string>
