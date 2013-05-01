@@ -2976,7 +2976,7 @@
           </Items>
         </Files>
       </GroupItem>
-	  <GroupItem Name="GenericSiteTool">
+      <GroupItem Name="GenericSiteTool">
         <ParentGroup />
         <DisplayName>Site Creation Tool</DisplayName>
         <DefaulChecked>true</DefaulChecked>
@@ -3101,7 +3101,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
           <string>Skins</string>
           <string>Default</string>
           <string>DefaultWide</string>
-		  <string>Titan</string>
+          <string>Titan</string>
           <string>GenericSiteTool</string>
           <string>LAVFilters</string>
           <string>ExtensionsPlugin</string>
@@ -3478,15 +3478,21 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>1</Major>
-      <Minor>5</Minor>
-      <Build>1</Build>
+      <Minor>6</Minor>
+      <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription />
+    <VersionDescription>added: "Play All (From here)" to context menu 
+added: SearchRelatedKeywords via context menu (thx Guzzi)
+added: new virtual method to Hoster class that allows passing a proxy
+fixed: Toggle subtitles (L on keyboard) not working in fullscreen playback
+fixed: incorrect dialog asking to update the local site when trying to report it broken
+siteparser: now possible to edit videolistregex at search-results
+improved: made MPUrlSourceSplitter a standalone MPE package and included it as reference</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/[Name][Version].mpe1</OnlineLocation>
-    <ReleaseDate>2013-03-29T15:00:00</ReleaseDate>
+    <ReleaseDate>2013-05-01T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
@@ -6295,20 +6301,6 @@ public class Script
         <ZipFileName>Installer{CopyFile}\{83078431-fd56-4e6b-9321-2434732bbe16}-myonlinevideos.overlay.xml</ZipFileName>
         <DestinationFilename>%Skin%\DefaultWide\myonlinevideos.overlay.xml</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteParser\bin\SiteParser.exe</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d97676eb-b0ee-4f86-912a-c7d92baaf10b}-SiteParser.exe</ZipFileName>
-        <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteParser\app.config</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2d84aca5-6979-4182-a582-20406d244f20}-app.config</ZipFileName>
-        <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe.config</DestinationFilename>
-      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -6441,6 +6433,20 @@ public class Script
         <LocalFileName>..\Skins\Titan\Media\OnlineVideos\Working.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{3b2212ef-eced-4c76-9b8f-0f6f245ae96b}-Working.png</ZipFileName>
         <DestinationFilename>%Skin%\Titan\Media\OnlineVideos\Working.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteParser\bin\SiteParser.exe</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d97676eb-b0ee-4f86-912a-c7d92baaf10b}-SiteParser.exe</ZipFileName>
+        <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteParser\app.config</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2d84aca5-6979-4182-a582-20406d244f20}-app.config</ZipFileName>
+        <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe.config</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />

@@ -25,4 +25,5 @@ using MediaPortal.Common.Utils;
 [assembly: UsesSubsystem("MP.Players.Video")]
 [assembly: UsesSubsystem("MP.Input")]
 [assembly: UsesSubsystem("MP.Externals.SQLite")]
+//[assembly: UsesSubsystem("MP.Externals.Log4Net")] todo : add when doing a MP 1.4 compatible version
 [assembly: UsesSubsystem("MP.Config")]
