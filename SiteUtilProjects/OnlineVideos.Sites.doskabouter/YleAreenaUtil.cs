@@ -160,7 +160,15 @@ namespace OnlineVideos.Sites
             JToken videoInfo = GetWebData<JToken>(video.VideoUrl);
             JArray subTitles = videoInfo["media"]["subtitles"] as JArray;
             if (subTitles != null && subTitles.Count > 0)
-                video.SubtitleUrl = subTitles[0].Value<string>("url");
+            {
+                try
+                {
+                    video.SubtitleText = GetWebData(subTitles[0].Value<string>("url"), forceUTF8: true);
+                }
+                catch
+                {
+                }
+            }
 
             string papiurl = base.getUrl(video);
 
@@ -202,7 +210,7 @@ namespace OnlineVideos.Sites
                 PlayPath = stream,
                 SwfUrl = @"http://areena.yle.fi/static/player/1.2.8/flowplayer/flowplayer.commercial-3.2.7-encrypted.swf",
                 App = "ondemand?" + rtmpUrl.Split('?')[1],
-                PageUrl = video.VideoUrl,
+                PageUrl = video.VideoUrl.Substring(0, video.VideoUrl.Length - 5),
                 TcUrl = rtmpUrl
             };
             return theUrl.ToString();
