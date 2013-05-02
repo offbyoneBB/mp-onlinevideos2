@@ -45,13 +45,6 @@ namespace OnlineVideos.Sites
             return FillPlaybackOptions(video, renditions);
         }
 
-        [Obsolete("Use other GetResultsFromViewerExperienceRequest", true)]
-        private AMFArray GetResultsFromViewerExperienceRequest(Match m, VideoInfo video)
-        {
-            return GetResultsFromViewerExperienceRequest(m, video.VideoUrl);
-        }
-
-
         protected AMFArray GetResultsFromViewerExperienceRequest(Match m, string videoUrl)
         {
             AMFObject contentOverride = new AMFObject("com.brightcove.experience.ContentOverride");
