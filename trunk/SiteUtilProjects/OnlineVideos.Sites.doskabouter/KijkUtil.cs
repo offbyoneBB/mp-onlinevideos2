@@ -96,44 +96,16 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            string url = video.VideoUrl;
-            string[] parts = url.Split('/');
-            video.VideoUrl = @"http://embed.kijk.nl/?width=868&height=491&video=" + parts[parts.Length - 1];
-            string webdata = GetWebData(video.VideoUrl, referer: url);
+            string[] parts = video.VideoUrl.Split('/');
+            string url = @"http://embed.kijk.nl/?width=868&height=491&video=" + parts[parts.Length - 1];
+            string webdata = GetWebData(url, referer: video.VideoUrl);
             Match m = regEx_FileUrl.Match(webdata);
 
             if (!m.Success)
-            {
-                video.VideoUrl = url;
                 return String.Empty;
-            }
-            Type[] types = new Type[2];
-            types[0] = typeof(Match);
-            types[1] = typeof(VideoInfo);
-            MethodInfo methodInfo = typeof(BrightCoveUtil).GetMethod("GetResultsFromViewerExperienceRequest",
-                BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
-            if (methodInfo != null)
-            {
-                object[] parameters = new object[2];
-                parameters[0] = m;
-                parameters[1] = video;
-                AMFArray renditions = (AMFArray)methodInfo.Invoke(this, parameters);
 
-                video.VideoUrl = url;
-
-                methodInfo = typeof(BrightCoveUtil).GetMethod("FillPlaybackOptions", BindingFlags.NonPublic | BindingFlags.Instance);
-                if (methodInfo == null)
-                    return String.Empty;
-
-                parameters[0] = video;
-                parameters[1] = renditions;
-
-                string result = (String)methodInfo.Invoke(this, parameters);
-                return result;
-            }
-            video.VideoUrl = url;
-            return String.Empty;
-
+            AMFArray renditions = GetResultsFromViewerExperienceRequest(m, url);
+            return FillPlaybackOptions(video, renditions);
         }
     }
 
