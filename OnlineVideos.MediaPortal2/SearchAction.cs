@@ -34,7 +34,7 @@ namespace OnlineVideos.MediaPortal2
 
         public bool IsActionEnabled(NavigationContext context)
         {
-            if (context.WorkflowModelId == Guids.WorkFlowModel)
+            if (context.WorkflowModelId == Guids.WorkFlowModelOV)
             {
                 if (!((OnlineVideosWorkflowModel)context.Models[context.WorkflowModelId.Value]).IsExecutingBackgroundTask)
                 {
@@ -49,7 +49,7 @@ namespace OnlineVideos.MediaPortal2
 
         public bool IsActionVisible(NavigationContext context)
         {
-            return context.WorkflowModelId == Guids.WorkFlowModel;
+            return context.WorkflowModelId == Guids.WorkFlowModelOV;
         }
 
         public event ContributorStateChangeDelegate StateChanged;

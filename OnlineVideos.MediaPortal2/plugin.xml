@@ -31,6 +31,7 @@
 
   <Register Location="/Models">
     <Model Id="C418243F-5BD3-4637-8871-DA6545387929" Name="OnlineVideosWorkflowModel" ClassName="OnlineVideos.MediaPortal2.OnlineVideosWorkflowModel"/>
+    <Model Id="C39D6682-90B5-4813-8A28-A1C9118D4F3E" Name="OnlineVideosSiteManagementWorkflowModel" ClassName="OnlineVideos.MediaPortal2.SiteManagementWorkflowModel"/>
     <Model Id="C43F4CD9-418A-4DFB-A0BD-DF24704B5BD6" Name="OnlineVideosSearchWorkflowModel" ClassName="OnlineVideos.MediaPortal2.SearchAction"/>
   </Register>
 
@@ -54,6 +55,11 @@
     <DialogState Id="F068C0DE-3763-4BA1-A59F-24435DBF0227"
         Name="OnlineVideosSearch" DialogScreen="dialogSearch" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
         DisplayLabel="[OnlineVideos.Search]" />
+
+    <WorkflowState Id="026DF45C-86CB-44AE-9174-114810A6BAFF"
+        Name="OnlineVideosSiteManagement" MainScreen="ovsSiteManagement" WorkflowModel="C39D6682-90B5-4813-8A28-A1C9118D4F3E"
+        DisplayLabel="[OnlineVideos.ManageSites]"/>
+
   </Register>
   
   <!-- Registration of our skin directory -->
@@ -104,6 +110,12 @@
         Text="[OnlineVideos.Settings_CacheTimeout]"
         HelpText="After how many minutes should http data be invalidated in the cache?"
         ClassName="OnlineVideos.MediaPortal2.Configuration.CacheTimeout"/>
+    <CustomConfigSetting
+        Id="OnlineVideosSiteManagement"
+        Text="[OnlineVideos.ManageSites]"
+        HelpText="Add, remove and update your Sites."
+        ClassName="OnlineVideos.MediaPortal2.Configuration.SiteManagement"
+        AdditionalData="WorkflowState=026DF45C-86CB-44AE-9174-114810A6BAFF,ConfAppPanel=..."/>
   </Register>
   
 </Plugin>

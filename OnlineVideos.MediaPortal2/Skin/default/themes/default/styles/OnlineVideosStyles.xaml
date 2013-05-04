@@ -261,4 +261,25 @@
 		<Setter Property="ItemTemplate" Value="{ThemeResource ovsSiteSettingsItemDataTemplate}"/>
 	</Style>
 
+  <DataTemplate x:Key="ovsOnlineSiteItemDataTemplate" DataType="{x:Type ovs:OnlineSiteViewModel}">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="1*"/>
+        <ColumnDefinition Width="1*"/>
+      </Grid.ColumnDefinitions>
+      <Image Width="20" Stretch="Uniform" Margin="2" Source="{Binding Path=Site.Language, Converter={StaticResource ovsLanguageIconConverter}}"/>
+      <Label Grid.Column="1" Content="{Binding [Name]}"
+					HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"
+					Color="{ThemeResource TextColor}"/>
+      <Label Grid.Column="2" Content="{Binding Owner}"
+					HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"
+					Color="{ThemeResource TextColor}"/>
+    </Grid>
+  </DataTemplate>
+  
+  <Style x:Key="ovsOnlineSiteListViewStyle" BasedOn="{ThemeResource ContentsMenuListViewStyle}">
+    <Setter Property="ItemTemplate" Value="{ThemeResource ovsOnlineSiteItemDataTemplate}"/>
+  </Style>
+
 </ResourceDictionary>
