@@ -103,7 +103,7 @@ namespace OnlineVideos.MediaPortal2
 
 		void RemoveSite()
 		{
-			var model = ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModel) as OnlineVideosWorkflowModel;
+			var model = ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelOV) as OnlineVideosWorkflowModel;
 			// remove from displayed list
 			model.SitesList.Remove(this);
 			model.SitesList.FireChange();

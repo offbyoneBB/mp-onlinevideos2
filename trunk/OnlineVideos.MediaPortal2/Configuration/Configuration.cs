@@ -86,5 +86,9 @@ namespace OnlineVideos.MediaPortal2.Configuration
             SettingsManager.Save(settings);
         }
     }
+
+	public class SiteManagement : CustomConfigSetting
+	{
+	}
     
 }

@@ -623,12 +623,12 @@ namespace OnlineVideos.MediaPortal2
 
         public Guid ModelId
         {
-            get { return Guids.WorkFlowModel; }
+            get { return Guids.WorkFlowModelOV; }
         }
 
         public void UpdateMenuActions(MediaPortal.UI.Presentation.Workflow.NavigationContext context, IDictionary<Guid, MediaPortal.UI.Presentation.Workflow.WorkflowAction> actions)
         {
-            actions.Remove(new Guid("09eae702-d9ec-4325-82d9-4843502c966b")); // remove "Playlists" from menu, which seems to be always there
+            //
         }
 
         public ScreenUpdateMode UpdateScreen(MediaPortal.UI.Presentation.Workflow.NavigationContext context, ref string screen)

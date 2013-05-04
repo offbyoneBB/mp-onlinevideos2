@@ -69,6 +69,7 @@
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="Configuration\UserSiteSettingsStore.cs" />
+    <Compile Include="SiteManagementWorkflowModel.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="LogDelegator.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="RawUrlMediaProvider.cs" />
     <Compile Include="RawUrlResourceAccessor.cs" />
     <Compile Include="SearchAction.cs" />
+    <Compile Include="ViewModels\OnlineSiteViewModel.cs" />
     <Compile Include="ViewModels\PlaylistItem.cs" />
     <Compile Include="ViewModels\SiteSettingViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
@@ -213,6 +215,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\ovsDialogSiteSettingChoice.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\ovsSiteManagement.xaml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
