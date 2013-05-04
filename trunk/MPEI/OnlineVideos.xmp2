@@ -2317,6 +2317,13 @@
               <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
             </FileItem>
+			<FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.ministerk.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f86c656f-e384-42cb-a1bd-0b05c8a810e5}-OnlineVideos.Sites.ministerk.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.ministerk.dll</DestinationFilename>
+            </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -5812,6 +5819,13 @@ public class Script
         <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
+      </FileItem>
+	  <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.ministerk.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f86c656f-e384-42cb-a1bd-0b05c8a810e5}-OnlineVideos.Sites.ministerk.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.ministerk.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
