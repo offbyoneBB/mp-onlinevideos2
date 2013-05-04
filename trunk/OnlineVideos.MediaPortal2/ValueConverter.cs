@@ -54,6 +54,24 @@ namespace OnlineVideos.MediaPortal2
         }
     }
 
+	public class SiteStateIconConverter : IValueConverter
+	{
+		public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+		{
+			result = null;
+			if (value == null) return false;
+			if (!Enum.IsDefined(typeof(OnlineVideosWebservice.SiteState), value)) return false;
+			var state = ((OnlineVideosWebservice.SiteState)value).ToString();
+			result = @"ovsSite" + state + ".png";
+			return true;
+		}
+
+		public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
     public class ExtendedInfoConverter : IValueConverter
     {
         public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)

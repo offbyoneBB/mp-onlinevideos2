@@ -139,6 +139,9 @@
     <Content Include="Skin\default\images\LanguageFlags\zh.png" />
     <Content Include="Skin\default\images\NextPage.png" />
     <Content Include="Skin\default\shortcuts\OnlineVideos-shortcuts.xml" />
+    <Content Include="Skin\default\themes\default\images\ovsSiteBroken.png" />
+    <Content Include="Skin\default\themes\default\images\ovsSiteReported.png" />
+    <Content Include="Skin\default\themes\default\images\ovsSiteWorking.png" />
     <Content Include="Skin\default\workflow\onlinevideos-actions.xml">
       <SubType>Designer</SubType>
     </Content>
