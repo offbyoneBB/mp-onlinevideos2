@@ -62,6 +62,7 @@
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="SVTPlayUtil.cs" />
     <Compile Include="TV4Play.cs" />
+    <Compile Include="Utils\HelperUtils.cs" />
     <Compile Include="ViasatUtil.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +75,7 @@
   <ItemGroup>
     <None Include="Properties\VersionInfo.cs.tmpl" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>

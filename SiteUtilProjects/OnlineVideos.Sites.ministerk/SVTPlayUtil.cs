@@ -537,7 +537,7 @@ namespace OnlineVideos.Sites
 				}
 				else if (url.StartsWith("http://") && url.EndsWith(".f4m"))
 				{
-					url = url + "?hdcore=2.11.3&g=" + GetRandomChars(12);
+                    url = url + "?hdcore=2.11.3&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
 				}
 				else if (url.StartsWith("http://geoip.api"))
 					url = HttpUtility.ParseQueryString(new Uri(url).Query)["vurl"];
@@ -554,14 +554,6 @@ namespace OnlineVideos.Sites
 
             return result;
         }
-
-		string GetRandomChars(int amount)
-		{
-			var random = new Random();
-			var sb = new System.Text.StringBuilder(amount);
-			for (int i = 0; i < amount;i++ ) sb.Append(System.Text.Encoding.ASCII.GetString(new byte[] { (byte)random.Next(65, 90) }));
-			return sb.ToString();
-		}
 
         string CleanSubtitle(string subtitle)
         {
