@@ -264,15 +264,22 @@
   <DataTemplate x:Key="ovsOnlineSiteItemDataTemplate" DataType="{x:Type ovs:OnlineSiteViewModel}">
     <Grid>
       <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="30"/>
+        <ColumnDefinition Width="1*"/>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="1*"/>
-        <ColumnDefinition Width="1*"/>
       </Grid.ColumnDefinitions>
-      <Image Width="20" Stretch="Uniform" Margin="2" Source="{Binding Path=Site.Language, Converter={StaticResource ovsLanguageIconConverter}}"/>
+      <Image Width="20" Stretch="Uniform" Source="{Binding Path=Site.Language, Converter={StaticResource ovsLanguageIconConverter}}"/>
       <Label Grid.Column="1" Content="{Binding [Name]}"
 					HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"
 					Color="{ThemeResource TextColor}"/>
-      <Label Grid.Column="2" Content="{Binding Owner}"
+      <Label Grid.Column="2" Color="{ThemeResource HintTextColor}"
+         HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="{ThemeResource SmallerFontSize}">
+        <Label.Content>
+          <Binding Path="Site.LastUpdated" Converter="{StaticResource StringFormatConverter}" ConverterParameter="{}{0:g}"/>
+        </Label.Content>
+      </Label>
+      <Label Grid.Column="3" Content="{Binding Owner}"
 					HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"
 					Color="{ThemeResource TextColor}"/>
     </Grid>
