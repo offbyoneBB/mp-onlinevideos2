@@ -254,11 +254,11 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override string getUrl(VideoInfo video)
         {
             Log.Debug("Mitele: getting video URL from video {0} ", video.Title);
-            List<String> result = new List<String>();
             String data = GetWebData(video.VideoUrl);
+            String videoURL = "";
             Match xmlURLMatch = regexXmlURL.Match(data);
             if (xmlURLMatch.Success)
             {
@@ -279,12 +279,11 @@ namespace OnlineVideos.Sites
                         endTime = "0";
                     }
                     String url = xmlDataMatch.Groups["VideoURL"].Value;
-                    String videoURL = getVideoURLMitele(url,startTime,endTime);
-                    result.Add(videoURL);
+                    videoURL = getVideoURLMitele(url,startTime,endTime);
                     Log.Debug("Mitele: videoURL {0} added", videoURL);
                 }
             }
-            return result;
+            return videoURL;
         }
 
         public String getVideoURLMitele(String url, String startTime, String endTime)
