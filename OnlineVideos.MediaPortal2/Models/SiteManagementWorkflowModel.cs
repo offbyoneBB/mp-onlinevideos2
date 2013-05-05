@@ -2,23 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using MediaPortal.Common;
+using MediaPortal.Common.General;
+using MediaPortal.Common.Threading;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Models;
+using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
 
 namespace OnlineVideos.MediaPortal2
 {
 	public class SiteManagementWorkflowModel : IWorkflowModel
 	{
+		enum FilterStateOption { All, Reported, Broken, Working, Updatable, OnlyLocal, OnlyServer };
+		enum SortOption { Updated, Name, Language_Name, Language_Updated };
+
 		public SiteManagementWorkflowModel()
 		{
 			SitesList = new ItemsList();
-			// make sure the main workflowmodel is instantiated
+			// make sure the main workflowmodel is initialized
 			var ovMainModel = ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelOV) as OnlineVideosWorkflowModel;
 		}
 
-		enum FilterStateOption { All, Reported, Broken, Working, Updatable, OnlyLocal, OnlyServer };
-		enum SortOption { Updated, Name, Language_Name, Language_Updated };
+		object syncObject = new object();
+		IWork currentBackgroundTask = null;
+		bool newDllsDownloaded = false;
+		bool newDataSaved = false;
 
 		string filter_Owner;
 		string filter_Language;
@@ -26,6 +34,22 @@ namespace OnlineVideos.MediaPortal2
 		SortOption sort;
 
 		public ItemsList SitesList { get; protected set; }
+
+		protected AbstractProperty _updateProgressProperty = new WProperty(typeof(byte), (byte)0);
+		public AbstractProperty UpdateProgressProperty { get { return _updateProgressProperty; } }
+		public byte UpdateProgress
+		{
+			get { return (byte)_updateProgressProperty.GetValue(); }
+			protected set { _updateProgressProperty.SetValue(value); }
+		}
+
+		protected AbstractProperty _updateInfoProperty = new WProperty(typeof(string), string.Empty);
+		public AbstractProperty UpdateInfoProperty { get { return _updateInfoProperty; } }
+		public string UpdateInfo 
+		{
+			get { return (string)_updateInfoProperty.GetValue(); }
+			protected set { _updateInfoProperty.SetValue(value); }
+		}
 
 		void GetFilteredAndSortedSites()
 		{
@@ -112,30 +136,96 @@ namespace OnlineVideos.MediaPortal2
 			return 0;
 		}
 
-		public bool CanEnterState(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+		void RunUpdate(NavigationContext context)
+		{
+			currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(() =>
+			{
+				try
+				{
+					bool? updateResult = OnlineVideos.Sites.Updater.UpdateSites((m, p) =>
+					{
+						UpdateInfo = m ?? string.Empty;
+						if (p.HasValue) UpdateProgress = p.Value;
+						return currentBackgroundTask.State != WorkState.CANCELED;
+					});
+					if (updateResult == true) newDllsDownloaded = true;
+					else if (updateResult == null) newDataSaved = true;
+				}
+				catch (Exception ex)
+				{
+					currentBackgroundTask.Exception = ex;
+				}
+			},
+			(args) =>
+			{
+				GetFilteredAndSortedSites();
+				lock (syncObject)
+				{
+					currentBackgroundTask = null;
+				}
+				// close dialog when still open
+				var screenMgr = ServiceRegistration.Get<IScreenManager>();
+				if (screenMgr.TopmostDialogInstanceId == context.DialogInstanceId)
+					screenMgr.CloseTopmostDialog();
+			});
+		}
+
+		public bool CanEnterState(NavigationContext oldContext, NavigationContext newContext)
 		{
 			return true;
 		}
 
-		public void ChangeModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext, bool push)
+		public void ChangeModelContext(NavigationContext oldContext, NavigationContext newContext, bool push)
+		{
+			if (newContext.WorkflowState.StateId == Guids.DialogStateSiteUpdate)
+			{
+				// start the update in a background thread upon entering the dialog state
+				RunUpdate(newContext);
+			}
+			else if (oldContext.WorkflowState.StateId == Guids.DialogStateSiteUpdate)
+			{
+				// cancel the update thread if it is still running
+				lock (syncObject)
+				{
+					if (currentBackgroundTask != null) currentBackgroundTask.State = WorkState.CANCELED;
+				}
+			}
+		}
+
+		public void Deactivate(NavigationContext oldContext, NavigationContext newContext)
 		{
 			//
 		}
 
-		public void Deactivate(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
-		{
-			//
-		}
-
-		public void EnterModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+		public void EnterModelContext(NavigationContext oldContext, NavigationContext newContext)
 		{
 			var update = Sites.Updater.GetRemoteOverviews();
 			if (update) GetFilteredAndSortedSites();
 		}
 
-		public void ExitModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+		public void ExitModelContext(NavigationContext oldContext, NavigationContext newContext)
 		{
-			//
+			// reload DLLs or Sites depending on change
+			if (newDllsDownloaded)
+			{
+				Log.Info("Reloading SiteUtil Dlls at runtime.");
+				// todo : stop playback if an OnlineVideos video is playing
+				DownloadManager.Instance.StopAll();
+				// now reload the appdomain
+				OnlineVideoSettings.Reload();
+				TranslationLoader.SetTranslationsToSingleton();
+				OnlineVideoSettings.Instance.BuildSiteUtilsList();
+				GC.Collect();
+				GC.WaitForFullGCComplete();
+				(ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelOV) as OnlineVideosWorkflowModel).RebuildSitesList();
+			}
+			else if (newDataSaved)
+			{
+				OnlineVideoSettings.Instance.BuildSiteUtilsList();
+				(ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelOV) as OnlineVideosWorkflowModel).RebuildSitesList();
+			}
+			newDataSaved = false;
+			newDllsDownloaded = false;
 		}
 
 		public Guid ModelId
@@ -143,17 +233,17 @@ namespace OnlineVideos.MediaPortal2
 			get { return Guids.WorkFlowModelSiteManagement; }
 		}
 
-		public void Reactivate(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+		public void Reactivate(NavigationContext oldContext, NavigationContext newContext)
 		{
 			//
 		}
 
-		public void UpdateMenuActions(MediaPortal.UI.Presentation.Workflow.NavigationContext context, IDictionary<Guid, MediaPortal.UI.Presentation.Workflow.WorkflowAction> actions)
+		public void UpdateMenuActions(NavigationContext context, IDictionary<Guid, WorkflowAction> actions)
 		{
 			//
 		}
 
-		public ScreenUpdateMode UpdateScreen(MediaPortal.UI.Presentation.Workflow.NavigationContext context, ref string screen)
+		public ScreenUpdateMode UpdateScreen(NavigationContext context, ref string screen)
 		{
 			return ScreenUpdateMode.AutoWorkflowManager;
 		}

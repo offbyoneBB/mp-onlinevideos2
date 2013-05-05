@@ -32,14 +32,9 @@ namespace OnlineVideos.MediaPortal2
             OnlineVideoSettings.Instance.Logger = new LogDelegator();
 			OnlineVideoSettings.Instance.UserStore = new Configuration.UserSiteSettingsStore();
 
-            OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES(X86)") ?? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\");
-            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DllsDir)) OnlineVideoSettings.Instance.DllsDir = System.IO.Path.GetDirectoryName(this.GetType().Assembly.Location);
-
-            OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\thumbs\OnlineVideos\");
-            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ThumbsDir)) OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(ovDataPath, "Thumbs");
-
-            OnlineVideoSettings.Instance.ConfigDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\");
-            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ConfigDir)) OnlineVideoSettings.Instance.ConfigDir = ovConfigPath;
+			OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(ovDataPath, "SiteUtils");
+            OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(ovDataPath, "Thumbs");
+            OnlineVideoSettings.Instance.ConfigDir = ovConfigPath;
 
             OnlineVideoSettings.Instance.UseAgeConfirmation = settings.UseAgeConfirmation;
             OnlineVideoSettings.Instance.CacheTimeout = settings.CacheTimeout;
@@ -58,7 +53,7 @@ namespace OnlineVideos.MediaPortal2
 			OnlineVideoSettings.Instance.BuildSiteUtilsList();
 
             SitesList = new ItemsList();
-			OnlineVideoSettings.Instance.SiteUtilsList.Values.ToList().ForEach(s => SitesList.Add(new SiteViewModel(s)));
+			RebuildSitesList();
         }
 
 		SiteViewModel _focusedSite;
@@ -91,6 +86,12 @@ namespace OnlineVideos.MediaPortal2
         
         public bool IsExecutingBackgroundTask { get { return currentBackgroundTask != null; } }
         IWork currentBackgroundTask = null;
+
+		public void RebuildSitesList()
+		{
+			SitesList.Clear();
+			OnlineVideoSettings.Instance.SiteUtilsList.Values.ToList().ForEach(s => SitesList.Add(new SiteViewModel(s)));
+		}
 
         public void SelectSite(object selectedItem)
         {
