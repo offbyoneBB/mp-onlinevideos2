@@ -42,6 +42,14 @@
         SourceStates="*"
         ContributorModelId="C43F4CD9-418A-4DFB-A0BD-DF24704B5BD6"
         DisplayTitle="[OnlineVideos.Search]"/>
+
+    <WorkflowContributorAction Id="C6F39B9F-149C-488F-B0CD-3C4779132FED"
+        Name="OnlineVideos->AutomaticUpdate"
+        DisplayCategory="z-OnlineVideos"
+        SortOrder="a"
+        SourceStates="*"
+        ContributorModelId="C2247268-A958-4CB3-B7D7-B4F5B3A922A6"
+        DisplayTitle="[OnlineVideos.AutomaticUpdate]"/>
     
   </MenuActions>
 </Workflow>
