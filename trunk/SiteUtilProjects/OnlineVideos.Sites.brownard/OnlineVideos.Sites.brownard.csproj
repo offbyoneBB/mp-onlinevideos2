@@ -45,6 +45,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -71,6 +72,9 @@
     <Compile Include="Utils\StreamComparer.cs" />
     <Compile Include="Utils\SubCatHolder.cs" />
     <Compile Include="Utils\SubtitleReader.cs" />
+    <Compile Include="Utils\TSEngine\AsyncSocket.cs" />
+    <Compile Include="Utils\TSEngine\Data.cs" />
+    <Compile Include="Utils\TSEngine\TSPlayer.cs" />
     <Compile Include="Utils\TVGuideGrabber.cs" />
     <Compile Include="Utils\YouTubeShowHandler.cs" />
     <Compile Include="WiziwigUtil.cs" />
