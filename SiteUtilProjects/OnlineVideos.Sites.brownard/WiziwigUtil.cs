@@ -1,42 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using TSEngine;
 
 namespace OnlineVideos.Sites
 {
     public class WiziwigUtil : SiteUtilBase
     {
+        TSPlayer tsPlayer = null;
         const string BASE_URL = "http://www.wiziwig.tv";
+        static Regex CAT_REG = new Regex(@"<tr class="".*?"">\s*<td class=""logo"">.*?</td>\s*<td><a.*?>(?<comp>[^<]*)</a>.*?</td>\s*<td>\s*<div class=""date"".*?>(?<date>[^<]*)</div>\s*<span class=""time"".*?>(?<starttime>[^<]*)</span> -\s*<span class=""time"".*?>(?<endtime>[^<]*)</span>\s*</td>\s*<td class=""home"".*?><img class=""flag"" src=""(?<thumb>[^""]*)"".*?/>(?<hometeam>[^<]*)<img.*?/></td>\s*(<td>vs.</td>\s*<td class=""away""><img.*?>(?<awayteam>[^<]*)<img class=""flag"" src=""(?<awaythumb>[^""]*)"".*?></td>\s*)?<td class=""broadcast""><a class=""broadcast"" href=""(?<url>[^""]*)""",
+            RegexOptions.Compiled);
+        static Regex CHANNEL_REG = new Regex(@"<tr class=""broadcast"">\s*<td class=""logo"".*?><img src=""(?<thumb>[^""]*)"".*?></td>\s*<td class=""stationname"">(?<name>[^<]*)</td>\s*(<td.*?>.*?</td>\s*){3}</tr>\s*(?<vidhtml><tr class=""streamrow.*?</tr>)",
+            RegexOptions.Singleline | RegexOptions.Compiled);
+        static Regex VIDEO_REG = new Regex(@"<tr class=""streamrow (odd|even)"">\s*<td>.*?</td>\s*<td>\s*<a class=""broadcast go"" href=""(?<url>[^""]*)"".*?</td>\s*<td>(?<bitrate>[^<]*)</td>\s*<td><div class=""rating"" rel=""(?<rating>[^""]*)""",
+            RegexOptions.Singleline | RegexOptions.Compiled);
+
+        [Category("OnlineVideosConfiguration"), Description("Max time in ms to wait for AceStream prebuffering to complete.")]
+        int aceStreamTimeout = 20000;
 
         public override int DiscoverDynamicCategories()
         {
-            if (Settings.Categories.Count > 0)
-            {
-                for (int i = 0; i < Settings.Categories.Count; i++)
-                    Settings.Categories[i].HasSubCategories = true;
-            }
+            foreach (Category cat in Settings.Categories)
+                if (cat is RssLink)
+                    cat.HasSubCategories = true;
+
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            string categoryRegex = @"<tr class="".*?"">\s*<td class=""logo"">.*?</td>\s*<td><a.*?>(?<comp>[^<]*)</a>.*?</td>\s*<td>\s*<div class=""date"".*?>(?<date>[^<]*)</div>\s*<span class=""time"".*?>(?<starttime>[^<]*)</span> -\s*<span class=""time"".*?>(?<endtime>[^<]*)</span>\s*</td>\s*<td class=""home"".*?><img class=""flag"" src=""(?<thumb>[^""]*)"".*?/>(?<hometeam>[^<]*)<img.*?/></td>\s*(<td>vs.</td>\s*<td class=""away""><img.*?>(?<awayteam>[^<]*)<img class=""flag"" src=""(?<awaythumb>[^""]*)"".*?></td>\s*)?<td class=""broadcast""><a class=""broadcast"" href=""(?<url>[^""]*)""";
-
-            string url = (parentCategory as RssLink).Url;
-
-            string html = GetWebData(url);
-
-            //hack, too lazy to implement next page properly
-            //Regex nextPage = new Regex(@"<a class=""paginate_pagelink"" href=""(?<nextpage>[^""]*)"">2</a></td>");
-            //if (nextPage.IsMatch(html))
-            //    html += GetWebData("http://myp2p.eu" + nextPage.Match(html).Groups["nextpage"].Value);
-
-            Regex regex = new Regex(categoryRegex);
-            List<Category> cats = new List<Category>();
-            foreach (Match match in regex.Matches(html))
+            string html = GetWebData((parentCategory as RssLink).Url);List<Category> cats = new List<Category>();
+            foreach (Match match in CAT_REG.Matches(html))
             {
                 RssLink cat = new RssLink();
                 string append = "";
@@ -56,29 +55,29 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            string channelRegex = @"<tr class=""broadcast"">\s*<td class=""logo"".*?><img src=""(?<thumb>[^""]*)"".*?></td>\s*<td class=""stationname"">(?<name>[^<]*)</td>\s*(<td.*?>.*?</td>\s*){3}</tr>\s*(?<vidhtml><tr class=""streamrow.*?</tr>)";
-            string videoRegex = @"<tr class=""streamrow (odd|even)"">\s*<td>.*?</td>\s*<td>\s*<a class=""broadcast go"" href=""(?<url>[^""]*)"".*?</td>\s*<td>(?<bitrate>[^<]*)</td>\s*<td><div class=""rating"" rel=""(?<rating>[^""]*)""";
+            Group group = category as Group;
+            if (group != null)
+                return group.Channels.Select(c => new VideoInfo()
+                {
+                    Title = c.StreamName,
+                    ImageUrl = c.Thumb,
+                    VideoUrl = c.Url
+                }).ToList();
 
             List<VideoInfo> vids = new List<VideoInfo>();
 
             //links page
-            string html = GetWebData(((RssLink)category).Url);
-
-            Regex regex = new Regex(channelRegex, RegexOptions.Singleline);
-
+            string html = GetWebData(((RssLink)category).Url);            
             //match the channel groups to get tile and logo for individual links
-            foreach (Match match in regex.Matches(html))
+            foreach (Match match in CHANNEL_REG.Matches(html))
             {
                 string imageurl = BASE_URL + System.Web.HttpUtility.HtmlDecode(match.Groups["thumb"].Value);
                 string channel = match.Groups["name"].Value;
-
-                Regex vidregex = new Regex(videoRegex, RegexOptions.Singleline);
-
                 //individual links
-                foreach (Match vidmatch in vidregex.Matches(match.Groups["vidhtml"].Value))
+                foreach (Match vidmatch in VIDEO_REG.Matches(match.Groups["vidhtml"].Value))
                 {
                     string url = vidmatch.Groups["url"].Value;
-                    if (!url.StartsWith("sop://") && !url.StartsWith("http://www.hitsports.net"))
+                    if (!isUrlSupported(url))
                         continue;
                     VideoInfo vid = new VideoInfo();
                     vid.ImageUrl = imageurl;
@@ -94,10 +93,37 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            if (video.VideoUrl.StartsWith("sop://"))
+            string url = video.VideoUrl;
+            if (url.StartsWith("acestream://"))
+                return getAceStreamUrl(url.Substring(12));
+            else if (url.StartsWith("sop://"))
                 return base.getUrl(video);
+            return getHitSportsUrl(url);
+        }
 
-            return getHitSportsUrl(video.VideoUrl);
+        string getAceStreamUrl(string pid)
+        {
+            if (tsPlayer == null)
+            {
+                tsPlayer = new TSPlayer();
+                tsPlayer.OnMessage += (s, e) => Log.Debug(e.Message);
+            }
+
+            if (!tsPlayer.Connect() || !tsPlayer.WaitForReady())
+                return null;
+
+            tsPlayer.StartPID(pid);
+            return tsPlayer.WaitForUrl(aceStreamTimeout);
+        }
+
+        public override void OnPlaybackEnded(VideoInfo video, string url, double percent, bool stoppedByUser)
+        {
+            if (tsPlayer != null)
+            {
+                tsPlayer.Stop();
+                tsPlayer.Close();
+                tsPlayer = null;
+            }
         }
 
         private string getHitSportsUrl(string url)
@@ -121,6 +147,11 @@ namespace OnlineVideos.Sites
             }.ToString();
         }
 
+        bool isUrlSupported(string url)
+        {
+            return url.StartsWith("acestream://") || url.StartsWith("sop://") || url.StartsWith("http://www.hitsports.net");
+        }
+
         private string getVidLength(string description)
         {
             string[] olengths = description.Split('\n')[0].Split('-');
@@ -133,7 +164,6 @@ namespace OnlineVideos.Sites
             string[] split = time.Split('-');
             string otime = DateTime.Parse(split[0].Trim()).AddHours(-1).ToShortTimeString();
             otime = otime + " - " + DateTime.Parse(split[1].Trim()).AddHours(-1).ToShortTimeString();
-
             return otime;
         }
     }
