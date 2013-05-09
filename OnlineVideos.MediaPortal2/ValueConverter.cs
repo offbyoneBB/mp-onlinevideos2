@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using MediaPortal.UI.SkinEngine.MarkupExtensions;
 using MediaPortal.UI.SkinEngine.ScreenManagement;
 using OnlineVideos.Sites;
@@ -54,15 +55,26 @@ namespace OnlineVideos.MediaPortal2
         }
     }
 
-	public class SiteStateIconConverter : IValueConverter
+	public class SiteStateColorConverter : IValueConverter
 	{
 		public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
 		{
 			result = null;
 			if (value == null) return false;
 			if (!Enum.IsDefined(typeof(OnlineVideosWebservice.SiteState), value)) return false;
-			var state = ((OnlineVideosWebservice.SiteState)value).ToString();
-			result = @"ovsSite" + state + ".png";
+			var state = (OnlineVideosWebservice.SiteState)value;
+			switch (state)
+			{
+				case OnlineVideosWebservice.SiteState.Broken:
+					result = Color.FromArgb(255, 53, 87);
+					break;
+				case OnlineVideosWebservice.SiteState.Reported:
+					result = Color.FromArgb(255, 220, 96);
+					break;
+				case OnlineVideosWebservice.SiteState.Working:
+					result = Color.FromArgb(55, 194, 48);
+					break;
+			}
 			return true;
 		}
 
