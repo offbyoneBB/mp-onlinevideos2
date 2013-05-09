@@ -7,8 +7,8 @@
 
   <ovs:SiteUtilIconConverter x:Key="ovsSiteUtilIconConverter"/>
   <ovs:LanguageIconConverter x:Key="ovsLanguageIconConverter"/>
-  <ovs:SiteStateIconConverter x:Key="ovsSiteStateIconConverter"/>
   <ovs:BoolFocusPrioConverter x:Key="ovsBoolFocusPrioConverter"/>
+  <ovs:SiteStateColorConverter x:Key="ovsSiteStateColorConverter"/>
 
   <RadialGradientBrush x:Key="ovsItemBackground" GradientOrigin="0.85,0.82">
     <RadialGradientBrush.RelativeTransform>
@@ -271,7 +271,11 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="1*"/>
       </Grid.ColumnDefinitions>
-      <Image Width="18" Stretch="Uniform" Source="{Binding Path=Site.State, Converter={StaticResource ovsSiteStateIconConverter}}"/>
+      <Ellipse Width="16" Height="16">
+        <Ellipse.Fill>
+          <SolidColorBrush Color="{Binding Path=Site.State, Converter={StaticResource ovsSiteStateColorConverter}}"/>
+        </Ellipse.Fill>
+      </Ellipse>
       <Image Grid.Column="1" Width="24" Stretch="Uniform" Source="{Binding Path=Site.Language, Converter={StaticResource ovsLanguageIconConverter}}"/>
       <Label Grid.Column="2" Content="{Binding [Name]}"
 					HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"

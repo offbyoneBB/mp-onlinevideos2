@@ -59,6 +59,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="VideoPlayers">
       <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
@@ -143,9 +144,6 @@
     <Content Include="Skin\default\images\LanguageFlags\zh.png" />
     <Content Include="Skin\default\images\NextPage.png" />
     <Content Include="Skin\default\shortcuts\OnlineVideos-shortcuts.xml" />
-    <Content Include="Skin\default\themes\default\images\ovsSiteBroken.png" />
-    <Content Include="Skin\default\themes\default\images\ovsSiteReported.png" />
-    <Content Include="Skin\default\themes\default\images\ovsSiteWorking.png" />
     <Content Include="Skin\default\workflow\onlinevideos-actions.xml">
       <SubType>Designer</SubType>
     </Content>
