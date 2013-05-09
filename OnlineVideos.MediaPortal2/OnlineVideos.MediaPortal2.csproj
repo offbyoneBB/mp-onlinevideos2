@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\AutomaticUpdateAction.cs" />
+    <Compile Include="CommandContainer.cs" />
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="Configuration\UserSiteSettingsStore.cs" />
@@ -94,7 +95,9 @@
     <Content Include="Language\strings_da.xml" />
     <Content Include="Language\strings_de.xml" />
     <Content Include="Language\strings_el.xml" />
-    <Content Include="Language\strings_en.xml" />
+    <Content Include="Language\strings_en.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Language\strings_es.xml" />
     <Content Include="Language\strings_et.xml" />
     <Content Include="Language\strings_fi.xml" />
@@ -229,6 +232,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\ovsDialogSiteUpdate.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\ovsDialogGenericItems.xaml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>

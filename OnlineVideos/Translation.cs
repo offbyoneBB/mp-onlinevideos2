@@ -294,33 +294,35 @@ namespace OnlineVideos
 		/// </summary>
 		/// <param name="language">The language ISO code to load.</param>
 		/// <param name="translationFilesPath">The path where to look for localization xml files.</param>
+		/// <param name="fallBackLanguage">ISO code for a language to use when the other lanuage is not available - should be one that is 100% available</param>
+		/// <param name="fileNameFormatString">formatstring to apply when building the language file name, should include the {0} group</param>
 		/// <returns></returns>
-		public static string LoadTranslations(string language, string translationFilesPath)
+		public static string LoadTranslations(string language, string translationFilesPath, string fallBackLanguage = "en-US", string fileNameFormatString = "{0}.xml")
 		{
 			XmlDocument doc = new XmlDocument();
 
 			string langPath = "";
 			try
 			{
-				langPath = Path.Combine(translationFilesPath, language + ".xml");
+				langPath = Path.Combine(translationFilesPath, string.Format(fileNameFormatString, language));
 				doc.Load(langPath);
 			}
 			catch (Exception ex)
 			{
-				if (language == "en-US")
+				if (language == fallBackLanguage)
 				{
 					return language; // otherwise we are in an endless loop!
 				}
 				if (ex.GetType() == typeof(FileNotFoundException) || ex.GetType() == typeof(DirectoryNotFoundException))
 				{
-					Log.Warn("Cannot find translation xml file '{0}'.  Falling back to English (US)", langPath);
+					Log.Warn("Cannot find translation xml file '{0}'.  Falling back to English", langPath);
 				}
 				else
 				{
-					Log.Error("Error in translation xml file: '{0}'. Falling back to English (US) : {1}", langPath, ex.Message);
+					Log.Error("Error in translation xml file: '{0}'. Falling back to English : {1}", langPath, ex.Message);
 				}
-				language = "en-US";
-				return LoadTranslations(language, translationFilesPath);
+				language = fallBackLanguage;
+				return LoadTranslations(language, translationFilesPath, fallBackLanguage, fileNameFormatString);
 			}
 
 			
@@ -330,8 +332,12 @@ namespace OnlineVideos
 				{
 					try
 					{
+						// for MP2 we have every resource prefixed with OnlineVideos.
+						string key = stringEntry.Attributes.GetNamedItem("name").Value;
+						if (key.StartsWith("OnlineVideos.")) key = key.Substring("OnlineVideos.".Length);
 						// Android String Resources Format Has Escaped apostrophes
-						TranslatedStrings.Add(stringEntry.Attributes.GetNamedItem("name").Value, stringEntry.InnerText.Replace(@"\'", "'"));
+						string value = stringEntry.InnerText.Replace(@"\'", "'");
+						TranslatedStrings.Add(key, value);
 					}
 					catch (Exception ex)
 					{

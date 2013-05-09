@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using MediaPortal.Common;
 using MediaPortal.Common.General;
+using MediaPortal.Common.Localization;
 using MediaPortal.Common.MediaManagement;
-using MediaPortal.Common.MediaManagement.DefaultItemAspects;
 using MediaPortal.Common.PathManager;
 using MediaPortal.Common.Settings;
-using MediaPortal.Common.SystemResolver;
 using MediaPortal.Common.Threading;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
-using MediaPortal.UI.SkinEngine.ScreenManagement;
 using MediaPortal.UiComponents.Media.General;
-using OnlineVideos.Sites;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -48,6 +45,15 @@ namespace OnlineVideos.MediaPortal2
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mkv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mkv", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mp4")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mp4", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".wmv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".wmv", false);
+
+			// clear cache files that might be left over from an application crash
+			MPUrlSourceFilter.MPUrlSourceFilterDownloader.ClearDownloadCache();
+			// load translation strings in other AppDomain, so SiteUtils can use localized language strings
+			TranslationLoader.LoadTranslations(ServiceRegistration.Get<ILocalization>().CurrentCulture.TwoLetterISOLanguageName, System.IO.Path.Combine(System.IO.Path.GetDirectoryName(GetType().Assembly.Location), "Language"), "en", "strings_{0}.xml");
+			// The default connection limit is 2 in .Net on most platforms! This means downloading two files will block all other WebRequests.
+			System.Net.ServicePointManager.DefaultConnectionLimit = 100;
+			// The default .Net implementation for URI parsing removes trailing dots, which is not correct
+			Utils.FixUriTrailingDots();
 
 			OnlineVideoSettings.Instance.LoadSites();
 			OnlineVideoSettings.Instance.BuildSiteUtilsList();
