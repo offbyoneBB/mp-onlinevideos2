@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Source="screens\master_bare.xaml">
+	<Include.Resources>
+
+		<!-- Contents -->
+		<ControlTemplate x:Key="Client_Template">
+			<Grid DataContext="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext}" Margin="10,10,10,10">
+				<ListView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+							Style="{ThemeResource ovsUserReportListViewStyle}"
+							ItemsSource="{Binding Path=ContextVariables[Items]}"/>
+			</Grid>
+		</ControlTemplate>
+
+	</Include.Resources>
+</Include>

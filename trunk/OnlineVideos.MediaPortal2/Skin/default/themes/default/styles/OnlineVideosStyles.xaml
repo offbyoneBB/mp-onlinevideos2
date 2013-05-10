@@ -291,9 +291,30 @@
 					Color="{ThemeResource TextColor}"/>
     </Grid>
   </DataTemplate>
+
+  <DataTemplate x:Key="ovsUserReportItemDataTemplate" DataType="{x:Type ovs:ReportViewModel}">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="130"/>
+        <ColumnDefinition Width="130"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Label Grid.Column="0" Content="{Binding Path=Report.Type}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="{ThemeResource LittleFontSize}" Color="{ThemeResource TextColor}"/>
+      <Label Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="{ThemeResource LittleFontSize}" Color="{ThemeResource TextColor}">
+        <Label.Content>
+          <Binding Path="Report.Date" Converter="{StaticResource StringFormatConverter}" ConverterParameter="{}{0:g}"/>
+        </Label.Content>
+      </Label>
+      <Label Grid.Column="2" Content="{Binding Path=Report.Message}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource TextColor}" Wrap="true"/>
+    </Grid>
+  </DataTemplate>
   
   <Style x:Key="ovsOnlineSiteListViewStyle" BasedOn="{ThemeResource ContentsMenuListViewStyle}">
     <Setter Property="ItemTemplate" Value="{ThemeResource ovsOnlineSiteItemDataTemplate}"/>
+  </Style>
+
+  <Style x:Key="ovsUserReportListViewStyle" BasedOn="{ThemeResource ContentsMenuListViewStyle}">
+    <Setter Property="ItemTemplate" Value="{ThemeResource ovsUserReportItemDataTemplate}"/>
   </Style>
 
 </ResourceDictionary>

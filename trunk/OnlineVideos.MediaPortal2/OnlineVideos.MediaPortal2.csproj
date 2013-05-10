@@ -85,6 +85,7 @@
     <Compile Include="Actions\SearchAction.cs" />
     <Compile Include="ViewModels\OnlineSiteViewModel.cs" />
     <Compile Include="ViewModels\PlaylistItem.cs" />
+    <Compile Include="ViewModels\ReportViewModel.cs" />
     <Compile Include="ViewModels\SiteSettingViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
     <Compile Include="ValueConverter.cs" />
@@ -241,6 +242,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\ovsDialogReportSite.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\ovsUserReports.xaml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
