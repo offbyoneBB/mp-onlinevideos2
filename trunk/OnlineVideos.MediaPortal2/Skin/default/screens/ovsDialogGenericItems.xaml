@@ -17,12 +17,12 @@
 						ItemsSource="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.ContextVariables[Items]}">
 				<ListView.Resources>
           <CommandList x:Key="Menu_Command">
+            <Command Source="{Service ScreenManager}" Path="CloseTopmostDialog"/>
             <Command Source="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.ContextVariables[Command]}" Path="Execute">
               <Command.Parameters>
                 <LateBoundValue BindingValue="{Binding}"/>
               </Command.Parameters>
             </Command>
-            <Command Source="{Service ScreenManager}" Path="CloseTopmostDialog"/>
           </CommandList>
 				</ListView.Resources>
 			</ListView>

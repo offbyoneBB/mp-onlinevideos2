@@ -32,6 +32,7 @@ namespace OnlineVideos.MediaPortal2
 
 		#region Protected fields
 
+		protected DialogCloseWatcher _dialogCloseWatcher = null;
 		protected readonly object syncObject = new object();
 		protected IWork currentBackgroundTask = null;
 		protected bool newDllsDownloaded = false;
@@ -90,6 +91,24 @@ namespace OnlineVideos.MediaPortal2
 		{
 			get { return (string)_updateInfoProperty.GetValue(); }
 			protected set { _updateInfoProperty.SetValue(value); }
+		}
+
+		#endregion
+
+		#region Public methods - Callable from GUI
+
+		public void ShowSiteOptions(OnlineSiteViewModel item)
+		{
+			ServiceRegistration.Get<IWorkflowManager>().NavigatePushTransient(
+				WorkflowState.CreateTransientState("OnlineSiteOptions", item.Site.Name, true, "ovsDialogGenericItems", false, WorkflowType.Dialog),
+				new NavigationContextConfig()
+				{
+					AdditionalContextVariables = new Dictionary<string, object>
+					{
+						{ Constants.CONTEXT_VAR_ITEMS, GetSiteOptions(item) },
+						{ Constants.CONTEXT_VAR_COMMAND, new CommandContainer<ListItem>(ExecuteSiteOption) }
+					}
+				});
 		}
 
 		#endregion
@@ -166,7 +185,7 @@ namespace OnlineVideos.MediaPortal2
 
 		public void UpdateMenuActions(NavigationContext context, IDictionary<Guid, WorkflowAction> actions)
 		{
-			actions.Add(Guids.FilterOwnerAction, CreateGenericMenuAction(
+			actions.Add(Guids.FilterOwnerAction, DynamicWorkflow.CreateDialogMenuAction(
 				Guids.FilterOwnerAction,
 				"FilterOwner", 
 				string.Format("{0}: {1}", LocalizationHelper.Translate("[OnlineVideos.Filter]"), LocalizationHelper.Translate("[OnlineVideos.Creator]")),
@@ -175,7 +194,7 @@ namespace OnlineVideos.MediaPortal2
 				(item) => { Filter_Owner = item.AdditionalProperties[Constants.KEY_VALUE] as string; GetFilteredAndSortedSites(); }
 			));
 
-			actions.Add(Guids.FilterLanguageAction, CreateGenericMenuAction(
+			actions.Add(Guids.FilterLanguageAction, DynamicWorkflow.CreateDialogMenuAction(
 				Guids.FilterLanguageAction,
 				"FilterLanguage",
 				string.Format("{0}: {1}", LocalizationHelper.Translate("[OnlineVideos.Filter]"), LocalizationHelper.Translate("[OnlineVideos.Language]")),
@@ -184,7 +203,7 @@ namespace OnlineVideos.MediaPortal2
 				(item) => { Filter_Language = item.AdditionalProperties[Constants.KEY_VALUE] as string; GetFilteredAndSortedSites(); }
 			));
 
-			actions.Add(Guids.FilterStateAction, CreateGenericMenuAction(
+			actions.Add(Guids.FilterStateAction, DynamicWorkflow.CreateDialogMenuAction(
 				Guids.FilterStateAction,
 				"FilterState",
 				string.Format("{0}: {1}", LocalizationHelper.Translate("[OnlineVideos.Filter]"), LocalizationHelper.Translate("[OnlineVideos.State]")),
@@ -193,7 +212,7 @@ namespace OnlineVideos.MediaPortal2
 				(item) => { Filter_State = (FilterStateOption)item.AdditionalProperties[Constants.KEY_VALUE]; GetFilteredAndSortedSites(); }
 			));
 
-			actions.Add(Guids.SortSitesAction, CreateGenericMenuAction(
+			actions.Add(Guids.SortSitesAction, DynamicWorkflow.CreateDialogMenuAction(
 				Guids.SortSitesAction,
 				"SortSites",
 				"[OnlineVideos.SortOptions]",
@@ -210,7 +229,7 @@ namespace OnlineVideos.MediaPortal2
 
 		#endregion
 
-		#region Private members
+		#region Private members - Sitelist sorting and filtering
 
 		void GetFilteredAndSortedSites()
 		{
@@ -228,7 +247,9 @@ namespace OnlineVideos.MediaPortal2
 			{
 				if (!site.IsAdult || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed)
 				{
-					var loListItem = new OnlineSiteViewModel(site, localSitesDic.ContainsKey(site.Name));
+					SiteSettings localSite = null;
+					localSitesDic.TryGetValue(site.Name, out localSite);
+					var loListItem = new OnlineSiteViewModel(site, localSite);
 					SitesList.Add(loListItem);
 				}
 			}
@@ -297,8 +318,13 @@ namespace OnlineVideos.MediaPortal2
 			return 0;
 		}
 
+		#endregion
+
+		#region Private members - Menu commands
+
 		void RunUpdate(NavigationContext context)
 		{
+			bool isManualUpdate = context.DisplayLabel == "[OnlineVideos.UpdateAll]";
 			currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(() =>
 			{
 				try
@@ -308,7 +334,7 @@ namespace OnlineVideos.MediaPortal2
 						UpdateInfo = m ?? string.Empty;
 						if (p.HasValue) UpdateProgress = p.Value;
 						return currentBackgroundTask.State != WorkState.CANCELED;
-					});
+					}, isManualUpdate ? SitesList.Select(s => ((OnlineSiteViewModel)s).Site).ToList() : null);
 					if (updateResult == true) newDllsDownloaded = true;
 					else if (updateResult == null) newDataSaved = true;
 				}
@@ -331,33 +357,35 @@ namespace OnlineVideos.MediaPortal2
 			});
 		}
 
-		/// <summary>
-		/// Creates a <see cref="WorkflowAction"/> that pushes a dialog as transient state on the navigation stack.
-		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="name"></param>
-		/// <param name="displayLabel"></param>
-		/// <param name="dialogItems"></param>
-		/// <param name="sourceState"></param>
-		/// <param name="action"></param>
-		/// <returns></returns>
-		WorkflowAction CreateGenericMenuAction(Guid id, string name, string displayLabel, ItemsList dialogItems, WorkflowState sourceState, Action<ListItem> action)
+		void RemoveAllSites()
 		{
-			return new PushTransientStateNavigationTransition(
-				id,
-				sourceState.Name + "->" + name, 
-				displayLabel,
-				new Guid[] { sourceState.StateId }, 
-				WorkflowState.CreateTransientState(name, displayLabel, true, "ovsDialogGenericItems", false, WorkflowType.Dialog), 
-				LocalizationHelper.CreateResourceString(displayLabel))
+			if (SitesList.Count > 0)
+			{
+				var dialogHandleId = ServiceRegistration.Get<IDialogManager>().ShowDialog("[OnlineVideos.RemoveAllFromMySites]", "", DialogType.YesNoDialog, false, DialogButtonType.Cancel);
+				_dialogCloseWatcher = new DialogCloseWatcher(this, dialogHandleId, (dialogResult) =>
 				{
-					SortOrder = name,
-					WorkflowNavigationContextVariables = new Dictionary<string, object>
+					if (dialogResult == DialogResult.Yes)
 					{
-						{ Constants.CONTEXT_VAR_ITEMS, dialogItems },
-						{ Constants.CONTEXT_VAR_COMMAND, new CommandContainer<ListItem>(action) }
+						bool needRefresh = false;
+						foreach (var siteToRemove in SitesList)
+						{
+							SiteSettings localSite = null;
+							var localSiteIndex = OnlineVideoSettings.Instance.GetSiteByName(((OnlineSiteViewModel)siteToRemove).Site.Name, out localSite);
+							if (localSiteIndex >= 0)
+							{
+								OnlineVideoSettings.Instance.RemoveSiteAt(localSiteIndex);
+								needRefresh = true;
+							}
+						}
+						if (needRefresh)
+						{
+							OnlineVideoSettings.Instance.SaveSites();
+							newDataSaved = true;
+							GetFilteredAndSortedSites();
+						}
 					}
-				};
+				});
+			}
 		}
 
 		ItemsList CreateSortOptionsList()
@@ -412,6 +440,123 @@ namespace OnlineVideos.MediaPortal2
 				items.Add(langItem);
 			}
 			return items;
+		}
+
+		#endregion
+
+		#region Private members - ContextMenu
+
+		ItemsList GetSiteOptions(OnlineSiteViewModel item)
+		{
+			var items = new ItemsList();
+
+			if (item.LocalSite == null && item.Site.State != OnlineVideosWebservice.SiteState.Broken)
+			{
+				var option = new ListItem(Consts.KEY_NAME, "[OnlineVideos.AddToMySites]");
+				option.AdditionalProperties[Constants.KEY_VALUE] = "AddToMySites";
+				items.Add(option);
+			}
+			else
+			{
+				if ((item.Site.LastUpdated - item.LocalSite.LastUpdated).TotalMinutes > 2 && item.Site.State != OnlineVideosWebservice.SiteState.Broken)
+				{
+					var option = new ListItem(Consts.KEY_NAME, "[OnlineVideos.UpdateMySite]");
+					option.AdditionalProperties[Constants.KEY_VALUE] = "UpdateMySite";
+					items.Add(option);
+				}
+				var optionR = new ListItem(Consts.KEY_NAME, "[OnlineVideos.RemoveFromMySites]");
+				optionR.AdditionalProperties[Constants.KEY_VALUE] = "RemoveFromMySites";
+				items.Add(optionR);
+			}
+
+			if (item.Site.ReportCount > 0)
+			{
+				var option = new ListItem(Consts.KEY_NAME, "[OnlineVideos.ShowReports]");
+				option.AdditionalProperties[Constants.KEY_VALUE] = "ShowReports";
+				items.Add(option);
+			}
+
+			if (!string.IsNullOrEmpty(item.Site.Owner_FK) && item.LocalSite != null) // !only local && ! only global
+			{
+				if (item.Site.State != OnlineVideosWebservice.SiteState.Broken)
+				{
+					var option = new ListItem(Consts.KEY_NAME, "[OnlineVideos.ReportBroken]");
+					option.AdditionalProperties[Constants.KEY_VALUE] = "ReportBroken";
+					items.Add(option);
+				}
+			}
+
+			foreach (var anOption in items)
+				anOption.AdditionalProperties.Add(Consts.KEY_MEDIA_ITEM, item);
+
+			return items;
+		}
+
+		void ExecuteSiteOption(ListItem option)
+		{
+			var site = option.AdditionalProperties[Consts.KEY_MEDIA_ITEM] as OnlineSiteViewModel;
+			SiteSettings localSite = null;
+			var localSiteIndex = OnlineVideoSettings.Instance.GetSiteByName(((OnlineSiteViewModel)site).Site.Name, out localSite);
+
+			switch (option.AdditionalProperties[Constants.KEY_VALUE] as string)
+			{
+				case "AddToMySites":
+				case "UpdateMySite":
+					bool? updateResult = OnlineVideos.Sites.Updater.UpdateSites(null, new List<OnlineVideosWebservice.Site> { site.Site }, false, false);
+					if (updateResult == true) newDllsDownloaded = true;
+					else if (updateResult == null) newDataSaved = true;
+					break;
+				case "RemoveFromMySites":
+					OnlineVideoSettings.Instance.RemoveSiteAt(localSiteIndex);
+					OnlineVideoSettings.Instance.SaveSites();
+					newDataSaved = true;
+					GetFilteredAndSortedSites();
+					break;
+				case "ShowReports":
+					break;
+				case "ReportBroken":
+					// wait for the current dialog to close!
+					var scm = ServiceRegistration.Get<IScreenManager>();
+					while (scm.IsDialogVisible) System.Threading.Thread.Sleep(20);
+					// when site is not up 2 date show message telling the user to update the local site first
+					if ((site.Site.LastUpdated - site.LocalSite.LastUpdated).TotalMinutes > 1)
+					{
+						ServiceRegistration.Get<IDialogManager>().ShowDialog(site.Site.Name, "[OnlineVideos.PleaseUpdateLocalSite]", DialogType.OkDialog, false, DialogButtonType.Ok);
+					}
+					else
+					{
+						ServiceRegistration.Get<IWorkflowManager>().NavigatePush(Guids.DialogStateReportSite, new NavigationContextConfig()
+						{
+							NavigationContextDisplayLabel = site.Site.Name,
+							AdditionalContextVariables = new Dictionary<string, object>
+							{
+								{ Constants.CONTEXT_VAR_COMMAND, new CommandContainer<string, OnlineVideosWebservice.Site>(ReportSite, site.Site) }
+							}
+						});
+					}
+					break;
+			}
+		}
+
+		public void ReportSite(string userReason, OnlineVideosWebservice.Site site)
+		{
+			if (userReason.Length < 15)
+			{
+				ServiceRegistration.Get<IDialogManager>().ShowDialog("[OnlineVideos.ReportBroken]", "[OnlineVideos.PleaseEnterDescription]", DialogType.OkDialog, false, DialogButtonType.Ok);
+			}
+			else
+			{
+				OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+				string message = "";
+				bool success = ws.SubmitReport(site.Name, userReason, OnlineVideosWebservice.ReportType.Broken, out message);
+				ServiceRegistration.Get<IDialogManager>().ShowDialog(success ? "[OnlineVideos.Done]" : "[OnlineVideos.Error]", message, DialogType.OkDialog, false, DialogButtonType.Ok);
+				if (success)
+				{
+					// reload online sites
+					OnlineVideos.Sites.Updater.GetRemoteOverviews(true);
+					GetFilteredAndSortedSites();
+				}
+			}
 		}
 
 		string GetLocalizedLanguageName(string aLang)

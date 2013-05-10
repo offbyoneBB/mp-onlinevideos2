@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -20,6 +17,7 @@ namespace OnlineVideos.MediaPortal2
 		public static readonly Guid WorkFlowModelSiteManagement = new Guid("C39D6682-90B5-4813-8A28-A1C9118D4F3E");
 		public static readonly Guid WorkflowStateSiteManagement = new Guid("026DF45C-86CB-44AE-9174-114810A6BAFF");
 		public static readonly Guid DialogStateSiteUpdate = new Guid("F6E1864A-4B9E-45FF-8200-23F4C1798562");
+		public static readonly Guid DialogStateReportSite = new Guid("23E542F8-CA2A-45F4-B173-47801C4480E4");
 
 		public static readonly Guid FilterOwnerAction = new Guid("{17DF1977-A632-4303-974E-B78B63836F75}");
 		public static readonly Guid FilterLanguageAction = new Guid("{0721D166-A47D-4F07-BA9A-169204B0FB85}");
