@@ -577,7 +577,7 @@ namespace OnlineVideos.MediaPortal2
 			}
 		}
 
-		string GetLocalizedLanguageName(string aLang)
+		public static string GetLocalizedLanguageName(string aLang)
 		{
 			string name = aLang;
 			try

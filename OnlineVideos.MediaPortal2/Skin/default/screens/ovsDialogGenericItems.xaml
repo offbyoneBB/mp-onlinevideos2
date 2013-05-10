@@ -12,7 +12,7 @@
 
 		<!-- Contents -->
 		<ControlTemplate x:Key="Contents_Template">
-			<ListView x:Name="DialogMenu" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SetFocusPrio="DefaultHigh"
+			<ListView x:Name="DialogMenu" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SetFocusPrio="DefaultHigh" MinWidth="400"
 						Style="{ThemeResource MenuListViewStyle}" 
 						ItemsSource="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.ContextVariables[Items]}">
 				<ListView.Resources>
