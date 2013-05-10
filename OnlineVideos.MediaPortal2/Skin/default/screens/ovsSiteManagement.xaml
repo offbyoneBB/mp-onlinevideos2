@@ -14,14 +14,27 @@
 		<ControlTemplate x:Key="Contents_Template">
 			<DockPanel DataContext="{Binding Source={StaticResource ovsSiteManagerModel}}" LastChildFill="true">
 
-        <Label Color="{ThemeResource HintTextColor}" DockPanel.Dock="Bottom" Height="60" Margin="100,0,100,1"
-					  HorizontalAlignment="Stretch" VerticalAlignment="Center" Wrap="True" Scroll="Auto" FontSize="{ThemeResource SmallerFontSize}"
-					  DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"
-					  Content="{Binding Site.Description}" />
+        <DockPanel Height="60" DockPanel.Dock="Bottom" LastChildFill="true">
+          <Image DockPanel.Dock="Left" Stretch="Uniform" Source="{Binding ElementName=siteslist, Path=CurrentItem, Converter={ThemeResource ovsSiteUtilIconConverter}}"/>
+          <Label Color="{ThemeResource HintTextColor}" Margin="40,0,100,0"
+              HorizontalAlignment="Stretch" VerticalAlignment="Center" Wrap="True" Scroll="Auto" FontSize="{ThemeResource SmallerFontSize}"
+              DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"
+              Content="{Binding Site.Description}" />  
+        </DockPanel>
 
         <ListView x:Name="siteslist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center"
               Style="{ThemeResource ovsOnlineSiteListViewStyle}"
-							ItemsSource="{Binding Path=SitesList}"/>
+							ItemsSource="{Binding Path=SitesList}">
+          <ListView.Resources>
+            <CommandList x:Key="Menu_Command">
+              <Command Source="{StaticResource ovsSiteManagerModel}" Path="ShowSiteOptions">
+                <Command.Parameters>
+                  <LateBoundValue BindingValue="{Binding}"/>
+                </Command.Parameters>
+              </Command>
+            </CommandList>
+          </ListView.Resources>
+        </ListView>
 			</DockPanel>
 
 		</ControlTemplate>

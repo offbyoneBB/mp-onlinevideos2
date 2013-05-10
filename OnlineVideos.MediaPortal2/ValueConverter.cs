@@ -11,20 +11,24 @@ namespace OnlineVideos.MediaPortal2
         public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
         {
             result = null;
-            if (value is SiteUtilBase)
+
+			var siteUtil = value as SiteUtilBase;
+			var onlineSite = value as OnlineSiteViewModel;
+			string siteName = siteUtil != null ? siteUtil.Settings.Name : onlineSite != null ? onlineSite.Site.Name : null;
+			if (!string.IsNullOrEmpty(siteName))
             {
                 string subDir = string.IsNullOrEmpty(parameter as string) ? "Icons" : parameter as string;
                 // use Icon with the same name as the Site
-                string image = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, subDir + @"\" + ((SiteUtilBase)value).Settings.Name + ".png");
+				string image = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, subDir + @"\" + siteName + ".png");
                 if (System.IO.File.Exists(image)) result = image;
-                else
+                else if (siteUtil != null)
                 {
                     // if that does not exist, try icon with the same name as the Util
-                    image = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, subDir + @"\" + ((SiteUtilBase)value).Settings.UtilName + ".png");
+					image = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, subDir + @"\" + siteUtil.Settings.UtilName + ".png");
                     if (System.IO.File.Exists(image)) result = image;
                 }
             }
-            return !(string.IsNullOrEmpty((string)result));
+			return true;
         }
 
         public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)

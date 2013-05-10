@@ -42,14 +42,33 @@
         SourceStates="*"
         ContributorModelId="C43F4CD9-418A-4DFB-A0BD-DF24704B5BD6"
         DisplayTitle="[OnlineVideos.Search]"/>
-
-    <WorkflowContributorAction Id="C6F39B9F-149C-488F-B0CD-3C4779132FED"
+    
+    <PushNavigationTransition Id="C6F39B9F-149C-488F-B0CD-3C4779132FED"
         Name="OnlineVideos->AutomaticUpdate"
         DisplayCategory="z-OnlineVideos"
         SortOrder="a"
-        SourceStates="*"
-        ContributorModelId="C2247268-A958-4CB3-B7D7-B4F5B3A922A6"
-        DisplayTitle="[OnlineVideos.AutomaticUpdate]"/>
+        SourceStates="026DF45C-86CB-44AE-9174-114810A6BAFF"
+        TargetState="F6E1864A-4B9E-45FF-8200-23F4C1798562"
+        DisplayTitle="[OnlineVideos.AutomaticUpdate]"
+        NavigationContextDisplayLabel="[OnlineVideos.AutomaticUpdate]"/>
+
+    <PushNavigationTransition Id="C8106544-ECF2-4E91-A050-5FCEED9AB328"
+        Name="OnlineVideos->ManualUpdate"
+        DisplayCategory="z-OnlineVideos"
+        SortOrder="ab"
+        SourceStates="026DF45C-86CB-44AE-9174-114810A6BAFF"
+        TargetState="F6E1864A-4B9E-45FF-8200-23F4C1798562"
+        DisplayTitle="[OnlineVideos.UpdateAll]"
+        NavigationContextDisplayLabel="[OnlineVideos.UpdateAll]"/>
+
+    <MethodCallAction Id="CFF5C4A4-E9E1-48ED-97D5-27F90007F3A9"
+        Name="OnlineVideosRemoveSites"
+        DisplayCategory="z-OnlineVideos"
+        SortOrder="b"
+        DisplayTitle="[OnlineVideos.RemoveAllFromMySites]"
+        SourceStates="026DF45C-86CB-44AE-9174-114810A6BAFF"
+        ModelId="C39D6682-90B5-4813-8A28-A1C9118D4F3E"
+        MethodName="RemoveAllSites"/>
     
   </MenuActions>
 </Workflow>

@@ -14,4 +14,20 @@ namespace OnlineVideos.MediaPortal2
 			action(item);
 		}
 	}
+
+	public class CommandContainer<T, S>
+	{
+		Action<T,S> action;
+		public CommandContainer(Action<T,S> action, S tag)
+		{
+			this.action = action;
+			this.Tag = tag;
+		}
+		public void Execute(T item)
+		{
+			action(item, Tag);
+		}
+
+		public S Tag { get; protected set; }
+	}
 }

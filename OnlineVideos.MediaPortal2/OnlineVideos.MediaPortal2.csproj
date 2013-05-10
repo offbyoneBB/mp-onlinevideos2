@@ -60,6 +60,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
     <Reference Include="VideoPlayers">
       <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
@@ -67,9 +68,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\AutomaticUpdateAction.cs" />
     <Compile Include="CommandContainer.cs" />
     <Compile Include="Configuration\Configuration.cs" />
+    <Compile Include="DynamicWorkflow.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="Configuration\UserSiteSettingsStore.cs" />
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />
@@ -235,6 +236,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\ovsDialogGenericItems.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\ovsDialogReportSite.xaml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
