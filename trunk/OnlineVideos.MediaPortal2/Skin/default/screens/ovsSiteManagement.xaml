@@ -2,18 +2,44 @@
 <Include
     xmlns="www.team-mediaportal.com/2008/mpf/directx"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
     Source="screens\master_menu.xaml">
 	<Include.Resources>
 
 		<Model x:Key="ovsSiteManagerModel" Id="C39D6682-90B5-4813-8A28-A1C9118D4F3E"/>
+    <ovs:FilterStateOptionLocalizedConverter x:Key="ovsFilterStateOptionLocalizedConverter" />
+    <ovs:LanguageCodeLocalizedConverter x:Key="ovsLanguageCodeLocalizedConverter" />
 
-		<!-- Header -->
+    <!-- Header -->
 		<ResourceWrapper x:Key="Header_Text" EnableBindings="True" Resource="[OnlineVideos.ManageSites]"/>
 
 		<!-- Contents -->
 		<ControlTemplate x:Key="Contents_Template">
 			<DockPanel DataContext="{Binding Source={StaticResource ovsSiteManagerModel}}" LastChildFill="true">
 
+        <Grid DockPanel.Dock="Top" Margin="5,0,25,3">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+          </Grid.ColumnDefinitions>
+          <WrapPanel Grid.Column="0">
+            <Label Content="[OnlineVideos.State]" FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource TextColor}"/>
+            <Label Content=":" FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource TextColor}" Margin="0,0,5,0"/>
+            <Label Content="{Binding Path=Filter_State, Converter={StaticResource ovsFilterStateOptionLocalizedConverter}}" FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource HintTextColor}"/>
+          </WrapPanel>
+          <WrapPanel Grid.Column="1" HorizontalAlignment="Center">
+            <Label Content="[OnlineVideos.Language]" FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource TextColor}"/>
+            <Label Content=":" FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource TextColor}" Margin="0,0,5,0"/>
+            <Label Content="{Binding Path=Filter_Language, Converter={StaticResource ovsLanguageCodeLocalizedConverter}}" FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource HintTextColor}"/>
+          </WrapPanel>
+          <WrapPanel Grid.Column="2" HorizontalAlignment="Right">
+            <Label Content="[OnlineVideos.Creator]" FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource TextColor}"/>
+            <Label Content=":" FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource TextColor}" Margin="0,0,5,0"/>
+            <Label Content="{Binding Path=Filter_Owner, Converter={StaticResource ovsLanguageCodeLocalizedConverter}, ConverterParameter=OnlyEmpty}" FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource HintTextColor}"/>
+          </WrapPanel>
+        </Grid>
+        
         <DockPanel Height="60" DockPanel.Dock="Bottom" LastChildFill="true">
           <Image DockPanel.Dock="Left" Stretch="Uniform" Source="{Binding ElementName=siteslist, Path=CurrentItem, Converter={ThemeResource ovsSiteUtilIconConverter}}"/>
           <Label Color="{ThemeResource HintTextColor}" Margin="40,0,100,0"

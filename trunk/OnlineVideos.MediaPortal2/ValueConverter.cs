@@ -3,6 +3,7 @@ using System.Drawing;
 using MediaPortal.UI.SkinEngine.MarkupExtensions;
 using MediaPortal.UI.SkinEngine.ScreenManagement;
 using OnlineVideos.Sites;
+using MediaPortal.Common.Localization;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -126,5 +127,41 @@ namespace OnlineVideos.MediaPortal2
 			throw new NotImplementedException();
 		}
 	}
+
+    public class FilterStateOptionLocalizedConverter : IValueConverter
+    {
+        public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        {
+            result = LocalizationHelper.Translate("[OnlineVideos." + ((SiteManagementWorkflowModel.FilterStateOption)value).ToString() + "]");
+            return true;
+        }
+
+        public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class LanguageCodeLocalizedConverter : IValueConverter
+    {
+        public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        {
+            if (string.IsNullOrEmpty(value as string))
+                result = LocalizationHelper.Translate("[OnlineVideos.All]");
+            else
+            {
+                if (parameter == null)
+                    result = SiteManagementWorkflowModel.GetLocalizedLanguageName(value as string);
+                else
+                    result = value as string;
+            }
+            return true;
+        }
+
+        public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
 }
