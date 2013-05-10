@@ -446,6 +446,19 @@ namespace OnlineVideos.MediaPortal2
 
 		#region Private members - ContextMenu
 
+		ItemsList GetUserReports(OnlineSiteViewModel item)
+		{
+			var items = new ItemsList();
+
+			OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+			var reports = ws.GetReports(item.Site.Name);
+			foreach (var report in reports.OrderByDescending(r => r.Date))
+			{
+				items.Add(new ReportViewModel(report));
+			}
+			return items;
+		}
+
 		ItemsList GetSiteOptions(OnlineSiteViewModel item)
 		{
 			var items = new ItemsList();
@@ -469,20 +482,17 @@ namespace OnlineVideos.MediaPortal2
 				items.Add(optionR);
 			}
 
-			if (item.Site.ReportCount > 0)
+			if (!string.IsNullOrEmpty(item.Site.Owner_FK) && item.LocalSite != null) // !only local && ! only global
 			{
 				var option = new ListItem(Consts.KEY_NAME, "[OnlineVideos.ShowReports]");
 				option.AdditionalProperties[Constants.KEY_VALUE] = "ShowReports";
 				items.Add(option);
-			}
 
-			if (!string.IsNullOrEmpty(item.Site.Owner_FK) && item.LocalSite != null) // !only local && ! only global
-			{
 				if (item.Site.State != OnlineVideosWebservice.SiteState.Broken)
 				{
-					var option = new ListItem(Consts.KEY_NAME, "[OnlineVideos.ReportBroken]");
-					option.AdditionalProperties[Constants.KEY_VALUE] = "ReportBroken";
-					items.Add(option);
+					var optionR = new ListItem(Consts.KEY_NAME, "[OnlineVideos.ReportBroken]");
+					optionR.AdditionalProperties[Constants.KEY_VALUE] = "ReportBroken";
+					items.Add(optionR);
 				}
 			}
 
@@ -513,6 +523,14 @@ namespace OnlineVideos.MediaPortal2
 					GetFilteredAndSortedSites();
 					break;
 				case "ShowReports":
+					ServiceRegistration.Get<IWorkflowManager>().NavigatePush(Guids.WorkflowStateUserReports, new NavigationContextConfig()
+					{
+						NavigationContextDisplayLabel = site.Site.Name,
+						AdditionalContextVariables = new Dictionary<string, object>
+						{
+							{ Constants.CONTEXT_VAR_ITEMS, GetUserReports(site) }
+						}
+					});
 					break;
 				case "ReportBroken":
 					// wait for the current dialog to close!
