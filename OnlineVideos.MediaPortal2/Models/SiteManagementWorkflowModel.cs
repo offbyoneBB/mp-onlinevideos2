@@ -150,24 +150,23 @@ namespace OnlineVideos.MediaPortal2
 
 		public void ExitModelContext(NavigationContext oldContext, NavigationContext newContext)
 		{
-			// reload DLLs or Sites depending on change
-			if (newDllsDownloaded)
+			if (OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
 			{
-				Log.Info("Reloading SiteUtil Dlls at runtime.");
-				// todo : stop playback if an OnlineVideos video is playing
-				DownloadManager.Instance.StopAll();
-				// now reload the appdomain
-				OnlineVideoSettings.Reload();
-				TranslationLoader.SetTranslationsToSingleton();
-				OnlineVideoSettings.Instance.BuildSiteUtilsList();
-				GC.Collect();
-				GC.WaitForFullGCComplete();
-				(ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelOV) as OnlineVideosWorkflowModel).RebuildSitesList();
-			}
-			else if (newDataSaved)
-			{
-				OnlineVideoSettings.Instance.BuildSiteUtilsList();
-				(ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelOV) as OnlineVideosWorkflowModel).RebuildSitesList();
+				if (newDllsDownloaded)
+				{
+					Log.Info("Reloading SiteUtil Dlls at runtime.");
+					DownloadManager.Instance.StopAll();
+					// now reload the appdomain
+					OnlineVideoSettings.Reload();
+					TranslationLoader.SetTranslationsToSingleton();
+					GC.Collect();
+					GC.WaitForFullGCComplete();
+				}
+				if (newDataSaved || newDllsDownloaded)
+				{
+					OnlineVideoSettings.Instance.BuildSiteUtilsList();
+					(ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelOV) as OnlineVideosWorkflowModel).RebuildSitesList();
+				}
 			}
 			newDataSaved = false;
 			newDllsDownloaded = false;

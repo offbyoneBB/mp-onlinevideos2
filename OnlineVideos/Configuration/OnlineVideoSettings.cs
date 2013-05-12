@@ -13,6 +13,8 @@ namespace OnlineVideos
     /// </summary>
 	public class OnlineVideoSettings : CrossDomanSingletonBase<OnlineVideoSettings>
     {
+		protected bool SiteUtilsWereBuilt = false;
+
         public IUserStore UserStore;
         public IFavoritesDatabase FavDB;
         public ILog Logger;
@@ -46,6 +48,10 @@ namespace OnlineVideos
 			ThumbsResizeOptions = ImageDownloader.ResizeOptions.Default;
 		}
 
+		/// <summary>
+		/// Drops the current single instance, creates a new Appdomain and copies all settings to a new instance in the new AppDomain.
+		/// SiteUtil (and DLLs) are not loaded.
+		/// </summary>
 		public static void Reload()
 		{
 			// remember settings
@@ -89,7 +95,7 @@ namespace OnlineVideos
 			newInstance.Locale = __Locale;
 			newInstance.VideoExtensions = __VideoExtensions;
 			newInstance.FavoritesFirst = __FavoritesFirst;
-			// load Sites Xml and Build Utils list
+			// load Sites Xml
 			newInstance.LoadSites();
 		}
 
@@ -170,8 +176,14 @@ namespace OnlineVideos
                 AddDownloadsSite();
             }
 
+			SiteUtilsWereBuilt = true;
 			Log.Info("Created {0} SiteUtils", SiteUtilsList.Count);
         }
+
+		public bool IsSiteUtilsListBuilt()
+		{
+			return SiteUtilsWereBuilt;
+		}
 
         void AddFavoritesSite()
         {

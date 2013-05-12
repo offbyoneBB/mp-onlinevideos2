@@ -20,6 +20,8 @@ namespace OnlineVideos.MediaPortal2
     {
         public OnlineVideosWorkflowModel()
         {
+			SitesList = new ItemsList();
+
 			OnlineVideosAppDomain.UseSeperateDomain = true;
 
             Configuration.Settings settings = ServiceRegistration.Get<ISettingsManager>().Load<Configuration.Settings>();
@@ -37,14 +39,7 @@ namespace OnlineVideos.MediaPortal2
             OnlineVideoSettings.Instance.CacheTimeout = settings.CacheTimeout;
             OnlineVideoSettings.Instance.UtilTimeout = settings.UtilTimeout;
 
-            if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asf")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asf", false);
-            if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asx")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asx", false);
-            if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".flv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".flv", false);
-            if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".m4v")) OnlineVideoSettings.Instance.VideoExtensions.Add(".m4v", false);
-            if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mov")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mov", false);
-            if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mkv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mkv", false);
-            if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mp4")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mp4", false);
-            if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".wmv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".wmv", false);
+			OnlineVideoSettings.Instance.AddSupportedVideoExtensions(new List<string>() { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mkv", ".mp4", ".wmv" });
 
 			// clear cache files that might be left over from an application crash
 			MPUrlSourceFilter.MPUrlSourceFilterDownloader.ClearDownloadCache();
@@ -56,10 +51,6 @@ namespace OnlineVideos.MediaPortal2
 			Utils.FixUriTrailingDots();
 
 			OnlineVideoSettings.Instance.LoadSites();
-			OnlineVideoSettings.Instance.BuildSiteUtilsList();
-
-            SitesList = new ItemsList();
-			RebuildSitesList();
         }
 
 		SiteViewModel _focusedSite;
@@ -620,7 +611,11 @@ namespace OnlineVideos.MediaPortal2
 
         public void EnterModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
         {
-            //
+			if (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
+			{
+				OnlineVideoSettings.Instance.BuildSiteUtilsList();
+				RebuildSitesList();
+			}
         }
 
         public void ExitModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
