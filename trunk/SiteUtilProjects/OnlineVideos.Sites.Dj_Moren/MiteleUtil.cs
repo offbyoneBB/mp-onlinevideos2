@@ -307,6 +307,18 @@ namespace OnlineVideos.Sites
             {
                 videoURL = HttpUtility.HtmlDecode(finalVideoURLMatch.Groups["url"].Value);
             }
+            int startIndex = videoURL.IndexOf("/", videoURL.IndexOf("//") + 2);
+            int endIndex = videoURL.IndexOf("?");
+
+            videoURL = videoURL.Substring(startIndex, endIndex - startIndex);
+            String tokenizedRequestUrl = "http://token.mitele.es/?callback=videoTokenizer&id=" + HttpUtility.UrlEncode(videoURL);
+            String tokenizedResponse = GetWebData(tokenizedRequestUrl, null, null, null, false, false, "Mozilla/5.0 (Linux; Android 4.1.1; HTC One X Build/JRO03C) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.58 Mobile Safari/537.31", null);
+            tokenizedResponse = tokenizedResponse.Replace("\\/", "/");
+
+            startIndex = tokenizedResponse.IndexOf(@":""");
+            endIndex = tokenizedResponse.IndexOf(@"""}");
+
+            videoURL = tokenizedResponse.Substring(startIndex + 2, endIndex - startIndex - 2);
             return videoURL;
         }
 
