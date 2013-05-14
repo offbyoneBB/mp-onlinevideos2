@@ -814,10 +814,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
           this->streamFragmentToDownload = (this->streamFragmentToDownload != UINT_MAX) ? this->streamFragmentDownloading : this->streamFragmentToDownload;
           this->streamFragmentDownloading = UINT_MAX;
           FREE_MEM_CLASS(this->mainCurlInstance);
+          this->isConnected = false;
         }
       }
 
-      if (SUCCEEDED(result) && (this->mainCurlInstance == NULL))
+      if (SUCCEEDED(result) && (this->isConnected) && (this->mainCurlInstance == NULL))
       {
         // no CURL instance exists, we finished download
         // start another one download
@@ -931,15 +932,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(bool *shouldExit, CRecei
       }
     }
   }
-  else
-  {
-    this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"connection closed, opening new one");
-    // re-open connection if previous is lost
-    if (this->StartReceivingData(NULL) != S_OK)
-    {
-      this->StopReceivingData();
-    }
-  }
 
   // store stream fragments to temporary file, do not store any data until video and audio track fragment header box are created
   if (((GetTickCount() - this->lastStoreTime) > 1000) && (this->videoTrackFragmentHeaderBox != NULL) && (this->audioTrackFragmentHeaderBox != NULL))
@@ -1049,10 +1041,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
   CLockMutex lock(this->lockMutex, INFINITE);
 
   this->wholeStreamDownloaded = false;
-  this->bytePosition = 0;
-  this->streamLength = 0;
-  this->setLength = false;
-  this->setEndOfStream = false;
 
   if (this->streamFragments == NULL)
   {
@@ -1111,18 +1099,18 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterC
     }
   }
 
-  if (SUCCEEDED(result))
+  if (SUCCEEDED(result) && (this->bufferForProcessing == NULL))
   {
     this->bufferForProcessing = new CLinearBuffer();
     CHECK_POINTER_HRESULT(result, this->bufferForProcessing, result, E_OUTOFMEMORY);
-
-    if (SUCCEEDED(result))
-    {
-      result = (this->bufferForProcessing->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER)) ? result : E_FAIL;
-    }
   }
 
-  if (SUCCEEDED(result) && (!this->seekingActive))
+  if (SUCCEEDED(result))
+  {
+    result = (this->bufferForProcessing->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER)) ? result : E_FAIL;
+  }
+
+  if (SUCCEEDED(result) && (this->videoTrackFragmentHeaderBox == NULL) && (this->audioTrackFragmentHeaderBox == NULL))
   {
     // start downloading first video and first audio stream fragments
     // both are needed for header reconstruction

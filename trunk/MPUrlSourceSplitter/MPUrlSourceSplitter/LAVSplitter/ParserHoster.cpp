@@ -422,7 +422,7 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
             switch(this->status)
             {
             case STATUS_NONE:
-              retval = E_FAIL;
+              retval = E_NO_DATA_AVAILABLE;
               break;
             case STATUS_RECEIVING_DATA:
               retval = S_OK;
@@ -646,11 +646,14 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
   CParserHoster *caller = (CParserHoster *)lpParam;
   caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME);
 
-  unsigned int attempts = 0;
+  bool openedConnection = false;
   bool stopReceivingData = false;
 
   HRESULT result = S_OK;
   CReceiveData *receiveData = NULL;
+  unsigned int maximumReopenTime = 0;
+  DWORD lastReopenStart = GetTickCount();
+
   while ((!caller->receiveDataWorkerShouldExit) && (!stopReceivingData))
   {
     if (receiveData == NULL)
@@ -662,8 +665,12 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
 
     if (caller->protocolHoster != NULL)
     {
-      unsigned int maximumAttempts = caller->protocolHoster->GetOpenConnectionMaximumAttempts();
-      if (maximumAttempts != UINT_MAX)
+      if (maximumReopenTime == 0)
+      {
+        maximumReopenTime = caller->protocolHoster->GetOpenConnectionMaximumAttempts() * caller->protocolHoster->GetReceiveDataTimeout();
+      }
+
+      if (maximumReopenTime != 0)
       {
         // if in active protocol is opened connection than receive data
         // if not than open connection
@@ -685,6 +692,9 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
 
               if (receiveData->GetMediaPacketCollection()->Count() != 0)
               {
+                // we are receiving data
+                openedConnection = true;
+
                 caller->PushMediaPackets(receiveData->GetMediaPacketCollection());
               }
 
@@ -704,36 +714,37 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
         }
         else if (!caller->supressData)
         {
-          if (attempts < maximumAttempts)
+          if (((GetTickCount() - lastReopenStart) <= maximumReopenTime) || (openedConnection))
           {
             result = caller->protocolHoster->StartReceivingData(NULL);
-            if (SUCCEEDED(result))
+
+            if (openedConnection)
             {
-              // set attempts to zero
-              attempts = 0;
+              lastReopenStart = GetTickCount();
+              caller->logger->Log(LOGGER_WARNING, L"%s: %s: connection closed, trying to open, maximum re-open time: %u (ms)", caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME, maximumReopenTime);
             }
-            else
-            {
-              // increase attempts
-              attempts++;
-            }
+
+            // we don't have opened connection
+            openedConnection = false;
           }
           else
           {
-            caller->logger->Log(LOGGER_ERROR, L"%s: %s: maximum attempts of opening connection reached, attempts: %u, maximum attempts: %u", caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME, attempts, maximumAttempts);
+            caller->logger->Log(LOGGER_ERROR, L"%s: %s: maximum time of re-opening connection reached, maximum re-open time: %u (ms)", caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME, maximumReopenTime);
+            result = (caller->status == STATUS_RECEIVING_DATA) ? E_CONNECTION_LOST_CANNOT_REOPEN : result;
             caller->status = result;
             stopReceivingData = true;
-
-            if (caller->parserOutputStream->IsDownloading())
-            {
-              caller->parserOutputStream->FinishDownload(result);
-            }
           }
         }
       }
     }
   }
   FREE_MEM_CLASS(receiveData);
+
+  // signalize end of download with result, if needed
+  if (caller->parserOutputStream->IsDownloading())
+  {
+    caller->parserOutputStream->FinishDownload(result);
+  }
 
   caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME);
   return S_OK;

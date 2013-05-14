@@ -44,6 +44,7 @@
 #define E_PARSER_STILL_PENDING                                                  -21
 #define E_DRM_PROTECTED                                                         -22
 #define E_UNKNOWN_STREAM_TYPE                                                   -23
+#define E_CONNECTION_LOST_CANNOT_REOPEN                                         -24
 
 // protocol hoster error codes
 

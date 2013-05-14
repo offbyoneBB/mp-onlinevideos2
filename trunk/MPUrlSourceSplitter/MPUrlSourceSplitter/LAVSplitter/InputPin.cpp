@@ -147,6 +147,8 @@ CLAVInputPin::~CLAVInputPin(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
 
   this->DestroyDemuxerWorker();
+  this->DestroyAsyncRequestProcessWorker();
+  this->ReleaseAVIOContext();
 
   if (this->parserHoster != NULL)
   {
@@ -154,9 +156,6 @@ CLAVInputPin::~CLAVInputPin(void)
     this->parserHoster->RemoveAllPlugins();
     FREE_MEM_CLASS(this->parserHoster);
   }
-
-  this->DestroyAsyncRequestProcessWorker();
-  this->ReleaseAVIOContext();
 
   FREE_MEM_CLASS(this->currentReadRequest);
   FREE_MEM_CLASS(this->mediaPacketCollection);
@@ -1181,6 +1180,13 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
           request->Complete(E_DEMUXER_WORKER_STOP_REQUEST);
         }
 
+        if (FAILED(caller->GetParserHosterStatus()))
+        {
+          // there is unrecoverable error while receiving data
+          // signalize, that we received all data and no other data come
+          request->Complete(caller->GetParserHosterStatus());
+        }
+
         if ((request->GetState() == CAsyncRequest::Waiting) || (request->GetState() == CAsyncRequest::WaitingIgnoreTimeout))
         {
           // process only waiting requests
@@ -1313,7 +1319,6 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   {
                     // we are receiving data, wait for all requested data
                   }
-                  //else if (!caller->estimate)
                   else if ((caller->allDataReceived) || ((caller->totalLengthReceived) && (!caller->estimate) && (caller->totalLength <= (request->GetStart() + request->GetBufferLength()))))
                   {
                     // we are not receiving more data
