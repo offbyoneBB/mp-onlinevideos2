@@ -847,7 +847,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
             // set end timestamp of last fragment
             CRtmpStreamFragment *fragment = this->rtmpStreamFragments->GetItem(this->rtmpStreamFragments->Count() - 1);
             CHECK_POINTER_HRESULT(result, fragment, result, E_FAIL);
-            
+
             if (SUCCEEDED(result))
             {
               fragment->SetDownloaded(true);
@@ -862,10 +862,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
           this->streamFragmentToDownload = (this->streamFragmentToDownload != UINT_MAX) ? this->streamFragmentDownloading : this->streamFragmentToDownload;
           this->streamFragmentDownloading = UINT_MAX;
           FREE_MEM_CLASS(this->mainCurlInstance);
+          this->isConnected = false;
         }
       }
 
-      if (SUCCEEDED(result) && (!this->shouldExit) && ((this->mainCurlInstance == NULL) || (this->streamFragmentToDownload != UINT_MAX)))
+      if (SUCCEEDED(result) && (!this->shouldExit) && (this->isConnected) && ((this->mainCurlInstance == NULL) || (this->streamFragmentToDownload != UINT_MAX)))
       {
         FREE_MEM_CLASS(this->mainCurlInstance);
         // no CURL instance exists, we finished or not started download
@@ -973,15 +974,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
         receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
         this->setLength = true;
       }
-    }
-  }
-  else
-  {
-    this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"connection closed, opening new one");
-    // re-open connection if previous is lost
-    if (this->StartReceivingData(NULL) != S_OK)
-    {
-      this->StopReceivingData();
     }
   }
 
@@ -1093,12 +1085,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StartReceivingData(const CParameterC
   CLockMutex lock(this->lockMutex, INFINITE);
 
   this->wholeStreamDownloaded = false;
-  this->firstTimestamp = -1;
-  this->firstVideoTimestamp = -1;
-  this->bytePosition = 0;
-  this->streamLength = 0;
-  this->setLength = false;
-  this->setEndOfStream = false;
 
   if (this->rtmpStreamFragments == NULL)
   {

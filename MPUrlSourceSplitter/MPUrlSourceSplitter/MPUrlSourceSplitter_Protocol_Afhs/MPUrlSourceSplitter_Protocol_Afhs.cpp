@@ -118,6 +118,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   this->canCallProcessSegmentsAndFragments = true;
   this->manifest = NULL;
   this->cookies = NULL;
+  this->addedHeader = false;
 
   this->decryptionHoster = new CAfhsDecryptionHoster(this->logger, this->configurationParameters);
   if (this->decryptionHoster != NULL)
@@ -617,10 +618,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
 
           // do not delete CURL instance
           // preserve all cookies, referer, user agent
+          this->isConnected = false;
         }
       }
 
-      if (SUCCEEDED(result) && (this->segmentFragmentDownloading == UINT_MAX) && (forceDownload || (this->segmentsFragments->GetFirstNotProcessedSegmentFragment(0) == UINT_MAX)))
+      if (SUCCEEDED(result) && (this->segmentFragmentDownloading == UINT_MAX) && (this->isConnected) && (forceDownload || (this->segmentsFragments->GetFirstNotProcessedSegmentFragment(0) == UINT_MAX)))
       {
         // do not start any download until all downloaded segments and fragments processed
         // no CURL instance exists, we finished download
@@ -909,15 +911,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
       }
     }
   }
-  else
-  {
-    this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"connection closed, opening new one");
-    // re-open connection if previous is lost
-    if (this->StartReceivingData(NULL) != S_OK)
-    {
-      this->StopReceivingData();
-    }
-  }
 
   // store segments and fragments to temporary file
   if (SUCCEEDED(result) && ((GetTickCount() - this->lastStoreTime) > 1000))
@@ -1031,12 +1024,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
   CLockMutex lock(this->lockMutex, INFINITE);
 
   this->wholeStreamDownloaded = false;
-  //this->firstTimestamp = -1;
-  //this->firstVideoTimestamp = -1;
-  this->bytePosition = 0;
-  this->streamLength = 0;
-  this->setLength = false;
-  this->setEndOfStream = false;
 
   if (this->cookies == NULL)
   {
@@ -1166,7 +1153,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
     }
   }
 
-  if (SUCCEEDED(result))
+  if (SUCCEEDED(result) && (this->bufferForProcessing == NULL))
   {
     this->bufferForProcessing = new CLinearBuffer();
     CHECK_POINTER_HRESULT(result, this->bufferForProcessing, result, E_OUTOFMEMORY);
@@ -1175,7 +1162,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
     {
       result = (this->bufferForProcessing->InitializeBuffer(MINIMUM_RECEIVED_DATA_FOR_SPLITTER)) ? result : E_FAIL;
 
-      if ((SUCCEEDED(result)) && (!this->seekingActive))
+      if ((SUCCEEDED(result)) && (!this->addedHeader))
       {
         this->bufferForProcessing->AddToBuffer(FLV_FILE_HEADER, FLV_FILE_HEADER_LENGTH);
 
@@ -1225,6 +1212,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
           FREE_MEM(metadata);
         }
         FREE_MEM(mediaMetadataBase64Encoded);
+
+        if (SUCCEEDED(result))
+        {
+          addedHeader = true;
+        }
       }
     }
   }
@@ -1340,6 +1332,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   this->segmentFragmentProcessing = 0;
   this->segmentFragmentToDownload = UINT_MAX;
   this->canCallProcessSegmentsAndFragments = true;
+  this->addedHeader = false;
   FREE_MEM_CLASS(this->manifest);
   FREE_MEM_CLASS(this->cookies);
 

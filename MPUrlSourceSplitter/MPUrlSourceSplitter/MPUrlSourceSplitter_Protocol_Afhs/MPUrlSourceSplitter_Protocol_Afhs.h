@@ -267,6 +267,9 @@ protected:
 
   // holds all cookies
   CParameterCollection *cookies;
+
+  // specifies if FLV header was added or not
+  bool addedHeader;
 };
 
 #endif
