@@ -103,20 +103,12 @@ namespace OnlineVideos.Sites
             video.Description = subContentData.Value<string>("description");
 
             //Nyt
-
-            // ('(rtmp://vod.dr.dk/cms)/([^\?]+)(\?.*)', rtmpUrl)
-
             Match match = Regex.Match(redirectUrl, @"(rtmp://vod.dr.dk/cms)/([^\?]+)(\?.*)", RegexOptions.IgnoreCase);
             if (match.Success)
             {
-              Log.Info("videosti fundet");
               video.VideoUrl = match.Groups[1].Value + match.Groups[3].Value + " playpath=" + match.Groups[2].Value + match.Groups[3].Value + " app=cms" + match.Groups[3].Value;
-              Log.Info("Her: " + video.VideoUrl);
             }
             //Nyt slut
-
-
-            //video.VideoUrl = redirectUrl.Replace("rtmp://vod.dr.dk/", "rtmp://vod.dr.dk/cms/");
             video.ImageUrl = baseUrlDrNu + "/videos/" + item.Value<string>("id") + "/images/400x225.jpg";
             video.Length = subContentData.Value<string>("duration");
             video.Airdate = subContentData.Value<string>("formattedBroadcastTime");
@@ -138,7 +130,15 @@ namespace OnlineVideos.Sites
           VideoInfo video = new VideoInfo();
           video.Title = item.Value<string>("title");
           video.Description = item.Value<string>("description");
-          video.VideoUrl = redirectUrl.Replace("rtmp://vod.dr.dk/", "rtmp://vod.dr.dk/cms/");
+
+          //Nyt
+          Match match = Regex.Match(redirectUrl, @"(rtmp://vod.dr.dk/cms)/([^\?]+)(\?.*)", RegexOptions.IgnoreCase);
+          if (match.Success)
+          {
+            video.VideoUrl = match.Groups[1].Value + match.Groups[3].Value + " playpath=" + match.Groups[2].Value + match.Groups[3].Value + " app=cms" + match.Groups[3].Value;
+            Log.Info("Her: " + video.VideoUrl);
+          }
+          //Nyt slut
           video.ImageUrl = baseUrlDrNu + "/videos/" + item.Value<string>("id") + "/images/400x225.jpg";
           video.Length = item.Value<string>("duration");
           video.Airdate = item.Value<string>("formattedBroadcastTime");
