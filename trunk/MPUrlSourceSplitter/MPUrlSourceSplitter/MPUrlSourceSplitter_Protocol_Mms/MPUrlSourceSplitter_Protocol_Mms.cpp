@@ -495,33 +495,44 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit, CReceiv
 
         if ((changingStream) || (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
         {
-          // all data received, we're not receiving data
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-
-          // whole stream downloaded
-          this->wholeStreamDownloaded = true;
-          FREE_MEM_CLASS(this->mainCurlInstance);
-
-          if (!this->seekingActive)
+          if ((changingStream) || (this->mainCurlInstance->GetDownloadResponse()->GetResultCode() == CURLE_OK))
           {
-            // we are not seeking, so we can set total length
-            if (!this->setLength)
+            // all data received, we're not receiving data
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: received all data", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+
+            // whole stream downloaded
+            this->wholeStreamDownloaded = true;
+            FREE_MEM_CLASS(this->mainCurlInstance);
+
+            if (!this->seekingActive)
             {
-              this->streamLength = this->bytePosition;
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-              receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
-              this->setLength = true;
+              // we are not seeking, so we can set total length
+              if (!this->setLength)
+              {
+                this->streamLength = this->bytePosition;
+                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+                receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
+                this->setLength = true;
+              }
+
+              // notify filter the we reached end of stream
+              receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, this->bytePosition - 1));
             }
 
-            // notify filter the we reached end of stream
-            receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, this->bytePosition - 1));
-          }
-        }
 
-        if (changingStream)
-        {
-          // stop receiving data, we are done with this video
-          this->StopReceivingData();
+            if (changingStream)
+            {
+              // stop receiving data, we are done with this video
+              this->StopReceivingData();
+            }
+          }
+          else
+          {
+            // error occured while downloading
+            // try to continue with downloading data
+            this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: %d, restarting download", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetDownloadResponse()->GetResultCode());
+            FREE_MEM_CLASS(this->mainCurlInstance);
+          }
         }
       }
       else
@@ -534,15 +545,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(bool *shouldExit, CReceiv
           receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
           this->setLength = true;
         }
-      }
-    }
-    else
-    {
-      this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"connection closed, opening new one");
-      // re-open connection if previous is lost
-      if (this->StartReceivingData(NULL) != S_OK)
-      {
-        this->StopReceivingData();
       }
     }
   }
@@ -624,33 +626,49 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
 
     this->wholeStreamDownloaded = false;
 
-    if (SUCCEEDED(result))
+    if (SUCCEEDED(result) && (this->mainCurlInstance == NULL))
     {
       this->mainCurlInstance = new CHttpCurlInstance(this->logger, this->lockCurlMutex, PROTOCOL_IMPLEMENTATION_NAME, L"Main");
       CHECK_POINTER_HRESULT(result, this->mainCurlInstance, result, E_OUTOFMEMORY);
+    }
+
+    if (SUCCEEDED(result))
+    {
+      CHttpDownloadRequest *request = new CHttpDownloadRequest();
+      CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
 
       if (SUCCEEDED(result))
       {
-        CHttpDownloadRequest *request = new CHttpDownloadRequest();
-        CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);
+        request->SetUrl(url);
+        request->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_REFERER, true, NULL));
+        request->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_USER_AGENT, true, NULL));
+        request->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_COOKIE, true, NULL));
+        request->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_VERSION, true, HTTP_VERSION_DEFAULT));
+        request->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
+        this->sequenceNumber = 1;
+        result = request->GetHeaders()->Add(L"Accept", L"*/*") ? S_OK : E_FAIL;
+        result = request->GetHeaders()->Add(USERAGENT_NAME, USERAGENT_VALUE) ? result : E_FAIL;
+
+        wchar_t *pragma = NULL;
+        if (this->bytePosition == 0)
+        {
+          pragma = FormatString(L"no-cache,rate=1.000000,stream-time=%u,request-context=%u,max-duration=0", this->streamTime, this->sequenceNumber++);
+        }
+        else
+        {
+          pragma = FormatString(L"no-cache,rate=1.000000,stream-offset=%u:%u,request-context=%u,max-duration=0", (unsigned int)(((uint64_t)this->bytePosition) >> 32), (unsigned int)(this->bytePosition & 0xFFFFFFFF), this->sequenceNumber++);
+        }
+        CHECK_POINTER_HRESULT(result, pragma, result, E_OUTOFMEMORY);
+        
+        if (SUCCEEDED(result))
+        {
+          result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
+        }
+        FREE_MEM(pragma);
 
         if (SUCCEEDED(result))
         {
-          request->SetUrl(url);
-          request->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_REFERER, true, NULL));
-          request->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_USER_AGENT, true, NULL));
-          request->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_MMS_COOKIE, true, NULL));
-          request->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_VERSION, true, HTTP_VERSION_DEFAULT));
-          request->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
-
-          this->sequenceNumber = 1;
-          result = request->GetHeaders()->Add(L"Accept", L"*/*") ? S_OK : E_FAIL;
-          result = request->GetHeaders()->Add(USERAGENT_NAME, USERAGENT_VALUE) ? result : E_FAIL;
-
-          wchar_t *pragma = FormatString(L"no-cache,rate=1.000000,stream-time=%u,request-context=%u,max-duration=0", this->streamTime, this->sequenceNumber++);
-          result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
-          FREE_MEM(pragma);
-
           result = request->GetHeaders()->Add(L"Pragma", clientGuidString) ? result : E_FAIL;
           result = request->GetHeaders()->Add(L"Connection", L"Close") ? result : E_FAIL;
 
@@ -660,10 +678,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
           {
             result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
           }
-
         }
-        FREE_MEM_CLASS(request);
       }
+      FREE_MEM_CLASS(request);
     }
 
     if (SUCCEEDED(result))
@@ -762,34 +779,54 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
           result = request->GetHeaders()->Add(L"Accept", L"*/*") ? S_OK : E_FAIL;
           result = request->GetHeaders()->Add(USERAGENT_NAME, USERAGENT_VALUE) ? result : E_FAIL;
 
-          wchar_t *pragma = FormatString(L"no-cache,rate=1.000000,request-context=%u,stream-time=%u", this->sequenceNumber++, this->streamTime);
-          result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
-          FREE_MEM(pragma);
-
-          result = request->GetHeaders()->Add(L"Pragma", L"xPlayStrm=1") ? result : E_FAIL;
-          result = request->GetHeaders()->Add(L"Pragma", clientGuidString) ? result : E_FAIL;
-
-          pragma = FormatString(L"stream-switch-count=%d", this->mmsContext->GetStreams()->Count());
-          result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
-          FREE_MEM(pragma);
-
-          for (unsigned int i = 0; i < this->mmsContext->GetStreams()->Count(); i++)
+          wchar_t *pragma = NULL;
+          if (this->bytePosition == 0)
           {
-            MMSStream *stream = mmsContext->GetStreams()->GetItem(i);
-            wchar_t *temp = FormatString(L"%sffff:%d:0 ", (pragma == NULL) ? L"stream-switch-entry=" : pragma, stream->GetId());
-            FREE_MEM(pragma);
-            pragma = temp;
+            pragma = FormatString(L"no-cache,rate=1.000000,request-context=%u,stream-time=%u", this->sequenceNumber++, this->streamTime);
           }
-          result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
-          FREE_MEM(pragma);
-
-          result = request->GetHeaders()->Add(L"Connection", L"Close") ? result : E_FAIL;
-
-          this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+          else
+          {
+            FormatString(L"no-cache,rate=1.000000,request-context=%u,stream-time=%u", this->sequenceNumber++, this->streamTime);
+            pragma = FormatString(L"no-cache,rate=1.000000,stream-offset=%u:%u,request-context=%u,max-duration=0", (unsigned int)(((uint64_t)this->bytePosition) >> 32), (unsigned int)(this->bytePosition & 0xFFFFFFFF), this->sequenceNumber++);
+          }
+          CHECK_POINTER_HRESULT(result, pragma, result, E_OUTOFMEMORY);
 
           if (SUCCEEDED(result))
           {
-            result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
+            result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
+          }
+          FREE_MEM(pragma);
+
+          if (SUCCEEDED(result))
+          {
+            result = request->GetHeaders()->Add(L"Pragma", L"xPlayStrm=1") ? result : E_FAIL;
+            result = request->GetHeaders()->Add(L"Pragma", clientGuidString) ? result : E_FAIL;
+
+            pragma = FormatString(L"stream-switch-count=%d", this->mmsContext->GetStreams()->Count());
+            result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
+            FREE_MEM(pragma);
+
+            for (unsigned int i = 0; i < this->mmsContext->GetStreams()->Count(); i++)
+            {
+              MMSStream *stream = mmsContext->GetStreams()->GetItem(i);
+              wchar_t *temp = FormatString(L"%sffff:%d:0 ", (pragma == NULL) ? L"stream-switch-entry=" : pragma, stream->GetId());
+              FREE_MEM(pragma);
+              pragma = temp;
+            }
+            result = request->GetHeaders()->Add(L"Pragma", pragma) ? result : E_FAIL;
+          }
+          FREE_MEM(pragma);
+
+          if (SUCCEEDED(result))
+          {
+            result = request->GetHeaders()->Add(L"Connection", L"Close") ? result : E_FAIL;
+
+            this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+
+            if (SUCCEEDED(result))
+            {
+              result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
+            }
           }
         }
         FREE_MEM_CLASS(request);
@@ -861,8 +898,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCo
   FREE_MEM(clientGuidString);
   FREE_MEM(url);
 
-  // if seeking than not send ASF header
-  this->sendAsfHeader = !this->seekingActive;
+  // if seeking then not send ASF header
+  //this->sendAsfHeader = !this->seekingActive;
+
+  // if seeking then do not send ASF header
+  // if reopening connection then do not send ASF header (this->bytePosition isn't 0, this->seekingActive is false)
+  this->sendAsfHeader = (this->bytePosition == 0) && (!this->seekingActive);
 
   // we are definitely not seeking
   this->seekingActive = false;
