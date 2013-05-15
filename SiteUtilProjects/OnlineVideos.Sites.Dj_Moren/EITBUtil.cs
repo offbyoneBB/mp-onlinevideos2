@@ -14,10 +14,11 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using OnlineVideos.AMF;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
-    public class EITBUtil : GenericSiteUtil
+    public class EITBUtil : BrightCoveUtil
     {
 
         [Category("OnlineVideosConfiguration")]
@@ -227,26 +228,13 @@ namespace OnlineVideos.Sites
         //****************************************************** Brightcove util *********************************************************
         //********************************************************************************************************************************
 
-        protected enum RequestType { ViewerExperienceRequest, FindMediaById };
-
-        [Category("OnlineVideosConfiguration"), Description("HashValue")]
-        protected string hashValue = null;
-        [Category("OnlineVideosConfiguration"), Description("Url for request")]
-        protected string requestUrl = null;
-        [Category("OnlineVideosConfiguration"), Description("optional playerId")]
-        protected string playerId = null;
-        [Category("OnlineVideosConfiguration"), Description("4th value in array")]
-        protected string array4 = null;
-        [Category("OnlineVideosConfiguration"), Description("Request type")]
-        protected RequestType requestType = RequestType.ViewerExperienceRequest;
-
         public override string getUrl(VideoInfo video)
         {
             string webdata = GetWebData(video.VideoUrl);
             return GetFileUrl(video, webdata);
         }
 
-        protected string GetFileUrl(VideoInfo video, string data)
+        protected new string GetFileUrl(VideoInfo video, string data)
         {
             Match m = regEx_FileUrl.Match(data);
 
@@ -255,7 +243,7 @@ namespace OnlineVideos.Sites
 
             AMFArray renditions = GetResultsFromFindByMediaId(m, video.VideoUrl);
 
-            return FillPlaybackOptions(video, renditions);
+            return FillPlaybackOptions(video, renditions, m);
         }
               
 
@@ -264,15 +252,15 @@ namespace OnlineVideos.Sites
             AMFSerializer ser = new AMFSerializer();
             object[] values = new object[4];
             values[0] = hashValue;
-            values[1] = Convert.ToDouble(playerId);
+            values[1] = Convert.ToDouble(m.Groups["experienceId"].Value);
             values[2] = Convert.ToDouble(videoUrl.Substring(videoUrl.LastIndexOf("/") + 1));
             values[3] = Convert.ToDouble(array4);
             byte[] data = ser.Serialize2("com.brightcove.player.runtime.PlayerMediaFacade.findMediaById", values);
-            AMFObject obj = AMFObject.GetResponse(requestUrl, data);
+            AMFObject obj = AMFObject.GetResponse(requestUrl + m.Groups["playerKey"].Value, data);
             return obj.GetArray("renditions");
         }
 
-        protected string FillPlaybackOptions(VideoInfo video, AMFArray renditions)
+        protected new string FillPlaybackOptions(VideoInfo video, AMFArray renditions, Match m)
         {
             video.PlaybackOptions = new Dictionary<string, string>();
 
@@ -281,7 +269,7 @@ namespace OnlineVideos.Sites
                 string nm = String.Format("{0}x{1} {2}K",
                     rendition.GetIntProperty("frameWidth"), rendition.GetIntProperty("frameHeight"),
                     rendition.GetIntProperty("encodingRate") / 1024);
-                string url = HttpUtility.UrlDecode(rendition.GetStringProperty("defaultURL"));
+                string url = HttpUtility.UrlDecode(rendition.GetStringProperty("defaultURL")); //"rtmp://brightcove.fcod.llnwd.net/a500/e1/uds/rtmp/ondemand/&mp4:102076681001/102076681001_986209826001_26930-20110610-122117.mp4&1368558000000&0aa762d184c16de09a21fe533394c3ea"
                 if (url.StartsWith("rtmp"))
                 {
                     //tested with ztele
@@ -290,9 +278,35 @@ namespace OnlineVideos.Sites
                         auth = '?' + url.Split('?')[1];
                     string[] parts = url.Split('&');
 
-                    string rtmp = parts[0] + auth;
-                    string playpath = parts[1].Split('?')[0] + auth;
-                    url = new MPUrlSourceFilter.RtmpUrl(rtmp) { PlayPath = playpath }.ToString();
+                    string rtmp = parts[0] + auth; //"rtmp://brightcove.fcod.llnwd.net/a500/e1/uds/rtmp/ondemand/"
+                    string playpath = parts[1].Split('?')[0] + auth; //"mp4:102076681001/102076681001_986209826001_26930-20110610-122117.mp4"
+                    if (url.IndexOf("edgefcs.net") != -1)
+                    {
+                        /*rtmpdump --rtmp "rtmp://cp150446.edgefcs.net/ondemand/&mp4:102076681001/102076681001_1506435728001_66034-20120314-120404.mp4?__nn__=1497926354001&slist=102076681001/&auth=daEbVc2bZd2bpcZdcbxbVdld6cEdWcpb4dC-brKM2q-bWG-rnBBssvx_ABAo_DDCB_GuD&aifp=bcosuds" --app="ondemand?__nn__=1497926354001&slist=102076681001/&auth=daEbVc2bZd2bpcZdcbxbVdld6cEdWcpb4dC-brKM2q-bWG-rnBBssvx_ABAo_DDCB_GuD&aifp=bcosuds&videoId=1506302142001&lineUpId=&pubId=102076681001&playerId=2202962695001" --swfUrl="http://admin.brightcove.com/viewer/us20121213.1025/federatedVideoUI/BrightcovePlayer.swf?uid=1355746343102" --playpath="mp4:102076681001/102076681001_1506435728001_66034-20120314-120404.mp4?__nn__=1497926354001&slist=102076681001/&auth=daEbVc2bZd2bpcZdcbxbVdld6cEdWcpb4dC-brKM2q-bWG-rnBBssvx_ABAo_DDCB_GuD&aifp=bcosuds&videoId=1506302142001" --pageUrl="http://www.eitb.tv/es/#/video/1506302142001" -o "Aduriz-La_cocina_de_las_palabras_-_Aduriz-Hitzen_sukaldea-.mp4"*/
+                        url = new MPUrlSourceFilter.RtmpUrl(rtmp) { PlayPath = playpath }.ToString();
+                    }
+                    else
+                    {
+                        /*
+                         rtmpdump --rtmp "rtmp://brightcove.fcod.llnwd.net/a500/e1/uds/rtmp/ondemand/&mp4:102076681001/102076681001_986252687001_26930-20110610-122117.mp4&1368558000000&0aa762d184c16de09a21fe533394c3ea" --app="a500/e1/uds/rtmp/ondemand?videoId=986121629001&lineUpId=&pubId=102076681001&playerId=2202962695001" --swfUrl="http://admin.brightcove.com/viewer/us20121218.1107/federatedVideoUI/BrightcovePlayer.swf?uid=1355158765470" --playpath="mp4:102076681001/102076681001_986252687001_26930-20110610-122117.mp4?videoId=986121629001&lineUpId=&pubId=102076681001&playerId=2202962695001" --pageUrl="http://www.eitb.tv/es/#/video/986121629001" -C "B:0" -C "S:mp4:102076681001/102076681001_986252687001_26930-20110610-122117.mp4&1368558000000&0aa762d184c16de09a21fe533394c3ea" -o "Sukalde_maisuak_-_Aduriz-Hitzen_sukaldea-.mp4"
+                         */
+                        string cadena = url.Substring(url.IndexOf(".net/") + 5);
+                        cadena = cadena.Remove(cadena.IndexOf("/&"));
+                        cadena += "?videoId=" + video.VideoUrl.Substring(video.VideoUrl.LastIndexOf("/") + 1) 
+                            + "&lineUpId=&pubId=" + array4 + "&playerId=" + m.Groups["experienceId"].Value;
+                        RtmpUrl rtmpUrl = new RtmpUrl(rtmp)
+                        {
+                            PlayPath = playpath,
+                            //App = "a500/e1/uds/rtmp/ondemand?videoId=986121629001&lineUpId=&pubId=102076681001&playerId=2202962695001"
+                            App = cadena
+                        };
+                        RtmpBooleanArbitraryData p1 = new RtmpBooleanArbitraryData(false);
+                        RtmpStringArbitraryData p2 = new RtmpStringArbitraryData(parts[1]+"&"+parts[2]+"&"+parts[3]);
+                        rtmpUrl.ArbitraryData.Add(p1);
+                        rtmpUrl.ArbitraryData.Add(p2);
+                        
+                        url = rtmpUrl.ToString();
+                    }
 
                 }
                 video.PlaybackOptions.Add(nm, url);
@@ -313,6 +327,6 @@ namespace OnlineVideos.Sites
         }
 
     }
-
+    
     
 }
