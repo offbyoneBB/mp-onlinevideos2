@@ -28,7 +28,7 @@ namespace OnlineVideos.Sites
     public override string getUrl(VideoInfo video)
     {
       XmlDocument doc = new XmlDocument();
-      string redirectUrl = GetWebData("http://common.tv2.dk/flashplayer/playlistSimple.xml.php/clip-" + video.Id + ".xml");
+      string redirectUrl = GetWebData("http://common.tv2.dk/flashplayer/playlist.xml.php/alias-player_news/autoplay-1/clipid-" + video.Id + "/keys-NEWS,PLAYER.xml");
       doc.LoadXml(redirectUrl);
       XmlNodeList elemList = doc.GetElementsByTagName("source");
         string attrVal = elemList[0].Attributes["video"].Value;
@@ -40,20 +40,18 @@ namespace OnlineVideos.Sites
     {
       List<VideoInfo> res = new List<VideoInfo>();
       XmlDocument doc = new XmlDocument();
-      string json = category.Other.ToString();
-      JArray contentData = JArray.Parse('[' + json + ']');
+      string json = GetWebData(category.Other.ToString());
+      JArray contentData = JArray.Parse(json);
       if (contentData != null)
       {
         foreach (var item in contentData)
         {
           VideoInfo video = new VideoInfo();
           video.Id = item.Value<int>("id");
-          video.Title = item.Value<string>("headline");
-          video.Description = item.Value<string>("descr");
+          video.Title = item.Value<string>("title");
+          video.Description = item.Value<string>("description");
           video.ImageUrl = item.Value<string>("img");
-          string len = item.Value<string>("duration");
-          string air = item.Value<string>("date");
-		  video.Length = len + '|' + Translation.Instance.Airdate + ": " + air;
+          string air = item.Value<string>("time");
           res.Add(video);
         }
       }
@@ -62,20 +60,22 @@ namespace OnlineVideos.Sites
 
     public override int DiscoverDynamicCategories()
     {
-      string js = GetWebData("http://video.tv2.dk/js/video-list.js.php/index.js");
-      Match m = regextv2.Match(js);
-      while (m.Success)
+      string[] paths = new string[9] { "nyheder", "most-viewed", "nyh0600", "nyh0900", "nyh1700", "nyh1900", "nyh2200", "station2", "newsmagasiner" };
+      string[] names = new string[9] { "Nyheder", "Mest sete", "06:00", "09:00", "17:00", "19:00", "22:00", "Station 2", "Newsmagasiner" };
+
+      for (int i = 0; i < 9; i++)
       {
+
         RssLink mainCategory = new RssLink()
         {
-          Name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(m.Groups["title"].Value),
+          Name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(names[i]),
           HasSubCategories = false,
           SubCategoriesDiscovered = false,
-          Other = m.Groups["content"].Value,
-          Url = "http://www.dr.dk/live"
+          Other = "http://nyhederne.tv2.dk/video/data/tag/" + paths[i] + "/",
+          Url = "http://nyhederne.tv2.dk/video/data/tag/" + paths[i] + "/"
         };
         Settings.Categories.Add(mainCategory);
-        m = m.NextMatch();
+
       }
       Settings.DynamicCategoriesDiscovered = true;
       return Settings.Categories.Count;
