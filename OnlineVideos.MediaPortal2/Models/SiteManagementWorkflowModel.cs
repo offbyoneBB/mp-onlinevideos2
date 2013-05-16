@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using MediaPortal.Common;
 using MediaPortal.Common.General;
 using MediaPortal.Common.Localization;
-using MediaPortal.Common.Threading;
+using MediaPortal.Common.Messaging;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
@@ -26,15 +25,17 @@ namespace OnlineVideos.MediaPortal2
 			SitesList = new ItemsList();
 			// make sure the main workflowmodel is initialized
 			var ovMainModel = ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelOV) as OnlineVideosWorkflowModel;
+
+			_messageQueue = new AsynchronousMessageQueue(this, new string[] { OnlineVideosMessaging.CHANNEL });
+			_messageQueue.MessageReceived += new MessageReceivedHandler(OnlineVideosMessageReceived);
 		}
 
 		#endregion
 
 		#region Protected fields
 
+		protected AsynchronousMessageQueue _messageQueue;
 		protected DialogCloseWatcher _dialogCloseWatcher = null;
-		protected readonly object syncObject = new object();
-		protected IWork currentBackgroundTask = null;
 		protected bool newDllsDownloaded = false;
 		protected bool newDataSaved = false;
 
@@ -77,22 +78,6 @@ namespace OnlineVideos.MediaPortal2
 			protected set { _sortProperty.SetValue(value); }
 		}
 
-		protected AbstractProperty _updateProgressProperty = new WProperty(typeof(byte), (byte)0);
-		public AbstractProperty UpdateProgressProperty { get { return _updateProgressProperty; } }
-		public byte UpdateProgress
-		{
-			get { return (byte)_updateProgressProperty.GetValue(); }
-			protected set { _updateProgressProperty.SetValue(value); }
-		}
-
-		protected AbstractProperty _updateInfoProperty = new WProperty(typeof(string), string.Empty);
-		public AbstractProperty UpdateInfoProperty { get { return _updateInfoProperty; } }
-		public string UpdateInfo 
-		{
-			get { return (string)_updateInfoProperty.GetValue(); }
-			protected set { _updateInfoProperty.SetValue(value); }
-		}
-
 		#endregion
 
 		#region Public methods - Callable from GUI
@@ -122,19 +107,7 @@ namespace OnlineVideos.MediaPortal2
 
 		public void ChangeModelContext(NavigationContext oldContext, NavigationContext newContext, bool push)
 		{
-			if (newContext.WorkflowState.StateId == Guids.DialogStateSiteUpdate)
-			{
-				// start the update in a background thread upon entering the dialog state
-				RunUpdate(newContext);
-			}
-			else if (oldContext.WorkflowState.StateId == Guids.DialogStateSiteUpdate)
-			{
-				// cancel the update thread if it is still running
-				lock (syncObject)
-				{
-					if (currentBackgroundTask != null) currentBackgroundTask.State = WorkState.CANCELED;
-				}
-			}
+			//
 		}
 
 		public void Deactivate(NavigationContext oldContext, NavigationContext newContext)
@@ -144,12 +117,14 @@ namespace OnlineVideos.MediaPortal2
 
 		public void EnterModelContext(NavigationContext oldContext, NavigationContext newContext)
 		{
+			_messageQueue.Start();
 			var update = Sites.Updater.GetRemoteOverviews();
-			if (update) GetFilteredAndSortedSites();
+			if (update || SitesList.Count == 0) GetFilteredAndSortedSites();
 		}
 
 		public void ExitModelContext(NavigationContext oldContext, NavigationContext newContext)
 		{
+			_messageQueue.Shutdown();
 			if (OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
 			{
 				if (newDllsDownloaded)
@@ -184,41 +159,7 @@ namespace OnlineVideos.MediaPortal2
 
 		public void UpdateMenuActions(NavigationContext context, IDictionary<Guid, WorkflowAction> actions)
 		{
-			actions.Add(Guids.FilterOwnerAction, DynamicWorkflow.CreateDialogMenuAction(
-				Guids.FilterOwnerAction,
-				"FilterOwner", 
-				string.Format("{0}: {1}", LocalizationHelper.Translate("[OnlineVideos.Filter]"), LocalizationHelper.Translate("[OnlineVideos.Creator]")),
-				CreateOwnersList(),
-				context.WorkflowState,
-				(item) => { Filter_Owner = item.AdditionalProperties[Constants.KEY_VALUE] as string; GetFilteredAndSortedSites(); }
-			));
-
-			actions.Add(Guids.FilterLanguageAction, DynamicWorkflow.CreateDialogMenuAction(
-				Guids.FilterLanguageAction,
-				"FilterLanguage",
-				string.Format("{0}: {1}", LocalizationHelper.Translate("[OnlineVideos.Filter]"), LocalizationHelper.Translate("[OnlineVideos.Language]")),
-				CreateLanguagesList(),
-				context.WorkflowState,
-				(item) => { Filter_Language = item.AdditionalProperties[Constants.KEY_VALUE] as string; GetFilteredAndSortedSites(); }
-			));
-
-			actions.Add(Guids.FilterStateAction, DynamicWorkflow.CreateDialogMenuAction(
-				Guids.FilterStateAction,
-				"FilterState",
-				string.Format("{0}: {1}", LocalizationHelper.Translate("[OnlineVideos.Filter]"), LocalizationHelper.Translate("[OnlineVideos.State]")),
-				CreateStatesList(),
-				context.WorkflowState,
-				(item) => { Filter_State = (FilterStateOption)item.AdditionalProperties[Constants.KEY_VALUE]; GetFilteredAndSortedSites(); }
-			));
-
-			actions.Add(Guids.SortSitesAction, DynamicWorkflow.CreateDialogMenuAction(
-				Guids.SortSitesAction,
-				"SortSites",
-				"[OnlineVideos.SortOptions]",
-				CreateSortOptionsList(),
-				context.WorkflowState,
-				(item) => { Sort = (SortOption)item.AdditionalProperties[Constants.KEY_VALUE]; GetFilteredAndSortedSites(); }
-			));
+			CreateMenuActions(context, actions);
 		}
 
 		public ScreenUpdateMode UpdateScreen(NavigationContext context, ref string screen)
@@ -321,46 +262,11 @@ namespace OnlineVideos.MediaPortal2
 
 		#region Private members - Menu commands
 
-		void RunUpdate(NavigationContext context)
-		{
-			bool isManualUpdate = context.DisplayLabel == "[OnlineVideos.UpdateAll]";
-			currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(() =>
-			{
-				try
-				{
-					bool? updateResult = OnlineVideos.Sites.Updater.UpdateSites((m, p) =>
-					{
-						UpdateInfo = m ?? string.Empty;
-						if (p.HasValue) UpdateProgress = p.Value;
-						return currentBackgroundTask.State != WorkState.CANCELED;
-					}, isManualUpdate ? SitesList.Select(s => ((OnlineSiteViewModel)s).Site).ToList() : null);
-					if (updateResult == true) newDllsDownloaded = true;
-					else if (updateResult == null) newDataSaved = true;
-				}
-				catch (Exception ex)
-				{
-					currentBackgroundTask.Exception = ex;
-				}
-			},
-			(args) =>
-			{
-				GetFilteredAndSortedSites();
-				lock (syncObject)
-				{
-					currentBackgroundTask = null;
-				}
-				// close dialog when still open
-				var screenMgr = ServiceRegistration.Get<IScreenManager>();
-				if (screenMgr.TopmostDialogInstanceId == context.DialogInstanceId)
-					screenMgr.CloseTopmostDialog();
-			});
-		}
-
-		void RemoveAllSites()
+		public void RemoveAllSites()
 		{
 			if (SitesList.Count > 0)
 			{
-				var dialogHandleId = ServiceRegistration.Get<IDialogManager>().ShowDialog("[OnlineVideos.RemoveAllFromMySites]", "", DialogType.YesNoDialog, false, DialogButtonType.Cancel);
+				var dialogHandleId = ServiceRegistration.Get<IDialogManager>().ShowDialog(LocalizationHelper.Translate("[OnlineVideos.RemoveAllFromMySites]") + "?", "", DialogType.YesNoDialog, false, DialogButtonType.Cancel);
 				_dialogCloseWatcher = new DialogCloseWatcher(this, dialogHandleId, (dialogResult) =>
 				{
 					if (dialogResult == DialogResult.Yes)
@@ -385,6 +291,45 @@ namespace OnlineVideos.MediaPortal2
 					}
 				});
 			}
+		}
+
+		void CreateMenuActions(NavigationContext context, IDictionary<Guid, WorkflowAction> actions)
+		{
+			actions.Add(Guids.FilterOwnerAction, DynamicWorkflow.CreateDialogMenuAction(
+				Guids.FilterOwnerAction,
+				"FilterOwner",
+				string.Format("{0}: {1}", LocalizationHelper.Translate("[OnlineVideos.Filter]"), LocalizationHelper.Translate("[OnlineVideos.Creator]")),
+				CreateOwnersList(),
+				context.WorkflowState,
+				(item) => { Filter_Owner = item.AdditionalProperties[Constants.KEY_VALUE] as string; GetFilteredAndSortedSites(); }
+			));
+
+			actions.Add(Guids.FilterLanguageAction, DynamicWorkflow.CreateDialogMenuAction(
+				Guids.FilterLanguageAction,
+				"FilterLanguage",
+				string.Format("{0}: {1}", LocalizationHelper.Translate("[OnlineVideos.Filter]"), LocalizationHelper.Translate("[OnlineVideos.Language]")),
+				CreateLanguagesList(),
+				context.WorkflowState,
+				(item) => { Filter_Language = item.AdditionalProperties[Constants.KEY_VALUE] as string; GetFilteredAndSortedSites(); }
+			));
+
+			actions.Add(Guids.FilterStateAction, DynamicWorkflow.CreateDialogMenuAction(
+				Guids.FilterStateAction,
+				"FilterState",
+				string.Format("{0}: {1}", LocalizationHelper.Translate("[OnlineVideos.Filter]"), LocalizationHelper.Translate("[OnlineVideos.State]")),
+				CreateStatesList(),
+				context.WorkflowState,
+				(item) => { Filter_State = (FilterStateOption)item.AdditionalProperties[Constants.KEY_VALUE]; GetFilteredAndSortedSites(); }
+			));
+
+			actions.Add(Guids.SortSitesAction, DynamicWorkflow.CreateDialogMenuAction(
+				Guids.SortSitesAction,
+				"SortSites",
+				"[OnlineVideos.SortOptions]",
+				CreateSortOptionsList(),
+				context.WorkflowState,
+				(item) => { Sort = (SortOption)item.AdditionalProperties[Constants.KEY_VALUE]; GetFilteredAndSortedSites(); }
+			));
 		}
 
 		ItemsList CreateSortOptionsList()
@@ -432,7 +377,7 @@ namespace OnlineVideos.MediaPortal2
 			var allItem = new ListItem(Consts.KEY_NAME, "[OnlineVideos.All]");
 			allItem.AdditionalProperties[Constants.KEY_VALUE] = null;
 			items.Add(allItem);
-			foreach (var lang in Sites.Updater.OnlineSites.Select(s => s.Language != null ? s.Language : "--").Distinct().Select(s => new { Code = s, Name = GetLocalizedLanguageName(s) }).OrderBy(s => s.Name))
+			foreach (var lang in Sites.Updater.OnlineSites.Select(s => s.Language != null ? s.Language : "--").Distinct().Select(s => new { Code = s, Name = TranslationLoader.GetLocalizedLanguageName(s) }).OrderBy(s => s.Name))
 			{
 				var langItem = new ListItem(Consts.KEY_NAME, lang.Name);
 				langItem.AdditionalProperties[Constants.KEY_VALUE] = lang.Code;
@@ -444,19 +389,6 @@ namespace OnlineVideos.MediaPortal2
 		#endregion
 
 		#region Private members - ContextMenu
-
-		ItemsList GetUserReports(OnlineSiteViewModel item)
-		{
-			var items = new ItemsList();
-
-			OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
-			var reports = ws.GetReports(item.Site.Name);
-			foreach (var report in reports.OrderByDescending(r => r.Date))
-			{
-				items.Add(new ReportViewModel(report));
-			}
-			return items;
-		}
 
 		ItemsList GetSiteOptions(OnlineSiteViewModel item)
 		{
@@ -498,6 +430,19 @@ namespace OnlineVideos.MediaPortal2
 			foreach (var anOption in items)
 				anOption.AdditionalProperties.Add(Consts.KEY_MEDIA_ITEM, item);
 
+			return items;
+		}
+
+		ItemsList GetUserReports(OnlineSiteViewModel item)
+		{
+			var items = new ItemsList();
+
+			OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+			var reports = ws.GetReports(item.Site.Name);
+			foreach (var report in reports.OrderByDescending(r => r.Date))
+			{
+				items.Add(new ReportViewModel(report));
+			}
 			return items;
 		}
 
@@ -555,7 +500,7 @@ namespace OnlineVideos.MediaPortal2
 			}
 		}
 
-		public void ReportSite(string userReason, OnlineVideosWebservice.Site site)
+		void ReportSite(string userReason, OnlineVideosWebservice.Site site)
 		{
 			if (userReason.Length < 15)
 			{
@@ -576,23 +521,25 @@ namespace OnlineVideos.MediaPortal2
 			}
 		}
 
-		public static string GetLocalizedLanguageName(string aLang)
+		#endregion
+
+		#region Private members - Messaging
+
+		void OnlineVideosMessageReceived(AsynchronousMessageQueue queue, SystemMessage message)
 		{
-			string name = aLang;
-			try
+			if (message.ChannelName == OnlineVideosMessaging.CHANNEL)
 			{
-				name = aLang != "--" ? CultureInfo.GetCultureInfoByIetfLanguageTag(aLang).DisplayName : "Global";
-			}
-			catch
-			{
-				var temp = CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
-					ci => ci.IetfLanguageTag == aLang || ci.ThreeLetterISOLanguageName == aLang || ci.TwoLetterISOLanguageName == aLang || ci.ThreeLetterWindowsLanguageName == aLang);
-				if (temp != null)
+				OnlineVideosMessaging.MessageType messageType = (OnlineVideosMessaging.MessageType)message.MessageType;
+				switch (messageType)
 				{
-					name = temp.DisplayName;
+					case OnlineVideosMessaging.MessageType.SitesUpdated:
+						GetFilteredAndSortedSites();
+						bool? updateResult = (bool?)message.MessageData[OnlineVideosMessaging.UPDATE_RESULT];
+						if (updateResult == true) newDllsDownloaded = true;
+						else if (updateResult == null) newDataSaved = true;
+						break;
 				}
 			}
-			return name;
 		}
 
 		#endregion

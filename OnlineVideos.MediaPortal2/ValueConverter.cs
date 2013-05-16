@@ -151,7 +151,7 @@ namespace OnlineVideos.MediaPortal2
             else
             {
                 if (parameter == null)
-                    result = SiteManagementWorkflowModel.GetLocalizedLanguageName(value as string);
+                    result = TranslationLoader.GetLocalizedLanguageName(value as string);
                 else
                     result = value as string;
             }

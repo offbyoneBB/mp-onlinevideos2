@@ -71,6 +71,7 @@
     <Compile Include="CommandContainer.cs" />
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="DynamicWorkflow.cs" />
+    <Compile Include="Models\SiteUpdateWorkflowModels.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="Configuration\UserSiteSettingsStore.cs" />
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />

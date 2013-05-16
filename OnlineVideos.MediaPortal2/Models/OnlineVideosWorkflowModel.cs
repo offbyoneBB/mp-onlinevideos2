@@ -5,6 +5,7 @@ using MediaPortal.Common;
 using MediaPortal.Common.General;
 using MediaPortal.Common.Localization;
 using MediaPortal.Common.MediaManagement;
+using MediaPortal.Common.Messaging;
 using MediaPortal.Common.PathManager;
 using MediaPortal.Common.Settings;
 using MediaPortal.Common.Threading;
@@ -51,7 +52,12 @@ namespace OnlineVideos.MediaPortal2
 			Utils.FixUriTrailingDots();
 
 			OnlineVideoSettings.Instance.LoadSites();
+
+			_messageQueue = new AsynchronousMessageQueue(this, new string[] { OnlineVideosMessaging.CHANNEL });
+			_messageQueue.MessageReceived += new MessageReceivedHandler(OnlineVideosMessageReceived);
         }
+
+		protected AsynchronousMessageQueue _messageQueue;
 
 		SiteViewModel _focusedSite;
 		public SiteViewModel FocusedSite
@@ -88,6 +94,7 @@ namespace OnlineVideos.MediaPortal2
 		{
 			SitesList.Clear();
 			OnlineVideoSettings.Instance.SiteUtilsList.Values.ToList().ForEach(s => SitesList.Add(new SiteViewModel(s)));
+			SitesList.FireChange();
 		}
 
         public void SelectSite(object selectedItem)
@@ -528,7 +535,49 @@ namespace OnlineVideos.MediaPortal2
 			}
 		}
 
-        public bool CanEnterState(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+		void OnlineVideosMessageReceived(AsynchronousMessageQueue queue, SystemMessage message)
+		{
+			if (message.ChannelName == OnlineVideosMessaging.CHANNEL)
+			{
+				OnlineVideosMessaging.MessageType messageType = (OnlineVideosMessaging.MessageType)message.MessageType;
+				switch (messageType)
+				{
+					case OnlineVideosMessaging.MessageType.SitesUpdated:
+						bool? updateResult = (bool?)message.MessageData[OnlineVideosMessaging.UPDATE_RESULT];
+						if (updateResult != false)
+						{
+							if (OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
+							{
+								if (updateResult == true)
+								{
+									Log.Info("Reloading SiteUtil Dlls at runtime.");
+									DownloadManager.Instance.StopAll();
+									// now reload the appdomain
+									OnlineVideoSettings.Reload();
+									TranslationLoader.SetTranslationsToSingleton();
+									GC.Collect();
+									GC.WaitForFullGCComplete();
+								}
+							}
+							OnlineVideoSettings.Instance.BuildSiteUtilsList();
+							RebuildSitesList();
+						}
+						else
+						{
+							if (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
+							{
+								OnlineVideoSettings.Instance.BuildSiteUtilsList();
+								RebuildSitesList();
+							}
+						}
+						break;
+				}
+			}
+		}
+
+		#region IWorkflowModel implementation
+
+		public bool CanEnterState(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
         {
             return currentBackgroundTask == null; // only can enter a new state when not doing any background work
         }
@@ -611,16 +660,19 @@ namespace OnlineVideos.MediaPortal2
 
         public void EnterModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
         {
+			_messageQueue.Start();
+			// when entering OV model context and no siteutils have been loaded yet - run Automatic Update 
+			// todo : let the user configure if he want to run it or be asked, configure x hours before doing/asking again
 			if (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
 			{
-				OnlineVideoSettings.Instance.BuildSiteUtilsList();
-				RebuildSitesList();
+				IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
+				workflowManager.NavigatePushAsync(Guids.DialogStateSiteUpdate);
 			}
         }
 
         public void ExitModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
         {
-            //
+			_messageQueue.Shutdown();
         }
 
         public Guid ModelId
@@ -635,8 +687,10 @@ namespace OnlineVideos.MediaPortal2
 
         public ScreenUpdateMode UpdateScreen(MediaPortal.UI.Presentation.Workflow.NavigationContext context, ref string screen)
         {
-            return ScreenUpdateMode.AutoWorkflowManager;
-        }
-    }
+			return ScreenUpdateMode.AutoWorkflowManager;
+		}
+
+		#endregion
+	}
 
 }
