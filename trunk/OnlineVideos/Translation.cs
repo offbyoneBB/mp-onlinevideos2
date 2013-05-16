@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.IO;
 
 namespace OnlineVideos
 {
@@ -365,6 +367,30 @@ namespace OnlineVideos
 				else
 					Log.Debug("Translation not found for field: '{0}'. Using hard-coded English default.", fi.Name);
 			}
+		}
+
+		/// <summary>
+		/// Gets the Display Name of a Language from the localized installation of the .Net framework.
+		/// </summary>
+		/// <param name="languageCode">RFC 4646 Language Code</param>
+		/// <returns>loclaized language name for the given code when found</returns>
+		public static string GetLocalizedLanguageName(string languageCode)
+		{
+			string name = languageCode;
+			try
+			{
+				name = languageCode != "--" ? CultureInfo.GetCultureInfoByIetfLanguageTag(languageCode).DisplayName : "Global";
+			}
+			catch
+			{
+				var temp = CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
+					ci => ci.IetfLanguageTag == languageCode || ci.ThreeLetterISOLanguageName == languageCode || ci.TwoLetterISOLanguageName == languageCode || ci.ThreeLetterWindowsLanguageName == languageCode);
+				if (temp != null)
+				{
+					name = temp.DisplayName;
+				}
+			}
+			return name;
 		}
 	}
 }
