@@ -286,6 +286,8 @@ namespace OnlineVideos.Sites.georgius
         {
             List<String> resultUrls = new List<string>();
 
+            Boolean live = (this.currentCategory.Name == "Živě");
+
             System.Net.CookieContainer container = new System.Net.CookieContainer();
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, container, null, null, true);
 
@@ -342,7 +344,7 @@ namespace OnlineVideos.Sites.georgius
                                         if ((firstQuote >= 0) && (secondQuote >= 0) && ((secondQuote - firstQuote) > 0))
                                         {
                                             String swfUrl = baseWebData.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
-                                            String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl }.ToString();
+                                            String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl, LiveStream = live }.ToString();
 
                                             videos.Add(new CeskaTelevizeVideo()
                                             {
