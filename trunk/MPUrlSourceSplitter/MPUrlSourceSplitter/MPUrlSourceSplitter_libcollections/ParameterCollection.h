@@ -30,7 +30,7 @@
 #define PARAMETER_NAME_MAX_PLUGINS                                            L"MaxPlugins"
 #define PARAMETER_NAME_DOWNLOAD_FILE_NAME                                     L"DownloadFileName"
 #define PARAMETER_NAME_CACHE_FOLDER                                           L"CacheFolder"
-#define PARAMETER_NAME_LIVE                                                   L"Live"
+#define PARAMETER_NAME_LIVE_STREAM                                            L"LiveStream"
 
 #include "Parameter.h"
 #include "Logger.h"

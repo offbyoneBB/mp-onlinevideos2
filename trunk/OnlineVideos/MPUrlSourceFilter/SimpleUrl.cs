@@ -19,7 +19,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         private String cacheFolder = String.Empty;
         private int maximumLogSize = SimpleUrl.DefaultMaximumLogSize;
         private int maximumPlugins = SimpleUrl.DefaultMaximumPlugins;
-        private Boolean live = SimpleUrl.DefaultLive;
+        private Boolean liveStream = SimpleUrl.DefaultLiveStream;
 
         #endregion
 
@@ -179,16 +179,16 @@ namespace OnlineVideos.MPUrlSourceFilter
         }
 
         /// <summary>
-        /// Gets or sets the live flag.
+        /// Gets or sets the live stream flag.
         /// </summary>
         /// <remarks>
-        /// Specifying live flag optimize some parts of MediaPortal Url Source Splitter. In case of live stream are ignored timeouts, cache file is not needed (except the case of downloading = recording).
+        /// Specifying live stream flag optimize some parts of MediaPortal Url Source Splitter. In case of live stream are ignored timeouts, cache file is not needed (except the case of downloading = recording).
         /// </remarks>
-        [Category("MPUrlSourceSplitter"), Description("Specifies if stream is live or not.")]
-        public Boolean Live
+        [Category("MPUrlSourceSplitter"), DefaultValue(false), Description("Specifies if stream is live or not.")]
+        public Boolean LiveStream
         {
-            get { return this.live; }
-            set { this.live = value; }
+            get { return this.liveStream; }
+            set { this.liveStream = value; }
         }
 
         #endregion
@@ -226,9 +226,9 @@ namespace OnlineVideos.MPUrlSourceFilter
             {
                 parameters.Add(new Parameter(SimpleUrl.ParameterCacheFolder, this.CacheFolder));
             }
-            if (this.Live != DefaultLive)
+            if (this.LiveStream != DefaultLiveStream)
             {
-                parameters.Add(new Parameter(SimpleUrl.ParameterLive, this.Live ? "1" : "0"));
+                parameters.Add(new Parameter(SimpleUrl.ParameterLiveStream, this.LiveStream ? "1" : "0"));
             }
 
             // return current URI and formatted connection string
@@ -280,9 +280,9 @@ namespace OnlineVideos.MPUrlSourceFilter
         protected static String ParameterCacheFolder = "CacheFolder";
 
         /// <summary>
-        /// Specifies live flag parameter name.
+        /// Specifies live stream flag parameter name.
         /// </summary>
-        protected static String ParameterLive = "Live";
+        protected static String ParameterLiveStream = "LiveStream";
 
         // default values for some parameters
 
@@ -311,12 +311,12 @@ namespace OnlineVideos.MPUrlSourceFilter
         public const int DefaultMaximumPlugins = 256;
 
         /// <summary>
-        /// Default value of live flag.
+        /// Default value of live stream flag.
         /// </summary>
         /// <remarks>
         /// The default value is <see langword="false"/>.
         /// </remarks>
-        public const Boolean DefaultLive = false;
+        public const Boolean DefaultLiveStream = false;
 
         #endregion
     }
