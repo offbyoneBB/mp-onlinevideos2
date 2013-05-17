@@ -1140,8 +1140,8 @@ STDMETHODIMP CLAVFDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
 
       if (index < 0)
       {
-        logger->Log(LOGGER_ERROR, L"%s: %s: index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, index);
-        result = -6;
+        logger->Log(LOGGER_WARNING, L"%s: %s: index lower than zero: %d, setting to zero", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, index);
+        index = 0;
       }
 
       if (SUCCEEDED(result))

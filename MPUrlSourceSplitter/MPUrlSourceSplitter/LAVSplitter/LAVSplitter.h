@@ -278,6 +278,9 @@ protected:
   // holds last command sent to filter (one of CMD_ values)
   int lastCommand;
 
+  // holds if filter want to call CAMThread::CallWorker() with CMD_PAUSE, CMD_SEEK, CMD_STOP values
+  volatile bool pauseSeekStopRequest;
+
 private:
   CCritSec m_csPins;
   std::vector<CLAVOutputPin *> m_pPins;

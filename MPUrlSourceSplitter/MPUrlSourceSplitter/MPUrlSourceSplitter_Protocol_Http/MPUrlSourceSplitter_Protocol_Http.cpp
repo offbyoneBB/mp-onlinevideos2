@@ -246,10 +246,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit, CRecei
 
   if (!(this->shouldExit))
   {
-    if (this->mainCurlInstance != NULL)
+    if ((this->IsConnected()) && (!this->wholeStreamDownloaded))
     {
-      // it is the same as if (this->IsConnected()) and if (!this->wholeStreamDownloaded)
-
       long responseCode = this->mainCurlInstance->GetHttpDownloadResponse()->GetResponseCode();
       if ((responseCode >= 0) && ((responseCode < 200) || (responseCode >= 400)))
       {
@@ -386,32 +384,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(bool *shouldExit, CRecei
       }
     }
   }
-
-  //if (this->IsConnected())
-  //{
-  //  if (!this->wholeStreamDownloaded)
-  //  {
-  //    if (!(this->shouldExit))
-  //    {
-  //      
-
-  //      
-  //    }
-
-  //    
-
-  //    
-  //  }
-  //}
-  //else
-  //{
-  //  this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"connection closed, opening new one");
-  //  // re-open connection if previous is lost
-  //  if (this->StartReceivingData(NULL) != S_OK)
-  //  {
-  //    this->StopReceivingData();
-  //  }
-  //}
 
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   return S_OK;

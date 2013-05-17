@@ -197,22 +197,19 @@ int CLAVInputPin::Read(void *opaque, uint8_t *buf, int buf_size)
   CAutoLock lock(pin);
 
   //pin->logger->Log(LOGGER_VERBOSE, L"%s: %s: position: %llu, size: %d", MODULE_NAME, METHOD_READ_NAME, pin->m_llBufferPosition, buf_size);
-  HRESULT hr = pin->SyncRead(pin->m_llBufferPosition, buf_size, buf);
-  if (FAILED(hr)) {
+  HRESULT result = pin->SyncRead(pin->m_llBufferPosition, buf_size, buf);
+
+  if (FAILED(result))
+  {
+    // return error if problem
     return -1;
   }
-  //if (hr == S_FALSE) {
-  //  // read single bytes, its internally buffered..
-  //  int count = 0;
-  //  do {
-  //    hr = pin->SyncRead(pin->m_llBufferPosition, 1, buf+count, true);
-  //    pin->m_llBufferPosition++;
-  //  } while(hr == S_OK && (++count) < buf_size);
 
-  //  return count;
-  //}
-  pin->m_llBufferPosition += buf_size;
-  return buf_size;
+  // in case of success is in result is length of returned data
+  //pin->logger->Log(LOGGER_VERBOSE, L"%s: %s: position: %llu, size: %d, returned: %d", MODULE_NAME, METHOD_READ_NAME, pin->m_llBufferPosition, buf_size, result);
+  
+  pin->m_llBufferPosition += result;
+  return result;
 }
 
 int64_t CLAVInputPin::Seek(void *opaque,  int64_t offset, int whence)
@@ -1306,7 +1303,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
               {
                 if (foundDataLength < (unsigned int)request->GetBufferLength())
                 {
-                  // found data length is lower than requested, return S_FALSE
+                  // found data length is lower than requested
                   DWORD currentTime = GetTickCount();
                   if ((!caller->allDataReceived) && ((currentTime - caller->lastReceivedMediaPacketTime) > caller->GetReceiveDataTimeout()))
                   {
@@ -1319,11 +1316,11 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   {
                     // we are receiving data, wait for all requested data
                   }
-                  else if ((caller->allDataReceived) || ((caller->totalLengthReceived) && (!caller->estimate) && (caller->totalLength <= (request->GetStart() + request->GetBufferLength()))))
+                  else if ((caller->filter->pauseSeekStopRequest) || (caller->allDataReceived) || ((caller->totalLengthReceived) && (!caller->estimate) && (caller->totalLength <= (request->GetStart() + request->GetBufferLength()))))
                   {
                     // we are not receiving more data
                     // finish request
-                    caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%d', complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), S_FALSE);
+                    caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: no more data available, request '%u', start '%lld', size '%d'", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength());
                     request->SetBufferLength(foundDataLength);
                     request->Complete(S_OK);
                   }

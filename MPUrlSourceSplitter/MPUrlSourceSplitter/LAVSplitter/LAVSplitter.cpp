@@ -163,6 +163,7 @@ CLAVSplitter::CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr)
   //, m_bStopValid(FALSE)
   , m_rtOffset(0)
   , lastCommand(-1)
+  , pauseSeekStopRequest(false)
 {
   this->logger = new CLogger(NULL);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
@@ -308,9 +309,11 @@ STDMETHODIMP CLAVSplitter::Close()
 
   CAutoLock cAutoLock(this);
 
+  this->pauseSeekStopRequest = true;
   AbortOperation();
   CAMThread::CallWorker(CMD_EXIT);
   CAMThread::Close();
+  this->pauseSeekStopRequest = false;
 
   m_State = State_Stopped;
   DeleteOutputs();
@@ -873,7 +876,7 @@ DWORD CLAVSplitter::ThreadProc()
     HRESULT hr = S_OK;
     while(SUCCEEDED(hr) && !CheckRequest(&cmd))
     {
-      if ((cmd == CMD_PAUSE) || (cmd == CMD_SEEK))
+      if ((cmd == CMD_PAUSE) || (cmd == CMD_SEEK) || (this->pauseSeekStopRequest))
       {
         hr = S_OK;
         Sleep(1);
@@ -1004,7 +1007,9 @@ STDMETHODIMP CLAVSplitter::Stop()
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_STOP_NAME);
 
+  this->pauseSeekStopRequest = true;
   CAMThread::CallWorker(CMD_EXIT);
+  this->pauseSeekStopRequest = false;
 
   CAutoLock cAutoLock(this);
 
@@ -1025,7 +1030,9 @@ STDMETHODIMP CLAVSplitter::Pause()
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_PAUSE_NAME);
 
+  this->pauseSeekStopRequest = true;
   CAMThread::CallWorker(CMD_PAUSE);
+  this->pauseSeekStopRequest = false;
 
   CAutoLock cAutoLock(this);
 
@@ -1184,7 +1191,9 @@ STDMETHODIMP CLAVSplitter::SetPositionsInternal(void *caller, LONGLONG* pCurrent
     if (ThreadExists())
     {
       DeliverBeginFlush();
+      this->pauseSeekStopRequest = true;
       CallWorker(CMD_SEEK);
+      this->pauseSeekStopRequest = false;
       DeliverEndFlush();
     }
 
