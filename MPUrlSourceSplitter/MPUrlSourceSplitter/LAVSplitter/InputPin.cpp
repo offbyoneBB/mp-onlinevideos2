@@ -531,7 +531,7 @@ STDMETHODIMP CLAVInputPin::Load()
     FREE_MEM(this->storeFilePath);
     this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
     this->downloadingFile = (this->storeFilePath != NULL);
-    this->liveStream = (this->configuration->GetValueUnsignedInt(PARAMETER_NAME_LIVE, true, 0) == 1);
+    this->liveStream = (this->configuration->GetValueUnsignedInt(PARAMETER_NAME_LIVE_STREAM, true, 0) == 1);
   }
 
   if (SUCCEEDED(result))
