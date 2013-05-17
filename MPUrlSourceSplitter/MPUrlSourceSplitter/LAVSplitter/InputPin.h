@@ -335,4 +335,7 @@ private:
   // creates folder structure if not created
   // @return : store file or NULL if error
   wchar_t *GetStoreFile(void);
+
+  // specifies if filter is processing live stream or not
+  bool liveStream;
 };

@@ -79,6 +79,11 @@ namespace OnlineVideos.MPUrlSourceFilter
         UnknownStreamType                                                           = -23,
 
         /// <summary>
+        /// Connection is lost, new connection cannot be opened.
+        /// </summary>
+        ConnectionLostCannotReopen                                                  = -24,
+
+        /// <summary>
         /// No protocol loaded.
         /// </summary>
         NoProtocolLoaded                                                            = -30,
