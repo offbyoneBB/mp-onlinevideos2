@@ -19,6 +19,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         private String cacheFolder = String.Empty;
         private int maximumLogSize = SimpleUrl.DefaultMaximumLogSize;
         private int maximumPlugins = SimpleUrl.DefaultMaximumPlugins;
+        private Boolean live = SimpleUrl.DefaultLive;
 
         #endregion
 
@@ -177,6 +178,19 @@ namespace OnlineVideos.MPUrlSourceFilter
             }
         }
 
+        /// <summary>
+        /// Gets or sets the live flag.
+        /// </summary>
+        /// <remarks>
+        /// Specifying live flag optimize some parts of MediaPortal Url Source Splitter. In case of live stream are ignored timeouts, cache file is not needed (except the case of downloading = recording).
+        /// </remarks>
+        [Category("MPUrlSourceSplitter"), Description("Specifies if stream is live or not.")]
+        public Boolean Live
+        {
+            get { return this.live; }
+            set { this.live = value; }
+        }
+
         #endregion
 
         #region Methods
@@ -211,6 +225,10 @@ namespace OnlineVideos.MPUrlSourceFilter
             if (!String.IsNullOrEmpty(this.CacheFolder))
             {
                 parameters.Add(new Parameter(SimpleUrl.ParameterCacheFolder, this.CacheFolder));
+            }
+            if (this.Live != DefaultLive)
+            {
+                parameters.Add(new Parameter(SimpleUrl.ParameterLive, this.Live ? "1" : "0"));
             }
 
             // return current URI and formatted connection string
@@ -261,6 +279,11 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// </summary>
         protected static String ParameterCacheFolder = "CacheFolder";
 
+        /// <summary>
+        /// Specifies live flag parameter name.
+        /// </summary>
+        protected static String ParameterLive = "Live";
+
         // default values for some parameters
 
         /// <summary>
@@ -286,6 +309,14 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// The default value is 256.
         /// </remarks>
         public const int DefaultMaximumPlugins = 256;
+
+        /// <summary>
+        /// Default value of live flag.
+        /// </summary>
+        /// <remarks>
+        /// The default value is <see langword="false"/>.
+        /// </remarks>
+        public const Boolean DefaultLive = false;
 
         #endregion
     }

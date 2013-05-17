@@ -125,6 +125,7 @@ CLAVInputPin::CLAVInputPin(CLogger *logger, TCHAR *pName, CLAVSplitter *pFilter,
   
   this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
   this->downloadingFile = (this->storeFilePath != NULL);
+  this->liveStream = false;
 
   this->hCreateDemuxerWorkerThread = NULL;
 
@@ -530,6 +531,7 @@ STDMETHODIMP CLAVInputPin::Load()
     FREE_MEM(this->storeFilePath);
     this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
     this->downloadingFile = (this->storeFilePath != NULL);
+    this->liveStream = (this->configuration->GetValueUnsignedInt(PARAMETER_NAME_LIVE, true, 0) == 1);
   }
 
   if (SUCCEEDED(result))
@@ -1305,7 +1307,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                 {
                   // found data length is lower than requested
                   DWORD currentTime = GetTickCount();
-                  if ((!caller->allDataReceived) && ((currentTime - caller->lastReceivedMediaPacketTime) > caller->GetReceiveDataTimeout()))
+                  if ((!caller->liveStream) && (!caller->allDataReceived) && ((currentTime - caller->lastReceivedMediaPacketTime) > caller->GetReceiveDataTimeout()))
                   {
                     // we don't receive data from protocol at least for specified timeout
                     // finish request with error to avoid freeze
@@ -1706,10 +1708,10 @@ STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
             }
             else
             {
-              // common case
-              if ((seekingCapabilities != SEEKING_METHOD_NONE) && ((GetTickCount() - ticks) > timeout))
+              // common case, not for live stream
+              if ((!this->liveStream) && (seekingCapabilities != SEEKING_METHOD_NONE) && ((GetTickCount() - ticks) > timeout))
               {
-                // if ranges are supported and timeout occured then stop waiting for data and exit with VFW_E_TIMEOUT error
+                // if seeking is supported and timeout occured then stop waiting for data and exit with VFW_E_TIMEOUT error
                 result = VFW_E_TIMEOUT;
                 break;
               }
