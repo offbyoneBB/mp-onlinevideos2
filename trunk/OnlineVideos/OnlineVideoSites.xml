@@ -1245,10 +1245,15 @@
     <Site name="Red Bull TV" util="BrightCove" agecheck="false" enabled="true" lang="en">
       <Description>Red Bull TV - Watch sports, music and entertainment TV online. Free.</Description>
       <Configuration>
+        <item key="videoListRegExLive"><![CDATA[<tr\sclass="[^"]*">\s*<td\sclass="status"><span\sclass="prev">Past</span></td>\s*<td\sclass="date"><span\sclass="localtime-date-only-med">(?<Airdate1>[^<]*)</span></td>\s*<td\sclass="time"><span\sclass="localtime-time-only">(?<Airdate>[^<]*)</span>\s-\s<span\sclass="localtime-time-only\stz-abbr">(?<AirdateEnd>[^<]*)</span></td>\s*<td\sclass="program">\s*<h3><a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)<span>(?<Title2>[^<]*)</span></a></h3>\s*</td>\s*<td\sclass="description">(?<Description>[^<]*)<]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"\sclass="next">Next</a></li>]]></item>
+        <item key="fileUrlRegExLive"><![CDATA[<span\sclass="player-key"><span\sclass="(?<playerKey>[^"]*)"></span></span>\s*<span\sclass="player-id"><span\sclass="(?<contentId>[^"]*)"></span>]]></item>
+        <item key="hashValueLive"><![CDATA[da46116ed5e11a378272c1baab78c5d3d57eb895]]></item>
+        <item key="requestUrlLive"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAApYJ7UqE~,xqr_zXk0I-zzNndy8NlHogrCb5QdyZRf]]></item>
+        <item key="baseUrl"><![CDATA[http://www.redbull.tv/]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="no-border">\s*<span\sclass="featured-image">\s*<img\ssrc="(?<thumb>[^"]*)"\s/>\s*<span\sclass="show-information">\s*Watch\snow\s*</span>\s*</span>\s*<span\sclass="title">(?<title>[^<]*)</span>\s*<span>(?<description>[^&<]*)(?:&nbsp;)*</span>\s*<span\sclass="episode-count">[^<]*</span>\s*<span\sclass="latest-addition"><span>Updated:\s*[^<]*</span></span>\s*<span\sclass="clear"></span>]]></item>
         <item key="videoListRegEx"><![CDATA[<tr(?:\sclass="active")?>\s*<td><a\shref="(?<VideoUrl>[^"]*)">[^<]*</a></td>\s*<td><a\shref="[^"]*">(?<Title>[^<]*)</a></td>\s*<td><a\shref="[^"]*">(?<Duration>[^<]*)</a></td>\s*<td><a\shref="[^"]*">\s*(?<Airdate>[^<]*)</a></td>\s*</tr>]]></item>
         <item key="fileUrlRegEx"><![CDATA[var\sepisode_video_id\s=\s'(?<mediaId>[^']*)';]]></item>
-        <item key="baseUrl"><![CDATA[http://www.redbull.tv/Redbulltv]]></item>
         <item key="hashValue"><![CDATA[cf760beae3fbdde270b76f2109537e13144e6fbd]]></item>
         <item key="playerId"><![CDATA[761157706001]]></item>
         <item key="array4"><![CDATA[710858724001]]></item>
@@ -1256,8 +1261,13 @@
         <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerId=761157706001]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Page 1">http://www.redbull.tv/cs/Satellite?_=1315253035003&amp;pagename=RBWebTV%2FRBTV_P%2FRBWTVShowContainer&amp;orderby=latest&amp;p=1242970775246&amp;start=1</Category>
-        <Category xsi:type="RssLink" name="Page 2">http://www.redbull.tv/cs/Satellite?_=1315253035003&amp;pagename=RBWebTV%2FRBTV_P%2FRBWTVShowContainer&amp;orderby=latest&amp;p=1242970775246&amp;start=9</Category>
+        <Category xsi:type="RssLink" name="Shows">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Page 1">http://www.redbull.tv/cs/Satellite?_=1315253035003&amp;pagename=RBWebTV%2FRBTV_P%2FRBWTVShowContainer&amp;orderby=latest&amp;p=1242970775246&amp;start=1</Category>
+            <Category xsi:type="RssLink" name="Page 2">http://www.redbull.tv/cs/Satellite?_=1315253035003&amp;pagename=RBWebTV%2FRBTV_P%2FRBWTVShowContainer&amp;orderby=latest&amp;p=1242970775246&amp;start=9</Category>
+          </SubCategories>
+        </Category>
+        <Category xsi:type="RssLink" name="Past Programs">http://live.redbull.tv/includes/fragments/schedule_list.php</Category>
       </Categories>
     </Site>
     <Site name="Rockpalast" util="Rockpalast" agecheck="false" enabled="true" lang="de">

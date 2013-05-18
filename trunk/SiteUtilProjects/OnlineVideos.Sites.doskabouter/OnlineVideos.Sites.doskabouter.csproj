@@ -105,6 +105,7 @@
     <Compile Include="LeagueOfLegendsUtil.cs" />
     <Compile Include="MuzuTV.cs" />
     <Compile Include="NickelodeonNLUtil.cs" />
+    <Compile Include="RedBull.cs" />
     <Compile Include="RockPalastUtil.cs" />
     <Compile Include="RTEPlayerUtil.cs" />
     <Compile Include="RtmpUtil.cs" />
