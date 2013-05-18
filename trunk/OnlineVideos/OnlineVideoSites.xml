@@ -1242,7 +1242,7 @@
         <item key="nextPageRegEx"><![CDATA[<li\sclass="last"><a\shref="(?<url>[^"]*)">Volgende\s&raquo;</a></li>]]></item>
       </Configuration>
     </Site>
-    <Site name="Red Bull TV" util="BrightCove" agecheck="false" enabled="true" lang="en">
+    <Site name="Red Bull TV" util="RedBull" agecheck="false" enabled="true" lang="en">
       <Description>Red Bull TV - Watch sports, music and entertainment TV online. Free.</Description>
       <Configuration>
         <item key="videoListRegExLive"><![CDATA[<tr\sclass="[^"]*">\s*<td\sclass="status"><span\sclass="prev">Past</span></td>\s*<td\sclass="date"><span\sclass="localtime-date-only-med">(?<Airdate1>[^<]*)</span></td>\s*<td\sclass="time"><span\sclass="localtime-time-only">(?<Airdate>[^<]*)</span>\s-\s<span\sclass="localtime-time-only\stz-abbr">(?<AirdateEnd>[^<]*)</span></td>\s*<td\sclass="program">\s*<h3><a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)<span>(?<Title2>[^<]*)</span></a></h3>\s*</td>\s*<td\sclass="description">(?<Description>[^<]*)<]]></item>
