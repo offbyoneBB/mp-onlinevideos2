@@ -32,6 +32,8 @@
 #define PARAMETER_NAME_CACHE_FOLDER                                           L"CacheFolder"
 #define PARAMETER_NAME_LIVE_STREAM                                            L"LiveStream"
 
+#define PARAMETER_NAME_LIVE_STREAM_DEFAULT                                    false
+
 #include "Parameter.h"
 #include "Logger.h"
 #include "Collection.h"

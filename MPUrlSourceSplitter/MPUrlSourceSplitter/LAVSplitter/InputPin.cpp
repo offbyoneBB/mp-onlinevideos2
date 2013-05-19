@@ -531,7 +531,7 @@ STDMETHODIMP CLAVInputPin::Load()
     FREE_MEM(this->storeFilePath);
     this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
     this->downloadingFile = (this->storeFilePath != NULL);
-    this->liveStream = (this->configuration->GetValueUnsignedInt(PARAMETER_NAME_LIVE_STREAM, true, 0) == 1);
+    this->liveStream = (this->configuration->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT));
   }
 
   if (SUCCEEDED(result))
@@ -1518,7 +1518,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
     }
 
     {
-      if ((GetTickCount() - lastCheckTime) > 1000)
+      if (((GetTickCount() - lastCheckTime) > 1000) && ((caller->downloadingFile) || (!caller->liveStream)))
       {
         lastCheckTime = GetTickCount();
 
@@ -1614,6 +1614,33 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
             else
             {
               caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, L"invalid file handle");
+            }
+          }
+        }
+      }
+
+      // remove used media packets
+      // in case of live stream they will not be needed (after created demuxer)
+      if ((!caller->downloadingFile) && (caller->liveStream) && (caller->createdDemuxer) && ((GetTickCount() - lastCheckTime) > 1000))
+      {
+        lastCheckTime = GetTickCount();
+
+        // lock access to media packets
+        CLockMutex mediaPacketLock(caller->mediaPacketMutex, INFINITE);
+
+        if (caller->mediaPacketCollection->Count() > 0)
+        {
+          while (true)
+          {
+            CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(0);
+
+            if (mediaPacket->GetEnd() < caller->m_llBufferPosition)
+            {
+              caller->mediaPacketCollection->Remove(0);
+            }
+            else
+            {
+              break;
             }
           }
         }

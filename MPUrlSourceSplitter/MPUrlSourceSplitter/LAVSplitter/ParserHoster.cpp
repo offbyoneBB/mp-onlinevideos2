@@ -741,7 +741,7 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
   FREE_MEM_CLASS(receiveData);
 
   // signalize end of download with result, if needed
-  if (caller->parserOutputStream->IsDownloading())
+  if ((caller->status != STATUS_NEW_URL_SPECIFIED) && (caller->parserOutputStream->IsDownloading()))
   {
     caller->parserOutputStream->FinishDownload(result);
   }
