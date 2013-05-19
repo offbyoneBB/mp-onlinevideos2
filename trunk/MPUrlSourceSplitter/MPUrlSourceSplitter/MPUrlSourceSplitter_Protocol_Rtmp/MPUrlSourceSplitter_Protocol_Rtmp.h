@@ -190,6 +190,8 @@ protected:
   bool seekingActive;
   // specifies if filter requested supressing data
   bool supressData;
+  // specifies if working with live stream
+  bool liveStream;
 
   // holds first FLV packet timestamp for correction of video packet timestamps
   int firstTimestamp;

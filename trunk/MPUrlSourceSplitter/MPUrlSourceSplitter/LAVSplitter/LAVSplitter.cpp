@@ -1942,9 +1942,9 @@ HRESULT CLAVSplitter::IsFilterReadyToConnectPins(bool *ready)
 {
   CheckPointer(ready, E_POINTER);
 
-  *ready = ((this->GetPinCount() != 0) && (this->m_pInput->storeFilePath != NULL));
+  *ready = (this->m_pInput->createdDemuxer);
 
-  if (this->m_pInput->GetParserHosterStatus() < STATUS_NONE)
+  if (FAILED(this->m_pInput->GetParserHosterStatus()))
   {
     // return parser hoster status, there is error
     return this->m_pInput->GetParserHosterStatus();

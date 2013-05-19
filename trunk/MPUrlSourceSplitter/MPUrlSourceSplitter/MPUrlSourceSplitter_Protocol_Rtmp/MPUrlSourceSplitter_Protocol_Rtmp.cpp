@@ -116,6 +116,7 @@ CMPUrlSourceSplitter_Protocol_Rtmp::CMPUrlSourceSplitter_Protocol_Rtmp(CParamete
   this->ignoreKeyFrameTimestamp = 0;
   this->additionalCorrection = 0;
   this->duration = RTMP_DURATION_UNSPECIFIED;
+  this->liveStream = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -982,7 +983,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
   {
     this->lastStoreTime = GetTickCount();
 
-    if (this->rtmpStreamFragments->Count() > 0)
+    if ((!this->liveStream) && (this->rtmpStreamFragments->Count() > 0))
     {
       // store all stream fragments (which are not stored) to file
       if (this->storeFilePath == NULL)
@@ -1045,6 +1046,30 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
           hTempFile = INVALID_HANDLE_VALUE;
         }
       }
+    }
+
+    if (this->liveStream)
+    {
+
+      if ((this->rtmpStreamFragments->Count() > 0) && (this->streamFragmentProcessing != UINT_MAX))
+      {
+        // leave last fragment in collection in order to not add downloaded and processed fragments
+        while ((this->streamFragmentProcessing > 0) && (this->rtmpStreamFragments->Count() > 1))
+        {
+          this->rtmpStreamFragments->Remove(0);
+          this->streamFragmentProcessing--;
+
+          if (this->streamFragmentDownloading != UINT_MAX)
+          {
+            this->streamFragmentDownloading--;
+          }
+          if (this->streamFragmentToDownload != UINT_MAX)
+          {
+            this->streamFragmentToDownload--;
+          }
+        }
+      }
+
     }
   }
 
@@ -1215,6 +1240,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
   this->ignoreKeyFrameTimestamp = 0;
   this->additionalCorrection = 0;
   this->duration = UINT64_MAX;
+  this->liveStream = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -1374,6 +1400,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::Initialize(PluginConfiguration *conf
 
   this->receiveDataTimeout = this->configurationParameters->GetValueLong(PARAMETER_NAME_RTMP_RECEIVE_DATA_TIMEOUT, true, RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT);
   this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(PARAMETER_NAME_RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
+  this->liveStream = this->configurationParameters->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT);
 
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
   this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;

@@ -912,12 +912,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
     }
   }
 
-  // store segments and fragments to temporary file
+  // store segments and fragments to temporary file (only when not live session)
+  // remove not needed segments and fragments (in case of live session)
   if (SUCCEEDED(result) && ((GetTickCount() - this->lastStoreTime) > 1000))
   {
     this->lastStoreTime = GetTickCount();
 
-    if (this->segmentsFragments->Count() > 0)
+    if ((!this->live) && (this->segmentsFragments->Count() > 0))
     {
       // store all segments and fragments (which are not stored) to file
       if (this->storeFilePath == NULL)
@@ -982,6 +983,28 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
 
           CloseHandle(hTempFile);
           hTempFile = INVALID_HANDLE_VALUE;
+        }
+      }
+    }
+
+    if (this->live)
+    {
+      if ((this->segmentsFragments->Count() > 0) && (this->segmentFragmentProcessing != UINT_MAX))
+      {
+        // leave last segment and fragment in collection in order to not add downloaded and processed segments and fragments
+        while ((this->segmentFragmentProcessing > 0) && (this->segmentsFragments->Count() > 1))
+        {
+          this->segmentsFragments->Remove(0);
+          this->segmentFragmentProcessing--;
+
+          if (this->segmentFragmentDownloading != UINT_MAX)
+          {
+            this->segmentFragmentDownloading--;
+          }
+          if (this->segmentFragmentToDownload != UINT_MAX)
+          {
+            this->segmentFragmentToDownload--;
+          }
         }
       }
     }
