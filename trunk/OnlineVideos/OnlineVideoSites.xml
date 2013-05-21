@@ -1228,6 +1228,20 @@
         <Category xsi:type="RssLink" name="Teen Nick">http://www.nickelodeon.nl/kanalen/28?window=teennick</Category>
       </Categories>
     </Site>
+    <Site name="NicoNico" util="NicoNico" agecheck="false" enabled="true" lang="en">
+      <Description>Niconico is a community website where users can enjoy commenting on videos from genres such as music, comedy, anime, game and gravure.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="child"\sid="[^"]*">\s*<a\shref="(?<url>[^"]*)"\sonclick="switchCategoryTag\('[^']*'\);\sreturn\sfalse;">(?<title>[^<]*)</a>\s*<p\sclass="upNum">(?<description>[^<]*)</p>\s*</li>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li>\s*<a\shref="(?<url>[^"]*)"\sonclick="switchCategoryTag\('[^']*'\);\sreturn\sfalse;">(?<title>[^<]*)</a>\s*</li>]]></item>
+        <item key="dynamicSubSubCategoriesRegEx"><![CDATA[<p\sclass="[^"]*"(?:\sstyle="[^"]*")?><a\shref="(?<url>[^"]*)">See\smore\s(?<title>[^<]*)</a></p>]]></item>
+        <item key="videoListRegEx"><![CDATA[<img\ssrc="(?<ImageUrl>[^"]*)"\salt=""\sclass="img_std96"></a></p>\s*<p\sclass="vinfo_length"><span>(?<Duration>[^<]*)</span></p>\s*</td>\s*<td\sclass="font10"\salign="right"><div\sstyle="width:92px;\soverflow:hidden;\spadding-left:4px;"><nobr>Views:\s<strong\sclass="vinfo_view">[^<]*</strong><br></nobr>\s*<nobr>Comments:\s<strong\sclass="vinfo_res">[^<]*</strong><br></nobr>\s*<nobr>My\sLists:\s<a[^>]*><strong\sclass="vinfo_mylist">[^<]*</strong></a><br></nobr>\s*<nobr>Ads:\s<a[^>]*><strong[^>]*>[^<]*</strong></a><br></nobr>\s*</div></td>\s*</tr>\s*</table>\s*</div>\s*</td>\s*<td[^>]*>\s*<div\sstyle="width:412px;\soverflow:hidden;">\s*<p\sclass="font12\sthumb_num">\s*Uploaded:\s<strong>(?<Airdate>[^<]*)</strong>\s*(?:<span[^>]*>[^<]*</span>\s*)?</p>\s*<p\sclass="font16"\sstyle="margin:2px\s0;"><nobr><a\shref="(?<VideoUrl>[^"]*)"[^>]*>(?<Title>[^<]*)</a></nobr></p>\s*<p[^>]*>(?<Description>[^<]*)</p>\s*</div>\s*</td>\s*</tr>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)">Next</a>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.nicovideo.jp/]]></item>
+        <item key="fileUrlRegEx"><![CDATA[&url=(?<m0>[^&]*)&]]></item>
+        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
+        <item key="searchUrl"><![CDATA[http://www.nicovideo.jp/search/{0}]]></item>
+      </Configuration>
+    </Site>
     <Site name="Nos" util="NOS" agecheck="false" enabled="true" lang="nl">
       <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
       <Configuration>
