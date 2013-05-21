@@ -275,6 +275,7 @@ namespace SiteParser
         #region Category
         private void CreateCategoryRegexButton_Click(object sender, EventArgs e)
         {
+            GuiToUtil(generic);
             categoryRegexTextbox.Text = F2Execute(categoryRegexTextbox.Text, baseUrlTextbox.Text,
                 new string[] { "url", "title", "thumb", "description" }, true);
         }
