@@ -19,9 +19,9 @@ namespace OnlineVideos.Sites
         protected string requestUrlLive = null;
 
         private Regex regEx_VideoListShow;
-        private Regex regEx_VideoListLive;
         private Regex regEx_FileUrlLive;
         private Regex regEx_FileUrlShow;
+        private Regex saveNextPage;
 
         private string hashValueShow;
         private string requestUrlShow;
@@ -29,7 +29,6 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             regEx_VideoListShow = regEx_VideoList;
-            regEx_VideoListLive = new Regex(videoListRegExLive, defaultRegexOptions);
 
             regEx_FileUrlShow = regEx_FileUrl;
             regEx_FileUrlLive = new Regex(fileUrlRegExLive, defaultRegexOptions);
@@ -37,19 +36,26 @@ namespace OnlineVideos.Sites
             hashValueShow = hashValue;
             requestUrlShow = requestUrl;
 
-            int res= base.DiscoverDynamicCategories();
+            saveNextPage = regEx_NextPage;
+
+            int res = base.DiscoverDynamicCategories();
             foreach (Category cat in Settings.Categories)
             {
-                if (cat.SubCategories != null && cat.SubCategories.Count >0)
+                if (cat.SubCategories != null && cat.SubCategories.Count > 0)
                 {
                     cat.SubCategoriesDiscovered = true;
                     foreach (Category subCat in cat.SubCategories)
-                    {
                         subCat.HasSubCategories = true;
-                    }
                 }
                 else
+                {
                     cat.HasSubCategories = false;
+                    if (!String.IsNullOrEmpty(cat.Description))
+                    {
+                        cat.Other = new Regex(videoListRegExLive.Replace("@Cat@", cat.Description), defaultRegexOptions);
+                        cat.Description = String.Empty;
+                    }
+                }
             }
             return res;
         }
@@ -61,7 +67,7 @@ namespace OnlineVideos.Sites
             {
                 string start = video.Airdate;
                 string end = matchGroups["AirdateEnd"].Value;
-                DateTime dtStart,dtEnd;
+                DateTime dtStart, dtEnd;
                 if (DateTime.TryParseExact(start, "yyyy-M-d-H-mm-ss", CultureInfo.InvariantCulture,
                     DateTimeStyles.None, out dtStart) &&
                     DateTime.TryParseExact(end, "yyyy-M-d-H-mm-ss", CultureInfo.InvariantCulture,
@@ -75,9 +81,14 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            string url = ((RssLink)category).Url;
-            bool isLive = url.StartsWith(@"http://live");
-            regEx_VideoList = isLive ? regEx_VideoListLive : regEx_VideoListShow;
+            if (category.Other is Regex)
+                regEx_VideoList = (Regex)category.Other;
+            else
+                regEx_VideoList = regEx_VideoListShow;
+            if (category.Name == "Upcoming" || category.Name == "Live")
+                regEx_NextPage = null;
+            else
+                regEx_NextPage = saveNextPage;
             return base.getVideoList(category);
         }
 
@@ -105,7 +116,7 @@ namespace OnlineVideos.Sites
             {
                 Dictionary<string, string> newOptions = new Dictionary<string, string>();
                 foreach (string key in video.PlaybackOptions.Keys)
-                    newOptions.Add(key,Patch(video.PlaybackOptions[key], m.Groups["contentId"].Value));
+                    newOptions.Add(key, Patch(video.PlaybackOptions[key], m.Groups["contentId"].Value));
                 video.PlaybackOptions = newOptions;
             }
             return Patch(s, m.Groups["contentId"].Value);
