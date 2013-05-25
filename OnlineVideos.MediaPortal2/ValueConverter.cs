@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
+using MediaPortal.Common.Localization;
 using MediaPortal.UI.SkinEngine.MarkupExtensions;
 using MediaPortal.UI.SkinEngine.ScreenManagement;
 using OnlineVideos.Sites;
-using MediaPortal.Common.Localization;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -26,7 +26,14 @@ namespace OnlineVideos.MediaPortal2
                 {
                     // if that does not exist, try icon with the same name as the Util
 					image = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, subDir + @"\" + siteUtil.Settings.UtilName + ".png");
-                    if (System.IO.File.Exists(image)) result = image;
+					if (System.IO.File.Exists(image)) result = image;
+					else
+					{
+						if (siteUtil.Settings.UtilName == "DownloadedVideo")
+						{
+							result = "DownloadedVideo.png";
+						}
+					}
                 }
             }
 			return true;

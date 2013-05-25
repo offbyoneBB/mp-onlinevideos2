@@ -126,6 +126,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Skin\default\images\C33E39CC-910E-41C8-BFFD-9ECCD340B569.jpg" />
+    <Content Include="Skin\default\images\DownloadedVideo.png" />
     <Content Include="Skin\default\images\LanguageFlags\--.png" />
     <Content Include="Skin\default\images\LanguageFlags\cs.png" />
     <Content Include="Skin\default\images\LanguageFlags\da.png" />
