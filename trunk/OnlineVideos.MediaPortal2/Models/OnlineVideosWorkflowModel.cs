@@ -40,6 +40,7 @@ namespace OnlineVideos.MediaPortal2
             OnlineVideoSettings.Instance.UseAgeConfirmation = settings.UseAgeConfirmation;
             OnlineVideoSettings.Instance.CacheTimeout = settings.CacheTimeout;
             OnlineVideoSettings.Instance.UtilTimeout = settings.UtilTimeout;
+			OnlineVideoSettings.Instance.DownloadDir = settings.DownloadFolder;
 
 			OnlineVideoSettings.Instance.AddSupportedVideoExtensions(new List<string>() { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mkv", ".mp4", ".wmv" });
 
@@ -590,6 +591,7 @@ namespace OnlineVideos.MediaPortal2
 		void OnlineVideosSettingsChanged(object sender, EventArgs e)
 		{
 			var settings = (sender as SettingsChangeWatcher<Configuration.Settings>).Settings;
+			OnlineVideoSettings.Instance.DownloadDir = settings.DownloadFolder;
 			OnlineVideoSettings.Instance.CacheTimeout = settings.CacheTimeout;
 			OnlineVideoSettings.Instance.UtilTimeout = settings.UtilTimeout;
 			if (settings.UseAgeConfirmation != OnlineVideoSettings.Instance.UseAgeConfirmation)

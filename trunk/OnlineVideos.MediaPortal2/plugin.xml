@@ -123,6 +123,11 @@
         Text="[OnlineVideos.Settings_CacheTimeout]"
         HelpText="After how many minutes should http data be invalidated in the cache?"
         ClassName="OnlineVideos.MediaPortal2.Configuration.CacheTimeout"/>
+    <ConfigSetting
+        Id="OnlineVideosDownloadFolder"
+        Text="Download Folder"
+        HelpText="Choose a folder where to store downloaded videos."
+        ClassName="OnlineVideos.MediaPortal2.Configuration.DownloadFolder"/>
     <CustomConfigSetting
         Id="OnlineVideosSiteManagement"
         Text="[OnlineVideos.ManageSites]"

@@ -13,6 +13,8 @@ namespace OnlineVideos.MediaPortal2.Configuration
         public int UtilTimeout { get; set; }
         [Setting(SettingScope.User, 30)]
         public int CacheTimeout { get; set; }
+		[Setting(SettingScope.User, "")]
+		public string DownloadFolder { get; set; }
     }
 
     public class UseAgeConfirmation : YesNo
@@ -41,6 +43,7 @@ namespace OnlineVideos.MediaPortal2.Configuration
         {
             get { return 20; }
         }
+
         public override void Save()
         {
             Settings settings = SettingsManager.Load<Settings>();
@@ -86,6 +89,26 @@ namespace OnlineVideos.MediaPortal2.Configuration
             SettingsManager.Save(settings);
         }
     }
+
+	public class DownloadFolder : PathEntry
+	{
+		public DownloadFolder()
+		{
+			_pathSelectionType = PathSelectionType.Folder;
+		}
+
+		public override void Load()
+		{
+			_path = SettingsManager.Load<Settings>().DownloadFolder;
+		}
+
+		public override void Save()
+		{
+			Settings settings = SettingsManager.Load<Settings>();
+			settings.DownloadFolder = _path;
+			SettingsManager.Save(settings);
+		}
+	}
 
 	public class SiteManagement : CustomConfigSetting
 	{
