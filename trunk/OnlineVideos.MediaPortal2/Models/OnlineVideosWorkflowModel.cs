@@ -26,7 +26,7 @@ namespace OnlineVideos.MediaPortal2
 
 			OnlineVideosAppDomain.UseSeperateDomain = true;
 
-            Configuration.Settings settings = ServiceRegistration.Get<ISettingsManager>().Load<Configuration.Settings>();
+            ServiceRegistration.Get<ISettingsManager>().Load<Configuration.Settings>().SetValuesToApi();
             string ovConfigPath = ServiceRegistration.Get<IPathManager>().GetPath(string.Format(@"<CONFIG>\{0}\", Environment.UserName));
             string ovDataPath = ServiceRegistration.Get<IPathManager>().GetPath(@"<DATA>\OnlineVideos");
 
@@ -36,11 +36,6 @@ namespace OnlineVideos.MediaPortal2
 			OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(ovDataPath, "SiteUtils");
             OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(ovDataPath, "Thumbs");
             OnlineVideoSettings.Instance.ConfigDir = ovConfigPath;
-
-            OnlineVideoSettings.Instance.UseAgeConfirmation = settings.UseAgeConfirmation;
-            OnlineVideoSettings.Instance.CacheTimeout = settings.CacheTimeout;
-            OnlineVideoSettings.Instance.UtilTimeout = settings.UtilTimeout;
-			OnlineVideoSettings.Instance.DownloadDir = settings.DownloadFolder;
 
 			OnlineVideoSettings.Instance.AddSupportedVideoExtensions(new List<string>() { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mkv", ".mp4", ".wmv" });
 
@@ -590,14 +585,31 @@ namespace OnlineVideos.MediaPortal2
 
 		void OnlineVideosSettingsChanged(object sender, EventArgs e)
 		{
+			bool rebuildUtils = false;
+			bool rebuildList = false;
+
 			var settings = (sender as SettingsChangeWatcher<Configuration.Settings>).Settings;
-			OnlineVideoSettings.Instance.DownloadDir = settings.DownloadFolder;
-			OnlineVideoSettings.Instance.CacheTimeout = settings.CacheTimeout;
-			OnlineVideoSettings.Instance.UtilTimeout = settings.UtilTimeout;
+
+			// a download dir was now configured or removed
+			if ((string.IsNullOrEmpty(OnlineVideoSettings.Instance.DownloadDir) && !string.IsNullOrEmpty(settings.DownloadFolder)) ||
+				(!string.IsNullOrEmpty(OnlineVideoSettings.Instance.DownloadDir) && string.IsNullOrEmpty(settings.DownloadFolder)))
+			{
+				rebuildUtils = true;
+				rebuildList = true;
+			}
+			// usage of age confirmation has changed
 			if (settings.UseAgeConfirmation != OnlineVideoSettings.Instance.UseAgeConfirmation)
 			{
-				OnlineVideoSettings.Instance.UseAgeConfirmation = settings.UseAgeConfirmation;
-				if (OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
+				rebuildList = true;
+			}
+
+			settings.SetValuesToApi();
+
+			if (OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
+			{
+				if (rebuildUtils)
+					OnlineVideoSettings.Instance.BuildSiteUtilsList();
+				if (rebuildList)
 					RebuildSitesList();
 			}
 		}

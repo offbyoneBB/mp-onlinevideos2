@@ -15,6 +15,14 @@ namespace OnlineVideos.MediaPortal2.Configuration
         public int CacheTimeout { get; set; }
 		[Setting(SettingScope.User, "")]
 		public string DownloadFolder { get; set; }
+
+		public void SetValuesToApi()
+		{
+			OnlineVideoSettings.Instance.UseAgeConfirmation = UseAgeConfirmation;
+			OnlineVideoSettings.Instance.CacheTimeout = CacheTimeout;
+			OnlineVideoSettings.Instance.UtilTimeout = UtilTimeout;
+			OnlineVideoSettings.Instance.DownloadDir = DownloadFolder;
+		}
     }
 
     public class UseAgeConfirmation : YesNo
