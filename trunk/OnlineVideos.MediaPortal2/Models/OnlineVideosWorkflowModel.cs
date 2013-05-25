@@ -265,7 +265,7 @@ namespace OnlineVideos.MediaPortal2
                             currentBackgroundTask = null;
                             VideosList.Remove(SelectedVideo);
 							int selectNr = VideosList.Count;
-							nextPageVideos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r) { Selected = VideosList.Count == selectNr }); });
+							nextPageVideos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r, SelectedSite.Name, SelectedSite.Site.Settings.UtilName) { Selected = VideosList.Count == selectNr }); });
                             if (SelectedSite.Site.HasNextPage) VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
                             VideosList.FireChange();
                             ImageDownloader.GetImages<VideoInfo>(nextPageVideos);
@@ -473,7 +473,7 @@ namespace OnlineVideos.MediaPortal2
         {
             SelectedCategory = category;
             VideosList = new ItemsList();
-			videos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r)); });
+			videos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r, SelectedSite.Name, SelectedSite.Site.Settings.UtilName)); });
 
             if (SelectedSite.Site.HasNextPage) VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
 
@@ -495,7 +495,7 @@ namespace OnlineVideos.MediaPortal2
         void ShowDetails(List<VideoInfo> choices)
         {
             DetailsVideosList = new List<VideoViewModel>();
-            choices.ForEach(r => { r.CleanDescriptionAndTitle(); DetailsVideosList.Add(new VideoViewModel(r)); });
+			choices.ForEach(r => { r.CleanDescriptionAndTitle(); DetailsVideosList.Add(new VideoViewModel(r, SelectedSite.Name, SelectedSite.Site.Settings.UtilName)); });
             ImageDownloader.GetImages<VideoInfo>(choices);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
             workflowManager.NavigatePushAsync(Guids.WorkflowStateDetails, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedVideo.Title });
