@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using MediaPortal.Common.General;
 using MediaPortal.UI.Presentation.DataObjects;
-using MediaPortal.UiComponents.Media.General;
 using MediaPortal.UI.SkinEngine.ScreenManagement;
+using MediaPortal.UiComponents.Media.General;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -61,11 +58,10 @@ namespace OnlineVideos.MediaPortal2
             set { _thumbnailImageProperty.SetValue(value); }
         }
 
-        protected VideoInfo _videoInfo;
-        public VideoInfo VideoInfo
-        {
-            get { return _videoInfo; }
-        }
+        public VideoInfo VideoInfo { get; protected set; }
+
+		public string SiteName { get; protected set; }
+		public string SiteUtilName { get; protected set; }
 
         public VideoViewModel(string title, string thumbImage)
 			: base(Consts.KEY_NAME, title)
@@ -74,10 +70,12 @@ namespace OnlineVideos.MediaPortal2
             _thumbnailImageProperty = new WProperty(typeof(string), thumbImage);
         }
 
-        public VideoViewModel(VideoInfo videoInfo)
+        public VideoViewModel(VideoInfo videoInfo, string siteName, string utilName)
             : base(Consts.KEY_NAME, !string.IsNullOrEmpty(videoInfo.Title2) ? videoInfo.Title2 : videoInfo.Title)
         {
-            _videoInfo = videoInfo;
+            VideoInfo = videoInfo;
+			SiteName = siteName;
+			SiteUtilName = utilName;
 
             _titleProperty = new WProperty(typeof(string), videoInfo.Title);
             _title2Property = new WProperty(typeof(string), videoInfo.Title2);
@@ -95,7 +93,7 @@ namespace OnlineVideos.MediaPortal2
 					else if (e.PropertyName == "Length") Length = (s as VideoInfo).Length;
 				}
 			};
-			_videoInfo.PropertyChanged += eventDelegator.EventDelegate;
+			VideoInfo.PropertyChanged += eventDelegator.EventDelegate;
         }
     }
 }
