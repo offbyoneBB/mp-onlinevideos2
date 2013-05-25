@@ -5,6 +5,7 @@ using MediaPortal.Common;
 using MediaPortal.Common.General;
 using MediaPortal.Common.Localization;
 using MediaPortal.Common.Messaging;
+using MediaPortal.Common.Services.Settings;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
@@ -28,6 +29,9 @@ namespace OnlineVideos.MediaPortal2
 
 			_messageQueue = new AsynchronousMessageQueue(this, new string[] { OnlineVideosMessaging.CHANNEL });
 			_messageQueue.MessageReceived += new MessageReceivedHandler(OnlineVideosMessageReceived);
+
+			_settingsWatcher = new SettingsChangeWatcher<Configuration.Settings>();
+			_settingsWatcher.SettingsChanged += OnlineVideosSettingsChanged;
 		}
 
 		#endregion
@@ -35,6 +39,7 @@ namespace OnlineVideos.MediaPortal2
 		#region Protected fields
 
 		protected AsynchronousMessageQueue _messageQueue;
+		protected SettingsChangeWatcher<Configuration.Settings> _settingsWatcher;
 		protected DialogCloseWatcher _dialogCloseWatcher = null;
 		protected bool newDllsDownloaded = false;
 		protected bool newDataSaved = false;
@@ -539,6 +544,15 @@ namespace OnlineVideos.MediaPortal2
 						else if (updateResult == null) newDataSaved = true;
 						break;
 				}
+			}
+		}
+
+		void OnlineVideosSettingsChanged(object sender, EventArgs e)
+		{
+			var settings = (sender as SettingsChangeWatcher<Configuration.Settings>).Settings;			
+			if (settings.UseAgeConfirmation != OnlineVideoSettings.Instance.UseAgeConfirmation)
+			{
+				GetFilteredAndSortedSites();
 			}
 		}
 

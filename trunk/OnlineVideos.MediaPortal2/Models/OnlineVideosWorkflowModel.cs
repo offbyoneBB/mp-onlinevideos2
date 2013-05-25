@@ -7,6 +7,7 @@ using MediaPortal.Common.Localization;
 using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.Messaging;
 using MediaPortal.Common.PathManager;
+using MediaPortal.Common.Services.Settings;
 using MediaPortal.Common.Settings;
 using MediaPortal.Common.Threading;
 using MediaPortal.UI.Presentation.DataObjects;
@@ -55,9 +56,13 @@ namespace OnlineVideos.MediaPortal2
 
 			_messageQueue = new AsynchronousMessageQueue(this, new string[] { OnlineVideosMessaging.CHANNEL });
 			_messageQueue.MessageReceived += new MessageReceivedHandler(OnlineVideosMessageReceived);
+
+			_settingsWatcher = new SettingsChangeWatcher<Configuration.Settings>();
+			_settingsWatcher.SettingsChanged += OnlineVideosSettingsChanged;
         }
 
 		protected AsynchronousMessageQueue _messageQueue;
+		protected SettingsChangeWatcher<Configuration.Settings> _settingsWatcher;
 
 		SiteViewModel _focusedSite;
 		public SiteViewModel FocusedSite
@@ -93,7 +98,14 @@ namespace OnlineVideos.MediaPortal2
 		public void RebuildSitesList()
 		{
 			SitesList.Clear();
-			OnlineVideoSettings.Instance.SiteUtilsList.Values.ToList().ForEach(s => SitesList.Add(new SiteViewModel(s)));
+			foreach (var site in OnlineVideoSettings.Instance.SiteUtilsList)
+			{
+				if (site.Value.Settings.IsEnabled &&
+					(!site.Value.Settings.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
+				{
+					SitesList.Add(new SiteViewModel(site.Value));
+				}
+			}
 			SitesList.FireChange();
 		}
 
@@ -572,6 +584,19 @@ namespace OnlineVideos.MediaPortal2
 						}
 						break;
 				}
+			}
+		}
+
+		void OnlineVideosSettingsChanged(object sender, EventArgs e)
+		{
+			var settings = (sender as SettingsChangeWatcher<Configuration.Settings>).Settings;
+			OnlineVideoSettings.Instance.CacheTimeout = settings.CacheTimeout;
+			OnlineVideoSettings.Instance.UtilTimeout = settings.UtilTimeout;
+			if (settings.UseAgeConfirmation != OnlineVideoSettings.Instance.UseAgeConfirmation)
+			{
+				OnlineVideoSettings.Instance.UseAgeConfirmation = settings.UseAgeConfirmation;
+				if (OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
+					RebuildSitesList();
 			}
 		}
 
