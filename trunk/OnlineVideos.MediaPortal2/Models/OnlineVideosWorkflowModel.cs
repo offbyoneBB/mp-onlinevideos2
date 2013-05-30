@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using MediaPortal.Common;
 using MediaPortal.Common.General;
 using MediaPortal.Common.Localization;
-using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.Messaging;
 using MediaPortal.Common.PathManager;
 using MediaPortal.Common.Services.Settings;
 using MediaPortal.Common.Settings;
-using MediaPortal.Common.Threading;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
-using MediaPortal.UiComponents.Media.General;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -48,11 +44,14 @@ namespace OnlineVideos.MediaPortal2
 			// The default .Net implementation for URI parsing removes trailing dots, which is not correct
 			Utils.FixUriTrailingDots();
 
+			// load the xml that holds all configured sites
 			OnlineVideoSettings.Instance.LoadSites();
 
+			// create a message queue where we listen to changes to the sites
 			_messageQueue = new AsynchronousMessageQueue(this, new string[] { OnlineVideosMessaging.CHANNEL });
 			_messageQueue.MessageReceived += new MessageReceivedHandler(OnlineVideosMessageReceived);
 
+			// listen to changes of configuration settings
 			_settingsWatcher = new SettingsChangeWatcher<Configuration.Settings>();
 			_settingsWatcher.SettingsChanged += OnlineVideosSettingsChanged;
         }
@@ -85,340 +84,216 @@ namespace OnlineVideos.MediaPortal2
         public ItemsList VideosList { get; protected set; }
         public List<VideoViewModel> DetailsVideosList { get; protected set; }
 
-        /// <summary>The MP2 simple dialog requires Items to be of type <see cref="ListItem"/> and have a Name to show a label in the GUI.</summary>
-        public ItemsList PlaybackOptions { get; protected set; }
-        
-        public bool IsExecutingBackgroundTask { get { return currentBackgroundTask != null; } }
-        IWork currentBackgroundTask = null;
-
-		public void RebuildSitesList()
-		{
-			SitesList.Clear();
-			foreach (var site in OnlineVideoSettings.Instance.SiteUtilsList)
-			{
-				if (site.Value.Settings.IsEnabled &&
-					(!site.Value.Settings.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
-				{
-					SitesList.Add(new SiteViewModel(site.Value));
-				}
-			}
-			SitesList.FireChange();
-		}
-
-        public void SelectSite(object selectedItem)
+		public void SelectSite(SiteViewModel siteModel)
         {
-            if (currentBackgroundTask != null) return;
-            SiteViewModel siteModel = selectedItem as SiteViewModel;
-            if (siteModel != null)
+			if (BackgroundTask.Instance.IsExecuting) return;
+            if (!siteModel.Site.Settings.DynamicCategoriesDiscovered)
             {
-                if (!siteModel.Site.Settings.DynamicCategoriesDiscovered)
-                {
-                    ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-                    currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-                        =>
-                        {
-                            try
-                            {
-                                siteModel.Site.DiscoverDynamicCategories();
-                            }
-                            catch (Exception ex)
-                            {
-                                currentBackgroundTask.Exception = ex;
-                            }
-                        },
-                        (args) =>
-                        {
-                            ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                            SelectedSite = siteModel;
-                            ShowCategories(siteModel.Site.Settings.Categories, SelectedSite.Name);
-                            currentBackgroundTask = null;
-                        });
-                }
-                else
-                {
-                    SelectedSite = siteModel;
-                    ShowCategories(siteModel.Site.Settings.Categories, SelectedSite.Name);
-                }
+				BackgroundTask.Instance.Start<bool>(
+					() =>
+					{
+						siteModel.Site.DiscoverDynamicCategories();
+						return true;
+					},
+					(success, result) =>
+					{
+						if (success)
+						{
+							SelectedSite = siteModel;
+							ShowCategories(siteModel.Site.Settings.Categories, SelectedSite.Name);
+						}
+					});
+            }
+            else
+            {
+                SelectedSite = siteModel;
+                ShowCategories(siteModel.Site.Settings.Categories, SelectedSite.Name);
             }
         }
 
-        public void SelectCategory(object selectedItem)
+		public void SelectCategory(CategoryViewModel categoryModel)
         {
-            if (currentBackgroundTask != null) return;
-            CategoryViewModel categoryModel = selectedItem as CategoryViewModel;
-            if (categoryModel != null)
+			if (BackgroundTask.Instance.IsExecuting) return;
+			if (categoryModel.Category is NextPageCategory)
             {
-				if (categoryModel.Category is NextPageCategory)
-                {
-                    // append next page categories
-                    ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-                    currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-                    =>
-                    {
-                        try
-                        {
-							SelectedSite.Site.DiscoverNextPageCategories(categoryModel.Category as NextPageCategory);
-                        }
-                        catch (Exception ex)
-                        {
-                            currentBackgroundTask.Exception = ex;
-                        }
+                // discover and append next page categories
+                BackgroundTask.Instance.Start<bool>(
+					() =>
+					{
+						SelectedSite.Site.DiscoverNextPageCategories(categoryModel.Category as NextPageCategory);
+						return true;
                     },
-                    (args) =>
-                    {
-                        ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                        currentBackgroundTask = null;
-                        int selectNr = CategoriesList.Count - 1;
-                        CategoriesList.Clear();
-						IList<Category> catList = categoryModel.Category.ParentCategory == null ? (IList<Category>)SelectedSite.Site.Settings.Categories : categoryModel.Category.ParentCategory.SubCategories;
-						foreach (Category c in catList) CategoriesList.Add(new CategoryViewModel(c) { Selected = CategoriesList.Count == selectNr });
-                        ImageDownloader.GetImages<Category>(catList);
-                        CategoriesList.FireChange();
-                    });
-                }
-                else
+					(success, result) =>
+					{
+						if (success)
+						{
+							int selectNr = CategoriesList.Count - 1;
+							CategoriesList.Clear();
+							IList<Category> catList = categoryModel.Category.ParentCategory == null ? (IList<Category>)SelectedSite.Site.Settings.Categories : categoryModel.Category.ParentCategory.SubCategories;
+							foreach (Category c in catList) CategoriesList.Add(new CategoryViewModel(c) { Selected = CategoriesList.Count == selectNr });
+							ImageDownloader.GetImages<Category>(catList);
+							CategoriesList.FireChange();
+						}
+					});
+            }
+            else
+            {
+				if (categoryModel.Category.HasSubCategories)
                 {
-					if (categoryModel.Category.HasSubCategories)
+					if (!categoryModel.Category.SubCategoriesDiscovered)
                     {
-						if (!categoryModel.Category.SubCategoriesDiscovered)
-                        {
-                            ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-                            currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-                                =>
-                                {
-                                    try
-                                    {
-										SelectedSite.Site.DiscoverSubCategories(categoryModel.Category);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        currentBackgroundTask.Exception = ex;
-                                    }
-                                },
-                                (args) =>
-                                {
-                                    ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
+						// discover and show subcategories
+                        BackgroundTask.Instance.Start<bool>(
+							() =>
+							{
+								SelectedSite.Site.DiscoverSubCategories(categoryModel.Category);
+								return true;
+                            },
+                            (success, result) =>
+							{
+								if (success)
+								{
 									SelectedCategory = categoryModel;
 									ShowCategories(categoryModel.Category.SubCategories, categoryModel.Name);
-                                    currentBackgroundTask = null;
-                                });
-                        }
-                        else
-                        {
-							SelectedCategory = categoryModel;
-							ShowCategories(categoryModel.Category.SubCategories, categoryModel.Name);
-                        }
+								}
+                            });
                     }
                     else
                     {
-                        List<VideoInfo> videos = null;
-                        ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-                        currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-                            =>
-                            {
-                                try
-                                {
-									videos = SelectedSite.Site.getVideoList(categoryModel.Category);
-                                }
-                                catch (Exception ex)
-                                {
-                                    currentBackgroundTask.Exception = ex;
-                                }
-                            },
-                            (args) =>
-                            {
-                                ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-								ShowVideos(categoryModel, videos);
-                                currentBackgroundTask = null;
-                            });
+						SelectedCategory = categoryModel;
+						ShowCategories(categoryModel.Category.SubCategories, categoryModel.Name);
                     }
+                }
+                else
+                {
+					// discover and show videos of this category
+                    BackgroundTask.Instance.Start<List<VideoInfo>>(
+						() =>
+						{
+							return SelectedSite.Site.getVideoList(categoryModel.Category);
+                        },
+                        (success, videos) =>
+						{
+							if (success)
+							{
+								ShowVideos(categoryModel, videos);
+							}
+                        });
                 }
             }
         }
 
-        public void SelectVideo(object selectedItem)
+		public void SelectVideo(VideoViewModel videoModel)
         {
-            if (currentBackgroundTask != null) return;
-            SelectedVideo = selectedItem as VideoViewModel;
-            if (SelectedVideo != null)
+			if (BackgroundTask.Instance.IsExecuting) return;
+			if (videoModel.VideoInfo == null)
             {
-                if (SelectedVideo.VideoInfo == null)
-                {
-                    // append next page videos
-                    List<VideoInfo> nextPageVideos = null;
-                    ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-                    currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-                        =>
-                        {
-                            try
-                            {
-                                nextPageVideos = SelectedSite.Site.getNextPageVideos();
-                            }
-                            catch (Exception ex)
-                            {
-                                currentBackgroundTask.Exception = ex;
-                            }
-                        },
-                        (args) =>
-                        {
-                            ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                            currentBackgroundTask = null;
-                            VideosList.Remove(SelectedVideo);
+                // discover and append next page videos
+				BackgroundTask.Instance.Start<List<VideoInfo>>(
+					() =>
+					{
+						return SelectedSite.Site.getNextPageVideos();
+					},
+					(success, nextPageVideos) =>
+					{
+						if (success)
+						{
+							VideosList.Remove(videoModel);
 							int selectNr = VideosList.Count;
-							nextPageVideos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r, SelectedSite.Name, SelectedSite.Site.Settings.UtilName) { Selected = VideosList.Count == selectNr }); });
-                            if (SelectedSite.Site.HasNextPage) VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
-                            VideosList.FireChange();
-                            ImageDownloader.GetImages<VideoInfo>(nextPageVideos);
+							nextPageVideos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r, SelectedCategory != null ? SelectedCategory.Category : null, SelectedSite.Name, SelectedSite.Site.Settings.UtilName, false) { Selected = VideosList.Count == selectNr }); });
+							if (SelectedSite.Site.HasNextPage) VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
+							VideosList.FireChange();
+							ImageDownloader.GetImages<VideoInfo>(nextPageVideos);
+						}
+					});
+            }
+            else
+            {
+				if (SelectedSite.Site is IChoice && videoModel.VideoInfo.HasDetails)
+                {
+                    // get details videos and show details view
+                    BackgroundTask.Instance.Start<List<VideoInfo>>(
+						() =>
+						{
+                            return ((IChoice)SelectedSite.Site).getVideoChoices(videoModel.VideoInfo);
+                        },
+						(success, choices) =>
+                        {
+							if (success)
+							{
+								SelectedVideo = videoModel;
+								ShowDetails(choices);
+							}
                         });
                 }
                 else
                 {
-                    if (SelectedSite.Site is IChoice && SelectedVideo.VideoInfo.HasDetails)
-                    {
-                        // show details view
-                        List<VideoInfo> choices = null;
-                        ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-                        currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-                            =>
-                            {
-                                try
-                                {
-                                    choices = ((IChoice)SelectedSite.Site).getVideoChoices(SelectedVideo.VideoInfo);
-                                }
-                                catch (Exception ex)
-                                {
-                                    currentBackgroundTask.Exception = ex;
-                                }
-                            },
-                            (args) =>
-                            {
-                                ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                                currentBackgroundTask = null;
-                                ShowDetails(choices);
-                            });
-                    }
-                    else
-                    {
-                        List<string> urls = null;
-                        ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-                        currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-                            =>
-                            {
-                                try
-                                {
-                                    urls = SelectedSite.Site.getMultipleVideoUrls(SelectedVideo.VideoInfo);
-                                }
-                                catch (Exception ex)
-                                {
-                                    currentBackgroundTask.Exception = ex;
-                                }
-                            },
-                            (args) =>
+					// get playback urls and play or show dialog to select playback options
+					BackgroundTask.Instance.Start<List<string>>(
+						() =>
+                        {
+							return SelectedSite.Site.getMultipleVideoUrls(videoModel.VideoInfo);
+                        },
+						(success, urls) =>
+						{
+							if (success)
 							{
-								ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-								currentBackgroundTask = null;
-
-								// when no PlaybackOptions are set, directly go to playing the result
-								if (SelectedVideo.VideoInfo.PlaybackOptions == null || SelectedVideo.VideoInfo.PlaybackOptions.Count == 0)
+								Utils.RemoveInvalidUrls(urls);
+								// if no valid urls were returned show error msg
+								if (urls == null || urls.Count == 0)
 								{
-									Play(SelectedVideo, urls);
+									ServiceRegistration.Get<IDialogManager>().ShowDialog("[OnlineVideos.Error]", "[OnlineVideos.UnableToPlayVideo]", DialogType.OkDialog, false, DialogButtonType.Ok);
 								}
 								else
 								{
-									ShowPlaybackOptions(SelectedVideo, urls);
+									SelectedVideo = videoModel;
+									SelectedVideo.ChoosePlaybackOptions(urls[0], (url) => { urls[0] = url; SelectedVideo.Play(urls); });
 								}
-							});
-                    }
+							}
+						});
                 }
             }
         }
 
-        public void SelectDetailsVideo(object selectedItem)
+        public void SelectDetailsVideo(VideoViewModel videoModel)
         {
-            if (currentBackgroundTask != null) return;
-            SelectedDetailsVideo = selectedItem as VideoViewModel;
-			if (SelectedDetailsVideo != null)
-            {
-                List<string> urls = null;
-                ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-                currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-                    =>
+			if (BackgroundTask.Instance.IsExecuting) return;
+			BackgroundTask.Instance.Start<List<string>>(
+				() =>
                 {
-                    try
-                    {
-						urls = SelectedSite.Site.getMultipleVideoUrls(SelectedDetailsVideo.VideoInfo);
-                    }
-                    catch (Exception ex)
-                    {
-                        currentBackgroundTask.Exception = ex;
-                    }
+					return SelectedSite.Site.getMultipleVideoUrls(videoModel.VideoInfo);
                 },
-                (args) =>
+				(success, urls) =>
                 {
-                    ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                    currentBackgroundTask = null;
-
-					if (SelectedDetailsVideo.VideoInfo.PlaybackOptions != null && SelectedDetailsVideo.VideoInfo.PlaybackOptions.Count > 1)
-                    {
-						ShowPlaybackOptions(SelectedDetailsVideo, urls);
-                    }
-                    else
-                    {
-						Play(SelectedDetailsVideo, urls);
-                    }
+					if (success)
+					{
+						Utils.RemoveInvalidUrls(urls);
+						// if no valid urls were returned show error msg
+						if (urls == null || urls.Count == 0)
+						{
+							ServiceRegistration.Get<IDialogManager>().ShowDialog("[OnlineVideos.Error]", "[OnlineVideos.UnableToPlayVideo]", DialogType.OkDialog, false, DialogButtonType.Ok);
+						}
+						else
+						{
+							SelectedDetailsVideo = videoModel;
+							SelectedDetailsVideo.ChoosePlaybackOptions(urls[0], (url) => { urls[0] = url; SelectedDetailsVideo.Play(urls); });
+						}
+					}
                 });
-            }
-        }
-
-        public void SelectPlaybackOption(ListItem selectedItem)
-        {
-			IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
-			var video = (workflowManager.CurrentNavigationContext.WorkflowState.StateId == Guids.WorkflowStateVideos) ? SelectedVideo : SelectedDetailsVideo;
-            // resolve playback option
-			string resolvedUrl = null;
-			ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-			currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-				=>
-			{
-				try
-				{
-					resolvedUrl = video.VideoInfo.GetPlaybackOptionUrl(((KeyValuePair<string, string>)selectedItem.AdditionalProperties[Consts.KEY_MEDIA_ITEM]).Key);
-				}
-				catch (Exception ex)
-				{
-					currentBackgroundTask.Exception = ex;
-				}
-			},
-			(args) =>
-			{
-				ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-				currentBackgroundTask = null;
-				var urls = (List<string>)selectedItem.AdditionalProperties[Constants.KEY_PLAYBACK_URLS];
-				urls[(int)selectedItem.AdditionalProperties[Consts.KEY_INDEX]] = resolvedUrl;
-				Play(video, urls);
-			});
         }
 
         public void StartSearch()
         {
-            List<ISearchResultItem> result = null;
-            ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-            currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-                =>
-            {
-                try
+			if (BackgroundTask.Instance.IsExecuting) return;
+			BackgroundTask.Instance.Start<List<ISearchResultItem>>(
+				() =>
+				{
+                    return SelectedSite.Site.DoSearch(SearchString);
+                
+				},
+				(success, result) =>
                 {
-                    result = SelectedSite.Site.DoSearch(SearchString);
-                }
-                catch (Exception ex)
-                {
-                    currentBackgroundTask.Exception = ex;
-                }
-            },
-                (args) =>
-                {
-                    ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                    if (result != null && result.Count > 0)
+                    if (success && result != null && result.Count > 0)
                     {
                         // pop all states up to the site state from the current navigation stack
                         IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
@@ -441,22 +316,22 @@ namespace OnlineVideos.MediaPortal2
                             ShowCategories(searchCategory.SubCategories, searchCategory.Name);
                         }
                     }
-                    currentBackgroundTask = null;
                 });
         }
 
-        void Play(VideoViewModel videoInfo, List<string> urls)
-        {
-			if (urls.Count == 1)
-				MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayItem(new PlaylistItem(videoInfo, urls[0]));
-			else
-				MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayItems(
-					new MediaPortal.UiComponents.Media.Models.GetMediaItemsDlgt(() => 
-					{
-						return new List<MediaItem>(urls.ConvertAll<MediaItem>(u => new PlaylistItem(videoInfo, u)));
-					}), 
-					MediaPortal.UI.Presentation.Players.AVType.Video);
-        }
+		void RebuildSitesList()
+		{
+			SitesList.Clear();
+			foreach (var site in OnlineVideoSettings.Instance.SiteUtilsList)
+			{
+				if (site.Value.Settings.IsEnabled &&
+					(!site.Value.Settings.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
+				{
+					SitesList.Add(new SiteViewModel(site.Value));
+				}
+			}
+			SitesList.FireChange();
+		}
 
         void ShowCategories(IList<Category> categories, string navigationLabel)
         {
@@ -473,7 +348,7 @@ namespace OnlineVideos.MediaPortal2
         {
             SelectedCategory = category;
             VideosList = new ItemsList();
-			videos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r, SelectedSite.Name, SelectedSite.Site.Settings.UtilName)); });
+			videos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r, SelectedCategory != null ? SelectedCategory.Category : null, SelectedSite.Name, SelectedSite.Site.Settings.UtilName, false)); });
 
             if (SelectedSite.Site.HasNextPage) VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
 
@@ -495,53 +370,11 @@ namespace OnlineVideos.MediaPortal2
         void ShowDetails(List<VideoInfo> choices)
         {
             DetailsVideosList = new List<VideoViewModel>();
-			choices.ForEach(r => { r.CleanDescriptionAndTitle(); DetailsVideosList.Add(new VideoViewModel(r, SelectedSite.Name, SelectedSite.Site.Settings.UtilName)); });
+			choices.ForEach(r => { r.CleanDescriptionAndTitle(); DetailsVideosList.Add(new VideoViewModel(r, SelectedCategory != null ? SelectedCategory.Category : null, SelectedSite.Name, SelectedSite.Site.Settings.UtilName, true)); });
             ImageDownloader.GetImages<VideoInfo>(choices);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
             workflowManager.NavigatePushAsync(Guids.WorkflowStateDetails, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedVideo.Title });
         }
-
-		void ShowPlaybackOptions(VideoViewModel video, List<string> urls)
-		{
-			// if just one option set, resolve it and play that one
-			if (video.VideoInfo.PlaybackOptions.Count == 1)
-			{
-				ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-				currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-					=>
-				{
-					try
-					{
-						urls[0] = video.VideoInfo.GetPlaybackOptionUrl(video.VideoInfo.PlaybackOptions.First().Key);
-					}
-					catch (Exception ex)
-					{
-						currentBackgroundTask.Exception = ex;
-					}
-				},
-				(args) =>
-				{
-					ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-					currentBackgroundTask = null;
-					Play(video, urls);
-				});
-			}
-			else
-			{
-				string defaultUrl = urls[0];
-				PlaybackOptions = new ItemsList();
-				foreach (var item in video.VideoInfo.PlaybackOptions)
-				{
-					var listItem = new ListItem(Consts.KEY_NAME, item.Key);
-					listItem.AdditionalProperties.Add(Consts.KEY_MEDIA_ITEM, item);
-					listItem.AdditionalProperties.Add(Consts.KEY_INDEX, 0);
-					listItem.AdditionalProperties.Add(Constants.KEY_PLAYBACK_URLS, urls);
-					listItem.Selected = item.Value == defaultUrl;
-					PlaybackOptions.Add(listItem);
-				}
-				ServiceRegistration.Get<IScreenManager>().ShowDialog("dialogPlaybackOptions");
-			}
-		}
 
 		void OnlineVideosMessageReceived(AsynchronousMessageQueue queue, SystemMessage message)
 		{
@@ -618,7 +451,7 @@ namespace OnlineVideos.MediaPortal2
 
 		public bool CanEnterState(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
         {
-            return currentBackgroundTask == null; // only can enter a new state when not doing any background work
+            return !BackgroundTask.Instance.IsExecuting; // only can enter a new state when not doing any background work
         }
 
         public void ChangeModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext, bool push)

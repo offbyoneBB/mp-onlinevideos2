@@ -172,6 +172,9 @@
             <Button.Command>
               <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectVideo" Parameters="{LateBoundValue BindingValue={Binding}}"/>
             </Button.Command>
+            <Button.ContextMenuCommand>
+              <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+            </Button.ContextMenuCommand>
             <Button.Triggers>
               <Trigger Property="HasFocus" Value="True">
                 <Setter TargetName="ItemLabelBig" Property="Scroll" Value="Auto"/>
@@ -196,6 +199,28 @@
               <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
             </Trigger>
           </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="ovsDetailsVideoItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button Style="{ThemeResource ButtonWideStyle}"
+              Command="{DynamicResource ResourceKey=Menu_Command}"
+              IsEnabled="{Binding Enabled}" SetFocus="{Binding Path=Selected,Mode=OneTime}">
+            <Button.ContextMenuCommand>
+              <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+            </Button.ContextMenuCommand>
+            <Button.Triggers>
+              <Trigger Property="HasFocus" Value="True">
+                <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+                <Setter Property="StackPanel.ZIndex" Value="100.0"/>
+              </Trigger>
+            </Button.Triggers>
+          </Button>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -241,6 +266,10 @@
     <Setter Property="ItemTemplate" Value="{ThemeResource ovsVideoItemDataTemplate}"/>
     <Setter Property="ItemContainerStyle" Value="{ThemeResource ovsVideoItemContainerStyle}"/>
     <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
+  </Style>
+
+  <Style x:Key="ovsDetailsVideosListViewStyle" BasedOn="{ThemeResource MenuListViewStyle}">
+    <Setter Property="ItemContainerStyle" Value="{ThemeResource ovsDetailsVideoItemContainerStyle}"/>
   </Style>
 
 	<DataTemplate x:Key="ovsSiteSettingsItemDataTemplate" DataType="{x:Type ovs:SiteSettingViewModel}">

@@ -58,7 +58,7 @@
 						<Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Plot}"
 								FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true" Scroll="Auto" Width="100" />
 					</DockPanel>
-					<ListView Grid.Column="1" Style="{ThemeResource MenuListViewStyle}" ItemsSource="{Binding Path=DetailsVideosList,Mode=OneTime}" SetFocus="true">
+					<ListView Grid.Column="1" Style="{ThemeResource ovsDetailsVideosListViewStyle}" ItemsSource="{Binding Path=DetailsVideosList,Mode=OneTime}" SetFocus="true">
 						<ListView.Resources>
 							<CommandList x:Key="Menu_Command">
 								<Command Source="{StaticResource OnlineVideosModel}" Path="SelectDetailsVideo">

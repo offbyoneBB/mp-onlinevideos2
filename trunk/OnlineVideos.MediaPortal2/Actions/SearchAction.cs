@@ -36,7 +36,7 @@ namespace OnlineVideos.MediaPortal2
         {
             if (context.WorkflowModelId == Guids.WorkFlowModelOV)
             {
-                if (!((OnlineVideosWorkflowModel)context.Models[context.WorkflowModelId.Value]).IsExecutingBackgroundTask)
+                if (!BackgroundTask.Instance.IsExecuting)
                 {
                     if (context.WorkflowState.Name == Guids.WorkflowStateCategoriesName || context.WorkflowState.StateId == Guids.WorkflowStateVideos)
                     {

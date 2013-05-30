@@ -68,6 +68,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackgroundTask.cs" />
     <Compile Include="CommandContainer.cs" />
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="DynamicWorkflow.cs" />
@@ -176,11 +177,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\dialogSearch.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\dialogPlaybackOptions.xaml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>

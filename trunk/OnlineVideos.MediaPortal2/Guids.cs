@@ -29,8 +29,8 @@ namespace OnlineVideos.MediaPortal2
 
 	public static class Constants
 	{
-		public const string KEY_PLAYBACK_URLS = "ovsPlaybackUrls";
 		public const string KEY_VALUE = "ovsItemValue";
+		public const string KEY_HANDLER = "ovsHandler";
 
 		public const string CONTEXT_VAR_ITEMS = "Items";
 		public const string CONTEXT_VAR_COMMAND = "Command";
