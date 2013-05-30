@@ -2090,28 +2090,6 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        private void removeInvalidEntries(List<string> loUrlList)
-        {
-            // remove all invalid entries from the list of playback urls
-            if (loUrlList != null)
-            {
-                int i = 0;
-                while (i < loUrlList.Count)
-                {
-                    if (string.IsNullOrEmpty(loUrlList[i]) ||
-                        !Utils.IsValidUri((loUrlList[i].IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? loUrlList[i].Substring(0, loUrlList[i].IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : loUrlList[i]))
-                    {
-                        Log.Instance.Debug("removed invalid url: '{0}'", loUrlList[i]);
-                        loUrlList.RemoveAt(i);
-                    }
-                    else
-                    {
-                        i++;
-                    }
-                }
-            }
-        }
-
         internal static bool GetUserInputString(ref string sString, bool password)
         {
             VirtualKeyboard keyBoard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
@@ -2244,7 +2222,7 @@ namespace OnlineVideos.MediaPortal1
 
         private void Play_Step2(PlayListItem playItem, List<String> loUrlList, bool goFullScreen, bool skipPlaybackOptionsDialog)
         {
-            removeInvalidEntries(loUrlList);
+            Utils.RemoveInvalidUrls(loUrlList);
 
             // if no valid urls were returned show error msg
             if (loUrlList == null || loUrlList.Count == 0)
@@ -2610,7 +2588,7 @@ namespace OnlineVideos.MediaPortal1
 
         private void SaveVideo_Step2(DownloadList saveItems, List<String> loUrlList, bool? enque)
         {
-            removeInvalidEntries(loUrlList);
+			Utils.RemoveInvalidUrls(loUrlList);
 
             // if no valid urls were returned show error msg
             if (loUrlList == null || loUrlList.Count == 0)

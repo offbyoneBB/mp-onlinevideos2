@@ -144,8 +144,9 @@ namespace OnlineVideos.MediaPortal2
 				}
 				if (newDataSaved || newDllsDownloaded)
 				{
-					OnlineVideoSettings.Instance.BuildSiteUtilsList();
-					(ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelOV) as OnlineVideosWorkflowModel).RebuildSitesList();
+					SystemMessage msg = new SystemMessage(OnlineVideosMessaging.MessageType.SitesUpdated);
+					msg.MessageData[OnlineVideosMessaging.UPDATE_RESULT] = newDllsDownloaded ? new bool?(true) : new bool?();
+					ServiceRegistration.Get<IMessageBroker>().Send(OnlineVideosMessaging.CHANNEL, msg);
 				}
 			}
 			newDataSaved = false;

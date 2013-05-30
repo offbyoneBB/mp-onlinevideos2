@@ -314,6 +314,31 @@ namespace OnlineVideos
             return Uri.TryCreate(url, UriKind.Absolute, out temp);
         }
 
+		/// <summary>
+		/// Remove all items from a List that are not a valid Url
+		/// </summary>
+		/// <param name="urls"></param>
+		public static void RemoveInvalidUrls(List<string> urls)
+		{
+			if (urls != null)
+			{
+				int i = 0;
+				while (i < urls.Count)
+				{
+					if (string.IsNullOrEmpty(urls[i]) ||
+						!Utils.IsValidUri((urls[i].IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? urls[i].Substring(0, urls[i].IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : urls[i]))
+					{
+						Log.Debug("Removed invalid url: '{0}'", urls[i]);
+						urls.RemoveAt(i);
+					}
+					else
+					{
+						i++;
+					}
+				}
+			}
+		}
+
         public static string GetNextFileName(string fullFileName)
         {
             if (string.IsNullOrEmpty(fullFileName)) throw new ArgumentNullException("fullFileName");
