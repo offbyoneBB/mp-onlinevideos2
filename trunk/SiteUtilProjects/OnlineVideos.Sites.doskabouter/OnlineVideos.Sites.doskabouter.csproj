@@ -130,6 +130,7 @@
     <Compile Include="SesameStreetUtil.cs" />
     <Compile Include="SouthParkUtil.cs" />
     <Compile Include="ThatGuyWithTheGlassesUtil.cs" />
+    <Compile Include="TheEscapistUtil.cs" />
     <Compile Include="TVEUtil.cs" />
     <Compile Include="TVNZOnDemandUtil.cs" />
     <Compile Include="WatchSeriesUtil.cs" />
