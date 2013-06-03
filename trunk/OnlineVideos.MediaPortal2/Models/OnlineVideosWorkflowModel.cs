@@ -405,10 +405,24 @@ namespace OnlineVideos.MediaPortal2
 						}
 						else
 						{
+							// called when entering OnlineVideos first time (after sites have been updated)
 							if (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
 							{
-								OnlineVideoSettings.Instance.BuildSiteUtilsList();
-								RebuildSitesList();
+								// show the busy indicator, because loading site dlls takes some seconds
+								ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
+								try
+								{
+									OnlineVideoSettings.Instance.BuildSiteUtilsList();
+									RebuildSitesList();
+								}
+								catch (Exception ex)
+								{
+									Log.Error(ex);
+								}
+								finally
+								{
+									ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
+								}
 							}
 						}
 						break;
