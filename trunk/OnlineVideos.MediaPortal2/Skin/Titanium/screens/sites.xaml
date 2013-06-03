@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Source="screens\master_menu.xaml">
+    <Include.Resources>
+
+        <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+
+      <!-- Header -->
+      <ResourceWrapper x:Key="Header_Text" Resource="OnlineVideos"/>
+
+		<!-- Contents -->
+        <ControlTemplate x:Key="Contents_Template">
+			<DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" LastChildFill="true">
+				
+				<Label Color="{ThemeResource HintTextColor}" DockPanel.Dock="Bottom" Height="40" Margin="100,0,100,1"
+					  HorizontalAlignment="Stretch" VerticalAlignment="Center" Wrap="True" Scroll="Auto" FontSize="{ThemeResource SmallerFontSize}"
+					  DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"
+					  Content="{Binding Description}" />
+
+				<ListView x:Name="siteslist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
+							Style="{ThemeResource ovsSitesListViewStyle}"
+							CurrentItem="{Binding Path=FocusedSite, Mode=OneWayToSource}"
+							ItemsSource="{Binding Path=SitesList}" SetFocusPrio="RestoreState"/>
+            </DockPanel>
+        </ControlTemplate>
+
+    </Include.Resources>
+</Include>
