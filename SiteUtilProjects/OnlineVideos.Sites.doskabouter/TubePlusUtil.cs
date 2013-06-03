@@ -314,7 +314,7 @@ namespace OnlineVideos.Sites
                 string extension = Path.GetExtension(name);
                 if (String.IsNullOrEmpty(extension) || !OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension))
                     name += ".flv";
-                if (category.ParentCategory != null && category.ParentCategory.Other.Equals(Mode.Series))
+                if (category.ParentCategory != null && Mode.Series.Equals(category.ParentCategory.Other))
                 {
                     string season = category.Name.Split('(')[0];
                     name = category.ParentCategory.Name + ' ' + season + ' ' + name;
