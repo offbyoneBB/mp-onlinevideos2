@@ -38,7 +38,9 @@ namespace OnlineVideos.WebService
                         reports.Columns[reports.Columns.Count - 1].Visible = User.Identity.Name == site.Owner_FK || User.IsInRole("admin");
                         var reportsQuery = from a in dc.Report where a.Site_FK == this.Request.Params["site"] select new { Message = a.Message, Type = a.Type, Date = a.Date, };
                         reportsQuery = reportsQuery.OrderByDescending(s => s.Date);
-                        reports.DataSource = (List<Report>)reportsQuery.ToList().ToNonAnonymousList(typeof(Report));
+						var result = (List<Report>)reportsQuery.ToList().ToNonAnonymousList(typeof(Report));
+						if (result.Count == 0) result.Add(null); // hack to make ASP.NET < 4 show header and footer when empty data
+						reports.DataSource = result;
                         reports.DataBind();
                     }
                 }

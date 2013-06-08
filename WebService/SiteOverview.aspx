@@ -30,10 +30,14 @@
                 ControlStyle-Height="48">
                 <ControlStyle Height="48px" Width="48px"></ControlStyle>
             </asp:ImageField>
-            <asp:TemplateField HeaderText="Site" SortExpression="Name" ItemStyle-HorizontalAlign="Center" ItemStyle-Font-Bold="true">
+            <asp:TemplateField HeaderText="Site" SortExpression="Name" ItemStyle-HorizontalAlign="Center" ItemStyle-VerticalAlign="Bottom" ItemStyle-Font-Bold="true">
                 <ItemTemplate>
-                    <asp:HyperLink ID="HyperLink1" runat="server" Text='<%# Eval("Name") %>' Visible='<%# (uint)Eval("ReportCount") > 0 %>' NavigateUrl='<%# "Reports.aspx?site=" + HttpUtility.UrlEncode((string)Eval("Name")) %>' />
-                    <asp:Label ID="Label1" runat="server" Text='<%# Eval("Name") %>' Visible='<%# (uint)Eval("ReportCount") == 0 %>' />
+                    <div style="position:relative">
+                    &nbsp;<br />
+                    <asp:HyperLink ID="HyperLink1" runat="server" Text='<%# Eval("Name") %>' NavigateUrl='<%# "Reports.aspx?site=" + HttpUtility.UrlEncode((string)Eval("Name")) %>' />
+                    <br />&nbsp;
+                    <span title="Reports" style="position:absolute;bottom:0;right:0;font-size:small;font-weight:normal"><%# Eval("ReportCount") %></span>
+                    </div>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField HeaderText="Creator" DataField="Owner_FK" SortExpression="Owner_FK" ItemStyle-HorizontalAlign="Center"/>
