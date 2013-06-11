@@ -94,7 +94,7 @@ namespace OnlineVideos.MediaPortal2
 				});
 			if (Site.GetUserConfigurationProperties().Count > 0)
 				ctxEntries.Add(
-					new ListItem(Consts.KEY_NAME, "Change Settings") 
+					new ListItem(Consts.KEY_NAME, new StringId("[OnlineVideos.ChangeSettings]")) 
 					{
 						Command = new MethodDelegateCommand(() => ConfigureSite()) 
 					});

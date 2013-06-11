@@ -97,6 +97,7 @@
   <string name="OnlineVideos.Others">Drugo</string>
   <!--P-->
   <string name="OnlineVideos.PlayAll">Predvajaj vse</string>
+  <string name="OnlineVideos.PlayAllFromHere">Predvajaj vse (od tukaj)</string>
   <string name="OnlineVideos.PlayAllRandom">Predvajaj vse (naključno)</string>
   <string name="OnlineVideos.PlayWith">Predvajaj z ...</string>
   <string name="OnlineVideos.Playlists">Seznam predvajanja</string>
@@ -140,7 +141,7 @@
   <string name="OnlineVideos.StartingPlayback">začetek predvajanja</string>
   <string name="OnlineVideos.Subscriptions">Naročnine</string>
   <string name="OnlineVideos.Success">Uspešno</string>
-  <string name="OnlineVideos.SearchRelatedKeywords">Ključne besede navezane na iskanje</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Ključne besede povezane z iskanjem</string>
   <!--T-->
   <string name="OnlineVideos.Timeframe">Časovni okvir</string>
   <string name="OnlineVideos.Timeout">Čas poteka</string>

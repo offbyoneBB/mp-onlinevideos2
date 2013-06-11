@@ -97,6 +97,7 @@
   <string name="OnlineVideos.Others">Altres</string>
   <!--P-->
   <string name="OnlineVideos.PlayAll">Reprodueix-ho tot</string>
+  <string name="OnlineVideos.PlayAllFromHere">Reprodueix-ho tot (des d\'aqui)</string>
   <string name="OnlineVideos.PlayAllRandom">Reprodueix-ho tot (aleatòriament)</string>
   <string name="OnlineVideos.PlayWith">Reprodueix al...</string>
   <string name="OnlineVideos.Playlists">Llistes</string>

@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Category</string>
   <string name="OnlineVideos.CategoryNotFound">Category not found</string>
   <string name="OnlineVideos.Categories">Categories</string>
+  <string name="OnlineVideos.ChangeSettings">Change Settings</string>
   <string name="OnlineVideos.Creator">Creator</string>
   <string name="OnlineVideos.CreateNewPlaylist">Create new Playlist ...</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">checking for updated plugin version</string>
