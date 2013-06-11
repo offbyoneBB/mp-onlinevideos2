@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Rubrik</string>
   <string name="OnlineVideos.CategoryNotFound">Rubrik nicht gefunden</string>
   <string name="OnlineVideos.Categories">Rubriken</string>
+  <string name="OnlineVideos.ChangeSettings">Einstellungen ändern</string>
   <string name="OnlineVideos.Creator">Ersteller</string>
   <string name="OnlineVideos.CreateNewPlaylist">Neue Playlist erstellen ...</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">beim Überprüfen auf aktuelle Version des Plugins</string>

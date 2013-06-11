@@ -97,6 +97,7 @@
   <string name="Others">Drugo</string>
   <!--P-->
   <string name="PlayAll">Predvajaj vse</string>
+  <string name="PlayAllFromHere">Predvajaj vse (od tukaj)</string>
   <string name="PlayAllRandom">Predvajaj vse (naključno)</string>
   <string name="PlayWith">Predvajaj z ...</string>
   <string name="Playlists">Seznam predvajanja</string>
@@ -140,7 +141,7 @@
   <string name="StartingPlayback">začetek predvajanja</string>
   <string name="Subscriptions">Naročnine</string>
   <string name="Success">Uspešno</string>
-  <string name="SearchRelatedKeywords">Ključne besede navezane na iskanje</string>
+  <string name="SearchRelatedKeywords">Ključne besede povezane z iskanjem</string>
   <!--T-->
   <string name="Timeframe">Časovni okvir</string>
   <string name="Timeout">Čas poteka</string>

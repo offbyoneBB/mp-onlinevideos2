@@ -97,6 +97,7 @@
   <string name="Others">Iné</string>
   <!--P-->
   <string name="PlayAll">Prehrať všetko</string>
+  <string name="PlayAllFromHere">Prehrať všetko (odtiaľto)</string>
   <string name="PlayAllRandom">Prehrať všetko (náhodne)</string>
   <string name="PlayWith">Prehrať s ...</string>
   <string name="Playlists">Zoznamy na prehratie</string>

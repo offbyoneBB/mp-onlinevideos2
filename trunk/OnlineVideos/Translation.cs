@@ -90,6 +90,7 @@ namespace OnlineVideos
         public string Category = "Category";
         public string CategoryNotFound = "Category not found";
         public string Categories = "Categories";
+		public string ChangeSettings = "Change Settings";
         public string Concurrent = "concurrent";
         public string Creator = "Creator";
         public string CreateNewPlaylist = "Create new Playlist ...";

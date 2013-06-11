@@ -21,6 +21,7 @@
   <string name="Category">Rubrik</string>
   <string name="CategoryNotFound">Rubrik nicht gefunden</string>
   <string name="Categories">Rubriken</string>
+  <string name="ChangeSettings">Einstellungen ändern</string>
   <string name="Creator">Ersteller</string>
   <string name="CreateNewPlaylist">Neue Playlist erstellen ...</string>
   <string name="CheckingForPluginUpdate">beim Überprüfen auf aktuelle Version des Plugins</string>

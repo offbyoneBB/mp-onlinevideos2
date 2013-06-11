@@ -21,6 +21,7 @@
   <string name="Category">Category</string>
   <string name="CategoryNotFound">Category not found</string>
   <string name="Categories">Categories</string>
+  <string name="ChangeSettings">Change Settings</string>
   <string name="Creator">Creator</string>
   <string name="CreateNewPlaylist">Create new Playlist ...</string>
   <string name="CheckingForPluginUpdate">checking for updated plugin version</string>

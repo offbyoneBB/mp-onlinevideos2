@@ -97,6 +97,7 @@
   <string name="OnlineVideos.Others">Iné</string>
   <!--P-->
   <string name="OnlineVideos.PlayAll">Prehrať všetko</string>
+  <string name="OnlineVideos.PlayAllFromHere">Prehrať všetko (odtiaľto)</string>
   <string name="OnlineVideos.PlayAllRandom">Prehrať všetko (náhodne)</string>
   <string name="OnlineVideos.PlayWith">Prehrať s ...</string>
   <string name="OnlineVideos.Playlists">Zoznamy na prehratie</string>

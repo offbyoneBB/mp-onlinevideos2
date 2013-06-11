@@ -97,6 +97,7 @@
   <string name="Others">Altres</string>
   <!--P-->
   <string name="PlayAll">Reprodueix-ho tot</string>
+  <string name="PlayAllFromHere">Reprodueix-ho tot (des d\'aqui)</string>
   <string name="PlayAllRandom">Reprodueix-ho tot (aleatòriament)</string>
   <string name="PlayWith">Reprodueix al...</string>
   <string name="Playlists">Llistes</string>
