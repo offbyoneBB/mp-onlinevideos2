@@ -52,15 +52,13 @@ namespace OnlineVideos.Sites
 				{
 					VideoInfo video = new VideoInfo();
 
-					var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playVideoBox')]");
-					video.ImageUrl = node.Element("a").Element("img").GetAttributeValue("data-imagename", "");
-
-					node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playJsSchedule') and contains(@class,'svtTab-Active')]");
-					node = node.Descendants("article").First();
+                    var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playJsSchedule') and contains(@class,'svtTab-Active')]");
+                    node = node.Descendants("div").Where(d => d.GetAttributeValue("class", "").Contains("playJsSchedule-SelectedEntry")).First();
 
 					video.Title = node.GetAttributeValue("data-title", "");
 					video.Description = node.GetAttributeValue("data-description", "");
 					video.Length = node.GetAttributeValue("data-length", "");
+                    video.ImageUrl = node.GetAttributeValue("data-titlepage-poster", "");
 					video.Airdate = node.Descendants("time").First().InnerText;
 
 					video.VideoUrl = url + "?output=json";
@@ -334,25 +332,6 @@ namespace OnlineVideos.Sites
                                     parentCategory.SubCategories.Add(cat);
                                 }
                             }
-                        }
-                    }
-                    else if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("kanaler"))
-                    {
-                        var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playChannelMenu')]");
-                        foreach (var li in node.Element("ul").Elements("li"))
-                        {
-                            RssLink cat = new RssLink();
-                            cat.Url = li.Element("a").GetAttributeValue("href", "");
-                            if (!string.IsNullOrEmpty(cat.Url) && !Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
-
-                            var img = li.Element("a").Element("div").Element("img");
-                            cat.Name = img.GetAttributeValue("alt", "");
-
-                            cat.Thumb = img.GetAttributeValue("src", "");
-                            if (!string.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(categoryUrl), cat.Thumb).AbsoluteUri;
-
-                            cat.ParentCategory = parentCategory;
-                            parentCategory.SubCategories.Add(cat);
                         }
                     }
                     else if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("oppetarkiv"))
