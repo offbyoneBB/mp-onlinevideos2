@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
-using System.Web;
 using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
@@ -46,14 +43,6 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        private string hash(string s)
-        {
-            int l = s.Length;
-            if (l < 4)
-                return s;
-            return String.Format("{0}/{1}/{2}/{3}", s[l - 1], s[l - 2], s[l - 3], s[l - 4]);
-        }
-
         public override string getUrl(VideoInfo video)
         {
             if ("livestream".Equals(video.Other))
@@ -77,43 +66,48 @@ namespace OnlineVideos.Sites
                 return null;
             }
 
-            //copied from http://code.google.com/p/pydowntv/:
-            //http://www.rtve.es/alacarta/videos/amar-en-tiempos-revueltos/amar-tiempos-revueltos-t6-capitulos-211-212/1137920/
+            //source: http://code.google.com/p/xbmc-tvalacarta/source/browse/trunk/tvalacarta/servers/rtve.py:
+            // thanks to aabilio and tvalacarta
             string[] parts = video.VideoUrl.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            return GetRedirectedUrl(String.Format(@"http://www.rtve.es/ztnr/consumer/xl/video/alta/{0}_es_292525252525111", parts[parts.Length - 1]));
-            /*string url = String.Format(@"http://www.rtve.es/swf/data/es/videos/video/{0}/{1}.xml",
-                hash(parts[parts.Length - 1]), parts[parts.Length - 1]);
-            string webData = GetWebData(url);
-            string assetId = GetSubString(webData, @"assetDataId::", @"""");
-
-            string url2 = String.Format(@"http://www.rtve.es/scd/CONTENTS/ASSET_DATA_VIDEO/{0}/ASSET_DATA_VIDEO-{1}.xml",
-                hash(assetId), assetId);
-
-            webData = GetWebData(url2);
-            Match m = Regex.Match(webData, @"<key>ASD_FILE</key>\s*<value>/deliverty/demo/resources/(?<url>[^<]*)</value>");
-            if (m.Success)
-                return baseUrl + @"/resources/TE_NGVA/" + m.Groups["url"].Value;
-            // get ipad url
-            webData = GetWebData(video.VideoUrl, userAgent: "Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.10");
-            m = Regex.Match(webData, @"<a\shref=""/usuarios/sharesend.shtml\?urlContent\=(?<url>[^""]+)"" target");
-            if (m.Success)
+            string data2 = GetWebData(String.Format(@"http://www.rtve.es/ztnr/movil/thumbnail/anubis/videos/{0}.png", parts[parts.Length - 1]));
+            data2 = Encoding.ASCII.GetString(Convert.FromBase64String(data2));
+            Match mm = Regex.Match(data2, ".*tEXt(?<cypher>.*)#[\x00]*(?<key>[0-9]*).*");
+            if (mm.Success)
             {
-                return new Uri(new Uri(baseUrl), m.Groups["url"].Value).AbsoluteUri;
+                string cypher = mm.Groups["cypher"].Value;
+                string key = mm.Groups["key"].Value;
+                string int_cypher = "";
+                int inc = 1;
+                int ti = 0;
+                while (ti < cypher.Length)
+                {
+                    ti = ti + inc;
+                    if (ti > 0 && ti <= cypher.Length)
+                        int_cypher += cypher[ti - 1];
+                    inc++;
+                    if (inc == 5) inc = 1;
+                }
+
+                string plaintext = "";
+                int key_ind = 0;
+                inc = 4;
+                while (key_ind < key.Length)
+                {
+                    key_ind++;
+                    ti = ((byte)key[key_ind - 1] - 48) * 10;
+                    key_ind += inc;
+                    if (key_ind <= key.Length)
+                        ti += (byte)key[key_ind - 1] - 48;
+                    ti++;
+                    inc++;
+                    if (inc == 5) inc = 1;
+                    if (ti > 0 && ti <= int_cypher.Length)
+                        plaintext += int_cypher[ti - 1];
+                }
+                return plaintext.Replace("www.rtve.es", "media5.rtve.es");
             }
+
             return null;
-             */
         }
-
-
-        private string GetSubString(string s, string start, string until)
-        {
-            int p = s.IndexOf(start);
-            if (p == -1) return String.Empty;
-            p += start.Length;
-            int q = s.IndexOf(until, p);
-            if (q == -1) return s.Substring(p);
-            return s.Substring(p, q - p);
-        }
-
     }
 }
