@@ -1,12 +1,13 @@
-﻿using System;
+﻿#if SUBTITLE
+extern alias MySubtitleDownloader; //resolves conflicts with HtmlAgilityPack elsewhere in this project
+using MySubtitleDownloader.SubtitleDownloader.Core;
+#endif
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System.IO;
 using System.Threading;
-#if SUBTITLE
-using SubtitleDownloader.Core;
-#endif
 
 namespace OnlineVideos.Subtitles
 {
