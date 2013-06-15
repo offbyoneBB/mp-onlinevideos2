@@ -53,48 +53,31 @@
         <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=52</UpdateUrl>
         <Version>
           <Major>0</Major>
-          <Minor>56</Minor>
-          <Build>2</Build>
+          <Minor>57</Minor>
+          <Build>0</Build>
           <Revision>0</Revision>
         </Version>
         <ExtensionDescription>The extension installs the LAV Filter package, which contains a splitter, audio and video decoder for the most common formats that are used around the web.</ExtensionDescription>
-        <VersionDescription>0.56.2 - 2013/04/19
+        <VersionDescription>0.57.0 - 2013/05/20
 LAV Splitter
-- Emit the EC_LENGTH_CHANGED event when the edition is changed, to help players update their playback duration
+- Added a Popup Menu to the Tray Icon which allows Stream, Edition and Chapter switching
+- Improved stream selection in files with multiple video streams
+- Improved performance when opening MKVs with linked segments
+- Fixed playback of MKVs with Segment Linking and Vorbis Audio
 
 LAV Video
-- dxva2: fixed corruption/dropped frames after seeking in interlaced MPEG-2/VC-1 streams
-- dxva2: fixed corruption after seeking in interlaced H.264 on AMD GPUs
-- dxva2: fixed decoding of H.264 on AMD UVD/UVD+ GPUs (HD 2xxx/3xxx Series)
-- dxva2: disabled wmv3 decoding on AMD UVD/UVD+ GPUs (until it can be fixed)
-- Fixed colorspace used for YUV Fraps to always be BT.709
-- Added support for MPEG-4 Video with the BLZ0 FourCC (used in older Blizzard games)
+- Enabled Hardware/GPU Deinterlacing when using the QuickSync decoder
+- Support for JPEG2000 DCinema streams
+- Support for RGB48 output, and high-quality dithering of RGB48 to RGB32
+- Fixed a crash with DXVA2 Native on AMD GPUs in certain situations
+- Improved detection of H.264 RGB streams, improves support with EVR
+- Adjusted performance tuning for consistent performance in both playback and transcoding (in 0.56, transcoding could be slow)
 
-0.56.1 - 2013/04/13
-LAV Splitter
-- Fixed various crashes with ordered chapter MKVs
-- Fixed a crash when playing an MKV with a disabled subtitle track
-- Fixed switching between video streams with different codecs (ie. H264 -&gt; MPEG2)
-
-LAV Video
-- Fixed a crash on close with DXVA2 Native
-- Re-tuned YADIF for smooth playback instead of benchmarking
-
-0.56.0 - 2013/04/10
-General
-- Major ffmpeg update, the DLLs have had their version number increased
-
-LAV Splitter
-- Support for Matroska Ordered Chaptes / Segment Linking
-- Improved support for parsing language tags from OGM files
-- Small performance improvements by avoiding copying the stream data in memory needlessly
-- Improved duration calculation for MP3 files
-
-LAV Video
-- Performance improvements for single-threaded decoders and YADIF (up to 20% in some situations)</VersionDescription>
+LAV Audio
+- Use the FLAC channel mask from metadata, fixes playback of FLAC files with non-standard channel layouts</VersionDescription>
         <DevelopmentStatus>Stable</DevelopmentStatus>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-        <ReleaseDate>2013-04-26T20:36:36</ReleaseDate>
+        <ReleaseDate>2013-06-15T20:36:36</ReleaseDate>
         <Tags>codec</Tags>
         <Location>.\LAVFilters[Version].mpe1</Location>
         <Params>
