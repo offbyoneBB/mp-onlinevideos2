@@ -56,6 +56,7 @@
     <Reference Include="SubtitleDownloader">
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\SubtitleDownloader.dll</HintPath>
       <Private>False</Private>
+      <Aliases>MySubtitleDownloader</Aliases>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
