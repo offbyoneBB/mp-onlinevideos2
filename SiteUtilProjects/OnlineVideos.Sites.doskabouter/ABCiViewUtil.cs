@@ -126,14 +126,14 @@ namespace OnlineVideos.Sites
             string host = doc.SelectSingleNode(@"a:iview/a:host", nsmRequest).InnerText;
 
             RtmpUrl rtmpUrl;
-            if (host.Equals("Akamai", StringComparison.InvariantCultureIgnoreCase))
+            //if (host.Equals("Akamai", StringComparison.InvariantCultureIgnoreCase))
             {
                 rtmpUrl = new RtmpUrl(@"rtmp://cp53909.edgefcs.net///flash/playback/_definst_/" + video.VideoUrl)
                 {
                     TcUrl = @"rtmp://cp53909.edgefcs.net/ondemand?auth=" + auth
                 };
             }
-            else
+            /*else
             {
                 string authUrl = doc.SelectSingleNode(@"a:iview/a:server", nsmRequest).InnerText +
                     "?auth=" + auth;
@@ -141,7 +141,7 @@ namespace OnlineVideos.Sites
                 if (vidUrl.EndsWith(".mp4", StringComparison.InvariantCultureIgnoreCase))
                     vidUrl = "mp4:" + vidUrl.Substring(0, vidUrl.Length - 4);
                 rtmpUrl = new RtmpUrl(authUrl) { PlayPath = vidUrl };
-            }
+            }*/
 
             rtmpUrl.SwfVerify = true;
             rtmpUrl.SwfUrl = @"http://www.abc.net.au/iview/images/iview.jpg";
