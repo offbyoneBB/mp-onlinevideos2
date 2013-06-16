@@ -1376,6 +1376,14 @@
         <Category xsi:type="RssLink" name="Lapset" thumb="" desc="">http://www.ruutu.fi/lapset</Category>
       </Categories>
     </Site>
+    <Site name="SBS.au" util="SBSau" agecheck="false" enabled="true" lang="en">
+      <Description>SBS On Demand gives you free, unlimited access to programs, films and events – watch your favourite SBS shows when you want!</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://www.sbs.com.au/ondemand/js/video-menu?v=1.1]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[playerParams\.releaseUrls\s=\s{\s*progressive:\s'[^']*',\s*html:\s'[^']*',\s*standard:\s'(?<url>[^']*)'\s*}|player\.releaseUrl\s=\s"(?<url>[^"]*)";]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<video\ssrc="(?<m0>[^"]*)"\ssystem-bitrate="(?<n0>[^"]*)"/>]]></item>
+      </Configuration>
+    </Site>
     <Site name="TV3NZ" util="TV3NZOnDemand" agecheck="false" enabled="true" lang="en">
       <Description>Television New Zealand: TV3, TV four</Description>
       <Configuration>
