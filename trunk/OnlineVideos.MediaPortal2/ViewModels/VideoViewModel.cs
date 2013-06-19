@@ -249,7 +249,7 @@ namespace OnlineVideos.MediaPortal2
 				{
 					var entry_for_closure = entry;
 					var item = new ListItem(Consts.KEY_NAME, entry.DisplayText);
-					item.Command = new MethodDelegateCommand(() => ExecuteCustom(entry_for_closure));
+					item.Command = new MethodDelegateCommand(() => HandleCustomContextMenuEntry(entry_for_closure));
 					ctxEntries.Add(item);
 				}
 			}
@@ -268,9 +268,96 @@ namespace OnlineVideos.MediaPortal2
 			SaveVideo_Step1(DownloadList.Create(DownloadInfo.Create(VideoInfo, Category, OnlineVideoSettings.Instance.SiteUtilsList[SiteName])), true);
 		}
 
-		void ExecuteCustom(Sites.ContextMenuEntry entry)
+		void HandleCustomContextMenuEntry(Sites.ContextMenuEntry entry)
 		{
 			ServiceRegistration.Get<IScreenManager>().CloseTopmostDialog();
+			switch (entry.Action)
+			{
+				case Sites.ContextMenuEntry.UIAction.Execute:
+					ExecuteCustomContextMenuEntry(entry);
+					break;
+				case Sites.ContextMenuEntry.UIAction.GetText:
+					//todo: show input dialog and execute when confirmed
+					//entry.UserInputText = text;
+					//ExecuteCustomContextMenuEntry(entry);
+					break;
+				case Sites.ContextMenuEntry.UIAction.PromptYesNo:
+					var dialogHandleId = ServiceRegistration.Get<IDialogManager>().ShowDialog(entry.DisplayText, entry.PromptText, DialogType.YesNoDialog, false, DialogButtonType.No);
+					var dialogCloseWatcher = new DialogCloseWatcher(this, dialogHandleId, (dialogResult) =>
+					{
+						if (dialogResult == DialogResult.Yes)
+						{
+							ExecuteCustomContextMenuEntry(entry);
+						}
+					});
+					break;
+				case Sites.ContextMenuEntry.UIAction.ShowList:
+					var menuItems = new ItemsList();
+					foreach (var item in entry.SubEntries)
+					{
+						var listItem = new ListItem(Consts.KEY_NAME, item.DisplayText);
+						listItem.AdditionalProperties.Add(Consts.KEY_MEDIA_ITEM, item);
+						menuItems.Add(listItem);
+					}
+					ServiceRegistration.Get<IWorkflowManager>().NavigatePushTransient(
+						WorkflowState.CreateTransientState("CustomContextItems", entry.DisplayText, true, "ovsDialogGenericItems", false, WorkflowType.Dialog),
+						new NavigationContextConfig()
+						{
+							AdditionalContextVariables = new Dictionary<string, object>
+							{
+								{ Constants.CONTEXT_VAR_ITEMS, menuItems },
+								{ Constants.CONTEXT_VAR_COMMAND, new CommandContainer<ListItem>((li)=>HandleCustomContextMenuEntry(li.AdditionalProperties[Consts.KEY_MEDIA_ITEM] as Sites.ContextMenuEntry)) }
+							}
+						});
+
+					break;
+			}
+		}
+
+		void ExecuteCustomContextMenuEntry(Sites.ContextMenuEntry entry)
+		{
+			var ovMainModel = ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelOV) as OnlineVideosWorkflowModel;
+			var site = OnlineVideoSettings.Instance.SiteUtilsList[SiteName];
+			BackgroundTask.Instance.Start<OnlineVideos.Sites.ContextMenuExecutionResult>(
+				() =>
+				{
+					return site.ExecuteContextMenuEntry(Category, VideoInfo, entry);
+				},
+				(success, result) =>
+				{
+					if (success)
+					{
+						if (!string.IsNullOrEmpty(result.ExecutionResultMessage))
+						{
+							//todo: show message - but also execute the two following if statements
+						}
+						if (result.RefreshCurrentItems)
+						{
+							// discover and show videos of this category
+							BackgroundTask.Instance.Start<List<VideoInfo>>(
+								() =>
+								{
+									return site.getVideoList(Category);
+								},
+								(success2, videos) =>
+								{
+									if (success2)
+									{
+										ovMainModel.VideosList.Clear();
+										videos.ForEach(r => { r.CleanDescriptionAndTitle(); ovMainModel.VideosList.Add(new VideoViewModel(r, Category, SiteName, SiteUtilName, false)); });
+										if (site.HasNextPage) ovMainModel.VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
+										ovMainModel.VideosList.FireChange();
+										ImageDownloader.GetImages<VideoInfo>(videos);
+									}
+								});
+						}
+						if (result.ResultItems != null && result.ResultItems.Count > 0)
+						{
+							ovMainModel.ShowSearchResults(result.ResultItems, entry.DisplayText);
+						}
+					}
+				},
+				entry.DisplayText);
 		}
 
 		#endregion
