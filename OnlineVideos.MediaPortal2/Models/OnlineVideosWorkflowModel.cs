@@ -295,26 +295,7 @@ namespace OnlineVideos.MediaPortal2
                 {
                     if (success && result != null && result.Count > 0)
                     {
-                        // pop all states up to the site state from the current navigation stack
-                        IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
-                        while (!(workflowManager.NavigationContextStack.Peek().WorkflowState.Name == Guids.WorkflowStateCategoriesName &&
-                            workflowManager.NavigationContextStack.Peek().WorkflowState.DisplayLabel == SelectedSite.Name))
-                        {
-                            workflowManager.NavigationContextStack.Pop();
-                        }
-                        // dislay results
-                        if (result[0] is VideoInfo) ShowVideos(null, result.ConvertAll(i => i as VideoInfo));
-                        else
-                        {
-                            Category searchCategory = new Category()
-                            {
-                                Name = Translation.Instance.SearchResults + " [" + SearchString + "]",
-                                HasSubCategories = true,
-                                SubCategoriesDiscovered = true,
-                            };
-                            searchCategory.SubCategories = result.ConvertAll(i => { (i as Category).ParentCategory = searchCategory; return i as Category; });
-                            ShowCategories(searchCategory.SubCategories, searchCategory.Name);
-                        }
+						ShowSearchResults(result, Translation.Instance.SearchResults + " [" + SearchString + "]");
                     }
                 });
         }
@@ -354,17 +335,7 @@ namespace OnlineVideos.MediaPortal2
 
             ImageDownloader.GetImages<VideoInfo>(videos);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
-            if (category == null)
-            {
-                // if previously in videos state - pop that state off the stack
-                if (workflowManager.NavigationContextStack.Peek().WorkflowState.StateId == Guids.WorkflowStateVideos)
-                {
-                    workflowManager.NavigationContextStack.Pop();
-                }
-                workflowManager.NavigatePushAsync(Guids.WorkflowStateVideos, new NavigationContextConfig() { NavigationContextDisplayLabel = string.Format("Search [{0}]", SearchString) });
-            }
-            else
-                workflowManager.NavigatePushAsync(Guids.WorkflowStateVideos, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedCategory.Name });
+            workflowManager.NavigatePushAsync(Guids.WorkflowStateVideos, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedCategory.Name });
         }
 
         void ShowDetails(List<VideoInfo> choices)
@@ -375,6 +346,36 @@ namespace OnlineVideos.MediaPortal2
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
             workflowManager.NavigatePushAsync(Guids.WorkflowStateDetails, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedVideo.Title });
         }
+
+		internal void ShowSearchResults(List<ISearchResultItem> result, string title)
+		{
+			// pop all states up to the site state from the current navigation stack
+			IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
+			while (!(workflowManager.NavigationContextStack.Peek().WorkflowState.Name == Guids.WorkflowStateCategoriesName &&
+				workflowManager.NavigationContextStack.Peek().WorkflowState.DisplayLabel == SelectedSite.Name))
+			{
+				workflowManager.NavigationContextStack.Pop();
+			}
+			// create a "fake" Category as Parent for a results items
+			var searchCategory = new CategoryViewModel(
+				new Category()
+				{
+					Name = title,
+					HasSubCategories = result[0] is Category,
+					SubCategoriesDiscovered = true
+				});
+			// display results
+			if (result[0] is VideoInfo)
+			{
+				ShowVideos(searchCategory, result.ConvertAll(i => i as VideoInfo));
+			}
+			else
+			{
+				searchCategory.Category.SubCategories = result.ConvertAll(i => { (i as Category).ParentCategory = searchCategory.Category; return i as Category; });
+				SelectedCategory = searchCategory;
+				ShowCategories(searchCategory.Category.SubCategories, searchCategory.Name);
+			}
+		}
 
 		void OnlineVideosMessageReceived(AsynchronousMessageQueue queue, SystemMessage message)
 		{

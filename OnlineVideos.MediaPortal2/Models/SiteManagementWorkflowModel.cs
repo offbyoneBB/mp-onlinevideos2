@@ -272,7 +272,7 @@ namespace OnlineVideos.MediaPortal2
 		{
 			if (SitesList.Count > 0)
 			{
-				var dialogHandleId = ServiceRegistration.Get<IDialogManager>().ShowDialog(LocalizationHelper.Translate("[OnlineVideos.RemoveAllFromMySites]") + "?", "", DialogType.YesNoDialog, false, DialogButtonType.Cancel);
+				var dialogHandleId = ServiceRegistration.Get<IDialogManager>().ShowDialog(LocalizationHelper.Translate("[OnlineVideos.RemoveAllFromMySites]") + "?", "", DialogType.YesNoDialog, false, DialogButtonType.No);
 				_dialogCloseWatcher = new DialogCloseWatcher(this, dialogHandleId, (dialogResult) =>
 				{
 					if (dialogResult == DialogResult.Yes)
