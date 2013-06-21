@@ -82,9 +82,9 @@ namespace OnlineVideos.Sites
                 }
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        protected override List<VideoInfo> Parse(string url, string data)
         {
-            string data = GetWebData(((RssLink)category).Url);
+            if (string.IsNullOrEmpty(data)) data = GetWebData(url);
             JObject contentData = JObject.Parse(data);
             List<VideoInfo> result = new List<VideoInfo>();
             foreach (JObject vid in contentData["entries"])
@@ -104,6 +104,26 @@ namespace OnlineVideos.Sites
                     video.ImageUrl = thumbs[0].Value<string>("plfile$downloadUrl");
                 result.Add(video);
             }
+            int startIndex = contentData.Value<Int32>("startIndex");
+            int entryCount = contentData.Value<Int32>("entryCount");
+            int totalResults = contentData.Value<Int32>("totalResults");
+            nextPageAvailable = startIndex + entryCount - 1 < totalResults;
+            if (nextPageAvailable)
+            {
+                int p = url.IndexOf("range=");
+                if (p >= 0)
+                {
+                    int q = url.IndexOf('&', p + 1);
+                    if (q >= 0)
+                        url = url.Substring(0, p - 1) + url.Substring(q, url.Length - q);
+                    else
+                        url = url.Substring(0, p - 1);
+                }
+                nextPageUrl = String.Format("{0}&range={1}-{2}", url, startIndex + entryCount, startIndex + entryCount + 24);
+            }
+            else
+                nextPageUrl = String.Empty;
+
             return result;
         }
 
