@@ -1132,10 +1132,10 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx">
+    <WebReferenceUrl Include="http://onlinevideos.nocrosshair.de/OnlineVideos.asmx">
       <UrlBehavior>Static</UrlBehavior>
       <RelPath>Web References\OnlineVideosWebservice\</RelPath>
-      <UpdateFromURL>http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx</UpdateFromURL>
+      <UpdateFromURL>http://onlinevideos.nocrosshair.de/OnlineVideos.asmx</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>

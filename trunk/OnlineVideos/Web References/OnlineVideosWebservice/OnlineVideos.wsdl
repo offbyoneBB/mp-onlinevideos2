@@ -688,10 +688,10 @@
   </wsdl:binding>
   <wsdl:service name="OnlineVideosService">
     <wsdl:port name="OnlineVideosServiceSoap" binding="tns:OnlineVideosServiceSoap">
-      <soap:address location="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx" />
+      <soap:address location="http://onlinevideos.nocrosshair.de/OnlineVideos.asmx" />
     </wsdl:port>
     <wsdl:port name="OnlineVideosServiceSoap12" binding="tns:OnlineVideosServiceSoap12">
-      <soap12:address location="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx" />
+      <soap12:address location="http://onlinevideos.nocrosshair.de/OnlineVideos.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
