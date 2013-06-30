@@ -61,7 +61,7 @@ namespace OnlineVideos.OnlineVideosWebservice {
         
         /// <remarks/>
         public OnlineVideosService() {
-            this.Url = "http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx";
+            this.Url = "http://onlinevideos.nocrosshair.de/OnlineVideos.asmx";
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

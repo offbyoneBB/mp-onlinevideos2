@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
-  <contractRef ref="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx?wsdl" docRef="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
-  <soap address="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx" xmlns:q1="http://tempuri.org/" binding="q1:OnlineVideosServiceSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
-  <soap address="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx" xmlns:q2="http://tempuri.org/" binding="q2:OnlineVideosServiceSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <contractRef ref="http://onlinevideos.nocrosshair.de/OnlineVideos.asmx?wsdl" docRef="http://onlinevideos.nocrosshair.de/OnlineVideos.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="http://onlinevideos.nocrosshair.de/OnlineVideos.asmx" xmlns:q1="http://tempuri.org/" binding="q1:OnlineVideosServiceSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="http://onlinevideos.nocrosshair.de/OnlineVideos.asmx" xmlns:q2="http://tempuri.org/" binding="q2:OnlineVideosServiceSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
 </discovery>
