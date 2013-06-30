@@ -13,7 +13,7 @@ namespace OnlineVideos.Sites.georgius
 
         private static String baseUrl = "http://www.mixer.cz";
 
-        private static String dynamicCategoryStart = @"<ul id=""normalPlaylists""";
+        private static String dynamicCategoryStart = @"<ul id=""playlists";
         private static String dynamicCategoryEnd = @"</ul>";
         private static String dynamicCategoryRegex = @"<a href=""(?<dynamicCategoryUrl>[^""]+)"" id=""[^""]*"" class=""[^""]*"" data-playlist-id=""[^""]*"" data-key=""[^""]*"" title=""(?<dynamicCategoryTitle>[^""]+)""";
 
@@ -24,9 +24,7 @@ namespace OnlineVideos.Sites.georgius
         private static String showEpisodeBlockEnd = @"</h2>";
 
         private static String showEpisodeThumbUrlRegex = @"<img class=""[^""]*"" alt=""[^""]*"" src=""(?<showThumbUrl>[^""]+)";
-        private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]+)"">[\s]*<span class=""[^""]*"">(?<showTitle>[^<]+)";
-
-        //private static String nextPageUrlRegex = @"";
+        private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]+)""[^>]*>(?<showTitle>[^<]+)";
 
         private static String videoUrlBlockStart = @"cdn_qualities.push";
         private static String videoUrlBlockEnd = @"var interpreters";

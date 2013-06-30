@@ -303,7 +303,7 @@ namespace OnlineVideos.Sites.georgius
                     Newtonsoft.Json.Linq.JObject jObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(postData);
                     String serializedDataForPost = this.SerializeJsonForPost(jObject);
                     serializedDataForPost = HttpUtility.UrlEncode(serializedDataForPost).Replace("%3d", "=").Replace("%26", "&");
-                    String videoDataUrl = CeskaTelevizeUtil.GetWebDataFromPost("http://www.ceskatelevize.cz/ajax/playlistURL.php", serializedDataForPost, container, video.VideoUrl);
+                    String videoDataUrl = CeskaTelevizeUtil.GetWebDataFromPost("http://www.ceskatelevize.cz/ajax/playlistURL.php", serializedDataForPost, container, video.VideoUrl).Replace("%26", "&");
 
                     CeskaTelevizeVideoCollection videos = new CeskaTelevizeVideoCollection();
                     int videoPart = 1;
