@@ -1167,7 +1167,7 @@
     <Site name="Khan Academy" util="KhanAcademy" agecheck="false" enabled="true" lang="en">
       <Description>Khan Academy is on a mission to provide a free world-class education to anyone anywhere. With over 2,600 videos covering everything from arithmetic to physics, finance, and history and 200 practice exercises, we're helping students learn whatever they want, whenever they want, at their own pace.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.khanacademy.org/api/v1/playlists]]></item>
+        <item key="baseUrl"><![CDATA[http://www.khanacademy.org/api/v1/topic/root]]></item>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
     </Site>

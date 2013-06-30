@@ -11,27 +11,59 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            string webData = GetWebData(baseUrl);
-            JArray jt = JArray.Parse(webData);
+            if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
+            foreach (Category cat in getSubcategories(baseUrl, null))
+                Settings.Categories.Add(cat);
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            parentCategory.SubCategoriesDiscovered = true;
+            parentCategory.SubCategories = getSubcategories(((RssLink)parentCategory).Url, parentCategory);
+            return parentCategory.SubCategories.Count;
+        }
+
+        private List<Category> getSubcategories(string url, Category parentCat)
+        {
+            string webData = GetWebData(url);
 
             List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a separate list
-            foreach (JToken j in jt)
+            bool videosPresent = false;
+            foreach (JToken j in JToken.Parse(webData)["children"])
             {
-                RssLink cat = new RssLink();
-                cat.Name = j.Value<string>("standalone_title");
-                string s = j.Value<string>("title");
-                string id = j.Value<string>("id");
-                //if (cat.Name != s)
-                //cat.Name += ":" + s;
-                cat.Description = j.Value<string>("description");
-                cat.Url = String.Format(@"http://www.khanacademy.org/api/v1/playlists/{0}/videos", id);
-                dynamicCategories.Add(cat);
+                switch (j.Value<string>("kind"))
+                {
+                    case "Topic":
+                        RssLink cat = new RssLink()
+                            {
+                                Name = j.Value<string>("title"),
+                                Description = j.Value<string>("description"),
+                                Url = String.Format(@"http://www.khanacademy.org/api/v1/topic/{0}", j.Value<string>("id")),
+                                HasSubCategories = true,
+                                ParentCategory = parentCat
+                            };
+                        dynamicCategories.Add(cat);
+                        break;
+                    case "Video":
+                        videosPresent = true; break;
+                }
             }
+            if (videosPresent)
+            {
+                RssLink vidCat = new RssLink()
+                {
+                    Name = "Videos",
+                    Url = url + "/videos",
+                    ParentCategory = parentCat,
+                    HasSubCategories = false
+                };
+                dynamicCategories.Add(vidCat);
+            }
+
             dynamicCategories.Sort(CategoryComparer);
-            if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
-            foreach (Category cat in dynamicCategories) Settings.Categories.Add(cat);
-            Settings.DynamicCategoriesDiscovered = dynamicCategories.Count > 0;
-            return dynamicCategories.Count;
+            return dynamicCategories;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
