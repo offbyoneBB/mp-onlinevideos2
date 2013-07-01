@@ -20,15 +20,6 @@ namespace OnlineVideos.Sites
         private Regex savedRegEx_dynamicSubCategoriesNextPage;
 
         string matchaz = @"(?<=<ol\sclass=""letters"">.*)<li[^>]*>\s*<a\shref=""(?<url>[^""]*)""(?:\sclass="""")?\stitle=""(?<description>[^""]*)"">(?<title>[^<]*)</a>\s*</li>";
-        CookieContainer SiteConsent;
-
-        public override void Initialize(OnlineVideos.SiteSettings siteSettings)
-        {
-            base.Initialize(siteSettings);
-            SiteConsent = new CookieContainer();
-            Cookie cookie = new Cookie("site_cookie_consent", "yes");
-            SiteConsent.Add(new Uri(baseUrl), cookie);
-        }
 
         public override int DiscoverDynamicCategories()
         {
@@ -72,11 +63,6 @@ namespace OnlineVideos.Sites
                         npCat.Url = HttpUtility.HtmlDecode(npCat.Url) + "&_pjax=true";
 
             return result;
-        }
-
-        protected override CookieContainer GetCookie()
-        {
-            return SiteConsent;
         }
 
         private int getType1Subcats(Category parentCat)
@@ -125,7 +111,7 @@ namespace OnlineVideos.Sites
                 {
                     regEx_dynamicSubCategoriesNextPage = null;
                 }
-            string data = GetWebData(((RssLink)parentCat).Url, cc: SiteConsent);
+            string data = GetWebData(((RssLink)parentCat).Url, cc: GetCookie());
             int res = ParseSubCategories(parentCat, data);
             if (res > 0)
                 foreach (RssLink cat in parentCat.SubCategories)
@@ -174,7 +160,7 @@ namespace OnlineVideos.Sites
         protected override List<VideoInfo> Parse(string url, string data)
         {
             if (data == null)
-                data = GetWebData(url, cc: SiteConsent);
+                data = GetWebData(url, cc: GetCookie());
             bool fromSearch = url.Contains(".nl/zoek/");
             data = Regex.Unescape(data);
             if (fromSearch)

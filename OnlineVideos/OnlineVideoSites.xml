@@ -1439,6 +1439,7 @@
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
         <item key="fileUrlRegEx"><![CDATA[<span\sid="episode-data"\s*data-episode-id="(?<m0>[^"]*)"]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://www.player.omroep.nl/ugslplayer.xap/aflid={0}]]></item>
+        <item key="cookies"><![CDATA[npo_cc=31]]></item>
       </Configuration>
     </Site>
     <Site name="TouTV" util="TouTv" agecheck="false" enabled="true" lang="fr">
