@@ -59,7 +59,7 @@
     <None Include="MarkizaUtil.cs" />
     <Compile Include="MixerCzUtil.cs" />
     <Compile Include="MuviCzUtil.cs" />
-    <None Include="NovaUtil.cs" />
+    <Compile Include="NovaUtil.cs" />
     <Compile Include="OckoTvUtil.cs" />
     <Compile Include="PohadkarUtil.cs" />
     <Compile Include="PrimaUtil.cs" />

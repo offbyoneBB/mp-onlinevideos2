@@ -368,7 +368,7 @@ namespace OnlineVideos.Sites.georgius
                 String mediaId = mediaIdMatch.Groups["mediaId"].Value;
 
                 String time = DateTime.Now.ToString("yyyyMMddHHmmss");
-                String signature = String.Format("nova-vod|{0}|{1}|chttvg.jkfrwm57", mediaId, time);
+                String signature = String.Format("nova-vod|{0}|{1}|bae8ca04b7d23ab2d62968d2ea54", mediaId, time);
                 String encodedHash = String.Empty;
                 using (MD5 md5 = MD5.Create())
                 {
