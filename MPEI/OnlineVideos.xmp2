@@ -2979,7 +2979,6 @@ Click Next to continue or Cancel to exit Setup.</Value>
           <string>Skins</string>
           <string>Default</string>
           <string>DefaultWide</string>
-          <string>Titan</string>
           <string>GenericSiteTool</string>
           <string>LAVFilters</string>
           <string>ExtensionsPlugin</string>
