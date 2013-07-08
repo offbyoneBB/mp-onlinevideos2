@@ -5,6 +5,8 @@ using System.Text;
 using System.Xml;
 using HtmlAgilityPack;
 using OnlineVideos.Sites.Pondman.Nodes;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 
@@ -53,123 +55,37 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
                 return NodeResult.Failed;
             }
 
-            // Filter the playlist nodes to get the ones we need
-            HtmlNodeCollection playlist = root.FirstChild.SelectNodes("//array/dict");
+            HtmlNode asset = root.SelectSingleNode("//httpfilevideoasset");
 
-            bool metadata = false;
-            if (playlist.Count > 0)
+            // media url
+            HtmlNode mediaUrlNode = asset.SelectSingleNode("mediaurl");          
+            if (mediaUrlNode == null) 
             {
-                foreach (HtmlNode clip in playlist)
-                {
-                    // Get the node following the previewURL this is the video url of the trailer
-                    string videourl = clip.SelectSingleNode("key[contains(.,'previewURL')]").NextSibling.InnerText;
+                return NodeResult.Failed;
+            }
 
-                    // Filter the Ipod format
-                    if (!videourl.Contains(".m4v"))
-                    {
-                        // Get the node following the songName this is the title of the trailer
-                        string title = clip.SelectSingleNode("key[contains(.,'songName')]").NextSibling.InnerText;
+            // image
+            HtmlNode imageUrlNode = asset.SelectSingleNode("image");
+            if (string.IsNullOrEmpty(video.ThumbUrl) && imageUrlNode != null)
+            {
+                video.ThumbUrl = imageUrlNode.InnerText.Trim();
+            }
 
-                        // Get the node following the previewLength this is the duration of the video in seconds
-                        int duration = int.Parse(clip.SelectSingleNode("key[contains(.,'previewLength')]").NextSibling.InnerText);
-
-                        // get the release date of this specific trailer
-                        string date = clip.SelectSingleNode("key[contains(.,'releaseDate')]").NextSibling.InnerText;
-
-                        string label;
-                        VideoQuality quality;
-
-                        // Parse label and quality from the provided title
-                        Video.ParseAppleVideoTitle(title, out label, out quality);
-
-                        // Add the current quality to the video
-                        video.Files[quality] = videourl;
-
-                        //  Update the metadata (only one time)
-                        if (metadata)
-                        {
-                            continue;
-                        }
-
-                        // Set the duration of the video
-                        video.Duration = new TimeSpan(0, 0, duration);
-
-                        if (!String.IsNullOrEmpty(date))
-                        {
-                            DateTime dt;
-                            if (DateTime.TryParse(date, out dt))
-                            {
-                                video.Published = dt;
-                            }
-                        }
-
-                        metadata = true;
-                    }
-                }
-
+            // Quality and media url
+            string mediaUrl = HttpUtility.HtmlDecode(mediaUrlNode.InnerText.Trim());
+            if (Regex.Match(asset.OuterHtml, @"720p", RegexOptions.IgnoreCase | RegexOptions.Compiled).Success) 
+            {
+                video.Files[VideoQuality.HD720] = mediaUrl;
+            } 
+            else 
+            {
+                video.Files[VideoQuality.Unknown] = mediaUrl;
             }
 
             this.state = NodeState.Complete;
+
             return NodeResult.Success;
         }
-
-        static void ParseAppleVideoTitle(string input, out string title, out VideoQuality quality) {
-            // This parses a title formatted as: "Trailer Name (Quality)" 
-            // from the playlist and splits it into a title and the quality enum
-
-            string[] parts = input.Split('(');
-            if (parts.Length == 2) {
-                // this should be the title.
-                title = parts[0].Trim();
-                // this should be the quality identifier
-                string q = parts[1].Replace(")", "").ToLower();
-                switch (q) {
-                    case "small":
-                        quality = VideoQuality.Small;
-                        break;
-                    case "medium":
-                        quality = VideoQuality.Medium;
-                        break;
-                    case "large":
-                        quality = VideoQuality.Large;
-                        break;
-                    case "hd 480p":
-                        quality = VideoQuality.HD480;
-                        break;
-                    case "hd 720p":
-                        quality = VideoQuality.HD720;
-                        break;
-                    case "hd 1080p":
-                        quality = VideoQuality.FullHD;
-                        break;
-                    default:
-                        quality = VideoQuality.Unknown;
-                        break;
-                }
-            }
-            else {
-                title = input;
-                quality = VideoQuality.Unknown;
-            }
-        }
-
-		public static VideoQuality ParseVideoQuality(string text)
-		{
-			if (text.ToLowerInvariant().Contains("480p"))
-				return VideoQuality.HD480;
-			if (text.ToLowerInvariant().Contains("720p"))
-				return VideoQuality.HD720;
-			if (text.ToLowerInvariant().Contains("1080p"))
-				return VideoQuality.FullHD;
-			if (text.ToLowerInvariant().Contains("small") || text.ToLowerInvariant().Contains("iphone"))
-				return VideoQuality.Small;
-			if (text.ToLowerInvariant().Contains("medium"))
-				return VideoQuality.Medium;
-			if (text.ToLowerInvariant().Contains("large"))
-				return VideoQuality.Large;
-
-			return VideoQuality.Unknown;
-		}
 
         #region IVideoDetails Members
 

@@ -64,7 +64,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes {
                 return _movieUri;
             }
             set { _movieUri = value; }
-        } string _movieUri = "/moviesxml/s/";
+        } string _movieUri = "/appletv/studios/";
 
 		public const string HtmlMovieTrailersUri = "includes/playlists/web.inc";
 
@@ -90,14 +90,6 @@ namespace OnlineVideos.Sites.Pondman.ITunes {
 
         public string FeaturedStudiosUri {
             get { return FeedsUri + "studios.json"; }
-        }
-
-        public string WeekendBoxOfficeUri {
-            get { return BaseUri + "/moviesxml/h/boxoffice_include.xml"; }
-        }
-
-        public string OpeningThisWeekUri {
-            get { return BaseUri + "/moviesxml/h/openings_include.xml"; }
         }
 
         /// <summary>
