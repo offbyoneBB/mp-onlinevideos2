@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("OnlineVideos.Sites.Pondman")]
-[assembly: AssemblyDescription("Site library for  MediaPortal OnlineVideos plugin")]
+[assembly: AssemblyDescription("Site library for MediaPortal OnlineVideos plugin")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Armand Pondman")]
 [assembly: AssemblyProduct("OnlineVideos.Sites.Pondman")]
-[assembly: AssemblyCopyright("Copyright © Armand Pondman 2012")]
+[assembly: AssemblyCopyright("Copyright © 2013 - Armand Pondman")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,3 +20,6 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("4561f3a5-181f-4340-a319-d2fc498f0d8e")]
+
+// Version
+[assembly: AssemblyVersion("2.0.*")]

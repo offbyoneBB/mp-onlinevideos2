@@ -9,14 +9,14 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
         public string Large {
             get {
                 if (_large == null) {
-                    string poster = Uri;
-                    if (poster.EndsWith("poster.jpg")) {
-                        poster = poster.Replace("poster.jpg", "poster-large.jpg");
-                        Large = poster;
-                    } 
-                    else if (poster.Contains("_20")) {
-                        poster = poster.Replace("_20", "_l20");
-                        Large = poster;
+                    _large = Uri;
+                    if (_large.EndsWith("poster.jpg"))
+                    {
+                        _large = _large.Replace("poster.jpg", "poster-large.jpg");
+                    }
+                    else if (_large.Contains("_20"))
+                    {
+                        _large = _large.Replace("_20", "_l20");
                     }
                     
                 }

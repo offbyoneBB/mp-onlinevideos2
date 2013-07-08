@@ -53,8 +53,11 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 
         internal static Section Root(ISession session) 
         {
-            Section root = session.Get<Section>(Section.RootUri);
-            root.Name = session.Config.RootTitle;
+            //Section root = session.Get<Section>(Section.RootUri);
+            //root.Name = session.Config.RootTitle;
+
+            Section root = session.Get<Section>(Section.FeaturedUri);
+            root.Name = "Featured";
 
             return root;
         }
@@ -68,50 +71,17 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
         {
             string sectionUri = this.Uri;
 
-            // these 2 sections never need an update
-            if (sectionUri == Section.StudiosUri || sectionUri == Section.GenresUri)
-            {
-                return NodeResult.Success;
-            }
-
             Configuration config = this.session.Config;
 
             #region Root
 
             if (sectionUri == Section.RootUri)
             {
-                Sections.Clear();
+                //Sections.Clear();
 
-                Section subSection = this.session.Get<Section>(Section.FeaturedUri);
-                subSection.Name = "Featured";
-                this.Sections.Add(subSection);
-
-                subSection = this.session.Get<Section>(this.session.Config.WeekendBoxOfficeUri);
-                subSection.Name = "Weekend Box Office";
-                Sections.Add(subSection);
-
-                subSection = this.session.Get<Section>(this.session.Config.OpeningThisWeekUri);
-                subSection.Name = "Opening This Week";
-                Sections.Add(subSection);
-
-                string homeData = this.session.MakeRequest(this.session.Config.HomeUri);
-
-                List<Section> sections = Section.GetSectionsFromHome(this.session, homeData);
-                List<Section> genres = sections.FindAll(s => s.Uri.Contains("/moviesxml/g/"));
-                List<Section> studios = sections.FindAll(s => s.Uri.Contains("/moviesxml/s/"));
-
-                subSection = this.session.Get<Section>(Section.GenresUri);
-                subSection.Name = "Genres";
-                subSection.Sections.AddRange(genres);
-                subSection.state = NodeState.Complete;
-
-                Sections.Add(subSection);
-
-                subSection = this.session.Get<Section>(Section.StudiosUri);
-                subSection.Name = "Studios";
-                subSection.Sections.AddRange(studios);
-                subSection.state = NodeState.Complete;
-                Sections.Add(subSection);
+                //Section subSection = this.session.Get<Section>(Section.FeaturedUri);
+                //subSection.Name = "Featured";
+                //this.Sections.Add(subSection);
 
                 this.state = NodeState.Complete;
                 return NodeResult.Success;
@@ -172,28 +142,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
             Movies.Clear();
 
             List<Movie> movies = new List<Movie>();
-
-            if (sectionUri == config.WeekendBoxOfficeUri || sectionUri == config.OpeningThisWeekUri)
-            {
-
-                // grab one of the bigger sections to add some more movie information
-                // to the cache before we display the box office
-                Section bigSection = this.session.Get<Section>(config.FeaturedStudiosUri);
-                bigSection.Update();
-
-                data = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?><boxoffice>" + data + "</boxoffice>";
-                movies = Movie.GetMoviesFromXmlInclude(this.session, data);
-            }
-            else if (sectionUri.Contains("/moviesxml/"))
-            {
-                List<Section> xmlSections = GetSectionsFromXml(this, data);
-                Sections.AddRange(xmlSections);
-                movies = Movie.GetMoviesFromXml(this.session, data);
-            }
-            else
-            {
-                movies = Movie.GetMoviesFromJsonData(session, data);
-            }
+            movies = Movie.GetMoviesFromJsonData(session, data);
 
             #region Featured Genres
 

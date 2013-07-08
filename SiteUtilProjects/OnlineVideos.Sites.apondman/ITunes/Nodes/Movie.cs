@@ -12,11 +12,11 @@ using OnlineVideos.Sites.Pondman.ITunes.DTO;
 using OnlineVideos.Sites.Pondman.Interfaces;
 using HtmlAgilityPack;
 using OnlineVideos.Sites.Pondman.Nodes;
+using System.Globalization;
 
 namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
     public class Movie : ExternalContentNodeBase, IVideoDetails
     {
-
         public string Title { get; set; }
 
         public string Plot { get; set; }
@@ -151,73 +151,25 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 
         public override NodeResult Update()
         {
-            HtmlNode verificationNode = null;
             string url = this.uri;
             string data = this.session.MakeRequest(url);
             HtmlNode root = Utility.ToHtmlNode(data);
 
-            if (root != null)
+            if (root == null)
             {
-                verificationNode = root.SelectSingleNode("//pathelement[3]");
+                return NodeResult.Failed;
             }
 
-            // if we don't have a valid result we are going to try some alternatives
-            if (verificationNode == null)
+            HtmlNode item = root.SelectSingleNode("atv/body/itemdetail");
+            if (item == null)
             {
-                HashSet<string> alternatives = this.GetPossibleIndexLocations();
-                foreach (string alternative in alternatives)
-                {
-                    // we skip the original uri as we already tried that
-                    if (alternative == url)
-                    {
-                        continue;
-                    }
-
-                    data = this.session.MakeRequest(alternative);
-                    root = Utility.ToHtmlNode(data);
-
-                    // if we found some valid xml break the loop
-                    if (root != null)
-                    {
-                        verificationNode = root.SelectSingleNode("//pathelement[3]");
-                        if (verificationNode == null)
-                        {
-                            url = alternative;
-                            break;
-                        }
-                    }
-                }
-
-                // if we exhausted all alternatives and we still don't 
-                // have some valid result try scraping from the OriginalLocation
-                if (verificationNode == null)
-                {
-					return UpdateFromOriginalLocation();
-                }
-            }
-
-            // Double check the 3rd PathElement node in the xml to see whether we got the
-            // expected details XML. If not try to reload from the new url.
-            string verifiedUrl = this.session.Config.BaseUri + verificationNode.InnerText;
-            if (url != verifiedUrl)
-            {
-                string newData = this.session.MakeRequest(url);
-                HtmlNode newRoot = Utility.ToHtmlNode(newData);
-                if (newRoot != null)
-                {
-                    verificationNode = newRoot.SelectSingleNode("//pathelement[3]");
-                    if (verificationNode != null)
-                    {
-                        root = newRoot;
-                    }
-                }
+                return NodeResult.Failed;
             }
 
             // Grab the poster
-            HtmlNode Poster = root.SelectSingleNode("//pictureview/@url[contains(.,'poster')]");
+            HtmlNode Poster = item.SelectSingleNode("image");
             if (Poster != null && Poster.InnerText.Length > 0)
             {
-
                 // sometimes the poster urls start relative, in that case complete the address
                 string poster = (Poster.InnerText.StartsWith("/")) ? this.session.Config.BaseUri + Poster.InnerText : Poster.InnerText;
 
@@ -227,183 +179,145 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
                     this.Poster = this.session.Get<Poster>(poster);
                 }
 
-                // set this address to be the large poster
-                this.Poster.Large = poster;
+                // set this address to be the x-large poster
+                this.Poster.XL = poster;
             }
-
+            
             // Synopsis
-            HtmlNodeCollection infoNodes = root.SelectNodes("//vboxview/textview/setfontstyle");
-            if (infoNodes != null && infoNodes.Count > 1)
+            HtmlNode summary = item.SelectSingleNode("summary");          
+            if (summary != null)
             {
-                string synopsis = infoNodes[2].InnerText.Trim();
+                string synopsis = summary.InnerText.Trim();
                 this.Plot = HttpUtility.HtmlDecode(synopsis);
             }
 
-            // Release Date
-            HtmlNodeCollection dateNodes = root.SelectNodes("//vboxview/textview/setfontstyle[contains(b, 'Theaters:')]");
-            if (dateNodes != null && dateNodes.Count == 1)
+            // Synopsis
+            if (string.IsNullOrEmpty(this.Studio))
             {
-                string date = dateNodes[0].InnerText;
-                date = date.Replace("In Theaters:", "");
-                date = Regex.Replace(date, @"[^\d]*, ", ", ");
-                date = date.Trim();
-
-                DateTime dt;
-                if (DateTime.TryParse(date, out dt))
+                HtmlNode studio = item.SelectSingleNode("subtitle");          
+                if (studio != null)
                 {
-                    this.ReleaseDate = dt;
+                    this.Studio = HttpUtility.HtmlDecode(studio.InnerText.Trim());
                 }
             }
 
-            // Genres
-            HtmlNodeCollection genreNodes = root.SelectNodes("//gotourl[contains(@url, '/moviesxml/g/')]");
-            if (genreNodes != null)
+            // other details
+            HtmlNodeCollection details = item.SelectNodes("table/rows/row/label");
+            if (details != null && details.Count == 20)
             {
-                this.Genres = genreNodes.ToStringList();
-            }
-
-            // Cast
-            HtmlNodeCollection castNodes = root.SelectNodes("//vboxview/textview[@styleset='basic10']/setfontstyle");
-            if (castNodes != null)
-            {
-                this.Actors = castNodes.ToStringList();
-            }
-
-            // Find all the videos for this movie.
-            HtmlNodeCollection videoNodes = root.SelectNodes("//gotourl[@target='main']");
-            if (videoNodes != null && videoNodes.Count > 0)
-            {
-
-                // clear videos
-                this.Videos.Clear();
-
-                HashSet<string> videoUrls = new HashSet<string>();
-                Dictionary<string, string> videoTitles = new Dictionary<string, string>();
-
-                // get the posted dates and runtime nodes
-                HtmlNodeCollection postedDates = root.SelectNodes("//setfontstyle[contains(., 'Posted:')]");
-                HtmlNodeCollection runtimes = root.SelectNodes("//setfontstyle[contains(., 'Runtime:')]");
-
-                int count = 0;
-                //foreach (XmlNode videoNode in videoNodes) {
-                foreach (HtmlNode videoNode in videoNodes)
+                // Release Date  (5th label)
+                if (this.ReleaseDate > DateTime.MinValue)
                 {
-
-                    // if it does not start with a specific string then ignore this url
-                    string videoUrl = videoNode.Attributes["url"].Value;
-                    if (!videoUrl.StartsWith("/moviesxml/s/"))
-                        continue;
-
-                    // complete the relative path
-                    videoUrl = this.session.Config.FixUri(videoUrl);
-
-                    // if we already added this url ignore it
-                    if (videoUrls.Contains(videoUrl))
-                        continue;
-
-                    videoUrls.Add(videoUrl);
-
-                    Video video = this.session.Get<Video>(videoUrl);
-                    video.Title = videoNode.Attributes["draggingName"].Value;
-
-                    // Set the duration of the video
-                    string runtime = runtimes[count].InnerText.Trim();
-                    runtime = runtime.Replace("Runtime: ", "");
-                    string[] units = runtime.Split(':');
-                    int minutes = 0;
-                    int seconds = 0;
-                    int.TryParse(units[0], out minutes);
-                    int.TryParse(units[1], out seconds);
-                    video.Duration = new TimeSpan(0, minutes, seconds);
-
-                    // set the date of the video
-                    string date = postedDates[count].InnerText.Trim();
-                    date = date.Replace("Posted: ", "");
-                    date = Regex.Replace(date, @"[^\d]*, ", ", ");
+                    string rawDate = details[4].InnerText;
+                    rawDate = rawDate.Replace("In Theaters ", "").Trim();
 
                     DateTime dt;
-                    if (DateTime.TryParse(date, out dt))
+                    if (DateTime.TryParseExact(rawDate, new string[] { @"M/dd" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
                     {
-                        video.Published = dt;
+                        this.ReleaseDate = dt;
                     }
-
-                    // add this video to the movie
-                    this.Videos.Add(video);
-                    count++;
                 }
+
+                if (this.Directors.Count == 0) 
+                {
+                    string director = HttpUtility.HtmlDecode(details[2].InnerText.Trim());                 
+                    this.Directors.Add(director);
+                }
+
+                //if (this.Writers.Count == 0)
+                //{
+                //    string writer = HttpUtility.HtmlDecode(details[3].InnerText.Trim());
+                //    this.Writers.Add(writer);
+                //}
+
+                if (this.Actors.Count == 0)
+                {
+                    this.Actors.Add(HttpUtility.HtmlDecode(details[1].InnerText.Trim()));
+                    this.Actors.Add(HttpUtility.HtmlDecode(details[5].InnerText.Trim()));
+                    this.Actors.Add(HttpUtility.HtmlDecode(details[9].InnerText.Trim()));
+                    this.Actors.Add(HttpUtility.HtmlDecode(details[13].InnerText.Trim()));
+                }
+
+                if (this.Genres.Count == 0)
+                {
+                    this.Actors.Add(HttpUtility.HtmlDecode(details[0].InnerText.Trim()));
+                }
+
             }
+
+            // clear videos
+            this.Videos.Clear();
+
+            HashSet<string> videoUrls = new HashSet<string>();
+            Dictionary<string, string> videoTitles = new Dictionary<string, string>();
+
+            // Find all the videos for this movie.
+            HtmlNodeCollection videoNodes = item.SelectNodes("//actionbutton");
+            if (videoNodes != null && videoNodes.Count > 0)
+            {
+                HtmlNode target = videoNodes.Where(x => x.GetAttributeValue("id", "") == "more").FirstOrDefault();
+                if (target != null)
+                {
+                    // use more link for all videos
+                    string allVideosUrl = this.Uri.Replace("index-hd.xml", "more.xml");
+                    string allVideosData = this.session.MakeRequest(allVideosUrl);
+                    HtmlNode allVideosRoot = Utility.ToHtmlNode(allVideosData);
+
+                    HtmlNodeCollection allVideoNodes = allVideosRoot.SelectNodes("//twolineenhancedmenuitem");
+                    foreach (var node in allVideoNodes)
+                    {
+                        var match = Regex.Match(node.OuterHtml, @"'[^\s]+\.xml'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                        if (!match.Success)
+                        {
+                            continue;
+                        }
+
+                        Video video = this.session.Get<Video>(match.Value.Replace("'", ""));
+                        
+                        HtmlNode temp = node.SelectSingleNode("label");          
+                        if (temp != null)
+                        {
+                            video.Title = HttpUtility.HtmlDecode(temp.InnerText.Trim());
+                        }
+                        
+                        temp = node.SelectSingleNode("image");
+                        if (temp != null)
+                        {
+                            video.ThumbUrl = HttpUtility.HtmlDecode(temp.InnerText.Trim());
+                        }
+
+                        temp = node.SelectSingleNode("rightlabel");
+                        if (temp != null)
+                        {
+                            DateTime dt;
+                            if (DateTime.TryParseExact(temp.InnerText.Trim(), new string[] { @"M/dd" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
+                            {
+                                video.Published = dt;
+                            }                            
+                        }
+
+                        this.Videos.Add(video);
+                    }
+                }
+                else
+                {
+                    // use single trailer
+                    target = videoNodes.FirstOrDefault();
+                    var match = Regex.Match(target.OuterHtml, @"'[^\s]+\.xml'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                    if (match.Success)
+                    {
+                        Video video = this.session.Get<Video>(match.Value.Replace("'",""));
+                        video.Title = "Trailer";
+                        this.Videos.Add(video);
+                    }
+                }             
+            }
+
             this.state = NodeState.Complete;
+
             return NodeResult.Success;
         }
 
-		NodeResult UpdateFromOriginalLocation()
-		{
-			// get trailers from web.inc
-			var trailersHtml = SiteUtilBase.GetWebData<HtmlDocument>(new Uri(OriginalLocation, Configuration.HtmlMovieTrailersUri).ToString());
-
-			var trailerList = trailersHtml.DocumentNode.SelectSingleNode("//ul[@class = 'trailers-dropdown']");
-			if (trailerList != null)
-			{
-				// clear videos
-				Videos.Clear();
-				// add new videos
-				foreach (var trailerListItem in trailerList.Elements("li"))
-				{
-					Video video = this.session.Get<Video>("");
-					video.Title = trailerListItem.Element("div").Element("div").Element("h3").InnerText;
-					foreach (var text in trailerListItem.Element("div").Element("div").Element("p").Elements("#text"))
-					{
-						if (text.InnerText.Trim().StartsWith("Posted:"))
-						{
-							DateTime dt;
-							if (System.DateTime.TryParse(text.InnerText.Replace("Posted:", "").Trim(), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dt))
-							{
-								video.Published = dt;
-							}
-						}
-						else if (text.InnerText.Trim().StartsWith("Runtime:"))
-						{
-							TimeSpan ts;
-							if (TimeSpan.TryParse("00:" + text.InnerText.Replace("Runtime:", "").Trim(), out ts))
-							{
-								video.Duration = ts;
-							}
-						}
-					}
-					var secondDiv = trailerListItem.Element("div").Elements("div").Last();
-					video.ThumbUrl = secondDiv.Element("a").Element("img").GetAttributeValue("src", "");
-
-					var trailerFilesDiv = secondDiv.Elements("div").FirstOrDefault(d => d.GetAttributeValue("class", "") == "dropdown-list");
-					if (trailerFilesDiv == null)
-						trailerFilesDiv = trailersHtml.DocumentNode.SelectSingleNode("//div[@class = 'dropdown-list']");
-					if (trailerFilesDiv != null)
-					{
-						var downloadLi = trailerFilesDiv.Element("ul").Elements("li").FirstOrDefault(li => li.InnerText.Trim() == "Download");
-						while (downloadLi != null)
-						{
-							if (downloadLi.Name == "li" && downloadLi.GetAttributeValue("class", "") == "hd")
-							{
-								string uri = downloadLi.Element("a").GetAttributeValue("href","");
-								if (!string.IsNullOrEmpty(uri))
-								{
-									VideoQuality vq = Video.ParseVideoQuality(downloadLi.Element("a").InnerText);
-									if (vq != VideoQuality.Unknown)
-									{
-										video.Files.Add(vq, uri);
-										video.Uri = uri.Replace("http://", "file://"); // we have to set an url so Onlinevideos downloader can distinguish clips, set one we can filter later
-									}
-								}
-							}
-							downloadLi = downloadLi.NextSibling;
-						}
-					}
-
-					if (video.Files.Count > 0)
-						Videos.Add(video);
-				}
-			}
-			return Videos.Count > 0 ? NodeResult.Success : NodeResult.Failed;
-		}
         /// <summary>
         /// Parses a JSON feed with movies
         /// </summary>
@@ -430,7 +344,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
         internal static Movie CreateMovieFromJson(ISession session, MovieDTO movieItem)
         {
             // convert location to actual movie uri
-            string movieUri = movieItem.location.Replace("/trailers/", session.Config.XmlMovieDetailsUri) + "index.xml";
+            string movieUri = movieItem.location.Replace("/trailers/", session.Config.XmlMovieDetailsUri) + "index-hd.xml";
 
             // create the movie object
             Movie movie =  session.Get<Movie>(movieUri);
