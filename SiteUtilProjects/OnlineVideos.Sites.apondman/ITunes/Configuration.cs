@@ -31,16 +31,6 @@ namespace OnlineVideos.Sites.Pondman.ITunes {
             set { _feedsUri = value; }
         } string _feedsUri = "/trailers/home/feeds/";
 
-        public string HomeUri {
-            get {
-                if (_homeUri.StartsWith("/"))
-                    return _baseUri + _homeUri;
-
-                return _homeUri;
-            }
-            set { _homeUri = value; }
-        } string _homeUri = "/moviesxml/h/index.xml";
-
         public string SearchUri {
             get {
                 if (_searchUri.StartsWith("/"))
@@ -51,11 +41,6 @@ namespace OnlineVideos.Sites.Pondman.ITunes {
             set { _searchUri = value; }
         } string _searchUri = "/trailers/home/scripts/quickfind.php?q=";
 
-        public string XmlNamespace {
-            get { return _xmlNamespace; }
-            set { _xmlNamespace = value; }
-        } string _xmlNamespace = "http://www.apple.com/itms/";
-
         public string XmlMovieDetailsUri {
             get {
                 if (_movieUri.StartsWith("/"))
@@ -65,8 +50,6 @@ namespace OnlineVideos.Sites.Pondman.ITunes {
             }
             set { _movieUri = value; }
         } string _movieUri = "/appletv/studios/";
-
-		public const string HtmlMovieTrailersUri = "includes/playlists/web.inc";
 
         public string FeaturedJustAddedUri {
             get { return FeedsUri + "just_added.json"; }

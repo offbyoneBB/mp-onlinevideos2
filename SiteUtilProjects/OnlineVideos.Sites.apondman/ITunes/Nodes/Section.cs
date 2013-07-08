@@ -219,54 +219,5 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
             return NodeResult.Success;
         }
 
-        internal static List<Section> GetSectionsFromXml(Section parentSection, string data)
-        {
-            List<Section> sections = new List<Section>();
-            HtmlNode root = Utility.ToHtmlNode(data);
-
-            if (root == null)
-            {
-                return sections;
-            }
-
-            HtmlNode moreNode = root.SelectSingleNode("//gotourl[textview/setfontstyle/b[contains(.,'More')]]");
-            if (moreNode != null)
-            {
-                string parentUri = parentSection.Uri;
-                string moreUri = moreNode.Attributes["url"].Value;
-                string uri = Regex.Replace(parentUri, @"/[^/]+$", "/" + moreUri);
-                Section moreSection = parentSection.session.Get<Section>(uri);
-                moreSection.Name = parentSection.Name + " (Page " + Regex.Match(moreUri, @"[\d]+(?=\.xml$)").Value + ")";
-                sections.Add(moreSection);
-            }
-
-            return sections;
-        }
-
-        internal static List<Section> GetSectionsFromHome(ISession session, string data)
-        {
-            List<Section> sections = new List<Section>();
-            HtmlNode root = Utility.ToHtmlNode(data);
-
-            if (root == null)
-            {
-                return sections;
-            }
-
-            // Genre and studio nodes
-            HtmlNodeCollection nodes = root.SelectNodes("//gotourl[contains(@url, '/moviesxml/')]");
-            foreach (HtmlNode node in nodes)
-            {
-                string name = node.Attributes["draggingName"].Value;
-                string url = node.Attributes["url"].Value;
-                Section section = session.Get<Section>(session.Config.BaseUri + url);
-                section.Name = HttpUtility.HtmlDecode(name);
-                sections.Add(section);
-            }
-
-            return sections;
-
-        }
-
     }
 }
