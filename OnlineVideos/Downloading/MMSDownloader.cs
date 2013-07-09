@@ -206,7 +206,7 @@ namespace OnlineVideos
                 n = s.Receive(recbytes, 1, System.Net.Sockets.SocketFlags.None);
                 rbytes = rbytes + n;
                 hinfo = hinfo + enc.GetString(recbytes, 0, n);
-                Log.Debug("MMSDownloader : Recieving Command Header..." + rbytes + "Bytes Recieved...");
+                //Log.Debug("MMSDownloader : Recieving Command Header..." + rbytes + "Bytes Recieved...");
                 if (hinfo.Contains(Environment.NewLine + Environment.NewLine) == true)
                     break;
             } while (true);
@@ -231,7 +231,7 @@ namespace OnlineVideos
                 {
                     n = s.Receive(tbytes, n1, 16, System.Net.Sockets.SocketFlags.None);
                     n1 = n1 + n;
-                    Log.Debug("MMSDownloader : Sorting Header..." + n1 + "Bytes Recieved...");
+                    //Log.Debug("MMSDownloader : Sorting Header..." + n1 + "Bytes Recieved...");
                 } while (!(Find(y.ToByteArray(), tbytes) > 0));
                 Array[] x = SortOutHeader(tbytes, n1);
                 connectionEstablished = true;
@@ -241,7 +241,7 @@ namespace OnlineVideos
                 i = bs[6] + bs[7] * (256) - 8 - x[0].Length;
                 cur = cur + i + x[0].Length;
             more:
-                Log.Debug("MMSDownloader : Header Size: " + cur + "Bytes");
+                Log.Debug("MMSDownloader : Header Size: " + cur + " Bytes");
                 byte[] header = new byte[i];
                 n1 = 0;
                 while (!(n1 == i))
@@ -251,8 +251,10 @@ namespace OnlineVideos
                 }
                 if (p == 0)
                     p = GetPacketLength(header);
+				Log.Debug("MMSDownloader : Packet Size: " + p + " Bytes");
                 if (np == 0)
                     np = GetNumberOfPackets(header);
+				Log.Debug("MMSDownloader : Total Packets to retrieve: " + np);
                 fs.Write(header, 0, header.Length);
                 if (bs[5] == 0x4 | bs[5] == 0x8)
                 {
@@ -290,7 +292,7 @@ namespace OnlineVideos
                     cur = cur + p;
                     PercentDownloaded = (byte)((float)rp / np * 100f);
                     CurrentBytesDownloaded = cur;
-                    Log.Debug("MMSDownloader : Recieving Packets. Packet Size Is " + p + "." + Environment.NewLine + "Recieved " + rp + " Packets Out Of " + np + "." + Environment.NewLine + "Downloaded So Far " + cur + "Bytes.");
+                    //Log.Debug("MMSDownloader : Recieving Packets. Packet Size Is " + p + "." + Environment.NewLine + "Recieved " + rp + " Packets Out Of " + np + "." + Environment.NewLine + "Downloaded So Far " + cur + "Bytes.");
                     n1 = 0;
                     while (n1 != 12)
                     {
