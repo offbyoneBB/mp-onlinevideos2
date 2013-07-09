@@ -100,18 +100,14 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
                 subSection.Name = "Just Added";
                 Sections.Add(subSection);
 
-                subSection = this.session.Get<Section>(config.FeaturedExclusiveUri);
-                subSection.Name = "Exclusive";
-                Sections.Add(subSection);
-
-                subSection = this.session.Get<Section>(config.FeaturedJustHdUri);
-                subSection.Name = "Just HD";
-                Sections.Add(subSection);
-
                 subSection = this.session.Get<Section>(config.FeaturedMostPopularUri);
                 subSection.Name = "Most Popular";
                 Sections.Add(subSection);
-
+                
+                subSection = this.session.Get<Section>(config.FeaturedExclusiveUri);
+                subSection.Name = "Exclusive";
+                Sections.Add(subSection);
+                
                 subSection = this.session.Get<Section>(config.FeaturedGenresUri);
                 subSection.Name = "Genre";
                 Sections.Add(subSection);
