@@ -59,10 +59,6 @@ namespace OnlineVideos.Sites.Pondman.ITunes {
             get { return FeedsUri + "exclusive.json"; }
         }
 
-        public string FeaturedJustHdUri {
-            get { return FeedsUri + "just_hd.json"; }
-        }
-
         public string FeaturedMostPopularUri {
             get { return FeedsUri + "most_pop.json"; }
         }

@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites.Pondman
         /// <returns></returns>
         protected virtual string doWebRequest(string uri)
         {
-            return GetWebData(uri, null, null, null, false, true);
+            return GetWebData(uri, forceUTF8: true);
         }
     }
 }
