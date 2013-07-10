@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <Target Name="BeforeBuild">
+    <Exec Command='subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"'/>
+  </Target>
+
+  <PropertyGroup>
+    <PluginDestination>$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\</PluginDestination>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PluginFiles Include="$(TargetDir)$(ProjectName).*" />
+    <PluginFiles Include="$(TargetDir)OnlineVideos.*" />
+    <PluginFiles Include="$(ProjectDir)plugin.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <LanguageFiles Include="$(ProjectDir)Language\*.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SkinFiles Include="$(ProjectDir)Skin\**\*.*" Exclude="$(ProjectDir)Skin\**\.svn\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MPUrlSourceSplitterFiles Include="$(SolutionDir)MPUrlSourceSplitter\bin_Win32\*.*" />
+  </ItemGroup>
+
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
+    <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PluginDestination)Language\" />
+    <Copy SourceFiles="@(SkinFiles)"
+          DestinationFiles="@(SkinFiles->'$(PluginDestination)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(PluginDestination)MPUrlSourceSplitter\" />
+
+    <!-- Copy again to NuGetPackage folder for simple package creation -->
+    <PropertyGroup>
+      <PackageContent>$(ProjectDir)NuGetPackage\PluginContent\</PackageContent>
+    </PropertyGroup>
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PackageContent)" />
+    <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PackageContent)Language\" />
+    <Copy SourceFiles="@(SkinFiles)"
+          DestinationFiles="@(SkinFiles->'$(PackageContent)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(PackageContent)MPUrlSourceSplitter\" />
+
+    <!-- Uncomment to enable automatic packaging -->
+    <!--
+    It might be worth also to change the BeforeBuild subversion revision detection to make it a MSBuild property and reuse it here.
+    <Exec WorkingDirectory="$(ProjectDir)NuGetPackage" Command="$(NuGetExePath) pack OnlineVideos.MediaPortal2.nuspec -Version 2.1.0" />
+    -->
+  </Target>
+</Project>
