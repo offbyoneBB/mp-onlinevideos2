@@ -68,6 +68,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OnlineVideos\OnlineVideos.csproj">
+      <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
+      <Name>OnlineVideos</Name>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="BackgroundTask.cs" />
     <Compile Include="CommandContainer.cs" />
     <Compile Include="Configuration\Configuration.cs" />
@@ -100,9 +107,7 @@
     <Content Include="Language\strings_da.xml" />
     <Content Include="Language\strings_de.xml" />
     <Content Include="Language\strings_el.xml" />
-    <Content Include="Language\strings_en.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="Language\strings_en.xml" />
     <Content Include="Language\strings_es.xml" />
     <Content Include="Language\strings_et.xml" />
     <Content Include="Language\strings_fi.xml" />
@@ -123,9 +128,7 @@
     <Content Include="Language\strings_sv.xml" />
     <Content Include="Language\strings_tr.xml" />
     <Content Include="Language\strings_zh.xml" />
-    <Content Include="plugin.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="plugin.xml" />
     <Content Include="Skin\default\images\C33E39CC-910E-41C8-BFFD-9ECCD340B569.jpg" />
     <Content Include="Skin\default\images\DownloadedVideo.png" />
     <Content Include="Skin\default\images\LanguageFlags\--.png" />
@@ -149,135 +152,34 @@
     <Content Include="Skin\default\images\LanguageFlags\zh.png" />
     <Content Include="Skin\default\images\NextPage.png" />
     <Content Include="Skin\default\shortcuts\OnlineVideos-shortcuts.xml" />
-    <Content Include="Skin\default\workflow\onlinevideos-actions.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="Skin\default\workflow\onlinevideos-actions.xml" />
+    <Content Include="Skin\default\screens\sites.xaml" />
+    <Content Include="Skin\default\screens\categories.xaml" />
+    <Content Include="Skin\default\screens\videos.xaml" />
+    <Content Include="Skin\default\screens\dialogSearch.xaml" />
+    <Content Include="Skin\default\screens\details.xaml" />
+    <Content Include="Skin\default\screens\ovsDialogItemContextMenu.xaml" />
+    <Content Include="Skin\default\themes\default\styles\OnlineVideosStyles.xaml" />
+    <Content Include="Skin\Reflexion\themes\default\styles\OnlineVideosStyles.xaml" />
+    <Content Include="Skin\default\screens\ovsSiteSettings.xaml" />
+    <Content Include="Skin\Titanium\themes\default\styles\OnlineVideosStyles.xaml" />
+    <Content Include="Skin\default\screens\ovsDialogSiteSettingText.xaml" />
+    <Content Include="Skin\default\screens\ovsDialogSiteSettingChoice.xaml" />
+    <Content Include="Skin\default\screens\ovsSiteManagement.xaml" />
+    <Content Include="Skin\default\screens\ovsDialogSiteUpdate.xaml" />
+    <Content Include="Skin\default\screens\ovsDialogGenericItems.xaml" />
+    <Content Include="Skin\default\screens\ovsDialogReportSite.xaml" />
+    <Content Include="Skin\default\screens\ovsUserReports.xaml" />
+    <Content Include="Skin\Titanium\screens\sites.xaml" />
+    <Content Include="Skin\Titanium\screens\details.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Skin\default\screens\sites.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\categories.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\videos.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\OnlineVideos\OnlineVideos.csproj">
-      <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
-      <Name>OnlineVideos</Name>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\dialogSearch.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\details.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="NuGetPackage\OnlineVideos.MediaPortal2.nuspec" />
     <None Include="Properties\VersionInfo.cs.tmpl" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Skin\default\screens\ovsDialogItemContextMenu.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\themes\default\styles\OnlineVideosStyles.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\Reflexion\themes\default\styles\OnlineVideosStyles.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\ovsSiteSettings.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\Titanium\themes\default\styles\OnlineVideosStyles.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\ovsDialogSiteSettingText.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\ovsDialogSiteSettingChoice.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\ovsSiteManagement.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\ovsDialogSiteUpdate.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\ovsDialogGenericItems.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\ovsDialogReportSite.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\ovsUserReports.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\Titanium\screens\sites.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\Titanium\screens\details.xaml">
-      <SubType>Designer</SubType>
-    </Content>
+    <None Include="build.targets" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>mkdir "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language"
-robocopy "$(ProjectDir)Language" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language" /MIR /NP /XD .svn
-mkdir "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Skin"
-robocopy "$(ProjectDir)Skin" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Skin" /MIR /NP /XD .svn
-xcopy /Y "$(TargetDir)$(ProjectName).*" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
-xcopy /Y "$(TargetDir)OnlineVideos.*" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
-xcopy /Y "$(ProjectDir)plugin.xml" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos"
-mkdir "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\MPUrlSourceSplitter"
-xcopy /Y "$(SolutionDir)MPUrlSourceSplitter\bin_Win32\*.*" "$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\MPUrlSourceSplitter"</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <Import Project="build.targets" />
 </Project>

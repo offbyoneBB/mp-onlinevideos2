@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <Target Name="BeforeBuild">
+    <Exec Command='subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"'/>
+  </Target>
+
+  <PropertyGroup>
+    <PluginDestination>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\</PluginDestination>
+    <DataDestination>$(ProgramData)\Team MediaPortal\MediaPortal\</DataDestination>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PluginFiles Include="$(TargetDir)$(ProjectName).*" />
+    <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
+    <APIFiles Include="$(TargetDir)OnlineVideos.pdb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <LanguageFiles Include="$(SolutionDir)Language\OnlineVideos\*.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SkinFiles Include="$(SolutionDir)Skins\**\*.*" />
+	<IconFiles Include="$(SolutionDir)SiteImages\**\*.*" />
+  </ItemGroup>
+
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
+    <Copy SourceFiles="@(APIFiles)" DestinationFolder="$(PluginDestination)OnlineVideos\" />
+    <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(DataDestination)language\OnlineVideos\" />
+    <Copy SourceFiles="@(SkinFiles)"
+          DestinationFiles="@(SkinFiles->'$(DataDestination)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
+	<Copy SourceFiles="@(IconFiles)"
+          DestinationFiles="@(IconFiles->'$(DataDestination)thumbs\OnlineVideos\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+</Project>

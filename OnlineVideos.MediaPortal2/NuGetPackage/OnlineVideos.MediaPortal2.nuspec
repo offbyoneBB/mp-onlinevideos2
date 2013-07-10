@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata>
+        <id>OnlineVideos.MediaPortal2</id>
+        <version>$version$</version>
+        <title>OnlineVideos.MediaPortal2</title>
+        <authors>offbyone</authors>
+        <owners>offbyone</owners>
+        <licenseUrl>https://code.google.com/p/mp-onlinevideos2/</licenseUrl>
+        <projectUrl>https://code.google.com/p/mp-onlinevideos2/</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>OnlineVideos is a plug-in for the open-source media center application MediaPortal running on the Windows platform. The main goal of this plug-in is the seamless integration of video content provided by various websites with the main application. In order to achieve this, playback is heavily dependent on directshow filters installed on the users operating system. The discovery or scraping of playback links is very flexible and can be done by reading rss feeds, parsing html with regular expressions or even programming against APIs provided by websites. The plug-in interface will unify the user experience from all the different websites into one simple structure. Every site will span a hierarchical tree of categories, each showing a set of videos with descriptions and thumbnails. Support for searching, filtering, bookmarking favorites and downloading is included as well.</description>
+        <summary>MediaPortal OnlineVideos Plugin</summary>
+    </metadata>
+    <files>
+        <file src="PluginContent\**\*.*" target="PluginContent" exclude="**\.svn\**" />
+    </files>
+</package>
