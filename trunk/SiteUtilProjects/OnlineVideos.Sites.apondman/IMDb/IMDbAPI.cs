@@ -94,7 +94,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                     }
                 }
 
-                HtmlNode imageNode = node.SelectSingleNode("img");
+                HtmlNode imageNode = node.DescendantNodes().Where(x => x.Name == "img").FirstOrDefault();
                 if (imageNode != null) {
                     Match match = imdbImageExpression.Match(imageNode.Attributes["src"].Value);
                     if (match.Success)
