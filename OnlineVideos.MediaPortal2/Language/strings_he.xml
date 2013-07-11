@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">קטגוריה</string>
   <string name="OnlineVideos.CategoryNotFound">קטגוריה לא נמצאה</string>
   <string name="OnlineVideos.Categories">קטגוריות</string>
+  <string name="OnlineVideos.ChangeSettings">שנה הגדרות</string>
   <string name="OnlineVideos.Creator">יוצר</string>
   <string name="OnlineVideos.CreateNewPlaylist">צור רשימת ניגון חדשה...</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">בודק אם יש גירסת עדכון לתוסף</string>
@@ -97,6 +98,7 @@
   <string name="OnlineVideos.Others">אחרים</string>
   <!--P-->
   <string name="OnlineVideos.PlayAll">נגן הכל</string>
+  <string name="OnlineVideos.PlayAllFromHere">נגן הכל (מכאן)</string>
   <string name="OnlineVideos.PlayAllRandom">נגן הכל (בסדר אקראי)</string>
   <string name="OnlineVideos.PlayWith">נגן עם...</string>
   <string name="OnlineVideos.Playlists">רשימות ניגון</string>
@@ -167,6 +169,7 @@
   <string name="OnlineVideos.Settings_SearchHistoryType_Off">כבוי</string>
   <string name="OnlineVideos.Settings_SearchHistoryType_Simple">פשוט</string>
   <string name="OnlineVideos.Settings_SearchHistoryType_Extended">מורחב</string>
+  <string name="OnlineVideos.Settings_BasicHomeName">חפש מילות מפתח קשורות</string>
   <string name="OnlineVideos.Settings_PluginEnabled">תוסף מופעל</string>
   <string name="OnlineVideos.Settings_ListedInHome">מופיע בעמוד הראשי</string>
   <string name="OnlineVideos.Settings_ListedInPlugins">מופיע ב-\"תוספים שלי\"</string>

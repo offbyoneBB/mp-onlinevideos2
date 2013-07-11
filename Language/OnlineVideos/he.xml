@@ -21,6 +21,7 @@
   <string name="Category">קטגוריה</string>
   <string name="CategoryNotFound">קטגוריה לא נמצאה</string>
   <string name="Categories">קטגוריות</string>
+  <string name="ChangeSettings">שנה הגדרות</string>
   <string name="Creator">יוצר</string>
   <string name="CreateNewPlaylist">צור רשימת ניגון חדשה...</string>
   <string name="CheckingForPluginUpdate">בודק אם יש גירסת עדכון לתוסף</string>
@@ -97,6 +98,7 @@
   <string name="Others">אחרים</string>
   <!--P-->
   <string name="PlayAll">נגן הכל</string>
+  <string name="PlayAllFromHere">נגן הכל (מכאן)</string>
   <string name="PlayAllRandom">נגן הכל (בסדר אקראי)</string>
   <string name="PlayWith">נגן עם...</string>
   <string name="Playlists">רשימות ניגון</string>
@@ -167,6 +169,7 @@
   <string name="Settings_SearchHistoryType_Off">כבוי</string>
   <string name="Settings_SearchHistoryType_Simple">פשוט</string>
   <string name="Settings_SearchHistoryType_Extended">מורחב</string>
+  <string name="Settings_BasicHomeName">חפש מילות מפתח קשורות</string>
   <string name="Settings_PluginEnabled">תוסף מופעל</string>
   <string name="Settings_ListedInHome">מופיע בעמוד הראשי</string>
   <string name="Settings_ListedInPlugins">מופיע ב-\"תוספים שלי\"</string>

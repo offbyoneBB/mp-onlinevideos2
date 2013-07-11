@@ -21,6 +21,7 @@
   <string name="Category">Kategori</string>
   <string name="CategoryNotFound">Kategori ikke fundet</string>
   <string name="Categories">Kategorier</string>
+  <string name="ChangeSettings">Skift indstillinger</string>
   <string name="Creator">Lavet af</string>
   <string name="CreateNewPlaylist">Opret ny Playlist</string>
   <string name="CheckingForPluginUpdate">Søger efter ny version</string>

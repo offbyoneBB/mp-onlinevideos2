@@ -21,6 +21,7 @@
   <string name="Category">Kategória</string>
   <string name="CategoryNotFound">Kategória nenájdená</string>
   <string name="Categories">Kategórie</string>
+  <string name="ChangeSettings">Zmeniť nastavenia</string>
   <string name="Creator">Autor</string>
   <string name="CreateNewPlaylist">Vytvoriť nový zoznam na prehratie ...</string>
   <string name="CheckingForPluginUpdate">kontrolujem nové verzie modulov</string>

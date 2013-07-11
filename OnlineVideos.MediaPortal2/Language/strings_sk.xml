@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Kategória</string>
   <string name="OnlineVideos.CategoryNotFound">Kategória nenájdená</string>
   <string name="OnlineVideos.Categories">Kategórie</string>
+  <string name="OnlineVideos.ChangeSettings">Zmeniť nastavenia</string>
   <string name="OnlineVideos.Creator">Autor</string>
   <string name="OnlineVideos.CreateNewPlaylist">Vytvoriť nový zoznam na prehratie ...</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">kontrolujem nové verzie modulov</string>

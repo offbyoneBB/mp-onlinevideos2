@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Kategori</string>
   <string name="OnlineVideos.CategoryNotFound">Kategorin saknas</string>
   <string name="OnlineVideos.Categories">Kategorier</string>
+  <string name="OnlineVideos.ChangeSettings">Ändra inställningar</string>
   <string name="OnlineVideos.Creator">Skapad av</string>
   <string name="OnlineVideos.CreateNewPlaylist">Skapa ny Spellista ...</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">söker efter uppdaterad plugin-version</string>

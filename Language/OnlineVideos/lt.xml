@@ -21,6 +21,7 @@
   <string name="Category">Kategorija</string>
   <string name="CategoryNotFound">Nerasta kategorija</string>
   <string name="Categories">Kategorijos</string>
+  <string name="ChangeSettings">Keisti nustatymus</string>
   <string name="Creator">Autorius</string>
   <string name="CreateNewPlaylist">Sukurti naują Grojaraštį...</string>
   <string name="CheckingForPluginUpdate">ieskoma naujos iskiepio versijos</string>
