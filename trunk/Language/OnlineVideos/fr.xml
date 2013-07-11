@@ -21,6 +21,7 @@
   <string name="Category">Catégorie</string>
   <string name="CategoryNotFound">Catégorie introuvable</string>
   <string name="Categories">Catégories</string>
+  <string name="ChangeSettings">Modifier les paramètres</string>
   <string name="Creator">Créateur</string>
   <string name="CreateNewPlaylist">Créer une nouvelle Playlist</string>
   <string name="CheckingForPluginUpdate">Vérifier la mise à jour du plugin</string>
@@ -34,7 +35,7 @@
   <string name="Downloading">Téléchargement</string>
   <string name="DownloadingDescription">Voir la liste des téléchargements en cours.</string>
   <string name="DownloadingSubtitle">Téléchargement des sous-titres</string>
-  <string name="DownloadFailed">Le téléchargement a échoué: {0}</string>
+  <string name="DownloadFailed">Le téléchargement a échoué : {0}</string>
   <string name="DownloadCancelled">Téléchargement annulé</string>
   <string name="DownloadComplete">Téléchargement terminé</string>
   <string name="DownloadStarted">Téléchargement démarré</string>
@@ -76,9 +77,9 @@
   <!--L-->
   <string name="LatestVersionRequired">Dernière version ({0}) requise !</string>
   <string name="Language">Par langue</string>
-  <string name="LayoutList">Disposition: Liste</string>
-  <string name="LayoutIcons">Disposition: Icônes</string>
-  <string name="LayoutBigIcons">Disposition: Grandes icônes</string>
+  <string name="LayoutList">Disposition : Liste</string>
+  <string name="LayoutIcons">Disposition : Icônes</string>
+  <string name="LayoutBigIcons">Disposition : Grandes icônes</string>
   <!--M-->
   <string name="ManageSites">Gérer les sites</string>
   <string name="MaxResults">Nombre de Résultats?</string>

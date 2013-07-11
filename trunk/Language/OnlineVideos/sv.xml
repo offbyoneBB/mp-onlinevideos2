@@ -21,6 +21,7 @@
   <string name="Category">Kategori</string>
   <string name="CategoryNotFound">Kategorin saknas</string>
   <string name="Categories">Kategorier</string>
+  <string name="ChangeSettings">Ändra inställningar</string>
   <string name="Creator">Skapad av</string>
   <string name="CreateNewPlaylist">Skapa ny Spellista ...</string>
   <string name="CheckingForPluginUpdate">söker efter uppdaterad plugin-version</string>

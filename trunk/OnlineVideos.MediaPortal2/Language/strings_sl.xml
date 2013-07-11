@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Kategorija</string>
   <string name="OnlineVideos.CategoryNotFound">Kategorija ni najdena</string>
   <string name="OnlineVideos.Categories">Kategorije</string>
+  <string name="OnlineVideos.ChangeSettings">Spremeni nastavitve</string>
   <string name="OnlineVideos.Creator">Ustvarjalec</string>
   <string name="OnlineVideos.CreateNewPlaylist">Ustvari nov seznam predvajanja ...</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">Preverjanje nove različice vtičnika</string>

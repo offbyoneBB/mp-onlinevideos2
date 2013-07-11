@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Kategori</string>
   <string name="OnlineVideos.CategoryNotFound">Kategori ikke fundet</string>
   <string name="OnlineVideos.Categories">Kategorier</string>
+  <string name="OnlineVideos.ChangeSettings">Skift indstillinger</string>
   <string name="OnlineVideos.Creator">Lavet af</string>
   <string name="OnlineVideos.CreateNewPlaylist">Opret ny Playlist</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">Søger efter ny version</string>

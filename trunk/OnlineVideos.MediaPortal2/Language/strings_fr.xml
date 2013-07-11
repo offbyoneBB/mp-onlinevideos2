@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Catégorie</string>
   <string name="OnlineVideos.CategoryNotFound">Catégorie introuvable</string>
   <string name="OnlineVideos.Categories">Catégories</string>
+  <string name="OnlineVideos.ChangeSettings">Modifier les paramètres</string>
   <string name="OnlineVideos.Creator">Créateur</string>
   <string name="OnlineVideos.CreateNewPlaylist">Créer une nouvelle Playlist</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">Vérifier la mise à jour du plugin</string>
@@ -34,7 +35,7 @@
   <string name="OnlineVideos.Downloading">Téléchargement</string>
   <string name="OnlineVideos.DownloadingDescription">Voir la liste des téléchargements en cours.</string>
   <string name="OnlineVideos.DownloadingSubtitle">Téléchargement des sous-titres</string>
-  <string name="OnlineVideos.DownloadFailed">Le téléchargement a échoué: {0}</string>
+  <string name="OnlineVideos.DownloadFailed">Le téléchargement a échoué : {0}</string>
   <string name="OnlineVideos.DownloadCancelled">Téléchargement annulé</string>
   <string name="OnlineVideos.DownloadComplete">Téléchargement terminé</string>
   <string name="OnlineVideos.DownloadStarted">Téléchargement démarré</string>
@@ -76,9 +77,9 @@
   <!--L-->
   <string name="OnlineVideos.LatestVersionRequired">Dernière version ({0}) requise !</string>
   <string name="OnlineVideos.Language">Par langue</string>
-  <string name="OnlineVideos.LayoutList">Disposition: Liste</string>
-  <string name="OnlineVideos.LayoutIcons">Disposition: Icônes</string>
-  <string name="OnlineVideos.LayoutBigIcons">Disposition: Grandes icônes</string>
+  <string name="OnlineVideos.LayoutList">Disposition : Liste</string>
+  <string name="OnlineVideos.LayoutIcons">Disposition : Icônes</string>
+  <string name="OnlineVideos.LayoutBigIcons">Disposition : Grandes icônes</string>
   <!--M-->
   <string name="OnlineVideos.ManageSites">Gérer les sites</string>
   <string name="OnlineVideos.MaxResults">Nombre de Résultats?</string>

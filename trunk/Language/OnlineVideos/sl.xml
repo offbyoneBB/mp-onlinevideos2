@@ -21,6 +21,7 @@
   <string name="Category">Kategorija</string>
   <string name="CategoryNotFound">Kategorija ni najdena</string>
   <string name="Categories">Kategorije</string>
+  <string name="ChangeSettings">Spremeni nastavitve</string>
   <string name="Creator">Ustvarjalec</string>
   <string name="CreateNewPlaylist">Ustvari nov seznam predvajanja ...</string>
   <string name="CheckingForPluginUpdate">Preverjanje nove različice vtičnika</string>

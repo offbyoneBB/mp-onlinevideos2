@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Kategorija</string>
   <string name="OnlineVideos.CategoryNotFound">Nerasta kategorija</string>
   <string name="OnlineVideos.Categories">Kategorijos</string>
+  <string name="OnlineVideos.ChangeSettings">Keisti nustatymus</string>
   <string name="OnlineVideos.Creator">Autorius</string>
   <string name="OnlineVideos.CreateNewPlaylist">Sukurti naują Grojaraštį...</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">ieskoma naujos iskiepio versijos</string>
