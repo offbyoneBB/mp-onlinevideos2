@@ -8,11 +8,9 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             int res = base.DiscoverDynamicCategories();
-            RssLink extra = new RssLink() { Url = baseUrl, Name = "Nur noch kurz online:", Other = 1 };
+            RssLink extra = new RssLink() { Url = baseUrl, Name = "Zuletzt hinzugekommen:", Other = 1 };
             Settings.Categories.Insert(0, extra);
-            extra = new RssLink() { Url = baseUrl, Name = "Zuletzt hinzugekommen:", Other = 2 };
-            Settings.Categories.Insert(1, extra);
-            return res + 2;
+            return res + 1;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -24,7 +22,7 @@ namespace OnlineVideos.Sites
             if (n.HasValue)
                 return Parse(url, parts[n.Value]);
             else
-                return Parse(url, parts[3]);
+                return Parse(url, parts[2]);
         }
     }
 }
