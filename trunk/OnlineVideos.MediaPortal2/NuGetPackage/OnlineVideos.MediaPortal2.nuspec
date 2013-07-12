@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>OnlineVideos.MediaPortal2</id>
-        <version>$version$</version>
+        <version>1.6.1</version>
         <title>OnlineVideos.MediaPortal2</title>
         <authors>offbyone</authors>
         <owners>offbyone</owners>
@@ -13,6 +13,6 @@
         <summary>MediaPortal OnlineVideos Plugin</summary>
     </metadata>
     <files>
-        <file src="PluginContent\**\*.*" target="PluginContent" exclude="**\.svn\**" />
+        <file src="PluginContent\**\*.*" target="PluginContent" exclude="**\.svn\**;*.pdb" />
     </files>
 </package>
