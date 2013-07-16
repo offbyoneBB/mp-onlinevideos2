@@ -90,7 +90,8 @@ namespace OnlineVideos.Sites
             //Hardcode regexp as we probably need to add workaround later (when GT changes their per-category layout once again)
             else
             {
-                strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""http://www\.gametrailers\.com/[^""]*/(?<tmpTitle>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnailUrl""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">";
+                strRegEx_VideoList =     @"<meta\sitemprop=""url""\scontent=""http://www\.gametrailers\.com/[^""]*/(?<tmpTitle>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnailUrl""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">";
+                //strRegEx_VideoList = @"<meta\sitemprop=""url""\scontent=""http://www\.gametrailers\.com/[^""]*/(?<tmpTitle>[^""]*)""/>\s*<meta\sitemprop=""name""\scontent=""(?<Title>[^""]*)""/>\s*<meta\sitemprop=""thumbnailUrl""\scontent=""(?<ImageUrl>[^""]*)""/>\s*<meta\sitemprop=""description""\scontent=""(?<Description>[^""]*)""/>\s*<meta\sitemprop=""uploadDate""\scontent=""(?<Airdate>[^""]*)""/>\s*<meta\sitemprop=""duration""\scontent=""(?<Duration>[^""]*)""/>\s*<a\shref=""(?<VideoUrl>[^""]*)""\sclass=""thumbnail"">";
                 regEx_VideoListTmp = new Regex(strRegEx_VideoList);
 
                 //Full video title regexp
@@ -109,29 +110,10 @@ namespace OnlineVideos.Sites
                         Match m2 = regEx_VideoListGameName.Match(data);
                         int counter = 0;
                         int videoCount = 0;
-                        int skipCount = 0;
-
                         while (m.Success)
                         {
-                            //Skip fake video record, needs to be fixed in Regexp at some point
-                            if (skipCount == 1)
-                            {
-                                videoCount++;
-                                counter++;
-                                m = m.NextMatch();
-                                m2 = m2.NextMatch();
-                                skipCount++;
-                            }
-                            else
-                            {
-                                if (skipCount == 0)
-                                {
-                                    skipCount++;
-                                }
                                 VideoInfo videoInfo = CreateVideoInfo();
-
                                 videoInfo.Title = m.Groups["Title"].Value.Replace("&acirc;", "'");
-
                                 //Try to retrieve full title (gameName + title) since these are listed differently per category or spread out, couldn't match those easily with one Regexp.
                                 if (!url.StartsWith(searchBase))
                                 {
@@ -139,7 +121,7 @@ namespace OnlineVideos.Sites
                                     {
                                         if (counter == videoCount)
                                         {
-                                            if (m2.Groups["gameName"].Value != "" && m2.Groups["gameName"].Value != null)
+                                            if (m2.Groups["gameName"].Value != "" && m2.Groups["gameName"].Value != null || m2.Groups["gameName"].Value.ToLower().Contains("comic-con"))
                                             {
                                                 videoInfo.Title = HttpUtility.HtmlDecode(m2.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m2.Groups["Title"].Value.Replace("&acirc;", "'"));
                                             }
@@ -153,20 +135,35 @@ namespace OnlineVideos.Sites
                                 }
 
                                 videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
-                                videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                                videoInfo.Airdate = m.Groups["Airdate"].Value;
-                                videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Replace("T", "").Trim();
 
-                                //Log.Debug("Desc: " + m.Groups["Description"].Value);
-                                //Encoding by GT is reported as UTF-8 but it's not in most cases, temporary fix added for "'" character
-                                videoInfo.Description = m.Groups["Description"].Value.Replace("&acirc;", "'");
-                                //Log.Debug("Desc (enc): " + videoInfo.Description);
+                                //Video url check
+                                if (!videoInfo.VideoUrl.StartsWith("http://") || videoInfo.VideoUrl == "" || videoInfo.Title.ToLower().Contains("comic-con"))
+                                {
+                                    Log.Debug("Np valid video url found or invalid video");
+                                    videoCount++;
+                                    m2 = m2.NextMatch();
+                                }
+                                else
+                                {
+                                    videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+                                    videoInfo.Airdate = m.Groups["Airdate"].Value;
+                                    videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Replace("T", "").Trim();
 
-                                videoCount++;
-                                videoList.Add(videoInfo);
-                                m = m.NextMatch();
-                                m2 = m2.NextMatch();
-                            }
+                                    //Log.Debug("Desc: " + m.Groups["Description"].Value);
+                                    //Encoding by GT is reported as UTF-8 but it's not in most cases, temporary fix added for "'" character
+                                    videoInfo.Description = m.Groups["Description"].Value.Replace("&acirc;", "'");
+                                    //Log.Debug("Desc (enc): " + videoInfo.Description);
+                                    Log.Debug("---------------");
+                                    Log.Debug("Description: " + videoInfo.Description);
+                                    Log.Debug("title: " + videoInfo.Title);
+                                    Log.Debug("Video URL: " + videoInfo.VideoUrl);
+                                    Log.Debug("Image: " + videoInfo.ImageUrl);
+
+                                    videoCount++;
+                                    videoList.Add(videoInfo);
+                                    m = m.NextMatch();
+                                    m2 = m2.NextMatch();
+                                }
                         }
 
                     }
