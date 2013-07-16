@@ -626,12 +626,12 @@
         <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\s>Next\s&raquo;</a>]]></item>
       </Configuration>
     </Site>
-    <Site name="CollegeHumor" util="CollegeHumor" agecheck="false" enabled="true" lang="en">
+    <Site name="CollegeHumor" util="CollegeHumor" agecheck="false" enabled="true" lang="en" lastUpdated="2012-10-29T23:34:16.9119564+01:00">
       <Description>Funny videos from CollegeHumor.com.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass="slide">\s*<a\shref="(?<url>[^"]*)"\stitle="[^"]*"\sclass="thumb\sthumb-overlay">\s*<img\ssrc="(?<thumb>[^"]*)"\swidth="139"\sheight="70"\salt="[^"]*">\s*<strong\sclass="din">(?<title>[^<]*)</strong>\s*</a>\s*</div>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!grid-listing\scfx.*)(?<=well-rounded.*)<li(?:\sclass="active")?><a\shref="(?<url>[^"]*)">(?<title>(?!Pictures)(?!Articles)[^<]*)</a></li>]]></item>
-        <item key="videoListRegEx"><![CDATA[(<div\sclass="pick\spick-1">\s*<div\sclass="heading">Recent</div>\s*|<div\sclass="media\svideo\sgrid3">)\s*<a\shref="/(video|embed)/(?<VideoUrl>[^/]+)/[^"]*"\stitle="[^"]*"\sclass="thumb[^"]*">\s*<img\ssrc="(?<ImageUrl>[^"]*)"\swidth="[^"]*"\sheight="[^"]*"\salt="[^"]*">\s*<strong>(?:<span\sclass="media-type">Video</span>)?(?<Title>[^<]*)</strong>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="din"><a\shref="(?<url>[^"]*)"\sdata-image="(?<thumb>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!<div\sclass="media-list-entries\s.*)(?<=<ul\sclass="nav\snav-tabs\s.*)(<li(?:\sclass="active")?><a\shref="(?<url>[^"]*)">(?<title>(?!Pictures)(?!Articles)[^<]*)</a></li>|<a\shref="(?<url>[^"]*)"\sclass="dropdown-toggle">(?<title>[^<]*)<b\sclass="caret">)]]></item>
+        <item key="videoListRegEx"><![CDATA[<img\ssrc="(?<ImageUrl>[^"]*)"\swidth="[^"]*"\sheight="[^"]*"\salt="[^"]*">\s*(?:<span[^>]*>[^<]*</span>\s*)?<i\sclass="play-btn">[^<]*</i>\s*</a>\s*<div\sclass="entry-body">\s*<h1\sclass="entry-header"><a\shref="/(embed|video|videos/playlist)/(?<VideoUrl>[^/]*)/[^>]*>(?<Title>[^<]*)</a></h1>\s*<div\sclass="entry-meta"><p\sclass="byline">(?:[^<]*<a[^>]*>[^<]*</a>)?[^<]*<time\sclass="date">(?<Airdate>[^<]*)</time>\s*</p></div>\s*(?:<p>(?<Description>[^<]*)</p>\s*)?<div]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www.collegehumor.com/moogaloop/video/{0}]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\sclass="next"\shref="(?<url>[^"]*)">&gt;</a>]]></item>
         <item key="fileUrlRegEx"><![CDATA[<youtubeID><!\[CDATA\[(?<m0>[^]]*)]]]]><![CDATA[></youtubeID>]]></item>
