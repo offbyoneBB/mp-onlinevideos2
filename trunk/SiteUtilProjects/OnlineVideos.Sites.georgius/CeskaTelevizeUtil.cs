@@ -344,7 +344,9 @@ namespace OnlineVideos.Sites.georgius
                                         if ((firstQuote >= 0) && (secondQuote >= 0) && ((secondQuote - firstQuote) > 0))
                                         {
                                             String swfUrl = baseWebData.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
-                                            String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl, LiveStream = live }.ToString();
+                                            String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl }.ToString();
+                                            // replace previous line with next line in OV higher than 1.6
+                                            //String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl, LiveStream = live }.ToString();
 
                                             videos.Add(new CeskaTelevizeVideo()
                                             {
