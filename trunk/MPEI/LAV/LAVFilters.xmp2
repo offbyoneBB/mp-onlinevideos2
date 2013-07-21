@@ -13,9 +13,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>LAVFilters-0.58.0.exe</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.58.0.exe</ZipFileName>
-              <DestinationFilename>%Base%\LAVFilters-0.58.0.exe</DestinationFilename>
+              <LocalFileName>LAVFilters-0.58.1.exe</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.58.1.exe</ZipFileName>
+              <DestinationFilename>%Base%\LAVFilters-0.58.1.exe</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -46,7 +46,7 @@
               <Params>
                 <Items>
                   <SectionParam Name="Path to application">
-                    <Value>%Base%\LAVFilters-0.58.0.exe</Value>
+                    <Value>%Base%\LAVFilters-0.58.1.exe</Value>
                     <ValueType>Template</ValueType>
                     <Description>Path to the application like 
  %Base%\MediaPortal.exe</Description>
@@ -100,7 +100,7 @@ public class Script
   public static void Main(PackageClass packageClass, ActionItem actionItem)
   {
     string setupExe = Path.Combine(
-      MpeInstaller.TransformInRealPath("%Base%"), "LAVFilters-0.58.0.exe");
+      MpeInstaller.TransformInRealPath("%Base%"), "LAVFilters-0.58.1.exe");
 
     try
     {
@@ -180,34 +180,29 @@ public class Script
     <Version>
       <Major>0</Major>
       <Minor>58</Minor>
-      <Build>0</Build>
+      <Build>1</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>The extension installs the LAV Filter package, which contains a splitter, audio and video decoder for the most common formats that are used around the web.</ExtensionDescription>
-    <VersionDescription>LAV Filters 0.58 (released 2013/06/23)
-General
-- LAV Filters now includes a manifest file to control DLL loading
-- Fixed the shortcuts to the configuration dialogs created by the installer in the start menu
-
+    <VersionDescription>0.58.1 - 2013/07/09
 LAV Splitter
-- Handle the "Default" flag in MKV files with multiple video streams
-- Fixed a regression in VC-1 demuxing which caused some streams to fail decoding with the WMV9 DMO decoder
-- Improved transition between ordered chapters in certain (badly formed) MKV files
-- Improved handling of AVC1 in AVI files
-- Improved accuracy of IAMStreamSelect::get_CurrentMarker
-- Several potential crash fixes and stability improvements
+- Improved UDP network streaming
+- Added a new option to configure the stream analysis duration of network streams
+- Reduced subtitle delay on certain Blu-ray titles
+- Improved detection of DTS-in-WAV
+- Improved I/O behaviour for sequential reading from optical media
 
 LAV Video
-- YADIF deinterlacing is now multi-threaded, significant performance improvement on multi-core CPUs
-- Improved detection of progressive streams to ensure deinterlacing is disabled, especially when "Aggressive Deinterlacing" is used
-- Restored Fraps constant frame rate output by proper handling of repeated frames
-- Support for the new UtVideo sub-types, and fixed a regression in UtVideo decoding
-- cuvid: fix double-rate deinterlacing on certain streams without timing information
-- Updated the Intel QuickSync Decoder to 0.44 
+- Fixed dynamic reconnection on parameter changes (Aspect Ratio, etc) with VMR-9
+- Support for Apple Intermediate Codec (ICOD)
+- dxva2: added a check for AMD UVD/UVD+ GPUs to ensure the H.264 Level 4.1 DPB restrictions are met
+
+LAV Audio
+- Fixed a regression decoding certain Ogg Vorbis streams
 </VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-    <ReleaseDate>2013-07-04T20:36:36</ReleaseDate>
+    <ReleaseDate>2013-07-21T15:00:00</ReleaseDate>
     <Tags>codec</Tags>
     <Location>.\LAVFilters[Version].mpe1</Location>
     <Params>
@@ -247,9 +242,9 @@ LAV Video
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>LAVFilters-0.58.0.exe</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.58.0.exe</ZipFileName>
-        <DestinationFilename>%Base%\LAVFilters-0.58.0.exe</DestinationFilename>
+        <LocalFileName>LAVFilters-0.58.1.exe</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.58.1.exe</ZipFileName>
+        <DestinationFilename>%Base%\LAVFilters-0.58.1.exe</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
