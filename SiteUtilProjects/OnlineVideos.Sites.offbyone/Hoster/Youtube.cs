@@ -128,9 +128,12 @@ namespace OnlineVideos.Hoster
                         type = Regex.Replace(type, @"; codecs=""[^""]*""", "");
                         type = type.Substring(type.LastIndexOfAny(new char[] { '/', '-' }) + 1);
                     }
+					string signature = urlOptions.Get("sig");
+					if (string.IsNullOrEmpty(signature))
+						signature = DecryptSignature(urlOptions.Get("s"));
 					string finalUrl = urlOptions.Get("url");
                     if (!string.IsNullOrEmpty(finalUrl))
-						PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl +  "&signature=" + urlOptions.Get("sig") + "&ext=." + type.Replace("webm", "mkv"));
+						PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + "&signature=" + signature + "&ext=." + type.Replace("webm", "mkv"));
                     else
                     {
                         string rtmpUrl = urlOptions.Get("conn");
@@ -159,5 +162,40 @@ namespace OnlineVideos.Hoster
             if (result != null && result.Count > 0) return result.Last().Value;
             else return String.Empty;
         }
+
+		/// <summary>
+		/// Turn the encrypted s parameter into a valid signature
+		/// </summary>
+		/// <param name="s">s Parameter value of the URL parameters</param>
+		/// <returns></returns>
+		string DecryptSignature(string s)
+        {
+			if (string.IsNullOrEmpty(s)) return string.Empty;
+			switch (s.Length)
+			{
+				case 92:
+					return s[25] + s.Substring(3, 25 - 3) + s[0] + s.Substring(26, 42 - 26) + s[79] + s.Substring(43, 79 - 43) + s[91] + s.Substring(80, 83 - 80);
+				case 90:
+					return s[25] + s.Substring(3, 25 - 3) + s[2] + s.Substring(26, 40 - 26) + s[77] + s.Substring(41, 77 - 41) + s[89] + s.Substring(78, 81 - 78);
+				case 88:
+					return s[48] + new string(s.Substring(67, 81 - 67).Reverse().ToArray()) + s[82] + new string(s.Substring(62, 66 - 62).Reverse().ToArray()) + s[85] + new string(s.Substring(48, 61 - 48).Reverse().ToArray()) + s[67] + new string(s.Substring(12, 47 - 12).Reverse().ToArray()) + s[3] + new string(s.Substring(3, 11 - 3).Reverse().ToArray()) + s[2] + s[12];
+				case 87:
+					return s.Substring(4, 23 - 4) + s[86] + s.Substring(24, 85 - 24);
+				case 86:
+					return s.Substring(2, 63 - 2) + s[82] + s.Substring(64, 82 - 64) + s[63];
+				case 85:
+					return s.Substring(2, 8 - 2) + s[0] + s.Substring(9, 21 - 9) + s[65] + s.Substring(22, 65 - 22) + s[84] + s.Substring(66, 82 - 66) + s[21];
+				case 84:
+					return new string(s.Substring(36, 83 - 36).Reverse().ToArray()) + s[2] + new string(s.Substring(26, 35 - 26).Reverse().ToArray()) + s[3] + new string(s.Substring(3, 25 - 3).Reverse().ToArray()) + s[26];
+				case 83:
+					return s[6] + s.Substring(3, 6 - 3) + s[33] + s.Substring(7, 24 - 7) + s[0] + s.Substring(25, 33 - 25) + s[53] + s.Substring(34, 53 - 34) + s[24] + s.Substring(54);
+				case 82:
+					return s[36] + new string(s.Substring(67, 79 - 67).Reverse().ToArray()) + s[81] + new string(s.Substring(40, 66 - 40).Reverse().ToArray()) + s[33] + new string(s.Substring(36, 39 - 36).Reverse().ToArray()) + s[40] + s[35] + s[0] + s[67] + new string(s.Substring(0, 32).Reverse().ToArray()) + s[34];
+				case 81:
+					return s[6] + s.Substring(3, 6 - 3) + s[33] + s.Substring(7, 24 - 7) + s[0] + s.Substring(25, 33 - 25) + s[2] + s.Substring(34, 53 - 34) + s[24] + s.Substring(54, 81 - 54);
+				default:
+					throw new OnlineVideosException(string.Format("Unable to decrypt signature, key length {0} not supported; retrying might work", s.Length));
+			}
+		}
     }
 }
