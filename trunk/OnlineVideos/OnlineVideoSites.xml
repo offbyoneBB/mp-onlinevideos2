@@ -126,10 +126,10 @@
     <Site name="Pro7" util="Pro7" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Senders Pro7.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.prosieben.de/video/]]></item>
+        <item key="baseUrl"><![CDATA[http://www.prosieben.de/tv/]]></item>
         <item key="rtmpBase"><![CDATA[rtmp://pssimp7lsfs.fplive.net:1935/pssimp7ls/]]></item>
-        <item key="regExPagingToken"><![CDATA['(?<url>.*cmlink[^']+)',\s*'(?<query>[^']+)',\s*'(?<pages>[^']+)']]></item>
-        <item key="regExDynamicCategory"><![CDATA[<h3>(?<Title>[^<]+)</h3>\s*</div>\s*<[^>]+>\s*<[^>]+>\s*<img\ssrc="(?<ImageUrl>[^"]+)"\s/>\s*</a>\s*</div>\s*<[^>]+>\s*<h4><a\shref="(?<Url>[^"]+)">(?<SubTitle>[^<]+)</a></h4>\s*<p>(?<Date>[^<]+)</p>]]></item>
+        <item key="atomFeedUrlRegex"><![CDATA[<link\s+rel="alternate"\s+type="application/atom\+xml"\s+title="Video[^"]*"\s+href="(?<url>[^"]+)"\s+/>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<a\s+class=("|')semibold[^"']*("|').+?title="(?<title>[^"]+)"[^>]*>\s*<img.+?src='(?<thumb>[^']+)'.*?/>\s*</a>\s*<h3>\s*<a\s+href=("|')(?<url>[^"']+)("|')[^>]*>]]></item>
       </Configuration>
     </Site>
     <Site name="Kabel1" util="Sat1" agecheck="false" enabled="true" lang="de">

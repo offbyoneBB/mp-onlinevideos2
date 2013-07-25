@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Newtonsoft.Json.Linq;
+using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using System.Web;
+using System.Xml.Linq;
 
 namespace OnlineVideos.Sites
 {
-    public class Pro7Util : SiteUtilBase
+    public class Pro7Util : GenericSiteUtil
     {
-        [Category("OnlineVideosConfiguration"), Description("Url used for category generation.")]
-        protected string baseUrl;
-        [Category("OnlineVideosConfiguration"), Description("Url used to parse the pagingtoken for dynamic category generation")]
-		protected string regExPagingToken;
-        [Category("OnlineVideosConfiguration"), Description("Url used to parse Category Content from Page")]
-		protected string regExDynamicCategory;
         [Category("OnlineVideosConfiguration"), Description("Url to rtmp Server")]
 		protected string rtmpBase;
+
+        [Category("OnlineVideosConfiguration"), Description("")]
+        protected string atomFeedUrlRegex;
+
+        protected Regex regEx_atomFeedUrl;
 
         private Dictionary<string, List<VideoInfo>> data = new Dictionary<string, List<VideoInfo>>();
 
@@ -25,56 +25,46 @@ namespace OnlineVideos.Sites
         {
             base.Initialize(siteSettings);
 
+            if (!string.IsNullOrEmpty(atomFeedUrlRegex)) regEx_atomFeedUrl = new Regex(atomFeedUrlRegex, defaultRegexOptions);
         }
-        public override int DiscoverDynamicCategories()
-        {
-            Settings.Categories.Clear();
-            string page = GetWebData(baseUrl);
-            string host = new Uri(baseUrl).Host;
 
-            Match m = Regex.Match(page, regExPagingToken);
+        public override List<VideoInfo> getVideoList(Category category)
+        {
+            List<VideoInfo> videoList = new List<VideoInfo>();
+
+            var videosUrl = (category as RssLink).Url;
+            if (!videosUrl.EndsWith("video/")) videosUrl += "video/";
+            var data = GetWebData(videosUrl);
+            var m = regEx_atomFeedUrl.Match(data);
             if (m.Success)
             {
-                for (int i = 1; i <= Convert.ToInt32(m.Groups["pages"].Value); i++)
+                var link = m.Groups["url"].Value;
+                if (!Uri.IsWellFormedUriString(link, System.UriKind.Absolute)) link = new Uri(new Uri((category as RssLink).Url), link).AbsoluteUri;
+
+                var feed = GetWebData<XDocument>(link);
+
+                var defaultNs = feed.Root.GetDefaultNamespace();
+                var psdNs = feed.Root.GetNamespaceOfPrefix("psd");
+
+                foreach (var entry in feed.Root.Elements(defaultNs + "entry").Where(e => e.Element(psdNs + "type").Value == "video"))
                 {
-                    string queryUrl = "http://" + host + m.Groups["url"].Value + "?page=" + i + "&brand=Prosieben&query=" + HttpUtility.UrlEncode(m.Groups["query"].Value) + "&isMediacenterLayout=true";
-                    string webData = GetWebData(queryUrl);
+                    VideoInfo video = CreateVideoInfo();
+                    video.Title = entry.Element(defaultNs + "title").Value;
+                    video.VideoUrl = entry.Element(defaultNs + "link").Attribute("href").Value;
+                    video.Airdate = DateTime.ParseExact(entry.Element(defaultNs + "published").Value.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture).ToString("g", OnlineVideoSettings.Instance.Locale);
+                    video.Description = string.Format("{0}\n{1}", entry.Element(defaultNs + "summary").Value, entry.Element(defaultNs + "content").Value);
+                    if (entry.Element(psdNs + "imagemedium") != null) video.ImageUrl = entry.Element(psdNs + "imagemedium").Value;
 
-                    Match n = Regex.Match(webData, regExDynamicCategory);
-                    while (n.Success)
-                    {
-                        if (!data.ContainsKey(n.Groups["Title"].Value))
-                        {
-                            data[n.Groups["Title"].Value] = new List<VideoInfo>();
-
-                            RssLink cat = new RssLink();
-                            cat.Name = n.Groups["Title"].Value;
-                            cat.Thumb = "http://" + host + n.Groups["ImageUrl"].Value;
-                            Settings.Categories.Add(cat);
-                        }
-
-                        VideoInfo video = new VideoInfo();
-                        video.ImageUrl = "http://" + host + n.Groups["ImageUrl"].Value;
-                        video.Title = n.Groups["SubTitle"].Value;
-                        video.VideoUrl = n.Groups["Url"].Value;
-						if (!Uri.IsWellFormedUriString(video.VideoUrl, System.UriKind.Absolute)) video.VideoUrl = new Uri(new Uri(baseUrl), video.VideoUrl).AbsoluteUri;
-                        video.Description = n.Groups["Date"].Value;
-
-                        data[n.Groups["Title"].Value].Add(video);
-
-                        n = n.NextMatch();
-                    }
+                    videoList.Add(video);
                 }
             }
 
-            Settings.DynamicCategoriesDiscovered = true;
-            return Settings.Categories.Count;
+            return videoList;
         }
 
         public override String getUrl(VideoInfo video)
         {
             string webData = HttpUtility.UrlDecode(GetWebData(video.VideoUrl));
-            webData = webData.Replace("\\\"", "\"");
             string url = string.Empty;
 
             //TODO: Fix flashdrm Videos
@@ -90,49 +80,55 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                string filename = Regex.Match(webData, @"downloadFilename"":""(?<Value>[^""]+)""").Groups["Value"].Value;
-                string geo = Regex.Match(webData, @"geoblocking"":""(?<Value>[^""]+)""").Groups["Value"].Value;
-                string geoblock = string.Empty;
-                if (string.IsNullOrEmpty(geo))
-                    geoblock = "geo_d_at_ch/";
-                else if (geo.Contains("ww"))
-                    geoblock = "geo_worldwide/";
-                else if (geo.Contains("de_at_ch"))
-                    geoblock = "geo_d_at_ch/";
-                else
-                    geoblock = "geo_d/";
-
-                if (webData.Contains("flashSuffix") || filename.Contains(".mp4"))
+                string jsonData = Regex.Match(webData, @"SIMVideoPlayer.extract\(""json"",\s*""(?<json>.*?)""\s*\);", RegexOptions.Singleline).Groups["json"].Value;
+                var json = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(Regex.Unescape(jsonData));
+                
+                // try http mp4 file from id
+                string clipId = json["categoryList"][0]["clipList"][0].Value<string>("id");
+                if (!string.IsNullOrEmpty(clipId))
                 {
-                    url = rtmpBase + geoblock + "mp4:" + filename;
-                    if (!url.EndsWith(".mp4")) url = url + ".mp4";
-                }
-                else
-                    url = rtmpBase + geoblock + filename;
-
-            }
-            string clipId = Regex.Match(webData, @",""id"":""(?<Value>[^""]+)""").Groups["Value"].Value;
-            if (!string.IsNullOrEmpty(clipId))
-            {
-                string link = GetRedirectedUrl("http://www.prosieben.de/dynamic/h264/h264map/?ClipID=" + clipId);
-                if (!string.IsNullOrEmpty(link))
-                {
-                    if (!link.Contains("h264_na.mp4"))
+                    string link = GetRedirectedUrl("http://www.prosieben.de/dynamic/h264/h264map/?ClipID=" + clipId);
+                    if (!string.IsNullOrEmpty(link))
                     {
-                        video.PlaybackOptions = new Dictionary<string, string>();
-                        video.PlaybackOptions.Add("Flv", url);
-                        video.PlaybackOptions.Add("Mp4", link);
+                        if (!link.Contains("not_available"))
+                        {
+                            url = link;
+                        }
                     }
                 }
-            }
+                if (string.IsNullOrEmpty(url))
+                {
+                    var dl = json.Descendants().Where(j => j.Type == Newtonsoft.Json.Linq.JTokenType.Property && ((Newtonsoft.Json.Linq.JProperty)j).Name == "downloadFilename");
 
+                    foreach (var prop in dl)
+                    {
+                        string filename = (prop as Newtonsoft.Json.Linq.JProperty).Value.ToString();
+                        string geo = (prop.Parent as Newtonsoft.Json.Linq.JObject).Value<string>("geoblocking");
+                        string geoblock = string.Empty;
+                        if (string.IsNullOrEmpty(geo))
+                            geoblock = "geo_d_at_ch/";
+                        else if (geo.Contains("ww"))
+                            geoblock = "geo_worldwide/";
+                        else if (geo.Contains("de_at_ch"))
+                            geoblock = "geo_d_at_ch/";
+                        else
+                            geoblock = "geo_d/";
+                        
+                        if (webData.Contains("flashSuffix") || filename.Contains(".mp4"))
+                        {
+                            url = rtmpBase + geoblock + /*"mp4:" +*/ filename;
+                            if (!url.EndsWith(".mp4")) url = url + ".mp4";
+                        }
+                        else
+                            url = rtmpBase + geoblock + filename;
+                    }
+                }
+
+            }
 
             return url;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
-        {
-            return data[category.Name];
-        }
+        
     }
 }
