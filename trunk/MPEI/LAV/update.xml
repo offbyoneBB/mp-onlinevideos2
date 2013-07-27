@@ -54,29 +54,23 @@
         <Version>
           <Major>0</Major>
           <Minor>58</Minor>
-          <Build>1</Build>
+          <Build>2</Build>
           <Revision>0</Revision>
         </Version>
         <ExtensionDescription>The extension installs the LAV Filter package, which contains a splitter, audio and video decoder for the most common formats that are used around the web.</ExtensionDescription>
-        <VersionDescription>0.58.1 - 2013/07/09
+        <VersionDescription>0.58.2 - 2013/07/26
 LAV Splitter
-- Improved UDP network streaming
-- Added a new option to configure the stream analysis duration of network streams
-- Reduced subtitle delay on certain Blu-ray titles
-- Improved detection of DTS-in-WAV
-- Improved I/O behaviour for sequential reading from optical media
+- Fixed demuxing of WavPack from MKV
 
 LAV Video
-- Fixed dynamic reconnection on parameter changes (Aspect Ratio, etc) with VMR-9
-- Support for Apple Intermediate Codec (ICOD)
-- dxva2: added a check for AMD UVD/UVD+ GPUs to ensure the H.264 Level 4.1 DPB restrictions are met
+- Fixed a crash when YADIF was being used on a single- or dual-core CPU
 
 LAV Audio
-- Fixed a regression decoding certain Ogg Vorbis streams
+- Fixed decoding of DTS streams with a frame size change mid-stream
 </VersionDescription>
         <DevelopmentStatus>Stable</DevelopmentStatus>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-        <ReleaseDate>2013-07-21T15:00:00</ReleaseDate>
+        <ReleaseDate>2013-07-27T15:00:00</ReleaseDate>
         <Tags>codec</Tags>
         <Location>.\LAVFilters[Version].mpe1</Location>
         <Params>
