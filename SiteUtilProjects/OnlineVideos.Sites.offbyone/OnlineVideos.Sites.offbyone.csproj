@@ -395,6 +395,7 @@
     <Compile Include="Google\GData\YouTube\youtubeservice.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="HeiseVideoUtil.cs" />
     <Compile Include="Hoster\Youtube.cs" />
     <Compile Include="Hoster\LiveVideo.cs" />
     <Compile Include="KinoDeUtil.cs" />
