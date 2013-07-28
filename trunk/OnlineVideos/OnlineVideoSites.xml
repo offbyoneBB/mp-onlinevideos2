@@ -325,24 +325,8 @@
         <item key="forceUTF8Encoding"><![CDATA[True]]></item>
       </Configuration>
     </Site>
-    <Site name="ctTV" util="GenericSite" agecheck="false" enabled="true" lang="de">
+    <Site name="ctTV" util="HeiseVideo" agecheck="false" enabled="true" lang="de">
       <Description>Videoportal des heise ctTVs</Description>
-      <Configuration>
-        <item key="videoListRegEx"><![CDATA[<li><a\shref="(?<VideoUrl>[^"]+)"[^>]*><img\s*src="(?<ImageUrl>[^"]+)".*?title="([^"]+)?"\stitle="(?<Title>[^"]+)"\sclass="titelbild"]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[var\sflashvars\s=\s{\s*sequenz:\s(?<url>\d+)]]></item>
-        <item key="playlistUrlFormatString"><![CDATA[http://www.heise.de/fastbin/mmcms-frontend?sequenz={0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<stream>\s*<src>(?<m0>[^<]+)</src>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.heise.de]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="ctTV">http://www.heise.de/ct-tv/</Category>
-        <Category xsi:type="RssLink" name="Vorsicht Kunde!">http://www.heise.de/ct-tv/vorsicht-kunde-4797.html</Category>
-        <Category xsi:type="RssLink" name="Drangeblieben">http://www.heise.de/ct-tv/drangeblieben-4789.html</Category>
-        <Category xsi:type="RssLink" name="Schnurer hilft!">http://www.heise.de/ct-tv/schnurer-hilft-4795.html</Category>
-        <Category xsi:type="RssLink" name="News">http://www.heise.de/ct-tv/news-4791.html</Category>
-        <Category xsi:type="RssLink" name="Computer-ABC">http://www.heise.de/ct-tv/computer-abc-4787.html</Category>
-        <Category xsi:type="RssLink" name="Prüfstand">http://www.heise.de/ct-tv/pruefstand-4793.html</Category>
-      </Categories>
     </Site>
     <Site name="Miro" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Miro combines and categorizes collections of video channels from thousands of sources.</Description>
