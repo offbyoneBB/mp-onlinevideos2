@@ -123,20 +123,14 @@
     <Site name="Kabel1" util="Sat1" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Senders Kabel1.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.kabeleins.de/videos/]]></item>
+        <item key="baseUrl"><![CDATA[http://www.kabeleins.de/tv/]]></item>
         <item key="rtmpBase"><![CDATA[rtmp://pssimkabel1fs.fplive.net:1935/pssimkabel1ls/]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div\s+class="teaser-horizontal[^"]+">\s*
-<a\s+href="(?<url>[^"]+)"[^>]*>\s*
-<img\s+src="(?<thumb>[^"]+)"[^>]+>\s*
-<p[^>]*>(?<title>[^<]*)<span[^>]*></span></p>\s*</a>\s*</div>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\s+class="rel">\s*
-<a\s+href="[^"]+"[^>]*>\s*
-<img\s+src="(?<ImageUrl>[^"]+)"[^>]*>\s*</a>\s*
-<p\s+class="medium\s+upper">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]*>(?<Title>[^<]+)</a>\s*</p>\s*
-<div\s+class="videoinfo\s+small\s+gradient-light">\s*
-<p\s+class="date">(?<Airdate>[^<]+)</p>\s*
-<p\s+class="time">(?<Duration>[^<]+)</p>\s*
-</div>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\s+class="trackable_teaser"[^>]*>\s*<article[^>]*>\s*<a\s+href="(?<url>[^"]+)"\s*title="(?<title>[^"]+)".*?<img.*?src="(?<thumb>[^"]+)"[^>]*>\s*</a>\s*<footer>\s*<p>(?<description>.*?)</p>]]></item>
+        <item key="videoListRegEx"><![CDATA[<figure\s+class="class-clip">\s*
+<a\s+href="(?<VideoUrl>[^"]+)"[^>]*>\s*<div.*?title="(?<Title>[^"]+)">\s*
+<em>(?<Duration>[^<]+)</em>\s*
+<em\s+class="airdate">(?<Airdate>[^<]+)</em>\s*</div>\s*
+<img\s+src="(?<ImageUrl>[^"]+)"[^>]*>]]></item>
       </Configuration>
     </Site>
     <Site name="RTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
