@@ -55,18 +55,6 @@
     </Site>
     <Site name="NDR" util="Ndr" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen aus der NDR Mediathek.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<broadcast\sid="(?<url>[^"]+)"\ssite="[^"]+">(?<title>[^<]+)</broadcast>]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www1.ndr.de/mediathek/mediathek100-mediathek_medium-tv_broadcast-{0}_pageSize-24.xml]]></item>
-        <item key="videoItemXml"><![CDATA[mediaItems/mediaItem]]></item>
-        <item key="videoTitleXml"><![CDATA[title]]></item>
-        <item key="videoThumbXml"><![CDATA[images/image]]></item>
-        <item key="videoUrlXml"><![CDATA[@id]]></item>
-        <item key="videoDurationXml"><![CDATA[duration]]></item>
-        <item key="videoAirDateXml"><![CDATA[date]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://www1.ndr.de/mediathek/{0}-mediathek_details-true.xml]]></item>
-        <item key="baseUrl"><![CDATA[http://www1.ndr.de/mediathek/mediathek100-mediathek_medium-tv_searchtype-broadcasts.xml]]></item>
-      </Configuration>
     </Site>
     <Site name="WDR" util="WDR" agecheck="false" enabled="true" lang="de">
       <Description>Podcasts des Westdeutschen Rundfunks (WDR).</Description>
