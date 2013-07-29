@@ -866,9 +866,6 @@
         </Category>
       </Categories>
     </Site>
-    <Site name="YahooMusicVideos" util="YahooMusicVideos" agecheck="false" enabled="true" lang="en">
-      <Description>Music videos hosted by Yahoo. Many videos are IP restricted to certain countries.</Description>
-    </Site>
     <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" lang="--" player="WMP">
       <Description>Collection of live music streams.</Description>
       <Categories>
