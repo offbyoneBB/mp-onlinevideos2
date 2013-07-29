@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Results>
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd1" filename="item.xsd" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://10.1.0.52:4322/MPExtended/StreamingService/?wsdl" filename="StreamingService.wsdl" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd2" filename="item0.xsd" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd0" filename="item1.xsd" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://10.1.0.248:4322/MPExtended/StreamingService/?wsdl=wsdl0" filename="item.wsdl" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd3" filename="item2.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd3" filename="item.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd2" filename="item0.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd1" filename="item1.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd0" filename="item2.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://multi:4322/MPExtended/StreamingService/?wsdl" filename="StreamingService.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd5" filename="item3.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd4" filename="item4.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://192.168.5.18:4322/MPExtended/StreamingService/?wsdl=wsdl0" filename="item.wsdl" />
   </Results>
 </DiscoveryClientResultsFile>

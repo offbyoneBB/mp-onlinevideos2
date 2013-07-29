@@ -2,55 +2,14 @@
 <wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://mpextended.github.com" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://mpextended.github.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <xsd:schema targetNamespace="http://mpextended.github.com/Imports">
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/TVAccessService/?xsd=xsd0" namespace="http://mpextended.github.com" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/TVAccessService/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/TVAccessService/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.TVAccessService.Interfaces" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/TVAccessService/?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/TVAccessService/?xsd=xsd4" namespace="http://schemas.microsoft.com/Message" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd0" namespace="http://mpextended.github.com" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.TVAccessService.Interfaces" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd4" namespace="http://schemas.microsoft.com/Message" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
     </xsd:schema>
   </wsdl:types>
-  <wsdl:message name="ITVAccessService_GetProgramIsScheduled_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetProgramIsScheduled" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetProgramIsScheduled_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetProgramIsScheduledResponse" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetAllRadioChannelStatesForGroup_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllRadioChannelStatesForGroup" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetAllRadioChannelStatesForGroup_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllRadioChannelStatesForGroupResponse" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetChannelBasicById_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetChannelBasicById" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetChannelBasicById_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetChannelBasicByIdResponse" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetChannelDetailedById_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetChannelDetailedById" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetChannelDetailedById_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetChannelDetailedByIdResponse" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetChannelState_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetChannelState" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetChannelState_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetChannelStateResponse" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_SwitchTVServerToChannelAndGetVirtualCard_InputMessage">
-    <wsdl:part name="parameters" element="tns:SwitchTVServerToChannelAndGetVirtualCard" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_SwitchTVServerToChannelAndGetVirtualCard_OutputMessage">
-    <wsdl:part name="parameters" element="tns:SwitchTVServerToChannelAndGetVirtualCardResponse" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_SwitchTVServerToChannelAndGetStreamingUrl_InputMessage">
-    <wsdl:part name="parameters" element="tns:SwitchTVServerToChannelAndGetStreamingUrl" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_SwitchTVServerToChannelAndGetStreamingUrl_OutputMessage">
-    <wsdl:part name="parameters" element="tns:SwitchTVServerToChannelAndGetStreamingUrlResponse" />
-  </wsdl:message>
   <wsdl:message name="ITVAccessService_SwitchTVServerToChannelAndGetTimeshiftFilename_InputMessage">
     <wsdl:part name="parameters" element="tns:SwitchTVServerToChannelAndGetTimeshiftFilename" />
   </wsdl:message>
@@ -165,6 +124,18 @@
   <wsdl:message name="ITVAccessService_GetProgramIsScheduledOnChannel_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetProgramIsScheduledOnChannelResponse" />
   </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetProgramIsScheduled_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetProgramIsScheduled" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetProgramIsScheduled_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetProgramIsScheduledResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetRecordingById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetRecordingById" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetRecordingById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetRecordingByIdResponse" />
+  </wsdl:message>
   <wsdl:message name="ITVAccessService_GetRecordingFileInfo_InputMessage">
     <wsdl:part name="parameters" element="tns:GetRecordingFileInfo" />
   </wsdl:message>
@@ -207,12 +178,6 @@
   <wsdl:message name="ITVAccessService_GetChannelCount_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetChannelCountResponse" />
   </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetAllChannelsBasic_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllChannelsBasic" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetAllChannelsBasic_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllChannelsBasicResponse" />
-  </wsdl:message>
   <wsdl:message name="ITVAccessService_GetChannelsBasic_InputMessage">
     <wsdl:part name="parameters" element="tns:GetChannelsBasic" />
   </wsdl:message>
@@ -224,12 +189,6 @@
   </wsdl:message>
   <wsdl:message name="ITVAccessService_GetChannelsBasicByRange_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetChannelsBasicByRangeResponse" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetAllChannelsDetailed_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllChannelsDetailed" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetAllChannelsDetailed_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllChannelsDetailedResponse" />
   </wsdl:message>
   <wsdl:message name="ITVAccessService_GetChannelsDetailed_InputMessage">
     <wsdl:part name="parameters" element="tns:GetChannelsDetailed" />
@@ -279,12 +238,6 @@
   <wsdl:message name="ITVAccessService_GetRadioChannelCount_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetRadioChannelCountResponse" />
   </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetAllRadioChannelsBasic_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllRadioChannelsBasic" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetAllRadioChannelsBasic_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllRadioChannelsBasicResponse" />
-  </wsdl:message>
   <wsdl:message name="ITVAccessService_GetRadioChannelsBasic_InputMessage">
     <wsdl:part name="parameters" element="tns:GetRadioChannelsBasic" />
   </wsdl:message>
@@ -297,12 +250,6 @@
   <wsdl:message name="ITVAccessService_GetRadioChannelsBasicByRange_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetRadioChannelsBasicByRangeResponse" />
   </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetAllRadioChannelsDetailed_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllRadioChannelsDetailed" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetAllRadioChannelsDetailed_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllRadioChannelsDetailedResponse" />
-  </wsdl:message>
   <wsdl:message name="ITVAccessService_GetRadioChannelsDetailed_InputMessage">
     <wsdl:part name="parameters" element="tns:GetRadioChannelsDetailed" />
   </wsdl:message>
@@ -314,6 +261,42 @@
   </wsdl:message>
   <wsdl:message name="ITVAccessService_GetRadioChannelsDetailedByRange_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetRadioChannelsDetailedByRangeResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetAllRadioChannelStatesForGroup_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllRadioChannelStatesForGroup" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetAllRadioChannelStatesForGroup_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllRadioChannelStatesForGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetChannelBasicById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetChannelBasicById" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetChannelBasicById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetChannelBasicByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetChannelDetailedById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetChannelDetailedById" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetChannelDetailedById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetChannelDetailedByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetChannelState_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetChannelState" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetChannelState_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetChannelStateResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_SwitchTVServerToChannelAndGetVirtualCard_InputMessage">
+    <wsdl:part name="parameters" element="tns:SwitchTVServerToChannelAndGetVirtualCard" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_SwitchTVServerToChannelAndGetVirtualCard_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SwitchTVServerToChannelAndGetVirtualCardResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_SwitchTVServerToChannelAndGetStreamingUrl_InputMessage">
+    <wsdl:part name="parameters" element="tns:SwitchTVServerToChannelAndGetStreamingUrl" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_SwitchTVServerToChannelAndGetStreamingUrl_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SwitchTVServerToChannelAndGetStreamingUrlResponse" />
   </wsdl:message>
   <wsdl:message name="ITVAccessService_GetServiceDescription_InputMessage">
     <wsdl:part name="parameters" element="tns:GetServiceDescription" />
@@ -339,11 +322,23 @@
   <wsdl:message name="ITVAccessService_WriteSettingToDatabase_OutputMessage">
     <wsdl:part name="parameters" element="tns:WriteSettingToDatabaseResponse" />
   </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetLocalDiskInformation_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLocalDiskInformation" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetLocalDiskInformation_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLocalDiskInformationResponse" />
+  </wsdl:message>
   <wsdl:message name="ITVAccessService_Search_InputMessage">
     <wsdl:part name="parameters" element="tns:Search" />
   </wsdl:message>
   <wsdl:message name="ITVAccessService_Search_OutputMessage">
     <wsdl:part name="parameters" element="tns:SearchResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetExternalMediaInfo_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetExternalMediaInfo" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetExternalMediaInfo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetExternalMediaInfoResponse" />
   </wsdl:message>
   <wsdl:message name="ITVAccessService_SearchResultsByRange_InputMessage">
     <wsdl:part name="parameters" element="tns:SearchResultsByRange" />
@@ -441,6 +436,18 @@
   <wsdl:message name="ITVAccessService_DeleteSchedule_OutputMessage">
     <wsdl:part name="parameters" element="tns:DeleteScheduleResponse" />
   </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetScheduledRecordingsForDate_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetScheduledRecordingsForDate" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetScheduledRecordingsForDate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetScheduledRecordingsForDateResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetScheduledRecordingsForToday_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetScheduledRecordingsForToday" />
+  </wsdl:message>
+  <wsdl:message name="ITVAccessService_GetScheduledRecordingsForToday_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetScheduledRecordingsForTodayResponse" />
+  </wsdl:message>
   <wsdl:message name="ITVAccessService_GetRecordingCount_InputMessage">
     <wsdl:part name="parameters" element="tns:GetRecordingCount" />
   </wsdl:message>
@@ -459,41 +466,7 @@
   <wsdl:message name="ITVAccessService_GetRecordingsByRange_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetRecordingsByRangeResponse" />
   </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetRecordingById_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetRecordingById" />
-  </wsdl:message>
-  <wsdl:message name="ITVAccessService_GetRecordingById_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetRecordingByIdResponse" />
-  </wsdl:message>
   <wsdl:portType name="ITVAccessService">
-    <wsdl:operation name="GetProgramIsScheduled">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetProgramIsScheduled" message="tns:ITVAccessService_GetProgramIsScheduled_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetProgramIsScheduledResponse" message="tns:ITVAccessService_GetProgramIsScheduled_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetAllRadioChannelStatesForGroup">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelStatesForGroup" message="tns:ITVAccessService_GetAllRadioChannelStatesForGroup_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelStatesForGroupResponse" message="tns:ITVAccessService_GetAllRadioChannelStatesForGroup_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetChannelBasicById">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelBasicById" message="tns:ITVAccessService_GetChannelBasicById_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelBasicByIdResponse" message="tns:ITVAccessService_GetChannelBasicById_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetChannelDetailedById">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelDetailedById" message="tns:ITVAccessService_GetChannelDetailedById_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelDetailedByIdResponse" message="tns:ITVAccessService_GetChannelDetailedById_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetChannelState">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelState" message="tns:ITVAccessService_GetChannelState_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelStateResponse" message="tns:ITVAccessService_GetChannelState_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="SwitchTVServerToChannelAndGetVirtualCard">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetVirtualCard" message="tns:ITVAccessService_SwitchTVServerToChannelAndGetVirtualCard_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetVirtualCardResponse" message="tns:ITVAccessService_SwitchTVServerToChannelAndGetVirtualCard_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="SwitchTVServerToChannelAndGetStreamingUrl">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetStreamingUrl" message="tns:ITVAccessService_SwitchTVServerToChannelAndGetStreamingUrl_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetStreamingUrlResponse" message="tns:ITVAccessService_SwitchTVServerToChannelAndGetStreamingUrl_OutputMessage" />
-    </wsdl:operation>
     <wsdl:operation name="SwitchTVServerToChannelAndGetTimeshiftFilename">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetTimeshiftFilename" message="tns:ITVAccessService_SwitchTVServerToChannelAndGetTimeshiftFilename_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetTimeshiftFilenameResponse" message="tns:ITVAccessService_SwitchTVServerToChannelAndGetTimeshiftFilename_OutputMessage" />
@@ -570,6 +543,14 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetProgramIsScheduledOnChannel" message="tns:ITVAccessService_GetProgramIsScheduledOnChannel_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetProgramIsScheduledOnChannelResponse" message="tns:ITVAccessService_GetProgramIsScheduledOnChannel_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="GetProgramIsScheduled">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetProgramIsScheduled" message="tns:ITVAccessService_GetProgramIsScheduled_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetProgramIsScheduledResponse" message="tns:ITVAccessService_GetProgramIsScheduled_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordingById">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetRecordingById" message="tns:ITVAccessService_GetRecordingById_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetRecordingByIdResponse" message="tns:ITVAccessService_GetRecordingById_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="GetRecordingFileInfo">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetRecordingFileInfo" message="tns:ITVAccessService_GetRecordingFileInfo_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetRecordingFileInfoResponse" message="tns:ITVAccessService_GetRecordingFileInfo_OutputMessage" />
@@ -598,10 +579,6 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelCount" message="tns:ITVAccessService_GetChannelCount_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelCountResponse" message="tns:ITVAccessService_GetChannelCount_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllChannelsBasic">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllChannelsBasic" message="tns:ITVAccessService_GetAllChannelsBasic_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllChannelsBasicResponse" message="tns:ITVAccessService_GetAllChannelsBasic_OutputMessage" />
-    </wsdl:operation>
     <wsdl:operation name="GetChannelsBasic">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelsBasic" message="tns:ITVAccessService_GetChannelsBasic_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelsBasicResponse" message="tns:ITVAccessService_GetChannelsBasic_OutputMessage" />
@@ -609,10 +586,6 @@
     <wsdl:operation name="GetChannelsBasicByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelsBasicByRange" message="tns:ITVAccessService_GetChannelsBasicByRange_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelsBasicByRangeResponse" message="tns:ITVAccessService_GetChannelsBasicByRange_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetAllChannelsDetailed">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllChannelsDetailed" message="tns:ITVAccessService_GetAllChannelsDetailed_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllChannelsDetailedResponse" message="tns:ITVAccessService_GetAllChannelsDetailed_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetChannelsDetailed">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelsDetailed" message="tns:ITVAccessService_GetChannelsDetailed_InputMessage" />
@@ -646,10 +619,6 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetRadioChannelCount" message="tns:ITVAccessService_GetRadioChannelCount_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetRadioChannelCountResponse" message="tns:ITVAccessService_GetRadioChannelCount_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllRadioChannelsBasic">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelsBasic" message="tns:ITVAccessService_GetAllRadioChannelsBasic_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelsBasicResponse" message="tns:ITVAccessService_GetAllRadioChannelsBasic_OutputMessage" />
-    </wsdl:operation>
     <wsdl:operation name="GetRadioChannelsBasic">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetRadioChannelsBasic" message="tns:ITVAccessService_GetRadioChannelsBasic_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetRadioChannelsBasicResponse" message="tns:ITVAccessService_GetRadioChannelsBasic_OutputMessage" />
@@ -658,10 +627,6 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetRadioChannelsBasicByRange" message="tns:ITVAccessService_GetRadioChannelsBasicByRange_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetRadioChannelsBasicByRangeResponse" message="tns:ITVAccessService_GetRadioChannelsBasicByRange_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllRadioChannelsDetailed">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelsDetailed" message="tns:ITVAccessService_GetAllRadioChannelsDetailed_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelsDetailedResponse" message="tns:ITVAccessService_GetAllRadioChannelsDetailed_OutputMessage" />
-    </wsdl:operation>
     <wsdl:operation name="GetRadioChannelsDetailed">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetRadioChannelsDetailed" message="tns:ITVAccessService_GetRadioChannelsDetailed_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetRadioChannelsDetailedResponse" message="tns:ITVAccessService_GetRadioChannelsDetailed_OutputMessage" />
@@ -669,6 +634,30 @@
     <wsdl:operation name="GetRadioChannelsDetailedByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetRadioChannelsDetailedByRange" message="tns:ITVAccessService_GetRadioChannelsDetailedByRange_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetRadioChannelsDetailedByRangeResponse" message="tns:ITVAccessService_GetRadioChannelsDetailedByRange_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllRadioChannelStatesForGroup">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelStatesForGroup" message="tns:ITVAccessService_GetAllRadioChannelStatesForGroup_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelStatesForGroupResponse" message="tns:ITVAccessService_GetAllRadioChannelStatesForGroup_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetChannelBasicById">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelBasicById" message="tns:ITVAccessService_GetChannelBasicById_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelBasicByIdResponse" message="tns:ITVAccessService_GetChannelBasicById_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetChannelDetailedById">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelDetailedById" message="tns:ITVAccessService_GetChannelDetailedById_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelDetailedByIdResponse" message="tns:ITVAccessService_GetChannelDetailedById_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetChannelState">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelState" message="tns:ITVAccessService_GetChannelState_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetChannelStateResponse" message="tns:ITVAccessService_GetChannelState_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SwitchTVServerToChannelAndGetVirtualCard">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetVirtualCard" message="tns:ITVAccessService_SwitchTVServerToChannelAndGetVirtualCard_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetVirtualCardResponse" message="tns:ITVAccessService_SwitchTVServerToChannelAndGetVirtualCard_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SwitchTVServerToChannelAndGetStreamingUrl">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetStreamingUrl" message="tns:ITVAccessService_SwitchTVServerToChannelAndGetStreamingUrl_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetStreamingUrlResponse" message="tns:ITVAccessService_SwitchTVServerToChannelAndGetStreamingUrl_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetServiceDescription">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetServiceDescription" message="tns:ITVAccessService_GetServiceDescription_InputMessage" />
@@ -686,9 +675,17 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/WriteSettingToDatabase" message="tns:ITVAccessService_WriteSettingToDatabase_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/WriteSettingToDatabaseResponse" message="tns:ITVAccessService_WriteSettingToDatabase_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="GetLocalDiskInformation">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetLocalDiskInformation" message="tns:ITVAccessService_GetLocalDiskInformation_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetLocalDiskInformationResponse" message="tns:ITVAccessService_GetLocalDiskInformation_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="Search">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/Search" message="tns:ITVAccessService_Search_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/SearchResponse" message="tns:ITVAccessService_Search_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetExternalMediaInfo">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetExternalMediaInfo" message="tns:ITVAccessService_GetExternalMediaInfo_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetExternalMediaInfoResponse" message="tns:ITVAccessService_GetExternalMediaInfo_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="SearchResultsByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/SearchResultsByRange" message="tns:ITVAccessService_SearchResultsByRange_InputMessage" />
@@ -754,6 +751,14 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/DeleteSchedule" message="tns:ITVAccessService_DeleteSchedule_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/DeleteScheduleResponse" message="tns:ITVAccessService_DeleteSchedule_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="GetScheduledRecordingsForDate">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetScheduledRecordingsForDate" message="tns:ITVAccessService_GetScheduledRecordingsForDate_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetScheduledRecordingsForDateResponse" message="tns:ITVAccessService_GetScheduledRecordingsForDate_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetScheduledRecordingsForToday">
+      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetScheduledRecordingsForToday" message="tns:ITVAccessService_GetScheduledRecordingsForToday_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetScheduledRecordingsForTodayResponse" message="tns:ITVAccessService_GetScheduledRecordingsForToday_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="GetRecordingCount">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetRecordingCount" message="tns:ITVAccessService_GetRecordingCount_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetRecordingCountResponse" message="tns:ITVAccessService_GetRecordingCount_OutputMessage" />
@@ -765,10 +770,6 @@
     <wsdl:operation name="GetRecordingsByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetRecordingsByRange" message="tns:ITVAccessService_GetRecordingsByRange_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetRecordingsByRangeResponse" message="tns:ITVAccessService_GetRecordingsByRange_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetRecordingById">
-      <wsdl:input wsam:Action="http://mpextended.github.com/ITVAccessService/GetRecordingById" message="tns:ITVAccessService_GetRecordingById_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/ITVAccessService/GetRecordingByIdResponse" message="tns:ITVAccessService_GetRecordingById_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>

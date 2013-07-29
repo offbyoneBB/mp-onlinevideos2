@@ -80,10 +80,10 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://10.1.0.52:4322/MPExtended/MediaAccessService/">
+    <WebReferenceUrl Include="http://Multi:4322/MPExtended/MediaAccessService/">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\MpExtendedService\</RelPath>
-      <UpdateFromURL>http://10.1.0.52:4322/MPExtended/MediaAccessService/</UpdateFromURL>
+      <UpdateFromURL>http://Multi:4322/MPExtended/MediaAccessService/</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
@@ -91,10 +91,10 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>OnlineVideos_Sites_diebagger_MpExtendedService_MediaAccessService</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="http://10.1.0.52:4322/MPExtended/StreamingService/%3fwsdl">
+    <WebReferenceUrl Include="http://Multi:4322/MPExtended/StreamingService/%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\MpExtendedStreamingService\</RelPath>
-      <UpdateFromURL>http://10.1.0.52:4322/MPExtended/StreamingService/%3fwsdl</UpdateFromURL>
+      <UpdateFromURL>http://Multi:4322/MPExtended/StreamingService/%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
@@ -102,10 +102,10 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>OnlineVideos_Sites_diebagger_MpExtendedStreamingService_StreamingService</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="http://10.1.0.52:4322/MPExtended/TvAccessService/">
+    <WebReferenceUrl Include="http://Multi:4322/MPExtended/TvAccessService/">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\MpExtendedTvService\</RelPath>
-      <UpdateFromURL>http://10.1.0.52:4322/MPExtended/TvAccessService/</UpdateFromURL>
+      <UpdateFromURL>http://Multi:4322/MPExtended/TvAccessService/</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
@@ -130,6 +130,9 @@
     <None Include="Web References\MpExtendedService\item1.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Web References\MpExtendedService\item10.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Web References\MpExtendedService\item2.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -151,18 +154,27 @@
     <None Include="Web References\MpExtendedService\item8.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Web References\MpExtendedService\item9.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Web References\MpExtendedService\MediaAccessService.wsdl" />
     <None Include="Web References\MpExtendedService\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\MpExtendedService\SerializableDictionaryOfstring.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
     <None Include="Web References\MpExtendedService\WebActor.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\MpExtendedService\WebBoolResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\MpExtendedService\WebCategory.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebDictionaryOfstring.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebDiskSpaceInformation.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\MpExtendedService\WebDriveBasic.datasource">
@@ -177,13 +189,16 @@
     <None Include="Web References\MpExtendedService\WebFilesystemItem.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\MpExtendedService\WebFilterOperator.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\MpExtendedService\WebFolderBasic.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\MpExtendedService\WebGenre.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
-    <None Include="Web References\MpExtendedService\WebItemCount.datasource">
+    <None Include="Web References\MpExtendedService\WebIntResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\MpExtendedService\WebMediaItem.datasource">
@@ -219,7 +234,16 @@
     <None Include="Web References\MpExtendedService\WebPictureDetailed.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\MpExtendedService\WebPlaylist.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebPlaylistItem.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\MpExtendedService\WebSearchResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedService\WebStringResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\MpExtendedService\WebTVEpisodeBasic.datasource">
@@ -253,11 +277,20 @@
     <None Include="Web References\MpExtendedStreamingService\item2.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Web References\MpExtendedStreamingService\item3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\item4.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Web References\MpExtendedStreamingService\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <None Include="Web References\MpExtendedStreamingService\StreamingService.wsdl" />
+    <None Include="Web References\MpExtendedStreamingService\WebBoolResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\MpExtendedStreamingService\WebItemSupportStatus.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
@@ -271,6 +304,9 @@
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\MpExtendedStreamingService\WebStreamServiceDescription.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedStreamingService\WebStringResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\MpExtendedStreamingService\WebTranscoderProfile.datasource">
@@ -295,11 +331,17 @@
     <None Include="Web References\MpExtendedTvService\item3.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Web References\MpExtendedTvService\item4.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Web References\MpExtendedTvService\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <None Include="Web References\MpExtendedTvService\TVAccessService.wsdl" />
+    <None Include="Web References\MpExtendedTvService\WebBoolResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\MpExtendedTvService\WebCard.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
@@ -321,10 +363,13 @@
     <None Include="Web References\MpExtendedTvService\WebChannelState.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
-    <None Include="Web References\MpExtendedTvService\WebCount.datasource">
+    <None Include="Web References\MpExtendedTvService\WebDictionaryOfstring.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\MpExtendedTvService\WebDiskSpaceInformation.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebIntResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\MpExtendedTvService\WebProgramBasic.datasource">
@@ -339,13 +384,16 @@
     <None Include="Web References\MpExtendedTvService\WebRecordingFileInfo.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
-    <None Include="Web References\MpExtendedTvService\WebResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
     <None Include="Web References\MpExtendedTvService\WebRtspClient.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\MpExtendedTvService\WebScheduleBasic.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebScheduledRecording.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MpExtendedTvService\WebStringResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\MpExtendedTvService\WebTVSearchResult.datasource">

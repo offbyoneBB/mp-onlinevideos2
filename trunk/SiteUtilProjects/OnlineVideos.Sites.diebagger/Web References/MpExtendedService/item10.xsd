@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-  <xs:complexType name="WebStringResult">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="Result" nillable="true" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="WebStringResult" nillable="true" type="tns:WebStringResult" />
-  <xs:complexType name="WebBoolResult">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="Result" type="xs:boolean" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="WebBoolResult" nillable="true" type="tns:WebBoolResult" />
-  <xs:complexType name="WebIntResult">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="Result" type="xs:int" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="WebIntResult" nillable="true" type="tns:WebIntResult" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
   <xs:simpleType name="WebSortField">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Title" />
@@ -66,22 +49,17 @@
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="WebSortOrder" nillable="true" type="tns:WebSortOrder" />
-  <xs:complexType name="ArrayOfWebDiskSpaceInformation">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebDiskSpaceInformation" nillable="true" type="tns:WebDiskSpaceInformation" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfWebDiskSpaceInformation" nillable="true" type="tns:ArrayOfWebDiskSpaceInformation" />
-  <xs:complexType name="WebDiskSpaceInformation">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="Available" type="xs:float" />
-      <xs:element minOccurs="0" name="Disk" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="PercentageUsed" type="xs:float" />
-      <xs:element minOccurs="0" name="Size" type="xs:float" />
-      <xs:element minOccurs="0" name="Used" type="xs:float" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="WebDiskSpaceInformation" nillable="true" type="tns:WebDiskSpaceInformation" />
+  <xs:simpleType name="WebFileType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Content" />
+      <xs:enumeration value="Backdrop" />
+      <xs:enumeration value="Banner" />
+      <xs:enumeration value="Poster" />
+      <xs:enumeration value="Cover" />
+      <xs:enumeration value="Logo" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="WebFileType" nillable="true" type="tns:WebFileType" />
   <xs:simpleType name="WebMediaType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Movie" />
@@ -101,6 +79,38 @@
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="WebMediaType" nillable="true" type="tns:WebMediaType" />
+  <xs:complexType name="WebIntResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Result" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebIntResult" nillable="true" type="tns:WebIntResult" />
+  <xs:complexType name="WebBoolResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Result" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebBoolResult" nillable="true" type="tns:WebBoolResult" />
+  <xs:complexType name="WebStringResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Result" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebStringResult" nillable="true" type="tns:WebStringResult" />
+  <xs:complexType name="ArrayOfWebFilterOperator">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebFilterOperator" nillable="true" type="tns:WebFilterOperator" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebFilterOperator" nillable="true" type="tns:ArrayOfWebFilterOperator" />
+  <xs:complexType name="WebFilterOperator">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Operator" nillable="true" type="xs:string" />
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="SuitableTypes" nillable="true" type="q1:ArrayOfstring" />
+      <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebFilterOperator" nillable="true" type="tns:WebFilterOperator" />
   <xs:complexType name="WebDictionaryOfstring">
     <xs:annotation>
       <xs:appinfo>
@@ -115,4 +125,20 @@
     <xs:attribute ref="ser:FactoryType" />
   </xs:complexType>
   <xs:element name="WebDictionaryOfstring" nillable="true" type="tns:WebDictionaryOfstring" />
+  <xs:complexType name="ArrayOfWebDiskSpaceInformation">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebDiskSpaceInformation" nillable="true" type="tns:WebDiskSpaceInformation" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebDiskSpaceInformation" nillable="true" type="tns:ArrayOfWebDiskSpaceInformation" />
+  <xs:complexType name="WebDiskSpaceInformation">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Available" type="xs:float" />
+      <xs:element minOccurs="0" name="Disk" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PercentageUsed" type="xs:float" />
+      <xs:element minOccurs="0" name="Size" type="xs:float" />
+      <xs:element minOccurs="0" name="Used" type="xs:float" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebDiskSpaceInformation" nillable="true" type="tns:WebDiskSpaceInformation" />
 </xs:schema>

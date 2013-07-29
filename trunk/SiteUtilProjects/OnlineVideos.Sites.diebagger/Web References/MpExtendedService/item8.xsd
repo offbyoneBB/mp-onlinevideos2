@@ -1,36 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" />
-  <xs:complexType name="WebFolderBasic">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:WebFilesystemItem">
-        <xs:sequence />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="WebFolderBasic" nillable="true" type="tns:WebFolderBasic" />
-  <xs:complexType name="WebFilesystemItem">
-    <xs:complexContent mixed="false">
-      <xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q1:WebMediaItem">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="LastAccessTime" type="xs:dateTime" />
-          <xs:element minOccurs="0" name="LastModifiedTime" type="xs:dateTime" />
-          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="WebFilesystemItem" nillable="true" type="tns:WebFilesystemItem" />
-  <xs:complexType name="WebFileBasic">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:WebFilesystemItem">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="Size" type="xs:long" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="WebFileBasic" nillable="true" type="tns:WebFileBasic" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" />
   <xs:complexType name="ArrayOfWebDriveBasic">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="WebDriveBasic" nillable="true" type="tns:WebDriveBasic" />
@@ -45,18 +15,47 @@
     </xs:complexContent>
   </xs:complexType>
   <xs:element name="WebDriveBasic" nillable="true" type="tns:WebDriveBasic" />
+  <xs:complexType name="WebFilesystemItem">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q1:WebMediaItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="LastAccessTime" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="LastModifiedTime" type="xs:dateTime" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebFilesystemItem" nillable="true" type="tns:WebFilesystemItem" />
   <xs:complexType name="ArrayOfWebFolderBasic">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="WebFolderBasic" nillable="true" type="tns:WebFolderBasic" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ArrayOfWebFolderBasic" nillable="true" type="tns:ArrayOfWebFolderBasic" />
+  <xs:complexType name="WebFolderBasic">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebFilesystemItem">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebFolderBasic" nillable="true" type="tns:WebFolderBasic" />
   <xs:complexType name="ArrayOfWebFileBasic">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="WebFileBasic" nillable="true" type="tns:WebFileBasic" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ArrayOfWebFileBasic" nillable="true" type="tns:ArrayOfWebFileBasic" />
+  <xs:complexType name="WebFileBasic">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebFilesystemItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Size" type="xs:long" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebFileBasic" nillable="true" type="tns:WebFileBasic" />
   <xs:complexType name="ArrayOfWebFilesystemItem">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="WebFilesystemItem" nillable="true" type="tns:WebFilesystemItem" />

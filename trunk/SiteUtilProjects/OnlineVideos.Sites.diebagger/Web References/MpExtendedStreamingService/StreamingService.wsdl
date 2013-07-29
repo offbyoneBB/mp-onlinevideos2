@@ -67,7 +67,21 @@
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
-  <wsdl:import namespace="http://mpextended.github.com" location="http://10.1.0.248:4322/MPExtended/StreamingService/?wsdl=wsdl0" />
+  <wsp:Policy wsu:Id="SoapEndpoint_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <http:BasicAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http" />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsp:Policy wsu:Id="SoapEndpoint1_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <http:BasicAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http" />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:import namespace="http://mpextended.github.com" location="http://192.168.5.18:4322/MPExtended/StreamingService/?wsdl=wsdl0" />
   <wsdl:types />
   <wsdl:binding name="NetPipeEndpoint" type="i0:IWebStreamingService">
     <wsp:PolicyReference URI="#NetPipeEndpoint_policy" />
@@ -153,8 +167,8 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="FinishStream">
-      <soap12:operation soapAction="http://mpextended.github.com/IWebStreamingService/FinishStream" style="document" />
+    <wsdl:operation name="StopStream">
+      <soap12:operation soapAction="http://mpextended.github.com/IWebStreamingService/StopStream" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -162,8 +176,8 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetStreamingUrl">
-      <soap12:operation soapAction="http://mpextended.github.com/IWebStreamingService/GetStreamingUrl" style="document" />
+    <wsdl:operation name="FinishStream">
+      <soap12:operation soapAction="http://mpextended.github.com/IWebStreamingService/FinishStream" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -247,6 +261,15 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="CustomTranscoderData">
+      <soap12:operation soapAction="http://mpextended.github.com/IStreamingService/CustomTranscoderData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="ExtractImage">
       <soap12:operation soapAction="http://mpextended.github.com/IStreamingService/ExtractImage" style="document" />
       <wsdl:input>
@@ -283,15 +306,6 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="CustomTranscoderData">
-      <soap12:operation soapAction="http://mpextended.github.com/IStreamingService/CustomTranscoderData" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="GetArtwork">
       <soap12:operation soapAction="http://mpextended.github.com/IStreamingService/GetArtwork" style="document" />
       <wsdl:input>
@@ -312,6 +326,7 @@
     </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="SoapEndpoint" type="i0:IWebStreamingService">
+    <wsp:PolicyReference URI="#SoapEndpoint_policy" />
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="GetServiceDescription">
       <soap:operation soapAction="http://mpextended.github.com/IWebStreamingService/GetServiceDescription" style="document" />
@@ -394,8 +409,8 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="FinishStream">
-      <soap:operation soapAction="http://mpextended.github.com/IWebStreamingService/FinishStream" style="document" />
+    <wsdl:operation name="StopStream">
+      <soap:operation soapAction="http://mpextended.github.com/IWebStreamingService/StopStream" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -403,8 +418,8 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetStreamingUrl">
-      <soap:operation soapAction="http://mpextended.github.com/IWebStreamingService/GetStreamingUrl" style="document" />
+    <wsdl:operation name="FinishStream">
+      <soap:operation soapAction="http://mpextended.github.com/IWebStreamingService/FinishStream" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -459,6 +474,7 @@
     </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="SoapEndpoint1" type="i0:IStreamingService">
+    <wsp:PolicyReference URI="#SoapEndpoint1_policy" />
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="GetMediaItem">
       <soap:operation soapAction="http://mpextended.github.com/IStreamingService/GetMediaItem" style="document" />
@@ -480,6 +496,15 @@
     </wsdl:operation>
     <wsdl:operation name="DoStream">
       <soap:operation soapAction="http://mpextended.github.com/IStreamingService/DoStream" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CustomTranscoderData">
+      <soap:operation soapAction="http://mpextended.github.com/IStreamingService/CustomTranscoderData" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -523,15 +548,6 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="CustomTranscoderData">
-      <soap:operation soapAction="http://mpextended.github.com/IStreamingService/CustomTranscoderData" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="GetArtwork">
       <soap:operation soapAction="http://mpextended.github.com/IStreamingService/GetArtwork" style="document" />
       <wsdl:input>
@@ -557,7 +573,7 @@
       <wsa10:EndpointReference>
         <wsa10:Address>net.pipe://127.0.0.1/MPExtended/StreamingService/soap</wsa10:Address>
         <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
-          <Upn>bagga-laptop\DieBagger</Upn>
+          <Spn>host/Multi</Spn>
         </Identity>
       </wsa10:EndpointReference>
     </wsdl:port>
@@ -566,15 +582,15 @@
       <wsa10:EndpointReference>
         <wsa10:Address>net.pipe://127.0.0.1/MPExtended/StreamingService/soapstream</wsa10:Address>
         <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
-          <Upn>bagga-laptop\DieBagger</Upn>
+          <Spn>host/Multi</Spn>
         </Identity>
       </wsa10:EndpointReference>
     </wsdl:port>
     <wsdl:port name="SoapEndpoint" binding="tns:SoapEndpoint">
-      <soap:address location="http://10.1.0.248:4322/MPExtended/StreamingService/soap" />
+      <soap:address location="http://192.168.5.18:4322/MPExtended/StreamingService/soap" />
     </wsdl:port>
     <wsdl:port name="SoapEndpoint1" binding="tns:SoapEndpoint1">
-      <soap:address location="http://10.1.0.248:4322/MPExtended/StreamingService/soapstream" />
+      <soap:address location="http://192.168.5.18:4322/MPExtended/StreamingService/soapstream" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

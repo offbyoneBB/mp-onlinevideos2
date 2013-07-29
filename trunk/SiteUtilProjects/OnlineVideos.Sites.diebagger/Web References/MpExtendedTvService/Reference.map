@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Results>
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://10.1.0.248:4322/MPExtended/TVAccessService/?wsdl" filename="TVAccessService.wsdl" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.DiscoveryDocumentReference" url="http://10.1.0.248:4322/MPExtended/TVAccessService/?disco" filename="item.disco" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://10.1.0.248:4322/MPExtended/TVAccessService/?xsd=xsd2" filename="item.xsd" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://10.1.0.248:4322/MPExtended/TVAccessService/?xsd=xsd3" filename="item0.xsd" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://10.1.0.248:4322/MPExtended/TVAccessService/?xsd=xsd4" filename="item1.xsd" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://10.1.0.248:4322/MPExtended/TVAccessService/?xsd=xsd0" filename="item2.xsd" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://10.1.0.248:4322/MPExtended/TVAccessService/?wsdl=wsdl0" filename="item.wsdl" />
-    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://10.1.0.248:4322/MPExtended/TVAccessService/?xsd=xsd1" filename="item3.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd5" filename="item.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.DiscoveryDocumentReference" url="http://192.168.5.18:4322/MPExtended/TVAccessService/?disco" filename="item.disco" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://192.168.5.18:4322/MPExtended/TVAccessService/?wsdl=wsdl0" filename="item.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd3" filename="item0.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd0" filename="item1.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd1" filename="item2.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd2" filename="item3.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://192.168.5.18:4322/MPExtended/TVAccessService/?wsdl" filename="TVAccessService.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://192.168.5.18:4322/MPExtended/TVAccessService/?xsd=xsd4" filename="item4.xsd" />
   </Results>
 </DiscoveryClientResultsFile>

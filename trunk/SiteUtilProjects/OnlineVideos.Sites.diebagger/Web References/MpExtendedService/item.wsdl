@@ -2,18 +2,224 @@
 <wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://mpextended.github.com" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://mpextended.github.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <xsd:schema targetNamespace="http://mpextended.github.com/Imports">
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd0" namespace="http://mpextended.github.com" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd5" namespace="http://schemas.microsoft.com/Message" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd7" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Picture" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd8" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd9" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Movie" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd0" namespace="http://mpextended.github.com" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Playlist" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd7" namespace="http://schemas.microsoft.com/Message" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd8" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Picture" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd9" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd10" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd11" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Movie" />
     </xsd:schema>
   </wsdl:types>
+  <wsdl:message name="IMediaAccessService_GetPlaylistItemsByRange_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlaylistItemsByRange" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetPlaylistItemsByRange_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlaylistItemsByRangeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetPlaylistItemsCount_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlaylistItemsCount" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetPlaylistItemsCount_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlaylistItemsCountResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_AddPlaylistItem_InputMessage">
+    <wsdl:part name="parameters" element="tns:AddPlaylistItem" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_AddPlaylistItem_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddPlaylistItemResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_AddPlaylistItems_InputMessage">
+    <wsdl:part name="parameters" element="tns:AddPlaylistItems" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_AddPlaylistItems_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddPlaylistItemsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_RemovePlaylistItem_InputMessage">
+    <wsdl:part name="parameters" element="tns:RemovePlaylistItem" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_RemovePlaylistItem_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RemovePlaylistItemResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_RemovePlaylistItems_InputMessage">
+    <wsdl:part name="parameters" element="tns:RemovePlaylistItems" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_RemovePlaylistItems_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RemovePlaylistItemsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_MovePlaylistItem_InputMessage">
+    <wsdl:part name="parameters" element="tns:MovePlaylistItem" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_MovePlaylistItem_OutputMessage">
+    <wsdl:part name="parameters" element="tns:MovePlaylistItemResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_CreatePlaylist_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreatePlaylist" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_CreatePlaylist_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreatePlaylistResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_DeletePlaylist_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeletePlaylist" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_DeletePlaylist_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeletePlaylistResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFilterValuesCount_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFilterValuesCount" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFilterValuesCount_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFilterValuesCountResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFilterValues_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFilterValues" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFilterValues_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFilterValuesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFilterValuesByRange_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFilterValuesByRange" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFilterValuesByRange_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFilterValuesByRangeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_CreateFilterString_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateFilterString" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_CreateFilterString_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateFilterStringResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFilterOperators_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFilterOperators" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFilterOperators_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFilterOperatorsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowCategories_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowCategories" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowCategories_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowCategoriesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowGenres_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowGenres" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowGenres_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowGenresResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowGenresByRange_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowGenresByRange" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowGenresByRange_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowGenresByRangeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowGenresCount_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowGenresCount" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowGenresCount_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowGenresCountResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowActors_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowActors" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowActors_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowActorsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowActorsByRange_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowActorsByRange" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowActorsByRange_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowActorsByRangeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowActorCount_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowActorCount" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVShowActorCount_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowActorCountResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemDriveCount_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemDriveCount" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemDriveCount_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemDriveCountResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemDrives_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemDrives" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemDrives_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemDrivesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemDrivesByRange_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemDrivesByRange" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemDrivesByRange_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemDrivesByRangeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFolders_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFolders" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFolders_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFoldersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFoldersByRange_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFoldersByRange" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFoldersByRange_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFoldersByRangeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFiles_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFiles" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFiles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFilesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFilesByRange_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFilesByRange" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFilesByRange_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFilesByRangeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFilesAndFolders_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFilesAndFolders" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFilesAndFolders_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFilesAndFoldersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFilesAndFoldersByRange_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFilesAndFoldersByRange" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFilesAndFoldersByRange_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFilesAndFoldersByRangeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFilesAndFoldersCount_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFilesAndFoldersCount" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFilesAndFoldersCount_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFilesAndFoldersCountResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFilesCount_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFilesCount" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFilesCount_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFilesCountResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFoldersCount_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFoldersCount" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemFoldersCount_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemFoldersCountResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemDriveBasicById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemDriveBasicById" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetFileSystemDriveBasicById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileSystemDriveBasicByIdResponse" />
+  </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetFileSystemFolderBasicById_InputMessage">
     <wsdl:part name="parameters" element="tns:GetFileSystemFolderBasicById" />
   </wsdl:message>
@@ -50,167 +256,17 @@
   <wsdl:message name="IMediaAccessService_RetrieveFile_OutputMessage">
     <wsdl:part name="parameters" element="tns:RetrieveFileResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVEpisodesDetailedForTVShowByRange_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVEpisodesDetailedForTVShowByRange" />
+  <wsdl:message name="IMediaAccessService_GetPlaylists_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlaylists" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVEpisodesDetailedForTVShowByRange_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVEpisodesDetailedForTVShowByRangeResponse" />
+  <wsdl:message name="IMediaAccessService_GetPlaylists_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlaylistsResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVEpisodesBasicForSeason_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVEpisodesBasicForSeason" />
+  <wsdl:message name="IMediaAccessService_GetPlaylistItems_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlaylistItems" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVEpisodesBasicForSeason_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVEpisodesBasicForSeasonResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVEpisodesDetailedForSeason_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVEpisodesDetailedForSeason" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVEpisodesDetailedForSeason_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVEpisodesDetailedForSeasonResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVEpisodeBasicById_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVEpisodeBasicById" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVEpisodeBasicById_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVEpisodeBasicByIdResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVEpisodeDetailedById_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVEpisodeDetailedById" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVEpisodeDetailedById_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVEpisodeDetailedByIdResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVShowCategories_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVShowCategories" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVShowCategories_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVShowCategoriesResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVShowGenres_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVShowGenres" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVShowGenres_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVShowGenresResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVShowGenresByRange_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVShowGenresByRange" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVShowGenresByRange_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVShowGenresByRangeResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVShowGenresCount_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVShowGenresCount" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVShowGenresCount_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVShowGenresCountResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVShowActors_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVShowActors" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVShowActors_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVShowActorsResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVShowActorsByRange_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVShowActorsByRange" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVShowActorsByRange_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVShowActorsByRangeResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVShowActorCount_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVShowActorCount" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetTVShowActorCount_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetTVShowActorCountResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemDriveCount_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemDriveCount" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemDriveCount_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemDriveCountResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllFileSystemDrives_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllFileSystemDrives" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllFileSystemDrives_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllFileSystemDrivesResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemDrivesByRange_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemDrivesByRange" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemDrivesByRange_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemDrivesByRangeResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllFileSystemFolders_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllFileSystemFolders" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllFileSystemFolders_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllFileSystemFoldersResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFoldersByRange_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFoldersByRange" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFoldersByRange_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFoldersByRangeResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllFileSystemFiles_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllFileSystemFiles" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllFileSystemFiles_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllFileSystemFilesResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFilesByRange_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFilesByRange" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFilesByRange_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFilesByRangeResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllFileSystemFilesAndFolders_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllFileSystemFilesAndFolders" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllFileSystemFilesAndFolders_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllFileSystemFilesAndFoldersResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFilesAndFoldersByRange_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFilesAndFoldersByRange" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFilesAndFoldersByRange_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFilesAndFoldersByRangeResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFilesAndFoldersCount_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFilesAndFoldersCount" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFilesAndFoldersCount_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFilesAndFoldersCountResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFilesCount_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFilesCount" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFilesCount_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFilesCountResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFoldersCount_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFoldersCount" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemFoldersCount_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemFoldersCountResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemDriveBasicById_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemDriveBasicById" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetFileSystemDriveBasicById_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetFileSystemDriveBasicByIdResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetPictureSubCategories_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetPictureSubCategories" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetPictureSubCategories_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetPictureSubCategoriesResponse" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetPicturesBasicByCategory_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetPicturesBasicByCategory" />
-  </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetPicturesBasicByCategory_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetPicturesBasicByCategoryResponse" />
+  <wsdl:message name="IMediaAccessService_GetPlaylistItems_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlaylistItemsResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetPicturesDetailedByCategory_InputMessage">
     <wsdl:part name="parameters" element="tns:GetPicturesDetailedByCategory" />
@@ -248,17 +304,17 @@
   <wsdl:message name="IMediaAccessService_GetTVSeasonCountForTVShow_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetTVSeasonCountForTVShowResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVShowsBasic_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVShowsBasic" />
+  <wsdl:message name="IMediaAccessService_GetTVShowsBasic_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowsBasic" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVShowsBasic_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVShowsBasicResponse" />
+  <wsdl:message name="IMediaAccessService_GetTVShowsBasic_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowsBasicResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVShowsDetailed_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVShowsDetailed" />
+  <wsdl:message name="IMediaAccessService_GetTVShowsDetailed_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowsDetailed" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVShowsDetailed_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVShowsDetailedResponse" />
+  <wsdl:message name="IMediaAccessService_GetTVShowsDetailed_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVShowsDetailedResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetTVShowsBasicByRange_InputMessage">
     <wsdl:part name="parameters" element="tns:GetTVShowsBasicByRange" />
@@ -308,17 +364,17 @@
   <wsdl:message name="IMediaAccessService_GetTVSeasonDetailedById_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetTVSeasonDetailedByIdResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVEpisodesBasic_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVEpisodesBasic" />
+  <wsdl:message name="IMediaAccessService_GetTVEpisodesBasic_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodesBasic" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVEpisodesBasic_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVEpisodesBasicResponse" />
+  <wsdl:message name="IMediaAccessService_GetTVEpisodesBasic_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodesBasicResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVEpisodesDetailed_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVEpisodesDetailed" />
+  <wsdl:message name="IMediaAccessService_GetTVEpisodesDetailed_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodesDetailed" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllTVEpisodesDetailed_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllTVEpisodesDetailedResponse" />
+  <wsdl:message name="IMediaAccessService_GetTVEpisodesDetailed_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodesDetailedResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetTVEpisodesBasicByRange_InputMessage">
     <wsdl:part name="parameters" element="tns:GetTVEpisodesBasicByRange" />
@@ -350,11 +406,35 @@
   <wsdl:message name="IMediaAccessService_GetTVEpisodesBasicForTVShowByRange_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetTVEpisodesBasicForTVShowByRangeResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicArtistsBasic_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicArtistsBasic" />
+  <wsdl:message name="IMediaAccessService_GetTVEpisodesDetailedForTVShowByRange_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodesDetailedForTVShowByRange" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicArtistsBasic_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicArtistsBasicResponse" />
+  <wsdl:message name="IMediaAccessService_GetTVEpisodesDetailedForTVShowByRange_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodesDetailedForTVShowByRangeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVEpisodesBasicForSeason_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodesBasicForSeason" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVEpisodesBasicForSeason_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodesBasicForSeasonResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVEpisodesDetailedForSeason_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodesDetailedForSeason" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVEpisodesDetailedForSeason_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodesDetailedForSeasonResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVEpisodeBasicById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodeBasicById" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVEpisodeBasicById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodeBasicByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVEpisodeDetailedById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodeDetailedById" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetTVEpisodeDetailedById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTVEpisodeDetailedByIdResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMusicArtistsBasicByRange_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicArtistsBasicByRange" />
@@ -368,11 +448,11 @@
   <wsdl:message name="IMediaAccessService_GetMusicArtistBasicById_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicArtistBasicByIdResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicArtistsDetailed_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicArtistsDetailed" />
+  <wsdl:message name="IMediaAccessService_GetMusicArtistsDetailed_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicArtistsDetailed" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicArtistsDetailed_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicArtistsDetailedResponse" />
+  <wsdl:message name="IMediaAccessService_GetMusicArtistsDetailed_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicArtistsDetailedResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMusicArtistsDetailedByRange_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicArtistsDetailedByRange" />
@@ -392,17 +472,17 @@
   <wsdl:message name="IMediaAccessService_GetMusicTrackCount_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicTrackCountResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicTracksBasic_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicTracksBasic" />
+  <wsdl:message name="IMediaAccessService_GetMusicTracksBasic_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicTracksBasic" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicTracksBasic_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicTracksBasicResponse" />
+  <wsdl:message name="IMediaAccessService_GetMusicTracksBasic_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicTracksBasicResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicTracksDetailed_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicTracksDetailed" />
+  <wsdl:message name="IMediaAccessService_GetMusicTracksDetailed_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicTracksDetailed" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicTracksDetailed_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicTracksDetailedResponse" />
+  <wsdl:message name="IMediaAccessService_GetMusicTracksDetailed_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicTracksDetailedResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMusicTracksBasicByRange_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicTracksBasicByRange" />
@@ -422,11 +502,23 @@
   <wsdl:message name="IMediaAccessService_GetMusicTracksBasicForAlbum_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicTracksBasicForAlbumResponse" />
   </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetMusicTracksBasicForArtist_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicTracksBasicForArtist" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetMusicTracksBasicForArtist_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicTracksBasicForArtistResponse" />
+  </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMusicTracksDetailedForAlbum_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicTracksDetailedForAlbum" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMusicTracksDetailedForAlbum_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicTracksDetailedForAlbumResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetMusicTracksDetailedForArtist_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicTracksDetailedForArtist" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetMusicTracksDetailedForArtist_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicTracksDetailedForArtistResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMusicTrackBasicById_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicTrackBasicById" />
@@ -440,11 +532,11 @@
   <wsdl:message name="IMediaAccessService_GetMusicTrackDetailedById_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicTrackDetailedByIdResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicGenres_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicGenres" />
+  <wsdl:message name="IMediaAccessService_GetMusicGenres_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicGenres" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicGenres_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicGenresResponse" />
+  <wsdl:message name="IMediaAccessService_GetMusicGenres_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicGenresResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMusicGenresByRange_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicGenresByRange" />
@@ -458,11 +550,11 @@
   <wsdl:message name="IMediaAccessService_GetMusicGenresCount_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicGenresCountResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicCategories_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicCategories" />
+  <wsdl:message name="IMediaAccessService_GetMusicCategories_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicCategories" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicCategories_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicCategoriesResponse" />
+  <wsdl:message name="IMediaAccessService_GetMusicCategories_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicCategoriesResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetPictureCount_InputMessage">
     <wsdl:part name="parameters" element="tns:GetPictureCount" />
@@ -470,17 +562,17 @@
   <wsdl:message name="IMediaAccessService_GetPictureCount_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetPictureCountResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllPicturesBasic_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllPicturesBasic" />
+  <wsdl:message name="IMediaAccessService_GetPicturesBasic_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPicturesBasic" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllPicturesBasic_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllPicturesBasicResponse" />
+  <wsdl:message name="IMediaAccessService_GetPicturesBasic_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPicturesBasicResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllPicturesDetailed_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllPicturesDetailed" />
+  <wsdl:message name="IMediaAccessService_GetPicturesDetailed_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPicturesDetailed" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllPicturesDetailed_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllPicturesDetailedResponse" />
+  <wsdl:message name="IMediaAccessService_GetPicturesDetailed_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPicturesDetailedResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetPictureBasicById_InputMessage">
     <wsdl:part name="parameters" element="tns:GetPictureBasicById" />
@@ -494,17 +586,35 @@
   <wsdl:message name="IMediaAccessService_GetPictureDetailedById_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetPictureDetailedByIdResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllPictureCategories_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllPictureCategories" />
+  <wsdl:message name="IMediaAccessService_GetPictureCategories_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPictureCategories" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllPictureCategories_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllPictureCategoriesResponse" />
+  <wsdl:message name="IMediaAccessService_GetPictureCategories_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPictureCategoriesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetPictureSubCategories_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPictureSubCategories" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetPictureSubCategories_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPictureSubCategoriesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetPicturesBasicByCategory_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPicturesBasicByCategory" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetPicturesBasicByCategory_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPicturesBasicByCategoryResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetServiceDescription_InputMessage">
     <wsdl:part name="parameters" element="tns:GetServiceDescription" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetServiceDescription_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetServiceDescriptionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_TestConnection_InputMessage">
+    <wsdl:part name="parameters" element="tns:TestConnection" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_TestConnection_OutputMessage">
+    <wsdl:part name="parameters" element="tns:TestConnectionResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMediaItem_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMediaItem" />
@@ -530,23 +640,29 @@
   <wsdl:message name="IMediaAccessService_GetExternalMediaInfo_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetExternalMediaInfoResponse" />
   </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetLocalDiskInformation_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLocalDiskInformation" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetLocalDiskInformation_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLocalDiskInformationResponse" />
+  </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMovieCount_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMovieCount" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMovieCount_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMovieCountResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMoviesBasic_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMoviesBasic" />
+  <wsdl:message name="IMediaAccessService_GetMoviesBasic_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMoviesBasic" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMoviesBasic_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMoviesBasicResponse" />
+  <wsdl:message name="IMediaAccessService_GetMoviesBasic_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMoviesBasicResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMoviesDetailed_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMoviesDetailed" />
+  <wsdl:message name="IMediaAccessService_GetMoviesDetailed_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMoviesDetailed" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMoviesDetailed_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMoviesDetailedResponse" />
+  <wsdl:message name="IMediaAccessService_GetMoviesDetailed_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMoviesDetailedResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMoviesBasicByRange_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMoviesBasicByRange" />
@@ -572,11 +688,11 @@
   <wsdl:message name="IMediaAccessService_GetMovieDetailedById_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMovieDetailedByIdResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMovieGenres_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMovieGenres" />
+  <wsdl:message name="IMediaAccessService_GetMovieGenres_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMovieGenres" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMovieGenres_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMovieGenresResponse" />
+  <wsdl:message name="IMediaAccessService_GetMovieGenres_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMovieGenresResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMovieGenresByRange_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMovieGenresByRange" />
@@ -590,17 +706,17 @@
   <wsdl:message name="IMediaAccessService_GetMovieGenresCount_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMovieGenresCountResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMovieCategories_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMovieCategories" />
+  <wsdl:message name="IMediaAccessService_GetMovieCategories_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMovieCategories" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMovieCategories_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMovieCategoriesResponse" />
+  <wsdl:message name="IMediaAccessService_GetMovieCategories_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMovieCategoriesResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMovieActors_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMovieActors" />
+  <wsdl:message name="IMediaAccessService_GetMovieActors_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMovieActors" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMovieActors_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMovieActorsResponse" />
+  <wsdl:message name="IMediaAccessService_GetMovieActors_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMovieActorsResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMovieActorsByRange_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMovieActorsByRange" />
@@ -620,11 +736,11 @@
   <wsdl:message name="IMediaAccessService_GetMusicAlbumCount_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicAlbumCountResponse" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicAlbumsBasic_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicAlbumsBasic" />
+  <wsdl:message name="IMediaAccessService_GetMusicAlbumsBasic_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicAlbumsBasic" />
   </wsdl:message>
-  <wsdl:message name="IMediaAccessService_GetAllMusicAlbumsBasic_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllMusicAlbumsBasicResponse" />
+  <wsdl:message name="IMediaAccessService_GetMusicAlbumsBasic_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicAlbumsBasicResponse" />
   </wsdl:message>
   <wsdl:message name="IMediaAccessService_GetMusicAlbumsBasicByRange_InputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicAlbumsBasicByRange" />
@@ -650,7 +766,149 @@
   <wsdl:message name="IMediaAccessService_GetMusicArtistCount_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetMusicArtistCountResponse" />
   </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetMusicArtistsBasic_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicArtistsBasic" />
+  </wsdl:message>
+  <wsdl:message name="IMediaAccessService_GetMusicArtistsBasic_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMusicArtistsBasicResponse" />
+  </wsdl:message>
   <wsdl:portType name="IMediaAccessService">
+    <wsdl:operation name="GetPlaylistItemsByRange">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPlaylistItemsByRange" message="tns:IMediaAccessService_GetPlaylistItemsByRange_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPlaylistItemsByRangeResponse" message="tns:IMediaAccessService_GetPlaylistItemsByRange_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPlaylistItemsCount">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPlaylistItemsCount" message="tns:IMediaAccessService_GetPlaylistItemsCount_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPlaylistItemsCountResponse" message="tns:IMediaAccessService_GetPlaylistItemsCount_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AddPlaylistItem">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/AddPlaylistItem" message="tns:IMediaAccessService_AddPlaylistItem_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/AddPlaylistItemResponse" message="tns:IMediaAccessService_AddPlaylistItem_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AddPlaylistItems">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/AddPlaylistItems" message="tns:IMediaAccessService_AddPlaylistItems_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/AddPlaylistItemsResponse" message="tns:IMediaAccessService_AddPlaylistItems_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RemovePlaylistItem">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/RemovePlaylistItem" message="tns:IMediaAccessService_RemovePlaylistItem_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/RemovePlaylistItemResponse" message="tns:IMediaAccessService_RemovePlaylistItem_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RemovePlaylistItems">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/RemovePlaylistItems" message="tns:IMediaAccessService_RemovePlaylistItems_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/RemovePlaylistItemsResponse" message="tns:IMediaAccessService_RemovePlaylistItems_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="MovePlaylistItem">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/MovePlaylistItem" message="tns:IMediaAccessService_MovePlaylistItem_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/MovePlaylistItemResponse" message="tns:IMediaAccessService_MovePlaylistItem_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreatePlaylist">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/CreatePlaylist" message="tns:IMediaAccessService_CreatePlaylist_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/CreatePlaylistResponse" message="tns:IMediaAccessService_CreatePlaylist_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeletePlaylist">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/DeletePlaylist" message="tns:IMediaAccessService_DeletePlaylist_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/DeletePlaylistResponse" message="tns:IMediaAccessService_DeletePlaylist_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFilterValuesCount">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFilterValuesCount" message="tns:IMediaAccessService_GetFilterValuesCount_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFilterValuesCountResponse" message="tns:IMediaAccessService_GetFilterValuesCount_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFilterValues">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFilterValues" message="tns:IMediaAccessService_GetFilterValues_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFilterValuesResponse" message="tns:IMediaAccessService_GetFilterValues_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFilterValuesByRange">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFilterValuesByRange" message="tns:IMediaAccessService_GetFilterValuesByRange_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFilterValuesByRangeResponse" message="tns:IMediaAccessService_GetFilterValuesByRange_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateFilterString">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/CreateFilterString" message="tns:IMediaAccessService_CreateFilterString_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/CreateFilterStringResponse" message="tns:IMediaAccessService_CreateFilterString_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFilterOperators">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFilterOperators" message="tns:IMediaAccessService_GetFilterOperators_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFilterOperatorsResponse" message="tns:IMediaAccessService_GetFilterOperators_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowCategories">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowCategories" message="tns:IMediaAccessService_GetTVShowCategories_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowCategoriesResponse" message="tns:IMediaAccessService_GetTVShowCategories_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowGenres">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowGenres" message="tns:IMediaAccessService_GetTVShowGenres_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresResponse" message="tns:IMediaAccessService_GetTVShowGenres_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowGenresByRange">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresByRange" message="tns:IMediaAccessService_GetTVShowGenresByRange_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresByRangeResponse" message="tns:IMediaAccessService_GetTVShowGenresByRange_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowGenresCount">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresCount" message="tns:IMediaAccessService_GetTVShowGenresCount_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresCountResponse" message="tns:IMediaAccessService_GetTVShowGenresCount_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowActors">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowActors" message="tns:IMediaAccessService_GetTVShowActors_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowActorsResponse" message="tns:IMediaAccessService_GetTVShowActors_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowActorsByRange">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowActorsByRange" message="tns:IMediaAccessService_GetTVShowActorsByRange_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowActorsByRangeResponse" message="tns:IMediaAccessService_GetTVShowActorsByRange_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTVShowActorCount">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowActorCount" message="tns:IMediaAccessService_GetTVShowActorCount_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowActorCountResponse" message="tns:IMediaAccessService_GetTVShowActorCount_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemDriveCount">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveCount" message="tns:IMediaAccessService_GetFileSystemDriveCount_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveCountResponse" message="tns:IMediaAccessService_GetFileSystemDriveCount_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemDrives">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDrives" message="tns:IMediaAccessService_GetFileSystemDrives_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDrivesResponse" message="tns:IMediaAccessService_GetFileSystemDrives_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemDrivesByRange">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDrivesByRange" message="tns:IMediaAccessService_GetFileSystemDrivesByRange_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDrivesByRangeResponse" message="tns:IMediaAccessService_GetFileSystemDrivesByRange_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFolders">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFolders" message="tns:IMediaAccessService_GetFileSystemFolders_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersResponse" message="tns:IMediaAccessService_GetFileSystemFolders_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFoldersByRange">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersByRange" message="tns:IMediaAccessService_GetFileSystemFoldersByRange_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersByRangeResponse" message="tns:IMediaAccessService_GetFileSystemFoldersByRange_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFiles">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFiles" message="tns:IMediaAccessService_GetFileSystemFiles_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesResponse" message="tns:IMediaAccessService_GetFileSystemFiles_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesByRange">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesByRange" message="tns:IMediaAccessService_GetFileSystemFilesByRange_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesByRangeResponse" message="tns:IMediaAccessService_GetFileSystemFilesByRange_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesAndFolders">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFolders" message="tns:IMediaAccessService_GetFileSystemFilesAndFolders_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersResponse" message="tns:IMediaAccessService_GetFileSystemFilesAndFolders_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesAndFoldersByRange">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersByRange" message="tns:IMediaAccessService_GetFileSystemFilesAndFoldersByRange_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersByRangeResponse" message="tns:IMediaAccessService_GetFileSystemFilesAndFoldersByRange_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesAndFoldersCount">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersCount" message="tns:IMediaAccessService_GetFileSystemFilesAndFoldersCount_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersCountResponse" message="tns:IMediaAccessService_GetFileSystemFilesAndFoldersCount_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFilesCount">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesCount" message="tns:IMediaAccessService_GetFileSystemFilesCount_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesCountResponse" message="tns:IMediaAccessService_GetFileSystemFilesCount_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemFoldersCount">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersCount" message="tns:IMediaAccessService_GetFileSystemFoldersCount_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersCountResponse" message="tns:IMediaAccessService_GetFileSystemFoldersCount_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileSystemDriveBasicById">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveBasicById" message="tns:IMediaAccessService_GetFileSystemDriveBasicById_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveBasicByIdResponse" message="tns:IMediaAccessService_GetFileSystemDriveBasicById_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="GetFileSystemFolderBasicById">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFolderBasicById" message="tns:IMediaAccessService_GetFileSystemFolderBasicById_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFolderBasicByIdResponse" message="tns:IMediaAccessService_GetFileSystemFolderBasicById_OutputMessage" />
@@ -675,113 +933,13 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/RetrieveFile" message="tns:IMediaAccessService_RetrieveFile_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/RetrieveFileResponse" message="tns:IMediaAccessService_RetrieveFile_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetTVEpisodesDetailedForTVShowByRange">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForTVShowByRange" message="tns:IMediaAccessService_GetTVEpisodesDetailedForTVShowByRange_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForTVShowByRangeResponse" message="tns:IMediaAccessService_GetTVEpisodesDetailedForTVShowByRange_OutputMessage" />
+    <wsdl:operation name="GetPlaylists">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPlaylists" message="tns:IMediaAccessService_GetPlaylists_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPlaylistsResponse" message="tns:IMediaAccessService_GetPlaylists_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetTVEpisodesBasicForSeason">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForSeason" message="tns:IMediaAccessService_GetTVEpisodesBasicForSeason_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForSeasonResponse" message="tns:IMediaAccessService_GetTVEpisodesBasicForSeason_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetTVEpisodesDetailedForSeason">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForSeason" message="tns:IMediaAccessService_GetTVEpisodesDetailedForSeason_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForSeasonResponse" message="tns:IMediaAccessService_GetTVEpisodesDetailedForSeason_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetTVEpisodeBasicById">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeBasicById" message="tns:IMediaAccessService_GetTVEpisodeBasicById_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeBasicByIdResponse" message="tns:IMediaAccessService_GetTVEpisodeBasicById_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetTVEpisodeDetailedById">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeDetailedById" message="tns:IMediaAccessService_GetTVEpisodeDetailedById_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeDetailedByIdResponse" message="tns:IMediaAccessService_GetTVEpisodeDetailedById_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetAllTVShowCategories">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVShowCategories" message="tns:IMediaAccessService_GetAllTVShowCategories_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVShowCategoriesResponse" message="tns:IMediaAccessService_GetAllTVShowCategories_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetAllTVShowGenres">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVShowGenres" message="tns:IMediaAccessService_GetAllTVShowGenres_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVShowGenresResponse" message="tns:IMediaAccessService_GetAllTVShowGenres_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetTVShowGenresByRange">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresByRange" message="tns:IMediaAccessService_GetTVShowGenresByRange_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresByRangeResponse" message="tns:IMediaAccessService_GetTVShowGenresByRange_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetTVShowGenresCount">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresCount" message="tns:IMediaAccessService_GetTVShowGenresCount_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowGenresCountResponse" message="tns:IMediaAccessService_GetTVShowGenresCount_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetAllTVShowActors">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVShowActors" message="tns:IMediaAccessService_GetAllTVShowActors_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVShowActorsResponse" message="tns:IMediaAccessService_GetAllTVShowActors_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetTVShowActorsByRange">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowActorsByRange" message="tns:IMediaAccessService_GetTVShowActorsByRange_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowActorsByRangeResponse" message="tns:IMediaAccessService_GetTVShowActorsByRange_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetTVShowActorCount">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowActorCount" message="tns:IMediaAccessService_GetTVShowActorCount_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowActorCountResponse" message="tns:IMediaAccessService_GetTVShowActorCount_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetFileSystemDriveCount">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveCount" message="tns:IMediaAccessService_GetFileSystemDriveCount_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveCountResponse" message="tns:IMediaAccessService_GetFileSystemDriveCount_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetAllFileSystemDrives">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemDrives" message="tns:IMediaAccessService_GetAllFileSystemDrives_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemDrivesResponse" message="tns:IMediaAccessService_GetAllFileSystemDrives_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetFileSystemDrivesByRange">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDrivesByRange" message="tns:IMediaAccessService_GetFileSystemDrivesByRange_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDrivesByRangeResponse" message="tns:IMediaAccessService_GetFileSystemDrivesByRange_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetAllFileSystemFolders">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFolders" message="tns:IMediaAccessService_GetAllFileSystemFolders_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFoldersResponse" message="tns:IMediaAccessService_GetAllFileSystemFolders_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetFileSystemFoldersByRange">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersByRange" message="tns:IMediaAccessService_GetFileSystemFoldersByRange_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersByRangeResponse" message="tns:IMediaAccessService_GetFileSystemFoldersByRange_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetAllFileSystemFiles">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFiles" message="tns:IMediaAccessService_GetAllFileSystemFiles_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFilesResponse" message="tns:IMediaAccessService_GetAllFileSystemFiles_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetFileSystemFilesByRange">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesByRange" message="tns:IMediaAccessService_GetFileSystemFilesByRange_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesByRangeResponse" message="tns:IMediaAccessService_GetFileSystemFilesByRange_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetAllFileSystemFilesAndFolders">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFilesAndFolders" message="tns:IMediaAccessService_GetAllFileSystemFilesAndFolders_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllFileSystemFilesAndFoldersResponse" message="tns:IMediaAccessService_GetAllFileSystemFilesAndFolders_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetFileSystemFilesAndFoldersByRange">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersByRange" message="tns:IMediaAccessService_GetFileSystemFilesAndFoldersByRange_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersByRangeResponse" message="tns:IMediaAccessService_GetFileSystemFilesAndFoldersByRange_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetFileSystemFilesAndFoldersCount">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersCount" message="tns:IMediaAccessService_GetFileSystemFilesAndFoldersCount_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesAndFoldersCountResponse" message="tns:IMediaAccessService_GetFileSystemFilesAndFoldersCount_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetFileSystemFilesCount">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesCount" message="tns:IMediaAccessService_GetFileSystemFilesCount_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFilesCountResponse" message="tns:IMediaAccessService_GetFileSystemFilesCount_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetFileSystemFoldersCount">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersCount" message="tns:IMediaAccessService_GetFileSystemFoldersCount_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemFoldersCountResponse" message="tns:IMediaAccessService_GetFileSystemFoldersCount_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetFileSystemDriveBasicById">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveBasicById" message="tns:IMediaAccessService_GetFileSystemDriveBasicById_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetFileSystemDriveBasicByIdResponse" message="tns:IMediaAccessService_GetFileSystemDriveBasicById_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetPictureSubCategories">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPictureSubCategories" message="tns:IMediaAccessService_GetPictureSubCategories_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPictureSubCategoriesResponse" message="tns:IMediaAccessService_GetPictureSubCategories_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetPicturesBasicByCategory">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPicturesBasicByCategory" message="tns:IMediaAccessService_GetPicturesBasicByCategory_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPicturesBasicByCategoryResponse" message="tns:IMediaAccessService_GetPicturesBasicByCategory_OutputMessage" />
+    <wsdl:operation name="GetPlaylistItems">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPlaylistItems" message="tns:IMediaAccessService_GetPlaylistItems_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPlaylistItemsResponse" message="tns:IMediaAccessService_GetPlaylistItems_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetPicturesDetailedByCategory">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPicturesDetailedByCategory" message="tns:IMediaAccessService_GetPicturesDetailedByCategory_InputMessage" />
@@ -807,13 +965,13 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVSeasonCountForTVShow" message="tns:IMediaAccessService_GetTVSeasonCountForTVShow_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVSeasonCountForTVShowResponse" message="tns:IMediaAccessService_GetTVSeasonCountForTVShow_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllTVShowsBasic">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVShowsBasic" message="tns:IMediaAccessService_GetAllTVShowsBasic_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVShowsBasicResponse" message="tns:IMediaAccessService_GetAllTVShowsBasic_OutputMessage" />
+    <wsdl:operation name="GetTVShowsBasic">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowsBasic" message="tns:IMediaAccessService_GetTVShowsBasic_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowsBasicResponse" message="tns:IMediaAccessService_GetTVShowsBasic_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllTVShowsDetailed">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVShowsDetailed" message="tns:IMediaAccessService_GetAllTVShowsDetailed_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVShowsDetailedResponse" message="tns:IMediaAccessService_GetAllTVShowsDetailed_OutputMessage" />
+    <wsdl:operation name="GetTVShowsDetailed">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowsDetailed" message="tns:IMediaAccessService_GetTVShowsDetailed_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowsDetailedResponse" message="tns:IMediaAccessService_GetTVShowsDetailed_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetTVShowsBasicByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVShowsBasicByRange" message="tns:IMediaAccessService_GetTVShowsBasicByRange_InputMessage" />
@@ -847,13 +1005,13 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVSeasonDetailedById" message="tns:IMediaAccessService_GetTVSeasonDetailedById_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVSeasonDetailedByIdResponse" message="tns:IMediaAccessService_GetTVSeasonDetailedById_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllTVEpisodesBasic">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVEpisodesBasic" message="tns:IMediaAccessService_GetAllTVEpisodesBasic_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVEpisodesBasicResponse" message="tns:IMediaAccessService_GetAllTVEpisodesBasic_OutputMessage" />
+    <wsdl:operation name="GetTVEpisodesBasic">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasic" message="tns:IMediaAccessService_GetTVEpisodesBasic_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicResponse" message="tns:IMediaAccessService_GetTVEpisodesBasic_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllTVEpisodesDetailed">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVEpisodesDetailed" message="tns:IMediaAccessService_GetAllTVEpisodesDetailed_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllTVEpisodesDetailedResponse" message="tns:IMediaAccessService_GetAllTVEpisodesDetailed_OutputMessage" />
+    <wsdl:operation name="GetTVEpisodesDetailed">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailed" message="tns:IMediaAccessService_GetTVEpisodesDetailed_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedResponse" message="tns:IMediaAccessService_GetTVEpisodesDetailed_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetTVEpisodesBasicByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicByRange" message="tns:IMediaAccessService_GetTVEpisodesBasicByRange_InputMessage" />
@@ -875,9 +1033,25 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForTVShowByRange" message="tns:IMediaAccessService_GetTVEpisodesBasicForTVShowByRange_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForTVShowByRangeResponse" message="tns:IMediaAccessService_GetTVEpisodesBasicForTVShowByRange_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMusicArtistsBasic">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicArtistsBasic" message="tns:IMediaAccessService_GetAllMusicArtistsBasic_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicArtistsBasicResponse" message="tns:IMediaAccessService_GetAllMusicArtistsBasic_OutputMessage" />
+    <wsdl:operation name="GetTVEpisodesDetailedForTVShowByRange">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForTVShowByRange" message="tns:IMediaAccessService_GetTVEpisodesDetailedForTVShowByRange_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForTVShowByRangeResponse" message="tns:IMediaAccessService_GetTVEpisodesDetailedForTVShowByRange_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesBasicForSeason">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForSeason" message="tns:IMediaAccessService_GetTVEpisodesBasicForSeason_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesBasicForSeasonResponse" message="tns:IMediaAccessService_GetTVEpisodesBasicForSeason_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodesDetailedForSeason">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForSeason" message="tns:IMediaAccessService_GetTVEpisodesDetailedForSeason_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodesDetailedForSeasonResponse" message="tns:IMediaAccessService_GetTVEpisodesDetailedForSeason_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeBasicById">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeBasicById" message="tns:IMediaAccessService_GetTVEpisodeBasicById_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeBasicByIdResponse" message="tns:IMediaAccessService_GetTVEpisodeBasicById_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTVEpisodeDetailedById">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeDetailedById" message="tns:IMediaAccessService_GetTVEpisodeDetailedById_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetTVEpisodeDetailedByIdResponse" message="tns:IMediaAccessService_GetTVEpisodeDetailedById_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetMusicArtistsBasicByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicArtistsBasicByRange" message="tns:IMediaAccessService_GetMusicArtistsBasicByRange_InputMessage" />
@@ -887,9 +1061,9 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicArtistBasicById" message="tns:IMediaAccessService_GetMusicArtistBasicById_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicArtistBasicByIdResponse" message="tns:IMediaAccessService_GetMusicArtistBasicById_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMusicArtistsDetailed">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicArtistsDetailed" message="tns:IMediaAccessService_GetAllMusicArtistsDetailed_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicArtistsDetailedResponse" message="tns:IMediaAccessService_GetAllMusicArtistsDetailed_OutputMessage" />
+    <wsdl:operation name="GetMusicArtistsDetailed">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicArtistsDetailed" message="tns:IMediaAccessService_GetMusicArtistsDetailed_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicArtistsDetailedResponse" message="tns:IMediaAccessService_GetMusicArtistsDetailed_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetMusicArtistsDetailedByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicArtistsDetailedByRange" message="tns:IMediaAccessService_GetMusicArtistsDetailedByRange_InputMessage" />
@@ -903,13 +1077,13 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTrackCount" message="tns:IMediaAccessService_GetMusicTrackCount_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTrackCountResponse" message="tns:IMediaAccessService_GetMusicTrackCount_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMusicTracksBasic">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicTracksBasic" message="tns:IMediaAccessService_GetAllMusicTracksBasic_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicTracksBasicResponse" message="tns:IMediaAccessService_GetAllMusicTracksBasic_OutputMessage" />
+    <wsdl:operation name="GetMusicTracksBasic">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksBasic" message="tns:IMediaAccessService_GetMusicTracksBasic_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksBasicResponse" message="tns:IMediaAccessService_GetMusicTracksBasic_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMusicTracksDetailed">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicTracksDetailed" message="tns:IMediaAccessService_GetAllMusicTracksDetailed_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicTracksDetailedResponse" message="tns:IMediaAccessService_GetAllMusicTracksDetailed_OutputMessage" />
+    <wsdl:operation name="GetMusicTracksDetailed">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksDetailed" message="tns:IMediaAccessService_GetMusicTracksDetailed_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksDetailedResponse" message="tns:IMediaAccessService_GetMusicTracksDetailed_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetMusicTracksBasicByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksBasicByRange" message="tns:IMediaAccessService_GetMusicTracksBasicByRange_InputMessage" />
@@ -923,9 +1097,17 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksBasicForAlbum" message="tns:IMediaAccessService_GetMusicTracksBasicForAlbum_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksBasicForAlbumResponse" message="tns:IMediaAccessService_GetMusicTracksBasicForAlbum_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="GetMusicTracksBasicForArtist">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksBasicForArtist" message="tns:IMediaAccessService_GetMusicTracksBasicForArtist_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksBasicForArtistResponse" message="tns:IMediaAccessService_GetMusicTracksBasicForArtist_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="GetMusicTracksDetailedForAlbum">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksDetailedForAlbum" message="tns:IMediaAccessService_GetMusicTracksDetailedForAlbum_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksDetailedForAlbumResponse" message="tns:IMediaAccessService_GetMusicTracksDetailedForAlbum_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicTracksDetailedForArtist">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksDetailedForArtist" message="tns:IMediaAccessService_GetMusicTracksDetailedForArtist_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTracksDetailedForArtistResponse" message="tns:IMediaAccessService_GetMusicTracksDetailedForArtist_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetMusicTrackBasicById">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTrackBasicById" message="tns:IMediaAccessService_GetMusicTrackBasicById_InputMessage" />
@@ -935,9 +1117,9 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTrackDetailedById" message="tns:IMediaAccessService_GetMusicTrackDetailedById_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicTrackDetailedByIdResponse" message="tns:IMediaAccessService_GetMusicTrackDetailedById_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMusicGenres">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicGenres" message="tns:IMediaAccessService_GetAllMusicGenres_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicGenresResponse" message="tns:IMediaAccessService_GetAllMusicGenres_OutputMessage" />
+    <wsdl:operation name="GetMusicGenres">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicGenres" message="tns:IMediaAccessService_GetMusicGenres_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicGenresResponse" message="tns:IMediaAccessService_GetMusicGenres_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetMusicGenresByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicGenresByRange" message="tns:IMediaAccessService_GetMusicGenresByRange_InputMessage" />
@@ -947,21 +1129,21 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicGenresCount" message="tns:IMediaAccessService_GetMusicGenresCount_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicGenresCountResponse" message="tns:IMediaAccessService_GetMusicGenresCount_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMusicCategories">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicCategories" message="tns:IMediaAccessService_GetAllMusicCategories_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicCategoriesResponse" message="tns:IMediaAccessService_GetAllMusicCategories_OutputMessage" />
+    <wsdl:operation name="GetMusicCategories">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicCategories" message="tns:IMediaAccessService_GetMusicCategories_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicCategoriesResponse" message="tns:IMediaAccessService_GetMusicCategories_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetPictureCount">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPictureCount" message="tns:IMediaAccessService_GetPictureCount_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPictureCountResponse" message="tns:IMediaAccessService_GetPictureCount_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllPicturesBasic">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllPicturesBasic" message="tns:IMediaAccessService_GetAllPicturesBasic_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllPicturesBasicResponse" message="tns:IMediaAccessService_GetAllPicturesBasic_OutputMessage" />
+    <wsdl:operation name="GetPicturesBasic">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPicturesBasic" message="tns:IMediaAccessService_GetPicturesBasic_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPicturesBasicResponse" message="tns:IMediaAccessService_GetPicturesBasic_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllPicturesDetailed">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllPicturesDetailed" message="tns:IMediaAccessService_GetAllPicturesDetailed_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllPicturesDetailedResponse" message="tns:IMediaAccessService_GetAllPicturesDetailed_OutputMessage" />
+    <wsdl:operation name="GetPicturesDetailed">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPicturesDetailed" message="tns:IMediaAccessService_GetPicturesDetailed_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPicturesDetailedResponse" message="tns:IMediaAccessService_GetPicturesDetailed_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetPictureBasicById">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPictureBasicById" message="tns:IMediaAccessService_GetPictureBasicById_InputMessage" />
@@ -971,13 +1153,25 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPictureDetailedById" message="tns:IMediaAccessService_GetPictureDetailedById_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPictureDetailedByIdResponse" message="tns:IMediaAccessService_GetPictureDetailedById_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllPictureCategories">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllPictureCategories" message="tns:IMediaAccessService_GetAllPictureCategories_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllPictureCategoriesResponse" message="tns:IMediaAccessService_GetAllPictureCategories_OutputMessage" />
+    <wsdl:operation name="GetPictureCategories">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPictureCategories" message="tns:IMediaAccessService_GetPictureCategories_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPictureCategoriesResponse" message="tns:IMediaAccessService_GetPictureCategories_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPictureSubCategories">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPictureSubCategories" message="tns:IMediaAccessService_GetPictureSubCategories_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPictureSubCategoriesResponse" message="tns:IMediaAccessService_GetPictureSubCategories_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPicturesBasicByCategory">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPicturesBasicByCategory" message="tns:IMediaAccessService_GetPicturesBasicByCategory_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetPicturesBasicByCategoryResponse" message="tns:IMediaAccessService_GetPicturesBasicByCategory_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetServiceDescription">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetServiceDescription" message="tns:IMediaAccessService_GetServiceDescription_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetServiceDescriptionResponse" message="tns:IMediaAccessService_GetServiceDescription_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="TestConnection">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/TestConnection" message="tns:IMediaAccessService_TestConnection_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/TestConnectionResponse" message="tns:IMediaAccessService_TestConnection_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetMediaItem">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMediaItem" message="tns:IMediaAccessService_GetMediaItem_InputMessage" />
@@ -995,17 +1189,21 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetExternalMediaInfo" message="tns:IMediaAccessService_GetExternalMediaInfo_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetExternalMediaInfoResponse" message="tns:IMediaAccessService_GetExternalMediaInfo_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="GetLocalDiskInformation">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetLocalDiskInformation" message="tns:IMediaAccessService_GetLocalDiskInformation_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetLocalDiskInformationResponse" message="tns:IMediaAccessService_GetLocalDiskInformation_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="GetMovieCount">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieCount" message="tns:IMediaAccessService_GetMovieCount_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieCountResponse" message="tns:IMediaAccessService_GetMovieCount_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMoviesBasic">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMoviesBasic" message="tns:IMediaAccessService_GetAllMoviesBasic_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMoviesBasicResponse" message="tns:IMediaAccessService_GetAllMoviesBasic_OutputMessage" />
+    <wsdl:operation name="GetMoviesBasic">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMoviesBasic" message="tns:IMediaAccessService_GetMoviesBasic_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMoviesBasicResponse" message="tns:IMediaAccessService_GetMoviesBasic_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMoviesDetailed">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMoviesDetailed" message="tns:IMediaAccessService_GetAllMoviesDetailed_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMoviesDetailedResponse" message="tns:IMediaAccessService_GetAllMoviesDetailed_OutputMessage" />
+    <wsdl:operation name="GetMoviesDetailed">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMoviesDetailed" message="tns:IMediaAccessService_GetMoviesDetailed_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMoviesDetailedResponse" message="tns:IMediaAccessService_GetMoviesDetailed_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetMoviesBasicByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMoviesBasicByRange" message="tns:IMediaAccessService_GetMoviesBasicByRange_InputMessage" />
@@ -1023,9 +1221,9 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieDetailedById" message="tns:IMediaAccessService_GetMovieDetailedById_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieDetailedByIdResponse" message="tns:IMediaAccessService_GetMovieDetailedById_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMovieGenres">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMovieGenres" message="tns:IMediaAccessService_GetAllMovieGenres_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMovieGenresResponse" message="tns:IMediaAccessService_GetAllMovieGenres_OutputMessage" />
+    <wsdl:operation name="GetMovieGenres">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieGenres" message="tns:IMediaAccessService_GetMovieGenres_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieGenresResponse" message="tns:IMediaAccessService_GetMovieGenres_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetMovieGenresByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieGenresByRange" message="tns:IMediaAccessService_GetMovieGenresByRange_InputMessage" />
@@ -1035,13 +1233,13 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieGenresCount" message="tns:IMediaAccessService_GetMovieGenresCount_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieGenresCountResponse" message="tns:IMediaAccessService_GetMovieGenresCount_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMovieCategories">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMovieCategories" message="tns:IMediaAccessService_GetAllMovieCategories_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMovieCategoriesResponse" message="tns:IMediaAccessService_GetAllMovieCategories_OutputMessage" />
+    <wsdl:operation name="GetMovieCategories">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieCategories" message="tns:IMediaAccessService_GetMovieCategories_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieCategoriesResponse" message="tns:IMediaAccessService_GetMovieCategories_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMovieActors">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMovieActors" message="tns:IMediaAccessService_GetAllMovieActors_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMovieActorsResponse" message="tns:IMediaAccessService_GetAllMovieActors_OutputMessage" />
+    <wsdl:operation name="GetMovieActors">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieActors" message="tns:IMediaAccessService_GetMovieActors_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieActorsResponse" message="tns:IMediaAccessService_GetMovieActors_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetMovieActorsByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMovieActorsByRange" message="tns:IMediaAccessService_GetMovieActorsByRange_InputMessage" />
@@ -1055,9 +1253,9 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumCount" message="tns:IMediaAccessService_GetMusicAlbumCount_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumCountResponse" message="tns:IMediaAccessService_GetMusicAlbumCount_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="GetAllMusicAlbumsBasic">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicAlbumsBasic" message="tns:IMediaAccessService_GetAllMusicAlbumsBasic_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetAllMusicAlbumsBasicResponse" message="tns:IMediaAccessService_GetAllMusicAlbumsBasic_OutputMessage" />
+    <wsdl:operation name="GetMusicAlbumsBasic">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumsBasic" message="tns:IMediaAccessService_GetMusicAlbumsBasic_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumsBasicResponse" message="tns:IMediaAccessService_GetMusicAlbumsBasic_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetMusicAlbumsBasicByRange">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicAlbumsBasicByRange" message="tns:IMediaAccessService_GetMusicAlbumsBasicByRange_InputMessage" />
@@ -1074,6 +1272,10 @@
     <wsdl:operation name="GetMusicArtistCount">
       <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicArtistCount" message="tns:IMediaAccessService_GetMusicArtistCount_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicArtistCountResponse" message="tns:IMediaAccessService_GetMusicArtistCount_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMusicArtistsBasic">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicArtistsBasic" message="tns:IMediaAccessService_GetMusicArtistsBasic_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IMediaAccessService/GetMusicArtistsBasicResponse" message="tns:IMediaAccessService_GetMusicArtistsBasic_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
 </wsdl:definitions>
