@@ -33,74 +33,18 @@
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
-  <wsdl:import namespace="http://mpextended.github.com" location="http://10.1.0.248:4322/MPExtended/TVAccessService/?wsdl=wsdl0" />
+  <wsp:Policy wsu:Id="SoapEndpoint_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <http:BasicAuthentication xmlns:http="http://schemas.microsoft.com/ws/06/2004/policy/http" />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:import namespace="http://mpextended.github.com" location="http://192.168.5.18:4322/MPExtended/TVAccessService/?wsdl=wsdl0" />
   <wsdl:types />
   <wsdl:binding name="NetPipeEndpoint" type="i0:ITVAccessService">
     <wsp:PolicyReference URI="#NetPipeEndpoint_policy" />
     <soap12:binding transport="http://schemas.microsoft.com/soap/named-pipe" />
-    <wsdl:operation name="GetProgramIsScheduled">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetProgramIsScheduled" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetAllRadioChannelStatesForGroup">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelStatesForGroup" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetChannelBasicById">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelBasicById" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetChannelDetailedById">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelDetailedById" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetChannelState">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelState" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="SwitchTVServerToChannelAndGetVirtualCard">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetVirtualCard" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="SwitchTVServerToChannelAndGetStreamingUrl">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetStreamingUrl" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="SwitchTVServerToChannelAndGetTimeshiftFilename">
       <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetTimeshiftFilename" style="document" />
       <wsdl:input>
@@ -272,6 +216,24 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetProgramIsScheduled">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetProgramIsScheduled" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordingById">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRecordingById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetRecordingFileInfo">
       <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRecordingFileInfo" style="document" />
       <wsdl:input>
@@ -335,15 +297,6 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetAllChannelsBasic">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllChannelsBasic" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="GetChannelsBasic">
       <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelsBasic" style="document" />
       <wsdl:input>
@@ -355,15 +308,6 @@
     </wsdl:operation>
     <wsdl:operation name="GetChannelsBasicByRange">
       <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelsBasicByRange" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetAllChannelsDetailed">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllChannelsDetailed" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -443,15 +387,6 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetAllRadioChannelsBasic">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelsBasic" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="GetRadioChannelsBasic">
       <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRadioChannelsBasic" style="document" />
       <wsdl:input>
@@ -470,15 +405,6 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetAllRadioChannelsDetailed">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelsDetailed" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="GetRadioChannelsDetailed">
       <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRadioChannelsDetailed" style="document" />
       <wsdl:input>
@@ -490,6 +416,60 @@
     </wsdl:operation>
     <wsdl:operation name="GetRadioChannelsDetailedByRange">
       <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRadioChannelsDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllRadioChannelStatesForGroup">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelStatesForGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChannelBasicById">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelBasicById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChannelDetailedById">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelDetailedById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChannelState">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelState" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SwitchTVServerToChannelAndGetVirtualCard">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetVirtualCard" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SwitchTVServerToChannelAndGetStreamingUrl">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetStreamingUrl" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -533,8 +513,26 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetLocalDiskInformation">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetLocalDiskInformation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="Search">
       <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/Search" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetExternalMediaInfo">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetExternalMediaInfo" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -686,6 +684,24 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetScheduledRecordingsForDate">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetScheduledRecordingsForDate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetScheduledRecordingsForToday">
+      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetScheduledRecordingsForToday" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetRecordingCount">
       <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRecordingCount" style="document" />
       <wsdl:input>
@@ -713,81 +729,10 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetRecordingById">
-      <soap12:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRecordingById" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="SoapEndpoint" type="i0:ITVAccessService">
+    <wsp:PolicyReference URI="#SoapEndpoint_policy" />
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="GetProgramIsScheduled">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetProgramIsScheduled" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetAllRadioChannelStatesForGroup">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelStatesForGroup" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetChannelBasicById">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelBasicById" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetChannelDetailedById">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelDetailedById" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetChannelState">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelState" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="SwitchTVServerToChannelAndGetVirtualCard">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetVirtualCard" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="SwitchTVServerToChannelAndGetStreamingUrl">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetStreamingUrl" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="SwitchTVServerToChannelAndGetTimeshiftFilename">
       <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetTimeshiftFilename" style="document" />
       <wsdl:input>
@@ -959,6 +904,24 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetProgramIsScheduled">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetProgramIsScheduled" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordingById">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRecordingById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetRecordingFileInfo">
       <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRecordingFileInfo" style="document" />
       <wsdl:input>
@@ -1022,15 +985,6 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetAllChannelsBasic">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllChannelsBasic" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="GetChannelsBasic">
       <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelsBasic" style="document" />
       <wsdl:input>
@@ -1042,15 +996,6 @@
     </wsdl:operation>
     <wsdl:operation name="GetChannelsBasicByRange">
       <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelsBasicByRange" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetAllChannelsDetailed">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllChannelsDetailed" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -1130,15 +1075,6 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetAllRadioChannelsBasic">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelsBasic" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="GetRadioChannelsBasic">
       <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRadioChannelsBasic" style="document" />
       <wsdl:input>
@@ -1157,15 +1093,6 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetAllRadioChannelsDetailed">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelsDetailed" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="GetRadioChannelsDetailed">
       <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRadioChannelsDetailed" style="document" />
       <wsdl:input>
@@ -1177,6 +1104,60 @@
     </wsdl:operation>
     <wsdl:operation name="GetRadioChannelsDetailedByRange">
       <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRadioChannelsDetailedByRange" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllRadioChannelStatesForGroup">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetAllRadioChannelStatesForGroup" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChannelBasicById">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelBasicById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChannelDetailedById">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelDetailedById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChannelState">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetChannelState" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SwitchTVServerToChannelAndGetVirtualCard">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetVirtualCard" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SwitchTVServerToChannelAndGetStreamingUrl">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/SwitchTVServerToChannelAndGetStreamingUrl" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -1220,8 +1201,26 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetLocalDiskInformation">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetLocalDiskInformation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="Search">
       <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/Search" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetExternalMediaInfo">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetExternalMediaInfo" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -1373,6 +1372,24 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetScheduledRecordingsForDate">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetScheduledRecordingsForDate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetScheduledRecordingsForToday">
+      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetScheduledRecordingsForToday" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="GetRecordingCount">
       <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRecordingCount" style="document" />
       <wsdl:input>
@@ -1400,15 +1417,6 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetRecordingById">
-      <soap:operation soapAction="http://mpextended.github.com/ITVAccessService/GetRecordingById" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="TVAccessService">
     <wsdl:port name="NetPipeEndpoint" binding="tns:NetPipeEndpoint">
@@ -1416,12 +1424,12 @@
       <wsa10:EndpointReference>
         <wsa10:Address>net.pipe://127.0.0.1/MPExtended/TVAccessService</wsa10:Address>
         <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
-          <Upn>bagga-laptop\DieBagger</Upn>
+          <Spn>host/Multi</Spn>
         </Identity>
       </wsa10:EndpointReference>
     </wsdl:port>
     <wsdl:port name="SoapEndpoint" binding="tns:SoapEndpoint">
-      <soap:address location="http://10.1.0.248:4322/MPExtended/TVAccessService/" />
+      <soap:address location="http://192.168.5.18:4322/MPExtended/TVAccessService/" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

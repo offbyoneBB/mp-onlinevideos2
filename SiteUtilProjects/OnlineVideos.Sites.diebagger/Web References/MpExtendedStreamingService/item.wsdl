@@ -2,10 +2,12 @@
 <wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://mpextended.github.com" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://mpextended.github.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <xsd:schema targetNamespace="http://mpextended.github.com/Imports">
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd0" namespace="http://mpextended.github.com" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.StreamingService.Interfaces" />
-      <xsd:import schemaLocation="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd3" namespace="http://schemas.microsoft.com/Message" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd0" namespace="http://mpextended.github.com" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.StreamingService.Interfaces" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" />
+      <xsd:import schemaLocation="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd5" namespace="http://schemas.microsoft.com/Message" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IWebStreamingService_GetServiceDescription_InputMessage">
@@ -62,17 +64,17 @@
   <wsdl:message name="IWebStreamingService_StartStreamWithStreamSelection_OutputMessage">
     <wsdl:part name="parameters" element="tns:StartStreamWithStreamSelectionResponse" />
   </wsdl:message>
+  <wsdl:message name="IWebStreamingService_StopStream_InputMessage">
+    <wsdl:part name="parameters" element="tns:StopStream" />
+  </wsdl:message>
+  <wsdl:message name="IWebStreamingService_StopStream_OutputMessage">
+    <wsdl:part name="parameters" element="tns:StopStreamResponse" />
+  </wsdl:message>
   <wsdl:message name="IWebStreamingService_FinishStream_InputMessage">
     <wsdl:part name="parameters" element="tns:FinishStream" />
   </wsdl:message>
   <wsdl:message name="IWebStreamingService_FinishStream_OutputMessage">
     <wsdl:part name="parameters" element="tns:FinishStreamResponse" />
-  </wsdl:message>
-  <wsdl:message name="IWebStreamingService_GetStreamingUrl_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetStreamingUrl" />
-  </wsdl:message>
-  <wsdl:message name="IWebStreamingService_GetStreamingUrl_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetStreamingUrlResponse" />
   </wsdl:message>
   <wsdl:message name="IWebStreamingService_GetStreamingSessions_InputMessage">
     <wsdl:part name="parameters" element="tns:GetStreamingSessions" />
@@ -122,6 +124,12 @@
   <wsdl:message name="IStreamingService_DoStream_OutputMessage">
     <wsdl:part name="parameters" element="tns:DoStreamResponse" />
   </wsdl:message>
+  <wsdl:message name="IStreamingService_CustomTranscoderData_InputMessage">
+    <wsdl:part name="parameters" element="tns:CustomTranscoderData" />
+  </wsdl:message>
+  <wsdl:message name="IStreamingService_CustomTranscoderData_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CustomTranscoderDataResponse" />
+  </wsdl:message>
   <wsdl:message name="IStreamingService_ExtractImage_InputMessage">
     <wsdl:part name="parameters" element="tns:ExtractImage" />
   </wsdl:message>
@@ -145,12 +153,6 @@
   </wsdl:message>
   <wsdl:message name="IStreamingService_GetImageResized_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetImageResizedResponse" />
-  </wsdl:message>
-  <wsdl:message name="IStreamingService_CustomTranscoderData_InputMessage">
-    <wsdl:part name="parameters" element="tns:CustomTranscoderData" />
-  </wsdl:message>
-  <wsdl:message name="IStreamingService_CustomTranscoderData_OutputMessage">
-    <wsdl:part name="parameters" element="tns:CustomTranscoderDataResponse" />
   </wsdl:message>
   <wsdl:message name="IStreamingService_GetArtwork_InputMessage">
     <wsdl:part name="parameters" element="tns:GetArtwork" />
@@ -201,13 +203,13 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/StartStreamWithStreamSelection" message="tns:IWebStreamingService_StartStreamWithStreamSelection_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/StartStreamWithStreamSelectionResponse" message="tns:IWebStreamingService_StartStreamWithStreamSelection_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="StopStream">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/StopStream" message="tns:IWebStreamingService_StopStream_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/StopStreamResponse" message="tns:IWebStreamingService_StopStream_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="FinishStream">
       <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/FinishStream" message="tns:IWebStreamingService_FinishStream_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/FinishStreamResponse" message="tns:IWebStreamingService_FinishStream_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="GetStreamingUrl">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetStreamingUrl" message="tns:IWebStreamingService_GetStreamingUrl_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IWebStreamingService/GetStreamingUrlResponse" message="tns:IWebStreamingService_GetStreamingUrl_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetStreamingSessions">
       <wsdl:input wsam:Action="http://mpextended.github.com/IWebStreamingService/GetStreamingSessions" message="tns:IWebStreamingService_GetStreamingSessions_InputMessage" />
@@ -243,6 +245,10 @@
       <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/DoStream" message="tns:IStreamingService_DoStream_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/DoStreamResponse" message="tns:IStreamingService_DoStream_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="CustomTranscoderData">
+      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/CustomTranscoderData" message="tns:IStreamingService_CustomTranscoderData_InputMessage" />
+      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/CustomTranscoderDataResponse" message="tns:IStreamingService_CustomTranscoderData_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="ExtractImage">
       <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/ExtractImage" message="tns:IStreamingService_ExtractImage_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/ExtractImageResponse" message="tns:IStreamingService_ExtractImage_OutputMessage" />
@@ -258,10 +264,6 @@
     <wsdl:operation name="GetImageResized">
       <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/GetImageResized" message="tns:IStreamingService_GetImageResized_InputMessage" />
       <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/GetImageResizedResponse" message="tns:IStreamingService_GetImageResized_OutputMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="CustomTranscoderData">
-      <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/CustomTranscoderData" message="tns:IStreamingService_CustomTranscoderData_InputMessage" />
-      <wsdl:output wsam:Action="http://mpextended.github.com/IStreamingService/CustomTranscoderDataResponse" message="tns:IStreamingService_CustomTranscoderData_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetArtwork">
       <wsdl:input wsam:Action="http://mpextended.github.com/IStreamingService/GetArtwork" message="tns:IStreamingService_GetArtwork_InputMessage" />

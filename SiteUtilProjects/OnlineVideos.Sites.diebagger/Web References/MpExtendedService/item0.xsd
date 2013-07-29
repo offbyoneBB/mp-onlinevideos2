@@ -1,9 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:complexType name="ArrayOfstring">
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="ArrayOfWebTVShowBasic">
     <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVShowBasic" nillable="true" type="tns:WebTVShowBasic" />
     </xs:sequence>
   </xs:complexType>
-  <xs:element name="ArrayOfstring" nillable="true" type="tns:ArrayOfstring" />
+  <xs:element name="ArrayOfWebTVShowBasic" nillable="true" type="tns:ArrayOfWebTVShowBasic" />
+  <xs:complexType name="WebTVShowBasic">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q1:WebObject">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Actors" nillable="true" type="q1:ArrayOfWebActor" />
+          <xs:element minOccurs="0" name="Artwork" nillable="true" type="q1:ArrayOfWebArtwork" />
+          <xs:element minOccurs="0" name="ContentRating" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="DateAdded" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="EpisodeCount" type="xs:int" />
+          <xs:element minOccurs="0" name="ExternalId" nillable="true" type="q1:ArrayOfWebExternalId" />
+          <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Genres" nillable="true" type="q2:ArrayOfstring" />
+          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="IsProtected" type="xs:boolean" />
+          <xs:element minOccurs="0" name="Rating" type="xs:float" />
+          <xs:element minOccurs="0" name="SeasonCount" type="xs:int" />
+          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="UnwatchedEpisodeCount" type="xs:int" />
+          <xs:element minOccurs="0" name="Year" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebTVShowBasic" nillable="true" type="tns:WebTVShowBasic" />
+  <xs:complexType name="ArrayOfWebTVShowDetailed">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVShowDetailed" nillable="true" type="tns:WebTVShowDetailed" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebTVShowDetailed" nillable="true" type="tns:ArrayOfWebTVShowDetailed" />
+  <xs:complexType name="WebTVShowDetailed">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebTVShowBasic">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AirsDay" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="AirsTime" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Network" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Runtime" type="xs:int" />
+          <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Summary" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebTVShowDetailed" nillable="true" type="tns:WebTVShowDetailed" />
+  <xs:complexType name="ArrayOfWebTVSeasonBasic">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVSeasonBasic" nillable="true" type="tns:WebTVSeasonBasic" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebTVSeasonBasic" nillable="true" type="tns:ArrayOfWebTVSeasonBasic" />
+  <xs:complexType name="WebTVSeasonBasic">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q3="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q3:WebObject">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Artwork" nillable="true" type="q3:ArrayOfWebArtwork" />
+          <xs:element minOccurs="0" name="DateAdded" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="EpisodeCount" type="xs:int" />
+          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="IsProtected" type="xs:boolean" />
+          <xs:element minOccurs="0" name="SeasonNumber" type="xs:int" />
+          <xs:element minOccurs="0" name="ShowId" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="UnwatchedEpisodeCount" type="xs:int" />
+          <xs:element minOccurs="0" name="Year" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebTVSeasonBasic" nillable="true" type="tns:WebTVSeasonBasic" />
+  <xs:complexType name="ArrayOfWebTVSeasonDetailed">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVSeasonDetailed" nillable="true" type="tns:WebTVSeasonDetailed" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebTVSeasonDetailed" nillable="true" type="tns:ArrayOfWebTVSeasonDetailed" />
+  <xs:complexType name="WebTVSeasonDetailed">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebTVSeasonBasic">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebTVSeasonDetailed" nillable="true" type="tns:WebTVSeasonDetailed" />
+  <xs:complexType name="ArrayOfWebTVEpisodeBasic">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVEpisodeBasic" nillable="true" type="tns:WebTVEpisodeBasic" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebTVEpisodeBasic" nillable="true" type="tns:ArrayOfWebTVEpisodeBasic" />
+  <xs:complexType name="WebTVEpisodeBasic">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q4="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q4:WebMediaItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="EpisodeNumber" type="xs:int" />
+          <xs:element minOccurs="0" name="ExternalId" nillable="true" type="q4:ArrayOfWebExternalId" />
+          <xs:element minOccurs="0" name="FirstAired" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="IsProtected" type="xs:boolean" />
+          <xs:element minOccurs="0" name="Rating" type="xs:float" />
+          <xs:element minOccurs="0" name="SeasonId" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="SeasonNumber" type="xs:int" />
+          <xs:element minOccurs="0" name="ShowId" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Watched" type="xs:boolean" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebTVEpisodeBasic" nillable="true" type="tns:WebTVEpisodeBasic" />
+  <xs:complexType name="ArrayOfWebTVEpisodeDetailed">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVEpisodeDetailed" nillable="true" type="tns:WebTVEpisodeDetailed" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebTVEpisodeDetailed" nillable="true" type="tns:ArrayOfWebTVEpisodeDetailed" />
+  <xs:complexType name="WebTVEpisodeDetailed">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebTVEpisodeBasic">
+        <xs:sequence>
+          <xs:element xmlns:q5="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Directors" nillable="true" type="q5:ArrayOfstring" />
+          <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GuestStars" nillable="true" type="q6:ArrayOfWebActor" />
+          <xs:element minOccurs="0" name="Show" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Summary" nillable="true" type="xs:string" />
+          <xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Writers" nillable="true" type="q7:ArrayOfstring" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebTVEpisodeDetailed" nillable="true" type="tns:WebTVEpisodeDetailed" />
 </xs:schema>

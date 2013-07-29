@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="WebMediaType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Movie" />
+      <xs:enumeration value="MusicTrack" />
+      <xs:enumeration value="Picture" />
+      <xs:enumeration value="TVEpisode" />
+      <xs:enumeration value="File" />
+      <xs:enumeration value="TVShow" />
+      <xs:enumeration value="TVSeason" />
+      <xs:enumeration value="MusicAlbum" />
+      <xs:enumeration value="MusicArtist" />
+      <xs:enumeration value="Folder" />
+      <xs:enumeration value="Drive" />
+      <xs:enumeration value="Playlist" />
+      <xs:enumeration value="TV" />
+      <xs:enumeration value="Recording" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="WebMediaType" nillable="true" type="tns:WebMediaType" />
+  <xs:complexType name="WebBoolResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Result" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebBoolResult" nillable="true" type="tns:WebBoolResult" />
+  <xs:complexType name="WebStringResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Result" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebStringResult" nillable="true" type="tns:WebStringResult" />
+  <xs:simpleType name="WebFileType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Content" />
+      <xs:enumeration value="Backdrop" />
+      <xs:enumeration value="Banner" />
+      <xs:enumeration value="Poster" />
+      <xs:enumeration value="Cover" />
+      <xs:enumeration value="Logo" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="WebFileType" nillable="true" type="tns:WebFileType" />
+</xs:schema>

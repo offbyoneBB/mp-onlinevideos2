@@ -1,42 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="anyType" nillable="true" type="xs:anyType" />
-  <xs:element name="anyURI" nillable="true" type="xs:anyURI" />
-  <xs:element name="base64Binary" nillable="true" type="xs:base64Binary" />
-  <xs:element name="boolean" nillable="true" type="xs:boolean" />
-  <xs:element name="byte" nillable="true" type="xs:byte" />
-  <xs:element name="dateTime" nillable="true" type="xs:dateTime" />
-  <xs:element name="decimal" nillable="true" type="xs:decimal" />
-  <xs:element name="double" nillable="true" type="xs:double" />
-  <xs:element name="float" nillable="true" type="xs:float" />
-  <xs:element name="int" nillable="true" type="xs:int" />
-  <xs:element name="long" nillable="true" type="xs:long" />
-  <xs:element name="QName" nillable="true" type="xs:QName" />
-  <xs:element name="short" nillable="true" type="xs:short" />
-  <xs:element name="string" nillable="true" type="xs:string" />
-  <xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte" />
-  <xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt" />
-  <xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong" />
-  <xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort" />
-  <xs:element name="char" nillable="true" type="tns:char" />
-  <xs:simpleType name="char">
-    <xs:restriction base="xs:int" />
-  </xs:simpleType>
-  <xs:element name="duration" nillable="true" type="tns:duration" />
-  <xs:simpleType name="duration">
-    <xs:restriction base="xs:duration">
-      <xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?" />
-      <xs:minInclusive value="-P10675199DT2H48M5.4775808S" />
-      <xs:maxInclusive value="P10675199DT2H48M5.4775807S" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:element name="guid" nillable="true" type="tns:guid" />
-  <xs:simpleType name="guid">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:attribute name="FactoryType" type="xs:QName" />
-  <xs:attribute name="Id" type="xs:ID" />
-  <xs:attribute name="Ref" type="xs:IDREF" />
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="ArrayOfWebMusicArtistBasic">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebMusicArtistBasic" nillable="true" type="tns:WebMusicArtistBasic" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebMusicArtistBasic" nillable="true" type="tns:ArrayOfWebMusicArtistBasic" />
+  <xs:complexType name="WebMusicArtistBasic">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q1:WebObject">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Artwork" nillable="true" type="q1:ArrayOfWebArtwork" />
+          <xs:element minOccurs="0" name="HasAlbums" type="xs:boolean" />
+          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebMusicArtistBasic" nillable="true" type="tns:WebMusicArtistBasic" />
+  <xs:complexType name="ArrayOfWebMusicArtistDetailed">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebMusicArtistDetailed" nillable="true" type="tns:WebMusicArtistDetailed" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebMusicArtistDetailed" nillable="true" type="tns:ArrayOfWebMusicArtistDetailed" />
+  <xs:complexType name="WebMusicArtistDetailed">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebMusicArtistBasic">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Biography" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Styles" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Tones" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebMusicArtistDetailed" nillable="true" type="tns:WebMusicArtistDetailed" />
+  <xs:complexType name="ArrayOfWebMusicTrackBasic">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebMusicTrackBasic" nillable="true" type="tns:WebMusicTrackBasic" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebMusicTrackBasic" nillable="true" type="tns:ArrayOfWebMusicTrackBasic" />
+  <xs:complexType name="WebMusicTrackBasic">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q2="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q2:WebMediaItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Album" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="AlbumId" nillable="true" type="xs:string" />
+          <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Artist" nillable="true" type="q3:ArrayOfstring" />
+          <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ArtistId" nillable="true" type="q4:ArrayOfstring" />
+          <xs:element minOccurs="0" name="Duration" type="xs:int" />
+          <xs:element xmlns:q5="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Genres" nillable="true" type="q5:ArrayOfstring" />
+          <xs:element minOccurs="0" name="Rating" type="xs:float" />
+          <xs:element minOccurs="0" name="TrackNumber" type="xs:int" />
+          <xs:element minOccurs="0" name="Year" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebMusicTrackBasic" nillable="true" type="tns:WebMusicTrackBasic" />
+  <xs:complexType name="ArrayOfWebMusicTrackDetailed">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebMusicTrackDetailed" nillable="true" type="tns:WebMusicTrackDetailed" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebMusicTrackDetailed" nillable="true" type="tns:ArrayOfWebMusicTrackDetailed" />
+  <xs:complexType name="WebMusicTrackDetailed">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebMusicTrackBasic">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Artists" nillable="true" type="tns:ArrayOfWebMusicArtistBasic" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebMusicTrackDetailed" nillable="true" type="tns:WebMusicTrackDetailed" />
+  <xs:complexType name="ArrayOfWebMusicAlbumBasic">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebMusicAlbumBasic" nillable="true" type="tns:WebMusicAlbumBasic" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebMusicAlbumBasic" nillable="true" type="tns:ArrayOfWebMusicAlbumBasic" />
+  <xs:complexType name="WebMusicAlbumBasic">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q6="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q6:WebObject">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AlbumArtist" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="AlbumArtistId" nillable="true" type="xs:string" />
+          <xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Artists" nillable="true" type="q7:ArrayOfstring" />
+          <xs:element xmlns:q8="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ArtistsId" nillable="true" type="q8:ArrayOfstring" />
+          <xs:element minOccurs="0" name="Artwork" nillable="true" type="q6:ArrayOfWebArtwork" />
+          <xs:element xmlns:q9="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Composer" nillable="true" type="q9:ArrayOfstring" />
+          <xs:element minOccurs="0" name="DateAdded" type="xs:dateTime" />
+          <xs:element xmlns:q10="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Genres" nillable="true" type="q10:ArrayOfstring" />
+          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Rating" type="xs:float" />
+          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Year" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebMusicAlbumBasic" nillable="true" type="tns:WebMusicAlbumBasic" />
 </xs:schema>

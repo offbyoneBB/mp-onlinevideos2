@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Web;
 using OnlineVideos.Sites.MpExtendedService;
 using OnlineVideos.Sites.MpExtendedStreamingService;
 using OnlineVideos.Sites.MpExtendedTvService;
-using System.Web;
 
 namespace OnlineVideos.Sites
 {
@@ -118,7 +118,7 @@ namespace OnlineVideos.Sites
 
         private void GetTvGroups(Category parentCategory)
         {
-            WebChannelGroup[] groups = tvAccess.GetGroups(MpExtendedTvService.SortField.User, true, MpExtendedTvService.SortOrder.Asc, true);
+			WebChannelGroup[] groups = tvAccess.GetGroups(MpExtendedTvService.WebSortField.User, true, MpExtendedTvService.WebSortOrder.Asc, true);
 
             foreach (WebChannelGroup g in groups)
             {
@@ -134,7 +134,7 @@ namespace OnlineVideos.Sites
 
         private void GetSeasons(Category parentCategory, WebTVShowBasic series)
         {
-            WebTVSeasonDetailed[] seasons = mediaAccess.GetTVSeasonsDetailedForTVShow(series.PID, true, series.Id, SortBy.TVSeasonNumber, true, OrderBy.Asc, true);
+            WebTVSeasonDetailed[] seasons = mediaAccess.GetTVSeasonsDetailedForTVShow(series.PID, true, series.Id, MpExtendedService.WebSortField.TVSeasonNumber, true, MpExtendedService.WebSortOrder.Asc, true);
 
             foreach (WebTVSeasonDetailed s in seasons)
             {
@@ -142,7 +142,7 @@ namespace OnlineVideos.Sites
                 cat.Name = "Season " + s.SeasonNumber;
 				cat.Description = s.YearSpecified && s.Year > 0 ? string.Format("{0}: {1}", Translation.Instance.DateOfRelease, s.Year) : "";
 				cat.EstimatedVideoCount = s.EpisodeCountSpecified ? (uint?)s.EpisodeCount : null;
-				if (s.Artwork.Any(a => a.Type == WebFileType.Banner)) cat.Thumb = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=2&offset=0&mediatype=6&maxWidth=160&maxHeight=160", mServer, mPort, s.Id, s.PID);
+				if (s.Artwork.Any(a => a.Type == MpExtendedService.WebFileType.Banner)) cat.Thumb = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=2&offset=0&mediatype=6&maxWidth=160&maxHeight=160", mServer, mPort, s.Id, s.PID);
                 cat.Url = "tvseason";
                 cat.HasSubCategories = false;
                 cat.Other = s;
@@ -153,7 +153,7 @@ namespace OnlineVideos.Sites
 
         private void GetSeries(Category parentCategory, WebBackendProvider provider)
         {
-            WebTVShowBasic[] allSeries = mediaAccess.GetAllTVShowsBasic(provider.Id, true, null, null, SortBy.Title, true, OrderBy.Asc, true);
+            WebTVShowBasic[] allSeries = mediaAccess.GetTVShowsBasic(provider.Id, true, null, MpExtendedService.WebSortField.Title, true, MpExtendedService.WebSortOrder.Asc, true);
 
             foreach (WebTVShowBasic s in allSeries)
             {
@@ -162,9 +162,9 @@ namespace OnlineVideos.Sites
 				cat.Description =
 					(s.YearSpecified && s.Year > 0 ? string.Format("{0}: {1}", Translation.Instance.DateOfRelease, s.Year) : "") +
 					(s.Genres != null && s.Genres.Length > 0 ? string.Format("\n{0}: {1}", Translation.Instance.Genre, string.Join(", ", s.Genres)) : "") +
-					(s.Actors != null && s.Actors.Length > 0 ? string.Format("\n{0}: {1}", Translation.Instance.Actors, string.Join(", ", s.Actors.Take(4).Select(a => a.Name).ToArray())) : "");
+					(s.Actors != null && s.Actors.Length > 0 ? string.Format("\n{0}: {1}", Translation.Instance.Actors, string.Join(", ", s.Actors.Take(4).Select(a => a.Title).ToArray())) : "");
 				cat.EstimatedVideoCount = s.EpisodeCountSpecified ? (uint?)s.EpisodeCount : null;
-				if (s.Artwork.Any(a => a.Type == WebFileType.Poster)) cat.Thumb = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=3&offset=0&mediatype=5&maxWidth=160&maxHeight=160", mServer, mPort, s.Id, s.PID);
+				if (s.Artwork.Any(a => a.Type == MpExtendedService.WebFileType.Poster)) cat.Thumb = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=3&offset=0&mediatype=5&maxWidth=160&maxHeight=160", mServer, mPort, s.Id, s.PID);
                 cat.Url = "tvshow";
                 cat.HasSubCategories = true;
                 cat.Other = s;
@@ -175,45 +175,54 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            WebStreamMediaType type = WebStreamMediaType.File;
+            var type = MpExtendedStreamingService.WebMediaType.File;
             int providerId = 0;
             String itemId = null;
-            String profile = null;
             bool live = false;
             
             if (video.Other.GetType().Equals(typeof(WebMovieBasic)))
             {
                 WebMovieBasic movie = video.Other as WebMovieBasic;
-                type = WebStreamMediaType.Movie;
+				type = MpExtendedStreamingService.WebMediaType.Movie;
                 providerId = movie.PID;
                 itemId = movie.Id;
-                profile = "Flash pseudostreaming test";
             }
             else if (video.Other.GetType().Equals(typeof(WebTVEpisodeBasic)))
             {
                 WebTVEpisodeBasic ep = video.Other as WebTVEpisodeBasic;
-                type = WebStreamMediaType.TVEpisode;
+				type = MpExtendedStreamingService.WebMediaType.TVEpisode;
                 providerId = ep.PID;
                 itemId = ep.Id;
-                profile = "Flash pseudostreaming test";
             }
             else if (video.Other.GetType().Equals(typeof(WebChannelBasic)))
             {
                 WebChannelBasic channel = video.Other as WebChannelBasic;
-                type = WebStreamMediaType.TV;
+				type = MpExtendedStreamingService.WebMediaType.TV;
                 providerId = 0;
                 itemId = channel.Id.ToString();
-				profile = "Flash HQ";
                 live = true;
             }
-            //mediaStreaming.InitStream(type, true, movie.PID, true, movie.Id, "MediaPortal client", identifier, out result, out result);
-            //String start = mediaStreaming.StartStream(identifier, "Flash HQ", 0, true);
-            //String url2 = mediaStreaming.GetStreamingUrl(type, true, movie.PID, true, movie.Id, "MediaPortal client", "Flash pseudostreaming test", 0, true);
-            // String ip = new MpExtendedStreamingService.SoapEndpoint1().Url.Replace("soapstream", "stream");
-            bool result;
-            mediaStreaming.AuthorizeStreaming(out result, out result);
-			string url = string.Format("http://{0}:{1}/MPExtended/StreamingService/stream/DoStream?type={2}&provider={3}&itemId={4}&clientDescription={5}&profileName={6}&startPosition={7}", mServer, mPort, type, providerId, HttpUtility.UrlEncode(itemId), HttpUtility.UrlEncode("OnlineVideos client"), HttpUtility.UrlEncode(profile), 0);
-            return url;
+
+			if (mediaStreaming.AuthorizeStreaming().Result == true)
+			{
+				video.PlaybackOptions = new Dictionary<string, string>();
+				foreach (var profile in mediaStreaming.GetTranscoderProfilesForTarget("pc-flash-video"))
+				{
+					video.PlaybackOptions.Add(profile.Name, new MPUrlSourceFilter.HttpUrl(
+						string.Format("http://{0}:{1}/MPExtended/StreamingService/stream/DoStream?type={2}&provider={3}&itemId={4}&clientDescription={5}&profileName={6}&startPosition={7}", 
+						mServer, 
+						mPort, 
+						(int)type, 
+						providerId, 
+						HttpUtility.UrlEncode(itemId), 
+						HttpUtility.UrlEncode("OnlineVideos client"), 
+						HttpUtility.UrlEncode(profile.Name), 0)) 
+							{ LiveStream = live }.ToString());
+				}
+				return video.PlaybackOptions.Select(p => p.Value).FirstOrDefault();
+			}
+
+			throw new OnlineVideosException("No authorization");
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -226,20 +235,20 @@ namespace OnlineVideos.Sites
 
                 if (provider != null)
                 {
-                    WebMovieBasic[] movies = mediaAccess.GetAllMoviesBasic(provider.Id, true, null, null, SortBy.Title, true, OrderBy.Asc, true);
+					WebMovieBasic[] movies = mediaAccess.GetMoviesBasic(provider.Id, true, null, MpExtendedService.WebSortField.Title, true, MpExtendedService.WebSortOrder.Asc, true);
 
                     foreach (WebMovieBasic m in movies)
                     {
                         VideoInfo info = new VideoInfo();
                         info.VideoUrl = m.Id;
-						if (m.Artwork.Any(a => a.Type == WebFileType.Cover)) info.ImageUrl = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=4&offset=0&mediatype=0&maxWidth=160&maxHeight=160", mServer, mPort, m.Id, m.PID);
+						if (m.Artwork.Any(a => a.Type == MpExtendedService.WebFileType.Cover)) info.ImageUrl = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=4&offset=0&mediatype=0&maxWidth=160&maxHeight=160", mServer, mPort, m.Id, m.PID);
                         info.Other = m;
                         info.Title = m.Title;
 						info.Length = new DateTime(TimeSpan.FromMinutes(m.Runtime).Ticks).ToString("HH:mm:ss");
                         info.Airdate = m.Year.ToString();
 						info.Description =
 							(m.Genres != null && m.Genres.Length > 0 ? string.Format("\n{0}: {1}", Translation.Instance.Genre, string.Join(", ", m.Genres)) : "") +
-							(m.Actors != null && m.Actors.Length > 0 ? string.Format("\n{0}: {1}", Translation.Instance.Actors, string.Join(", ", m.Actors.Take(4).Select(a => a.Name).ToArray())) : "");
+							(m.Actors != null && m.Actors.Length > 0 ? string.Format("\n{0}: {1}", Translation.Instance.Actors, string.Join(", ", m.Actors.Take(4).Select(a => a.Title).ToArray())) : "");
                         returnList.Add(info);
                     }
                 }
@@ -250,13 +259,13 @@ namespace OnlineVideos.Sites
 
                 if (season != null)
                 {
-                    WebTVEpisodeBasic[] episodes = mediaAccess.GetTVEpisodesBasicForSeason(season.PID, true, season.Id, SortBy.TVEpisodeNumber, true, OrderBy.Asc, true);
+					WebTVEpisodeBasic[] episodes = mediaAccess.GetTVEpisodesBasicForSeason(season.PID, true, season.Id, MpExtendedService.WebSortField.TVEpisodeNumber, true, MpExtendedService.WebSortOrder.Asc, true);
 
                     foreach (WebTVEpisodeBasic e in episodes)
                     {
                         VideoInfo info = new VideoInfo();
                         info.VideoUrl = e.Id;
-						if (e.Artwork.Any(a => a.Type == WebFileType.Banner)) info.ImageUrl = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=2&offset=0&mediatype=3&maxWidth=160&maxHeight=160", mServer, mPort, e.Id, e.PID);
+						if (e.Artwork.Any(a => a.Type == MpExtendedService.WebFileType.Banner)) info.ImageUrl = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=2&offset=0&mediatype=3&maxWidth=160&maxHeight=160", mServer, mPort, e.Id, e.PID);
 						if (e.RatingSpecified && e.Rating > 0.0f) info.Description = string.Format("Rating: {0}", e.Rating);
                         info.Other = e;
                         info.Title = string.Format("s{0:D2}e{1:D2} - {2}", e.SeasonNumber, e.EpisodeNumber, e.Title);
@@ -272,14 +281,21 @@ namespace OnlineVideos.Sites
 
                 if (group != null)
                 {
-                    WebChannelBasic[] channels = tvAccess.GetChannelsBasic(group.Id, true, MpExtendedTvService.SortField.Channel, true, MpExtendedTvService.SortOrder.Asc, true);
+                    WebChannelDetailed[] channels = tvAccess.GetChannelsDetailed(group.Id, true, MpExtendedTvService.WebSortField.Channel, true, MpExtendedTvService.WebSortOrder.Asc, true);
 
-                    foreach (WebChannelBasic c in channels)
+                    foreach (var c in channels)
                     {
                         VideoInfo info = new VideoInfo();
                         info.VideoUrl = c.Id.ToString();
                         info.Other = c;
-                        info.Title = c.DisplayName;
+						info.Title = string.Format("{0}{1}", c.Title, c.CurrentProgram != null ? " --- " + c.CurrentProgram.Title : "");
+						if (c.CurrentProgram != null)
+						{
+							info.Airdate = string.Format("{0:t} - {1:t}", c.CurrentProgram.StartTime, c.CurrentProgram.EndTime);
+							info.Description = c.CurrentProgram.Description;
+							info.Length = (c.CurrentProgram.DurationInMinutes * 60).ToString();
+						}
+						info.ImageUrl = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&artworktype={3}&offset=0&mediatype={4}&maxWidth=160&maxHeight=160", mServer, mPort, c.Id, (int)MpExtendedStreamingService.WebFileType.Logo, (int)MpExtendedStreamingService.WebMediaType.TV);
                         returnList.Add(info);
                     }
                 }

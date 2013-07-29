@@ -1,139 +1,2066 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
-  <xs:import schemaLocation="http://10.1.0.248:4322/MPExtended/MediaAccessService/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" />
-  <xs:complexType name="ArrayOfWebTVEpisodeDetailed">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVEpisodeDetailed" nillable="true" type="tns:WebTVEpisodeDetailed" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfWebTVEpisodeDetailed" nillable="true" type="tns:ArrayOfWebTVEpisodeDetailed" />
-  <xs:complexType name="WebTVEpisodeDetailed">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:WebTVEpisodeBasic">
-        <xs:sequence>
-          <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Directors" nillable="true" type="q1:ArrayOfstring" />
-          <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GuestStars" nillable="true" type="q2:ArrayOfstring" />
-          <xs:element minOccurs="0" name="Show" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="Summary" nillable="true" type="xs:string" />
-          <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Writers" nillable="true" type="q3:ArrayOfstring" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="WebTVEpisodeDetailed" nillable="true" type="tns:WebTVEpisodeDetailed" />
-  <xs:complexType name="WebTVEpisodeBasic">
-    <xs:complexContent mixed="false">
-      <xs:extension xmlns:q4="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q4:WebMediaItem">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="Artwork" nillable="true" type="q4:ArrayOfWebArtwork" />
-          <xs:element minOccurs="0" name="EpisodeNumber" type="xs:int" />
-          <xs:element minOccurs="0" name="ExternalId" nillable="true" type="q4:ArrayOfWebExternalId" />
-          <xs:element minOccurs="0" name="FirstAired" type="xs:dateTime" />
-          <xs:element minOccurs="0" name="IsProtected" type="xs:boolean" />
-          <xs:element minOccurs="0" name="Rating" type="xs:float" />
-          <xs:element minOccurs="0" name="SeasonId" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="SeasonNumber" type="xs:int" />
-          <xs:element minOccurs="0" name="ShowId" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="Watched" type="xs:boolean" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="WebTVEpisodeBasic" nillable="true" type="tns:WebTVEpisodeBasic" />
-  <xs:complexType name="ArrayOfWebTVEpisodeBasic">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVEpisodeBasic" nillable="true" type="tns:WebTVEpisodeBasic" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfWebTVEpisodeBasic" nillable="true" type="tns:ArrayOfWebTVEpisodeBasic" />
-  <xs:complexType name="ArrayOfWebTVShowBasic">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVShowBasic" nillable="true" type="tns:WebTVShowBasic" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfWebTVShowBasic" nillable="true" type="tns:ArrayOfWebTVShowBasic" />
-  <xs:complexType name="WebTVShowBasic">
-    <xs:complexContent mixed="false">
-      <xs:extension xmlns:q5="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q5:WebObject">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="Actors" nillable="true" type="q5:ArrayOfWebActor" />
-          <xs:element minOccurs="0" name="Artwork" nillable="true" type="q5:ArrayOfWebArtwork" />
-          <xs:element minOccurs="0" name="ContentRating" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="DateAdded" type="xs:dateTime" />
-          <xs:element minOccurs="0" name="EpisodeCount" type="xs:int" />
-          <xs:element minOccurs="0" name="ExternalId" nillable="true" type="q5:ArrayOfWebExternalId" />
-          <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Genres" nillable="true" type="q6:ArrayOfstring" />
-          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="IsProtected" type="xs:boolean" />
-          <xs:element minOccurs="0" name="Rating" type="xs:float" />
-          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="UnwatchedEpisodeCount" type="xs:int" />
-          <xs:element minOccurs="0" name="Year" type="xs:int" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="WebTVShowBasic" nillable="true" type="tns:WebTVShowBasic" />
-  <xs:complexType name="ArrayOfWebTVShowDetailed">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVShowDetailed" nillable="true" type="tns:WebTVShowDetailed" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfWebTVShowDetailed" nillable="true" type="tns:ArrayOfWebTVShowDetailed" />
-  <xs:complexType name="WebTVShowDetailed">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:WebTVShowBasic">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="AirsDay" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="AirsTime" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="Network" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="Runtime" type="xs:int" />
-          <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="Summary" nillable="true" type="xs:string" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="WebTVShowDetailed" nillable="true" type="tns:WebTVShowDetailed" />
-  <xs:complexType name="ArrayOfWebTVSeasonBasic">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVSeasonBasic" nillable="true" type="tns:WebTVSeasonBasic" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfWebTVSeasonBasic" nillable="true" type="tns:ArrayOfWebTVSeasonBasic" />
-  <xs:complexType name="WebTVSeasonBasic">
-    <xs:complexContent mixed="false">
-      <xs:extension xmlns:q7="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" base="q7:WebObject">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="Artwork" nillable="true" type="q7:ArrayOfWebArtwork" />
-          <xs:element minOccurs="0" name="DateAdded" type="xs:dateTime" />
-          <xs:element minOccurs="0" name="EpisodeCount" type="xs:int" />
-          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="IsProtected" type="xs:boolean" />
-          <xs:element minOccurs="0" name="SeasonNumber" type="xs:int" />
-          <xs:element minOccurs="0" name="ShowId" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="UnwatchedEpisodeCount" type="xs:int" />
-          <xs:element minOccurs="0" name="Year" type="xs:int" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="WebTVSeasonBasic" nillable="true" type="tns:WebTVSeasonBasic" />
-  <xs:complexType name="ArrayOfWebTVSeasonDetailed">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebTVSeasonDetailed" nillable="true" type="tns:WebTVSeasonDetailed" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfWebTVSeasonDetailed" nillable="true" type="tns:ArrayOfWebTVSeasonDetailed" />
-  <xs:complexType name="WebTVSeasonDetailed">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:WebTVSeasonBasic">
-        <xs:sequence />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="WebTVSeasonDetailed" nillable="true" type="tns:WebTVSeasonDetailed" />
+<xs:schema xmlns:tns="http://mpextended.github.com" elementFormDefault="qualified" targetNamespace="http://mpextended.github.com" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Playlist" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd7" namespace="http://schemas.microsoft.com/Message" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd8" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Picture" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd9" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd10" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd11" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Movie" />
+  <xs:element name="GetPlaylistItemsByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="playlistId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q1:WebSortField" />
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q2:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPlaylistItemsByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Playlist" minOccurs="0" name="GetPlaylistItemsByRangeResult" nillable="true" type="q3:ArrayOfWebPlaylistItem" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPlaylistItemsCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="playlistId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPlaylistItemsCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetPlaylistItemsCountResult" nillable="true" type="q4:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AddPlaylistItem">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="playlistId" nillable="true" type="xs:string" />
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="type" type="q5:WebMediaType" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="position" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AddPlaylistItemResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="AddPlaylistItemResult" nillable="true" type="q6:WebBoolResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AddPlaylistItems">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="playlistId" nillable="true" type="xs:string" />
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="type" type="q7:WebMediaType" />
+        <xs:element minOccurs="0" name="position" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="ids" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AddPlaylistItemsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="AddPlaylistItemsResult" nillable="true" type="q8:WebBoolResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RemovePlaylistItem">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="playlistId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="position" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RemovePlaylistItemResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="RemovePlaylistItemResult" nillable="true" type="q9:WebBoolResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RemovePlaylistItems">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="playlistId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="positions" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RemovePlaylistItemsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="RemovePlaylistItemsResult" nillable="true" type="q10:WebBoolResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MovePlaylistItem">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="playlistId" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="oldPosition" type="xs:int" />
+        <xs:element minOccurs="0" name="newPosition" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MovePlaylistItemResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="MovePlaylistItemResult" nillable="true" type="q11:WebBoolResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreatePlaylist">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="playlistName" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreatePlaylistResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="CreatePlaylistResult" nillable="true" type="q12:WebStringResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeletePlaylist">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="playlistId" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DeletePlaylistResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="DeletePlaylistResult" nillable="true" type="q13:WebBoolResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFilterValuesCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="mediaType" type="q14:WebMediaType" />
+        <xs:element minOccurs="0" name="filterField" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="op" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="limit" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFilterValuesCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetFilterValuesCountResult" nillable="true" type="q15:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFilterValues">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="mediaType" type="q16:WebMediaType" />
+        <xs:element minOccurs="0" name="filterField" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="op" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="limit" nillable="true" type="xs:int" />
+        <xs:element xmlns:q17="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q17:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFilterValuesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q18="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetFilterValuesResult" nillable="true" type="q18:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFilterValuesByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q19="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="mediaType" type="q19:WebMediaType" />
+        <xs:element minOccurs="0" name="filterField" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="op" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="limit" nillable="true" type="xs:int" />
+        <xs:element xmlns:q20="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q20:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFilterValuesByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q21="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetFilterValuesByRangeResult" nillable="true" type="q21:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateFilterString">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="field" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="op" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="value" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="conjunction" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateFilterStringResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q22="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="CreateFilterStringResult" nillable="true" type="q22:WebStringResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFilterOperators">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFilterOperatorsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q23="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetFilterOperatorsResult" nillable="true" type="q23:ArrayOfWebFilterOperator" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowCategories">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowCategoriesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q24="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetTVShowCategoriesResult" nillable="true" type="q24:ArrayOfWebCategory" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowGenres">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q25="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q25:WebSortField" />
+        <xs:element xmlns:q26="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q26:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowGenresResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q27="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetTVShowGenresResult" nillable="true" type="q27:ArrayOfWebGenre" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowGenresByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q28="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q28:WebSortField" />
+        <xs:element xmlns:q29="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q29:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowGenresByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q30="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetTVShowGenresByRangeResult" nillable="true" type="q30:ArrayOfWebGenre" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowGenresCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowGenresCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q31="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetTVShowGenresCountResult" nillable="true" type="q31:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowActors">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q32="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q32:WebSortField" />
+        <xs:element xmlns:q33="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q33:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowActorsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q34="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetTVShowActorsResult" nillable="true" type="q34:ArrayOfWebActor" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowActorsByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q35="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q35:WebSortField" />
+        <xs:element xmlns:q36="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q36:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowActorsByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q37="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetTVShowActorsByRangeResult" nillable="true" type="q37:ArrayOfWebActor" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowActorCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowActorCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q38="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetTVShowActorCountResult" nillable="true" type="q38:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemDriveCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemDriveCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q39="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetFileSystemDriveCountResult" nillable="true" type="q39:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemDrives">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q40="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q40:WebSortField" />
+        <xs:element xmlns:q41="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q41:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemDrivesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q42="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" minOccurs="0" name="GetFileSystemDrivesResult" nillable="true" type="q42:ArrayOfWebDriveBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemDrivesByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q43="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q43:WebSortField" />
+        <xs:element xmlns:q44="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q44:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemDrivesByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q45="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" minOccurs="0" name="GetFileSystemDrivesByRangeResult" nillable="true" type="q45:ArrayOfWebDriveBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFolders">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q46="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q46:WebSortField" />
+        <xs:element xmlns:q47="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q47:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFoldersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q48="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" minOccurs="0" name="GetFileSystemFoldersResult" nillable="true" type="q48:ArrayOfWebFolderBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFoldersByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q49="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q49:WebSortField" />
+        <xs:element xmlns:q50="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q50:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFoldersByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q51="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" minOccurs="0" name="GetFileSystemFoldersByRangeResult" nillable="true" type="q51:ArrayOfWebFolderBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFiles">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q52="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q52:WebSortField" />
+        <xs:element xmlns:q53="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q53:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFilesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q54="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" minOccurs="0" name="GetFileSystemFilesResult" nillable="true" type="q54:ArrayOfWebFileBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFilesByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q55="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q55:WebSortField" />
+        <xs:element xmlns:q56="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q56:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFilesByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q57="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" minOccurs="0" name="GetFileSystemFilesByRangeResult" nillable="true" type="q57:ArrayOfWebFileBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFilesAndFolders">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q58="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q58:WebSortField" />
+        <xs:element xmlns:q59="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q59:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFilesAndFoldersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q60="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" minOccurs="0" name="GetFileSystemFilesAndFoldersResult" nillable="true" type="q60:ArrayOfWebFilesystemItem" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFilesAndFoldersByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q61="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q61:WebSortField" />
+        <xs:element xmlns:q62="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q62:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFilesAndFoldersByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q63="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" minOccurs="0" name="GetFileSystemFilesAndFoldersByRangeResult" nillable="true" type="q63:ArrayOfWebFilesystemItem" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFilesAndFoldersCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFilesAndFoldersCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q64="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetFileSystemFilesAndFoldersCountResult" nillable="true" type="q64:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFilesCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFilesCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q65="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetFileSystemFilesCountResult" nillable="true" type="q65:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFoldersCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFoldersCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q66="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetFileSystemFoldersCountResult" nillable="true" type="q66:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemDriveBasicById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemDriveBasicByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q67="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" minOccurs="0" name="GetFileSystemDriveBasicByIdResult" nillable="true" type="q67:WebDriveBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFolderBasicById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFolderBasicByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q68="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" minOccurs="0" name="GetFileSystemFolderBasicByIdResult" nillable="true" type="q68:WebFolderBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFileBasicById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileSystemFileBasicByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q69="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.FileSystem" minOccurs="0" name="GetFileSystemFileBasicByIdResult" nillable="true" type="q69:WebFileBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPathList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q70="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="mediatype" type="q70:WebMediaType" />
+        <xs:element xmlns:q71="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="filetype" type="q71:WebFileType" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPathListResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q72="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetPathListResult" nillable="true" type="q72:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileInfo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q73="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="mediatype" type="q73:WebMediaType" />
+        <xs:element xmlns:q74="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="filetype" type="q74:WebFileType" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="offset" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetFileInfoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q75="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetFileInfoResult" nillable="true" type="q75:WebFileInfo" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsLocalFile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q76="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="mediatype" type="q76:WebMediaType" />
+        <xs:element xmlns:q77="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="filetype" type="q77:WebFileType" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="offset" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IsLocalFileResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q78="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="IsLocalFileResult" nillable="true" type="q78:WebBoolResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RetrieveFile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q79="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="mediatype" type="q79:WebMediaType" />
+        <xs:element xmlns:q80="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="filetype" type="q80:WebFileType" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="offset" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RetrieveFileResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q81="http://schemas.microsoft.com/Message" name="RetrieveFileResult" type="q81:StreamBody" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPlaylists">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPlaylistsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q82="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Playlist" minOccurs="0" name="GetPlaylistsResult" nillable="true" type="q82:ArrayOfWebPlaylist" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPlaylistItems">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="playlistId" nillable="true" type="xs:string" />
+        <xs:element xmlns:q83="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q83:WebSortField" />
+        <xs:element xmlns:q84="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q84:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPlaylistItemsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q85="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Playlist" minOccurs="0" name="GetPlaylistItemsResult" nillable="true" type="q85:ArrayOfWebPlaylistItem" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPicturesDetailedByCategory">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPicturesDetailedByCategoryResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q86="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Picture" minOccurs="0" name="GetPicturesDetailedByCategoryResult" nillable="true" type="q86:ArrayOfWebPictureDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodeCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodeCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q87="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetTVEpisodeCountResult" nillable="true" type="q87:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodeCountForTVShow">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodeCountForTVShowResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q88="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetTVEpisodeCountForTVShowResult" nillable="true" type="q88:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodeCountForSeason">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodeCountForSeasonResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q89="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetTVEpisodeCountForSeasonResult" nillable="true" type="q89:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q90="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetTVShowCountResult" nillable="true" type="q90:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVSeasonCountForTVShow">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVSeasonCountForTVShowResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q91="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetTVSeasonCountForTVShowResult" nillable="true" type="q91:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowsBasic">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q92="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q92:WebSortField" />
+        <xs:element xmlns:q93="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q93:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowsBasicResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q94="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVShowsBasicResult" nillable="true" type="q94:ArrayOfWebTVShowBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowsDetailed">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q95="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q95:WebSortField" />
+        <xs:element xmlns:q96="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q96:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowsDetailedResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q97="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVShowsDetailedResult" nillable="true" type="q97:ArrayOfWebTVShowDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowsBasicByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q98="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q98:WebSortField" />
+        <xs:element xmlns:q99="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q99:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowsBasicByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q100="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVShowsBasicByRangeResult" nillable="true" type="q100:ArrayOfWebTVShowBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowsDetailedByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q101="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q101:WebSortField" />
+        <xs:element xmlns:q102="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q102:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowsDetailedByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q103="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVShowsDetailedByRangeResult" nillable="true" type="q103:ArrayOfWebTVShowDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowBasicById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowBasicByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q104="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVShowBasicByIdResult" nillable="true" type="q104:WebTVShowBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowDetailedById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVShowDetailedByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q105="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVShowDetailedByIdResult" nillable="true" type="q105:WebTVShowDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVSeasonsBasicForTVShow">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q106="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q106:WebSortField" />
+        <xs:element xmlns:q107="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q107:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVSeasonsBasicForTVShowResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q108="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVSeasonsBasicForTVShowResult" nillable="true" type="q108:ArrayOfWebTVSeasonBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVSeasonsDetailedForTVShow">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q109="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q109:WebSortField" />
+        <xs:element xmlns:q110="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q110:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVSeasonsDetailedForTVShowResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q111="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVSeasonsDetailedForTVShowResult" nillable="true" type="q111:ArrayOfWebTVSeasonDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVSeasonBasicById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVSeasonBasicByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q112="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVSeasonBasicByIdResult" nillable="true" type="q112:WebTVSeasonBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVSeasonDetailedById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVSeasonDetailedByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q113="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVSeasonDetailedByIdResult" nillable="true" type="q113:WebTVSeasonDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesBasic">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q114="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q114:WebSortField" />
+        <xs:element xmlns:q115="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q115:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesBasicResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q116="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodesBasicResult" nillable="true" type="q116:ArrayOfWebTVEpisodeBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesDetailed">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q117="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q117:WebSortField" />
+        <xs:element xmlns:q118="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q118:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesDetailedResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q119="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodesDetailedResult" nillable="true" type="q119:ArrayOfWebTVEpisodeDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesBasicByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q120="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q120:WebSortField" />
+        <xs:element xmlns:q121="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q121:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesBasicByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q122="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodesBasicByRangeResult" nillable="true" type="q122:ArrayOfWebTVEpisodeBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesDetailedByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q123="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q123:WebSortField" />
+        <xs:element xmlns:q124="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q124:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesDetailedByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q125="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodesDetailedByRangeResult" nillable="true" type="q125:ArrayOfWebTVEpisodeDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesBasicForTVShow">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q126="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q126:WebSortField" />
+        <xs:element xmlns:q127="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q127:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesBasicForTVShowResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q128="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodesBasicForTVShowResult" nillable="true" type="q128:ArrayOfWebTVEpisodeBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesDetailedForTVShow">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q129="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q129:WebSortField" />
+        <xs:element xmlns:q130="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q130:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesDetailedForTVShowResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q131="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodesDetailedForTVShowResult" nillable="true" type="q131:ArrayOfWebTVEpisodeDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesBasicForTVShowByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q132="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q132:WebSortField" />
+        <xs:element xmlns:q133="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q133:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesBasicForTVShowByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q134="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodesBasicForTVShowByRangeResult" nillable="true" type="q134:ArrayOfWebTVEpisodeBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesDetailedForTVShowByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q135="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q135:WebSortField" />
+        <xs:element xmlns:q136="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q136:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesDetailedForTVShowByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q137="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodesDetailedForTVShowByRangeResult" nillable="true" type="q137:ArrayOfWebTVEpisodeDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesBasicForSeason">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q138="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q138:WebSortField" />
+        <xs:element xmlns:q139="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q139:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesBasicForSeasonResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q140="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodesBasicForSeasonResult" nillable="true" type="q140:ArrayOfWebTVEpisodeBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesDetailedForSeason">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q141="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q141:WebSortField" />
+        <xs:element xmlns:q142="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q142:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodesDetailedForSeasonResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q143="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodesDetailedForSeasonResult" nillable="true" type="q143:ArrayOfWebTVEpisodeDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodeBasicById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodeBasicByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q144="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodeBasicByIdResult" nillable="true" type="q144:WebTVEpisodeBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodeDetailedById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTVEpisodeDetailedByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q145="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.TVShow" minOccurs="0" name="GetTVEpisodeDetailedByIdResult" nillable="true" type="q145:WebTVEpisodeDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistsBasicByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q146="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q146:WebSortField" />
+        <xs:element xmlns:q147="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q147:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistsBasicByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q148="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicArtistsBasicByRangeResult" nillable="true" type="q148:ArrayOfWebMusicArtistBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistBasicById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistBasicByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q149="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicArtistBasicByIdResult" nillable="true" type="q149:WebMusicArtistBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistsDetailed">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q150="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q150:WebSortField" />
+        <xs:element xmlns:q151="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q151:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistsDetailedResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q152="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicArtistsDetailedResult" nillable="true" type="q152:ArrayOfWebMusicArtistDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistsDetailedByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q153="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q153:WebSortField" />
+        <xs:element xmlns:q154="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q154:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistsDetailedByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q155="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicArtistsDetailedByRangeResult" nillable="true" type="q155:ArrayOfWebMusicArtistDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistDetailedById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistDetailedByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q156="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicArtistDetailedByIdResult" nillable="true" type="q156:WebMusicArtistDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTrackCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTrackCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q157="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetMusicTrackCountResult" nillable="true" type="q157:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksBasic">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q158="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q158:WebSortField" />
+        <xs:element xmlns:q159="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q159:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksBasicResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q160="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicTracksBasicResult" nillable="true" type="q160:ArrayOfWebMusicTrackBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksDetailed">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q161="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q161:WebSortField" />
+        <xs:element xmlns:q162="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q162:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksDetailedResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q163="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicTracksDetailedResult" nillable="true" type="q163:ArrayOfWebMusicTrackDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksBasicByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q164="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q164:WebSortField" />
+        <xs:element xmlns:q165="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q165:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksBasicByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q166="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicTracksBasicByRangeResult" nillable="true" type="q166:ArrayOfWebMusicTrackBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksDetailedByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q167="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q167:WebSortField" />
+        <xs:element xmlns:q168="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q168:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksDetailedByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q169="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicTracksDetailedByRangeResult" nillable="true" type="q169:ArrayOfWebMusicTrackDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksBasicForAlbum">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q170="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q170:WebSortField" />
+        <xs:element xmlns:q171="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q171:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksBasicForAlbumResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q172="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicTracksBasicForAlbumResult" nillable="true" type="q172:ArrayOfWebMusicTrackBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksBasicForArtist">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q173="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q173:WebSortField" />
+        <xs:element xmlns:q174="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q174:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksBasicForArtistResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q175="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicTracksBasicForArtistResult" nillable="true" type="q175:ArrayOfWebMusicTrackBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksDetailedForAlbum">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q176="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q176:WebSortField" />
+        <xs:element xmlns:q177="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q177:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksDetailedForAlbumResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q178="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicTracksDetailedForAlbumResult" nillable="true" type="q178:ArrayOfWebMusicTrackDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksDetailedForArtist">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q179="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q179:WebSortField" />
+        <xs:element xmlns:q180="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q180:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTracksDetailedForArtistResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q181="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicTracksDetailedForArtistResult" nillable="true" type="q181:ArrayOfWebMusicTrackDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTrackBasicById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTrackBasicByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q182="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicTrackBasicByIdResult" nillable="true" type="q182:WebMusicTrackBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTrackDetailedById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicTrackDetailedByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q183="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicTrackDetailedByIdResult" nillable="true" type="q183:WebMusicTrackDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicGenres">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q184="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q184:WebSortField" />
+        <xs:element xmlns:q185="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q185:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicGenresResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q186="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetMusicGenresResult" nillable="true" type="q186:ArrayOfWebGenre" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicGenresByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q187="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q187:WebSortField" />
+        <xs:element xmlns:q188="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q188:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicGenresByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q189="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetMusicGenresByRangeResult" nillable="true" type="q189:ArrayOfWebGenre" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicGenresCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicGenresCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q190="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetMusicGenresCountResult" nillable="true" type="q190:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicCategories">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicCategoriesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q191="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetMusicCategoriesResult" nillable="true" type="q191:ArrayOfWebCategory" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPictureCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPictureCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q192="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetPictureCountResult" nillable="true" type="q192:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPicturesBasic">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q193="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q193:WebSortField" />
+        <xs:element xmlns:q194="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q194:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPicturesBasicResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q195="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Picture" minOccurs="0" name="GetPicturesBasicResult" nillable="true" type="q195:ArrayOfWebPictureBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPicturesDetailed">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q196="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q196:WebSortField" />
+        <xs:element xmlns:q197="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q197:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPicturesDetailedResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q198="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Picture" minOccurs="0" name="GetPicturesDetailedResult" nillable="true" type="q198:ArrayOfWebPictureDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPictureBasicById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPictureBasicByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q199="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Picture" minOccurs="0" name="GetPictureBasicByIdResult" nillable="true" type="q199:WebPictureBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPictureDetailedById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPictureDetailedByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q200="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Picture" minOccurs="0" name="GetPictureDetailedByIdResult" nillable="true" type="q200:WebPictureDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPictureCategories">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPictureCategoriesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q201="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetPictureCategoriesResult" nillable="true" type="q201:ArrayOfWebCategory" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPictureSubCategories">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPictureSubCategoriesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q202="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetPictureSubCategoriesResult" nillable="true" type="q202:ArrayOfWebCategory" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPicturesBasicByCategory">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPicturesBasicByCategoryResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q203="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Picture" minOccurs="0" name="GetPicturesBasicByCategoryResult" nillable="true" type="q203:ArrayOfWebPictureBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetServiceDescription">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetServiceDescriptionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q204="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetServiceDescriptionResult" nillable="true" type="q204:WebMediaServiceDescription" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TestConnection">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TestConnectionResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q205="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="TestConnectionResult" nillable="true" type="q205:WebBoolResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMediaItem">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q206="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="type" type="q206:WebMediaType" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMediaItemResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q207="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetMediaItemResult" nillable="true" type="q207:WebMediaItem" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Search">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="text" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SearchResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q208="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="SearchResult" nillable="true" type="q208:ArrayOfWebSearchResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SearchResultsByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="text" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SearchResultsByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q209="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="SearchResultsByRangeResult" nillable="true" type="q209:ArrayOfWebSearchResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetExternalMediaInfo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q210="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="type" type="q210:WebMediaType" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetExternalMediaInfoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q211="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetExternalMediaInfoResult" nillable="true" type="q211:WebDictionaryOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLocalDiskInformation">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLocalDiskInformationResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q212="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetLocalDiskInformationResult" nillable="true" type="q212:ArrayOfWebDiskSpaceInformation" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q213="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetMovieCountResult" nillable="true" type="q213:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMoviesBasic">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q214="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q214:WebSortField" />
+        <xs:element xmlns:q215="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q215:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMoviesBasicResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q216="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Movie" minOccurs="0" name="GetMoviesBasicResult" nillable="true" type="q216:ArrayOfWebMovieBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMoviesDetailed">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q217="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q217:WebSortField" />
+        <xs:element xmlns:q218="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q218:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMoviesDetailedResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q219="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Movie" minOccurs="0" name="GetMoviesDetailedResult" nillable="true" type="q219:ArrayOfWebMovieDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMoviesBasicByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q220="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q220:WebSortField" />
+        <xs:element xmlns:q221="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q221:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMoviesBasicByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q222="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Movie" minOccurs="0" name="GetMoviesBasicByRangeResult" nillable="true" type="q222:ArrayOfWebMovieBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMoviesDetailedByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q223="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q223:WebSortField" />
+        <xs:element xmlns:q224="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q224:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMoviesDetailedByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q225="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Movie" minOccurs="0" name="GetMoviesDetailedByRangeResult" nillable="true" type="q225:ArrayOfWebMovieDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieBasicById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieBasicByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q226="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Movie" minOccurs="0" name="GetMovieBasicByIdResult" nillable="true" type="q226:WebMovieBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieDetailedById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieDetailedByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q227="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Movie" minOccurs="0" name="GetMovieDetailedByIdResult" nillable="true" type="q227:WebMovieDetailed" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieGenres">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q228="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q228:WebSortField" />
+        <xs:element xmlns:q229="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q229:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieGenresResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q230="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetMovieGenresResult" nillable="true" type="q230:ArrayOfWebGenre" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieGenresByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element xmlns:q231="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q231:WebSortField" />
+        <xs:element xmlns:q232="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q232:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieGenresByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q233="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetMovieGenresByRangeResult" nillable="true" type="q233:ArrayOfWebGenre" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieGenresCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieGenresCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q234="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetMovieGenresCountResult" nillable="true" type="q234:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieCategories">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element xmlns:q235="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q235:WebSortField" />
+        <xs:element xmlns:q236="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q236:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieCategoriesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q237="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetMovieCategoriesResult" nillable="true" type="q237:ArrayOfWebCategory" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieActors">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q238="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q238:WebSortField" />
+        <xs:element xmlns:q239="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q239:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieActorsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q240="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetMovieActorsResult" nillable="true" type="q240:ArrayOfWebActor" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieActorsByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q241="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q241:WebSortField" />
+        <xs:element xmlns:q242="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q242:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieActorsByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q243="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" minOccurs="0" name="GetMovieActorsByRangeResult" nillable="true" type="q243:ArrayOfWebActor" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieActorCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMovieActorCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q244="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetMovieActorCountResult" nillable="true" type="q244:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicAlbumCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicAlbumCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q245="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetMusicAlbumCountResult" nillable="true" type="q245:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicAlbumsBasic">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q246="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q246:WebSortField" />
+        <xs:element xmlns:q247="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q247:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicAlbumsBasicResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q248="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicAlbumsBasicResult" nillable="true" type="q248:ArrayOfWebMusicAlbumBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicAlbumsBasicByRange">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="start" type="xs:int" />
+        <xs:element minOccurs="0" name="end" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q249="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q249:WebSortField" />
+        <xs:element xmlns:q250="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q250:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicAlbumsBasicByRangeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q251="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicAlbumsBasicByRangeResult" nillable="true" type="q251:ArrayOfWebMusicAlbumBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicAlbumsBasicForArtist">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element xmlns:q252="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q252:WebSortField" />
+        <xs:element xmlns:q253="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q253:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicAlbumsBasicForArtistResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q254="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicAlbumsBasicForArtistResult" nillable="true" type="q254:ArrayOfWebMusicAlbumBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicAlbumBasicById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicAlbumBasicByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q255="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicAlbumBasicByIdResult" nillable="true" type="q255:WebMusicAlbumBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistCount">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistCountResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q256="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="GetMusicArtistCountResult" nillable="true" type="q256:WebIntResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistsBasic">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="provider" nillable="true" type="xs:int" />
+        <xs:element minOccurs="0" name="filter" nillable="true" type="xs:string" />
+        <xs:element xmlns:q257="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="sort" nillable="true" type="q257:WebSortField" />
+        <xs:element xmlns:q258="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="order" nillable="true" type="q258:WebSortOrder" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMusicArtistsBasicResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q259="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces.Music" minOccurs="0" name="GetMusicArtistsBasicResult" nillable="true" type="q259:ArrayOfWebMusicArtistBasic" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>

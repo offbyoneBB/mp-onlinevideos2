@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/MPExtended.Services.StreamingService.Interfaces" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.StreamingService.Interfaces" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://10.1.0.248:4322/MPExtended/StreamingService/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/StreamingService/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" />
   <xs:complexType name="WebStreamServiceDescription">
     <xs:sequence>
       <xs:element minOccurs="0" name="ApiVersion" type="xs:int" />
@@ -26,107 +27,11 @@
       <xs:element minOccurs="0" name="MaxOutputHeight" type="xs:int" />
       <xs:element minOccurs="0" name="MaxOutputWidth" type="xs:int" />
       <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="Target" nillable="true" type="xs:string" />
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Targets" nillable="true" type="q1:ArrayOfstring" />
       <xs:element minOccurs="0" name="Transport" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="WebTranscoderProfile" nillable="true" type="tns:WebTranscoderProfile" />
-  <xs:simpleType name="WebStreamMediaType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="TV">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">-2</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="Recording">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">-1</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="Movie">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">0</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="MusicTrack">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">1</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="Picture">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">2</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="TVEpisode">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">3</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="File">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">4</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="TVShow">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">5</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="TVSeason">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">6</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="MusicAlbum">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">7</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="MusicArtist">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">8</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="Folder">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">9</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-      <xs:enumeration value="Drive">
-        <xs:annotation>
-          <xs:appinfo>
-            <EnumerationValue xmlns="http://schemas.microsoft.com/2003/10/Serialization/">10</EnumerationValue>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:enumeration>
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:element name="WebStreamMediaType" nillable="true" type="tns:WebStreamMediaType" />
   <xs:complexType name="WebMediaInfo">
     <xs:sequence>
       <xs:element minOccurs="0" name="AudioStreams" nillable="true" type="tns:ArrayOfWebAudioStream" />
@@ -193,12 +98,12 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="Failed" type="xs:boolean" />
       <xs:element minOccurs="0" name="Finished" type="xs:boolean" />
-      <xs:element minOccurs="0" name="OutputBitrate" type="xs:int" />
+      <xs:element minOccurs="0" name="OutputBitrate" type="xs:long" />
       <xs:element minOccurs="0" name="Supported" type="xs:boolean" />
-      <xs:element minOccurs="0" name="TranscodedFrames" type="xs:int" />
-      <xs:element minOccurs="0" name="TranscodedTime" type="xs:int" />
-      <xs:element minOccurs="0" name="TranscodingFPS" type="xs:int" />
-      <xs:element minOccurs="0" name="TranscodingPosition" type="xs:int" />
+      <xs:element minOccurs="0" name="TranscodedFrames" type="xs:long" />
+      <xs:element minOccurs="0" name="TranscodedTime" type="xs:long" />
+      <xs:element minOccurs="0" name="TranscodingFPS" type="xs:long" />
+      <xs:element minOccurs="0" name="TranscodingPosition" type="xs:long" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="WebTranscodingInfo" nillable="true" type="tns:WebTranscodingInfo" />
@@ -214,11 +119,12 @@
       <xs:element minOccurs="0" name="ClientIPAddress" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="DisplayName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Identifier" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="PlayerPosition" type="xs:int" />
+      <xs:element minOccurs="0" name="PercentageProgress" type="xs:int" />
+      <xs:element minOccurs="0" name="PlayerPosition" type="xs:long" />
       <xs:element minOccurs="0" name="Profile" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SourceId" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="SourceType" type="tns:WebStreamMediaType" />
-      <xs:element minOccurs="0" name="StartPosition" type="xs:int" />
+      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="SourceType" type="q2:WebMediaType" />
+      <xs:element minOccurs="0" name="StartPosition" type="xs:long" />
       <xs:element minOccurs="0" name="StartTime" type="xs:dateTime" />
       <xs:element minOccurs="0" name="TranscodingInfo" nillable="true" type="tns:WebTranscodingInfo" />
     </xs:sequence>
@@ -238,15 +144,4 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="WebItemSupportStatus" nillable="true" type="tns:WebItemSupportStatus" />
-  <xs:simpleType name="WebArtworkType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Content" />
-      <xs:enumeration value="Backdrop" />
-      <xs:enumeration value="Banner" />
-      <xs:enumeration value="Poster" />
-      <xs:enumeration value="Cover" />
-      <xs:enumeration value="Logo" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:element name="WebArtworkType" nillable="true" type="tns:WebArtworkType" />
 </xs:schema>

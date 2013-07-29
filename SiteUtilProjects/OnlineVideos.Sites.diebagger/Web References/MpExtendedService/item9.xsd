@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.MediaAccessService.Interfaces" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://192.168.5.18:4322/MPExtended/MediaAccessService/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" />
+  <xs:complexType name="WebMediaItem">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebObject">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Artwork" nillable="true" type="tns:ArrayOfWebArtwork" />
+          <xs:element minOccurs="0" name="DateAdded" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+          <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Path" nillable="true" type="q1:ArrayOfstring" />
+          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+          <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="Type" type="q2:WebMediaType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebMediaItem" nillable="true" type="tns:WebMediaItem" />
+  <xs:complexType name="WebObject">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="PID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebObject" nillable="true" type="tns:WebObject" />
+  <xs:complexType name="ArrayOfWebArtwork">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebArtwork" nillable="true" type="tns:WebArtwork" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebArtwork" nillable="true" type="tns:ArrayOfWebArtwork" />
+  <xs:complexType name="WebArtwork">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Filetype" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Offset" type="xs:int" />
+      <xs:element minOccurs="0" name="Rating" type="xs:int" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="Type" type="q3:WebFileType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebArtwork" nillable="true" type="tns:WebArtwork" />
+  <xs:complexType name="WebArtworkDetailed">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebArtwork">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Path" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebArtworkDetailed" nillable="true" type="tns:WebArtworkDetailed" />
+  <xs:complexType name="ArrayOfWebCategory">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebCategory" nillable="true" type="tns:WebCategory" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebCategory" nillable="true" type="tns:ArrayOfWebCategory" />
+  <xs:complexType name="WebCategory">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebObject">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebCategory" nillable="true" type="tns:WebCategory" />
+  <xs:complexType name="ArrayOfWebGenre">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebGenre" nillable="true" type="tns:WebGenre" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebGenre" nillable="true" type="tns:ArrayOfWebGenre" />
+  <xs:complexType name="WebGenre">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebObject">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebGenre" nillable="true" type="tns:WebGenre" />
+  <xs:complexType name="ArrayOfWebActor">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebActor" nillable="true" type="tns:WebActor" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebActor" nillable="true" type="tns:ArrayOfWebActor" />
+  <xs:complexType name="WebActor">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebObject">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebActor" nillable="true" type="tns:WebActor" />
+  <xs:complexType name="WebFileInfo">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebObject">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Exists" type="xs:boolean" />
+          <xs:element minOccurs="0" name="Extension" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="IsLocalFile" type="xs:boolean" />
+          <xs:element minOccurs="0" name="IsReadOnly" type="xs:boolean" />
+          <xs:element minOccurs="0" name="LastAccessTime" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="LastModifiedTime" type="xs:dateTime" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="OnNetworkDrive" type="xs:boolean" />
+          <xs:element minOccurs="0" name="Path" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Size" type="xs:long" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebFileInfo" nillable="true" type="tns:WebFileInfo" />
+  <xs:complexType name="ArrayOfWebExternalId">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebExternalId" nillable="true" type="tns:WebExternalId" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebExternalId" nillable="true" type="tns:ArrayOfWebExternalId" />
+  <xs:complexType name="WebExternalId">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Site" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebExternalId" nillable="true" type="tns:WebExternalId" />
+  <xs:complexType name="WebMediaServiceDescription">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ApiVersion" type="xs:int" />
+      <xs:element minOccurs="0" name="AvailableFileSystemLibraries" nillable="true" type="tns:ArrayOfWebBackendProvider" />
+      <xs:element minOccurs="0" name="AvailableMovieLibraries" nillable="true" type="tns:ArrayOfWebBackendProvider" />
+      <xs:element minOccurs="0" name="AvailableMusicLibraries" nillable="true" type="tns:ArrayOfWebBackendProvider" />
+      <xs:element minOccurs="0" name="AvailablePictureLibraries" nillable="true" type="tns:ArrayOfWebBackendProvider" />
+      <xs:element minOccurs="0" name="AvailableTvShowLibraries" nillable="true" type="tns:ArrayOfWebBackendProvider" />
+      <xs:element minOccurs="0" name="DefaultFileSystemLibrary" type="xs:int" />
+      <xs:element minOccurs="0" name="DefaultMovieLibrary" type="xs:int" />
+      <xs:element minOccurs="0" name="DefaultMusicLibrary" type="xs:int" />
+      <xs:element minOccurs="0" name="DefaultPictureLibrary" type="xs:int" />
+      <xs:element minOccurs="0" name="DefaultTvShowLibrary" type="xs:int" />
+      <xs:element minOccurs="0" name="ServiceVersion" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebMediaServiceDescription" nillable="true" type="tns:WebMediaServiceDescription" />
+  <xs:complexType name="ArrayOfWebBackendProvider">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebBackendProvider" nillable="true" type="tns:WebBackendProvider" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebBackendProvider" nillable="true" type="tns:ArrayOfWebBackendProvider" />
+  <xs:complexType name="WebBackendProvider">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Version" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WebBackendProvider" nillable="true" type="tns:WebBackendProvider" />
+  <xs:complexType name="ArrayOfWebSearchResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WebSearchResult" nillable="true" type="tns:WebSearchResult" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWebSearchResult" nillable="true" type="tns:ArrayOfWebSearchResult" />
+  <xs:complexType name="WebSearchResult">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WebObject">
+        <xs:sequence>
+          <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="Details" nillable="true" type="q4:WebDictionaryOfstring" />
+          <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Score" type="xs:int" />
+          <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+          <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/MPExtended.Services.Common.Interfaces" minOccurs="0" name="Type" type="q5:WebMediaType" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WebSearchResult" nillable="true" type="tns:WebSearchResult" />
+</xs:schema>
