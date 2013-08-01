@@ -2731,7 +2731,6 @@ namespace OnlineVideos.MediaPortal1
                     Log.Instance.Info("Starting download of '{0}' to '{1}' from Site '{2}'", dlList.CurrentItem.Url, dlList.CurrentItem.LocalFile, dlList.CurrentItem.Util.Settings.Name);
                     Exception exception = dlHelper.Download(dlList.CurrentItem);
                     if (exception != null) Log.Instance.Warn("Error downloading '{0}', Msg: {1}", dlList.CurrentItem.Url, exception.Message);
-                    SaveSubtitles(dlList.CurrentItem.VideoInfo, Path.ChangeExtension(dlList.CurrentItem.LocalFile, ".srt"));
                     OnDownloadFileCompleted(dlList, exception);
                 }
                 catch (System.Threading.ThreadAbortException)
@@ -2832,10 +2831,14 @@ namespace OnlineVideos.MediaPortal1
                             + Path.GetExtension(saveItems.CurrentItem.ThumbFile);
                         File.Copy(saveItems.CurrentItem.ThumbFile, localImageName, true);
                     }
+					// save subtitles if SubtitlesUrl was set
+					SaveSubtitles(saveItems.CurrentItem.VideoInfo, Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".srt"));
+					// save matroska tag
+					File.WriteAllText(Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".xml"), saveItems.CurrentItem.VideoInfo.CreateMatroskaXmlTag(), System.Text.Encoding.UTF8);
                 }
                 catch (Exception ex)
                 {
-                    Log.Instance.Warn("Error saving thumbnail for download: {0}", ex.ToString());
+                    Log.Instance.Warn("Error saving additional files for download: {0}", ex.ToString());
                 }
 
                 // get file size

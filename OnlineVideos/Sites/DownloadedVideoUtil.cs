@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using System.Net;
+using System.Xml.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -97,12 +98,30 @@ namespace OnlineVideos.Sites
                 {
                     if (isPossibleVideo(file.Name) && PassesAgeCheck(file.FullName))
                     {
+						string description_xml = "";
+						string airdate_xml = "";
+						string title_xml = "";
+						// read info from Matroska Xml File if available
+						if (File.Exists(Path.ChangeExtension(file.FullName, ".xml")))
+						{
+							var matroskaTagsXmlDoc = XDocument.Load(Path.ChangeExtension(file.FullName, ".xml"));
+							foreach (var simpleNode in matroskaTagsXmlDoc.Document.Descendants("Simple"))
+							{
+								if (simpleNode.Element("Name").Value == "TITLE")
+									title_xml = simpleNode.Element("String").Value;
+								else if (simpleNode.Element("Name").Value == "DESCRIPTION")
+									description_xml = simpleNode.Element("String").Value;
+								else if (simpleNode.Element("Name").Value == "DATE_RELEASED")
+									airdate_xml = simpleNode.Element("String").Value;
+							}
+						}
                         VideoInfo loVideoInfo = new VideoInfo();
                         loVideoInfo.VideoUrl = file.FullName;
                         loVideoInfo.ImageUrl = file.FullName.Substring(0, file.FullName.LastIndexOf(".")) + ".jpg";
-                        loVideoInfo.Length = file.LastWriteTime.ToString("g", OnlineVideoSettings.Instance.Locale);
-                        loVideoInfo.Title = file.Name;
-                        loVideoInfo.Description = string.Format("{0} MB", (file.Length / 1024 / 1024).ToString("N0"));
+						loVideoInfo.Title = string.IsNullOrEmpty(title_xml) ? file.Name : title_xml;
+						loVideoInfo.Length = string.Format("{0} MB", (file.Length / 1024 / 1024).ToString("N0"));
+                        loVideoInfo.Airdate = string.IsNullOrEmpty(airdate_xml) ? file.LastWriteTime.ToString("g", OnlineVideoSettings.Instance.Locale) : airdate_xml;
+						loVideoInfo.Description = description_xml;
                         loVideoInfo.Other = file;
                         loVideoInfoList.Add(loVideoInfo);
                     }
@@ -191,8 +210,11 @@ namespace OnlineVideos.Sites
         {
 			if (choice.DisplayText == Translation.Instance.Delete)
             {
-                if (System.IO.File.Exists(selectedItem.ImageUrl)) System.IO.File.Delete(selectedItem.ImageUrl);
-                if (System.IO.File.Exists(selectedItem.VideoUrl)) System.IO.File.Delete(selectedItem.VideoUrl);
+				try
+				{
+					DeleteVideo(selectedItem.VideoUrl);
+				}
+				catch { } // file might be locked (e.g. still downloading)
             }
 			else if (choice.DisplayText == Translation.Instance.DeleteAll)
             {
@@ -203,9 +225,7 @@ namespace OnlineVideos.Sites
                     {
                         try
                         {
-                            string imageFileName = file.FullName.Substring(0, file.FullName.LastIndexOf(".")) + ".jpg";
-                            if (System.IO.File.Exists(imageFileName)) System.IO.File.Delete(imageFileName);
-                            System.IO.File.Delete(file.FullName);
+							DeleteVideo(selectedItem.VideoUrl);
                         }
                         catch { } // file might be locked (e.g. still downloading)
                     }
@@ -217,6 +237,16 @@ namespace OnlineVideos.Sites
             }
             return new ContextMenuExecutionResult() { RefreshCurrentItems = true };
         }
+
+		void DeleteVideo(string path)
+		{
+			if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+			foreach (var extension in new string[] { ".jpg", ".png", ".gif", ".srt", ".xml" })
+			{
+				string additionalFile = Path.ChangeExtension(path, extension);
+				if (System.IO.File.Exists(additionalFile)) System.IO.File.Delete(additionalFile);
+			}
+		}
 
 		public override bool isPossibleVideo(string fsUrl)
 		{
