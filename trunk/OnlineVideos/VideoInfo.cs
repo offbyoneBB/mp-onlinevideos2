@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using OnlineVideos.Sites;
 using RssToolkit.Rss;
-using System.Text;
 
 namespace OnlineVideos
 {
@@ -137,6 +137,29 @@ namespace OnlineVideos
         {
             return PlaybackOptions[option];
         }
+
+		/// <summary>
+		/// Create a Matroska Xml Tag (http://www.matroska.org/technical/specs/tagging/index.html) for the Video. With Title, Description and Airdate.
+		/// </summary>
+		/// <returns>Utf-8 encoded xml</returns>
+		public virtual string CreateMatroskaXmlTag()
+		{
+			return new XDocument(new XDeclaration("1.0", "utf-8", "true"),
+			new XElement("Tags",
+				new XElement("Tag",
+				new XElement("Targets",
+					new XElement("TargetTypeValue", 50)),
+				new XElement("Simple",
+					new XElement("Name", "TITLE"),
+					new XElement("String", Title)),
+				new XElement("Simple",
+					new XElement("Name", "DESCRIPTION"),
+					new XElement("String", Description)),
+				new XElement("Simple",
+					new XElement("Name", "DATE_RELEASED"),
+					new XElement("String", Airdate))
+			))).ToString();
+		}
 
         /// <summary>
         /// Example: startTime = 02:34:25.00 should result in 9265 seconds
