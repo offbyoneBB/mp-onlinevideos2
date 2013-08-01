@@ -180,23 +180,23 @@ namespace OnlineVideos.Sites
             String itemId = null;
             bool live = false;
             
-            if (video.Other.GetType().Equals(typeof(WebMovieBasic)))
+            if (video.Other is WebMovieBasic)
             {
                 WebMovieBasic movie = video.Other as WebMovieBasic;
 				type = MpExtendedStreamingService.WebMediaType.Movie;
                 providerId = movie.PID;
                 itemId = movie.Id;
             }
-            else if (video.Other.GetType().Equals(typeof(WebTVEpisodeBasic)))
+            else if (video.Other is WebTVEpisodeBasic)
             {
                 WebTVEpisodeBasic ep = video.Other as WebTVEpisodeBasic;
 				type = MpExtendedStreamingService.WebMediaType.TVEpisode;
                 providerId = ep.PID;
                 itemId = ep.Id;
             }
-            else if (video.Other.GetType().Equals(typeof(WebChannelBasic)))
+            else if (video.Other is WebChannelDetailed)
             {
-                WebChannelBasic channel = video.Other as WebChannelBasic;
+				WebChannelDetailed channel = video.Other as WebChannelDetailed;
 				type = MpExtendedStreamingService.WebMediaType.TV;
                 providerId = 0;
                 itemId = channel.Id.ToString();
