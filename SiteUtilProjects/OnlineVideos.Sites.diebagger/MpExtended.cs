@@ -217,7 +217,7 @@ namespace OnlineVideos.Sites
 						HttpUtility.UrlEncode(itemId), 
 						HttpUtility.UrlEncode("OnlineVideos client"), 
 						HttpUtility.UrlEncode(profile.Name), 0)) 
-							{ LiveStream = live }.ToString());
+							/*{ LiveStream = live }*/.ToString());
 				}
 				return video.PlaybackOptions.Select(p => p.Value).FirstOrDefault();
 			}
