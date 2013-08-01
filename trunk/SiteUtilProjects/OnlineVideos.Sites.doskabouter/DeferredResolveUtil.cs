@@ -24,10 +24,13 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Show hosters for which no provider exists.")]
         protected bool showUnknownHosters = false;
 
-		[Category("OnlineVideosUserConfiguration"), Description("Select subtitle source, for example: TvSubtitles")]
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle source, for example: TvSubtitles")]
         protected string subtitleSource = "";
-		[Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
         protected string subtitleLanguages = "";
+
+        [Category("OnlineVideosConfiguration"), Description("Enables getting the redirected url instead of the given url for hoster.")]
+        protected bool getRedirectedFileUrlForHoster = false;
 
         private SubtitleHandler sh = null;
         private System.Threading.Thread subtitleThread;
@@ -148,6 +151,8 @@ namespace OnlineVideos.Sites
 
         public virtual string ResolveVideoUrl(string url)
         {
+            if (getRedirectedFileUrlForHoster)
+                url = GetRedirectedUrl(url);
             return GetVideoUrl(url);
         }
 
