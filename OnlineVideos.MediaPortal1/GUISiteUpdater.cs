@@ -171,7 +171,7 @@ namespace OnlineVideos.MediaPortal1
                     GUIListItem loListItem = new GUIListItem(site.Name);
                     loListItem.TVTag = site;
                     loListItem.Label2 = site.Language;
-                    loListItem.Label3 = site.LastUpdated.ToString("g", OnlineVideoSettings.Instance.Locale);
+                    loListItem.Label3 = site.LastUpdated.ToLocalTime().ToString("g", OnlineVideoSettings.Instance.Locale);
 					string image = SiteImageExistenceCache.GetImageForSite(site.Name, "", "Icon", false);
                     if (!string.IsNullOrEmpty(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
                     if (!string.IsNullOrEmpty(site.Owner_FK)) loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
