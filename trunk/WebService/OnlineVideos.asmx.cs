@@ -62,7 +62,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public bool SubmitSite(string email, string password, string siteXml, byte[] icon, byte[] banner, string requiredDll, out string infoMessage)
         {
-			DateTime updateTime = DateTime.Now;
+			DateTime updateTime = DateTime.Now.ToUniversalTime(); // use universal Time when setting the current TimeStamp to the Database
             NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
 
             // is the given site xml at least valid xml?
