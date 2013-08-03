@@ -62,6 +62,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public bool SubmitSite(string email, string password, string siteXml, byte[] icon, byte[] banner, string requiredDll, out string infoMessage)
         {
+			DateTime updateTime = DateTime.Now;
             NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
 
             // is the given site xml at least valid xml?
@@ -83,6 +84,14 @@ namespace OnlineVideos.WebService
                 desc = xml.SelectSingleNode("//Site/Description").InnerText;
                 XmlNode n = xml.SelectSingleNode("//Site/@agecheck");
                 if (n != null) isAdult = bool.Parse(n.Value);
+				// write the current server time into the xml as lastUpdated, so comparing it later with the DB field will always work on any client 
+				// (the submitting client might have wrong time settings)
+				XmlNode lastUpdatedNode = xml.SelectSingleNode("//Site/@lastUpdated");
+				if (lastUpdatedNode == null)
+				{
+					lastUpdatedNode = (xml.SelectSingleNode("//Site") as XmlElement).Attributes.Append(xml.CreateAttribute("lastUpdated"));
+				}
+				(lastUpdatedNode as XmlAttribute).Value = updateTime.ToString("o"); 
             }
             catch
             {
@@ -126,7 +135,7 @@ namespace OnlineVideos.WebService
                             site.Language = lang;
                             site.Description = desc;
                             site.IsAdult = isAdult;
-                            site.LastUpdated = DateTime.Now;
+							site.LastUpdated = updateTime;
                             if (site.XML != siteXml) site.XML = siteXml;
                             if (site.RequiredDll != requiredDll) site.RequiredDll = requiredDll;
                             site.State = SiteState.Working;
@@ -150,7 +159,7 @@ namespace OnlineVideos.WebService
                             Language = lang,
                             Description = desc,
                             IsAdult = isAdult,
-                            LastUpdated = DateTime.Now,
+							LastUpdated = updateTime,
                             XML = siteXml,
                             RequiredDll = requiredDll,
                             Owner = user,
