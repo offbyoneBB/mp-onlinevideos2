@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -12,11 +10,6 @@ namespace OnlineVideos.Sites
 {
     public class BrUtil : SiteUtilBase
     {
-		public enum VideoQuality { small, large, xlarge };
-
-		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the preferred quality for the video to be played.")]
-		VideoQuality videoQuality = VideoQuality.large;
-
 		XmlDocument masterXmlDoc;
 
 		public override int DiscoverDynamicCategories()
@@ -70,57 +63,13 @@ namespace OnlineVideos.Sites
                     if(ausstrahlung.SelectSingleNode("bild") != null)video.ImageUrl = ausstrahlung.SelectSingleNode("bild").InnerText;
                     video.Description = ausstrahlung.SelectSingleNode("beschreibung").InnerText;
                     if (string.IsNullOrEmpty(video.Description)) video.Description = ausstrahlung.SelectSingleNode("kurzbeschreibung").InnerText;
-                    video.VideoUrl = ausstrahlung.SelectSingleNode("videos").InnerXml;
+					video.VideoUrl = ausstrahlung.SelectSingleNode("hdslink").InnerText + "?hdcore=2.11.3&g=AAAAAAAAAAAA";
                     if(!string.IsNullOrEmpty(video.VideoUrl))
                         videos.Add(video);
                 }
             }
             return videos;
         }
-
-		public override String getUrl(VideoInfo video)
-		{
-			string defaultUrl =  null;
-			if (video.PlaybackOptions == null)
-			{
-				video.PlaybackOptions = new Dictionary<string, string>();
-				Match m = Regex.Match(video.VideoUrl, @"<video\sapplication=""(?<app>[^""]+)""\s*host=""(?<host>[^""]+)""\s*groesse=""(?<title>[^""]+)""\s*stream=""(?<stream>[^""]+)""");
-				while (m.Success)
-				{
-					string rtmpurl = new MPUrlSourceFilter.RtmpUrl("rtmp://" + m.Groups["host"].Value + ":1935/" + m.Groups["app"].Value)
-					{
-						App = m.Groups["app"].Value,
-						PlayPath = m.Groups["stream"].Value
-					}.ToString();
-					video.PlaybackOptions.Add(m.Groups["title"].Value, rtmpurl);
-					if (m.Groups["title"].Value == videoQuality.ToString()) defaultUrl = rtmpurl;
-					m = m.NextMatch();
-				}
-			}
-			if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
-			{
-				var keyList = video.PlaybackOptions.Keys.ToList();
-				keyList.Sort((s1, s2) =>
-				{
-					try
-					{
-						VideoQuality v1 = (VideoQuality)Enum.Parse(typeof(VideoQuality), s1);
-						VideoQuality v2 = (VideoQuality)Enum.Parse(typeof(VideoQuality), s2);
-						return v1.CompareTo(v2);
-					}
-					catch (Exception)
-					{
-						return 0;
-					}
-				});
-				Dictionary<string, string> newPlaybackOptions = new Dictionary<string, string>();
-				keyList.ForEach(k => newPlaybackOptions.Add(k, video.PlaybackOptions[k]));
-				video.PlaybackOptions = newPlaybackOptions;
-				if (defaultUrl != null) return defaultUrl;
-				else return video.PlaybackOptions.First().Value;
-			}
-			return null;
-		}
 
     }
 }
