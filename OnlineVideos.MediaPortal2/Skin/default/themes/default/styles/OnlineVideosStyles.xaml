@@ -312,7 +312,7 @@
       <Label Grid.Column="3" Color="{ThemeResource HintTextColor}"
          HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="{ThemeResource SmallerFontSize}">
         <Label.Content>
-          <Binding Path="Site.LastUpdated" Converter="{StaticResource StringFormatConverter}" ConverterParameter="{}{0:g}"/>
+          <Binding Path="LastUpdated" Converter="{StaticResource StringFormatConverter}" ConverterParameter="{}{0:g}"/>
         </Label.Content>
       </Label>
       <Label Grid.Column="4" Content="{Binding Owner}"
