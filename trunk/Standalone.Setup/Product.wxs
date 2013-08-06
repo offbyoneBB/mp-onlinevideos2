@@ -19,7 +19,7 @@
 
 		<PropertyRef Id="NETFRAMEWORK40FULL"/>
 
-		<Condition Message="This application is only supported on Windows Vista or higher.">
+		<Condition Message="This application is only supported on Windows XP Service Pack 3 or higher.">
 			<![CDATA[Installed OR (((VersionNT >= v5.1) AND (ServicePackLevel >= 3)) OR ((VersionNT >= v5.2) AND (ServicePackLevel >= 2)) OR (VersionNT >= v6.0))]]>
 		</Condition>
 
