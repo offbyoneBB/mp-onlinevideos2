@@ -10,7 +10,7 @@
         <ListView x:Name="lvSites" SelectionMode="Single" Background="Transparent" Foreground="Black" FontSize="13" local:GridViewSort.AutoSort="True" AlternationCount="2">
             <ListView.Resources>
                 <local:SiteStateToBrushConverter x:Key="SiteStateToBrushConverter"/>
-                <local:SiteStateToImageConverter x:Key="SiteStateToImageConverter "/>
+                <local:SiteStateToImageConverter x:Key="SiteStateToImageConverter"/>
                 <local:SiteVisibilityConverter x:Key="SiteVisibilityConverter"/>
                 <Style x:Key="LeftAlignedHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Left"/>
