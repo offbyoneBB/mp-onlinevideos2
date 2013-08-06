@@ -6,7 +6,6 @@
 		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense" />
 		<WixVariable Id="WixStdbaLicenseUrl" Value="" />
 
-		<util:RegistrySearch Root="HKLM" Key="SOFTWARE\Microsoft\Net Framework Setup\NDP\v3.5" Value="Version" Variable="Netfx35Version" />
 		<util:ProductSearch Guid="F0C3E5D1-1ADE-321E-8167-68EF0DE699A5" Variable="VCpp2010SP1_Installed"/>
 		<util:FileSearch Path="[SystemFolder]D3DX9_41.DLL" Variable="Directx9c_Version1" Result="version"/>
 		<util:FileSearch Path="[SystemFolder]D3DX9_43.DLL" Variable="Directx9c_Version2" Result="version"/>
@@ -14,19 +13,7 @@
 		<util:RegistrySearch Root="HKCR" Key="CLSID\{EE30215D-164F-4A92-A4EB-9D4C13390F9F}\InprocServer32" Win64="no" Variable="LAVVideoDecoderPath"/>
 
 		<Chain>
-			<ExePackage Id="Netfx35Sp1"
-				Cache="no"
-				Compressed="no"
-				PerMachine="yes"
-				Permanent="yes"
-				Vital="yes"
-				SourceFile="dotnetfx35setup.exe"
-				DownloadUrl="http://go.microsoft.com/fwlink/?linkid=118076"
-				InstallCommand="/q /norestart"
-				InstallCondition="NOT Netfx35Version OR (Netfx35Version &lt; v3.5.30729.1)"
-				DetectCondition="Netfx35Version AND (Netfx35Version &gt;= v3.5.30729.1)">
-				<ExitCode Value="3010" Behavior="forceReboot" />
-			</ExePackage>
+			<PackageGroupRef Id="NetFx40Web"/>
 
 			<ExePackage Id="VCpp2010x86Sp1"
 				Cache="no"

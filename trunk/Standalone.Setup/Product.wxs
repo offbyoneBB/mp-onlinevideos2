@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="OnlineVideosWPF" Language="1033" Version="1.2.1.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
+	<Product Id="*" Name="OnlineVideosWPF" Language="1033" Version="1.6.1.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x86" />
 
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
@@ -17,14 +17,14 @@
 		<Property Id='ARPHELPLINK'>https://code.google.com/p/mp-onlinevideos2/w/list</Property>
 		<Property Id='ARPCOMMENTS'>Standalone WPF Application front-end for the OnlineVideos API.</Property>
 
-		<PropertyRef Id="NETFRAMEWORK35_SP_LEVEL"/>
+		<PropertyRef Id="NETFRAMEWORK40FULL"/>
 
 		<Condition Message="This application is only supported on Windows Vista or higher.">
 			<![CDATA[Installed OR (((VersionNT >= v5.1) AND (ServicePackLevel >= 3)) OR ((VersionNT >= v5.2) AND (ServicePackLevel >= 2)) OR (VersionNT >= v6.0))]]>
 		</Condition>
 
-		<Condition Message="This application requires the .NET Framework 3.5 SP1.">
-			<![CDATA[Installed OR (NETFRAMEWORK35_SP_LEVEL and NOT NETFRAMEWORK35_SP_LEVEL = "#0")]]>
+		<Condition Message="This application requires the full .NET Framework 4.0">
+			<![CDATA[Installed OR NETFRAMEWORK40FULL]]>
 		</Condition>
 
 		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
@@ -57,10 +57,11 @@
               <File Id="MPUrlSource_Parser_Asx_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_Asx.dll" DiskId="1" Vital="yes"/>
               <File Id="MPUrlSource_Parser_F4m_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_F4M.dll" DiskId="1" Vital="yes"/>
               <File Id="MPUrlSource_Parser_Mshs_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_MSHS.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Decryption_Akamai" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll" DiskId="1" Vital="yes"/>
               <File Id="avcodec_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
 							<File Id="avformat_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
 							<File Id="avutil_51_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll" DiskId="1" Vital="yes"/>
-						</Component>
+            </Component>
 					</Directory>
 					<Directory Id="Images" Name="Images">
 						<Component Id="OnlineVideosStandaloneImages" Guid="5212c6f7-6f1c-4b97-ab7c-4929c69fc7b0">
