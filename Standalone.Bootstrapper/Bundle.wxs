@@ -47,7 +47,7 @@
 				Vital="no"
 				SourceFile="LAVFilters-0.51.2.exe"
 				InstallCommand="/SILENT /SP-"
-				DownloadUrl="http://mp-onlinevideos2.googlecode.com/svn/trunk/Standalone.Bootstrapper/LAVFilters-0.51.2.exe"
+				DownloadUrl="https://lavfilters.googlecode.com/files/LAVFilters-0.58.2.exe"
 				InstallCondition="NOT LAVAudioDecoderPath OR NOT LAVVideoDecoderPath"
 				DetectCondition="LAVAudioDecoderPath AND LAVVideoDecoderPath"/>
 			
