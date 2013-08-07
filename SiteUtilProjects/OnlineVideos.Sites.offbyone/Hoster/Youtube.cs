@@ -98,7 +98,7 @@ namespace OnlineVideos.Hoster
 
             if (!string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")))
             {
-                string swfUrl = Regex.Match(contents, "\"url\":\\s\"([^\"]+)\"").Groups[1].Value.Replace("\\/", "/");// "url": "http:\/\/s.ytimg.com\/yt\/swfbin\/watch_as3-vflOCLBVA.swf"
+                string swfUrl = Regex.Unescape(Regex.Match(contents, "\"url\":\\s\"([^\"]+)\"").Groups[1].Value);
 
                 string[] FmtUrlMap = Items["url_encoded_fmt_stream_map"].Split(',');
                 string[] FmtList = Items["fmt_list"].Split(',');
@@ -132,18 +132,22 @@ namespace OnlineVideos.Hoster
 					if (string.IsNullOrEmpty(signature))
 						signature = DecryptSignature(urlOptions.Get("s"));
 					string finalUrl = urlOptions.Get("url");
-                    if (!string.IsNullOrEmpty(finalUrl))
+					if (!string.IsNullOrEmpty(finalUrl))
+					{
+						if (!finalUrl.Contains("ratebypass"))
+							finalUrl += "&ratebypass=yes";
 						PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + "&signature=" + signature + "&ext=." + type.Replace("webm", "mkv"));
-                    else
-                    {
-                        string rtmpUrl = urlOptions.Get("conn");
-                        string rtmpPlayPath = urlOptions.Get("stream");
-                        if (!string.IsNullOrEmpty(rtmpUrl) && !string.IsNullOrEmpty(rtmpPlayPath))
-                        {
-                            PlaybackOptions.Add(string.Format("{0} | {1} ({2})", quality.Key[1], type, quality.Key[0]), 
-								new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = rtmpPlayPath, SwfUrl = swfUrl, SwfVerify = true}.ToString());
-                        }
-                    }
+					}
+					else
+					{
+						string rtmpUrl = urlOptions.Get("conn");
+						string rtmpPlayPath = urlOptions.Get("stream");
+						if (!string.IsNullOrEmpty(rtmpUrl) && !string.IsNullOrEmpty(rtmpPlayPath))
+						{
+							PlaybackOptions.Add(string.Format("{0} | {1} ({2})", quality.Key[1], type, quality.Key[0]),
+								new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = rtmpPlayPath, SwfUrl = swfUrl, SwfVerify = true }.ToString());
+						}
+					}
                 }
             }
             else if (Items.Get("status")== "fail")
@@ -180,7 +184,7 @@ namespace OnlineVideos.Hoster
 				case 88:
 					return s[48] + new string(s.Substring(67 + 1, 81 - 67).Reverse().ToArray()) + s[82] + new string(s.Substring(62 + 1, 66 - 62).Reverse().ToArray()) + s[85] + new string(s.Substring(48 + 1, 61 - 48).Reverse().ToArray()) + s[67] + new string(s.Substring(12 + 1, 47 - 12).Reverse().ToArray()) + s[3] + new string(s.Substring(3 + 1, 11 - 3).Reverse().ToArray()) + s[2] + s[12];
 				case 87:
-					return s.Substring(4, 23 - 4) + s[86] + s.Substring(24, 85 - 24);
+					return new string(s.Substring(53 + 1, 83 - 53).Reverse().ToArray()) + s[3] + new string(s.Substring(40 + 1, 52 - 40).Reverse().ToArray()) + s[86] + new string(s.Substring(10 + 1, 39 - 10).Reverse().ToArray()) + s[0] + new string(s.Substring(3 + 1, 9 - 3).Reverse().ToArray()) + s[53];
 				case 86:
 					return s.Substring(2, 63 - 2) + s[82] + s.Substring(64, 82 - 64) + s[63];
 				case 85:
@@ -188,7 +192,7 @@ namespace OnlineVideos.Hoster
 				case 84:
 					return new string(s.Substring(36 + 1, 83 - 36).Reverse().ToArray()) + s[2] + new string(s.Substring(26 + 1, 35 - 26).Reverse().ToArray()) + s[3] + new string(s.Substring(3 + 1, 25 - 3).Reverse().ToArray()) + s[26];
 				case 83:
-					return s[6] + s.Substring(3, 6 - 3) + s[33] + s.Substring(7, 24 - 7) + s[0] + s.Substring(25, 33 - 25) + s[53] + s.Substring(34, 53 - 34) + s[24] + s.Substring(54);
+					return s.Substring(0, 15) + s[80] + s.Substring(16, 80 - 16) + s[15];
 				case 82:
 					return s[36] + new string(s.Substring(67 + 1, 79 - 67).Reverse().ToArray()) + s[81] + new string(s.Substring(40 + 1, 66 - 40).Reverse().ToArray()) + s[33] + new string(s.Substring(36 + 1, 39 - 36).Reverse().ToArray()) + s[40] + s[35] + s[0] + s[67] + new string(s.Substring(0 + 1, 32).Reverse().ToArray()) + s[34];
 				case 81:
