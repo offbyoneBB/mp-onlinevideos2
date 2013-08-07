@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Kategoria</string>
   <string name="OnlineVideos.CategoryNotFound">Kategoriaa ei löydy</string>
   <string name="OnlineVideos.Categories">Kategoriat</string>
+  <string name="OnlineVideos.ChangeSettings">Muuta asetuksia</string>
   <string name="OnlineVideos.Creator">Luoja</string>
   <string name="OnlineVideos.CreateNewPlaylist">Luo uusi soittolista...</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">tarkistetaan lisäosan päivitykset</string>

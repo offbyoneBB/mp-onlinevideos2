@@ -21,6 +21,7 @@
   <string name="Category">Categorie</string>
   <string name="CategoryNotFound">Categorie niet gevonden</string>
   <string name="Categories">Categorieën</string>
+  <string name="ChangeSettings">Verander instellingen</string>
   <string name="Creator">Maker</string>
   <string name="CreateNewPlaylist">Maak nieuwe afspeellijst</string>
   <string name="CheckingForPluginUpdate">Controleren op bijgewerkte plug-in versie</string>
