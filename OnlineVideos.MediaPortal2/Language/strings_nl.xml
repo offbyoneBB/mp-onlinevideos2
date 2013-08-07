@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Categorie</string>
   <string name="OnlineVideos.CategoryNotFound">Categorie niet gevonden</string>
   <string name="OnlineVideos.Categories">Categorieën</string>
+  <string name="OnlineVideos.ChangeSettings">Verander instellingen</string>
   <string name="OnlineVideos.Creator">Maker</string>
   <string name="OnlineVideos.CreateNewPlaylist">Maak nieuwe afspeellijst</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">Controleren op bijgewerkte plug-in versie</string>

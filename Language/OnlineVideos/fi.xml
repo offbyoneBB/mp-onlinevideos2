@@ -21,6 +21,7 @@
   <string name="Category">Kategoria</string>
   <string name="CategoryNotFound">Kategoriaa ei löydy</string>
   <string name="Categories">Kategoriat</string>
+  <string name="ChangeSettings">Muuta asetuksia</string>
   <string name="Creator">Luoja</string>
   <string name="CreateNewPlaylist">Luo uusi soittolista...</string>
   <string name="CheckingForPluginUpdate">tarkistetaan lisäosan päivitykset</string>
