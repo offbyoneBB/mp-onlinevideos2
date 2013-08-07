@@ -43,6 +43,8 @@ namespace OnlineVideos.Sites.georgius
         private static String videoBlockEnd = @"</script>";
         private static String videoSubBlockStart = @"<script";
 
+        private static String videoSectionStart = @"player.addClip";
+
         private static String videoTitleStart = @"<div class=""description"">";
         private static String videoTitleEnd = @"</div>";
 
@@ -383,6 +385,9 @@ namespace OnlineVideos.Sites.georgius
 
             String videoData = (String)video.Other;
 
+            int index = videoData.LastIndexOf(CsfdCzUtil.videoSectionStart);
+            videoData = videoData.Substring(index);
+
             MatchCollection matches = Regex.Matches(videoData, CsfdCzUtil.videoUrlRegex);
             for (int i = 0; i < matches.Count; i++)
             {
@@ -390,7 +395,7 @@ namespace OnlineVideos.Sites.georgius
                 String extension = Path.GetExtension(url).Replace(".", "");
                 String fileName = Path.GetFileNameWithoutExtension(url);
 
-                if (!url.Contains("/ads/"))
+                if (!url.Contains("/videoads/"))
                 {
                     String item = videoData.Substring(matches[i].Index);
 
