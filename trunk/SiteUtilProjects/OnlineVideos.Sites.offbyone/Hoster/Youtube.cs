@@ -190,7 +190,7 @@ namespace OnlineVideos.Hoster
 				case 85:
 					return s.Substring(2, 8 - 2) + s[0] + s.Substring(9, 21 - 9) + s[65] + s.Substring(22, 65 - 22) + s[84] + s.Substring(66, 82 - 66) + s[21];
 				case 84:
-					return new string(s.Substring(36 + 1, 83 - 36).Reverse().ToArray()) + s[2] + new string(s.Substring(26 + 1, 35 - 26).Reverse().ToArray()) + s[3] + new string(s.Substring(3 + 1, 25 - 3).Reverse().ToArray()) + s[26];
+					return new string(s.Substring(27 + 1, 83 - 27).Reverse().ToArray()) + s[0] + new string(s.Substring(5 + 1, 26 - 5).Reverse().ToArray()) + new string(s.Substring(0 + 1, 2 - 0).Reverse().ToArray()) + s[27];
 				case 83:
 					return s.Substring(0, 15) + s[80] + s.Substring(16, 80 - 16) + s[15];
 				case 82:
