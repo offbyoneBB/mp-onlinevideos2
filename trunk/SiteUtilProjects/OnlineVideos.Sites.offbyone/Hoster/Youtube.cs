@@ -181,12 +181,14 @@ namespace OnlineVideos.Hoster
 					return s[25] + s.Substring(3, 25 - 3) + s[0] + s.Substring(26, 42 - 26) + s[79] + s.Substring(43, 79 - 43) + s[91] + s.Substring(80, 83 - 80);
 				case 90:
 					return s[25] + s.Substring(3, 25 - 3) + s[2] + s.Substring(26, 40 - 26) + s[77] + s.Substring(41, 77 - 41) + s[89] + s.Substring(78, 81 - 78);
+				case 89:
+					return new string(s.Substring(78 + 1, 84 - 78).Reverse().ToArray()) + s[87] + new string(s.Substring(60 + 1, 77 - 60).Reverse().ToArray()) + s[0] + new string(s.Substring(3 + 1, 59 - 3).Reverse().ToArray());
 				case 88:
 					return s[48] + new string(s.Substring(67 + 1, 81 - 67).Reverse().ToArray()) + s[82] + new string(s.Substring(62 + 1, 66 - 62).Reverse().ToArray()) + s[85] + new string(s.Substring(48 + 1, 61 - 48).Reverse().ToArray()) + s[67] + new string(s.Substring(12 + 1, 47 - 12).Reverse().ToArray()) + s[3] + new string(s.Substring(3 + 1, 11 - 3).Reverse().ToArray()) + s[2] + s[12];
 				case 87:
 					return new string(s.Substring(53 + 1, 83 - 53).Reverse().ToArray()) + s[3] + new string(s.Substring(40 + 1, 52 - 40).Reverse().ToArray()) + s[86] + new string(s.Substring(10 + 1, 39 - 10).Reverse().ToArray()) + s[0] + new string(s.Substring(3 + 1, 9 - 3).Reverse().ToArray()) + s[53];
 				case 86:
-					return s.Substring(2, 63 - 2) + s[82] + s.Substring(64, 82 - 64) + s[63];
+					return s.Substring(5, 20 - 5) + s[2] + s.Substring(21);
 				case 85:
 					return s.Substring(2, 8 - 2) + s[0] + s.Substring(9, 21 - 9) + s[65] + s.Substring(22, 65 - 22) + s[84] + s.Substring(66, 82 - 66) + s[21];
 				case 84:
