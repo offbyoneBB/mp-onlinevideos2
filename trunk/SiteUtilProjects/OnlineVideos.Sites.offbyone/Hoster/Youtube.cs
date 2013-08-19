@@ -186,15 +186,15 @@ namespace OnlineVideos.Hoster
 				case 88:
 					return s[48] + new string(s.Substring(67 + 1, 81 - 67).Reverse().ToArray()) + s[82] + new string(s.Substring(62 + 1, 66 - 62).Reverse().ToArray()) + s[85] + new string(s.Substring(48 + 1, 61 - 48).Reverse().ToArray()) + s[67] + new string(s.Substring(12 + 1, 47 - 12).Reverse().ToArray()) + s[3] + new string(s.Substring(3 + 1, 11 - 3).Reverse().ToArray()) + s[2] + s[12];
 				case 87:
-					return new string(s.Substring(53 + 1, 83 - 53).Reverse().ToArray()) + s[3] + new string(s.Substring(40 + 1, 52 - 40).Reverse().ToArray()) + s[86] + new string(s.Substring(10 + 1, 39 - 10).Reverse().ToArray()) + s[0] + new string(s.Substring(3 + 1, 9 - 3).Reverse().ToArray()) + s[53];
+                    return s.Slice(6, 27) + s[4] + s.Slice(28, 39) + s[27] + s.Slice(40, 59) + s[2] + s.Slice(60);
 				case 86:
 					return s.Substring(5, 20 - 5) + s[2] + s.Substring(21);
 				case 85:
-					return s.Substring(2, 8 - 2) + s[0] + s.Substring(9, 21 - 9) + s[65] + s.Substring(22, 65 - 22) + s[84] + s.Substring(66, 82 - 66) + s[21];
+                    return s.Slice(83, 34, -1) + s[0] + s.Slice(33, 27, -1) + s[3] + s.Slice(26, 19, -1) + s[34] + s.Slice(18, 3, -1) + s[27];
 				case 84:
 					return new string(s.Substring(27 + 1, 83 - 27).Reverse().ToArray()) + s[0] + new string(s.Substring(5 + 1, 26 - 5).Reverse().ToArray()) + new string(s.Substring(0 + 1, 2 - 0).Reverse().ToArray()) + s[27];
 				case 83:
-					return s.Substring(0, 15) + s[80] + s.Substring(16, 80 - 16) + s[15];
+                    return s.Slice(81, 64, -1) + s[82] + s.Slice(63, 52, -1) + s[45] + s.Slice(51, 45, -1) + s[1] + s.Slice(44, 1, -1) + s[0];
 				case 82:
 					return s[36] + new string(s.Substring(67 + 1, 79 - 67).Reverse().ToArray()) + s[81] + new string(s.Substring(40 + 1, 66 - 40).Reverse().ToArray()) + s[33] + new string(s.Substring(36 + 1, 39 - 36).Reverse().ToArray()) + s[40] + s[35] + s[0] + s[67] + new string(s.Substring(0 + 1, 32).Reverse().ToArray()) + s[34];
 				case 81:
@@ -206,4 +206,26 @@ namespace OnlineVideos.Hoster
 			}
 		}
     }
+
+    public static class PythonExtensions
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="startIndex">start index (inclusive9, default: 0</param>
+        /// <param name="endIndex">end index (exclusive), default: length of string</param>
+        /// <param name="step">default: 1</param>
+        /// <returns></returns>
+        public static string Slice(this String str, int startIndex = 0, int endIndex = int.MaxValue, int step = 1)
+        {
+            var result = new System.Text.StringBuilder("");
+            endIndex = Math.Min(str.Length, endIndex);
+            for (int i = startIndex; i != endIndex; i += step)
+            {
+                result.Append(str[i]);
+            }
+            return result.ToString();
+        }
+    }   
 }
