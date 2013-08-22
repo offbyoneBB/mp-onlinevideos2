@@ -73,8 +73,8 @@ namespace OnlineVideos.Sites
                 }
 				else
 				{
-					string tabName = category.Name == "Hela program" ? "episodes" : "clips";
-					var containerDiv = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class, 'playBoxBody') and contains(@data-tabname, '" + tabName + "')]");
+                    string tabName = category.Name == "Hela program" ? "programpanel" : "klipppanel";
+					var containerDiv = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@id, '" + tabName + "')]");
 					if (containerDiv != null)
 					{
 						var lastPageNode = containerDiv.Descendants("div").Where(d => d.GetAttributeValue("class", "") == "playBoxContainer").FirstOrDefault();
