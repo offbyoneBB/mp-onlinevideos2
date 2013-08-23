@@ -95,7 +95,7 @@
 								<Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
 								<Trigger.EnterActions>
 									<BeginStoryboard x:Name="Focused_BeginStoryboardGrow" Storyboard="{ThemeResource ovsSiteItemGrowAnimation}"/>
-									<SoundPlayerAction Source="button12.wav" DisableOnAudioOutput="True"/>
+									<SoundPlayerAction Source="navigate.wav" DisableOnAudioOutput="True"/>
 									<BeginStoryboard x:Name="Focused_BeginStoryboardColor" Storyboard="{ThemeResource FocusedButtonStoryboard}"/>
 								</Trigger.EnterActions>
 								<Trigger.ExitActions>
@@ -136,7 +136,7 @@
                 <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
                 <Trigger.EnterActions>
                   <BeginStoryboard x:Name="Focused_BeginStoryboardGrow" Storyboard="{ThemeResource ovsCategoryItemGrowAnimation}"/>
-                  <SoundPlayerAction Source="button12.wav" DisableOnAudioOutput="True"/>
+                  <SoundPlayerAction Source="navigate.wav" DisableOnAudioOutput="True"/>
                   <BeginStoryboard x:Name="Focused_BeginStoryboardColor" Storyboard="{ThemeResource FocusedButtonStoryboard}"/>
                 </Trigger.EnterActions>
                 <Trigger.ExitActions>
@@ -181,7 +181,7 @@
                 <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
                 <Trigger.EnterActions>
                   <BeginStoryboard x:Name="Focused_BeginStoryboardGrow" Storyboard="{ThemeResource ovsVideoItemGrowAnimation}"/>
-                  <SoundPlayerAction Source="button12.wav" DisableOnAudioOutput="True"/>
+                  <SoundPlayerAction Source="navigate.wav" DisableOnAudioOutput="True"/>
                   <BeginStoryboard x:Name="Focused_BeginStoryboardColor" Storyboard="{ThemeResource FocusedButtonStoryboard}"/>
                 </Trigger.EnterActions>
                 <Trigger.ExitActions>
