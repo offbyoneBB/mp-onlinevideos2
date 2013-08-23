@@ -63,6 +63,7 @@ namespace OnlineVideos.MediaPortal1
 			roller.LockingModel = new FileAppender.MinimalLock();
 			roller.AppendToFile = true;
 			roller.RollingStyle = RollingFileAppender.RollingMode.Once;
+			roller.PreserveLogFileNameExtension = true;
 			roller.MaxSizeRollBackups = 1;
 			roller.MaximumFileSize = "10MB";
 			roller.StaticLogFileName = true;
