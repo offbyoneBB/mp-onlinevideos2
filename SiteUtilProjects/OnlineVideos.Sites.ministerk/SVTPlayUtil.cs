@@ -151,9 +151,9 @@ namespace OnlineVideos.Sites
                         if (!Uri.IsWellFormedUriString(video.VideoUrl, System.UriKind.Absolute)) video.VideoUrl = new Uri(new Uri(url), video.VideoUrl).AbsoluteUri;
                         video.VideoUrl += "?output=json";
 
-                        var h1 = li.SelectSingleNode(".//h1[contains(@class,'playH5')]");
+                        var titleDiv = li.SelectSingleNode(".//div[contains(@class,'playBroadcastTitle')]");
 
-                        var title = HttpUtility.HtmlDecode((h1 != null ? h1.InnerText : "").Trim().Replace('\n', ' '));
+                        var title = HttpUtility.HtmlDecode((titleDiv != null ? titleDiv.InnerText : "").Trim().Replace('\n', ' '));
                         bool live = li.Descendants("img").Where(img => img.GetAttributeValue("class", "") == "playBroadcastLiveIcon").Any();
                         video.Title = (live ? "LIVE - " : "") + title;
 
@@ -386,7 +386,7 @@ namespace OnlineVideos.Sites
                     }
                     else
                     {
-                        var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playBoxBody') and contains(@class,'svtTab-Active')]");
+                        var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playJsTabs playBox')]");
                         CategoriesFromArticles(node, parentCategory);
 
                         // categories are spread over pages - remember the last page on the parent category, so we know when to stop adding a NextPageCategory
