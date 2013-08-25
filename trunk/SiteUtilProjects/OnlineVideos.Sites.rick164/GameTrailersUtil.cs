@@ -137,7 +137,7 @@ namespace OnlineVideos.Sites
                                 videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
 
                                 //Video url check
-                                if (!videoInfo.VideoUrl.StartsWith("http://") || videoInfo.VideoUrl == "" || videoInfo.Title.ToLower().Contains("comic-con"))
+                                if (!videoInfo.VideoUrl.StartsWith("http://") || videoInfo.VideoUrl == "" || videoInfo.Title.ToLower().Contains("comic-con") || videoInfo.Title.ToLower().Contains("gt/live"))
                                 {
                                     Log.Debug("Np valid video url found or invalid video");
                                     videoCount++;
@@ -153,11 +153,11 @@ namespace OnlineVideos.Sites
                                     //Encoding by GT is reported as UTF-8 but it's not in most cases, temporary fix added for "'" character
                                     videoInfo.Description = m.Groups["Description"].Value.Replace("&acirc;", "'");
                                     //Log.Debug("Desc (enc): " + videoInfo.Description);
-                                    Log.Debug("---------------");
-                                    Log.Debug("Description: " + videoInfo.Description);
-                                    Log.Debug("title: " + videoInfo.Title);
-                                    Log.Debug("Video URL: " + videoInfo.VideoUrl);
-                                    Log.Debug("Image: " + videoInfo.ImageUrl);
+                                    //Log.Debug("---------------");
+                                    //Log.Debug("Description: " + videoInfo.Description);
+                                    //Log.Debug("title: " + videoInfo.Title);
+                                    //Log.Debug("Video URL: " + videoInfo.VideoUrl);
+                                    //Log.Debug("Image: " + videoInfo.ImageUrl);
 
                                     videoCount++;
                                     videoList.Add(videoInfo);
