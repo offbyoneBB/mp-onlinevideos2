@@ -10,9 +10,19 @@ namespace OnlineVideos.Sites
     {
         private XmlDocument doc = null;
         private DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+        private Dictionary<String, String> qualities;
+        private Dictionary<String, String> formats;
 
         public override int DiscoverDynamicCategories()
         {
+            qualities = new Dictionary<string, string>();
+            qualities.Add("0", "Low");
+            qualities.Add("1", "Medium");
+            qualities.Add("2", "HD");
+
+            formats = new Dictionary<string, string>();
+            formats.Add("0", "WMV");
+            formats.Add("3", "FLV");
             String webData = GetWebData(baseUrl, forceUTF8: true);
             doc = new XmlDocument();
             doc.LoadXml(webData);
@@ -44,7 +54,7 @@ namespace OnlineVideos.Sites
 
             foreach (XmlNode vidNode in doc.SelectNodes("//resp/VoDs/vod"))
             {
-                VideoInfo video = new VideoInfo();
+                VideoInfo video = new IplaVideoInfo();
                 video.Title = vidNode.Attributes["title"].Value;
                 video.Airdate = epoch.AddSeconds(float.Parse(vidNode.Attributes["timestamp"].Value)).ToString();
                 video.Length = VideoInfo.GetDuration(vidNode.Attributes["dur"].Value);
@@ -54,8 +64,15 @@ namespace OnlineVideos.Sites
                 foreach (XmlNode urlNode in vidNode.SelectNodes("srcreq[@drmtype=\"0\" and @format!=\"2\"]"))
                 {
                     string url = urlNode.Attributes["url"].Value;
-                    string key = "quality " + urlNode.Attributes["quality"].Value +
-                        " format: " + urlNode.Attributes["format"].Value;
+                    string quality = urlNode.Attributes["quality"].Value;
+                    string key = qualities.ContainsKey(quality) ? qualities[quality] : "quality " + quality;
+                    string format = urlNode.Attributes["format"].Value;
+
+                    if (formats.ContainsKey(format))
+                        key = key + " " + formats[format];
+                    else
+                        key = key + " format: " + format;
+
                     if (!video.PlaybackOptions.ContainsKey(key))
                         video.PlaybackOptions.Add(key, url);
                 }
@@ -72,7 +89,7 @@ namespace OnlineVideos.Sites
                 return String.Empty;
             if (video.PlaybackOptions.Count == 1)
             {
-                string url = video.PlaybackOptions.First().Value;
+                string url = GetRedirectedUrl(video.PlaybackOptions.First().Value);
                 video.PlaybackOptions = null;
                 return url;
             }
@@ -120,5 +137,18 @@ namespace OnlineVideos.Sites
             return String.Empty;
         }
 
+        public class IplaVideoInfo : VideoInfo
+        {
+
+            public override string GetPlaybackOptionUrl(string url)
+            {
+                string result = PlaybackOptions[url];
+                Log.Debug("Ipla:result=" + result);
+                result = GetRedirectedUrl(result);
+                Log.Debug("Ipla:redirectedresult=" + result);
+                return result;
+
+            }
+        }
     }
 }
