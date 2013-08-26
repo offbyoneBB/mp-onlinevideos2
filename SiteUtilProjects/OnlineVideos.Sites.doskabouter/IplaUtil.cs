@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Xml;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
@@ -18,7 +19,8 @@ namespace OnlineVideos.Sites
             qualities = new Dictionary<string, string>();
             qualities.Add("0", "Low");
             qualities.Add("1", "Medium");
-            qualities.Add("2", "HD");
+            qualities.Add("2", "SD");
+            qualities.Add("3", "HD");
 
             formats = new Dictionary<string, string>();
             formats.Add("0", "WMV");
@@ -54,7 +56,7 @@ namespace OnlineVideos.Sites
 
             foreach (XmlNode vidNode in doc.SelectNodes("//resp/VoDs/vod"))
             {
-                VideoInfo video = new IplaVideoInfo();
+                VideoInfo video = new VideoInfo();
                 video.Title = vidNode.Attributes["title"].Value;
                 video.Airdate = epoch.AddSeconds(float.Parse(vidNode.Attributes["timestamp"].Value)).ToString();
                 video.Length = VideoInfo.GetDuration(vidNode.Attributes["dur"].Value);
@@ -74,7 +76,10 @@ namespace OnlineVideos.Sites
                         key = key + " format: " + format;
 
                     if (!video.PlaybackOptions.ContainsKey(key))
-                        video.PlaybackOptions.Add(key, url);
+                    {
+                        HttpUrl httpUtl = new HttpUrl(url) { UserAgent = "this is no useragent" };
+                        video.PlaybackOptions.Add(key, httpUtl.ToString());
+                    }
                 }
                 if (video.PlaybackOptions.Count > 0)
                     result.Add(video);
@@ -87,13 +92,10 @@ namespace OnlineVideos.Sites
         {
             if (video.PlaybackOptions == null)
                 return String.Empty;
+            string url = video.PlaybackOptions.Last().Value;
             if (video.PlaybackOptions.Count == 1)
-            {
-                string url = GetRedirectedUrl(video.PlaybackOptions.First().Value);
                 video.PlaybackOptions = null;
-                return url;
-            }
-            return video.PlaybackOptions.Last().Value;
+            return url;
         }
 
         private List<Category> AddCats(string pid, XmlDocument doc, Category parentCat)
@@ -137,18 +139,5 @@ namespace OnlineVideos.Sites
             return String.Empty;
         }
 
-        public class IplaVideoInfo : VideoInfo
-        {
-
-            public override string GetPlaybackOptionUrl(string url)
-            {
-                string result = PlaybackOptions[url];
-                Log.Debug("Ipla:result=" + result);
-                result = GetRedirectedUrl(result);
-                Log.Debug("Ipla:redirectedresult=" + result);
-                return result;
-
-            }
-        }
     }
 }
