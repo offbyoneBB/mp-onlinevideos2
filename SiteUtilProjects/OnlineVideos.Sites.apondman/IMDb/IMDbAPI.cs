@@ -442,7 +442,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             HtmlNode descNode = root.SelectSingleNode("//table[@id='video-details']/tr[1]/td[2]");
             details.Description = HttpUtility.HtmlDecode(descNode.InnerText);
 
-            HtmlNode formats = root.SelectSingleNode("//div[@id='hd-ctrl']");
+            string[] formats = null;
             
             MatchCollection matches = videoFormatExpression.Matches(data);
             foreach (Match m in matches)
@@ -455,25 +455,39 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                     video = video + "?uff=1";
                 }
 
-                VideoFormat f = VideoFormat.SD;
+				if (formats == null)
+				{
+					string videoPlayerHtml = session.MakeRequest(session.Settings.BaseUri + video);
+					var json = GetJsonForVideo(videoPlayerHtml);
+					if (json != null)
+					{
+						formats = json["titleObject"]["encoding"].Select(q => (q as JProperty).Name).Where(q => q != "selected").ToArray();
+					}
+				}
 
-                if (formats != null)
+				if (formats != null)
                 {
-                    switch (format.ToLower())
+                    switch (format)
                     {
+						case "SD":
+							if (formats.Contains("240p"))
+								details.Files[VideoFormat.SD] = video;
+                            break;
                         case "480p":
-                            f = VideoFormat.HD480;
+							if (formats.Contains("480p"))
+								details.Files[VideoFormat.HD480] = video;
                             break;
                         case "720p":
-                            f = VideoFormat.HD720;
+							if (formats.Contains("720p"))
+								details.Files[VideoFormat.HD720] = video;
                             break;
                     }
 
-                    details.Files[f] = video;
+                    
                 }
                 else
                 {
-                    details.Files[f] = video;
+                    details.Files[VideoFormat.SD] = video;
                     break;
                 }
             }
@@ -544,11 +558,9 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 return System.Web.HttpUtility.UrlDecode(value + "/" + file);
             }
 
-			match = videoPlayerJsonExpression.Match(response);
-			if (match.Success)
+			var json = GetJsonForVideo(response);
+			if (json != null)
 			{
-				string jsonText = match.Groups["json"].Value;
-				var json = Newtonsoft.Json.JsonConvert.DeserializeObject<JObject>(jsonText);
 				return json["videoPlayerObject"]["video"].Value<string>("url");
 			}
 
@@ -712,6 +724,17 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
             return match.Value;
         }
+
+		static JObject GetJsonForVideo(string html)
+		{
+			var match = videoPlayerJsonExpression.Match(html);
+			if (match.Success)
+			{
+				string jsonText = match.Groups["json"].Value;
+				return Newtonsoft.Json.JsonConvert.DeserializeObject<JObject>(jsonText);
+			}
+			return null;
+		}
 
         #endregion
 
