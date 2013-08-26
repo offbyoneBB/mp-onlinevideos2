@@ -24,6 +24,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         static Regex videoFormatExpression = new Regex(@"case\s+'(?<format>[^']+)'\s+:\s+url = '(?<video>/video/[^']+)'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoFileExpression = new Regex(@"IMDbPlayer.playerKey = ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoPlayerExpression = new Regex(@"IMDbPlayer.playerType = ['""](?<player>[^'""]+)['""]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		static Regex videoPlayerJsonExpression = new Regex(@"<script class=""imdb-player-data"" type=""text/imdb-video-player-json"">(?<json>.*?)</script>", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
 
         // todo: create single expression for RTMP variables
         static Regex videoRTMPExpression = new Regex(@"so.addVariable\(""file"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -541,7 +542,15 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 string file = match.Groups["video"].Value;
                 
                 return System.Web.HttpUtility.UrlDecode(value + "/" + file);
-            }            
+            }
+
+			match = videoPlayerJsonExpression.Match(response);
+			if (match.Success)
+			{
+				string jsonText = match.Groups["json"].Value;
+				var json = Newtonsoft.Json.JsonConvert.DeserializeObject<JObject>(jsonText);
+				return json["videoPlayerObject"]["video"].Value<string>("url");
+			}
 
             return null;
         }
