@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text.RegularExpressions;
-using OnlineVideos.Hoster.Base;
-using System.Web;
-using System.Globalization;
 using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
+using System.Web;
+using OnlineVideos.Hoster.Base;
 
 namespace OnlineVideos.Hoster
 {
@@ -188,17 +188,19 @@ namespace OnlineVideos.Hoster
 				case 87:
                     return s.Slice(6, 27) + s[4] + s.Slice(28, 39) + s[27] + s.Slice(40, 59) + s[2] + s.Slice(60);
 				case 86:
-					return s.Substring(5, 20 - 5) + s[2] + s.Substring(21);
+                    return s.Slice(5, 40) + s[3] + s.Slice(41, 48) + s[0] + s.Slice(49, 86);
 				case 85:
                     return s.Slice(83, 34, -1) + s[0] + s.Slice(33, 27, -1) + s[3] + s.Slice(26, 19, -1) + s[34] + s.Slice(18, 3, -1) + s[27];
 				case 84:
-					return new string(s.Substring(27 + 1, 83 - 27).Reverse().ToArray()) + s[0] + new string(s.Substring(5 + 1, 26 - 5).Reverse().ToArray()) + new string(s.Substring(0 + 1, 2 - 0).Reverse().ToArray()) + s[27];
+                    return s.Slice(5, 40) + s[3] + s.Slice(41, 48) + s[0] + s.Slice(49, 84);
 				case 83:
                     return s.Slice(81, 64, -1) + s[82] + s.Slice(63, 52, -1) + s[45] + s.Slice(51, 45, -1) + s[1] + s.Slice(44, 1, -1) + s[0];
 				case 82:
-					return s[36] + new string(s.Substring(67 + 1, 79 - 67).Reverse().ToArray()) + s[81] + new string(s.Substring(40 + 1, 66 - 40).Reverse().ToArray()) + s[33] + new string(s.Substring(36 + 1, 39 - 36).Reverse().ToArray()) + s[40] + s[35] + s[0] + s[67] + new string(s.Substring(0 + 1, 32).Reverse().ToArray()) + s[34];
+                    return s.Slice(1, 19) + s[0] + s.Slice(20, 68) + s[19] + s.Slice(69, 82);
 				case 81:
 					return s[56] + new string(s.Substring(56 + 1, 79 - 56).Reverse().ToArray()) + s[41] + new string(s.Substring(41 + 1, 55 - 41).Reverse().ToArray()) + s[80] + new string(s.Substring(34 + 1, 40 - 34).Reverse().ToArray()) + s[0] + new string(s.Substring(29 + 1, 33 - 29).Reverse().ToArray()) + s[34] + new string(s.Substring(9 + 1, 28 - 9).Reverse().ToArray()) + s[29] + new string(s.Substring(0 + 1, 8 - 0).Reverse().ToArray()) + s[9];
+                case 80:
+                    return s.Slice(1, 19) + s[0] + s.Slice(20, 68) + s[19] + s.Slice(69, 80);
 				case 79:
 					return s[54] + new string(s.Substring(54 + 1, 77 - 54).Reverse().ToArray()) + s[39] + new string(s.Substring(39 + 1, 53 - 39).Reverse().ToArray()) + s[78] + new string(s.Substring(34 + 1, 38 - 34).Reverse().ToArray()) + s[0] + new string(s.Substring(29 + 1, 33 - 29).Reverse().ToArray()) + s[34] + new string(s.Substring(9 + 1, 28 - 9).Reverse().ToArray()) + s[29] + new string(s.Substring(0 + 1, 8 - 0).Reverse().ToArray()) + s[9];
 				default:
