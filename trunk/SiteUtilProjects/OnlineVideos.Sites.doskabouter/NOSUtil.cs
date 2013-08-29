@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
         {
             base.Initialize(siteSettings);
             SiteConsent = new CookieContainer();
-            Cookie cookie = new Cookie("site_cookie_consent", "yes");
+            Cookie cookie = new Cookie("npo_cc", "tmp");
             SiteConsent.Add(new Uri(baseUrl), cookie);
         }
 
