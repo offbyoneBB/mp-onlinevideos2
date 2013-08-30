@@ -348,6 +348,9 @@
         <Category xsi:type="RssLink" name="MassageNerd">http://www.metacafe.com/channels/massagenerd/rss.xml</Category>
       </Categories>
     </Site>
+    <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true" lang="en">
+      <Description>Dailymotion is a video sharing service website, based in Paris (France).</Description>
+    </Site>
     <Site name="Live Video" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Broadcast yourself live, watch, connect and share videos with people all over the world.</Description>
       <Configuration>
