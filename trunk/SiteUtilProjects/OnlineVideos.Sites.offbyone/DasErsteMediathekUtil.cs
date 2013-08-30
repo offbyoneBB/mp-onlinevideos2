@@ -24,6 +24,7 @@ namespace OnlineVideos.Sites
 		{
 			int result = base.DiscoverDynamicCategories();
 			Settings.Categories.Add(new RssLink() { Name = "Sendung verpasst?", HasSubCategories = true, Url = SendungVerpasst_baseUrl });
+            //Settings.Categories.Add(new Category() { Name = "Live" });
 			return result + 1;
 		}
 
@@ -53,8 +54,26 @@ namespace OnlineVideos.Sites
 			}
 		}
 
+        /*public override List<VideoInfo> getVideoList(Category category)
+        {
+            if (category is RssLink)
+                return base.getVideoList(category);
+            else
+                return new List<VideoInfo>() 
+                { 
+                    new VideoInfo()
+                    {
+                         Title = "Das Erste - Live Stream",
+                         VideoUrl = "http://daserste_live-lh.akamaihd.net/z/daserste_de@91204/manifest.f4m?hdcore=2.11.4&g=" + Utils.GetRandomLetters(12)
+                    }
+                };
+        }*/
+
         public override String getUrl(VideoInfo video)
         {
+            /*if (video.Title == "Das Erste - Live Stream")
+                return video.VideoUrl;
+            */
             if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
             {
                 string dataPage = GetWebData(video.VideoUrl);
