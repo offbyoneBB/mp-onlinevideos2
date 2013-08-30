@@ -139,7 +139,7 @@
         <item key="dynamicCategoriesRegEx"><![CDATA[<div[^>]*>\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*
 <img(?:(?!src).)+src="(?<thumb>[^"]+)"[^>]*>\s*</a>\s*</div>\s*
 <div[^>]*>\s*
-<span[^>]*>.*?</span>\s*
+<span[^>]*>FREE.*?</span>\s*
 <h2>(?<title>[^<]+)</h2>\s*(?<description>[^<]*)</div>]]></item>
         <item key="videoListRegEx"><![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
 <div[^>]*>[^<]*</div>\s*
