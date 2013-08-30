@@ -439,6 +439,14 @@ namespace OnlineVideos
 			}
 		}
 
+        public static string GetRandomLetters(int amount)
+        {
+            var random = new Random();
+            var sb = new StringBuilder(amount);
+            for (int i = 0; i < amount; i++) sb.Append(Encoding.ASCII.GetString(new byte[] { (byte)random.Next('A', 'Z') }));
+            return sb.ToString();
+        }
+
 		internal static DateTime RetrieveLinkerTimestamp(string filePath)
 		{
 			const int c_PeHeaderOffset = 60;
