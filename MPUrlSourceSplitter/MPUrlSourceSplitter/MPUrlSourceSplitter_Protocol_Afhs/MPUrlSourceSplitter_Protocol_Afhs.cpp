@@ -752,23 +752,23 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(bool *shouldExit, CRecei
                   if (bootstrapInfoBox->Parse(buffer, length))
                   {
                     //this->logger->Log(LOGGER_VERBOSE, L"%s: %s: new bootstrap info box:\n%s", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, bootstrapInfoBox->GetParsedHumanReadable(L""));
+                    CSegmentFragment *lastSegmentFragment = this->segmentsFragments->GetItem(this->segmentsFragments->Count() - 1);
 
                     CSegmentFragmentCollection *updateSegmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(
                       this->logger,
                       METHOD_RECEIVE_DATA_NAME,
                       this->configurationParameters,
                       bootstrapInfoBox,
-                      false);
+                      false,
+                      lastSegmentFragment->GetFragmentTimestamp());
                     continueWithBootstrapInfo &= (updateSegmentsFragments != NULL);
 
                     if (continueWithBootstrapInfo)
                     {
-                      CSegmentFragment *lastSegmentFragment = this->segmentsFragments->GetItem(this->segmentsFragments->Count() - 1);
-
                       for (unsigned int i = 0; i < updateSegmentsFragments->Count(); i++)
                       {
                         CSegmentFragment *parsedSegmentFragment = updateSegmentsFragments->GetItem(i);
-                        if (parsedSegmentFragment->GetFragment() > lastSegmentFragment->GetFragment())
+                        if (parsedSegmentFragment->GetFragmentTimestamp() > lastSegmentFragment->GetFragmentTimestamp())
                         {
                           // new segment fragment, add it to be downloaded
                           CSegmentFragment *clone = new CSegmentFragment(
@@ -1140,6 +1140,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
     {
       // we have bootstrap info box successfully parsed
       this->live = this->bootstrapInfoBox->IsLive();
+      uint64_t currentMediaTime = (this->bootstrapInfoBox->GetCurrentMediaTime() > 0) ? (this->bootstrapInfoBox->GetCurrentMediaTime() - 1): 0;
 
       FREE_MEM_CLASS(this->segmentsFragments);
       this->segmentsFragments = this->GetSegmentsFragmentsFromBootstrapInfoBox(
@@ -1147,14 +1148,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterC
         METHOD_START_RECEIVING_DATA_NAME,
         this->configurationParameters,
         this->bootstrapInfoBox,
-        false);
+        false,
+        this->live ? currentMediaTime : 0);
       CHECK_POINTER_HRESULT(result, this->segmentsFragments, result, E_POINTER);
 
       if (this->live)
       {
         // in case of live stream check current media time and choose right segment and fragment
-
-        uint64_t currentMediaTime = (this->bootstrapInfoBox->GetCurrentMediaTime() > 0) ? (this->bootstrapInfoBox->GetCurrentMediaTime() - 1): 0;
         // this download one fragment before current media time
 
         // find segment and fragment to process
@@ -1542,7 +1542,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(PluginConfiguration *conf
 
 // other methods
 
-CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragmentsFromBootstrapInfoBox(CLogger *logger, const wchar_t *methodName, CParameterCollection *configurationParameters, CBootstrapInfoBox *bootstrapInfoBox, bool logCollection)
+CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragmentsFromBootstrapInfoBox(CLogger *logger, const wchar_t *methodName, CParameterCollection *configurationParameters, CBootstrapInfoBox *bootstrapInfoBox, bool logCollection, uint64_t lastSegmentFragmentTimestamp)
 {
   HRESULT result = S_OK;
   CSegmentFragmentCollection *segmentsFragments = NULL;
@@ -1632,12 +1632,78 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
       result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
     }
 
-    CFragmentRunEntryCollection *fragmentRunEntryTable = new CFragmentRunEntryCollection();
-    CHECK_POINTER_HRESULT(result, fragmentRunEntryTable, result, E_OUTOFMEMORY);
+    wchar_t *serverBaseUrl = Duplicate(configurationParameters->GetValue(PARAMETER_NAME_AFHS_BASE_URL, true, L""));
+    for (unsigned int i = 0; i < bootstrapInfoBox->GetServerEntryTable()->Count(); i++)
+    {
+      CBootstrapInfoServerEntry *serverEntry = bootstrapInfoBox->GetServerEntryTable()->GetItem(i);
+      if (!IsNullOrEmptyOrWhitespace(serverEntry->GetServerEntry()))
+      {
+        FREE_MEM(serverBaseUrl);
+        serverBaseUrl = Duplicate(serverEntry->GetServerEntry());
+      }
+    }
+    CHECK_POINTER_HRESULT(result, serverBaseUrl, result, E_OUTOFMEMORY);
+
+    wchar_t *mediaPartUrl = NULL;
+    wchar_t *baseUrl = NULL;
+    //wchar_t *movieIdentifierUrl = NULL;
+    wchar_t *qualityUrl = NULL;
 
     if (SUCCEEDED(result))
     {
-      // convert temporary fragment run table to simplier collection
+      mediaPartUrl = Duplicate(configurationParameters->GetValue(PARAMETER_NAME_AFHS_MEDIA_PART_URL, true, L""));
+      CHECK_POINTER_HRESULT(result, mediaPartUrl, result, E_OUTOFMEMORY);
+    }
+
+    if (SUCCEEDED(result))
+    {
+      baseUrl = FormatAbsoluteUrl(serverBaseUrl, mediaPartUrl);
+      CHECK_POINTER_HRESULT(result, baseUrl, result, E_OUTOFMEMORY);
+    }
+    
+    if (SUCCEEDED(result))
+    {
+      //movieIdentifierUrl = FormatAbsoluteUrl(baseUrl, this->bootstrapInfoBox->GetMovieIdentifier());
+      //CHECK_POINTER_HRESULT(result, movieIdentifierUrl, result, E_OUTOFMEMORY);
+    }
+        
+    if (SUCCEEDED(result))
+    {
+      //qualityUrl = FormatString(L"%s%s", movieIdentifierUrl, (quality == NULL) ? L"" : quality);
+      qualityUrl = FormatAbsoluteUrl(baseUrl, (quality == NULL) ? L"" : quality);
+      CHECK_POINTER_HRESULT(result, qualityUrl, result, E_OUTOFMEMORY);
+    }
+          
+    if (SUCCEEDED(result))
+    {
+      segmentsFragments = new CSegmentFragmentCollection();
+      CHECK_POINTER_HRESULT(result, segmentsFragments, result, E_OUTOFMEMORY);
+    }
+
+    if (SUCCEEDED(result))
+    {
+      result = (segmentsFragments->SetBaseUrl(qualityUrl)) ? result : E_OUTOFMEMORY;
+      result = (segmentsFragments->SetExtraParameters(configurationParameters->GetValue(PARAMETER_NAME_AFHS_EXTRA_PARAMETERS, true, NULL))) ? result : E_OUTOFMEMORY;
+    }
+            
+    if (SUCCEEDED(result))
+    {
+      // convert segment run entry table and fragment run entry table to segments and fragments
+
+      //segmentRunEntryTable->Clear();
+      //segmentRunEntryTable->Add(new CSegmentRunEntry(1, 100));
+      //segmentRunEntryTable->Add(new CSegmentRunEntry(5, 20));
+      //segmentRunEntryTable->Add(new CSegmentRunEntry(10, 350));
+
+      unsigned int segmentRunEntryIndex = 0;  // holds index in segmentRunEntryTable
+
+      unsigned int firstSegmentInRun = segmentRunEntryTable->GetItem(segmentRunEntryIndex)->GetFirstSegment();
+      unsigned int lastSegmentInRun = (((segmentRunEntryIndex + 1) < segmentRunEntryTable->Count()) ? segmentRunEntryTable->GetItem(segmentRunEntryIndex + 1)->GetFirstSegment() : UINT_MAX);
+      unsigned int fragmentsPerSegment = segmentRunEntryTable->GetItem(segmentRunEntryIndex)->GetFragmentsPerSegment();   // if UINT_MAX, then current segment is forever
+      unsigned int fragmentInSegment = 0;     // holds fragment in current segment, if it reach fragmentsPerSegment, the segment must be changed
+
+      unsigned int segmentNumber = firstSegmentInRun;     // holds segment number for final segment and fragment
+
       for (unsigned int i = 0; i < fragmentRunEntryTableTemp->Count(); i++)
       {
         CFragmentRunEntry *fragmentRunEntryTemp = fragmentRunEntryTableTemp->GetItem(i);
@@ -1658,163 +1724,337 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
           }
         }
 
-        if (((fragmentRunEntryTemp->GetFirstFragmentTimestamp() == 0) && (i == 0)) ||
-          (fragmentRunEntryTemp->GetFirstFragmentTimestamp() != 0))
+        uint64_t fragmentTimestamp = fragmentRunEntryTemp->GetFirstFragmentTimestamp();
+        unsigned int lastFragment = (fragmentRunEntryTempNext == NULL) ? (fragmentRunEntryTemp->GetFirstFragment() + 1) : fragmentRunEntryTempNext->GetFirstFragment();
+        uint64_t lastFragmentTimestamp = (fragmentRunEntryTempNext == NULL) ? (fragmentRunEntryTemp->GetFirstFragmentTimestamp() + fragmentRunEntryTemp->GetFragmentDuration() - 1) : (fragmentRunEntryTempNext->GetFirstFragmentTimestamp() - 1);
+
+        // in some special live session can be some fragments with zero duration
+        // these fragments can get HTTP 503 error, which disables playback
+        // just skip these fragments and continue with next fragment
+        if ((lastFragmentTimestamp >= lastSegmentFragmentTimestamp) && (fragmentRunEntryTemp->GetFragmentDuration() != 0))
         {
-          uint64_t fragmentTimestamp = fragmentRunEntryTemp->GetFirstFragmentTimestamp();
-          unsigned int lastFragment = (fragmentRunEntryTempNext == NULL) ? (fragmentRunEntryTemp->GetFirstFragment() + 1) : fragmentRunEntryTempNext->GetFirstFragment();
+          // current fragment run entry has at least some timestamps greater than requested segment and fragment timestamp (lastSegmentFragmentTimestamp)
+          unsigned int fragmentIndex = (unsigned int)((lastFragmentTimestamp - fragmentRunEntryTemp->GetFirstFragmentTimestamp()) / fragmentRunEntryTemp->GetFragmentDuration());
 
-          for (unsigned int j = fragmentRunEntryTemp->GetFirstFragment(); j < lastFragment; j++)
+          fragmentTimestamp += fragmentIndex * fragmentRunEntryTemp->GetFragmentDuration();
+          fragmentIndex += fragmentRunEntryTemp->GetFirstFragment();
+
+          while (SUCCEEDED(result) && (fragmentIndex < lastFragment))
           {
-            unsigned int diff = j - fragmentRunEntryTemp->GetFirstFragment();
-            CFragmentRunEntry *fragmentRunEntry = new CFragmentRunEntry(
-              fragmentRunEntryTemp->GetFirstFragment() + diff,
-              fragmentTimestamp,
-              fragmentRunEntryTemp->GetFragmentDuration(),
-              fragmentRunEntryTemp->GetDiscontinuityIndicator());
-            fragmentTimestamp += fragmentRunEntryTemp->GetFragmentDuration();
-
-            CHECK_POINTER_HRESULT(result, fragmentRunEntry, result, E_OUTOFMEMORY);
+            CSegmentFragment *segFrag = new CSegmentFragment(segmentNumber, fragmentIndex, fragmentTimestamp * 1000 / timeScale);
+            CHECK_POINTER_HRESULT(result, segFrag, result, E_OUTOFMEMORY);
 
             if (SUCCEEDED(result))
             {
-              result = (fragmentRunEntryTable->Add(fragmentRunEntry)) ? result : E_FAIL;
+              result = (segmentsFragments->Add(segFrag)) ? result : E_OUTOFMEMORY;
             }
 
             if (FAILED(result))
             {
-              FREE_MEM_CLASS(fragmentRunEntry);
+              FREE_MEM_CLASS(segFrag);
             }
+
+            fragmentTimestamp += fragmentRunEntryTemp->GetFragmentDuration();
+            fragmentIndex++;
+          }
+        }
+        
+        // update segment information if necessary
+        unsigned int fragmentCount = lastFragment - fragmentRunEntryTemp->GetFirstFragment();
+        while (fragmentCount != 0)
+        {
+          unsigned int fragmentsToEndOfSegment = min(fragmentsPerSegment - fragmentInSegment, fragmentCount);
+          fragmentCount -= fragmentsToEndOfSegment;
+          fragmentInSegment += fragmentsToEndOfSegment;
+
+          if (fragmentInSegment == fragmentsPerSegment)
+          {
+            // we reached end of segment, update segment information
+            if ((++segmentNumber) >= lastSegmentInRun)
+            {
+              // we reached end of segment run, we must update firstSegmentInRun, lastSegmentInRun, fragmentsPerSegment
+              segmentRunEntryIndex++;
+
+              firstSegmentInRun = segmentRunEntryTable->GetItem(segmentRunEntryIndex)->GetFirstSegment();
+              lastSegmentInRun = (((segmentRunEntryIndex + 1) < segmentRunEntryTable->Count()) ? segmentRunEntryTable->GetItem(segmentRunEntryIndex + 1)->GetFirstSegment() : UINT_MAX);
+              fragmentsPerSegment = segmentRunEntryTable->GetItem(segmentRunEntryIndex)->GetFragmentsPerSegment();   // if UINT_MAX, then current segment is forever
+            }
+
+            fragmentInSegment = 0;
           }
         }
       }
     }
 
-    if (SUCCEEDED(result))
+    FREE_MEM(serverBaseUrl);
+    FREE_MEM(mediaPartUrl);
+    FREE_MEM(baseUrl);
+    //FREE_MEM(movieIdentifierUrl);
+    FREE_MEM(qualityUrl);
+
+    //CFragmentRunEntryCollection *fragmentRunEntryTable = new CFragmentRunEntryCollection();
+    //CHECK_POINTER_HRESULT(result, fragmentRunEntryTable, result, E_OUTOFMEMORY);
+
+    //if (SUCCEEDED(result))
+    //{
+    //  // convert temporary fragment run table to simplier collection
+    //  for (unsigned int i = 0; i < fragmentRunEntryTableTemp->Count(); i++)
+    //  {
+    //    CFragmentRunEntry *fragmentRunEntryTemp = fragmentRunEntryTableTemp->GetItem(i);
+    //    unsigned int nextItemIndex = i + 1;
+    //    CFragmentRunEntry *fragmentRunEntryTempNext = NULL;
+
+    //    for (unsigned int j = nextItemIndex; j < fragmentRunEntryTableTemp->Count(); j++)
+    //    {
+    //      CFragmentRunEntry *temp = fragmentRunEntryTableTemp->GetItem(nextItemIndex);
+    //      if (temp->GetFirstFragment() != 0)
+    //      {
+    //        fragmentRunEntryTempNext = temp;
+    //        break;
+    //      }
+    //      else
+    //      {
+    //        nextItemIndex++;
+    //      }
+    //    }
+
+    //    //if (!fragmentRunEntryTemp->IsDiscontinuityInFragmentNumbering())
+    //    {
+    //      uint64_t fragmentTimestamp = fragmentRunEntryTemp->GetFirstFragmentTimestamp();
+    //      unsigned int lastFragment = (fragmentRunEntryTempNext == NULL) ? (fragmentRunEntryTemp->GetFirstFragment() + 1) : fragmentRunEntryTempNext->GetFirstFragment();
+    //      uint64_t lastFragmentTimestamp = (fragmentRunEntryTempNext == NULL) ? (fragmentRunEntryTemp->GetFirstFragmentTimestamp() + fragmentRunEntryTemp->GetFragmentDuration() - 1) : (fragmentRunEntryTempNext->GetFirstFragmentTimestamp() - 1);
+
+    //      if (lastFragmentTimestamp >= lastSegmentFragmentTimestamp)
+    //      {
+    //        // in current fragment run entry has at least some timestamps greater than requested segment and fragment timestamp (lastSegmentFragmentTimestamp)
+
+    //        unsigned int j = (unsigned int)((lastFragmentTimestamp - fragmentRunEntryTemp->GetFirstFragmentTimestamp()) / fragmentRunEntryTemp->GetFragmentDuration());
+
+    //        fragmentTimestamp += j * fragmentRunEntryTemp->GetFragmentDuration();
+    //        j += fragmentRunEntryTemp->GetFirstFragment();
+
+    //        while (SUCCEEDED(result) && (j < lastFragment))
+    //        {
+    //          unsigned int diff = j - fragmentRunEntryTemp->GetFirstFragment();
+
+    //          CFragmentRunEntry *fragmentRunEntry = new CFragmentRunEntry(
+    //            fragmentRunEntryTemp->GetFirstFragment() + diff,
+    //            fragmentTimestamp,
+    //            fragmentRunEntryTemp->GetFragmentDuration(),
+    //            fragmentRunEntryTemp->GetDiscontinuityIndicator());
+    //          fragmentTimestamp += fragmentRunEntryTemp->GetFragmentDuration();
+
+    //          CHECK_POINTER_HRESULT(result, fragmentRunEntry, result, E_OUTOFMEMORY);
+
+    //          if (SUCCEEDED(result))
+    //          {
+    //            result = (fragmentRunEntryTable->Add(fragmentRunEntry)) ? result : E_FAIL;
+    //          }
+
+    //          if (FAILED(result))
+    //          {
+    //            FREE_MEM_CLASS(fragmentRunEntry);
+    //          }
+
+    //          j++;
+    //          ttt++;
+    //        }
+    //      }
+    //      else
+    //      {
+    //        ttt += lastFragment - fragmentRunEntryTemp->GetFirstFragment();
+    //      }
+    //    }
+
+    //    /*if (((fragmentRunEntryTemp->GetFirstFragmentTimestamp() == 0) && (i == 0)) ||
+    //      (fragmentRunEntryTemp->GetFirstFragmentTimestamp() != 0))
+    //    {
+    //      uint64_t fragmentTimestamp = fragmentRunEntryTemp->GetFirstFragmentTimestamp();
+    //      unsigned int lastFragment = (fragmentRunEntryTempNext == NULL) ? (fragmentRunEntryTemp->GetFirstFragment() + 1) : fragmentRunEntryTempNext->GetFirstFragment();
+
+    //      for (unsigned int j = fragmentRunEntryTemp->GetFirstFragment(); j < lastFragment; j++)
+    //      {
+    //        unsigned int diff = j - fragmentRunEntryTemp->GetFirstFragment();
+    //        CFragmentRunEntry *fragmentRunEntry = new CFragmentRunEntry(
+    //          fragmentRunEntryTemp->GetFirstFragment() + diff,
+    //          fragmentTimestamp,
+    //          fragmentRunEntryTemp->GetFragmentDuration(),
+    //          fragmentRunEntryTemp->GetDiscontinuityIndicator());
+    //        fragmentTimestamp += fragmentRunEntryTemp->GetFragmentDuration();
+
+    //        CHECK_POINTER_HRESULT(result, fragmentRunEntry, result, E_OUTOFMEMORY);
+
+    //        if (SUCCEEDED(result))
+    //        {
+    //          if ((fragmentRunEntry->GetFirstFragmentTimestamp() + fragmentRunEntry->GetFragmentDuration()) >= lastSegmentFragmentTimestamp)
+    //          {
+    //            result = (fragmentRunEntryTable->Add(fragmentRunEntry)) ? result : E_FAIL;
+    //          }
+    //        }
+
+    //        if (FAILED(result))
+    //        {
+    //          FREE_MEM_CLASS(fragmentRunEntry);
+    //        }
+    //      }
+    //    }*/
+    //  }
+    //}
+
+    /*if (SUCCEEDED(result))
     {
       if (fragmentRunEntryTable->Count() == 0)
       {
         logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, methodName, L"cannot find any fragment run entry");
         result = HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
       }
-    }
+    }*/
 
-    if (SUCCEEDED(result))
-    {
-      wchar_t *serverBaseUrl = Duplicate(configurationParameters->GetValue(PARAMETER_NAME_AFHS_BASE_URL, true, L""));
-      for (unsigned int i = 0; i < bootstrapInfoBox->GetServerEntryTable()->Count(); i++)
-      {
-        CBootstrapInfoServerEntry *serverEntry = bootstrapInfoBox->GetServerEntryTable()->GetItem(i);
-        if (!IsNullOrEmptyOrWhitespace(serverEntry->GetServerEntry()))
-        {
-          FREE_MEM(serverBaseUrl);
-          serverBaseUrl = Duplicate(serverEntry->GetServerEntry());
-        }
-      }
+    //if (SUCCEEDED(result))
+    //{
+    //  wchar_t *serverBaseUrl = Duplicate(configurationParameters->GetValue(PARAMETER_NAME_AFHS_BASE_URL, true, L""));
+    //  for (unsigned int i = 0; i < bootstrapInfoBox->GetServerEntryTable()->Count(); i++)
+    //  {
+    //    CBootstrapInfoServerEntry *serverEntry = bootstrapInfoBox->GetServerEntryTable()->GetItem(i);
+    //    if (!IsNullOrEmptyOrWhitespace(serverEntry->GetServerEntry()))
+    //    {
+    //      FREE_MEM(serverBaseUrl);
+    //      serverBaseUrl = Duplicate(serverEntry->GetServerEntry());
+    //    }
+    //  }
 
-      CHECK_POINTER_HRESULT(result, serverBaseUrl, result, E_OUTOFMEMORY);
+    //  CHECK_POINTER_HRESULT(result, serverBaseUrl, result, E_OUTOFMEMORY);
 
-      if (SUCCEEDED(result))
-      {
-        wchar_t *mediaPartUrl = Duplicate(configurationParameters->GetValue(PARAMETER_NAME_AFHS_MEDIA_PART_URL, true, L""));
-        CHECK_POINTER_HRESULT(result, mediaPartUrl, result, E_OUTOFMEMORY);
+    //  if (SUCCEEDED(result))
+    //  {
+    //    wchar_t *mediaPartUrl = Duplicate(configurationParameters->GetValue(PARAMETER_NAME_AFHS_MEDIA_PART_URL, true, L""));
+    //    CHECK_POINTER_HRESULT(result, mediaPartUrl, result, E_OUTOFMEMORY);
 
-        if (SUCCEEDED(result))
-        {
-          wchar_t *baseUrl = FormatAbsoluteUrl(serverBaseUrl, mediaPartUrl);
-          CHECK_POINTER_HRESULT(result, baseUrl, result, E_OUTOFMEMORY);
+    //    if (SUCCEEDED(result))
+    //    {
+    //      wchar_t *baseUrl = FormatAbsoluteUrl(serverBaseUrl, mediaPartUrl);
+    //      CHECK_POINTER_HRESULT(result, baseUrl, result, E_OUTOFMEMORY);
 
-          if (SUCCEEDED(result))
-          {
-            //wchar_t *movieIdentifierUrl = FormatAbsoluteUrl(baseUrl, this->bootstrapInfoBox->GetMovieIdentifier());
-            //CHECK_POINTER_HRESULT(result, movieIdentifierUrl, result, E_OUTOFMEMORY);
+    //      if (SUCCEEDED(result))
+    //      {
+    //        //wchar_t *movieIdentifierUrl = FormatAbsoluteUrl(baseUrl, this->bootstrapInfoBox->GetMovieIdentifier());
+    //        //CHECK_POINTER_HRESULT(result, movieIdentifierUrl, result, E_OUTOFMEMORY);
 
-            if (SUCCEEDED(result))
-            {
-              //wchar_t *qualityUrl = FormatString(L"%s%s", movieIdentifierUrl, (quality == NULL) ? L"" : quality);
-              wchar_t *qualityUrl = FormatAbsoluteUrl(baseUrl, (quality == NULL) ? L"" : quality);
-              CHECK_POINTER_HRESULT(result, qualityUrl, result, E_OUTOFMEMORY);
+    //        if (SUCCEEDED(result))
+    //        {
+    //          //wchar_t *qualityUrl = FormatString(L"%s%s", movieIdentifierUrl, (quality == NULL) ? L"" : quality);
+    //          wchar_t *qualityUrl = FormatAbsoluteUrl(baseUrl, (quality == NULL) ? L"" : quality);
+    //          CHECK_POINTER_HRESULT(result, qualityUrl, result, E_OUTOFMEMORY);
 
-              if (SUCCEEDED(result))
-              {
-                // convert segment run entry table to simplier collection
-                segmentsFragments = new CSegmentFragmentCollection();
-                CHECK_POINTER_HRESULT(result, segmentsFragments, result, E_OUTOFMEMORY);
+    //          if (SUCCEEDED(result))
+    //          {
+    //            // convert segment run entry table to simplier collection
+    //            segmentsFragments = new CSegmentFragmentCollection();
+    //            CHECK_POINTER_HRESULT(result, segmentsFragments, result, E_OUTOFMEMORY);
 
-                if (SUCCEEDED(result))
-                {
-                  result = (segmentsFragments->SetBaseUrl(qualityUrl)) ? result : E_OUTOFMEMORY;
-                  result = (segmentsFragments->SetExtraParameters(configurationParameters->GetValue(PARAMETER_NAME_AFHS_EXTRA_PARAMETERS, true, NULL))) ? result : E_OUTOFMEMORY;
-                }
+    //            if (SUCCEEDED(result))
+    //            {
+    //              result = (segmentsFragments->SetBaseUrl(qualityUrl)) ? result : E_OUTOFMEMORY;
+    //              result = (segmentsFragments->SetExtraParameters(configurationParameters->GetValue(PARAMETER_NAME_AFHS_EXTRA_PARAMETERS, true, NULL))) ? result : E_OUTOFMEMORY;
+    //            }
 
-                if (SUCCEEDED(result))
-                {
-                  unsigned int fragmentRunEntryTableIndex  = 0;
+    //            if (SUCCEEDED(result))
+    //            {
+    //              // we must found to which segment belongs first fragment from fragmentRunEntryTable
+    //              // in worst case it will be last segment
 
-                  for (unsigned int i = 0; (SUCCEEDED(result) && (i < segmentRunEntryTable->Count())); i++)
-                  {
-                    CSegmentRunEntry *segmentRunEntry = segmentRunEntryTable->GetItem(i);
-                    unsigned int lastSegment = (i == (segmentRunEntryTable->Count() - 1)) ? (segmentRunEntry->GetFirstSegment() + 1) : segmentRunEntryTable->GetItem(i + 1)->GetFirstSegment();
+    //              unsigned int segmentRunEntryStartIndex = segmentRunEntryTable->Count() - 1;
+    //              for (unsigned int i = 0; (SUCCEEDED(result) && (i < segmentRunEntryTable->Count())); i++)
+    //              {
+    //                CSegmentRunEntry *segmentRunEntry = segmentRunEntryTable->GetItem(i);
+    //                
+    //                if (fragmentRunEntryTable->GetItem(0)->GetFirstFragment() <= (segmentRunEntry->GetFirstSegment() + segmentRunEntry->GetFragmentsPerSegment()))
+    //                {
+    //                  segmentRunEntryStartIndex = i;
+    //                  break;
+    //                }
+    //              }
 
-                    for (unsigned int j = segmentRunEntry->GetFirstSegment(); (SUCCEEDED(result) && (j < lastSegment)); j++)
-                    {
-                      unsigned int totalFragmentsPerSegment = ((segmentRunEntry->GetFragmentsPerSegment() == UINT_MAX) ? fragmentRunEntryTable->Count() : segmentRunEntry->GetFragmentsPerSegment());
+    //              for (unsigned int i = segmentRunEntryStartIndex; (SUCCEEDED(result) && (i < segmentRunEntryTable->Count())); i++)
+    //              {
+    //                CSegmentRunEntry *segmentRunEntry = segmentRunEntryTable->GetItem(i);
+    //                unsigned int lastSegment = (i == (segmentRunEntryTable->Count() - 1)) ? (segmentRunEntry->GetFirstSegment() + 1) : segmentRunEntryTable->GetItem(i + 1)->GetFirstSegment();
 
-                      result = (segmentsFragments->EnsureEnoughSpace(segmentsFragments->Count() + totalFragmentsPerSegment)) ? result : E_OUTOFMEMORY;
+    //                for (unsigned int j = segmentRunEntry->GetFirstSegment(); (SUCCEEDED(result) && (j < lastSegment)); j++)
+    //                {
+    //                  unsigned int totalFragmentsPerSegment = ((segmentRunEntry->GetFragmentsPerSegment() == UINT_MAX) ? fragmentRunEntryTable->Count() : segmentRunEntry->GetFragmentsPerSegment());
 
-                      for (unsigned int k = 0; (SUCCEEDED(result) && (k < totalFragmentsPerSegment)); k++)
-                      {
-                        // choose fragment and get its timestamp
-                        CFragmentRunEntry *fragmentRunEntry = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1));
+    //                }
+    //              }
 
-                        uint64_t timestamp = fragmentRunEntry->GetFirstFragmentTimestamp();
-                        unsigned int firstFragment = fragmentRunEntry->GetFirstFragment();
+    //              //unsigned int fragmentRunEntryTableIndex  = 0;
 
-                        if (fragmentRunEntryTableIndex >= fragmentRunEntryTable->Count())
-                        {
-                          // adjust fragment timestamp
-                          timestamp += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count() + 1) * fragmentRunEntryTable->GetItem(fragmentRunEntryTable->Count() - 1)->GetFragmentDuration();
-                          firstFragment += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count() + 1);
-                        }
-                        fragmentRunEntryTableIndex++;
+    //              //for (unsigned int i = 0; (SUCCEEDED(result) && (i < segmentRunEntryTable->Count())); i++)
+    //              //{
+    //              //  CSegmentRunEntry *segmentRunEntry = segmentRunEntryTable->GetItem(i);
+    //              //  unsigned int lastSegment = (i == (segmentRunEntryTable->Count() - 1)) ? (segmentRunEntry->GetFirstSegment() + 1) : segmentRunEntryTable->GetItem(i + 1)->GetFirstSegment();
 
-                        if (fragmentRunEntry->GetFragmentDuration() != 0)
-                        {
-                          // in some special live session can be some fragments with zero duration
-                          // these fragments can get HTTP 503 error, which disables playback
-                          // just skip these fragments and continue with next fragment
+    //              //  for (unsigned int j = segmentRunEntry->GetFirstSegment(); (SUCCEEDED(result) && (j < lastSegment)); j++)
+    //              //  {
+    //              //    unsigned int totalFragmentsPerSegment = ((segmentRunEntry->GetFragmentsPerSegment() == UINT_MAX) ? fragmentRunEntryTable->Count() : segmentRunEntry->GetFragmentsPerSegment());
 
-                          CSegmentFragment *segmentFragment = new CSegmentFragment(j, firstFragment, timestamp * 1000 / timeScale);
-                          CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
+    //              //    result = (segmentsFragments->EnsureEnoughSpace(segmentsFragments->Count() + totalFragmentsPerSegment)) ? result : E_OUTOFMEMORY;
 
-                          if (SUCCEEDED(result))
-                          {
-                            result = (segmentsFragments->Add(segmentFragment)) ? result : E_FAIL;
-                          }
+    //              //    for (unsigned int k = 0; (SUCCEEDED(result) && (k < totalFragmentsPerSegment)); k++)
+    //              //    {
+    //              //      // choose fragment and get its timestamp
+    //              //      CFragmentRunEntry *fragmentRunEntry = fragmentRunEntryTable->GetItem(min(fragmentRunEntryTableIndex, fragmentRunEntryTable->Count() - 1));
 
-                          if (FAILED(result))
-                          {
-                            FREE_MEM_CLASS(segmentFragment);
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-              FREE_MEM(qualityUrl);
-            }
-            //FREE_MEM(movieIdentifierUrl);
-          }
-          FREE_MEM(baseUrl);
-        }
-        FREE_MEM(mediaPartUrl);
-      }
-      FREE_MEM(serverBaseUrl);
-    }
+    //              //      uint64_t timestamp = fragmentRunEntry->GetFirstFragmentTimestamp();
+    //              //      unsigned int firstFragment = fragmentRunEntry->GetFirstFragment();
+
+    //              //      if (fragmentRunEntryTableIndex >= fragmentRunEntryTable->Count())
+    //              //      {
+    //              //        // adjust fragment timestamp
+    //              //        timestamp += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count() + 1) * fragmentRunEntryTable->GetItem(fragmentRunEntryTable->Count() - 1)->GetFragmentDuration();
+    //              //        firstFragment += (fragmentRunEntryTableIndex - fragmentRunEntryTable->Count() + 1);
+    //              //      }
+    //              //      fragmentRunEntryTableIndex++;
+
+    //              //      if (fragmentRunEntry->GetFragmentDuration() != 0)
+    //              //      {
+    //              //        // in some special live session can be some fragments with zero duration
+    //              //        // these fragments can get HTTP 503 error, which disables playback
+    //              //        // just skip these fragments and continue with next fragment
+
+    //              //        CSegmentFragment *segmentFragment = new CSegmentFragment(j, firstFragment, timestamp * 1000 / timeScale);
+    //              //        CHECK_POINTER_HRESULT(result, segmentFragment, result, E_OUTOFMEMORY);
+
+    //              //        if (SUCCEEDED(result))
+    //              //        {
+    //              //          result = (segmentsFragments->Add(segmentFragment)) ? result : E_FAIL;
+    //              //        }
+
+    //              //        if (FAILED(result))
+    //              //        {
+    //              //          FREE_MEM_CLASS(segmentFragment);
+    //              //        }
+    //              //      }
+    //              //    }
+    //              //  }
+    //              //}
+    //            }
+    //          }
+    //          FREE_MEM(qualityUrl);
+    //        }
+    //        //FREE_MEM(movieIdentifierUrl);
+    //      }
+    //      FREE_MEM(baseUrl);
+    //    }
+    //    FREE_MEM(mediaPartUrl);
+    //  }
+    //  FREE_MEM(serverBaseUrl);
+    //}
 
     FREE_MEM(quality);
+    /*
     FREE_MEM_CLASS(fragmentRunEntryTable);
+    */
 
     if (SUCCEEDED(result))
     {

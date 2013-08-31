@@ -34,6 +34,8 @@ CFragmentRunEntry::~CFragmentRunEntry(void)
 {
 }
 
+/* get methods */
+
 uint32_t CFragmentRunEntry::GetFirstFragment(void)
 {
   return this->firstFragment;
@@ -52,4 +54,28 @@ uint32_t CFragmentRunEntry::GetFragmentDuration(void)
 uint32_t CFragmentRunEntry::GetDiscontinuityIndicator(void)
 {
   return this->discontinuityIndicator;
+}
+
+/* set methods */
+
+/* other methods */
+
+bool CFragmentRunEntry::IsEndOfPresentation(void)
+{
+  return ((this->fragmentDuration == 0) && (this->discontinuityIndicator == DISCONTINUITY_INDICATOR_END_OF_PRESENTATION));
+}
+
+bool CFragmentRunEntry::IsDiscontinuityInFragmentNumbering(void)
+{
+  return ((this->fragmentDuration == 0) && (this->IsDiscontinuityInFragmentNumberingAndTimestamps() || (this->discontinuityIndicator == DISCONTINUITY_INDICATOR_FRAGMENT_NUMBERING)));
+}
+
+bool CFragmentRunEntry::IsDiscontinuityInFragmentTimestamps(void)
+{
+  return ((this->fragmentDuration == 0) && (this->IsDiscontinuityInFragmentNumberingAndTimestamps() || (this->discontinuityIndicator == DISCONTINUITY_INDICATOR_TIMESTAMPS)));
+}
+
+bool CFragmentRunEntry::IsDiscontinuityInFragmentNumberingAndTimestamps(void)
+{
+  return ((this->fragmentDuration == 0) && (this->discontinuityIndicator == DISCONTINUITY_INDICATOR_FRAGMENT_NUMBERING_AND_TIMESTAMPS));
 }
