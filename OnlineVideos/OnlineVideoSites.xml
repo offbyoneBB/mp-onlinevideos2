@@ -897,10 +897,7 @@
       <Description>Videos from Swedish TV3 TV6 TV8 and Sport channels.</Description>
     </Site>
     <Site name="TV4Play" util="TV4Play" agecheck="false" enabled="true" lang="sv">
-      <Description>Videos from Swedish TV4 Play online offer.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.tv4play.se/program]]></item>
-      </Configuration>
+      <Description>Videos from Swedish TV4 Play online offer. Log in for premium content.</Description>
     </Site>
     <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true" lang="--">
       <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country or genre.</Description>
