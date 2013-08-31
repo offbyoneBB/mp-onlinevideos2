@@ -67,6 +67,11 @@ namespace OnlineVideos.Sites
 
         protected bool isPremium = false;
 
+        private bool isLoggedIn()
+        {
+            return GetWebData(loginPostUrl, cc).Trim() == "ok";
+        }
+
         private void login()
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
@@ -75,21 +80,24 @@ namespace OnlineVideos.Sites
                 isPremium = false;
                 return;
             }
-            var loginpage = GetWebData(loginUrl,cc);
+            isPremium = isLoggedIn();
+            if (isPremium) 
+                return;
+            var loginpage = GetWebData(loginUrl, cc);
             var htmlDoc = new HtmlAgilityPack.HtmlDocument();
             htmlDoc.LoadHtml(loginpage);
             var input = htmlDoc.DocumentNode.SelectSingleNode("//input[@id = 'authenticity_token']");
             var authenticity_token = input.GetAttributeValue("value", "");
             string postData = string.Format("user_name={0}&password={1}&remember_me=true&authenticity_token={2}&https=&my_page=true", System.Web.HttpUtility.UrlEncode(username), System.Web.HttpUtility.UrlEncode(password), System.Web.HttpUtility.UrlEncode(authenticity_token));
-            string loginresponse = GetWebDataFromPost(loginPostUrl, postData,cc);
-            isPremium = GetWebData(loginPostUrl, cc).Trim() == "ok";
+            string loginresponse = GetWebDataFromPost(loginPostUrl, postData, cc);
+            isPremium = isLoggedIn();
         }
 
         public override int DiscoverDynamicCategories()
         {
             currentPage = 1;
-            if (!isPremium)
-                login();
+            login();
+
             Settings.Categories.Clear();
             
             Settings.Categories.Add (new RssLink(){Url = programCategoriesUrl, Name = program, HasSubCategories = true});
@@ -279,6 +287,9 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            //To be certain if the user is *really* logged in...
+            login();
+            
             string result = string.Empty;
             video.PlaybackOptions = new Dictionary<string, string>();
             XmlDocument xDoc = GetWebData<XmlDocument>(video.VideoUrl, cc);
