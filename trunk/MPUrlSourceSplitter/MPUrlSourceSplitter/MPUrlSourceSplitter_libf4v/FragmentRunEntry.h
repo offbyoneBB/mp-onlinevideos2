@@ -39,6 +39,8 @@ public:
   CFragmentRunEntry(uint32_t firstFragment, uint64_t firstFragmentTimestamp, uint32_t fragmentDuration, uint32_t discontinuityIndicator);
   ~CFragmentRunEntry(void);
 
+  /* get methods */
+
   // gets first fragment
   // @return : first fragment
   uint32_t GetFirstFragment(void);
@@ -54,6 +56,26 @@ public:
   // gets discontinuity indicator
   // @return : discontinuity indicator or DISCONTINUITY_INDICATOR_NOT_AVAILABLE if not available
   uint32_t GetDiscontinuityIndicator(void);
+
+  /* set methods */
+
+  /* other methods */
+
+  // tests is end of presentation is signaled
+  // @return : true if end of presentation is signaled, false otherwise
+  bool IsEndOfPresentation(void);
+
+  // tests if discontinuity in fragment numbering is signaled
+  // @return : true if discontinuity in fragment numbering is signaled, false otherwise
+  bool IsDiscontinuityInFragmentNumbering(void);
+
+  // tests if discontinuity in timestamps is signaled
+  // @return : true if discontinuity in timestamps is signaled, false otherwise
+  bool IsDiscontinuityInFragmentTimestamps(void);
+
+  // tests if discontinuity in fragment numbering and timestamps is signaled
+  // @return : true if discontinuity in fragment numbering and timestamps is signaled, false otherwise
+  bool IsDiscontinuityInFragmentNumberingAndTimestamps(void);
 
 private:
   // stores the identifying number of the first fragment in this run of fragments with the same duration
