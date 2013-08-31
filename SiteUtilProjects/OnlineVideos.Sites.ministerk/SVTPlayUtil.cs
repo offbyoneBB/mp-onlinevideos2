@@ -322,7 +322,7 @@ namespace OnlineVideos.Sites
                                 {
                                     if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
 
-                                    cat.Name = HttpUtility.HtmlDecode((li.Descendants("h3").Select(h => h.InnerText).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
+                                    cat.Name = HttpUtility.HtmlDecode((li.Descendants("span").Where(c => c.GetAttributeValue("class", "").Equals("playCategoryCaption")).Select(h => h.InnerText).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
 
                                     cat.Thumb = li.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
                                     if (!string.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(categoryUrl), cat.Thumb).AbsoluteUri;
