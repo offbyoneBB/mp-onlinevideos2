@@ -74,6 +74,16 @@ namespace OnlineVideos.Sites
                         subcat.Url = String.Format(baseUrl, item.Value<string>("_id"));
                         subcat.ParentCategory = parentCategory;
                         subcat.HasSubCategories = subcat.Name != "wideo";
+
+                        JArray types = item["types"] as JArray;
+                        if (types != null)
+                            foreach (JToken typ in types)
+                            {
+                                JValue val = typ as JValue;
+                                if (val != null && val.Value.Equals("directory_video"))
+                                    subcat.HasSubCategories = false;
+                            }
+
                         subcat.Thumb = getImageUrl(item);
                         result.Add(subcat);
                     }
