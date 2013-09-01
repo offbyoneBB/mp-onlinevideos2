@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--A-->
+  <string name="Airdate">Приказано</string>
+  <string name="AlreadyDownloading">Фајл се већ скида</string>
+  <string name="All">Све</string>
+  <string name="Actions">Дејства</string>
+  <string name="Actors">Глумци</string>
+  <string name="AddComment">Додај коментар</string>
+  <string name="AddToPlaylist">Дадај у листу за пуштање</string>
+  <string name="AddToMySites">Додај у моје странице</string>
+  <string name="AddToFavourites">Додај у моје фаворите</string>
+  <string name="AddingToFavorites">додавање у фаворите</string>
+  <string name="AutomaticUpdate">Аутоматско ажурирање</string>
+  <string name="AutomaticUpdateDisabled">Аутоматско ажурирање онемогућено</string>
+  <!--B-->
+  <string name="Broken">Не ради</string>
+  <string name="Buffered">учитано</string>
+  <!--C-->
+  <string name="Cancel">Одустани</string>
+  <string name="Category">Категорија</string>
+  <string name="CategoryNotFound">Категорија није пронађена</string>
+  <string name="Categories">Категорије</string>
+  <string name="Creator">Креатор</string>
+  <string name="CreateNewPlaylist">Направи нову листу за пуштање</string>
+  <string name="CheckingForPluginUpdate">провера за постојање новије верзије додатка</string>
+  <string name="Concurrent">истовремен</string>
+  <!--D-->
+  <string name="Date">Датум</string>
+  <string name="DateOfRelease">Датум издавања</string>
+  <string name="Directors">Режисери</string>
+  <string name="Download">Скидање са интернета</string>
+  <string name="DownloadUserdefined">Скини у директоријум корисника</string>
+  <string name="Downloading">Фајл се скида са интернета</string>
+  <string name="DownloadingDescription">Прикажи листу фјалова који се тренутно скидају</string>
+  <string name="DownloadingSubtitle">скидање титлова</string>
+  <string name="DownloadFailed">Скидање није успело: {0}</string>
+  <string name="DownloadCancelled">Скидање је отказано</string>
+  <string name="DownloadComplete">Скидање је завршено</string>
+  <string name="DownloadStarted">Скидање је започело</string>
+  <string name="DownloadedVideos">Скинута видеа</string>
+  <string name="DownloadsWillBeAborted">Скидање ће бити прекинуто</string>
+  <string name="Delete">Обриши</string>
+  <string name="DeletePlaylist">Обриши листу за пуштање</string>
+  <string name="DeleteAll">Обриши све</string>
+  <string name="Default">Подразумевано</string>
+  <string name="Done">Готово</string>
+  <string name="DeletingOldThumbs">Брисање старих сличица</string>
+  <!--E-->
+  <string name="Error">Грешка</string>
+  <string name="EnterPin">Унеси пин</string>
+  <!--F-->
+  <string name="Favourites">Фаворити</string>
+  <string name="Filter">Филтер</string>
+  <string name="FullUpdate">Потпуно ажурирање</string>
+  <!--G-->
+  <string name="Genre">Жанр</string>
+  <string name="GettingVideoDetails">примање видео детаља</string>
+  <string name="GettingCategoryVideos">примање видео категорије</string>
+  <string name="GettingFavoriteVideos">примање омиљних видео снимака</string>
+  <string name="GettingSearchResults">примање резултата претраживања</string>
+  <string name="GettingRelatedVideos">примање сродних видео снимака</string>
+  <string name="GettingFilteredVideos">примање филтрираних видеа</string>
+  <string name="GettingNextPageVideos">примање видеа за следећу страницу</string>
+  <string name="GettingPreviousPageVideos">примање видеа за претходну страницу</string>
+  <string name="GettingPlaybackUrlsForVideo">примање УРЛ-с плејлисте за видео</string>
+  <string name="GettingDynamicCategories">примање динамичке категорије</string>
+  <string name="GettingReports">примање извештаја са веб сервиса</string>
+  <string name="GettingSiteXml">примање xml сајта са веб сервиса</string>
+  <string name="GettingIcon">примање иконе сајта са веб сервиса</string>
+  <string name="GettingBanner">примање банера сајта са веб сервиса</string>
+  <string name="GettingDll">примање dll фајлова са веб сервиса</string>
+  <string name="Groups">Групе</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="LatestVersionRequired">Потребна најновија верзија ({0})</string>
+  <string name="Language">Језик</string>
+  <string name="LayoutList">Рапоред: Листа</string>
+  <string name="LayoutIcons">Распоред: Иконе</string>
+  <string name="LayoutBigIcons">Распоред: Велике иконе</string>
+  <!--M-->
+  <string name="ManageSites">Среди сајтове</string>
+  <string name="MaxResults">Максималан број резултата</string>
+  <!--N-->
+  <string name="Name">Име</string>
+  <string name="NextPage">Следећа страница</string>
+  <string name="NewVideos">Нови видеи</string>
+  <string name="None">Ниједан</string>
+  <string name="NoVideoFound">Видео није пронађен</string>
+  <string name="NoReportsForSite">Нема извештаја за овај сајт</string>
+  <string name="NewDllDownloaded">Нови dll фајл је скинут</string>
+  <string name="NewSearch">Ново претраживање</string>
+  <!--O-->
+  <!--P-->
+  <!--Q-->
+  <!--R-->
+  <!--S-->
+  <!--T-->
+  <!--U-->
+  <!--V-->
+  <!--W-->
+  <!--Y-->
+  <!--Strings from the settings file-->
+</resources>
