@@ -722,7 +722,7 @@ namespace OnlineVideos.MediaPortal1
         {
             confPlayer.Stop();
             string info = "";
-            bool succes = confPlayer.Play("http://87.106.7.69/OnlineVideosWebService/TestVideos/Test.flv", videopanel, out info);
+			bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.flv", videopanel, out info);
             tbxFLVSplitter.Text = info;
             if (succes) chkFLVSplitterInstalled.CheckState = CheckState.Checked; else chkFLVSplitterInstalled.CheckState = CheckState.Unchecked;
         }
@@ -731,7 +731,7 @@ namespace OnlineVideos.MediaPortal1
         {
             confPlayer.Stop();
             string info = "";
-            bool succes = confPlayer.Play("http://87.106.7.69/OnlineVideosWebService/TestVideos/Test.mp4", videopanel, out info);
+			bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.mp4", videopanel, out info);
             tbxMP4Splitter.Text = info;
             if (succes) chkMP4SplitterInstalled.CheckState = CheckState.Checked; else chkMP4SplitterInstalled.CheckState = CheckState.Unchecked;
         }
@@ -740,7 +740,7 @@ namespace OnlineVideos.MediaPortal1
         {
             confPlayer.Stop();
             string info = "";
-            bool succes = confPlayer.Play("http://87.106.7.69/OnlineVideosWebService/TestVideos/Test.avi", videopanel, out info);
+			bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.avi", videopanel, out info);
             tbxAVISplitter.Text = info;
             if (succes) chkAVISplitterInstalled.CheckState = CheckState.Checked; else chkAVISplitterInstalled.CheckState = CheckState.Unchecked;
         }
@@ -749,7 +749,7 @@ namespace OnlineVideos.MediaPortal1
         {
             confPlayer.Stop();
             string info = "";
-            bool succes = confPlayer.Play("http://87.106.7.69/OnlineVideosWebService/TestVideos/Test.wmv", videopanel, out info);
+			bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.wmv", videopanel, out info);
             tbxWMVSplitter.Text = info;
             if (succes) chkWMVSplitterInstalled.CheckState = CheckState.Checked; else chkWMVSplitterInstalled.CheckState = CheckState.Unchecked;
         }
@@ -758,7 +758,7 @@ namespace OnlineVideos.MediaPortal1
         {
             confPlayer.Stop();
             string info = "";
-            bool succes = confPlayer.Play("http://87.106.7.69/OnlineVideosWebService/TestVideos/Test.mov", videopanel, out info);
+			bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.mov", videopanel, out info);
             tbxMOVSplitter.Text = info;
             if (succes) chkMOVSplitterInstalled.CheckState = CheckState.Checked; else chkMOVSplitterInstalled.CheckState = CheckState.Unchecked;
         }

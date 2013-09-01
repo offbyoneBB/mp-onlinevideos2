@@ -88,7 +88,7 @@ namespace OnlineVideos
                 {
                     string siteName = (item.Other as OnlineVideos.OnlineVideosWebservice.Site).Name;
                     string localSiteImage = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + siteName + ".png");
-                    string onlineSiteImage = "http://87.106.7.69/OnlineVideosWebService/Icons/" + siteName + ".png";
+					string onlineSiteImage = "http://onlinevideos.nocrosshair.de/Icons/" + siteName + ".png";
                     urls = new string[] { localSiteImage, onlineSiteImage };
                 }
                 if (urls == null) continue;

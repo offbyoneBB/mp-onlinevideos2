@@ -2164,7 +2164,7 @@
 			// onlineVideosService1
 			// 
 			this.onlineVideosService1.Credentials = null;
-			this.onlineVideosService1.Url = "http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx";
+			this.onlineVideosService1.Url = "http://onlinevideos.nocrosshair.de/OnlineVideos.asmx";
 			this.onlineVideosService1.UseDefaultCredentials = false;
 			// 
 			// Configuration
