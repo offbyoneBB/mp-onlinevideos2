@@ -3,7 +3,8 @@
 namespace OnlineVideos
 {
     /// <summary>
-    /// This Interface defines the methods needed to store and retrieve arbitrary configurational data for fields tagged with the Category attribute 'OnlineVideosUserConfiguration'.
+    /// This Interface defines the methods needed to store and retrieve arbitrary configurationa data 
+	/// for fields tagged with the <see cref="CategoryAttribute"/> and category "OnlineVideosUserConfiguration".
     /// </summary>
     public interface IUserStore
     {

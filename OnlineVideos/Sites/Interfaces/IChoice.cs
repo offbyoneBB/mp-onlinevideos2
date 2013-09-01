@@ -5,8 +5,9 @@ namespace OnlineVideos
 {
     /// <summary>
     /// If a <see cref="SiteUtilBase"/> implements this interface, the site has multiple choices for a video.<br/>
-    /// The GUI will show a details view with a selection of videos, taken from <see cref="getOtherVideoList"/>.
+	/// The GUI will show a details view with a selection of videos, taken from <see cref="getVideoChoices"/>.
     /// </summary>
+	/// <remarks>An example would be a list of Trailers for a given movie.</remarks>
     public interface IChoice
     {
         /// <summary>
