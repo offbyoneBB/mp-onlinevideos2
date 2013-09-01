@@ -1752,7 +1752,7 @@
       <Description>A Huge selection of hardcore videos is what makes Tube8 the best porn tube site. The site contains 100% user-uploaded free porn.</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<div\sid="video_i\d+"[^>]*>\s*
-<a\shref="(?<VideoUrl>[^"]+)">\s*
+<a\shref="(?<VideoUrl>[^"]+)"[^>]*>\s*
 <img\s(?:(?!\ssrc).)*\ssrc="(?<ImageUrl>[^"]+)".*?/></a>\s*
 .*?<a\shref="[^"]*"\stitle="(?<Title>[^"]+)">\s*
 (?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>]]></item>
