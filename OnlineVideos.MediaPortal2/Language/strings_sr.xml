@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--A-->
+  <string name="OnlineVideos.Airdate">Приказано</string>
+  <string name="OnlineVideos.AlreadyDownloading">Фајл се већ скида</string>
+  <string name="OnlineVideos.All">Све</string>
+  <string name="OnlineVideos.Actions">Дејства</string>
+  <string name="OnlineVideos.Actors">Глумци</string>
+  <string name="OnlineVideos.AddComment">Додај коментар</string>
+  <string name="OnlineVideos.AddToPlaylist">Дадај у листу за пуштање</string>
+  <string name="OnlineVideos.AddToMySites">Додај у моје странице</string>
+  <string name="OnlineVideos.AddToFavourites">Додај у моје фаворите</string>
+  <string name="OnlineVideos.AddingToFavorites">додавање у фаворите</string>
+  <string name="OnlineVideos.AutomaticUpdate">Аутоматско ажурирање</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">Аутоматско ажурирање онемогућено</string>
+  <!--B-->
+  <string name="OnlineVideos.Broken">Не ради</string>
+  <string name="OnlineVideos.Buffered">учитано</string>
+  <!--C-->
+  <string name="OnlineVideos.Cancel">Одустани</string>
+  <string name="OnlineVideos.Category">Категорија</string>
+  <string name="OnlineVideos.CategoryNotFound">Категорија није пронађена</string>
+  <string name="OnlineVideos.Categories">Категорије</string>
+  <string name="OnlineVideos.Creator">Креатор</string>
+  <string name="OnlineVideos.CreateNewPlaylist">Направи нову листу за пуштање</string>
+  <string name="OnlineVideos.CheckingForPluginUpdate">провера за постојање новије верзије додатка</string>
+  <string name="OnlineVideos.Concurrent">истовремен</string>
+  <!--D-->
+  <string name="OnlineVideos.Date">Датум</string>
+  <string name="OnlineVideos.DateOfRelease">Датум издавања</string>
+  <string name="OnlineVideos.Directors">Режисери</string>
+  <string name="OnlineVideos.Download">Скидање са интернета</string>
+  <string name="OnlineVideos.DownloadUserdefined">Скини у директоријум корисника</string>
+  <string name="OnlineVideos.Downloading">Фајл се скида са интернета</string>
+  <string name="OnlineVideos.DownloadingDescription">Прикажи листу фјалова који се тренутно скидају</string>
+  <string name="OnlineVideos.DownloadingSubtitle">скидање титлова</string>
+  <string name="OnlineVideos.DownloadFailed">Скидање није успело: {0}</string>
+  <string name="OnlineVideos.DownloadCancelled">Скидање је отказано</string>
+  <string name="OnlineVideos.DownloadComplete">Скидање је завршено</string>
+  <string name="OnlineVideos.DownloadStarted">Скидање је започело</string>
+  <string name="OnlineVideos.DownloadedVideos">Скинута видеа</string>
+  <string name="OnlineVideos.DownloadsWillBeAborted">Скидање ће бити прекинуто</string>
+  <string name="OnlineVideos.Delete">Обриши</string>
+  <string name="OnlineVideos.DeletePlaylist">Обриши листу за пуштање</string>
+  <string name="OnlineVideos.DeleteAll">Обриши све</string>
+  <string name="OnlineVideos.Default">Подразумевано</string>
+  <string name="OnlineVideos.Done">Готово</string>
+  <string name="OnlineVideos.DeletingOldThumbs">Брисање старих сличица</string>
+  <!--E-->
+  <string name="OnlineVideos.Error">Грешка</string>
+  <string name="OnlineVideos.EnterPin">Унеси пин</string>
+  <!--F-->
+  <string name="OnlineVideos.Favourites">Фаворити</string>
+  <string name="OnlineVideos.Filter">Филтер</string>
+  <string name="OnlineVideos.FullUpdate">Потпуно ажурирање</string>
+  <!--G-->
+  <string name="OnlineVideos.Genre">Жанр</string>
+  <string name="OnlineVideos.GettingVideoDetails">примање видео детаља</string>
+  <string name="OnlineVideos.GettingCategoryVideos">примање видео категорије</string>
+  <string name="OnlineVideos.GettingFavoriteVideos">примање омиљних видео снимака</string>
+  <string name="OnlineVideos.GettingSearchResults">примање резултата претраживања</string>
+  <string name="OnlineVideos.GettingRelatedVideos">примање сродних видео снимака</string>
+  <string name="OnlineVideos.GettingFilteredVideos">примање филтрираних видеа</string>
+  <string name="OnlineVideos.GettingNextPageVideos">примање видеа за следећу страницу</string>
+  <string name="OnlineVideos.GettingPreviousPageVideos">примање видеа за претходну страницу</string>
+  <string name="OnlineVideos.GettingPlaybackUrlsForVideo">примање УРЛ-с плејлисте за видео</string>
+  <string name="OnlineVideos.GettingDynamicCategories">примање динамичке категорије</string>
+  <string name="OnlineVideos.GettingReports">примање извештаја са веб сервиса</string>
+  <string name="OnlineVideos.GettingSiteXml">примање xml сајта са веб сервиса</string>
+  <string name="OnlineVideos.GettingIcon">примање иконе сајта са веб сервиса</string>
+  <string name="OnlineVideos.GettingBanner">примање банера сајта са веб сервиса</string>
+  <string name="OnlineVideos.GettingDll">примање dll фајлова са веб сервиса</string>
+  <string name="OnlineVideos.Groups">Групе</string>
+  <!--H-->
+  <!--I-->
+  <!--L-->
+  <string name="OnlineVideos.LatestVersionRequired">Потребна најновија верзија ({0})</string>
+  <string name="OnlineVideos.Language">Језик</string>
+  <string name="OnlineVideos.LayoutList">Рапоред: Листа</string>
+  <string name="OnlineVideos.LayoutIcons">Распоред: Иконе</string>
+  <string name="OnlineVideos.LayoutBigIcons">Распоред: Велике иконе</string>
+  <!--M-->
+  <string name="OnlineVideos.ManageSites">Среди сајтове</string>
+  <string name="OnlineVideos.MaxResults">Максималан број резултата</string>
+  <!--N-->
+  <string name="OnlineVideos.Name">Име</string>
+  <string name="OnlineVideos.NextPage">Следећа страница</string>
+  <string name="OnlineVideos.NewVideos">Нови видеи</string>
+  <string name="OnlineVideos.None">Ниједан</string>
+  <string name="OnlineVideos.NoVideoFound">Видео није пронађен</string>
+  <string name="OnlineVideos.NoReportsForSite">Нема извештаја за овај сајт</string>
+  <string name="OnlineVideos.NewDllDownloaded">Нови dll фајл је скинут</string>
+  <string name="OnlineVideos.NewSearch">Ново претраживање</string>
+  <!--O-->
+  <!--P-->
+  <!--Q-->
+  <!--R-->
+  <!--S-->
+  <!--T-->
+  <!--U-->
+  <!--V-->
+  <!--W-->
+  <!--Y-->
+  <!--Strings from the settings file-->
+</resources>
