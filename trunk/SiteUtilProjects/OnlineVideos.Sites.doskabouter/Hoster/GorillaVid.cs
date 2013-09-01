@@ -61,21 +61,11 @@ namespace OnlineVideos.Hoster
                     if (!string.IsNullOrEmpty(postData))
                         page = SiteUtilBase.GetWebDataFromPost(url, postData);
                 }
-
-                //divx
-                string link = DivxProvider(url, page);
-                if (!string.IsNullOrEmpty(link))
-                {
-                    videoType = VideoType.divx;
-                    return link;
-                }
-                //flv
-                link = FlashProvider(url, page);
-                if (!string.IsNullOrEmpty(link))
-                {
-                    videoType = VideoType.flv;
-                    return link;
-                }
+                //file:\s*'(?<Title>[^"]*)',
+                Match n = Regex.Match(page, @"file:\s*'(?<url>[^']*)'");
+                if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
+                n = Regex.Match(page, @"file:\s*""(?<url>[^""]*)""");
+                if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
             }
             return String.Empty;
         }
