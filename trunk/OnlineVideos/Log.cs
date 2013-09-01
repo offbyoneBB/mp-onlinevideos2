@@ -3,7 +3,7 @@
 namespace OnlineVideos
 {
 	/// <summary>
-	/// This interface defines the contract a class can implement that wants to receive all log message that are generated in the OnlineVideos Core and Sites.
+	/// This interface defines the contract a class should implement that wants to receive all log messages generated in the OnlineVideos Core and Sites.
 	/// </summary>
     public interface ILog
     {
