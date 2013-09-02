@@ -188,11 +188,11 @@ namespace OnlineVideos.Hoster
 				case 87:
                     return s.Slice(6, 27) + s[4] + s.Slice(28, 39) + s[27] + s.Slice(40, 59) + s[2] + s.Slice(60);
 				case 86:
-                    return s.Slice(5, 40) + s[3] + s.Slice(41, 48) + s[0] + s.Slice(49, 86);
+					return s.Slice(81, 73, -1) + s[84] + s.Slice(72, 58, -1) + s[0] + s.Slice(57, 35, -1) + s[85] + s.Slice(34, 0, -1);
 				case 85:
                     return s.Slice(83, 34, -1) + s[0] + s.Slice(33, 27, -1) + s[3] + s.Slice(26, 19, -1) + s[34] + s.Slice(18, 3, -1) + s[27];
 				case 84:
-                    return s.Slice(5, 40) + s[3] + s.Slice(41, 48) + s[0] + s.Slice(49, 84);
+					return s.Slice(81, 36, -1) + s[0] + s.Slice(35, 2, -1);
 				case 83:
                     return s.Slice(81, 64, -1) + s[82] + s.Slice(63, 52, -1) + s[45] + s.Slice(51, 45, -1) + s[1] + s.Slice(44, 1, -1) + s[0];
 				case 82:
