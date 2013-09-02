@@ -1,17 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
     public class VodTvpUtil : GenericSiteUtil
     {
+        const string categoryUrl = @"http://www.api.v3.tvp.pl/shared/listing.php?dump=json&direct=true&count=150&parent_id={0}";
+
         public override int DiscoverDynamicCategories()
         {
             if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
 
-            foreach (Category cat in getCats(String.Format(baseUrl, "1785454"), null))
+            foreach (Category cat in Settings.Categories)
+            {
+                cat.HasSubCategories = true;
+                cat.Other = true;
+            }
+
+            foreach (Category cat in getCats(String.Format(categoryUrl, "1785454"), null))
                 Settings.Categories.Add(cat);
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
@@ -19,6 +28,14 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
+            if (true.Equals(parentCategory.Other))
+            {
+                int res = base.DiscoverSubCategories(parentCategory);
+                foreach (Category cat in parentCategory.SubCategories)
+                    cat.Other = parentCategory.Other;
+                return res;
+            }
+
             parentCategory.SubCategories = getCats(((RssLink)parentCategory).Url, parentCategory);
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
@@ -26,6 +43,8 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
+            if (true.Equals(category.Other))
+                return base.getVideoList(category);
             string webData = GetWebData(((RssLink)category).Url);
             JObject contentData = JObject.Parse(webData);
             if (contentData != null)
@@ -35,26 +54,56 @@ namespace OnlineVideos.Sites
                 {
                     List<VideoInfo> result = new List<VideoInfo>();
                     foreach (JToken item in items)
-                    {
-                        VideoInfo video = new VideoInfo();
-                        video.Title = item.Value<string>("title");
-                        video.VideoUrl = String.Format(videoUrlFormatString, item.Value<string>("_id"));
-                        video.Description = item.Value<string>("description_root");
-                        video.ImageUrl = getImageUrl(item);
-                        video.Airdate = item.Value<string>("publication_start_dt") + ' ' + item.Value<string>("publication_start_hour");
-                        result.Add(video);
-                    }
+                        if (!item.Value<bool>("payable") && item.Value<int>("play_mode") == 1)
+                        {
+                            VideoInfo video = new VideoInfo();
+                            video.Title = item.Value<string>("title");
+                            video.VideoUrl = String.Format(videoListRegExFormatString, item.Value<string>("_id"));
+                            video.Description = item.Value<string>("description_root");
+                            video.ImageUrl = getImageUrl(item);
+                            video.Airdate = item.Value<string>("publication_start_dt") + ' ' + item.Value<string>("publication_start_hour");
+                            result.Add(video);
+                        }
                     return result;
                 }
             }
             return null;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override String getUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl);
-            JObject obj = JObject.Parse(webData);
-            return obj.Value<string>("url");
+            JObject content = JObject.Parse(webData);
+
+            if (content != null)
+            {
+                JArray formats = content["formats"] as JArray;
+                if (formats != null)
+                {
+                    SortedList<int, string> options = new SortedList<int, string>();
+                    foreach (JToken format in formats)
+                    {
+                        int bitrate = format.Value<int>("totalBitrate");
+                        options.Add(bitrate, format.Value<string>("url"));
+                    }
+                    Dictionary<string, string> result = new Dictionary<string, string>();
+                    foreach (KeyValuePair<int, string> option in options)
+                    {
+                        string key = String.Format("{0}Kb", option.Key / 1000);
+                        if (!result.ContainsKey(key))
+                            result.Add(key, option.Value);
+                    }
+                    if (result.Count > 1)
+                        video.PlaybackOptions = result;
+
+                    if (result.Count >= 1)
+                        return result.Last().Value;
+
+                    return null;
+                }
+            }
+            return null;
+
         }
 
         private List<Category> getCats(string url, Category parentCategory)
@@ -71,7 +120,7 @@ namespace OnlineVideos.Sites
                     {
                         RssLink subcat = new RssLink();
                         subcat.Name = item.Value<string>("title");
-                        subcat.Url = String.Format(baseUrl, item.Value<string>("_id"));
+                        subcat.Url = String.Format(categoryUrl, item.Value<string>("_id"));
                         subcat.ParentCategory = parentCategory;
                         subcat.HasSubCategories = subcat.Name != "wideo";
 

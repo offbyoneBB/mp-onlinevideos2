@@ -1408,9 +1408,14 @@
     <Site name="Vod.tvp" util="VodTvp" agecheck="false" enabled="true" lang="pl">
       <Description>Telewizja Polsa S.A.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.api.v3.tvp.pl/shared/listing.php?dump=json&direct=true&count=150&parent_id={0}]]></item>
-        <item key="videoUrlFormatString"><![CDATA[http://www.tvp.pl/shared/cdn/tokenizer_v2.php?object_id={0}&sdt_version=sdt-v2]]></item>
+        <item key="baseUrl"><![CDATA[http://vod.tvp.pl/]]></item>
+        <item key="videoListRegExFormatString"><![CDATA[http://www.tvp.pl/shared/cdn/tokenizer_v2.php?object_id={0}&sdt_version=sdt-v2]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li>\s*<a\shref="(?<url>/serwisy-informacyjne/[^"]*)">(?<title>[^<]*)</a>\s*</li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<li>\s*<strong><a\shref="[^"]*?(?<VideoUrl>[\d]+)">(?<Title>[^<]*)</a></strong>\s*<span><a\shref="[^"]*">(?<Airdate>[^<]*)</a></span>\s*</li>]]></item>
       </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Serwisy Informacyjne">http://vod.tvp.pl/</Category>
+      </Categories>
     </Site>
     <Site name="Yle Areena" util="YleAreena" agecheck="false" enabled="true" lang="fi">
       <Description>Areena - Ylen netti-tv ja -radio</Description>
