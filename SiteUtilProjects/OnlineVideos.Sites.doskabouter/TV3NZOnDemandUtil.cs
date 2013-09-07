@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
 using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
@@ -20,6 +22,7 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string res = base.getUrl(video);
+            XmlDocument doc = new XmlDocument();
             string[] urlParts = video.VideoUrl.Split('.');
 
             if (urlParts[1] == "four")
@@ -27,20 +30,26 @@ namespace OnlineVideos.Sites
             else
                 res = res.Replace("@@", "tv3");
 
-            video.PlaybackOptions = new Dictionary<string, string>();
-            string[] bitRates = { "330K", "700K" };
-            foreach (string bitRate in bitRates)
-            {
+            doc.Load(res);
 
-                RtmpUrl rtmpUrl = new RtmpUrl(res + bitRate)
+            video.PlaybackOptions = new Dictionary<string, string>();
+
+            string meta_base = doc.SelectSingleNode("//smil/head/meta").Attributes["base"].Value;
+
+            foreach (XmlNode node in doc.SelectNodes("//smil/body/switch/video"))
+            {
+                int bitRate = int.Parse(node.Attributes["system-bitrate"].Value) / 1024;
+
+                RtmpUrl rtmpUrl = new RtmpUrl(meta_base + "/" + node.Attributes["src"].Value)
                 {
                     SwfVerify = true,
-                    SwfUrl = @"http://static.mediaworks.co.nz/video/jw/5.10/df.swf"
+                    SwfUrl = @"http://static.mediaworks.co.nz/video/jw/6.50/jwplayer.flash.swf"
                 };
 
-                video.PlaybackOptions.Add(bitRate, rtmpUrl.ToString());
+                video.PlaybackOptions.Add(bitRate.ToString() + "K", rtmpUrl.ToString());
             }
-            return video.PlaybackOptions[bitRates[1]];
+
+            return video.PlaybackOptions.Last().Value;
         }
     }
 }
