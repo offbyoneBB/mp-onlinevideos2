@@ -34,7 +34,10 @@ namespace OnlineVideos.Sites
 
             video.PlaybackOptions = new Dictionary<string, string>();
 
-            string meta_base = doc.SelectSingleNode("//smil/head/meta").Attributes["base"].Value;
+            string meta_base = @"rtmpe://202.49.175.79/vod/_definst_"; // found with wireshark. apparently value in 
+            //meta/base (rtmpe://vod-geo.mediaworks.co.nz/vod/_definst_) is just a decoy
+
+            //old: doc.SelectSingleNode("//smil/head/meta").Attributes["base"].Value;
 
             foreach (XmlNode node in doc.SelectNodes("//smil/body/switch/video"))
             {
