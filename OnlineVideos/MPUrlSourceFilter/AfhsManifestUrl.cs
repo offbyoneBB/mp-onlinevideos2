@@ -12,7 +12,7 @@ namespace OnlineVideos.MPUrlSourceFilter
     {
         #region Private fields
 
-        private String extraParameters;
+        private String segmentFragmentUrlExtraParameters;
 
         #endregion
 
@@ -40,7 +40,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         public AfhsManifestUrl(Uri uri)
             : base(uri)
         {
-            this.ExtraParameters = AfhsManifestUrl.DefaultExtraParameters;
+            this.SegmentFragmentUrlExtraParameters = AfhsManifestUrl.DefaultSegmentFragmentUrlExtraParameters;
         }
 
         #endregion
@@ -48,22 +48,22 @@ namespace OnlineVideos.MPUrlSourceFilter
         #region Properties
 
         /// <summary>
-        /// Gets or sets extra parameters attached to each segment and fragment URL. Extra parameters should start with '?'.
+        /// Gets or sets segment and fragment extra parameters attached to each segment and fragment URL. Segment and fragment extra parameters should start with '?'.
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// <para>The <see cref="ExtraParameters"/> is <see langword="null"/>.</para>
         /// </exception>
-        public String ExtraParameters
+        public String SegmentFragmentUrlExtraParameters
         {
-            get { return this.extraParameters; }
+            get { return this.segmentFragmentUrlExtraParameters; }
             set
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("ExtraParameters");
+                    throw new ArgumentNullException("SegmentFragmentUrlExtraParameters");
                 }
 
-                this.extraParameters = value;
+                this.segmentFragmentUrlExtraParameters = value;
             }
         }
 
@@ -81,9 +81,9 @@ namespace OnlineVideos.MPUrlSourceFilter
         {
             ParameterCollection parameters = new ParameterCollection();
 
-            if (this.ExtraParameters != DefaultExtraParameters)
+            if (this.SegmentFragmentUrlExtraParameters != AfhsManifestUrl.DefaultSegmentFragmentUrlExtraParameters)
             {
-                parameters.Add(new Parameter(AfhsManifestUrl.ParameterExtraParameters, this.ExtraParameters));
+                parameters.Add(new Parameter(AfhsManifestUrl.ParameterSegmentFragmentUrlExtraParameters, this.SegmentFragmentUrlExtraParameters));
             }
 
             // return formatted connection string
@@ -97,19 +97,19 @@ namespace OnlineVideos.MPUrlSourceFilter
         // common parameters of AFHS protocol (based on manifest URL) for MediaPortal Url Source Splitter
 
         /// <summary>
-        /// Specifies extra parameters added to each segment and fragment for AFHS protocol.
+        /// Specifies segment and fragment extra parameters added to each segment and fragment for AFHS protocol.
         /// </summary>
-        protected static String ParameterExtraParameters = "AfhsExtraParameters";
+        protected static String ParameterSegmentFragmentUrlExtraParameters = "AfhsSegmentFragmentUrlExtraParameters";
 
         // default values for some parameters
 
         /// <summary>
-        /// Default extra parameters for MediaPortal Url Source Splitter.
+        /// Default segment and fragment extra parameters for MediaPortal Url Source Splitter.
         /// </summary>
         /// <remarks>
         /// This value is <see cref="System.String.Empty"/>.
         /// </remarks>
-        public static String DefaultExtraParameters = String.Empty;
+        public static String DefaultSegmentFragmentUrlExtraParameters = String.Empty;
 
         #endregion
     }
