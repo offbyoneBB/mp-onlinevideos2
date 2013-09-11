@@ -17,12 +17,14 @@ namespace OnlineVideos.Sites
 
         private const string StandardAdvancedApiUrl = "http://vimeo.com/api/rest/v2";
         private string currentVideoListUrl;
+        private Regex urlRegex;
         private int pageNr = 0;
         private int nPages = 0;
 
         public override void Initialize(SiteSettings siteSettings)
         {
             resolveHoster = HosterResolving.FromUrl;
+            urlRegex = new Regex(@"http://vimeo.com/(?<id>[^/]*)/(?<kind>(channels|videos|likes|groups|albums))/", defaultRegexOptions);
             base.Initialize(siteSettings);
         }
 
@@ -37,7 +39,7 @@ namespace OnlineVideos.Sites
 
                 foreach (Category cat in Settings.Categories)
                 {
-                    Match m = Regex.Match(((RssLink)cat).Url, @"http://vimeo.com/user[^/]*/(?<kind>[^/]*)");
+                    Match m = Regex.Match(((RssLink)cat).Url, @"http://vimeo.com/[^/]*/(?<kind>(channels|groups|albums)*)/");
                     if (m.Success)
                         cat.HasSubCategories = "channels".Equals(m.Groups["kind"].Value) ||
                             "groups".Equals(m.Groups["kind"].Value) || "albums".Equals(m.Groups["kind"].Value);
@@ -97,13 +99,13 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            Match m = Regex.Match(((RssLink)parentCategory).Url, @"http://vimeo.com/(?<username>user[^/]*)/(?<kind>[^/]*)");
+            Match m = urlRegex.Match(((RssLink)parentCategory).Url);
             if (!m.Success)
                 return base.DiscoverSubCategories(parentCategory);
             else
             {
                 string kind = m.Groups["kind"].Value;
-                string url = StandardAdvancedApiUrl + "?method=vimeo." + kind + ".getall&user_id=" + m.Groups["username"].Value;
+                string url = StandardAdvancedApiUrl + "?method=vimeo." + kind + ".getall&user_id=" + m.Groups["id"].Value;
                 return subcatsFromVimeo(parentCategory, url, kind);
             }
         }
@@ -125,7 +127,7 @@ namespace OnlineVideos.Sites
             else
             {
                 string query = null;
-                Match m = Regex.Match(url, @"http://vimeo.com/(?<id>user[^/]*)/(?<kind>[^/]*)");
+                Match m = urlRegex.Match(url);
                 if (m.Success)
                 {
                     switch (m.Groups["kind"].Value)
@@ -136,7 +138,7 @@ namespace OnlineVideos.Sites
                 }
                 else
                 {
-                    m = Regex.Match(url, @"http://vimeo.com/(?<kind>[^/]*)/(?<id>[^/]*)");
+                    m = Regex.Match(url, @"http://vimeo.com/(?<kind>(channels|videos|likes|groups|albums))/(?<id>[^/]*)");
                     if (m.Success)
                     {
                         switch (m.Groups["kind"].Value)
