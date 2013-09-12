@@ -48,6 +48,7 @@ namespace OnlineVideos.Sites
                     });
                     cat.SubCategoriesDiscovered = true;
                 }
+            parentCategory.SubCategoriesDiscovered = true;
             return 1 + res;
         }
 
