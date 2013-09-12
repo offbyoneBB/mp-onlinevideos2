@@ -1098,7 +1098,7 @@
     <Site name="Kijk.nl" util="Kijk" agecheck="false" enabled="true" lang="nl">
       <Description>Videos van SBS6, Net5 en Veronica</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="station\sstation-[^\s]*\s">\s*<a\shref="(?<url>[^"]*)">\s*<span\sclass="icon">(?<title>[^<]*)</span>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<a\sclass=""\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<=<dt>Alle\sprogramma's</dt>\s*.*)<li><a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
         <item key="videoListRegEx"><![CDATA[(?#Normal)
 <li\sclass="item">\s*<article\sclass="preview">\s*<a\sclass="wrap"\shref="(?<VideoUrl>[^"]*)">\s*<figure>\s*<img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*</figure>\s*<div\sclass="content">\s*<h1\sclass="title">(?<Title>[^<]*)</h1>\s*<time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time>\s*<span\sclass="icon\sicon-play">\(bekijken\)</span>\s*</div>\s*</a>\s*</article>\s*</li>
