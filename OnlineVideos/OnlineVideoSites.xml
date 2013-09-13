@@ -561,6 +561,7 @@
         <item key="fileUrlFormatString"><![CDATA[http://youtube.com/{0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.collegehumor.com/videos]]></item>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
+        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Home page">http://www.collegehumor.com/videos</Category>
