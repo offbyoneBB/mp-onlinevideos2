@@ -1202,6 +1202,20 @@
         <item key="nextPageRegEx"><![CDATA[<li\sclass="last"><a\shref="(?<url>[^"]*)">Volgende\s&raquo;</a></li>]]></item>
       </Configuration>
     </Site>
+    <Site name="Power Unlimited" util="PowerUnlimited" agecheck="false" enabled="true" lang="nl">
+      <Description>Power Unlimited | PU TV, nieuws, reviews en previews van games voor de PC, Xbox360, PlayStation 3, PlayStation Vita, 3DS en Wii U.</Description>
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[<a\sclass='article[^']*'\shref='(?<VideoUrl>[^']*)'><span\sclass='type'></span><article><div\sclass='article-image'>(?:<img\ssrc='(?<ImageUrl>[^']*)'\salt=''\stitle=''\s/>)?</div><header><h4>(?<Title>.*?)</h4></header><div\sclass='date\shidden-phone'>(?<AirdateDay>[^<]*)<span></span>(?<AirdateMonth>[^<]*)<div\sclass='time'>(?<AirdateTime>[^<]*)</div></div><div\sclass='intro\shidden-phone'>(?<Description>[^<]*)</div>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<div\sclass='next'><a\shref='(?<url>[^']*)'>\s*Volgende\s*</a>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<iframe\swidth="[^"]*"\sheight="[^"]*"\ssrc="(?<m0>[^"]*)"[^>]*></iframe>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.pu.nl/media/pu-tv/]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="PU-TV" thumb="" desc="">http://www.pu.nl/media/pu-tv/</Category>
+        <Category xsi:type="RssLink" name="Trailers" thumb="" desc="">http://www.pu.nl/media/trailer/</Category>
+      </Categories>
+    </Site>
     <Site name="Red Bull TV" util="RedBull" agecheck="false" enabled="true" lang="en">
       <Description>Red Bull TV - Watch sports, music and entertainment TV online. Free.</Description>
       <Configuration>
