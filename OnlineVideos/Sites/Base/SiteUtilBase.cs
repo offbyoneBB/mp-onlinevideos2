@@ -14,17 +14,17 @@ namespace OnlineVideos.Sites
 {
     /// <summary>
     /// The abstract base class for all sites. 
-	/// It might be hosted in a seperate AppDomain than the main application, so it can be unloaded at runtime.
+    /// It might be hosted in a seperate AppDomain than the main application, so it can be unloaded at runtime.
     /// </summary>
-	public abstract class SiteUtilBase : MarshalByRefObject, ICustomTypeDescriptor
+    public abstract class SiteUtilBase : MarshalByRefObject, ICustomTypeDescriptor
     {
-		#region MarshalByRefObject overrides
-		public override object InitializeLifetimeService()
-		{
-			// In order to have the lease across appdomains live forever, we return null.
-			return null;
-		}
-		#endregion
+        #region MarshalByRefObject overrides
+        public override object InitializeLifetimeService()
+        {
+            // In order to have the lease across appdomains live forever, we return null.
+            return null;
+        }
+        #endregion
 
         /// <summary>
         /// The <see cref="SiteSettings"/> as configured in the xml will be set after an instance of this class was created 
@@ -117,16 +117,16 @@ namespace OnlineVideos.Sites
             return 0;
         }
 
-		/// <summary>
-		/// Override this method in your derived Util when you need paging in a list of <see cref="Category"/>s.
-		/// It will be called when the last item in that list is a <see cref="NextPageCategory"/>.
-		/// </summary>
-		/// <param name="category">The category item that you used to store info about how to get the next page categories.</param>
-		/// <returns>The number of new categories discovered.</returns>
-		public virtual int DiscoverNextPageCategories(NextPageCategory category)
-		{
-			return 0;
-		}
+        /// <summary>
+        /// Override this method in your derived Util when you need paging in a list of <see cref="Category"/>s.
+        /// It will be called when the last item in that list is a <see cref="NextPageCategory"/>.
+        /// </summary>
+        /// <param name="category">The category item that you used to store info about how to get the next page categories.</param>
+        /// <returns>The number of new categories discovered.</returns>
+        public virtual int DiscoverNextPageCategories(NextPageCategory category)
+        {
+            return 0;
+        }
 
         /// <summary>
         /// If a category has sub-categories this function will be called when the user selects a category in the GUI.
@@ -138,6 +138,15 @@ namespace OnlineVideos.Sites
         {
             parentCategory.SubCategoriesDiscovered = true;
             return 0;
+        }
+
+        /// <summary>
+        /// Ths can be used to override the default behavior of diving down or up if only one category is present
+        /// </summary>
+        /// <returns>if it's allowed to dive up or down</returns>
+        public virtual bool AllowDiveDownOrUpIfSingle
+        {
+            get { return true; }
         }
 
         /// <summary>
@@ -220,27 +229,27 @@ namespace OnlineVideos.Sites
             return new TrackingInfo() { VideoKind = VideoKind.Other, Title = video.Title };
         }
 
-		/// <summary>
-		/// This method will be called after playback of a video from this site was stopped or has ended.
-		/// </summary>
-		/// <param name="video"></param>
-		/// <param name="url"></param>
-		/// <param name="percent"></param>
-		/// <param name="stoppedByUser"></param>
-		public virtual void OnPlaybackEnded(VideoInfo video, string url, double percent, bool stoppedByUser)
-		{
-		}
+        /// <summary>
+        /// This method will be called after playback of a video from this site was stopped or has ended.
+        /// </summary>
+        /// <param name="video"></param>
+        /// <param name="url"></param>
+        /// <param name="percent"></param>
+        /// <param name="stoppedByUser"></param>
+        public virtual void OnPlaybackEnded(VideoInfo video, string url, double percent, bool stoppedByUser)
+        {
+        }
 
-		/// <summary>
-		/// This method will be called after download of a video from this site was stopped or has ended.
-		/// </summary>
-		/// <param name="video"></param>
-		/// <param name="url"></param>
-		/// <param name="percent"></param>
-		/// <param name="stoppedByUser"></param>
-		public virtual void OnDownloadEnded(VideoInfo video, string url, double percent, bool stoppedByUser)
-		{
-		}
+        /// <summary>
+        /// This method will be called after download of a video from this site was stopped or has ended.
+        /// </summary>
+        /// <param name="video"></param>
+        /// <param name="url"></param>
+        /// <param name="percent"></param>
+        /// <param name="stoppedByUser"></param>
+        public virtual void OnDownloadEnded(VideoInfo video, string url, double percent, bool stoppedByUser)
+        {
+        }
 
         /// <summary>
         /// This function will be called when the user selects a video for playback. It should return the absolute url to the video file.<br/>
@@ -358,16 +367,16 @@ namespace OnlineVideos.Sites
                 return video.Title;
             else // called for downloading
             {
-				Uri uri = new Uri(url);
+                Uri uri = new Uri(url);
                 string extension = System.IO.Path.GetExtension(uri.LocalPath.Trim(new char[] { '/' }));
                 if (extension == string.Empty) extension = System.IO.Path.GetExtension(url);
                 if (extension == ".f4v" || extension == ".fid") extension = ".flv";
-				// downloading via rtmp always creates a flv file
-				if ((string.IsNullOrEmpty(extension) || !OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension)) && uri.Scheme.StartsWith("rtmp"))
-				{
-					extension = ".flv";
-				}				
-				string safeName = Utils.GetSaveFilename(video.Title);
+                // downloading via rtmp always creates a flv file
+                if ((string.IsNullOrEmpty(extension) || !OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension)) && uri.Scheme.StartsWith("rtmp"))
+                {
+                    extension = ".flv";
+                }
+                string safeName = Utils.GetSaveFilename(video.Title);
                 return safeName + extension;
             }
         }
@@ -464,7 +473,7 @@ namespace OnlineVideos.Sites
         /// It will automatically convert the retrieved data into the type you provided.
         /// Retrieved data is added to a cache if HTTP Status was 200 and more than 500 bytes were retrieved. The cache timeout is user configurable (<see cref="OnlineVideoSettings.CacheTimeout"/>).
         /// </summary>
-		/// <typeparam name="T">The type you want the returned data to be. Supported are <see cref="String"/>, <see cref="Newtonsoft.Json.Linq.JToken"/>, <see cref="Newtonsoft.Json.Linq.JObject"/>, <see cref="RssToolkit.Rss.RssDocument"/>, <see cref="XmlDocument"/>, <see cref="System.Xml.Linq.XDocument"/> and <see cref="HtmlAgilityPack.HtmlDocument"/>.</typeparam>
+        /// <typeparam name="T">The type you want the returned data to be. Supported are <see cref="String"/>, <see cref="Newtonsoft.Json.Linq.JToken"/>, <see cref="Newtonsoft.Json.Linq.JObject"/>, <see cref="RssToolkit.Rss.RssDocument"/>, <see cref="XmlDocument"/>, <see cref="System.Xml.Linq.XDocument"/> and <see cref="HtmlAgilityPack.HtmlDocument"/>.</typeparam>
         /// <param name="url">The url to requets data from.</param>
         /// <param name="cc">A <see cref="CookieContainer"/> that will send cookies along with the request and afterwards contains all cookies of the response.</param>
         /// <param name="referer">A referer that will be send with the request.</param>
@@ -474,26 +483,26 @@ namespace OnlineVideos.Sites
         /// <param name="userAgent">You can provide a custom UserAgent for the request, otherwise the default one (<see cref="OnlineVideoSettings.UserAgent"/>) is used.</param>
         /// <param name="encoding">Set an <see cref="Encoding"/> for reading the response data.</param>
         /// <returns>The data returned by a <see cref="HttpWebResponse"/> converted to the specified type.</returns>
-		public static T GetWebData<T>(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
-		{
-			NameValueCollection headers = new NameValueCollection();
-			headers.Add("Accept", "*/*"); // accept any content type
-			headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-			if (referer != null) headers.Add("Referer", referer);
-			return GetWebData<T>(url, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, true);
-		}
-
-		public static T GetWebData<T>(string url, NameValueCollection headers, CookieContainer cc, IWebProxy proxy, bool forceUTF8, bool allowUnsafeHeader, Encoding encoding, bool cache)
+        public static T GetWebData<T>(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
         {
-			string webData = GetWebData(url, null, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, cache);
+            NameValueCollection headers = new NameValueCollection();
+            headers.Add("Accept", "*/*"); // accept any content type
+            headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
+            if (referer != null) headers.Add("Referer", referer);
+            return GetWebData<T>(url, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, true);
+        }
+
+        public static T GetWebData<T>(string url, NameValueCollection headers, CookieContainer cc, IWebProxy proxy, bool forceUTF8, bool allowUnsafeHeader, Encoding encoding, bool cache)
+        {
+            string webData = GetWebData(url, null, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, cache);
             if (typeof(T) == typeof(string))
             {
                 return (T)(object)webData;
             }
-			else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JToken))
-			{
-				return (T)(object)Newtonsoft.Json.Linq.JToken.Parse(webData);
-			}
+            else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JToken))
+            {
+                return (T)(object)Newtonsoft.Json.Linq.JToken.Parse(webData);
+            }
             else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JObject))
             {
                 return (T)(object)Newtonsoft.Json.Linq.JObject.Parse(webData);
@@ -508,97 +517,97 @@ namespace OnlineVideos.Sites
                 xmlDoc.LoadXml(webData);
                 return (T)(object)xmlDoc;
             }
-			else if (typeof(T) == typeof(System.Xml.Linq.XDocument))
-			{
-				return (T)(object)System.Xml.Linq.XDocument.Parse(webData);
-			}
-			else if (typeof(T) == typeof(HtmlAgilityPack.HtmlDocument))
-			{
-				HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
-				htmlDoc.LoadHtml(webData);
-				return (T)(object)htmlDoc;
-			}
+            else if (typeof(T) == typeof(System.Xml.Linq.XDocument))
+            {
+                return (T)(object)System.Xml.Linq.XDocument.Parse(webData);
+            }
+            else if (typeof(T) == typeof(HtmlAgilityPack.HtmlDocument))
+            {
+                HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                htmlDoc.LoadHtml(webData);
+                return (T)(object)htmlDoc;
+            }
 
             return default(T);
         }
 
-		public static string GetWebData(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
-		{
-			NameValueCollection headers = new NameValueCollection();
-			headers.Add("Accept", "*/*"); // accept any content type
-			headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-			if (referer != null) headers.Add("Referer", referer);
-			return GetWebData(url, null, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, true);
-		}
+        public static string GetWebData(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
+        {
+            NameValueCollection headers = new NameValueCollection();
+            headers.Add("Accept", "*/*"); // accept any content type
+            headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
+            if (referer != null) headers.Add("Referer", referer);
+            return GetWebData(url, null, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, true);
+        }
 
-		public static string GetWebDataFromPost(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
-		{
-			NameValueCollection headers = new NameValueCollection();
-			headers.Add("Accept", "*/*"); // accept any content type
-			headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-			if (referer != null) headers.Add("Referer", referer);
-			return GetWebData(url, postData, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, false);
-		}
+        public static string GetWebDataFromPost(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
+        {
+            NameValueCollection headers = new NameValueCollection();
+            headers.Add("Accept", "*/*"); // accept any content type
+            headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
+            if (referer != null) headers.Add("Referer", referer);
+            return GetWebData(url, postData, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, false);
+        }
 
-		public static string GetWebData(string url, string postData, NameValueCollection headers, CookieContainer cc, IWebProxy proxy, bool forceUTF8, bool allowUnsafeHeader, Encoding encoding, bool cache)
+        public static string GetWebData(string url, string postData, NameValueCollection headers, CookieContainer cc, IWebProxy proxy, bool forceUTF8, bool allowUnsafeHeader, Encoding encoding, bool cache)
         {
             HttpWebResponse response = null;
             try
             {
-				// build a CRC of the url and all headers + proxy + cookies for caching
-				string requestCRC = Utils.EncryptLine(
-					string.Format("{0}{1}{2}{3}", 
-					url,
-					headers != null ? string.Join("&", (from item in headers.AllKeys select string.Format("{0}={1}", item, headers[item])).ToArray()) : "", 
-					proxy != null ? proxy.GetProxy(new Uri(url)).AbsoluteUri : "", 
-					cc != null ? cc.GetCookieHeader(new Uri(url)) : ""));
-				
+                // build a CRC of the url and all headers + proxy + cookies for caching
+                string requestCRC = Utils.EncryptLine(
+                    string.Format("{0}{1}{2}{3}",
+                    url,
+                    headers != null ? string.Join("&", (from item in headers.AllKeys select string.Format("{0}={1}", item, headers[item])).ToArray()) : "",
+                    proxy != null ? proxy.GetProxy(new Uri(url)).AbsoluteUri : "",
+                    cc != null ? cc.GetCookieHeader(new Uri(url)) : ""));
+
                 // try cache first
-				string cachedData = cache ? WebCache.Instance[requestCRC] : null;
-				Log.Debug("GetWebData-{2}{1}: '{0}'", url, cachedData != null ? " (cached)" : "", postData != null ? "POST" : "GET");
-				if (cachedData != null) return cachedData;
+                string cachedData = cache ? WebCache.Instance[requestCRC] : null;
+                Log.Debug("GetWebData-{2}{1}: '{0}'", url, cachedData != null ? " (cached)" : "", postData != null ? "POST" : "GET");
+                if (cachedData != null) return cachedData;
 
                 // build the request
                 if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(true);
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return "";
-				request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; // turn on automatic decompression of both formats (adds header "AcceptEncoding: gzip,deflate" to the request)
+                request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; // turn on automatic decompression of both formats (adds header "AcceptEncoding: gzip,deflate" to the request)
                 if (cc != null) request.CookieContainer = cc; // set cookies if given
                 if (proxy != null) request.Proxy = proxy; // send the request over a proxy if given
-				if (headers != null) // set user defined headers
-				{
-					foreach (var headerName in headers.AllKeys)
-					{
-						switch (headerName.ToLowerInvariant())
-						{
-							case "accept":
-								request.Accept = headers[headerName];
-								break;
-							case "user-agent":
-								request.UserAgent = headers[headerName];
-								break;
-							case "referer":
-								request.Referer = headers[headerName];
-								break;
-							default:
-								request.Headers.Set(headerName, headers[headerName]);
-								break;
-						}
-					}
-				}
-				if (postData != null)
-				{
-					byte[] data = encoding != null ? encoding.GetBytes(postData) : Encoding.UTF8.GetBytes(postData);
-					request.Method = "POST";
-					request.ContentType = "application/x-www-form-urlencoded";
-					request.ContentLength = data.Length;
-					request.ProtocolVersion = HttpVersion.Version10;
-					Stream requestStream = request.GetRequestStream();
-					requestStream.Write(data, 0, data.Length);
-					requestStream.Close();
-				}
+                if (headers != null) // set user defined headers
+                {
+                    foreach (var headerName in headers.AllKeys)
+                    {
+                        switch (headerName.ToLowerInvariant())
+                        {
+                            case "accept":
+                                request.Accept = headers[headerName];
+                                break;
+                            case "user-agent":
+                                request.UserAgent = headers[headerName];
+                                break;
+                            case "referer":
+                                request.Referer = headers[headerName];
+                                break;
+                            default:
+                                request.Headers.Set(headerName, headers[headerName]);
+                                break;
+                        }
+                    }
+                }
+                if (postData != null)
+                {
+                    byte[] data = encoding != null ? encoding.GetBytes(postData) : Encoding.UTF8.GetBytes(postData);
+                    request.Method = "POST";
+                    request.ContentType = "application/x-www-form-urlencoded";
+                    request.ContentLength = data.Length;
+                    request.ProtocolVersion = HttpVersion.Version10;
+                    Stream requestStream = request.GetRequestStream();
+                    requestStream.Write(data, 0, data.Length);
+                    requestStream.Close();
+                }
 
-				// request the data
+                // request the data
                 try
                 {
                     response = (HttpWebResponse)request.GetResponse();
@@ -608,7 +617,7 @@ namespace OnlineVideos.Sites
                     Log.Debug(webEx.Message);
                     response = (HttpWebResponse)webEx.Response; // if the server returns a 404 or similar .net will throw a WebException that has the response
                 }
-                Stream responseStream = response.GetResponseStream();				
+                Stream responseStream = response.GetResponseStream();
 
                 // UTF8 is the default encoding as fallback
                 Encoding responseEncoding = Encoding.UTF8;
@@ -623,7 +632,7 @@ namespace OnlineVideos.Sites
                 {
                     string str = reader.ReadToEnd().Trim();
                     // add to cache if HTTP Status was 200 and we got more than 500 bytes (might just be an errorpage otherwise)
-					if (cache && response.StatusCode == HttpStatusCode.OK && str.Length > 500) WebCache.Instance[requestCRC] = str;
+                    if (cache && response.StatusCode == HttpStatusCode.OK && str.Length > 500) WebCache.Instance[requestCRC] = str;
                     return str;
                 }
             }
@@ -752,10 +761,10 @@ namespace OnlineVideos.Sites
             foreach (FieldInfo field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 FieldPropertyDescriptor fieldDesc = new FieldPropertyDescriptor(field);
-				if (!filtering || fieldDesc.Attributes.Contains(attributes))
-				{
-					props.Add(fieldDesc);
-				}
+                if (!filtering || fieldDesc.Attributes.Contains(attributes))
+                {
+                    props.Add(fieldDesc);
+                }
             }
 
             // Store the computed properties
@@ -771,70 +780,70 @@ namespace OnlineVideos.Sites
             return props;
         }
 
-		public List<FieldPropertyDescriptorByRef> GetUserConfigurationProperties()
-		{
-			List<FieldPropertyDescriptorByRef> result = new List<FieldPropertyDescriptorByRef>();
-			CategoryAttribute attr = new CategoryAttribute("OnlineVideosUserConfiguration");
-			var props = ((ICustomTypeDescriptor)this).GetProperties(new Attribute[] { attr });
-			foreach (PropertyDescriptor prop in props) if (prop.Attributes.Contains(attr) && prop is FieldPropertyDescriptor) result.Add(new FieldPropertyDescriptorByRef() { FieldPropertyDescriptor = prop as FieldPropertyDescriptor });
-			return result;
-		}
+        public List<FieldPropertyDescriptorByRef> GetUserConfigurationProperties()
+        {
+            List<FieldPropertyDescriptorByRef> result = new List<FieldPropertyDescriptorByRef>();
+            CategoryAttribute attr = new CategoryAttribute("OnlineVideosUserConfiguration");
+            var props = ((ICustomTypeDescriptor)this).GetProperties(new Attribute[] { attr });
+            foreach (PropertyDescriptor prop in props) if (prop.Attributes.Contains(attr) && prop is FieldPropertyDescriptor) result.Add(new FieldPropertyDescriptorByRef() { FieldPropertyDescriptor = prop as FieldPropertyDescriptor });
+            return result;
+        }
 
-		public string GetConfigValueAsString(FieldPropertyDescriptorByRef config)
-		{
-			object result = config.FieldPropertyDescriptor.GetValue(this);
-			return result == null ? string.Empty: result.ToString();
-		}
+        public string GetConfigValueAsString(FieldPropertyDescriptorByRef config)
+        {
+            object result = config.FieldPropertyDescriptor.GetValue(this);
+            return result == null ? string.Empty : result.ToString();
+        }
 
-		public void SetConfigValueFromString(FieldPropertyDescriptorByRef config, string value) 
-		{
-			object valueConverted = null;
-			if (config.FieldPropertyDescriptor.PropertyType.IsEnum) valueConverted = Enum.Parse(config.FieldPropertyDescriptor.PropertyType, value);
-			else valueConverted = Convert.ChangeType(value, config.FieldPropertyDescriptor.PropertyType);
-			config.FieldPropertyDescriptor.SetValue(this, valueConverted);
-		}
+        public void SetConfigValueFromString(FieldPropertyDescriptorByRef config, string value)
+        {
+            object valueConverted = null;
+            if (config.FieldPropertyDescriptor.PropertyType.IsEnum) valueConverted = Enum.Parse(config.FieldPropertyDescriptor.PropertyType, value);
+            else valueConverted = Convert.ChangeType(value, config.FieldPropertyDescriptor.PropertyType);
+            config.FieldPropertyDescriptor.SetValue(this, valueConverted);
+        }
 
-		public class FieldPropertyDescriptorByRef : MarshalByRefObject
-		{
-			internal FieldPropertyDescriptor FieldPropertyDescriptor { get; set; }
-			
-			public string DisplayName
-			{
-				get
-				{
-					var attr = FieldPropertyDescriptor.Attributes[typeof(LocalizableDisplayNameAttribute)];
-					if (attr != null && ((LocalizableDisplayNameAttribute)attr).LocalizedDisplayName != null) return ((LocalizableDisplayNameAttribute)attr).LocalizedDisplayName;
-					else return FieldPropertyDescriptor.DisplayName;
-				}
-			}
+        public class FieldPropertyDescriptorByRef : MarshalByRefObject
+        {
+            internal FieldPropertyDescriptor FieldPropertyDescriptor { get; set; }
 
-			public string Description
-			{
-				get
-				{
+            public string DisplayName
+            {
+                get
+                {
+                    var attr = FieldPropertyDescriptor.Attributes[typeof(LocalizableDisplayNameAttribute)];
+                    if (attr != null && ((LocalizableDisplayNameAttribute)attr).LocalizedDisplayName != null) return ((LocalizableDisplayNameAttribute)attr).LocalizedDisplayName;
+                    else return FieldPropertyDescriptor.DisplayName;
+                }
+            }
 
-					var descAttr = FieldPropertyDescriptor.Attributes[typeof(DescriptionAttribute)];
-					return descAttr != null ? ((DescriptionAttribute)descAttr).Description : string.Empty;
-				}
-			}
+            public string Description
+            {
+                get
+                {
 
-			public bool IsPassword
-			{
-				get
-				{
-					return FieldPropertyDescriptor.Attributes.Contains(new System.ComponentModel.PasswordPropertyTextAttribute(true));
-				}
-			}
+                    var descAttr = FieldPropertyDescriptor.Attributes[typeof(DescriptionAttribute)];
+                    return descAttr != null ? ((DescriptionAttribute)descAttr).Description : string.Empty;
+                }
+            }
 
-			public bool IsBool { get { return FieldPropertyDescriptor.PropertyType.Equals(typeof(bool)); } }
+            public bool IsPassword
+            {
+                get
+                {
+                    return FieldPropertyDescriptor.Attributes.Contains(new System.ComponentModel.PasswordPropertyTextAttribute(true));
+                }
+            }
 
-			public bool IsEnum { get { return FieldPropertyDescriptor.PropertyType.IsEnum; } }
+            public bool IsBool { get { return FieldPropertyDescriptor.PropertyType.Equals(typeof(bool)); } }
 
-			public string[] GetEnumValues()
-			{
-				return Enum.GetNames(FieldPropertyDescriptor.PropertyType);
-			}
-		}
+            public bool IsEnum { get { return FieldPropertyDescriptor.PropertyType.IsEnum; } }
+
+            public string[] GetEnumValues()
+            {
+                return Enum.GetNames(FieldPropertyDescriptor.PropertyType);
+            }
+        }
 
         public class FieldPropertyDescriptor : PropertyDescriptor
         {
@@ -855,17 +864,17 @@ namespace OnlineVideos.Sites
 
             public override int GetHashCode() { return _field.GetHashCode(); }
 
-			public override string DisplayName 
-			{
-				get
-				{
-					var attr = _field.GetCustomAttributes(typeof(LocalizableDisplayNameAttribute), false);
-					if (attr.Length > 0)
-						return ((LocalizableDisplayNameAttribute)attr[0]).LocalizedDisplayName;
-					else 
-						return base.DisplayName;
-				}
-			}
+            public override string DisplayName
+            {
+                get
+                {
+                    var attr = _field.GetCustomAttributes(typeof(LocalizableDisplayNameAttribute), false);
+                    if (attr.Length > 0)
+                        return ((LocalizableDisplayNameAttribute)attr[0]).LocalizedDisplayName;
+                    else
+                        return base.DisplayName;
+                }
+            }
 
             public override bool IsReadOnly { get { return false; } }
 
