@@ -25,6 +25,8 @@ namespace OnlineVideos.Sites
             return null;
         }
         #endregion
+        [Category("OnlineVideosUserConfiguration"), Description("Ths can be used to set the default behavior of diving down or up if only one category is present")]
+        protected bool allowDiveDownOrUpIfSingle = true;
 
         /// <summary>
         /// The <see cref="SiteSettings"/> as configured in the xml will be set after an instance of this class was created 
@@ -146,7 +148,7 @@ namespace OnlineVideos.Sites
         /// <returns>if it's allowed to dive up or down</returns>
         public virtual bool AllowDiveDownOrUpIfSingle
         {
-            get { return true; }
+            get { return allowDiveDownOrUpIfSingle; }
         }
 
         /// <summary>
