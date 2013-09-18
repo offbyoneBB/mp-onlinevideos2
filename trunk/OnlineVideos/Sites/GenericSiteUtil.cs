@@ -346,7 +346,7 @@ namespace OnlineVideos.Sites
                 string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 Match matchPlaylistUrl = regEx_PlaylistUrl.Match(dataPage);
                 if (matchPlaylistUrl.Success)
-                    return string.Format(playlistUrlFormatString, HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
+                    return FormatDecodeAbsolutifyUrl(resultUrl, matchPlaylistUrl.Groups["url"].Value, playlistUrlFormatString, UrlDecoding.UrlDecode);
                 else return String.Empty; // if no match, return empty url -> error
             }
             else
