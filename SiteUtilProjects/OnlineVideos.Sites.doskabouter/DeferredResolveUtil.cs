@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            sh.SetSubtitleText(video, out subtitleThread);
+            sh.SetSubtitleText(video, GetTrackingInfo, out subtitleThread);
             string tmp = base.getUrl(video);
             return SortPlaybackOptions(video, baseUrl, tmp, limitUrlsPerHoster, showUnknownHosters);
         }

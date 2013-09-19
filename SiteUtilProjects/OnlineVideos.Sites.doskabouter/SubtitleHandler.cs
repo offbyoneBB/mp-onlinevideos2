@@ -23,6 +23,7 @@ namespace OnlineVideos.Subtitles
 
         //smallest value has the highest prio
         private Dictionary<string, int> languagePrios = new Dictionary<string, int>();
+        public delegate ITrackingInfo GetTrackingInfo(VideoInfo video);
 
         public SubtitleHandler(string className, string languages)
         {
@@ -56,11 +57,11 @@ namespace OnlineVideos.Subtitles
             }
         }
 
-        public void SetSubtitleText(VideoInfo video)
+        public void SetSubtitleText(VideoInfo video, GetTrackingInfo getTrackingInfo)
         {
             if (tryLoadSubtitles)
             {
-                ITrackingInfo it = video.Other as ITrackingInfo;
+                ITrackingInfo it = getTrackingInfo(video);
                 if (sdObject != null && it != null && String.IsNullOrEmpty(video.SubtitleText))
                     try
                     {
@@ -75,12 +76,12 @@ namespace OnlineVideos.Subtitles
             }
         }
 
-        public void SetSubtitleText(VideoInfo video, out Thread thread)
+        public void SetSubtitleText(VideoInfo video, GetTrackingInfo getTrackingInfo, out Thread thread)
         {
             thread = null;
             if (tryLoadSubtitles)
             {
-                ITrackingInfo it = video.Other as ITrackingInfo;
+                ITrackingInfo it = getTrackingInfo(video);
                 if (sdObject != null && it != null && String.IsNullOrEmpty(video.SubtitleText))
                 {
                     thread = new Thread(
@@ -131,9 +132,20 @@ namespace OnlineVideos.Subtitles
         private void setSubtitleText(VideoInfo video, ITrackingInfo it)
         {
             ISubtitleDownloader sd = (ISubtitleDownloader)sdObject;
-            EpisodeSearchQuery qu = new EpisodeSearchQuery(it.Title, (int)it.Season, (int)it.Episode);
-            qu.LanguageCodes = languagePrios.Keys.ToArray();
-            List<Subtitle> results = sd.SearchSubtitles(qu);
+            List<Subtitle> results;
+            if (it.VideoKind == VideoKind.Movie)
+            {
+                SearchQuery qu = new SearchQuery(it.Title);
+                qu.Year = (int)it.Year;
+                qu.LanguageCodes = languagePrios.Keys.ToArray();
+                results = sd.SearchSubtitles(qu);
+            }
+            else
+            {
+                EpisodeSearchQuery qu = new EpisodeSearchQuery(it.Title, (int)it.Season, (int)it.Episode);
+                qu.LanguageCodes = languagePrios.Keys.ToArray();
+                results = sd.SearchSubtitles(qu);
+            }
             Log.Debug("Subtitles found:" + results.Count.ToString());
             if (results.Count > 0)
             {
