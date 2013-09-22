@@ -25,7 +25,7 @@ namespace OnlineVideos.Sites
             return null;
         }
         #endregion
-        [Category("OnlineVideosUserConfiguration"), Description("Ths can be used to set the default behavior of diving down or up if only one category is present")]
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Skip single Category", TranslationFieldName = "SkipSingleCategory"), Description("Enables skipping over category lists that only contain a single category.")]
         protected bool allowDiveDownOrUpIfSingle = true;
 
         /// <summary>
