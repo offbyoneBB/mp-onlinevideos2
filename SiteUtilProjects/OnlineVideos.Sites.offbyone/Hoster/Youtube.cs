@@ -177,32 +177,36 @@ namespace OnlineVideos.Hoster
 			if (string.IsNullOrEmpty(s)) return string.Empty;
 			switch (s.Length)
 			{
+				case 93:
+					return s.Slice(86, 29, -1) + s[88] + s.Slice(28, 5, -1);
 				case 92:
-					return s[25] + s.Substring(3, 25 - 3) + s[0] + s.Substring(26, 42 - 26) + s[79] + s.Substring(43, 79 - 43) + s[91] + s.Substring(80, 83 - 80);
+					return s[25] + s.Slice(3, 25) + s[0] + s.Slice(26, 42) + s[79] + s.Slice(43, 79) + s[91] + s.Slice(80, 83);
+				case 91:
+					return s.Slice(84, 27, -1) + s[86] + s.Slice(26, 5, -1);
 				case 90:
-					return s[25] + s.Substring(3, 25 - 3) + s[2] + s.Substring(26, 40 - 26) + s[77] + s.Substring(41, 77 - 41) + s[89] + s.Substring(78, 81 - 78);
+					return s[25] + s.Slice(3, 25) + s[2] + s.Slice(26, 40) + s[77] + s.Slice(41, 77) + s[89] + s.Slice(78, 81);
 				case 89:
-					return new string(s.Substring(78 + 1, 84 - 78).Reverse().ToArray()) + s[87] + new string(s.Substring(60 + 1, 77 - 60).Reverse().ToArray()) + s[0] + new string(s.Substring(3 + 1, 59 - 3).Reverse().ToArray());
+					return s.Slice(84, 78, -1) + s[87] + s.Slice(77, 60, -1) + s[0] + s.Slice(59, 3, -1);
 				case 88:
                     return s.Slice(7, 28) + s[87] + s.Slice(29, 45) + s[55] + s.Slice(46, 55) + s[2] + s.Slice(56, 87) + s[28];
 				case 87:
                     return s.Slice(6, 27) + s[4] + s.Slice(28, 39) + s[27] + s.Slice(40, 59) + s[2] + s.Slice(60);
 				case 86:
-					return s.Slice(81, 73, -1) + s[84] + s.Slice(72, 58, -1) + s[0] + s.Slice(57, 35, -1) + s[85] + s.Slice(34, 0, -1);
+					return s.Slice(5, 34) + s[0] + s.Slice(35, 38) + s[3] + s.Slice(39, 45) + s[38] + s.Slice(46, 53) + s[73] + s.Slice(54, 73) + s[85] + s.Slice(74, 85) + s[53];
 				case 85:
-                    return s.Slice(83, 34, -1) + s[0] + s.Slice(33, 27, -1) + s[3] + s.Slice(26, 19, -1) + s[34] + s.Slice(18, 3, -1) + s[27];
+					return s.Slice(3, 11) + s[0] + s.Slice(12, 55) + s[84] + s.Slice(56, 84);
 				case 84:
 					return s.Slice(81, 36, -1) + s[0] + s.Slice(35, 2, -1);
 				case 83:
                     return s.Slice(81, 64, -1) + s[82] + s.Slice(63, 52, -1) + s[45] + s.Slice(51, 45, -1) + s[1] + s.Slice(44, 1, -1) + s[0];
 				case 82:
-                    return s.Slice(1, 19) + s[0] + s.Slice(20, 68) + s[19] + s.Slice(69, 82);
+					return s.Slice(80, 73, -1) + s[81] + s.Slice(72, 54, -1) + s[2] + s.Slice(53, 43, -1) + s[0] + s.Slice(42, 2, -1) + s[43] + s[1] + s[54];
 				case 81:
-					return s[56] + new string(s.Substring(56 + 1, 79 - 56).Reverse().ToArray()) + s[41] + new string(s.Substring(41 + 1, 55 - 41).Reverse().ToArray()) + s[80] + new string(s.Substring(34 + 1, 40 - 34).Reverse().ToArray()) + s[0] + new string(s.Substring(29 + 1, 33 - 29).Reverse().ToArray()) + s[34] + new string(s.Substring(9 + 1, 28 - 9).Reverse().ToArray()) + s[29] + new string(s.Substring(0 + 1, 8 - 0).Reverse().ToArray()) + s[9];
+					return s[56] + s.Slice(79, 56, -1) + s[41] + s.Slice(55, 41, -1) + s[80] + s.Slice(40, 34, -1) + s[0] + s.Slice(33, 29, -1) + s[34] + s.Slice(28, 9, -1) + s[29] + s.Slice(8, 0, -1) + s[9];
                 case 80:
                     return s.Slice(1, 19) + s[0] + s.Slice(20, 68) + s[19] + s.Slice(69, 80);
 				case 79:
-					return s[54] + new string(s.Substring(54 + 1, 77 - 54).Reverse().ToArray()) + s[39] + new string(s.Substring(39 + 1, 53 - 39).Reverse().ToArray()) + s[78] + new string(s.Substring(34 + 1, 38 - 34).Reverse().ToArray()) + s[0] + new string(s.Substring(29 + 1, 33 - 29).Reverse().ToArray()) + s[34] + new string(s.Substring(9 + 1, 28 - 9).Reverse().ToArray()) + s[29] + new string(s.Substring(0 + 1, 8 - 0).Reverse().ToArray()) + s[9];
+					return s[54] + s.Slice(77, 54, -1) + s[39] + s.Slice(53, 39, -1) + s[78] + s.Slice(38, 34, -1) + s[0] + s.Slice(33, 29, -1) + s[34] + s.Slice(28, 9, -1) + s[29] + s.Slice(8, 0, -1) + s[9];
 				default:
 					throw new OnlineVideosException(string.Format("Unable to decrypt signature, key length {0} not supported; retrying might work", s.Length));
 			}
