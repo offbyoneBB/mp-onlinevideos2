@@ -62,7 +62,7 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            var json = JObject.Parse(Regex.Match(GetWebData(video.VideoUrl), "var info = (?<json>{.*?}),").Groups["json"].Value);
+            var json = JObject.Parse(Regex.Match(GetWebData(video.VideoUrl), "var info = (?<json>{.*),").Groups["json"].Value);
 
             video.PlaybackOptions = new Dictionary<string,string>();
             
