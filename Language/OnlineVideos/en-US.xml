@@ -133,6 +133,7 @@
   <string name="SelectSource">Select source</string>
   <string name="Sites">Sites</string>
   <string name="Size">Size</string>
+  <string name="SkipSingleCategory">Skip single Category</string>
   <string name="SortOptions">Sort options</string>
   <string name="Search">Search</string>
   <string name="SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>

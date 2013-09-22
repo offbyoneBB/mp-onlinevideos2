@@ -215,6 +215,7 @@ namespace OnlineVideos
         public string SelectSource = "Select source";
         public string Sites = "Sites";
         public string Size = "Size";
+		public string SkipSingleCategory = "Skip single Category";
         public string SortOptions = "Sort options";
         public string Search = "Search";
         public string SetDownloadFolderInConfig = "Please set a download folder in Configuration!";

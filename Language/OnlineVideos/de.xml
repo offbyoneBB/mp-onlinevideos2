@@ -133,6 +133,7 @@
   <string name="SelectSource">Quelle wählen</string>
   <string name="Sites">Sites</string>
   <string name="Size">Größe</string>
+  <string name="SkipSingleCategory">Einzelne Rubrik überspringen</string>
   <string name="SortOptions">Sortierung</string>
   <string name="Search">Suchen</string>
   <string name="SetDownloadFolderInConfig">Bitte einen Ordner für Downloads in der Konfiguration wählen!</string>

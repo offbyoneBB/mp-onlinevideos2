@@ -133,6 +133,7 @@
   <string name="OnlineVideos.SelectSource">Select source</string>
   <string name="OnlineVideos.Sites">Sites</string>
   <string name="OnlineVideos.Size">Size</string>
+  <string name="OnlineVideos.SkipSingleCategory">Skip single Category</string>
   <string name="OnlineVideos.SortOptions">Sort options</string>
   <string name="OnlineVideos.Search">Search</string>
   <string name="OnlineVideos.SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>
