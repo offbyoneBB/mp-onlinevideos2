@@ -133,6 +133,7 @@
   <string name="SelectSource">Välj källa</string>
   <string name="Sites">Sidor</string>
   <string name="Size">Storlek</string>
+  <string name="SkipSingleCategory">Skippa enskilda kategorier</string>
   <string name="SortOptions">Sorteringsval</string>
   <string name="Search">Sök</string>
   <string name="SetDownloadFolderInConfig">Välj först en destinationsfolder under inställningar!</string>

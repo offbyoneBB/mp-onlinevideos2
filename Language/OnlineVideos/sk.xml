@@ -133,6 +133,7 @@
   <string name="SelectSource">Vyber zdroj</string>
   <string name="Sites">Stránky</string>
   <string name="Size">Veľkosť</string>
+  <string name="SkipSingleCategory">Preskočiť jednu kategóriu</string>
   <string name="SortOptions">Trediť podľa</string>
   <string name="Search">Hľadať</string>
   <string name="SetDownloadFolderInConfig">Nastav v konfigurácii adresár pre sťahovanie!</string>

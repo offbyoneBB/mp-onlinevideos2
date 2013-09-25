@@ -133,6 +133,7 @@
   <string name="OnlineVideos.SelectSource">Vyber zdroj</string>
   <string name="OnlineVideos.Sites">Stránky</string>
   <string name="OnlineVideos.Size">Veľkosť</string>
+  <string name="OnlineVideos.SkipSingleCategory">Preskočiť jednu kategóriu</string>
   <string name="OnlineVideos.SortOptions">Trediť podľa</string>
   <string name="OnlineVideos.Search">Hľadať</string>
   <string name="OnlineVideos.SetDownloadFolderInConfig">Nastav v konfigurácii adresár pre sťahovanie!</string>
