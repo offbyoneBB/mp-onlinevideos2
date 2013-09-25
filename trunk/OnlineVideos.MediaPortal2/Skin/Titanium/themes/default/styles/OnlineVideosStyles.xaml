@@ -54,6 +54,9 @@
 						<Button.Command>
 							<Command Source="{DynamicResource OnlineVideosModel}" Path="SelectSite" Parameters="{LateBoundValue BindingValue={Binding}}"/>
 						</Button.Command>
+						<Button.ContextMenuCommand>
+							<Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+						</Button.ContextMenuCommand>
 					</Button>
 					<ControlTemplate.Triggers>
 						<Trigger Property="Selected" Value="True">
