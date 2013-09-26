@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Xml;
 
 namespace OnlineVideos.Sites
 {
     public class NickelodeonNLUtil : GenericSiteUtil
     {
-        private string playListRegex = @"swfobject\.embedSWF\('http://media\.mtvnservices\.com/(?<url>[^']*)',\s'player_prime_container',";
+        private string playListRegex = @"mrss\s*:\s'(?<url>[^']*)',";
         private string urlRegex = @"<media:content\sduration='[^']*'\sisDefault='true'\stype='text/xml'\surl='(?<url>[^']*)'></media:content>";
 
         private Regex regEx_PlayList;
@@ -40,9 +39,7 @@ namespace OnlineVideos.Sites
             if (!m.Success)
                 return null;
 
-            string url = String.Format(@"http://api.mtvnn.com/v2/mrss.xml?uri={0}", HttpUtility.UrlEncode(m.Groups["url"].Value));
-
-            webData = GetWebData(url);
+            webData = GetWebData(m.Groups["url"].Value);
             m = regex_Url.Match(webData);
             string furl = null;
             while (m.Success)
