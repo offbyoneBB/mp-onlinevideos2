@@ -232,11 +232,28 @@ namespace OnlineVideos.Sites
             // walk the categories and see if there are user's playlists - they need to be set to have subcategories
             foreach (Category link in Settings.Categories)
             {
-                if ((link is RssLink) && Regex.Match(((RssLink)link).Url, USER_PLAYLISTS_FEED).Success)
-                {
-                    link.HasSubCategories = true;
-                    link.SubCategoriesDiscovered = false;
-                }
+				if (link is RssLink)
+				{
+					if (Regex.Match(((RssLink)link).Url, USER_PLAYLISTS_FEED).Success)
+					{
+						link.HasSubCategories = true;
+						link.SubCategoriesDiscovered = false;
+					}
+				}
+				else
+				{
+					// static Categories with static Subcategories
+					if (link.HasSubCategories && link.SubCategories != null)
+					{
+						foreach(var subLink in link.SubCategories)
+							if (subLink is RssLink && Regex.Match(((RssLink)subLink).Url, USER_PLAYLISTS_FEED).Success)
+							{
+								subLink.HasSubCategories = true;
+								subLink.SubCategoriesDiscovered = false;
+							}
+						link.SubCategoriesDiscovered = true;
+					}
+				}
             }
 
 			// add categories defined by YouTube
