@@ -11,8 +11,8 @@
 
 		<ControlTemplate x:Key="Contents_Template">
 			<StackPanel Width="500" Height="200" DataContext="{Binding Source={Service ScreenManager}, Path=FocusedScreen.FocusedElement.VisualParent.Context}">
-				<TextBox Text="{Binding Path=NewValue, Mode=TwoWay}" SetFocus="true"
-                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <TextBox Text="{Binding Path=NewValue, Mode=TwoWay}" SetFocusPrio="DefaultHigh" Style="{ThemeResource ovsPasswordTextBoxStyle}"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 				<Grid HorizontalAlignment="Right" Margin="0,10,0,10">
 					<Button Style="{ThemeResource DialogButtonStyle}" Content="[System.Ok]" HorizontalAlignment="Right" Margin="0,0,220,0">
 						<Button.Command>

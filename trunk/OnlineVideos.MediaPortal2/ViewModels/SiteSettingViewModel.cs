@@ -50,6 +50,14 @@ namespace OnlineVideos.MediaPortal2
 			get { return (string)_newValueProperty.GetValue(); }
 			set { _newValueProperty.SetValue(value); }
 		}
+		
+		protected AbstractProperty _isPasswordProperty;
+		public AbstractProperty IsPasswordProperty { get { return _isPasswordProperty; } }
+		public bool IsPassword
+		{
+			get { return (bool)_isPasswordProperty.GetValue(); }
+			set { _isPasswordProperty.SetValue(value); }
+		}
 
 		protected AbstractProperty _possibleValuesProperty;
 		public AbstractProperty PossibleValuesProperty
@@ -103,6 +111,7 @@ namespace OnlineVideos.MediaPortal2
 
 			_nameProperty = new WProperty(typeof(string), propertyDescriptor.DisplayName);
 			_descriptionProperty = new WProperty(typeof(string), propertyDescriptor.Description);
+			_isPasswordProperty = new WProperty(typeof(bool), propertyDescriptor.IsPassword);
 
 			string valueAsString = site.Site.GetConfigValueAsString(propertyDescriptor);
 			_valueProperty = new WProperty(typeof(string), propertyDescriptor.IsPassword ? new string('*', valueAsString.Length) : valueAsString);
