@@ -1,4 +1,5 @@
-﻿using MediaPortal.Common.Configuration.ConfigurationClasses;
+﻿using System;
+using MediaPortal.Common.Configuration.ConfigurationClasses;
 using MediaPortal.Common.Settings;
 
 namespace OnlineVideos.MediaPortal2.Configuration
@@ -15,6 +16,8 @@ namespace OnlineVideos.MediaPortal2.Configuration
         public int CacheTimeout { get; set; }
 		[Setting(SettingScope.User, "")]
 		public string DownloadFolder { get; set; }
+		[Setting(SettingScope.Global)]
+		public DateTime LastAutomaticUpdate { get; set; }
 
 		public void SetValuesToApi()
 		{
