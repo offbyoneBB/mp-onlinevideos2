@@ -549,11 +549,33 @@ namespace OnlineVideos.MediaPortal2
         {
 			_messageQueue.Start();
 			// when entering OV model context and no siteutils have been loaded yet - run Automatic Update 
-			// todo : let the user configure if he want to run it or be asked, configure x hours before doing/asking again
+			// todo : let the user configure if he wants to run the AutoUpdate or be asked, configure x hours before doing/asking again
 			if (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
 			{
-				IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
-				workflowManager.NavigatePushAsync(Guids.DialogStateSiteUpdate);
+				if (_settingsWatcher.Settings.LastAutomaticUpdate.AddHours(4) < DateTime.Now &&
+					OnlineVideos.Sites.Updater.VersionCompatible)
+				{
+					IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
+					workflowManager.NavigatePushAsync(Guids.DialogStateSiteUpdate);
+				}
+				else
+				{
+					// show the busy indicator, because loading site dlls takes some seconds
+					ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
+					try
+					{
+						OnlineVideoSettings.Instance.BuildSiteUtilsList();
+						RebuildSitesList();
+					}
+					catch (Exception ex)
+					{
+						Log.Error(ex);
+					}
+					finally
+					{
+						ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
+					}
+				}
 			}
         }
 

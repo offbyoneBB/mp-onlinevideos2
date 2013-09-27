@@ -4,6 +4,7 @@ using System.Linq;
 using MediaPortal.Common;
 using MediaPortal.Common.General;
 using MediaPortal.Common.Messaging;
+using MediaPortal.Common.Settings;
 using MediaPortal.Common.Threading;
 using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
@@ -123,6 +124,14 @@ namespace OnlineVideos.MediaPortal2
 						if (p.HasValue) UpdateProgress = p.Value;
 						return currentBackgroundTask.State != WorkState.CANCELED;
 					}, sitesToUpdate, onlyUpdateNoAdd);
+
+					if (!isManualUpdate)
+					{
+						var settingsManager = ServiceRegistration.Get<ISettingsManager>();
+						var settings = settingsManager.Load<Configuration.Settings>();
+						settings.LastAutomaticUpdate = DateTime.Now;
+						settingsManager.Save(settings);
+					}
 
 					SystemMessage msg = new SystemMessage(OnlineVideosMessaging.MessageType.SitesUpdated);
 					msg.MessageData[OnlineVideosMessaging.UPDATE_RESULT] = updateResult;
