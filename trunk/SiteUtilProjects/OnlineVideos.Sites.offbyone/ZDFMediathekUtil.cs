@@ -183,11 +183,11 @@ namespace OnlineVideos.Sites
 							new KeyValuePair<string,string>(
 								string.Format("{0} | {1,3:d}x{2,3:d} | {3,4:d} kbps | {4}:// | {5}", vid.quality.ToString().Replace("OBSOLETE_", "").PadLeft(8,' '), vid.width, vid.height, bitrate / 1024, myUrl.Substring(0, myUrl.IndexOf("://")), myUrl.Substring(myUrl.LastIndexOf('.'))), myUrl));
                     }
-                    /*else if (vid.url.EndsWith(".f4m"))
+                    else if (vid.url.EndsWith(".f4m"))
                     {
                         sortedPlaybackOptions.Add((uint)(sortedPlaybackOptions.Count + 1),
                             new KeyValuePair<string, string>("Flash Dynamic HTTP Streaming", vid.url + "?g=" + Utils.GetRandomLetters(12) + "&hdcore=3.0.3"));
-                    }*/
+                    }
                 }
 				video.PlaybackOptions = sortedPlaybackOptions.ToDictionary(e => e.Value.Key, e => e.Value.Value);
             }
