@@ -140,29 +140,27 @@ namespace OnlineVideos.Sites
 
         public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            List<String> result;
             if (!string.IsNullOrEmpty(video.SubtitleUrl) && retrieveSubtitles)
             {
                 string subData = GetWebData(video.SubtitleUrl);
                 JArray subtitleJson = (JArray)JsonConvert.DeserializeObject(subData);
                 video.SubtitleText = formatSubtitle(subtitleJson);
             }
+           
             if (inPlaylist)
             {
                 video.Other = video.PlaybackOptions;
                 video.PlaybackOptions = null;
-                result = new List<string>() { video.VideoUrl };
             }
             else
             {
                 if (video.PlaybackOptions == null && video.Other != null)
-                    video.PlaybackOptions = (Dictionary<string, string>)video.Other;
-                if (video.PlaybackOptions != null)
-                    result = video.PlaybackOptions.Values.ToList();
-                else
-                    result = new List<string>() { video.VideoUrl };
+                {
+                    video.PlaybackOptions = video.Other as Dictionary<string, string>;
+                    video.Other = null;
+                }
             }
-            return result;
+            return new List<string>() { video.VideoUrl };
         }
 
         private string formatSubtitle(JArray subtitleJson)
