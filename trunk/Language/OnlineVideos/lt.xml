@@ -133,6 +133,7 @@
   <string name="SelectSource">Pasirinkti saltini</string>
   <string name="Sites">Puslapiai</string>
   <string name="Size">Dydis</string>
+  <string name="SkipSingleCategory">Praleisti vieną kategoriją</string>
   <string name="SortOptions">Rusiavimo nustatymai</string>
   <string name="Search">Paieska</string>
   <string name="SetDownloadFolderInConfig">Reikia nustatymuose pasirinkti aplanka parsiuntimui!</string>

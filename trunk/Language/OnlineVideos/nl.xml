@@ -133,6 +133,7 @@
   <string name="SelectSource">Kies bron</string>
   <string name="Sites">Sites</string>
   <string name="Size">Grootte</string>
+  <string name="SkipSingleCategory">Enkele categorie overslaan</string>
   <string name="SortOptions">Sorteeropties</string>
   <string name="Search">Zoek</string>
   <string name="SetDownloadFolderInConfig">Kies eerst een download-map in de instellingen!</string>

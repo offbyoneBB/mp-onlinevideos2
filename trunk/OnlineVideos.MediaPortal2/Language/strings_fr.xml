@@ -98,7 +98,7 @@
   <string name="OnlineVideos.Others">Autres</string>
   <!--P-->
   <string name="OnlineVideos.PlayAll">Lecture de la totalité des vidéos</string>
-  <string name="OnlineVideos.PlayAllFromHere">Lecture de la totalité ( à partir d\'ici)</string>
+  <string name="OnlineVideos.PlayAllFromHere">Lecture de la totalité (à partir d\'ici)</string>
   <string name="OnlineVideos.PlayAllRandom">Lecture de la totalité des vidéos (ordre aléatoire)</string>
   <string name="OnlineVideos.PlayWith">Lire avec ...</string>
   <string name="OnlineVideos.Playlists">Playlists</string>
@@ -188,7 +188,7 @@
   <string name="OnlineVideos.Settings_FavoritesFirst">Mettre les Favoris et Sites de Téléchargements, en  premier place dans la liste au lieu de la dernière</string>
   <string name="OnlineVideos.Settings_LatestVideosMaxItems">Nombre des dernières vidéos à afficher</string>
   <string name="OnlineVideos.Settings_LatestVideosRandomize">Mélanger les dernières vidéos avant de les afficher</string>
-  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Actualiser les données concernant les  vidéos récentes à partir du web, toutes les x minutes</string>
+  <string name="OnlineVideos.Settings_LatestVideosOnlineDataRefresh">Actualiser les données concernant les vidéos récentes à partir du web, toutes les x minutes</string>
   <string name="OnlineVideos.Settings_LatestVideosGuiDataRefresh">Actualiser les dernières vidéos affichées, toutes les x secondes</string>
   <string name="OnlineVideos.Settings_StoreLayoutPerCategory">Se souvenir de la configuration concernant les Sites et les Catégories</string>
 </resources>
