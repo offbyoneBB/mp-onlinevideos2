@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites
         public enum VideoQuality { H264_sb, H264_bb, H264_std };
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Preferred Format"), Description("Prefer this format when there are more than one for the desired quality.")]
-        VideoQuality preferredQuality = VideoQuality.H264_bb;
+        VideoQuality preferredQuality = VideoQuality.H264_std;
 
         private enum UgType { None, Recent, Omroepen, Genres, AtoZ, Type1, AtoZSub, Search };
         private Regex savedRegEx_dynamicSubCategoriesNextPage;
