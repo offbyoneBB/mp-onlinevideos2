@@ -1379,7 +1379,7 @@
       <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.uitzendinggemist.nl/]]></item>
-        <item key="videoListRegEx"><![CDATA[(<li\sclass="(?:web_only_)?episode\sactive(?:\sknav)?"\sdata-broadcasted-at="[^"]*"\sdata-remote-id="[^"]*"\sid="(?:web_only_)?episode_(?<episodeid>[^"]*)">\s*<div\sclass="image">\s*<a[^>]*><img\salt="[^"]*"\sclass="thumbnail"\sdata-images="\[(?:&quot;(?<ImageUrl>[^&]*)&)?[^>]*></a>\s*</div>\s*<div\sclass="description">\s*<span[^>]*>[^<]*<img[^>]*></span>\s*<h3><a\shref="(?<VideoUrl>[^"]*)"\sclass="episode\sactive\sknav_link"\stitle="[^>]*>(?<Title>[^<]*)(?:<img\salt="888"[^>]*>)?\s*(?:<span\sclass="date">(?:\((?<Airdate>[^\)]*)\))?</span>)?</a></h3>\s*(?<Description>[^<]*)</div>\s*</li>)(?#videos of one series)
+        <item key="videoListRegEx"><![CDATA[(<li\sclass="(?:web_only_)?episode\sactive(?:\sknav)?"\sdata-broadcasted-at="[^"]*"\sdata-local-id="[^"]*"\sdata-remote-id="[^"]*"\sid="(?:web_only_)?episode_(?<episodeid>[^"]*)">\s*<div\sclass="image">\s*<a[^>]*><img\salt="[^"]*"\sclass="thumbnail"\sdata-images="\[(?:&quot;(?<ImageUrl>[^&]*)&)?[^>]*></a>\s*</div>\s*<div\sclass="description">\s*<span[^>]*>[^<]*<img[^>]*></span>\s*<h3><a\shref="(?<VideoUrl>[^"]*)"\sclass="episode\sactive\sknav_link"\stitle="[^>]*>(?<Title>[^<]*)(?:<img\salt="888"[^>]*>)?\s*(?:<span\sclass="date">(?:\((?<Airdate>[^\)]*)\))?</span>)?</a></h3>\s*(?<Description>[^<]*)</div>\s*</li>)(?#videos of one series)
         |
         (<li\sclass="broadcast\sactive"\sid="(?<broadcastid>[^"]*)">\s*<div\sclass="image">\s*<a\shref="(?<VideoUrl>[^"]*)"\sclass="episode\sactive\sepisode-image"\stitle=""><img\salt="[^"]*"\sclass="thumbnail"\sdata-images="\[&quot;(?<ImageUrl>[^&]*)&[^>]*></a>\s*</div>\s*<div\sclass="info">\s*<span\sclass="views">[^<]*<img[^>]*>\s*</span>\s*<h2><a[^>]*>(?<Title>[^<]*)</a>\s<span\sclass="broadcasters">\([^\)]*\)</span></h2>\s*<h3><a[^>]*>(?<Airdate>[^<]*)</a>\s*(?:<img\salt="888"\sclass="tt888"\ssrc="[^>]*>)?</h3>\s*<div\sclass="description">(?<Description>[^<]*)</div>\s*</div>\s*</li>)(?#videos of recent)
         |
@@ -1389,9 +1389,8 @@
         <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<a\sclass="next_page"\srel="next"\shref="(?<url>[^"]*)">Volgende</a></div>]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\sclass="next_page"\srel="next"\shref="(?<url>[^"]*)">Volgende</a></div>]]></item>
         <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<span\sid="episode-data"\s*data-episode-id="(?<m0>[^"]*)"]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://www.player.omroep.nl/ugslplayer.xap/aflid={0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<span\sid="episode-data"\s*data-episode-id="[^"]*"\s*data-player-id="(?<m0>[^"]*)"]]></item>
+        <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/odiplus/?prid={0}&puboptions=h264_bb,h264_sb,h264_std&adaptive=yes&part=1&token=]]></item>
         <item key="cookies"><![CDATA[npo_cc=31]]></item>
       </Configuration>
     </Site>

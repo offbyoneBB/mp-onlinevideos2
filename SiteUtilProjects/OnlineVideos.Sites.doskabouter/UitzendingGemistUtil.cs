@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.ComponentModel;
-using System.Net;
-using System.Web;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
     public class UitzendingGemistUtil : GenericSiteUtil
     {
 
-        public enum VideoFormat { Wmv_Sb, Mov_Sb, Wmv_Bb, Mov_Bb, Mov_Std, Wvc1_Std };
+        public enum VideoQuality { H264_sb, H264_bb, H264_std };
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Preferred Format"), Description("Prefer this format when there are more than one for the desired quality.")]
-        VideoFormat preferredFormat = VideoFormat.Wvc1_Std;
+        VideoQuality preferredQuality = VideoQuality.H264_bb;
 
         private enum UgType { None, Recent, Omroepen, Genres, AtoZ, Type1, AtoZSub, Search };
         private Regex savedRegEx_dynamicSubCategoriesNextPage;
@@ -137,24 +137,57 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string res = base.getUrl(video);
-            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
+            string webData = GetWebData(@"http://ida.omroep.nl/npoplayer/i.js");
+
+            string result = String.Empty;
+
+            Match m = Regex.Match(webData, @"token\s*=\s*""(?<token>[^""]*)""", defaultRegexOptions);
+            if (m.Success)
             {
-                foreach (KeyValuePair<string, string> kv in video.PlaybackOptions)
+                webData = GetWebData(res + m.Groups["token"].Value);
+                JObject contentData = (JObject)JObject.Parse(webData);
+                JArray items = contentData["streams"] as JArray;
+                List<KeyValuePair<string, string>> playbackOptions = new List<KeyValuePair<string, string>>();
+                foreach (JToken item in items)
                 {
-                    VideoFormat fmt;
-                    try
+                    string s = item.Value<string>();
+
+                    m = Regex.Match(s, @"npoplayer/(?<quality>[^/]*)/");
+                    if (m.Success)
                     {
-                        fmt = (VideoFormat)Enum.Parse(typeof(VideoFormat), kv.Key.Replace(' ', '_'), true);
-                        if (Enum.IsDefined(typeof(VideoFormat), fmt) && fmt.Equals(preferredFormat))
-                            return kv.Value;
-                    }
-                    catch (ArgumentException)
-                    {
+                        string quality = m.Groups["quality"].Value;
+                        try
+                        {
+                            VideoQuality vq = (VideoQuality)Enum.Parse(typeof(VideoQuality), quality, true);
+                            if (Enum.IsDefined(typeof(VideoQuality), vq) && vq.Equals(preferredQuality))
+                                result = s;
+                        }
+                        catch (ArgumentException)
+                        {
+                        };
+
+                        playbackOptions.Add(new KeyValuePair<string, string>(quality, s));
                     }
                 }
-                res = video.PlaybackOptions.Last().Value;
+                playbackOptions.Sort(Compare);
+                video.PlaybackOptions = new Dictionary<string, string>();
+                foreach (KeyValuePair<string, string> kv in playbackOptions)
+                    video.PlaybackOptions.Add(kv.Key, kv.Value);
             }
-            return res;
+
+            if (String.IsNullOrEmpty(result))
+                result = video.PlaybackOptions.Last().Value;
+            return result;
+        }
+
+        private static readonly string[] sortedQualities = new string[] { "h264_sb", "h264_bb", "h264_std" };
+
+        private int Compare(KeyValuePair<string, string> a, KeyValuePair<string, string> b)
+        {
+            int res = Array.IndexOf(sortedQualities, a.Key).CompareTo(Array.IndexOf(sortedQualities, b.Key));
+            if (res != 0)
+                return res;
+            return a.Value.CompareTo(b.Value);
         }
 
         protected override List<VideoInfo> Parse(string url, string data)
