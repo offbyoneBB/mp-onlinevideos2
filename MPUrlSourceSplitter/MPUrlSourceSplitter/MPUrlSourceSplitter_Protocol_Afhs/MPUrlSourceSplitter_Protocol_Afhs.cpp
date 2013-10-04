@@ -1729,7 +1729,7 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
         if ((lastFragmentTimestamp >= lastSegmentFragmentTimestamp) && (fragmentRunEntryTemp->GetFragmentDuration() != 0))
         {
           // current fragment run entry has at least some timestamps greater than requested segment and fragment timestamp (lastSegmentFragmentTimestamp)
-          unsigned int fragmentIndex = (unsigned int)((lastFragmentTimestamp - fragmentRunEntryTemp->GetFirstFragmentTimestamp()) / fragmentRunEntryTemp->GetFragmentDuration());
+          unsigned int fragmentIndex = (lastSegmentFragmentTimestamp > fragmentTimestamp) ? (unsigned int)((lastFragmentTimestamp - fragmentTimestamp) / fragmentRunEntryTemp->GetFragmentDuration()) : 0;
 
           fragmentTimestamp += fragmentIndex * fragmentRunEntryTemp->GetFragmentDuration();
           fragmentIndex += fragmentRunEntryTemp->GetFirstFragment();
