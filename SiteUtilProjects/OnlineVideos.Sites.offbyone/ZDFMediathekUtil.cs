@@ -170,26 +170,26 @@ namespace OnlineVideos.Sites
             if (video.PlaybackOptions == null)
             {
                 video videoInfo = Agent.BeitragsDetail(ConfigurationHelper.GetBeitragsDetailsServiceUrl(RestAgent.Configuration), video.VideoUrl, video.Other.ToString());
-				var sortedPlaybackOptions = new SortedDictionary<uint, KeyValuePair<string, string>>();
+				var sortedPlaybackOptions = new SortedDictionary<uint, List<KeyValuePair<string, string>>>();
                 foreach (var vid in videoInfo.formitaeten)
                 {
-					if (vid.url.StartsWith("http://") && (vid.url.EndsWith(".asx") || (vid.url.EndsWith(".mp4") && !vid.url.Contains("hbbtv"))))
+					if (vid.url.StartsWith("http://") && (vid.url.EndsWith(".asx") || vid.url.EndsWith(".mp4") || vid.url.EndsWith(".webm") || vid.url.EndsWith(".f4m")) && !vid.url.Contains("hbbtv"))
                     {
 						if (vid.facets != null && vid.facets.Any(s => s == "restriction_useragent"))
 							continue;
 						string myUrl = vid.url.EndsWith(".asx") ? SiteUtilBase.ParseASX(vid.url)[0] : vid.url;
+						string extensions = myUrl.Substring(myUrl.LastIndexOf('.'));
+						myUrl = vid.url.EndsWith(".f4m") ? vid.url + "?g=" + Utils.GetRandomLetters(12) + "&hdcore=3.0.3" : vid.url;
 						uint bitrate = vid.bruttoBitrateSpecified ? vid.bruttoBitrate : vid.audioBitrate + vid.videoBitrate;
-						sortedPlaybackOptions.Add(bitrate, 
-							new KeyValuePair<string,string>(
-								string.Format("{0} | {1,3:d}x{2,3:d} | {3,4:d} kbps | {4}:// | {5}", vid.quality.ToString().Replace("OBSOLETE_", "").PadLeft(8,' '), vid.width, vid.height, bitrate / 1024, myUrl.Substring(0, myUrl.IndexOf("://")), myUrl.Substring(myUrl.LastIndexOf('.'))), myUrl));
-                    }
-                    else if (vid.url.EndsWith(".f4m"))
-                    {
-                        sortedPlaybackOptions.Add((uint)(sortedPlaybackOptions.Count + 1),
-                            new KeyValuePair<string, string>("Flash Dynamic HTTP Streaming", vid.url + "?g=" + Utils.GetRandomLetters(12) + "&hdcore=3.0.3"));
+						if (!sortedPlaybackOptions.ContainsKey(bitrate))
+							sortedPlaybackOptions[bitrate] = new List<KeyValuePair<string, string>>();
+						sortedPlaybackOptions[bitrate].Add(new KeyValuePair<string,string>(
+								string.Format("{0} | {1,3:d}x{2,3:d} | {3,4:d} kbps | {4}:// | {5}", vid.quality.ToString().Replace("OBSOLETE_", "").PadLeft(8, ' '), vid.width, vid.height, bitrate / 1024, myUrl.Substring(0, myUrl.IndexOf("://")), extensions), myUrl));
                     }
                 }
-				video.PlaybackOptions = sortedPlaybackOptions.ToDictionary(e => e.Value.Key, e => e.Value.Value);
+				video.PlaybackOptions = new Dictionary<string, string>();
+				foreach (KeyValuePair<string, string> e in sortedPlaybackOptions.Values.SelectMany(e => e))
+					video.PlaybackOptions.Add(e.Key, e.Value);
             }
 
 			if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
