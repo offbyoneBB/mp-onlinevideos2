@@ -176,8 +176,8 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                //no priorities found or equal priorites -> compare percentage
-                res = IntComparer(e1.percentage, e2.percentage);
+                //no priorities found or equal priorites -> see if status is different
+                res = String.Compare(e1.status, e2.status);
 
                 if (res != 0)
                 {
@@ -185,8 +185,8 @@ namespace OnlineVideos.Sites
                 }
                 else
                 {
-                    //equal percentage -> see if status is different
-                    res = String.Compare(e1.status, e2.status);
+                    //equal status -> compare percentage
+                    res = IntComparer(e1.percentage, e2.percentage);
                     if (res != 0)
                     {
                         return res;
