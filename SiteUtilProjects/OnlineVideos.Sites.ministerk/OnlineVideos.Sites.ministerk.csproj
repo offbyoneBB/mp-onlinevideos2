@@ -63,6 +63,7 @@
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="SVTPlayUtil.cs" />
     <Compile Include="TV4Play.cs" />
+    <Compile Include="URPlayUtil.cs" />
     <Compile Include="Utils\HelperUtils.cs" />
     <Compile Include="ViasatUtil.cs" />
   </ItemGroup>
