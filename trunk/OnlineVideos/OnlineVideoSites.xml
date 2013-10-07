@@ -914,6 +914,9 @@
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
       <Description>Videos from the Swedish Viasat channels TV3 TV6 TV8 and TV10.</Description>
     </Site>
+    <Site name="URPlay" util="URPlay" agecheck="false" enabled="true" lang="sv">
+      <Description>UR Play är Sveriges mest kunskapsspäckade Playtjänst med program om allt från historia till matematik och språk.</Description>
+    </Site>
     <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true" lang="--">
       <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country or genre.</Description>
       <Configuration>
