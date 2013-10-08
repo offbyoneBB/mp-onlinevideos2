@@ -1393,7 +1393,7 @@
         <item key="nextPageRegEx"><![CDATA[<a\sclass="next_page"\srel="next"\shref="(?<url>[^"]*)">Volgende</a></div>]]></item>
         <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="fileUrlRegEx"><![CDATA[<span\sid="episode-data"\s*data-episode-id="[^"]*"\s*data-player-id="(?<m0>[^"]*)"]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/odiplus/?prid={0}&puboptions=h264_bb,h264_sb,h264_std&adaptive=yes&part=1&token=]]></item>
+        <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/odiplus/?prid={0}&puboptions=adaptive,h264_bb,h264_sb,h264_std&adaptive=no&part=1&token=]]></item>
         <item key="cookies"><![CDATA[npo_cc=31]]></item>
       </Configuration>
     </Site>

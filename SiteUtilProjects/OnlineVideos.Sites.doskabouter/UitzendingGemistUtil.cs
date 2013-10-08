@@ -118,6 +118,8 @@ namespace OnlineVideos.Sites
                 {
                     if ((UgType)parentCat.Other == UgType.Search && cat is NextPageCategory)
                         cat.Url = HttpUtility.HtmlDecode(cat.Url) + "&_pjax=true";
+                    if (!String.IsNullOrEmpty(cat.Description))
+                        cat.Description = HttpUtility.HtmlDecode(cat.Description);
 
                     if (subType != UgType.None)
                     {
@@ -225,6 +227,25 @@ namespace OnlineVideos.Sites
             return result;
         }
 
+        public override VideoInfo CreateVideoInfo()
+        {
+            return new UZGVideoInfo();
+        }
+
+    }
+
+    public class UZGVideoInfo : VideoInfo
+    {
+        public override string GetPlaybackOptionUrl(string option)
+        {
+            string s = base.GetPlaybackOptionUrl(option);
+            string webData = SiteUtilBase.GetWebData(s);
+            Match m = Regex.Match(webData, @"\((?<res>.*)\)");
+            if (m.Success)
+                webData = m.Groups["res"].Value;
+            JObject contentData = (JObject)JObject.Parse(webData);
+            return contentData.Value<string>("url");
+        }
     }
 
 }
