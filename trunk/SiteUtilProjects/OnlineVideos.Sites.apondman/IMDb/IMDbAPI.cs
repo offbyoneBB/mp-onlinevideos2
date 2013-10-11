@@ -450,11 +450,6 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 string format = m.Groups["format"].Value;
                 string video = m.Groups["video"].Value;
 
-                if (!video.Contains("?uff"))
-                {
-                    video = video + "?uff=1";
-                }
-
 				if (formats == null)
 				{
 					string videoPlayerHtml = session.MakeRequest(session.Settings.BaseUri + video);
