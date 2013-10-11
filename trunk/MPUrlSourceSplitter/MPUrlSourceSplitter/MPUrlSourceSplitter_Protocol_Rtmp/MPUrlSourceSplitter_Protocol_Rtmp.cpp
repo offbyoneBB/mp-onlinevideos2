@@ -763,7 +763,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(bool *shouldExit, CRecei
       {
         if ((this->duration == RTMP_DURATION_UNSPECIFIED) && (this->mainCurlInstance != NULL))
         {
-          this->duration = this->mainCurlInstance->GetDuration();
+          this->duration = (this->mainCurlInstance->GetDuration() != 0) ? this->mainCurlInstance->GetDuration() : RTMP_DURATION_UNSPECIFIED;
         }
 
         if (this->duration != RTMP_DURATION_UNSPECIFIED)
