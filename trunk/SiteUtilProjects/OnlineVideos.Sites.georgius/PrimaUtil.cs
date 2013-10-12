@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites.georgius
         private static String showBlockStart = @"<div class=""item"">";
         private static String showBlockEnd = @"<div class=""field-video-count";
 
-        private static String showThumbUrl = @"<img src=""(?<showThumbUrl>[^""]*)";
+        private static String showThumbUrlRegex = @"<img src=""(?<showThumbUrl>[^""]*)";
         private static String showUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]*)"">(?<showTitle>[^<]*)";
 
         private static String showListNextPageRegex = @"<a href=""(?<showListNextPage>[^""]+)"" class=""active"">další<";
@@ -33,9 +33,9 @@ namespace OnlineVideos.Sites.georgius
         private static String showEpisodesBlockEnd = @"<div id=""rightContainer"">";
 
         private static String showEpisodeBlockStart = @"<div class=""item";
-        private static String showEpisodeBlockEnd = @"</a></div></div>";
+        private static String showEpisodeBlockEnd = @"</div></div>";
 
-        private static String showEpisodeThumbUrl = @"<img src=""(?<showEpisodeThumbUrl>[^""]*)";
+        private static String showEpisodeThumbUrlRegex = @"<img src=""(?<showEpisodeThumbUrl>[^""]*)";
         private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showEpisodeUrl>[^""]*)"">(?<showEpisodeTitle>[^<]*)";
 
         private static String showEpisodeNextPageRegex = @"<a href=""(?<showEpisodeNextPage>[^""]+)"" class=""active"">další<";
@@ -170,7 +170,7 @@ namespace OnlineVideos.Sites.georgius
                                 String showUrl = String.Empty;
                                 String showTitle = String.Empty;
 
-                                Match match = Regex.Match(showData, PrimaUtil.showThumbUrl);
+                                Match match = Regex.Match(showData, PrimaUtil.showThumbUrlRegex);
                                 if (match.Success)
                                 {
                                     showThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showThumbUrl"].Value, PrimaUtil.baseUrl);
@@ -261,10 +261,10 @@ namespace OnlineVideos.Sites.georgius
                                     String showEpisodeUrl = String.Empty;
                                     String showEpisodeTitle = String.Empty;
 
-                                    Match match = Regex.Match(showEpisodeData, PrimaUtil.showEpisodeThumbUrl);
+                                    Match match = Regex.Match(showEpisodeData, PrimaUtil.showEpisodeThumbUrlRegex);
                                     if (match.Success)
                                     {
-                                        showThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showEpisodeThumbUrl"].Value, PrimaUtil.baseUrl);
+                                        showEpisodeThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showEpisodeThumbUrl"].Value, PrimaUtil.baseUrl);
                                         showEpisodeData = showEpisodeData.Substring(match.Index + match.Length);
                                     }
 
@@ -279,7 +279,7 @@ namespace OnlineVideos.Sites.georgius
                                     {
                                         VideoInfo videoInfo = new VideoInfo()
                                         {
-                                            ImageUrl = showThumbUrl,
+                                            ImageUrl = showEpisodeThumbUrl,
                                             Title = showEpisodeTitle,
                                             VideoUrl = showEpisodeUrl
                                         };
