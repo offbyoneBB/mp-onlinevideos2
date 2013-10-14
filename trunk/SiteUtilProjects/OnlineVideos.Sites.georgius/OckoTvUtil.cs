@@ -112,7 +112,7 @@ namespace OnlineVideos.Sites.georgius
 
                     String tcUrl = rtmpUrl;
                     String app = rtmpUrl.Substring(rtmpUrl.IndexOf("/", rtmpUrl.IndexOf("//") + 2) + 1);
-                    String playPath = "ockoHQ1";
+                    String playPath = "ockoHQ3";
 
                     String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, PageUrl = OckoTvUtil.baseUrl, Live = true }.ToString();
 

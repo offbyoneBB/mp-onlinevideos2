@@ -12,7 +12,7 @@ namespace OnlineVideos.Sites.georgius
         #region Private fields
 
         private static String baseUrl = @"http://www.apetitonline.cz/apetit-tv";
-        private static String videoBaseUrl = @"http://www.apetitonline.cz";
+        private static String videoBaseUrl = @"http://www.apetitonline.cz/video/apetit_tv";
 
         private static String showEpisodesStart = @"<div class=""dalsi-videa-obsah"">";
         private static String showEpisodesEnd = @"<div id=""sidebar"">";
@@ -22,8 +22,7 @@ namespace OnlineVideos.Sites.georgius
 
         private static String showEpisodeNextPageRegex = @"<dd class=""next""><a href=""(?<nextPageUrl>[^""]+)"">Další strana</a></dd>";
 
-        private static String showVideoDescriptionRegex = @"file: ""/apetit-tv/(?<showVideoDescription>[^""]+)";
-        private static String showVideoUrlsRegex = @"<media:content url=""(?<showVideoUrl>[^""]+)";
+        private static String showVideoUrlRegex = @"file: ""/video/apetit_tv/(?<showVideoUrl>[^""]+)";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -214,16 +213,11 @@ namespace OnlineVideos.Sites.georgius
         public override string getUrl(VideoInfo video)
         {
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
-            Match match = Regex.Match(baseWebData, ApetitTvUtil.showVideoDescriptionRegex);
+            Match match = Regex.Match(baseWebData, ApetitTvUtil.showVideoUrlRegex);
             if (match.Success)
             {
-                baseWebData = SiteUtilBase.GetWebData(Utils.FormatAbsoluteUrl(match.Groups["showVideoDescription"].Value, ApetitTvUtil.baseUrl), null, null, null, true);
-                match = Regex.Match(baseWebData, ApetitTvUtil.showVideoUrlsRegex);
-                if (match.Success)
-                {
-                    String url = Utils.FormatAbsoluteUrl(match.Groups["showVideoUrl"].Value, ApetitTvUtil.videoBaseUrl);
-                    return new MPUrlSourceFilter.HttpUrl(url) { UserAgent = "Mozilla/5.0 (Windows NT 6.1; rv:19.0) Gecko/20100101 Firefox/19.0" }.ToString();
-                }
+                String url = Utils.FormatAbsoluteUrl(match.Groups["showVideoUrl"].Value, ApetitTvUtil.videoBaseUrl);
+                return new MPUrlSourceFilter.HttpUrl(url) { UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0" }.ToString();
             }
 
             return String.Empty;
