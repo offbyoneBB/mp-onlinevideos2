@@ -33,7 +33,6 @@ namespace OnlineVideos.Sites
         protected bool getRedirectedFileUrlForHoster = false;
 
         private SubtitleHandler sh = null;
-        private System.Threading.Thread subtitleThread;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -43,7 +42,7 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            sh.SetSubtitleText(video, GetTrackingInfo, out subtitleThread);
+            sh.SetSubtitleText(video, GetTrackingInfo, true);
             string tmp = base.getUrl(video);
             return SortPlaybackOptions(video, baseUrl, tmp, limitUrlsPerHoster, showUnknownHosters);
         }
@@ -207,8 +206,7 @@ namespace OnlineVideos.Sites
             public override string GetPlaybackOptionUrl(string url)
             {
                 string result = parent.ResolveVideoUrl(PlaybackOptions[url]);
-                if (parent.subtitleThread != null)
-                    parent.subtitleThread.Join();
+                parent.sh.WaitForSubtitleCompleted();
                 return result;
 
             }
