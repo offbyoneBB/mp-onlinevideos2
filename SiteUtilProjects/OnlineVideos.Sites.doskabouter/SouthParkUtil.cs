@@ -38,8 +38,8 @@ namespace OnlineVideos.Sites
                 ti.VideoKind = VideoKind.TvSeries;
                 video.Other = new VideoInfoOtherHelper() { TI = ti };
             }
-
-            video.Other = new VideoInfoOtherHelper();
+            else
+                video.Other = new VideoInfoOtherHelper();
         }
 
         private enum SouthParkCountry { Unknown, World, Nl, De };
