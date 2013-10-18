@@ -1,14 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Xml;
 using RssToolkit.Rss;
+using OnlineVideos.Subtitles;
 
 namespace OnlineVideos.Sites
 {
     public class SouthParkUtil : GenericSiteUtil
     {
         Regex episodePlayerRegEx = new Regex(@"swfobject.embedSWF\(""(?<url>[^""]*)""", RegexOptions.Compiled);
+
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle source, for example: TvSubtitles")]
+        protected string subtitleSource = "";
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
+        protected string subtitleLanguages = "";
+
+        private SubtitleHandler sh = null;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+            sh = new SubtitleHandler(subtitleSource, subtitleLanguages);
+        }
 
         public override int DiscoverDynamicCategories()
         {
@@ -46,6 +61,8 @@ namespace OnlineVideos.Sites
 
         public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
+            sh.SetSubtitleText(video, this.GetTrackingInfo, true);
+
             List<string> result = new List<string>();
 
             string data = GetWebData(video.VideoUrl);
@@ -93,6 +110,7 @@ namespace OnlineVideos.Sites
                     }
                 }
             }
+            sh.WaitForSubtitleCompleted();
             return result;
         }
 

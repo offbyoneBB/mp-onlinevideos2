@@ -21,17 +21,16 @@ namespace OnlineVideos.Subtitles
         private object sdObject = null;
         private bool tryLoadSubtitles = false;
 
+        private System.Threading.Thread subtitleThread = null;
+
+
         //smallest value has the highest prio
-        private Dictionary<string, int> languagePrios = new Dictionary<string, int>();
+        private Dictionary<string, int> languagePrios = null;
         public delegate ITrackingInfo GetTrackingInfo(VideoInfo video);
 
         public SubtitleHandler(string className, string languages)
         {
             Log.Debug(String.Format("Create subtitlehandler for '{0}', languages '{1}'", className, languages));
-
-            string[] langs = languages.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < langs.Length; i++)
-                languagePrios.Add(langs[i], i);
 
             className = className.Trim();
             tryLoadSubtitles = !String.IsNullOrEmpty(className);
@@ -40,6 +39,11 @@ namespace OnlineVideos.Subtitles
             {
                 if (tryLoadSubtitles)
                 {
+                    languagePrios = new Dictionary<string, int>();
+                    string[] langs = languages.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 0; i < langs.Length; i++)
+                        languagePrios.Add(langs[i], i);
+
 #if SUBTITLE
                     tryLoadSubtitles = tryLoad(className);
 #endif
@@ -57,25 +61,49 @@ namespace OnlineVideos.Subtitles
             }
         }
 
-        public void SetSubtitleText(VideoInfo video, GetTrackingInfo getTrackingInfo)
+        private void SafeSetSubtitleText(VideoInfo video, ITrackingInfo trackingInfo)
         {
+            try
+            {
+#if SUBTITLE
+                setSubtitleText(video, trackingInfo);
+#endif
+            }
+            catch (Exception e)
+            {
+                Log.Warn("SubtitleDownloader: " + e.ToString());
+            }
+        }
+
+        public void SetSubtitleText(VideoInfo video, GetTrackingInfo getTrackingInfo, bool threaded = false)
+        {
+            subtitleThread = null;
             if (tryLoadSubtitles)
             {
                 ITrackingInfo it = getTrackingInfo(video);
                 if (sdObject != null && it != null && String.IsNullOrEmpty(video.SubtitleText))
-                    try
+                    if (threaded)
                     {
-#if SUBTITLE
-                        setSubtitleText(video, it);
-#endif
+                        subtitleThread = new Thread(
+                            delegate()
+                            {
+                                SafeSetSubtitleText(video, it);
+                            });
+                        subtitleThread.Start();
                     }
-                    catch (Exception e)
-                    {
-                        Log.Warn("SubtitleDownloader: " + e.ToString());
-                    }
+                    else
+                        SafeSetSubtitleText(video, it);
             }
         }
 
+        public void WaitForSubtitleCompleted()
+        {
+            if (subtitleThread != null)
+                subtitleThread.Join();
+        }
+
+
+        [Obsolete("Use the SetSubtitleText with threaded=true")]
         public void SetSubtitleText(VideoInfo video, GetTrackingInfo getTrackingInfo, out Thread thread)
         {
             thread = null;
@@ -87,22 +115,14 @@ namespace OnlineVideos.Subtitles
                     thread = new Thread(
                         delegate()
                         {
-                            try
-                            {
-#if SUBTITLE
-                                setSubtitleText(video, it);
-#endif
-                            }
-                            catch (Exception e)
-                            {
-                                Log.Warn("SubtitleDownloader: " + e.ToString());
-                            }
+                            SafeSetSubtitleText(video, it);
                         });
                     thread.Start();
                 }
             }
         }
 
+        [Obsolete("Use the SetSubtitleText with threaded=true, and WaitForSubtitleCompleted without parameters")]
         public void WaitForSubtitleCompleted(Thread thread)
         {
             if (thread != null)
