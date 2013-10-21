@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using OnlineVideos.Hoster.Base;
 using OnlineVideos.Sites;
 using System.Text.RegularExpressions;
@@ -99,41 +100,42 @@ namespace OnlineVideos.Hoster
 
         private string Dumb(string w, string i, string s)
         {
-            string arr1 = "";
-            string arr2 = "";
+            StringBuilder arr1 = new StringBuilder();
+            StringBuilder arr2 = new StringBuilder();
             int v1 = 0;
             int v2 = 0;
             int v3 = 0;
-            while (true)
+            int endLength = w.Length + i.Length + s.Length;
+
+            while (endLength != arr1.Length + arr2.Length)
             {
-                if (v1 < 5) arr2 += w[v1];
+                if (v1 < 5) arr2.Append(w[v1]);
                 else
                     if (v1 < w.Length)
-                        arr1 += w[v1];
+                        arr1.Append(w[v1]);
                 v1++;
 
-                if (v2 < 5) arr2 += i[v2];
+                if (v2 < 5) arr2.Append(i[v2]);
                 else
                     if (v2 < i.Length)
-                        arr1 += i[v2];
+                        arr1.Append(i[v2]);
                 v2++;
-                if (v3 < 5) arr2 += s[v3];
+                if (v3 < 5) arr2.Append(s[v3]);
                 else
                     if (v3 < s.Length)
-                        arr1 += s[v3];
+                        arr1.Append(s[v3]);
                 v3++;
-                if (w.Length + i.Length + s.Length == arr1.Length + arr2.Length)
-                    break;
             }
 
             v2 = 0;
+            string arr1S = arr1.ToString();
             string res = "";
-            for (v1 = 0; v1 < arr1.Length; v1 += 2)
+            for (v1 = 0; v1 < arr1S.Length; v1 += 2)
             {
                 int tt = -1;
                 if (arr2[v2] % 2 == 1)
                     tt = 1;
-                int b = FromBase36(arr1.Substring(v1, 2)) - tt;
+                int b = FromBase36(arr1S.Substring(v1, 2)) - tt;
                 res += Convert.ToChar(b);
                 v2++;
                 if (v2 >= arr2.Length) v2 = 0;
