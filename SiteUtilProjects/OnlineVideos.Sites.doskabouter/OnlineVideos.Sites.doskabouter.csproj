@@ -100,6 +100,7 @@
     <Compile Include="Hoster\VideoBB.cs" />
     <Compile Include="Hoster\VideoWeed.cs" />
     <Compile Include="Hoster\Vimeo.cs" />
+    <Compile Include="Hoster\MyHosterBase.cs" />
     <Compile Include="Hoster\Xtream.cs" />
     <Compile Include="IplaUtil.cs" />
     <Compile Include="Katsomo.cs" />
