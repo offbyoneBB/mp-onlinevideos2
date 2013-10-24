@@ -198,13 +198,15 @@ namespace OnlineVideos.Sites
                         VideoInfo video = new VideoInfo();
                         video.VideoUrl = baseUrl + a.GetAttributeValue("href", "");
                         var img = a.Descendants("img");
-                        if (img != null && img.FirstOrDefault() != null)
-                            video.ImageUrl = img.FirstOrDefault().GetAttributeValue("src", "");
+                        if (img != null && img.First() != null)
+                        {
+                            video.ImageUrl = img.First().GetAttributeValue("src", "");
+                            video.Title = img.First().GetAttributeValue("alt", "");
+                        }
                         var dd = a.Descendants("dd");
                         if (dd != null && dd.FirstOrDefault() != null)
                             video.Length = dd.FirstOrDefault().InnerText;
                         var h1 = a.Descendants("h1");
-                        video.Title = a.GetAttributeValue("title", "");
                         videoList.Add(video);
                         var descP = section.Descendants("p").Where(p => p.GetAttributeValue("class", "") == "ellipsis-lastline");
                         if (descP != null && descP.FirstOrDefault() != null)
