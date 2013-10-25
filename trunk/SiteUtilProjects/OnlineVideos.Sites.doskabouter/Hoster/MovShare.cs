@@ -21,7 +21,7 @@ namespace OnlineVideos.Hoster
             return String.Empty;
         }
 
-        public string ParseData(string data)
+        protected string ParseData(string data)
         {
             string step1 = WiseCrack(data);
             Match m = Regex.Match(step1, @"\}\('(?<p>.+?)[^\\]',(?<a>[^,]*),(?<c>[^,]*),[^']*'(?<k>\|[^']*)'.split\('\|'\),(?<e>[^,]*),(?<d>[^\)]*)\)");

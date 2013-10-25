@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using OnlineVideos.Hoster.Base;
+using OnlineVideos.Sites;
 
 namespace OnlineVideos.Hoster
 {
@@ -22,6 +23,22 @@ namespace OnlineVideos.Hoster
                 m = m.NextMatch();
             }
             return null;
+        }
+
+        protected string FlashProvider(string page)
+        {
+            Match m = Regex.Match(page, @"flashvars\.domain=""(?<domain>[^""]*)"";\s*flashvars\.file=""(?<file>[^""]*)"";\s*flashvars\.filekey=""(?<filekey>[^""]*)"";");
+            if (m.Success)
+            {
+                string fileKey = m.Groups["filekey"].Value.Replace(".", "%2E").Replace("-", "%2D");
+                string url2 = String.Format(@"{0}/api/player.api.php?key={1}&user=undefined&codes=1&pass=undefined&file={2}",
+                    m.Groups["domain"].Value, fileKey, m.Groups["file"].Value);
+                page = SiteUtilBase.GetWebData(url2);
+                m = Regex.Match(page, @"url=(?<url>[^&]*)&");
+                if (m.Success)
+                    return m.Groups["url"].Value;
+            }
+            return HosterBase.FlashProvider(page);
         }
 
         private int FromBase36(char c)
