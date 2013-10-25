@@ -18,7 +18,7 @@ namespace OnlineVideos.Hoster
             return ParseData(page);
         }
 
-        public string ParseData(string webData)
+        private string ParseData(string webData)
         {
             string step1 = WiseCrack(webData);
 
