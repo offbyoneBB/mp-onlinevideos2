@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Web;
 using OnlineVideos.Hoster.Base;
 using OnlineVideos.Sites;
 using System.Text.RegularExpressions;
@@ -32,50 +32,29 @@ namespace OnlineVideos.Hoster
             string page = SiteUtilBase.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
-                Match n = Regex.Match(page, @"document.getElementById\('player[^=]*=(?<json>.*?);Player.checkRatio", RegexOptions.Singleline);
+                Match n = Regex.Match(page, @"data-config-url=""(?<url>[^""]*)""");
                 if (n.Success)
                 {
-                    JToken jt = JObject.Parse(n.Groups["json"].Value) as JToken;
-                    JToken video = jt["config"]["video"];
-                    JToken request = jt["config"]["request"];
-                    JArray files = video["files"]["h264"] as JArray;
+                    page = SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(n.Groups["url"].Value));
+                    JToken jt = JObject.Parse(page) as JToken;
+                    JToken video = jt["video"];
+                    JToken request = jt["request"];
+                    JObject files = request["files"]["h264"] as JObject;
 
                     string sig = request.Value<string>("signature");
                     string timestamp = request.Value<string>("timestamp");
                     string id = video.Value<string>("id");
 
-                    foreach (JToken item in files)
+                    foreach (KeyValuePair<string, JToken> item in files)
                     {
-                        string quality = item.Value<string>();
-                        string vidUrl = String.Format(@"http://player.vimeo.com/play_redirect?clip_id={0}&sig={1}&time={2}&codecs=H264,VP8,VP6&quality={3}",
-                            id, sig, timestamp, quality);
-                        result.Add(quality, getRedirect(vidUrl));
+                        string quality = item.Key;
+                        string vidUrl = item.Value.Value<string>("url");
+                        result.Add(quality, vidUrl);
                     }
                 }
             }
             return result;
         }
 
-        private string getRedirect(string url)
-        {
-            HttpWebResponse httpWebresponse = null;
-            try
-            {
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                request.AllowAutoRedirect = false;
-                if (request == null) return url;
-                request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-                request.Timeout = 15000;
-                httpWebresponse = request.GetResponse() as HttpWebResponse;
-                if (httpWebresponse == null) return url;
-                return httpWebresponse.GetResponseHeader("Location");
-            }
-            catch (Exception ex)
-            {
-                Log.Warn(ex.ToString());
-            }
-            if (httpWebresponse != null) httpWebresponse.Close();
-            return url;
-        }
     }
 }
