@@ -38,6 +38,8 @@ namespace SiteParser
             FillDecodingCombo(nextPageUrlDecodingComboBox);
             FillDecodingCombo(videoListUrlDecodingComboBox);
             FillDecodingCombo(videoUrlDecodingComboBox);
+            FillDecodingCombo(fileUrlDecodingComboBox);
+            FillDecodingCombo(fileUrlNameDecodingComboBox);
 
             FillLanguagesComboBox();
 
@@ -152,8 +154,10 @@ namespace SiteParser
 
             fileUrlRegexTextBox.Text = GetRegex(util, "regEx_FileUrl");
             fileUrlFormatStringTextBox.Text = (string)GetProperty(util, "fileUrlFormatString");
+            fileUrlDecodingComboBox.SelectedItem = (GenericSiteUtil.UrlDecoding)GetProperty(util, "fileUrlDecoding");
             fileUrlPostStringTextBox.Text = (string)GetProperty(util, "fileUrlPostString");
             fileUrlNameFormatStringTextBox.Text = (string)GetProperty(util, "fileUrlNameFormatString");
+            fileUrlNameDecodingComboBox.SelectedItem = (GenericSiteUtil.UrlDecoding)GetProperty(util, "fileUrlNameDecoding");
             getRedirectedFileUrlCheckBox.Checked = (bool)GetProperty(util, "getRedirectedFileUrl");
             comboBoxResolving.SelectedItem = (GenericSiteUtil.HosterResolving)GetProperty(util, "resolveHoster");
 
@@ -212,9 +216,11 @@ namespace SiteParser
             SetProperty(util, "playlistUrlFormatString", playlistUrlFormatStringTextBox.Text);
 
             SetRegex(util, "regEx_FileUrl", "fileUrlRegEx", fileUrlRegexTextBox.Text);
+            SetProperty(util, "fileUrlDecoding", fileUrlDecodingComboBox.SelectedItem);
             SetProperty(util, "fileUrlFormatString", fileUrlFormatStringTextBox.Text);
             SetProperty(util, "fileUrlPostString", fileUrlPostStringTextBox.Text);
             SetProperty(util, "fileUrlNameFormatString", fileUrlNameFormatStringTextBox.Text);
+            SetProperty(util, "fileUrlNameDecoding", fileUrlNameDecodingComboBox.SelectedItem);
             SetProperty(util, "getRedirectedFileUrl", getRedirectedFileUrlCheckBox.Checked);
             SetProperty(util, "resolveHoster", comboBoxResolving.SelectedItem);
         }

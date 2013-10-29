@@ -32,6 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.generalTabPage = new System.Windows.Forms.TabPage();
+            this.cookiesTextBox = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.forceUtf8CheckBox = new System.Windows.Forms.CheckBox();
             this.pictureBoxSiteBanner = new System.Windows.Forms.PictureBox();
             this.pictureBoxSiteIcon = new System.Windows.Forms.PictureBox();
             this.label38 = new System.Windows.Forms.Label();
@@ -130,6 +133,8 @@
             this.GetPlayListUrlButton = new System.Windows.Forms.Button();
             this.playListUrlResultTextBox = new System.Windows.Forms.TextBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.fileUrlNameDecodingComboBox = new System.Windows.Forms.ComboBox();
+            this.fileUrlDecodingComboBox = new System.Windows.Forms.ComboBox();
             this.label36 = new System.Windows.Forms.Label();
             this.btnPlay = new System.Windows.Forms.Button();
             this.playButtonContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -173,9 +178,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.openPngDialog = new System.Windows.Forms.OpenFileDialog();
-            this.forceUtf8CheckBox = new System.Windows.Forms.CheckBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.cookiesTextBox = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.generalTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSiteBanner)).BeginInit();
@@ -247,6 +249,38 @@
             this.generalTabPage.TabIndex = 4;
             this.generalTabPage.Text = "General";
             this.generalTabPage.UseVisualStyleBackColor = true;
+            // 
+            // cookiesTextBox
+            // 
+            this.cookiesTextBox.Location = new System.Drawing.Point(81, 412);
+            this.cookiesTextBox.Multiline = true;
+            this.cookiesTextBox.Name = "cookiesTextBox";
+            this.cookiesTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.cookiesTextBox.Size = new System.Drawing.Size(300, 88);
+            this.cookiesTextBox.TabIndex = 20;
+            this.cookiesTextBox.WordWrap = false;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.label21.Location = new System.Drawing.Point(0, 412);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(52, 13);
+            this.label21.TabIndex = 19;
+            this.label21.Text = "Cookies";
+            // 
+            // forceUtf8CheckBox
+            // 
+            this.forceUtf8CheckBox.AutoSize = true;
+            this.forceUtf8CheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.forceUtf8CheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.forceUtf8CheckBox.Location = new System.Drawing.Point(0, 171);
+            this.forceUtf8CheckBox.Name = "forceUtf8CheckBox";
+            this.forceUtf8CheckBox.Size = new System.Drawing.Size(143, 17);
+            this.forceUtf8CheckBox.TabIndex = 18;
+            this.forceUtf8CheckBox.Text = "Force Utf8 Encoding";
+            this.forceUtf8CheckBox.UseVisualStyleBackColor = true;
             // 
             // pictureBoxSiteBanner
             // 
@@ -1409,6 +1443,8 @@
             // 
             this.groupBox12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox12.Controls.Add(this.fileUrlNameDecodingComboBox);
+            this.groupBox12.Controls.Add(this.fileUrlDecodingComboBox);
             this.groupBox12.Controls.Add(this.label36);
             this.groupBox12.Controls.Add(this.btnPlay);
             this.groupBox12.Controls.Add(this.ResultUrlComboBox);
@@ -1432,6 +1468,32 @@
             this.groupBox12.TabIndex = 92;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "File Url";
+            // 
+            // fileUrlNameDecodingComboBox
+            // 
+            this.fileUrlNameDecodingComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.fileUrlNameDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.fileUrlNameDecodingComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fileUrlNameDecodingComboBox.FormattingEnabled = true;
+            this.fileUrlNameDecodingComboBox.Location = new System.Drawing.Point(362, 100);
+            this.fileUrlNameDecodingComboBox.Name = "fileUrlNameDecodingComboBox";
+            this.fileUrlNameDecodingComboBox.Size = new System.Drawing.Size(85, 21);
+            this.fileUrlNameDecodingComboBox.TabIndex = 90;
+            this.toolTip1.SetToolTip(this.fileUrlNameDecodingComboBox, "What type of decoding should be applied to the \'m0\', \'m1\', ... match of the video" +
+        "UrlRegEx.");
+            // 
+            // fileUrlDecodingComboBox
+            // 
+            this.fileUrlDecodingComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.fileUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.fileUrlDecodingComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fileUrlDecodingComboBox.FormattingEnabled = true;
+            this.fileUrlDecodingComboBox.Location = new System.Drawing.Point(362, 74);
+            this.fileUrlDecodingComboBox.Name = "fileUrlDecodingComboBox";
+            this.fileUrlDecodingComboBox.Size = new System.Drawing.Size(85, 21);
+            this.fileUrlDecodingComboBox.TabIndex = 89;
+            this.toolTip1.SetToolTip(this.fileUrlDecodingComboBox, "What type of decoding should be applied to the \'m0\', \'m1\', ... match of the video" +
+        "UrlRegEx.");
             // 
             // label36
             // 
@@ -1573,7 +1635,7 @@
             this.fileUrlNameFormatStringTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fileUrlNameFormatStringTextBox.Location = new System.Drawing.Point(80, 101);
             this.fileUrlNameFormatStringTextBox.Name = "fileUrlNameFormatStringTextBox";
-            this.fileUrlNameFormatStringTextBox.Size = new System.Drawing.Size(367, 20);
+            this.fileUrlNameFormatStringTextBox.Size = new System.Drawing.Size(268, 20);
             this.fileUrlNameFormatStringTextBox.TabIndex = 87;
             this.toolTip1.SetToolTip(this.fileUrlNameFormatStringTextBox, "Format string used with the groups (n0, n1, ..) of the regex matches of the fileU" +
         "rlRegEx to create the Name for a playback choice.");
@@ -1639,7 +1701,7 @@
             this.fileUrlFormatStringTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fileUrlFormatStringTextBox.Location = new System.Drawing.Point(80, 75);
             this.fileUrlFormatStringTextBox.Name = "fileUrlFormatStringTextBox";
-            this.fileUrlFormatStringTextBox.Size = new System.Drawing.Size(367, 20);
+            this.fileUrlFormatStringTextBox.Size = new System.Drawing.Size(268, 20);
             this.fileUrlFormatStringTextBox.TabIndex = 67;
             this.toolTip1.SetToolTip(this.fileUrlFormatStringTextBox, "Format string used with the groups (m0, m1, ..) of the regex matches of the fileU" +
         "rlRegEx to create the Url for playback.");
@@ -1840,38 +1902,6 @@
             // openPngDialog
             // 
             this.openPngDialog.Filter = "png-Files|*png";
-            // 
-            // forceUtf8CheckBox
-            // 
-            this.forceUtf8CheckBox.AutoSize = true;
-            this.forceUtf8CheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.forceUtf8CheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            this.forceUtf8CheckBox.Location = new System.Drawing.Point(0, 171);
-            this.forceUtf8CheckBox.Name = "forceUtf8CheckBox";
-            this.forceUtf8CheckBox.Size = new System.Drawing.Size(143, 17);
-            this.forceUtf8CheckBox.TabIndex = 18;
-            this.forceUtf8CheckBox.Text = "Force Utf8 Encoding";
-            this.forceUtf8CheckBox.UseVisualStyleBackColor = true;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            this.label21.Location = new System.Drawing.Point(0, 412);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(52, 13);
-            this.label21.TabIndex = 19;
-            this.label21.Text = "Cookies";
-            // 
-            // cookiesTextBox
-            // 
-            this.cookiesTextBox.Location = new System.Drawing.Point(81, 412);
-            this.cookiesTextBox.Multiline = true;
-            this.cookiesTextBox.Name = "cookiesTextBox";
-            this.cookiesTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.cookiesTextBox.Size = new System.Drawing.Size(300, 88);
-            this.cookiesTextBox.TabIndex = 20;
-            this.cookiesTextBox.WordWrap = false;
             // 
             // Form1
             // 
@@ -2078,6 +2108,8 @@
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.CheckBox forceUtf8CheckBox;
         private System.Windows.Forms.TextBox cookiesTextBox;
+        private System.Windows.Forms.ComboBox fileUrlNameDecodingComboBox;
+        private System.Windows.Forms.ComboBox fileUrlDecodingComboBox;
     }
 }
 
