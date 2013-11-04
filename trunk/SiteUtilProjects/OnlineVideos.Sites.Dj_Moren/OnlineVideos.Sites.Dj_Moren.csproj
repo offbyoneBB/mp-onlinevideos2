@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Antena3NuevoUtil.cs" />
+    <Compile Include="AtresplayerUtil.cs" />
     <Compile Include="EITBUtil.cs" />
     <Compile Include="MiteleUtil.cs" />
     <Compile Include="LaSextaUtil.cs" />
