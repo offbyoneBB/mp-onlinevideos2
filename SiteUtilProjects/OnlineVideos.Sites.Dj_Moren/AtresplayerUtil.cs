@@ -7,11 +7,18 @@ using System.ComponentModel;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
 using System.Web;
+using System.Net;
+using System.Collections.Specialized;
 
 namespace OnlineVideos.Sites
 {
     public class AtresplayerUtil : GenericSiteUtil
     {
+
+        [Category("OnlineVideosUserConfiguration"), Description("Email de tu cuenta de Atresplayer")]
+        string email = null;
+        [Category("OnlineVideosUserConfiguration"), Description("Password de tu cuenta de Atresplayer")]
+        string password = null;
 
         [Category("OnlineVideosConfiguration")]
         protected string categoriasRegEx;
@@ -27,6 +34,12 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosConfiguration")]
         protected string todosURL;
+
+        private static CookieContainer cc = new CookieContainer();
+
+        protected String PREESTRENO = "PREESTRENO (DE PAGO)";
+        protected String REGISTRO = "REQUIERE REGISTRO (GRATUITO)";
+        protected String PREMIUM = "PREMIUM (DE PAGO)";
 
         internal enum CategoryType
         {
@@ -164,22 +177,22 @@ namespace OnlineVideos.Sites
                 String tipo = (String)capitulo.SelectToken("icono");
                 if (tipo.Equals("preestreno"))
                 {
-                    tipo = "PREESTRENO (DE PAGO)";
+                    tipo = PREESTRENO;
                 }
                 else if (tipo.Equals("user"))
                 {
-                    tipo = "REQUIERE REGISTRO (GRATUITO)";
+                    tipo = REGISTRO;
                 }
                 else if (tipo.Equals("premium"))
                 {
-                    tipo = "PREMIUM (DE PAGO)";
+                    tipo = PREMIUM;
                 }
                 VideoInfo video = new VideoInfo();
                 video.Title = (String)capitulo.SelectToken("title") + (tipo.Equals("") ? "" : " - " + tipo);
                 video.VideoUrl = (String)capitulo.SelectToken("hrefHtml");
                 video.ImageUrl = baseUrl + (String)capitulo.SelectToken("srcImage");
                 video.Description = tipo;
-                //video.Airdate = "";
+                video.Other = tipo;
                 videoList.Add(video);
 
             }
@@ -188,6 +201,10 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            if (REGISTRO.Equals(video.Other) || PREMIUM.Equals(video.Other) || PREESTRENO.Equals(video.Other))
+            {
+                login("https://servicios.atresplayer.com/j_spring_security_check", String.Format("j_username={0}&j_password={1}", HttpUtility.UrlEncode(email), HttpUtility.UrlEncode(password)));
+            }
             String videoURL = "";
             String data = GetWebData(video.VideoUrl);
             regEx_dynamicSubCategories = new Regex(videoIDRegEx, defaultRegexOptions);
@@ -197,8 +214,10 @@ namespace OnlineVideos.Sites
                 String videoID = match.Groups["videoID"].Value;
                 String token = HttpUtility.UrlEncode(getToken(videoID, "puessepavuestramerced"));
                 String auxURL = String.Format("https://servicios.atresplayer.com/api/urlVideo/{0}/{1}/{2}", videoID, "android_tablet", token);
-                String datos = GetWebData(auxURL);
+                String datos = GetWebData(auxURL,cc);
                 JObject datosJSON = JObject.Parse(datos);
+                // {"result": 0, "resultDes": "OK", "resultObject": {"es": "http://urldelvideo"}}
+                // {"result": 2,"resultDes": "El usuario no tiene permisos para ver el vídeo"}
                 videoURL = (String)datosJSON["resultObject"]["es"];
             }
             return videoURL;
@@ -237,6 +256,61 @@ namespace OnlineVideos.Sites
                 sbinary += buff[i].ToString("X2");
             }
             return (sbinary);
+        }
+
+        public void login(string url, string postData)
+        {
+            if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(password))
+            {
+                Log.Error("Atresplayer: Debes indicar tu email y password para ver los vídeos que requieren registro, los premium y los preestrenos");
+                throw new OnlineVideosException("Debes indicar tu email y password para ver los vídeos que requieren registro, los premium y los preestrenos");
+            }
+            else
+            {
+                GetWebData(url, postData, null, cc, null, false, false, null, false);
+                String datosCookie = GetWebData("https://servicios.atresplayer.com/connected", cc);
+                Log.Debug("Atresplayer: Datos obtenidos del login: {0}", datosCookie);
+                //{"iduser":0000000,"connected":true,"username":"xxxxxx","subscriber":false,"keywords":""} // login OK
+                //{"connected": false} // Login error
+                JObject datosCookieJSON = JObject.Parse(datosCookie);
+                if ((bool)datosCookieJSON["connected"])
+                {
+                    DateTime expireTime = DateTime.Now.AddHours(3);
+                    Cookie c1 = new Cookie();
+                    c1.Name = "comunidad";
+                    c1.Value = datosCookieJSON["username"].ToString();
+                    c1.Path = "/";
+                    c1.Domain = new Uri(url).Host;
+                    c1.Expires = expireTime;
+                    Cookie c2 = new Cookie();
+                    c2.Name = "suscriber";
+                    c2.Value = datosCookieJSON["subscriber"].ToString();
+                    c2.Path = "/";
+                    c2.Domain = "atresplayer.com";
+                    c2.Expires = expireTime;
+                    Cookie c3 = new Cookie();
+                    c3.Name = "comunidadIdentifier";
+                    c3.Value = datosCookieJSON["iduser"].ToString();
+                    c3.Path = "/";
+                    c3.Domain = "atresplayer.com";
+                    c3.Expires = expireTime;
+                    Cookie c4 = new Cookie();
+                    c4.Name = "keyworsForTarget";
+                    c4.Value = datosCookieJSON["keywords"].ToString();
+                    c4.Path = "/";
+                    c4.Domain = "atresplayer.com";
+                    c4.Expires = expireTime;
+                    cc.Add(c1);
+                    cc.Add(c2);
+                    cc.Add(c3);
+                    cc.Add(c4);
+                }
+                else
+                {
+                    Log.Error("Atresplayer: Datos de login erróneos, asegúrate de haberlos introducido correctamente");
+                    throw new OnlineVideosException("Datos de login erróneos, asegúrate de haberlos introducido correctamente");
+                }
+            }
         }
 
     }
