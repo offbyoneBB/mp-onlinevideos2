@@ -25,7 +25,7 @@ namespace OnlineVideos.Hoster
 
 		static readonly byte[] fmtOptions3D = new byte[] { 82, 83, 84, 85, 100, 101, 102 };
 		static readonly byte[] fmtOptionsMobile = new byte[] { 13, 17 };
-		static readonly byte[] fmtOptionsQualitySorted = new byte[] { 38, 85, 46, 37, 102, 84, 45, 22, 101, 83, 44, 35, 100, 82, 43, 18, 34, 6, 5, 0, 17, 13 };
+		static readonly byte[] fmtOptionsQualitySorted = new byte[] { 38, 85, 137, 46, 37, 102, 84, 136, 45, 22, 101, 135, 83, 134, 44, 35, 100, 82, 43, 18, 34, 133, 6, 5, 0, 17, 13 };
         static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS'|swf)\s*(?:=|\:)\s((""\s*(?<html>.*)"";)|
 (?<json>\{.+\})|
 (?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|
@@ -100,11 +100,20 @@ namespace OnlineVideos.Hoster
             {
                 string swfUrl = Regex.Unescape(Regex.Match(contents, "\"url\":\\s\"([^\"]+)\"").Groups[1].Value);
 
-                string[] FmtUrlMap = Items["url_encoded_fmt_stream_map"].Split(',');
-                string[] FmtList = Items["fmt_list"].Split(',');
+				List<KeyValuePair<string[], string>> qualities = new List<KeyValuePair<string[], string>>();
 
-                List<KeyValuePair<string[], string>> qualities = new List<KeyValuePair<string[], string>>();
+                string[] FmtUrlMap = Items["url_encoded_fmt_stream_map"].Split(',');
+				string[] FmtList = Items["fmt_list"].Split(',');
                 for (int i = 0; i < FmtList.Length; i++) qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), FmtUrlMap[i]));
+
+				string[] AdaptiveFmtUrlMap = Items["adaptive_fmts"].Split(',');
+				for (int i = 0; i < AdaptiveFmtUrlMap.Length; i++)
+				{
+					var adaptive_options = HttpUtility.ParseQueryString(AdaptiveFmtUrlMap[i]);
+					var quality = new string[] { adaptive_options["itag"], adaptive_options["size"] };
+					qualities.Add(new KeyValuePair<string[], string>(quality, AdaptiveFmtUrlMap[i]));
+				}
+
                 qualities.Sort(new Comparison<KeyValuePair<string[], string>>((a,b)=>
                 {
                     return Array.IndexOf(fmtOptionsQualitySorted, byte.Parse(b.Key[0])).CompareTo(Array.IndexOf(fmtOptionsQualitySorted, byte.Parse(a.Key[0])));
@@ -136,7 +145,7 @@ namespace OnlineVideos.Hoster
 					{
 						if (!finalUrl.Contains("ratebypass"))
 							finalUrl += "&ratebypass=yes";
-						PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + "&signature=" + signature + "&ext=." + type.Replace("webm", "mkv"));
+						PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + (!string.IsNullOrEmpty(signature) ? ("&signature=" + signature) : "") + "&ext=." + type.Replace("webm", "mkv"));
 					}
 					else
 					{
