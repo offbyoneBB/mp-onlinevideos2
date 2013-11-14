@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using Newtonsoft.Json.Linq;
 using OnlineVideos.MPUrlSourceFilter;
@@ -91,8 +92,11 @@ namespace OnlineVideos.Sites
                     video.Title = vid.Value<String>("b");
                     video.Description = vid.Value<string>("d");
                     video.VideoUrl = vid.Value<string>("n");
-                    if (video.VideoUrl == "livestream.flv")
+                    if (String.IsNullOrEmpty(video.VideoUrl))
                         video.VideoUrl = vid.Value<string>("r");
+                    else
+                        video.SubtitleUrl = String.Format(@"http://www.abc.net.au/iview/captions/{0}.xml", Path.GetFileNameWithoutExtension(video.VideoUrl));
+
                     video.Length = VideoInfo.GetDuration(vid.Value<String>("j"));
                     video.Airdate = vid.Value<String>("f");
                     video.ImageUrl = vid.Value<String>("s");
@@ -105,7 +109,8 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             XmlDocument doc = new XmlDocument();
-            doc.Load(@"http://tviview.abc.net.au/iview/auth/?v2");
+            string xmlData = GetWebData(@"http://iview.abc.net.au/auth/flash/?", userAgent: "FireFox");
+            doc.LoadXml(xmlData);
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("a", "http://www.abc.net.au/iView/Services/iViewHandshaker");
             string auth = doc.SelectSingleNode(@"a:iview/a:token", nsmRequest).InnerText;
@@ -119,7 +124,7 @@ namespace OnlineVideos.Sites
                     SwfVerify = true,
                     SwfUrl = @"http://www.abc.net.au/iview/images/iview.jpg",
                     PlayPath = fileName,
-                    App = "live/" + fileName + "?auth=" + auth + "&aifp=v001",
+                    App = "live/" + fileName + "?auth=" + auth,
                     Live = true
                 }.ToString();
             }
@@ -128,7 +133,7 @@ namespace OnlineVideos.Sites
             RtmpUrl rtmpUrl;
             //if (host.Equals("Akamai", StringComparison.InvariantCultureIgnoreCase))
             {
-                rtmpUrl = new RtmpUrl(@"rtmp://cp53909.edgefcs.net///flash/playback/_definst_/" + video.VideoUrl)
+                rtmpUrl = new RtmpUrl(@"rtmp://cp53909.edgefcs.net////flash/playback/_definst_/" + video.VideoUrl)
                 {
                     TcUrl = @"rtmp://cp53909.edgefcs.net/ondemand?auth=" + auth
                 };
