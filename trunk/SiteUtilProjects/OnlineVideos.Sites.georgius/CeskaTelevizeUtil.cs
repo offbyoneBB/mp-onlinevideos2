@@ -286,6 +286,11 @@ namespace OnlineVideos.Sites.georgius
         {
             List<String> resultUrls = new List<string>();
 
+            if (video.PlaybackOptions == null)
+            {
+                video.PlaybackOptions = new Dictionary<string, string>();
+            }
+
             Boolean live = (this.currentCategory.Name == "Živě");
 
             System.Net.CookieContainer container = new System.Net.CookieContainer();
@@ -368,12 +373,29 @@ namespace OnlineVideos.Sites.georgius
                     video.Other = videos;
 
                     videoPart = 0;
+                    bool first = true;
+
                     foreach (var ctVideo in videos)
                     {
                         if (ctVideo.Part != videoPart)
                         {
                             resultUrls.Add(ctVideo.Url);
                             videoPart = ctVideo.Part;
+
+                            if (first)
+                            {
+                                video.PlaybackOptions.Clear();
+
+                                foreach (var vid in videos)
+                                {
+                                    if (vid.Part == videoPart)
+                                    {
+                                        video.PlaybackOptions.Add(vid.Label, vid.Url);
+                                    }
+                                }
+
+                                first = false;
+                            }
                         }
                     }
                 }

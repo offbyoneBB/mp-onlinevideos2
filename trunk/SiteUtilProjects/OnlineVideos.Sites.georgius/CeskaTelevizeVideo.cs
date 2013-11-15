@@ -15,9 +15,7 @@ namespace OnlineVideos.Sites.georgius
         }
 
         public int Part { get; set; }
-
         public String Label { get; set; }
-
         public String Url { get; set; }
     }
 }
