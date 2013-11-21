@@ -1162,17 +1162,12 @@
     <Site name="MuzuTV" util="MuzuTV" agecheck="false" enabled="true" lang="en">
       <Description>Watch official music videos, documentaries, TV shows, interviews, behind the scenes, tutorials and loads of exclusive and rare footage.</Description>
       <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(<li><a\shref="/[^/]*/channels/(?<url>[^/]*)/[^"]*"\stitle="[^"]*">(?<title>[^<]*)</a></li>)
-        |
-        (<h3><a\shref="/[^/]*/channels/(?<url>[^/]*)/[^"]*"\sclass="green">(?<title>[^<]*)</a></h3>)]]></item>
         <item key="baseUrl"><![CDATA[http://www.muzu.tv/]]></item>
-        <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<li\sid="next">\s*<a\shref='(?<url>[^']*)'>Next</a>\s*</li>]]></item>
-        <item key="videoListRegEx"><![CDATA[(<li>\s*<a\stitle="[^"]*"\shref="/[^/]*/[^/]*/[^/]*/(?<VideoUrl>[^/]*)/">\s*<img\salt="[^"]*"\stitle="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*<span>(?<Title>[^<]*)</span>\s*</a>\s*</li>)(?#videos of one channel)
-        |
-        (<li\sdata-id="(?<VideoUrl>[^"]*)">\s*<h4>(?<Title>[^<]*)</h4>\s*</li>)(?#videos of one playlist)
-        |(<li>\s*<a\shref="[^>]*>\s*<div\sclass="v-thumb\scanAddToPlaylist"\sdata-id="(?<VideoUrl>[^"]*)">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div><!--/\.v-thumb-->\s*<div\sclass="v-details">\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Description>[^<]*)</p>\s*<ul>\s*<li><span>(?<Duration>[^<]*)</span></li>\s*<li>[^<]*</li>\s*<li>(?<Airdate>[^<]*)</li>\s*</ul>\s*</div><!--\sv-details\s-->\s*</a>\s*</li>)(?#videos of search)]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[player/playAsset?assetId={0}]]></item>
+        <item key="videoListRegEx"><![CDATA[(?#videos of new releases)(<li[^>]*>\s*<a\sitemprop="url"\shref="[^"]*"\sstyle="[^"]*"\sclass="[^"]*"\sdata-id="(?<VideoUrl>[^"]*)"\sdata-name="[^"]*"><img\ssrc="(?<ImageUrl>[^"]*)"\salt="[^"]*"\swidth="[^"]*"\sheight="[^"]*"\s/><br>\s*<h2\sitemprop="name">(?<Title>[^<]*)</h2>\s*<span\sitemprop="byArtist">(?<Description>[^<]*)</span>)|
+        (?#videos of one playlist)(<li\sid="[^"]*"\sclass="[^"]*"\sdata-id="(?<VideoUrl>[^"]*)"><a\shref="\#"\sclass="itemImage"><img\salt="(?<Description>[^"]*)"\s*src="(?<ImageUrl>[^"]*)"\swidth="[^"]*"></a><div\sclass="removeVideo"><a[^>]*></a></div><br>\s*<h2><span\sclass="trackNumber"></span>(?<Title>[^<]*)</h2>)]]></item>
+        <item key="videoListRegExFormatString"><![CDATA[http://player.muzu.tv/player/requestVideo?viewhash=ur4uJCOszp6vEJnIEXLUmxWMo&ai={0}]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\sid="next">\s*<a\shref="(?<url>[^"]*)">Next</a>\s*</li>]]></item>
+        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
       </Configuration>
     </Site>
     <Site name="Nickelodeon.nl" util="NickelodeonNL" agecheck="false" enabled="true" lang="nl">
