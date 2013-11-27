@@ -20,14 +20,14 @@ namespace OnlineVideos.Sites
         protected bool retrieveSubtitles = false;
         
         [Category("OnlineVideosConfiguration")]
-		protected string SwfUrl = "http://www.svtplay.se/public/swf/video/svtplayer-2012.28.swf";
+		protected string SwfUrl = "http://www.svtplay.se/public/swf/video/svtplayer-2013.26.swf";
 
         protected int currentVideosMaxPages = 0;
         protected string nextPageUrl = "";
 
         public override int DiscoverDynamicCategories()
         {
-            Settings.Categories.ToList().ForEach(c => c.HasSubCategories = true);
+            Settings.Categories.ToList().ForEach(c => c.HasSubCategories = c.Name != "Live");
             return Settings.Categories.Count;
         }
 
@@ -44,26 +44,9 @@ namespace OnlineVideos.Sites
 				var htmlDoc = new HtmlAgilityPack.HtmlDocument();
 				htmlDoc.LoadHtml(data);
 
-				if (category.ParentCategory.Name == "Live" && category.Name == "Livesändningar")
+				if (category.Name == "Live")
 				{
 					return VideosForLiveCategory(htmlDoc.DocumentNode, url);
-				}
-				else if (category.ParentCategory.Name == "Live")
-				{
-					VideoInfo video = new VideoInfo();
-
-                    var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playJsSchedule') and contains(@class,'svtTab-Active')]");
-                    node = node.Descendants("div").Where(d => d.GetAttributeValue("class", "").Contains("playJsSchedule-SelectedEntry")).First();
-
-					video.Title = node.GetAttributeValue("data-title", "");
-					video.Description = node.GetAttributeValue("data-description", "");
-					video.Length = node.GetAttributeValue("data-length", "");
-                    video.ImageUrl = node.GetAttributeValue("data-titlepage-poster", "");
-					video.Airdate = node.Descendants("time").First().InnerText;
-
-					video.VideoUrl = url + "?output=json";
-
-					return new List<VideoInfo>() { video };
 				}
                 else if (category.ParentCategory.Name == "Öppet arkiv" || (category.ParentCategory.ParentCategory != null && category.ParentCategory.ParentCategory.Name == "Öppet arkiv"))
                 {
@@ -140,10 +123,11 @@ namespace OnlineVideos.Sites
             var lis = node.Descendants("li");
             foreach (var li in lis)
             {
-                if (!li.Descendants("article").Where(a => a.GetAttributeValue("class", "") == "playBroadcastEnded").Any())
+                var videoLink = li.Descendants("a").FirstOrDefault();
+                if (!videoLink.GetAttributeValue("class", "").Contains("playBroadcastEnded"))
                 {
                     VideoInfo video = new VideoInfo();
-                    video.VideoUrl = li.Descendants("a").Select(a => a.GetAttributeValue("href", "")).FirstOrDefault();
+                    video.VideoUrl = videoLink.GetAttributeValue("href", "");
 
                     if (!string.IsNullOrEmpty(video.VideoUrl))
                     {
@@ -151,15 +135,23 @@ namespace OnlineVideos.Sites
                         if (!Uri.IsWellFormedUriString(video.VideoUrl, System.UriKind.Absolute)) video.VideoUrl = new Uri(new Uri(url), video.VideoUrl).AbsoluteUri;
                         video.VideoUrl += "?output=json";
 
-                        var titleDiv = li.SelectSingleNode(".//div[contains(@class,'playBroadcastTitle')]");
 
-                        var title = HttpUtility.HtmlDecode((titleDiv != null ? titleDiv.InnerText : "").Trim().Replace('\n', ' '));
                         bool live = li.Descendants("img").Where(img => img.GetAttributeValue("class", "") == "playBroadcastLiveIcon").Any();
-                        video.Title = (live ? "LIVE - " : "") + title;
+                        if (live)
+                        {
+                            var titleH1 = li.SelectSingleNode(".//h1[contains(@class,'playH5')]");
+                            video.Title = "LIVE - " + HttpUtility.HtmlDecode((titleH1 != null ? titleH1.InnerText : "").Trim().Replace('\n', ' '));
+                        }
+                        else
+                        {
+                            var titleDiv = li.SelectSingleNode(".//div[contains(@class,'playBroadcastTitle')]");
+                            video.Title = HttpUtility.HtmlDecode((titleDiv != null ? titleDiv.InnerText : "").Trim().Replace('\n', ' '));
+                        }
 
                         video.Airdate = li.Descendants("time").Select(t => t.GetAttributeValue("datetime", "")).FirstOrDefault();
                         if (!string.IsNullOrEmpty(video.Airdate)) video.Airdate = DateTime.Parse(video.Airdate).ToString("g", OnlineVideoSettings.Instance.Locale);
 
+                        video.Other = "live";
                         videoList.Add(video);
                     }
                 }
@@ -231,7 +223,7 @@ namespace OnlineVideos.Sites
                     video.Title = HttpUtility.HtmlDecode((article.Descendants("a").Select(a => a.GetAttributeValue("title", "")).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
                     video.ImageUrl = article.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
                     video.Airdate = article.Descendants("time").Select(t => t.GetAttributeValue("datetime", "")).FirstOrDefault();
-                    if (!string.IsNullOrEmpty(video.Airdate)) video.Airdate = DateTime.Parse(video.Airdate).ToString("g", OnlineVideoSettings.Instance.Locale);
+                    if (!string.IsNullOrEmpty(video.Airdate)) video.Airdate = DateTime.Parse(video.Airdate).ToString("d", OnlineVideoSettings.Instance.Locale);
                     videoList.Add(video);
                 }
             }
@@ -240,114 +232,29 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            if (parentCategory.ParentCategory == null && parentCategory.Name == "Live")
+            string categoryUrl = (parentCategory as RssLink).Url;
+            string data = GetWebData(categoryUrl);
+            if (!string.IsNullOrEmpty(data))
             {
-                parentCategory.HasSubCategories = true;
-                parentCategory.SubCategoriesDiscovered = true;
-                return parentCategory.SubCategories.Count;
-
-            }
-            else
-            {
-                string categoryUrl = (parentCategory as RssLink).Url;
-                string data = GetWebData(categoryUrl);
-                if (!string.IsNullOrEmpty(data))
+                var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                htmlDoc.LoadHtml(data);
+                parentCategory.SubCategories = new List<Category>();
+                if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("program"))
                 {
-                    var htmlDoc = new HtmlAgilityPack.HtmlDocument();
-                    htmlDoc.LoadHtml(data);
-                    parentCategory.SubCategories = new List<Category>();
-                    if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("program"))
+                    var divs = htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'playAlphabeticLetter')]");
+                    if (divs != null)
                     {
-                        var divs = htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'playAlphabeticLetter')]");
-                        if (divs != null)
-                        {
-                            foreach (var div in divs)
-                            {
-                                RssLink letterCategory = new RssLink()
-                                {
-                                    Name = HttpUtility.HtmlDecode(div.Element("h3").InnerText.Trim().Replace('\n', ' ')),
-                                    HasSubCategories = true,
-                                    ParentCategory = parentCategory,
-                                    SubCategoriesDiscovered = true,
-                                    SubCategories = new List<Category>()
-                                };
-                                var li_a_s = div.Element("ul").Descendants("li").Select(li => li.Element("a"));
-                                if (li_a_s != null)
-                                {
-                                    foreach (var a in li_a_s)
-                                    {
-                                        RssLink cat = new RssLink();
-                                        cat.Url = a.GetAttributeValue("href", "");
-                                        if (!string.IsNullOrEmpty(cat.Url))
-                                        {
-                                            if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
-
-                                            cat.Name = HttpUtility.HtmlDecode(a.InnerText.Trim().Replace('\n', ' '));
-
-                                            cat.SubCategories = new List<Category>() { new RssLink() { Name = "Hela program", ParentCategory = cat, Url = cat.Url + "?pr=1" }, new RssLink() { Name = "Klipp", ParentCategory = cat, Url = cat.Url + "?kl=1" } };
-                                            cat.HasSubCategories = true;
-                                            cat.SubCategoriesDiscovered = true;
-
-                                            if (splitByLetter)
-                                            {
-                                                letterCategory.SubCategories.Add(cat);
-                                                cat.ParentCategory = letterCategory;
-                                            }
-                                            else
-                                            {
-                                                parentCategory.SubCategories.Add(cat);
-                                                cat.ParentCategory = parentCategory;
-                                            }
-                                        }
-                                    }
-                                    if (splitByLetter && letterCategory.SubCategories.Count > 0)
-                                    {
-                                        letterCategory.EstimatedVideoCount = (uint)letterCategory.SubCategories.Count;
-                                        parentCategory.SubCategories.Add(letterCategory);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("kategorier"))
-                    {
-                        var lis = htmlDoc.DocumentNode.SelectNodes("//li[contains(@class,'svtMediaBlock')]");
-                        if (lis != null)
-                        {
-                            foreach (var li in lis)
-                            {
-                                RssLink cat = new RssLink();
-                                cat.Url = li.Descendants("a").Select(a => a.GetAttributeValue("href", "")).FirstOrDefault();
-                                if (!string.IsNullOrEmpty(cat.Url) && !cat.Url.EndsWith("oppetarkiv"))
-                                {
-                                    if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
-
-                                    cat.Name = HttpUtility.HtmlDecode((li.Descendants("span").Where(c => c.GetAttributeValue("class", "").Equals("playCategoryCaption")).Select(h => h.InnerText).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
-
-                                    cat.Thumb = li.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
-                                    if (!string.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(categoryUrl), cat.Thumb).AbsoluteUri;
-
-                                    cat.HasSubCategories = true;
-                                    cat.ParentCategory = parentCategory;
-                                    parentCategory.SubCategories.Add(cat);
-                                }
-                            }
-                        }
-                    }
-                    else if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("oppetarkiv"))
-                    {
-                        var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@role,'main')]");
-                        foreach (var section in node.Elements("section"))
+                        foreach (var div in divs)
                         {
                             RssLink letterCategory = new RssLink()
                             {
-                                Name = HttpUtility.HtmlDecode(section.Element("h2").Element("a").GetAttributeValue("id", "")),
+                                Name = HttpUtility.HtmlDecode(div.Element("h3").InnerText.Trim().Replace('\n', ' ')),
                                 HasSubCategories = true,
                                 ParentCategory = parentCategory,
                                 SubCategoriesDiscovered = true,
                                 SubCategories = new List<Category>()
                             };
-                            var li_a_s = section.Element("ul").Descendants("li").Select(li => li.Element("a"));
+                            var li_a_s = div.Element("ul").Descendants("li").Select(li => li.Element("a"));
                             if (li_a_s != null)
                             {
                                 foreach (var a in li_a_s)
@@ -356,13 +263,13 @@ namespace OnlineVideos.Sites
                                     cat.Url = a.GetAttributeValue("href", "");
                                     if (!string.IsNullOrEmpty(cat.Url))
                                     {
-                                        cat.Url = HttpUtility.UrlDecode(cat.Url);
-                                        cat.Url = HttpUtility.HtmlDecode(cat.Url); //Some urls come html encoded
                                         if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
-                                        cat.Url += "?sida=1&sort=tid_stigande";
+
                                         cat.Name = HttpUtility.HtmlDecode(a.InnerText.Trim().Replace('\n', ' '));
-                                        cat.HasSubCategories = false;
-                                        cat.SubCategoriesDiscovered = false;
+
+                                        cat.SubCategories = new List<Category>() { new RssLink() { Name = "Hela program", ParentCategory = cat, Url = cat.Url + "?pr=1" }, new RssLink() { Name = "Klipp", ParentCategory = cat, Url = cat.Url + "?kl=1" } };
+                                        cat.HasSubCategories = true;
+                                        cat.SubCategoriesDiscovered = true;
 
                                         if (splitByLetter)
                                         {
@@ -384,32 +291,108 @@ namespace OnlineVideos.Sites
                             }
                         }
                     }
-                    else
+                }
+                else if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("kategorier"))
+                {
+                    var lis = htmlDoc.DocumentNode.SelectNodes("//li[contains(@class,'svtMediaBlock')]");
+                    if (lis != null)
                     {
-                        var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playJsTabs playBox')]");
-                        CategoriesFromArticles(node, parentCategory);
-
-                        // categories are spread over pages - remember the last page on the parent category, so we know when to stop adding a NextPageCategory
-                        var lastPageNode = node.Descendants("div").Where(d => d.GetAttributeValue("class", "") == "playBoxContainer").FirstOrDefault();
-                        if (lastPageNode != null) lastPageNode = lastPageNode.Element("a");
-                        if (lastPageNode != null)
+                        foreach (var li in lis)
                         {
-                            int maxPages = lastPageNode.GetAttributeValue("data-lastpage", 0);
-                            if (maxPages > 1)
+                            RssLink cat = new RssLink();
+                            cat.Url = li.Descendants("a").Select(a => a.GetAttributeValue("href", "")).FirstOrDefault();
+                            if (!string.IsNullOrEmpty(cat.Url) && !cat.Url.EndsWith("oppetarkiv"))
                             {
-                                parentCategory.Other = maxPages;
-                                string url = HttpUtility.HtmlDecode(lastPageNode.GetAttributeValue("data-baseurl", "")) + lastPageNode.GetAttributeValue("data-name", "") + "=" + lastPageNode.GetAttributeValue("data-nextpage", "");
-                                if (!Uri.IsWellFormedUriString(url, System.UriKind.Absolute)) url = new Uri(new Uri(categoryUrl), url).AbsoluteUri;
-                                parentCategory.SubCategories.Add(new NextPageCategory() { Url = url, ParentCategory = parentCategory });
+                                if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
+
+                                cat.Name = HttpUtility.HtmlDecode((li.Descendants("span").Where(c => c.GetAttributeValue("class", "").Equals("playCategoryCaption")).Select(h => h.InnerText).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
+
+                                cat.Thumb = li.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
+                                if (!string.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(categoryUrl), cat.Thumb).AbsoluteUri;
+
+                                cat.HasSubCategories = true;
+                                cat.ParentCategory = parentCategory;
+                                parentCategory.SubCategories.Add(cat);
                             }
                         }
                     }
-
-                    parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0; // only set to true if actually discovered (forces re-discovery until found)
-
-                    return parentCategory.SubCategories.Count; // return the number of discovered categories
                 }
+                else if (parentCategory.ParentCategory == null && (parentCategory as RssLink).Url.Contains("oppetarkiv"))
+                {
+                    var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@role,'main')]");
+                    foreach (var section in node.Elements("section"))
+                    {
+                        RssLink letterCategory = new RssLink()
+                        {
+                            Name = HttpUtility.HtmlDecode(section.Element("h2").Element("a").GetAttributeValue("id", "")),
+                            HasSubCategories = true,
+                            ParentCategory = parentCategory,
+                            SubCategoriesDiscovered = true,
+                            SubCategories = new List<Category>()
+                        };
+                        var li_a_s = section.Element("ul").Descendants("li").Select(li => li.Element("a"));
+                        if (li_a_s != null)
+                        {
+                            foreach (var a in li_a_s)
+                            {
+                                RssLink cat = new RssLink();
+                                cat.Url = a.GetAttributeValue("href", "");
+                                if (!string.IsNullOrEmpty(cat.Url))
+                                {
+                                    cat.Url = HttpUtility.UrlDecode(cat.Url);
+                                    cat.Url = HttpUtility.HtmlDecode(cat.Url); //Some urls come html encoded
+                                    if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(categoryUrl), cat.Url).AbsoluteUri;
+                                    cat.Url += "?sida=1&sort=tid_stigande";
+                                    cat.Name = HttpUtility.HtmlDecode(a.InnerText.Trim().Replace('\n', ' '));
+                                    cat.HasSubCategories = false;
+                                    cat.SubCategoriesDiscovered = false;
+
+                                    if (splitByLetter)
+                                    {
+                                        letterCategory.SubCategories.Add(cat);
+                                        cat.ParentCategory = letterCategory;
+                                    }
+                                    else
+                                    {
+                                        parentCategory.SubCategories.Add(cat);
+                                        cat.ParentCategory = parentCategory;
+                                    }
+                                }
+                            }
+                            if (splitByLetter && letterCategory.SubCategories.Count > 0)
+                            {
+                                letterCategory.EstimatedVideoCount = (uint)letterCategory.SubCategories.Count;
+                                parentCategory.SubCategories.Add(letterCategory);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'playJsTabs playBox')]");
+                    CategoriesFromArticles(node, parentCategory);
+
+                    // categories are spread over pages - remember the last page on the parent category, so we know when to stop adding a NextPageCategory
+                    var lastPageNode = node.Descendants("div").Where(d => d.GetAttributeValue("class", "") == "playBoxContainer").FirstOrDefault();
+                    if (lastPageNode != null) lastPageNode = lastPageNode.Element("a");
+                    if (lastPageNode != null)
+                    {
+                        int maxPages = lastPageNode.GetAttributeValue("data-lastpage", 0);
+                        if (maxPages > 1)
+                        {
+                            parentCategory.Other = maxPages;
+                            string url = HttpUtility.HtmlDecode(lastPageNode.GetAttributeValue("data-baseurl", "")) + lastPageNode.GetAttributeValue("data-name", "") + "=" + lastPageNode.GetAttributeValue("data-nextpage", "");
+                            if (!Uri.IsWellFormedUriString(url, System.UriKind.Absolute)) url = new Uri(new Uri(categoryUrl), url).AbsoluteUri;
+                            parentCategory.SubCategories.Add(new NextPageCategory() { Url = url, ParentCategory = parentCategory });
+                        }
+                    }
+                }
+
+                parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0; // only set to true if actually discovered (forces re-discovery until found)
+
+                return parentCategory.SubCategories.Count; // return the number of discovered categories
             }
+
             return 0;
         }
 
@@ -511,12 +494,16 @@ namespace OnlineVideos.Sites
 					{
 						SwfVerify = true,
 						SwfUrl = SwfUrl,
-						Live = video.VideoUrl.Contains("/live")
+                        Live = video.Other != null
 					}.ToString();
 				}
+                    
 				else if (url.StartsWith("http://") && url.EndsWith(".f4m"))
 				{
-                    url = url + "?hdcore=2.11.3&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
+                    url = new MPUrlSourceFilter.AfhsManifestUrl(url + "?hdcore=3.1.0&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12))
+                    {
+                        LiveStream = video.Other != null
+                    }.ToString();
 				}
 				else if (url.StartsWith("http://geoip.api"))
 					url = HttpUtility.ParseQueryString(new Uri(url).Query)["vurl"];
