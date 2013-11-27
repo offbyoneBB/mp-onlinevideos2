@@ -154,7 +154,7 @@ namespace OnlineVideos.Sites
                 {
                     string s = item.Value<string>();
 
-                    m = Regex.Match(s, @"npoplayer/(?<quality>[^/]*)/");
+                    m = Regex.Match(s, @"/ida/(?<quality>[^/]*)/");
                     if (m.Success)
                     {
                         string quality = m.Groups["quality"].Value;
