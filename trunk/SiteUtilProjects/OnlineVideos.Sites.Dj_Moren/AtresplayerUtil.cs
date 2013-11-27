@@ -27,6 +27,9 @@ namespace OnlineVideos.Sites
         protected string menuAZRegEx;
 
         [Category("OnlineVideosConfiguration")]
+        protected string temporadasRegEx;
+
+        [Category("OnlineVideosConfiguration")]
         protected string videoIDRegEx;
 
         [Category("OnlineVideosConfiguration")]
@@ -46,7 +49,8 @@ namespace OnlineVideos.Sites
             None,
             menuAZ,
             subMenuAZ,
-            general
+            general,
+            temporadas
         }
 
         public override int DiscoverDynamicCategories()
@@ -83,6 +87,9 @@ namespace OnlineVideos.Sites
                     break;
                 case CategoryType.subMenuAZ:
                     subCategories = DiscoverSubMenuAZ(parentCategory as RssLink);
+                    break;
+                case CategoryType.temporadas:
+                    subCategories = DiscoverTemporadas(parentCategory as RssLink);
                     break;
             }
 
@@ -123,9 +130,10 @@ namespace OnlineVideos.Sites
                 if ("".Equals(parentCategory.Url) || (("?" + letra).ToUpper().Equals(parentCategory.Url.ToUpper()) || "?0".Equals(parentCategory.Url) && int.TryParse(letra, out ignoreMe)))
                 {
                     String name = (String)programa.SelectToken("titulo");
-                    String url = baseUrl + (String)programa.SelectToken("href") + "/carousel.json";
+                    //String url = baseUrl + (String)programa.SelectToken("href") + "/carousel.json";
+                    String url = baseUrl + (String)programa.SelectToken("href");
                     String thumbUrl = baseUrl + (String)programa.SelectToken("img");
-                    result.Add(CreateCategory(name, url, thumbUrl, CategoryType.None, "", parentCategory));
+                    result.Add(CreateCategory(name, url, thumbUrl, CategoryType.temporadas, "", parentCategory));
                 }
             }
             return result;
@@ -140,10 +148,34 @@ namespace OnlineVideos.Sites
             while (match.Success)
             {
                 String name = match.Groups["title"].Value;
-                String url =  match.Groups["url"].Value + "/carousel.json";
+                //String url =  match.Groups["url"].Value + "/carousel.json";
+                String url = match.Groups["url"].Value;
                 String thumbUrl = baseUrl + match.Groups["thumb"].Value;
-                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.None, "", parentCategory));
+                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.temporadas, "", parentCategory));
                 match = match.NextMatch();
+            }
+            return result;
+        }
+
+        internal List<Category> DiscoverTemporadas(RssLink parentCategory)
+        {
+            List<Category> result = new List<Category>();
+            String programsData = GetWebData(parentCategory.Url);
+            regEx_dynamicSubCategories = new Regex(temporadasRegEx, defaultRegexOptions);
+            Match match = regEx_dynamicSubCategories.Match(programsData);
+            if (match.Success)
+            {
+                while (match.Success)
+                {
+                    String name = match.Groups["title"].Value;
+                    String url = match.Groups["url"].Value + "/carousel.json";
+                    result.Add(CreateCategory(name, url, null, CategoryType.None, "", parentCategory));
+                    match = match.NextMatch();
+                }
+            }
+            else
+            {                
+                result.Add(CreateCategory("Temporada única", parentCategory.Url + "/carousel.json", null, CategoryType.None, "", parentCategory));
             }
             return result;
         }
@@ -194,7 +226,6 @@ namespace OnlineVideos.Sites
                 video.Description = tipo;
                 video.Other = tipo;
                 videoList.Add(video);
-
             }
             return videoList;
         }
