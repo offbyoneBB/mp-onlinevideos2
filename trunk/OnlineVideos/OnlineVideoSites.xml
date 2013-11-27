@@ -1119,7 +1119,7 @@
         <item key="dynamicCategoriesRegEx"><![CDATA[<a\sclass=""\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<=<dt>Alle\sprogramma's</dt>\s*.*)<li><a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
         <item key="videoListRegEx"><![CDATA[(?#Normal)
-<li\sclass="item">\s*<article\sclass="preview">\s*<a\sclass="wrap"\shref="(?<VideoUrl>[^"]*)">\s*<figure>\s*<img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*</figure>\s*<div\sclass="content">\s*<h1\sclass="title">(?<Title>[^<]*)</h1>\s*<time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time>\s*<span\sclass="icon\sicon-play">\(bekijken\)</span>\s*</div>\s*</a>\s*</article>\s*</li>
+<li\sclass="item">\s*<article\sclass="preview">\s*<a\sclass="wrap"\shref="(?<VideoUrl>[^"]*)">\s*<figure>\s*<img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*</figure>\s*<div\sclass="content">\s*<h3\sclass="title">(?<Title>[^<]*)</h3>\s*<time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time>\s*<span\sclass="icon\sicon-play">\(bekijken\)</span>\s*</div>\s*</a>\s*</article>\s*</li>
 |
 (?#Gemist/dag)
 <div\sdata-channel="[^"]*"\sclass="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<div\sclass="figure">\s*<span\sclass="icon\sicon-play">\(bekijken\)</span>\s*<img\ssrc="(?<ImageUrl>[^"]*)"\salt=""\s/>\s*</div>\s*<p>\s*<span\sclass="title">(?<Title>[^<]*)</span>\s*</p>\s*</a>\s*</div>]]></item>
