@@ -12,6 +12,7 @@ namespace OnlineVideos.Sites
 {
     public class TV4Play : SiteUtilBase
     {
+        // API: http://webapi.tv4play.se/ also http://mobapi.tv4play.se/
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("TV4Play username")]
         protected string username = null;
@@ -66,14 +67,21 @@ namespace OnlineVideos.Sites
         protected const string tvKanaler = "TV-kanaler";
 
         protected bool isPremium = false;
+        protected bool fakePremium = false;
 
         private bool isLoggedIn()
         {
+            if (fakePremium) return fakePremium;
             return GetWebData(loginPostUrl, cc).Trim() == "ok";
         }
 
         private void login()
         {
+            if (fakePremium)
+            {
+                isPremium = fakePremium;
+                return;
+            }
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 cc = new CookieContainer();
@@ -114,6 +122,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             currentPage = 1;
+            login();
             if (parentCategory.ParentCategory == null)
             {
                 string jsonstr = GetWebData((parentCategory as RssLink).Url);
@@ -209,6 +218,7 @@ namespace OnlineVideos.Sites
 
         private List<VideoInfo> generateVideoList(Category category)
         {
+            login();
             currentVideoUrl = (category as RssLink).Url;
             List<VideoInfo> videos = new List<VideoInfo>();
             Newtonsoft.Json.Linq.JObject json = new Newtonsoft.Json.Linq.JObject();
@@ -225,7 +235,7 @@ namespace OnlineVideos.Sites
             Newtonsoft.Json.Linq.JArray results = (Newtonsoft.Json.Linq.JArray)json["results"];
             foreach (var result in results)
             {
-                if (!tryFilterDrm || !(bool)result["is_drm_protected"])
+                if ((!tryFilterDrm || !(bool)result["is_drm_protected"]) && (isPremium || int.Parse(((string)result["availability"]["availability_group_free"]).Replace("+",string.Empty)) > 0))
                 {
                     VideoInfo video = new VideoInfo();
                     video.Title = (string)result["title"];
@@ -329,13 +339,13 @@ namespace OnlineVideos.Sites
                         {
                             urls.Add(new KeyValuePair<int, string>(
                                 int.Parse(videoElem.GetElementsByTagName("bitrate")[0].InnerText),
-                                videoElem.GetElementsByTagName("url")[0].InnerText + "?hdcore=2.11.3&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12)));
+                                videoElem.GetElementsByTagName("url")[0].InnerText + "?hdcore=2.10.3&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12)));
                         }
                         else if (scheme.StartsWith("http"))
                         {
                             urls.Add(new KeyValuePair<int, string>(
                                 int.Parse(videoElem.GetElementsByTagName("bitrate")[0].InnerText),
-                                videoElem.GetElementsByTagName("url")[0].InnerText + "hdcore=2.11.3&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12)));
+                                videoElem.GetElementsByTagName("url")[0].InnerText + "hdcore=2.10.3&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12)));
                         }
 
                     } /* Can not play wvm format, drm'ed? (widevine) ? */
