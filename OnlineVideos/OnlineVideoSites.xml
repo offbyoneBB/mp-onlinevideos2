@@ -997,7 +997,7 @@
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<div\sclass="contentitem">\s*<a\shref="(?<VideoUrl>[^"]*)"\srel="videoplayer">\s*<span\sclass="media\svideo">\s*<img\ssrc="(?<ImageUrl>[^"]*)">\s*<span\sclass="copyright">[^<]*</span>\s*<span[^>]*><small>[^<]*</small></span>\s*</span>\s*<h1>\s*<span\sclass="overlay"><i></i></span>(?<Title>[^<]*)</h1>\s*</a>
 |
-<a\shref="(?<VideoUrl>[^"]*)"\srel="videoplayer">\s*<span\sclass="title\stitle_before_media">(?<Title>[^<]*)</span>\s*(?:<span\sclass="abstract\sabstract_before_media">(?<Description>[^<]*)</span>\s*)?<span\sclass="video">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>]]></item>
+<a\shref="(?<VideoUrl>[^"]*)"\sclass="videolink">\s*<span\sclass="title\stitle_before_media">(?<Title>[^<]*)</span>\s*(?:<span\sclass="abstract\sabstract_before_media">(?<Description>[^<]*)</span>\s*)?<span\sclass="video">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>]]></item>
         <item key="fileUrlRegEx"><![CDATA[data-video-src="(?<m0>[^"]*)"]]></item>
         <item key="baseUrl"><![CDATA[http://www.deredactie.be/cm/vrtnieuws/videozone]]></item>
       </Configuration>
