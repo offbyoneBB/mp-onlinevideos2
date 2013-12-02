@@ -1332,7 +1332,7 @@
         <item key="baseUrl"><![CDATA[http://www.sbs.com.au/ondemand/js/video-menu?v=1.1]]></item>
         <item key="searchUrl"><![CDATA[http://www.sbs.com.au/api/video_feed/f/dYtmxB/search?form=json&q={0}&count=true&defaultThumbnailAssetType=Thumbnail&range=1-24]]></item>
         <item key="playlistUrlRegEx"><![CDATA[playerParams\.releaseUrls\s=\s{\s*progressive:\s'[^']*',\s*html:\s'[^']*',\s*standard:\s'(?<url>[^']*)'\s*}|player\.releaseUrl\s=\s"(?<url>[^"]*)";]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<video\ssrc="(?<m0>[^"]*)"\ssystem-bitrate="(?<n0>[^"]*)"/>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[(<video\ssrc="(?<m0>[^"]*)"\ssystem-bitrate="(?<n0>[^"]*)"[^>]*>)|(<video\ssrc="(?<m0>[^"]*)"\stitle[^>]*>)]]></item>
       </Configuration>
     </Site>
     <Site name="TV3NZ" util="TV3NZOnDemand" agecheck="false" enabled="true" lang="en">
