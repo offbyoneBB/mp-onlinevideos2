@@ -6,6 +6,9 @@ using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using System.Web;
+using System.Net;
+using System.Collections;
+using System.Reflection;
 
 namespace OnlineVideos.Sites
 {
@@ -17,10 +20,81 @@ namespace OnlineVideos.Sites
         protected const string TV = "TV";
         protected const string FILM = "FILM";
 
+        // ddos prevention-prevention
+        protected const string formula = @"a\.value = (\d+)\+(\d+)\*(\d+)";
+        protected CookieContainer cc = new CookieContainer();
+        protected const string ddosUrl = "http://dreamfilm.se{0}?jschl_vc={1}&jschl_answer={2}";
+
+        #region MyGetWebData
+
+        //Stolen from http://stackoverflow.com/questions/1047669/cookiecontainer-bug
+        // Wildcarded domains not sent with request... i.e. ".dreamfilm.se"
+        private void BugFix_CookieDomain(CookieContainer cookieContainer)
+        {
+            System.Type _ContainerType = typeof(CookieContainer);
+            Hashtable table = (Hashtable)_ContainerType.InvokeMember("m_domainTable",
+                                       System.Reflection.BindingFlags.NonPublic |
+                                       System.Reflection.BindingFlags.GetField |
+                                       System.Reflection.BindingFlags.Instance,
+                                       null,
+                                       cookieContainer,
+                                       new object[] { });
+            ArrayList keys = new ArrayList(table.Keys);
+            foreach (string keyObj in keys)
+            {
+                string key = (keyObj as string);
+                if (key[0] == '.')
+                {
+                    string newKey = key.Remove(0, 1);
+                    table[newKey] = table[keyObj];
+                }
+            }
+        }
+
+        protected string GetWebDataWithDdosRemoval(string url,string postData = null)
+        {
+            NameValueCollection headers = new NameValueCollection();
+            headers.Add("Accept", "*/*"); // accept any content type
+            headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
+            headers.Add("Referer", url);
+
+            BugFix_CookieDomain(cc);
+            // No caching... if url results in ddos protection page.
+            string data = GetWebData(url, postData, headers, cc, null, false, false, null, false);
+            var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+            htmlDoc.LoadHtml(data);
+            var form = htmlDoc.DocumentNode.SelectSingleNode("//form[@id = 'challenge-form']");
+            if (form != null)
+            {
+                //Need to bypass CloudFlare ddos protection, calculate answer on challenge and keep cookies
+                string action = form.GetAttributeValue("action","");
+                string jschlVc = htmlDoc.DocumentNode.SelectSingleNode("//input[@name = 'jschl_vc']").GetAttributeValue("value", "");
+                string a = "0";
+                string b = "0";
+                string c = "0";
+                Regex rgx = new Regex(formula);
+                Match m = rgx.Match(data);
+                if (m.Success)
+                {
+                    a = m.Groups[1].Value;
+                    b = m.Groups[2].Value;
+                    c = m.Groups[3].Value;
+                }
+                int answer = (int.Parse(a) + int.Parse(b) * int.Parse(c)) + 12;
+                
+                var challengeUrl = string.Format(ddosUrl, action, jschlVc, answer);
+                BugFix_CookieDomain(cc);
+                data = GetWebData(challengeUrl, postData, headers, cc, null, false, false, null, false);
+            }
+            return data;
+        }
+
+        #endregion
         #region SettingsCategories
-        
+
         public override int DiscoverDynamicCategories()
         {
+
             Settings.Categories.ToList().ForEach(c => c.HasSubCategories = true);
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
@@ -73,7 +147,7 @@ namespace OnlineVideos.Sites
 
             };
             parentCategory.SubCategories.Add(cat);
-            string data = GetWebData(categoryUrl);
+            string data = GetWebDataWithDdosRemoval(categoryUrl);
             if (!string.IsNullOrEmpty(data))
             {
                 var htmlDoc = new HtmlAgilityPack.HtmlDocument();
@@ -107,8 +181,8 @@ namespace OnlineVideos.Sites
                 categoryUrl = (parentCategory as RssLink).Url;
             else
                 categoryUrl = string.Format("http://dreamfilm.se/search/?q={0}", currentSearch);
- 
-            string data = GetWebData(string.Format("{0}{1}page={2}", categoryUrl, categoryUrl.Contains("?") ? "&" : "?", currentCategoryPage));
+
+            string data = GetWebDataWithDdosRemoval(string.Format("{0}{1}page={2}", categoryUrl, categoryUrl.Contains("?") ? "&" : "?", currentCategoryPage));
             if (!string.IsNullOrEmpty(data))
             {
                 var htmlDoc = new HtmlAgilityPack.HtmlDocument();
@@ -206,7 +280,7 @@ namespace OnlineVideos.Sites
         {
             List<VideoInfo> videos = new List<VideoInfo>();
             string categoryUrl = (category as RssLink).Url;
-            string data = GetWebData(categoryUrl);
+            string data = GetWebDataWithDdosRemoval(categoryUrl);
             if (!string.IsNullOrEmpty(data))
             {
                 var htmlDoc = new HtmlAgilityPack.HtmlDocument();
@@ -279,7 +353,7 @@ namespace OnlineVideos.Sites
             string type = (string)video.Other;
             if (type.Equals(TV))
             {
-                string data = GetWebDataFromPost("http://dreamfilm.se/CMS/modules/series/ajax.php", string.Format("action=showmovie&id={0}", video.VideoUrl));
+                string data = GetWebDataWithDdosRemoval("http://dreamfilm.se/CMS/modules/series/ajax.php", string.Format("action=showmovie&id={0}", video.VideoUrl));
                 var htmlDoc = new HtmlAgilityPack.HtmlDocument();
                 htmlDoc.LoadHtml(data);
                 iframeUrl = htmlDoc.DocumentNode.SelectSingleNode("//iframe").GetAttributeValue("src", "");
