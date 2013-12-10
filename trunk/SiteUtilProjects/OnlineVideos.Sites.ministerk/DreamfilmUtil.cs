@@ -198,7 +198,8 @@ namespace OnlineVideos.Sites
                             var imageDiv = div.SelectSingleNode("div[@class = 'image-galery']");
                             cat.Url = imageDiv.SelectSingleNode("a").GetAttributeValue("href", "");
                             var image = imageDiv.SelectSingleNode("a/img").GetAttributeValue("src", "");
-                            cat.Thumb = string.IsNullOrEmpty(image) ? "" : (image.StartsWith("http") ? image : string.Format("http://dreamfilm.se/{0}", image));
+                            //do not get thumb if source dreamfilm due to ddos protection
+                            cat.Thumb = (string.IsNullOrEmpty(image) || !image.StartsWith("http")) ? "" : image;
                             cat.Name = Regex.Replace(div.SelectSingleNode("div/div/h4").InnerText, @"S[0-9]+E[0-9]+", string.Empty);
                             cat.Name = Regex.Replace(cat.Name, @"\s+", " ").Trim();
                             cat.HasSubCategories = false;
@@ -223,7 +224,8 @@ namespace OnlineVideos.Sites
                             RssLink cat = new RssLink();
                             cat.Url = a.GetAttributeValue("href", "");
                             var image = a.SelectSingleNode("li/div/img").GetAttributeValue("src", "");
-                            cat.Thumb = string.IsNullOrEmpty(image) ? "" : (image.StartsWith("http") ? image : string.Format("http://dreamfilm.se/{0}", image));
+                            //do not get thumb if source dreamfilm due to ddos protection
+                            cat.Thumb = (string.IsNullOrEmpty(image) || !image.StartsWith("http")) ? "" : image;
                             cat.Name = Regex.Replace(a.SelectSingleNode("li/div/h4").InnerText, @"\s+", " ").Trim();
                             cat.HasSubCategories = false;
                             cat.Other = cat.Url.Contains("/movies") ? FILM : TV;
