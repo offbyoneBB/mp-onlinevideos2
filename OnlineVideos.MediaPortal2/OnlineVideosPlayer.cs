@@ -1,8 +1,8 @@
 ﻿using System;
-using DirectShowLib;
+using System.IO;
+using DirectShow;
 using MediaPortal.UI.Players.Video;
 using MediaPortal.UI.Players.Video.Tools;
-using System.IO;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -10,7 +10,7 @@ namespace OnlineVideos.MediaPortal2
     {
         public const string ONLINEVIDEOS_MIMETYPE = "video/online";
 
-        protected override void AddFileSource()
+		protected override void AddSourceFilter()
         {
             string sourceFilterName = getSourceFilterName();
             if (!string.IsNullOrEmpty(sourceFilterName))
@@ -45,7 +45,7 @@ namespace OnlineVideos.MediaPortal2
             }
             else
             {
-                base.AddFileSource();
+				base.AddSourceFilter();
             }
         }
 

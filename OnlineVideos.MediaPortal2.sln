@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.MediaPortal2", "OnlineVideos.MediaPortal2\OnlineVideos.MediaPortal2.csproj", "{FA12B047-F5EC-4045-8D26-47C7B17B3B16}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos", "OnlineVideos\OnlineVideos.csproj", "{E0D9D390-CDD6-4B98-86F3-6EB04A958882}"
