@@ -133,6 +133,7 @@
   <string name="OnlineVideos.SelectSource">Valitse lähde</string>
   <string name="OnlineVideos.Sites">Sivut</string>
   <string name="OnlineVideos.Size">Koko</string>
+  <string name="OnlineVideos.SkipSingleCategory">Ohita yksi kategoria</string>
   <string name="OnlineVideos.SortOptions">Lajitteluasetukset</string>
   <string name="OnlineVideos.Search">Haku</string>
   <string name="OnlineVideos.SetDownloadFolderInConfig">Aseta latauskansio asetuksista!</string>
