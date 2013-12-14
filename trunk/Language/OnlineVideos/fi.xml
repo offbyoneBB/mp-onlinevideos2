@@ -133,6 +133,7 @@
   <string name="SelectSource">Valitse lähde</string>
   <string name="Sites">Sivut</string>
   <string name="Size">Koko</string>
+  <string name="SkipSingleCategory">Ohita yksi kategoria</string>
   <string name="SortOptions">Lajitteluasetukset</string>
   <string name="Search">Haku</string>
   <string name="SetDownloadFolderInConfig">Aseta latauskansio asetuksista!</string>

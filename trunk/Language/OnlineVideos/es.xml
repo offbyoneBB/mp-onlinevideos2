@@ -21,6 +21,7 @@
   <string name="Category">Categoría</string>
   <string name="CategoryNotFound">Categoría no encontrada</string>
   <string name="Categories">Categorías</string>
+  <string name="ChangeSettings">Cambiar configuración</string>
   <string name="Creator">Creador</string>
   <string name="CreateNewPlaylist">Crear nueva lista de reproducción</string>
   <string name="CheckingForPluginUpdate">comprobando actualizaciones del plugin</string>
@@ -132,6 +133,7 @@
   <string name="SelectSource">Seleccionar fuente</string>
   <string name="Sites">Sitios</string>
   <string name="Size">Tamaño</string>
+  <string name="SkipSingleCategory">Omitir categoría única</string>
   <string name="SortOptions">Opciones de filtrado</string>
   <string name="Search">Buscar</string>
   <string name="SetDownloadFolderInConfig">Por favor, elija una carpeta de descarga.</string>
