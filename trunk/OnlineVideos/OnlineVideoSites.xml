@@ -552,22 +552,16 @@
     <Site name="CollegeHumor" util="CollegeHumor" agecheck="false" enabled="true" lang="en" lastUpdated="2012-10-29T23:34:16.9119564+01:00">
       <Description>Funny videos from CollegeHumor.com.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="din"><a\shref="(?<url>[^"]*)"\sdata-image="(?<thumb>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!<div\sclass="media-list-entries\s.*)(?<=<ul\sclass="nav\snav-tabs\s.*)(<li(?:\sclass="active")?><a\shref="(?<url>[^"]*)">(?<title>(?!Pictures)(?!Articles)[^<]*)</a></li>|<a\shref="(?<url>[^"]*)"\sclass="dropdown-toggle">(?<title>[^<]*)<b\sclass="caret">)]]></item>
-        <item key="videoListRegEx"><![CDATA[<img\ssrc="(?<ImageUrl>[^"]*)"\swidth="[^"]*"\sheight="[^"]*"\salt="[^"]*">\s*(?:<span[^>]*>[^<]*</span>\s*)?<i\sclass="play-btn">[^<]*</i>\s*</a>\s*<div\sclass="entry-body">\s*<h1\sclass="entry-header"><a\shref="/(embed|video|videos/playlist)/(?<VideoUrl>[^/]*)/[^>]*>(?<Title>[^<]*)</a></h1>\s*<div\sclass="entry-meta"><p\sclass="byline">(?:[^<]*<a[^>]*>[^<]*</a>)?[^<]*<time\sclass="date">(?<Airdate>[^<]*)</time>\s*</p></div>\s*(?:<p>(?<Description>[^<]*)</p>\s*)?<div]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://www.collegehumor.com/moogaloop/video/{0}]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\sclass="next"\shref="(?<url>[^"]*)">&gt;</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<youtubeID><!\[CDATA\[(?<m0>[^]]*)]]]]><![CDATA[></youtubeID>]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://youtube.com/{0}]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li>\s*<a\shref="(?<url>/[^/]*)">\s*<i></i>(?<title>[^<]*)</a>\s*</li>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>/videos[^"]*)">(?<title>[^<]*)</a></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<img\ssrc="[^"]*"\swidth="[^"]*"\sheight="[^"]*"\sclass="[^"]*"\salt="[^"]*"\sdata-src="(?<ImageUrl>[^"]*)"\sdata-src-retina="(?<ImageUrl1>[^"]*)">\s*<span\sclass="play-btn"><i></i></span>\s*</a>\s*<div\sclass="caption">\s*(?:<span[^>]*>[^<]*</span>)?\s*<h3><a\shref="/(video|embed)/(?<VideoUrl>[^/]*)[^"]*">(?<Title>[^<]*)</a></h3>\s*</div>\s*</article]]></item>
+        <item key="videoListRegExFormatString"><![CDATA[http://www.collegehumor.com/moogaloop/video/{0}.json]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\sclass="next"\shref="(?<url>[^"]*)">&raquo;</a>]]></item>
         <item key="baseUrl"><![CDATA[http://www.collegehumor.com/videos]]></item>
-        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
         <item key="forceUTF8Encoding"><![CDATA[True]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Home page">http://www.collegehumor.com/videos</Category>
-        <Category xsi:type="RssLink" name="Sketch Comedy" desc="The internet is full of lots of people making lots of videos. Most of them are crap. But some of them are great. Here, we've compiled the best sketch videos from the top sketch comedy groups on the internet. Browse through the most viewed videos, or select a group and watch their whole collection. Either way, we hope you enjoy!">http://www.collegehumor.com/sketch-comedy</Category>
-        <Category xsi:type="RssLink" name="TV/Movies">http://www.collegehumor.com/tv-movies/videos</Category>
-        <Category xsi:type="RssLink" name="All Originals">http://www.collegehumor.com/originals</Category>
       </Categories>
     </Site>
     <Site name="5min" util="FiveMin" agecheck="false" enabled="true" lang="en">

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Newtonsoft.Json.Linq;
+using OnlineVideos.Hoster.Base;
 
 namespace OnlineVideos.Sites
 {
@@ -39,6 +42,27 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            string data = GetWebData(video.VideoUrl);
+            JToken jt = JObject.Parse(data) as JToken;
+            JToken vids = jt["video"]["mp4"];
+            if (vids != null)
+            {
+                video.PlaybackOptions = new System.Collections.Generic.Dictionary<string, string>();
+                video.PlaybackOptions.Add("low", vids.Value<string>("low_quality"));
+                video.PlaybackOptions.Add("high", vids.Value<string>("high_quality"));
+                return video.PlaybackOptions.Last().Value;
+            }
+            //probably youtube
+            JToken vid = jt["video"]["youtubeId"];
+            //http://youtube.com/
+            foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
+                if (hosterUtil.getHosterUrl().ToLower().Equals("youtube.com"))
+                {
+                    video.PlaybackOptions = hosterUtil.getPlaybackOptions(@"http://youtube.com/" + vid.Value<string>());
+                }
+            return video.PlaybackOptions.Last().Value;
+            //Hoster.Hos
+
             string res = base.getUrl(video);// for embedded youtube
             if (String.IsNullOrEmpty(res))
             {
