@@ -30,14 +30,7 @@ namespace OnlineVideos.Sites
                 return result;
             }
 
-            int res = base.ParseSubCategories(parentCategory, data);
-            if (parentCategory.Name == "Sketch Comedy")
-                foreach (Category subcat in parentCategory.SubCategories)
-                {
-                    subcat.HasSubCategories = true;
-                    subcat.Other = true;
-                }
-            return res;
+            return base.ParseSubCategories(parentCategory, data);
         }
 
         public override string getUrl(VideoInfo video)
@@ -54,25 +47,12 @@ namespace OnlineVideos.Sites
             }
             //probably youtube
             JToken vid = jt["video"]["youtubeId"];
-            //http://youtube.com/
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
                 if (hosterUtil.getHosterUrl().ToLower().Equals("youtube.com"))
                 {
                     video.PlaybackOptions = hosterUtil.getPlaybackOptions(@"http://youtube.com/" + vid.Value<string>());
                 }
             return video.PlaybackOptions.Last().Value;
-            //Hoster.Hos
-
-            string res = base.getUrl(video);// for embedded youtube
-            if (String.IsNullOrEmpty(res))
-            {
-                string webData = GetWebData(video.VideoUrl);
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(webData);
-                XmlNode node = doc.SelectSingleNode("//videoplayer/video/file");
-                if (node != null) return node.InnerText + "?hdcore=2.6.8";
-            }
-            return res;
         }
     }
 }
