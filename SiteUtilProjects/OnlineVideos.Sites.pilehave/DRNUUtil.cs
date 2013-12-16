@@ -9,7 +9,7 @@ namespace OnlineVideos.Sites
   public class DRTVUtil : SiteUtilBase
   {
 
-    private string baseUrlDrNu = "http://www.dr.dk/nu/api";
+    private string baseUrlDrNu = "http://www.dr.dk/mu";
     string bonanza_url = "http://www.dr.dk/Bonanza/index.htm";
     string bonanzaKategori_regEx = @"<p><a\shref=""(?<url>/Bonanza/kategori[^""]+)"">(?<title>[^<]+)</a></p>";
     string bonanzaSerie_regEx = @"<a\shref=""(?<url>[^""]+)""[^>]*>\s*
@@ -67,82 +67,326 @@ namespace OnlineVideos.Sites
       }
     }
 
-    //Add static DR channels
+    //Add static DR live-channels
     private List<VideoInfo> getlivestreams()
     {
       List<VideoInfo> res = new List<VideoInfo>();
-      string[] channels = new string[6] { "DR1", "DR2", "DR Ultra", "DR K", "DR Ramasjang", "DR 3" };
-      string[] paths = new string[6] { "astream3", "astream3", "astream3", "astream3", "astream3", "bstream3" };
+      string[] channels = new string[6] { "DR 1", "DR 2", "DR 3", "DR K", "DR Ramasjang", "DR Ultra" };
+      string[] paths = new string[6] { "1astream3", "2astream3", "6astream3", "4astream3", "5astream3", "3astream3" };
       for (int i = 0; i < 6; i++)
       {
         VideoInfo video = new VideoInfo();
         video.Title = channels[i];
-        //New URL: rtmp://livetv.gss.dr.dk/live/livedr0
-        //Old URL: rtmp://rtmplive.dr.dk/live/livedr0
-        video.VideoUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://livetv.gss.dr.dk/live/livedr0" + (i + 1) + paths[i]) { Live = true }.ToString();
+        video.VideoUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://livetv.gss.dr.dk/live/livedr0" + paths[i]) { Live = true }.ToString();
         res.Add(video);
       }
       return res;
     }
 
-    private List<VideoInfo> getSpecialvideos(JArray contentData)
+
+    public string loadAsset(string url, string target = "Android")
+    {
+      string struri = GetWebData(url);
+      string link = "";
+      int bitrate = 0;
+      JObject objuri = JObject.Parse(struri);
+      JArray links = (JArray)objuri["Links"];
+      for (int ilinks = 0; ilinks < links.Count; ilinks++)
+      {
+        if ((string)links[ilinks]["Target"] == target && (int)links[ilinks]["Bitrate"] > bitrate)
+        {
+          link = (string)links[ilinks]["Uri"];
+          bitrate = (int)links[ilinks]["Bitrate"];
+        }
+      }
+      link = link.Replace("rtsp://om.gss.dr.dk", "rtmp://vod-prio3.gss.dr.dk");
+      return link;
+    }
+
+
+
+    private List<VideoInfo> getvideosSpot(JObject contentData)
     {
       List<VideoInfo> res = new List<VideoInfo>();
       if (contentData != null)
       {
-        foreach (var item in contentData)
-        {
-          string url = baseUrlDrNu + "/videos/" + item.Value<string>("id");
-          string json = GetWebData(url);
-          JObject subContentData = JObject.Parse(json);
-          if (subContentData != null)
-          {
-            string redirectUrl = GetWebData(subContentData.Value<string>("videoManifestUrl"));
-            VideoInfo video = new VideoInfo();
-            video.Title = subContentData.Value<string>("title");
-            video.Description = subContentData.Value<string>("description");
+        JArray slugs = (JArray)contentData["Data"][0]["Relations"];
 
-            //Nyt
-            Match match = Regex.Match(redirectUrl, @"(rtmp://vod.dr.dk/cms)/([^\?]+)(\?.*)", RegexOptions.IgnoreCase);
-            if (match.Success)
+        foreach (var slug in slugs)
+        {
+          try
+          {
+            string itemslug = slug.Value<string>("Slug");
+            string link = null;
+            TimeSpan duration = new TimeSpan(0);
+            string img = null;
+            string webDataUrl = baseUrlDrNu + "/programcard/expanded/" + itemslug;
+            string strprogramcard = GetWebData(webDataUrl);
+            JObject objprogramcard = JObject.Parse(strprogramcard);
+            string itemTitle = (string)objprogramcard["Data"][0]["Broadcasts"][0]["Title"];
+            string itemDescription = (string)objprogramcard["Data"][0]["Broadcasts"][0]["Description"];
+
+
+            JArray assets = (JArray)objprogramcard["Data"][0]["Assets"];
+            if (assets.Count > 0)
             {
-              video.VideoUrl = match.Groups[1].Value + match.Groups[3].Value + " playpath=" + match.Groups[2].Value + match.Groups[3].Value + " app=cms" + match.Groups[3].Value;
+              for (int iasset = 0; iasset < assets.Count; iasset++)
+              {
+                string kind = (string)objprogramcard["Data"][0]["Assets"][iasset]["Kind"];
+                string uri = (string)objprogramcard["Data"][0]["Assets"][iasset]["Uri"];
+                if (kind == "VideoResource")
+                {
+                  string url = uri;
+                  link = loadAsset(url);
+                  duration = TimeSpan.FromMilliseconds((int)assets[iasset]["DurationInMilliseconds"]);
+                }
+                if (kind == "Image")
+                {
+                  img = uri;
+                }
+              }
             }
-            //Nyt slut
-            video.ImageUrl = baseUrlDrNu + "/videos/" + item.Value<string>("id") + "/images/400x225.jpg";
-            video.Length = subContentData.Value<string>("duration");
-            video.Airdate = subContentData.Value<string>("formattedBroadcastTime");
+            VideoInfo video = new VideoInfo();
+            video.Title = itemTitle;
+            video.Description = itemDescription;
+            video.VideoUrl = link;
+            video.ImageUrl = img;
+            video.Length = duration.ToString();
             res.Add(video);
+          }
+          catch
+          {
           }
         }
       }
       return res;
     }
 
-    private List<VideoInfo> getvideos(JArray contentData)
+
+    private List<VideoInfo> getvideosSearch(JObject contentData)
     {
       List<VideoInfo> res = new List<VideoInfo>();
       if (contentData != null)
       {
-        foreach (var item in contentData)
+        JArray slugs = (JArray)contentData["Data"];
+        for (int i = 0; i < slugs.Count; i++)
         {
-          string redirectUrl = GetWebData(item.Value<string>("videoManifestUrl"));
-          VideoInfo video = new VideoInfo();
-          video.Title = item.Value<string>("title");
-          video.Description = item.Value<string>("description");
-
-          //Nyt
-          Match match = Regex.Match(redirectUrl, @"(rtmp://vod.dr.dk/cms)/([^\?]+)(\?.*)", RegexOptions.IgnoreCase);
-          if (match.Success)
+          try
           {
-            video.VideoUrl = match.Groups[1].Value + match.Groups[3].Value + " playpath=" + match.Groups[2].Value + match.Groups[3].Value + " app=cms" + match.Groups[3].Value;
-            Log.Info("Her: " + video.VideoUrl);
+            string link = null;
+            TimeSpan duration = new TimeSpan(0);
+            string img = null;
+            string itemTitle = (string)slugs[i]["Title"];
+            string itemDescription = (string)slugs[i]["Description"];
+            JArray assets = (JArray)slugs[i]["Assets"];
+            if (assets.Count > 0)
+            {
+              for (int iasset = 0; iasset < assets.Count; iasset++)
+              {
+                string kind = (string)assets[iasset]["Kind"];
+                string uri = (string)assets[iasset]["Uri"];
+                if (kind == "VideoResource")
+                {
+                  link = loadAsset(uri);
+                  duration = TimeSpan.FromMilliseconds((int)assets[iasset]["DurationInMilliseconds"]);
+                }
+                if (kind == "Image")
+                {
+                  img = uri;
+                }
+              }
+            }
+            if (link.Length > 0)
+            {
+              VideoInfo video = new VideoInfo();
+              video.Title = itemTitle;
+              video.Description = itemDescription;
+              video.VideoUrl = link;
+              video.Length = duration.ToString();
+              video.ImageUrl = img;
+              res.Add(video);
+            }
           }
-          //Nyt slut
-          video.ImageUrl = baseUrlDrNu + "/videos/" + item.Value<string>("id") + "/images/400x225.jpg";
-          video.Length = item.Value<string>("duration");
-          video.Airdate = item.Value<string>("formattedBroadcastTime");
-          res.Add(video);
+          catch
+          {
+          }
+        }
+      }
+      return res;
+    }
+
+
+    private List<VideoInfo> getvideosAlpha(JObject contentData)
+    {
+      List<VideoInfo> res = new List<VideoInfo>();
+      if (contentData != null)
+      {
+        JArray slugs = (JArray)contentData["Data"];
+        for (int i = 0; i < slugs.Count; i++)
+        {
+          try
+          {
+            JArray broadcasts = (JArray)contentData["Data"][i]["Broadcasts"];
+            if (broadcasts.Count > 0)
+            {
+              string link = null;
+              TimeSpan duration = new TimeSpan(0);
+              string img = null;
+              string itemTitle = (string)broadcasts[0]["Title"];
+              string itemDescription = (string)broadcasts[0]["Description"];
+              JArray assets = (JArray)contentData["Data"][i]["Assets"];
+              if (assets.Count > 0)
+              {
+                for (int iasset = 0; iasset < assets.Count; iasset++)
+                {
+                  string kind = (string)assets[iasset]["Kind"];
+                  string uri = (string)assets[iasset]["Uri"];
+                  if (kind == "VideoResource")
+                  {
+                    link = loadAsset(uri);
+                    duration = TimeSpan.FromMilliseconds((int)assets[iasset]["DurationInMilliseconds"]);
+                  }
+                  if (kind == "Image")
+                  {
+                    img = uri;
+                  }
+                }
+              }
+              if (link.Length > 0)
+              {
+                VideoInfo video = new VideoInfo();
+                video.Title = itemTitle;
+                video.Description = itemDescription;
+                video.VideoUrl = link;
+                video.Length = duration.ToString();
+                video.ImageUrl = img;
+                res.Add(video);
+              }
+            }
+          }
+          catch
+          {
+          }
+        }
+      }
+      return res;
+    }
+
+
+
+    private List<VideoInfo> getvideosPremiere(JObject contentData)
+    {
+      List<VideoInfo> res = new List<VideoInfo>();
+      if (contentData != null)
+      {
+        JArray slugs = (JArray)contentData["Data"][0]["Relations"];
+        for (int i = 0; i < slugs.Count; i++)
+        {
+          try
+          {
+            string itemslug = slugs[i].Value<string>("Slug");
+            string link = null;
+            TimeSpan duration = new TimeSpan(0);
+            string img = null;
+            string webDataUrl = baseUrlDrNu + "/programcard/expanded/" + itemslug;
+            Log.Info("MPJ webDataUrl:" + webDataUrl);
+            string strprogramcard = GetWebData(webDataUrl);
+            JObject objprogramcard = JObject.Parse(strprogramcard);
+            string itemTitle = (string)objprogramcard["Data"][0]["Broadcasts"][0]["Title"];
+            string itemDescription = (string)objprogramcard["Data"][0]["Broadcasts"][0]["Description"];
+            JArray assets = (JArray)objprogramcard["Data"][0]["Assets"];
+            if (assets.Count > 0)
+            {
+              for (int iasset = 0; iasset < assets.Count; iasset++)
+              {
+                string kind = (string)assets[iasset]["Kind"];
+                string uri = (string)assets[iasset]["Uri"];
+                if (kind == "VideoResource")
+                {
+                  link = loadAsset(uri);
+                  duration = TimeSpan.FromMilliseconds((int)assets[iasset]["DurationInMilliseconds"]);
+                }
+
+                if (kind == "Image")
+                {
+                  img = uri;
+                }
+
+              }
+            }
+            if (link.Length > 0)
+            {
+              VideoInfo video = new VideoInfo();
+              video.Title = itemTitle;
+              video.Description = itemDescription;
+              video.VideoUrl = link;
+              video.Length = duration.ToString();
+              video.ImageUrl = img;
+              res.Add(video);
+            }
+          }
+          catch
+          {
+          }
+        }
+      }
+      return res;
+    }
+
+
+
+    private List<VideoInfo> getvideos(JObject contentData)
+    {
+      List<VideoInfo> res = new List<VideoInfo>();
+      if (contentData != null)
+      {
+        JArray slugs = (JArray)contentData["Data"];
+
+        for (int i = 0; i < slugs.Count; i++)
+        {
+          try
+          {
+            string itemslug = slugs[i].Value<string>("Slug");
+            string link = null;
+            TimeSpan duration = new TimeSpan();
+            string img = null;
+            string webDataUrl = baseUrlDrNu + "/programcard/expanded/" + itemslug;
+            string strprogramcard = GetWebData(webDataUrl);
+            JObject objprogramcard = JObject.Parse(strprogramcard);
+            string itemTitle = (string)objprogramcard["Data"][0]["Broadcasts"][0]["Title"];
+            string itemDescription = (string)objprogramcard["Data"][0]["Broadcasts"][0]["Description"];
+            JArray assets = (JArray)objprogramcard["Data"][0]["Assets"];
+            if (assets.Count > 0)
+            {
+              for (int iasset = 0; iasset < assets.Count; iasset++)
+              {
+                string kind = (string)assets[iasset]["Kind"];
+                string uri = (string)assets[iasset]["Uri"];
+                if (kind == "VideoResource")
+                {
+                  link = loadAsset(uri);
+                  duration = TimeSpan.FromMilliseconds((int)assets[iasset]["DurationInMilliseconds"]);
+                }
+                if (kind == "Image")
+                {
+                  img = uri;
+                }
+              }
+            }
+            if (link.Length > 0)
+            {
+              VideoInfo video = new VideoInfo();
+              video.Title = itemTitle;
+              video.Description = itemDescription;
+              video.VideoUrl = link;
+              video.Length = duration.ToString();
+              video.ImageUrl = img;
+              res.Add(video);
+            }
+          }
+          catch
+          {
+          }
         }
       }
       return res;
@@ -157,44 +401,53 @@ namespace OnlineVideos.Sites
         return getlivestreams();
       }
 
-      if (myString[0] == "drnu")
+      if (myString[0] == "search")
       {
-        string url = baseUrlDrNu + "/programseries/" + myString[1] + "/videos";
+
+        string url = baseUrlDrNu + "/programcard?Title=$like(\"" + myString[1] + "\")&limit=$eq(50)";
         string json = GetWebData(url);
-        JArray contentData = JArray.Parse(json);
-        return getvideos(contentData);
+        JObject contentData = JObject.Parse(json);
+        return getvideosSearch(contentData);
       }
 
-      if (myString[0] == "drnunewest")
+      if (myString[0] == "drnulist_card")
       {
-        string url = baseUrlDrNu + "/videos/newest";
+        string url = baseUrlDrNu + "/programcard?Relations.Slug=\"" + myString[1] + "\"&limit=$eq(50)";
         string json = GetWebData(url);
-        JArray contentData = JArray.Parse(json);
-        return getSpecialvideos(contentData);
+        JObject contentData = JObject.Parse(json);
+        return getvideosAlpha(contentData);
       }
 
-      if (myString[0] == "drnuhighlight")
+      if (myString[0] == "drnupremiere")
       {
-        string url = baseUrlDrNu + "/videos/highlight";
+        string url = baseUrlDrNu + "/bundle/forpremierer";
         string json = GetWebData(url);
-        JArray contentData = JArray.Parse(json);
-        return getSpecialvideos(contentData);
+        JObject contentData = JObject.Parse(json);
+        return getvideosPremiere(contentData);
       }
 
       if (myString[0] == "drnumostviewed")
       {
-        string url = baseUrlDrNu + "/videos/mostviewed";
+        string url = baseUrlDrNu + "/View/programviews?days=7&count=10";
         string json = GetWebData(url);
-        JArray contentData = JArray.Parse(json);
+        JObject contentData = JObject.Parse(json);
         return getvideos(contentData);
       }
 
-      if (myString[0] == "drnulastchance")
+      if (myString[0] == "drnuspotlight")
       {
-        string url = baseUrlDrNu + "/videos/lastchance";
+        string url = baseUrlDrNu + "/bundle/test-spotliste";
         string json = GetWebData(url);
-        JArray contentData = JArray.Parse(json);
-        return getvideos(contentData);
+        JObject contentData = JObject.Parse(json);
+        return getvideosSpot(contentData);
+      }
+
+      if (myString[0] == "drnuhighlight")
+      {
+        string url = baseUrlDrNu + "/bundle/hoejdepunkter";
+        string json = GetWebData(url);
+        JObject contentData = JObject.Parse(json);
+        return getvideosSpot(contentData);
       }
 
       if (myString[0] == "bonanza")
@@ -239,7 +492,7 @@ namespace OnlineVideos.Sites
         Name = "Live TV",
         HasSubCategories = false,
         SubCategoriesDiscovered = false,
-        Description = "Se de 6 danske TV-kanaler DR1, DR2, DR3, DR Ramasjang, DR Update og DR Ultra.",
+        Description = "Se de 6 danske TV-kanaler DR1, DR2, DR3, DR Ramasjang, DR K og DR Ultra.",
         Url = "http://www.dr.dk/live",
         Other = "drlive,",
         EstimatedVideoCount = 6
@@ -253,7 +506,7 @@ namespace OnlineVideos.Sites
         HasSubCategories = true,
         SubCategoriesDiscovered = false,
         Description = "Video fra DR NU.",
-        Url = "http://www.dr.dk/nu/api",
+        Url = "http://www.dr.dk/mu",
         Other = "drnu,"
       };
       Settings.Categories.Add(mainCategory);
@@ -280,73 +533,123 @@ namespace OnlineVideos.Sites
       RssLink parentCat = parentCategory as RssLink;
       string[] myString = parentCategory.Other.ToString().Split(',');
 
-      //DR NU
+      if (myString[0] == "drnulist_az")
+      {
+        //Add alphabetic A-Å subcategories
+        string[] alpha = new string[29] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "Æ", "Ø", "Å" };
+        for (int i = 0; i < 29; i++)
+        {
+
+          RssLink subCategory = new RssLink()
+          {
+            Name = alpha[i],
+            ParentCategory = parentCategory,
+            HasSubCategories = true,
+            SubCategoriesDiscovered = false,
+            Other = "drnulist_alpha," + alpha[i]
+          };
+          parentCategory.SubCategories.Add(subCategory);
+        }
+      }
+
+      if (myString[0] == "drnulist_alpha")
+      {
+        string url = baseUrlDrNu + "/view/bundles-with-public-asset?Title=$like(\"" + myString[1] + "\"),$orderby(\"asc\")&BundleType=$eq(\"Series\")&ChannelType=$eq(\"TV\")&limit=100";
+        string json = GetWebData(url);
+        JObject contentData = JObject.Parse(json);
+        if (contentData != null)
+        {
+          JArray slugs = (JArray)contentData["Data"];
+          for (int i = 0; i < slugs.Count; i++)
+          {
+            try
+            {
+              JArray broadcasts = (JArray)contentData["Data"][i]["ProgramCard"]["Broadcasts"];
+              if (broadcasts.Count > 0)
+              {
+                string itemslug = slugs[i].Value<string>("Slug");
+                string itemTitle = slugs[i].Value<string>("Title");
+                VideoInfo video = new VideoInfo();
+                RssLink subCategory = new RssLink()
+                {
+                  Name = itemTitle,
+                  ParentCategory = parentCategory,
+                  HasSubCategories = false,
+                  SubCategoriesDiscovered = false,
+                  Other = "drnulist_card," + itemslug
+                };
+                parentCategory.SubCategories.Add(subCategory);
+              }
+            }
+            catch
+            {
+            }
+          }
+        }
+      }
+
+
+      //DR NU categories
       if (myString[0] == "drnu")
       {
-        //Add static categories newest, spot and most viewed
+        //Add static category A-Å program series
         RssLink subCategory = new RssLink()
         {
-          Name = "Nyeste",
+          Name = "Programmer A-Å",
           ParentCategory = parentCategory,
-          HasSubCategories = false,
+          HasSubCategories = true,
           SubCategoriesDiscovered = false,
-          Other = "drnunewest,"
+          Other = "drnulist_az,"
         };
         parentCategory.SubCategories.Add(subCategory);
 
+        //Add static category premiere
         subCategory = new RssLink()
         {
-          Name = "Højdepunkter",
+          Name = "Forpremiere",
           ParentCategory = parentCategory,
           HasSubCategories = false,
           SubCategoriesDiscovered = false,
-          EstimatedVideoCount = 9,
-          Other = "drnuhighlight,"
+          Other = "drnupremiere,"
         };
         parentCategory.SubCategories.Add(subCategory);
 
+        //Add static category most viewed
         subCategory = new RssLink()
         {
           Name = "Mest sete",
           ParentCategory = parentCategory,
           HasSubCategories = false,
           SubCategoriesDiscovered = false,
-          EstimatedVideoCount = 9,
+          EstimatedVideoCount = 10,
           Other = "drnumostviewed,"
         };
         parentCategory.SubCategories.Add(subCategory);
 
+        //Add static category spotlight
         subCategory = new RssLink()
         {
-          Name = "Sidste chance",
+          Name = "Spotlight",
           ParentCategory = parentCategory,
           HasSubCategories = false,
           SubCategoriesDiscovered = false,
-          EstimatedVideoCount = 9,
-          Other = "drnulastchance,"
+          EstimatedVideoCount = 3,
+          Other = "drnuspotlight,"
         };
         parentCategory.SubCategories.Add(subCategory);
 
-        string json = GetWebData(parentCat.Url + "/programseries");
-        if (!string.IsNullOrEmpty(json))
+        //Add static category highlight
+        subCategory = new RssLink()
         {
-          foreach (var item in JArray.Parse(json))
-          {
-            subCategory = new RssLink()
-            {
-              Name = item.Value<string>("title"),
-              HasSubCategories = false,
-              SubCategoriesDiscovered = false,
-              ParentCategory = parentCat,
-              Description = item.Value<string>("description"),
-              EstimatedVideoCount = item.Value<uint>("videoCount"),
-              Other = "drnu," + item.Value<string>("slug"),
-              Thumb = baseUrlDrNu + "/programseries/" + item.Value<string>("slug") + "/images/400x225.jpg"
-            };
-            parentCategory.SubCategories.Add(subCategory);
-          }
-          parentCategory.SubCategoriesDiscovered = true;
-        }
+          Name = "Højdepunkter",
+          ParentCategory = parentCategory,
+          HasSubCategories = false,
+          SubCategoriesDiscovered = false,
+          EstimatedVideoCount = 6,
+          Other = "drnuhighlight,"
+        };
+        parentCategory.SubCategories.Add(subCategory);
+
       }
 
       //DR Bonanza
@@ -381,5 +684,18 @@ namespace OnlineVideos.Sites
       }
       return parentCategory.SubCategories.Count;
     }
+
+    #region Search
+    public override bool CanSearch { get { return true; } }
+
+    public override List<VideoInfo> Search(string query)
+    {
+      Category search = new Category();
+      search.Other = "search," + query;
+      return getVideoList(search);
+    }
+
+    #endregion
+
   }
 }
