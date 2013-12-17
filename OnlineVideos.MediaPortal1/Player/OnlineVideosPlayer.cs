@@ -268,7 +268,16 @@ namespace OnlineVideos.MediaPortal1.Player
                 IBaseFilter sourceFilter = null;
                 try
                 {
-                    sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, sourceFilterName);
+					/*if (sourceFilterName == MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName)
+					{
+						sourceFilter = FilterFromFile.LoadFilterFromDll("MPUrlSourceSplitter\\MPUrlSourceSplitter.ax", new Guid(MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterCLSID), true);
+						if (sourceFilter != null)
+							Marshal.ThrowExceptionForHR(graphBuilder.AddFilter(sourceFilter, MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName));
+					}*/
+					if (sourceFilter == null)
+					{
+						sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, sourceFilterName);
+					}
                 }
                 catch (Exception ex)
                 {
