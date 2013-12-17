@@ -23,9 +23,9 @@ namespace OnlineVideos.Hoster
 		[Category("OnlineVideosUserConfiguration"), Description("Don't show the 3gpp formats that youtube offers on some clips."), LocalizableDisplayName("Hide Mobile Formats")]
 		protected bool hideMobileFormats = true;
 
-		static readonly byte[] fmtOptions3D = new byte[] { 82, 83, 84, 85, 100, 101, 102 };
-		static readonly byte[] fmtOptionsMobile = new byte[] { 13, 17 };
-		static readonly byte[] fmtOptionsQualitySorted = new byte[] { 38, 85, 137, 46, 37, 102, 84, 136, 45, 22, 101, 135, 83, 134, 44, 35, 100, 82, 43, 18, 34, 133, 6, 5, 0, 17, 13 };
+		static readonly ushort[] fmtOptions3D = new ushort[] { 82, 83, 84, 85, 100, 101, 102 };
+		static readonly ushort[] fmtOptionsMobile = new ushort[] { 13, 17 };
+		static readonly ushort[] fmtOptionsQualitySorted = new ushort[] { 38, 85, 137, 46, 37, 102, 84, 136, 45, 22, 101, 135, 83, 134, 44, 35, 100, 82, 43, 18, 34, 133, 6, 5, 0, 17, 13 };
         static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS'|swf)\s*(?:=|\:)\s((""\s*(?<html>.*)"";)|
 (?<json>\{.+\})|
 (?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|
@@ -116,13 +116,13 @@ namespace OnlineVideos.Hoster
 
                 qualities.Sort(new Comparison<KeyValuePair<string[], string>>((a,b)=>
                 {
-                    return Array.IndexOf(fmtOptionsQualitySorted, byte.Parse(b.Key[0])).CompareTo(Array.IndexOf(fmtOptionsQualitySorted, byte.Parse(a.Key[0])));
+					return Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(b.Key[0])).CompareTo(Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(a.Key[0])));
                 }));
 
                 PlaybackOptions = new Dictionary<string, string>();
                 foreach (var quality in qualities)
                 {
-					byte fmt_quality = byte.Parse(quality.Key[0]);
+					ushort fmt_quality = ushort.Parse(quality.Key[0]);
 
 					if (!fmtOptionsQualitySorted.Contains(fmt_quality)) continue;
 
