@@ -192,8 +192,10 @@ namespace OnlineVideos.MediaPortal2
 			Utils.RemoveInvalidUrls(urls);
 			if (urls != null && urls.Count > 0)
 			{
+				// todo : if player is already playing a OV video -> stop that one first or don't play concurrent, otherwise play concurrent
+
 				if (urls.Count == 1)
-					MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayItem(new PlaylistItem(this, urls[0]));
+					MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayOrEnqueueItem(new PlaylistItem(this, urls[0]), true, MediaPortal.UI.Presentation.Players.PlayerContextConcurrencyMode.ConcurrentVideo);
 				else
 					MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayItems(
 						new MediaPortal.UiComponents.Media.Models.GetMediaItemsDlgt(() =>
