@@ -102,57 +102,16 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl);
-            string url = string.Empty;
-
-            if (webData.Contains("flashdrm_url"))
-            {
-                url = Regex.Match(webData, @"flashdrm_url"":""(?<Value>[^""]+)""").Groups["Value"].Value;
-                url = url.Replace("\\/", "/");
-                //url = url.Replace("rtmpte", "rtmpe");
-                //url = url.Replace(".net", ".net:1935");
-				url = new MPUrlSourceFilter.RtmpUrl(url) { SwfUrl = "http://www.sat1.de/imperia/moveplayer/HybridPlayer.swf", SwfVerify = true }.ToString();
-            }
-            else
-            {
-                string filename = Regex.Match(webData, @"downloadFilename"":""(?<Value>[^""]+)""").Groups["Value"].Value;
-                string geo = Regex.Match(webData, @"geoblocking"":""(?<Value>[^""]+)""").Groups["Value"].Value;
-                string geoblock = string.Empty;
-                if (string.IsNullOrEmpty(geo))
-                    geoblock = "geo_d_at_ch/";
-                else if (geo.Contains("ww"))
-                    geoblock = "geo_worldwide/";
-                else if (geo.Contains("de_at_ch"))
-                    geoblock = "geo_d_at_ch/";
-                else
-                    geoblock = "geo_d/";
-
-
-                if (webData.Contains("flashSuffix") || filename.Contains(".mp4"))
-                {
-                    url = rtmpBase + geoblock + "mp4:" + filename;
-                    if (!url.EndsWith(".mp4")) url = url + ".mp4";
-                }
-                else
-                    url = rtmpBase + geoblock + filename;
-
-				url = new MPUrlSourceFilter.RtmpUrl(url) { SwfUrl = "http://www.sat1.de/imperia/moveplayer/HybridPlayer.swf", SwfVerify = true }.ToString();
-            }
-
             string clipId = Regex.Match(webData, @",""id"":""(?<Value>[^""]+)""").Groups["Value"].Value;
             if (!string.IsNullOrEmpty(clipId))
             {
                 string link = GetRedirectedUrl("http://www.prosieben.de/dynamic/h264/h264map/?ClipID=" + clipId);
                 if (!string.IsNullOrEmpty(link))
                 {
-                    if(!link.Contains("h264_na.mp4")){
-                        video.PlaybackOptions = new Dictionary<string, string>();
-                        video.PlaybackOptions.Add("Flv", url);
-                        video.PlaybackOptions.Add("Mp4", link);
-                    }
+                    return link;
                 }
             }
-
-            return url;
+            return string.Empty;
         }
 
     }
