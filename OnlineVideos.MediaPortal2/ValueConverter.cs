@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using MediaPortal.Common.Localization;
+using MediaPortal.UI.SkinEngine;
 using MediaPortal.UI.SkinEngine.MarkupExtensions;
 using MediaPortal.UI.SkinEngine.ScreenManagement;
 using OnlineVideos.Sites;
@@ -78,13 +79,13 @@ namespace OnlineVideos.MediaPortal2
 			switch (state)
 			{
 				case OnlineVideosWebservice.SiteState.Broken:
-					result = Color.FromArgb(255, 53, 87);
+					result = Color.FromArgb(255, 53, 87).FromDrawingColor();
 					break;
 				case OnlineVideosWebservice.SiteState.Reported:
-					result = Color.FromArgb(255, 220, 96);
+					result = Color.FromArgb(255, 220, 96).FromDrawingColor();
 					break;
 				case OnlineVideosWebservice.SiteState.Working:
-					result = Color.FromArgb(55, 194, 48);
+					result = Color.FromArgb(55, 194, 48).FromDrawingColor();
 					break;
 			}
 			return true;
