@@ -49,6 +49,27 @@
     </Site>
     <Site name="BR" util="Br" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen aus der Mediathek des Bayerischen Rundfunks (BR).</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://www.br.de/mediathek/video/sendungen/index.html]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li>\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*<figure>\s*<img[^>]*>\s*<noscript>\s*<img\s+src="(?<thumb>[^"]+)"[^/]*/>\s*</noscript>\s*<span\s+class="layer">\s*</span>\s*</figure>\s*<span>(?<title>[^<]*)</span>\s*</a>\s*</li>]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[{0}#seriesMoreCount=20]]></item>
+        <item key="videoListRegEx">
+          <![CDATA[<a\s+href="(?<VideoUrl>[^"]+)"[^>]*>\s*
+<figure>\s*
+<img[^>]*>\s*
+<noscript>\s*
+<img\s+src="(?<ImageUrl>[^"]+)"[^>]*>\s*
+</noscript>.*?
+</figure>\s*
+<h4>\s*
+<span\s+class="name">[^<]*</span>\s*
+<span\s+class="episode">(?<Title>[^<]*)</span>\s*
+</h4>.*?
+<time[^>]*>(?<Duration>[^<]*)</time>]]>
+        </item>
+        <item key="playlistUrlRegEx"><![CDATA[\.setup\({dataURL:'(?<url>[^']+)']]></item>
+        <item key="fileUrlRegEx"><![CDATA[xml]]></item>
+      </Configuration>
     </Site>
     <Site name="MDR" util="Mdr" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen aus der Mediathek des Mitteldeutschen Rundfunks (MDR).</Description>
