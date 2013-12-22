@@ -143,7 +143,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             }
 
             // Release date
-            node = root.SelectSingleNode("//div[h1='Release Date']/p");
+            node = root.SelectSingleNode("//section[h3='Release Date:']/span");
             if (node != null)
             {
                 DateTime value;
@@ -154,7 +154,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             }
 
             // Summary
-            node = root.SelectSingleNode("//div[h1='Plot Summary']/p");
+            node = root.SelectSingleNode("//p[@itemprop='description']");
             if (node != null)
             {
                 node = node.FirstChild;
@@ -165,14 +165,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             }
 
             // Genres
-            node = root.SelectSingleNode("//div[h1='Genre']/p");
-            if (node != null)
-            {
-                string[] genres = node.InnerText.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
-                title.Genres = genres.Select(s => HttpUtility.HtmlDecode(s)).ToList();
-            }
+            title.Genres = root.SelectNodes("//span[@itemprop='genre']").Select(s => HttpUtility.HtmlDecode(s.InnerText)).ToList();
+            
 
-            // Rating
+            // Ratings / Votes
+            // todo: fix this
             node = root.SelectSingleNode("//p[@class='votes']/strong");
             if (node != null)
             {
@@ -187,14 +184,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 }
             }
 
-            
-
-
             // Certification
-            node = root.SelectSingleNode("//div[h1='Rated']/p");
+            node = root.SelectSingleNode("//span[@itemprop='contentRating']");
             if (node != null)
             {
-                title.Certificate = HttpUtility.HtmlDecode(node.InnerText);
+                title.Certificate = HttpUtility.HtmlDecode(node.GetAttributeValue("content", "?"));
             }
 
             //Poster
@@ -209,7 +203,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             }
 
             // Cast
-            HtmlNodeCollection nodes = root.SelectNodes("//section[@class='topCast posters']/div");
+            HtmlNodeCollection nodes = root.SelectNodes("//div[@id='cast-and-crew-']/div");
             if (nodes != null)
             {
                 foreach (HtmlNode n in nodes)
