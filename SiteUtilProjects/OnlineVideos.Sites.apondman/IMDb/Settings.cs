@@ -176,7 +176,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             {
                 this.videoInfo = value;
             }
-        } private string videoInfo = "http://www.imdb.com/video/screenplay/{0}/";
+        } private string videoInfo = "http://www.imdb.com/video/imdb/{0}/";
 
         public string TrailersTopHD
         {

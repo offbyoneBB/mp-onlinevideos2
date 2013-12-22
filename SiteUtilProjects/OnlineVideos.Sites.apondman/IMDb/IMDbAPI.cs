@@ -130,7 +130,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             title.ID = imdbID;
 
             // Main Details
-            HtmlNode node = root.SelectSingleNode("//div[@class='mainInfo']");
+            HtmlNode node = root.SelectSingleNode("//div[@class='media-body']");
             string titleInfo = node.SelectSingleNode("h1").InnerText;
 
             ParseDisplayStringToTitleBase(title, HttpUtility.HtmlDecode(titleInfo));
