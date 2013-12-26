@@ -38,6 +38,7 @@
   <ItemGroup>
     <Reference Include="DirectShowWrapper">
       <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\DirectShowWrapper.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Media, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -51,6 +52,10 @@
     </Reference>
     <Reference Include="MediaPortal.UI">
       <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SharpDX">
+      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\SkinEngine\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SkinEngine">

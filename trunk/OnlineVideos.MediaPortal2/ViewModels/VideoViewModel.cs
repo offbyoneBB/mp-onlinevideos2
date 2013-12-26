@@ -126,7 +126,7 @@ namespace OnlineVideos.MediaPortal2
 						if (success)
 							resultHandler(url);
 					},
-					"[OnlineVideos.GettingPlaybackUrlsForVideo]");
+					Translation.Instance.GettingPlaybackUrlsForVideo);
 			}
 			else
 			{
@@ -144,7 +144,7 @@ namespace OnlineVideos.MediaPortal2
 							if (success)
 								resultHandler(url);
 						},
-						"[OnlineVideos.GettingPlaybackUrlsForVideo]");
+						Translation.Instance.GettingPlaybackUrlsForVideo);
 				}
 				else
 				{
@@ -184,7 +184,7 @@ namespace OnlineVideos.MediaPortal2
 					if (success)
 						resultHandler(url);
 				},
-				"[OnlineVideos.GettingPlaybackUrlsForVideo]");
+				Translation.Instance.GettingPlaybackUrlsForVideo);
 		}
 
 		public void Play(List<string> urls)
@@ -351,7 +351,8 @@ namespace OnlineVideos.MediaPortal2
 										ovMainModel.VideosList.FireChange();
 										ImageDownloader.GetImages<VideoInfo>(videos);
 									}
-								});
+								},
+                                Translation.Instance.GettingCategoryVideos);
 						}
 						if (result.ResultItems != null && result.ResultItems.Count > 0)
 						{
