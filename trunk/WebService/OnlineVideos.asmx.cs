@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Mail;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Services;
 using System.Xml;
@@ -488,12 +488,11 @@ namespace OnlineVideos.WebService
         {
             try
             {
-                MailMessage m = new MailMessage();
-                m.To = user.Email;
-                m.From = "offbyone@offbyone.de";
+                MailMessage m = new MailMessage("offbyone@offbyone.de", user.Email);
                 m.Subject = "Thank you for registering with MediaPortal OnlineVideos Plugin.";
                 m.Body = "Your registered password is: " + user.Password;
-                SmtpMail.Send(m);
+                var smtpClient = new SmtpClient();
+                smtpClient.Send(m);
                 return true;
             }
             catch
@@ -506,12 +505,11 @@ namespace OnlineVideos.WebService
         {
             try
             {
-                MailMessage m = new MailMessage();
-                m.To = report.Site.Owner.Email;
-                m.From = "offbyone@offbyone.de";
+                MailMessage m = new MailMessage("offbyone@offbyone.de", report.Site.Owner.Email);
                 m.Subject = string.Format("OnlineVideos: New Report ({0}) for {1}", report.Type.ToString(), report.Site.Name);
                 m.Body = report.Message;
-                SmtpMail.Send(m);
+                var smtpClient = new SmtpClient();
+                smtpClient.Send(m);
                 return true;
             }
             catch
