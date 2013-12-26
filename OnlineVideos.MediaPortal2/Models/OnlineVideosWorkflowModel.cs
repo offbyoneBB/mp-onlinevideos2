@@ -102,7 +102,8 @@ namespace OnlineVideos.MediaPortal2
 							SelectedSite = siteModel;
 							ShowCategories(siteModel.Site.Settings.Categories, SelectedSite.Name);
 						}
-					});
+					},
+                    Translation.Instance.GettingDynamicCategories);
             }
             else
             {
@@ -134,7 +135,8 @@ namespace OnlineVideos.MediaPortal2
 							ImageDownloader.GetImages<Category>(catList);
 							CategoriesList.FireChange();
 						}
-					});
+					},
+                    Translation.Instance.GettingNextPageVideos);
             }
             else
             {
@@ -156,7 +158,8 @@ namespace OnlineVideos.MediaPortal2
 									SelectedCategory = categoryModel;
 									ShowCategories(categoryModel.Category.SubCategories, categoryModel.Name);
 								}
-                            });
+                            },
+                            Translation.Instance.GettingDynamicCategories);
                     }
                     else
                     {
@@ -178,7 +181,8 @@ namespace OnlineVideos.MediaPortal2
 							{
 								ShowVideos(categoryModel, videos);
 							}
-                        });
+                        },
+                        Translation.Instance.GettingCategoryVideos);
                 }
             }
         }
@@ -205,7 +209,8 @@ namespace OnlineVideos.MediaPortal2
 							VideosList.FireChange();
 							ImageDownloader.GetImages<VideoInfo>(nextPageVideos);
 						}
-					});
+					},
+                    Translation.Instance.GettingNextPageVideos);
             }
             else
             {
@@ -224,7 +229,8 @@ namespace OnlineVideos.MediaPortal2
 								SelectedVideo = videoModel;
 								ShowDetails(choices);
 							}
-                        });
+                        },
+                        Translation.Instance.GettingVideoDetails);
                 }
                 else
                 {
@@ -250,7 +256,8 @@ namespace OnlineVideos.MediaPortal2
 									SelectedVideo.ChoosePlaybackOptions(urls[0], (url) => { urls[0] = url; SelectedVideo.Play(urls); });
 								}
 							}
-						});
+						},
+                        Translation.Instance.GettingPlaybackUrlsForVideo);
                 }
             }
         }
@@ -279,7 +286,8 @@ namespace OnlineVideos.MediaPortal2
 							SelectedDetailsVideo.ChoosePlaybackOptions(urls[0], (url) => { urls[0] = url; SelectedDetailsVideo.Play(urls); });
 						}
 					}
-                });
+                },
+                Translation.Instance.GettingPlaybackUrlsForVideo);
         }
 
         public void StartSearch()
@@ -297,7 +305,8 @@ namespace OnlineVideos.MediaPortal2
                     {
 						ShowSearchResults(result, Translation.Instance.SearchResults + " [" + SearchString + "]");
                     }
-                });
+                },
+                Translation.Instance.GettingSearchResults);
         }
 
 		void RebuildSitesList()

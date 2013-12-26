@@ -46,9 +46,15 @@ namespace OnlineVideos.MediaPortal2
 			{
 				ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
 				bool success = currentBackgroundTask.Exception == null && currentBackgroundTask.State == WorkState.FINISHED;
-				// todo : show dialog or notification message when no success?
-				//Log.Warn(ex.Message);
-				//ServiceRegistration.Get<IDialogManager>().ShowDialog("[OnlineVideos.Error]", description, DialogType.OkDialog, false, DialogButtonType.Ok);
+                if (!success)
+                {
+                    // show dialog or notification message when no success
+                    Log.Warn(currentBackgroundTask.Exception.ToString());
+                    var ovError = currentBackgroundTask.Exception as OnlineVideosException;
+                    bool showDescription = ovError != null ? ovError.ShowCurrentTaskDescription : true;
+                    string info = string.Format("{0}\n{1}", showDescription ? description : "", currentBackgroundTask.Exception.Message);
+                    ServiceRegistration.Get<IDialogManager>().ShowDialog("[OnlineVideos.Error]", info, DialogType.OkDialog, false, DialogButtonType.Ok);
+                }
 				currentBackgroundTask = null;
 				completed.Invoke(success, args.GetResult<T>());
 			});
