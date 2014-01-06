@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Net;
+using System.Collections.Specialized;
 using System.Text.RegularExpressions;
-using System.Web;
 using OnlineVideos.Hoster.Base;
 using OnlineVideos.Sites;
 
@@ -16,28 +15,33 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
-            CookieContainer cc = new CookieContainer();
-            string fullUrl = url + "?ss=1";
-            string webData = SiteUtilBase.GetWebDataFromPost(fullUrl, "ss=1&sss=1", cc);
-            Match m = Regex.Match(webData, @"var\st=setTimeout\(""lc\('(?<s>[^']*)','(?<k>[^']*)','(?<t>[^']*)','(?<key>[^']*)'\)"",[^\)]*\);");
+            string webData = SiteUtilBase.GetWebData(url);
+            string slotId = Regex.Match(webData, @"var\sadslotid='(?<value>[^']*)'").Groups["value"].Value;
+            string footerhash = Regex.Match(webData, @"var\sfooterhash='(?<value>[^']*)'").Groups["value"].Value;
+            string dataid = Regex.Match(webData, @"data-id=""(?<value>[^""]*)""").Groups["value"].Value;
+
+            NameValueCollection headers = new NameValueCollection();
+            headers.Add("Accept", "*/*"); // accept any content type
+            headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent);
+            headers.Add("X-Requested-With", "XMLHttpRequest");
+
+            string page = SiteUtilBase.GetWebData(@"http://www.ecostream.tv/xhr/video/vidurl",
+                String.Format("id={0}&tpm={1}{2}", dataid, footerhash, slotId),
+                headers, null, null, false, false, null, false);
+
+
+            Match m = Regex.Match(page, @"""url"":""(?<url>[^""]*)""");
             if (m.Success)
             {
-                string newUrl = String.Format(@"http://www.ecostream.tv/lo/mq.php?s={0}&k={1}&t={2}&key={3}",
-                    m.Groups["s"].Value, m.Groups["k"].Value, m.Groups["t"].Value, m.Groups["key"].Value);
-                webData = SiteUtilBase.GetWebDataFromPost(newUrl, "", cc, referer: fullUrl);
-                m = Regex.Match(webData, @"<param\sname=""flashvars""\svalue=""file=(?<url>[^&]*)&[^>]*>");
-                if (m.Success)
+                string newUrl = m.Groups["url"].Value;
+
+                if (!Uri.IsWellFormedUriString(newUrl, UriKind.Absolute))
                 {
-                    newUrl = HttpUtility.UrlDecode(m.Groups["url"].Value);
-                    if (!Uri.IsWellFormedUriString(newUrl, UriKind.Absolute))
-                    {
-                        Uri uri = null;
-                        if (Uri.TryCreate(new Uri(url), newUrl, out uri))
-                        {
-                            return SiteUtilBase.GetRedirectedUrl(uri.ToString() + "&start=0");
-                        }
-                    }
+                    Uri uri = null;
+                    if (Uri.TryCreate(new Uri(url), newUrl, out uri))
+                        newUrl = uri.ToString();
                 }
+                return SiteUtilBase.GetRedirectedUrl(newUrl);
             }
             return String.Empty;
         }
