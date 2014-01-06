@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using OnlineVideos.Hoster.Base;
 using OnlineVideos.Sites;
 
@@ -8,6 +10,39 @@ namespace OnlineVideos.Hoster
 {
     public abstract class MyHosterBase : HosterBase
     {
+        protected string GetFromPost(string url, string page, bool skipsubmit = false)
+        {
+            List<string> values = new List<string>();
+
+            Match m = Regex.Match(page, @"<input\s*type=""hidden""\s*name=""(?<name>[^\'""]+)""\s*value=""(?<value>[^\'""]+)""[^>]*>");
+            while (m != null && m.Success)
+            {
+                AddToList(m.Groups, values);
+                m = m.NextMatch();
+            }
+
+            if (!skipsubmit)
+            {
+                m = Regex.Match(page, @"<input\s*type=""submit""\s*[^>]*name=""(?<name>[^""]*)""[^>]*value=""(?<value>[^""]*)""[^>]*>");
+                if (m.Success)
+                    AddToList(m.Groups, values);
+            }
+
+            if (values.Count > 0)
+                page = SiteUtilBase.GetWebDataFromPost(url, String.Join("&", values.ToArray()));
+
+            return page;
+        }
+
+        private void AddToList(GroupCollection groups, List<string> values)
+        {
+            string key = groups["name"].Value;
+            string value = groups["value"].Value;
+
+            if (!String.IsNullOrEmpty(key) && !String.IsNullOrEmpty(value))
+                values.Add(String.Format("{0}={1}", key, HttpUtility.UrlEncode(value)));
+        }
+
         protected string WiseCrack(string webdata)
         {
             Match m = Regex.Match(webdata, @"\('(?<w>[^']{5,})','(?<i>[^']{5,})','(?<s>[^']{5,})'");

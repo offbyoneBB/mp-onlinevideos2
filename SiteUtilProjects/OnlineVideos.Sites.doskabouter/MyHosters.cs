@@ -9,7 +9,6 @@ using System.Web;
 using System.Threading;
 using System.Xml;
 using System.Linq;
-using Newtonsoft.Json;
 using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Hoster
@@ -580,6 +579,29 @@ namespace OnlineVideos.Hoster
             string webData = SiteUtilBase.GetWebData(url);
             url = GetSubString(webData, @"url[", @"';");
             return GetSubString(url, @"'", @"'");
+        }
+    }
+
+    public class StreamCloud : MyHosterBase
+    {
+        public override string getHosterUrl()
+        {
+            return "streamcloud.eu";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            string webData = SiteUtilBase.GetWebData(url);
+
+            string timeToWait = Regex.Match(webData, @"var\s*count\s*=\s*(?<time>[^;]+);").Groups["time"].Value;
+            if (Convert.ToInt32(timeToWait) <= 10)
+                System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
+
+            webData = GetFromPost(url, webData);
+            Match m = Regex.Match(webData, @"file:\s*""(?<url>[^""]*)""");
+            if (m.Success)
+                return m.Groups["url"].Value;
+            return String.Empty;
         }
     }
 
