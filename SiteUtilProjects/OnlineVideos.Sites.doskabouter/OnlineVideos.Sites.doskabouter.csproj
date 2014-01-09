@@ -118,6 +118,7 @@
     <Compile Include="RuutuUtil.cs" />
     <Compile Include="SBSauUtil.cs" />
     <Compile Include="SubtitleHandler.cs" />
+    <Compile Include="TelegraafTVUtil.cs" />
     <Compile Include="ToonsTv.cs" />
     <Compile Include="TubePlusUtil.cs" />
     <Compile Include="TV3NZOnDemandUtil.cs" />
