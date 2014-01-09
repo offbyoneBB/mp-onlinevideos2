@@ -1350,6 +1350,14 @@
         <item key="fileUrlRegEx"><![CDATA[(<video\ssrc="(?<m0>[^"]*)"\ssystem-bitrate="(?<n0>[^"]*)"[^>]*>)|(<video\ssrc="(?<m0>[^"]*)"\stitle[^>]*>)]]></item>
       </Configuration>
     </Site>
+    <Site name="ToonsTv" util="ToonsTv" agecheck="false" enabled="true" lang="en">
+      <Description>ToonsTV - The Home of Angry Birds Toons and Much More!</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[https://www.toons.tv/channels/]]></item>
+        <item key="hashValue"><![CDATA[75384f6d6bb17f9bdd44b8157487b9a64f40f6b4]]></item>
+        <item key="requestUrl"><![CDATA[https://secure.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAB4eGoB7k~,qFXAwsXF0CNH_yigPCPuBhmMwKcWfpTc]]></item>
+      </Configuration>
+    </Site>
     <Site name="TV3NZ" util="TV3NZOnDemand" agecheck="false" enabled="true" lang="en">
       <Description>Television New Zealand: TV3, TV four</Description>
       <Configuration>
