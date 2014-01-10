@@ -13,9 +13,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>LAVFilters-0.58.2.exe</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.58.2.exe</ZipFileName>
-              <DestinationFilename>%Base%\LAVFilters-0.58.2.exe</DestinationFilename>
+              <LocalFileName>LAVFilters-0.59.1.exe</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.59.1.exe</ZipFileName>
+              <DestinationFilename>%Base%\LAVFilters-0.59.1.exe</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -46,7 +46,7 @@
               <Params>
                 <Items>
                   <SectionParam Name="Path to application">
-                    <Value>%Base%\LAVFilters-0.58.2.exe</Value>
+                    <Value>%Base%\LAVFilters-0.59.1.exe</Value>
                     <ValueType>Template</ValueType>
                     <Description>Path to the application like 
  %Base%\MediaPortal.exe</Description>
@@ -100,7 +100,7 @@ public class Script
   public static void Main(PackageClass packageClass, ActionItem actionItem)
   {
     string setupExe = Path.Combine(
-      MpeInstaller.TransformInRealPath("%Base%"), "LAVFilters-0.58.2.exe");
+      MpeInstaller.TransformInRealPath("%Base%"), "LAVFilters-0.59.1.exe");
 
     try
     {
@@ -179,24 +179,32 @@ public class Script
     <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=52</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>58</Minor>
-      <Build>2</Build>
+      <Minor>59</Minor>
+      <Build>1</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>The extension installs the LAV Filter package, which contains a splitter, audio and video decoder for the most common formats that are used around the web.</ExtensionDescription>
-    <VersionDescription>0.58.2 - 2013/07/26
+    <VersionDescription>0.59.1 - 2013/11/04
 LAV Splitter
-- Fixed demuxing of WavPack from MKV
+- Fixed a regression when demuxing AAC audio from MP4/MOV files
+
+0.59.0 - 2013/11/03
+LAV Splitter
+- Support for demuxing H.265/HEVC and VP9
+- Improvements for H.264 in AVI or as raw video streams
+- Improved stream detection in files which start with a few seconds audio before the video
+- Improved timestamp handling when demuxing seamless branching Blu-rays, fixes a few hicups/freezes mid-stream
 
 LAV Video
-- Fixed a crash when YADIF was being used on a single- or dual-core CPU
+- Support for decoding H.265/HEVC and VP9
+- Accept H.264 from the MainConcept demuxer
+- Added support for DV Video from Canopus cameras
 
 LAV Audio
-- Fixed decoding of DTS streams with a frame size change mid-stream
-</VersionDescription>
+- Fixed playback issues on a few DTS and DTS-HD tracks</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-    <ReleaseDate>2013-07-27T15:00:00</ReleaseDate>
+    <ReleaseDate>2014-01-10T15:00:00</ReleaseDate>
     <Tags>codec</Tags>
     <Location>.\LAVFilters[Version].mpe1</Location>
     <Params>
@@ -236,9 +244,9 @@ LAV Audio
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>LAVFilters-0.58.2.exe</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.58.2.exe</ZipFileName>
-        <DestinationFilename>%Base%\LAVFilters-0.58.2.exe</DestinationFilename>
+        <LocalFileName>LAVFilters-0.59.1.exe</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.59.1.exe</ZipFileName>
+        <DestinationFilename>%Base%\LAVFilters-0.59.1.exe</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
