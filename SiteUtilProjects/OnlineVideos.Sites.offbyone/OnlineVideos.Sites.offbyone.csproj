@@ -441,6 +441,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\VersionInfo.cs" />
+    <Compile Include="rbbUtil.cs" />
     <Compile Include="TEDTalksUtil.cs" />
     <Compile Include="Tube8Util.cs" />
     <Compile Include="TwitchTV.cs" />
