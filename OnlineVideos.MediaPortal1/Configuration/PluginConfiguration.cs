@@ -141,6 +141,29 @@ namespace OnlineVideos.MediaPortal1
             ovsconf.ThumbsDir = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\";
             ovsconf.ConfigDir = Config.GetFolder(Config.Dir.Config);
             ovsconf.DllsDir = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
+
+            // When run from MPEI we get an invalid plugin directory, we'll try to rectify that here
+            try 
+            {
+                var hasFiles = true;
+
+                if (Directory.Exists(ovsconf.DllsDir))
+                {
+                    var files = Directory.GetFiles(ovsconf.DllsDir, "OnlineVideos.Sites.*.dll");
+                    if (files == null || files.Count() == 0)
+                        hasFiles = false;
+                }
+                else
+                    hasFiles = false;
+
+                if (!hasFiles)
+                    ovsconf.DllsDir = Path.Combine(MediaPortal.Configuration.Config.GetDirectoryInfo(MediaPortal.Configuration.Config.Dir.Plugins).FullName, "Windows\\OnlineVideos"); 
+            }
+            catch (Exception ex)
+            {
+                Log.Instance.Error(ex);
+            }
+            
             ovsconf.ThumbsResizeOptions = new OnlineVideos.ImageDownloader.ResizeOptions()
             {
                 MaxSize = (int)Thumbs.ThumbLargeResolution,
