@@ -1,0 +1,17 @@
+﻿using System.Reflection;
+using System.Runtime.InteropServices;
+
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle("OnlineVideos.WebAutomation.BrowserHost")]
+[assembly: AssemblyDescription("OnlineVideos utility for displaying a browser fullscreen.")]
+[assembly: AssemblyProduct("OnlineVideos")]
+
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type.
+[assembly: ComVisible(false)]
+
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("b21e01b0-865e-4052-818e-3fd9edc7a3d2")]

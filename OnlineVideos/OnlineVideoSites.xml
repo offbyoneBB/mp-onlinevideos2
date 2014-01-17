@@ -1936,5 +1936,17 @@
         <Category xsi:type="RssLink" name="Voyeurism">http://www.empflix.com/browsecat.php?chid=42</Category>
       </Categories>
     </Site>
+	  <Site name="Sky Go Uk" util="WebAutomationSite" agecheck="false" enabled="true" player="Browser" lang="en">
+		  <Description>Sky Go lets you watch TV channels live on your PC. Watch catch-up TV from all channels - up to 500 great movies and the best sports &amp; entertainment around!  Requires a user name/password.</Description>
+		  <Configuration>
+			  <item key="webAutomationType"><![CDATA[SkyGo]]></item>
+		  </Configuration>
+	  </Site>
+	  <Site name="4oD Web" util="WebAutomationSite" agecheck="false" enabled="true" player="Browser" lang="en">
+		  <Description>Catchup on all your favourite Channel 4 shows (only available in the UK). Requires a user name/password.</Description>
+		  <Configuration>
+			  <item key="webAutomationType"><![CDATA[_4oD]]></item>
+		  </Configuration>
+	  </Site>
   </Sites>
 </OnlineVideoSites>
