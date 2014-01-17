@@ -133,6 +133,7 @@
   <string name="SelectSource">Sélectionner une source</string>
   <string name="Sites">Sites</string>
   <string name="Size">Taille</string>
+  <string name="SkipSingleCategory">Passer la catégorie simple</string>
   <string name="SortOptions">Options de tri</string>
   <string name="Search">Recherche</string>
   <string name="SetDownloadFolderInConfig">S\'il vous plaît définissez le dossier pour le téléchargement dans le menu Configuration!</string>

@@ -133,6 +133,7 @@
   <string name="SelectSource">Izberi izvor</string>
   <string name="Sites">Strani</string>
   <string name="Size">Velikost</string>
+  <string name="SkipSingleCategory">Preskoči eno kategorijo</string>
   <string name="SortOptions">Možnosti sortiranja</string>
   <string name="Search">Iskanje</string>
   <string name="SetDownloadFolderInConfig">V nastavitvah izberite mapo za prenos!</string>

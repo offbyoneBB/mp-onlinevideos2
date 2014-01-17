@@ -133,6 +133,7 @@
   <string name="OnlineVideos.SelectSource">Izberi izvor</string>
   <string name="OnlineVideos.Sites">Strani</string>
   <string name="OnlineVideos.Size">Velikost</string>
+  <string name="OnlineVideos.SkipSingleCategory">Preskoči eno kategorijo</string>
   <string name="OnlineVideos.SortOptions">Možnosti sortiranja</string>
   <string name="OnlineVideos.Search">Iskanje</string>
   <string name="OnlineVideos.SetDownloadFolderInConfig">V nastavitvah izberite mapo za prenos!</string>
