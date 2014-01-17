@@ -2313,6 +2313,90 @@
               <ZipFileName>Installer{CopyFile}\{7a9ea59b-3f72-48cd-8ebd-79eeedb3764a}-Vod.tvp.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Vod.tvp.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\4oD Web.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c0de89aa-e8e6-4256-b0de-cfabad7d1ac8}-4oD Web.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\4oD Web.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Dreamfilm.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2509f6ea-67a8-47ad-af16-b80729cbe3e4}-Dreamfilm.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Dreamfilm.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Sky Go Uk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3006fde1-5971-443e-b788-8a96c3140216}-Sky Go Uk.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Sky Go Uk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TelegraafTV.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2fc3ae25-b3d9-428c-ba65-9ee3ecc61637}-TelegraafTV.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TelegraafTV.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\ToonsTv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{da3491d4-1394-4cf9-aa94-f5debaf72c7f}-ToonsTv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ToonsTv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\URPlay.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{1beaaed8-52ad-4f76-bcda-ce642376659b}-URPlay.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\URPlay.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\4oD Web.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2e2c50b9-3f1a-46ef-bfb1-133f8bbfef67}-4oD Web.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\4oD Web.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Dreamfilm.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4b6a7da2-03fb-4470-a695-35def89cc64d}-Dreamfilm.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Dreamfilm.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Sky Go Uk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{15b82547-fb51-4257-85a4-a18176f3c77c}-Sky Go Uk.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Sky Go Uk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\TelegraafTV.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2679f012-a983-442e-9d92-d7d103d6ecd7}-TelegraafTV.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TelegraafTV.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\ToonsTv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{04e7aec9-dea6-496a-a2a4-418cca5f7b3d}-ToonsTv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ToonsTv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\URPlay.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f811db3c-e35d-42ff-8e56-bbfad32ea260}-URPlay.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\URPlay.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2348,9 +2432,23 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{453f6e32-54d5-49c0-af60-cd08a14c386d}-OnlineVideos.WebAutomation.BrowserHost.exe</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0e030923-323c-4964-9e9b-05806a4fac5c}-OnlineVideos.WebAutomation.BrowserHost.exe.config</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</DestinationFilename>
+            </FileItem>			
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.5.0.0\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.8.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -2407,6 +2505,13 @@
               <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.ministerk.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{f86c656f-e384-42cb-a1bd-0b05c8a810e5}-OnlineVideos.Sites.ministerk.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.ministerk.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.MrP.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3e1ff5fd-9f1d-4227-b9ff-3235d4244146}-OnlineVideos.Sites.MrP.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.MrP.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -3433,21 +3538,17 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>1</Major>
-      <Minor>7</Minor>
+      <Minor>8</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>fixed: SiteManager converts LastUpdated to Local Time taking the timezone into account
-fixed: removed excessive logging of MMS Downloader 
-changed: Webservice reference now uses DNS instead of IP
-changed: OnlineVideos log files preserve extension
-changed: removed Titan skin files from SVN and installer (they are maintained by Titan Team)
-added: downloaded video also save matroska xml with the Title, Description, Airdate
-added: made skipping single categories user-configurable for each site</VersionDescription>
+    <VersionDescription>fixed running Config from MediaPortal Extensiosn Manager
+added a new type of Player: "Browser" - with a supplemental executable to show a browser window full screen for DRM protected videos
+</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/[Name][Version].mpe1</OnlineLocation>
-    <ReleaseDate>2013-10-01T15:00:00</ReleaseDate>
+    <ReleaseDate>2014-02-01T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
@@ -5787,6 +5888,90 @@ added: made skipping single categories user-configurable for each site</VersionD
         <ZipFileName>Installer{CopyFile}\{7a9ea59b-3f72-48cd-8ebd-79eeedb3764a}-Vod.tvp.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Vod.tvp.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\4oD Web.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c0de89aa-e8e6-4256-b0de-cfabad7d1ac8}-4oD Web.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\4oD Web.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Dreamfilm.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2509f6ea-67a8-47ad-af16-b80729cbe3e4}-Dreamfilm.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Dreamfilm.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Sky Go Uk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3006fde1-5971-443e-b788-8a96c3140216}-Sky Go Uk.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Sky Go Uk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TelegraafTV.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2fc3ae25-b3d9-428c-ba65-9ee3ecc61637}-TelegraafTV.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TelegraafTV.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\ToonsTv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{da3491d4-1394-4cf9-aa94-f5debaf72c7f}-ToonsTv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ToonsTv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\URPlay.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{1beaaed8-52ad-4f76-bcda-ce642376659b}-URPlay.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\URPlay.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\4oD Web.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2e2c50b9-3f1a-46ef-bfb1-133f8bbfef67}-4oD Web.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\4oD Web.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Dreamfilm.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4b6a7da2-03fb-4470-a695-35def89cc64d}-Dreamfilm.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Dreamfilm.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Sky Go Uk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{15b82547-fb51-4257-85a4-a18176f3c77c}-Sky Go Uk.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Sky Go Uk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\TelegraafTV.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2679f012-a983-442e-9d92-d7d103d6ecd7}-TelegraafTV.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TelegraafTV.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\ToonsTv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{04e7aec9-dea6-496a-a2a4-418cca5f7b3d}-ToonsTv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ToonsTv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\URPlay.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f811db3c-e35d-42ff-8e56-bbfad32ea260}-URPlay.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\URPlay.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -5804,9 +5989,16 @@ added: made skipping single categories user-configurable for each site</VersionD
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{453f6e32-54d5-49c0-af60-cd08a14c386d}-OnlineVideos.WebAutomation.BrowserHost.exe</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.5.0.0\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.8.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -5867,6 +6059,13 @@ added: made skipping single categories user-configurable for each site</VersionD
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.MrP.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3e1ff5fd-9f1d-4227-b9ff-3235d4244146}-OnlineVideos.Sites.MrP.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.MrP.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
@@ -5905,6 +6104,13 @@ added: made skipping single categories user-configurable for each site</VersionD
         <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0e030923-323c-4964-9e9b-05806a4fac5c}-OnlineVideos.WebAutomation.BrowserHost.exe.config</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
