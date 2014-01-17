@@ -2222,7 +2222,9 @@ namespace OnlineVideos.MediaPortal1
 
         private void Play_Step2(PlayListItem playItem, List<String> loUrlList, bool goFullScreen, bool skipPlaybackOptionsDialog)
         {
-            Utils.RemoveInvalidUrls(loUrlList);
+
+            if (playItem.Util.Settings.Player != PlayerType.Browser)
+                Utils.RemoveInvalidUrls(loUrlList);
 
             // if no valid urls were returned show error msg
             if (loUrlList == null || loUrlList.Count == 0)
@@ -2314,9 +2316,14 @@ namespace OnlineVideos.MediaPortal1
 
         void Play_Step4(PlayListItem playItem, string lsUrl, bool goFullScreen)
         {
+
+            OnlineVideos.MediaPortal1.Player.PlayerFactory factory = new OnlineVideos.MediaPortal1.Player.PlayerFactory(playItem.ForcedPlayer != null ? playItem.ForcedPlayer.Value : playItem.Util.Settings.Player, lsUrl);
+
             // check for valid url and cut off additional parameter
-            if (String.IsNullOrEmpty(lsUrl) ||
+            if ((String.IsNullOrEmpty(lsUrl) ||
                 !Utils.IsValidUri((lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? lsUrl.Substring(0, lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : lsUrl))
+                &&
+                factory.PreparedPlayerType != PlayerType.Browser)
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
@@ -2335,9 +2342,16 @@ namespace OnlineVideos.MediaPortal1
 
             currentPlayingItem = null;
 
-            OnlineVideos.MediaPortal1.Player.PlayerFactory factory = new OnlineVideos.MediaPortal1.Player.PlayerFactory(playItem.ForcedPlayer != null ? playItem.ForcedPlayer.Value : playItem.Util.Settings.Player, lsUrl);
             if (factory.PreparedPlayerType != PlayerType.Internal)
             {
+                // Websites will just go to play
+                if (factory.PreparedPlayerType == PlayerType.Browser)
+                {
+                    (factory.PreparedPlayer as WebBrowserVideoPlayer).Initialise(playItem.Util);
+                    factory.PreparedPlayer.Play(lsUrl);
+                    return;
+                }
+
                 // external players can only be created on the main thread
                 Play_Step5(playItem, lsUrl, goFullScreen, factory, true, true);
             }

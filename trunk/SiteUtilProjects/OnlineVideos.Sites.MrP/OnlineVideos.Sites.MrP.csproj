@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{59C03F73-0B0E-4DDE-9C34-788BD7DADC5E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OnlineVideos.Sites.WebAutomation</RootNamespace>
+    <AssemblyName>OnlineVideos.Sites.MrP</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConnectorImplementations\4OD\Connectors\_4ODConnector.cs" />
+    <Compile Include="ConnectorImplementations\4OD\Connectors\_4ODInformationConnector.cs" />
+    <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODCategoryData.cs" />
+    <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODCategoryParser.cs" />
+    <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODVideoParser.cs" />
+    <Compile Include="ConnectorImplementations\SkyGo\Connectors\SkyGoConnector.cs" />
+    <Compile Include="ConnectorImplementations\SkyGo\Connectors\SkyGoInformationConnector.cs" />
+    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoHtmlAgilityPackExtensions.cs" />
+    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoCategoryData.cs" />
+    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoCategoryParser.cs" />
+    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoVideoData.cs" />
+    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoVideoParser.cs" />
+    <Compile Include="Extensions\HtmlAgilityPackExtensions.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="Factories\ConnectorFactory.cs" />
+    <Compile Include="Factories\ConnectorType.cs" />
+    <Compile Include="Interfaces\IInformationConnector.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="WebAutomationSiteUtil.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
+      <Project>{e0d9d390-cdd6-4b98-86f3-6eb04a958882}</Project>
+      <Name>OnlineVideos</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
