@@ -12,6 +12,8 @@ namespace OnlineVideos.Sites
 {
 	public static class Updater
 	{
+		public const string UpdateXmlUrl = "http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml";
+
 		public delegate bool ProgressReport(string action, byte? percent);
 
 		static DateTime lastOnlineVersionCheck = DateTime.MinValue;
@@ -47,24 +49,34 @@ namespace OnlineVideos.Sites
 					if (DateTime.Now - lastOnlineVersionCheck > TimeSpan.FromHours(4)) // only check every 4 hours
 					{
 						lastOnlineVersionCheck = DateTime.Now;
-						XmlDocument xDoc = SiteUtilBase.GetWebData<XmlDocument>("http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml", null, null, null, false, false, null, false);
-						var versionNode = xDoc.SelectNodes("//PackageClass/GeneralInfo/Version");
+						XmlDocument xDoc = SiteUtilBase.GetWebData<XmlDocument>(UpdateXmlUrl, null, null, null, false, false, null, false);
 						List<Version> versions = new List<Version>();
-						foreach (XmlElement versionNodee in versionNode)
+						var versionNode = xDoc.SelectNodes("//PackageClass/GeneralInfo/Version");
+						if (versionNode != null)
 						{
-							versions.Add(new Version(
-							int.Parse(versionNodee.SelectSingleNode("Major").InnerText),
-								int.Parse(versionNodee.SelectSingleNode("Minor").InnerText),
+							foreach (XmlElement versionNodee in versionNode)
+							{
+								versions.Add(new Version(
+									int.Parse(versionNodee.SelectSingleNode("Major").InnerText),
+									int.Parse(versionNodee.SelectSingleNode("Minor").InnerText),
 									int.Parse(versionNodee.SelectSingleNode("Build").InnerText),
-										int.Parse(versionNodee.SelectSingleNode("Revision").InnerText)));
+									int.Parse(versionNodee.SelectSingleNode("Revision").InnerText)));
+							}
 						}
-						versions.Sort();
-						versionOnline = versions.LastOrDefault();
+						if (versions.Any())
+						{
+							versions.Sort();
+							versionOnline = versions.LastOrDefault();
+						}
+						else
+						{
+							OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn("No version found in '{0}'", UpdateXmlUrl);
+						}
 					}
 				}
 				catch (Exception ex)
 				{
-					OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn("Error retrieving '{0}' to check for latest version: {1}", "http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml", ex.Message);
+					OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn("Error retrieving '{0}' to check for latest version: {1}", UpdateXmlUrl, ex.Message);
 					return null;
 				}
 				return versionOnline;

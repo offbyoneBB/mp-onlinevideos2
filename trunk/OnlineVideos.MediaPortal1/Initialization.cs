@@ -125,6 +125,7 @@ namespace OnlineVideos.MediaPortal1
 						if (doUpdate == true)
 						{
 							if (dlgPrgrs != null) dlgPrgrs.SetHeading(string.Format("{0} - {1}", PluginConfiguration.Instance.BasicHomeScreenName, Translation.Instance.AutomaticUpdate));
+							var onlineVersion = Sites.Updater.VersionOnline;
 							if (OnlineVideos.Sites.Updater.VersionCompatible)
 							{
 								bool? updateResult = OnlineVideos.Sites.Updater.UpdateSites((m, p) =>
@@ -150,7 +151,7 @@ namespace OnlineVideos.MediaPortal1
 							{
 								// inform the user that autoupdate is disabled due to outdated version!
 								dlgPrgrs.SetLine(1, Translation.Instance.AutomaticUpdateDisabled);
-								dlgPrgrs.SetLine(2, string.Format(Translation.Instance.LatestVersionRequired, Sites.Updater.VersionOnline.ToString()));
+								dlgPrgrs.SetLine(2, onlineVersion != null ? string.Format(Translation.Instance.LatestVersionRequired, onlineVersion) : "Check your Internet Connection!");
 								Thread.Sleep(5000);
 								dlgPrgrs.SetLine(2, string.Empty);
 							}

@@ -708,7 +708,7 @@ namespace OnlineVideos.MediaPortal1
                     dlg.Reset();
                     dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
 					dlg.SetLine(1, Translation.Instance.AutomaticUpdateDisabled);
-					dlg.SetLine(2, string.Format(Translation.Instance.LatestVersionRequired, Sites.Updater.VersionOnline.ToString()));
+					dlg.SetLine(2, string.Format(Translation.Instance.LatestVersionRequired, Sites.Updater.VersionOnline));
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                 }
                 return false;
