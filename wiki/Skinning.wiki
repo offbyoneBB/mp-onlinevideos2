@@ -67,6 +67,7 @@ The listcontrol (id 50) also sets the PinIcon for each listitem to an image file
   * `#OnlineVideos.HeaderImage` - banner style image (3:1 AR) that changes according to the current site the user is browsing
   * `#OnlineVideos.Translation.ManageSites.Label` - can be used for the button that calls the site manager window
   * `#OnlineVideos.currentDownloads` - number of downloads currently running in the background
+  * `#OnlineVideos.HomeScreenName` - user configured name for the OnlineVideos menu item
 
  * Site Manager Window (4757) only
   * `#OnlineVideos.owner` - Creator of the current selected item (localized label property: {{{#OnlineVideos.Translation.Creator.Label}}})
