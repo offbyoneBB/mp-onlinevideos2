@@ -46,6 +46,9 @@ namespace OnlineVideos.MediaPortal1
 				// The default .Net implementation for URI parsing removes trailing dots, which is not correct
 				Utils.FixUriTrailingDots();
 
+				// set a GUI Property to the configured menu entry of the plugin so skins can use it
+				GUIPropertyManager.SetProperty("#OnlineVideos.HomeScreenName", PluginConfiguration.Instance.BasicHomeScreenName);
+
 				// When AutoUpdate of sites on startup is enabled and the last update was done earlier than configured run AutoUpdate and deletion of old thumbs
 				if (PluginConfiguration.Instance.updateOnStart == true &&
 					PluginConfiguration.Instance.lastFirstRun.AddHours(PluginConfiguration.Instance.updatePeriod) < DateTime.Now &&
