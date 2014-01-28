@@ -129,6 +129,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
 
                         if (swfElement != null)
                         {
+                            DoResize();
                             // Not 100% sure why, but for some reason the page does reload after the initial element is loaded
                             // We'll basically do the accept and resize on the second refresh
                             _currentState = State.Playing;
@@ -160,6 +161,9 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
                     }
                                              
                     DoResize();
+                    _currentState = State.None;
+                    ProcessComplete.Finished = true;
+                    ProcessComplete.Success = true;
                     break;
             }
 
