@@ -64,11 +64,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
             // It took a long time to figure out that this was the problem with the web browser control not loading the video after the first go
             RemoveFileFromTempInternetFiles("4odplayer", ".swf");
             _currentState = State.PlayPage;
-            ProcessComplete.Finished = false;
-            ProcessComplete.Success = false;
+            ProcessComplete.Finished = true;
+            ProcessComplete.Success = true;
             _nextVideoToPlayId = videoToPlay.Split('~')[1];
             _nextVideoToPlayName = videoToPlay.Split('~')[0];
             Url = Properties.Resources._4OD_VideoPlayUrl.Replace("{VIDEO_NAME}", _nextVideoToPlayName).Replace("{VIDEO_ID}", _nextVideoToPlayId);
+            
             return EventResult.Complete();
         }
 
@@ -125,22 +126,34 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
                 case State.PlayPage:
                     if (Url.Contains(_nextVideoToPlayName))
                     {
-                        var swfElement = Browser.Document.GetElementById("catchUpPlayer");
+                       /* var swfElement = Browser.Document.GetElementById("catchUpPlayer");
 
                         if (swfElement != null)
                         {
                             DoResize();
                             // Not 100% sure why, but for some reason the page does reload after the initial element is loaded
                             // We'll basically do the accept and resize on the second refresh
-                            _currentState = State.Playing;
+                            _currentState = State.None;
                             ProcessComplete.Finished = true;
-                            ProcessComplete.Success = true;   
+                            ProcessComplete.Success = true;
                         }
+                        */
+
+                        // Rather than click the age restriction button we'll set the cookie for this program 
+                        if (HasAgeRestriction())
+                        {
+                            InvokeScript("function cookieObject() {this.allowedToWatch = 18};");
+                            InvokeScript("C4.Util.setCookieValue('C4AccessControlCookie_" + _nextVideoToPlayName + "', new cookieObject())");
+                        }
+                        DoResize();
+                        _currentState = State.Playing;
+                        ProcessComplete.Finished = true;
+                        ProcessComplete.Success = true;
                     }
                     break;
                 case State.Playing:
                     // Handle the accepting of age restrictions, do this before making it fullscreen so we can get the absolute position of the box
-                    var currPosLeft = Browser.Document.Window.Position.X + 125;
+                    /*var currPosLeft = Browser.Document.Window.Position.X + 125;
                     var currPosTop = Browser.Document.Window.Position.Y + 260;
                     var coloursToLookFor = new[] { "0F7FA8", "FFFFFF", "009ACA" };
 
@@ -158,10 +171,11 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
 
                         CursorHelper.DoLeftMouseClick();
                         Application.DoEvents();
-                    }
+                    }*/
                                              
                     DoResize();
-                    _currentState = State.None;
+                    // We'll keep coming into this case in case the page refreshes for some reason - re-attaching the screen re-size javascript won't do any damage
+                    //_currentState = State.None;
                     ProcessComplete.Finished = true;
                     ProcessComplete.Success = true;
                     break;
@@ -239,48 +253,5 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
             }
             return false;
         }
-
-
-        // Hack to go full screen - similar hack to sky go, albeit slightly more accurate
-        // Basically we need to wait for the video to load before we can click the maximise button, so we'll wait for the colour to change under the cursor
-        /* currPosLeft = Browser.Document.Window.Position.X + swfElement.OffsetRectangle.Width - 10;
-         currPosTop = Browser.Document.Window.Position.Y + swfElement.OffsetRectangle.Height - 10;
-
-         Cursor.Position = new System.Drawing.Point(currPosLeft, currPosTop);
-         Application.DoEvents();
-                            
-         var offset = 5;
-
-         while (!coloursToLookFor.Contains(CursorHelper.GetColourUnderCursor().Name.Substring(2).ToUpper()))
-         {
-             offset = offset < 20 ? offset + 5 : 0;
-             Cursor.Position = new System.Drawing.Point(currPosLeft + offset, currPosTop + offset);
-             Application.DoEvents();
-             Thread.Sleep(20);
-         }
-                            
-          InvokeScript("document.getElementById('catchUpPlayer').style.width = '1000px';");
-         InvokeScript("document.getElementById('catchUpPlayer').style.height = '1000px';");
-                           
-         InvokeScript("document.getElementById('resizeLarge').click();");                
-        
-         var enddate = DateTime.Now.AddSeconds(5);
-                            
-         while (DateTime.Now < enddate)
-         {
-             Application.DoEvents();
-         }
-CursorHelper.DoLeftMouseClick();
-         Application.DoEvents(); 
-           * // By making the form tiny and giving it focus we can capture the key events (otherwise the flash component does :-( )
-/*                            Browser.Focus();
-
-         Browser.FindForm().WindowState = FormWindowState.Normal;
-         Browser.FindForm().Width = 1;
-         Browser.FindForm().Height = 1;
-         Browser.FindForm().Top = -50;
-         Browser.FindForm().Left = -50;
-        */
     }
-
 }

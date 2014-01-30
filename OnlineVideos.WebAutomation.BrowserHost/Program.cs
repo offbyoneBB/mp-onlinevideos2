@@ -32,6 +32,9 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 AppDomain currentDomain = AppDomain.CurrentDomain;
                 currentDomain.AssemblyResolve += new ResolveEventHandler(MyResolveEventHandler);
 
+                // Set the BaseDirectory of the app domain to the mediaportal root, otherwise the inputdevices can't initialise (due to Configuration.Config using this path)
+                // The other option is to run this exe in the root of the media portal dir, which I wasn't too keen on
+                currentDomain.SetData("APPBASE", _assemblyPath); 
 
                 var result = args[2];
                 var host = new BrowserHost();
