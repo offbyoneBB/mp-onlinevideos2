@@ -55,6 +55,14 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Core">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RemotePlugins">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\RemotePlugins.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -111,15 +119,15 @@
     <ProjectReference Include="..\OnlineVideos\OnlineVideos.csproj">
       <Project>{e0d9d390-cdd6-4b98-86f3-6eb04a958882}</Project>
       <Name>OnlineVideos</Name>
-      <Private>True</Private>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="build.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetPath)" "%25programfiles(x86)%25\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos" /Y /E /I
-xcopy "$(TargetPath).config" "%25programfiles(x86)%25\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos" /Y /E /I</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(TargetPath)" "%25programfiles(x86)%25\Team MediaPortal\MediaPortal\plugins\windows\onlinevideos\" /Y /E /I
+xcopy "$(TargetPath).config" "%25programfiles(x86)%25\Team MediaPortal\MediaPortal\plugins\windows\onlinevideos\" /Y /E /I</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

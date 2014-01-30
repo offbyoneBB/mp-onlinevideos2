@@ -7,6 +7,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using OnlineVideos.Helpers;
 using OnlineVideos.Sites;
+using MediaPortal.InputDevices;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
@@ -86,12 +87,11 @@ namespace OnlineVideos.MediaPortal1.Player
             // Hide MediaPortal
             if (_browserProcess.Start())
             {
+                ProcessHelper.SetForeground(_browserProcess.MainWindowHandle);
                 SuspendMP(true);
                 Redirect(_browserProcess.StandardError);
             }
-
-            ProcessHelper.SetForeground(_browserProcess.MainWindowHandle);
-            
+           
             return true;
         }
 
@@ -157,13 +157,14 @@ namespace OnlineVideos.MediaPortal1.Player
 
             if (suspend) //suspend and hide MediaPortal
             {
-                //InputDevices.Stop();
+                InputDevices.Stop(); //stop input devices so they don't interfere when the browser player starts listening
                 
                 // hide mediaportal and suspend rendering 
                 GUIGraphicsContext.BlankScreen = true;
                 GUIGraphicsContext.form.Hide();
                 GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
                 // Hide the window
+                ProcessHelper.SetWindowState("mediaportal", ProcessHelper.WINDOW_STATE.SW_MINIMIZE);
                 _mpWindowHandle = ProcessHelper.SetWindowState("mediaportal", ProcessHelper.WINDOW_STATE.SW_HIDE);
                 _mpWindowHidden = true;
             }
@@ -172,7 +173,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 
                 // Restore the window
                 ProcessHelper.RestoreWindow(_mpWindowHandle);
-                //InputDevices.Init();
+                InputDevices.Init();
 
                 // Resume Mediaportal rendering
                 GUIGraphicsContext.BlankScreen = false;

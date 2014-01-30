@@ -13,11 +13,23 @@ using System.IO;
 using System.Diagnostics;
 using System.Configuration;
 using OnlineVideos.Sites.Base;
+using MediaPortal.GUI.Library;
+using MediaPortal.InputDevices;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 {
     public partial class BrowserForm : Form
     {
+        /// <summary>
+        /// Which was the last of the 2 events fired between play/pause.  We'll use this to handle the media key as that's a single play/pause button.
+        /// </summary>
+        private enum PlayPauseToggle
+        { 
+            Play, 
+            Pause 
+        }
+
         public bool ForceClose { get; private set; }
 
         private string _connectorType;
@@ -26,14 +38,12 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private string _password;
         private BrowserUtilConnector _connector;
 
-        private Keys? _playKey;
-        private Keys? _pauseKey;
-        private Keys? _stopKey;
-
         private bool _debugMode = false; // Allow for the form to be resized/lose focus in debug mode
 
-        private Keys _lastKeyPressed;
+        private int _lastKeyPressed;
         private DateTime _lastKeyPressedTime;
+
+        private PlayPauseToggle _lastPlayPauseState = PlayPauseToggle.Play;
 
         /// <summary>
         /// This form is used to play a video - we use separate exe as there is no reliable way to dispose of the web browser between sessions
@@ -50,15 +60,20 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             _videoInfo = videoInfo;
             _userName = userName;
             _password = password;
-            _playKey = GetKeyForAction("PlayKey");
-            _pauseKey = GetKeyForAction("PauseKey");
-            _stopKey = GetKeyForAction("StopKey");
             _debugMode = false;
 
             var configValue = ConfigurationManager.AppSettings["DebugMode"];
             if (!string.IsNullOrEmpty(configValue) && configValue.ToUpper() == "TRUE")
                 _debugMode = true;
+
+            //Load keyboard mappings
+            ActionTranslator.Load();
             
+            //Load remote mappings
+            InputDevices.Init();
+
+            //Some remotes will fire this event directly
+            GUIGraphicsContext.OnNewAction += OnNewAction;
         }
         
         /// <summary>
@@ -97,7 +112,6 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             }
             catch (Exception ex)
             {
-                //MediaPortal.Common.Utils.Logger.CommonLogger.Instance.Error(MediaPortal.Common.Utils.Logger.CommonLogType.Error, ex);
                 Log.Error(ex);
                 ForceQuit();
             }
@@ -119,7 +133,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// <param name="e"></param>
         private void BrowserForm_KeyDown(object sender, KeyEventArgs e)
         {
-            HandleKeyPress(e.KeyCode);
+            HandleKeyPress(e.KeyValue);
         }
 
         /// <summary>
@@ -129,28 +143,99 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// <param name="e"></param>
         private void webBrowser_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            HandleKeyPress(e.KeyCode);
+            HandleKeyPress(e.KeyValue);
+        }
+
+        //Used to pass messages to remotes. Lifted from MediaPortal.cs
+        protected override void WndProc(ref Message msg)
+        {
+            Action action;
+            char key;
+            Keys keyCode;
+            if (InputDevices.WndProc(ref msg, out action, out key, out keyCode))
+            {
+                //If remote doesn't fire event directly we manually fire it
+                if (action != null && action.wID != Action.ActionType.ACTION_INVALID)
+                {
+                    OnNewAction(action);
+                }
+
+                if (keyCode != Keys.A)
+                {
+                    var ke = new KeyEventArgs(keyCode);
+                    OnKeyDown(ke);
+                }
+                return; // abort WndProc()
+            }
+            base.WndProc(ref msg);
         }
 
         /// <summary>
         /// Event sink for key press
         /// </summary>
         /// <param name="keyPressed"></param>
-        private void HandleKeyPress(Keys keyPressed)
+        private void HandleKeyPress(int keyPressed)
         {
-            // Ignore duplicate presses within 1 second (happens because sometimes both the browser and form fire the event)
-            if (_lastKeyPressed == keyPressed && _lastKeyPressedTime.AddSeconds(1) > DateTime.Now) return;
+            // Ignore duplicate presses within 0.5 seconds (happens because sometimes both the browser and form fire the event)
+            if (_lastKeyPressed == keyPressed && _lastKeyPressedTime.AddSeconds(0.5) > DateTime.Now) return;
             _lastKeyPressed = keyPressed;
             _lastKeyPressedTime = DateTime.Now;
 
-            if (keyPressed == Keys.Escape)
-                ForceQuit();
-            if (_playKey.HasValue && keyPressed == _playKey)
-                _connector.Play();
-            if (_stopKey.HasValue && keyPressed == _stopKey)
-                ForceQuit();
-            if (_pauseKey.HasValue && keyPressed == _pauseKey)
-                _connector.Pause();
+            Action action = new Action();
+            //Try and get corresponding Action from key.
+            //Some actions are mapped to KeyDown others to KeyPressed, try and handle both
+            if (ActionTranslator.GetAction(-1, new Key(0, keyPressed), ref action))
+            {
+                OnNewAction(action);
+            }
+            else
+            {
+                //See if it's mapped to KeyPressed instead
+                if (keyPressed >= (int)Keys.A && keyPressed <= (int)Keys.Z)
+                    keyPressed += 32; //convert to char code
+                if (ActionTranslator.GetAction(-1, new Key(keyPressed, 0), ref action))
+                    OnNewAction(action);
+                else
+                {
+                    // Handle the mesdia keys (toggle the play/pause as they are one button in this instance)
+                    switch (keyPressed)
+                    {
+                        case (int)Keys.MediaPlayPause:
+                            if (_lastPlayPauseState == PlayPauseToggle.Play)
+                                OnNewAction(new Action(Action.ActionType.ACTION_PAUSE, 0, 0));
+                            else
+                                OnNewAction(new Action(Action.ActionType.ACTION_PLAY, 0, 0));
+                            break;
+                        case (int)Keys.MediaStop:
+                            OnNewAction(new Action(Action.ActionType.ACTION_STOP, 0, 0));
+                            break;
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Handle actions
+        /// </summary>
+        /// <param name="action"></param>
+        void OnNewAction(Action action)
+        {
+            switch (action.wID)
+            {
+                case Action.ActionType.ACTION_PLAY:
+                case Action.ActionType.ACTION_MUSIC_PLAY:
+                    _connector.Play();
+                    _lastPlayPauseState = PlayPauseToggle.Play;
+                    break;
+                case Action.ActionType.ACTION_PAUSE:
+                    _connector.Pause();
+                    _lastPlayPauseState = PlayPauseToggle.Pause;
+                    break;
+                case Action.ActionType.ACTION_STOP:
+                case Action.ActionType.ACTION_PREVIOUS_MENU:
+                    ForceQuit();
+                    break;
+            }
         }
 
         /// <summary>
@@ -174,22 +259,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private void tmrKeepOnTop_Tick(object sender, EventArgs e)
         {
             ProcessHelper.SetForeground(Process.GetCurrentProcess().MainWindowHandle);
-        }
-
-        /// <summary>
-        /// Lookup the key code for the specified action name
-        /// </summary>
-        /// <param name="actionName"></param>
-        /// <returns></returns>
-        private Keys? GetKeyForAction(string actionName)
-        {
-            var configValue = ConfigurationManager.AppSettings[actionName];
-            if (string.IsNullOrEmpty(configValue)) return null;
-            
-            if (System.Enum.GetNames(typeof(Keys)).Where(x => x.ToUpper() == configValue).Count() > 0)
-                return (Keys)System.Enum.Parse(typeof(Keys), configValue, true);
-            
-            return null;
+            this.Activate();
+            this.Focus();
         }
 
         /// <summary>
