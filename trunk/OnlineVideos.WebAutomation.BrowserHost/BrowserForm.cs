@@ -74,6 +74,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 
             //Some remotes will fire this event directly
             GUIGraphicsContext.OnNewAction += OnNewAction;
+
         }
         
         /// <summary>
@@ -176,11 +177,11 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// <param name="keyPressed"></param>
         private void HandleKeyPress(int keyPressed)
         {
-            // Ignore duplicate presses within 0.5 seconds (happens because sometimes both the browser and form fire the event)
-            if (_lastKeyPressed == keyPressed && _lastKeyPressedTime.AddSeconds(0.5) > DateTime.Now) return;
+            // Ignore duplicate presses within 1 seconds (happens because sometimes both the browser and form fire the event)
+            if (_lastKeyPressed == keyPressed && _lastKeyPressedTime.AddSeconds(1) > DateTime.Now) return;
             _lastKeyPressed = keyPressed;
             _lastKeyPressedTime = DateTime.Now;
-
+            
             Action action = new Action();
             //Try and get corresponding Action from key.
             //Some actions are mapped to KeyDown others to KeyPressed, try and handle both
@@ -195,27 +196,12 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                     keyPressed += 32; //convert to char code
                 if (ActionTranslator.GetAction(-1, new Key(keyPressed, 0), ref action))
                     OnNewAction(action);
-                else
-                {
-                    // Handle the mesdia keys (toggle the play/pause as they are one button in this instance)
-                    switch (keyPressed)
-                    {
-                        case (int)Keys.MediaPlayPause:
-                            if (_lastPlayPauseState == PlayPauseToggle.Play)
-                                OnNewAction(new Action(Action.ActionType.ACTION_PAUSE, 0, 0));
-                            else
-                                OnNewAction(new Action(Action.ActionType.ACTION_PLAY, 0, 0));
-                            break;
-                        case (int)Keys.MediaStop:
-                            OnNewAction(new Action(Action.ActionType.ACTION_STOP, 0, 0));
-                            break;
-                    }
-                }
             }
         }
         
         /// <summary>
         /// Handle actions
+        /// We'll make play/pause a toggle, just so we can ensure we support media buttons properly
         /// </summary>
         /// <param name="action"></param>
         void OnNewAction(Action action)
@@ -224,12 +210,22 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             {
                 case Action.ActionType.ACTION_PLAY:
                 case Action.ActionType.ACTION_MUSIC_PLAY:
-                    _connector.Play();
-                    _lastPlayPauseState = PlayPauseToggle.Play;
+                    if (_lastPlayPauseState == PlayPauseToggle.Play)
+                        OnNewAction(new Action(Action.ActionType.ACTION_PAUSE, 0, 0));
+                    else
+                    {
+                        _connector.Play();
+                        _lastPlayPauseState = PlayPauseToggle.Play;
+                    }
                     break;
                 case Action.ActionType.ACTION_PAUSE:
-                    _connector.Pause();
-                    _lastPlayPauseState = PlayPauseToggle.Pause;
+                    if (_lastPlayPauseState == PlayPauseToggle.Pause)
+                        OnNewAction(new Action(Action.ActionType.ACTION_PLAY, 0, 0));
+                    else
+                    {
+                        _connector.Pause();
+                        _lastPlayPauseState = PlayPauseToggle.Pause;
+                    }
                     break;
                 case Action.ActionType.ACTION_STOP:
                 case Action.ActionType.ACTION_PREVIOUS_MENU:
