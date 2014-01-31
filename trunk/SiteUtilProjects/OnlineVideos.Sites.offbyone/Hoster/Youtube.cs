@@ -53,6 +53,7 @@ namespace OnlineVideos.Hoster
                 videoId = videoId.Substring(p, q - p);
             }
 
+			NameValueCollection ItemsAPI = new NameValueCollection();
             NameValueCollection Items = new NameValueCollection();
             string contents = "";
             try
@@ -68,6 +69,7 @@ namespace OnlineVideos.Hoster
                 Items = System.Web.HttpUtility.ParseQueryString(contents);
                 if (Items.Count == 0 || Items["status"] == "fail")
                 {
+					ItemsAPI = Items;
 					contents = Sites.SiteUtilBase.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxy);
                     Match m = swfJsonArgs.Match(contents);
                     if (m.Success)
@@ -78,15 +80,15 @@ namespace OnlineVideos.Hoster
                         }
                         else if (m.Groups["json"].Success)
                         {
-                            Items.Clear();
+							Items = new NameValueCollection();
                             foreach (var z in Newtonsoft.Json.Linq.JObject.Parse(m.Groups["json"].Value))
                             {
                                 Items.Add(z.Key, z.Value.ToString());
                             }
                         }
                         else if (m.Groups["html"].Success)
-                        {                            
-                            Items.Clear();
+                        {
+							Items = new NameValueCollection();
                             string html = Regex.Match(m.Groups["html"].Value, @"flashvars=\\""(?<value>.+?)\\""").Groups["value"].Value;
                             html = unicodeFinder.Replace(html, match => ((char)Int32.Parse(match.Value.Substring(2), NumberStyles.HexNumber)).ToString());
                             Items = System.Web.HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(html));
@@ -105,7 +107,7 @@ namespace OnlineVideos.Hoster
                 string[] FmtUrlMap = Items["url_encoded_fmt_stream_map"].Split(',');
 				string[] FmtList = Items["fmt_list"].Split(',');
                 for (int i = 0; i < FmtList.Length; i++) qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), FmtUrlMap[i]));
-
+				/*
 				string[] AdaptiveFmtUrlMap = Items["adaptive_fmts"].Split(',');
 				for (int i = 0; i < AdaptiveFmtUrlMap.Length; i++)
 				{
@@ -113,7 +115,7 @@ namespace OnlineVideos.Hoster
 					var quality = new string[] { adaptive_options["itag"], adaptive_options["size"] };
 					qualities.Add(new KeyValuePair<string[], string>(quality, AdaptiveFmtUrlMap[i]));
 				}
-
+				*/
                 qualities.Sort(new Comparison<KeyValuePair<string[], string>>((a,b)=>
                 {
 					return Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(b.Key[0])).CompareTo(Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(a.Key[0])));
@@ -164,6 +166,11 @@ namespace OnlineVideos.Hoster
                 string reason = Items.Get("reason");
                 if (!string.IsNullOrEmpty(reason) && (PlaybackOptions == null || PlaybackOptions.Count == 0)) throw new OnlineVideosException(reason);
             }
+			else if (ItemsAPI.Get("status") == "fail")
+			{
+				string reason = ItemsAPI.Get("reason");
+				if (!string.IsNullOrEmpty(reason) && (PlaybackOptions == null || PlaybackOptions.Count == 0)) throw new OnlineVideosException(reason);
+			}
 
             return PlaybackOptions;
         }
@@ -209,7 +216,7 @@ namespace OnlineVideos.Hoster
 				case 83:
 					return s.Slice(80, 63, -1) + s[0] + s.Slice(62, 0, -1) + s[63];
 				case 82:
-					return s.Slice(80, 73, -1) + s[81] + s.Slice(72, 54, -1) + s[2] + s.Slice(53, 43, -1) + s[0] + s.Slice(42, 2, -1) + s[43] + s[1] + s[54];
+					return s.Slice(80, 37, -1) + s[7] + s.Slice(36, 7, -1) + s[0] + s.Slice(6, 0, -1) + s[37];
 				case 81:
 					return s[56] + s.Slice(79, 56, -1) + s[41] + s.Slice(55, 41, -1) + s[80] + s.Slice(40, 34, -1) + s[0] + s.Slice(33, 29, -1) + s[34] + s.Slice(28, 9, -1) + s[29] + s.Slice(8, 0, -1) + s[9];
                 case 80:
