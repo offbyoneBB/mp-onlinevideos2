@@ -122,7 +122,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Extensi
         /// <returns></returns>
         private static string MakeWebSafe(string stringToFix)
         {
-            return stringToFix.Replace(" ", "-").Replace("'", "").Replace(":", "").Replace(".", "").Replace(",", "").ToLower();
+            return stringToFix.ToLower().Replace(" ", "-").Replace("'", "").Replace(":", "").Replace(".", "").Replace(",", "").Replace("&amp;", "").ToLower();
         }
     }
 }

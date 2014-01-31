@@ -71,10 +71,11 @@ namespace OnlineVideos.MediaPortal1.Player
             _browserProcess.StartInfo.RedirectStandardError = true;
             _browserProcess.EnableRaisingEvents = true;
             //_browserProcess.StartInfo.FileName = "plugins\\Windows\\OnlineVideos\\OnlineVideos.Sites.WebAutomation.BrowserHost.exe";
-            var dllDir = OnlineVideoSettings.Instance.DllsDir;
+            var dir = MediaPortal.Configuration.Config.GetFolder(MediaPortal.Configuration.Config.Dir.Base);
+            
             _browserProcess.StartInfo.FileName = Path.Combine(OnlineVideoSettings.Instance.DllsDir, "OnlineVideos.WebAutomation.BrowserHost.exe");
             _browserProcess.StartInfo.Arguments = string.Format("\"{0} \" \"{1}\" \"{2}\" \"{3}\" \"{4}\"",
-                                            dllDir,
+                                            dir,
                                             strFile,
                                             _automationType,
                                             (string.IsNullOrEmpty(_username) ? "_" : _username),

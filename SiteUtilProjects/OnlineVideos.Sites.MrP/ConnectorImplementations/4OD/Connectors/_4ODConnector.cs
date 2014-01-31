@@ -243,13 +243,22 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
         private bool HasAgeRestriction()
         {
             var document = new XmlDocument();
-            document.Load(Properties.Resources._4OD_VideoDetailsUrl.Replace("{VIDEO_ID}", _nextVideoToPlayId));
-            var node = document.GetElementsByTagName("rating");
-            if (node != null && node.Count > 0)
+            try
             {
-                var result = 0;
-                if (int.TryParse(node[0].InnerText, out result))
-                    return result >= 16;
+                document.Load(Properties.Resources._4OD_VideoDetailsUrl.Replace("{VIDEO_ID}", _nextVideoToPlayId));
+                var node = document.GetElementsByTagName("rating");
+                if (node != null && node.Count > 0)
+                {
+                    var result = 0;
+                    if (int.TryParse(node[0].InnerText, out result))
+                        return result >= 16;
+                }
+
+                return false;
+            }
+            catch 
+            {
+                // Ignore errors here - we'll assume it's not a restricted video
             }
             return false;
         }
