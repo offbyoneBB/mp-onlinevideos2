@@ -22,9 +22,19 @@ namespace OnlineVideos.Sites
             {
                 if (!asset.Attribute("type").Value.StartsWith("MOBILE"))
                 {
-                    var info = string.Format("{0} ({1})", asset.Descendants("dimensions").First().Value, asset.Descendants("readableSize").First().Value);
-                    var url = asset.Descendants("downloadUrl").First().Value;
-                    result.Add(info, url);
+					var downloadUrlNode = asset.Descendants("downloadUrl").FirstOrDefault();
+					if (downloadUrlNode != null)
+					{
+						var url = downloadUrlNode.Value;
+						if (!string.IsNullOrEmpty(url))
+						{
+							var dimNode = asset.Descendants("dimensions").FirstOrDefault();
+							var sizeNode = asset.Descendants("readableSize").FirstOrDefault();
+							var info = dimNode != null && sizeNode != null ?
+								string.Format("{0} ({1})", dimNode.Value, sizeNode.Value) : asset.Attribute("type").Value;
+							result[info] = url;
+						}
+					}
                 }
             }
             return result;
