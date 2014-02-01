@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Newtonsoft.Json.Linq;
+using System.Xml.Linq;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
@@ -16,9 +18,11 @@ namespace OnlineVideos.Sites
 		string featuredStreamsUrl = "/streams/featured?limit=100";
 		string streamsUrl = "/streams?limit=100&game={0}";
 		string searchUrl = "/search/streams?limit=100&query={0}";
-		string metaInfoUrl = "http://usher.twitch.tv/find/{0}.json?type=any&private_code=null&group=&";
+		string tokenUrl = "http://api.twitch.tv/api/channels/{0}/access_token";
+		string playlistUrl = "http://usher.twitch.tv/select/{0}.m3u8?nauthsig={1}&nauth={2}&allow_source=true";
 		string swfUrl = "http://www-cdn.jtvnw.net/widgets/live_site_player.reecf0cca00fdb5cb6edc8e227c91702545504613.swf";
 		string pageUrlBase = "http://de.twitch.tv/";
+		string m3u8Regex = @"#EXT-X-STREAM-INF:PROGRAM-ID=\d,BANDWIDTH=(?<bitrate>\d+),(RESOLUTION=\d+x\d+,)?VIDEO=""(?<quality>[^""]+)""\n(?<url>.*)";
 
 		string nextPageUrl;
 
@@ -83,23 +87,16 @@ namespace OnlineVideos.Sites
 		public override string getUrl(OnlineVideos.VideoInfo video)
 		{
 			video.PlaybackOptions = new Dictionary<string, string>();
-			var metaDataJson = GetWebData<JToken>(string.Format(metaInfoUrl, video.VideoUrl));
-			foreach (var quali in metaDataJson)
+
+			var tokenDataJson = GetWebData<JToken>(string.Format(tokenUrl, video.VideoUrl));
+			var token= tokenDataJson["token"];
+			var sig = tokenDataJson["sig"];
+			var m3u8Data = GetWebData(string.Format(playlistUrl, video.VideoUrl, sig, token));
+			foreach (Match match in Regex.Matches(m3u8Data, m3u8Regex))
 			{
-				if (quali["play"] != null && quali["connect"] != null)
-				{
-					var rtmpUrl = new MPUrlSourceFilter.RtmpUrl(quali.Value<string>("connect") + "/" + quali.Value<string>("play"))
-					{
-						SwfUrl = swfUrl,
-						SwfVerify = true,
-						Live = true,
-						PageUrl = pageUrlBase + video.VideoUrl,
-						Jtv = quali.Value<string>("token")
-					};
-					video.PlaybackOptions.Add(
-						string.Format("{0:F0} kbps | {1}", quali.Value<double>("bitrate"), quali.Value<string>("type")),
-						rtmpUrl.ToString());
-				}
+				video.PlaybackOptions.Add(
+					string.Format("{0} - {1} kbps", match.Groups["quality"].Value, int.Parse(match.Groups["bitrate"].Value) / 1000),
+					match.Groups["url"].Value);
 			}
 			return video.PlaybackOptions.Select(p => p.Value).FirstOrDefault();
 		}
