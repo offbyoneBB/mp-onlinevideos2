@@ -399,8 +399,7 @@ namespace Flowplayer.Commercial.V3_1_5_17_002
 
             return Base64.Encode(builder.ToString(), false);
         }
-
-        //public const String Key = "EaDUutg4ppGYXwNMFdRJsadenFSnI6gJ";
+        
         public const String Key = "xo85kT+QHz3fRMcHMXp9cA";
 
         // Sbox is pre-computed multiplicative inverse in GF(2^8) used in subBytes and keyExpansion [§5.1.1]

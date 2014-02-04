@@ -279,7 +279,7 @@ namespace OnlineVideos.Sites
                         endTime = "0";
                     }
                     String url = xmlDataMatch.Groups["VideoURL"].Value;
-                    videoURL = getVideoURLMitele(url,startTime,endTime);
+                    videoURL = getVideoURLMitele(url, startTime, endTime);
                     Log.Debug("Mitele: videoURL {0} added", videoURL);
                 }
             }
@@ -288,10 +288,9 @@ namespace OnlineVideos.Sites
 
         public String getVideoURLMitele(String url, String startTime, String endTime)
         {
-            String videoURL = "";
             String serverTime = GetWebData(timeURL);
             String toEncode = serverTime + ";" + url + ";" + startTime + ";" + endTime;
-            String encodedParams = Flowplayer.Commercial.V3_1_5_17_002.Aes.Encrypt(toEncode, Flowplayer.Commercial.V3_1_5_17_002.Aes.Key, Flowplayer.Commercial.V3_1_5_17_002.Aes.KeyType.Key256);
+            String encodedParams = Flowplayer.Commercial.V3_1_5_17_002.Aes.Encrypt(toEncode, base64Encode(Flowplayer.Commercial.V3_1_5_17_002.Aes.Key), Flowplayer.Commercial.V3_1_5_17_002.Aes.KeyType.Key256);
             String hash = HttpUtility.UrlEncode(encodedParams);
             NameValueCollection headers = new NameValueCollection();
             headers.Add("Accept", "*/*");
@@ -301,25 +300,8 @@ namespace OnlineVideos.Sites
             headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1");
             headers.Add("Origin", "http://static1.tele-cinco.net");
             headers.Add("Referer", "http://static1.tele-cinco.net/comun/swf/playerMitele.swf");
-            String data = GetWebData(tokenizerURL, "hash=" + hash, headers, null, null, false, false, null, false);
-            Match finalVideoURLMatch = regexFinalVideoURL.Match(data);
-            if (finalVideoURLMatch.Success)
-            {
-                videoURL = HttpUtility.HtmlDecode(finalVideoURLMatch.Groups["url"].Value);
-            }
-            int startIndex = videoURL.IndexOf("/", videoURL.IndexOf("//") + 2);
-            int endIndex = videoURL.IndexOf("?");
-
-            videoURL = videoURL.Substring(startIndex, endIndex - startIndex);
-            String tokenizedRequestUrl = "http://token.mitele.es/?callback=videoTokenizer&id=" + HttpUtility.UrlEncode(videoURL);
-            String tokenizedResponse = GetWebData(tokenizedRequestUrl, null, null, null, false, false, "Mozilla/5.0 (Linux; Android 4.1.1; HTC One X Build/JRO03C) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.58 Mobile Safari/537.31", null);
-            tokenizedResponse = tokenizedResponse.Replace("\\/", "/");
-
-            startIndex = tokenizedResponse.IndexOf(@":""");
-            endIndex = tokenizedResponse.IndexOf(@"""}");
-
-            videoURL = tokenizedResponse.Substring(startIndex + 2, endIndex - startIndex - 2);
-            return videoURL;
+            string data = GetWebData(tokenizerURL+"?hash=" + hash + "&id=" + url + "&startTime=0&endTime=0", null, headers, null, null, false, false, null, false);
+            return data.Substring(data.IndexOf("tokenizedUrl\":\"") + "tokenizedUrl\":\"".Length).Split('\"')[0].Replace(" ", "").Replace("\\/", "/");
         }
 
         public static string GetWebDataFromPostMitele(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
@@ -338,6 +320,12 @@ namespace OnlineVideos.Sites
             headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
             if (referer != null) headers.Add("Referer", referer);
             return GetWebData(url, postData, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, false);
+        }
+
+        public static string base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
         }
     }
 }
