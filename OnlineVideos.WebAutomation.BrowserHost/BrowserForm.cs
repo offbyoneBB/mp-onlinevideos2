@@ -206,6 +206,11 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// <param name="action"></param>
         void OnNewAction(Action action)
         {
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate() { OnNewAction(action); });
+                return;
+            }
             switch (action.wID)
             {
                 case Action.ActionType.ACTION_PLAY:
