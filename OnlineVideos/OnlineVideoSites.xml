@@ -1108,16 +1108,16 @@
       <Description>MTV3:n, Subin ja Avan sarjat sekä MTV3 MAX, Max Sport 1 ja Max Sport 2 urheilu Katsomossa - katso TV-ohjelmia silloin kun haluat!</Description>
       <Configuration>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<li\sdata-id="(?<url>[^"]*)">(?<title>[^<]*)</li>]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://m.katsomo.fi/katsomo/?treeId={0}]]></item>
-        <item key="baseUrl"><![CDATA[http://m.katsomo.fi/katsomo/]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="program">\s*<a\shref="(?<VideoUrl>[^"]*)"\sclass="program-link">\s*<img\ssrc="(?<ImageUrl>[^"]*)"\swidth="[^"]*"\sheight="[^"]*"\sonerror="this\.style\.visibility\s=\s'hidden'"/>\s*<p\sclass="timestamp">(?<Airdate>[^<]*)</p>\s*<span\sclass="[^"]*"></span>\s*<p\sclass="program-name">(?<Title>[^<]*)</p>]]></item>
+        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://m.mtvkatsomo.fi/katsomo/?treeId={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://m.mtvkatsomo.fi/katsomo/]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="program\sprogram-toggle"\s*data-id="">\s*<a\shref="(?<VideoUrl>[^"]*)"\sclass="program-link"\stitle="[^"]*">\s*<img\sclass="program-thumbnail"\ssrc="(?<ImageUrl>[^"]*)"\s/><div\sclass="program-info">\s*<p\sclass="program-name">(?<Title>[^<]*)</p>\s*<p\sclass="timestamp">(?<Airdate>[^<]*)</p>]]></item>
         <item key="fileUrlRegEx"><![CDATA[<source\stype="video/mp4"\ssrc="(?<m0>[^"]*)"/>]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Uutiset">http://m.katsomo.fi/katsomo/?treeId=33001</Category>
-        <Category xsi:type="RssLink" name="Urheilu">http://m.katsomo.fi/katsomo/?treeId=33002</Category>
-        <Category xsi:type="RssLink" name="Lapset">http://m.katsomo.fi/katsomo/?treeId=33003</Category>
-        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://m.katsomo.fi/katsomo/programs</Category>
+        <Category xsi:type="RssLink" name="Uutiset">http://m.mtvkatsomo.fi/katsomo/?treeId=33001</Category>
+        <Category xsi:type="RssLink" name="Urheilu">http://m.mtvkatsomo.fi/katsomo/?treeId=33002</Category>
+        <Category xsi:type="RssLink" name="Lapset">http://m.mtvkatsomo.fi/katsomo/?treeId=33003</Category>
+        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://m.mtvkatsomo.fi/katsomo/programs</Category>
       </Categories>
     </Site>
     <Site name="Khan Academy" util="KhanAcademy" agecheck="false" enabled="true" lang="en">
