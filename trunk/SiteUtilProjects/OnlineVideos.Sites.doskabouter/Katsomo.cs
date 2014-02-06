@@ -20,11 +20,7 @@ namespace OnlineVideos.Sites
         {
             string webData = GetWebData(((RssLink)parentCategory).Url, userAgent: UserAgent);
 
-            Category aakkosjärjestyksessä = GetNewCat("Aakkosjärjestyksessä", parentCategory);
-            AddSubs(webData, @"""program-group"" id=", new Regex(@"""(?<title>[^""]*)""", defaultRegexOptions), aakkosjärjestyksessä);
-
-            Category aiheittain = GetNewCat("Aiheittain", parentCategory);
-            AddSubs(webData, @"class=""initial""", new Regex(@">(?<title>[^<]*)<", defaultRegexOptions), aiheittain);
+            AddSubs(webData, @"""program-group"" id=", new Regex(@"""(?<title>[^""]*)""", defaultRegexOptions), parentCategory);
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
         }
