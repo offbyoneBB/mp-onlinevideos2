@@ -1107,8 +1107,7 @@
     <Site name="Katsomo" util="Katsomo" agecheck="false" enabled="true" lang="fi" player="VLC">
       <Description>MTV3:n, Subin ja Avan sarjat sekä MTV3 MAX, Max Sport 1 ja Max Sport 2 urheilu Katsomossa - katso TV-ohjelmia silloin kun haluat!</Description>
       <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li\sdata-id="(?<url>[^"]*)">(?<title>[^<]*)</li>]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://m.mtvkatsomo.fi/katsomo/?treeId={0}]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="program-link">\s*<li>(?<title>[^<]*)</li>\s*</a>]]></item>
         <item key="baseUrl"><![CDATA[http://m.mtvkatsomo.fi/katsomo/]]></item>
         <item key="videoListRegEx"><![CDATA[<div\sclass="program\sprogram-toggle"\s*data-id="">\s*<a\shref="(?<VideoUrl>[^"]*)"\sclass="program-link"\stitle="[^"]*">\s*<img\sclass="program-thumbnail"\ssrc="(?<ImageUrl>[^"]*)"\s/><div\sclass="program-info">\s*<p\sclass="program-name">(?<Title>[^<]*)</p>\s*<p\sclass="timestamp">(?<Airdate>[^<]*)</p>]]></item>
         <item key="fileUrlRegEx"><![CDATA[<source\stype="video/mp4"\ssrc="(?<m0>[^"]*)"/>]]></item>
