@@ -1323,7 +1323,8 @@
 \s*</div>\s*</header>\s*<section\sclass="content\sshow-on-hover\sslide">\s*<div\sclass="field\sfield-name-field-webdescription\sfield-type-text-long\sfield-label-above">
 (?:\s*<p>(?<Description>[^<]*)<)?]]></item>
         <item key="nextPageRegEx"><![CDATA[pager-browse-next\slast"><a\shref="(?<url>[^"]*)">]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[ruutuplayer\("mediaplayer",\s[^,]*,\s[^,]*,\s"[^"]*",\s"(?<url>[^"]*)",\s[^,]*,\s[^\)]*\)]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[<div\s*id="mediaplayer"\sdata-media-id="(?<url>[^"]*)"\sdata]]></item>
+        <item key="playlistUrlFormatString"><![CDATA[http://gatling.ruutu.fi/media-xml-cache?id={0}]]></item>
         <item key="fileUrlRegEx"><![CDATA[<SourceFile>(?<m0>[^<]*)</SourceFile>]]></item>
         <item key="searchUrl"><![CDATA[http://www.ruutu.fi/hakutulokset/{0}Z]]></item>
       </Configuration>
