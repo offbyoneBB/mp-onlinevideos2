@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.MrP", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.WebAutomation.BrowserHost", "OnlineVideos.WebAutomation.BrowserHost\OnlineVideos.WebAutomation.BrowserHost.csproj", "{615884DB-2243-4F68-9B4D-AD8B0A50B479}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.DavidCalder", "SiteUtilProjects\OnlineVideos.Sites.DavidCalder\OnlineVideos.Sites.DavidCalder.csproj", "{4DEAA1AF-E356-4588-BCD7-A3AFC8CA1A95}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -191,6 +193,12 @@ Global
 		{615884DB-2243-4F68-9B4D-AD8B0A50B479}.Release|Any CPU.Build.0 = Release|x86
 		{615884DB-2243-4F68-9B4D-AD8B0A50B479}.Release|x86.ActiveCfg = Release|x86
 		{615884DB-2243-4F68-9B4D-AD8B0A50B479}.Release|x86.Build.0 = Release|x86
+		{4DEAA1AF-E356-4588-BCD7-A3AFC8CA1A95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DEAA1AF-E356-4588-BCD7-A3AFC8CA1A95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DEAA1AF-E356-4588-BCD7-A3AFC8CA1A95}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4DEAA1AF-E356-4588-BCD7-A3AFC8CA1A95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DEAA1AF-E356-4588-BCD7-A3AFC8CA1A95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DEAA1AF-E356-4588-BCD7-A3AFC8CA1A95}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -214,5 +222,6 @@ Global
 		{D947C918-476D-45D1-93DC-1216381F5001} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{F094B1D9-4437-4D90-AC09-A7CA1F990200} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{59C03F73-0B0E-4DDE-9C34-788BD7DADC5E} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
+		{4DEAA1AF-E356-4588-BCD7-A3AFC8CA1A95} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 	EndGlobalSection
 EndGlobal
