@@ -44,7 +44,7 @@ namespace OnlineVideos.Sites
             switch ((UgType)parentCategory.Other)
             {
                 case UgType.Recent: return getSubcats(parentCategory, UgType.None, @"<li><a\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></li>");
-                case UgType.Omroepen: return getSubcats(parentCategory, UgType.Type1, @"<li\sclass=""broadcaster\sknav""\sid=""broadcaster[^""]*"">\s*<a[^>]*><img\salt=""[^""]*""\sclass=""thumbnail""\ssrc=""(?<thumb>[^""]*)""\s/></a>\s*<h3><a\shref=""(?<url>[^""]*)""\sclass=""broadcaster\sknav_link""\stitle=""[^""]*"">(?<title>[^<]*)</a></h3>");
+                case UgType.Omroepen: return getSubcats(parentCategory, UgType.Type1, @"<li\sclass=""broadcaster\sknav[^""]*""\sid=""broadcaster[^""]*"">\s*<a[^>]*><img\salt=""[^""]*""\sclass=""thumbnail""\ssrc=""(?<thumb>[^""]*)""\s/></a>\s*<h3><a\shref=""(?<url>[^""]*)""\sclass=""broadcaster\sknav_link""\stitle=""[^""]*"">(?<title>[^<]*)</a></h3>");
                 case UgType.Genres: return getSubcats(parentCategory, UgType.Type1, @"<li\sclass=""genre\sknav""\sid=""genre[^""]*"">\s*<a[^>]*><img\salt=""[^""]*""\sclass=""thumbnail""\ssrc=""(?<thumb>[^""]*)""\s/></a>\s*<h3><a\shref=""(?<url>[^""]*)""\sclass=""genre\sknav_link""\stitle=""[^""]*"">(?<title>[^<]*)</a></h3>");
                 case UgType.AtoZ: return getSubcats(parentCategory, UgType.Type1, matchaz);
                 case UgType.Type1: return getType1Subcats(parentCategory);
