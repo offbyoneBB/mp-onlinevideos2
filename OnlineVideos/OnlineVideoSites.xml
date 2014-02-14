@@ -1132,10 +1132,10 @@
         <item key="dynamicCategoriesRegEx"><![CDATA[<a\sclass=""\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<=<dt>Alle\sprogramma's</dt>\s*.*)<li><a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
         <item key="videoListRegEx"><![CDATA[(?#Normal)
-<li\sclass="item">\s*<article\sclass="preview">\s*<a\sclass="wrap"\shref="(?<VideoUrl>[^"]*)">\s*<figure>\s*<img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*</figure>\s*<div\sclass="content">\s*<h3\sclass="title">(?<Title>[^<]*)</h3>\s*<time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time>\s*<span\sclass="icon\sicon-play">\(bekijken\)</span>\s*</div>\s*</a>\s*</article>\s*</li>
+<li\sclass="item">\s*<article\sclass="preview">\s*(?:<div\sclass="nlziet-content-wrapper">\s*<span[^>]*></span>\s*</div>\s*)?<a\sdata-nlziet="[^"]*"\sclass="wrap"\shref="(?<VideoUrl>[^"]*)">\s*<figure>\s*(?:<span\sclass="icon\sicon-play">\(bekijken\)</span>\s*)?<img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*</figure>\s*<div\sclass="content">\s*<h3\sclass="title">(?<Title>[^<]*)</h3>\s*<time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time>\s*</div>\s*</a>\s*</article>
 |
 (?#Gemist/dag)
-<div\sdata-channel="[^"]*"\sclass="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<div\sclass="figure">\s*<span\sclass="icon\sicon-play">\(bekijken\)</span>\s*<img\ssrc="(?<ImageUrl>[^"]*)"\salt=""\s/>\s*</div>\s*<p>\s*<span\sclass="title">(?<Title>[^<]*)</span>\s*</p>\s*</a>\s*</div>]]></item>
+<div\sdata-channel="[^"]*"\sclass="[^"]*">\s*<span\sclass="icon\sicon-play">\(bekijken\)</span>\s*<div\sclass="nlziet-content-wrapper">\s*(?:<span[^>]*></span>\s*)?</div>\s*<a\sdata-nlziet="[^"]*"\shref="(?<VideoUrl>[^"]*)">\s*<div\sclass="figure">\s*<img\ssrc="(?<ImageUrl>[^"]*)"\salt=""\s/>\s*</div>\s*<p>\s*<span\sclass="title">(?<Title>[^<]*)</span>\s*</p>\s*</a>\s*</div>]]></item>
         <item key="fileUrlRegEx"><![CDATA[<object\sid=\\"myExperience[^"]*"\sclass=\\"BrightcoveExperience\\">"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param\sname=\\"playerID\\"\svalue=\\"(?<experienceId>[^\\]*)\\"\s/>"\s*\+\s"<param\sname=\\"playerKey\\"\svalue=\\"(?<playerKey>[^\\]*)\\"\s/>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param\sname=\\"@videoPlayer\\"\svalue=\\"(?<contentId>[^\\]*)\\"\s/>]]></item>
         <item key="baseUrl"><![CDATA[http://www.kijk.nl]]></item>
         <item key="forceUTF8Encoding"><![CDATA[true]]></item>
@@ -1424,7 +1424,7 @@
         <item key="nextPageRegEx"><![CDATA[<a\sclass="next_page"\srel="next"\shref="(?<url>[^"]*)">Volgende</a></div>]]></item>
         <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="fileUrlRegEx"><![CDATA[<span\sid="episode-data"\s*data-episode-id="[^"]*"\s*data-player-id="(?<m0>[^"]*)"]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/odi/?prid={0}&puboptions=h264_bb,h264_sb,wmv_bb,wmv_sb&adaptive=yes&part=1&token=]]></item>
+        <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/odi/?prid={0}&puboptions=adaptive,h264_bb,h264_sb,h264_std&adaptive=no&part=1&token=]]></item>
         <item key="cookies"><![CDATA[npo_cc=31]]></item>
       </Configuration>
     </Site>
