@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -47,7 +47,7 @@ namespace OnlineVideos.Sites.DavidCalder
                 string data = SiteUtilBase.GetWebData(stripedurl,cc,newUrl);
            
                 //<a href="http://hoster/ekqiej2ito9p"
-                Match n = Regex.Match(data, @"<a\shref=""(?<url>[^""]*)""\starget=""_blank");
+                Match n = Regex.Match(data, @"<a\shref=""(?<url>[^""]*)"">");
                 if (n.Success)
                     return GetVideoUrl(n.Groups["url"].Value);
             
