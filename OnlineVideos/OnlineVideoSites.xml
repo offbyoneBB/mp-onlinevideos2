@@ -977,18 +977,6 @@
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
     </Site>
-    <Site name="AFL" util="AFL" agecheck="false" enabled="true" lang="en">
-      <Description>AFL Videos - AFL match replays - AFL.com.au</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="toyotaplayer[^"]*">\s*(?:<div\sclass="comptabid"\stitle="[^"]*"\svisible="false"></div>)?\s*<a\shref="(?<url>[^"]*)"\s>(?<title>[^<]*)</a>\s*</li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!<select\sclass="rounds">.*)<option\svalue=(?<seasonid>[^\s]*)\s[^>]*>(?<title>[^<]*)</option>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="abstract\sspaceR">\s*<div\sclass="video-thumb">\s*<a\sclass="thumb-arrow\spngbg"\shref=":;"\sonclick="document\.getElementById\('videoFrame'\)\.contentWindow\.EmbeddedMediaPlayer\.PlayVideo\('(?<VideoUrl>[^']*)',\s'[^>]*></a>\s*<a\shref=":;"\sonclick="[^>]*><img\sheight="[^"]*"\swidth="[^"]*"\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\sonerror="[^"]*"/></a>\s*</div>\s*<h5><a\shref=":;"\sonclick="[^>]*>(?<Title>[^<]*)</a></h5>\s*<p>(?<Airdate>[^<]*)</p>\s*</div>]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://afl.bigpondvideo.com/App/AmfPhp/gatewayJson.php?service=Player&serviceMethod=getClipListByContentId&params={{"platformId":"1","contentIds":["{0}"]}}&requestId=1]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\sclass="next\s"\shref="http://www\.afl\.com\.au/tabid/[^/]*/feed/videosearch/videotabid/[^/]*/videosubtabid/[^/]*/page/(?<url>[^/]*)/default\.aspx\?[^>]*>Next</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[{"bitrate":"(?<n0>[^"]*)","url":"(?<m0>[^"]*)","mediaFileId":"[^"]*"}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.afl.com.au/tabid/76/default.aspx]]></item>
-      </Configuration>
-    </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
       <Description>CBC.ca is the English-language online service of the Canadian Broadcasting Corporation. It was introduced in 1996. Under its previous names, the CBC's online service first went live in 1993.</Description>
     </Site>

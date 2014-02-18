@@ -65,7 +65,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ABCiViewUtil.cs" />
-    <Compile Include="AFLUtil.cs" />
     <Compile Include="BrassBandTubeUtil.cs" />
     <Compile Include="CollegeHumorUtil.cs" />
     <Compile Include="DeferredResolveUtil.cs" />
