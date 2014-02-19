@@ -36,9 +36,9 @@ namespace OnlineVideos.Sites.DavidCalder
                     postData += match.Groups["name"].Value + "=" + match.Groups["value"].Value;
                     match = match.NextMatch();
                 }
-
-                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
                 System.Threading.Thread.Sleep(Convert.ToInt32(5) * 1001);
+                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+                
 
                 Match n1 = Regex.Match(data, @"""sources""\s:\s\[\s*{\s*""file""\s:\s""(?<url>[^""]+)"",\s*""default""\s:\strue,\s*""label""\s:\s""720""\s*}\s*\]");
                 if (n1.Success)
