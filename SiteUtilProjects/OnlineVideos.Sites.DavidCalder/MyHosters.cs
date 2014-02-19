@@ -95,8 +95,8 @@ namespace OnlineVideos.Sites.DavidCalder
                     match = match.NextMatch();
                 }
 
-                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
                 System.Threading.Thread.Sleep(Convert.ToInt32(5) * 1001);
+                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
 
                 Match n = Regex.Match(data, @"""sources""\s:\s\[\s*{\s*""file""\s:\s""(?<url>[^""]+)"",\s*""default""\s:\strue,\s*""label""\s:\s""720""\s*}\s*\]");
                 if (n.Success)
@@ -133,8 +133,8 @@ namespace OnlineVideos.Sites.DavidCalder
                     match = match.NextMatch();
                 }
 
-                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
                 System.Threading.Thread.Sleep(Convert.ToInt32(5) * 1001);
+                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
                 Match n = Regex.Match(data, @"""sources""\s:\s\[\s*{\s*""file""\s:\s""(?<url>[^""]+)"",\s*""default""\s:\strue,\s*""label""\s:\s""720""\s*}\s*\]");
                 if (n.Success)
 
@@ -170,9 +170,9 @@ namespace OnlineVideos.Sites.DavidCalder
                     postData += match.Groups["name"].Value + "=" + match.Groups["value"].Value;
                     match = match.NextMatch();
                 }
-
-                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
                 System.Threading.Thread.Sleep(Convert.ToInt32(5) * 1001);
+                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+                
 
                 Match n = Regex.Match(data, @"<a\shref=""(?<url>[^""]+)"">Download\sthe\sfile</a>");
                 if (n.Success)
@@ -210,10 +210,9 @@ namespace OnlineVideos.Sites.DavidCalder
                     match = match.NextMatch();
                 }
                 postData += "&referer=&method_free=Continue";
-
-                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
                 System.Threading.Thread.Sleep(Convert.ToInt32(5) * 1001);
-
+                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+                
                 Match n = Regex.Match(data, @"config:{file:'(?<url>[^']+)','provider':'http'}");
                 if (n.Success)
 
@@ -250,10 +249,9 @@ namespace OnlineVideos.Sites.DavidCalder
                     match = match.NextMatch();
                 }
                 postData += "&imhuman=Continue+to+Video";
-
-                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
                 System.Threading.Thread.Sleep(Convert.ToInt32(5) * 1001);
-
+                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+                
                 Match n = Regex.Match(data, @"{\s*file:\s""(?<url>[^""]+)"",\s*image:");
                 if (n.Success)
 
