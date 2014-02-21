@@ -220,10 +220,6 @@ namespace OnlineVideos.Sites
                 //Add static categories, no need to fetch them since Gametrailers will most likely keep them as is for a while.
                 catNames.Add("Newest Media");
                 catNames.Add("Must See Videos");
-                if (parentCategory.Name == "ALL")
-                {
-                    catNames.Add("E3 2013");
-                }
                 catNames.Add("Review");
                 catNames.Add("Preview");
                 catNames.Add("Trailer");
