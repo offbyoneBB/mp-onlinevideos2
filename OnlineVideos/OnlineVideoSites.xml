@@ -585,28 +585,6 @@
         <Category xsi:type="RssLink" name="Home page">http://www.collegehumor.com/videos</Category>
       </Categories>
     </Site>
-    <Site name="5min" util="FiveMin" agecheck="false" enabled="true" lang="en">
-      <Description>Free instructional videos.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\s*style="background-image:\surl\('(?<thumb>[^']+)'\);"\s*>\s*<a\shref="(?<url>[^"]+)">\s*(?<title>[^<]+)</a>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li>\s*<a\s*href="(?<url>http://www.5min.com/Category[^"]+)">\s*(?<title>[^<]+)</a>\s*</li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sid="[^"]*divImagePreviewLeaf"[^>]*>\s*
-<a\s*href="(?<VideoUrl>[^"]+)"[^>]*>\s*
-<img(?:(?!src).)+src="(?<ImageUrl>[^"]+)"[^>]+>\s*
-</a>\s*
-</div>\s*
-<div(?:(?!</div>).)+</div>\s*
-(?:(?!<h2>).)+<h2><a[^>]*><span[^>]*>(?<Title>[^<]*)</span></a></h2>\s*
-</div>\s*
-<div[^>]*>(?<Description>[^<]*)</div>\s*
-<div[^>]*>(?<Duration>[^<]*)</div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[href="(?<url>[^"]+)">Next</a>]]></item>
-        <item key="prevPageRegEx"><![CDATA[href="(?<url>[^"]+)">Previous</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[videoUrl=(?<m0>.*?)(?<m2>\.mp4|\.flv)&(activeRenditions=\d+&defaultRendition=(?<m1>\d+))?]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}_{1}{2}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.5min.com/]]></item>
-      </Configuration>
-    </Site>
     <Site name="CNN" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Videos from the Cable News Network.</Description>
       <Configuration>

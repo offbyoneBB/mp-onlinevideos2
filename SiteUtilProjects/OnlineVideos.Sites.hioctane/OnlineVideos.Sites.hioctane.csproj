@@ -62,7 +62,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FiveMinUtil.cs" />
     <Compile Include="ArtePlus7Util.cs" />
     <Compile Include="BrUtil.cs" />
     <Compile Include="MdrUtil.cs" />
