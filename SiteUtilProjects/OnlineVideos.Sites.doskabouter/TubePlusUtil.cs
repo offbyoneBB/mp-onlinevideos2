@@ -306,26 +306,28 @@ namespace OnlineVideos.Sites
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
+			string pre = "";
+			if (category != null && category.ParentCategory != null && Mode.Series.Equals(category.ParentCategory.Other))
+			{
+				string season = category.Name.Split('(')[0];
+				pre = category.ParentCategory.Name + ' ' + season + ' ' + pre;
+				int l;
+				do
+				{
+					l = pre.Length;
+					pre = pre.Replace("  ", " ");
+				} while (l != pre.Length);
+			}
+
             if (string.IsNullOrEmpty(url)) // called for adding to favorites
-                return video.Title;
+                return pre+video.Title;
             else // called for downloading
             {
                 string name = base.GetFileNameForDownload(video, category, url);
                 string extension = Path.GetExtension(name);
                 if (String.IsNullOrEmpty(extension) || !OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension))
                     name += ".flv";
-                if (category.ParentCategory != null && Mode.Series.Equals(category.ParentCategory.Other))
-                {
-                    string season = category.Name.Split('(')[0];
-                    name = category.ParentCategory.Name + ' ' + season + ' ' + name;
-                    int l;
-                    do
-                    {
-                        l = name.Length;
-                        name = name.Replace("  ", " ");
-                    } while (l != name.Length);
-
-                }
+				name = pre + name;
                 return Utils.GetSaveFilename(name);
             }
         }

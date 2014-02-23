@@ -142,7 +142,7 @@ namespace OnlineVideos
 		/// Create a Matroska Xml Tag (http://www.matroska.org/technical/specs/tagging/index.html) for the Video. With Title, Description and Airdate.
 		/// </summary>
 		/// <returns>Utf-8 encoded xml</returns>
-		public virtual string CreateMatroskaXmlTag()
+		public virtual string CreateMatroskaXmlTag(string niceTitle)
 		{
 			return new XDocument(new XDeclaration("1.0", "utf-8", "true"),
 			new XElement("Tags",
@@ -151,7 +151,7 @@ namespace OnlineVideos
 					new XElement("TargetTypeValue", 50)),
 				new XElement("Simple",
 					new XElement("Name", "TITLE"),
-					new XElement("String", Title)),
+					new XElement("String", niceTitle)),
 				new XElement("Simple",
 					new XElement("Name", "DESCRIPTION"),
 					new XElement("String", Description)),
