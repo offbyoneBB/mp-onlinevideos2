@@ -955,6 +955,13 @@
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
     </Site>
+    <Site name="BigPondVideo" util="BigPondVideo" agecheck="false" enabled="true" lang="en">
+      <Description>Watch videos online with BigPond Video. For the very latest music, games, news, sports and travel videos, tune in to BigPond Video.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://bigpondvideo.com/web/Sitemap/index.xml]]></item>
+        <item key="videoUrlRegEx"><![CDATA[cid=(?<cid>.*)]]></item>
+      </Configuration>
+    </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
       <Description>CBC.ca is the English-language online service of the Canadian Broadcasting Corporation. It was introduced in 1996. Under its previous names, the CBC's online service first went live in 1993.</Description>
     </Site>
