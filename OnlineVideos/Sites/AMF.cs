@@ -554,14 +554,20 @@ namespace OnlineVideos.AMF
             output = new List<byte>();
         }
 
+        [Obsolete]
         public byte[] Serialize(AMFObject obj, string hash)
+        {
+            return Serialize(obj, "com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience", hash);
+        }
+
+        public byte[] Serialize(AMFObject obj, string target, string hash)
         {
             output.Clear();
 
             OutShort(3); //version
             OutShort(0); //headercount
             OutShort(1); //responsecount
-            OutString("com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience");
+            OutString(target);
             OutString("/1");
             OutShort(0); //??
 
