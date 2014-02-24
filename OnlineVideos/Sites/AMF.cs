@@ -287,13 +287,22 @@ namespace OnlineVideos.AMF
 
         private AMFObject DeserializeVersion0()
         {
+            int hc = ReadShort();
+            for (int ii = 0; ii < hc; ii++)
+            {
+                string s2 = ReadString();
+                reader.ReadBoolean();
+                int hlen = ReadInt32();
+                reader.ReadBytes(hlen);
+            }
             int i = ReadShort();
-            i = ReadShort();
             string s = ReadString();
             s = ReadString();
             i = ReadShort();
             i = ReadShort();
             object res = ReadParamValue();
+            if (res is string)
+                return new AMFObject((string)res);
             return res as AMFObject;
         }
 
@@ -569,11 +578,59 @@ namespace OnlineVideos.AMF
             return output.ToArray();
         }
 
+        private void OutAMF0Object(object obj)
+        {
+            if (obj is String)
+            {
+                output.Add((byte)AMF0Type.StringMarker);
+                OutString((String)obj);
+            }
+            else if (obj is double)
+            {
+                output.Add((byte)AMF0Type.NumberMarker);
+                byte[] bytes;
+                if (double.IsNaN((double)obj))
+                    bytes = new byte[8] { 0x7F, 0xFF, 0xFF, 0xFF, 0xE0, 0, 0, 0 };
+                else
+                {
+                    bytes = BitConverter.GetBytes((double)obj);
+                    Array.Reverse(bytes);
+                }
+                output.AddRange(bytes);
+            }
+            else if (obj == null)
+                output.Add((byte)AMF0Type.NullMarker);
+            else
+                if (obj is Array)
+                {
+                    output.Add((byte)AMF0Type.StrictArrayMarker);
+                    object[] arr = (object[])obj;
+                    OutInt32(arr.Length);
+                    foreach (object obj2 in arr)
+                        OutAMF0Object(obj2);
+                }
+                else
+                    if (obj is AMFObject)
+                    {
+                        output.Add((byte)AMF0Type.ObjectMarker);
+                        AMFObject ao = (AMFObject)obj;
+                        foreach (KeyValuePair<string, object> kv in ao.Properties)
+                        {
+                            OutString(kv.Key);
+                            OutAMF0Object(kv.Value);
+                        }
+                        OutShort(0);//??
+                        output.Add((byte)AMF0Type.ObjectEndMarker);
+                    }
+                    else
+                        throw new NotImplementedException();
+        }
+
         public byte[] Serialize2(string target, object[] values)
         {
             output.Clear();
 
-            OutShort(3); //version
+            OutShort(0); //version
             OutShort(0); //headercount
             OutShort(1); //responsecount
             OutString(target);
@@ -581,33 +638,8 @@ namespace OnlineVideos.AMF
             OutShort(0); //??
 
             int lengthpos = output.Count;
-            output.Add((byte)AMF0Type.StrictArrayMarker);
-            OutInt32(values.Length);
-            foreach (object obj in values)
-            {
-                if (obj is String)
-                {
-                    output.Add((byte)AMF0Type.StringMarker);
-                    OutString((String)obj);
-                }
-                else if (obj is double)
-                {
-                    output.Add((byte)AMF0Type.NumberMarker);
-                    byte[] bytes;
-                    if (double.IsNaN((double)obj))
-                        bytes = new byte[8] { 0x7F, 0xFF, 0xFF, 0xFF, 0xE0, 0, 0, 0 };
-                    else
-                    {
-                        bytes = BitConverter.GetBytes((double)obj);
-                        Array.Reverse(bytes);
-                    }
-                    output.AddRange(bytes);
-                }
-                else if (obj == null)
-                    output.Add((byte)AMF0Type.NullMarker);
-                else
-                    throw new NotImplementedException();
-            }
+
+            OutAMF0Object(values);
             OutShort((short)(output.Count - lengthpos), lengthpos);
 
             return output.ToArray();
