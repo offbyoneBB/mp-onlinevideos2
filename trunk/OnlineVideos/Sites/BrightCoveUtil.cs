@@ -96,7 +96,7 @@ namespace OnlineVideos.Sites
                 ViewerExperienceRequest.Add("experienceId", double.NaN);
 
             AMFSerializer ser = new AMFSerializer();
-            byte[] data = ser.Serialize(ViewerExperienceRequest, hashValue);
+            byte[] data = ser.Serialize(ViewerExperienceRequest, "com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience", hashValue);
 
             AMFObject response = AMFObject.GetResponse(requestUrl, data);
             return response.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
