@@ -192,8 +192,9 @@ This is done by replacing "GenericSite" by "Rtmp" in the OnlineVideoSites.xml, a
 
 f.e. if you need to set the playpath, you use the following: 
 {{{
-<item key="fileUrlFormatString"><![CDATA[{0}&playpath={1}]]></item>
+<item key="fileUrlFormatString"><![CDATA[{0}?&playpath={1}]]></item>
 }}}
+Note the "?" between the rtmpurl and the added parameters.
 
 The following parameters are supported:
  * rtmpurl
