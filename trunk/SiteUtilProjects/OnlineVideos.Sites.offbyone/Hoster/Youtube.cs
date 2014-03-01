@@ -141,7 +141,13 @@ namespace OnlineVideos.Hoster
                     }
 					string signature = urlOptions.Get("sig");
 					if (string.IsNullOrEmpty(signature))
-						signature = DecryptSignature(urlOptions.Get("s"));
+					{
+						string playerUrl = "";
+						var jsPlayerMatch = Regex.Match(contents, "\"assets\":.+?\"js\":\\s*(\"[^\"]+\")");
+						if (jsPlayerMatch.Success)
+							playerUrl = Newtonsoft.Json.Linq.JToken.Parse(jsPlayerMatch.Groups[1].Value).ToString();
+						signature = DecryptSignature(playerUrl, urlOptions.Get("s"));
+					}
 					string finalUrl = urlOptions.Get("url");
 					if (!string.IsNullOrEmpty(finalUrl))
 					{
@@ -188,9 +194,36 @@ namespace OnlineVideos.Hoster
 		/// </summary>
 		/// <param name="s">s Parameter value of the URL parameters</param>
 		/// <returns></returns>
-		string DecryptSignature(string s)
+		string DecryptSignature(string javascriptUrl, string s)
         {
 			if (string.IsNullOrEmpty(s)) return string.Empty;
+
+			// try decryption by executing the Javascript from Youtube
+			if (!string.IsNullOrEmpty(javascriptUrl))
+			{
+				try
+				{
+					if (javascriptUrl.StartsWith("//"))
+						javascriptUrl = "http:" + javascriptUrl;
+					string jsContent = Sites.SiteUtilBase.GetWebData(javascriptUrl);
+					string signatureMethodName = Regex.Match(jsContent, "signature=([a-zA-Z]+)").Groups[1].Value;
+					string methods = Regex.Match(jsContent, @"(function WD.*?)function [a-zA-Z]+\(\)").Groups[1].Value;
+
+					var engine = new Jurassic.ScriptEngine();
+					engine.Global["window"] = engine.Global;
+					engine.Global["document"] = engine.Global;
+					engine.Execute(methods);
+					string decrypted = engine.CallGlobalFunction(signatureMethodName, s).ToString();
+					if (!string.IsNullOrEmpty(decrypted))
+						return decrypted;
+				}
+				catch (Exception ex)
+				{
+					Log.Info("YouTube signature decryption by executing the Javascript failed: {0}", ex);
+				}
+			}
+
+			// try static decryption (most likely out of date)
 			switch (s.Length)
 			{
 				case 93:
