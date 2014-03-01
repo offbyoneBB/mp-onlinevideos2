@@ -14,8 +14,21 @@ namespace OnlineVideos.Hoster.Base
         divx,
         unknown
     }
-    public abstract class HosterBase : ICustomTypeDescriptor
+
+	/// <summary>
+	/// The abstract base class for all hosters. 
+	/// It might be hosted in a seperate AppDomain than the main application, so it can be unloaded at runtime.
+	/// </summary>
+	public abstract class HosterBase : MarshalByRefObject, ICustomTypeDescriptor
     {
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
+
         protected VideoType videoType;
 
         public virtual Dictionary<string, string> getPlaybackOptions(string url)
