@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
-using OnlineVideos.MyAMF;
+using OnlineVideos.AMF;
 
 namespace OnlineVideos.Sites
 {
