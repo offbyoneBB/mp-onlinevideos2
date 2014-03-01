@@ -20,13 +20,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\5min.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{54dea0f1-0e9f-4145-a2e3-be2716f94037}-5min.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\5min.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Arte+7.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{95df6fae-e079-40b2-8782-4e0577e44a38}-Arte+7.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Arte+7.png</DestinationFilename>
@@ -387,13 +380,6 @@
               <LocalFileName>..\SiteImages\Banners\3sat.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{5f978aa3-ffbf-4f0d-8114-bfcbf2a12a57}-3sat.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\3sat.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\5min.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{169c57db-48fd-40d3-91b0-9b5d1f1025b7}-5min.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\5min.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1973,13 +1959,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\AFL.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{86a7e82c-d550-4740-9066-f85248a4303a}-AFL.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\AFL.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\family.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{5a43679c-cf89-44ae-b67b-ca6b39b9302e}-family.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\family.png</DestinationFilename>
@@ -2004,13 +1983,6 @@
               <LocalFileName>..\SiteImages\Icons\zie.nl.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{7c0b57e3-8d5c-4e1a-a6c0-f49abf1b82ee}-zie.nl.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\zie.nl.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\AFL.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{39846469-ae74-478b-8ade-ff60c237d4b5}-AFL.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\AFL.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -2397,6 +2369,20 @@
               <ZipFileName>Installer{CopyFile}\{f811db3c-e35d-42ff-8e56-bbfad32ea260}-URPlay.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\URPlay.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\BigPondVideo.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b311a7e0-ce6a-4cc0-a4f6-3dca24a7e7ad}-BigPondVideo.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\BigPondVideo.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\BigPondVideo.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{af21020b-0526-47e9-8b2c-38faafcd80cd}-BigPondVideo.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BigPondVideo.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2442,7 +2428,7 @@
               <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{0e030923-323c-4964-9e9b-05806a4fac5c}-OnlineVideos.WebAutomation.BrowserHost.exe.config</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</DestinationFilename>
-            </FileItem>			
+            </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -3512,7 +3498,7 @@ public class Script
           <Items>
             <CompatibleVersionItem>
               <MinRequiredVersion>1.3.100.0</MinRequiredVersion>
-              <DesignedForVersion>1.3.100.0</DesignedForVersion>
+              <DesignedForVersion>1.4.100.0</DesignedForVersion>
             </CompatibleVersionItem>
           </Items>
         </CompatibleVersion>
@@ -3523,6 +3509,7 @@ public class Script
             <SubSystemItem Name="MP.Externals.SQLite" />
             <SubSystemItem Name="MP.Input" />
             <SubSystemItem Name="MP.Players.Video" />
+            <SubSystemItem Name="MP.Plugins.Videos" />
             <SubSystemItem Name="MP.SkinEngine" />
           </Items>
         </SubSystemsUsed>
@@ -3543,12 +3530,15 @@ public class Script
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>fixed running Config from MediaPortal Extensiosn Manager
+    <VersionDescription>fixed DownloadedVideos site shows incorrect video title for some sites
+fixed running OnlineVideos Config from MediaPortal Extension Manager
 added a new type of Player: "Browser" - with a supplemental executable to show a browser window full screen for DRM protected videos
-</VersionDescription>
+added Javascript Engine (Jurassic) that allows executing javascript code
+added a GUIProperty so skinners can use the user-configured OnlineVideos plugin-name (#OnlineVideos.HomeScreenName)
+changed: HosterBase now inherits from MarshalByRefObject so Hosters can be used from other plugins easier</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/[Name][Version].mpe1</OnlineLocation>
-    <ReleaseDate>2014-02-01T15:00:00</ReleaseDate>
+    <ReleaseDate>2014-03-01T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
@@ -3591,13 +3581,6 @@ added a new type of Player: "Browser" - with a supplemental executable to show a
         <LocalFileName>..\SiteImages\Icons\3sat.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{347d358a-ceec-4aed-814e-1b3b3c325b3a}-3sat.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\3sat.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\5min.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{54dea0f1-0e9f-4145-a2e3-be2716f94037}-5min.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\5min.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3962,13 +3945,6 @@ added a new type of Player: "Browser" - with a supplemental executable to show a
         <LocalFileName>..\SiteImages\Banners\3sat.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{5f978aa3-ffbf-4f0d-8114-bfcbf2a12a57}-3sat.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\3sat.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\5min.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{169c57db-48fd-40d3-91b0-9b5d1f1025b7}-5min.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\5min.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5548,13 +5524,6 @@ added a new type of Player: "Browser" - with a supplemental executable to show a
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\AFL.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{86a7e82c-d550-4740-9066-f85248a4303a}-AFL.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\AFL.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\family.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{5a43679c-cf89-44ae-b67b-ca6b39b9302e}-family.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\family.png</DestinationFilename>
@@ -5579,13 +5548,6 @@ added a new type of Player: "Browser" - with a supplemental executable to show a
         <LocalFileName>..\SiteImages\Icons\zie.nl.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{7c0b57e3-8d5c-4e1a-a6c0-f49abf1b82ee}-zie.nl.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\zie.nl.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\AFL.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{39846469-ae74-478b-8ade-ff60c237d4b5}-AFL.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\AFL.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5972,6 +5934,20 @@ added a new type of Player: "Browser" - with a supplemental executable to show a
         <ZipFileName>Installer{CopyFile}\{f811db3c-e35d-42ff-8e56-bbfad32ea260}-URPlay.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\URPlay.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\BigPondVideo.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b311a7e0-ce6a-4cc0-a4f6-3dca24a7e7ad}-BigPondVideo.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\BigPondVideo.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\BigPondVideo.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{af21020b-0526-47e9-8b2c-38faafcd80cd}-BigPondVideo.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BigPondVideo.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -5992,6 +5968,13 @@ added a new type of Player: "Browser" - with a supplemental executable to show a
         <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{453f6e32-54d5-49c0-af60-cd08a14c386d}-OnlineVideos.WebAutomation.BrowserHost.exe</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0e030923-323c-4964-9e9b-05806a4fac5c}-OnlineVideos.WebAutomation.BrowserHost.exe.config</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -6104,13 +6087,6 @@ added a new type of Player: "Browser" - with a supplemental executable to show a
         <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{0e030923-323c-4964-9e9b-05806a4fac5c}-OnlineVideos.WebAutomation.BrowserHost.exe.config</ZipFileName>
-        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
