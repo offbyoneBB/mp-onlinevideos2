@@ -13,7 +13,7 @@
   <ItemGroup>
     <PluginFiles Include="$(TargetDir)$(ProjectName).*" />
     <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
-    <APIFiles Include="$(TargetDir)OnlineVideos.pdb" />
+    <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
   </ItemGroup>
 
   <ItemGroup>
@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <SkinFiles Include="$(SolutionDir)Skins\**\*.*" />
-	<IconFiles Include="$(SolutionDir)SiteImages\**\*.*" />
+    <IconFiles Include="$(SolutionDir)SiteImages\**\*.*" />
   </ItemGroup>
 
   <Target Name="AfterBuild">
@@ -31,7 +31,7 @@
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(DataDestination)language\OnlineVideos\" />
     <Copy SourceFiles="@(SkinFiles)"
           DestinationFiles="@(SkinFiles->'$(DataDestination)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
-	<Copy SourceFiles="@(IconFiles)"
-          DestinationFiles="@(IconFiles->'$(DataDestination)thumbs\OnlineVideos\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(IconFiles)"
+            DestinationFiles="@(IconFiles->'$(DataDestination)thumbs\OnlineVideos\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 </Project>
