@@ -207,11 +207,9 @@ namespace OnlineVideos.Hoster
 						javascriptUrl = "http:" + javascriptUrl;
 					string jsContent = Sites.SiteUtilBase.GetWebData(javascriptUrl);
 					string signatureMethodName = Regex.Match(jsContent, "signature=([a-zA-Z]+)").Groups[1].Value;
-					string methods = Regex.Match(jsContent, @"(function WD.*?)function [a-zA-Z]+\(\)").Groups[1].Value;
+					string methods = Regex.Match(jsContent, "(function " + signatureMethodName + @".*?)function [a-zA-Z]+\(\)").Groups[1].Value;
 
 					var engine = new Jurassic.ScriptEngine();
-					engine.Global["window"] = engine.Global;
-					engine.Global["document"] = engine.Global;
 					engine.Execute(methods);
 					string decrypted = engine.CallGlobalFunction(signatureMethodName, s).ToString();
 					if (!string.IsNullOrEmpty(decrypted))
