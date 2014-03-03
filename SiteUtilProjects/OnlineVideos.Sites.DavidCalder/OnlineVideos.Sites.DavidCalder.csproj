@@ -55,17 +55,16 @@
     <Compile Include="MyHosters.cs" />
     <Compile Include="VideoBullUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="WatchOnlineSeriesUtil.cs" />
     <Compile Include="WatchSeriesUSUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\VersionInfo.cs.tmpl" />
-    <Compile Include="Properties\VersionInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
