@@ -252,8 +252,8 @@
 		<Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
       <Description>Auf MyVideo findest Du kostenlos die besten Videos und Clips. Werbespots, lustige Videos, funny Clips uvm.</Description>
       <Configuration>
-        <item key="serienSenderRegEx"><![CDATA["<a\shref='(?<url>[^']+)'\sclass='sThumb'\starget='_top'\s*title='(?<title>[^']+)'>\s*<img\s+src='(?<thumb>[^']+)']]></item>
-        <item key="serienRegEx"><![CDATA[longdesc='(?<thumb>[^']+)'\s*alt=''\sclass='vThumb'/></a></div></div><div\sclass='lContent\spChContent'>\s*<div\sclass='pChHead'><a\shref='(?<url>[^']+)'\sclass[^>]+>(?<title>[^<]+)</a></div><div\s*class='pChText'>(?<description>[^<]+)</div>]]></item>
+        <item key="serienSenderRegEx"><![CDATA[<a\shref='(?<url>[^']+)'[^>]*?title='(?<title>[^']+)'[^>]*>\s*<img\s+src='(?<thumb>[^']+)]]></item>
+        <item key="serienRegEx"><![CDATA[longdesc='(?<thumb>[^']+)'\s*alt=''\sclass='vThumb'/></a></div></div><div\sclass='pChContent'>\s*<div\sclass='pChHead'><a\shref='(?<url>[^']+)'\sclass[^>]+>(?<title>[^<]+)</a></div><div\s*class='pChText'>(?<description>[^<]+)</div>]]></item>
         <item key="episodenRegEx"><![CDATA[(?<!id_series_newest_movies_init.*)<a\s+href='(?<VideoUrl>[^']+)'\s+title='(?<Title>[^']+)'><img(?:(?!longdesc).)+longdesc='(?<ImageUrl>[^']+)'[^>]*><span[^>]*>(?<Duration>[^<]+)</span></a>]]></item>
       </Configuration>
     </Site>

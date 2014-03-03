@@ -144,8 +144,11 @@ namespace OnlineVideos.Sites
                         cat.Other = serienRegEx;
                         cat.HasSubCategories = true;
                     }
-                    cat.ParentCategory = parentCategory;
-                    parentCategory.SubCategories.Add(cat);
+					if (!parentCategory.SubCategories.Any(c => (c as RssLink).Url == cat.Url))
+					{
+						cat.ParentCategory = parentCategory;
+						parentCategory.SubCategories.Add(cat);
+					}
                     m = m.NextMatch();
                 }
                 parentCategory.SubCategoriesDiscovered = true;
