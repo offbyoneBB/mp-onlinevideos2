@@ -9,11 +9,15 @@ using System.Web;
 using System.Net;
 using System.Collections;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace OnlineVideos.Sites
 {
     public class DreamfilmUtil : SiteUtilBase
     {
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable ddos protection workaround"), Description("If nothing works, try this! For faster site set this to false.")]
+        protected bool removeDdosProtection = false;
+
         private int currentCategoryPage = 0;
         private string currentSearch = "";
 
@@ -53,40 +57,47 @@ namespace OnlineVideos.Sites
 
         protected string GetWebDataWithDdosRemoval(string url,string postData = null)
         {
-            NameValueCollection headers = new NameValueCollection();
-            headers.Add("Accept", "*/*"); // accept any content type
-            headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-            headers.Add("Referer", url);
-
-            BugFix_CookieDomain(cc);
-            // No caching... if url results in ddos protection page.
-            string data = GetWebData(url, postData, headers, cc, null, false, false, null, false);
-            var htmlDoc = new HtmlAgilityPack.HtmlDocument();
-            htmlDoc.LoadHtml(data);
-            var form = htmlDoc.DocumentNode.SelectSingleNode("//form[@id = 'challenge-form']");
-            if (form != null)
+            if (removeDdosProtection)
             {
-                //Need to bypass CloudFlare ddos protection, calculate answer on challenge and keep cookies
-                string action = form.GetAttributeValue("action","");
-                string jschlVc = htmlDoc.DocumentNode.SelectSingleNode("//input[@name = 'jschl_vc']").GetAttributeValue("value", "");
-                string a = "0";
-                string b = "0";
-                string c = "0";
-                Regex rgx = new Regex(formula);
-                Match m = rgx.Match(data);
-                if (m.Success)
-                {
-                    a = m.Groups[1].Value;
-                    b = m.Groups[2].Value;
-                    c = m.Groups[3].Value;
-                }
-                int answer = (int.Parse(a) + int.Parse(b) * int.Parse(c)) + 12;
-                
-                var challengeUrl = string.Format(ddosUrl, action, jschlVc, answer);
+                NameValueCollection headers = new NameValueCollection();
+                headers.Add("Accept", "*/*"); // accept any content type
+                headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
+                headers.Add("Referer", url);
+
                 BugFix_CookieDomain(cc);
-                data = GetWebData(challengeUrl, postData, headers, cc, null, false, false, null, false);
+                // No caching... if url results in ddos protection page.
+                string data = GetWebData(url, postData, headers, cc, null, false, false, null, false);
+                var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                htmlDoc.LoadHtml(data);
+                var form = htmlDoc.DocumentNode.SelectSingleNode("//form[@id = 'challenge-form']");
+                if (form != null)
+                {
+                    //Need to bypass CloudFlare ddos protection, calculate answer on challenge and keep cookies
+                    string action = form.GetAttributeValue("action", "");
+                    string jschlVc = htmlDoc.DocumentNode.SelectSingleNode("//input[@name = 'jschl_vc']").GetAttributeValue("value", "");
+                    string a = "0";
+                    string b = "0";
+                    string c = "0";
+                    Regex rgx = new Regex(formula);
+                    Match m = rgx.Match(data);
+                    if (m.Success)
+                    {
+                        a = m.Groups[1].Value;
+                        b = m.Groups[2].Value;
+                        c = m.Groups[3].Value;
+                    }
+                    int answer = (int.Parse(a) + int.Parse(b) * int.Parse(c)) + 12;
+
+                    var challengeUrl = string.Format(ddosUrl, action, jschlVc, answer);
+                    BugFix_CookieDomain(cc);
+                    data = GetWebData(challengeUrl, postData, headers, cc, null, false, false, null, false);
+                }
+                return data;
             }
-            return data;
+            else
+            {
+                return GetWebData(url);
+            }
         }
 
         #endregion
@@ -197,9 +208,11 @@ namespace OnlineVideos.Sites
                             RssLink cat = new RssLink();
                             var imageDiv = div.SelectSingleNode("div[@class = 'image-galery']");
                             cat.Url = imageDiv.SelectSingleNode("a").GetAttributeValue("href", "");
-                            var image = imageDiv.SelectSingleNode("a/img").GetAttributeValue("src", "");
-                            //do not get thumb if source dreamfilm due to ddos protection
-                            cat.Thumb = (string.IsNullOrEmpty(image) || !image.StartsWith("http")) ? "" : image;
+                            var image = imageDiv.SelectSingleNode("a/img").GetAttributeValue("data-cfsrc", "");
+                            if (!removeDdosProtection)
+                                cat.Thumb = string.IsNullOrEmpty(image) ? "" : (image.StartsWith("http") ? image : string.Format("http://dreamfilm.se/{0}", image));
+                            else
+                                cat.Thumb = (string.IsNullOrEmpty(image) || !image.StartsWith("http")) ? "" : image;
                             cat.Name = Regex.Replace(div.SelectSingleNode("div/div/h4").InnerText, @"S[0-9]+E[0-9]+", string.Empty);
                             cat.Name = Regex.Replace(cat.Name, @"\s+", " ").Trim();
                             cat.HasSubCategories = false;
@@ -223,9 +236,11 @@ namespace OnlineVideos.Sites
                         {
                             RssLink cat = new RssLink();
                             cat.Url = a.GetAttributeValue("href", "");
-                            var image = a.SelectSingleNode("li/div/img").GetAttributeValue("src", "");
-                            //do not get thumb if source dreamfilm due to ddos protection
-                            cat.Thumb = (string.IsNullOrEmpty(image) || !image.StartsWith("http")) ? "" : image;
+                            var image = a.SelectSingleNode("li/div/img").GetAttributeValue("data-cfsrc", "");
+                            if (!removeDdosProtection)
+                                cat.Thumb = string.IsNullOrEmpty(image) ? "" : (image.StartsWith("http") ? image : string.Format("http://dreamfilm.se/{0}", image));
+                            else
+                                cat.Thumb = (string.IsNullOrEmpty(image) || !image.StartsWith("http")) ? "" : image;
                             cat.Name = Regex.Replace(a.SelectSingleNode("li/div/h4").InnerText, @"\s+", " ").Trim();
                             cat.HasSubCategories = false;
                             cat.Other = cat.Url.Contains("/movies") ? FILM : TV;
