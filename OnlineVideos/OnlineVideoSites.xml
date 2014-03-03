@@ -39,7 +39,7 @@
 </div>\s*
 <h3\sclass="mt-title">\s*<a\shref="(?<VideoUrl>[^"]+)"[^>]*>(?<Title>[^<]+)</a>\s*</h3>\s*
 <p[^>]*>[^<]*</p>\s*
-<p\sclass="mt-airtime_channel">\s*<span\sclass="mt-airtime">\s*(?<Airdate>.*?)\s*(\n|·)\s*(?<Duration>.*?)(\s+min)?</span>]]></item>
+<p\sclass="mt-airtime_channel">\s*<span\sclass="mt-airtime">\s*(?<Airdate>.*?)\s*(\n|·|\s)(?<Duration>.*?)(\s+min)?</span>]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\s+href="(?<url>[^"]+)"\s[^>]*>Weiter</a>]]></item>
         <item key="fileUrlRegEx"><![CDATA[mediaCollection.addMediaStream\((?<Info>[^\)]+)]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}{1}]]></item>
