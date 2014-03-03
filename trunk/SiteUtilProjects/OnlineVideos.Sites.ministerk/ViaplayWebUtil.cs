@@ -16,11 +16,13 @@ namespace OnlineVideos.Sites
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Viaplay password")]
         protected string password = null;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show help category"), Description("Enable or disable help category (Link to forum - http://tinyurl.com/olv-viaplay)")]
+        protected bool showHelpCategory = true;
         #endregion
 
         #region Constants
         protected const string _typeVod = "vod";
-        #region States 
+        #region States
         protected const string _section = "SECTION";
         protected const string _filterGroup = "FILTER_GROUP";
         protected const string _filter = "FILTER";
@@ -330,6 +332,13 @@ namespace OnlineVideos.Sites
                     Other = _watched
                 });
             }
+            if (showHelpCategory)
+            {
+                Settings.Categories.Add(new RssLink()
+                {
+                    Name = GetTranslation("Viaplay at your service", "Do you need help?"),
+                });
+            }
             Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
             return Settings.Categories.Count;
         }
@@ -515,7 +524,7 @@ namespace OnlineVideos.Sites
                             Url = seasonUrl,
                             ParentCategory = parentCategory,
                             HasSubCategories = false,
-                            
+
                         });
                     }
                     break;
@@ -555,8 +564,17 @@ namespace OnlineVideos.Sites
                 other.Add("starUrl", ((string)product["_links"]["viaplay:star"]["href"]).Replace("{starred}", string.Empty));
             if (product["_links"]["viaplay:watched"] != null)
                 other.Add("watchedUrl", ((string)product["_links"]["viaplay:watched"]["href"]).Replace("{watched}", string.Empty));
-            if (content["duration"] != null && content["duration"]["milliseconds"] != null)
-                other.Add("duration", ((int)content["duration"]["milliseconds"]).ToString());
+            if (product["_links"]["viaplay:peopleSearch"] != null)
+                other.Add("peopleSearchUrl", ((string)product["_links"]["viaplay:peopleSearch"]["href"]).Replace("{person}", string.Empty));
+            var people = content["people"];
+            if (people != null)
+            {
+                if (people["directors"] != null)
+                    other.Add("directors", (string)(people["directors"].Aggregate((current, next) => (string)current + ";" + (string)next)));
+                if (people["actors"] != null)
+                    other.Add("actors", (string)(people["actors"].Aggregate((current, next) => (string)current + ";" + (string)next)));
+            }
+
 
             string lenght = string.Empty;
             if (content["duration"] != null && content["duration"]["readable"] != null)
@@ -636,6 +654,8 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
+            if (category.Name == GetTranslation("Viaplay at your service", "Do you need help?"))
+                throw new OnlineVideosException("Forum http://tinyurl.com/olv-viaplay");
             var data = MyGetWebData((category as RssLink).Url);
             List<VideoInfo> videos = new List<VideoInfo>();
             uint count;
@@ -703,7 +723,7 @@ namespace OnlineVideos.Sites
         public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
             List<ContextMenuEntry> menuItems = new List<ContextMenuEntry>();
-            if (HaveCredentials() && selectedItem != null && selectedItem.Other != null && selectedItem.Other is SerializableDictionary<string,string>)
+            if (HaveCredentials() && selectedItem != null && selectedItem.Other != null && selectedItem.Other is SerializableDictionary<string, string>)
             {
                 var other = selectedItem.Other as SerializableDictionary<string, string>;
 
@@ -711,9 +731,9 @@ namespace OnlineVideos.Sites
                 {
                     ContextMenuEntry starMenuEntry = new ContextMenuEntry();
                     bool starred = false;
-                    bool.TryParse((string)other["starred"],out starred);
+                    bool.TryParse((string)other["starred"], out starred);
                     if (starred)
-                        starMenuEntry.DisplayText = GetTranslation("Unstar","Unstar");
+                        starMenuEntry.DisplayText = GetTranslation("Unstar", "Unstar");
                     else
                         starMenuEntry.DisplayText = GetTranslation("Star", "Star");
                     menuItems.Add(starMenuEntry);
@@ -727,6 +747,33 @@ namespace OnlineVideos.Sites
                     ContextMenuEntry watchedMenuEntry = new ContextMenuEntry();
                     watchedMenuEntry.DisplayText = selectedCategory.Name + ": " + GetTranslation("Remove from History", "Remove from History");
                     menuItems.Add(watchedMenuEntry);
+                }
+            }
+            if (selectedItem != null && selectedItem.Other != null && selectedItem.Other is SerializableDictionary<string, string>)
+            {
+                var other = selectedItem.Other as SerializableDictionary<string, string>;
+                if (other.ContainsKey("peopleSearchUrl"))
+                {
+                    if (other.ContainsKey("actors"))
+                    {
+                        foreach (string actor in other["actors"].Split(';'))
+                        {
+                            ContextMenuEntry actorsMenuEntry = new ContextMenuEntry();
+                            actorsMenuEntry.DisplayText = GetTranslation("Cast", "Cast") + ": " + actor;
+                            actorsMenuEntry.Other = actor;
+                            menuItems.Add(actorsMenuEntry);
+                        }
+                    }
+                    if (other.ContainsKey("directors"))
+                    {
+                        foreach (string director in other["directors"].Split(';'))
+                        {
+                            ContextMenuEntry directorsMenuEntry = new ContextMenuEntry();
+                            directorsMenuEntry.DisplayText = GetTranslation("Director", "Director") + ": " + director;
+                            directorsMenuEntry.Other = director;
+                            menuItems.Add(directorsMenuEntry);
+                        }
+                    }
                 }
             }
             return menuItems;
@@ -770,6 +817,16 @@ namespace OnlineVideos.Sites
                 }
                 else
                     result.ExecutionResultMessage += ": Error";
+                return result;
+            }
+            //People search
+            if (choice.Other != null && choice.Other is string && (string)choice.Other != "")
+            {
+                var searchResults = DoSearch(choice.Other as string);
+                if (searchResults != null && searchResults.Count > 0)
+                    result.ResultItems = DoSearch(choice.Other as string);
+                else
+                    result.ExecutionResultMessage = GetTranslation("Your search for {query} gave no results", "Your search for {query} gave no results").Replace("{query}", (string)choice.Other);
                 return result;
             }
             return base.ExecuteContextMenuEntry(selectedCategory, selectedItem, choice);
