@@ -53,11 +53,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BrowserUtilConnectors\ViaplayConnectorNo.cs" />
+    <Compile Include="BrowserUtilConnectors\ViaplayConnectorFi.cs" />
+    <Compile Include="BrowserUtilConnectors\ViaplayConnectorDa.cs" />
+    <Compile Include="BrowserUtilConnectors\ViaplayConnectorBase.cs" />
+    <Compile Include="BrowserUtilConnectors\ViaplayConnectorSv.cs" />
+    <Compile Include="ViaplayWebUtil.cs" />
     <Compile Include="DreamfilmUtil.cs" />
     <Compile Include="Kanal59PlayUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

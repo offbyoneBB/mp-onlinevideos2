@@ -908,7 +908,19 @@
         <Category xsi:type="RssLink" name="Filmer HD-720p">http://dreamfilm.se/hd/720p/</Category>
         <Category xsi:type="RssLink" name="TV-serier">http://dreamfilm.se/series/</Category>
       </Categories>
-    </Site>    
+    </Site>
+    <Site name="Viaplay.se" util="ViaplayWeb" agecheck="false" enabled="true" lang="sv" player="Browser">
+      <Description>TV, Film online och Sport på nätet - Viaplay.se</Description>
+    </Site>
+    <Site name="Viaplay.no" util="ViaplayWeb" agecheck="false" enabled="true" lang="no" player="Browser">
+      <Description>TV, film og sport på nettet - Viaplay.no</Description>
+    </Site>
+    <Site name="Viaplay.dk" util="ViaplayWeb" agecheck="false" enabled="true" lang="da" player="Browser">
+      <Description>Se TV, Film og sport på nettet - Viaplay.dk</Description>
+    </Site>
+    <Site name="Viaplay.fi" util="ViaplayWeb" agecheck="false" enabled="true" lang="fi" player="Browser">
+      <Description>Tv-ohjelmat, urheilua ja elokuvat netissä  - Viaplay.fi</Description>
+    </Site>
     <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true" lang="--">
       <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country or genre.</Description>
       <Configuration>
