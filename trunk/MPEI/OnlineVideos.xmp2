@@ -3537,7 +3537,7 @@ added Javascript Engine (Jurassic) that allows executing javascript code
 added a GUIProperty so skinners can use the user-configured OnlineVideos plugin-name (#OnlineVideos.HomeScreenName)
 changed: HosterBase now inherits from MarshalByRefObject so Hosters can be used from other plugins easier</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>https://docs.google.com/uc?id=0B5C3c56idluyNTlWckVZN2Zxekk&amp;export=download</OnlineLocation>
+    <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=58</OnlineLocation>
     <ReleaseDate>2014-03-02T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
