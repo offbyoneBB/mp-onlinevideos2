@@ -54,10 +54,21 @@ namespace OnlineVideos.Sites
                 catch { }
             }
 
-            RtmpUrl theUrl = new RtmpUrl(url.Split('?')[0]);
+            RtmpUrl theUrl;
+            NameValueCollection paramsHash;
+            if (url.IndexOf(' ') >= 0)
+            {
+                string[] urlParts = url.Split(' ');
+                theUrl = new RtmpUrl(urlParts[0]);
+                paramsHash = HttpUtility.ParseQueryString(urlParts[1]);
+            }
+            else
+            {
+                theUrl = new RtmpUrl(url.Split('?')[0]);
 
-            Uri uri = new Uri(url);
-            NameValueCollection paramsHash = HttpUtility.ParseQueryString(uri.Query);
+                Uri uri = new Uri(url);
+                paramsHash = HttpUtility.ParseQueryString(uri.Query);
+            }
 
             string t;
 
@@ -74,7 +85,7 @@ namespace OnlineVideos.Sites
             {
                 int to;
                 if (int.TryParse(t, out to))
-                    theUrl.ReceiveDataTimeout = to*1000;
+                    theUrl.ReceiveDataTimeout = to * 1000;
             }
 
             return theUrl.ToString();
