@@ -196,6 +196,11 @@ f.e. if you need to set the playpath, you use the following:
 }}}
 There must be a "?" between the url and the added parameters, and between each param=value-pair there must be an "&"
 
+Sometimes this doesn't work because there are "?" present in the rtmpurl or in the other parameters. In that case, a " " is also allowed, ex.: 
+{{{
+<item key="fileUrlFormatString"><![CDATA[{0} playpath={1}&app={2}]]></item>
+}}}
+
 This is in accordance to a [http://en.wikipedia.org/wiki/Query_string Query string]
 
 The following parameters are supported:
