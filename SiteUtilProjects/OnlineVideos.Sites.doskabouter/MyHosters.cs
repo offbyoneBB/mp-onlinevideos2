@@ -455,6 +455,22 @@ namespace OnlineVideos.Hoster
             return @"http://www.playmyvid.com/files/videos/" + url;
         }
     }
+    public class SharedSx : HosterBase
+    {
+        public override string getHosterUrl()
+        {
+            return "shared.sx";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            string page = SiteUtilBase.GetWebData(url);
+            Match n = Regex.Match(page, @"<source\ssrc=""(?<url>[^""]*)""");
+            if (n.Success)
+                return n.Groups["url"].Value;
+            return String.Empty;
+        }
+    }
 
     public class ShareRepo : HosterBase
     {
