@@ -25,7 +25,7 @@ namespace OnlineVideos.Sites
             return null;
         }
         #endregion
-		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Skip single Category", TranslationFieldName = "SkipSingleCategory"), Description("Enables skipping over category lists that only contain a single category.")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Skip single Category", TranslationFieldName = "SkipSingleCategory"), Description("Enables skipping over category lists that only contain a single category.")]
         protected bool allowDiveDownOrUpIfSingle = true;
 
         /// <summary>
@@ -429,39 +429,49 @@ namespace OnlineVideos.Sites
 
         # region static helper functions
 
-		public static string GetRedirectedUrl(string url, string referer = null)
-		{
-			HttpWebResponse httpWebresponse = null;
-			try
-			{
-				HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-				if (request == null) return url;
-				request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-				request.AllowAutoRedirect = true;
-				request.Timeout = 15000;
-				if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
-				// invoke getting the Response async and abort as soon as data is coming in 
-				// (according to docs - this is after headers are completely received)
-				var result = request.BeginGetResponse((ar) => request.Abort(), null);
-				// wait for the completion (or abortion) of the async response
-				while (!result.IsCompleted) System.Threading.Thread.Sleep(10);
-				httpWebresponse = request.EndGetResponse(result) as HttpWebResponse;
-				if (httpWebresponse == null) return url;
-				if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
-					return url;
-				else
-					return httpWebresponse.ResponseUri.OriginalString;
-			}
-			catch (Exception ex)
-			{
-				Log.Warn(ex.ToString());
-			}
-			finally
-			{
-				if (httpWebresponse != null) httpWebresponse.Close();
-			}
-			return url;
-		}
+        public static string GetRedirectedUrl(string url, string referer = null)
+        {
+            HttpWebResponse httpWebresponse = null;
+            try
+            {
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                if (request == null) return url;
+                request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+                request.AllowAutoRedirect = true;
+                request.Timeout = 15000;
+                if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
+                // invoke getting the Response async and abort as soon as data is coming in 
+                // (according to docs - this is after headers are completely received)
+                var result = request.BeginGetResponse((ar) => request.Abort(), null);
+                // wait for the completion (or abortion) of the async response
+                while (!result.IsCompleted) System.Threading.Thread.Sleep(10);
+                httpWebresponse = request.EndGetResponse(result) as HttpWebResponse;
+                if (httpWebresponse == null) return url;
+                if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
+                    return url;
+                else
+                    return httpWebresponse.ResponseUri.OriginalString;
+            }
+            catch (Exception ex)
+            {
+                Log.Warn(ex.ToString());
+            }
+            finally
+            {
+                if (httpWebresponse != null)
+                {
+                    try
+                    {
+                        httpWebresponse.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warn(ex.ToString());
+                    }
+                }
+            }
+            return url;
+        }
 
         /// <summary>
         /// This method should be used whenever requesting data via http get. You can optionally provide some request settings.
