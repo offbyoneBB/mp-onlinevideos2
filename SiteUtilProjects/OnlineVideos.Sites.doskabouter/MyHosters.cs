@@ -466,6 +466,8 @@ namespace OnlineVideos.Hoster
         {
             string page = SiteUtilBase.GetWebData(url);
             Match n = Regex.Match(page, @"<source\ssrc=""(?<url>[^""]*)""");
+            if (!n.Success)
+                n = Regex.Match(page, @"<div\sclass=""stream-content""\sdata-url=""(?<url>[^""]*)""");
             if (n.Success)
                 return n.Groups["url"].Value;
             return String.Empty;
