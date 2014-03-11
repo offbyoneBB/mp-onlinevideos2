@@ -1036,6 +1036,18 @@
     <Site name="Filmon" util="Filmon" agecheck="false" enabled="true" lang="en">
       <Description>Watch free 600 Free Live TV Channels. See 45000 Complimentary movies TV shows and documentaries. Record Local TV zero cost. View Horror Movies at no charge!</Description>
     </Site>
+    <Site name="iLive.to" util="iLiveTo" agecheck="false" enabled="true" lang="en" lastUpdated="2014-03-06T14:06:23.440555+01:00">
+      <Description>Watch Live TV Online, Watch Live Sports, Watch Movies Online</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[(?<!<select\sname="language.*)<option\svalue="(?<url>[^"]*)">(?<title>[^<]*)</option>]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.ilive.to/channels/{0}]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\stitle="[^"]*"\sclass="clist-thumb">\s*<img\swidth="200"\sheight="128"\sdata-lazy-src="(?<ImageUrl>[^"]*)"[^>]*>\s*<noscript><img[^>]*></noscript>\s*</a>\s*<a[^>]*><strong>(?<Title>[^<]*)</strong></a><br/>\s*<span\sclass="viewers">[^<]*</span>\s*<span\sclass="totalviews">[^<]*</span><br/>\s*<a[^>]*>(?<Genre>[^<]*)</a>&nbsp;&nbsp;&nbsp;&nbsp;\s*<a[^>]*>(?<Description>[^<]*)</a>\s*</li>]]></item>
+        <item key="nextPageRegEx"><![CDATA[>\s\d*\s<a\shref="(?<url>[^"]*)">]]></item>
+        <item key="fileUrlRegEx"><![CDATA[flashplayer:\s"(?<swfurl>[^"]*)",\s*provider:\s"rtmp",\s*'rtmp\.tunneling':[^,]*,\s*bufferLength:\s"[^"]*",\s*token:\stoken,\s*streamer:\s"(?<rtmpurl>[^\?]*\?(?<app>[^"]*)[^"]*)",\s*file:\s"(?<playpath>[^\.]*)\.flv"]]></item>
+        <item key="baseUrl"><![CDATA[http://www.ilive.to/channels]]></item>
+        <item key="token"><![CDATA[motngaynew1]]></item>
+      </Configuration>
+    </Site>
     <Site name="NrkBrowser" util="NrkBrowser" agecheck="false" enabled="true" lang="no">
       <Description>NRK er Norges største tilbud på nett; nyheter, radio- og tv-programmer live, nett-tv og podcast.</Description>
     </Site>
