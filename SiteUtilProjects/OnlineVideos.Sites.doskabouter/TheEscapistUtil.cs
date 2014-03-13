@@ -1,13 +1,15 @@
-using System.Web;
+using System;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
     public class TheEscapistUtil : GenericSiteUtil
     {
-        public override string getUrl(VideoInfo video)
+        protected override void ExtraVideoMatch(VideoInfo video, GroupCollection matchGroups)
         {
-            string s = base.getUrl(video);
-            return HttpUtility.UrlDecode(s);
+            string title2 = matchGroups["Title2"].Value;
+            if (!String.IsNullOrEmpty(title2))
+                video.Title += " " + title2;
         }
     }
 }
