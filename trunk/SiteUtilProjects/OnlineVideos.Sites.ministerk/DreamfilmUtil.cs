@@ -55,7 +55,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        protected string GetWebDataWithDdosRemoval(string url,string postData = null)
+        protected string GetWebDataWithDdosRemoval(string url, string postData = null)
         {
             if (removeDdosProtection)
             {
@@ -96,6 +96,8 @@ namespace OnlineVideos.Sites
             }
             else
             {
+                if (postData != null)
+                    return GetWebDataFromPost(url, postData);
                 return GetWebData(url);
             }
         }
@@ -106,7 +108,15 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
 
-            Settings.Categories.ToList().ForEach(c => c.HasSubCategories = true);
+            Settings.Categories.ToList().ForEach((c) =>
+            {
+                c.HasSubCategories = true;
+                if (c.Name == "TV-Serier")
+                {
+                    c.SubCategoriesDiscovered = true;
+                    c.SubCategories.ForEach(child => child.HasSubCategories = true);
+                }
+            });
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
@@ -114,12 +124,36 @@ namespace OnlineVideos.Sites
         #endregion
 
         #region SubCategories
- 
+
         public override int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategories = new List<Category>();
             currentCategoryPage = 0;
-            if (parentCategory.Name == "Filmer")
+            if (parentCategory.Name == "Lista A-Ö")
+            {
+                string categoryUrl = (parentCategory as RssLink).Url;
+                string data = GetWebDataWithDdosRemoval(categoryUrl);
+                if (!string.IsNullOrEmpty(data))
+                {
+                    var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                    htmlDoc.LoadHtml(data);
+                    foreach (var a in htmlDoc.DocumentNode.SelectNodes("//div[@class = 'l']/a"))
+                    {
+                        RssLink cat = new RssLink()
+                        {
+                            Name = a.InnerText.Replace("\r", string.Empty).Trim(),
+                            HasSubCategories = true,
+                            Other = TV,
+                            ParentCategory = parentCategory,
+                            Url = a.GetAttributeValue("href", "")
+                        };
+                        parentCategory.SubCategories.Add(cat);
+                    }
+                }
+                parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
+                return parentCategory.SubCategories.Count;
+            }
+            else if (parentCategory.Name == "Filmer")
                 return DoDiscoverFilmSubCategories(parentCategory);
             else
             {
@@ -187,7 +221,7 @@ namespace OnlineVideos.Sites
         private void PopulateSubCategories(ref Category parentCategory)
         {
             string categoryUrl;
-            bool  notSearch = (parentCategory is RssLink) && !string.IsNullOrEmpty((parentCategory as RssLink).Url);
+            bool notSearch = (parentCategory is RssLink) && !string.IsNullOrEmpty((parentCategory as RssLink).Url);
             if (notSearch)
                 categoryUrl = (parentCategory as RssLink).Url;
             else
@@ -288,11 +322,11 @@ namespace OnlineVideos.Sites
 
             return results;
         }
-        
+
         #endregion
 
         #region Videos
-        
+
         public override List<VideoInfo> getVideoList(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
@@ -397,7 +431,7 @@ namespace OnlineVideos.Sites
                             {
                                 res = int.Parse(m.Groups[1].Value);
                                 url = (string)json[string.Format("url{0}", res)];
-                                video.PlaybackOptions.Add(string.Format("{0}p",res),url);
+                                video.PlaybackOptions.Add(string.Format("{0}p", res), url);
                                 if (max < res)
                                 {
                                     max = res;
