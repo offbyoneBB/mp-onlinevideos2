@@ -906,7 +906,12 @@
       <Categories>
         <Category xsi:type="RssLink" name="Filmer">http://dreamfilm.se/movies/</Category>
         <Category xsi:type="RssLink" name="Filmer HD-720p">http://dreamfilm.se/hd/720p/</Category>
-        <Category xsi:type="RssLink" name="TV-serier">http://dreamfilm.se/series/</Category>
+        <Category xsi:type="RssLink" name="TV-Serier">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Bläddra">http://dreamfilm.se/series/</Category>
+            <Category xsi:type="RssLink" name="Lista A-Ö">http://dreamfilm.se/series/list/</Category>
+          </SubCategories>
+        </Category>
       </Categories>
     </Site>
     <Site name="Viaplay.se" util="ViaplayWeb" agecheck="false" enabled="true" lang="sv" player="Browser">
