@@ -18,9 +18,6 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable ddos protection workaround"), Description("If nothing works, try this! For faster site set this to false.")]
         protected bool removeDdosProtection = false;
 
-        private int currentCategoryPage = 0;
-        private string currentSearch = "";
-
         protected const string TV = "TV";
         protected const string FILM = "FILM";
 
@@ -116,6 +113,11 @@ namespace OnlineVideos.Sites
                     c.SubCategoriesDiscovered = true;
                     c.SubCategories.ForEach(child => child.HasSubCategories = true);
                 }
+                if (c.Name == "Topplista")
+                {
+                    c.SubCategoriesDiscovered = true;
+                    c.SubCategories.ForEach(child => child.HasSubCategories = true);
+                }
             });
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
@@ -128,11 +130,9 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategories = new List<Category>();
-            currentCategoryPage = 0;
             if (parentCategory.Name == "Lista A-Ö")
             {
-                string categoryUrl = (parentCategory as RssLink).Url;
-                string data = GetWebDataWithDdosRemoval(categoryUrl);
+                string data = GetWebDataWithDdosRemoval((parentCategory as RssLink).Url);
                 if (!string.IsNullOrEmpty(data))
                 {
                     var htmlDoc = new HtmlAgilityPack.HtmlDocument();
@@ -154,29 +154,67 @@ namespace OnlineVideos.Sites
                 return parentCategory.SubCategories.Count;
             }
             else if (parentCategory.Name == "Filmer")
+            {
+                if (parentCategory.ParentCategory != null && parentCategory.ParentCategory.Name == "Topplista")
+                {
+                    string data = GetWebDataWithDdosRemoval((parentCategory as RssLink).Url);
+                    if (!string.IsNullOrEmpty(data))
+                    {
+                        var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                        htmlDoc.LoadHtml(data);
+
+                        foreach (var a in htmlDoc.DocumentNode.SelectNodes("//a[contains(@class, 'btn btn-info')]"))
+                        {
+                            RssLink cat = new RssLink()
+                            {
+                                Name = a.InnerText.Replace("\r", string.Empty).Trim(),
+                                HasSubCategories = true,
+                                Other = FILM,
+                                ParentCategory = parentCategory,
+                                Url = a.GetAttributeValue("href", "")
+                            };
+                            parentCategory.SubCategories.Add(cat);
+                        }
+                    }
+                    parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
+                    return parentCategory.SubCategories.Count;
+                }
                 return DoDiscoverFilmSubCategories(parentCategory);
+            }
             else
             {
                 return DoDiscoverSubCategories(parentCategory);
             }
         }
 
-        public override int DiscoverNextPageCategories(NextPageCategory category)
+        public override int DiscoverNextPageCategories(NextPageCategory nextPagecategory)
         {
-            category.ParentCategory.SubCategories.Remove(category);
-            currentCategoryPage++;
-            return DoDiscoverSubCategories(category.ParentCategory);
+            nextPagecategory.ParentCategory.SubCategories.Remove(nextPagecategory);
+            Category category = new RssLink()
+            {
+                SubCategories = new List<Category>(),
+                Url = nextPagecategory.Url
+            };
+
+            string nextPage = "";
+            PopulateSubCategories(ref category, out nextPage);
+            if (category.SubCategories != null)
+                nextPagecategory.ParentCategory.SubCategories.AddRange(category.SubCategories);
+            if (nextPage != "")
+                nextPagecategory.ParentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = nextPagecategory.ParentCategory, Url = nextPage, SubCategories = new List<Category>() });
+
+            return category.SubCategories.Count;
         }
 
         private int DoDiscoverSubCategories(Category parentCategory)
         {
-            var foundSoFar = parentCategory.SubCategories.Count;
-            PopulateSubCategories(ref parentCategory);
-            parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count - foundSoFar > 0;
-            if (parentCategory.SubCategoriesDiscovered)
-                parentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = parentCategory });
+            string nextPage = "";
+            PopulateSubCategories(ref parentCategory, out nextPage);
+            parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
+            if (nextPage != "")
+                parentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = parentCategory, Url = nextPage });
 
-            return parentCategory.SubCategories.Count - foundSoFar;
+            return parentCategory.SubCategories.Count;
         }
 
         private int DoDiscoverFilmSubCategories(Category parentCategory)
@@ -218,21 +256,17 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        private void PopulateSubCategories(ref Category parentCategory)
+        private void PopulateSubCategories(ref Category parentCategory, out string nextPage)
         {
-            string categoryUrl;
-            bool notSearch = (parentCategory is RssLink) && !string.IsNullOrEmpty((parentCategory as RssLink).Url);
-            if (notSearch)
-                categoryUrl = (parentCategory as RssLink).Url;
-            else
-                categoryUrl = string.Format("http://dreamfilm.se/search/?q={0}", currentSearch);
+            nextPage = "";
+            string categoryUrl = (parentCategory as RssLink).Url;
 
-            string data = GetWebDataWithDdosRemoval(string.Format("{0}{1}page={2}", categoryUrl, categoryUrl.Contains("?") ? "&" : "?", currentCategoryPage));
+            string data = GetWebDataWithDdosRemoval(categoryUrl);
             if (!string.IsNullOrEmpty(data))
             {
                 var htmlDoc = new HtmlAgilityPack.HtmlDocument();
                 htmlDoc.LoadHtml(data);
-                if (notSearch)
+                if (!categoryUrl.StartsWith("http://dreamfilm.se/search/"))
                 {
                     var divs = htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'galery info')]");
                     if (divs != null)
@@ -288,6 +322,13 @@ namespace OnlineVideos.Sites
                         }
                     }
                 }
+                var buttons = htmlDoc.DocumentNode.SelectNodes("//a[contains(@class, 'btn')]");
+                if (buttons != null)
+                {
+                    var nextButton = buttons.FirstOrDefault(b => !b.GetAttributeValue("class", "").Contains("disabled") && b.InnerText != null && b.InnerText.Contains("Nästa"));
+                    if (nextButton != null)
+                        nextPage = nextButton.GetAttributeValue("href", "");
+                }
             }
         }
 
@@ -306,16 +347,16 @@ namespace OnlineVideos.Sites
         public override List<ISearchResultItem> DoSearch(string query)
         {
             List<ISearchResultItem> results = new List<ISearchResultItem>();
-            currentSearch = HttpUtility.UrlEncode(query);
-            Category parentCategory = new Category()
+            Category parentCategory = new RssLink()
             {
-                SubCategories = new List<Category>()
+                SubCategories = new List<Category>(),
+                Url = string.Format("http://dreamfilm.se/search/?q={0}", HttpUtility.UrlEncode(query))
             };
-            currentCategoryPage = 0;
-            PopulateSubCategories(ref parentCategory);
+            string nextPage = "";
+            PopulateSubCategories(ref parentCategory, out nextPage);
             parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
-            if (parentCategory.SubCategoriesDiscovered)
-                parentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = parentCategory });
+            if (nextPage != "")
+                parentCategory.SubCategories.Add(new NextPageCategory() { ParentCategory = parentCategory, Url = nextPage });
 
             foreach (Category c in parentCategory.SubCategories)
                 results.Add(c);
