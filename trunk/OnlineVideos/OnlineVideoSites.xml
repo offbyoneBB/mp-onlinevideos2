@@ -912,6 +912,12 @@
             <Category xsi:type="RssLink" name="Lista A-Ö">http://dreamfilm.se/series/list/</Category>
           </SubCategories>
         </Category>
+        <Category xsi:type="RssLink" name="Topplista">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Filmer">http://dreamfilm.se/top/filmer/</Category>
+            <Category xsi:type="RssLink" name="TV-Serier">http://dreamfilm.se/top/serier/</Category>
+          </SubCategories>
+        </Category>
       </Categories>
     </Site>
     <Site name="Viaplay.se" util="ViaplayWeb" agecheck="false" enabled="true" lang="sv" player="Browser">
