@@ -1020,7 +1020,7 @@
         <item key="videoListRegEx"><![CDATA[<div\sclass='filmstrip_video'><a\shref='(?<VideoUrl>[^']*)'><img\ssrc='(?<ImageUrl>[^']*)'></a><div\sclass='title'>[<i>]*(?<Title>[^<]*)[</i>]*(?<Title2>[^<]*)</div><div\sclass='date'>Date:\s(?<Airdate>[^<]*)</div><div\sclass='comments'><a\shref='[^']*'>[^<]*</a></div></div>]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='next_page\s*'>Next</a>]]></item>
         <item key="playlistUrlRegEx"><![CDATA[(<param\sname="flashvars"\svalue="config=(?<url>[^"]*)"/>)|(flashvars=&quot;config=(?<url>[^&]*)&quot;)]]></item>
-        <item key="fileUrlRegEx"><![CDATA['url':'(?<m0>[^']*)','autoPlay':[^,]*,'autoBuffering':[^,]*,'LR_VIDEO_ID':'[^']*','scaling':'[^']*','eventCategory':\s'Video']]></item>
+        <item key="fileUrlRegEx"><![CDATA['url':'(?<m0>[^']*)',(?:'linkUrl':'[^']*','linkWindow':'[^']*',)?'autoPlay':[^,]*,'autoBuffering':[^,]*,'LR_VIDEO_ID':'[^']*','scaling':'[^']*','eventCategory':\s'Video'},]]></item>
         <item key="baseUrl"><![CDATA[http://www.escapistmagazine.com/videos/galleries]]></item>
       </Configuration>
     </Site>
