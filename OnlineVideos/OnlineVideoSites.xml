@@ -1018,7 +1018,7 @@
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass='folders_container\scol_[^']*'\sid='folder_[^']*'><div\sclass='folders_title_card'><a\shref='(?<url>[^']*)'><img\ssrc='(?<thumb>[^']*)'\swidth='310'\sheight='90'></a></div><a\shref[^>]*>(?<title>[^:]*):\s(?:(?!folder_desc').)*folder_desc'\sstyle='display:none'><p\sstyle='padding:\s10px;'>(?<description>[^<]*)<]]></item>
         <item key="videoListRegEx"><![CDATA[<div\sclass='filmstrip_video'><a\shref='(?<VideoUrl>[^']*)'><img\ssrc='(?<ImageUrl>[^']*)'></a><div\sclass='title'>[<i>]*(?<Title>[^<]*)[</i>]*(?<Title2>[^<]*)</div><div\sclass='date'>Date:\s(?<Airdate>[^<]*)</div><div\sclass='comments'><a\shref='[^']*'>[^<]*</a></div></div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='next_page'>Next</a>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='next_page\s*'>Next</a>]]></item>
         <item key="playlistUrlRegEx"><![CDATA[(<param\sname="flashvars"\svalue="config=(?<url>[^"]*)"/>)|(flashvars=&quot;config=(?<url>[^&]*)&quot;)]]></item>
         <item key="fileUrlRegEx"><![CDATA['url':'(?<m0>[^']*)','autoPlay':[^,]*,'autoBuffering':[^,]*,'LR_VIDEO_ID':'[^']*','scaling':'[^']*','eventCategory':\s'Video']]></item>
         <item key="baseUrl"><![CDATA[http://www.escapistmagazine.com/videos/galleries]]></item>
