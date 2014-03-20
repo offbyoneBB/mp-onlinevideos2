@@ -288,7 +288,7 @@ namespace OnlineVideos.Sites
         {
             if (category.ParentCategory == null)
                 return category.Name == GetTranslation("Series");
-            return IsSeries(category.ParentCategory);
+            return category.Name == GetTranslation("Series") || category.Name == GetTranslation("All children series") || IsSeries(category.ParentCategory);
         }
         #endregion
 
@@ -487,13 +487,13 @@ namespace OnlineVideos.Sites
                         if (isSeries)
                         {
                             cat.Name = (string)content["series"]["title"];
-                            cat.Thumb = content["images"]["landscape"] != null ? (string)content["images"]["landscape"]["url"] : string.Empty;
+                            cat.Thumb = content["images"] != null && content["images"]["landscape"] != null ? (string)content["images"]["landscape"]["url"] : string.Empty;
                             cat.Description = content["series"]["synopsis"] != null ? (string)content["series"]["synopsis"] : (string)content["synopsis"];
                         }
                         else
                         {
                             cat.Name = (string)content["title"];
-                            cat.Thumb = content["images"]["boxart"] != null ? (string)content["images"]["boxart"]["url"] : string.Empty;
+                            cat.Thumb = content["images"] != null && content["images"]["boxart"] != null ? (string)content["images"]["boxart"]["url"] : string.Empty;
                             cat.Description = (string)content["synopsis"];
                         }
                         cat.Url = (string)product["_links"]["viaplay:page"]["href"];
@@ -754,25 +754,18 @@ namespace OnlineVideos.Sites
                 var other = selectedItem.Other as SerializableDictionary<string, string>;
                 if (other.ContainsKey("peopleSearchUrl"))
                 {
+
                     if (other.ContainsKey("actors"))
                     {
-                        foreach (string actor in other["actors"].Split(';'))
-                        {
-                            ContextMenuEntry actorsMenuEntry = new ContextMenuEntry();
-                            actorsMenuEntry.DisplayText = GetTranslation("Cast", "Cast") + ": " + actor;
-                            actorsMenuEntry.Other = actor;
-                            menuItems.Add(actorsMenuEntry);
-                        }
+                        ContextMenuEntry actorsMenuEntry = new ContextMenuEntry();
+                        actorsMenuEntry.DisplayText = GetTranslation("Cast", "Cast");
+                        menuItems.Add(actorsMenuEntry);
                     }
                     if (other.ContainsKey("directors"))
                     {
-                        foreach (string director in other["directors"].Split(';'))
-                        {
-                            ContextMenuEntry directorsMenuEntry = new ContextMenuEntry();
-                            directorsMenuEntry.DisplayText = GetTranslation("Director", "Director") + ": " + director;
-                            directorsMenuEntry.Other = director;
-                            menuItems.Add(directorsMenuEntry);
-                        }
+                        ContextMenuEntry directorsMenuEntry = new ContextMenuEntry();
+                        directorsMenuEntry.DisplayText = GetTranslation("Director", "Director");
+                        menuItems.Add(directorsMenuEntry);
                     }
                 }
             }
@@ -820,13 +813,40 @@ namespace OnlineVideos.Sites
                 return result;
             }
             //People search
-            if (choice.Other != null && choice.Other is string && (string)choice.Other != "")
+            if (choice.DisplayText != null && choice.DisplayText is string && (string)choice.DisplayText == GetTranslation("Cast", "Cast"))
             {
-                var searchResults = DoSearch(choice.Other as string);
-                if (searchResults != null && searchResults.Count > 0)
-                    result.ResultItems = DoSearch(choice.Other as string);
-                else
-                    result.ExecutionResultMessage = GetTranslation("Your search for {query} gave no results", "Your search for {query} gave no results").Replace("{query}", (string)choice.Other);
+                List<ISearchResultItem> results = new List<ISearchResultItem>();
+                foreach (string actor in (selectedItem.Other as SerializableDictionary<string, string>)["actors"].Split(';'))
+                {
+                    results.Add(new RssLink()
+                    {
+                        Name = actor,
+                        Url = ApiUrl + "/search?query=" + HttpUtility.UrlEncode(actor),
+                        Other = _search,
+                        ParentCategory = selectedCategory,
+                        HasSubCategories = true,
+                        SubCategories = new List<Category>()
+                    });
+                }
+                result.ResultItems = results;
+                return result;
+            }
+            if (choice.DisplayText != null && choice.DisplayText is string && (string)choice.DisplayText == GetTranslation("Director", "Director"))
+            {
+                List<ISearchResultItem> results = new List<ISearchResultItem>();
+                foreach (string director in (selectedItem.Other as SerializableDictionary<string, string>)["directors"].Split(';'))
+                {
+                    results.Add(new RssLink()
+                    {
+                        Name = director,
+                        Url = ApiUrl + "/search?query=" + HttpUtility.UrlEncode(director),
+                        Other = _search,
+                        ParentCategory = selectedCategory,
+                        HasSubCategories = true,
+                        SubCategories = new List<Category>()
+                    });
+                }
+                result.ResultItems = results;
                 return result;
             }
             return base.ExecuteContextMenuEntry(selectedCategory, selectedItem, choice);
