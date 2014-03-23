@@ -242,10 +242,9 @@ namespace OnlineVideos.Sites
             if (thisUrl.IndexOf("player.screenwavemedia.com") >= 0)
             {
                 string webData = GetWebData(thisUrl);
-                Match m = Regex.Match(webData, @"'file':\s*'(?<url>[^']*)'");
+                Match m = Regex.Match(webData, @"{file:\s'(?<url>[^']*.f4m)'");
                 if (m.Success)
-                    return String.Format(@"http://player.screenwavemedia.com/{0}", m.Groups["url"].Value);
-                //else prob. rtmp?
+                    return m.Groups["url"].Value;
             }
             return null;
         }

@@ -562,7 +562,7 @@
     <Site name="Cinemassacre" util="Cinemassacre" agecheck="false" enabled="true" lang="en" player="Internal">
       <Description>Video site from cinemassacre productions.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.cinemassacre.com]]></item>
+        <item key="baseUrl"><![CDATA[http://cinemassacre.com]]></item>
         <item key="videoListRegEx"><![CDATA[(<div\sid="featuredImg">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<img\swidth="[^"]*"\sheight="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\sclass="largethumb\swp-post-image"\salt="[^"]*"\s/>\s*</a>\s*<span\sid="archiveCaption"><a[^>]*>(?<Title>[^<]*)</a></span>\s*</div>)|(<div\sclass="archiveitem">\s*<a\shref="(?<VideoUrl>[^"]*)[^>]*>\s*<img\swidth="[^"]*"\sheight="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\sclass="mediumthumb\swp-post-image"\salt="[^"]*"\s/>\s*<div>(?<Title>[^<]*)</div></a>\s*</div>\s*)]]></item>
         <item key="playlistUrlRegEx"><![CDATA[<div\sclass="videoarea"><div\sid=['"]SWMPlayer_[^"']*['"][^>]*>[^<]*</div>\s*<script[^>]*></script>\s*<script\stype=['"]text/javascript['"]\ssrc=['"](?<url>[^"']*)['"]>]]></item>
         <item key="fileUrlRegEx"><![CDATA['streamer':\s'(?<m0>[^']*)',\s*'flashplayer':\s'http://player\.screenwavemedia\.com/play/jwplayer/player\.swf',\s*'file':\s'(?<m1>[^']*)']]></item>
