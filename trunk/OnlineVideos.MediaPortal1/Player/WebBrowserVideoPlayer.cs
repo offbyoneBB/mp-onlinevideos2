@@ -84,13 +84,19 @@ namespace OnlineVideos.MediaPortal1.Player
             
             // Restart MP or Restore MP Window if needed
             _browserProcess.Exited += new EventHandler(BrowserProcess_Exited);
-            
+
             // Hide MediaPortal
             if (_browserProcess.Start())
             {
                 ProcessHelper.SetForeground(_browserProcess.MainWindowHandle);
                 SuspendMP(true);
-                Redirect(_browserProcess.StandardError);
+                if (_browserProcess != null)
+                    Redirect(_browserProcess.StandardError);
+                else
+                {
+                    Log.Instance.Error("Browser process closed on startup");
+                    SuspendMP(false);
+                }
             }
            
             return true;

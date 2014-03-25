@@ -10,8 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OnlineVideos.MediaPortal1</RootNamespace>
     <AssemblyName>OnlineVideos.MediaPortal1</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,6 +38,10 @@
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\AxInterop.WMPLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Common.GUIPlugins">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\Common.GUIPlugins.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Common.Utils">
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Common.Utils.dll</HintPath>
       <Private>False</Private>
@@ -54,6 +60,14 @@
     </Reference>
     <Reference Include="DirectShowLib">
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\DirectShowLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="GUIHome">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\GUIHome.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="GUIVideos">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\GUIVideos.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Interop.WMPLib">
@@ -84,10 +98,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="Utils">
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Utils.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="WindowPlugins">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\WindowPlugins.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
