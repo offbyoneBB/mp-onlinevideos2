@@ -31,7 +31,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 _assemblyPath = args[0];
                 AppDomain currentDomain = AppDomain.CurrentDomain;
                 currentDomain.AssemblyResolve += new ResolveEventHandler(MyResolveEventHandler);
-
+                
                 // Set the BaseDirectory of the app domain to the mediaportal root, otherwise the inputdevices can't initialise (due to Configuration.Config using this path)
                 // The other option is to run this exe in the root of the media portal dir, which I wasn't too keen on
                 currentDomain.SetData("APPBASE", _assemblyPath); 
@@ -76,16 +76,21 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 if (strAssmbName.FullName.Substring(0, strAssmbName.FullName.IndexOf(",")) == dllName)
                 {
                     var fullDllName = dllName + ".dll";
-                    
-                    if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), fullDllName)))
-                        strTempAssmbPath = Path.Combine(Directory.GetCurrentDirectory(), fullDllName);
-                    else
+
+                    strTempAssmbPath = Path.Combine(Directory.GetCurrentDirectory(), fullDllName);
+
+                    if (!File.Exists(strTempAssmbPath))
                         //Build the path of the assembly from where it has to be loaded.				
                         strTempAssmbPath = Path.Combine(_assemblyPath, fullDllName);
+
+                    if (!File.Exists(strTempAssmbPath))
+                        strTempAssmbPath = Path.Combine(Directory.GetCurrentDirectory(), "plugins\\windows\\onlinevideos", fullDllName);
+
                     break;
                 }
 
             }
+
             if (!string.IsNullOrEmpty(strTempAssmbPath))
                 //Load the assembly from the specified path. 					
                 MyAssembly = Assembly.LoadFrom(strTempAssmbPath);

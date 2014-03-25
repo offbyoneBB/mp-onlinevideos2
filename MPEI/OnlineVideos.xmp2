@@ -2383,6 +2383,90 @@
               <ZipFileName>Installer{CopyFile}\{af21020b-0526-47e9-8b2c-38faafcd80cd}-BigPondVideo.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BigPondVideo.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Filmon.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{71dc95ce-5cb1-4e7b-ab54-952ccc1d133e}-Filmon.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Filmon.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\iLive.to.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{dec919bf-0c00-44f6-864d-70bdebffa606}-iLive.to.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\iLive.to.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Viaplay.dk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d5de46be-cea9-4802-9db3-3ffc4a803186}-Viaplay.dk.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viaplay.dk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Viaplay.fi.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{da2d982d-09f6-4d16-8dbb-c2a3d3d7b5ca}-Viaplay.fi.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viaplay.fi.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Viaplay.no.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{18197802-3915-4e4c-bc8e-5fbe1c6877ed}-Viaplay.no.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viaplay.no.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Viaplay.se.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{66670d6d-3724-413c-aac7-aa967b6e7a3c}-Viaplay.se.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viaplay.se.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Filmon.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0f39fbbe-7522-49f8-9373-8f64dcc56634}-Filmon.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Filmon.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\iLive.to.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2420241d-77f9-4f68-9012-6e2f0d04f52d}-iLive.to.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\iLive.to.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Viaplay.dk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b872ca82-f9ff-4137-973c-8d8a6fed88d0}-Viaplay.dk.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viaplay.dk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Viaplay.fi.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2ed93292-ce90-4600-af2d-a89107b4ff94}-Viaplay.fi.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viaplay.fi.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Viaplay.no.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0de36359-d3ed-4de0-b7f5-10ae5bfa4355}-Viaplay.no.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viaplay.no.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Viaplay.se.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c87ca876-2be9-4ca1-aa07-5fa64ce56b4b}-Viaplay.se.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viaplay.se.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -3497,8 +3581,8 @@ public class Script
         <CompatibleVersion>
           <Items>
             <CompatibleVersionItem>
-              <MinRequiredVersion>1.3.100.0</MinRequiredVersion>
-              <DesignedForVersion>1.4.100.0</DesignedForVersion>
+              <MinRequiredVersion>1.6.100.0</MinRequiredVersion>
+              <DesignedForVersion>1.6.100.0</DesignedForVersion>
             </CompatibleVersionItem>
           </Items>
         </CompatibleVersion>
@@ -3526,19 +3610,14 @@ public class Script
     <Version>
       <Major>1</Major>
       <Minor>8</Minor>
-      <Build>0</Build>
+      <Build>1</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>fixed DownloadedVideos site shows incorrect video title for some sites
-fixed running OnlineVideos Config from MediaPortal Extension Manager
-added a new type of Player: "Browser" - with a supplemental executable to show a browser window full screen for DRM protected videos
-added Javascript Engine (Jurassic) that allows executing javascript code
-added a GUIProperty so skinners can use the user-configured OnlineVideos plugin-name (#OnlineVideos.HomeScreenName)
-changed: HosterBase now inherits from MarshalByRefObject so Hosters can be used from other plugins easier</VersionDescription>
+    <VersionDescription>compatible with MediaPortal 1.7</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=58</OnlineLocation>
-    <ReleaseDate>2014-03-02T15:00:00</ReleaseDate>
+    <ReleaseDate>2014-04-01T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
@@ -5947,6 +6026,90 @@ changed: HosterBase now inherits from MarshalByRefObject so Hosters can be used 
         <LocalFileName>..\SiteImages\Banners\BigPondVideo.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{af21020b-0526-47e9-8b2c-38faafcd80cd}-BigPondVideo.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BigPondVideo.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Filmon.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{71dc95ce-5cb1-4e7b-ab54-952ccc1d133e}-Filmon.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Filmon.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\iLive.to.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{dec919bf-0c00-44f6-864d-70bdebffa606}-iLive.to.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\iLive.to.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Viaplay.dk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d5de46be-cea9-4802-9db3-3ffc4a803186}-Viaplay.dk.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viaplay.dk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Viaplay.fi.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{da2d982d-09f6-4d16-8dbb-c2a3d3d7b5ca}-Viaplay.fi.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viaplay.fi.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Viaplay.no.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{18197802-3915-4e4c-bc8e-5fbe1c6877ed}-Viaplay.no.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viaplay.no.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Viaplay.se.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{66670d6d-3724-413c-aac7-aa967b6e7a3c}-Viaplay.se.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viaplay.se.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Filmon.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0f39fbbe-7522-49f8-9373-8f64dcc56634}-Filmon.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Filmon.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\iLive.to.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2420241d-77f9-4f68-9012-6e2f0d04f52d}-iLive.to.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\iLive.to.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Viaplay.dk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b872ca82-f9ff-4137-973c-8d8a6fed88d0}-Viaplay.dk.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viaplay.dk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Viaplay.fi.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2ed93292-ce90-4600-af2d-a89107b4ff94}-Viaplay.fi.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viaplay.fi.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Viaplay.no.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0de36359-d3ed-4de0-b7f5-10ae5bfa4355}-Viaplay.no.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viaplay.no.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Viaplay.se.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c87ca876-2be9-4ca1-aa07-5fa64ce56b4b}-Viaplay.se.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viaplay.se.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />

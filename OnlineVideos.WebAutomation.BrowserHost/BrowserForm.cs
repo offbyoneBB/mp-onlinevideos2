@@ -68,13 +68,12 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 
             //Load keyboard mappings
             ActionTranslator.Load();
-            
+
             //Load remote mappings
             InputDevices.Init();
 
             //Some remotes will fire this event directly
             GUIGraphicsContext.OnNewAction += OnNewAction;
-
         }
         
         /// <summary>
@@ -110,9 +109,15 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                     if (!result)
                         ForceQuit();
                 }
+                else
+                {
+                    ForceQuit();
+                }                
             }
             catch (Exception ex)
             {
+                Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                Console.Error.Flush();
                 Log.Error(ex);
                 ForceQuit();
             }
