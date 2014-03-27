@@ -424,7 +424,7 @@ namespace OnlineVideos.Sites
                             {
                                 video = new VideoInfo();
                                 video.Other = TV;
-                                video.VideoUrl = seasonEpisodeNode.GetAttributeValue("href", "");
+                                video.VideoUrl = seasonEpisodeNode.GetAttributeValue("rel", "");
                                 video.Title = (category.Name + "." + seasonName + seasonEpisodeNode.InnerText.Replace("Avsnitt ", "E")).Replace("\r", string.Empty).Trim();
                                 video.ImageUrl = category.Thumb;
                                 video.Description = category.Description;
