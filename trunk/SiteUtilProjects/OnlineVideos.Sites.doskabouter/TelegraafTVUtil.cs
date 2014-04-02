@@ -2,7 +2,7 @@
 
 namespace OnlineVideos.Sites
 {
-    public class TelegraafTVUtil : BrightCoveUtil
+    public class TelegraafTVUtil : GenericSiteUtil
     {
         protected override List<VideoInfo> Parse(string url, string data)
         {

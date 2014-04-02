@@ -1368,11 +1368,10 @@
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<h2>(?:<a[^>]*>)?(?<title>[^<]*)(?:</a>)?</h2>\s*<div\sclass="moreVideos"><a\shref="[^"]*">[^<]*</a></div>\s*<div\sclass="pagination">\s*<div\sid="pagination(?<url>[^"]*)">\s*</div>]]></item>
         <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.telegraaf.nl/jsp/video_carrousel_page.jsp?artid={0}&pagenr=1]]></item>
         <item key="videoListRegEx"><![CDATA[<div\sclass="videoItem\s">\s*<div\sclass="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<img\sclass="itemImg"\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\swidth="151"\sheight="87"\s/><span\sclass="playTime">(?<Duration>[^<]*)</span>\s*<span\sclass="playButton"><img\sclass="playImg"\ssrc="/graphics/videopage/play\.png"></span></a>\s*</div>\s*<a[^>]*>(?<Title>[^<]*)</a>\s*</div>]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[loadPlayer\('(?<url>[^']*)',]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<location\ss1:label="(?<n0>[^"]*)"\ss1:height="[^"]*">(?<m0>[^<]*)</location>]]></item>
         <item key="baseUrl"><![CDATA[http://www.telegraaf.nl/tv/]]></item>
         <item key="forceUTF8Encoding"><![CDATA[True]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<object\sid="myExperience_BCID"\sclass="BrightcoveExperience">\s*<param[^>]*>\s*<param\sname="playerID"\svalue="(?<experienceId>[^"]*)"\s/>\s*<param\sname="playerKey"\svalue="(?<playerKey>[^"]*)"\s/>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param\sname="@videoPlayer"\svalue="(?<contentId>[^"]*)"\s/>]]></item>
-        <item key="hashValue"><![CDATA[122bed0139d9db222570a8544010d7633bd59732]]></item>
-        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAAPLptWHE~,ndp_QiqbO1Q1XhpN5Vb3BcOhr404lGvW]]></item>
       </Configuration>
     </Site>
     <Site name="ToonsTv" util="ToonsTv" agecheck="false" enabled="true" lang="en">
