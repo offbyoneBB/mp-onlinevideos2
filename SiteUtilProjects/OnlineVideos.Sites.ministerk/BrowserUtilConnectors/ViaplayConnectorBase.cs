@@ -18,9 +18,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected enum State
         {
             None,
-            LogInFaze1,
-            LogInFaze2,
-            Play,
+            OpenPage,
+            LoginAndPlay,
             Playing
         }
 
@@ -30,21 +29,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected string _password;
 
         public abstract string BaseUrl { get; }
-
-        public string LoginUrl
-        {
-            get { return BaseUrl; }
-        }
-
-        public override EventResult PlayVideo(string videoToPlay)
-        {
-            ProcessComplete.Finished = true;
-            ProcessComplete.Success = true;
-            Uri uri = new Uri(BaseUrl + videoToPlay);
-            Url = uri.GetLeftPart(UriPartial.Path);
-            _currentState = State.Play;
-            return EventResult.Complete();
-        }
 
         public override EventResult Pause()
         {
@@ -81,89 +65,47 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             _password = password;
             _username = username;
-            _currentState = State.LogInFaze1;
-            Url = LoginUrl;
-            ProcessComplete.Finished = false;
-            ProcessComplete.Success = false;
-            return EventResult.Complete() ;
+            _currentState = State.None;
+            Url = "about:blank";
+            ProcessComplete.Finished = true;
+            ProcessComplete.Success = true;
+            return EventResult.Complete();
+        }
+
+        public override EventResult PlayVideo(string videoToPlay)
+        {
+            ProcessComplete.Finished = true;
+            ProcessComplete.Success = true;
+            Uri uri = new Uri(BaseUrl + videoToPlay);
+            Url = uri.GetLeftPart(UriPartial.Path);
+            _currentState = State.OpenPage;
+            return EventResult.Complete();
         }
 
         public override EventResult BrowserDocumentComplete()
         {
-            bool loggedIn;
-            HtmlElementCollection forms;
             switch (_currentState)
             {
-                case State.LogInFaze1:
-                    forms = Browser.Document.GetElementsByTagName("form");
-                    loggedIn = true;
-                    if (forms != null && forms.Count > 0)
-                    {
-                        foreach (HtmlElement form in forms)
-                        {
-                            var className = form.GetAttribute("className");
-                            loggedIn &= (string.IsNullOrEmpty(className) || className != "menu-login-form");
-                        }
-                    }
-                    if (!loggedIn)
-                    {
-                        var js = string.Format(@"$('input.username').val('{0}');$('input.password').val('{1}');$('form.menu-login-form').submit();", _username, _password);
-                        InvokeScript(js);
-                        //wait for login... Can take some time...    
-                        Thread.Sleep(4000);
-                        Url = LoginUrl;
-                        _currentState = State.LogInFaze2;
-                        Browser.Refresh(WebBrowserRefreshOption.Completely);// Need to load page again
-                    }
-                    else
-                    {
-                        _currentState = State.None;
-                        ProcessComplete.Finished = true;
-                        ProcessComplete.Success = true;
-                    }
+                case State.OpenPage:
+                    _currentState = State.LoginAndPlay;
                     break;
-                   
-                case State.LogInFaze2:
-                    _currentState = State.None;
-
-                    forms = Browser.Document.GetElementsByTagName("form");
-                    loggedIn = true;
-                    if (forms != null && forms.Count > 0)
-                    {
-                        foreach (HtmlElement form in forms)
-                        {
-                            var className = form.GetAttribute("className");
-                            loggedIn &= (string.IsNullOrEmpty(className) || className != "menu-login-form");
-                        }
-                    }
-                    if (loggedIn)
-                    {
-                        ProcessComplete.Finished = true;
-                        ProcessComplete.Success = true;
-                    }
-                    else
-                    {
-                        ProcessComplete.Finished = true;
-                        ProcessComplete.Success = true;
-                        return EventResult.Error("Could not log in!");
-
-                    }
-                    break;
-                case State.Play:
-                    //Click play button, but first wait for page
-                    InvokeScript("setTimeout(function(){$('a.play:first').click()}, 2000);");
+                case State.LoginAndPlay:
+                    //Pause 4 sec. before trying
+                    var js = "setTimeout(\"myPlay()\",4000);function myLogin(){if ($('section.login-required').length > 0) {$('section.login-required').find('input[type=email].username').filter(':visible:first').val(\"" + _username + "\");$('section.login-required').find('input[type=password].password').filter(':visible:first').val(\"" + _password + "\");$('section.login-required').find('input[type=submit]').filter(':visible:first').click();} else {setTimeout(\"myLogin()\",250);}};function myPlay() {if ($('figure.mediaplayer>a.play:first').length > 0) {$('figure.mediaplayer>a.play:first').click();setTimeout(\"myLogin()\",250);} else {setTimeout(\"myPlay()\",250);}};";
+                    InvokeScript(js);
                     _currentState = State.Playing;
-                    ProcessComplete.Finished = true;
-                    ProcessComplete.Success = true;
                     break;
                 case State.Playing:
                     // Remove banner
-                    InvokeScript("setTimeout(function(){if ($('#hellobar-close').length != 0) { $('#hellobar-close').click(); }}, 5000);");
+                    InvokeScript("setTimeout(function(){if ($('#hellobar-close').length != 0) { $('#hellobar-close').click(); }}, 10000);");
                     _currentState = State.Playing;
-                    ProcessComplete.Finished = true;
-                    ProcessComplete.Success = true;
                     break;
+                default:
+                    break;
+
             }
+            ProcessComplete.Finished = true;
+            ProcessComplete.Success = true;
             return EventResult.Complete();
         }
     }
