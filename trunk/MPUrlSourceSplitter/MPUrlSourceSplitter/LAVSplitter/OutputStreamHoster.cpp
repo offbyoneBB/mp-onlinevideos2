@@ -25,7 +25,7 @@
 COutputStreamHoster::COutputStreamHoster(CLogger *logger, CParameterCollection *configuration, const wchar_t *moduleName, const wchar_t *moduleSearchPattern, IOutputStream *outputStream)
   : CHoster(logger, configuration, moduleName, moduleSearchPattern)
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_OUTPUT_STREAM_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_OUTPUT_STREAM_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   this->outputStream = outputStream;
 

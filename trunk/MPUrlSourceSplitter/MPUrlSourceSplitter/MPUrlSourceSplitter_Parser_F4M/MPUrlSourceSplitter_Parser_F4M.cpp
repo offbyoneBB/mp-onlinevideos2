@@ -61,7 +61,7 @@ CMPUrlSourceSplitter_Parser_F4M::CMPUrlSourceSplitter_Parser_F4M(CParameterColle
   }
 
   this->logger = new CLogger(this->connectionParameters);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   wchar_t *version = GetVersionInfo(VERSION_INFO_MPURLSOURCESPLITTER_PARSER_F4M, COMPILE_INFO_MPURLSOURCESPLITTER_PARSER_F4M);
   if (version != NULL)

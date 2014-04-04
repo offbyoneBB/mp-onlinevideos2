@@ -61,7 +61,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbasd.lib;dsutillite.lib;demuxers.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbasd.lib;dsutillite.lib;demuxers.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;DbgHelp.lib</AdditionalDependencies>
       <ModuleDefinitionFile>MPUrlSourceSplitter.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(DSHOW_BASE)Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>
@@ -95,7 +95,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbase.lib;dsutillite.lib;demuxers.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib</AdditionalDependencies>
+      <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbase.lib;dsutillite.lib;demuxers.lib;avformat-mpurlsourcesplitter.lib;avutil-mpurlsourcesplitter.lib;avcodec-mpurlsourcesplitter.lib;libcurl.lib;MPUrlSourceSplitter_libmemory.lib;MPUrlSourceSplitter_libstrings.lib;MPUrlSourceSplitter_libcollections.lib;MPUrlSourceSplitter_liblogger.lib;MPUrlSourceSplitter_libshared.lib;DbgHelp.lib</AdditionalDependencies>
       <ModuleDefinitionFile>MPUrlSourceSplitter.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(DSHOW_BASE)Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ForceFileOutput>
@@ -115,7 +115,8 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>copy /Y "$(TargetDir)$(TargetName).lib" "$(SolutionDir)bin_$(PlatformName)\lib\$(TargetName).lib"
-copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(TargetFileName)"</Command>
+copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(TargetFileName)"
+copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)\$(TargetName).pdb"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>subwcrev "$(ProjectDir)." "$(ProjectDir)VersionInfo.h.template" "$(ProjectDir)VersionInfo.h"</Command>

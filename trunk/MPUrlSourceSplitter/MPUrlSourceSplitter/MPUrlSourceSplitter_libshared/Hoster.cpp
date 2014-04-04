@@ -29,7 +29,7 @@ CHoster::CHoster(CLogger *logger, CParameterCollection *configuration, const wch
 {
   this->moduleName = Duplicate(moduleName);
   this->logger = logger;
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   this->moduleSearchPattern = Duplicate(moduleSearchPattern);
   this->pluginImplementationsCount = 0;

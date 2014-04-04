@@ -76,7 +76,7 @@ CMPUrlSourceSplitter_Protocol_Rtmp::CMPUrlSourceSplitter_Protocol_Rtmp(CParamete
   }
 
   this->logger = new CLogger(this->configurationParameters);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   wchar_t *version = GetVersionInfo(VERSION_INFO_MPURLSOURCESPLITTER_PROTOCOL_RTMP, COMPILE_INFO_MPURLSOURCESPLITTER_PROTOCOL_RTMP);
   if (version != NULL)

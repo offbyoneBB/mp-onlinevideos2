@@ -59,7 +59,7 @@ CMPUrlSourceSplitter_Protocol_Http::CMPUrlSourceSplitter_Protocol_Http(CParamete
   }
 
   this->logger = new CLogger(this->configurationParameters);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   wchar_t *version = GetVersionInfo(VERSION_INFO_MPURLSOURCESPLITTER_PROTOCOL_HTTP, COMPILE_INFO_MPURLSOURCESPLITTER_PROTOCOL_HTTP);
   if (version != NULL)
@@ -477,7 +477,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(const CParameterC
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
 
   CHECK_POINTER_DEFAULT_HRESULT(result, this->configurationParameters);
-
+  
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
 

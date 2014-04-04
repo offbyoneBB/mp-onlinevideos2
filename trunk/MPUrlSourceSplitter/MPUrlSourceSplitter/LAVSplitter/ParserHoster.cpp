@@ -30,7 +30,7 @@
 CParserHoster::CParserHoster(CLogger *logger, CParameterCollection *configuration, IParserOutputStream *parserOutputStream)
   : COutputStreamHoster(logger, configuration, L"ParserHoster", L"mpurlsourcesplitter_parser_*.dll", parserOutputStream)
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_PARSER_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_PARSER_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   this->parserOutputStream = parserOutputStream;
 

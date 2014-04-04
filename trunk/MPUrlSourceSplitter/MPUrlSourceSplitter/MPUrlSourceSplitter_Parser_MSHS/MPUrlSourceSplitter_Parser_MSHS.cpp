@@ -62,7 +62,7 @@ CMPUrlSourceSplitter_Parser_MSHS::CMPUrlSourceSplitter_Parser_MSHS(CParameterCol
   }
 
   this->logger = new CLogger(this->connectionParameters);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   wchar_t *version = GetVersionInfo(VERSION_INFO_MPURLSOURCESPLITTER_PARSER_MSHS, COMPILE_INFO_MPURLSOURCESPLITTER_PARSER_MSHS);
   if (version != NULL)

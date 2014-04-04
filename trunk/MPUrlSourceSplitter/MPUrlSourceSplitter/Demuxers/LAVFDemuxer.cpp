@@ -166,6 +166,7 @@ CLAVFDemuxer::CLAVFDemuxer(CCritSec *pLock, ILAVFSettingsInternal *settings, IFi
   }
 
   m_pFilter = filter;
+  filter->GetLogger()->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, this);
   this->flvTimestamps = ALLOC_MEM_SET(this->flvTimestamps, FlvTimestamp, FLV_TIMESTAMP_MAX, 0);
   this->dontChangeTimestamps = false;
 
