@@ -26,7 +26,7 @@
 CProtocolHoster::CProtocolHoster(CLogger *logger, CParameterCollection *configuration)
   : CHoster(logger, configuration, L"ProtocolHoster", L"mpurlsourcesplitter_protocol_*.dll")
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_PROTOCOL_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_PROTOCOL_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   this->activeProtocol = NULL;
 

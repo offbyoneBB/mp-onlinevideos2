@@ -95,7 +95,7 @@ CLAVInputPin::CLAVInputPin(CLogger *logger, TCHAR *pName, CLAVSplitter *pFilter,
   this->configuration = new CParameterCollection();
 
   this->logger = logger;
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, this);
   
   this->createdDemuxer = false;
   this->m_pAVIOContext = NULL;

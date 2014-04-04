@@ -57,7 +57,7 @@ CMPUrlSourceSplitter_Afhs_Decryption_Akamai::CMPUrlSourceSplitter_Afhs_Decryptio
   }
 
   this->logger = new CLogger(this->configurationParameters);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PLUGIN_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_CONSTRUCTOR_START_FORMAT, PLUGIN_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME, this);
 
   wchar_t *version = GetVersionInfo(VERSION_INFO_MPURLSOURCESPLITTER_AFHS_DECRYPTION_AKAMAI, COMPILE_INFO_MPURLSOURCESPLITTER_AFHS_DECRYPTION_AKAMAI);
   if (version != NULL)

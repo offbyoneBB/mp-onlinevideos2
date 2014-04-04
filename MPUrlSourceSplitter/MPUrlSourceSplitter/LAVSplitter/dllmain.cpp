@@ -33,6 +33,8 @@
 #include "registry.h"
 #include "IGraphRebuildDelegate.h"
 
+#include <dbghelp.h>
+#include <Shlwapi.h>
 
 #define g_wszPullSource                                           L"MediaPortal Url Source Splitter"
 
@@ -42,6 +44,10 @@
 #define METHOD_DLL_UNREGISTER_SERVER_NAME                         L"DllUnregisterServer()"
 #define METHOD_DLL_MAIN_NAME                                      L"DllMain()"
 
+// holds reference to exception handler returned in registration
+PVOID exceptionHandler = NULL;
+// exception handler for any unhandled exception in process
+static LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo);
 
 // Filter setup data
 const AMOVIESETUP_MEDIATYPE sudMediaTypes[] =
@@ -121,7 +127,15 @@ BOOL APIENTRY DllMain(HMODULE hModule,
   switch (ul_reason_for_call)
   {
   case DLL_PROCESS_ATTACH:
-    logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DLL_MAIN_NAME, L"DLL_PROCESS_ATTACH");
+    {
+      logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DLL_MAIN_NAME, L"DLL_PROCESS_ATTACH");
+
+      if (exceptionHandler == NULL)
+      {
+        // register exception handler
+        exceptionHandler = AddVectoredExceptionHandler(1, ExceptionHandler);
+      }
+    }
     break;
   case DLL_THREAD_ATTACH:
     logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DLL_MAIN_NAME, L"DLL_THREAD_ATTACH");
@@ -130,7 +144,15 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DLL_MAIN_NAME, L"DLL_THREAD_DETACH");
     break;
   case DLL_PROCESS_DETACH:
-    logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DLL_MAIN_NAME, L"DLL_PROCESS_DETACH");
+    {
+      if (exceptionHandler != NULL)
+      {
+        RemoveVectoredExceptionHandler(exceptionHandler);
+        exceptionHandler = NULL;
+      }
+
+      logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DLL_MAIN_NAME, L"DLL_PROCESS_DETACH");
+    }
     break;
   }
 
@@ -140,4 +162,85 @@ BOOL APIENTRY DllMain(HMODULE hModule,
   logger.Log(LOGGER_INFO, (result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_DLL_MAIN_NAME);
 
   return result;
+}
+
+LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
+{
+  // we received some unhandled exception
+  // flush logs and continue with processing exception
+
+  // by ntstatus.h:
+
+  //
+  //  Values are 32 bit values laid out as follows:
+  //
+  //   3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
+  //   1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+  //  +---+-+-+-----------------------+-------------------------------+
+  //  |Sev|C|R|     Facility          |               Code            |
+  //  +---+-+-+-----------------------+-------------------------------+
+  //
+  //  where
+  //
+  //      Sev - is the severity code
+  //
+  //          00 - Success
+  //          01 - Informational
+  //          10 - Warning
+  //          11 - Error
+  //
+  //      C - is the Customer code flag (0 for Microsoft errors, 1 for custom errors)
+  //
+  //      R - is a reserved bit
+  //
+  //      Facility - is the facility code
+  //
+  //      Code - is the facility's status code
+  //
+  // we care only about errors
+  if (((exceptionInfo->ExceptionRecord->ExceptionCode & 0xF0000000) == 0xC0000000) &&
+       (exceptionHandler != NULL))
+  {
+    // remove exception handler
+    RemoveVectoredExceptionHandler(exceptionHandler);
+    exceptionHandler = NULL;
+
+    SYSTEMTIME currentLocalTime;
+    MINIDUMP_EXCEPTION_INFORMATION minidumpException;
+    GetLocalTime(&currentLocalTime);
+
+    wchar_t *logFile = GetMediaPortalFilePath(MPURLSOURCESPLITTER_LOG_FILE);
+    PathRemoveFileSpec(logFile);
+
+    // files with 'dmp' extension are known for Visual Studio
+
+    wchar_t *dumpFileName = FormatString(L"%s\\MPUrlSourceSplitter-%04.4d-%02.2d-%02.2d-%02.2d-%02.2d-%02.2d-%03.3d.dmp", logFile,
+      currentLocalTime.wYear, currentLocalTime.wMonth, currentLocalTime.wDay,
+      currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond, currentLocalTime.wMilliseconds);
+
+    HANDLE dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+
+    if (dumpFile != INVALID_HANDLE_VALUE)
+    {
+      minidumpException.ThreadId = GetCurrentThreadId();
+      minidumpException.ExceptionPointers = exceptionInfo;
+      minidumpException.ClientPointers = TRUE;
+
+      MINIDUMP_TYPE miniDumpType = (MINIDUMP_TYPE)
+        (MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpIgnoreInaccessibleMemory); 
+
+      if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, miniDumpType, &minidumpException, NULL, NULL) == TRUE)
+      {
+        CLogger logger(NULL);
+        logger.Log(LOGGER_ERROR, dumpFileName);
+      }
+
+      CloseHandle(dumpFile);
+    }
+
+    FREE_MEM(dumpFileName);
+    FREE_MEM(logFile);
+  }
+
+  return EXCEPTION_CONTINUE_SEARCH;
 }
