@@ -100,7 +100,7 @@ namespace OnlineVideos.Sites.DavidCalder
                 
                 data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
                 System.Threading.Thread.Sleep(Convert.ToInt32(5) * 1001);
-                //data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+                data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
 
                 Match n = Regex.Match(data, @"file""\s\:\s""(?<url>[^""]*)"",\s*""default""\s:\s[^.]*,\s*""label""\s:\s""720");
                 Match n1 = Regex.Match(data, @"file""\s\:\s""(?<url>[^""]*)"",\s*""default""\s:\s[^.]*,\s*""label""\s:\s""480");
