@@ -42,7 +42,9 @@ namespace OnlineVideos.Sites
             {
                 video.PlaybackOptions = new System.Collections.Generic.Dictionary<string, string>();
                 video.PlaybackOptions.Add("low", vids.Value<string>("low_quality"));
-                video.PlaybackOptions.Add("high", vids.Value<string>("high_quality"));
+                string h = vids.Value<string>("high_quality");
+                if (!String.IsNullOrEmpty(h))
+                    video.PlaybackOptions.Add("high", h);
                 return video.PlaybackOptions.Last().Value;
             }
             //probably youtube
