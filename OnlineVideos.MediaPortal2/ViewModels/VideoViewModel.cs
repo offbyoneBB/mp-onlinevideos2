@@ -10,6 +10,7 @@ using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
 using MediaPortal.UiComponents.Media.General;
+using MediaPortal.UI.Presentation.Players;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -192,7 +193,11 @@ namespace OnlineVideos.MediaPortal2
 			Utils.RemoveInvalidUrls(urls);
 			if (urls != null && urls.Count > 0)
 			{
-				// todo : if player is already playing a OV video -> stop that one first or don't play concurrent, otherwise play concurrent
+				// if there is already an OnlineVideo playing stop it first
+                var videoContexts = ServiceRegistration.Get<IPlayerContextManager>().GetPlayerContextsByAVType(AVType.Video);
+                var ovPlayerCtx = videoContexts.FirstOrDefault(vc => vc.CurrentPlayer is OnlineVideosPlayer);
+                if (ovPlayerCtx != null)
+                    ovPlayerCtx.Stop();
 
 				if (urls.Count == 1)
 					MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayOrEnqueueItem(new PlaylistItem(this, urls[0]), true, MediaPortal.UI.Presentation.Players.PlayerContextConcurrencyMode.ConcurrentVideo);
