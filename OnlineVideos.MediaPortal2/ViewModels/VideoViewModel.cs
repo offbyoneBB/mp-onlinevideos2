@@ -193,21 +193,21 @@ namespace OnlineVideos.MediaPortal2
 			Utils.RemoveInvalidUrls(urls);
 			if (urls != null && urls.Count > 0)
 			{
-				// if there is already an OnlineVideo playing stop it first
+				// if there is already an OnlineVideo playing stop it first, 2 streams at the same time might saturate the connection or not be allowed by the server
                 var videoContexts = ServiceRegistration.Get<IPlayerContextManager>().GetPlayerContextsByAVType(AVType.Video);
                 var ovPlayerCtx = videoContexts.FirstOrDefault(vc => vc.CurrentPlayer is OnlineVideosPlayer);
                 if (ovPlayerCtx != null)
                     ovPlayerCtx.Stop();
 
-				if (urls.Count == 1)
-					MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayOrEnqueueItem(new PlaylistItem(this, urls[0]), true, MediaPortal.UI.Presentation.Players.PlayerContextConcurrencyMode.ConcurrentVideo);
-				else
-					MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayItems(
-						new MediaPortal.UiComponents.Media.Models.GetMediaItemsDlgt(() =>
-						{
-							return new List<MediaItem>(urls.ConvertAll<MediaItem>(u => new PlaylistItem(this, u)));
-						}),
-						MediaPortal.UI.Presentation.Players.AVType.Video);
+                if (urls.Count == 1)
+                    MediaPortal.UiComponents.Media.Models.PlayItemsModel.CheckQueryPlayAction(new PlaylistItem(this, urls[0]));
+                else
+                    MediaPortal.UiComponents.Media.Models.PlayItemsModel.PlayItems(
+                        new MediaPortal.UiComponents.Media.Models.GetMediaItemsDlgt(() =>
+                        {
+                            return new List<MediaItem>(urls.ConvertAll<MediaItem>(u => new PlaylistItem(this, u)));
+                        }),
+                        MediaPortal.UI.Presentation.Players.AVType.Video);
 			}
 			else
 			{
