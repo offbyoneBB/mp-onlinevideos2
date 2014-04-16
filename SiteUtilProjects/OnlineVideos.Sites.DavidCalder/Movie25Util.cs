@@ -9,7 +9,6 @@ namespace OnlineVideos.Sites.DavidCalder
 {
   public class Movie25Util : DeferredResolveUtil
   {
-
     public override ITrackingInfo GetTrackingInfo(VideoInfo video)
     {
       try
@@ -49,6 +48,7 @@ namespace OnlineVideos.Sites.DavidCalder
         return true;
       }
     }
+
     public override List<ISearchResultItem> DoSearch(string query)
     {
       List<ISearchResultItem> cats = new List<ISearchResultItem>();
@@ -76,6 +76,22 @@ namespace OnlineVideos.Sites.DavidCalder
       return cats;
     }
 
+    public override int DiscoverDynamicCategories()
+    {
+      base.DiscoverDynamicCategories();
+      int i = 0;
+      do
+      {
+        RssLink cat = (RssLink)Settings.Categories[i];
+        if (cat.Name == "Submit Links" || cat.Name == "TV Shows")
+          Settings.Categories.Remove(cat);
+        else
+        {
+          i++;
+        }
+      }   
+      while (i < Settings.Categories.Count);
+      return Settings.Categories.Count;
+    }
   }
-
 }
