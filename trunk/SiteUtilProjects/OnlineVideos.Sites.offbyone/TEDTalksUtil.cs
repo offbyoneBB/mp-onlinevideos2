@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Collections.Specialized;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -15,20 +11,18 @@ namespace OnlineVideos.Sites
 {
     public class TEDTalksUtil : SiteUtilBase
     {
-        string tagsUrl = "http://www.ted.com/talks/tags";
-        string themesUrl = "http://www.ted.com/themes";
-        string newestReleasesUrl = "http://www.ted.com/talks?lang=en&event=&duration=&sort=newest&tag=&page=1";
-        string mostViewedUrl = "http://www.ted.com/talks?lang=en&event=&duration=&sort=mostviewed&tag=&page=1";
-        string mostPopularUrl = "http://www.ted.com/talks?lang=en&event=&duration=&sort=mostpopular&tag=&page=1";
-        string tagsRegex = @"<li><a\s+href=""(?<url>/talks[^""]+)"">(?<title>[^\(\n]+)\((?<amount>\d+)\)</a></li>";
-        string themesRegex = @"<li\s+class=""clearfix"">\s*<div\s+class=""col"">\s*<a\s+title=""[^""]*""\s+href=""(?<url>[^""]+)"">\s*
-<img\s+alt=""[^""]*""\s+src=""(?<thumb>[^""]+)""\s*/>\s*</a>\s*</div>\s*
-<h4>\s*<a[^>]*>(?<title>[^<]+)</a>\s*</h4>\s*<p[^>]*>\s*<span[^>]*>(?<amount>[^<]+)</span>[^<]*</p>\s*
-<p>(?<desc>[^<]*)</p>\s*</li>";
-        string lastPageIndexRegex = @"Showing page \d+ of (?<lastpageindex>\d+)";
-        string nextPageUrlRegex = @"<li><a class=""next"" href=""(?<url>[^""]+)"">Next <span class=""bull"">&raquo;</span></a></li>";
-        string videosRegex = @"<img alt=""[^""]*"" src=""(?<thumb>[^""]+)"".*?<h\d[^>]*>\s*<a.*?href=""(?<url>[^""]+)"">(?<title>[^<]*)</a>\s*</h\d>.*?<em[^>]*>\s*(<span[^>]*>)?(?<length>\d+\:\d+)(</span>)?\s+Posted\:\s*(?<aired>.*?)</em>";
-        string talkDetailsRegex = @"<script\s+type\s*=\s*""text/javascript"">var\s+talkDetails\s*=\s*(?<json>{.*?})\s*</script>";
+		string baseUrl = "http://www.ted.com/talks/browse";
+		string topicsUrl = "http://www.ted.com/watch/topics";
+		
+		string queryOption_Sort_Newest = "sort=newest";
+		string queryOption_Sort_Popular = "sort=popular";
+		string queryOption_Filter_Topic = "topics%5B%5D={0}";
+		string queryOption_Page = "page={0}";
+
+		string topicsRegex = @"<div\s+class='topics__list__topic'>\s*<div\s+class='h9'>\s*<a\s+href='/topics/(?<query>[^']+)'>(?<name>[^<]+)</a>\s*</div>\s*(?<amount>\d+)\s+talks\s*</div>";
+		string nextPageUrlRegex = @"<a\s+class=""pagination__next pagination__flipper pagination__link""\s+rel=""next""\s+href=""(?<url>[^""]+)"">Next</a>";
+		string videosRegex = @"<img.*?src=""(?<thumb>[^""]+)"".*?<span\s+class=""thumb__duration"">(?<length>[^<]*)<.*?<h4[^>]*>(?<speaker>[^<]*)</h4>.*?<a\s+href='(?<url>[^']+)'>\s*(?<title>[^<]*)<(.*?<span\s+class='meta__val'>\s*(?<aired>[^>]*)</span>){2}";
+        string talkDetailsRegex = @"<script>q\(""talkPage.init"",(?<json>.*?)\)</script>";
 
         string nextPageUrl;
 
@@ -36,11 +30,9 @@ namespace OnlineVideos.Sites
         {
             if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
             Settings.Categories.Clear();
-            Settings.Categories.Add(new RssLink() { Name = "Newest Releases", Url = newestReleasesUrl, Other = "X-Requested-With:XMLHttpRequest" });
-            Settings.Categories.Add(new RssLink() { Name = "Most Viewed", Url = mostViewedUrl, Other = "X-Requested-With:XMLHttpRequest" });
-            Settings.Categories.Add(new RssLink() { Name = "Most Popular", Url = mostPopularUrl, Other = "X-Requested-With:XMLHttpRequest" });
-            Settings.Categories.Add(new RssLink() { Name = "Tags", Url = tagsUrl, Other = tagsRegex, HasSubCategories = true });
-            Settings.Categories.Add(new RssLink() { Name = "Themes", Url = themesUrl, Other = themesRegex, HasSubCategories = true });
+			Settings.Categories.Add(new RssLink() { Name = "Newest Releases", Url = string.Format("{0}?{1}&{2}", baseUrl, queryOption_Sort_Newest, string.Format(queryOption_Page, 1)) });
+			Settings.Categories.Add(new RssLink() { Name = "Most Viewed", Url = string.Format("{0}?{1}&{2}", baseUrl, queryOption_Sort_Popular, string.Format(queryOption_Page, 1)) });
+			Settings.Categories.Add(new RssLink() { Name = "Topics", Url = topicsUrl, Other = topicsRegex, HasSubCategories = true });
             Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
             return Settings.Categories.Count;
         }
@@ -55,13 +47,10 @@ namespace OnlineVideos.Sites
             {
                 parentCategory.SubCategories.Add(new RssLink()
                 {
-                    Name = HttpUtility.HtmlDecode(match.Groups["title"].Value).Trim(),
-					Url = new Uri(new Uri((parentCategory as RssLink).Url), (parentCategory.Name == "Themes" ? match.Groups["url"].Value + "?page=1" : match.Groups["url"].Value.Replace("/tags", "/tags/name") + "/page/1")).AbsoluteUri,
+                    Name = HttpUtility.HtmlDecode(match.Groups["name"].Value).Trim(),
+					Url = string.Format("{0}?{1}&{2}&{3}", baseUrl, queryOption_Sort_Newest, string.Format(queryOption_Filter_Topic, match.Groups["query"].Value), string.Format(queryOption_Page, 1)),
                     EstimatedVideoCount = uint.Parse(match.Groups["amount"].Value),
-                    Description = HttpUtility.HtmlDecode(match.Groups["desc"].Value).Trim(),
-                    Thumb = match.Groups["thumb"].Value,
-                    ParentCategory = parentCategory,
-					Other = parentCategory.Name == "Themes" ? "X-Requested-With:XMLHttpRequest" : "sort=date"
+                    ParentCategory = parentCategory
                 });                
                 match = match.NextMatch();
             }
@@ -71,82 +60,43 @@ namespace OnlineVideos.Sites
 
 		public override List<VideoInfo> getVideoList(Category category)
 		{
-			HasNextPage = false;
-			nextPageUrl = null;
-
-			string firstPageData = "";
-
-			if (((string)category.Other).Contains('='))
-			{
-				firstPageData = GetWebDataFromPost((category as RssLink).Url, (string)category.Other);
-
-				HasNextPage = true;
-				nextPageUrl = (category as RssLink).Url.Substring(0, (category as RssLink).Url.LastIndexOf('/') + 1) + "2";
-			}
-			else if (((string)category.Other).Contains(':'))
-			{
-				string[] headerArray = ((string)category.Other).Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-				var headers = new NameValueCollection();
-				headers.Add(headerArray[0], headerArray[1]);
-				headers.Add("Accept", "*/*");
-				headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent);
-				firstPageData = GetWebData((category as RssLink).Url, null, headers, null, null, false, false, null, true);
-
-				HasNextPage = true;
-				nextPageUrl = (category as RssLink).Url.Substring(0, (category as RssLink).Url.LastIndexOf('=') + 1) + "2";
-			}
-
-			return ParseVideos(firstPageData, false);
+			return getVideoList((category as RssLink).Url);
 		}
 
         public override List<VideoInfo> getNextPageVideos()
         {
-            if (nextPageUrl.Contains("page="))
-            {
-				var headers = new NameValueCollection();
-				headers.Add("X-Requested-With", "XMLHttpRequest");
-				headers.Add("Accept", "*/*");
-				headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent);
-
-                var videos = ParseVideos(GetWebData(nextPageUrl, null, headers, null, null, false, false, null, true));
-                uint pageIndex = uint.Parse(nextPageUrl.Substring(nextPageUrl.LastIndexOf('=') + 1)) + 1;
-                nextPageUrl = nextPageUrl.Substring(0, nextPageUrl.LastIndexOf('=') + 1) + pageIndex;
-                return videos;
-            }
-            else
-            {
-                var videos = ParseVideos(GetWebDataFromPost(nextPageUrl, "sort=date"));
-                uint pageIndex = uint.Parse(nextPageUrl.Substring(nextPageUrl.LastIndexOf('/') + 1));
-                if (pageIndex <= 1)
-                {
-                    HasNextPage = false;
-                    nextPageUrl = null;
-                }
-                else
-                {
-                    nextPageUrl = nextPageUrl.Substring(0, nextPageUrl.LastIndexOf('/') + 1) + (pageIndex + 1).ToString();
-                }
-                return videos;
-            }
+            return getVideoList(nextPageUrl);
         }
 
-        List<VideoInfo> ParseVideos(string data, bool reverse = true)
-        {
+		List<VideoInfo> getVideoList(string url)
+		{
+			HasNextPage = false;
+			nextPageUrl = null;
+
+			string data = GetWebData(url);
+
             List<VideoInfo> result = new List<VideoInfo>();
             var match = Regex.Match(data, videosRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Multiline | RegexOptions.Singleline);
             while (match.Success)
             {
                 result.Add(new VideoInfo()
                 {
-                    Title = HttpUtility.HtmlDecode(match.Groups["title"].Value).Trim(),
-                    VideoUrl = new Uri(new Uri(tagsUrl), match.Groups["url"].Value).AbsoluteUri,
+					Title = string.Format("{0} ({1})", HttpUtility.HtmlDecode(match.Groups["title"].Value).Trim(), HttpUtility.HtmlDecode(match.Groups["speaker"].Value).Trim()),
+					VideoUrl = new Uri(new Uri(topicsUrl), match.Groups["url"].Value).AbsoluteUri,
                     ImageUrl = match.Groups["thumb"].Value,
                     Length = match.Groups["length"].Value.Trim(),
                     Airdate = Utils.PlainTextFromHtml(match.Groups["aired"].Value).Trim()
                 });
                 match = match.NextMatch();
             }
-            if (reverse) result.Reverse();
+
+			match = Regex.Match(data, nextPageUrlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Multiline | RegexOptions.Singleline);
+			if (match.Success)
+			{
+				HasNextPage = true;
+				nextPageUrl = new Uri(new Uri(url), HttpUtility.HtmlDecode(match.Groups["url"].Value)).AbsoluteUri;
+			}
+
             return result;
         }
 
@@ -158,9 +108,9 @@ namespace OnlineVideos.Sites
             if (talkDetailsMatch.Success)
             {
                 JObject talkDetails = JsonConvert.DeserializeObject(talkDetailsMatch.Groups["json"].Value) as JObject;
-                foreach (var htmlStream in talkDetails["htmlStreams"])
+				foreach (JProperty htmlStream in talkDetails["talks"][0]["nativeDownloads"])
                 {
-                    video.PlaybackOptions.Add(htmlStream.Value<string>("id"), htmlStream.Value<string>("file"));
+                    video.PlaybackOptions.Add(htmlStream.Name, htmlStream.Value.ToString());
                 }
             }
             return video.PlaybackOptions.Count > 0 ? video.PlaybackOptions.Last().Value : "";
