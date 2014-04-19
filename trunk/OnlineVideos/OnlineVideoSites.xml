@@ -80,11 +80,9 @@
     <Site name="WDR" util="WDR" agecheck="false" enabled="true" lang="de">
       <Description>Podcasts des Westdeutschen Rundfunks (WDR).</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<h2>(?<title>[^<]+?)\s-\szum\sMitnehmen</h2>.*?
-<img\s+src="(?<thumb>[^"]+)".*?/>.*?
-<img\s+src="/tv/home/codebase/img/icons/icon_(?<description>(audio|video)).gif".*?
-<input\svalue="(?<url>[^"]+)"]]></item>
-        <item key="baseUrl"><![CDATA[http://www.wdr.de/tv/home/videopodcast/vodcast.jsp]]></item>
+        <item key="sendungenUrl"><![CDATA[http://www1.wdr.de/mediathek/video/sendungen/index.html]]></item>
+        <item key="searchUrl"><![CDATA[http://www1.wdr.de/mediathek/video/suche/videosuche106.jsp]]></item>
+        <item key="livestreamUrl"><![CDATA[http://www1.wdr.de/mediathek/video/livestream/videostreamstundenwdrfernsehen104-videoplayer_size-L.html]]></item>
       </Configuration>
     </Site>
     <Site name="ZDF Mediathek" util="ZDFMediathek" agecheck="false" enabled="true" lang="de">
