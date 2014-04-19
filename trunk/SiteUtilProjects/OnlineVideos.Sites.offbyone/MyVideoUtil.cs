@@ -361,11 +361,10 @@ namespace OnlineVideos.Sites
                 string rtmpUrl = HttpUtility.UrlDecode(videoElement.GetAttribute("connectionurl"));
                 if (rtmpUrl.StartsWith("rtmp"))
                 {
-                    if (rtmpUrl.Contains("myvideo2flash")) rtmpUrl = rtmpUrl.Replace("rtmpe://", "rtmpt://");
+                    rtmpUrl = rtmpUrl.Replace("rtmpe://", "rtmp://");
                     string playPath = HttpUtility.UrlDecode(videoElement.GetAttribute("source"));
-                    playPath = string.Format("{0}:{1}", playPath.Substring(playPath.LastIndexOf('.') + 1), playPath.Substring(0, playPath.LastIndexOf('.')));
-                    string pageUrl = string.Format("http://www.myvideo.de/watch/{0}/", videoId);
-                    string swfUrl = HttpUtility.UrlDecode(Regex.Match(data, @"new SWFObject\(\'(.+?)\'").Groups[1].Value);
+					string pageUrl = HttpUtility.UrlDecode((xDoc.SelectSingleNode("//destserver") as XmlElement).InnerText) + HttpUtility.UrlDecode(videoElement.GetAttribute("video_link"));
+					string swfUrl = HttpUtility.UrlDecode(Regex.Match(data, @"swfobject\.embedSWF\(\'(.+?)\'").Groups[1].Value);
                     return new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = rtmpUrl, SwfUrl = swfUrl, SwfVerify = true, PlayPath = playPath, PageUrl = pageUrl }.ToString();
                 }
                 else
