@@ -37,7 +37,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Extensi
                 var item = new VideoInfo();
                 item.Title = node.SelectSingleNodeText("title1") + (string.IsNullOrEmpty(node.SelectSingleNodeText("title2")) ? string.Empty : " - ") + node.SelectSingleNodeText("title2"); 
                 item.Description = node.SelectSingleNodeText("synopsis");
-                item.ImageUrl = Properties.Resources._4OD_RootUrl + node.SelectSingleNodeText("pictureUrl");
+                //item.ImageUrl = Properties.Resources._4OD_RootUrl + node.SelectSingleNodeText("pictureUrl");
+                item.ImageUrl = node.SelectSingleNodeText("pictureUrl");
 
                 DateTime airDate;
 
@@ -69,7 +70,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Extensi
                 var item = new VideoInfo();
                 item.Title = node.SelectSingleNodeText("title1") + (string.IsNullOrEmpty(node.SelectSingleNodeText("title2")) ? string.Empty : " - ") + node.SelectSingleNodeText("title2");
                 item.Description = node.SelectSingleNodeText("synopsis");
-                item.ImageUrl = Properties.Resources._4OD_RootUrl + node.SelectSingleNodeText("imagePath");
+                //item.ImageUrl = Properties.Resources._4OD_RootUrl + node.SelectSingleNodeText("imagePath");
+                item.ImageUrl = node.SelectSingleNodeText("imagePath");
 
                 item.Other = MakeWebSafe(node.SelectSingleNodeText("brandTitle")) + "~" + node.SelectSingleNodeText("assetId");
                 result.Add(item);
@@ -105,7 +107,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Extensi
                     item.Title = listItem.GetNodeByClass("title").InnerText + (listItem.GetNodeByClass("series-info") == null ? string.Empty : " - " + listItem.GetNodeByClass("series-info").InnerText);
                     item.Description = listItem.GetNodeByClass("synopsis").InnerText;
                     item.Airdate = listItem.GetNodeByClass("txtime").InnerText;
-                    item.ImageUrl = Properties.Resources._4OD_RootUrl + listItem.SelectSingleNode("a/img").GetAttribute("src");
+                    //item.ImageUrl = Properties.Resources._4OD_RootUrl + listItem.SelectSingleNode("a/img").GetAttribute("src");
+                    item.ImageUrl = listItem.SelectSingleNode("a/img").GetAttribute("src");
                     item.Other = MakeWebSafe(listItem.GetNodeByClass("title").InnerText) + "~" + listItem.SelectSingleNode("a").GetAttribute("href").Split('#')[1];
                     results.Add(item);
                 }

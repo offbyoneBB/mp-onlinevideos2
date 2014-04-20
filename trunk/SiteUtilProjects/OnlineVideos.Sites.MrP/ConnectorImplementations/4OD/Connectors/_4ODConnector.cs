@@ -201,7 +201,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
             // The js code to wait for the resize to become enabled 
             var jsCode = "setTimeout('doResize()', 1000);";
             jsCode += "function doResize() {";
-            jsCode += "if(document.getElementById('resizeLarge').getAttribute('src') == '/static/programmes/css/img/pop_large.gif') {";
+            jsCode += "if(document.getElementById('resizeLarge').getAttribute('src').indexOf('pop_large.gif') > -1) {";
             jsCode += jsCodeToRun;
             jsCode += "}";
             jsCode += "else setTimeout('doResize()', 1000);";
