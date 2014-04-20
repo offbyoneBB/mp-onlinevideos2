@@ -1255,18 +1255,17 @@
       <Configuration>
         <item key="videoListRegExLive"><![CDATA[<tr\sclass="[^"]*">\s*<td\sclass="status"><span[^>]*>@Cat@</span></td>\s*<td\sclass="date"><span\sclass="localtime-date-only-med">(?<Airdate1>[^<]*)</span></td>\s*<td\sclass="time"><span\sclass="localtime-time-only">(?<Airdate>[^<]*)</span>\s-\s<span\sclass="localtime-time-only\stz-abbr">(?<AirdateEnd>[^<]*)</span></td>\s*<td\sclass="program">\s*<h3><a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)<span>(?<Title2>[^<]*)</span></a></h3>\s*</td>\s*<td\sclass="description">(?<Description>[^<]*)<]]></item>
         <item key="nextPageRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"\sclass="next">Next</a></li>]]></item>
-        <item key="fileUrlRegExLive"><![CDATA[<span\sdata-player-key="(?<playerKey>[^"]*)"\sdata-player-id="(?<contentId>[^"]*)"></span>]]></item>
+        <item key="fileUrlRegExLive"><![CDATA[data-player-key="(?<playerKey>[^"]*)"\sdata-player-id="(?<contentId>[^"]*)">]]></item>
         <item key="hashValueLive"><![CDATA[da46116ed5e11a378272c1baab78c5d3d57eb895]]></item>
         <item key="requestUrlLive"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAApYJ7UqE~,xqr_zXk0I-zzNndy8NlHogrCb5QdyZRf]]></item>
         <item key="baseUrl"><![CDATA[http://www.redbull.tv/]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="no-border">\s*<span\sclass="featured-image">\s*<img\ssrc="(?<thumb>[^"]*)"\s/>\s*<span\sclass="show-information">\s*Watch\snow\s*</span>\s*</span>\s*<span\sclass="title">(?<title>[^<]*)</span>\s*<span>(?<description>[^&<]*)(?:&nbsp;)*</span>\s*<span\sclass="episode-count">[^<]*</span>\s*<span\sclass="latest-addition"><span>Updated:\s*[^<]*</span></span>\s*<span\sclass="clear"></span>]]></item>
         <item key="videoListRegEx"><![CDATA[<tr(?:\sclass="active")?>\s*<td><a\shref="(?<VideoUrl>[^"]*)">[^<]*</a></td>\s*<td><a\shref="[^"]*">(?<Title>[^<]*)</a></td>\s*<td><a\shref="[^"]*">(?<Duration>[^<]*)</a></td>\s*<td><a\shref="[^"]*">\s*(?<Airdate>[^<]*)</a></td>\s*</tr>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[var\sepisode_video_id\s=\s'(?<mediaId>[^']*)';]]></item>
-        <item key="hashValue"><![CDATA[cf760beae3fbdde270b76f2109537e13144e6fbd]]></item>
-        <item key="playerId"><![CDATA[761157706001]]></item>
-        <item key="array4"><![CDATA[710858724001]]></item>
-        <item key="requestType"><![CDATA[FindMediaById]]></item>
-        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerId=761157706001]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<param\sname="playerID"\svalue="(?<experienceId>[^"]*)"\s/>\s*<param\sname="isSlim"\svalue="[^"]*"\s/>\s*<param\sname="dynamicStreaming"\svalue="[^"]*"\s/>\s*<param\sname="@videoPlayer"\svalue="(?<contentId>[^"]*)"\s/>]]></item>
+        <item key="hashValue"><![CDATA[98778a410805682c693e3b02004f01d338e8a7ec]]></item>
+        <item key="playerId"><![CDATA[1398061561001]]></item>
+        <item key="requestType"><![CDATA[ViewerExperienceRequest]]></item>
+        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerId=1398061561001]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Shows">
