@@ -60,11 +60,13 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BrowserUtilConnectors\HboNordicConnector.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorNo.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorFi.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorDa.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorBase.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorSv.cs" />
+    <Compile Include="HboNordicWebUtil.cs" />
     <Compile Include="ViaplayWebUtil.cs" />
     <Compile Include="DreamfilmUtil.cs" />
     <Compile Include="Kanal59PlayUtil.cs" />

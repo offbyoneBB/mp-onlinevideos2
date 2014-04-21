@@ -14,5 +14,19 @@ namespace OnlineVideos.Sites.Utils
             for (int i = 0; i < amount; i++) sb.Append(System.Text.Encoding.ASCII.GetString(new byte[] { (byte)random.Next(65, 90) }));
             return sb.ToString();
         }
+
+        public static bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }
