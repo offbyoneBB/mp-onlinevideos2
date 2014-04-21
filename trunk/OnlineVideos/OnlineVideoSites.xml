@@ -130,15 +130,6 @@
 |(<a\s+href="(?<VideoUrl>[^"]+)"\s*>\s*<figure[^>]*>\s*<img\s+src="(?<ImageUrl>[^"]+)".*?title="(?<Title>[^"]*)"[^>]*>.*?</figure>\s*</a>)]]></item>
       </Configuration>
     </Site>
-    <Site name="Pro7" util="Pro7" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des Senders Pro7.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.prosieben.de/tv/]]></item>
-        <item key="rtmpBase"><![CDATA[rtmp://pssimp7lsfs.fplive.net:1935/pssimp7ls/]]></item>
-        <item key="atomFeedUrlRegex"><![CDATA[<link\s+rel="alternate"\s+type="application/atom\+xml"\s+title="Video[^"]*"\s+href="(?<url>[^"]+)"\s+/>]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<a\s+class=("|')semibold[^"']*("|').+?title="(?<title>[^"]+)"[^>]*>\s*<img.+?src='(?<thumb>[^']+)'.*?/>\s*</a>\s*<h3>\s*<a\s+href=("|')(?<url>[^"']+)("|')[^>]*>]]></item>
-      </Configuration>
-    </Site>
     <Site name="Kabel1" util="Sat1" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Senders Kabel1.</Description>
       <Configuration>
@@ -252,7 +243,26 @@
       <Configuration>
         <item key="serienSenderRegEx"><![CDATA[<a\shref='(?<url>[^']+)'[^>]*?title='(?<title>[^']+)'[^>]*>\s*<img\s+src='(?<thumb>[^']+)]]></item>
         <item key="serienRegEx"><![CDATA[longdesc='(?<thumb>[^']+)'\s*alt=''\sclass='vThumb'/></a></div></div><div\sclass='pChContent'>\s*<div\sclass='pChHead'><a\shref='(?<url>[^']+)'\sclass[^>]+>(?<title>[^<]+)</a></div><div\s*class='pChText'>(?<description>[^<]+)</div>]]></item>
-        <item key="episodenRegEx"><![CDATA[(?<!id_series_newest_movies_init.*)<a\s+href='(?<VideoUrl>[^']+)'\s+title='(?<Title>[^']+)'><img(?:(?!longdesc).)+longdesc='(?<ImageUrl>[^']+)'[^>]*><span[^>]*>(?<Duration>[^<]+)</span></a>]]></item>
+        <item key="episodenRegEx">
+          <![CDATA[(<div\s+class="videolist--item">\s*<a.*?href="(?<VideoUrl>[^"]+)".*?>\s*
+<div\s+class="thumbnail--container">\s*<img.*?src="(?<ImageUrl>[^"]+)".*?>\s*
+<div\s+class="thumbnail--title">\s*
+<div\s+class="thumbnail--maintitle">(?<Title>[^<]+)</div>\s*
+<div\s+class="thumbnail--subtitle">(?<Title>[^<]+)</div>)|
+(<div\s+class='[^']*\s+full_episodes[^']*'>.*?
+<div\s+class='slThumb\s+vViews'>\s*
+<a\s+href='(?<VideoUrl>[^']+)'[^>]*>\s*
+<img.*?longdesc='(?<ImageUrl>[^']+)'[^>]*>\s*
+<span[^>]*>(?<Duration>[^<]*)</span>\s*</a>\s*</div>\s*</div>\s*
+<div\s+class='pChContent'>\s*
+<div\s+class='pChHead'>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
+<div\s+class='pChText'>(?<Description>[^<]+)</div>)|
+(<div\s+class='[^']*\s+highlight_clips[^']*'>\s*
+<div\s+class='pChHead'>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>.*?
+<div\s+class='slThumb\s+vViews'>\s*
+<a\s+href='(?<VideoUrl>[^']+)'[^>]*>\s*
+<img.*?longdesc='(?<ImageUrl>[^']+)'[^>]*>\s*
+<span[^>]*>(?<Duration>[^<]*)</span>\s*</a>\s*</div>\s*</div>\s*)]]></item>
       </Configuration>
     </Site>
     <Site name="mySpass" util="GenericSite" agecheck="false" enabled="true" lang="de">
