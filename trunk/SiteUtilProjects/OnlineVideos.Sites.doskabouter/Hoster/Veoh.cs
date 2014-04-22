@@ -20,7 +20,7 @@ namespace OnlineVideos.Hoster
         {
             string videoId = Regex.Match(url, @"permalinkId=(?<value>[^&]+)&").Groups["value"].Value;
             if (String.IsNullOrEmpty(videoId))
-                videoId = Regex.Match(url, @"http://www.veoh.com/tv/watch/(?<value>[^$]*)$").Groups["value"].Value;
+                videoId = Regex.Match(url, @"http://www.veoh.com/(tv/)?watch/(?<value>[^$]*)$").Groups["value"].Value;
             CookieContainer cc = new CookieContainer();
             string page = SiteUtilBase.GetWebData("http://www.veoh.com/rest/v2/execute.xml?apiKey=5697781E-1C60-663B-FFD8-9B49D2B56D36&method=veoh.video.findByPermalink&permalink=" + videoId + "&", cc);
 
