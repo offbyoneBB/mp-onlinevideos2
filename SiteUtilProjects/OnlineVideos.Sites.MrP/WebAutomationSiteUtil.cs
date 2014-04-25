@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using OnlineVideos.Sites.WebAutomation.Interfaces;
+using OnlineVideos.Sites.WebAutomation.Entities;
 
 namespace OnlineVideos.Sites.WebAutomation
 {
@@ -106,9 +107,21 @@ namespace OnlineVideos.Sites.WebAutomation
             BuildCategories(parentCategory, null);
            
             parentCategory.SubCategoriesDiscovered = true;
-            parentCategory.SubCategories = parentCategory.SubCategories.OrderBy(x => x.Name).ToList();
+            parentCategory.SubCategories = parentCategory.SubCategories.OrderBy(x => GetCategorySortField(x)).ToList();
             
             return parentCategory.SubCategories.Count;
+        }
+
+        /// <summary>
+        /// Get the sort field for the category 
+        /// </summary>
+        /// <param name="categ"></param>
+        /// <returns></returns>
+        private string GetCategorySortField(Category categ)
+        {
+            var categTyped = categ as ExtendedCategory;
+            if (categTyped == null) return categ.Name;
+            return categTyped.SortValue;
         }
 
         /// <summary>

@@ -61,19 +61,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
                 subCategs.Add(new Category { Name = "Society and Culture", HasSubCategories = true, Other = "G~society-and-culture" });
                 subCategs.Add(new Category { Name = "Sports and Games", HasSubCategories = true, Other = "G~sports-and-games" });
                 subCategs.Add(new Category { Name = "US Shows", HasSubCategories = true, Other = "G~us-shows" });
-                
-                var allChannels = new Category { Name = "All Channels", HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = subCategs };
+
+                var allChannels = new Category { Name = "All Channels", HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = subCategs, Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-c4.png" };
                 allChannels.SubCategories.ForEach(x => x.ParentCategory = allChannels);
                 categories.Add(allChannels);
 
-                categories.Add(new Category { Name = "4Music", HasSubCategories = true, Other = "G~music", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-4music.png" });
-                categories.Add(new Category { Name = "4Seven", HasSubCategories = true, Other = "G~seven", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-47.png" });
-                categories.Add(new Category { Name = "Channel 4", HasSubCategories = true, Other = "G~c4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-c4.png" });
-                categories.Add(new Category { Name = "E4", HasSubCategories = true, Other = "G~e4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-e4.png" });
-                categories.Add(new Category { Name = "More4", HasSubCategories = true, Other = "G~more4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-more4.png" });
-                
-              
-                categories.Add(new Category { Name = "Collections", HasSubCategories = true, Other="C~"});
+                categories.Add(new Category { Name = "Box Sets", HasSubCategories = true, Other = "C~", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-c4.png" });
 
                 // Add the catch up section - it'll be "Catch Up"->{Channel}->Day->Programmes
                 subCategs = new List<Category>();
@@ -82,11 +75,19 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
                 subCategs.Add(new Category { Name = "Channel 4", HasSubCategories = true, Other = "U~C4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-c4.png" });
                 subCategs.Add(new Category { Name = "E4", HasSubCategories = true, Other = "U~E4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-e4.png" });
                 subCategs.Add(new Category { Name = "More4", HasSubCategories = true, Other = "U~M4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-more4.png" });
-                var catchUp = new Category { Name = "Catch Up", HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = subCategs };
+
+                var catchUp = new Category { Name = "Catch Up", HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = subCategs, Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-c4.png" };
 
                 categories.Add(catchUp);
                 catchUp.SubCategories.ForEach(x => x.ParentCategory = catchUp);
 
+                categories.Add(new Category { Name = "4Music", HasSubCategories = true, Other = "G~music", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-4music.png" });
+                //categories.Add(new Category { Name = "4Seven", HasSubCategories = true, Other = "G~seven", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-47.png" });
+                categories.Add(new Category { Name = "Channel 4", HasSubCategories = true, Other = "G~c4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-c4.png" });
+                categories.Add(new Category { Name = "E4", HasSubCategories = true, Other = "G~e4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-e4.png" });
+                //categories.Add(new Category { Name = "Film4", HasSubCategories = true, Other = "G~film4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-film4.png" });
+                categories.Add(new Category { Name = "More4", HasSubCategories = true, Other = "G~more4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-more4.png" });
+            
                 return categories;
             }
             else

@@ -6,6 +6,7 @@ using System.Text;
 using OnlineVideos.Sites.WebAutomation.Extensions;
 using System.Xml;
 using System.Net;
+using OnlineVideos.Sites.WebAutomation.Entities;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Extensions
 {
@@ -37,8 +38,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Extensi
             if (image == null)
                 image = node.DescendantNodes().Where(x => !string.IsNullOrEmpty(x.GetAttribute("src"))).FirstOrDefault();
             if (image != null)
-                result.Thumb = Properties.Resources._4OD_RootUrl + image.GetAttribute("src");
-
+                result.Thumb = image.GetAttribute("src"); //Properties.Resources._4OD_RootUrl + 
+            
             // Collections don't have sub categories
             if (parentCategory.Type() == _4ODCategoryData.CategoryType.GeneralCategory)
             {
@@ -91,7 +92,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Extensi
                     var categ = new Category();
                     categ.Name = parentCategory.Name + " Series " + series.InnerText;
                     categ.Description = doc.SelectSingleNodeText("/brandLongFormInfo/synopsis", parentCategory.Description);
-                    categ.Thumb = Properties.Resources._4OD_RootUrl + doc.SelectSingleNodeText("/brandLongFormInfo/imagePath", parentCategory.Thumb);
+                    categ.Thumb = doc.SelectSingleNodeText("/brandLongFormInfo/imagePath", parentCategory.Thumb);//Properties.Resources._4OD_RootUrl + 
                     categ.HasSubCategories = false;
                     categ.Other = parentCategory.Other + "~" + series.InnerText;
                     categ.ParentCategory = parentCategory;
@@ -122,15 +123,18 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Extensi
 
             foreach(HtmlNode node in doc.GetElementsByTagName("a").Where(x=>x.GetAttribute("href").StartsWith("/programmes/4od/catchup/date/")))
             {
-                var result = new Category();
+                var result = new ExtendedCategory();
                 var dateParts = node.GetAttribute("href").Replace("/programmes/4od/catchup/date/", "").Split('/');
-                result.Name = new DateTime(Convert.ToInt32(dateParts[0]), Convert.ToInt32(dateParts[1]), Convert.ToInt32(dateParts[2])).ToString("dd MMM yyyy");
+                var videoDate = new DateTime(Convert.ToInt32(dateParts[0]), Convert.ToInt32(dateParts[1]), Convert.ToInt32(dateParts[2]));
+                result.Name = parentCategory.Name + " - " + videoDate.ToString("dd MMMM yyyy");
+                result.SortValue = videoDate.ToString("yyyyMMdd");
                 result.Other = "U~" + parentCategory.CategoryId() + "~" + Properties.Resources._4OD_RootUrl + node.GetAttribute("href");
+                result.Thumb = parentCategory.Thumb;
                 result.HasSubCategories = false;
                 result.ParentCategory = parentCategory;
                 results.Add(result);
             }
-                        
+  
             return results;
         }
 
