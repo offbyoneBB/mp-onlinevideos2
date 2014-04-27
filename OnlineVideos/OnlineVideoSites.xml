@@ -380,35 +380,6 @@
     <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true" lang="en">
       <Description>Dailymotion is a video sharing service website, based in Paris (France).</Description>
     </Site>
-    <Site name="Live Video" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <Description>Broadcast yourself live, watch, connect and share videos with people all over the world.</Description>
-      <Configuration>
-        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Featured Videos">http://rss.livevideo.com/rss/rss.ashx?v=Featured</Category>
-        <Category xsi:type="RssLink" name="New Videos">http://rss.livevideo.com/rss/rss.ashx?v=Newest</Category>
-        <Category xsi:type="RssLink" name="Most Viewed Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostViewed</Category>
-        <Category xsi:type="RssLink" name="Most Discussed Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostDiscussed</Category>
-        <Category xsi:type="RssLink" name="Most Hit Votes Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostHit</Category>
-        <Category xsi:type="RssLink" name="Arts &amp; Animation">http://rss.livevideo.com/rss/rss.ashx?catid=1</Category>
-        <Category xsi:type="RssLink" name="Auto &amp; Vehicles">http://rss.livevideo.com/rss/rss.ashx?catid=6</Category>
-        <Category xsi:type="RssLink" name="Business &amp; Commercial">http://rss.livevideo.com/rss/rss.ashx?catid=19 </Category>
-        <Category xsi:type="RssLink" name="Comedy">http://rss.livevideo.com/rss/rss.ashx?catid=7</Category>
-        <Category xsi:type="RssLink" name="Entertainment">http://rss.livevideo.com/rss/rss.ashx?catid=8</Category>
-        <Category xsi:type="RssLink" name="Extreme">http://rss.livevideo.com/rss/rss.ashx?catid=3</Category>
-        <Category xsi:type="RssLink" name="Music">http://rss.livevideo.com/rss/rss.ashx?catid=9</Category>
-        <Category xsi:type="RssLink" name="News">http://rss.livevideo.com/rss/rss.ashx?catid=10</Category>
-        <Category xsi:type="RssLink" name="People">http://rss.livevideo.com/rss/rss.ashx?catid=11</Category>
-        <Category xsi:type="RssLink" name="Pets &amp; Animals">http://rss.livevideo.com/rss/rss.ashx?catid=12</Category>
-        <Category xsi:type="RssLink" name="Science &amp; Technology">http://rss.livevideo.com/rss/rss.ashx?catid=13</Category>
-        <Category xsi:type="RssLink" name="Sports">http://rss.livevideo.com/rss/rss.ashx?catid=5</Category>
-        <Category xsi:type="RssLink" name="Travel &amp; Places">http://rss.livevideo.com/rss/rss.ashx?catid=14</Category>
-        <Category xsi:type="RssLink" name="Video Blogs">http://rss.livevideo.com/rss/rss.ashx?catid=17</Category>
-        <Category xsi:type="RssLink" name="Video Comments">http://rss.livevideo.com/rss/rss.ashx?catid=18</Category>
-        <Category xsi:type="RssLink" name="Video Games">http://rss.livevideo.com/rss/rss.ashx?catid=15</Category>
-      </Categories>
-    </Site>
     <Site name="GameTrailers" util="GameTrailers" agecheck="false" enabled="true" lang="en">
       <Description>Watch trailers, reviews, interviews and ingame footage for games from all the major platforms.</Description>
       <Configuration>
