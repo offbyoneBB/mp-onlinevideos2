@@ -1863,81 +1863,17 @@
     <Site name="Empflix" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>Full Free Porn movies.</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[<div\sid="remove(?:(?!href).)*href="(?<VideoUrl>[^"]*)"\s*title="(?<Title>[^"]*)">(?:(?!data).)*data-src="(?<ImageUrl>[^"]*)"\s(?:(?!/>).)*/>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<a\s+href="(?<url>[^"]*)"[^>]*>\s*<img\s+src="(?<thumb>[^"]*)"\s+alt="(?<title>[^"]*)">\s*</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\s+href="(?<VideoUrl>[^"]*)"[^>]*>\s*<span[^>]*>\s*<h2>(?<Title>[^<]*)</h2>\s*<span\s+class="duringTime">(?<Duration>[^<]*).*?<img\s+src="(?<ImageUrl>[^"]*)"]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\sclass="navLink"\sonclick="killVideoThumbs\(\);"\shref="(?<url>[^"]*)">next\s&gt;&gt;</a>]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\sonclick="killVideoThumbs\(\)\;"\shref="(?<url>.*)">&lt;&lt;\sprev</a>]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[flashvars\.config\s=\sescape\("(?<url>[^&]*)&]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[name="config"\s+value="(?<url>[^&]+)&]]></item>
         <item key="fileUrlRegEx"><![CDATA[<videoLink>(?<m0>[^<]*)</videoLink>]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}&filetype=.flv]]></item>
+        <item key="fileUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="searchUrl"><![CDATA[http://www.empflix.com/search.php?what={0}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.empflix.com]]></item>
+        <item key="baseUrl"><![CDATA[http://www.empflix.com/categories.php]]></item>
       </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Top Rated">http://www.empflix.com/browse.php?category=tr</Category>
-        <Category xsi:type="RssLink" name="Most Recent">http://www.empflix.com/browse.php?category=mr</Category>
-        <Category xsi:type="RssLink" name="Most Viewed">http://www.empflix.com/browse.php?category=mv</Category>
-        <Category xsi:type="RssLink" name="Amateur">http://www.empflix.com/browsecat.php?chid=6</Category>
-        <Category xsi:type="RssLink" name="Anal">http://www.empflix.com/browsecat.php?chid=4</Category>
-        <Category xsi:type="RssLink" name="Asian">http://www.empflix.com/browsecat.php?chid=17</Category>
-        <Category xsi:type="RssLink" name="Ass">http://www.empflix.com/browsecat.php?chid=37</Category>
-        <Category xsi:type="RssLink" name="BBW">http://www.empflix.com/browsecat.php?chid=32</Category>
-        <Category xsi:type="RssLink" name="BJ/HJ">http://www.empflix.com/browsecat.php?chid=7</Category>
-        <Category xsi:type="RssLink" name="Babes">http://www.empflix.com/browsecat.php?chid=26</Category>
-        <Category xsi:type="RssLink" name="Big Boobs">http://www.empflix.com/browsecat.php?chid=13</Category>
-        <Category xsi:type="RssLink" name="Big Cock">http://www.empflix.com/browsecat.php?chid=27</Category>
-        <Category xsi:type="RssLink" name="Bizarre">http://www.empflix.com/browsecat.php?chid=62</Category>
-        <Category xsi:type="RssLink" name="Blonde">http://www.empflix.com/browsecat.php?chid=63</Category>
-        <Category xsi:type="RssLink" name="Brunette">http://www.empflix.com/browsecat.php?chid=64</Category>
-        <Category xsi:type="RssLink" name="Celebrity">http://www.empflix.com/browsecat.php?chid=41</Category>
-        <Category xsi:type="RssLink" name="Classic">http://www.empflix.com/browsecat.php?chid=31</Category>
-        <Category xsi:type="RssLink" name="Club Chix">http://www.empflix.com/browsecat.php?chid=36</Category>
-        <Category xsi:type="RssLink" name="Creampie">http://www.empflix.com/browsecat.php?chid=15</Category>
-        <Category xsi:type="RssLink" name="Cum">http://www.empflix.com/browsecat.php?chid=3</Category>
-        <Category xsi:type="RssLink" name="DP">http://www.empflix.com/browsecat.php?chid=21</Category>
-        <Category xsi:type="RssLink" name="Ebony">http://www.empflix.com/browsecat.php?chid=16</Category>
-        <Category xsi:type="RssLink" name="Extreme">http://www.empflix.com/browsecat.php?chid=49</Category>
-        <Category xsi:type="RssLink" name="Facial">http://www.empflix.com/browsecat.php?chid=65</Category>
-        <Category xsi:type="RssLink" name="Fat">http://www.empflix.com/browsecat.php?chid=61</Category>
-        <Category xsi:type="RssLink" name="Feet">http://www.empflix.com/browsecat.php?chid=46</Category>
-        <Category xsi:type="RssLink" name="Fisting">http://www.empflix.com/browsecat.php?chid=14</Category>
-        <Category xsi:type="RssLink" name="Flashing">http://www.empflix.com/browsecat.php?chid=50</Category>
-        <Category xsi:type="RssLink" name="Funny">http://www.empflix.com/browsecat.php?chid=51</Category>
-        <Category xsi:type="RssLink" name="Gang Bang">http://www.empflix.com/browsecat.php?chid=20</Category>
-        <Category xsi:type="RssLink" name="Gay/Bi-Male">http://www.empflix.com/browsecat.php?chid=30</Category>
-        <Category xsi:type="RssLink" name="Gothic">http://www.empflix.com/browsecat.php?chid=45</Category>
-        <Category xsi:type="RssLink" name="Granny">http://www.empflix.com/browsecat.php?chid=57</Category>
-        <Category xsi:type="RssLink" name="Group Sex">http://www.empflix.com/browsecat.php?chid=10</Category>
-        <Category xsi:type="RssLink" name="Hairy">http://www.empflix.com/browsecat.php?chid=47</Category>
-        <Category xsi:type="RssLink" name="Hardcore">http://www.empflix.com/browsecat.php?chid=1</Category>
-        <Category xsi:type="RssLink" name="Home made">http://www.empflix.com/browsecat.php?chid=35</Category>
-        <Category xsi:type="RssLink" name="Indian">http://www.empflix.com/browsecat.php?chid=54</Category>
-        <Category xsi:type="RssLink" name="Insertions">http://www.empflix.com/browsecat.php?chid=53</Category>
-        <Category xsi:type="RssLink" name="Interracial">http://www.empflix.com/browsecat.php?chid=12</Category>
-        <Category xsi:type="RssLink" name="Latinas">http://www.empflix.com/browsecat.php?chid=18</Category>
-        <Category xsi:type="RssLink" name="Lesbian">http://www.empflix.com/browsecat.php?chid=11</Category>
-        <Category xsi:type="RssLink" name="MILF">http://www.empflix.com/browsecat.php?chid=59</Category>
-        <Category xsi:type="RssLink" name="Mature">http://www.empflix.com/browsecat.php?chid=9</Category>
-        <Category xsi:type="RssLink" name="Other Fetish">http://www.empflix.com/browsecat.php?chid=25</Category>
-        <Category xsi:type="RssLink" name="POV">http://www.empflix.com/browsecat.php?chid=29</Category>
-        <Category xsi:type="RssLink" name="Petite">http://www.empflix.com/browsecat.php?chid=24</Category>
-        <Category xsi:type="RssLink" name="Piss">http://www.empflix.com/browsecat.php?chid=34</Category>
-        <Category xsi:type="RssLink" name="Porn Stars">http://www.empflix.com/browsecat.php?chid=19</Category>
-        <Category xsi:type="RssLink" name="Pregnant">http://www.empflix.com/browsecat.php?chid=56</Category>
-        <Category xsi:type="RssLink" name="Public / Out Door">http://www.empflix.com/browsecat.php?chid=52</Category>
-        <Category xsi:type="RssLink" name="Redhead">http://www.empflix.com/browsecat.php?chid=44</Category>
-        <Category xsi:type="RssLink" name="Shemale/Trans">http://www.empflix.com/browsecat.php?chid=23</Category>
-        <Category xsi:type="RssLink" name="Softcore">http://www.empflix.com/browsecat.php?chid=22</Category>
-        <Category xsi:type="RssLink" name="Solo">http://www.empflix.com/browsecat.php?chid=8</Category>
-        <Category xsi:type="RssLink" name="Spanking">http://www.empflix.com/browsecat.php?chid=58</Category>
-        <Category xsi:type="RssLink" name="Squirting">http://www.empflix.com/browsecat.php?chid=5</Category>
-        <Category xsi:type="RssLink" name="Storyline">http://www.empflix.com/browsecat.php?chid=33</Category>
-        <Category xsi:type="RssLink" name="Swingers">http://www.empflix.com/browsecat.php?chid=48</Category>
-        <Category xsi:type="RssLink" name="Teens">http://www.empflix.com/browsecat.php?chid=2</Category>
-        <Category xsi:type="RssLink" name="Toys">http://www.empflix.com/browsecat.php?chid=60</Category>
-        <Category xsi:type="RssLink" name="UK Dogging">http://www.empflix.com/browsecat.php?chid=55</Category>
-        <Category xsi:type="RssLink" name="Upskirt Down Blouse">http://www.empflix.com/browsecat.php?chid=43</Category>
-        <Category xsi:type="RssLink" name="Voyeurism">http://www.empflix.com/browsecat.php?chid=42</Category>
-      </Categories>
     </Site>
 	  <Site name="Sky Go Uk" util="WebAutomationSite" agecheck="false" enabled="true" player="Browser" lang="en">
 		  <Description>Sky Go lets you watch TV channels live on your PC. Watch catch-up TV from all channels - up to 500 great movies and the best sports &amp; entertainment around!  Requires a user name/password.</Description>
