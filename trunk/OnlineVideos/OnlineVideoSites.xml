@@ -1803,15 +1803,17 @@
       <Description>xHamster - just porn, no bullshit.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<a\s+href='(?<url>/channels/[^']+)'>(?<title>[^<]+)</a>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\s+class='video'>\s*
+        <item key="videoListRegEx">
+          <![CDATA[<div\s+class='video'>\s*
 <a\s+href='(?<VideoUrl>[^']+)'[^>]*>\s*
 <img.*?src='(?<ImageUrl>[^']+)'[^>]*>\s*
 (<img[^>]*>\s*)?
 <b>(?<Duration>[^<]*)</b>\s*
-<u[^>]*>(?<Title>.*?)</u>]]></item>
+<u[^>]*>(?<Title>.*?)</u>]]>
+        </item>
         <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'[^>]*>\s*<div[^>]*>[^<]*</div>Next</a>]]></item>
         <item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
-        <item key="fileUrlRegEx"><![CDATA['srv':\s'(?<m0>[^']*)',\s*'file':\s'(?<m1>[^']*)',\s*'image']]></item>
+        <item key="fileUrlRegEx"><![CDATA[&srv=(?<m0>[^&]*)&file=(?<m1>[^&]*)]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}/key={1}]]></item>
         <item key="searchUrl"><![CDATA[http://www.xhamster.com/search.php?q={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
