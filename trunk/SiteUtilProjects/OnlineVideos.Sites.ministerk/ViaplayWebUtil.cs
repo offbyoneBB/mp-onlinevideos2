@@ -821,7 +821,7 @@ namespace OnlineVideos.Sites
                     results.Add(new RssLink()
                     {
                         Name = actor,
-                        Url = ApiUrl + "/search?query=" + HttpUtility.UrlEncode(actor),
+                        Url = ApiUrl + "/search?query=" + HttpUtility.UrlEncode("\"" + actor + "\""),
                         Other = _search,
                         ParentCategory = selectedCategory,
                         HasSubCategories = true,
@@ -839,7 +839,7 @@ namespace OnlineVideos.Sites
                     results.Add(new RssLink()
                     {
                         Name = director,
-                        Url = ApiUrl + "/search?query=" + HttpUtility.UrlEncode(director),
+                        Url = ApiUrl + "/search?query=" + HttpUtility.UrlEncode("\"" + director + "\""),
                         Other = _search,
                         ParentCategory = selectedCategory,
                         HasSubCategories = true,
