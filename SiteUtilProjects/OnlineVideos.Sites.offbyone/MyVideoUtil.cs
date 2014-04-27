@@ -7,13 +7,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
     public class MyVideoUtil : SiteUtilBase
     {
         [Category("OnlineVideosConfiguration")]
-        string serienSenderRegEx;
+		string serienSenderUrl;
         [Category("OnlineVideosConfiguration")]
         string serienRegEx;
         [Category("OnlineVideosConfiguration")]
@@ -54,7 +56,7 @@ namespace OnlineVideos.Sites
                 new RssLink() { Name = "WM Hits", ParentCategory = music, Url = GetApiUrl("myvideo.videos.list_by_chart_id", new NameValueCollection() { { "chart_id", "607" } }) }
             };
             Settings.Categories.Add(music);
-            Settings.Categories.Add(new RssLink() { Name = "Serien", HasSubCategories = true, Url = "http://www.myvideo.de/Serien", Other = serienSenderRegEx });
+			Settings.Categories.Add(new RssLink() { Name = "Serien", HasSubCategories = true, Url = serienSenderUrl });
             Category filme = new Category() { Name = "Filme", HasSubCategories = true, SubCategoriesDiscovered = true };
             filme.SubCategories = new List<Category>() 
             {
@@ -127,30 +129,60 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                string data = GetWebData((parentCategory as RssLink).Url, forceUTF8: true);
-                parentCategory.SubCategories = new List<Category>();
-                Match m = Regex.Match(data, parentCategory.Other as string, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
-                while (m.Success)
-                {
-                    RssLink cat = new RssLink();
-                    cat.Url = m.Groups["url"].Value;
-                    if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri((parentCategory as RssLink).Url), cat.Url).AbsoluteUri;
-                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim().Replace('\n', ' '));
-                    cat.Thumb = m.Groups["thumb"].Value;
-                    if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri((parentCategory as RssLink).Url), cat.Thumb).AbsoluteUri;
-                    cat.Description = m.Groups["description"].Value;
-                    if (parentCategory.ParentCategory == null)
-                    {
-                        cat.Other = serienRegEx;
-                        cat.HasSubCategories = true;
-                    }
-					if (!parentCategory.SubCategories.Any(c => (c as RssLink).Url == cat.Url))
+				if (parentCategory.Other == null) // "Serien" main Category
+				{
+					var data = GetWebData<JObject>((parentCategory as RssLink).Url, forceUTF8: true);
+					parentCategory.SubCategories = new List<Category>();
+					foreach (var item in data["items"])
 					{
-						cat.ParentCategory = parentCategory;
-						parentCategory.SubCategories.Add(cat);
+						if (!item.Value<string>("title").StartsWith("Alle Serien"))
+						{
+							RssLink cat = new RssLink();
+							cat.Name = item.Value<string>("title");
+							cat.Url = "http://www.myvideo.de" + item.Value<string>("href");
+							cat.Thumb = item.Value<string>("src");
+							cat.Description = item.Value<string>("description");
+							cat.Other = serienRegEx;
+							cat.HasSubCategories = true;
+							cat.ParentCategory = parentCategory;
+							parentCategory.SubCategories.Add(cat);
+						}
 					}
-                    m = m.NextMatch();
-                }
+				}
+				else // "Serien" -> "Pro 7" ... Subcategories
+				{
+					var data = GetWebData((parentCategory as RssLink).Url, forceUTF8: true);
+					Match m = Regex.Match(data, parentCategory.Other as string, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+					List<string> jsonUrls = new List<string>();
+					while (m.Success)
+					{
+						jsonUrls.Add(new Uri(new Uri((parentCategory as RssLink).Url), m.Groups["jsonUrl"].Value).AbsoluteUri + "?_format=json");
+						m = m.NextMatch();
+					}
+					parentCategory.SubCategories = new List<Category>();
+					foreach (string url in jsonUrls)
+					{
+						if (url != serienSenderUrl)
+						{
+							var json = GetWebData<JObject>(url, forceUTF8: true);
+							foreach (var item in json["items"])
+							{
+								if (!string.IsNullOrEmpty(item.Value<string>("href")))
+								{
+									RssLink cat = new RssLink();
+									cat.Name = item.Value<string>("title");
+									cat.Url = "http://www.myvideo.de" + item.Value<string>("href");
+									cat.Thumb = item.Value<string>("src");
+									cat.Description = item.Value<string>("description");
+									cat.Other = episodenRegEx;
+									cat.ParentCategory = parentCategory;
+									parentCategory.SubCategories.Add(cat);
+								}
+							}
+						}
+					}
+				}
+				
                 parentCategory.SubCategoriesDiscovered = true;
             }
             return parentCategory.SubCategories.Count;
