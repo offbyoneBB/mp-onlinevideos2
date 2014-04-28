@@ -97,7 +97,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     break;
                 case State.Playing:
                     // Remove banner
-                    InvokeScript("setTimeout(function(){if ($('#hellobar-close').length != 0) { $('#hellobar-close').click(); }}, 10000);");
+                    //Wait some time.. sometimes slow ajax/javascriptloading.
+                    InvokeScript("setTimeout(function(){if ($('#hellobar-close').length != 0) { $('#hellobar-close').click(); }}, 8000);");
+                    //Remove cookie banner
+                    InvokeScript("setTimeout(function(){if ($('.button.agree-button').length != 0) { $('.button.agree-button:first').click(); }}, 9000);");
+                    //button agree-button
                     _currentState = State.Playing;
                     break;
                 default:
