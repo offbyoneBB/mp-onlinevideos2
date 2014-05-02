@@ -37,7 +37,7 @@ namespace OnlineVideos.Hoster
                         if (m.Success)
                         {
                             res = int.Parse(m.Groups[1].Value);
-                            url = (string)json[string.Format("url{0}", res)];
+                            url = ((string)json[string.Format("url{0}", res)]).Replace("https://","http://");
                             pairs.Add(new KeyValuePair<string, string>(string.Format("{0}p", res), url));
                         }
                     }
