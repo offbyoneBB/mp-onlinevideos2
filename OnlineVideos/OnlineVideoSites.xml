@@ -900,6 +900,9 @@
         </Category>
       </Categories>
     </Site>
+    <Site name="Swefilmer" util="SwefilmerSite" agecheck="false" enabled="true" lang="sv">
+      <Description>Titta på filmer på nätet med svenska undertexter.</Description>
+    </Site>
     <Site name="Viaplay.se" util="ViaplayWeb" agecheck="false" enabled="true" lang="sv" player="Browser">
       <Description>TV, Film online och Sport på nätet - Viaplay.se</Description>
     </Site>
