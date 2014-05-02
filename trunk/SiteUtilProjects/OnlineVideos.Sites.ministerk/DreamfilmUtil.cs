@@ -452,37 +452,11 @@ namespace OnlineVideos.Sites
             }
             if (!string.IsNullOrEmpty(iframeUrl))
             {
-                string frameData = GetWebData(iframeUrl) ?? "";
-                Regex rgx = new Regex(@"var vars = (.*)");
-                Match m = rgx.Match(frameData);
-                if (m.Success)
-                {
-                    var json = JObject.Parse(m.Groups[1].Value);
-                    rgx = new Regex(@"url([0-9]+)");
-                    int res;
-                    int max = 0;
-                    string url;
-                    foreach (JToken token in json.Descendants())
-                    {
-                        JProperty property = token as JProperty;
-                        if (property != null)
-                        {
-                            m = rgx.Match(property.Name);
-                            if (m.Success)
-                            {
-                                res = int.Parse(m.Groups[1].Value);
-                                url = (string)json[string.Format("url{0}", res)];
-                                video.PlaybackOptions.Add(string.Format("{0}p", res), url);
-                                if (max < res)
-                                {
-                                    max = res;
-                                    bestUrl = url;
-                                }
-                            }
-                        }
-                    }
-                }
+                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("vk").getPlaybackOptions(iframeUrl);
+                if (video.PlaybackOptions.Count > 0)
+                    bestUrl = video.PlaybackOptions.First().Value;
             }
+
             if (inPlaylist) video.PlaybackOptions.Clear();
             return new List<string>() { bestUrl };
         }
