@@ -859,7 +859,7 @@
       </Categories>
     </Site>
     <Site name="TV4Play" util="TV4Play" agecheck="false" enabled="true" lang="sv">
-      <Description>Videos from Swedish TV4 Play online offer. Log in for premium content.</Description>
+      <Description>Videos from Swedish TV4 Play online offer.</Description>
     </Site>
     <Site name="Kanal5Play" util="Kanal59Play" agecheck="false" enabled="true" lang="sv">
       <Description>The free online play content from Swedish Kanal 5.</Description>

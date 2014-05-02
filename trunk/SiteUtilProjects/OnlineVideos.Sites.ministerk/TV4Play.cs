@@ -14,16 +14,18 @@ namespace OnlineVideos.Sites
     {
         // API: http://webapi.tv4play.se/ also http://mobapi.tv4play.se/
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("TV4Play username")]
+        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("TV4Play username")]
         protected string username = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("TV4Play password")]
+        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("TV4Play password")]
         protected string password = null;
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show movies"), Description("Show \"Filmer\" category or not when logged in (Mostly DRM titles)")]
-        protected bool showMovies = true;
+        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show movies"), Description("Show \"Filmer\" category or not when logged in (Mostly DRM titles)")]
+        //protected bool showMovies = true;
+        protected bool showMovies = false;
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show live TV"), Description("Show \"TV-kanaler\" category or not when logged in (Some DRM free channels)")]
-        protected bool showTv = true;
+        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show live TV"), Description("Show \"TV-kanaler\" category or not when logged in (Some DRM free channels)")]
+        //protected bool showTv = true;
+        protected bool showTv = false;
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Filter DRM videos"), Description("Remove videos marked with DRM from video lists")]
         protected bool tryFilterDrm = true;
