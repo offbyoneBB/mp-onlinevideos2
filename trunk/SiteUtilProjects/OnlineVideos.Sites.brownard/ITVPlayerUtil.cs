@@ -12,6 +12,15 @@ namespace OnlineVideos.Sites
 {
     public class ITVPlayerUtil : SiteUtilBase
     {
+        #region Category Type
+        enum CategoryType
+        {
+            AtoZ,
+            Default
+        }
+        #endregion
+
+        #region Site Config
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
         string proxy = null;
         [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a username, set it here.")]
@@ -30,10 +39,58 @@ namespace OnlineVideos.Sites
         protected int StreamQualityPref = 5;
         [Category("OnlineVideosUserConfiguration"), Description("Whether to retrieve current program info for live streams.")]
         protected bool retrieveTVGuide = true;
-
         [Category("OnlineVideosConfiguration"), Description("The layout to use to display TV Guide info, possible wildcards are <nowtitle>,<nowdescription>,<nowstart>,<nowend>,<nexttitle>,<nextstart>,<nextend>,<newline>")]
-        protected string tvGuideFormatString;// = "Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>";
+        protected string tvGuideFormatString;// = "Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>";        
+        #endregion
 
+        #region Consts
+        const string BASE_URL = "http://www.itv.com";
+        
+        const string SOAP_TEMPLATE = @"<?xml version='1.0' encoding='utf-8'?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+    <SOAP-ENV:Body>
+	    <tem:GetPlaylist xmlns:tem='http://tempuri.org/' xmlns:itv='http://schemas.datacontract.org/2004/07/Itv.BB.Mercury.Common.Types' xmlns:com='http://schemas.itv.com/2009/05/Common'>
+	        <tem:request>
+                {0}
+		        <itv:RequestGuid>FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF</itv:RequestGuid>
+		        <itv:Vodcrid>
+		            <com:Id>{1}</com:Id>
+		            <com:Partition>itv.com</com:Partition>
+		        </itv:Vodcrid>
+	        </tem:request>
+	        <tem:userInfo>
+		        <itv:GeoLocationToken>
+		            <itv:Token/>
+		        </itv:GeoLocationToken>
+		        <itv:RevenueScienceValue>scc=true; svisit=1; sc4=Other</itv:RevenueScienceValue>
+	        </tem:userInfo>
+	        <tem:siteInfo>
+		        <itv:Area>ITVPLAYER.VIDEO</itv:Area>
+		        <itv:Platform>DotCom</itv:Platform>
+		        <itv:Site>ItvCom</itv:Site>
+	        </tem:siteInfo>
+            <tem:deviceInfo> 
+                <itv:ScreenSize>Big</itv:ScreenSize> 
+            </tem:deviceInfo>
+	    </tem:GetPlaylist>
+	</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>";
+        #endregion
+
+        #region Regex
+        //Shows
+        static readonly Regex showsRegex = new Regex(@"<img src='(.*?)'>[\s\n]*</a>[\s\n]*<div.*?>[\s\n]*<a href=""(.*?)"">(.*?)</a>[\s\n]*.*?[\s\n]*<div.*>[\s\n]*<span.*?>(\d+)");
+        static readonly Regex showsVideoRegex = new Regex(@"<a href=""(.*?)""><img.*?src=""(.*?)"".*?title=""(.*?)"".*[\s\n]*<a.*?>[\s\n]*<div.*?>[\s\n]*.*?<span.*?>(.*?)</span>.*?<span.*?>Catch up</span><br />[\s\n]*<div.*?>Series (<div.*?>){3}(.*?)</div>.*[\s\n]*<div.*?>Episode (<div.*?>){3}(.*?)</div>.*[\s\n]*</div>[\s\n]*(<div.*?>){3}(.*?)</div>.*?(<div.*?>){3}(.*?)</div>");
+        static readonly Regex singleShowsVideoRegex = new Regex(@"<h1 class=""title episode-title"".*?>[\s\n]*(.*?)<span.*?>Catch up</span>.*[\s\n]*(<div.*?>){3}<span.*?>(.*?)</span>.*?<div.*?>.*?</div>(<div.*?>){2}(.*?)</div>(.|\n)*?name=""poster"" value=""(.*?)""(.|\n)*?<div class=""description"">[\s\n]*(.*?)</div>");
+        //AtoZ
+        static readonly Regex atozVideoRegex = new Regex(@"<div class=""listItem.*?<a href=""http://.*?&amp;Filter=(\d+).*?<img.*? src=""([^""]*)"".*?<a.*?>([^<]*).*?<p class=""date"">([^<]*).*?<p class=""progDesc"">([^<]*).*?<li>\s*Duration:([^<]*)", RegexOptions.Singleline);
+        //Search
+        static readonly Regex searchRegex = new Regex(@"<div class=""search-wrapper"">.*?<div class=""search-result-image"">[\s\n]*(<a.*?><img.*?src=""(.*?)"")?.*?<h4 class=""programme-title""><a href=""(.*?)"">(.*?)</a>.*?<div class=""programme-description"">[\s\n]*(.*?)</div>", RegexOptions.Singleline);
+        //ProductionId
+        static readonly Regex productionIdRegex = new Regex(@"""productionId"":""(.*?)""");
+        #endregion
+
+        #region SiteUtil Overrides
         DateTime lastRefresh = DateTime.MinValue;
         public override int DiscoverDynamicCategories()
         {
@@ -49,114 +106,109 @@ namespace OnlineVideos.Sites
                     if (string.IsNullOrEmpty(cat.Thumb))
                         cat.Thumb = string.Format(@"{0}\Icons\{1}.png", OnlineVideoSettings.Instance.ThumbsDir, Settings.Name);
                 }
-
                 lastRefresh = DateTime.Now;
             }
-
             return Settings.Categories.Count;
         }
-        
+
         public override int DiscoverSubCategories(Category parentCategory)
         {
             if ((parentCategory as RssLink).Url.StartsWith("http://www.itv.com/_data"))
                 return getAtoZList(parentCategory);
-
             return getShowsList(parentCategory);
-        }
-
-        int getShowsList(Category parentCategory)
-        {
-            string html = GetWebData((parentCategory as RssLink).Url);
-            Regex reg = new Regex(@"<img src='(.*?)'>[\s\n]*</a>[\s\n]*<div.*?>[\s\n]*<a href=""(.*?)"">(.*?)</a>[\s\n]*.*?[\s\n]*<div.*>[\s\n]*<span.*?>(\d+)");
-
-            List<Category> subCats = new List<Category>();
-            foreach (Match match in reg.Matches(html))
-            {
-                RssLink cat = new RssLink();
-                cat.ParentCategory = parentCategory;
-                cat.Url = "http://www.itv.com" + match.Groups[2].Value;
-                cat.Name = cleanString(match.Groups[3].Value);
-                string thumb = match.Groups[1].Value;
-                if(!string.IsNullOrEmpty(thumbReplaceRegExPattern))
-                    thumb = Regex.Replace(thumb, thumbReplaceRegExPattern, thumbReplaceString);
-                cat.Thumb = thumb;
-                cat.EstimatedVideoCount = uint.Parse(match.Groups[4].Value);
-                subCats.Add(cat);
-            }
-
-            parentCategory.SubCategories = subCats;
-            parentCategory.SubCategoriesDiscovered = true;
-            return subCats.Count;
-        }
-
-        int getAtoZList(Category parentCategory)
-        {
-            string xml = GetWebData((parentCategory as RssLink).Url);
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(xml);
-
-            List<Category> subCats = new List<Category>();            
-            foreach (XmlNode node in doc.SelectNodes("//ITVCatchUpProgramme"))
-            {
-                RssLink cat = new RssLink();
-                cat.ParentCategory = parentCategory;
-                cat.Url = node.SelectSingleNode("ProgrammeId").InnerText;
-                cat.Name = cleanString(node.SelectSingleNode("ProgrammeTitle").InnerText);
-                cat.Thumb = node.SelectSingleNode("ProgrammeMediaUrl").InnerText;
-                subCats.Add(cat);
-            }
-
-            parentCategory.SubCategories = subCats;
-            parentCategory.SubCategoriesDiscovered = true;
-            return subCats.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            if (category is Group)
+            Group group = category as Group;
+            if (group != null)
+                return getLiveStreams(group);
+
+            switch (category.Other as CategoryType?)
             {
-                //Live streams
-                List<VideoInfo> vids = new List<VideoInfo>();
-                foreach (Channel chan in ((Group)category).Channels)
-                {
-                    VideoInfo vid = new VideoInfo();
-                    vid.Title = chan.StreamName;
-                    vid.ImageUrl = chan.Thumb;
+                case CategoryType.AtoZ:
+                    return getAtoZVids(category);
+                default:
+                    return getShowsVids(category);
+            }
+        }
 
-                    int argIndex = chan.Url.IndexOf('?');
-                    if (argIndex < 0)
-                        vid.VideoUrl = chan.Url;
-                    else
-                        vid.VideoUrl = chan.Url.Remove(argIndex);
+        public override string getUrl(VideoInfo video)
+        {
+            //Direct stream
+            if (video.VideoUrl.StartsWith("http://") || video.VideoUrl.StartsWith("rtmp://") || video.VideoUrl.StartsWith("rtmpe://"))
+                return video.VideoUrl;
 
-                    if (retrieveTVGuide && argIndex > -1) //retrieve tv guide
-                    {
-                        Utils.TVGuideGrabber guide = new Utils.TVGuideGrabber();
-                        if (guide.GetNowNextForChannel(chan.Url))
-                            vid.Description = guide.FormatTVGuide(tvGuideFormatString);
-                    }
+            bool isProductionId = false;
+            bool isLiveStream = video.VideoUrl.StartsWith("sim");
+            if (!isLiveStream && video.VideoUrl.StartsWith("/itvplayer"))
+            {
+                isProductionId = true;
+                video.VideoUrl = getProductionId(video.VideoUrl);
+            }
+            return populateUrlsFromXml(video, getPlaylistDocument(video.VideoUrl, isProductionId), isLiveStream);
+        }
+        #endregion
 
-                    vids.Add(vid);
-                }
-                return vids;
+        #region Search
+        public override bool CanSearch
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override List<ISearchResultItem> DoSearch(string query)
+        {
+            string html = GetWebData(string.Format("http://www.itv.com/itvplayer/search/term/{0}/catch-up", query));
+            List<ISearchResultItem> cats = new List<ISearchResultItem>();
+            foreach (Match match in searchRegex.Matches(html))
+            {
+                RssLink cat = new RssLink();
+                cat.Thumb = match.Groups[2].Value;
+                cat.Url = match.Groups[3].Value;
+                cat.Name = cleanString(match.Groups[4].Value);
+                cat.Description = cleanString(match.Groups[5].Value);
+                cats.Add(cat);
             }
 
-            if ((category as RssLink).Url.StartsWith("http"))
-                return getShowsVids(category);
-            return getAtoZVids(category);
+            return cats;
+        }
+        #endregion
+
+        #region Shows
+        int getShowsList(Category parentCategory)
+        {
+            string html = GetWebData((parentCategory as RssLink).Url);
+            List<Category> subCats = new List<Category>();
+            foreach (Match match in showsRegex.Matches(html))
+            {
+                RssLink cat = new RssLink();
+                cat.ParentCategory = parentCategory;
+                cat.Url = match.Groups[2].Value;
+                cat.Name = cleanString(match.Groups[3].Value);
+                string thumb = match.Groups[1].Value;
+                if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
+                    thumb = Regex.Replace(thumb, thumbReplaceRegExPattern, thumbReplaceString);
+                cat.Thumb = thumb;
+                cat.EstimatedVideoCount = uint.Parse(match.Groups[4].Value);
+                cat.Other = CategoryType.Default;
+                subCats.Add(cat);
+            }
+            parentCategory.SubCategories = subCats;
+            parentCategory.SubCategoriesDiscovered = true;
+            return subCats.Count;
         }
 
         List<VideoInfo> getShowsVids(Category category)
         {
-            string html = GetWebData((category as RssLink).Url);
-            Regex reg = new Regex(@"<a href=""(.*?)""><img.*?src=""(.*?)"".*?title=""(.*?)"".*[\s\n]*<a.*?>[\s\n]*<div.*?>[\s\n]*.*?<span.*?>(.*?)</span>.*?<span.*?>Catch up</span><br />[\s\n]*<div.*?>Series (<div.*?>){3}(.*?)</div>.*[\s\n]*<div.*?>Episode (<div.*?>){3}(.*?)</div>.*[\s\n]*</div>[\s\n]*(<div.*?>){3}(.*?)</div>.*?(<div.*?>){3}(.*?)</div>");
-
+            string html = GetWebData(BASE_URL + (category as RssLink).Url);
             List<VideoInfo> vids = new List<VideoInfo>();
-            foreach (Match match in reg.Matches(html))
+            foreach (Match match in showsVideoRegex.Matches(html))
             {
                 VideoInfo vid = new VideoInfo();
                 vid.VideoUrl = match.Groups[1].Value;
-
                 string thumb = match.Groups[2].Value;
                 if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
                     thumb = Regex.Replace(thumb, thumbReplaceRegExPattern, thumbReplaceString);
@@ -170,7 +222,8 @@ namespace OnlineVideos.Sites
 
             if (vids.Count < 1)
             {
-                Match match = Regex.Match(html, @"<h1 class=""title episode-title"".*?>[\s\n]*(.*?)<span.*?>Catch up</span>.*[\s\n]*(<div.*?>){3}<span.*?>(.*?)</span>.*?<div.*?>.*?</div>(<div.*?>){2}(.*?)</div>(.|\n)*?name=""poster"" value=""(.*?)""(.|\n)*?<div class=""description"">[\s\n]*(.*?)</div>(.|\n)*?<a href=""(.*?)""");
+                //Single episode
+                Match match = singleShowsVideoRegex.Match(html);
                 if (match.Success)
                 {
                     VideoInfo vid = new VideoInfo();
@@ -179,21 +232,40 @@ namespace OnlineVideos.Sites
                     vid.Length = match.Groups[5].Value;
                     vid.ImageUrl = match.Groups[7].Value;
                     vid.Description = cleanString(match.Groups[9].Value);
-                    vid.VideoUrl = match.Groups[11].Value;
+                    vid.VideoUrl = (category as RssLink).Url;
                     vids.Add(vid);
                 }
             }
 
             return vids;
         }
-        
+        #endregion
+
+        #region AtoZ
+        int getAtoZList(Category parentCategory)
+        {
+            XmlDocument doc = GetWebData<XmlDocument>((parentCategory as RssLink).Url);
+            List<Category> subCats = new List<Category>();
+            foreach (XmlNode node in doc.SelectNodes("//ITVCatchUpProgramme"))
+            {
+                RssLink cat = new RssLink();
+                cat.ParentCategory = parentCategory;
+                cat.Url = node.SelectSingleNode("ProgrammeId").InnerText;
+                cat.Name = cleanString(node.SelectSingleNode("ProgrammeTitle").InnerText);
+                cat.Thumb = node.SelectSingleNode("ProgrammeMediaUrl").InnerText;
+                cat.Other = CategoryType.AtoZ;
+                subCats.Add(cat);
+            }
+            parentCategory.SubCategories = subCats;
+            parentCategory.SubCategoriesDiscovered = true;
+            return subCats.Count;
+        }
+
         List<VideoInfo> getAtoZVids(Category category)
         {
             string html = GetWebData(string.Format("http://www.itv.com/_app/Dynamic/CatchUpData.ashx?ViewType=1&Filter={0}&moduleID=115107", (category as RssLink).Url));
-            Regex vidReg = new Regex(@"<div class=""listItem.*?<a href=""http://.*?&amp;Filter=(\d+).*?<img.*? src=""([^""]*)"".*?<a.*?>([^<]*).*?<p class=""date"">([^<]*).*?<p class=""progDesc"">([^<]*).*?<li>\s*Duration:([^<]*)", RegexOptions.Singleline);
-
             List<VideoInfo> vids = new List<VideoInfo>();
-            foreach (Match match in vidReg.Matches(html))
+            foreach (Match match in atozVideoRegex.Matches(html))
             {
                 VideoInfo vid = new VideoInfo();
                 vid.VideoUrl = match.Groups[1].Value;
@@ -214,210 +286,182 @@ namespace OnlineVideos.Sites
             }
             return vids;
         }
+        #endregion
 
-        public override string getUrl(VideoInfo video)
+        #region Live Streams
+        List<VideoInfo> getLiveStreams(Group group)
         {
-            if (video.VideoUrl.StartsWith("http://") || video.VideoUrl.StartsWith("rtmp://") || video.VideoUrl.StartsWith("rtmpe://"))
-                return video.VideoUrl;
-            else if (video.VideoUrl.StartsWith("sim"))
-                return getLiveUrl(video);
-
-            bool isProductionId = false;
-            if (video.VideoUrl.StartsWith("/itvplayer"))
+            List<VideoInfo> vids = new List<VideoInfo>();
+            foreach (Channel chan in group.Channels)
             {
-                isProductionId = true;
-                video.VideoUrl = getProductionId(video.VideoUrl);
+                VideoInfo vid = new VideoInfo();
+                vid.Title = chan.StreamName;
+                vid.ImageUrl = chan.Thumb;
+                vid.VideoUrl = chan.Url;
+                int argIndex = chan.Url.IndexOf('?');
+                if (argIndex >= 0)
+                {
+                    if (retrieveTVGuide)
+                    {
+                        //retrieve tv guide
+                        Utils.TVGuideGrabber guide = new Utils.TVGuideGrabber();
+                        if (guide.GetNowNextForChannel(vid.VideoUrl))
+                            vid.Description = guide.FormatTVGuide(tvGuideFormatString);
+                    }
+                    vid.VideoUrl = vid.VideoUrl.Remove(argIndex);
+                }
+                vids.Add(vid);
+            }
+            return vids;
+        }
+        #endregion
+
+        #region Playlist Methods
+        string populateUrlsFromXml(VideoInfo video, XmlDocument streamPlaylist, bool live)
+        {
+            if (streamPlaylist == null)
+            {
+                Log.Warn("ITVPlayer: Stream playlist is null");
+                return "";
             }
 
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(getPlaylist(video.VideoUrl, isProductionId));
-            XmlNode videoEntry = doc.SelectSingleNode("//VideoEntries/Video");
+            XmlNode videoEntry = streamPlaylist.SelectSingleNode("//VideoEntries/Video");
             if (videoEntry == null)
+            {
+                Log.Warn("ITVPlayer: Could not find video entry");
                 return "";
+            }
 
             XmlNode node;
-            if (RetrieveSubtitles)
-            {
-                node = videoEntry.SelectSingleNode("./ClosedCaptioningURIs");
-                if (node != null && OnlineVideos.Utils.IsValidUri(node.InnerText))
-                    video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(GetWebData(node.InnerText));
-            }
             node = videoEntry.SelectSingleNode("./MediaFiles");
-            if(node == null || node.Attributes["base"] == null)
+            if (node == null || node.Attributes["base"] == null)
+            {
+                Log.Warn("ITVPlayer: Could not find base url");
                 return "";
-            string rtmpUrl = node.Attributes["base"].Value;
+            }
 
+            string rtmpUrl = node.Attributes["base"].Value;
             SortedList<string, string> options = new SortedList<string, string>(new StreamComparer());
             foreach (XmlNode mediaFile in node.SelectNodes("./MediaFile"))
             {
                 if (mediaFile.Attributes["delivery"] == null || mediaFile.Attributes["delivery"].Value != "Streaming")
                     continue;
-                string title = ""; int br;
+
+                string title = "";
                 if (mediaFile.Attributes["bitrate"] != null)
                 {
                     title = mediaFile.Attributes["bitrate"].Value;
-                    if (int.TryParse(title, out br))
-                        title = string.Format("{0} kbps", br / 1000);
+                    int bitrate;
+                    if (int.TryParse(title, out bitrate))
+                        title = string.Format("{0} kbps", bitrate / 1000);
                 }
-                string playPath = mediaFile.InnerText;
-                string url = new MPUrlSourceFilter.RtmpUrl(rtmpUrl)
-                {
-                    PlayPath = playPath,
-                    SwfUrl = "http://www.itv.com/mediaplayer/ITVMediaPlayer.swf?v=12.18.4", //"http://www.itv.com/mercury/Mercury_VideoPlayer.swf",
-                    SwfVerify = true
-                }.ToString();
 
                 if (!options.ContainsKey(title))
+                {
+                    string url = new MPUrlSourceFilter.RtmpUrl(rtmpUrl)
+                    {
+                        PlayPath = mediaFile.InnerText,
+                        SwfUrl = "http://www.itv.com/mediaplayer/ITVMediaPlayer.swf?v=12.18.4",
+                        SwfVerify = true,
+                        Live = live
+                    }.ToString();
                     options.Add(title, url);
+                }
             }
 
             video.PlaybackOptions = new Dictionary<string, string>();
             foreach (KeyValuePair<string, string> key in options)
                 video.PlaybackOptions.Add(key.Key, key.Value);
 
+            if (RetrieveSubtitles)
+            {
+                node = videoEntry.SelectSingleNode("./ClosedCaptioningURIs");
+                if (node != null && OnlineVideos.Utils.IsValidUri(node.InnerText))
+                    video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(GetWebData(node.InnerText));
+            }
+
             return StreamComparer.GetBestPlaybackUrl(video.PlaybackOptions, StreamQualityPref, AutoSelectStream);
         }
 
-        private string getProductionId(string url)
+        string getProductionId(string url)
         {
-            string html = GetWebData("http://www.itv.com" + url);
-            Match m = Regex.Match(html,  @"""productionId"":""(.*?)""");
+            string html = GetWebData(BASE_URL + url);
+            Match m = productionIdRegex.Match(html);
+            string productionId;
             if (m.Success)
             {
-                return m.Groups[1].Value.Replace("\\", "");
+                productionId = m.Groups[1].Value.Replace("\\", "");
+                Log.Debug("ITVPlayer: Found production id '{0}'", productionId);
             }
-            return "";
+            else
+            {
+                productionId = "";
+                Log.Warn("ITVPlayer: Failed to get production id");
+            }
+            return productionId;
         }
 
         string getPlaylist(string id, bool isProductionId = false)
         {
             System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
             if (isProductionId)
-                doc.InnerXml = string.Format(SOAP_TEMPLATE_PRODID, id);
+                doc.InnerXml = string.Format(SOAP_TEMPLATE, "<itv:ProductionId>" + id + "</itv:ProductionId>", "");
             else
-                doc.InnerXml = string.Format(SOAP_TEMPLATE, id);
+                doc.InnerXml = string.Format(SOAP_TEMPLATE, "", id);
 
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://mercury.itv.com/PlaylistService.svc");
-
-            req.Headers.Add("SOAPAction", "http://tempuri.org/PlaylistService/GetPlaylist");
-            req.Referer = "http://www.itv.com/mediaplayer/ITVMediaPlayer.swf?v=12.18.4/[[DYNAMIC]]/2";
-            req.ContentType = "text/xml;charset=\"utf-8\"";
-            req.Accept = "text/xml";
-            req.Method = "POST";
-
-            System.Net.WebProxy proxy = getProxy();
-            if (proxy != null)
-                req.Proxy = proxy;
-
-            Stream stm;
-            using (stm = req.GetRequestStream())
-                doc.Save(stm);
-
-            using (stm = req.GetResponse().GetResponseStream())
-            using (StreamReader r = new StreamReader(stm))
+            try
             {
-                string ret = r.ReadToEnd();
-                Log.Debug("ITV Response:\r\n\t {0}", ret);
-                return ret;
-            }
-        }
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://mercury.itv.com/PlaylistService.svc");
+                req.Headers.Add("SOAPAction", "http://tempuri.org/PlaylistService/GetPlaylist");
+                req.Referer = "http://www.itv.com/mediaplayer/ITVMediaPlayer.swf?v=12.18.4/[[DYNAMIC]]/2";
+                req.ContentType = "text/xml;charset=\"utf-8\"";
+                req.Accept = "text/xml";
+                req.Method = "POST";
 
-        string getLiveUrl(VideoInfo video)
-        {
-            bool loadMultiple = false;            
-            string xml;
-            //hack for ITV1
-            if (video.VideoUrl == "sim1")
-            {
-                xml = GetWebData("http://www.itv.com/ukonly/mediaplayer/xml/channels.itv1.xml");
-                loadMultiple = true;
-            }
-            else
-            {
-                xml = getPlaylist(video.VideoUrl);
-            }
+                System.Net.WebProxy proxy = getProxy();
+                if (proxy != null)
+                    req.Proxy = proxy;
 
-            video.PlaybackOptions = new Dictionary<string, string>();
+                Stream stream;
+                using (stream = req.GetRequestStream())
+                    doc.Save(stream);
 
-            string res = new Regex("<ClosedCaptioningURIs.+", RegexOptions.Singleline).Match(xml).Groups[0].Value;
-            string rtmpUrl = new Regex("(rtmp[^\"]+)").Match(res).Groups[1].Value.Replace("&amp;", "&");
-
-            string lastUrl = "";
-            string[] streams = res.Split(new string[] { "<MediaFile delivery=" }, StringSplitOptions.RemoveEmptyEntries);
-            for (int x = 1; x < streams.Length; x++)
-            {
-                string stream = streams[x];
-                if (!stream.StartsWith("\"Streaming\""))
-                    continue;
-
-                Match match = new Regex(@"bitrate=""([^""]+)"" base=""([^""]*)""").Match(stream);
-                string title = match.Groups[1].Value;
-                int br;
-                if (int.TryParse(title, out br))
+                using (stream = req.GetResponse().GetResponseStream())
+                using (StreamReader sr = new StreamReader(stream))
                 {
-                    br = br / 1000;
-                    title = string.Format("{0} kbps", br);
+                    string responseXml = sr.ReadToEnd();
+                    Log.Debug("ITVPlayer: Playlist response:\r\n\t {0}", responseXml);
+                    return responseXml;
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("ITVPlayer: Failed to get playlist - {0}\r\n{1}", ex.Message, ex.StackTrace);
+                return null;
+            }
+        }
 
-                string playPath = new Regex("<URL><![[]CDATA[[]([^]]+)").Match(stream).Groups[1].Value;
-                string baseUrl = match.Groups[2].Value;
-                if (string.IsNullOrEmpty(baseUrl))
-                    baseUrl = rtmpUrl;
-
-                baseUrl = baseUrl.Replace(".net", ".net:1935");
-                string url = new MPUrlSourceFilter.RtmpUrl(baseUrl)
+        XmlDocument getPlaylistDocument(string id, bool isProductionId = false)
+        {
+            string xml = getPlaylist(id, isProductionId);
+            if (!string.IsNullOrEmpty(xml))
+            {
+                XmlDocument document = new XmlDocument();
+                try
                 {
-                    PlayPath = playPath,
-                    SwfUrl = "http://www.itv.com/mediaplayer/ITVMediaPlayer.swf?v=12.18.4",
-                    SwfVerify = true,
-                    Live = true
-                }.ToString();
-
-                if (video.PlaybackOptions.ContainsKey(title))
-                    video.PlaybackOptions[title] = url;
-                else
-                    video.PlaybackOptions.Add(title, url);
-                lastUrl = url;
-
-                if (!loadMultiple)
-                    break; //hack, only lowest quality stream seems to play
+                    document.LoadXml(xml);
+                    return document;
+                }
+                catch (Exception ex)
+                {
+                    Log.Warn("ITVPlayer: Failed to load plalist xml '{0}' - {1}\r\n{2}", xml, ex.Message, ex.StackTrace);
+                }
             }
-
-            return lastUrl;
+            return null;
         }
-
-        #region Search
-
-        public override bool CanSearch
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public override List<ISearchResultItem> DoSearch(string query)
-        {
-            string html = GetWebData(string.Format("http://www.itv.com/itvplayer/search/term/{0}/catch-up", query));
-            string regStr = @"<div class=""search-wrapper"">.*?<div class=""search-result-image"">[\s\n]*(<a.*?><img.*?src=""(.*?)"")?.*?<h4 class=""programme-title""><a href=""(.*?)"">(.*?)</a>.*?<div class=""programme-description"">[\s\n]*(.*?)</div>";
-            Regex reg = new Regex(regStr, RegexOptions.Singleline);
-
-            List<ISearchResultItem> cats = new List<ISearchResultItem>();            
-            foreach (Match match in reg.Matches(html))
-            {
-                RssLink cat = new RssLink();
-                cat.Thumb = match.Groups[2].Value;
-                cat.Url = match.Groups[3].Value;
-                cat.Name = cleanString(match.Groups[4].Value);
-                cat.Description = cleanString(match.Groups[5].Value);
-                cats.Add(cat);
-            }
-
-            return cats;
-        }
-
         #endregion
 
+        #region Utils
         string cleanString(string s)
         {
             s = stripTags(s);
@@ -440,65 +484,6 @@ namespace OnlineVideos.Sites
             }
             return proxyObj;
         }
-
-        const string SOAP_TEMPLATE = @"<?xml version='1.0' encoding='utf-8'?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
-    <SOAP-ENV:Body>
-	    <tem:GetPlaylist xmlns:tem='http://tempuri.org/' xmlns:itv='http://schemas.datacontract.org/2004/07/Itv.BB.Mercury.Common.Types' xmlns:com='http://schemas.itv.com/2009/05/Common'>
-	        <tem:request>
-		        <itv:RequestGuid>FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF</itv:RequestGuid>
-		        <itv:Vodcrid>
-		            <com:Id>{0}</com:Id>
-		            <com:Partition>itv.com</com:Partition>
-		        </itv:Vodcrid>
-	        </tem:request>
-	        <tem:userInfo>
-		        <itv:GeoLocationToken>
-		            <itv:Token/>
-		        </itv:GeoLocationToken>
-		        <itv:RevenueScienceValue>scc=true; svisit=1; sc4=Other</itv:RevenueScienceValue>
-	        </tem:userInfo>
-	        <tem:siteInfo>
-		        <itv:Area>ITVPLAYER.VIDEO</itv:Area>
-		        <itv:Platform>DotCom</itv:Platform>
-		        <itv:Site>ItvCom</itv:Site>
-	        </tem:siteInfo>
-            <tem:deviceInfo> 
-                <itv:ScreenSize>Big</itv:ScreenSize> 
-            </tem:deviceInfo>
-	    </tem:GetPlaylist>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>";
-
-        const string SOAP_TEMPLATE_PRODID = @"<?xml version='1.0' encoding='utf-8'?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
-    <SOAP-ENV:Body>
-	    <tem:GetPlaylist xmlns:tem='http://tempuri.org/' xmlns:itv='http://schemas.datacontract.org/2004/07/Itv.BB.Mercury.Common.Types' xmlns:com='http://schemas.itv.com/2009/05/Common'>
-	        <tem:request>
-                <itv:ProductionId>{0}</itv:ProductionId> 
-		        <itv:RequestGuid>FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF</itv:RequestGuid>
-		        <itv:Vodcrid>
-		            <com:Id />
-		            <com:Partition>itv.com</com:Partition>
-		        </itv:Vodcrid>
-	        </tem:request>
-	        <tem:userInfo>
-		        <itv:GeoLocationToken>
-		            <itv:Token/>
-		        </itv:GeoLocationToken>
-		        <itv:RevenueScienceValue>scc=true; svisit=1; sc4=Other</itv:RevenueScienceValue>
-	        </tem:userInfo>
-	        <tem:siteInfo>
-		        <itv:Area>ITVPLAYER.VIDEO</itv:Area>
-		        <itv:Platform>DotCom</itv:Platform>
-		        <itv:Site>ItvCom</itv:Site>
-	        </tem:siteInfo>
-            <tem:deviceInfo> 
-                <itv:ScreenSize>Big</itv:ScreenSize> 
-            </tem:deviceInfo>
-	    </tem:GetPlaylist>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>";
-        
+        #endregion
     }
 }
