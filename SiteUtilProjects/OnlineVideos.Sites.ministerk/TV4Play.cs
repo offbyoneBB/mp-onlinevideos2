@@ -14,18 +14,16 @@ namespace OnlineVideos.Sites
     {
         // API: http://webapi.tv4play.se/ also http://mobapi.tv4play.se/
 
-        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("TV4Play username")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("TV4Play username")]
         protected string username = null;
-        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("TV4Play password")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("TV4Play password")]
         protected string password = null;
 
-        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show movies"), Description("Show \"Filmer\" category or not when logged in (Mostly DRM titles)")]
-        //protected bool showMovies = true;
-        protected bool showMovies = false;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show movies"), Description("Show \"Filmer\" category or not when logged in (Mostly DRM titles)")]
+        protected bool showMovies = true;
 
-        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show live TV"), Description("Show \"TV-kanaler\" category or not when logged in (Some DRM free channels)")]
-        //protected bool showTv = true;
-        protected bool showTv = false;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show live TV"), Description("Show \"TV-kanaler\" category or not when logged in (Some DRM free channels)")]
+        protected bool showTv = true;
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Filter DRM videos"), Description("Remove videos marked with DRM from video lists")]
         protected bool tryFilterDrm = true;
@@ -98,7 +96,7 @@ namespace OnlineVideos.Sites
             htmlDoc.LoadHtml(loginpage);
             var input = htmlDoc.DocumentNode.SelectSingleNode("//input[@id = 'authenticity_token']");
             var authenticity_token = input.GetAttributeValue("value", "");
-            string postData = string.Format("user_name={0}&password={1}&remember_me=true&authenticity_token={2}&https=&my_page=true", System.Web.HttpUtility.UrlEncode(username), System.Web.HttpUtility.UrlEncode(password), System.Web.HttpUtility.UrlEncode(authenticity_token));
+            string postData = string.Format("user_name={0}&password={1}&authenticity_token={2}&https=", System.Web.HttpUtility.UrlEncode(username), System.Web.HttpUtility.UrlEncode(password), System.Web.HttpUtility.UrlEncode(authenticity_token));
             string loginresponse = GetWebDataFromPost(loginPostUrl, postData, cc);
             isPremium = isLoggedIn();
         }
