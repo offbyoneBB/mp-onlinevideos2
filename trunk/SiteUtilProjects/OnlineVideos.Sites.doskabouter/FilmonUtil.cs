@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using OnlineVideos.MPUrlSourceFilter;
@@ -63,19 +64,24 @@ namespace OnlineVideos.Sites
             headers.Add("X-Requested-With", "XMLHttpRequest");
             string webdata = GetWebData(video.VideoUrl, (string)video.Other, headers, newCc, null, false, false, null, false);
 
-            string jsondata = @"{""result"":" + webdata + "}";
+            JToken jt = JObject.Parse(webdata) as JToken;
+            JArray streams = jt.Value<JArray>("streams");
+            video.PlaybackOptions = new Dictionary<string, string>();
+            foreach (JToken stream in streams)
+            {
+                string serverUrl = stream.Value<string>("url");
 
-            JToken jt = JObject.Parse(jsondata) as JToken;
-            jt = (jt["result"] as JArray)[0];
-            string serverUrl = jt.Value<string>("serverURL");
-            RtmpUrl res = new RtmpUrl(serverUrl);
-            res.PlayPath = jt.Value<string>("streamName");
+                RtmpUrl res = new RtmpUrl(serverUrl);
+                res.PlayPath = stream.Value<string>("name");
 
-            int p = serverUrl.IndexOf("live/?id");
-            res.App = serverUrl.Substring(p);
+                int p = serverUrl.IndexOf("live/?id");
+                res.App = serverUrl.Substring(p);
+                video.PlaybackOptions.Add(stream.Value<string>("quality"), res.ToString());
+            }
 
-            return res.ToString();
+            return video.PlaybackOptions.First().Value;
         }
+
         private static string GetSubString(string s, string start, string until)
         {
             if (string.IsNullOrEmpty(s)) return string.Empty;
