@@ -42,6 +42,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                 var catchUpCategory = new Category { Name = "Catch up", SubCategoriesDiscovered = true, HasSubCategories = true };
 
                 result.Add(catchUpCategory);
+                result.Add(new Category { Name = "Live TV", SubCategoriesDiscovered = false, HasSubCategories = false, Other = "L~Live_TV" });
                 result.Add(new Category { Name = "Sky Movies", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Sky_Movies" });
                 result.Add(new Category { Name = "TV Box Sets", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~TV_Box_Sets" });
                 catchUpCategory.SubCategories = new List<Category>();
@@ -124,13 +125,23 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         public List<VideoInfo> LoadVideos(Category parentCategory)
         {
             var results = new List<VideoInfo>();
-            if (parentCategory.Type() != SkyGoCategoryData.CategoryType.Video)
+            if (parentCategory.Type() != SkyGoCategoryData.CategoryType.Video && parentCategory.Type() != SkyGoCategoryData.CategoryType.LiveTv)
                 throw new ApplicationException("Cannot retrieve videos for non-video category");
-            
-            var doc = Properties.Resources.SkyGo_VideoDetailsUrl.Replace("{VIDEO_ID}", parentCategory.CategoryId()).LoadSkyGoContentFromUrl();
-            var result = doc.LoadVideoFromDocument(parentCategory.CategoryId());
 
-            results.Add(result);
+
+            if (parentCategory.Type() != SkyGoCategoryData.CategoryType.LiveTv)
+            {
+                var doc = Properties.Resources.SkyGo_VideoDetailsUrl.Replace("{VIDEO_ID}", parentCategory.CategoryId()).LoadSkyGoContentFromUrl();
+                var result = doc.LoadVideoFromDocument(parentCategory.CategoryId());
+
+                results.Add(result);
+            }
+            else
+            {
+                
+                var channels = Properties.Resources.SkyGo_LiveTvListingUrl.LoadSkyGoLiveTvChannelsFromUrl();
+                results = Properties.Resources.SkyGo_LiveTvGetNowNextUrl.Replace("{CHANNEL_IDS}", String.Join(",", channels.Select(x => x.ChannelId).ToArray())).LoadSkyGoLiveTvNowNextVideosFromUrl(channels);
+            }
             return results;
         }
 

@@ -51,6 +51,7 @@
     <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoHtmlAgilityPackExtensions.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoCategoryData.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoCategoryParser.cs" />
+    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoLiveTvChannelItem.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoVideoData.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoVideoParser.cs" />
     <Compile Include="Entities\ExtendedCategory.cs" />

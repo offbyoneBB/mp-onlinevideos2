@@ -117,8 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="SkyGoLiveTvImageUrl" xml:space="preserve">
+    <value>http://epgstatic.sky.com/epgdata/1.0/newchanlogos/75/35/skychb{CHANNEL_ID}.png</value>
+  </data>
   <data name="SkyGo_CategoryAToZUrl" xml:space="preserve">
     <value>http://go.sky.com/vod/content/{CATEGORY}/All/content/default/promoPage.do?aToZ.indexCharacter={CHARACTER}&amp;aToZ.viewIndex={PAGE}&amp;aaxmlrequest=true&amp;aazones=content</value>
+  </data>
+  <data name="SkyGo_LiveTvGetNowNextUrl" xml:space="preserve">
+    <value>http://go.sky.com/tvlistings-proxy/TvListingsApi/xml/v2/nowNextLater.do?channelIds={CHANNEL_IDS}&amp;siteId=4&amp;accessKey=fdgJRTd345S4fKMER92mddSFJWERJ35285FDdm3412jdRTmsdd</value>
+  </data>
+  <data name="SkyGo_LiveTvListingUrl" xml:space="preserve">
+    <value>http://go.sky.com/vod/page/tvListing.do</value>
+  </data>
+  <data name="SkyGo_LiveTvPlayUrl" xml:space="preserve">
+    <value>http://go.sky.com/vod/content/Home/content/videoId/{VIDEO_ID}____/l/l/content/detachedLiveTv.do</value>
   </data>
   <data name="SkyGo_LoginUrl" xml:space="preserve">
     <value>https://skyid.sky.com/signin/skygo</value>
