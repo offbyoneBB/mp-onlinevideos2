@@ -11,7 +11,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
     public static class SkyGoVideoData
     {
         /// <summary>
-        /// Other will contain {Video Id}_{Asset Id}
+        /// Other will contain {Video Id}~{Asset Id}
         /// </summary>
         /// <param name="Video"></param>
         /// <returns></returns>
@@ -22,7 +22,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
         }
 
         /// <summary>
-        /// Other will contain {Video Id}_{Asset Id}
+        /// Other will contain {Video Id}~{Asset Id}
         /// </summary>
         /// <param name="Video"></param>
         /// <returns></returns>

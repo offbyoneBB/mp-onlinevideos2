@@ -15,7 +15,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
             Unknown,
             Root,
             Series,
-            Video
+            Video,
+            LiveTv
         }
 
         /// <summary>
@@ -31,6 +32,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
                 return CategoryType.Video;
             if (category.Other.ToString().StartsWith("R"))
                 return CategoryType.Root;
+            if (category.Other.ToString().StartsWith("L"))
+                return CategoryType.LiveTv;
             return CategoryType.Unknown;
         }
 

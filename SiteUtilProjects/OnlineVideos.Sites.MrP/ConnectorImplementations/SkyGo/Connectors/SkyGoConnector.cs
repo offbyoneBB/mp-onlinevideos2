@@ -20,7 +20,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             LoggingIn,
             LoginResult,
             VideoInfo,
-            PlayPage
+            PlayPage,
+            PlayPageLiveTv
         }
 
         private State _currentState = State.None;
@@ -30,6 +31,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         private bool _isPlayOrPausing;
         private int _playPausePos = -1;
         private int _playPauseHeight = -1;
+        private bool _isLiveTv = false;
 
         /// <summary>
         /// Perform a log in to the sky go site
@@ -113,6 +115,25 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                             return EventResult.Error("SkyGoOnDemandConnector/ProcessMessage/Expected video play page, was actually " + Url);
                     }
                     break;
+                case State.PlayPageLiveTv:
+                    if (Url.Contains("/detachedLiveTv.do"))
+                    {
+                        // After 4 seconds we'll assume the page has loaded and will click in the top corner
+                        var endDate = DateTime.Now.AddSeconds(4);
+                        while (DateTime.Now < endDate)
+                        {
+                            Application.DoEvents();
+                            System.Threading.Thread.Sleep(200);
+                        }
+                        Cursor.Position = new System.Drawing.Point(50, 50);
+                        Application.DoEvents();
+                        CursorHelper.DoLeftMouseClick();
+                        Application.DoEvents();
+                        ProcessComplete.Finished = true;
+                        ProcessComplete.Success = true;
+                    }
+
+                    break;
             }
 
             return EventResult.Complete();
@@ -128,8 +149,16 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             _currentState = State.VideoInfo;
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
-            _nextVideoToPlayId = videoToPlay;
-            Url = Properties.Resources.SkyGo_VideoActionsUrl.Replace("{VIDEO_ID}", _nextVideoToPlayId);
+            if (videoToPlay.StartsWith("LTV~")) _isLiveTv = true;
+            _nextVideoToPlayId = videoToPlay.Replace("LTV~", string.Empty);
+
+            if (!_isLiveTv)
+                Url = Properties.Resources.SkyGo_VideoActionsUrl.Replace("{VIDEO_ID}", _nextVideoToPlayId);
+            else
+            {
+                _currentState = State.PlayPageLiveTv;
+                Url = Properties.Resources.SkyGo_LiveTvPlayUrl.Replace("{VIDEO_ID}", _nextVideoToPlayId);
+            }
 
             return EventResult.Complete();
         }
