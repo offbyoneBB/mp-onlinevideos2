@@ -243,9 +243,9 @@ namespace OnlineVideos.Sites
             if (match.Success)
             {
                 String videoID = match.Groups["videoID"].Value;
-                String token = HttpUtility.UrlEncode(getToken(videoID, "puessepavuestramerced"));
+                String token = HttpUtility.UrlEncode(getToken(videoID, "QWtMLXs414Yo+c#_+Q#K@NN)"));
                 String auxURL = String.Format("https://servicios.atresplayer.com/api/urlVideo/{0}/{1}/{2}", videoID, "android_tablet", token);
-                String datos = GetWebData(auxURL,cc);
+                String datos = GetWebData(auxURL,cc,null,null,false,false,"Dalvik/1.6.0 (Linux; U; Android 4.3; GT-I9300 Build/JSS15J)",null);
                 JObject datosJSON = JObject.Parse(datos);
                 // {"result": 0, "resultDes": "OK", "resultObject": {"es": "http://urldelvideo"}}
                 // {"result": 2,"resultDes": "El usuario no tiene permisos para ver el vídeo"}
@@ -256,7 +256,7 @@ namespace OnlineVideos.Sites
 
         public String getToken(String videoID, String password)
         {
-            long l = 3000L + getApiTime();
+            long l = 30000L + getApiTime();
             String hash = getHash(videoID + l, password);
             return videoID + ("|" + l + "|" + hash).ToLower();
             
