@@ -21,7 +21,7 @@ namespace OnlineVideos.Sites
         private static string feedPIDUrl = @"http://www.cbc.ca/video/js/SWFVideoPlayer.js";
         private static string videoListUrl = platformRoot + @"/getReleaseList?PID={0}&query=CategoryIDs|{1}&sortDescending=true&endIndex=500";
 
-        private static Regex feedPIDRegex = new Regex(@"{PID:\s""(?<feedPID>[^""]*)"",",
+        private static Regex feedPIDRegex = new Regex(@"{\s+PID:\s""(?<feedPID>[^""]*)"",",
                                                       RegexOptions.Compiled);
 
         public override int DiscoverDynamicCategories()
@@ -222,12 +222,17 @@ namespace OnlineVideos.Sites
             {
                 // retrieve the RTMP URL from the Location header
                 string rtmpUrlFromHeader = response.GetResponseHeader("Location");
-                Log.Debug(@"RTMP URL: {0}", rtmpUrlFromHeader);
+                Log.Debug(@"RTMP URL from header: {0}", rtmpUrlFromHeader);
                 
                 // split on <break>
                 string[] pathParts = rtmpUrlFromHeader.Split(new string[] { "<break>" }, StringSplitOptions.None);
                 string host = pathParts[0];
                 string playPath = pathParts[1];
+                if (host.StartsWith("{switch:none}{manifest:none}")) {
+                    // Handle URLs of form {switch:none}{manifest:none}rtmp://cp209208.edgefcs.net/ondemand/?auth=daFbRa0aldEcad_bsd7cXawd5dId3bkdjdw-btCbTQ-c0-oknqnHronA&aifp=v0001&slist=287/267/<break>287/267/Arctic_Air_S03E12_09_00_00_2014-04-08_640x360_1200kbps.mp4{manifest:f4m}http://mobilehls-vh.akamaihd.net/z/prodVideo/entertainment/287%2F267%2FArctic_Air_S03E12_09_00_00_2014-04-08_640x360_1200kbps.csmil/manifest.f4m?hdnea=st=1399855948~exp=1399856278~acl=/z/*~id={nonce}~hmac=UNRECOGNIZED_TOKEN_TYPE{manifest:m3u}http://mobilehls-vh.akamaihd.net/i/prodVideo/entertainment/287%2F267%2FArctic_Air_S03E12_09_00_00_2014-04-08_640x360_1200kbps.csmil/master.m3u8?hdnea=st=1399855948~exp=1399856278~acl=/i/*~id={nonce}~hmac=UNRECOGNIZED_TOKEN_TYPE{manifest}{switch:http}http://progressive.cbc.ca/prodVideo/entertainment/287/267/Arctic_Air_S03E12_09_00_00_2014-04-08_640x360_1200kbps.mp4?hdnea=st=1399855948~exp=1399856278~acl=/*~hmac=UNRECOGNIZED_TOKEN_TYPE{switch}
+                    host = pathParts[0].Substring(28);
+                    playPath = pathParts[1].Substring(0, pathParts[1].IndexOf("{manifest"));
+                }
 
                 if (playPath.EndsWith(@".mp4") && !playPath.StartsWith(@"mp4:"))
                 {
