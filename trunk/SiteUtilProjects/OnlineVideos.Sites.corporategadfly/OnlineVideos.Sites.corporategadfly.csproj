@@ -39,7 +39,6 @@
   <ItemGroup>
     <Compile Include="ABCUtil.cs" />
     <Compile Include="BiographyUtil.cs" />
-    <Compile Include="BNNUtil.cs" />
     <Compile Include="CanadaBrightCoveUtilBase.cs" />
     <Compile Include="CanWestUtil.cs" />
     <Compile Include="CartoonNetworkUtil.cs" />
@@ -48,6 +47,7 @@
     <Compile Include="CTVLocalNewsUtil.cs" />
     <Compile Include="CTVNewsUtil.cs" />
     <Compile Include="CTVDeprecatedUtil.cs" />
+    <Compile Include="CTVUtil.cs" />
     <Compile Include="DisneyJuniorCanadaUtil.cs" />
     <Compile Include="FamilyUtil.cs" />
     <Compile Include="GlobalNewsUtil.cs" />

@@ -1524,9 +1524,6 @@
     </Site>
     <Site name="CTV.ca" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>CTV is Canada's largest private broadcaster, offering a wide range of leading news, sports, and entertainment programming.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://watch.ctv.ca]]></item>
-      </Configuration>
     </Site>
     <Site name="CTV News" util="CTVNews" agecheck="false" enabled="true" lang="en" lastUpdated="2012-08-09T20:05:40.9911502-04:00">
       <Description>CTV News.</Description>
@@ -1537,7 +1534,7 @@
     <Site name="CTV Local News" util="CTVLocalNews" agecheck="false" enabled="true" lang="en" lastUpdated="2012-08-11T11:26:55.1867848-04:00">
       <Description>CTV Local News.</Description>
     </Site>
-    <Site name="Discovery Channel Canada" util="CTV" agecheck="false" enabled="true" lang="en">
+    <Site name="Discovery Channel Canada" util="CTVDeprecated" agecheck="false" enabled="true" lang="en">
       <Description>Canadian TV Channel dedicated to documentaries about popular science, technology, and history.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://watch.discoverychannel.ca]]></item>
@@ -1548,17 +1545,16 @@
     <Site name="The Comedy Network" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>Canada's first specialty comedy service, The Comedy Network airs comedy of all kinds, 24-hours-a-day. Launched in October 1997, The Comedy Network broadcasts, uncut and uncensored, an eclectic mix of scripted, stand-up, sketch, improv, and animated comedy - as well as topical comedy talk shows, game shows and classic situation comedies.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://watch.thecomedynetwork.ca]]></item>
-		<item key="swfUrl"><![CDATA[http://watch.thecomedynetwork.ca/Flash/player.swf?themeURL=http://watch.thecomedynetwork.ca/themes/Comedy/player/theme.aspx]]></item>
+        <item key="siteCode"><![CDATA[comedy]]></item>
       </Configuration>
     </Site>
     <Site name="Space" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>SPACE is Canada’s national science fiction, fantasy and horror channel. Look no further for your fix of the paranormal, edgy, scary, creepy and fun! SPACE is the station for all those who dare to challenge their imagination.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://watch.spacecast.com]]></item>
+        <item key="siteCode"><![CDATA[space]]></item>
       </Configuration>
     </Site>
-    <Site name="Fashion Television" util="CTV" agecheck="false" enabled="true" lang="en">
+    <Site name="Fashion Television" util="CTVDeprecated" agecheck="false" enabled="true" lang="en">
       <Description>FashionTelevisionChannel (FT) is Canada's first and only 24-hour English language fashion channel dedicated to the world of art, architecture, photography, and design.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://watch.fashiontelevision.com]]></item>
@@ -1579,12 +1575,10 @@
         </Category>
       </Categories>
     </Site>
-    <Site name="BNN" util="BNN" agecheck="false" enabled="true" lang="en">
+    <Site name="BNN" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>Business News Network is Canada’s only all business and financial news channel.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://watch.bnn.ca]]></item>
-        <item key="swfUrl"><![CDATA[http://watch.bnn.ca/news/Flash/player.swf?themeURL=http://watch.bnn.ca/themes/BusinessNews/player/theme.aspx]]></item>
-        <item key="isLookaheadNeededAtMainLevel"><![CDATA[true]]></item>
+        <item key="siteCode"><![CDATA[bnn]]></item>
       </Configuration>
     </Site>
     <Site name="Global TV" util="CanWest" agecheck="false" enabled="true" lang="en">
