@@ -6,7 +6,8 @@ using System.Web;
 
 namespace OnlineVideos.Sites
 {
-    public class CTVUtil : GenericSiteUtil
+    [Obsolete]
+    public class CTVDeprecatedUtil : GenericSiteUtil
     {
         [Category("OnlineVideosConfiguration"), Description("URL of the SWF player")]
         protected string swfUrl = @"http://watch.ctv.ca/Flash/player.swf?themeURL=http://watch.ctv.ca/themes/CTV/player/theme.aspx";
