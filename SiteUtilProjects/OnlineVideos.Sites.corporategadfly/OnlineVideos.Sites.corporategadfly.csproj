@@ -47,7 +47,7 @@
     <Compile Include="CBSUtil.cs" />
     <Compile Include="CTVLocalNewsUtil.cs" />
     <Compile Include="CTVNewsUtil.cs" />
-    <Compile Include="CTVUtil.cs" />
+    <Compile Include="CTVDeprecatedUtil.cs" />
     <Compile Include="DisneyJuniorCanadaUtil.cs" />
     <Compile Include="FamilyUtil.cs" />
     <Compile Include="GlobalNewsUtil.cs" />

@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
-    public class BNNUtil : CTVUtil
+    public class BNNUtil : CTVDeprecatedUtil
     {
         private static Regex weekdayRegex = new Regex(@"Monday|Tuesday|Wednesday|Thursday|Friday",
             RegexOptions.Compiled);
