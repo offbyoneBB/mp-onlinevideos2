@@ -382,6 +382,22 @@ namespace OnlineVideos.Sites
                 string type = category.Other as string;
                 if (type.Equals(FILM))
                 {
+                    ITrackingInfo ti = new TrackingInfo() { VideoKind = VideoKind.Movie, Title = category.Name };
+                    Regex rgx = new Regex(@"http://www.imdb.com/title/(tt\d{7})/");
+                    Match m = rgx.Match(data);
+                    if (m.Success)
+                    {
+                        ti.ID_IMDB = m.Groups[1].Value;
+                    }
+                    rgx = new Regex(@"([^\(]*)\((\d{4})\)");
+                    m = rgx.Match(category.Name);
+                    uint y = 0;
+                    if (m.Success)
+                    {
+                        ti.Title = m.Groups[1].Value;
+                        uint.TryParse (m.Groups[2].Value,out y);
+                        ti.Year = y;
+                    }
                     string tabName;
                     string movieId;
                     HtmlAgilityPack.HtmlNode a;
@@ -394,7 +410,7 @@ namespace OnlineVideos.Sites
                         movieId = a.GetAttributeValue("href", "#iBetThisIdDoesNotExistOnPage").Replace("#", string.Empty);
                         movieFrame = div.SelectSingleNode(string.Format(".//div[@id = '{0}']/iframe", movieId));
                         video = new VideoInfo();
-                        video.Other = FILM;
+                        video.Other = ti;
                         video.VideoUrl = movieFrame.GetAttributeValue("src", "");
                         video.Title = string.Format("{0} [{1}]", category.Name, tabName);
                         video.ImageUrl = category.Thumb;
@@ -411,6 +427,15 @@ namespace OnlineVideos.Sites
                     string seasonName;
                     string seasonId;
                     VideoInfo video;
+                    Regex rgx = new Regex(@"([^\(]*)\((\d{4})\)");
+                    Match m = rgx.Match(category.Name);
+                    uint year = 0;
+                    string title = category.Name;
+                    if (m.Success)
+                    {
+                        title = m.Groups[1].Value;
+                        uint.TryParse(m.Groups[2].Value, out year);
+                    }
                     foreach (var li in lis)
                     {
                         a = li.SelectSingleNode("a");
@@ -423,11 +448,23 @@ namespace OnlineVideos.Sites
                             foreach (var seasonEpisodeNode in seasonEpisodeNodes)
                             {
                                 video = new VideoInfo();
-                                video.Other = TV;
                                 video.VideoUrl = seasonEpisodeNode.GetAttributeValue("rel", "");
                                 video.Title = (category.Name + "." + seasonName + seasonEpisodeNode.InnerText.Replace("Avsnitt ", "E")).Replace("\r", string.Empty).Trim();
                                 video.ImageUrl = category.Thumb;
                                 video.Description = category.Description;
+
+                                ITrackingInfo ti = new TrackingInfo() { VideoKind = VideoKind.TvSeries, Title = title, Year = year };
+                                rgx = new Regex(@"\.S(\d+)E(\d+)");
+                                m = rgx.Match(video.Title);
+                                uint s,e = 0;
+                                if (m.Success)
+                                {
+                                    uint.TryParse(m.Groups[1].Value, out s);
+                                    ti.Season = s;
+                                    uint.TryParse(m.Groups[2].Value, out e);
+                                    ti.Episode = e;
+                                }
+                                video.Other = ti;
                                 videos.Add(video);
                             }
                         }
@@ -442,8 +479,7 @@ namespace OnlineVideos.Sites
             string bestUrl = "";
             video.PlaybackOptions = new Dictionary<string, string>();
             string iframeUrl = video.VideoUrl;
-            string type = (string)video.Other;
-            if (type.Equals(TV))
+            if ((video.Other as TrackingInfo).VideoKind == VideoKind.TvSeries)
             {
                 string data = GetWebDataWithDdosRemoval("http://dreamfilm.se/CMS/modules/series/ajax.php", string.Format("action=showmovie&id={0}", video.VideoUrl));
                 var htmlDoc = new HtmlAgilityPack.HtmlDocument();
@@ -459,6 +495,11 @@ namespace OnlineVideos.Sites
 
             if (inPlaylist) video.PlaybackOptions.Clear();
             return new List<string>() { bestUrl };
+        }
+
+        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+            return video.Other as TrackingInfo;
         }
         #endregion
     }
