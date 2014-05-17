@@ -5,18 +5,114 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
 namespace TSEngine
 {
-    public delegate void TSEngineHandler(object sender, TSEngineEventArgs e);
+    #region TSEngineEventArgs
+
+    public class TSEngineEventArgs : EventArgs
+    {
+        public TSEngineEventArgs(string message = null)
+        {
+            Message = message;
+        }
+        public string Message { get; protected set; }
+    }
+
+    #endregion
+
+    #region TSMessage
+
+    public class TSMessage
+    {
+        public static TSMessage Create(string message)
+        {
+            string[] messageSplit = message.Split(' ');
+            List<string> arguments = new List<string>();
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            for (int x = 1; x < messageSplit.Length; x++)
+            {
+                string[] paramSplit = messageSplit[x].Split('=');
+                if (paramSplit.Length == 1)
+                    arguments.Add(paramSplit[0]);
+                else
+                    parameters[paramSplit[0]] = paramSplit[1];
+            }
+            return new TSMessage(messageSplit[0], arguments, parameters);
+        }
+
+        string message;
+        List<string> arguments;
+        Dictionary<string, string> parameters;
+        private TSMessage(string message, List<string> arguments, Dictionary<string, string> parameters)
+        {
+            this.message = message;
+            this.arguments = arguments;
+            this.parameters = parameters;
+        }
+
+        public string Message { get { return message; } }
+
+        public string this[int index]
+        {
+            get
+            {
+                if (arguments.Count > index)
+                    return arguments[index];
+                return null;
+            }
+        }
+
+        public string this[string key]
+        {
+            get
+            {
+                string value;
+                if (!parameters.TryGetValue(key, out value))
+                    value = null;
+                return value;
+            }
+        }
+    }
+
+    #endregion
 
     class TSPlayer
     {
+        #region Consts
+
+        const string API_KEY = "n51LvQoTlJzNGaFxseRK-uvnvX-sD4Vm5Axwmc4UcoD-jruxmKsuJaH0eVgE";
+        const int DEFAULT_PORT = 62062; //apparently the default port
+
+        #endregion
+
+        #region Variables
+
         object clientLock = new object();
         AsyncSocket socket = null;
         string installDir;
+
+        bool isClosed;
+        ManualResetEvent engineReadyEvent;
+        ManualResetEvent urlReadyEvent;
+
+        #endregion
+
+        #region Events
+
+        public event EventHandler<TSEngineEventArgs> OnConnected;
+        public event EventHandler<TSEngineEventArgs> OnDisconnected;
+        public event EventHandler<TSEngineEventArgs> OnPlaybackReady;
+        public event EventHandler<TSEngineEventArgs> OnPlaybackPause;
+        public event EventHandler<TSEngineEventArgs> OnPlaybackResume;
+        public event EventHandler<TSEngineEventArgs> OnMessage;
+
+        #endregion
+
+        #region Properties
 
         string host;
         public string Host
@@ -24,7 +120,7 @@ namespace TSEngine
             get { return host; }
         }
 
-        int port = 62062; //apparently the default port;
+        int port = DEFAULT_PORT;
         public int Port
         {
             get { return port; }
@@ -48,9 +144,17 @@ namespace TSEngine
             get { lock (clientLock) return currentUrl; }
         }
 
+        #endregion
+
+        #region Ctor
+
         public TSPlayer(string host = "127.0.0.1")
         {
             this.host = host;
+
+            engineReadyEvent = new ManualResetEvent(false);
+            urlReadyEvent = new ManualResetEvent(false);
+
             socket = new AsyncSocket();
             socket.AllowMultithreadedCallbacks = true;
             socket.WillConnect += new AsyncSocket.SocketWillConnect(socket_WillConnect);
@@ -62,81 +166,130 @@ namespace TSEngine
             installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TorrentStream\\engine");
         }
 
+        #endregion
+
+        #region Socket Event Handlers
+
+        void socket_DidConnect(AsyncSocket sender, System.Net.IPAddress address, ushort port)
+        {
+            log("Socket connected: {0}:{1}", address, port);
+            sender.Read(AsyncSocket.CRLFData, -1, 0);
+            writeMessage("HELLOBG");
+        }
+
+        void socket_DidWrite(AsyncSocket sender, long tag)
+        {
+            log("Message sent");
+        }
+
+        void socket_DidRead(AsyncSocket sender, byte[] data, long tag)
+        {
+            lock (clientLock)
+            {
+                if (isClosed)
+                    return;
+
+                string msg = Encoding.UTF8.GetString(data).Trim();
+                log("Message received: {0}", msg);
+                TSMessage tsMessage = TSMessage.Create(msg);
+                sender.Read(AsyncSocket.CRLFData, -1, 0);
+                handleMessage(tsMessage);
+            }
+        }
+
+        void socket_DidClose(AsyncSocket sender)
+        {
+            log("Socket closed");
+            lock (clientLock)
+            {
+                isConnected = false;
+                isReady = false;
+                if (OnDisconnected != null)
+                    OnDisconnected(this, new TSEngineEventArgs());
+            }
+        }
+
+        void socket_WillClose(AsyncSocket sender, Exception e)
+        {
+
+        }
+
+        static bool socket_WillConnect(AsyncSocket sender, Socket socket)
+        {
+            return true;
+        }
+
+        #endregion
+
+        #region Public Methods
+
         public bool Connect(int timeout = 5000)
         {
             if (!isConnected)
             {
-                if (Process.GetProcessesByName("tsengine").Length < 1)
+                lock (clientLock)
                 {
+                    string enginePath = Path.Combine(installDir, "tsengine.exe");
                     try
                     {
-                        using (Process p = Process.Start(Path.Combine(installDir, "tsengine.exe"))) 
-                        { }
+                        using (Process p = Process.Start(enginePath)) { }
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        log("Failed to start '{0}' - {1}", enginePath, ex.Message);
                         return false;
                     }
-                }
 
-                string portFile = Path.Combine(installDir, "acestream.port");
-                int tries = timeout / 100;
-                while (!File.Exists(portFile))
-                {
-                    tries--;
-                    if (tries < 0)
+                    string portFile = Path.Combine(installDir, "acestream.port");
+                    int tries = timeout / 100;
+                    while (!File.Exists(portFile))
+                    {
+                        tries--;
+                        if (tries < 0)
+                            return false;
+                        Thread.Sleep(100);
+                    }
+
+                    try
+                    {
+                        port = int.Parse(File.ReadAllText(portFile));
+                        log("Using port {0}", port);
+                    }
+                    catch (Exception ex)
+                    {
+                        log("Failed to get port from '{0}' - {1}", portFile, ex.Message);
+                        log("Using default port {0}", DEFAULT_PORT);
+                        port = DEFAULT_PORT; //try default port
+                    }
+
+                    if (!socket.Connect(host, (ushort)port))
+                    {
+                        socket.Close();
+                        log("Error connecting to {0}:{1)", host, port);
                         return false;
-                    Thread.Sleep(100);
+                    }
+                    isConnected = true;
                 }
-
-                try
-                {
-                    port = int.Parse(File.ReadAllText(portFile));
-                }
-                catch
-                { } //try default port
-
-
-                if (!socket.Connect(host, (ushort)port))
-                {
-                    socket.Close();
-                    log("Error connecting to {0}:{1)", host, port);
-                    return false;
-                }
-                isConnected = true;
             }
             return true;
         }
 
         public bool WaitForReady(int timeout = 5000)
         {
-            if (isReady)
-                return true;
-
-            int tries = timeout / 10;
-            while (!isReady)
-            {
-                tries--;
-                if (tries < 0)
-                    break;
-                Thread.Sleep(10);
-            }
+            if (!isReady)
+                engineReadyEvent.WaitOne(timeout);
+            log("Ready: {0}", isReady);
             return isReady;
         }
 
         public string WaitForUrl(int timeout = 20000)
         {
+            if (!isReady)
+                return null;
+
             if (currentUrl == null)
-            {
-                int tries = timeout / 10;
-                while (currentUrl == null)
-                {
-                    tries--;
-                    if (tries < 0)
-                        break;
-                    Thread.Sleep(10);
-                }
-            }
+                urlReadyEvent.WaitOne(timeout);
+            log("Url: '{0}'", currentUrl);
             return currentUrl;
         }
 
@@ -194,36 +347,80 @@ namespace TSEngine
 
         public void Close()
         {
-            if (!isConnected)
-                return;
-
-            writeMessage("SHUTDOWN"); //close socket connection
-            socket.CloseAfterWriting();
-        }
-
-        void handleMessage(string message)
-        {
-            string[] messageParams = message.Split(' ');
-            if (messageParams.Length < 1)
-                return;
             lock (clientLock)
             {
-                switch (messageParams[0])
+                if (!isClosed)
                 {
-                    case "START":
-                        currentUrl = messageParams[1];
-                        if (OnPlaybackReady != null)
-                            OnPlaybackReady(this, new TSEngineEventArgs(currentUrl));
-                        break;
-                    case "PAUSE":
-                        if (OnPlaybackPause != null)
-                            OnPlaybackPause(this, new TSEngineEventArgs());
-                        break;
-                    case "RESUME":
-                        if (OnPlaybackResume != null)
-                            OnPlaybackResume(this, new TSEngineEventArgs());
-                        break;
+                    engineReadyEvent.Close();
+                    urlReadyEvent.Close();
+                    isClosed = true;
                 }
+                if (isConnected)
+                    socket.Close();
+
+                try
+                {
+                    Process[] ps = Process.GetProcessesByName("tsengine");
+                    if (ps.Length > 0)
+                        ps[0].Kill();
+                }
+                catch (Exception ex)
+                {
+                    log("Error closing TSEngine - {0}", ex.Message);
+                }
+                try
+                {
+                    File.Delete(Path.Combine(installDir, "acestream.port"));
+                }
+                catch (Exception ex)
+                {
+                    log("Error deleting port file - {0}", ex.Message);
+                }
+                log("Closed");
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        void handleMessage(TSMessage message)
+        {
+            switch (message.Message)
+            {
+                case "HELLOTS":
+                    string key = message["key"];
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        string responseKey = createResponseKey(message["key"]);
+                        writeMessage("READY key=" + responseKey);
+                    }
+                    else
+                    {
+                        writeMessage("READY");
+                    }
+                    break;
+                case "READY":
+                case "AUTH":
+                    isReady = true;
+                    engineReadyEvent.Set();
+                    if (OnConnected != null)
+                        OnConnected(this, new TSEngineEventArgs());
+                    break;
+                case "START":
+                    currentUrl = message[0];
+                    urlReadyEvent.Set();
+                    if (OnPlaybackReady != null)
+                        OnPlaybackReady(this, new TSEngineEventArgs(currentUrl));
+                    break;
+                case "PAUSE":
+                    if (OnPlaybackPause != null)
+                        OnPlaybackPause(this, new TSEngineEventArgs());
+                    break;
+                case "RESUME":
+                    if (OnPlaybackResume != null)
+                        OnPlaybackResume(this, new TSEngineEventArgs());
+                    break;
             }
         }
 
@@ -236,77 +433,32 @@ namespace TSEngine
         void log(string format, params object[] args)
         {
             if (OnMessage != null)
-                OnMessage(this, new TSEngineEventArgs(string.Format(format, args)));
+                OnMessage(this, new TSEngineEventArgs("AceStream: " + string.Format(format, args)));
         }
-
-        #region Events
-
-        public event TSEngineHandler OnConnected;
-        public event TSEngineHandler OnDisconnected;
-        public event TSEngineHandler OnPlaybackReady;
-        public event TSEngineHandler OnPlaybackPause;
-        public event TSEngineHandler OnPlaybackResume;
-        public event TSEngineHandler OnMessage;
 
         #endregion
 
-        #region Socket Events
-        void socket_DidWrite(AsyncSocket sender, long tag)
+        #region Static Methods
+
+        static string createResponseKey(string requestKey)
         {
-            log("Message sent");
+            SHA1 sha1 = SHA1.Create();
+            byte[] hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(requestKey + API_KEY));
+            return API_KEY.Split('-')[0] + "-" + hexStringFromBytes(hash);
         }
 
-        void socket_DidRead(AsyncSocket sender, byte[] data, long tag)
+        static string hexStringFromBytes(byte[] bytes)
         {
-            string msg = Encoding.UTF8.GetString(data);
-            log("Message received: {0}", msg);
-            sender.Read(AsyncSocket.CRLFData, -1, 0);
-            handleMessage(msg);
+            string addressString = "";
+            if (bytes == null || bytes.Length == 0)
+                return addressString;
+
+            for (int x = 0; x < bytes.Length - 1; x++)
+                addressString += bytes[x].ToString("x2");
+            addressString += bytes[bytes.Length - 1].ToString("x2");
+            return addressString;
         }
 
-        void socket_DidClose(AsyncSocket sender)
-        {
-            log("Socket closed");
-            lock (clientLock)
-            {
-                isConnected = false;
-                isReady = false;
-                if (OnDisconnected != null)
-                    OnDisconnected(this, new TSEngineEventArgs());
-            }
-        }
-
-        void socket_WillClose(AsyncSocket sender, Exception e)
-        {
-
-        }
-
-        void socket_DidConnect(AsyncSocket sender, System.Net.IPAddress address, ushort port)
-        {
-            log("Socket connected: {0}:{1}", address, port);
-            sender.Read(AsyncSocket.CRLFData, -1, 0);
-            writeMessage("HELLOBG");
-            writeMessage("READY");
-            lock (clientLock)
-                isReady = true;
-
-            if (OnConnected != null)
-                OnConnected(this, new TSEngineEventArgs());
-        }
-
-        static bool socket_WillConnect(AsyncSocket sender, Socket socket)
-        {
-            return true;
-        }
         #endregion
-    }
-
-    public class TSEngineEventArgs : EventArgs
-    {
-        public TSEngineEventArgs(string message = null)
-        {
-            Message = message;
-        }
-        public string Message { get; protected set; }
     }
 }
