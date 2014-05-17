@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,12 +15,12 @@ namespace OnlineVideos.Sites
         const string BASE_URL = "http://www.wiziwig.tv";
         static Regex CAT_REG = new Regex(@"<tr class="".*?"">\s*<td class=""logo"">.*?</td>\s*<td><a.*?>(?<comp>[^<]*)</a>.*?</td>\s*<td>\s*<div class=""date"".*?>(?<date>[^<]*)</div>\s*<span class=""time"".*?>(?<starttime>[^<]*)</span> -\s*<span class=""time"".*?>(?<endtime>[^<]*)</span>\s*</td>\s*<td class=""home"".*?><img class=""flag"" src=""(?<thumb>[^""]*)"".*?/>(?<hometeam>[^<]*)<img.*?/></td>\s*(<td>vs.</td>\s*<td class=""away""><img.*?>(?<awayteam>[^<]*)<img class=""flag"" src=""(?<awaythumb>[^""]*)"".*?></td>\s*)?<td class=""broadcast""><a class=""broadcast"" href=""(?<url>[^""]*)""",
             RegexOptions.Compiled);
-        static Regex CHANNEL_REG = new Regex(@"<tr class=""broadcast"">\s*<td class=""logo"".*?><img src=""(?<thumb>[^""]*)"".*?></td>\s*<td class=""stationname"">(?<name>[^<]*)</td>\s*(<td.*?>.*?</td>\s*){3}</tr>\s*(?<vidhtml><tr class=""streamrow.*?</tr>)",
+        static Regex CHANNEL_REG = new Regex(@"<tr class=""broadcast"">\s*<td class=""logo"".*?><img src=""(?<thumb>[^""]*)"".*?></td>\s*<td class=""stationname"">(?<name>[^<]*)</td>\s*(<td.*?>.*?</td>\s*){3}</tr>\s*(?<vidhtml>(<tr class=""streamrow.*?</tr>\s*)+)",
             RegexOptions.Singleline | RegexOptions.Compiled);
         static Regex VIDEO_REG = new Regex(@"<tr class=""streamrow (odd|even)"">\s*<td>.*?</td>\s*<td>\s*<a class=""broadcast go"" href=""(?<url>[^""]*)"".*?</td>\s*<td>(?<bitrate>[^<]*)</td>\s*<td><div class=""rating"" rel=""(?<rating>[^""]*)""",
             RegexOptions.Singleline | RegexOptions.Compiled);
 
-        [Category("OnlineVideosConfiguration"), Description("Max time in ms to wait for AceStream prebuffering to complete.")]
+        [Category("OnlineVideosConfiguration"), Description("Max time in ms to wait for AceStream prebuffering to complete, ensure that OnlineVideos' web request timeout is at least equal to this.")]
         int aceStreamTimeout = 20000;
 
         public override int DiscoverDynamicCategories()
@@ -68,6 +69,7 @@ namespace OnlineVideos.Sites
 
             //links page
             string html = GetWebData(((RssLink)category).Url);            
+
             //match the channel groups to get tile and logo for individual links
             foreach (Match match in CHANNEL_REG.Matches(html))
             {
@@ -98,22 +100,40 @@ namespace OnlineVideos.Sites
                 return getAceStreamUrl(url.Substring(12));
             else if (url.StartsWith("sop://"))
                 return base.getUrl(video);
-            return getHitSportsUrl(url);
+            return null;
         }
 
         string getAceStreamUrl(string pid)
         {
-            if (tsPlayer == null)
+            if (tsPlayer != null)
+                tsPlayer.Close();
+
+            Log.Debug("Wiziwig: Starting acestream with PID '{0}'", pid);
+            string url = null;
+            try
             {
                 tsPlayer = new TSPlayer();
-                tsPlayer.OnMessage += (s, e) => Log.Debug(e.Message);
+                tsPlayer.OnMessage += (s, e) => Log.Debug("Wiziwig: " + e.Message);
+                if (!tsPlayer.Connect() || !tsPlayer.WaitForReady())
+                    return null;
+
+                tsPlayer.StartPID(pid);
+                url = tsPlayer.WaitForUrl(aceStreamTimeout);
+            }
+            catch (System.Threading.ThreadAbortException)
+            {
+                tsPlayer.Close();
+                tsPlayer = null;
+                Log.Warn("Wiziwig: Background thread was aborted by OnlineVideos, consider increasing OnlineVideos' web request timeout");
+                throw;
             }
 
-            if (!tsPlayer.Connect() || !tsPlayer.WaitForReady())
-                return null;
-
-            tsPlayer.StartPID(pid);
-            return tsPlayer.WaitForUrl(aceStreamTimeout);
+            if (string.IsNullOrEmpty(url))
+            {
+                tsPlayer.Close();
+                tsPlayer = null;
+            }
+            return url;
         }
 
         public override void OnPlaybackEnded(VideoInfo video, string url, double percent, bool stoppedByUser)
@@ -126,30 +146,9 @@ namespace OnlineVideos.Sites
             }
         }
 
-        private string getHitSportsUrl(string url)
-        {
-            string html = GetWebData(url);
-            Match m = new Regex(@"http://hitsports.net/stream-\d+.php").Match(html);
-            if (!m.Success)
-                return "";
-            html = GetWebData(m.Value);
-            m = new Regex(@"fid='(.*?)'").Match(html);
-            if (!m.Success)
-                return "";
-
-            return new MPUrlSourceFilter.RtmpUrl("rtmp://50.115.124.69/flashi")
-            {
-                PlayPath = m.Groups[1].Value,
-                SwfUrl = "http://www.flashi.tv/player/player-licensed.swf",
-                SwfVerify = true,
-                PageUrl = "http://www.flashi.tv/embed.php?v=" + m.Groups[1].Value,
-                Live = true
-            }.ToString();
-        }
-
         bool isUrlSupported(string url)
         {
-            return url.StartsWith("acestream://") || url.StartsWith("sop://") || url.StartsWith("http://www.hitsports.net");
+            return url.StartsWith("acestream://"); // || url.StartsWith("sop://");
         }
 
         private string getVidLength(string description)
