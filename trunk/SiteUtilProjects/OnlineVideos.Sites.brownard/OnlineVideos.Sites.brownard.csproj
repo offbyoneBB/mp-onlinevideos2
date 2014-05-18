@@ -56,7 +56,6 @@
     <Compile Include="Demand5Util.cs" />
     <Compile Include="FootballStreamingInfoUtil.cs" />
     <Compile Include="FourodUtil.cs" />
-    <Compile Include="Utils\Flashi.cs" />
     <Compile Include="Utils\FourodDecrypter.cs" />
     <Compile Include="ITVPlayerUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,9 +71,9 @@
     <Compile Include="Utils\StreamComparer.cs" />
     <Compile Include="Utils\SubCatHolder.cs" />
     <Compile Include="Utils\SubtitleReader.cs" />
-    <Compile Include="Utils\TSEngine\AsyncSocket.cs" />
-    <Compile Include="Utils\TSEngine\Data.cs" />
-    <Compile Include="Utils\TSEngine\TSPlayer.cs" />
+    <Compile Include="Utils\AceStreamEngine\AsyncSocket.cs" />
+    <Compile Include="Utils\AceStreamEngine\Data.cs" />
+    <Compile Include="Utils\AceStreamEngine\AceStreamEngine.cs" />
     <Compile Include="Utils\TVGuideGrabber.cs" />
     <Compile Include="Utils\YouTubeShowHandler.cs" />
     <Compile Include="WiziwigUtil.cs" />

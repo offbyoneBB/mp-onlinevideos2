@@ -1,17 +1,17 @@
 ﻿using HtmlAgilityPack;
+using OnlineVideos.Sites.Utils.Brownard.AceStream;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using TSEngine;
 
 namespace OnlineVideos.Sites
 {
     public class WiziwigUtil : SiteUtilBase
     {
-        TSPlayer tsPlayer = null;
+        AceStreamEngine aceStreamEngine = null;
         const string BASE_URL = "http://www.wiziwig.tv";
         static Regex CAT_REG = new Regex(@"<tr class="".*?"">\s*<td class=""logo"">.*?</td>\s*<td><a.*?>(?<comp>[^<]*)</a>.*?</td>\s*<td>\s*<div class=""date"".*?>(?<date>[^<]*)</div>\s*<span class=""time"".*?>(?<starttime>[^<]*)</span> -\s*<span class=""time"".*?>(?<endtime>[^<]*)</span>\s*</td>\s*<td class=""home"".*?><img class=""flag"" src=""(?<thumb>[^""]*)"".*?/>(?<hometeam>[^<]*)<img.*?/></td>\s*(<td>vs.</td>\s*<td class=""away""><img.*?>(?<awayteam>[^<]*)<img class=""flag"" src=""(?<awaythumb>[^""]*)"".*?></td>\s*)?<td class=""broadcast""><a class=""broadcast"" href=""(?<url>[^""]*)""",
             RegexOptions.Compiled);
@@ -105,44 +105,44 @@ namespace OnlineVideos.Sites
 
         string getAceStreamUrl(string pid)
         {
-            if (tsPlayer != null)
-                tsPlayer.Close();
+            if (aceStreamEngine != null)
+                aceStreamEngine.Close();
 
             Log.Debug("Wiziwig: Starting acestream with PID '{0}'", pid);
             string url = null;
             try
             {
-                tsPlayer = new TSPlayer();
-                tsPlayer.OnMessage += (s, e) => Log.Debug("Wiziwig: " + e.Message);
-                if (!tsPlayer.Connect() || !tsPlayer.WaitForReady())
+                aceStreamEngine = new AceStreamEngine();
+                aceStreamEngine.OnMessage += (s, e) => Log.Debug("Wiziwig: " + e.Message);
+                if (!aceStreamEngine.Connect() || !aceStreamEngine.WaitForReady())
                     return null;
 
-                tsPlayer.StartPID(pid);
-                url = tsPlayer.WaitForUrl(aceStreamTimeout);
+                aceStreamEngine.StartPID(pid);
+                url = aceStreamEngine.WaitForUrl(aceStreamTimeout);
             }
             catch (System.Threading.ThreadAbortException)
             {
-                tsPlayer.Close();
-                tsPlayer = null;
+                aceStreamEngine.Close();
+                aceStreamEngine = null;
                 Log.Warn("Wiziwig: Background thread was aborted by OnlineVideos, consider increasing OnlineVideos' web request timeout");
                 throw;
             }
 
             if (string.IsNullOrEmpty(url))
             {
-                tsPlayer.Close();
-                tsPlayer = null;
+                aceStreamEngine.Close();
+                aceStreamEngine = null;
             }
             return url;
         }
 
         public override void OnPlaybackEnded(VideoInfo video, string url, double percent, bool stoppedByUser)
         {
-            if (tsPlayer != null)
+            if (aceStreamEngine != null)
             {
-                tsPlayer.Stop();
-                tsPlayer.Close();
-                tsPlayer = null;
+                aceStreamEngine.Stop();
+                aceStreamEngine.Close();
+                aceStreamEngine = null;
             }
         }
 

@@ -9,13 +9,13 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
-namespace TSEngine
+namespace OnlineVideos.Sites.Utils.Brownard.AceStream
 {
-    #region TSEngineEventArgs
+    #region AceStreamEventArgs
 
-    public class TSEngineEventArgs : EventArgs
+    public class AceStreamEventArgs : EventArgs
     {
-        public TSEngineEventArgs(string message = null)
+        public AceStreamEventArgs(string message = null)
         {
             Message = message;
         }
@@ -24,11 +24,11 @@ namespace TSEngine
 
     #endregion
 
-    #region TSMessage
+    #region AceStreamMessage
 
-    public class TSMessage
+    public class AceStreamMessage
     {
-        public static TSMessage Create(string message)
+        public static AceStreamMessage Create(string message)
         {
             string[] messageSplit = message.Split(' ');
             List<string> arguments = new List<string>();
@@ -41,13 +41,13 @@ namespace TSEngine
                 else
                     parameters[paramSplit[0]] = paramSplit[1];
             }
-            return new TSMessage(messageSplit[0], arguments, parameters);
+            return new AceStreamMessage(messageSplit[0], arguments, parameters);
         }
 
         string message;
         List<string> arguments;
         Dictionary<string, string> parameters;
-        private TSMessage(string message, List<string> arguments, Dictionary<string, string> parameters)
+        private AceStreamMessage(string message, List<string> arguments, Dictionary<string, string> parameters)
         {
             this.message = message;
             this.arguments = arguments;
@@ -80,7 +80,7 @@ namespace TSEngine
 
     #endregion
 
-    class TSPlayer
+    class AceStreamEngine
     {
         #region Consts
 
@@ -94,6 +94,7 @@ namespace TSEngine
         object clientLock = new object();
         AsyncSocket socket = null;
         string installDir;
+        string enginePath;
 
         bool isClosed;
         ManualResetEvent engineReadyEvent;
@@ -103,12 +104,12 @@ namespace TSEngine
 
         #region Events
 
-        public event EventHandler<TSEngineEventArgs> OnConnected;
-        public event EventHandler<TSEngineEventArgs> OnDisconnected;
-        public event EventHandler<TSEngineEventArgs> OnPlaybackReady;
-        public event EventHandler<TSEngineEventArgs> OnPlaybackPause;
-        public event EventHandler<TSEngineEventArgs> OnPlaybackResume;
-        public event EventHandler<TSEngineEventArgs> OnMessage;
+        public event EventHandler<AceStreamEventArgs> OnConnected;
+        public event EventHandler<AceStreamEventArgs> OnDisconnected;
+        public event EventHandler<AceStreamEventArgs> OnPlaybackReady;
+        public event EventHandler<AceStreamEventArgs> OnPlaybackPause;
+        public event EventHandler<AceStreamEventArgs> OnPlaybackResume;
+        public event EventHandler<AceStreamEventArgs> OnMessage;
 
         #endregion
 
@@ -148,7 +149,7 @@ namespace TSEngine
 
         #region Ctor
 
-        public TSPlayer(string host = "127.0.0.1")
+        public AceStreamEngine(string host = "127.0.0.1")
         {
             this.host = host;
 
@@ -163,7 +164,6 @@ namespace TSEngine
             socket.DidClose += new AsyncSocket.SocketDidClose(socket_DidClose);
             socket.DidRead += new AsyncSocket.SocketDidRead(socket_DidRead);
             socket.DidWrite += new AsyncSocket.SocketDidWrite(socket_DidWrite);
-            installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TorrentStream\\engine");
         }
 
         #endregion
@@ -191,7 +191,7 @@ namespace TSEngine
 
                 string msg = Encoding.UTF8.GetString(data).Trim();
                 log("Message received: {0}", msg);
-                TSMessage tsMessage = TSMessage.Create(msg);
+                AceStreamMessage tsMessage = AceStreamMessage.Create(msg);
                 sender.Read(AsyncSocket.CRLFData, -1, 0);
                 handleMessage(tsMessage);
             }
@@ -205,7 +205,7 @@ namespace TSEngine
                 isConnected = false;
                 isReady = false;
                 if (OnDisconnected != null)
-                    OnDisconnected(this, new TSEngineEventArgs());
+                    OnDisconnected(this, new AceStreamEventArgs());
             }
         }
 
@@ -229,15 +229,25 @@ namespace TSEngine
             {
                 lock (clientLock)
                 {
-                    string enginePath = Path.Combine(installDir, "tsengine.exe");
-                    try
-                    {
-                        using (Process p = Process.Start(enginePath)) { }
-                    }
-                    catch(Exception ex)
-                    {
-                        log("Failed to start '{0}' - {1}", enginePath, ex.Message);
+                    setInstallationDirectory();
+                    if (string.IsNullOrEmpty(enginePath))
                         return false;
+
+                    if (Process.GetProcessesByName(Path.GetFileNameWithoutExtension(enginePath)).Length == 0)
+                    {
+                        try
+                        {
+                            using (Process p = Process.Start(enginePath)) { }
+                        }
+                        catch (Exception ex)
+                        {
+                            log("Failed to start '{0}' - {1}", enginePath, ex.Message);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        log("AceStream already running");
                     }
 
                     string portFile = Path.Combine(installDir, "acestream.port");
@@ -360,13 +370,13 @@ namespace TSEngine
 
                 try
                 {
-                    Process[] ps = Process.GetProcessesByName("tsengine");
+                    Process[] ps = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(enginePath));
                     if (ps.Length > 0)
                         ps[0].Kill();
                 }
                 catch (Exception ex)
                 {
-                    log("Error closing TSEngine - {0}", ex.Message);
+                    log("Error closing AceStreamEngine - {0}", ex.Message);
                 }
                 try
                 {
@@ -383,8 +393,32 @@ namespace TSEngine
         #endregion
 
         #region Private Methods
+        
+        void setInstallationDirectory()
+        {
+            installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ACEStream\\engine");
+            enginePath = Path.Combine(installDir, "ace_engine.exe");
+            if (File.Exists(enginePath))
+            {
+                log("Found AceStream installation at '{0}'", installDir);
+                return;
+            }
 
-        void handleMessage(TSMessage message)
+            //Old install path
+            installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TorrentStream\\engine");
+            enginePath = Path.Combine(installDir, "tsengine.exe");
+            if (File.Exists(enginePath))
+            {
+                log("Found AceStream installation at '{0}'", installDir);
+                return;
+            }
+
+            log("No AceStream installations were found");
+            installDir = null;
+            enginePath = null;
+        }
+
+        void handleMessage(AceStreamMessage message)
         {
             switch (message.Message)
             {
@@ -405,21 +439,21 @@ namespace TSEngine
                     isReady = true;
                     engineReadyEvent.Set();
                     if (OnConnected != null)
-                        OnConnected(this, new TSEngineEventArgs());
+                        OnConnected(this, new AceStreamEventArgs());
                     break;
                 case "START":
                     currentUrl = message[0];
                     urlReadyEvent.Set();
                     if (OnPlaybackReady != null)
-                        OnPlaybackReady(this, new TSEngineEventArgs(currentUrl));
+                        OnPlaybackReady(this, new AceStreamEventArgs(currentUrl));
                     break;
                 case "PAUSE":
                     if (OnPlaybackPause != null)
-                        OnPlaybackPause(this, new TSEngineEventArgs());
+                        OnPlaybackPause(this, new AceStreamEventArgs());
                     break;
                 case "RESUME":
                     if (OnPlaybackResume != null)
-                        OnPlaybackResume(this, new TSEngineEventArgs());
+                        OnPlaybackResume(this, new AceStreamEventArgs());
                     break;
             }
         }
@@ -433,7 +467,7 @@ namespace TSEngine
         void log(string format, params object[] args)
         {
             if (OnMessage != null)
-                OnMessage(this, new TSEngineEventArgs("AceStream: " + string.Format(format, args)));
+                OnMessage(this, new AceStreamEventArgs("AceStream: " + string.Format(format, args)));
         }
 
         #endregion
@@ -453,9 +487,8 @@ namespace TSEngine
             if (bytes == null || bytes.Length == 0)
                 return addressString;
 
-            for (int x = 0; x < bytes.Length - 1; x++)
+            for (int x = 0; x < bytes.Length; x++)
                 addressString += bytes[x].ToString("x2");
-            addressString += bytes[bytes.Length - 1].ToString("x2");
             return addressString;
         }
 
