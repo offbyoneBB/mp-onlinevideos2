@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
         private static string LIVE_STREAMING = @"En Direct";
         private static string liveEpisodeUrl = @"http://vtele.ca/en-direct/includes/retreiveEmiV3.inc.php";
 
-        private static Regex contentIdRegex = new Regex(@"bcMPlayer\.initialize\('(?<contentId>[^']*)'",
+        private static Regex contentIdRegex = new Regex(@"idBC:\s'(?<contentId>[^']*)'",
                                                         RegexOptions.Compiled);
         private Category currentCategory = null;
         
@@ -157,7 +157,7 @@ namespace OnlineVideos.Sites
                                    Title = HttpUtility.HtmlDecode(anchor.InnerText),
                                    VideoUrl = anchor.GetAttributeValue(@"href", string.Empty),
                                    ImageUrl = img.GetAttributeValue(@"src", string.Empty),
-                                   Airdate = airdate.InnerText.Replace(@"Ajouté le", string.Empty)
+                                   Airdate = airdate.InnerText.Replace(@"Ajouté le", string.Empty).Split('\\')[2].Trim()
                                });
                 }
                 
