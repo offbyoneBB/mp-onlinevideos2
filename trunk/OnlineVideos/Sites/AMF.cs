@@ -7,6 +7,8 @@ using System.Net;
 
 namespace OnlineVideos.AMF
 {
+    public enum AMFVersion { AMF0 = 0, AMF3 = 3 };
+
     enum AMF0Type
     {
         NumberMarker = 0x00,
@@ -564,7 +566,7 @@ namespace OnlineVideos.AMF
         {
             output.Clear();
 
-            OutShort(3); //version
+            OutShort(Convert.ToInt16(AMFVersion.AMF3)); // AMF version 3
             OutShort(0); //headercount
             OutShort(1); //responsecount
             OutString(target);
@@ -634,9 +636,14 @@ namespace OnlineVideos.AMF
 
         public byte[] Serialize2(string target, object[] values)
         {
+            return this.Serialize2(target, values, AMFVersion.AMF0);
+        }
+        
+        public byte[] Serialize2(string target, object[] values, AMFVersion version)
+        {
             output.Clear();
 
-            OutShort(0); //version
+            OutShort(Convert.ToInt16(version)); // AMFVersion (AMF0 or AMF3)
             OutShort(0); //headercount
             OutShort(1); //responsecount
             OutString(target);
