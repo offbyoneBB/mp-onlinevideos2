@@ -23,6 +23,7 @@ namespace OnlineVideos.Sites
         private static Regex nidRegex = new Regex(@"(?<nid>[\d]+)\-wrapper$", RegexOptions.Compiled);
         private static Regex rtmpUrlRegex = new Regex(@"(?<rtmp>rtmpe?)://(?<host>[^/]+)/(?<app>[^&]*)&(?<leftover>.*)", RegexOptions.Compiled);
         private static Regex nextPageLinkRegex = new Regex(@"(/video|/views/ajax)\?page=(?<page>\d+)", RegexOptions.Compiled);
+        private static Regex videoIdRegex = new Regex(@"<param name=""@videoPlayer"" value=""(?<videoId>[^""]*)""", RegexOptions.Compiled);
         
         private Category currentCategory = null;
 
@@ -34,7 +35,10 @@ namespace OnlineVideos.Sites
                 new RssLink() { Name = "All Programs", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "1"), HasSubCategories = true }
                );
             Settings.Categories.Add(
-                new RssLink() { Name = "Documentaries", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "4"), HasSubCategories = true }
+                new RssLink() { Name = "Documentaries", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "13"), HasSubCategories = true }
+               );
+            Settings.Categories.Add(
+                new RssLink() { Name = "Documentary Series", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "4"), HasSubCategories = true }
                );
             Settings.Categories.Add(
                 new RssLink() { Name = "Dramas", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "5"), HasSubCategories = true }
@@ -43,10 +47,10 @@ namespace OnlineVideos.Sites
                 new RssLink() { Name = "TVO Archive", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "3"), HasSubCategories = true }
                );
             Settings.Categories.Add(
-                new RssLink() { Name = "Topics", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "2"), HasSubCategories = true }
+                new RssLink() { Name = "Playlists", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "7"), HasSubCategories = true }
                );
             Settings.Categories.Add(
-                new RssLink() { Name = "Playlists", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "7"), HasSubCategories = true }
+                new RssLink() { Name = "Coming Soon", Url = string.Format(mainCategoriesUrl, baseUrlPrefix, "8"), HasSubCategories = true }
                );
 
             Settings.DynamicCategoriesDiscovered = true;
@@ -163,6 +167,21 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getNextPageVideos()
         {
             return getVideoListForSinglePage(currentCategory, nextPageUrl);
+        }
+        
+        public override string getBrightCoveVideoIdForViewerExperienceRequest(string videoUrl)
+        {
+            string result = string.Empty;
+            string webData = GetWebData(videoUrl);
+            if (!string.IsNullOrEmpty(webData))
+            {
+                Match videoIdMatch = videoIdRegex.Match(webData);
+                if (videoIdMatch.Success)
+                {
+                    result = videoIdMatch.Groups["videoId"].Value;
+                }
+            }
+            return result;
         }
     }
 }
