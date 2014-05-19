@@ -107,7 +107,7 @@ namespace OnlineVideos.Sites
                     // viewer experience request
                     AMFObject viewerExperenceRequest = new AMFObject(@"com.brightcove.experience.ViewerExperienceRequest");
                     viewerExperenceRequest.Add("contentOverrides", contentOverrideArray);
-                    viewerExperenceRequest.Add("experienceId", playerId);
+                    viewerExperenceRequest.Add("experienceId", Convert.ToDouble(playerId));
                     viewerExperenceRequest.Add("deliveryType", null);
                     viewerExperenceRequest.Add("playerKey", string.Empty);
                     viewerExperenceRequest.Add("URL", video.VideoUrl);
@@ -115,7 +115,7 @@ namespace OnlineVideos.Sites
     
                     //Log.Debug("About to make AMF call: {0}", viewerExperenceRequest.ToString());
                     AMFSerializer serializer = new AMFSerializer();
-                    AMFObject response = AMFObject.GetResponse(brightcoveUrl, serializer.Serialize(viewerExperenceRequest, hashValue));
+                    AMFObject response = AMFObject.GetResponse(brightcoveUrl, serializer.Serialize(viewerExperenceRequest, "com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience", hashValue));
                     //Log.Debug("AMF Response: {0}", response.ToString());
     
                     renditions = response.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
