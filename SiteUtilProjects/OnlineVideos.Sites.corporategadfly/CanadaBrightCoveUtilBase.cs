@@ -47,7 +47,7 @@ namespace OnlineVideos.Sites
                 values[3] = Convert.ToDouble(publisherId);
     
                 AMFSerializer serializer = new AMFSerializer();
-                AMFObject response = AMFObject.GetResponse(brightcoveUrl, serializer.Serialize2("com.brightcove.player.runtime.PlayerMediaFacade.findMediaById", values));
+                AMFObject response = AMFObject.GetResponse(brightcoveUrl, serializer.Serialize2("com.brightcove.player.runtime.PlayerMediaFacade.findMediaById", values, AMFVersion.AMF3));
                 //Log.Debug("AMF Response: {0}", response.ToString());
     
                 renditions = response.GetArray("renditions");
