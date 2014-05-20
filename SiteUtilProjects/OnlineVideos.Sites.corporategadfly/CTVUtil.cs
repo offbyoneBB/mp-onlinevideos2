@@ -16,11 +16,11 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Short code for site utility")]
         protected string siteCode = @"ctv";
 
-        private static string mediaBaseUrl              = @"http://capi.9c9media.com/destinations";
+        protected static string mediaBaseUrl            = @"http://capi.9c9media.com/destinations";
         private static string mainCategoriesUrlFormat   = mediaBaseUrl + @"/{0}_web/platforms/desktop/collections/67/medias?$sort=name&$include=[id,images,name]&$page=1&$top=1000";
         private static string seasonsUrlFormat          = mediaBaseUrl + @"/{0}_web/platforms/desktop/medias/{1}/seasons?$sort=name";
         private static string videoListUrlFormat        = mediaBaseUrl + @"/{0}_web/platforms/desktop/medias/{1}/seasons/{2}/contents?$sort=BroadcastDate&$order=desc&$include=[broadcastdate,contentpackages,desc,id,images,name]&$page=1&$top=1000";
-        private static string stacksUrlFormat           = mediaBaseUrl + @"/{0}_web/platforms/desktop/contents/{1}/contentpackages/{2}/stacks";
+        protected static string stacksUrlFormat          = mediaBaseUrl + @"/{0}_web/platforms/desktop/contents/{1}/contentpackages/{2}/stacks";
         private static string manifestUrlFormat         = @"{0}/{1}/manifest.f4m";
 
         private static Regex jsonPayloadRegex = new Regex(@"define\((?<json>.*)\);",
