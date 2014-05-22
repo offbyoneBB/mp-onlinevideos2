@@ -1435,10 +1435,8 @@
     <Site name="TouTV" util="TouTv" agecheck="false" enabled="true" lang="fr">
       <Description>Webtélé de divertissement axée sur la vidéo sur demande, offerte par Radio-Canada et une vingtaine de diffuseurs et de producteurs partenaires.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\sdata-stats-action="menu_bas_page[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
         <item key="playlistUrlRegEx"><![CDATA["idMedia":"(?<url>[^"]*)"]]></item>
-        <item key="playlistUrlFormatString"><![CDATA[http://api.radio-canada.ca/validationMedia/v1/Validation.html?connectionType=wifi&idMedia={0}&multibitrate=true&output=jsonp&appCode=thePlatform&deviceType=flashhd]]></item>
-        <item key="baseUrl"><![CDATA[http://www.tou.tv/repertoire]]></item>
+        <item key="playlistUrlFormatString"><![CDATA[http://api.radio-canada.ca/validationMedia/v1/Validation.html?connectionType=wifi&idMedia={0}&output=json&appCode=toutv&deviceType=flashhd]]></item>
       </Configuration>
     </Site>
     <Site name="Tube+" util="TubePlus" agecheck="false" enabled="true" lang="en" player="Internal">
