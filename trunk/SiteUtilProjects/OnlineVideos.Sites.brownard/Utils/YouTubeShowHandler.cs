@@ -7,6 +7,14 @@ using OnlineVideos.Hoster.Base;
 
 namespace OnlineVideos.Sites.Brownard
 {
+    class EpisodeInfo
+    {
+        public string SeriesTitle { get; set; }
+        public string SeriesNumber { get; set; }
+        public string EpisodeNumber { get; set; }
+        public string AirDate { get; set; }
+    }
+
     class YouTubeShowHandler
     {
         public static Dictionary<string, string> GetYouTubePlaybackOptions(EpisodeInfo info)

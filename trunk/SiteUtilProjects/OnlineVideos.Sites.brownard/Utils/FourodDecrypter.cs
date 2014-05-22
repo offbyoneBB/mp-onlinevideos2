@@ -7,21 +7,20 @@ using Org.BouncyCastle.Crypto.Parameters;
 
 namespace OnlineVideos.Sites
 {
-    class FourodDecrypter
+    static class FourodDecrypter
     {
-        public string Decode4odToken(string token)
+        const string KEY = "wHcnqpHNN"; // "STINGMIMI";
+
+        public static string Decode4odToken(string token)
         {
-            //get bytes from token
             byte[] encryptedBytes = Convert.FromBase64String(token);
-            
-            string key = "STINGMIMI";
             BlowfishEngine bf = new BlowfishEngine();
-            bf.Init(false, new KeyParameter(Encoding.ASCII.GetBytes(key)));
+            bf.Init(false, new KeyParameter(Encoding.ASCII.GetBytes(KEY)));
             byte[] decryptedBytes = decrypt(encryptedBytes, bf);
             return Encoding.ASCII.GetString(decryptedBytes);
         }
 
-        byte[] decrypt(byte[] byteArray, BlowfishEngine bf)
+        static byte[] decrypt(byte[] byteArray, BlowfishEngine bf)
         {
             int blockSize = 8;
             List<byte> decrypted = new List<byte>();
@@ -40,7 +39,7 @@ namespace OnlineVideos.Sites
             return decrypted.ToArray();
         }
 
-        void unpad(List<byte> decrypted)
+        static void unpad(List<byte> decrypted)
         {
             uint c = decrypted[decrypted.Count - 1];
             for (uint i = c; i > 0; i--)

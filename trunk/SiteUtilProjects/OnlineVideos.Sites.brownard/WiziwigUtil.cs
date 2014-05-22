@@ -128,12 +128,12 @@ namespace OnlineVideos.Sites
                 throw;
             }
 
-            if (string.IsNullOrEmpty(url))
-            {
-                aceStreamEngine.Close();
-                aceStreamEngine = null;
-            }
-            return url;
+            if (!string.IsNullOrEmpty(url))
+                return new MPUrlSourceFilter.HttpUrl(url) { LiveStream = true, ReceiveDataTimeout = MPUrlSourceFilter.HttpUrl.DefaultReceiveDataTimeout * 2 }.ToString();
+
+            aceStreamEngine.Close();
+            aceStreamEngine = null;
+            return null;
         }
 
         public override void OnPlaybackEnded(VideoInfo video, string url, double percent, bool stoppedByUser)
