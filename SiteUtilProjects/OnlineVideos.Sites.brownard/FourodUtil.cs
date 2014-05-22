@@ -7,6 +7,9 @@ using System.ComponentModel;
 using OnlineVideos.Hoster.Base;
 using OnlineVideos.Sites.Brownard;
 using Newtonsoft.Json.Linq;
+using HtmlAgilityPack;
+using System.Xml;
+using System.Web;
 
 namespace OnlineVideos.Sites
 {
@@ -23,6 +26,22 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Url of the 4od swf object")]
         string swfObjectUrl = "http://www.channel4.com/static/programmes/asset/flash/swf/4odplayer-11.31.1.swf";
 
+        const string BASE_URL = "http://m.channel4.com";
+        const string SEARCH_URL = "http://m.channel4.com/4od/search/ajax/";
+
+        static readonly Regex catchupDaysRegex = new Regex(@"<li[^>]*>\s*<a href=""([^""]*)"">([^\s]+)\s*<span");
+        static readonly Regex previousCatchupDaysRegex = new Regex(@"<li[^>]*>\s*<a href=""([^""]*)"">\s*<span>Forward");
+        static readonly Regex dateFromUrlRegex = new Regex(@"\d\d\d\d/(\d+)/\d+");
+
+        static readonly Regex aToZRegex = new Regex(@"<a href=""(/4od/atoz/[^""]*)[^>]*>([^<]*)");
+
+        static readonly Regex trimRegex = new Regex(@"\s\s+");
+        static readonly Regex seasonRegex = new Regex(@"<li[^>]*>\s*<a href=""([^""]*)"">(\d+)<", RegexOptions.Singleline);
+        static readonly Regex episodeRegex = new Regex(@"data-preselectasseturl=""([^""]*)"".*?<img class=""screenShot"" src=""([^""]*)"".*?<a[^>]*>([^<]*)</a>(.*?)\(\d", RegexOptions.Singleline);
+        static readonly Regex episodeInfoRegex = new Regex(@"<p>(.*?)</p>", RegexOptions.Singleline);
+
+        static readonly string[] months = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
         string defaultLogo;
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -36,8 +55,6 @@ namespace OnlineVideos.Sites
             if ((DateTime.Now - lastRefesh).TotalMinutes > 15)
             {
                 BindingList<Category> dynamicCats = new BindingList<Category>();
-                foreach (Category dynamicCat in loadDynamicCats())
-                    dynamicCats.Add(dynamicCat);
                 foreach (Category cat in Settings.Categories)
                 {
                     if (cat is RssLink)
@@ -55,54 +72,37 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        List<Category> loadDynamicCats()
-        {
-            Regex catReg = new Regex(@"<li class=""fourOnDemandCollection""[^>]*>[\s\n]*<h2>([^<]*)</h2>[\s\n]*<ul(.*?)</ul>", RegexOptions.Singleline);
-            Regex itemReg = new Regex(@"&quot;title&quot;: &quot;(.*?)&quot;[\s\r\n]*, &quot;synopsis&quot;: &quot;(.*?)&quot;[\s\r\n]*, &quot;url&quot;:  &quot;(.*?)&quot;[\s\r\n]*, &quot;img&quot;: {&quot;src&quot;: &quot;(.*?)&quot;");
-            List<Category> dynamicCats = new List<Category>();
-            foreach (Match catMatch in catReg.Matches(GetWebData("http://www.channel4.com/programmes/4od")))
-            {
-                string items = catMatch.Groups[2].Value;
-                MatchCollection itemMatches = itemReg.Matches(catMatch.Groups[2].Value);
-                if (itemMatches.Count < 2)
-                    continue;
-
-                Category cat = createCategory(catMatch.Groups[1].Value, "", itemMatches[0].Groups[4].Value, "", null, null);
-                cat.HasSubCategories = true;
-                cat.SubCategoriesDiscovered = true;
-                cat.SubCategories = new List<Category>();
-                foreach (Match itemMatch in itemMatches)
-                {
-                    string catUrl = itemMatch.Groups[3].Value;
-                    if (catUrl.Contains("/programmes/")) //exclude film4 content
-                        cat.SubCategories.Add(createCategory(itemMatch.Groups[1].Value, itemMatch.Groups[2].Value, itemMatch.Groups[4].Value, catUrl, null, cat));
-                }
-                if (cat.SubCategories.Count > 0)
-                    dynamicCats.Add(cat);
-            }
-            return dynamicCats;
-        }
-
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            string url = (parentCategory as RssLink).Url;
-            List<Category> subCats;
-            if (url.StartsWith("http://www.channel4.com/programmes/4od/catchup"))
-                subCats = getCatchupCategories(parentCategory);
-            else if (url.StartsWith("http://www.channel4.com/programmes/4od/collections"))
-                subCats = getCollections(parentCategory);
-            else
-                subCats = lGetSubCategories(parentCategory);
-
+            bool isNextPage = false;
             if (parentCategory is NextPageCategory)
             {
-                parentCategory.ParentCategory.SubCategories.Remove(parentCategory);   
-                parentCategory.ParentCategory.SubCategories.AddRange(subCats);
-                return parentCategory.ParentCategory.SubCategories.Count;
+                isNextPage = true;
+                parentCategory.ParentCategory.Other = parentCategory.Other;
+                parentCategory = parentCategory.ParentCategory;
             }
 
-            parentCategory.SubCategories = subCats;
-            parentCategory.SubCategoriesDiscovered = true;
+            string url = (parentCategory as RssLink).Url;
+            List<Category> subCats;
+            if (url == "http://m.channel4.com/4od/atoz")
+                subCats = getAtoZCategories(url, parentCategory);
+            else if (url == "http://m.channel4.com/4od/catchup")
+                subCats = getCatchupDays(url, parentCategory);
+            else if (url.StartsWith("http://m.channel4.com/4od/tags") || url.StartsWith("http://m.channel4.com/4od/atoz"))
+                subCats = getShows(url, parentCategory);
+            else
+                subCats = getSeasons(url, parentCategory);
+
+            if (isNextPage)
+            {
+                parentCategory.SubCategories.RemoveAt(parentCategory.SubCategories.Count - 1);
+                parentCategory.SubCategories.AddRange(subCats);
+            }
+            else
+            {
+                parentCategory.SubCategories = subCats;
+                parentCategory.SubCategoriesDiscovered = true;
+            }
             return parentCategory.SubCategories.Count;
         }
 
@@ -111,70 +111,182 @@ namespace OnlineVideos.Sites
             return this.DiscoverSubCategories(category);
         }
 
+        List<Category> getAtoZCategories(string url, Category parentCategory)
+        {
+            List<Category> subCats = new List<Category>();
+            string html = GetWebData(url);
+            foreach (Match m in aToZRegex.Matches(html))
+            {
+                subCats.Add(new RssLink()
+                {
+                    Url = BASE_URL + m.Groups[1].Value,
+                    Name = m.Groups[2].Value.Trim(),
+                    HasSubCategories = true
+                });
+            }
+            return subCats;
+        }
+
+        List<Category> getCatchupDays(string url, Category parentCategory)
+        {
+            List<Category> subCats = new List<Category>();
+            while (true)
+            {
+                string html = GetWebData(url);
+                MatchCollection matches = catchupDaysRegex.Matches(html);
+                for (int x = matches.Count - 1; x >= 0; x--)
+                {
+                    Match m = matches[x];
+                    string catUrl = m.Groups[1].Value;
+                    string day = stripTags(m.Groups[2].Value);
+                    if (day != "Today" && day != "Yesterday")
+                    {
+                        string month = months[int.Parse(dateFromUrlRegex.Match(catUrl).Groups[1].Value) - 1];
+                        day += " " + month;
+                    }
+
+                    subCats.Add(new RssLink()
+                    {
+                        Url = BASE_URL + catUrl,
+                        Name = day,
+                        ParentCategory = parentCategory
+                    });
+                }
+
+                Match previousDays = previousCatchupDaysRegex.Match(html);
+                if (!previousDays.Success)
+                    break;
+                url = BASE_URL + previousDays.Groups[1].Value;
+            }
+            return subCats;
+        }
+
+        List<Category> getShows(string url, Category parentCategory)
+        {
+            List<Category> subCats = new List<Category>();
+            int pageNumber = (parentCategory == null || parentCategory.Other == null) ? 1 : (int)parentCategory.Other;
+
+            JObject jsonResponse = GetWebData<JObject>(url + "/page-" + pageNumber);
+            foreach (JObject result in (JArray)jsonResponse["results"])
+            {
+                subCats.Add(new RssLink()
+                {
+                    Name = cleanString((string)result["title"]),
+                    Thumb = (string)result["img"],
+                    Url = BASE_URL + (string)result["url"],
+                    ParentCategory = parentCategory,
+                    HasSubCategories = true
+                });
+            }
+
+            if ((int)jsonResponse["nextPageCount"] > 0)
+            {
+                subCats.Add(new NextPageCategory()
+                {
+                    Url = url,
+                    Other = pageNumber + 1,
+                    ParentCategory = parentCategory
+                });
+            }
+
+            return subCats;
+        }
+
+        List<Category> getSeasons(string url, Category parentCategory)
+        {
+            List<Category> subCats = new List<Category>();
+            string html = GetWebData(url);
+            MatchCollection ms = seasonRegex.Matches(html);
+            if (ms.Count > 0)
+            {
+                foreach (Match m in ms)
+                {
+                    subCats.Add(new RssLink()
+                    {
+                        Url = BASE_URL + m.Groups[1].Value,
+                        Name = "Series " + m.Groups[2].Value,
+                        Thumb = parentCategory.Thumb,
+                        ParentCategory = parentCategory
+                    });
+                }
+            }
+            else
+            {
+                subCats.Add(new RssLink()
+                {
+                    Url = url,
+                    Name = "Series 1",
+                    Thumb = parentCategory.Thumb,
+                    ParentCategory = parentCategory
+                });
+            }
+
+            parentCategory.SubCategoriesDiscovered = true;
+            return subCats;
+        }
+
         public override List<VideoInfo> getVideoList(Category category)
         {
-            string url = (category as RssLink).Url;
-            if (url.StartsWith("http://www.channel4.com/programmes/4od/catchup"))
-                return getCatchupVideos(url);
-            else if (url.StartsWith("http://www.channel4.com/programmes/4od/collections"))
-                return getCollectionVideos(url);
-            return getVideoListInternal(url, category.Name);
+            List<VideoInfo> videos = new List<VideoInfo>();
+
+            string html = GetWebData(((RssLink)category).Url);
+            foreach (Match m in episodeRegex.Matches(html))
+            {
+                VideoInfo video = new VideoInfo()
+                {
+                    VideoUrl = m.Groups[1].Value,
+                    ImageUrl = m.Groups[2].Value
+                };
+
+                string episodeTitle = cleanString(m.Groups[3].Value);
+                MatchCollection info = episodeInfoRegex.Matches(m.Groups[4].Value);
+                if (info.Count == 2)
+                {
+                    video.Title = cleanString(trim(info[0].Groups[1].Value)) + (episodeTitle != category.ParentCategory.Name ? " - " + episodeTitle : "");
+                    video.Airdate = cleanString(trim(info[1].Groups[1].Value));
+                }
+                else
+                {
+                    video.Title = episodeTitle;
+                    if (info.Count == 1)
+                        video.Airdate = cleanString(trim(info[0].Groups[1].Value));
+                }
+
+                videos.Add(video);
+            }
+
+            return videos;
         }
 
         public override string getUrl(VideoInfo video)
         {
-            string epId = video.VideoUrl;
-            string url = string.Format("http://ais.channel4.com/asset/{0}", epId);
-
-            string xml = GetWebData(url, null, new System.Collections.Specialized.NameValueCollection(), null, getProxy(), false, false, null, false);
+            XmlDocument xml = GetWebData<XmlDocument>(video.VideoUrl, null, null, getProxy());
             if (RetrieveSubtitles)
             {
-                Match subtitle = new Regex("<subtitlesFileUri>(.*?)</subtitlesFileUri>").Match(xml);
-                if (subtitle.Success)
-                    video.SubtitleText = Utils.SubtitleReader.SAMI2SRT(GetWebData("http://ais.channel4.com" + subtitle.Groups[1].Value));
-            }
-            string siteSection = new Regex("<siteSectionId>(.*?)</siteSectionId>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
-            if (!siteSection.StartsWith("ps3"))
-            {
-                Log.Info("This video is encrypted and cannot be played, looking for alternate PS3 stream");
-                string seriesTitle = new Regex("<webSafeBrandTitle>(.*?)</webSafeBrandTitle>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
-                string id = new Regex("<fwAssetId>(.*?)</fwAssetId>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
-                string newAsset = getPS3AssetId(seriesTitle, id);
-                if (!string.IsNullOrEmpty(newAsset) && newAsset != epId)
-                {
-                    Log.Info("Found possible PS3 stream, new id {0}", newAsset);
-                    video.VideoUrl = newAsset;
-                    return getUrl(video);
-                }
-
-                Log.Info("No PS3 stream found, searching youtube for alternate stream");
-                video.PlaybackOptions = YouTubeShowHandler.GetYouTubePlaybackOptions(video.Other as EpisodeInfo);
-                if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
-                    return video.PlaybackOptions.Last().Value;
-                return null;
+                XmlNode subtitle = xml.SelectSingleNode("//subtitlesFileUri");
+                if (subtitle != null && !string.IsNullOrEmpty(subtitle.InnerText))
+                    video.SubtitleText = Utils.SubtitleReader.SAMI2SRT(GetWebData("http://ais.channel4.com" + subtitle.InnerText));
             }
 
-            string uriData = new Regex("<uriData>(.*?)</uriData>", RegexOptions.Singleline).Match(xml).Groups[1].Value;
-            string streamUri = new Regex("<streamUri>(.*?)</streamUri>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
-            string token = new Regex("<token>(.*?)</token>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
-            string cdn = new Regex("<cdn>(.*?)</cdn>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
-            string decryptedToken = new FourodDecrypter().Decode4odToken(token);
+            string token = xml.SelectSingleNode("//token").InnerText;
+            string decryptedToken = FourodDecrypter.Decode4odToken(token);
+            string cdn = xml.SelectSingleNode("//cdn").InnerText;
             string auth;
             if (cdn == "ll")
             {
-                string e = new Regex("<e>(.*?)</e>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
+                string e = xml.SelectSingleNode("//e").InnerText;
                 auth = string.Format("e={0}&h={1}", e, decryptedToken);
             }
             else
             {
-                string fingerprint = new Regex("<fingerprint>(.*?)</fingerprint>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
-                string slist = new Regex("<slist>(.*?)</slist>", RegexOptions.Singleline).Match(uriData).Groups[1].Value;
+                string fingerprint = xml.SelectSingleNode("//fingerprint").InnerText;
+                string slist = xml.SelectSingleNode("//slist").InnerText;
                 auth = string.Format("auth={0}&aifp={1}&slist={2}", decryptedToken, fingerprint, slist);
             }
 
+            string streamUri = xml.SelectSingleNode("//streamUri").InnerText;
             string playUrl = new Regex("(.*?)mp4:", RegexOptions.Singleline).Match(streamUri).Groups[1].Value;
             playUrl = playUrl.Replace(".com/", ".com:1935/");
-
             string playPath = new Regex("(mp4:.*)", RegexOptions.Singleline).Match(streamUri).Groups[1].Value;
             playPath = playPath + "?" + auth;
 
@@ -182,239 +294,9 @@ namespace OnlineVideos.Sites
             {
                 PlayPath = playPath,
                 SwfUrl = swfObjectUrl,
-                SwfVerify = true,
-                Live = false
+                SwfVerify = true
             }.ToString();
         }
-
-        string getPS3AssetId(string seriesTitle, string id)
-        {
-            JObject json = GetWebData<JObject>(string.Format("http://ps3.channel4.com/pmlsd/{0}/4od.json?platform=ps3", seriesTitle));
-            JToken link = json["feed"];
-            JToken entries = link["entry"];
-            switch (entries.Type)
-            {
-                case JTokenType.Array:
-                    foreach (JObject entry in entries as JArray)
-                    {
-                        if ((string)entry["dc:relation.programmeId"] == id)
-                        {
-                            return ((string)entry["group"]["player"]["@url"]).Replace("http://ais.channel4.com/asset/", "");
-                        }
-                    }
-                    break;
-                case JTokenType.Object:
-                    if ((string)entries["dc:relation.programmeId"] == id)
-                    {
-                        return ((string)entries["group"]["player"]["@url"]).Replace("http://ais.channel4.com/asset/", "");
-                    }
-                    break;
-            }
-            return null;
-        }
-
-        #region Default Categories
-
-        List<Category> lGetSubCategories(Category parentCategory)
-        {
-            string url = (parentCategory as RssLink).Url;
-            if (!url.EndsWith("/")) url += "/";
-            int page = 1;
-            int cats = 50;
-            List<Category> subCats = new List<Category>();
-
-            while (cats == 50)
-            {
-                cats = 0;
-                string lUrl = url + "page-" + page.ToString();
-                string html = GetWebData(lUrl);
-                foreach (Match catMatch in new Regex("<li.*?<a class=\".*?\" href=\"([^\"]*)\".*?<img src=\"(.*?)\".*?<p class=\"title\">(.*?)</p>.*?<p class=\"synopsis\">(.*?)</p>", RegexOptions.Singleline).Matches(html))
-                {
-                    Category cat = createCategory(catMatch.Groups[3].Value, catMatch.Groups[4].Value, catMatch.Groups[2].Value, catMatch.Groups[1].Value, null, parentCategory);
-                    subCats.Add(cat);
-                    cats++;
-                }
-                page++;
-            }
-            return subCats;
-        }
-
-        List<VideoInfo> getVideoListInternal(string url, string seriesTitle)
-        {
-            List<VideoInfo> vids = new List<VideoInfo>();
-            string html = GetWebData(url);
-
-            if (Regex.IsMatch(html, @"<li id=""series\d+"" [^>]*>\s*<ol class=""episode-list"))
-                html = Regex.Replace(html, @"<li id=""recentlyOn""[^>]*>\s*<ol[^>]*>.*?</ol>", "", RegexOptions.Singleline);
-
-            string epHtml = new Regex("<ol class=\"all-series\">(.*?)</div>", RegexOptions.Singleline).Match(html).Groups[1].Value;
-
-            foreach (Match m in new Regex("<li.*?data-episode-number=\"(.*?)\".*?data-assetid=\"(.*?)\".*?data-episodeurl=\"(.*?)\".*?data-image-url=\"(.*?)\".*?data-episodetitle=\"(.*?)\".*?data-episodeinfo=\"(.*?)\".*?data-episodesynopsis=\"(.*?)\".*?data-series-number=\"(.*?)\"", RegexOptions.Singleline).Matches(epHtml))
-            {
-                string title;
-                string extraInfo = "";
-                string epTitle = m.Groups[5].Value;
-                string epInfo = m.Groups[6].Value;
-
-                if (cleanString(epTitle).ToLower() == seriesTitle.ToLower() && epInfo != "")
-                    title = epInfo;
-                else
-                {
-                    title = epTitle;
-                    if (!string.IsNullOrEmpty(epInfo))
-                        extraInfo = epInfo;
-                }
-
-                string img = m.Groups[4].Value;
-                if (img == "")
-                    img = new Regex("<meta property=\"og:image\" content=\"(.*?)\"", RegexOptions.Singleline).Match(html).Groups[1].Value;
-
-                VideoInfo vid = createVideoItem(m.Groups[2].Value, title, m.Groups[7].Value, img, extraInfo);
-                EpisodeInfo info = new EpisodeInfo()
-                {
-                    SeriesTitle = seriesTitle,
-                    SeriesNumber = m.Groups[8].Value
-                };
-                if (!string.IsNullOrEmpty(m.Groups[1].Value))
-                    info.EpisodeNumber = m.Groups[1].Value;
-                else
-                {
-                    DateTime airDate;
-                    if (DateTime.TryParse(m.Groups[6].Value, out airDate))
-                    {
-                        info.AirDate = airDate.ToString("dd/MM/yy");
-                    }
-                }
-                vid.Other = info;
-                vids.Add(vid);
-            }
-
-            return vids;
-        }
-
-        #endregion
-
-        #region Catchup Categories
-
-        List<Category> getCatchupCategories(Category parentCategory)
-        {
-            string html = GetWebData((parentCategory as RssLink).Url);
-            Regex reg = new Regex(@"<li[^>]*><a href=""(/programmes/4od/catchup/date/[^""]*)"">([^<]*)</a></li>");
-            List<Category> subCats = new List<Category>();
-            foreach (Match m in reg.Matches(html))
-            {
-                Category cat = createCategory(m.Groups[2].Value, "", null, m.Groups[1].Value, null, parentCategory);
-                subCats.Add(cat);
-            }
-            return subCats;
-        }
-
-        List<VideoInfo> getCatchupVideos(string url)
-        {
-            List<VideoInfo> vids = new List<VideoInfo>();
-            string html = GetWebData(url);
-            Regex reg = new Regex(@"<li class=""promo\s[^>]*>[\s\n]*<a class=""[^""]*"" href=""/programmes/[^/]*/4od#(\d+)"">[\s\n]*<img src=""([^""]*)""[^>]*>[\s\n]*<span[^>]*></span>[\s\n]*<p class=""txinfo txtime"">([^<]*)</p>[\s\n]*<p class=""title"">([^<]*)</p>[\s\n]*<p class=""series-info"">([^<]*)</p>[\s\n]*</a>[\s\n]*<a.*?</a>[\s\n]*<ul.*?>[\s\n]*(<li.*?</li>[\s\n]*)*</ul>[\s\n]*<p class=""synopsis"">(.*?)</p>");
-            foreach (Match m in reg.Matches(html))
-            {
-                string description = m.Groups[5].Value != m.Groups[4].Value ? string.Format("{0}\r\n{1}", m.Groups[5].Value, m.Groups[7].Value) : m.Groups[7].Value;
-                VideoInfo video = createVideoItem(m.Groups[1].Value, m.Groups[4].Value, description, m.Groups[2].Value, m.Groups[3].Value);
-
-                EpisodeInfo epInfo = new EpisodeInfo() { SeriesTitle = m.Groups[4].Value };
-                Match ep = Regex.Match(m.Groups[5].Value, @"Series\s+(\d+)\s+Episode\s+(\d+)");
-                if (ep.Success)
-                {
-                    epInfo.SeriesNumber = ep.Groups[1].Value;
-                    epInfo.EpisodeNumber = ep.Groups[2].Value;
-                }
-                else
-                {
-                    DateTime airDate;
-                    if (DateTime.TryParse(m.Groups[5].Value, out airDate))
-                    {
-                        epInfo.SeriesNumber = airDate.Year.ToString();
-                        epInfo.AirDate = airDate.ToString("dd/MM/yy");
-                    }
-                }
-                video.Other = epInfo;
-                vids.Add(video);
-            }
-            vids.Sort(catchupVideosComparer);
-            return vids;
-        }
-
-        #endregion
-
-        #region Collections
-
-        List<Category> getCollections(Category parentCategory)
-        {
-            string url = (parentCategory as RssLink).Url;
-            int currentPage = 1;
-            if(url.EndsWith("collections"))
-            {
-                url += "/page-1";
-            }
-            else if (!int.TryParse(url.Last().ToString(), out currentPage))
-            {
-                currentPage = 1;
-            }
-            
-            string html = GetWebData(url);
-            Regex reg = new Regex(@"<a class=""promo-link"" href=""([^""]*)"">[\s\n]*<div[^>]*>[\s\n]*<img class=""[^""]*"" src=""([^""]*)""[^>]*>[\s\n]*(<img[^>]*>[\s\n]*)*<span[^>]*></span[^>]*>[\s\n]*</div[^>]*>[\s\n]*<div[^>]*>[\s\n]*<p class=""title"">([^<]*)</p>[\s\n]*<p class=""programme-count"">(\d+)([^<]*).*?</p>[\s\n]*</div>[\s\n]*</a>[\s\n]*<ul[^>]*>[\s\n]*((<li.*?</li>[\s\n]*)*)</ul>[\s\n]*</div>[\s\n]*<p class=""synopsis"">([^<]*)");
-            
-            List<Category> subCats = new List<Category>();
-            if (parentCategory is NextPageCategory)
-                parentCategory = parentCategory.ParentCategory;
-
-            MatchCollection matches = reg.Matches(html);
-            foreach (Match m in matches)
-            {
-                string desc = string.Format("{0}\r\n{1}{2}", m.Groups[9].Value, m.Groups[5].Value, m.Groups[6].Value);
-                foreach (Match n in new Regex("<li>([^<]*)").Matches(m.Groups[7].Value))
-                    desc += string.Format("\r\n{0}", n.Groups[1].Value);
-
-                RssLink cat = createCategory(m.Groups[4].Value, desc, m.Groups[2].Value, m.Groups[1].Value, null, parentCategory) as RssLink;
-                cat.EstimatedVideoCount = uint.Parse(m.Groups[5].Value);
-                subCats.Add(cat);
-            }
-            if (matches.Count == 20)
-                subCats.Add(new NextPageCategory()
-                {
-                    Url = "http://www.channel4.com/programmes/4od/collections/page-" + (currentPage + 1),
-                    ParentCategory = parentCategory
-                });
-
-            return subCats;
-        }
-
-        List<VideoInfo> getCollectionVideos(string url)
-        {
-            List<VideoInfo> vids = new List<VideoInfo>();
-            string html = GetWebData(url);
-            Regex reg = new Regex(@"<a href=""[^#""]*#(\d+)"">[\s\n]*<img src=""([^""]*)""[^>]*>.*?<span class=""title1"">([^<]*)</span>[\s\n]*</span>[\s\n]*(<span[^>]*>[\s\n]*<span class=""title2"">([^<]*)</span>)?.*?<div class=""synopsis"">[\s\n]*<p>([^<]*)", RegexOptions.Singleline);
-            foreach (Match m in reg.Matches(html))
-            {
-                EpisodeInfo epInfo = new EpisodeInfo() { SeriesTitle = m.Groups[3].Value };                
-                Match ep = Regex.Match(m.Groups[5].Value, @"Series\s+(\d+)\s+Episode\s+(\d+)");
-                if (ep.Success)
-                {
-                    epInfo.SeriesNumber = ep.Groups[1].Value;
-                    epInfo.EpisodeNumber = ep.Groups[2].Value;
-                }
-                else
-                {
-                    epInfo.SeriesNumber = "1";
-                    epInfo.EpisodeNumber = "1";
-                }
-
-                VideoInfo vid = createVideoItem(m.Groups[1].Value, m.Groups[3].Value, m.Groups[6].Value, "http://www.channel4.com" + m.Groups[2].Value, m.Groups[5].Value);
-                vid.Other = epInfo;
-                vids.Add(vid);
-            }
-            return vids;
-        }
-
-        #endregion
 
         #region Search
 
@@ -428,129 +310,43 @@ namespace OnlineVideos.Sites
 
         public override List<ISearchResultItem> DoSearch(string query)
         {
-            List<ISearchResultItem> cats = new List<ISearchResultItem>();
-            string searchReg = "{\"imgUrl\":\"(.*?)\".*?\"value\": \"(.*?)\".*?\"siteUrl\":\"(.*?)\",\"fourOnDemand\":\"true\"}";
-
-            string searchHTML = GetWebData("http://www.channel4.com/search/predictive/?q=" + System.Web.HttpUtility.UrlEncode(query));
-            foreach (Match result in new Regex(searchReg, RegexOptions.Singleline).Matches(searchHTML))
-            {
-                Category cat = createCategory(result.Groups[2].Value, "", result.Groups[1].Value, result.Groups[3].Value, null, null);
-                cats.Add(cat);
-            }
-
-            return cats;
+            string searchUrl = SEARCH_URL + urlEncode(query);
+            return getShows(searchUrl, null).Select(c => (ISearchResultItem)c).ToList();
         }
 
         #endregion
-
-        #region YouTube Handling
-
-        bool verifyYoutubePage(string url, string targetSeries, string targetEpisode)
-        {
-            Match m = Regex.Match(url, "v=([^&]*)");
-            if (m.Success)
-            {
-                string youtubeId = m.Groups[1].Value;
-                string page = GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1&has_verified=1", youtubeId));
-                if (!string.IsNullOrEmpty(page))
-                {
-                    m = Regex.Match(page, string.Format(@"Season {0} Ep\. ([0-9]+)", targetSeries));
-                    if (m.Success)
-                    {
-                        return m.Groups[1].Value == targetEpisode;
-                    }
-                }
-            }
-            return false;
-        }
-
-        Dictionary<string, string> youtubeTitleChanges = null;
-        void getYoutubeTitleChanges()
-        {
-            string titleChanges = GetWebData("http://mossy-xbmc-repo.googlecode.com/git/src/plugin.video.4od/titlechanges.txt");
-            youtubeTitleChanges = new Dictionary<string, string>();
-            foreach (string change in titleChanges.Split("\r\n".ToCharArray()))
-            {
-                string[] keyVal = change.Split(',');
-                if (keyVal.Length == 2)
-                    youtubeTitleChanges.Add(keyVal[0], keyVal[1]);
-            }
-        }
-
-        #endregion
-
-        Category createCategory(string title, string description, string thumb, string url, object other, Category parentCategory)
-        {
-            if (string.IsNullOrEmpty(thumb))
-                thumb = defaultLogo;
-            else if (!thumb.StartsWith("http://"))
-                thumb = "http://www.channel4.com" + thumb;
-
-            return new RssLink()
-            {
-                Name = cleanString(title),
-                Description = cleanString(description),
-                Thumb = thumb,
-                Url = url.StartsWith("http://") ? url : "http://www.channel4.com" + url,
-                Other = other,
-                ParentCategory = parentCategory
-            };
-        }
-
-        VideoInfo createVideoItem(string url, string title, string description, string thumb, string extraInfo = "")
-        {
-            return new VideoInfo()
-            {
-                VideoUrl = url,
-                Title = cleanString(title),
-                Airdate = cleanString(extraInfo),
-                Description = stripTags(description),
-                ImageUrl = thumb.StartsWith("http://") ? thumb : "http://www.channel4.com" + thumb,
-            };
-        }
 
         System.Net.WebProxy getProxy()
         {
-            System.Net.WebProxy proxyObj = null;
-            if (!string.IsNullOrEmpty(proxy))
-            {
-                proxyObj = new System.Net.WebProxy(proxy);
-                if (!string.IsNullOrEmpty(proxyUsername) && !string.IsNullOrEmpty(proxyPassword))
-                    proxyObj.Credentials = new System.Net.NetworkCredential(proxyUsername, proxyPassword);
-            }
+            if (string.IsNullOrEmpty(proxy))
+                return null;
+
+            System.Net.WebProxy proxyObj = new System.Net.WebProxy(proxy);
+            if (!string.IsNullOrEmpty(proxyUsername) && !string.IsNullOrEmpty(proxyPassword))
+                proxyObj.Credentials = new System.Net.NetworkCredential(proxyUsername, proxyPassword);
             return proxyObj;
         }
 
-        string stripTags(string s)
+        static string trim(string s)
         {
-            s = cleanString(s);
-            return s.Replace("<p>", "").Replace("</p>", "\r\n");
+            return trimRegex.Replace(s.Trim(), " ");
         }
 
-        string cleanString(string s)
+        static string stripTags(string s)
+        {
+            s = cleanString(s);
+            return s.Replace("<br>", " ").Replace("<p>", "").Replace("</p>", "\r\n");
+        }
+
+        static string cleanString(string s)
         {
             return s.Replace("&amp;", "&").Replace("&pound;", "£").Replace("&hellip;", "...").Trim();
         }
 
-        string[] timeFormats = new string[] { "htt", "h.mmtt" };
-        int catchupVideosComparer(VideoInfo x, VideoInfo y)
+        static string urlEncode(string s)
         {
-            if (x == y)
-                return 0;
-            DateTime xTime, yTime;
-            if (x == null || !DateTime.TryParseExact(x.Airdate, timeFormats, new System.Globalization.CultureInfo("en-GB"), System.Globalization.DateTimeStyles.None, out xTime))
-                return -1;
-            if (y == null || !DateTime.TryParseExact(y.Airdate, timeFormats, new System.Globalization.CultureInfo("en-GB"), System.Globalization.DateTimeStyles.None, out yTime))
-                return 1;
-            return xTime.CompareTo(yTime);
+            //The search string has to be fully url encoded, then the %s encoded
+            return HttpUtility.UrlEncode(s).Replace("+", "%20").Replace("!", "%21").Replace("'", "%27").Replace("(", "%28").Replace(")", "%29").Replace("%", "%25");
         }
-    }
-
-    class EpisodeInfo
-    {
-        public string SeriesTitle { get; set; }
-        public string SeriesNumber { get; set; }
-        public string EpisodeNumber { get; set; }
-        public string AirDate { get; set; }
     }
 }
