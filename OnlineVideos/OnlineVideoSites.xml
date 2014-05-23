@@ -903,6 +903,32 @@
     <Site name="Swefilmer" util="SwefilmerSite" agecheck="false" enabled="true" lang="sv">
       <Description>Titta på filmer på nätet med svenska undertexter.</Description>
     </Site>
+    <Site name="MovHunter" util="GenericSite" agecheck="false" enabled="true" lang="--">
+      <Description>Full HD and HD movies online. Most content in English, but there's some country/language specific categories and movies: Swedish, Russian, Bollywood, Turkish, Italian, French and Mandarin.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass=""><a\shref="(?<url>[^"]*)"\sclass="">(?<title>[^<]*)</a></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<li>\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<span(?:(?!"title">).)*"title">(?<Title>[^<]*)</span>.*?<img\ssrc="(?<ImageUrl>[^"]*)]]></item>
+        <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li\sclass="">\s*<a\shref="(?<url>[^"]*)">&raquo;]]></item>
+        <item key="nextPageRegExUrlFormatString"><![CDATA[http://www.movhunter.net/{0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<video[^>]*>\s<source\stype="(?<n0>[^"]*)"\ssrc="(?<m0>[^"]*)]]></item>
+        <item key="fileUrlDecoding"><![CDATA[None]]></item>
+        <item key="searchUrl"><![CDATA[http://www.movhunter.net/search.php?keywords={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.movhunter.net/]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="New Videos" desc="Recently added videos">http://www.movhunter.net/newvideos.php</Category>
+        <Category xsi:type="RssLink" name="Top Videos" desc="Top videos">http://www.movhunter.net/topvideos.php</Category>
+      </Categories>
+    </Site>
+    <Site name="TFPlay" util="TFPlay" agecheck="false" enabled="true" lang="sv">
+      <Description>Tankafetast streaming-sida med filmer och TV-serier</Description>
+      <Categories>
+        <Category xsi:type="RssLink" name="Genres">http://tfplay.org</Category>
+        <Category xsi:type="RssLink" name="TV-Series">http://tfplay.org/media/tv-series</Category>
+        <Category xsi:type="RssLink" name="Just for Kids">http://tfplay.org/media/kids</Category>
+      </Categories>
+    </Site>
     <Site name="Viaplay.se" util="ViaplayWeb" agecheck="false" enabled="true" lang="sv" player="Browser">
       <Description>TV, Film online och Sport på nätet - Viaplay.se</Description>
     </Site>
