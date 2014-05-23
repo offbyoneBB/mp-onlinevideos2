@@ -69,6 +69,7 @@
     <Compile Include="HboNordicWebUtil.cs" />
     <Compile Include="Hoster\vk.cs" />
     <Compile Include="SwefilmerSiteUtil.cs" />
+    <Compile Include="TFPlayUtil.cs" />
     <Compile Include="ViaplayWebUtil.cs" />
     <Compile Include="DreamfilmUtil.cs" />
     <Compile Include="Kanal59PlayUtil.cs" />

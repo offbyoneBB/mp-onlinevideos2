@@ -105,7 +105,38 @@ namespace OnlineVideos.Sites
             {
                 var a = div.SelectSingleNode("a");
                 var img = a.SelectSingleNode("img");
-                videos.Add(new VideoInfo() { Title = img.GetAttributeValue("alt", ""), ImageUrl = img.GetAttributeValue("src", ""), VideoUrl = a.GetAttributeValue("href", "") });
+                string title = img.GetAttributeValue("alt", "");
+                ITrackingInfo ti = new TrackingInfo();
+                //Series
+                Regex rgx = new Regex(@"([^S\d+E\d+]*)S(\d+)E(\d+)");
+                uint s = 0;
+                uint e = 0;
+                Match m = rgx.Match(title);
+                if (m.Success)
+                {
+                    ti.Title = m.Groups[1].Value;
+                    uint.TryParse(m.Groups[2].Value, out s);
+                    ti.Season = s;
+                    uint.TryParse(m.Groups[3].Value, out e);
+                    ti.Episode = e;
+                    ti.VideoKind = VideoKind.TvSeries;
+                }
+                else
+                {
+                    //movies
+                    rgx = new Regex(@"(.+)\((\d{4})\)");
+                    m = rgx.Match(title);
+                    uint y = 0;
+                    if (m.Success)
+                    {
+                        ti.Title = m.Groups[1].Value;
+                        uint.TryParse(m.Groups[2].Value, out y);
+                        ti.Year = y;
+                        ti.VideoKind = VideoKind.Movie;
+                    }
+                }
+
+                videos.Add(new VideoInfo() { Title = title, ImageUrl = img.GetAttributeValue("src", ""), VideoUrl = a.GetAttributeValue("href", ""), Other = ti });
             }
             var fastphp = doc.DocumentNode.SelectSingleNode("//div[@class = 'fastphp']");
             HtmlNode next = null;
@@ -158,6 +189,7 @@ namespace OnlineVideos.Sites
             Videos("http://www.swefilmer.com/search.php?keywords=" + HttpUtility.UrlEncode(query)).ForEach(v => results.Add(v));
             return results;
         }
+
         public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             string decodedBase64 = "";
@@ -206,6 +238,11 @@ namespace OnlineVideos.Sites
             }
             if (inPlaylist) video.PlaybackOptions.Clear();
             return new List<string>() { bestUrl };
+        }
+
+        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+            return video.Other as TrackingInfo;
         }
     }
 }
