@@ -1164,7 +1164,7 @@
         <item key="dynamicCategoriesRegEx"><![CDATA[<a\sclass=""\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
         <item key="videoListRegEx"><![CDATA[(?#Normal)
-<li\sclass="item">\s*<article\sclass="preview">\s*(?:<div\sclass="nlziet-content-wrapper">\s*<span[^>]*></span>\s*</div>\s*)?<a\sdata-nlziet="[^"]*"\sclass="wrap"\shref="(?<VideoUrl>[^"]*)">\s*<figure>\s*(?:<span\sclass="icon\sicon-play">\(bekijken\)</span>\s*)?<img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*</figure>\s*<div\sclass="content">\s*<h3\sclass="title">(?<Title>[^<]*)</h3>\s*<time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time>\s*</div>\s*</a>\s*</article>
+<div\sclass="block\spreview"\sitemscope\sitemtype="http://schema\.org/TVEpisodes">\s*<a\shref="(?<VideoUrl>[^"]*)"\s[^>]*>\s*<div[^>]*><img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\sitemprop="image"><span></span></div>\s*<div\sclass="content">\s*<h4\sclass="title"\sitemprop="name">(?<Title>[^<]*)</h4>\s*<time[^>]*>(?<Airdate>[^<]*)</time>\s*<meta[^>]*>\s*<meta[^>]*>\s*<meta[^>]*>\s*</div>\s*<div\sclass="tag\sfree">GRATIS</div>\s*</a>
 |
 (?#Gemist/dag)
 <div\sclass="block\spreview">\s*<a\shref="(?<VideoUrl>[^"]*)"\stitle="[^"]*">\s*<div[^>]*><img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/><span></span></div>\s*<div\sclass="content">\s*<h4\sclass="title">(?<Title>[^<]*)</h4>\s*<p>(?<Description>[^<]*)</p>\s*<time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time>\s*</div>\s*</a>\s*</div>]]></item>
