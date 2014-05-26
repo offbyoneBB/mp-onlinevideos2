@@ -27,12 +27,12 @@ namespace OnlineVideos.MediaPortal1
             // The InitializeComponent() call is required for Windows Forms designer support.
             //
             InitializeComponent();
-            
+
             siteColumnLanguage.AspectToStringConverter = delegate(object o)
             {
                 return PluginConfiguration.GetLanguageInUserLocale(o as string);
             };
-            
+
             propertyGridUserConfig.BrowsableAttributes = new AttributeCollection(new CategoryAttribute("OnlineVideosUserConfiguration"));
             propertyGridHoster.BrowsableAttributes = new AttributeCollection(new CategoryAttribute("OnlineVideosUserConfiguration"));
         }
@@ -53,12 +53,12 @@ namespace OnlineVideos.MediaPortal1
             tbxPin.Text = PluginConfiguration.Instance.pinAgeConfirmation;
             tbxWebCacheTimeout.Text = OnlineVideoSettings.Instance.CacheTimeout.ToString();
             tbxUtilTimeout.Text = OnlineVideoSettings.Instance.UtilTimeout.ToString();
-			tbxCategoriesTimeout.Text = OnlineVideoSettings.Instance.DynamicCategoryTimeout.ToString();
+            tbxCategoriesTimeout.Text = OnlineVideoSettings.Instance.DynamicCategoryTimeout.ToString();
             tbxWMPBuffer.Text = PluginConfiguration.Instance.wmpbuffer.ToString();
             chkAdaptRefreshRate.Checked = PluginConfiguration.Instance.AllowRefreshRateChange;
             udPlayBuffer.SelectedItem = PluginConfiguration.Instance.playbuffer.ToString();
             chkUseQuickSelect.Checked = PluginConfiguration.Instance.useQuickSelect;
-			chkStoreLayoutPerCategory.Checked = PluginConfiguration.Instance.StoreLayoutPerCategory;
+            chkStoreLayoutPerCategory.Checked = PluginConfiguration.Instance.StoreLayoutPerCategory;
             nUPSearchHistoryItemCount.Value = PluginConfiguration.Instance.searchHistoryNum;
             if (PluginConfiguration.Instance.searchHistoryType == PluginConfiguration.SearchHistoryType.Simple)
                 rbLastSearch.Checked = true;
@@ -71,10 +71,10 @@ namespace OnlineVideos.MediaPortal1
             else chkDoAutoUpdate.CheckState = CheckState.Indeterminate;
             tbxUpdatePeriod.Text = PluginConfiguration.Instance.updatePeriod.ToString();
 
-			chkLatestVideosRandomize.Checked = PluginConfiguration.Instance.LatestVideosRandomize;
-			tbxLatestVideosAmount.Text = PluginConfiguration.Instance.LatestVideosMaxItems.ToString();
-			tbxLatestVideosOnlineRefresh.Text = PluginConfiguration.Instance.LatestVideosOnlineDataRefresh.ToString();
-			tbxLatestVideosGuiRefresh.Text = PluginConfiguration.Instance.LatestVideosGuiDataRefresh.ToString();
+            chkLatestVideosRandomize.Checked = PluginConfiguration.Instance.LatestVideosRandomize;
+            tbxLatestVideosAmount.Text = PluginConfiguration.Instance.LatestVideosMaxItems.ToString();
+            tbxLatestVideosOnlineRefresh.Text = PluginConfiguration.Instance.LatestVideosOnlineDataRefresh.ToString();
+            tbxLatestVideosGuiRefresh.Text = PluginConfiguration.Instance.LatestVideosGuiDataRefresh.ToString();
 
             /** fill "Sites" tab **/
             // make sure refelction has run to discover all utils and hosters
@@ -123,7 +123,7 @@ namespace OnlineVideos.MediaPortal1
                 OnlineVideoSettings.Instance.UseAgeConfirmation = chkUseAgeConfirmation.Checked;
                 PluginConfiguration.Instance.pinAgeConfirmation = tbxPin.Text;
                 PluginConfiguration.Instance.useQuickSelect = chkUseQuickSelect.Checked;
-				PluginConfiguration.Instance.StoreLayoutPerCategory = chkStoreLayoutPerCategory.Checked;
+                PluginConfiguration.Instance.StoreLayoutPerCategory = chkStoreLayoutPerCategory.Checked;
                 PluginConfiguration.Instance.searchHistoryNum = (int)nUPSearchHistoryItemCount.Value;
                 if (rbLastSearch.Checked)
                     PluginConfiguration.Instance.searchHistoryType = PluginConfiguration.SearchHistoryType.Simple;
@@ -138,20 +138,20 @@ namespace OnlineVideos.MediaPortal1
                 catch { }
                 try { OnlineVideoSettings.Instance.UtilTimeout = int.Parse(tbxUtilTimeout.Text); }
                 catch { }
-				try { OnlineVideoSettings.Instance.DynamicCategoryTimeout = int.Parse(tbxCategoriesTimeout.Text); }
-				catch { }
+                try { OnlineVideoSettings.Instance.DynamicCategoryTimeout = int.Parse(tbxCategoriesTimeout.Text); }
+                catch { }
                 if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) PluginConfiguration.Instance.updateOnStart = null;
                 else PluginConfiguration.Instance.updateOnStart = chkDoAutoUpdate.Checked;
                 PluginConfiguration.Instance.updatePeriod = uint.Parse(tbxUpdatePeriod.Text);
                 PluginConfiguration.Instance.autoGroupByLang = chkAutoGroupByLang.Checked;
                 OnlineVideoSettings.Instance.FavoritesFirst = chkFavFirst.Checked;
-				PluginConfiguration.Instance.LatestVideosRandomize = chkLatestVideosRandomize.Checked;
-				try { PluginConfiguration.Instance.LatestVideosMaxItems = uint.Parse(tbxLatestVideosAmount.Text); }
+                PluginConfiguration.Instance.LatestVideosRandomize = chkLatestVideosRandomize.Checked;
+                try { PluginConfiguration.Instance.LatestVideosMaxItems = uint.Parse(tbxLatestVideosAmount.Text); }
                 catch { }
-				try { PluginConfiguration.Instance.LatestVideosOnlineDataRefresh =  uint.Parse(tbxLatestVideosOnlineRefresh.Text); }
+                try { PluginConfiguration.Instance.LatestVideosOnlineDataRefresh = uint.Parse(tbxLatestVideosOnlineRefresh.Text); }
                 catch { }
-				try { PluginConfiguration.Instance.LatestVideosGuiDataRefresh = uint.Parse(tbxLatestVideosGuiRefresh.Text); }
-				catch { }
+                try { PluginConfiguration.Instance.LatestVideosGuiDataRefresh = uint.Parse(tbxLatestVideosGuiRefresh.Text); }
+                catch { }
                 PluginConfiguration.Instance.Save(false);
             }
         }
@@ -159,7 +159,7 @@ namespace OnlineVideos.MediaPortal1
         private void btnEditSite_Click(object sender, EventArgs e)
         {
             SiteSettings siteSettings = (SiteSettings)bindingSourceSiteSettings.Current;
-            
+
             // use a copy of the original settings so anything that is changed can be canceled
             SerializableSettings s = new SerializableSettings() { Sites = new BindingList<SiteSettings>() };
             s.Sites.Add(siteSettings);
@@ -200,7 +200,7 @@ namespace OnlineVideos.MediaPortal1
 
         private void btnDeleteSite_Click(object sender, EventArgs e)
         {
-            string question = siteList.SelectedObjects.Count > 1 ? string.Format("Delete {0} sites?", siteList.SelectedObjects.Count) : string.Format("Delete {0}?",(siteList.SelectedObject as SiteSettings).Name);
+            string question = siteList.SelectedObjects.Count > 1 ? string.Format("Delete {0} sites?", siteList.SelectedObjects.Count) : string.Format("Delete {0}?", (siteList.SelectedObject as SiteSettings).Name);
             if (MessageBox.Show(question, "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 foreach (SiteSettings site in siteList.SelectedObjects)
@@ -283,9 +283,9 @@ namespace OnlineVideos.MediaPortal1
             }
             catch (Exception ex)
             {
-				MessageBox.Show(ex.Message, Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }        
+        }
 
         private void btnPublishSite_Click(object sender, EventArgs e)
         {
@@ -368,18 +368,18 @@ namespace OnlineVideos.MediaPortal1
                                     {
                                         if (data == null) data = System.IO.File.ReadAllBytes(location);
                                         success = ws.SubmitDll(PluginConfiguration.Instance.email, PluginConfiguration.Instance.password, dll, data, out msg);
-										MessageBox.Show(msg, success ? Translation.Instance.Success : Translation.Instance.Error, MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+                                        MessageBox.Show(msg, success ? Translation.Instance.Success : Translation.Instance.Error, MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
                                     }
                                 }
                             }
                         }
                     }
                     success = ws.SubmitSite(PluginConfiguration.Instance.email, PluginConfiguration.Instance.password, siteXmlString, icon, banner, dll, out msg);
-					MessageBox.Show(msg, success ? Translation.Instance.Success : Translation.Instance.Error, MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+                    MessageBox.Show(msg, success ? Translation.Instance.Success : Translation.Instance.Error, MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {
-					MessageBox.Show(ex.Message, Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 // if the site was not submitted, restore old last updated date, so saving won't write the wrong value
                 if (!success) site.LastUpdated = lastUdpBkp;
@@ -393,9 +393,9 @@ namespace OnlineVideos.MediaPortal1
                 MessageBox.Show("Could not retrieve latest version info from the internet!", Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-			if (!OnlineVideos.Sites.Updater.VersionCompatible)
+            if (!OnlineVideos.Sites.Updater.VersionCompatible)
             {
-				MessageBox.Show(string.Format(Translation.Instance.LatestVersionRequired, OnlineVideos.Sites.Updater.VersionOnline), Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(string.Format(Translation.Instance.LatestVersionRequired, OnlineVideos.Sites.Updater.VersionOnline), Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return;
             }
             SiteSettings site = siteList.SelectedObject as SiteSettings;
@@ -421,8 +421,8 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (!hashedLocalSites.ContainsKey(onlineSites[i].Name))
                 {
-					int indexOfAt = onlineSites[i].Owner_FK.IndexOf('@');
-					if (indexOfAt > 0) onlineSites[i].Owner_FK = onlineSites[i].Owner_FK.Substring(0, onlineSites[i].Owner_FK.IndexOf('@'));
+                    int indexOfAt = onlineSites[i].Owner_FK.IndexOf('@');
+                    if (indexOfAt > 0) onlineSites[i].Owner_FK = onlineSites[i].Owner_FK.Substring(0, onlineSites[i].Owner_FK.IndexOf('@'));
                     onlyOnlineSites.Add(onlineSites[i]);
                 }
                 i++;
@@ -466,7 +466,7 @@ namespace OnlineVideos.MediaPortal1
                 }
                 catch (Exception ex)
                 {
-					MessageBox.Show(ex.Message, Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, Translation.Instance.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
                 {
@@ -474,7 +474,7 @@ namespace OnlineVideos.MediaPortal1
                 }
                 if (importedSites.Count > 0)
                 {
-                    siteList.SelectedObjects = importedSites; 
+                    siteList.SelectedObjects = importedSites;
                     siteList.EnsureModelVisible(importedSites[0]);
                     siteList.Focus();
                 }
@@ -705,12 +705,12 @@ namespace OnlineVideos.MediaPortal1
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-				// focus the thumbnail textbox so databinding will pick up the new value
-				tbxSitesGroupThumb.Focus();
-				// set the file path from the dialog
+                // focus the thumbnail textbox so databinding will pick up the new value
+                tbxSitesGroupThumb.Focus();
+                // set the file path from the dialog
                 tbxSitesGroupThumb.Text = openFileDialog1.FileName;
-				// focus a different control seo the text is written to the bound object
-				tbxSitesGroupDesc.Focus(); 
+                // focus a different control seo the text is written to the bound object
+                tbxSitesGroupDesc.Focus();
             }
         }
 
@@ -722,7 +722,7 @@ namespace OnlineVideos.MediaPortal1
         {
             confPlayer.Stop();
             string info = "";
-			bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.flv", videopanel, out info);
+            bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.flv", videopanel, out info);
             tbxFLVSplitter.Text = info;
             if (succes) chkFLVSplitterInstalled.CheckState = CheckState.Checked; else chkFLVSplitterInstalled.CheckState = CheckState.Unchecked;
         }
@@ -731,7 +731,7 @@ namespace OnlineVideos.MediaPortal1
         {
             confPlayer.Stop();
             string info = "";
-			bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.mp4", videopanel, out info);
+            bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.mp4", videopanel, out info);
             tbxMP4Splitter.Text = info;
             if (succes) chkMP4SplitterInstalled.CheckState = CheckState.Checked; else chkMP4SplitterInstalled.CheckState = CheckState.Unchecked;
         }
@@ -740,7 +740,7 @@ namespace OnlineVideos.MediaPortal1
         {
             confPlayer.Stop();
             string info = "";
-			bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.avi", videopanel, out info);
+            bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.avi", videopanel, out info);
             tbxAVISplitter.Text = info;
             if (succes) chkAVISplitterInstalled.CheckState = CheckState.Checked; else chkAVISplitterInstalled.CheckState = CheckState.Unchecked;
         }
@@ -749,7 +749,7 @@ namespace OnlineVideos.MediaPortal1
         {
             confPlayer.Stop();
             string info = "";
-			bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.wmv", videopanel, out info);
+            bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.wmv", videopanel, out info);
             tbxWMVSplitter.Text = info;
             if (succes) chkWMVSplitterInstalled.CheckState = CheckState.Checked; else chkWMVSplitterInstalled.CheckState = CheckState.Unchecked;
         }
@@ -758,11 +758,11 @@ namespace OnlineVideos.MediaPortal1
         {
             confPlayer.Stop();
             string info = "";
-			bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.mov", videopanel, out info);
+            bool succes = confPlayer.Play("http://onlinevideos.nocrosshair.de/TestVideos/Test.mov", videopanel, out info);
             tbxMOVSplitter.Text = info;
             if (succes) chkMOVSplitterInstalled.CheckState = CheckState.Checked; else chkMOVSplitterInstalled.CheckState = CheckState.Unchecked;
         }
-        
+
         protected override void WndProc(ref Message m)
         {
             switch (m.Msg)
@@ -809,6 +809,7 @@ namespace OnlineVideos.MediaPortal1
         private void listBoxHosters_SelectedValueChanged(object sender, EventArgs e)
         {
             Hoster.Base.HosterBase hoster = (sender as ListBox).SelectedItem as Hoster.Base.HosterBase;
+            sourceLabel.Text = hoster.GetType().Module.ToString();
             propertyGridHoster.SelectedObject = hoster;
         }
 
