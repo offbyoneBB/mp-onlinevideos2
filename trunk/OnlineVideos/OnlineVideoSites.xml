@@ -1597,15 +1597,6 @@
         <item key="siteCode"><![CDATA[bnn]]></item>
       </Configuration>
     </Site>
-    <Site name="Global TV" util="CanWest" agecheck="false" enabled="true" lang="en">
-      <Description>Global Television reaches almost 100% of Canadians and is the online destination for Global Entertainment show information, episodes, web exclusives and more!</Description>
-	  <Configuration>
-		<item key="feedPIDUrl"><![CDATA[http://www.globaltv.com/widgets/ThePlatformContentBrowser/js/cwpGlobalVC.js]]></item>
-		<item key="feedPIDRegexString"><![CDATA[data.PID\s=\sdata\.PID\s\|\|\s"(?<feedPID>[^"]*)";]]></item>
-		<item key="playerTag"><![CDATA[z/Global Video Centre]]></item>
-		<item key="swfUrl"><![CDATA[http://www.globaltv.com/widgets/ThePlatformContentBrowser/swf/flvPlayer.swf]]></item>
-	  </Configuration>
-    </Site>
     <Site name="History Television" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>History Television captivates Canadian audiences with gripping stories about the people and events that have shaped our world.</Description>
 	  <Configuration>
