@@ -70,9 +70,9 @@ namespace OnlineVideos.Sites
                                 Name = (string) item["title"],
                                 Url = string.Format(@"{0}video", (string) item["link"]),
                                 Thumb = (string) item["filepath_nav_logo"],
-                                HasSubCategories = !itemType.Equals(CBSItemType.Movie),
+                                HasSubCategories = true,
                                 Other =
-                                    itemType.Equals(CBSItemType.Show)
+                                    itemType.Equals(CBSItemType.Show) || itemType.Equals(CBSItemType.Movie)
                                     ? CBSItemType.ShowCarousels
                                     : CBSItemType.ClassicSeasons
                             });
@@ -129,10 +129,25 @@ namespace OnlineVideos.Sites
             {
                 foreach (JToken item in json["result"]["data"] as JArray)
                 {
+                    string description = string.Empty;
+                    if (!string.IsNullOrEmpty((string) item["season_number"]))
+                    {
+                        description = string.Format(@"Season {0}", item["season_number"]);
+                    }
+                    if (!string.IsNullOrEmpty((string) item["episode_number"]))
+                    {
+                        description = string.Format(@"{0}, Episode {1}", description, item["episode_number"]);
+                    }
                     result.Add(new VideoInfo() {
-                                   Title = item.Value<string>("title"),
-                                   VideoUrl = string.Format(@"{0}{1}", baseUrl, item.Value<string>("url")),
-                                   ImageUrl = item.Value<JObject>("thumb").Value<string>("large")
+                                   Title = (string) item["title"],
+                                   Description =
+                                       string.IsNullOrEmpty(description) ?
+                                       (string) item["description"] :
+                                       string.Format(@"{0}: {1}", description, item["description"]),
+                                   Airdate = (string) item["airdate"],
+                                   Length = (string) item["duration"],
+                                   VideoUrl = string.Format(@"{0}{1}", baseUrl, item["url"]),
+                                   ImageUrl = (string) item["thumb"]["large"]
                                });
                 }
             }
