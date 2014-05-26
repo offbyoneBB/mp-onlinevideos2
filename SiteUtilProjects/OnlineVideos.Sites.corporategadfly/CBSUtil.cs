@@ -1,47 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 
-using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
+    enum CBSItemType { Movie, Show, ShowCarousels, Classic, ClassicSeasons };
     /// <summary>
     /// Site utility for CBS.
     /// </summary>
     public class CBSUtil : GenericSiteUtil
     {
-        private static Regex carouselRegex = new Regex(@"""id-carousel-(?<carouselId>[^""]*)""",
-                                                       RegexOptions.Compiled);
+        private static Regex videoSectionsRegex = new Regex(@"video\.section_ids\s=\s\[(?<videoSections>[^\\]*?)\]",
+                                                           RegexOptions.Compiled);
+        private static Regex showIdRegex = new Regex(@"var\sshow\s=\snew\sCBS\.Show\({id:(?<showId>[^}]*)}",
+                                                     RegexOptions.Compiled);
         private static Regex pidRegex = new Regex(@"video\.settings\.pid\s=\s'(?<pid>[^']*)';",
                                                   RegexOptions.Compiled);
 
-        private static string TOP_LEVEL_TABS = @"topleveltabs";
+        private static string mainCategoriesUrlFormat = @"http://www.cbs.com/carousels/showsByCategory/{0}/offset/0/limit/100";
+        private static string videoSectionUrlFormat = @"http://www.cbs.com/carousels/videosBySection/{0}/offset/0/limit/1/xs/0/";
+        private static string videoListUrlFormat = @"http://www.cbs.com/carousels/videosByWindow/{0}/offset/0/limit/40/xs/0/{1}/";
         private static string thePlatformUrlFormat = @"http://link.theplatform.com/s/dJ5BDC/{0}?format=SMIL&Tracking=true&mbr=true";
 
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
             
-            HtmlDocument document = GetWebData<HtmlDocument>(string.Format(@"{0}/video/", baseUrl));
-            if (document != null)
-            {
-                foreach (HtmlNode anchor in document.DocumentNode.SelectNodes(@"//div[@id = 'daypart_nav']//a"))
-                {
-                    string title = anchor.GetAttributeValue("onclick", string.Empty).Replace("showDaypart('", string.Empty).Replace("');", string.Empty);
-                    Settings.Categories.Add(new RssLink() {
-                                                Name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(title),
-                                                Other = title,
-                                                HasSubCategories = true
-                                            });
-                    Log.Debug(@"Category: {0}", title);
-                }
-            }
+            Settings.Categories.Add(
+                new RssLink() {
+                    Url = string.Format(mainCategoriesUrlFormat, "0"), HasSubCategories = true, Name = @"Shows", Other = CBSItemType.Show
+                });
+            Settings.Categories.Add(
+                new RssLink() {
+                    Url = string.Format(mainCategoriesUrlFormat, "4"), HasSubCategories = true, Name = @"TV Classics", Other = CBSItemType.Classic
+                });
+            Settings.Categories.Add(
+                new RssLink() {
+                    Url = string.Format(mainCategoriesUrlFormat, "6"), HasSubCategories = true, Name = @"Movies & Specials", Other = CBSItemType.Movie
+                });
+            
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
@@ -49,75 +51,67 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategories = new List<Category>();
+            RssLink parentRssLink = parentCategory as RssLink;
             
-            if (!TOP_LEVEL_TABS.Equals(parentCategory.Other as string))
+            CBSItemType itemType = (CBSItemType) parentCategory.Other;
+            
+            if (itemType.Equals(CBSItemType.Show)
+                || itemType.Equals(CBSItemType.Movie)
+                || itemType.Equals(CBSItemType.Classic))
             {
-                // this section takes care of shows within top-subcategories like primetime, daytime, latenight, classics, originals, specials
-                HtmlDocument document = GetWebData<HtmlDocument>(string.Format(@"{0}/video/", baseUrl));
-                if (document != null)
+                JObject json = GetWebData<JObject>(parentRssLink.Url);
+                if (json != null)
                 {
-                    List<RssLink> subCategories = new List<RssLink>();
-                    
-                    if (@"primetime".Equals((parentCategory.Other) as string))
-                    {
-                        // Golden Boy is missing from http://www.cbs.com/video/, so add it manually
-                        subCategories.Add(new RssLink() {
-                                              ParentCategory = parentCategory,
-                                              Name = @"Golden Boy",
-                                              Url = @"http://www.cbs.com/shows/golden_boy/video/",
-                                              Other = TOP_LEVEL_TABS,
-                                              HasSubCategories = true
-                                          });
-                    }
-                    foreach (HtmlNode anchor in document.DocumentNode.SelectNodes(string.Format(@"//div[@id = '{0}']//a", parentCategory.Other as string)))
-                    {
-                        string clazz = anchor.GetAttributeValue("class", string.Empty);
-                        if ("vidgreen".Equals(clazz)) continue;
-                        
-                        HtmlNode image = anchor.SelectSingleNode("./img");
-                        string name = image.GetAttributeValue("alt", string.Empty);
-                        string url = anchor.GetAttributeValue("href", string.Empty);
-                        // make sure url starts with http://
-                        if (!url.StartsWith("http://") && url.StartsWith("/")) url = string.Format(@"{0}{1}", baseUrl, url);
-                        // make sure url ends with video/
-                        if (!url.Contains("/video")) url = string.Format(@"{0}{1}", url, @"video/");
-                        string thumb = string.Format("{0}{1}", baseUrl, image.GetAttributeValue("src", string.Empty));
-                        subCategories.Add(new RssLink() {
-                                              ParentCategory = parentCategory,
-                                              Name = HttpUtility.HtmlDecode(name),
-                                              Url = url,
-                                              Thumb = thumb,
-                                              Other = TOP_LEVEL_TABS,
-                                              HasSubCategories = true
-                                          });
-                    }
-                    
-                    // sort subcategories by category name but remove "The" during sort
-                    foreach (RssLink category in subCategories.OrderBy(s => 
-                                                                       s.Name.StartsWith("The ", StringComparison.OrdinalIgnoreCase) ?
-                                                                       s.Name.Substring(s.Name.IndexOf(" ") + 1) :
-                                                                       s.Name))
-                    {
-                        parentCategory.SubCategories.Add(category);
+                    JArray items = (JArray) json["result"]["data"];
+                    foreach (JToken item in items) {
+                        parentCategory.SubCategories.Add(
+                            new RssLink() {
+                                ParentCategory = parentCategory,
+                                Name = (string) item["title"],
+                                Url = string.Format(@"{0}video", (string) item["link"]),
+                                Thumb = (string) item["filepath_nav_logo"],
+                                HasSubCategories = !itemType.Equals(CBSItemType.Movie),
+                                Other =
+                                    itemType.Equals(CBSItemType.Show)
+                                    ? CBSItemType.ShowCarousels
+                                    : CBSItemType.ClassicSeasons
+                            });
                     }
                 }
             }
-            else
+            else if (itemType.Equals(CBSItemType.ClassicSeasons))
             {
-                // this section takes care of subcatories for a particular show
-                string webData = GetWebData((parentCategory as RssLink).Url);
-                
+                string webData = GetWebData(parentRssLink.Url);
                 if (!string.IsNullOrEmpty(webData))
                 {
-                    foreach (Match m in carouselRegex.Matches(webData))
+                    throw new OnlineVideosException("Not implemented yet");
+                }
+            }
+            else if (itemType.Equals(CBSItemType.ShowCarousels))
+            {
+                string webData = GetWebData(parentRssLink.Url);
+                if (!string.IsNullOrEmpty(webData))
+                {
+                    Match showIdMatch = showIdRegex.Match(webData);
+                    Match videoSectionsMatch = videoSectionsRegex.Match(webData);
+                    if (showIdMatch.Success && videoSectionsMatch.Success)
                     {
-                        string url = string.Format("http://www.cbs.com/carousels/videosBySection/{0}/0/40/", m.Groups["carouselId"].Value);
-                        JObject json = GetWebData<JObject>(url);
-                        parentCategory.SubCategories.Add(new RssLink() {
-                                                             Url = url,
-                                                             Name = json.Value<JObject>("result").Value<string>("title"),
-                                                             HasSubCategories = false
-                                                         });
+                        string showId = showIdMatch.Groups["showId"].Value;
+                        // retrieve info for each section
+                        foreach (string sectionId in videoSectionsMatch.Groups["videoSections"].Value.Split(',').ToList())
+                        {
+                            JObject json = GetWebData<JObject>(string.Format(videoSectionUrlFormat, sectionId));
+                            if (json != null)
+                            {
+                                parentCategory.SubCategories.Add(
+                                    new RssLink() {
+                                        ParentCategory = parentCategory,
+                                        Name = (string) json["result"]["title"],
+                                        Url = string.Format(videoListUrlFormat, sectionId, showId),
+                                        HasSubCategories = false
+                                    });
+                            }
+                        }
                     }
                 }
             }
@@ -133,7 +127,7 @@ namespace OnlineVideos.Sites
             JObject json = GetWebData<JObject>((category as RssLink).Url);
             if (json != null)
             {
-                foreach (JToken item in json["result"]["videos"] as JArray)
+                foreach (JToken item in json["result"]["data"] as JArray)
                 {
                     result.Add(new VideoInfo() {
                                    Title = item.Value<string>("title"),
