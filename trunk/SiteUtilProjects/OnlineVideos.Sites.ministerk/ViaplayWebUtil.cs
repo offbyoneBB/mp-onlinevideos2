@@ -317,7 +317,7 @@ namespace OnlineVideos.Sites
             {
                 Settings.Categories.Add(new RssLink()
                 {
-                    Name = (string)starred["title"],
+                    Name = GetTranslation("Starred", "Starred"),
                     Url = (string)starred["href"],
                     HasSubCategories = false,
                 });
@@ -326,7 +326,7 @@ namespace OnlineVideos.Sites
             {
                 Settings.Categories.Add(new RssLink()
                 {
-                    Name = (string)watched["title"],
+                    Name = GetTranslation("Watched", "Watched"),
                     Url = (string)watched["href"],
                     HasSubCategories = false,
                     Other = _watched
