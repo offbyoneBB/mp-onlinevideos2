@@ -7,6 +7,7 @@ using System.Net;
 using System.Xml;
 using System.IO;
 using System.Web;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -34,27 +35,15 @@ namespace OnlineVideos.Sites
                 return 0;
             Log.Debug("tld, emailaddress and password != null");
 
-            SubcatRegex = new Regex(@"<option value=""UpdateAjaxVod\('(?<url>[^']*)'[^>]*>(?<title>[^<]*)</option>");
+            SubcatRegex = new Regex(@"<li\sclass=""vod-menu-element-sports-element""\sdata-sporturl=""(?<url>[^""]*)""\sdata-filter=""sports"">(?<title>[^<]*)</li>");
             baseUrl = String.Format(@"http://www.eurosportplayer.{0}/", tld);
 
             CookieContainer cc = new CookieContainer();
 
-            string url = baseUrl + "_wsplayerxrm_/PlayerCrmApi.asmx/Login";
-            string postData = @"data={""ul"":""" + emailAddress + @""",""p"":""" + password +
-                @"""}&context={""g"":""" + tld.ToUpper() + @""",""d"":""1"",""s"":""1"",""p"":""1"",""b"":""Desktop"",""bp"":""""}";
-
-            string cookies = @"ns_cookietest=true,ns_session=true";
-            string[] myCookies = cookies.Split(',');
-            foreach (string aCookie in myCookies)
-            {
-                string[] name_value = aCookie.Split('=');
-                Cookie c = new Cookie();
-                c.Name = name_value[0];
-                c.Value = name_value[1];
-                c.Expires = DateTime.Now.AddHours(1);
-                c.Domain = new Uri(url).Host;
-                cc.Add(c);
-            }
+            string url = baseUrl + "_wsplayerxrm_/PlayerCrmApi_v5.svc/Login";
+            string postData =
+                @"{""data"":""{\""ul\"":\""" + emailAddress + @"\"",\""p\"":\""" + password +
+                @"\"",\""r\"":false}"",""context"":""{\""g\"":\""" + tld.ToUpper() + @"\"",\""d\"":\""1\"",\""s\"":\""1\"",\""p\"":\""1\"",\""b\"":\""Desktop\"",\""bp\"":\""\""}""}";
 
             string res = GetWebDataFromPost(url, postData, cc);
             if (!res.Contains(@"<Success>1</Success>"))
@@ -72,13 +61,13 @@ namespace OnlineVideos.Sites
 
 
             RssLink category = new RssLink();
-            category.Url = baseUrl + "tv.shtml";
+            category.Url = baseUrl + "live.shtml";
             category.Name = "Live TV";
             category.Other = kind.Live;
             Settings.Categories.Add(category);
 
             category = new RssLink();
-            category.Url = baseUrl + "vod.shtml";
+            category.Url = baseUrl + "on-demand.shtml";
             category.Name = "Videos";
             category.Other = kind.Video;
             category.HasSubCategories = true;
@@ -123,86 +112,64 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> GetVideoListFromVideo(Category category)
         {
             XmlDocument doc = new XmlDocument();
-            string webData = GetWebData(((RssLink)category).Url, newcc).Replace(@"xmlns:genExt=""http://twilight.eurosport.com/XsltExtensions/General""", String.Empty);
+            string webData = GetWebData(((RssLink)category).Url, newcc);
             doc.LoadXml(webData);
             List<VideoInfo> result = new List<VideoInfo>();
-            foreach (XmlNode node in doc.SelectNodes("//array"))
+            foreach (XmlNode node in doc.SelectNodes("//catchups"))
             {
                 VideoInfo video = new VideoInfo();
-                video.Title = node.SelectSingleNode("title").InnerText;
-                video.ImageUrl = node.SelectSingleNode("img").InnerText;
-                video.Length = '|' + Translation.Instance.Airdate + ": " + node.SelectSingleNode("date").InnerText;
-                video.VideoUrl = baseUrl + node.SelectSingleNode("link").InnerText.TrimStart('/');
+                video.Title = node.SelectSingleNode("titlecatchup").InnerText;
+                video.ImageUrl = node.SelectSingleNode("thumbnail/url").InnerText;
+                video.Length = Utils.PlainTextFromHtml(node.SelectSingleNode("durationInSeconds").InnerText);
+                video.Airdate = Utils.PlainTextFromHtml(node.SelectSingleNode("startdate/date").InnerText);
+                video.VideoUrl = baseUrl + node.SelectSingleNode("url").InnerText.TrimStart('/');
                 video.Other = category.Other;
                 result.Add(video);
             }
             return result;
         }
 
+        private string getValue(string webData, string id)
+        {
+            Match m = Regex.Match(webData, @"Ply\.[^\.]*\.add\('" + id + @"',\s*'(?<value>[^']*)'");
+            if (m.Success)
+                return m.Groups["value"].Value;
+            return null;
+        }
+
         private List<VideoInfo> GetVideoListFromLive(Category category)
         {
-            string getData = GetWebData(((RssLink)category).Url, newcc);
-            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),rt=(?<rt>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
+            string webData = GetWebData(((RssLink)category).Url, newcc);
 
-            string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
-<s:Body xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-<FindDefaultProductShortsByCountryAndService xmlns=""http://tempuri.org/"">
-<countryCode>{0}</countryCode>
-<type>Live</type>
-<partnerCode />
-<languageId>{1}</languageId>
-<sportId>{2}</sportId>
-<realIp>{3}</realIp>
-<service>1</service>
-<userId>{4}</userId>
-<hkey>{5}</hkey>
-<responseLangId>{1}</responseLangId>
-</FindDefaultProductShortsByCountryAndService>
-</s:Body></s:Envelope>", tld.ToUpperInvariant(), m.Groups["lang"].Value, -1, m.Groups["realip"].Value,
-                   m.Groups["ut"].Value, m.Groups["ht"].Value);
+            string url = baseUrl + String.Format(@"_wsvideoshop_/JsonProductService.svc/GetAllProducts?device=1&isocode={0}&languageid={1}&hkey={2}&userid={3}",
+                tld.ToUpperInvariant(), getValue(webData, "languageid"),
+                getValue(webData, "hashkey"), getValue(webData, "userid"));
+            webData = GetWebData(url, newcc);
 
-            string postData = GetWebDataFromPost("http://videoshop.eurosport.com/PlayerProductService.asmx",
-                post, @"SOAPAction: ""http://tempuri.org/FindDefaultProductShortsByCountryAndService""");
-
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(postData);
-
-            nsmRequest = new XmlNamespaceManager(doc.NameTable);
-            nsmRequest.AddNamespace("a", "http://tempuri.org/");
-
-            XmlNodeList list = doc.SelectNodes("//a:PlayerProduct", nsmRequest);
-
+            JToken alldata = JObject.Parse(webData) as JToken;
+            JArray jVideos = alldata["PlayerObj"] as JArray;
             List<VideoInfo> videos = new List<VideoInfo>();
-            foreach (XmlNode prod in list)
+
+            foreach (JToken jVideo in jVideos)
             {
                 VideoInfo video = new VideoInfo();
-                video.Title = null;
-                XmlNodeList nodeList = prod.SelectNodes("a:livestreams/a:livestream", nsmRequest);
-                foreach (XmlNode stream in nodeList)
+                video.Title = jVideo["channellabel"].Value<string>();
+
+                JArray jLiveStreams = jVideo["livestreams"] as JArray;
+
+                foreach (JToken stream in jLiveStreams)
                 {
-                    string name = stream.SelectSingleNode("a:name", nsmRequest).InnerText;
-                    if (video.Title == null)
+                    string name = stream["name"].Value<string>();
+                    if (!String.IsNullOrEmpty(name))
                         video.Title = name;
-                    else
-                    {
-                        int ind = 0;
-                        while (ind < video.Title.Length && ind < name.Length && video.Title[ind] == name[ind])
-                            ind++;
-                        video.Title = name.Substring(0, ind);
-                    }
                 }
 
-                video.ImageUrl = String.Format(@"http://layout.eurosportplayer.{0}/i", tld) + prod.SelectSingleNode("a:vignetteurl", nsmRequest).InnerText;
-                XmlNode descr = prod.SelectSingleNode("a:channellivesublabel", nsmRequest);
-                if (descr != null)
-                    video.Description = descr.InnerText;
-                video.Other = nodeList;
-
+                video.ImageUrl = String.Format(@"http://layout.eurosportplayer.{0}/i", tld) + jVideo["vignetteurl"].Value<string>();
+                video.Description = jVideo["channellivesublabel"].Value<string>();
+                video.Other = jLiveStreams;
                 videos.Add(video);
             }
-
             return videos;
-
         }
 
         public override string getUrl(VideoInfo video)
@@ -273,23 +240,12 @@ namespace OnlineVideos.Sites
 
         private string GetUrlFromLive(VideoInfo video)
         {
-            XmlNodeList streams = (XmlNodeList)video.Other;
+            JArray streams = (JArray)video.Other;
             video.PlaybackOptions = new Dictionary<string, string>();
-            foreach (XmlNode stream in streams)
+            foreach (JToken stream in streams)
             {
-                string securedUrl = stream.SelectSingleNode("a:securedurl", nsmRequest).InnerText;
-                XmlNode nameNode = stream.SelectSingleNode("a:label/a:name", nsmRequest);
-                string name;
-                if (nameNode != null)
-                    name = stream.SelectSingleNode("a:label/a:name", nsmRequest).InnerText;
-                else
-                    name = String.Empty;
-                if (!Uri.IsWellFormedUriString(securedUrl, System.UriKind.Absolute))
-                {
-                    string url = stream.SelectSingleNode("a:url", nsmRequest).InnerText;
-                    securedUrl = new Uri(new Uri(url), securedUrl).AbsoluteUri;
-                }
-
+                string securedUrl = stream["securedurl"].Value<string>();
+                string name = (video.PlaybackOptions.Count + 1).ToString();
                 video.PlaybackOptions.Add(name, securedUrl);
             }
 
@@ -326,6 +282,49 @@ namespace OnlineVideos.Sites
             request.ProtocolVersion = HttpVersion.Version10;
             request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
             request.Headers.Add(headerExtra);
+
+            Stream requestStream = request.GetRequestStream();
+            requestStream.Write(data, 0, data.Length);
+            requestStream.Close();
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                Stream responseStream;
+                if (response.ContentEncoding.ToLower().Contains("gzip"))
+                    responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                else if (response.ContentEncoding.ToLower().Contains("deflate"))
+                    responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                else
+                    responseStream = response.GetResponseStream();
+
+                Encoding encoding = Encoding.UTF8;
+                encoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
+
+                StreamReader reader = new StreamReader(responseStream, encoding, true);
+                string str = reader.ReadToEnd();
+                return str.Trim();
+            }
+
+        }
+
+
+        private static string GetWebDataFromPost(string url, string postData, CookieContainer cc)
+        {
+            Log.Debug("get webdata from {0}", url);
+            Log.Debug("postdata = " + postData);
+
+            // request the data
+            byte[] data = Encoding.UTF8.GetBytes(postData);
+
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            if (request == null) return "";
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+            request.Timeout = 15000;
+            request.ContentLength = data.Length;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+            request.CookieContainer = cc;
 
             Stream requestStream = request.GetRequestStream();
             requestStream.Write(data, 0, data.Length);
