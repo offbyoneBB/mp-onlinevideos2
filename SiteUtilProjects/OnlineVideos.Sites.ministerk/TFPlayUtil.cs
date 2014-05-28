@@ -264,5 +264,12 @@ namespace OnlineVideos.Sites
                 results.Add(c);
             return results;
         }
+
+        // File name from base.GetFileNameForDownload get the extension .mp4&HttpRecieveDataTimout=<timeout>
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            //Extension always .mp4
+            return video.Title + ".mp4";
+        }
     }
 }
