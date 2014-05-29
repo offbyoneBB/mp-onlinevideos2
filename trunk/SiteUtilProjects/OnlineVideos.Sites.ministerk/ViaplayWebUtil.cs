@@ -288,7 +288,7 @@ namespace OnlineVideos.Sites
         {
             if (category.ParentCategory == null)
                 return category.Name == GetTranslation("Series");
-            return category.Name == GetTranslation("Series") || category.Name == GetTranslation("All children series") || IsSeries(category.ParentCategory);
+            return category.Name == GetTranslation("Series") || category.Name == GetTranslation("Children series") || category.Name == GetTranslation("All children series") || IsSeries(category.ParentCategory);
         }
         #endregion
 
@@ -444,7 +444,6 @@ namespace OnlineVideos.Sites
                         {
                             foreach (JToken block in data["_embedded"]["viaplay:blocks"].Where(b => !IsBlockedCategory((string)b["title"])))
                             {
-                                (parentCategory as RssLink).EstimatedVideoCount += (uint)block["totalProductCount"];
                                 if (block["_embedded"]["viaplay:products"] != null && block["_embedded"]["viaplay:products"].Count() > 0)
                                 {
                                     bool isSeries = (string)block["_embedded"]["viaplay:products"].First()["type"] == "series";
@@ -470,9 +469,8 @@ namespace OnlineVideos.Sites
                     if (sortingBlocks == null)
                         firstBlock = data;
                     else
-                        firstBlock = sortingBlocks.First(b => ((string)b["type"]).Contains("list"));
+                        firstBlock = sortingBlocks.First(b => ((string)b["type"]).ToLower().Contains("list"));
 
-                    (parentCategory as RssLink).EstimatedVideoCount = (uint)firstBlock["totalProductCount"];
                     JToken content;
                     RssLink cat;
                     List<Category> categories = new List<Category>();
@@ -612,10 +610,8 @@ namespace OnlineVideos.Sites
             };
         }
 
-        private List<VideoInfo> getVideos(JToken block, out uint totalProductCount)
+        private List<VideoInfo> getVideos(JToken block)
         {
-            totalProductCount = 0;
-            totalProductCount += (uint)block["totalProductCount"];
             HasNextPage = block["_links"] != null && block["_links"]["next"] != null && block["_links"]["next"]["href"] != null;
             if (HasNextPage)
             {
@@ -648,8 +644,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getNextPageVideos()
         {
             var data = MyGetWebData(nextPageVideosUrl);
-            uint dummy = 0;
-            return getVideos(data, out dummy);
+            return getVideos(data);
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -658,28 +653,25 @@ namespace OnlineVideos.Sites
                 throw new OnlineVideosException("Forum http://tinyurl.com/olv-viaplay");
             var data = MyGetWebData((category as RssLink).Url);
             List<VideoInfo> videos = new List<VideoInfo>();
-            uint count;
-            uint totalProductCount = 0;
             var blocks = data["_embedded"]["viaplay:blocks"];
             if (blocks != null)
             {
-                string loopType = "list";
+                string loopType = "dynamicList";
                 if (blocks.Any(b => (string)b["type"] == "starred"))
                     loopType = "starred";
                 else if (blocks.Any(b => (string)b["type"] == "product"))
                     loopType = "product";
+                else if (blocks.Any(b => (string)b["type"] == "list"))
+                    loopType = "list";
                 foreach (JToken block in blocks.Where(b => (string)b["type"] == loopType))
                 {
-                    count = 0;
-                    getVideos(block, out count).ForEach(v => videos.Add(v));
-                    totalProductCount += count;
+                    getVideos(block).ForEach(v => videos.Add(v));
                 }
             }
             else
             {
-                getVideos(data, out totalProductCount).ForEach(v => videos.Add(v));
+                getVideos(data).ForEach(v => videos.Add(v));
             }
-            (category as RssLink).EstimatedVideoCount = totalProductCount;
             return videos;
         }
 
