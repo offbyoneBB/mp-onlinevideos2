@@ -1045,7 +1045,7 @@
         <item key="baseUrl"><![CDATA[http://www.escapistmagazine.com/videos/galleries]]></item>
       </Configuration>
     </Site>
-    <Site name="EuroSport" util="EuroSport" agecheck="false" enabled="true" lang="en" player="WMP">
+    <Site name="EuroSport" util="EuroSport" agecheck="false" enabled="true" lang="en" player="Internal">
       <Description>Eurosport live streams and videos</Description>
     </Site>
     <Site name="EventCaster" util="EventCaster" agecheck="false" enabled="true" lang="nl">
