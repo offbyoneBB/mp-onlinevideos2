@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text.RegularExpressions;
-using System.Xml;
-using OnlineVideos.AMF;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -11,78 +7,76 @@ namespace OnlineVideos.Sites
     {
         public override int DiscoverDynamicCategories()
         {
-            XmlDocument doc = new XmlDocument();
             string data = GetWebData(baseUrl);
-            doc.LoadXml(data);
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
-            nsmgr.AddNamespace("a", "http://www.sitemaps.org/schemas/sitemap/0.9");
+            int p = data.IndexOf('{');
+            int q = data.LastIndexOf('}');
+            data = data.Substring(p, q - p + 1);
 
-            if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
-            foreach (XmlNode node in doc.SelectNodes("//a:sitemap/a:loc", nsmgr))
+            JToken alldata = JObject.Parse(data) as JToken;
+            JArray jCats = alldata["widget"]["carousel"] as JArray;
+            foreach (JToken jcat in jCats)
             {
-                RssLink cat = new RssLink();
-                string s = node.InnerText;
-                cat.Url = s;
-                int p = s.LastIndexOf("-");
-                int q = s.IndexOf('.', p);
-                s = s.Substring(p + 1, q - p - 1);
-                if (!String.IsNullOrEmpty(s))
-                    s = s.Substring(0, 1).ToUpperInvariant() + s.Substring(1);
-                cat.Name = s;
-                Settings.Categories.Add(cat);
+                string tab = @"{""bla"":" + jcat["tab"].Value<string>() + '}';
+                JToken jsubcats = JObject.Parse(tab)["bla"] as JArray;
+
+                foreach (JToken jsub in jsubcats)
+                {
+                    RssLink cat = new RssLink();
+                    cat.Name = jsub["tabTitle"].Value<string>();
+                    cat.Url = FormatDecodeAbsolutifyUrl(baseUrl, jsub["tabTargetLevel"].Value<string>(), dynamicCategoryUrlFormatString, dynamicCategoryUrlDecoding);
+                    Settings.Categories.Add(cat);
+                }
             }
+
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            List<VideoInfo> res = new List<VideoInfo>();
-
             string data = GetWebData(((RssLink)category).Url);
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(data);
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
-            nsmgr.AddNamespace("a", "http://www.sitemaps.org/schemas/sitemap/0.9");
-            nsmgr.AddNamespace("video", "http://www.google.com/schemas/sitemap-video/1.1");
+            int p = data.IndexOf('{');
+            int q = data.LastIndexOf('}');
+            data = data.Substring(p, q - p + 1);
+            JToken alldata = JObject.Parse(data) as JToken;
+            JArray jVideos = alldata["list"] as JArray;
 
-            foreach (XmlNode node in doc.SelectNodes("a:urlset/a:url/video:video", nsmgr))
+            List<VideoInfo> res = new List<VideoInfo>();
+            foreach (JToken jVideo in jVideos)
             {
                 VideoInfo video = new VideoInfo();
-                video.Title = node.SelectSingleNode("video:title", nsmgr).InnerText;
-                video.ImageUrl = node.SelectSingleNode("video:thumbnail_loc", nsmgr).InnerText;
-                video.Description = node.SelectSingleNode("video:description", nsmgr).InnerText;
-                video.Airdate = DateTime.Parse(node.SelectSingleNode("video:publication_date", nsmgr).InnerText).ToString();
-                XmlNode durNode = node.SelectSingleNode("video:duration", nsmgr);
-                if (durNode != null)
-                    video.Length = VideoInfo.GetDuration(durNode.InnerText);
-                XmlNode locNode = node.SelectSingleNode("video:player_loc", nsmgr);
-                if (locNode != null)
+                video.Title = jVideo["title"].Value<string>();
+                video.ImageUrl = jVideo["imageUrl"].Value<string>();
+                video.Description = jVideo["description"].Value<string>();
+                //video.Airdate = DateTime.Parse(jVideo["publishDate"].Value<string>()).ToString(); not sure what format it is
+                video.Length = jVideo["duration"].Value<string>();
+                JArray medias = jVideo["media"] as JArray;
+                if (medias != null)
                 {
-                    video.VideoUrl = locNode.InnerText;
-                    res.Add(video);
+                    Dictionary<string, string> PlaybackOptions = new Dictionary<string, string>();
+                    foreach (JToken media in medias)
+                    {
+                        string reso = media["bitrate"].Value<string>();
+                        string url = media["url"].Value<string>();
+                        video.VideoUrl = url;
+                        PlaybackOptions.Add(reso + " lines", url);
+                    }
+                    if (PlaybackOptions.Count == 1)
+                    {
+                        res.Add(video);
+                    }
+                    else
+                        if (PlaybackOptions.Count > 1)
+                        {
+                            res.Add(video);
+                            video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(PlaybackOptions);
+                        }
                 }
             }
+
             return res;
+
         }
 
-        public override string getUrl(VideoInfo video)
-        {
-            Match matchVideoUrl = regEx_VideoUrl.Match(video.VideoUrl);
-            if (matchVideoUrl.Success)
-            {
-                string cid = matchVideoUrl.Groups["cid"].Value;
-                AMFObject root = new AMFObject("");
-                root.Add("cid", cid);
-
-                AMFSerializer ser = new AMFSerializer();
-                byte[] data = ser.Serialize2("SEOPlayer.getMediaURL", new object[] { root });
-
-                AMFObject obj = AMFObject.GetResponse(@"http://bigpondvideo.com/App/AmfPhp/gateway.php", data);
-                return obj.Name;
-
-            }
-            return String.Empty;
-        }
     }
 }
