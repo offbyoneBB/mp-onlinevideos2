@@ -1002,8 +1002,8 @@
     <Site name="BigPondVideo" util="BigPondVideo" agecheck="false" enabled="true" lang="en">
       <Description>Watch videos online with BigPond Video. For the very latest music, games, news, sports and travel videos, tune in to BigPond Video.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://bigpondvideo.com/web/Sitemap/index.xml]]></item>
-        <item key="videoUrlRegEx"><![CDATA[cid=(?<cid>.*)]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://bigpondvideo.com/App/AmfPhp/gatewayJson.php?service=Player&serviceMethod=getClipListByTargetLevel&params={{"platformId":"1","siteId":"1","targetLevel":"{0}"}}&requestId=1]]></item>
+        <item key="baseUrl"><![CDATA[http://bigpondvideo.com/App/AmfPhp/gatewayJson.php?service=Player&serviceMethod=getWidgetSetting&params={"widgetId":"968","initOnLoad":true,"environment":"bptv","targetDiv":"widget","domainURL":"http://bigpondvideo.com/","uniqueUserId":"","playerVersion":"3"}&requestId=0]]></item>
       </Configuration>
     </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
