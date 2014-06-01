@@ -35,6 +35,7 @@
 
 #include <dbghelp.h>
 #include <Shlwapi.h>
+#include <Psapi.h>
 
 #define g_wszPullSource                                           L"MediaPortal Url Source Splitter"
 
@@ -164,6 +165,59 @@ BOOL APIENTRY DllMain(HMODULE hModule,
   return result;
 }
 
+HMODULE GetModuleHandleByAddress(LPVOID lpAddress)
+{
+  HMODULE *moduleArray = NULL;
+
+  DWORD moduleArraySize = 0;
+  DWORD moduleArraySizeNeeded = 0;
+
+  if (EnumProcessModules(GetCurrentProcess(), moduleArray, moduleArraySize, &moduleArraySizeNeeded) == 0)
+  {
+    return NULL;
+  }
+
+  moduleArray = ALLOC_MEM_SET(moduleArray, HMODULE, (moduleArraySizeNeeded / sizeof(HMODULE)), 0);
+  if (moduleArray != NULL)
+  {
+    moduleArraySize = moduleArraySizeNeeded;
+
+    if (EnumProcessModules(GetCurrentProcess(), moduleArray, moduleArraySize, &moduleArraySizeNeeded) == 0)
+    {
+      return NULL;
+    }
+  }
+
+  HMODULE result = NULL;
+  unsigned int count = moduleArraySize / sizeof(HMODULE);
+  for (unsigned int i = 0; i < count ; i++)
+  {
+    MODULEINFO modinfo;
+
+    if (GetModuleInformation(GetCurrentProcess(), moduleArray[i], &modinfo, sizeof(modinfo)) == 0)
+    {
+      continue;
+    }
+
+    if (lpAddress < modinfo.lpBaseOfDll)
+    {
+      continue;
+    }
+
+    if ((ULONG_PTR)lpAddress >= ((ULONG_PTR)modinfo.lpBaseOfDll + modinfo.SizeOfImage))
+    {
+      continue;
+    }
+
+    result = (HMODULE)modinfo.lpBaseOfDll;
+    break;
+  }
+
+  FREE_MEM(moduleArray);
+
+  return result;
+}
+
 LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
 {
   // we received some unhandled exception
@@ -201,45 +255,49 @@ LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
   if (((exceptionInfo->ExceptionRecord->ExceptionCode & 0xF0000000) == 0xC0000000) &&
        (exceptionHandler != NULL))
   {
-    // remove exception handler
-    RemoveVectoredExceptionHandler(exceptionHandler);
-    exceptionHandler = NULL;
-
-    SYSTEMTIME currentLocalTime;
-    MINIDUMP_EXCEPTION_INFORMATION minidumpException;
-    GetLocalTime(&currentLocalTime);
-
-    wchar_t *logFile = GetMediaPortalFilePath(MPURLSOURCESPLITTER_LOG_FILE);
-    PathRemoveFileSpec(logFile);
-
-    // files with 'dmp' extension are known for Visual Studio
-
-    wchar_t *dumpFileName = FormatString(L"%s\\MPUrlSourceSplitter-%04.4d-%02.2d-%02.2d-%02.2d-%02.2d-%02.2d-%03.3d.dmp", logFile,
-      currentLocalTime.wYear, currentLocalTime.wMonth, currentLocalTime.wDay,
-      currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond, currentLocalTime.wMilliseconds);
-
-    HANDLE dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
-
-    if (dumpFile != INVALID_HANDLE_VALUE)
+    HMODULE exceptionModule = GetModuleHandleByAddress(exceptionInfo->ExceptionRecord->ExceptionAddress);
+    if (exceptionModule != NULL)
     {
-      minidumpException.ThreadId = GetCurrentThreadId();
-      minidumpException.ExceptionPointers = exceptionInfo;
-      minidumpException.ClientPointers = TRUE;
+      // remove exception handler
+      RemoveVectoredExceptionHandler(exceptionHandler);
+      exceptionHandler = NULL;
 
-      MINIDUMP_TYPE miniDumpType = (MINIDUMP_TYPE)
-        (MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpIgnoreInaccessibleMemory); 
+      SYSTEMTIME currentLocalTime;
+      MINIDUMP_EXCEPTION_INFORMATION minidumpException;
+      GetLocalTime(&currentLocalTime);
 
-      if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, miniDumpType, &minidumpException, NULL, NULL) == TRUE)
+      wchar_t *logFile = GetMediaPortalFilePath(MPURLSOURCESPLITTER_LOG_FILE);
+      PathRemoveFileSpec(logFile);
+
+      // files with 'dmp' extension are known for Visual Studio
+
+      wchar_t *dumpFileName = FormatString(L"%s\\MPUrlSourceSplitter-%04.4d-%02.2d-%02.2d-%02.2d-%02.2d-%02.2d-%03.3d.dmp", logFile,
+        currentLocalTime.wYear, currentLocalTime.wMonth, currentLocalTime.wDay,
+        currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond, currentLocalTime.wMilliseconds);
+
+      HANDLE dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+
+      if (dumpFile != INVALID_HANDLE_VALUE)
       {
-        CLogger logger(NULL);
-        logger.Log(LOGGER_ERROR, dumpFileName);
+        minidumpException.ThreadId = GetCurrentThreadId();
+        minidumpException.ExceptionPointers = exceptionInfo;
+        minidumpException.ClientPointers = TRUE;
+
+        MINIDUMP_TYPE miniDumpType = (MINIDUMP_TYPE)
+          (MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpIgnoreInaccessibleMemory); 
+
+        if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, miniDumpType, &minidumpException, NULL, NULL) == TRUE)
+        {
+          CLogger logger(NULL);
+          logger.Log(LOGGER_ERROR, dumpFileName);
+        }
+
+        CloseHandle(dumpFile);
       }
 
-      CloseHandle(dumpFile);
+      FREE_MEM(dumpFileName);
+      FREE_MEM(logFile);
     }
-
-    FREE_MEM(dumpFileName);
-    FREE_MEM(logFile);
   }
 
   return EXCEPTION_CONTINUE_SEARCH;
