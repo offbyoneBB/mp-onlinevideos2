@@ -1068,6 +1068,18 @@
     <Site name="Filmon" util="Filmon" agecheck="false" enabled="true" lang="en">
       <Description>Watch free 600 Free Live TV Channels. See 45000 Complimentary movies TV shows and documentaries. Record Local TV zero cost. View Horror Movies at no charge!</Description>
     </Site>
+    <Site name="GameKings" util="GameKings" agecheck="false" enabled="true" lang="nl">
+      <Description>Videos van gamekings.tv</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<option\sclass="level-(0|1)"\svalue="(?<url>[^"]*)">(?<title>[^<]*)</option>]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[category/{0}/]]></item>
+        <item key="videoListRegEx"><![CDATA[<article><a\shref="(?<VideoUrl>[^"]*)"\stitle="[^"]*"><img\ssrc="(?<zzImageUrl>[^"]*)"\salt="[^"]*"><h2>(?:<span>[^<]*</span>)?(?<Title>[^<]*)</h2><p\sclass="col">(?<Airdate>[^\s]*)\sdoor[^<]*<a\shref='[^']*'></a></p><p>(?<Description>[^<]*)</p>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li><a\shref='(?<url>[^']*)'\sclass='corners-small'>VOLGENDE</a></li>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<meta\sproperty="og:video"\scontent="http://stream\.gamekings\.tv/(?<m0>[^"]*)"/>]]></item>
+        <item key="fileUrlFormatString"><![CDATA[http://stream.gamekings.tv/large/{0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.gamekings.tv/videos]]></item>
+      </Configuration>
+    </Site>
     <Site name="iLive.to" util="iLiveTo" agecheck="false" enabled="true" lang="en" lastUpdated="2014-03-06T14:06:23.440555+01:00">
       <Description>Watch Live TV Online, Watch Live Sports, Watch Movies Online</Description>
       <Configuration>

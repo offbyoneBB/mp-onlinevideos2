@@ -74,6 +74,7 @@
     <Compile Include="EuroSportUtil.cs" />
     <Compile Include="EventCasterUtil.cs" />
     <Compile Include="FilmonUtil.cs" />
+    <Compile Include="GameKingsUtil.cs" />
     <Compile Include="Hoster\Archiv.cs" />
     <Compile Include="Hoster\EcoStream.cs" />
     <Compile Include="Hoster\OvFile.cs" />
