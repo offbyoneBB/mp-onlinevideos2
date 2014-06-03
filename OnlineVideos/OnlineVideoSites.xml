@@ -1220,8 +1220,8 @@
       <Description>Watch official music videos, documentaries, TV shows, interviews, behind the scenes, tutorials and loads of exclusive and rare footage.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.muzu.tv/]]></item>
-        <item key="videoListRegEx"><![CDATA[(?#videos of new releases)(<li[^>]*>\s*<a\sitemprop="url"\shref="[^"]*"\sstyle="[^"]*"\sclass="[^"]*"\sdata-id="(?<VideoUrl>[^"]*)"\sdata-name="[^"]*"><img\ssrc="(?<ImageUrl>[^"]*)"\salt="[^"]*"\swidth="[^"]*"\sheight="[^"]*"\s/><br>\s*<h2\sitemprop="name">(?<Title>[^<]*)</h2>\s*<span\sitemprop="byArtist">(?<Description>[^<]*)</span>)|
-        (?#videos of one playlist)(<li\sid="[^"]*"\sclass="[^"]*"\sdata-id="(?<VideoUrl>[^"]*)"><a\shref="\#"\sclass="itemImage"><img\salt="(?<Description>[^"]*)"\s*src="(?<ImageUrl>[^"]*)"\swidth="[^"]*"></a><div\sclass="removeVideo"><a[^>]*></a></div><br>\s*<h2><span\sclass="trackNumber"></span>(?<Title>[^<]*)</h2>)]]></item>
+        <item key="videoListRegEx"><![CDATA[(?#videos of new releases)(<li\sclass="[^"]*"\s(?:data-type="videos"\s)?data-id="(?<VideoUrl>[^"]*)">\s*<a[^>]*>\s*<img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"/>\s*<div\sclass="[^"]*">\s*<div\sclass="[^"]*">(?<Description>[^<]*)</div>\s*<div\sclass="[^"]*">(?<Title>[^<]*)</div>\s*<div\sclass="[^"]*">(?<Airdate>[^<]*)</div>\s*</div>\s*</a>\s*</li>)|
+        (?#videos of one playlist)(<li\sid="[^"]*"\sclass="allowedPlay\splaylistQItem"\sdata-id="(?<VideoUrl>[^"]*)">\s*<a\shref="\#"\sclass="itemImage"><img\salt="[^"]*"\s*src="(?<ImageUrl>[^"]*)"\swidth="[^"]*"></a>\s*<div\sclass="removeVideo"><a[^>]*></a></div>\s*<div\sclass="jukebox-track-name">\s*<h2><span\sclass="trackNumber"></span>(?<Title>[^<]*)</h2>\s*<span\sclass="artistTitle">(?<Description>[^<]*)</span>\s*</div>\s*</li>)]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://player.muzu.tv/player/requestVideo?viewhash=ur4uJCOszp6vEJnIEXLUmxWMo&ai={0}]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\sid="next">\s*<a\shref="(?<url>[^"]*)">Next</a>\s*</li>]]></item>
         <item key="forceUTF8Encoding"><![CDATA[True]]></item>
