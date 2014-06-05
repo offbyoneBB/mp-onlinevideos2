@@ -851,11 +851,13 @@
     </Site>
     <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sv">
       <Description>Se dina favoritprogram när du vill i SVT Play - fri television på nätet.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://www.svtplay.se/]]></item>
+        <item key="oppetArkivListUrl"><![CDATA[http://www.oppetarkiv.se/kategori/titel]]></item>
+        <item key="hdcore"><![CDATA[3.3.0]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Program A-Ö">http://www.svtplay.se/program</Category>
-        <Category xsi:type="RssLink" name="Kategorier">http://www.svtplay.se/kategorier</Category>
-        <Category xsi:type="RssLink" name="Live">http://www.svtplay.se/ajax/live</Category>
-        <Category xsi:type="RssLink" name="Öppet arkiv">http://www.oppetarkiv.se/kategori/titel</Category>
       </Categories>
     </Site>
     <Site name="TV4Play" util="TV4Play" agecheck="false" enabled="true" lang="sv">
