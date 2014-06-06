@@ -188,7 +188,9 @@ namespace OnlineVideos.Sites
 				{
 					sendung.Name = HttpUtility.HtmlDecode(a.Element("strong").Element("strong").InnerText.Trim());
 					sendung.Url = new Uri(baseUri, a.GetAttributeValue("href", "")).AbsoluteUri;
-					sendung.Thumb = new Uri(baseUri, li.Element("img").GetAttributeValue("src", "")).AbsoluteUri;
+					var img = li.Element("img");
+					if (img != null)
+						sendung.Thumb = new Uri(baseUri, img.GetAttributeValue("src", "")).AbsoluteUri;
 					result.Add(sendung);
 				}
 			}
