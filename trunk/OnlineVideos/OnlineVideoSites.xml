@@ -19,33 +19,6 @@
     </Site>
     <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" lang="de">
       <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.ardmediathek.de/ard/servlet/]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref="/kategorien/.*?\?documentId=(?<url>[^"]+)"[^>]*>(?<title>[^<]+)</a></li>]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.ardmediathek.de/ard/servlet/ajax-cache/3516706/view=switch/clipFilter=fernsehen/content=fernsehen/documentId={0}/index.html]]></item>
-        <item key="dynamicSubCategoriesRegEx">
-          <![CDATA[<div\sclass="mt-media_item">\s*
-<div\sclass="mt-image">\s*
-<img\s(data-)?src="(?<thumb>[^"]+)"[^>]*>\s*
-</div>\s*
-<h3\sclass="mt-title">\s*<a\shref=".+?documentId=(?<url>[^"]+)"\s[^>]*>(?<title>[^<]+)</a>\s*</h3>]]>
-        </item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.ardmediathek.de/ard/servlet/ajax-cache/3516962/view=list/documentId={0}/index.html]]></item>
-        <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<a\s+href="(?<url>[^"]+)"[^>]*>Weiter</a>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="mt-media_item[^"]*">\s*
-<div\sclass="mt-image">\s*
-<span\sclass="mt-icon\smt-icon_video\s*"></span>\s*
-<img\s(data-)?src="(?<ImageUrl>[^"]+)"\s[^/]*/>\s*
-</div>\s*
-<h3\sclass="mt-title">\s*<a\shref="(?<VideoUrl>[^"]+)"[^>]*>(?<Title>[^<]+)</a>\s*</h3>\s*
-<p[^>]*>[^<]*</p>\s*
-<p\sclass="mt-airtime_channel">\s*<span\sclass="mt-airtime">\s*(?<Airdate>.*?)\s*(\n|·|\s)(?<Duration>.*?)(\s+min)?</span>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\s+href="(?<url>[^"]+)"\s[^>]*>Weiter</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[mediaCollection.addMediaStream\((?<Info>[^\)]+)]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}{1}]]></item>
-        <item key="fileUrlNameFormatString"><![CDATA[{0}-{1}]]></item>
-        <item key="searchUrl"><![CDATA[http://www.ardmediathek.de/ard/servlet/content/3517006?inhalt=tv&s={0}]]></item>
-      </Configuration>
     </Site>
     <Site name="BR" util="Br" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen aus der Mediathek des Bayerischen Rundfunks (BR).</Description>
