@@ -16,6 +16,8 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName="VideoQuality"), Description("Choose your preferred quality for the videos according to bandwidth.")]
         VideoQuality videoQuality = VideoQuality.High;
 
+		string nextPageUrl;
+
 		public override int DiscoverDynamicCategories()
 		{
 			Settings.Categories.Add(new RssLink() { Name = "Sendungen A-Z", HasSubCategories = true, Url = "http://www.ardmediathek.de/tv/sendungen-a-z" });
@@ -137,6 +139,8 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
+			HasNextPage = false;
+
 			var myBaseUri = new Uri((category as RssLink).Url);
 			var baseDoc = GetWebData<HtmlDocument>(myBaseUri.AbsoluteUri);
 
@@ -196,56 +200,86 @@ namespace OnlineVideos.Sites
 			else
 			{
 				var mainDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modMini")).ParentNode;
-				foreach (var teaser in mainDiv.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "teaser"))
-				{
-					var link = teaser.Descendants("a").FirstOrDefault();
-					if (link != null)
-					{
-						var video = new VideoInfo();
-						video.VideoUrl = new Uri(myBaseUri, HttpUtility.HtmlDecode(link.GetAttributeValue("href", ""))).AbsoluteUri;
-
-						var img = teaser.Descendants("img").FirstOrDefault();
-						if (img != null) video.ImageUrl = new Uri(myBaseUri, JObject.Parse(HttpUtility.HtmlDecode(img.GetAttributeValue("data-ctrl-image", ""))).Value<string>("urlScheme").Replace("##width##", "256")).AbsoluteUri;
-
-						var headline = teaser.Descendants("h4").FirstOrDefault(h4 => h4.GetAttributeValue("class", "") == "headline");
-						if (headline != null) video.Title = HttpUtility.HtmlDecode(headline.InnerText.Trim());
-
-						var textWrapper = teaser.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "textWrapper");
-						if (textWrapper != null)
-						{
-							var dachzeile = HttpUtility.HtmlDecode(textWrapper.Descendants("p").FirstOrDefault(div => div.GetAttributeValue("class", "") == "dachzeile").InnerText);
-							var subtitle = textWrapper.Descendants("p").FirstOrDefault(div => div.GetAttributeValue("class", "") == "subtitle").ChildNodes[0].InnerText;
-							if (subtitle.Contains('|'))
-							{
-								video.Description = dachzeile;
-								foreach (var subtitleSplit in subtitle.Split('|'))
-								{
-									if (subtitleSplit.Contains("min"))
-										video.Length = subtitleSplit.Trim();
-									else if (subtitleSplit.Count(c => c == '.') == 2)
-										video.Airdate = subtitleSplit.Trim();
-								}
-							}
-							else
-							{
-								video.Length = subtitle;
-								video.Airdate = dachzeile;
-							}
-						}
-						result.Add(video);
-					}
-				}
-				// todo : paging
+				result = GetVideosFromDiv(mainDiv, myBaseUri);
 			}
 			return result;
         }
 
+		List<VideoInfo> GetVideosFromDiv(HtmlNode mainDiv, Uri myBaseUri)
+		{
+			var result = new List<VideoInfo>();
+			foreach (var teaser in mainDiv.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "teaser"))
+			{
+				var link = teaser.Descendants("a").FirstOrDefault();
+				if (link != null)
+				{
+					var video = new VideoInfo();
+					video.VideoUrl = new Uri(myBaseUri, HttpUtility.HtmlDecode(link.GetAttributeValue("href", ""))).AbsoluteUri;
+
+					var img = teaser.Descendants("img").FirstOrDefault();
+					if (img != null) video.ImageUrl = new Uri(myBaseUri, JObject.Parse(HttpUtility.HtmlDecode(img.GetAttributeValue("data-ctrl-image", ""))).Value<string>("urlScheme").Replace("##width##", "256")).AbsoluteUri;
+
+					var headline = teaser.Descendants("h4").FirstOrDefault(h4 => h4.GetAttributeValue("class", "") == "headline");
+					if (headline != null) video.Title = HttpUtility.HtmlDecode(headline.InnerText.Trim());
+
+					var textWrapper = teaser.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "textWrapper");
+					if (textWrapper != null)
+					{
+						var dachzeile = HttpUtility.HtmlDecode(textWrapper.Descendants("p").FirstOrDefault(div => div.GetAttributeValue("class", "") == "dachzeile").InnerText);
+						video.Description = dachzeile;
+
+						var teaserParagraph = textWrapper.Descendants("p").FirstOrDefault(div => div.GetAttributeValue("class", "") == "teasertext");
+						if (teaserParagraph != null)
+							video.Description += (string.IsNullOrEmpty(video.Description) ? "" : "\n") + teaserParagraph.InnerText;
+
+						var subtitle = textWrapper.Descendants("p").FirstOrDefault(div => div.GetAttributeValue("class", "") == "subtitle").ChildNodes[0].InnerText;
+						if (subtitle.Contains('|'))
+						{
+							
+							foreach (var subtitleSplit in subtitle.Split('|'))
+							{
+								if (subtitleSplit.Contains("min"))
+									video.Length = subtitleSplit.Trim();
+								else if (subtitleSplit.Count(c => c == '.') == 2)
+									video.Airdate = subtitleSplit.Trim();
+							}
+						}
+						else
+						{
+							video.Length = subtitle;
+							video.Airdate = dachzeile;
+						}
+					}
+					result.Add(video);
+				}
+			}
+			
+			// paging
+			var nextPageLink = mainDiv.Descendants("a").FirstOrDefault(a => a.GetAttributeValue("href", "") != "" && a.InnerText.Trim() == HttpUtility.HtmlEncode(">"));
+			HasNextPage = nextPageLink != null;
+			if (HasNextPage)
+				nextPageUrl = new Uri(myBaseUri, HttpUtility.HtmlDecode(nextPageLink.GetAttributeValue("href", ""))).AbsoluteUri;
+
+			return result;
+		}
+
+		public override List<VideoInfo> getNextPageVideos()
+		{
+			var myBaseUri = new Uri(nextPageUrl);
+			var doc = GetWebData<HtmlDocument>(nextPageUrl);
+			var mainDiv = doc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modList") || div.GetAttributeValue("class", "").Contains("modMini")).ParentNode;
+			return GetVideosFromDiv(mainDiv, myBaseUri);
+		}
+
 		public override bool CanSearch { get { return true; } }
+
 		public override List<ISearchResultItem> DoSearch(string query)
 		{
-			var doc = GetWebData<HtmlDocument>(string.Format("http://www.ardmediathek.de/tv/suche?searchText={0}", HttpUtility.UrlEncode(query)));
-			
-			return base.DoSearch(query);
+			var searchUrl = string.Format("http://www.ardmediathek.de/tv/suche?searchText={0}", HttpUtility.UrlEncode(query));
+			var myBaseUri = new Uri(searchUrl);
+			var doc = GetWebData<HtmlDocument>(searchUrl);
+			var mainDiv = doc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modList")).ParentNode;
+			return GetVideosFromDiv(mainDiv, myBaseUri).ConvertAll(v => v as ISearchResultItem);
 		}
 
 		public override String getUrl(VideoInfo video)
