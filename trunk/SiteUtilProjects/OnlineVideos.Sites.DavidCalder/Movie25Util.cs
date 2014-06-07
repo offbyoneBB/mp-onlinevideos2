@@ -3,12 +3,37 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+using System.IO.Compression;
+using System.Net;
 using System.Text.RegularExpressions;
+
+
 
 namespace OnlineVideos.Sites.DavidCalder
 {
-  public class Movie25Util : DeferredResolveUtil
+  public class Movie25Util : DeferredResolveUtil, IChoice
   {
+    public static List<VideoInfo> videoList = new List<VideoInfo>();
+
+    public override int DiscoverDynamicCategories()
+    {
+      base.DiscoverDynamicCategories();
+      int i = 0;
+      do
+      {
+        RssLink cat = (RssLink)Settings.Categories[i];
+        if (cat.Name == "Submit Links" || cat.Name == "TV Shows")
+          Settings.Categories.Remove(cat);
+        else
+        {
+          i++;
+        }
+      }
+      while (i < Settings.Categories.Count);
+      return Settings.Categories.Count;
+    }
+
     public override ITrackingInfo GetTrackingInfo(VideoInfo video)
     {
       try
@@ -36,9 +61,17 @@ namespace OnlineVideos.Sites.DavidCalder
       if (match.Success)
       {
         newUrl = match.Groups["url"].Value;
+        return GetVideoUrl(newUrl);
       }
-      Log.Info(newUrl);
-      return GetVideoUrl(newUrl);
+      //Log.Info(newUrl);
+      return newUrl;
+    }
+
+    public override Dictionary<string, string> GetPlaybackOptions(string playlistUrl)
+    {
+      if (playlistUrl.StartsWith("https://www.youtube.com/watch?v="))
+        return Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(playlistUrl);
+      else return base.GetPlaybackOptions(playlistUrl);
     }
 
     public override bool CanSearch
@@ -49,49 +82,52 @@ namespace OnlineVideos.Sites.DavidCalder
       }
     }
 
-    public override List<ISearchResultItem> DoSearch(string query)
+    public override List<VideoInfo> getVideoList(Category category)
     {
-      List<ISearchResultItem> cats = new List<ISearchResultItem>();
-
-      Regex r = new Regex(@"<div\sclass=""movie_pic""><a\shref=""(?<url>[^""]*)""\starget=""_blank"">\s*<img\ssrc=""(?<thumb>[^""]*)""\swidth=""101""\sheight=""150""\s/>\s*</a></div>\s*<div\sclass=""movie_about"">\s*<div\sclass=""movie_about_text"">\s*<h1><a\shref=""[^""]*""\starget=""_blank"">(?<title>[^<]*)</a></h1>", defaultRegexOptions);
-
-      query = query.Replace(" ", "+");
-      string webData = GetWebData(string.Format(baseUrl + "/search.php?key={0}&submit=", query), forceUTF8: true);
-      Match m = r.Match(webData);
-      while (m.Success)
-      {
-        RssLink cat = new RssLink();
-        cat.Url = baseUrl + m.Groups["url"].Value;
-        if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
-        cat.Url = ApplyUrlDecoding(cat.Url, dynamicSubCategoryUrlDecoding);
-        if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
-        cat.Name = m.Groups["title"].Value.Trim();
-        cat.Thumb = m.Groups["thumb"].Value;
-        if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
-        cat.Description = m.Groups["description"].Value;
-        cat.HasSubCategories = false;
-        cats.Add(cat);
-        m = m.NextMatch();
-      }
-      return cats;
+      List<VideoInfo> videos = base.getVideoList(category);
+      TMDB.BackgroundWorker worker = new TMDB.BackgroundWorker();
+      worker.start(videos);
+      return videos;
     }
 
-    public override int DiscoverDynamicCategories()
+    public List<VideoInfo> getVideoChoices(VideoInfo video)
     {
-      base.DiscoverDynamicCategories();
-      int i = 0;
-      do
+      List<VideoInfo> videos = new List<VideoInfo>();
+      if (video.Other.GetType() == typeof(TMDbVideoDetails))
       {
-        RssLink cat = (RssLink)Settings.Categories[i];
-        if (cat.Name == "Submit Links" || cat.Name == "TV Shows")
-          Settings.Categories.Remove(cat);
-        else
+        TMDbVideoDetails videoDetail = (TMDbVideoDetails)video.Other;
+        
+        foreach (TMDB.Trailer trailer in videoDetail.TMDbDetails.videos.TrailerList())
         {
-          i++;
+          VideoInfo clip = new VideoInfo();
+          clip.Description = videoDetail.TMDbDetails.overview;
+          clip.ImageUrl = videoDetail.TMDbDetails.PosterPathFullUrl();
+          clip.Title = string.Format("{0}  –  {1}", video.Title, trailer.name);
+          clip.Airdate = videoDetail.TMDbDetails.ReleaseDateAsString();
+          clip.Title2 = trailer.name;
+          clip.VideoUrl = "https://www.youtube.com/watch?v=" + trailer.key;
+          videos.Add(clip);
         }
-      }   
-      while (i < Settings.Categories.Count);
-      return Settings.Categories.Count;
+      }
+      videos.Insert(0, video);
+      return videos;
+    }
+
+    public override List<VideoInfo> Search(string query)
+    {    
+      searchUrl = string.Format("http://www.movie25.so/search.php?key={0}&submit=", query.Replace(" ", "+"));
+      List<VideoInfo> videos = base.Search(searchUrl);
+      TMDB.BackgroundWorker worker = new TMDB.BackgroundWorker();
+      worker.start(videos);
+      return videos;
+    }
+
+    public override List<VideoInfo> getNextPageVideos()
+    {
+      List<VideoInfo> videos = base.getNextPageVideos();
+      TMDB.BackgroundWorker worker = new TMDB.BackgroundWorker();
+      worker.start(videos);
+      return videos;
     }
   }
 }

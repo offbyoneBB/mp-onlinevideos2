@@ -10,6 +10,23 @@ using System.Net;
 
 namespace OnlineVideos.Sites.DavidCalder
 {
+  //public class Youtube : HosterBase
+  //{
+  //  public override string getHosterUrl()
+  //  {
+  //    return "youtube.com";
+  //  }
+
+  //  public override string getVideoUrls(string url)
+  //  {
+  //    string api = "ewBaO91_XAo5G866rTdUBO5tv_KFPcJ5_xxvJZbFSkr6lWoL0NCDPTCV7H06q-KMAWpws8_C08Q23kMYukIatA";
+  //    CloudConvert fileConvert = new CloudConvert(api);
+  //     string process = fileConvert.GetProcessURL("mp4", "mp4");
+      
+  //    return String.Empty;
+  //  }
+  //}
+
     public class Uploadc : HosterBase
     {
         public override string getHosterUrl()
@@ -83,7 +100,6 @@ namespace OnlineVideos.Sites.DavidCalder
         {
             CookieContainer cc = new CookieContainer();
             string postData = String.Empty;
-            string Referer = "http://allmyvideos.net/player/6.6/jwplayer.flash.swf";
 
             string data = SiteUtilBase.GetWebData(url, cc);
             if (!string.IsNullOrEmpty(data))
