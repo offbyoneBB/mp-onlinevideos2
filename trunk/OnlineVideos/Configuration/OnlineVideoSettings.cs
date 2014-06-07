@@ -23,7 +23,7 @@ namespace OnlineVideos
         public string ThumbsDir;        
         public string DownloadDir;
         public string DllsDir;
-        public string UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3";
+        public string UserAgent = "Mozilla/5.0 (Windows NT 6.1)";
         public string SitesFileName = "OnlineVideoSites.xml";
         public bool UseAgeConfirmation = true; // enable pin by default -> child protection
         public bool AgeConfirmed = false;
