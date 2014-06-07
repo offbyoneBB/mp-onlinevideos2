@@ -276,7 +276,9 @@ namespace OnlineVideos.Sites
                             RssLink cat = new RssLink();
                             var imageDiv = div.SelectSingleNode("div[@class = 'image-galery']");
                             cat.Url = imageDiv.SelectSingleNode("a").GetAttributeValue("href", "");
-                            var image = imageDiv.SelectSingleNode("a/img").GetAttributeValue("data-cfsrc", "");
+                            var image = imageDiv.SelectSingleNode("a/img").GetAttributeValue("src", "");
+                            if (string.IsNullOrEmpty(image))
+                                image = imageDiv.SelectSingleNode("a/img").GetAttributeValue("data-cfsrc", "");
                             if (!removeDdosProtection)
                                 cat.Thumb = string.IsNullOrEmpty(image) ? "" : (image.StartsWith("http") ? image : string.Format("http://dreamfilm.se/{0}", image));
                             else
@@ -304,7 +306,9 @@ namespace OnlineVideos.Sites
                         {
                             RssLink cat = new RssLink();
                             cat.Url = a.GetAttributeValue("href", "");
-                            var image = a.SelectSingleNode("li/div/img").GetAttributeValue("data-cfsrc", "");
+                            var image = a.SelectSingleNode("li/div/img").GetAttributeValue("src", "");
+                            if (string.IsNullOrEmpty(image))
+                                image = a.SelectSingleNode("li/div/img").GetAttributeValue("data-cfsrc", "");
                             if (!removeDdosProtection)
                                 cat.Thumb = string.IsNullOrEmpty(image) ? "" : (image.StartsWith("http") ? image : string.Format("http://dreamfilm.se/{0}", image));
                             else
