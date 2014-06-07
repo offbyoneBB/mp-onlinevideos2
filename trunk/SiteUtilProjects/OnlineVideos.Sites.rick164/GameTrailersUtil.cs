@@ -121,10 +121,18 @@ namespace OnlineVideos.Sites
                                     {
                                         if (counter == videoCount)
                                         {
-                                            if (m2.Groups["gameName"].Value != "" && m2.Groups["gameName"].Value != null || m2.Groups["gameName"].Value.ToLower().Contains("comic-con"))
+                                            if (m2.Groups["gameName"].Value.ToString().ToLower() == "e3 "+DateTime.Now.Year)
                                             {
-                                                videoInfo.Title = HttpUtility.HtmlDecode(m2.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m2.Groups["Title"].Value.Replace("&acirc;", "'"));
+                                                //skip invalid entries, mostly E3 without valid URL matched by regex
                                             }
+                                            else
+                                            {
+                                                if (m2.Groups["gameName"].Value != "" && m2.Groups["gameName"].Value != null || m2.Groups["gameName"].Value.ToLower().Contains("comic-con"))
+                                                {
+                                                    videoInfo.Title = HttpUtility.HtmlDecode(m2.Groups["gameName"].Value) + " - " + HttpUtility.HtmlDecode(m2.Groups["Title"].Value.Replace("&acirc;", "'"));
+                                                }
+                                            }
+
                                             counter++;
                                         }
                                         else
@@ -137,7 +145,7 @@ namespace OnlineVideos.Sites
                                 videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
 
                                 //Video url check
-                                if (!videoInfo.VideoUrl.StartsWith("http://") || videoInfo.VideoUrl == "" || videoInfo.Title.ToLower().Contains("comic-con") || videoInfo.Title.ToLower().Contains("gt/live"))
+                                if (!videoInfo.VideoUrl.StartsWith("http://") || videoInfo.VideoUrl == "" || videoInfo.Title.ToLower().Contains("comic-con") || videoInfo.Title.ToLower().Contains("gt/live") || m2.Groups["gameName"].Value.ToString().ToLower() == "e3 " + DateTime.Now.Year)
                                 {
                                     Log.Debug("Np valid video url found or invalid video");
                                     videoCount++;
@@ -149,15 +157,15 @@ namespace OnlineVideos.Sites
                                     videoInfo.Airdate = m.Groups["Airdate"].Value;
                                     videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Replace("T", "").Trim();
 
-                                    //Log.Debug("Desc: " + m.Groups["Description"].Value);
+                                    Log.Debug("Desc: " + m.Groups["Description"].Value);
                                     //Encoding by GT is reported as UTF-8 but it's not in most cases, temporary fix added for "'" character
                                     videoInfo.Description = m.Groups["Description"].Value.Replace("&acirc;", "'");
-                                    //Log.Debug("Desc (enc): " + videoInfo.Description);
-                                    //Log.Debug("---------------");
-                                    //Log.Debug("Description: " + videoInfo.Description);
-                                    //Log.Debug("title: " + videoInfo.Title);
-                                    //Log.Debug("Video URL: " + videoInfo.VideoUrl);
-                                    //Log.Debug("Image: " + videoInfo.ImageUrl);
+                                    Log.Debug("Desc (enc): " + videoInfo.Description);
+                                    Log.Debug("---------------");
+                                    Log.Debug("Description: " + videoInfo.Description);
+                                    Log.Debug("title: " + videoInfo.Title);
+                                    Log.Debug("Video URL: " + videoInfo.VideoUrl);
+                                    Log.Debug("Image: " + videoInfo.ImageUrl);
 
                                     videoCount++;
                                     videoList.Add(videoInfo);
