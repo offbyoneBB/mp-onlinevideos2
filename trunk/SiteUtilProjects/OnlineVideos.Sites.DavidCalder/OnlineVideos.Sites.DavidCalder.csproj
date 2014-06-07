@@ -35,6 +35,18 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< .mine
+    <Reference Include="OnlineVideos">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</HintPath>
+    </Reference>
+    <Reference Include="OnlineVideos.MediaPortal1">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</HintPath>
+    </Reference>
+    <Reference Include="OnlineVideos.Sites.doskabouter, Version=1.0.0.3212, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</HintPath>
+    </Reference>
+=======
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
       <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
       <Name>OnlineVideos</Name>
@@ -45,15 +57,47 @@
       <Name>OnlineVideos.Sites.doskabouter</Name>
       <Private>False</Private>
     </ProjectReference>
+>>>>>>> .r3264
     <Reference Include="System" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TMDB\BackgroundWorker.cs" />
+    <Compile Include="TMDB\TMDbObjects\Created_By.cs" />
+    <Compile Include="TMDB\TMDbObjects\Episode.cs" />
+    <Compile Include="TMDB\TMDbObjects\Network.cs" />
+    <Compile Include="TMDB\TMDbObjects\Season.cs" />
+    <Compile Include="TMDB\TMDbObjects\TVSeries.cs" />
+    <Compile Include="TMDB\TMDB_MopVideo.cs" />
+    <Compile Include="TMDB\TMDB_Movie25.cs" />
+    <Compile Include="TMDB\TMDbObjects\Backdrop.cs" />
+    <Compile Include="TMDB\TMDbObjects\Cast.cs" />
+    <Compile Include="TMDB\TMDbObjects\Country.cs" />
+    <Compile Include="TMDB\TMDbObjects\Crew.cs" />
+    <Compile Include="TMDB\TMDbObjects\Poster.cs" />
+    <Compile Include="TMDB\TMDbObjects\ProductionCompanies.cs" />
+    <Compile Include="TMDB\TMDbObjects\ProductionCountries.cs" />
+    <Compile Include="TMDB\TMDbObjects\TMDbObjectLists.cs" />
+    <Compile Include="TMDB\TMDbObjects\Certification.cs" />
+    <Compile Include="CouchtunerUtil.cs" />
     <Compile Include="MopVideoUtil.cs" />
+    <Compile Include="TMDB\TMDbObjects\Genre.cs" />
+    <Compile Include="TMDB\TMDbObjects\Images.cs" />
+    <Compile Include="TMDB\TMDbObjects\Languages.cs" />
     <Compile Include="Movie25Util.cs" />
+    <Compile Include="MovieBeUtil.cs" />
     <Compile Include="MyHosters.cs" />
+    <Compile Include="TMDB\SearchResults.cs" />
+    <Compile Include="TMDB\TMDB_API.cs" />
+    <Compile Include="TMDB\TMDbObjects\Movie.cs" />
+    <Compile Include="TMDB\TMDbVideoDetails.cs" />
+    <Compile Include="TMDB\TMDbObjects\Trailer.cs" />
+    <Compile Include="TMDB\TMDbObjects\Translations.cs" />
     <Compile Include="VideoBullUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
