@@ -269,7 +269,7 @@ namespace OnlineVideos.Sites
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
             //Extension always .mp4
-            return video.Title + ".mp4";
+            return OnlineVideos.Utils.GetSaveFilename(video.Title) + ".mp4";
         }
     }
 }

@@ -430,7 +430,7 @@ namespace OnlineVideos.Sites
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
             //Extension always .f4m
-            return video.Title + ".f4m";
+            return OnlineVideos.Utils.GetSaveFilename(video.Title) + ".f4m";
         }
 
         #endregion
