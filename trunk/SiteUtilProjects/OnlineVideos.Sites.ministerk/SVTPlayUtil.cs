@@ -66,11 +66,11 @@ namespace OnlineVideos.Sites
         private List<Category> DiscoverProgramAOCategories(HtmlNode htmlNode, Category parentCategory)
         {
             List<Category> categories = new List<Category>();
-            HtmlNode div = htmlNode.Descendants("div").First(d => d.GetAttributeValue("class", "") == "play_alphabetic-list-titles");
-            foreach (HtmlNode alphaLi in div.SelectNodes("ul/li"))
+            IEnumerable< HtmlNode> alphabetList = htmlNode.Descendants("li").Where(d => d.GetAttributeValue("class", "").StartsWith("play_alphabetic-letter"));
+            foreach (HtmlNode alphaLi in alphabetList)
             {
-                Category alphaCat = new Category() { Name = HttpUtility.HtmlDecode(alphaLi.SelectSingleNode("div/h3").InnerText), SubCategories = new List<Category>(), HasSubCategories = true, ParentCategory = parentCategory };
-                HtmlNodeCollection programs = alphaLi.SelectNodes("div/ul/li");
+                Category alphaCat = new Category() { Name = HttpUtility.HtmlDecode(alphaLi.SelectSingleNode("h3").InnerText), SubCategories = new List<Category>(), HasSubCategories = true, ParentCategory = parentCategory };
+                HtmlNodeCollection programs = alphaLi.SelectNodes("ul/li");
                 if (programs != null)
                 {
                     foreach (HtmlNode program in programs)
@@ -184,16 +184,16 @@ namespace OnlineVideos.Sites
                     string ariaControls = categoryNode.SelectSingleNode("a").GetAttributeValue("aria-controls", "");
                     HtmlNode div = htmlNode.SelectSingleNode("//div[@id = '" + ariaControls + "']");
 
-                    RssLink category = new RssLink() { Name = categoryNode.SelectSingleNode("a/span").InnerText, ParentCategory = parentCategory };
+                    RssLink category = new RssLink() { Name = categoryNode.SelectSingleNode("a").InnerText.Trim(), ParentCategory = parentCategory };
                     if (category.Name == _programA_O)
                     {
-                        IEnumerable<HtmlNode> alphaDivs = div.Descendants("div").Where(d => d.GetAttributeValue("class", "") == "play_alphabetic-letter playx_clearfix");
-                        bool split = SplitByLetter && alphaDivs != null && alphaDivs.Count() > 0;
+                        IEnumerable<HtmlNode> alphaList = div.Descendants("li").Where(d => d.GetAttributeValue("class", "") == "play_alphabetic-letter");
+                        bool split = SplitByLetter && alphaList != null && alphaList.Count() > 0;
                         category.HasSubCategories = true;
                         category.SubCategories = new List<Category>();
                         if (split)
                         {
-                            foreach (HtmlNode alphaDiv in alphaDivs)
+                            foreach (HtmlNode alphaDiv in alphaList)
                             {
                                 Category alphaCat = new Category() { Name = HttpUtility.HtmlDecode(alphaDiv.SelectSingleNode("h3").InnerText), ParentCategory = category, HasSubCategories = true, SubCategories = new List<Category>() };
                                 foreach (HtmlNode article in alphaDiv.Descendants("article"))
@@ -260,10 +260,10 @@ namespace OnlineVideos.Sites
             video.Description = article.GetAttributeValue("data-description", "");
             video.Airdate = HttpUtility.HtmlDecode(article.GetAttributeValue("data-broadcasted", ""));
             video.Length = article.GetAttributeValue("data-length", "");
-            HtmlNode a = article.SelectSingleNode("div/a");
+            HtmlNode a = article.SelectSingleNode("a");
             Uri uri = new Uri(new Uri(baseUrl), a.GetAttributeValue("href", ""));
             video.VideoUrl = uri.ToString();
-            video.ImageUrl = a.SelectSingleNode("div/img").GetAttributeValue("data-imagename", "");
+            video.ImageUrl = a.SelectSingleNode("figure/img").GetAttributeValue("data-imagename", "");
             video.CleanDescriptionAndTitle();
             return video;
         }
