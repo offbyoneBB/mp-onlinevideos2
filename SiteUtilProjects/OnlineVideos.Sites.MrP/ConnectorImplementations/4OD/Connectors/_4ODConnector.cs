@@ -9,10 +9,12 @@ using OnlineVideos.Sites.Base;
 using System.Xml;
 using System.Threading;
 using OnlineVideos.Helpers;
+using OnlineVideos.Sites.WebAutomation.Properties;
+using System.Drawing;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connectors
 {
-    public class _4ODConnector : BrowserUtilConnector
+    public class _4ODConnector : BrowserUtilConnectorBase
     {
         /// <summary>
         /// The states this connector can be in - useful when waiting for browser responses
@@ -32,6 +34,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
         private string _nextVideoToPlayId;
         private string _nextVideoToPlayName;
         private bool _lastButtonPause = false;
+        private Panel _blankPanel = new Panel();
 
         /// <summary>
         /// Perform a log in to the 4OD site
@@ -39,8 +42,9 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public override EventResult PerformLogin(string username, string password)
+        protected override EventResult PerformActualLogin(string username, string password)
         {
+         
             _username = username;
             _password = password;
             _currentState = State.LoggingIn;
@@ -139,6 +143,16 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
                         }
                         */
 
+                        _loadingPicture.Visible = false;
+                        // Hide the controls of the flash player
+                        _blankPanel.Width = Browser.Width;
+                        _blankPanel.Height = 50;
+                        _blankPanel.BackColor = Color.Black;
+                        _blankPanel.Top = Browser.FindForm().Bottom - 50;
+
+                        Browser.FindForm().Controls.Add(_blankPanel);
+                        _blankPanel.BringToFront();
+
                         // Rather than click the age restriction button we'll set the cookie for this program 
                         if (HasAgeRestriction())
                         {
@@ -193,14 +207,13 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
             //var jsCodeToRun = "document.getElementById('resizeLarge').click();";
             var width = Browser.Width;
             var height = Browser.Height;
-
+            
             var jsCodeToRun = "C4.PopoutPlayer.View.getView().resizePlayer(" + width.ToString() + "," + height.ToString() + ");";
             jsCodeToRun += "document.getElementById('c4nc').style.overflow='hidden';";
-            //jsCodeToRun += "document.getElementById('footerContainer').style.display='none';";
-
+            InvokeScript(jsCodeToRun);
             // The js code to wait for the resize to become enabled 
             var jsCode = "setTimeout('doResize()', 1000);";
-            jsCode += "function doResize() {";
+            jsCode += "function doResize() { ";
             jsCode += "if(document.getElementById('resizeLarge').getAttribute('src').indexOf('pop_large.gif') > -1) {";
             jsCode += jsCodeToRun;
             jsCode += "}";
