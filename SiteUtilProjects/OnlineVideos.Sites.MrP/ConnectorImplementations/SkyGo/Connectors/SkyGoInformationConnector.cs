@@ -7,11 +7,22 @@ using OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extensions
 using System.Xml;
 using HtmlAgilityPack;
 using OnlineVideos.Sites.WebAutomation.Extensions;
+using System.Threading;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connectors
 {
     public class SkyGoInformationConnector: IInformationConnector
     {
+        /// <summary>
+        /// The parameters to use when loading the sub category on a separate thread
+        /// </summary>
+        private class LoadSubCategParams
+        {
+            public Category ParentCategory { get; set; }
+            public string CurrentChar { get; set; }
+            public int Index { get; set; }
+        }
+
         private enum State
         { 
             None,
@@ -23,6 +34,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
 
         private List<string> _lastLoadedPages = new List<string>();
         SiteUtilBase _siteUtil;
+        private const int NumThreads = 5;
+        private static ManualResetEvent[] resetEvents = new ManualResetEvent[NumThreads];
 
         public SkyGoInformationConnector(SiteUtilBase siteUtil)
         {
@@ -72,7 +85,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
 
             return result;
         }
-
+        
         /// <summary>
         /// Use the api version of the Sky Go pages to load categories
         /// </summary>
@@ -80,41 +93,53 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         private void LoadSubCategories(Category parentCategory)
         {
             var tmpchar = "%23";
-            var currentAToZPos = 0;            
-            var currentPagePos = 0;
+            var currentAToZPos = 0;
+            var currThreadHandle = 0;
             
-            _lastLoadedPages = new List<string>();
-
             // Loop through the whole alphabet
             while ((currentAToZPos + 64) <= 90)
             {
-                var pages = -1;
-                LoadThisCategoryPage(parentCategory, tmpchar, currentPagePos, out pages);
-                
-                // Handle multiple pages per char
-                if (currentPagePos < pages)
-                {
-                    currentPagePos++;
-                }
-                else
-                {
-                    currentPagePos = 0;
-                    currentAToZPos++;
+                var tmpParams = new LoadSubCategParams { CurrentChar = tmpchar, ParentCategory = parentCategory, Index = currThreadHandle };
+                resetEvents[currThreadHandle] = new ManualResetEvent(false);
+                ThreadPool.QueueUserWorkItem(new WaitCallback(LoadCharacterSubCateg), (object)tmpParams);
+              
+                currentAToZPos++;
 
-                    // Bit of a basic check, but if we've loaded the same page more than 4 times we'll stop loading them 
-                    //  This happens if the page doesn't have multiple alphabetic pages
-                    if (_lastLoadedPages != null && _lastLoadedPages.Count() >= 4)
-                    {
-                        if (_lastLoadedPages.Distinct().Count() == 1)
-                            break;
-                        else
-                            _lastLoadedPages = null; // We've got 4 distinct pages, stop logging them
-                    }
+                // Move to the next character
+                tmpchar = ((char)(currentAToZPos + 64)).ToString();
+                currThreadHandle++;
 
-                    // Move to the next character
-                    tmpchar = ((char)(currentAToZPos + 64)).ToString();
+                // Wait for all threads to complete if the array is fully loaded
+                if (currThreadHandle >= NumThreads)
+                {
+                    WaitHandle.WaitAll(resetEvents, 10000);
+                    currThreadHandle = 0;
                 }
             }
+        }
+
+        /// <summary>
+        /// Load the category page for the specified character in a separate thread - this will pull out all pages for the specified character 
+        /// </summary>
+        /// <param name="parametersObject"></param>
+        private void LoadCharacterSubCateg(object parametersObject)
+        {
+            var pages = -1;
+            var currentPagePos = 0;
+            var parameters = (LoadSubCategParams)parametersObject;
+
+            while (pages > -2)
+            {
+                LoadThisCategoryPage(parameters.ParentCategory, parameters.CurrentChar, currentPagePos, out pages);
+
+                // Handle multiple pages per char
+                if (currentPagePos < pages)
+                    currentPagePos++;
+                else
+                    pages = -2;
+            }
+
+            resetEvents[parameters.Index].Set();
         }
 
         /// <summary>
@@ -163,10 +188,11 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         private void LoadThisCategoryPage(Category parentCategory, string currentChar, int pageNo, out int pages)
         {
             var doc = Properties.Resources.SkyGo_CategoryAToZUrl.Replace("{CATEGORY}", parentCategory.CategoryId()).Replace("{CHARACTER}", currentChar).Replace("{PAGE}", pageNo.ToString()).LoadSkyGoContentFromUrl();
-            if (_lastLoadedPages != null) _lastLoadedPages.Add(doc.DocumentNode.InnerText);
-
-            doc.LoadChildCategoriesFromDocument(parentCategory);
-
+          
+            lock (parentCategory)
+            {
+                doc.LoadChildCategoriesFromDocument(parentCategory);
+            }
             pages = (TotalResults(doc) - 1) / 50;
         }
 
