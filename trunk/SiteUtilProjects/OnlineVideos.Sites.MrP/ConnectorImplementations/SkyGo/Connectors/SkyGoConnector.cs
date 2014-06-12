@@ -9,7 +9,7 @@ using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connectors
 {
-    public class SkyGoConnector : BrowserUtilConnector
+    public class SkyGoConnector : BrowserUtilConnectorBase
     {
         /// <summary> 
         /// The states this connector can be in - useful when waiting for browser responses
@@ -39,7 +39,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public override EventResult PerformLogin(string username, string password)
+        protected override EventResult PerformActualLogin(string username, string password)
         {
             _username = username;
             _password = password;
@@ -106,6 +106,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                     {
                         Browser.Refresh(WebBrowserRefreshOption.Completely);// Need to do this for some reason
                         _currentState = State.None;
+                        _loadingPicture.Visible = false;
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
                     }
@@ -129,6 +130,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                         Application.DoEvents();
                         CursorHelper.DoLeftMouseClick();
                         Application.DoEvents();
+                        _loadingPicture.Visible = false;
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
                     }

@@ -124,6 +124,16 @@ namespace OnlineVideos.Sites.WebAutomation.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap loading {
+            get {
+                object obj = ResourceManager.GetObject("loading", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to http://go.sky.com/vod/content/{CATEGORY}/All/content/default/promoPage.do?aToZ.indexCharacter={CHARACTER}&amp;aToZ.viewIndex={PAGE}&amp;aaxmlrequest=true&amp;aazones=content.
         /// </summary>
         public static string SkyGo_CategoryAToZUrl {
