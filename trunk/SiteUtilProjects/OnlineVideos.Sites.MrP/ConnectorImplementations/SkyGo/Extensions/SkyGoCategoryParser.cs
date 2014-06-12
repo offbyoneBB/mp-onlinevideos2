@@ -136,6 +136,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
                                 tmpCateg.SubCategories.Add(tmpCategItem);
                                 tmpCateg.HasSubCategories = true;
                                 tmpCateg.SubCategoriesDiscovered = true;
+                                tmpCateg.SubCategories = tmpCateg.SubCategories.OrderBy(x => x.Name).ToList();
                             }
                             
                             added = true;
