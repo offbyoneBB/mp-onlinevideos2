@@ -13,9 +13,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>LAVFilters-0.61.2.exe</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.61.2.exe</ZipFileName>
-              <DestinationFilename>%Base%\LAVFilters-0.61.2.exe</DestinationFilename>
+              <LocalFileName>LAVFilters-0.62.0.exe</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.62.0.exe</ZipFileName>
+              <DestinationFilename>%Base%\LAVFilters-0.62.0.exe</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -46,7 +46,7 @@
               <Params>
                 <Items>
                   <SectionParam Name="Path to application">
-                    <Value>%Base%\LAVFilters-0.61.2.exe</Value>
+                    <Value>%Base%\LAVFilters-0.62.0.exe</Value>
                     <ValueType>Template</ValueType>
                     <Description>Path to the application like 
  %Base%\MediaPortal.exe</Description>
@@ -100,7 +100,7 @@ public class Script
   public static void Main(PackageClass packageClass, ActionItem actionItem)
   {
     string setupExe = Path.Combine(
-      MpeInstaller.TransformInRealPath("%Base%"), "LAVFilters-0.61.2.exe");
+      MpeInstaller.TransformInRealPath("%Base%"), "LAVFilters-0.62.0.exe");
 
     try
     {
@@ -179,97 +179,27 @@ public class Script
     <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=52</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>61</Minor>
-      <Build>2</Build>
+      <Minor>62</Minor>
+      <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>The extension installs the LAV Filter package, which contains a splitter, audio and video decoder for the most common formats that are used around the web.</ExtensionDescription>
-    <VersionDescription>0.61.2 - 2014/04/08
-General
-- Installer: The installer does now backup DirectShow registry settings before overwriting them, allowing uninstall to restore them
-
+    <VersionDescription>0.62.0 - 2014/06/12
 LAV Splitter
-- NEW: Support for ProRes in MKV
-- Fixed: Opening AviSynth scripts with LAV Splitter which used DirectShowSource to load LAV Splitter again caused a deadlock
-- Fixed: Audio-only AviSynth scripts did not show a duration.
-- Fixed: Cue Sheets with directives with empty parameters could cause a crash
+- Fixed: The filtered Forced Subtitles stream did not properly send all related subtitle data in some cases
 
 LAV Video
-- Fixed: AVC1 video streams without SPS/PPS in the configuration record did not decode properly
-- Fixed: Decoding H.264 streams with a resolution change using the DXVA2 Copy-Back decoder could crash
-- Fixed: YUV-&gt;RGB conversion produced the wrong output for the last line of odd-height 4:2:2 or 4:4:4 files
+- NEW: Implemented a WMV9 MFT decoder to replace the old DMO decoder for VC-1/WMV3 on Windows 7 and above
+- NEW: Support for VP7 video
+- Fixed: Multi-threaded video decoding could result in a handle leak on some systems
+- Fixed: Video processing was slow on Windows XP due to inefficient memcpy use
+- Fixed: DVD subtitles could overlap on some discs
 
 LAV Audio
-- Changed: LAV Audio offers more alternate output configurations to the audio renderer if the audio renderer refuses our preferred format.
-- Fixed: Decoding AC3 audio with corrupted audio frames could cause unnecessary format changes to occur and disrupt playback
-- Fixed: Decoding DTS audio on a CPU without SSE2 support could crash on some streams
-
-0.61.1 - 2014/03/07
-LAV Splitter
-- NEW: Support for opening "icyx://" stream URLs
-- Fixed: Opening of some Blu-ray discs would take several minutes and could hang the player.
-
-LAV Video
-- Fixed: Aggressive Deinterlacing is no longer applied to soft-telecined content, which caused severe playback issues.
-
-0.61.0 - 2014/03/04
-LAV Splitter
-- NEW: Support for "demuxing" AviSynth scripts (requires AviSynth, 2.6 recommended)
-- NEW: Support for reading ICY stream metadata from ShoutCast streams
-- Fixed: The duration of DVB MPEG-TS files is being detected more reliably
-- Fixed: The ITrackInfo interface was not available in the last few versions
-- Fixed: The duration of certain Ogg Vorbis streams was wrong
-- Changed: DTS-HD audio tracks are now exposed using the official DTS-HD media type, in addition to the old DTS type
-- Workaround: Block WMP/WMC from always overwriting the initial track selection
-
-LAV Video
-- NEW: Support for Duck TrueMotion 1/2
-- NEW: Support for BT.2020 in YCbCr -&gt; RGB conversions
-- Fixed: Format conversion could cause out of memory errors when converting high-resolution videos
-- Fixed: The decoder could crash if DXVA2 decoding failed and the software decoder is unavailable
-- Fixed: Reduced binary bloat caused by the YCbCr -&gt; RGB converter, reducing binary size to nearly half
-- Fixed: Playback of RV30/RV40 was not smooth in 0.60
-- Fixed: Video corruption when using DXVA2 on Intel GPUs when decoding certain VC-1 or MPEG-2 clips
-- Fixed: Decoding WMV3 Complex profile automatically falls back to software, since hardware decoding is unsupported.
-- Faster: DXVA2 Copy-Back decoding on Intel GPUs is significantly faster
-- Changed: If the wmv9dmo decoder is unavailable, the FFmpeg decoder is automatically used instead
-- Changed: Updated QuickSync decoder to the latest version, fixes a few timestamp issues.
-- Changed: Relaxed the resolution checks for H.264 decoding on AMD GPUs, allowing files with 2K resolutions to be decoded (ie. 2048x1280, etc.)
-
-LAV Audio
-- NEW: Support for ATRAC3+
-- Fixed: Decoding AC3 audio could produce glitches in playback due to too aggressive error checking.
-
-0.60.1 - 2014/01/14
-LAV Splitter
-- Fixed a crash when opening MPEG-2 files with Stereo3D Metadata
-- Improved the format of the chapter names created from embedded cue sheets
-- Fixed an incompatibility in the IPropertyBag metadata interface with a few players
-
-0.60.0 - 2014/01/12
-LAV Splitter
-- Improved playback of a few Blu-ray discs, avoids a hiccup at clip change
-- Support for reading embedded Cue Sheets from audio files as chapters
-- Added support for reporting the stream bitrate through IBitrateInfo (for MPC-HC et al.)
-- Additional metadata from the source file is exported through IPropertyBag (including "ROTATION" for video orientation information)
-- Fixed demuxing of MKV files with huge SSA/ASS format blocks (&gt; 1MB)
-- Fixed playback of certain MPEG4 ASP streams in MKV to be smooth
-
-LAV Video
-- Added support for VC-1/WMV3 DXVA2 decoding on recent Intel GPUs (Ivy Bridge/Haswell, needs recent drivers)
-- Fixed a crash when stopping playback or seeking on AMD when using DXVA2 Native
-- Fixed playback of WMVA videos in software mode
-- Fixed a few issues with output of odd-height videos when converting to various pixel formats
-- Fixed a few corner cases when reporting the video range to madVR
-- Fixed a crash when playing raw video files with unaligned width (non mod16)
-
-LAV Audio
-- The version of the DTS DLL decoder is now checked, and versions before 1.1.0.0 are blocked (since they do not work)
-- Fixed an issue with DTS parsing which could result in occasional audio stutter
-- Improved support for Opus audio pre-skip</VersionDescription>
+- Fixed: Dynamic format switching to an audio stream with a different sample rate did not work in some cases</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-    <ReleaseDate>2014-04-17T15:00:00</ReleaseDate>
+    <ReleaseDate>2014-06-14T15:00:00</ReleaseDate>
     <Tags>codec</Tags>
     <Location>.\LAVFilters[Version].mpe1</Location>
     <Params>
@@ -309,9 +239,9 @@ LAV Audio
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>LAVFilters-0.61.2.exe</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.61.2.exe</ZipFileName>
-        <DestinationFilename>%Base%\LAVFilters-0.61.2.exe</DestinationFilename>
+        <LocalFileName>LAVFilters-0.62.0.exe</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.62.0.exe</ZipFileName>
+        <DestinationFilename>%Base%\LAVFilters-0.62.0.exe</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
