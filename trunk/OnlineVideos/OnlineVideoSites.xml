@@ -116,25 +116,6 @@
 <img\s+src="(?<ImageUrl>[^"]+)"[^>]*>]]></item>
       </Configuration>
     </Site>
-    <Site name="RTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div[^>]*>\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*
-<img(?:(?!src).)+src="(?<thumb>[^"]+)"[^>]*>\s*</a>\s*</div>\s*
-<div[^>]*>\s*
-<span[^>]*>FREE.*?</span>\s*
-<h2>(?<title>[^<]+)</h2>\s*(?<description>[^<]*)</div>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
-<div[^>]*>[^<]*</div>\s*
-(<div[^>]*>[^<]*</div>\s*)?
-<div\s+onclick=[^>]*>\s*<div[^<]*>[^<]*</div>\s*(?<Airdate>[^<]*)</div>\s*
-(?:(?!<div\sclass="buy">).)+
-<div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
-        <item key="baseUrl"><![CDATA[http://rtl-now.rtl.de/sendung_a_z.php]]></item>
-        <item key="baseUrl2"><![CDATA[http://rtl-now.rtl.de/newsuebersicht.php]]></item>
-        <item key="app"><![CDATA[rtlnow/]]></item>
-      </Configuration>
-    </Site>
     <Site name="RTL2 Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen auf RTL2Now.</Description>
       <Configuration>
@@ -148,60 +129,6 @@
 <div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://rtl2now.rtl2.de]]></item>
         <item key="app"><![CDATA[rtl2now/]]></item>
-      </Configuration>
-    </Site>    
-    <Site name="Vox Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des Vox.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div[^>]*>\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*
-<img(?:(?!src).)+src="(?<thumb>[^"]+)"[^>]*>\s*</a>\s*</div>\s*
-<div[^>]*>\s*
-<span[^>]*>\s*FREE\s+\|\s+Jetzt\s+ansehen\s*<br>\s*</span>\s*
-<h2>(?<title>[^<]+)</h2>\s*(?<description>[^<]*)</div>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
-<div[^>]*>[^<]*</div>\s*
-(<div[^>]*>[^<]*</div>\s*)?
-<div\s+onclick=[^>]*>\s*<div[^<]*>[^<]*</div>\s*(?<Airdate>[^<]*)</div>\s*
-(?:(?!<div\sclass="buy">).)+
-<div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.voxnow.de/sendung_a_z.php]]></item>
-        <item key="app"><![CDATA[voxnow/]]></item>
-      </Configuration>
-    </Site>
-    <Site name="SuperRTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des Super RTL.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[FREE</a>\s*</div>\s*<div\sstyle=""\sclass="seriennavi_link">\s*<a.*?href="(?<url>[^"]+)"[^>]*>(?<title>[^<]+)</a>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
-<div[^>]*>[^<]*</div>\s*
-(<div[^>]*>[^<]*</div>\s*)?
-<div\s+onclick=[^>]*>\s*<div[^<]*>[^<]*</div>\s*(?<Airdate>[^<]*)</div>\s*
-(?:(?!<div\sclass="buy">).)+
-<div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.superrtlnow.de]]></item>
-        <item key="app"><![CDATA[superrtlnow/]]></item>
-      </Configuration>
-    </Site>
-    <Site name="RTL Nitro" util="RTLGroup" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen von RTL Nitro.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx">
-          <![CDATA[<div[^>]*>\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*
-<img(?:(?!src).)+src="(?<thumb>[^"]+)"[^>]*>\s*</a>\s*</div>\s*
-<div[^>]*>\s*
-<span[^>]*>.*?</span>\s*
-<h2>(?<title>[^<]+)</h2>\s*(?<description>[^<]*)</div>]]>
-        </item>
-        <item key="videoListRegEx">
-          <![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
-<div[^>]*>[^<]*</div>\s*
-(<div[^>]*>[^<]*</div>\s*)?
-<div\s+onclick=[^>]*>\s*<div[^<]*>[^<]*</div>\s*(?<Airdate>[^<]*)</div>\s*
-(?:(?!<div\sclass="buy">).)+
-<div\sclass="buy">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]+>kostenlos</a>]]>
-        </item>
-        <item key="baseUrl"><![CDATA[http://www.rtlnitronow.de/sendung_a_z.php]]></item>
-        <item key="app"><![CDATA[nitronow/]]></item>
       </Configuration>
     </Site>
     <Site name="Orf" util="Orf" agecheck="false" enabled="true" lang="de">
