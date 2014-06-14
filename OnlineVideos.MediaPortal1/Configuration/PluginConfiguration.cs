@@ -223,7 +223,7 @@ namespace OnlineVideos.MediaPortal1
                     {
                         try
                         {
-                            byte[] searchHistoryBytes = System.Text.Encoding.GetEncoding(0).GetBytes(searchHistoryXML);
+                            byte[] searchHistoryBytes = System.Text.Encoding.UTF8.GetBytes(searchHistoryXML);
                             MemoryStream xmlMem = new MemoryStream(searchHistoryBytes);
                             xmlMem.Position = 0;
                             System.Runtime.Serialization.DataContractSerializer dcs = new System.Runtime.Serialization.DataContractSerializer(typeof(Dictionary<string, List<string>>));
