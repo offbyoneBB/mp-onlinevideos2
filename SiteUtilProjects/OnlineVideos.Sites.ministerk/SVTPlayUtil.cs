@@ -184,7 +184,7 @@ namespace OnlineVideos.Sites
                     string ariaControls = categoryNode.SelectSingleNode("a").GetAttributeValue("aria-controls", "");
                     HtmlNode div = htmlNode.SelectSingleNode("//div[@id = '" + ariaControls + "']");
 
-                    RssLink category = new RssLink() { Name = categoryNode.SelectSingleNode("a").InnerText.Trim(), ParentCategory = parentCategory };
+                    RssLink category = new RssLink() { Name = HttpUtility.HtmlDecode(categoryNode.SelectSingleNode("a").InnerText.Trim()), ParentCategory = parentCategory };
                     if (category.Name == _programA_O)
                     {
                         IEnumerable<HtmlNode> alphaList = div.Descendants("li").Where(d => d.GetAttributeValue("class", "") == "play_alphabetic-letter");
