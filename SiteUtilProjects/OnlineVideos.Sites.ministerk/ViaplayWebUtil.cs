@@ -91,7 +91,7 @@ namespace OnlineVideos.Sites
             get
             {
                 if (_translations == null)
-                    _translations = GetWebData<JObject>("https://cms-api.viaplay.se/translations/web");
+                    _translations = GetWebData<JObject>("https://cms-service.viaplay.se/translations/web");
                 return _translations;
             }
         }
@@ -286,9 +286,7 @@ namespace OnlineVideos.Sites
 
         private bool IsSeries(Category category)
         {
-            if (category.ParentCategory == null)
-                return category.Name == GetTranslation("Series");
-            return category.Name == GetTranslation("Series") || category.Name == GetTranslation("Children series") || category.Name == GetTranslation("All children series") || IsSeries(category.ParentCategory);
+            return category.Name.ToLower() == GetTranslation("Series").ToLower() || category.Name.ToLower() == GetTranslation("Children series").ToLower() || category.Name.ToLower() == GetTranslation("All children series").ToLower() || (category.ParentCategory != null && IsSeries(category.ParentCategory));
         }
         #endregion
 
