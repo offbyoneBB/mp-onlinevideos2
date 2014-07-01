@@ -325,16 +325,9 @@ namespace OnlineVideos.Sites
                     c3.Path = "/";
                     c3.Domain = "atresplayer.com";
                     c3.Expires = expireTime;
-                    Cookie c4 = new Cookie();
-                    c4.Name = "keyworsForTarget";
-                    c4.Value = datosCookieJSON["keywords"].ToString();
-                    c4.Path = "/";
-                    c4.Domain = "atresplayer.com";
-                    c4.Expires = expireTime;
                     cc.Add(c1);
                     cc.Add(c2);
                     cc.Add(c3);
-                    cc.Add(c4);
                 }
                 else
                 {
