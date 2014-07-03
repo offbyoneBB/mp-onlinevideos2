@@ -69,7 +69,7 @@ namespace OnlineVideos.Sites
             //source: http://code.google.com/p/xbmc-tvalacarta/source/browse/trunk/tvalacarta/servers/rtve.py:
             // thanks to aabilio and tvalacarta
             string[] parts = video.VideoUrl.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            string data2 = GetWebData(String.Format(@"http://www.rtve.es/ztnr/movil/thumbnail/anubis/videos/{0}.png", parts[parts.Length - 1]));
+            string data2 = GetWebData(String.Format(@"http://www.rtve.es/ztnr/movil/thumbnail/anubis/videos/{0}.png", parts[parts.Length - 1]), referer: @"http://www.rtve.es");
             data2 = Encoding.ASCII.GetString(Convert.FromBase64String(data2));
             Match mm = Regex.Match(data2, ".*tEXt(?<cypher>.*)#[\x00]*(?<key>[0-9]*).*");
             if (mm.Success)
