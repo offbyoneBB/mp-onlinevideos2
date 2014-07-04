@@ -777,6 +777,13 @@
         <item key="swfPlayer"><![CDATA[http://www.kanal9play.se/flash/K9StandardPlayer.swf]]></item>
       </Configuration>
     </Site>
+    <Site name="Kanal11Play" util="Kanal59Play" agecheck="false" enabled="true" lang="sv">
+      <Description>The free online play content from Swedish Kanal 11.</Description>
+      <Configuration>
+        <item key="apiBaseUrl"><![CDATA[http://www.kanal11play.se/api]]></item>
+        <item key="swfPlayer"><![CDATA[http://www.kanal11play.se/flash/K11StandardPlayer.swf]]></item>
+      </Configuration>
+    </Site>
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
       <Description>Videos from the Swedish Viasat channels TV3 TV6 TV8 and TV10.</Description>
     </Site>
