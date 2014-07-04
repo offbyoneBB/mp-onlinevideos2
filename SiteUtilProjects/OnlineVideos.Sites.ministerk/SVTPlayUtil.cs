@@ -263,7 +263,8 @@ namespace OnlineVideos.Sites
             HtmlNode a = article.SelectSingleNode("a");
             Uri uri = new Uri(new Uri(baseUrl), a.GetAttributeValue("href", ""));
             video.VideoUrl = uri.ToString();
-            video.ImageUrl = a.SelectSingleNode("figure/img").GetAttributeValue("data-imagename", "");
+            HtmlNode img = a.Descendants("img").FirstOrDefault(i => !string.IsNullOrEmpty(i.GetAttributeValue("data-imagename", "")));
+            video.ImageUrl = img != null ? img.GetAttributeValue("data-imagename", "") : "";
             video.CleanDescriptionAndTitle();
             return video;
         }
