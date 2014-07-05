@@ -255,7 +255,7 @@ namespace OnlineVideos.Sites
             values[1] = Convert.ToDouble(m.Groups["experienceId"].Value);
             values[2] = Convert.ToDouble(videoUrl.Substring(videoUrl.LastIndexOf("/") + 1));
             values[3] = Convert.ToDouble(array4);
-            byte[] data = ser.Serialize2("com.brightcove.player.runtime.PlayerMediaFacade.findMediaById", values);
+            byte[] data = ser.Serialize2("com.brightcove.player.runtime.PlayerMediaFacade.findMediaById", values, AMFVersion.AMF3);
             AMFObject obj = AMFObject.GetResponse(requestUrl + m.Groups["playerKey"].Value, data);
             return obj.GetArray("renditions");
         }
