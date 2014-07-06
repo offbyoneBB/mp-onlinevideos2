@@ -1363,20 +1363,18 @@
     <Site name="Uitzending Gemist" util="UitzendingGemist" agecheck="false" enabled="true" lang="nl">
       <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.uitzendinggemist.nl/]]></item>
-        <item key="videoListRegEx"><![CDATA[(<li\sclass="(?:web_only_)?episode\sactive(?:\sknav)?"\sdata-broadcasted-at="[^"]*"\sdata-local-id="[^"]*"\sdata-remote-id="[^"]*"\sid="(?:web_only_)?episode_(?<episodeid>[^"]*)">\s*<div\sclass="image">\s*<a[^>]*><img\salt="[^"]*"\sclass="thumbnail"\sdata-images="\[(?:&quot;(?<ImageUrl>[^&]*)&)?[^>]*></a>\s*</div>\s*<div\sclass="description">\s*<span[^>]*>[^<]*<img[^>]*></span>\s*<h3><a\shref="(?<VideoUrl>[^"]*)"\sclass="episode\sactive\sknav_link"\stitle="[^>]*>(?<Title>[^<]*)(?:<img\salt="888"[^>]*>)?\s*(?:<span\sclass="date">(?:\((?<Airdate>[^\)]*)\))?</span>)?</a></h3>\s*(?<Description>[^<]*)</div>\s*</li>)(?#videos of one series)
+        <item key="baseUrl"><![CDATA[http://www.npo.nl/]]></item>
+        <item key="videoListRegEx"><![CDATA[(<img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a\shref="(?<VideoUrl>[^"]*)"\sdata-tracker="tekstlink"><h4>(?<Title>[^<]*)<span\sclass='inactive'>(?<Omroep>[^<]*)</span>\s*<span\sclass='av-icon'><i\sclass="[^"]*"></i></span>\s*</h4>\s*<h5>(?<Airdate>[^<]*)</h5>\s*<p\sclass='visible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>\s*</div>)(?#videos of one series)
         |
-        (<li\sclass="broadcast\sactive"\sid="(?<broadcastid>[^"]*)">\s*<div\sclass="image">\s*<a\shref="(?<VideoUrl>[^"]*)"\sclass="episode\sactive\sepisode-image"\stitle=""><img\salt="[^"]*"\sclass="thumbnail"\sdata-images="\[&quot;(?<ImageUrl>[^&]*)&[^>]*></a>\s*</div>\s*<div\sclass="info">\s*<span\sclass="views">[^<]*<img[^>]*>\s*</span>\s*<h2><a[^>]*>(?<Title>[^<]*)</a>\s<span\sclass="broadcasters">\([^\)]*\)</span></h2>\s*<h3><a[^>]*>(?<Airdate>[^<]*)</a>\s*(?:<img\salt="888"\sclass="tt888"\ssrc="[^>]*>)?</h3>\s*<div\sclass="description">(?<Description>[^<]*)</div>\s*</div>\s*</li>)(?#videos of recent)
+        (<img\salt="[^"]*"\sclass="program-image"\sdata-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*</a></div>\s*<div\sclass='description'>\s*<h4[^>]*>\s*<a\shref="(?<VideoUrl>[^"]*)"\sdata-tracker="tekstlink"><i\sclass="npo-icon-watch"></i>(?<Title>[^<]*)<span\sclass='inactive'>(?<Description>[^<]*)</span>\s*</a></h4>\s*<h5>(?<Airdate>[^<]*)</h5>\s*</div>)(?#videos of recent)
         |
-        (<li\sclass="episode\sactive(?:\sknav)?"\sdata-score="[^"]*"\sid="episode_(?<episodeid>[^"]*)">\s*<div\sclass="image">\s*<a[^>]*><img\salt="[^"]*"\sclass="thumbnail"\sdata-images="\[(?:&quot;(?<ImageUrl>[^&]*)&)?[^>]*></a>\s*</div>\s*<div\sclass="description">\s*<span[^>]*>[^<]*<img[^>]*>\s*</span>\s*<h3[^>]*>\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>[^<]*</a>\s*<span\sclass="broadcasters">\([^\)]*\)</span>\s*</h3>\s*<h3\sclass="episode">\s*<a[^>]*>(?<Title>[^<]*)(?:<img\salt="888"\sclass="tt888"[^>]*>)?\s*(?:<span\sclass="date">\((?<Airdate>[^\)]*)\)</span>)?</a>\s*</h3>(?<Description>[^<]*)<)(?#search results)
+        (<img\salt="[^"]*"\sclass="preview"\sdata-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a\shref="(?<VideoUrl>[^"]*)"\sdata-tracker="tekstlink"><h4>(?<Title>[^<]*)<span\sclass='inactive'>(?<Omroep>[^<]*)</span>\s*<span\sclass='av-icon'><i\sclass="[^"]*"></i></span>\s*</h4>\s*<h5>(?<Airdate>[^<]*)</h5>\s*<p\sclass='visible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>\s*</div>)(?#videos of op datum)
         ]]></item>
-        <item key="searchUrl"><![CDATA[http://www.uitzendinggemist.nl/zoek?q={0}]]></item>
-        <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<a\sclass="next_page"\srel="next"\shref="(?<url>[^"]*)">Volgende</a></div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\sclass="next_page"\srel="next"\shref="(?<url>[^"]*)">Volgende</a></div>]]></item>
-        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<span\sid="episode-data"\s*data-episode-id="[^"]*"\s*data-player-id="(?<m0>[^"]*)"]]></item>
+        <item key="searchUrl"><![CDATA[http://www.npo.nl/zoeken?utf8=%E2%9C%93&commit=Zoeken&q={0}]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<img\salt="[^"]*"(?:\sclass="preview"\sdata-images="[^"]*"\sdata-toggle="image-skimmer")?\ssrc="(?<thumb>[^"]*)"\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a\shref="(?<url>[^"]*)"\sdata-tracker="tekstlink"><h4>(?<title>[^<]*)<span\sclass='inactive'>(?<omroep>[^<]*)</span>\s*<span\sclass='av-icon'><i[^>]*></i></span>\s*</h4>\s*(?:<h5><span\sclass="inactive">Laatste\suitzending:</span>\s<a[^>]*>(?<lastaired>[^<]*)</a></h5>\s*)?<p\sclass='visible-for-desktop'>(?<description>[^<]*)</p>\s*</a></div>\s*</div>]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/odi/?prid={0}&puboptions=adaptive,h264_bb,h264_sb,h264_std&adaptive=no&part=1&token=]]></item>
         <item key="cookies"><![CDATA[npo_cc=31]]></item>
+        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
       </Configuration>
     </Site>
     <Site name="TouTV" util="TouTv" agecheck="false" enabled="true" lang="fr">
