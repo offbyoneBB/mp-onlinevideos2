@@ -3,24 +3,74 @@ using System.Collections.Generic;
 using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
+using OnlineVideos.Hoster.Base;
 
 namespace OnlineVideos.Sites
 {
   public class DumpertUtil : GenericSiteUtil
   {
 
-    #region Overrides of GenericSiteUtil
-
-    /// <summary>
-    /// This function will be called to get the urls for playback of a video.<br/>
-    /// By default: returns a list with the result from <see cref="getUrl"/>.
-    /// </summary>
-    /// <param name="video">The <see cref="VideoInfo"/> object, for which to get a list of urls.</param>
-    /// <returns></returns>
-    public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+    public override string getUrl(VideoInfo video)
     {
-        //video is a base64 encoded piece of javascript which contains the videos
-        string encodedHTML = getUrl(video);
+        //string encodedHTML = getUrl(video);
+        string resultUrl = getFormattedVideoUrl(video);
+        string playListUrl = getPlaylistUrl(resultUrl);
+        if (String.IsNullOrEmpty(playListUrl))
+            return String.Empty; // if no match, return empty url -> error
+
+        // 3.b find a match in the retrieved data for the final playback url
+        if (regEx_FileUrl != null)
+        {
+            video.PlaybackOptions = GetPlaybackOptions(playListUrl);
+            if (video.PlaybackOptions.Count == 0) return ""; // if no match, return empty url -> error
+            else
+            {
+                // return first found url as default
+                var enumer = video.PlaybackOptions.GetEnumerator();
+                enumer.MoveNext();
+                resultUrl = enumer.Current.Value; 
+            }
+            if (video.PlaybackOptions.Count == 1) video.PlaybackOptions = null; // only one url found, PlaybackOptions not needed
+        }
+
+        string encodedHTML = resultUrl; //is a base64 encoded piece of javascript which contains the videos
+
+        Log.Info("encoded HTML: " + encodedHTML);
+        Dictionary<String, String> videos = getVidList(encodedHTML);
+
+        if (videos != null)
+        {
+            video.PlaybackOptions = new System.Collections.Generic.Dictionary<string, string>();
+
+            //sort from high to low quality: 720p, tablet, flv, mobile
+            if (videos.ContainsKey("720p"))
+            {
+                video.PlaybackOptions.Add("720p", videos["720p"]);
+            }
+            if (videos.ContainsKey("tablet"))
+            {
+                video.PlaybackOptions.Add("High", videos["tablet"]);
+            }
+            if (videos.ContainsKey("flv"))
+            {
+                video.PlaybackOptions.Add("Medium", videos["flv"]);
+            }
+            if (videos.ContainsKey("mobile"))
+            {
+                video.PlaybackOptions.Add("Low", videos["mobile"]);
+            }
+
+            return video.PlaybackOptions.First().Value;
+        }
+        else
+            return String.Empty;
+    }
+
+    private Dictionary<String, String> getVidList(string encodedHTML)
+    {
+        Dictionary<String, String> videos = new Dictionary<String, String>();
+
         Log.Debug("DumpertUtil: base64encoded videoURLs: " + encodedHTML);
         byte[] data = Convert.FromBase64String(encodedHTML);
         string decodedHTML = Encoding.UTF8.GetString(data);
@@ -31,41 +81,37 @@ namespace OnlineVideos.Sites
 
         if (matches.Count > 0)
         {
-            List<String> urls = new List<String>();
-            List<String> videos = new List<String>();
-
             foreach (Match videosMatch in matches)
             {
                 GroupCollection videosGroups = videosMatch.Groups;
 
                 string videoUrl = videosGroups["url"].Value.Replace("\\/", "/");
-                Log.Info("DumpertUtil: video: " + videoUrl);
-                videos.Add(videoUrl);
+                string videoType = videosGroups["type"].Value;
+                Log.Info("DumpertUtil: " + videoType  + " - " + videoUrl);
+                videos.Add(videoType, videoUrl);
             }
-            videos.RemoveAt(videos.Count - 1); //remove the still image from the videos list
-
-
-            //try to get original url
-            MatchCollection origVideoMatches = Regex.Matches(videos[0], @"flv/(?<code>.*)\.flv");
-            Match origVideoMatch = origVideoMatches[0];
-            GroupCollection origVideoGroups = origVideoMatch.Groups;
-
-            string origVideoFile = origVideoGroups["code"].Value;
-            string orgVideoUrl = "http://media.dumpert.nl/original/" + origVideoFile;
-            Log.Debug("DumpertUil: original video url: " + orgVideoUrl);
-
-            urls.Add(orgVideoUrl);
-
-
-            return urls;
-        }else
+            videos.Remove("still"); //remove the still image from the videos list
+            return videos;
+        }
+        else
         {
-            Log.Info("DumpertUtil: no video found");
             return null;
         }
-        
     }
 
-    #endregion
+
+    //unused, now it returns an 403 Forbidden error
+    private string getOriginalDumpertUrl(string flvUrl) 
+    {
+        //try to get original url
+        MatchCollection origVideoMatches = Regex.Matches(flvUrl, @"flv/(?<code>.*)\.flv");
+        Match origVideoMatch = origVideoMatches[0];
+        GroupCollection origVideoGroups = origVideoMatch.Groups;
+
+        string origVideoFile = origVideoGroups["code"].Value;
+
+        return "http://media.dumpert.nl/original/" + origVideoFile;
+    }
+
   }
 }
