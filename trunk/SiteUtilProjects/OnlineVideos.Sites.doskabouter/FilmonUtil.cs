@@ -72,6 +72,7 @@ namespace OnlineVideos.Sites
                 string serverUrl = stream.Value<string>("url");
 
                 RtmpUrl res = new RtmpUrl(serverUrl);
+                res.Live = true;
                 res.PlayPath = stream.Value<string>("name");
 
                 int p = serverUrl.IndexOf("live/?id");
