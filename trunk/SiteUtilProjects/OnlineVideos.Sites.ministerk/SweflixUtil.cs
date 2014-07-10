@@ -16,6 +16,7 @@ namespace OnlineVideos.Sites
         #region Enums
 
         public enum Languages { Svenska, Engelska };
+        public enum VideoSort { Tillagd, IMDBbetyg, Titel_Ö_till_A, Lanseringsår, Populäritet };
 
         #endregion
 
@@ -27,6 +28,23 @@ namespace OnlineVideos.Sites
         protected string password = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Prefered subtitle language"), Description("Pick your prefered subtitle language")]
         Languages preferedLanguage = Languages.Svenska;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Sort videos by"), Description("Sort videos by, not for Latest/Popular categories")]
+        VideoSort videoSort = VideoSort.Tillagd;
+        string VideoSortId
+        {
+            get
+            {
+                switch (videoSort)
+                {
+                    case VideoSort.Tillagd: return "id";
+                    case VideoSort.IMDBbetyg: return "imdbrate";
+                    case VideoSort.Titel_Ö_till_A: return "titel";
+                    case VideoSort.Lanseringsår: return "year";
+                    case VideoSort.Populäritet: return "hits";
+                    default: return "id";
+                }
+            }
+        }
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Load movie timeout"), Description("In seconds. Onlinvideos default 20 seconds, Sweflix default 40 seconds.")]
         uint httpReceiveDataTimeoutInSec = 40;
 
@@ -57,7 +75,6 @@ namespace OnlineVideos.Sites
 
         private CookieContainer cc = null;
         private bool isLoggedIn = false;
-        private bool skipLogIn = false;
 
         private bool HaveCredentials()
         {
@@ -87,6 +104,14 @@ namespace OnlineVideos.Sites
         {
             if (HaveCredentials() && cc == null)
                 cc = new CookieContainer();
+
+            if (!url.Contains("sort=") && !url.Contains(latestUrl) && !url.Contains("act=pop"))
+            {
+                if (url.Contains("?"))
+                    url += "&sort=" + VideoSortId;
+                else
+                    url += "?sort=" + VideoSortId;
+            }
 
             T t = GetWebData<T>(url, cc);
             if (HaveCredentials())
