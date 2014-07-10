@@ -25,7 +25,7 @@ namespace OnlineVideos.Sites
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Sweflix password")]
         protected string password = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Prefered TV-Series subtitle language"), Description("Pick your prefered subtitle language")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Prefered subtitle language"), Description("Pick your prefered subtitle language")]
         Languages preferedLanguage = Languages.Svenska;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Load movie timeout"), Description("In seconds. Onlinvideos default 20 seconds, Sweflix default 40 seconds.")]
         uint httpReceiveDataTimeoutInSec = 40;
