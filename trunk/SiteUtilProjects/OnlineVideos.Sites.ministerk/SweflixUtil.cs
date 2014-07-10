@@ -16,7 +16,7 @@ namespace OnlineVideos.Sites
         #region Enums
 
         public enum Languages { Svenska, Engelska };
-        public enum VideoSort { Tillagd, IMDBbetyg, Titel_Ö_till_A, Lanseringsår, Populäritet };
+        public enum VideoSort { Tillagd, IMDBbetyg, Titel_Ö_till_A, Lanseringsår, Popularitet };
 
         #endregion
 
@@ -40,7 +40,7 @@ namespace OnlineVideos.Sites
                     case VideoSort.IMDBbetyg: return "imdbrate";
                     case VideoSort.Titel_Ö_till_A: return "titel";
                     case VideoSort.Lanseringsår: return "year";
-                    case VideoSort.Populäritet: return "hits";
+                    case VideoSort.Popularitet: return "hits";
                     default: return "id";
                 }
             }
