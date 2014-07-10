@@ -203,7 +203,7 @@ namespace OnlineVideos.Sites
             if (movieAnchor != null)
             {
                 VideoInfo video = new VideoInfo() { Title = category.Name, Description = category.Description, ImageUrl = category.Thumb, VideoUrl = baseUrl + movieAnchor.GetAttributeValue("href", "") };
-                TrackingInfo ti = new TrackingInfo() { VideoKind = VideoKind.Movie, Title = category.Name.Replace("1080P", "") };
+                TrackingInfo ti = new TrackingInfo() { VideoKind = VideoKind.Movie, Title = category.Name.Replace("1080P", "").Replace("1080p", "") };
                 Regex rgx = new Regex(@"Releasedatum:\s(\d{4})");
                 Match m = rgx.Match(video.Description);
                 uint y = 0;
@@ -222,7 +222,7 @@ namespace OnlineVideos.Sites
                 foreach (HtmlNode row in rows)
                 {
                     VideoInfo video = new VideoInfo();
-                    video.Title = category.Name.Replace("1080P", "");
+                    video.Title = category.Name;
                     video.ImageUrl = category.Thumb;
                     HtmlNode descP = row.Descendants("p").FirstOrDefault();
                     string desc = "";
@@ -242,7 +242,7 @@ namespace OnlineVideos.Sites
                         uint e = 0;
                         if (m.Success)
                         {
-                            TrackingInfo ti = new TrackingInfo() { VideoKind = VideoKind.TvSeries, Title = video.Title, Year = y };
+                            TrackingInfo ti = new TrackingInfo() { VideoKind = VideoKind.TvSeries, Title = video.Title.Replace("1080P", "").Replace("1080p", ""), Year = y };
                             uint.TryParse(m.Groups["Season"].Value, out s);
                             uint.TryParse(m.Groups["Episode"].Value, out e);
                             video.Title = string.Format("{0} {1}x{2} {3}", video.Title, s, e, m.Groups["Title"].Value);
