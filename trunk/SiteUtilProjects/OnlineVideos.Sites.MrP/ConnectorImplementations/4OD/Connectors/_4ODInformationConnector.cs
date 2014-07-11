@@ -25,6 +25,14 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
             defaultLogo = string.Format(@"{0}\Icons\{1}.png", OnlineVideoSettings.Instance.ThumbsDir, siteUtil.Settings.Name);
         }
 
+        /// <summary>
+        /// Let the util sort the results
+        /// </summary>
+        public bool ShouldSortResults
+        {
+            get { return true; }
+        }
+
         public List<Category> LoadCategories(Category parentCategory = null)
         {
             if (parentCategory == null)
@@ -187,5 +195,6 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
 
             return results;
         }
+
     }
 }

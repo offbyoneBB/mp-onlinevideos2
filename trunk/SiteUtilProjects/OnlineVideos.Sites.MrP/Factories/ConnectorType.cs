@@ -11,6 +11,7 @@ namespace OnlineVideos.Sites.WebAutomation.Factories
     public enum ConnectorType
     {
         SkyGo,
-        _4oD
+        _4oD,
+        AmazonPrime
     }
 }

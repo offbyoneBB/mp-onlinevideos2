@@ -215,7 +215,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             if (_isPlayOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
 
             _isPlayOrPausing = true;
-            if (_playPauseHeight == -1) _playPauseHeight = Browser.FindForm().Top + Browser.Height - (Browser.Height / 9);
+            if (_playPauseHeight == -1) _playPauseHeight = Browser.FindForm().Bottom - 15;
             var startX = Browser.FindForm().Left;
 
             // We've previously found the play/pause button, so re-use its position
@@ -270,7 +270,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             // Very primitive, but set the cursor at the correct height and move across till we hit the right colour!
             // We have to move the cursor otherwise the play controls disappear
             var currentPos = startX + 10;
-            while (currentPos < (startX + Browser.Document.Body.ClientRectangle.Width / 2))
+            while (currentPos < (startX + (Browser.Document.Body.ClientRectangle.Width / 8)))
             {
                 Cursor.Position = new System.Drawing.Point(currentPos + 2, height);
                 currentPos = Cursor.Position.X;

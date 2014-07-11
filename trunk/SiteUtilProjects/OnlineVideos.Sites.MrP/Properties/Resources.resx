@@ -175,4 +175,19 @@
   <data name="_4OD_VideoPlayUrl" xml:space="preserve">
     <value>http://www.channel4.com/programmes/{VIDEO_NAME}/4od/player/{VIDEO_ID}</value>
   </data>
+  <data name="AmazonLoginUrl" xml:space="preserve">
+    <value>https://www.amazon.co.uk/ap/signin?_encoding=UTF8&amp;openid.assoc_handle=gbflex&amp;openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;openid.mode=checkid_setup&amp;openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&amp;openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&amp;openid.pape.max_auth_age=0&amp;openid.return_to=https%3A%2F%2Fwww.amazon.co.uk%2Fgp%2Fyourstore%2Fhome%3Fie%3DUTF8%26ref_%3Dnav_signin_btn</value>
+  </data>
+  <data name="AmazonMovieUrl" xml:space="preserve">
+    <value>http://www.amazon.co.uk/gp/product/{VIDEO_ID}?ref_=pda_recs_wdgt_nav_dyn_{VIDEO_ID}</value>
+  </data>
+  <data name="AmazonMovieCategoriesUrl" xml:space="preserve">
+    <value>http://www.amazon.co.uk/gp/search/other/ref=sr_sa_p_n_theme_browse-bin?rh=n%3A3280626031%2Cn%3A%213010086031%2Cn%3A3046737031&amp;bbn=3280626031&amp;sort=popularity-rank&amp;pickerToList=theme_browse-bin&amp;ie=UTF8&amp;qid={RANDOMNUMBER}</value>
+  </data>
+  <data name="AmazonTVCategoriesUrl" xml:space="preserve">
+    <value>http://www.amazon.co.uk/gp/search/other/ref=sr_sa_p_n_theme_browse-bin?rh=n%3A3280626031%2Cn%3A%213010086031%2Cn%3A3046738031&amp;bbn=3280626031&amp;sort=popularity-rank&amp;pickerToList=theme_browse-bin&amp;ie=UTF8&amp;qid={RANDOMNUMBER}</value>
+  </data>
+  <data name="AmazonRootUrl" xml:space="preserve">
+    <value>http://www.amazon.co.uk</value>
+  </data>
 </root>

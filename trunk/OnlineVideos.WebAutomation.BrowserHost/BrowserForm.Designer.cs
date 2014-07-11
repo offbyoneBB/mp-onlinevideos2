@@ -48,7 +48,7 @@
             // tmrKeepOnTop
             // 
             this.tmrKeepOnTop.Enabled = true;
-            this.tmrKeepOnTop.Interval = 1000;
+            this.tmrKeepOnTop.Interval = 30000;
             this.tmrKeepOnTop.Tick += new System.EventHandler(this.tmrKeepOnTop_Tick);
             // 
             // BrowserForm
