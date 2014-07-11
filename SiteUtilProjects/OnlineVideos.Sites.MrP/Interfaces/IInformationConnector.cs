@@ -28,5 +28,10 @@ namespace OnlineVideos.Sites.WebAutomation.Interfaces
         /// The type name of the entity to use as the BrowserUtilConnector
         /// </summary>
         string ConnectorEntityTypeName { get; }
+
+        /// <summary>
+        /// Should the main util sort the video results
+        /// </summary>
+        bool ShouldSortResults { get; }
     }
 }

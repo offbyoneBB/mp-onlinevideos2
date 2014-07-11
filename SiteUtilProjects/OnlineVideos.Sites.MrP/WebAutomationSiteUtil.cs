@@ -45,7 +45,7 @@ namespace OnlineVideos.Sites.WebAutomation
         }
 
         [Category("OnlineVideosConfiguration"), Description("Type of web automation to run")]
-        ConnectorType webAutomationType = ConnectorType.SkyGo;
+        ConnectorType webAutomationType = ConnectorType.AmazonPrime;
 
         /// <summary>
         /// Username required for some web automation
@@ -107,11 +107,12 @@ namespace OnlineVideos.Sites.WebAutomation
             BuildCategories(parentCategory, null);
            
             parentCategory.SubCategoriesDiscovered = true;
-            parentCategory.SubCategories = parentCategory.SubCategories.OrderBy(x => GetCategorySortField(x)).ToList();
+            if (_connector.ShouldSortResults)
+                parentCategory.SubCategories = parentCategory.SubCategories.OrderBy(x => GetCategorySortField(x)).ToList();
             
             return parentCategory.SubCategories.Count;
         }
-
+        
         /// <summary>
         /// Get the sort field for the category 
         /// </summary>
@@ -139,13 +140,23 @@ namespace OnlineVideos.Sites.WebAutomation
         /// </summary>
         /// <param name="category"></param>
         /// <returns></returns>
-        public override int DiscoverNextPageCategories(NextPageCategory category)
+        public override int DiscoverNextPageCategories(NextPageCategory nextPagecategory)
         {
-            return this.DiscoverSubCategories(category);
+            string nextPage = string.Empty;
+            var results = new List<Category>();
+
+            nextPagecategory.ParentCategory.SubCategories.Remove(nextPagecategory);
+
+            BuildCategories(nextPagecategory.ParentCategory, results);
+
+            if (results != null)
+                nextPagecategory.ParentCategory.SubCategories.AddRange(results);
+
+            return results.Count;
         }
 
         /// <summary>
-        /// Build the specified category list - needs to be called from an STA thread
+        /// Build the specified category list
         /// </summary>
         /// <param name="parentCategory"></param>
         /// <param name="categoriesToPopulate"></param>
@@ -168,5 +179,6 @@ namespace OnlineVideos.Sites.WebAutomation
             var results = _connector.LoadVideos(parentCategory);
             results.OrderBy(x=>x.Title).ToList().ForEach(videosToPopulate.Add);
         }
+
     }
 }

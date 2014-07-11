@@ -48,6 +48,10 @@
     <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODCategoryData.cs" />
     <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODCategoryParser.cs" />
     <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODVideoParser.cs" />
+    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeConnector.cs" />
+    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeInformationConnector.cs" />
+    <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeCategoryParser.cs" />
+    <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeVideoParser.cs" />
     <Compile Include="ConnectorImplementations\BrowserUtilConnectorBase.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Connectors\SkyGoConnector.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Connectors\SkyGoInformationConnector.cs" />
@@ -92,7 +96,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
+	<PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
+
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

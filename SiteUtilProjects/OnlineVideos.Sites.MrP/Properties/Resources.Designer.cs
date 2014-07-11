@@ -124,6 +124,51 @@ namespace OnlineVideos.Sites.WebAutomation.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://www.amazon.co.uk/ap/signin?_encoding=UTF8&amp;openid.assoc_handle=gbflex&amp;openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;openid.mode=checkid_setup&amp;openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&amp;openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&amp;openid.pape.max_auth_age=0&amp;openid.return_to=https%3A%2F%2Fwww.amazon.co.uk%2Fgp%2Fyourstore%2Fhome%3Fie%3DUTF8%26ref_%3Dnav_s [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string AmazonLoginUrl {
+            get {
+                return ResourceManager.GetString("AmazonLoginUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.amazon.co.uk/gp/search/other/ref=sr_sa_p_n_theme_browse-bin?rh=n%3A3280626031%2Cn%3A%213010086031%2Cn%3A3046737031&amp;bbn=3280626031&amp;sort=popularity-rank&amp;pickerToList=theme_browse-bin&amp;ie=UTF8&amp;qid={RANDOMNUMBER}.
+        /// </summary>
+        public static string AmazonMovieCategoriesUrl {
+            get {
+                return ResourceManager.GetString("AmazonMovieCategoriesUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.amazon.co.uk/gp/product/{VIDEO_ID}?ref_=pda_recs_wdgt_nav_dyn_{VIDEO_ID}.
+        /// </summary>
+        public static string AmazonMovieUrl {
+            get {
+                return ResourceManager.GetString("AmazonMovieUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.amazon.co.uk.
+        /// </summary>
+        public static string AmazonRootUrl {
+            get {
+                return ResourceManager.GetString("AmazonRootUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.amazon.co.uk/gp/search/other/ref=sr_sa_p_n_theme_browse-bin?rh=n%3A3280626031%2Cn%3A%213010086031%2Cn%3A3046738031&amp;bbn=3280626031&amp;sort=popularity-rank&amp;pickerToList=theme_browse-bin&amp;ie=UTF8&amp;qid={RANDOMNUMBER}.
+        /// </summary>
+        public static string AmazonTVCategoriesUrl {
+            get {
+                return ResourceManager.GetString("AmazonTVCategoriesUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap loading {

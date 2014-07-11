@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connectors
 {
-    public class SkyGoInformationConnector: IInformationConnector
+    public class SkyGoInformationConnector : IInformationConnector
     {
         /// <summary>
         /// The parameters to use when loading the sub category on a separate thread
@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         }
 
         private enum State
-        { 
+        {
             None,
             LoadRootCategory,
             LoadChildCategory,
@@ -40,6 +40,15 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         public SkyGoInformationConnector(SiteUtilBase siteUtil)
         {
             _siteUtil = siteUtil;
+        }
+
+
+        /// <summary>
+        /// Let the util sort the results
+        /// </summary>
+        public bool ShouldSortResults
+        {
+            get { return true; }
         }
 
         /// <summary>
@@ -85,7 +94,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
 
             return result;
         }
-        
+
         /// <summary>
         /// Use the api version of the Sky Go pages to load categories
         /// </summary>
@@ -95,14 +104,14 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             var tmpchar = "%23";
             var currentAToZPos = 0;
             var currThreadHandle = 0;
-            
+
             // Loop through the whole alphabet
             while ((currentAToZPos + 64) <= 90)
             {
                 var tmpParams = new LoadSubCategParams { CurrentChar = tmpchar, ParentCategory = parentCategory, Index = currThreadHandle };
                 resetEvents[currThreadHandle] = new ManualResetEvent(false);
                 ThreadPool.QueueUserWorkItem(new WaitCallback(LoadCharacterSubCateg), (object)tmpParams);
-              
+
                 currentAToZPos++;
 
                 // Move to the next character
@@ -163,7 +172,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             }
             else
             {
-                
+
                 var channels = Properties.Resources.SkyGo_LiveTvListingUrl.LoadSkyGoLiveTvChannelsFromUrl();
                 results = Properties.Resources.SkyGo_LiveTvGetNowNextUrl.Replace("{CHANNEL_IDS}", String.Join(",", channels.Select(x => x.ChannelId).ToArray())).LoadSkyGoLiveTvNowNextVideosFromUrl(channels);
             }
@@ -188,7 +197,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         private void LoadThisCategoryPage(Category parentCategory, string currentChar, int pageNo, out int pages)
         {
             var doc = Properties.Resources.SkyGo_CategoryAToZUrl.Replace("{CATEGORY}", parentCategory.CategoryId()).Replace("{CHARACTER}", currentChar).Replace("{PAGE}", pageNo.ToString()).LoadSkyGoContentFromUrl();
-          
+
             lock (parentCategory)
             {
                 doc.LoadChildCategoriesFromDocument(parentCategory);
@@ -240,7 +249,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                     }
                 }
             }
-            catch 
+            catch
             {
             }
             return -1;
