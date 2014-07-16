@@ -812,10 +812,11 @@
     <Site name="Swefilmer" util="SwefilmerSite" agecheck="false" enabled="true" lang="sv">
       <Description>Titta på filmer på nätet med svenska undertexter.</Description>
     </Site>
-    <Site name="MovHunter" util="GenericSite" agecheck="false" enabled="true" lang="--">
-      <Description>Full HD and HD movies online. Most content in English, but there's some country/language specific categories and movies: Swedish, Russian, Bollywood, Turkish, Italian, French and Mandarin.</Description>
+    <Site name="MovHunter" util="MovHunter" agecheck="false" enabled="true" lang="--">
+      <Description>Full HD and HD movies and series online. Most content in English, but there's some country/language specific categories and movies: Swedish, Russian, Bollywood, Turkish, Italian, French and Mandarin.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass=""><a\shref="(?<url>[^"]*)"\sclass="">(?<title>[^<]*)</a></li>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li\sclass=""><a\shref="(?<url>[^"]*)"\sclass="">(?<title>[^<]*)</a>\s</li>]]></item>
         <item key="videoListRegEx"><![CDATA[<li>\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<span(?:(?!"title">).)*"title">(?<Title>[^<]*)</span>.*?<img\ssrc="(?<ImageUrl>[^"]*)]]></item>
         <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\sclass="">\s*<a\shref="(?<url>[^"]*)">&raquo;]]></item>
@@ -828,6 +829,7 @@
       <Categories>
         <Category xsi:type="RssLink" name="New Videos" desc="Recently added videos">http://www.movhunter.net/newvideos.php</Category>
         <Category xsi:type="RssLink" name="Top Videos" desc="Top videos">http://www.movhunter.net/topvideos.php</Category>
+        <Category xsi:type="RssLink" name="TV Series" desc="TV Series">http://www.movhunter.net/</Category>
       </Categories>
     </Site>
     <Site name="TFPlay" util="TFPlay" agecheck="false" enabled="true" lang="sv">

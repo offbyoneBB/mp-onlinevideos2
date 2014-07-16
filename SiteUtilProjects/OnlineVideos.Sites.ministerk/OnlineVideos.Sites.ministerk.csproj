@@ -68,6 +68,7 @@
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorSv.cs" />
     <Compile Include="HboNordicWebUtil.cs" />
     <Compile Include="Hoster\vk.cs" />
+    <Compile Include="MovHunterUtil.cs" />
     <Compile Include="SwefilmerSiteUtil.cs" />
     <Compile Include="SweflixUtil.cs" />
     <Compile Include="TFPlayUtil.cs" />
