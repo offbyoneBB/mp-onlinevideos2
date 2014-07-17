@@ -463,18 +463,14 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> GetLatestVideos()
         {
-            DiscoverDynamicCategories();
+            HtmlNode htmlNode = GetWebData<HtmlDocument>(baseUrl).DocumentNode;
+            HtmlNode div = htmlNode.Descendants("div").FirstOrDefault(d => d.GetAttributeValue("id", "") == "latest-videos");
             List<VideoInfo> videos = new List<VideoInfo>();
-            Category latestVideos = Settings.Categories.FirstOrDefault(c => c.Name == _latestVideos);
-            if (latestVideos != null && latestVideos.Other is List<VideoInfo>)
+            foreach (HtmlNode article in div.Descendants("article"))
             {
-                foreach (VideoInfo video in latestVideos.Other as List<VideoInfo>)
-                {
-                    videos.Add(video);
-                    if (videos.Count == LatestVideosCount) break;
-                }
+                videos.Add(getVideoFromArticle(article));
             }
-            return videos;
+            return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
         }
 
         #endregion
