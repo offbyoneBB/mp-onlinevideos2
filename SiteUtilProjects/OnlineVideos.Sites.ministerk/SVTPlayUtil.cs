@@ -10,11 +10,13 @@ using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
-    public class SVTPlayUtil : SiteUtilBase
+    public class SVTPlayUtil : LatestVideosSiteUtilBase
     {
         public enum JaNej { Ja, Nej };
         protected const string _oppetArkiv = "Öppet arkiv";
         protected const string _programA_O = "Program A-Ö";
+        protected const string _latestVideos = "Senaste program";
+
         protected string nextPageUrl = "";
 
         [Category("OnlineVideosConfiguration"), Description("Url used for prepending relative links.")]
@@ -66,7 +68,7 @@ namespace OnlineVideos.Sites
         private List<Category> DiscoverProgramAOCategories(HtmlNode htmlNode, Category parentCategory)
         {
             List<Category> categories = new List<Category>();
-            IEnumerable< HtmlNode> alphabetList = htmlNode.Descendants("li").Where(d => d.GetAttributeValue("class", "").StartsWith("play_alphabetic-letter"));
+            IEnumerable<HtmlNode> alphabetList = htmlNode.Descendants("li").Where(d => d.GetAttributeValue("class", "").StartsWith("play_alphabetic-letter"));
             foreach (HtmlNode alphaLi in alphabetList)
             {
                 Category alphaCat = new Category() { Name = HttpUtility.HtmlDecode(alphaLi.SelectSingleNode("h3").InnerText), SubCategories = new List<Category>(), HasSubCategories = true, ParentCategory = parentCategory };
@@ -453,6 +455,26 @@ namespace OnlineVideos.Sites
             // I haven't noticed any other tags or strange WebSrt stuff, so keeping it simple. 
             rgx = new Regex(@"</{0,1}\d\d>");
             return rgx.Replace(subtitle, string.Empty);
+        }
+
+        #endregion
+
+        #region LatestVideos
+
+        public override List<VideoInfo> GetLatestVideos()
+        {
+            DiscoverDynamicCategories();
+            List<VideoInfo> videos = new List<VideoInfo>();
+            Category latestVideos = Settings.Categories.FirstOrDefault(c => c.Name == _latestVideos);
+            if (latestVideos != null && latestVideos.Other is List<VideoInfo>)
+            {
+                foreach (VideoInfo video in latestVideos.Other as List<VideoInfo>)
+                {
+                    videos.Add(video);
+                    if (videos.Count == LatestVideosCount) break;
+                }
+            }
+            return videos;
         }
 
         #endregion
