@@ -11,7 +11,7 @@ using HtmlAgilityPack;
 
 namespace OnlineVideos.Sites
 {
-    public class URPlayUtil : SiteUtilBase
+    public class URPlayUtil : LatestVideosSiteUtilBase
     {
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Download Subtitles"), Description("Chose if you want to download available subtitles or not.")]
         protected bool retrieveSubtitles = true;
@@ -20,6 +20,7 @@ namespace OnlineVideos.Sites
         protected string subtitlesLanguage = "Svenska";
 
         protected string baseUrl = "http://urplay.se/";
+        protected string senasteUrl = "Senaste?product_type=programtv";
         protected string swfUrl = "http://urplay.se/design/ur/javascript/jwplayer-5.10.swf";
 
         protected string[] ignoreCategories = { "Aktuellt" , "Start", "Tablå" };
@@ -322,5 +323,15 @@ namespace OnlineVideos.Sites
         }
         #endregion
 
+        #region LatestVideos
+
+        public override List<VideoInfo> GetLatestVideos()
+        {
+            RssLink latest = new RssLink() { Name = "Latest videos", Url = senasteUrl };
+            List<VideoInfo> videos = getVideoList(latest);
+            return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount): new List<VideoInfo>();
+        }
+
+        #endregion
     }
 }

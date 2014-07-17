@@ -11,7 +11,7 @@ using System.Net;
 
 namespace OnlineVideos.Sites
 {
-    public class SwefilmerSiteUtil : SiteUtilBase
+    public class SwefilmerSiteUtil : LatestVideosSiteUtilBase
     {
         public enum VideoSort { Date, Views, Length, Alphabet };
 
@@ -249,6 +249,12 @@ namespace OnlineVideos.Sites
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
         {
             return video.Other as TrackingInfo;
+        }
+
+        public override List<VideoInfo> GetLatestVideos()
+        {
+            List<VideoInfo> videos = Videos("http://www.swefilmer.com/newvideos.html");
+            return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
         }
     }
 }

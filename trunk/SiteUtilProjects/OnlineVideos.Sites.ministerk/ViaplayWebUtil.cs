@@ -9,7 +9,7 @@ using System.Web;
 
 namespace OnlineVideos.Sites
 {
-    public class ViaplayWebUtil : SiteUtilBase, IBrowserSiteUtil
+    public class ViaplayWebUtil : LatestVideosSiteUtilBase, IBrowserSiteUtil
     {
         #region Config
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("Viaplay username")]
@@ -114,6 +114,33 @@ namespace OnlineVideos.Sites
                         break;
                     case "no":
                         apiUrl = @"https://content.viaplay.no/pc-no";
+                        break;
+                    default:
+                        apiUrl = string.Empty;
+                        break;
+                }
+                return apiUrl;
+            }
+        }
+
+        protected string LatestUrl
+        {
+            get
+            {
+                string apiUrl;
+                switch (Settings.Language)
+                {
+                    case "sv":
+                        apiUrl = @"/film/samtliga?sort=recently_added";
+                        break;
+                    case "da":
+                        apiUrl = @"/film/alle?sort=recently_added";
+                        break;
+                    case "fi":
+                        apiUrl = @"/leffat/kaikki?sort=recently_added";
+                        break;
+                    case "no":
+                        apiUrl = @"/filmer/alle?sort=recently_added";
                         break;
                     default:
                         apiUrl = string.Empty;
@@ -843,6 +870,17 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
+        #endregion
+
+        #region LatestVideos
+
+        public override List<VideoInfo> GetLatestVideos()
+        {
+            RssLink latest = new RssLink() { Name = "Latest Videos", Url = ApiUrl + LatestUrl };
+            List<VideoInfo> videos = getVideoList(latest);
+            return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
+        }
+
         #endregion
     }
 }
