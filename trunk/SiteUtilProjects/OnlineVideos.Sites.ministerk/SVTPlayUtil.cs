@@ -466,9 +466,12 @@ namespace OnlineVideos.Sites
             HtmlNode htmlNode = GetWebData<HtmlDocument>(baseUrl).DocumentNode;
             HtmlNode div = htmlNode.Descendants("div").FirstOrDefault(d => d.GetAttributeValue("id", "") == "latest-videos");
             List<VideoInfo> videos = new List<VideoInfo>();
-            foreach (HtmlNode article in div.Descendants("article"))
+            if (div != null)
             {
-                videos.Add(getVideoFromArticle(article));
+                foreach (HtmlNode article in div.Descendants("article"))
+                {
+                    videos.Add(getVideoFromArticle(article));
+                }
             }
             return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
         }
