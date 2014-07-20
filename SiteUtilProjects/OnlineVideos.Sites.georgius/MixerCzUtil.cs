@@ -18,18 +18,21 @@ namespace OnlineVideos.Sites.georgius
         private static String dynamicCategoryRegex = @"<a href=""(?<dynamicCategoryUrl>[^""]+)"" id=""[^""]*"" class=""[^""]*"" data-playlist-id=""[^""]*"" data-key=""[^""]*"" title=""(?<dynamicCategoryTitle>[^""]+)""";
 
         private static String showEpisodesBlockStart = @"<div id=""list"">";
-        private static String showEpisodesBlockEnd = @"<form";
+        private static String showEpisodesBlockEnd = @"<p id=""more""";
 
         private static String showEpisodeBlockStart = @"<div id=""clip";
         private static String showEpisodeBlockEnd = @"</h2>";
 
         private static String showEpisodeThumbUrlRegex = @"<img class=""[^""]*"" alt=""[^""]*"" src=""(?<showThumbUrl>[^""]+)";
         private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]+)""[^>]*>(?<showTitle>[^<]+)";
+        private static String showEpisodeDataClipIdRegex = @"data-clip-id=""(?<showDataClipId>[^""]+)""";
 
-        private static String videoUrlBlockStart = @"cdn_qualities.push";
-        private static String videoUrlBlockEnd = @"var interpreters";
-        private static String videoUrlRegex = @"Number\('(?<videoUrl>[^']+)'\),[\s]*quality:[\s]*'(?<videoQuality>[^']+)'";
-        private static String videoUrlFormat = @"http://cdn-dispatcher.stream.cz/?id={0}";
+        private static String videoUrlBlockStart = @"var cdn2";
+        private static String videoUrlBlockEndFormat = @"id: Number('{0}')";
+
+        private static String videoUrlQualityRegex = @"quality: '(?<videoQuality>[^']+)'";
+        private static String videoUrlRegex = @"url: '(?<videoUrl>[^']+)'";
+        private static String videoUrlFormatRegex = @"format: '(?<videoFormat>[^']+)'";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -101,7 +104,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = CsfdCzUtil.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = MixerCzUtil.GetWebData(pageUrl, null, null, null, true);
 
                 int startIndex = baseWebData.IndexOf(MixerCzUtil.showEpisodesBlockStart);
                 if (startIndex >= 0)
@@ -123,8 +126,15 @@ namespace OnlineVideos.Sites.georgius
                                     String episodeTitle = String.Empty;
                                     String episodeUrl = String.Empty;
                                     String episodeThumbUrl = String.Empty;
+                                    String episodeDataClipId = String.Empty;
 
-                                    Match match = Regex.Match(episodeData, MixerCzUtil.showEpisodeThumbUrlRegex);
+                                    Match match = Regex.Match(episodeData, MixerCzUtil.showEpisodeDataClipIdRegex);
+                                    if (match.Success)
+                                    {
+                                        episodeDataClipId = match.Groups["showDataClipId"].Value;
+                                    }
+
+                                    match = Regex.Match(episodeData, MixerCzUtil.showEpisodeThumbUrlRegex);
                                     if (match.Success)
                                     {
                                         episodeThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showThumbUrl"].Value, pageUrl); ;
@@ -143,7 +153,8 @@ namespace OnlineVideos.Sites.georgius
                                         {
                                             Title = episodeTitle,
                                             VideoUrl = episodeUrl,
-                                            ImageUrl = episodeThumbUrl
+                                            ImageUrl = episodeThumbUrl,
+                                            Other = episodeDataClipId
                                         };
 
                                         pageVideos.Add(videoInfo);
@@ -235,22 +246,46 @@ namespace OnlineVideos.Sites.georgius
             }
             video.PlaybackOptions.Clear();
 
-            int startIndex = baseWebData.IndexOf(MixerCzUtil.videoUrlBlockStart);
-            if (startIndex >= 0)
+            int endIndex = baseWebData.LastIndexOf(String.Format(MixerCzUtil.videoUrlBlockEndFormat, video.Other));
+            if (endIndex >= 0)
             {
-                int endIndex = baseWebData.IndexOf(MixerCzUtil.videoUrlBlockEnd, startIndex);
-                if (endIndex >= 0)
+                baseWebData = baseWebData.Substring(0, endIndex);
+
+                int startIndex = baseWebData.LastIndexOf(MixerCzUtil.videoUrlBlockStart);
+                if (startIndex >= 0)
                 {
-                    baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
+                    baseWebData = baseWebData.Substring(startIndex);
 
-                    Match match = Regex.Match(baseWebData, MixerCzUtil.videoUrlRegex);
-                    while (match.Success)
+                    String[] entries = baseWebData.Split(new String[] { "}" }, StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var entry in entries)
                     {
-                        String url = new MPUrlSourceFilter.HttpUrl(SiteUtilBase.GetRedirectedUrl(String.Format(MixerCzUtil.videoUrlFormat, match.Groups["videoUrl"].Value))).ToString();
-                        String quality = match.Groups["videoQuality"].Value;
+                        String quality = String.Empty;
+                        String url = String.Empty;
+                        String format = String.Empty;
 
-                        video.PlaybackOptions.Add(quality, url);
-                        match = match.NextMatch();
+                        Match match = Regex.Match(entry, MixerCzUtil.videoUrlQualityRegex);
+                        if (match.Success)
+                        {
+                            quality = match.Groups["videoQuality"].Value;
+                        }
+
+                        match = Regex.Match(entry, MixerCzUtil.videoUrlRegex);
+                        if (match.Success)
+                        {
+                            url = match.Groups["videoUrl"].Value;
+                        }
+
+                        match = Regex.Match(entry, MixerCzUtil.videoUrlFormatRegex);
+                        if (match.Success)
+                        {
+                            format = match.Groups["videoFormat"].Value;
+                        }
+
+                        if ((!String.IsNullOrEmpty(quality)) && (!String.IsNullOrEmpty(url)) && (!String.IsNullOrEmpty(format)))
+                        {
+                            video.PlaybackOptions.Add(String.Format("{0} | {1}", quality, format), url);
+                        }
                     }
                 }
             }

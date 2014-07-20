@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.IO;
 using System.Collections.ObjectModel;
+using System.Web;
 
 namespace OnlineVideos.Sites.georgius
 {
@@ -21,41 +22,34 @@ namespace OnlineVideos.Sites.georgius
 
         private static String dynamicCategoryUrlFormat = "http://www.csfd.cz/videa/filtr-{0}";
 
-        private static String showsBlockStart = @"<ul class=""ui-image-list"">";
-        private static String showsBlockEnd = @"<div class=""footer"">";
-
-        private static String showsNextPageRegex = @"<a class=""button"" href=""(?<nextPageUrl>[^""]+)"" rel=""nofollow"">starší &gt;</a>";
+        private static String showsNextPageRegex = @"<a class=""button"" href=""(?<nextPageUrl>[^""]+)"" rel=""nofollow"">starší";
         
-        private static String showBlockStart = @"<li>";
-        private static String showBlockEnd = @"</li>";
+        private static String showsBlockStart = @"var playlist = player.getPlaylist()";
+        private static String showsBlockEnd = @"player.initialize()";
 
-        private static String showThumbUrl = @"<img src=""(?<showThumbUrl>[^""]+)";
-        private static String showUrl = @"<a href=""(?<showUrl>[^""]+)"" class=""[^""]*"">(?<showTitle>[^<]+)";
+        private static String showBlockStart = @"var clip = playlist.addClip(";
 
-        private static String navigationStart = @"<h2 class=""header"">";
-        private static String navigationEnd = @"</div>";
+        private static String showThumbUrl = @"""(?<showThumbUrl>[^""]+)"",";
+        private static String showUrl = @"<a href=\\""(?<showUrl>[^>]+)>(?<showTitle>[^<]+)";
+
+        private static String navigationStart = @"<li class=""selected";
+        private static String navigationEnd = @"</ul>";
 
         private static String navigationItemStart = @"<li";
         private static String navigationItemEnd = @"</li>";
         private static String navigationItemRegex = @"<a href=""(?<navigationItemUrl>[^""]+)";
 
-        private static String videoBlockStart = @"<div class=""ui-video-player"">";
-        private static String videoBlockEnd = @"</script>";
-        private static String videoSubBlockStart = @"<script";
+        private static String videoBlockStart = @"<video";
+        private static String videoBlockEnd = @"<script";
 
-        private static String videoSectionStart = @"player.addClip";
-
-        private static String videoTitleStart = @"<div class=""description"">";
+        private static String videoThumbUrlRegex = @"poster=""(?<videoThumbUrl>[^""]+)";
+        private static String videoTitleStart = @"<div class=""description flag"">";
         private static String videoTitleEnd = @"</div>";
 
-        private static String videoUrlRegex = @"""src"":""(?<videoUrl>[^""]+)";
+        private static String videoNextPageRegex = @"<a class=""next"" href=""(?<nextPageUrl>[^""]+)"">následující";
 
-        private static String videoTypeRegex = @"""type"":""(?<videoType>[^""]+)";
-        private static String videoQualityRegex = @"""quality"":""(?<videoQuality>[^""]+)";
-        private static String videoWidthRegex = @"""width"":""(?<videoWidth>[^""]+)";
-        private static String videoHeightRegex = @"""height"":""(?<videoHeight>[^""]+)";
-
-        private static String subtitleUrlRegex = @"subtitles"":\[\{""src"":""(?<subtitleUrl>[^""]+)";
+        private static String videoUrlRegex = @"<source src=""(?<videoUrl>[^""]+)"" type=""video/(?<videoType>[^""]+)"" width=""(?<videoWidth>[^""]+)"" height=""(?<videoHeight>[^""]+)""";
+        private static String subtitleUrlRegex = @"<track src=""(?<subtitleUrl>[^""]+)";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -150,6 +144,7 @@ namespace OnlineVideos.Sites.georgius
                 int endIndex = baseWebData.IndexOf(CsfdCzUtil.showsBlockEnd, startIndex);
                 if (endIndex >= 0)
                 {
+                    String baseData = baseWebData;
                     baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
                     while (true)
@@ -157,7 +152,12 @@ namespace OnlineVideos.Sites.georgius
                         startIndex = baseWebData.IndexOf(CsfdCzUtil.showBlockStart);
                         if (startIndex >= 0)
                         {
-                            endIndex = baseWebData.IndexOf(CsfdCzUtil.showBlockEnd, startIndex);
+                            endIndex = baseWebData.IndexOf(CsfdCzUtil.showBlockStart, startIndex + CsfdCzUtil.showBlockStart.Length);
+                            if (endIndex == (-1))
+                            {
+                                endIndex = baseWebData.Length - 1;
+                            }
+
                             if (endIndex >= 0)
                             {
                                 String showData = baseWebData.Substring(startIndex, endIndex - startIndex);
@@ -169,14 +169,14 @@ namespace OnlineVideos.Sites.georgius
                                 Match match = Regex.Match(showData, CsfdCzUtil.showThumbUrl);
                                 if (match.Success)
                                 {
-                                    showThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showThumbUrl"].Value, url);
+                                    showThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showThumbUrl"].Value.Replace("\\/", "/"), url);
                                 }
 
                                 match = Regex.Match(showData, CsfdCzUtil.showUrl);
                                 if (match.Success)
                                 {
-                                    showUrl = Utils.FormatAbsoluteUrl("videa", Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, url));
-                                    showTitle = OnlineVideos.Utils.PlainTextFromHtml(match.Groups["showTitle"].Value);
+                                    showUrl = Utils.FormatAbsoluteUrl("videa", Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value.Replace("\\/", "/").Replace("\\\"", ""), url));
+                                    showTitle = OnlineVideos.Utils.PlainTextFromHtml(Utils.DecodeEncodedNonAsciiCharacters(match.Groups["showTitle"].Value));
                                 }
 
                                 if (!String.IsNullOrEmpty(showUrl))
@@ -208,7 +208,7 @@ namespace OnlineVideos.Sites.georgius
                         }
                     }
 
-                    Match nextPageMatch = Regex.Match(baseWebData, CsfdCzUtil.showsNextPageRegex);
+                    Match nextPageMatch = Regex.Match(baseData, CsfdCzUtil.showsNextPageRegex);
                     if (nextPageMatch.Success)
                     {
                         String nextPageUrl = Utils.FormatAbsoluteUrl(nextPageMatch.Groups["nextPageUrl"].Value, url);
@@ -238,14 +238,13 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = CsfdCzUtil.GetWebData(pageUrl, null, null, null, true);
                 List<String> navigationItems = new List<String>();
+                String baseWebData = CsfdCzUtil.GetWebData(pageUrl, null, null, null, true);
 
                 int startIndex = baseWebData.IndexOf(CsfdCzUtil.navigationStart);
-                int endIndex = -1;
                 if (startIndex >= 0)
                 {
-                    endIndex = baseWebData.IndexOf(CsfdCzUtil.navigationEnd, startIndex);
+                    int endIndex = baseWebData.IndexOf(CsfdCzUtil.navigationEnd, startIndex);
                     if (endIndex >= 0)
                     {
                         String navigation = baseWebData.Substring(startIndex, endIndex - startIndex);
@@ -279,13 +278,16 @@ namespace OnlineVideos.Sites.georgius
                     }
                 }
 
-                foreach (var navItem in navigationItems)
+                int i = 0;
+                while (i < navigationItems.Count)
                 {
+                    var navItem = navigationItems[i];
                     baseWebData = CsfdCzUtil.GetWebData(navItem, null, null, null, true);
 
                     while (true)
                     {
-                        startIndex = endIndex = -1;
+                        startIndex = -1;
+                        int endIndex = -1;
 
                         startIndex = baseWebData.IndexOf(CsfdCzUtil.videoBlockStart);
                         if (startIndex >= 0)
@@ -293,21 +295,27 @@ namespace OnlineVideos.Sites.georgius
                             endIndex = baseWebData.IndexOf(CsfdCzUtil.videoBlockEnd, startIndex);
                             if (endIndex >= 0)
                             {
-                                int subBlockStart = baseWebData.IndexOf(CsfdCzUtil.videoSubBlockStart, startIndex);
-                                int titleStart = baseWebData.IndexOf(CsfdCzUtil.videoTitleStart, startIndex);
+                                String episodeData = baseWebData.Substring(startIndex, endIndex - startIndex);
+                                baseWebData = baseWebData.Substring(endIndex);
 
-                                if ((titleStart >= 0) && (subBlockStart >= 0))
+                                startIndex = episodeData.IndexOf(CsfdCzUtil.videoTitleStart);
+                                if (startIndex >= 0)
                                 {
-                                    int titleEnd = baseWebData.IndexOf(CsfdCzUtil.videoTitleEnd, titleStart);
-                                    if (titleEnd >= 0)
+                                    endIndex = episodeData.IndexOf(CsfdCzUtil.videoTitleEnd, startIndex);
+                                    if (endIndex >= 0)
                                     {
-                                        String title = baseWebData.Substring(titleStart + CsfdCzUtil.videoTitleStart.Length, titleEnd - titleStart - CsfdCzUtil.videoTitleStart.Length);
+                                        String title = episodeData.Substring(startIndex + CsfdCzUtil.videoTitleStart.Length, endIndex - startIndex - CsfdCzUtil.videoTitleStart.Length);
+                                        String videoThumbUrl = String.Empty;
 
-                                        pageVideos.Add(new VideoInfo() { Title = title, Other = baseWebData.Substring(subBlockStart, endIndex - subBlockStart), VideoUrl = CsfdCzUtil.baseUrl });
+                                        Match match = Regex.Match(episodeData, CsfdCzUtil.videoThumbUrlRegex);
+                                        if (match.Success)
+                                        {
+                                            videoThumbUrl = match.Groups["videoThumbUrl"].Value;
+                                        }
+
+                                        pageVideos.Add(new VideoInfo() { Title = title, Other = episodeData, VideoUrl = CsfdCzUtil.baseUrl, ImageUrl = videoThumbUrl });
                                     }
                                 }
-
-                                baseWebData = baseWebData.Substring(endIndex);
                             }
                         }
 
@@ -316,6 +324,14 @@ namespace OnlineVideos.Sites.georgius
                             break;
                         }
                     }
+
+                    Match nextPageMatch = Regex.Match(baseWebData, CsfdCzUtil.videoNextPageRegex);
+                    if (nextPageMatch.Success)
+                    {
+                        navigationItems.Add(Utils.FormatAbsoluteUrl(nextPageMatch.Groups["nextPageUrl"].Value, CsfdCzUtil.baseUrl));
+                    }
+
+                    i++;
                 }
             }
 
@@ -385,51 +401,15 @@ namespace OnlineVideos.Sites.georgius
 
             String videoData = (String)video.Other;
 
-            int index = videoData.LastIndexOf(CsfdCzUtil.videoSectionStart);
-            videoData = videoData.Substring(index);
-
             MatchCollection matches = Regex.Matches(videoData, CsfdCzUtil.videoUrlRegex);
             for (int i = 0; i < matches.Count; i++)
             {
-                String url = matches[i].Groups["videoUrl"].Value.Replace("\\/", "/");
-                String extension = Path.GetExtension(url).Replace(".", "");
-                String fileName = Path.GetFileNameWithoutExtension(url);
+                String url = matches[i].Groups["videoUrl"].Value;
+                String type = matches[i].Groups["videoType"].Value;
+                String width = matches[i].Groups["videoWidth"].Value;
+                String height = matches[i].Groups["videoHeight"].Value;
 
-                if (!url.Contains("/videoads/"))
-                {
-                    String item = videoData.Substring(matches[i].Index);
-
-                    String videoType = String.Empty;
-                    String quality = String.Empty;
-                    String width = String.Empty;
-                    String height = String.Empty;
-
-                    Match match = Regex.Match(item, videoTypeRegex);
-                    if (match.Success)
-                    {
-                        videoType = match.Groups["videoType"].Value;
-                    }
-
-                    match = Regex.Match(item, videoQualityRegex);
-                    if (match.Success)
-                    {
-                        quality = match.Groups["videoQuality"].Value;
-                    }
-
-                    match = Regex.Match(item, videoWidthRegex);
-                    if (match.Success)
-                    {
-                        width = match.Groups["videoWidth"].Value;
-                    }
-
-                    match = Regex.Match(item, videoHeightRegex);
-                    if (match.Success)
-                    {
-                        height = match.Groups["videoHeight"].Value;
-                    }
-
-                    video.PlaybackOptions.Add(String.Format("{0} {1} {2}x{3}", videoType, quality, width, height), url);
-                }
+                video.PlaybackOptions.Add(String.Format("{0} ({1}x{2})", type, width, height), url);
             }
 
             Match subtitleMatch = Regex.Match(videoData, CsfdCzUtil.subtitleUrlRegex);

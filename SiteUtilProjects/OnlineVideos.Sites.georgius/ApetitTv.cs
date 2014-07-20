@@ -14,15 +14,17 @@ namespace OnlineVideos.Sites.georgius
         private static String baseUrl = @"http://www.apetitonline.cz/apetit-tv";
         private static String videoBaseUrl = @"http://www.apetitonline.cz/video/apetit_tv";
 
-        private static String showEpisodesStart = @"<div class=""dalsi-videa-obsah"">";
-        private static String showEpisodesEnd = @"<div id=""sidebar"">";
-        private static String showEpisodeStart = @"<div class=""dalsi-video"">";
-        private static String showEpisodeThumbRegex = @"<img src=""(?<showEpisodeThumbUrl>[^""]+)"" alt=""[^""]*"" width=""[^""]*"" />";
+        private static String showEpisodesStart = @"<div id=""wrapper""";
+        private static String showEpisodesEnd = @"<aside";
+        private static String showEpisodeStart = @"<div class=""article-default video-art"">";
+
+        private static String showEpisodeThumbRegex = @"<img typeof=""foaf:Image"" src=""(?<showEpisodeThumbUrl>[^""]+)""";
         private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showEpisodeUrl>[^""]+)"">(?<showEpisodeTitle>[^<]+)</a>";
 
-        private static String showEpisodeNextPageRegex = @"<dd class=""next""><a href=""(?<nextPageUrl>[^""]+)"">Další strana</a></dd>";
+        private static String showEpisodeNextPageRegex = @"<a title=""Přejít na další stranu"" href=""(?<nextPageUrl>[^""]+)""";
 
-        private static String showVideoUrlRegex = @"file: ""/video/apetit_tv/(?<showVideoUrl>[^""]+)";
+        private static String showVideoUrlBlockStart = @"<source src=""";
+        private static String showVideoUrlBlockEnd = @"""";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -213,11 +215,17 @@ namespace OnlineVideos.Sites.georgius
         public override string getUrl(VideoInfo video)
         {
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
-            Match match = Regex.Match(baseWebData, ApetitTvUtil.showVideoUrlRegex);
-            if (match.Success)
+
+            int startIndex = baseWebData.IndexOf(ApetitTvUtil.showVideoUrlBlockStart);
+            if (startIndex >= 0)
             {
-                String url = Utils.FormatAbsoluteUrl(match.Groups["showVideoUrl"].Value, ApetitTvUtil.videoBaseUrl);
-                return new MPUrlSourceFilter.HttpUrl(url) { UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0" }.ToString();
+                int endIndex = baseWebData.IndexOf(ApetitTvUtil.showVideoUrlBlockEnd, startIndex + ApetitTvUtil.showVideoUrlBlockStart.Length);
+                if (endIndex >= 0)
+                {
+                    baseWebData = baseWebData.Substring(startIndex + ApetitTvUtil.showVideoUrlBlockStart.Length, endIndex - startIndex - ApetitTvUtil.showVideoUrlBlockStart.Length);
+
+                    return new MPUrlSourceFilter.HttpUrl(baseWebData) { UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0" }.ToString();
+                }
             }
 
             return String.Empty;
