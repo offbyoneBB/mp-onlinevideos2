@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites.georgius
         private static String baseUrl = "http://play.iprima.cz/az";
 
         private static String dynamicCategoryStart = @"<div class=""genres"">";
-        private static String dynamicCategoryEnd = @"<div class=""channels"">";
+        private static String dynamicCategoryEnd = @"<div class=""mainContent"">";
 
         private static String categoryRegex = @"<a href=""(?<categoryUrl>[^""]*)"">(?<categoryTitle>[^<]*)";
 

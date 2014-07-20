@@ -17,28 +17,41 @@ namespace OnlineVideos.Sites.georgius
         private static String baseUrl = "http://www.ceskatelevize.cz";
         private static String dynamicCategoryBaseUrl = "http://www.ceskatelevize.cz/ivysilani/podle-abecedy";
 
-        private static String dynamicCategoryStart = @"<ul id=""programmeGenre"" class=""clearfix"">";
-        private static String dynamicCategoryRegex = @"<a class=""pageLoadAjaxAlphabet"" href=""(?<dynamicCategoryUrl>[^""]+)"" rel=""[^""]*""><span>(?<dynamicCategoryTitle>[^<]+)";
+        private static String dynamicCategoryStart = @"<ul id=""programmeGenre"" class=""clearfix";
+        private static String dynamicCategoryRegex = @"<a class=""pageLoadAjaxAlphabet"" href=""(?<dynamicCategoryUrl>[^""]+)"" rel=""[^""]*"">[\s]*<span>(?<dynamicCategoryTitle>[^<]+)";
 
         private static String subCategoryFormat = @"{0}{1}dalsi-casti";
 
         private static String showListStart = @"<div id=""programmeAlphabetContent"">";
-        private static String showRegex = @"(<a href=""(?<showUrl>[^""]+)"" title=""[^""]*"">(?<showTitle>[^""]+)</a>)|(<a class=""toolTip"" href=""(?<showUrl>[^""]+)"" title=""[^""]*"">(?<showTitle>[^""]+)</a>)";
-        private static String showEnd = @"</li>";
-        private static string onlyBonuses = @"<span class=""labelBonus"">pouze bonusy</span>";
+        private static String showListEnd = @"<div class=""sidePanel";
 
-        private static String showEpisodesStartRegex = @"(<div class=""contentBox"">)|(<div class=""clearfix"">)";
-        private static String showEpisodeBlockStartRegex = @"(<li class=""itemBlock clearfix"">)|(<li class=""itemBlock clearfix active"">)|(<div class=""channel"">)";
+        private static String showStart = @"<li";
+        private static String showEnd = @"</li>";
+        private static String showRegex = @"(<a href=""(?<showUrl>[^""]+)"">(?<showTitle>[^""]+)</a>)|(<a class=""toolTip"" title=""[^""]*"" href=""(?<showUrl>[^""]+)"">(?<showTitle>[^""]+)</a>)";
+        private static String onlyBonuses = @"pouze bonusy";
+
+        private static String showEpisodesStart = @"<div id=""programmeMoreBox";
+        private static String showEpisodesEnd = @"<div class=""sidePanel";
+        private static String showEpisodeStart = @"<li";
+        private static String showEpisodeEnd = @"</li";
         private static String showEpisodeThumbUrlRegex = @"src=""(?<showThumbUrl>[^""]+)""";
-        private static String showEpisodeUrlAndTitleRegex = @"(<a class=""itemSetPaging"" rel=""[^""]+"" href=""(?<showUrl>[^""]+)"">(?<showTitle>[^<]+)</a>)|(<a href=""(?<showUrl>[^""]+)"">(?<showTitle>[^<]+)</a>)";
-        private static String showEpisodeNextPageRegex = @"<a title=""[^""]+"" rel=""[^""]*"" class=""detailProgrammePaging next"" href=""(?<url>[^""]+)"">";
+        private static String showEpisodeUrlAndTitleRegex = @"<a class=""itemSetPaging"" rel=""[^""]+"" href=""(?<showUrl>[^""]+)"">[\s\r\n]*(?<showTitle>[^<]+)";
+
+        private static String showEpisodeLiveStart = @"<div class=""channel";
+        private static String showEpisodeLiveEnd = @"<p class=""next";
+
+        private static String showEpisodeLiveUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]+)"">[\s\r\n]*(?<showTitle>[^<]+)";
+        private static String showEpisodeLiveThumbUrlRegex = @"<img src=""(?<showThumbUrl>[^""]+)";
+
         private static String showEpisodeDescriptionStart = @"</h3>";
         private static String showEpisodeDescriptionEnd = @"<p class=""itemRating";
 
+        private static String nextPageRegex = @"<a href=""(?<nextPage>[^""]+)"" data-page=""[^""]+"" class=""next"">další";
+
         private static String liveNextProgramm = @"<p class=""next"">";
 
-        private static String showEpisodePostStart = @"callSOAP(";
-        private static String showEpisodePostEnd = @");";
+        private static String showEpisodePostStart = @"getPlaylistUrl([";
+        private static String showEpisodePostEnd = @"]";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -70,16 +83,16 @@ namespace OnlineVideos.Sites.georgius
         {
             int dynamicCategoriesCount = 0;
 
-            this.Settings.Categories.Add(
-                new RssLink()
-                {
-                    Name = "Živě",
-                    HasSubCategories = false,
-                    Url = "live"
-                });
-            dynamicCategoriesCount++;
+            //this.Settings.Categories.Add(
+            //    new RssLink()
+            //    {
+            //        Name = "Živě",
+            //        HasSubCategories = false,
+            //        Url = "live"
+            //    });
+            //dynamicCategoriesCount++;
 
-            String baseWebData = SiteUtilBase.GetWebData(CeskaTelevizeUtil.dynamicCategoryBaseUrl, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(CeskaTelevizeUtil.dynamicCategoryBaseUrl, null, null, null, true).Replace("\r", "").Replace("\n", "");
 
             int index = baseWebData.IndexOf(CeskaTelevizeUtil.dynamicCategoryStart);
             if (index > 0)
@@ -117,105 +130,144 @@ namespace OnlineVideos.Sites.georgius
                 this.nextPageUrl = String.Empty;
                 if (this.currentCategory.Name == "Živě")
                 {
-                    TimeSpan span = DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0);
-                    pageUrl = "http://www.ceskatelevize.cz/ivysilani/ajax/liveBox.php?time=" + ((long)span.TotalMilliseconds).ToString();
+                    pageUrl = "http://www.ceskatelevize.cz/ivysilani/ajax/live-box";
                 }
                 String baseWebData = CeskaTelevizeUtil.GetWebData(pageUrl, null, null, null, true);
 
-                Match showEpisodesStart = Regex.Match(baseWebData, CeskaTelevizeUtil.showEpisodesStartRegex);
-                if (showEpisodesStart.Success)
+                if (this.currentCategory.Name == "Živě")
                 {
-                    baseWebData = baseWebData.Substring(showEpisodesStart.Index + showEpisodesStart.Length);
-
-                    Match nextPageMatch = Regex.Match(baseWebData, CeskaTelevizeUtil.showEpisodeNextPageRegex);
                     while (true)
                     {
-                        Match showEpisodeBlockStart = Regex.Match(baseWebData, CeskaTelevizeUtil.showEpisodeBlockStartRegex);
-                        nextPageMatch = Regex.Match(baseWebData, CeskaTelevizeUtil.showEpisodeNextPageRegex);
-
-                        if (((nextPageMatch.Success) && (showEpisodeBlockStart.Success) && (nextPageMatch.Index > showEpisodeBlockStart.Index)) ||
-                            ((!nextPageMatch.Success) && (showEpisodeBlockStart.Success)))
+                        int startIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodeLiveStart);
+                        if (startIndex >= 0)
                         {
-                            baseWebData = baseWebData.Substring(showEpisodeBlockStart.Index + showEpisodeBlockStart.Length);
-
-                            String showTitle = String.Empty;
-                            String showThumbUrl = String.Empty;
-                            String showUrl = String.Empty;
-                            String showDescription = String.Empty;
-
-                            if (this.currentCategory.Name == "Živě")
+                            int endIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodeLiveEnd, startIndex);
+                            if (endIndex >= 0)
                             {
-                                int nextProgrammIndex = baseWebData.IndexOf(CeskaTelevizeUtil.liveNextProgramm);
-                                if (nextProgrammIndex >= 0)
+                                String episodeData = baseWebData.Substring(startIndex, endIndex - startIndex);
+                                baseWebData = baseWebData.Substring(endIndex);
+
+                                String showUrl = String.Empty;
+                                String showTitle = String.Empty;
+                                String showThumbUrl = String.Empty;
+
+                                Match match = Regex.Match(episodeData, CeskaTelevizeUtil.showEpisodeLiveUrlAndTitleRegex);
+                                if (match.Success)
                                 {
-                                    String liveChannelData = baseWebData.Substring(0, nextProgrammIndex);
-
-                                    Match showEpisodeUrlAndTitle = Regex.Match(liveChannelData, CeskaTelevizeUtil.showEpisodeUrlAndTitleRegex);
-                                    if (showEpisodeUrlAndTitle.Success)
-                                    {
-                                        showUrl = Utils.FormatAbsoluteUrl(showEpisodeUrlAndTitle.Groups["showUrl"].Value, CeskaTelevizeUtil.baseUrl);
-                                        showTitle = showEpisodeUrlAndTitle.Groups["showTitle"].Value.Trim();
-                                    }
-
-                                    Match showEpisodeThumbUrl = Regex.Match(liveChannelData, CeskaTelevizeUtil.showEpisodeThumbUrlRegex);
-                                    if (showEpisodeThumbUrl.Success)
-                                    {
-                                        showThumbUrl = showEpisodeThumbUrl.Groups["showThumbUrl"].Value;
-                                    }
-
-                                    baseWebData = baseWebData.Substring(nextProgrammIndex);
+                                    showUrl = Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, CeskaTelevizeUtil.baseUrl);
+                                    showTitle = match.Groups["showTitle"].Value.Trim();
                                 }
+
+                                match = Regex.Match(episodeData, CeskaTelevizeUtil.showEpisodeLiveThumbUrlRegex);
+                                if (match.Success)
+                                {
+                                    showThumbUrl = match.Groups["showThumbUrl"].Value;
+                                }
+
+                                if (String.IsNullOrEmpty(showTitle) || String.IsNullOrEmpty(showUrl) || String.IsNullOrEmpty(showThumbUrl))
+                                {
+                                    continue;
+                                }
+
+                                VideoInfo videoInfo = new VideoInfo()
+                                {
+                                    ImageUrl = showThumbUrl,
+                                    Title = showTitle,
+                                    VideoUrl = showUrl
+                                };
+
+                                pageVideos.Add(videoInfo);
                             }
                             else
                             {
-                                Match showEpisodeThumbUrl = Regex.Match(baseWebData, CeskaTelevizeUtil.showEpisodeThumbUrlRegex);
-                                if (showEpisodeThumbUrl.Success)
-                                {
-                                    showThumbUrl = showEpisodeThumbUrl.Groups["showThumbUrl"].Value;
-                                    baseWebData = baseWebData.Substring(showEpisodeThumbUrl.Index + showEpisodeThumbUrl.Length);
-                                }
-
-                                Match showEpisodeUrlAndTitle = Regex.Match(baseWebData, CeskaTelevizeUtil.showEpisodeUrlAndTitleRegex);
-                                if (showEpisodeUrlAndTitle.Success)
-                                {
-                                    showUrl = Utils.FormatAbsoluteUrl(showEpisodeUrlAndTitle.Groups["showUrl"].Value, CeskaTelevizeUtil.baseUrl);
-                                    showTitle = showEpisodeUrlAndTitle.Groups["showTitle"].Value.Trim();
-                                    baseWebData = baseWebData.Substring(showEpisodeUrlAndTitle.Index + showEpisodeUrlAndTitle.Length);
-                                }
-
-                                int startIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodeDescriptionStart);
-                                if (startIndex >= 0)
-                                {
-                                    int endIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodeDescriptionEnd, startIndex);
-                                    if (endIndex >= 0)
-                                    {
-                                        showDescription = baseWebData.Substring(startIndex + CeskaTelevizeUtil.showEpisodeDescriptionStart.Length, endIndex - startIndex - CeskaTelevizeUtil.showEpisodeDescriptionStart.Length).Trim().Replace('\t', ' ').Replace("</p>", "\n").Trim();
-                                    }
-                                }
+                                break;
                             }
-
-                            if (String.IsNullOrEmpty(showTitle) || String.IsNullOrEmpty(showUrl) || String.IsNullOrEmpty(showThumbUrl))
-                            {
-                                continue;
-                            }
-
-                            VideoInfo videoInfo = new VideoInfo()
-                            {
-                                ImageUrl = showThumbUrl,
-                                Title = showTitle,
-                                VideoUrl = showUrl,
-                                Description = showDescription
-                            };
-
-                            pageVideos.Add(videoInfo);
                         }
                         else
                         {
                             break;
                         }
                     }
+                }
+                else
+                {
+                    int startIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodesStart);
+                    if (startIndex >= 0)
+                    {
+                        int endIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodesEnd, startIndex);
+                        if (endIndex >= 0)
+                        {
+                            baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                    this.nextPageUrl = (nextPageMatch.Success) ? String.Format("{0}{1}", CeskaTelevizeUtil.baseUrl, nextPageMatch.Groups["url"].Value) : String.Empty;
+                            while (true)
+                            {
+                                startIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodeStart);
+                                if (startIndex >= 0)
+                                {
+                                    endIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodeEnd, startIndex);
+                                    if (endIndex >= 0)
+                                    {
+                                        String episodeData = baseWebData.Substring(startIndex, endIndex - startIndex);
+                                        baseWebData = baseWebData.Substring(endIndex + CeskaTelevizeUtil.showEpisodeEnd.Length);
+
+                                        String showTitle = String.Empty;
+                                        String showThumbUrl = String.Empty;
+                                        String showUrl = String.Empty;
+                                        String showDescription = String.Empty;
+
+                                        Match match = Regex.Match(episodeData, CeskaTelevizeUtil.showEpisodeUrlAndTitleRegex);
+                                        if (match.Success)
+                                        {
+                                            showUrl = Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, CeskaTelevizeUtil.baseUrl);
+                                            showTitle = match.Groups["showTitle"].Value.Trim();
+                                        }
+
+                                        match = Regex.Match(episodeData, CeskaTelevizeUtil.showEpisodeThumbUrlRegex);
+                                        if (match.Success)
+                                        {
+                                            showThumbUrl = match.Groups["showThumbUrl"].Value;
+                                        }
+
+                                        startIndex = episodeData.IndexOf(CeskaTelevizeUtil.showEpisodeDescriptionStart);
+                                        if (startIndex >= 0)
+                                        {
+                                            endIndex = episodeData.IndexOf(CeskaTelevizeUtil.showEpisodeDescriptionEnd, startIndex);
+                                            if (endIndex >= 0)
+                                            {
+                                                showDescription = episodeData.Substring(startIndex + CeskaTelevizeUtil.showEpisodeDescriptionStart.Length, endIndex - startIndex - CeskaTelevizeUtil.showEpisodeDescriptionStart.Length).Trim().Replace('\t', ' ').Replace("</p>", "\n").Trim();
+                                            }
+                                        }
+
+                                        if (String.IsNullOrEmpty(showTitle) || String.IsNullOrEmpty(showUrl) || String.IsNullOrEmpty(showThumbUrl))
+                                        {
+                                            continue;
+                                        }
+
+                                        VideoInfo videoInfo = new VideoInfo()
+                                        {
+                                            ImageUrl = showThumbUrl,
+                                            Title = showTitle,
+                                            VideoUrl = showUrl,
+                                            Description = showDescription
+                                        };
+
+                                        pageVideos.Add(videoInfo);
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+
+                            Match nextPageMatch = Regex.Match(baseWebData, CeskaTelevizeUtil.nextPageRegex);
+                            this.nextPageUrl = (nextPageMatch.Success) ? String.Format("{0}{1}", CeskaTelevizeUtil.baseUrl, nextPageMatch.Groups["nextPage"].Value) : String.Empty;
+                        }
+                    }
                 }
             }
 
@@ -299,16 +351,31 @@ namespace OnlineVideos.Sites.georgius
             int start = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodePostStart);
             if (start >= 0)
             {
-                start += CeskaTelevizeUtil.showEpisodePostStart.Length;
-                int end = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodePostEnd, start);
+                int end = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodePostEnd, start + CeskaTelevizeUtil.showEpisodePostStart.Length);
                 if (end >= 0)
                 {
-                    String postData = baseWebData.Substring(start, end - start);
+                    String postData = baseWebData.Substring(start + CeskaTelevizeUtil.showEpisodePostStart.Length, end - start - CeskaTelevizeUtil.showEpisodePostStart.Length);
+                    Newtonsoft.Json.Linq.JContainer playlistData = (Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(postData);
+                    
+                    StringBuilder builder = new StringBuilder();
+                    foreach (Newtonsoft.Json.Linq.JProperty child in playlistData.Children())
+                    {
+                        builder.AppendFormat("&playlist[0][{0}]={1}", child.Name, child.Value.ToString());
+                    }
+                    builder.AppendFormat("&requestUrl={0}&requestSource=iVysilani&addCommercials=1&type=flash", video.VideoUrl.Remove(0, CeskaTelevizeUtil.baseUrl.Length));
+                    
+                    String serializedDataForPost = HttpUtility.UrlEncode(builder.ToString()).Replace("%3d", "=").Replace("%26", "&");
+                    String playlistSerializedUrl = CeskaTelevizeUtil.GetWebDataFromPost("http://www.ceskatelevize.cz/ivysilani/ajax/get-playlist-url", serializedDataForPost, container, video.VideoUrl);
+                    Newtonsoft.Json.Linq.JContainer playlistJson = (Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(playlistSerializedUrl);
 
-                    Newtonsoft.Json.Linq.JObject jObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(postData);
-                    String serializedDataForPost = this.SerializeJsonForPost(jObject);
-                    serializedDataForPost = HttpUtility.UrlEncode(serializedDataForPost).Replace("%3d", "=").Replace("%26", "&");
-                    String videoDataUrl = CeskaTelevizeUtil.GetWebDataFromPost("http://www.ceskatelevize.cz/ajax/playlistURL.php", serializedDataForPost, container, video.VideoUrl).Replace("%26", "&");
+                    String videoDataUrl = String.Empty;
+                    foreach (Newtonsoft.Json.Linq.JProperty child in playlistJson.Children())
+                    {
+                        if (child.Name == "url")
+                        {
+                            videoDataUrl = child.Value.ToString().Replace("%26", "&");
+                        }
+                    }
 
                     CeskaTelevizeVideoCollection videos = new CeskaTelevizeVideoCollection();
                     int videoPart = 1;
@@ -330,36 +397,38 @@ namespace OnlineVideos.Sites.georgius
 
                                 foreach (XmlNode source in sources)
                                 {
-                                    // create rtmp proxy for selected source
-                                    String baseUrl = itemData.Attributes["base"].Value.Replace("/_definst_", "");
-                                    String playPath = source.Attributes["src"].Value;
-
-                                    String rtmpUrl = baseUrl + "/" + playPath;
-
-                                    String host = new Uri(baseUrl).Host;
-                                    String app = baseUrl.Substring(baseUrl.LastIndexOf('/') + 1);
-                                    String tcUrl = baseUrl;
-
-                                    int swfobjectIndex = baseWebData.IndexOf("swfobject.embedSWF(");
-                                    if (swfobjectIndex >= 0)
+                                    if (String.Compare(source.Attributes["label"].Value, "AD", StringComparison.CurrentCultureIgnoreCase) != 0)
                                     {
-                                        int firstQuote = baseWebData.IndexOf("\"", swfobjectIndex);
-                                        int secondQuote = baseWebData.IndexOf("\"", firstQuote + 1);
+                                        // skip advertising
+                                        // create rtmp proxy for selected source
+                                        String baseUrl = itemData.Attributes["base"].Value.Replace("/_definst_", "");
+                                        String playPath = source.Attributes["src"].Value;
 
-                                        if ((firstQuote >= 0) && (secondQuote >= 0) && ((secondQuote - firstQuote) > 0))
+                                        String rtmpUrl = baseUrl + "/" + playPath;
+
+                                        String host = new Uri(baseUrl).Host;
+                                        String app = baseUrl.Substring(baseUrl.LastIndexOf('/') + 1);
+                                        String tcUrl = baseUrl;
+
+                                        int swfobjectIndex = baseWebData.IndexOf("swfobject.embedSWF(");
+                                        if (swfobjectIndex >= 0)
                                         {
-                                            String swfUrl = baseWebData.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
-                                            //String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl }.ToString();
-                                            // replace previous line with next line in OV higher than 1.6
-                                            String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl, LiveStream = live }.ToString();
+                                            int firstQuote = baseWebData.IndexOf("\"", swfobjectIndex);
+                                            int secondQuote = baseWebData.IndexOf("\"", firstQuote + 1);
 
-                                            videos.Add(new CeskaTelevizeVideo()
+                                            if ((firstQuote >= 0) && (secondQuote >= 0) && ((secondQuote - firstQuote) > 0))
                                             {
-                                                Part = videoPart,
-                                                Label = source.Attributes["label"].Value,
-                                                Url = resultUrl
-                                            });
+                                                String swfUrl = baseWebData.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
+                                                String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl, LiveStream = live }.ToString();
 
+                                                videos.Add(new CeskaTelevizeVideo()
+                                                {
+                                                    Part = videoPart,
+                                                    Label = source.Attributes["label"].Value,
+                                                    Url = resultUrl
+                                                });
+
+                                            }
                                         }
                                     }
                                 }
@@ -440,34 +509,57 @@ namespace OnlineVideos.Sites.georgius
 
             String baseWebData = SiteUtilBase.GetWebData(category.Url, null, null, null, true);
 
-            int index = baseWebData.IndexOf(CeskaTelevizeUtil.showListStart);
-            if (index > 0)
+            int startIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showListStart);
+            if (startIndex > 0)
             {
-                baseWebData = baseWebData.Substring(index);
-                category.SubCategories = new List<Category>();
-
-                MatchCollection matches = Regex.Matches(baseWebData, CeskaTelevizeUtil.showRegex);
-                for (int i = 0; i < matches.Count; i++)
+                int endIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showListEnd, startIndex);
+                if (endIndex >= 0)
                 {
-                    String showUrl = matches[i].Groups["showUrl"].Value;
-                    String showTitle = matches[i].Groups["showTitle"].Value;
+                    category.SubCategories = new List<Category>();
+                    baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                    int showEndIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEnd, matches[i].Index + matches[i].Length);
-                    int onlyBonusesIndex = baseWebData.IndexOf(CeskaTelevizeUtil.onlyBonuses, matches[i].Index + matches[i].Length);
-
-                    if (((onlyBonusesIndex != (-1)) && (onlyBonusesIndex > showEndIndex)) ||
-                        (onlyBonusesIndex == (-1)))
+                    while (true)
                     {
-                        category.SubCategoriesDiscovered = true;
-                        category.SubCategories.Add(
-                            new RssLink()
+                        startIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showStart);
+                        if (startIndex >= 0)
+                        {
+                            endIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showEnd, startIndex);
+                            if (endIndex >= 0)
                             {
-                                Name = showTitle,
-                                HasSubCategories = false,
-                                Url = String.Format(CeskaTelevizeUtil.subCategoryFormat, CeskaTelevizeUtil.baseUrl, showUrl)
-                            });
+                                String showData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                        dynamicSubCategoriesCount++;
+                                if (!showData.Contains(CeskaTelevizeUtil.onlyBonuses))
+                                {
+                                    Match match = Regex.Match(showData, CeskaTelevizeUtil.showRegex);
+                                    if (match.Success)
+                                    {
+                                        String showUrl = match.Groups["showUrl"].Value;
+                                        String showTitle = match.Groups["showTitle"].Value;
+
+                                        category.SubCategoriesDiscovered = true;
+                                        category.SubCategories.Add(
+                                            new RssLink()
+                                            {
+                                                Name = showTitle,
+                                                HasSubCategories = false,
+                                                Url = String.Format(CeskaTelevizeUtil.subCategoryFormat, CeskaTelevizeUtil.baseUrl, showUrl)
+                                            });
+
+                                        dynamicSubCategoriesCount++;
+                                    }
+                                }
+
+                                baseWebData = baseWebData.Substring(endIndex + CeskaTelevizeUtil.showEnd.Length);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                 }
             }
