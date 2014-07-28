@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites.Utils
 {
-    class SubtitleReader
+    public class SubtitleReader
     {
         static string srtFormat = "{0}\r\n{1} --> {2}\r\n{3}\r\n\r\n";
         public static string TimedText2SRT(string TTAFTxt)
