@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -8,6 +9,7 @@ using System.Xml;
 
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
+using OnlineVideos.Sites.Utils;
 
 namespace OnlineVideos.Sites
 {
@@ -17,6 +19,8 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class CBSUtil : GenericSiteUtil
     {
+    	[Category("OnlineVideosUserConfiguration"), DefaultValue(false), Description("Whether to download subtitles"), LocalizableDisplayName("Retrieve Subtitles")]
+        protected bool retrieveSubtitles;
         private static Regex videoSectionsRegex = new Regex(@"video\.section_ids\s=\s\[(?<videoSections>[^\\]*?)\]",
                                                            RegexOptions.Compiled);
         private static Regex showIdRegex = new Regex(@"var\sshow\s=\snew\sCBS\.Show\({id:(?<showId>[^}]*)}",
@@ -320,11 +324,23 @@ namespace OnlineVideos.Sites
                         urlsDictionary.Add(bitrate / 1000, new MPUrlSourceFilter.RtmpUrl(url) { PlayPath = playPath }.ToString());
                     }
                 }
+                
+                // closed captions
+                string subtitleText = string.Empty;
+                if (retrieveSubtitles) {
+	                XmlNode ccUrl = xml.SelectSingleNode("//a:body/a:switch/a:ref/a:param[@name='ClosedCaptionURL']", nsmRequest);
+	                if (ccUrl != null) {
+	                	subtitleText = SubtitleReader.TimedText2SRT(GetWebData(ccUrl.Attributes["value"].Value));
+	                }
+                }
     
                 // sort the URLs ascending by bitrate
                 foreach (var item in urlsDictionary.OrderBy(u => u.Key))
                 {
                     video.PlaybackOptions.Add(string.Format("{0} kbps", item.Key), item.Value);
+                    if (!string.IsNullOrEmpty(subtitleText)) {
+                    	video.SubtitleText = subtitleText;
+                    }
                     // return last URL as the default (will be the highest bitrate)
                     result = item.Value;
                 }

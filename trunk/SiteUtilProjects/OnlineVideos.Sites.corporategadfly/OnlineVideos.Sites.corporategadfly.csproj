@@ -74,6 +74,10 @@
       <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
       <Name>OnlineVideos</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OnlineVideos.Sites.brownard\OnlineVideos.Sites.brownard.csproj">
+      <Project>{1DCE9E7A-4B28-4B38-B0F7-909E1F089F4A}</Project>
+      <Name>OnlineVideos.Sites.brownard</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\VersionInfo.cs.tmpl" />
