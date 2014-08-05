@@ -13,17 +13,30 @@ namespace OnlineVideos.Sites
 {
     public class URPlayUtil : LatestVideosSiteUtilBase
     {
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Download Subtitles"), Description("Chose if you want to download available subtitles or not.")]
-        protected bool retrieveSubtitles = true;
+        public enum JaNej { Ja, Nej };
+        public enum Subtitle { Svenska, Förvald_URPlay, Endast_manuellt_val, Ingen_textning };
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Subtitle Language"), Description("Chose the language of the subtitle to download, if no match the first subtitle will be downloaded")]
-        protected string subtitlesLanguage = "Svenska";
+        protected const string _amnesord = "Ämnesord";
+        protected const string _textningssprak = "Textningsspråk";
+        protected const string _ingenTextning = "Ingen textning";
+
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Textning"), Description("Svenska; Förvalt av URPlay; Manuellt val från kontextmenyn (F9 eller info-knapp) för filmen; Ingen textning.")]
+        protected Subtitle subtitleChoice = Subtitle.Svenska;
+        protected bool AutomaticallyRetrieveSubtitles { get { return subtitleChoice == Subtitle.Svenska || subtitleChoice == Subtitle.Förvald_URPlay; } }
+        protected bool ManuallyRetrieveSubtitles { get { return subtitleChoice == Subtitle.Endast_manuellt_val; } }
+
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Föredra alltid HD-kvalité"), Description("Välj om du automatiskt vill se filmerna i HD-kvalité om det finns tillgängligt, annars får du manuellt välja.")]
+        protected JaNej preferHD = JaNej.Nej;
+        protected bool PreferHD { get { return preferHD == JaNej.Ja; } }
+
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Aktivera ämnesordsök"), Description("Välj om du vill kunna göra ämnesordsök från kontextmenyn (F9 eller info-knapp) för varje enskild film/video.")]
+        protected JaNej enableAOSearch = JaNej.Ja;
+        protected bool EnableAOSearch { get { return enableAOSearch == JaNej.Ja; } }
 
         protected string baseUrl = "http://urplay.se/";
         protected string senasteUrl = "Senaste?product_type=programtv";
-        protected string swfUrl = "http://urplay.se/design/ur/javascript/jwplayer-5.10.swf";
 
-        protected string[] ignoreCategories = { "Aktuellt" , "Start", "Tablå" };
+        protected string[] ignoreCategories = { "Aktuellt", "Start", "Tablå" };
         protected string[] noSubCategories = { "Senaste", "Mest spelade", "Mest delade", "Sista chansen" };
 
         protected int currentVideoIndex;
@@ -56,7 +69,6 @@ namespace OnlineVideos.Sites
             Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
             return Settings.Categories.Count;
         }
-
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
@@ -142,7 +154,7 @@ namespace OnlineVideos.Sites
             videoPages = new List<string>();
             List<VideoInfo> videos = new List<VideoInfo>();
             string url = (category as RssLink).Url;
-            string data = GetWebData(baseUrl +  url);
+            string data = GetWebData(baseUrl + url);
             if (data.Length > 0)
             {
                 var htmlDoc = new HtmlAgilityPack.HtmlDocument();
@@ -159,7 +171,7 @@ namespace OnlineVideos.Sites
                         }
                         HasNextPage = videoPages.Count() > 1;
                     }
-                    
+
                 }
                 videos = VideosForCategory(htmlDoc.DocumentNode);
             }
@@ -188,6 +200,7 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> VideosForCategory(HtmlAgilityPack.HtmlNode node)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
+
             var sections = node.Descendants("section").Where(s => s.GetAttributeValue("class", "") == "tv");
             if (sections != null)
             {
@@ -208,98 +221,201 @@ namespace OnlineVideos.Sites
                         if (dd != null && dd.FirstOrDefault() != null)
                             video.Length = dd.FirstOrDefault().InnerText;
                         var h1 = a.Descendants("h1");
-                        videoList.Add(video);
                         var descP = section.Descendants("p").Where(p => p.GetAttributeValue("class", "") == "ellipsis-lastline");
                         if (descP != null && descP.FirstOrDefault() != null)
                             video.Description = descP.FirstOrDefault().InnerText;
+                        if (EnableAOSearch)
+                        {
+                            SerializableDictionary<string, string> other = new SerializableDictionary<string, string>();
+                            var ul = section.SelectSingleNode("div[@class = 'details']/ul[@class = 'keywords']");
+                            if (ul != null)
+                            {
+                                IEnumerable<HtmlNode> keyAs = ul.Descendants("a");
+                                foreach (HtmlNode keyA in keyAs)
+                                {
+                                    other.Add(keyA.GetAttributeValue("data-keyword", ""), keyA.GetAttributeValue("href", ""));
+                                }
+                            }
+                            video.Other = other;
+                        }
+                        videoList.Add(video);
                     }
                 }
             }
             return videoList;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             var data = GetWebData(video.VideoUrl);
-            var url = string.Empty;
+            var urlSD = string.Empty;
+            var urlHD = string.Empty;
             Regex rgx = new Regex(@"^urPlayer.init\((.*)\);", RegexOptions.Multiline);
             Match m = rgx.Match(data);
+            video.PlaybackOptions = new Dictionary<string, string>();
             if (m != null)
             {
                 var json = JObject.Parse(m.Groups[1].Value);
-                /*
-                var format = "http://{0}/{1}/{2}";
-                var file = (string)json["file_html5"];
+                var format = "http://{0}/urplay/_definst_/{1}/{2}";
+                var fileHD = (string)json["file_hd"];
+                var fileSD = (string)json["file_flash"];
                 var domain = (string)json["streaming_config"]["streamer"]["redirect"];
                 var manifest = (string)json["streaming_config"]["http_streaming"]["hds_file"];
-                url = string.Format(format, domain, file, manifest);
-                */
-                var format = "rtmp://{0}/{1}/{2}";
-                var domain = (string)json["streaming_config"]["streamer"]["redirect"];
-                var file = (string)json["file_flash"];
-                var app = (string)json["streaming_config"]["rtmp"]["application"];
-                url = string.Format(format, domain, app, file);
-                url = new MPUrlSourceFilter.RtmpUrl(url)
+                if (!string.IsNullOrEmpty(fileHD))
                 {
-                    SwfVerify = true,
-                    SwfUrl = swfUrl
-                }.ToString();
-                var subtitle = (string)json["subtitles"];
-                var lable = (string)json["subtitle_labels"];
-                if (!string.IsNullOrEmpty(subtitle) && !string.IsNullOrEmpty(subtitle))
+                    urlHD = string.Format(format, domain, fileHD, manifest);
+                    video.PlaybackOptions.Add("HD", urlHD);
+                }
+                if (!string.IsNullOrEmpty(fileSD))
                 {
-                    string[] subtitles = subtitle.Split(',');
-                    string[] lables = lable.Split(',');
-                    Dictionary<string, string> subDictionary = new Dictionary<string, string>();
-                    int noOfSubs = subtitles.Count();
-                    for (int i = 0; i < lables.Count() && i < noOfSubs; i++)
-                    {
-                        subDictionary.Add(lables[i], subtitles[i]);
-                    }
-                    var subUrl = "";
-                    if (subDictionary.TryGetValue(subtitlesLanguage, out subUrl))
-                    {
-                        video.SubtitleText = GetSubtitle(subUrl);
-                    }
-                    else if (subtitles.Count() > 0)
-                    {
-                        video.SubtitleText = GetSubtitle(subtitles[0]);
-                    }
+                    urlSD = string.Format(format, domain, fileSD, manifest);
+                    video.PlaybackOptions.Add("SD", urlSD);
+                }
+
+                if (AutomaticallyRetrieveSubtitles)
+                {
+                    video.SubtitleText = GetSubtitle(json, subtitleChoice == Subtitle.Förvald_URPlay ? (string)json["subtitle_default"] : subtitleChoice.ToString());
                 }
             }
-            return url;
+            if (inPlaylist || PreferHD)
+                video.PlaybackOptions.Clear();
+
+            return new List<string>() { string.IsNullOrEmpty(urlHD) ? urlSD : urlHD };
         }
 
-        string GetSubtitle(string url)
+        private string GetSubtitle(JObject json, string language)
         {
-            XmlDocument xDoc = GetWebData<XmlDocument>(url);
-            string srt = string.Empty;
-            var errorElements = xDoc.SelectNodes("//meta[@name = 'error']");
-            if (errorElements == null || errorElements.Count <= 0)
+            var subtitle = (string)json["subtitles"];
+            var label = (string)json["subtitle_labels"];
+            if (!string.IsNullOrEmpty(subtitle) && !string.IsNullOrEmpty(label))
             {
-                string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n\r\n";
-                string begin;
-                string end;
-                string text;
-                string textPart;
-                int line = 1;
-                foreach (XmlElement p in xDoc.GetElementsByTagName("p"))
+                string[] subtitles = subtitle.Split(',');
+                string[] lables = label.Split(',');
+                Dictionary<string, string> subDictionary = new Dictionary<string, string>();
+                for (int i = 0; i < lables.Count() && i < subtitles.Count(); i++)
                 {
-                    text = string.Empty;
-                    begin = p.GetAttribute("begin");
-                    end = p.GetAttribute("end");
-                    XmlNodeList textNodes = p.SelectNodes(".//text()");
-                    foreach (XmlNode textNode in textNodes)
+                    subDictionary.Add(lables[i], subtitles[i]);
+                }
+                var url = "";
+                if (subDictionary.TryGetValue(language, out url))
+                {
+                    XmlDocument xDoc = GetWebData<XmlDocument>(url);
+                    string srt = string.Empty;
+                    var errorElements = xDoc.SelectNodes("//meta[@name = 'error']");
+                    if (errorElements == null || errorElements.Count <= 0)
                     {
-                        textPart = textNode.InnerText;
-                        textPart.Trim();
-                        text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
+                        string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n\r\n";
+                        string begin;
+                        string end;
+                        string text;
+                        string textPart;
+                        int line = 1;
+                        foreach (XmlElement p in xDoc.GetElementsByTagName("p"))
+                        {
+                            text = string.Empty;
+                            begin = p.GetAttribute("begin");
+                            end = p.GetAttribute("end");
+                            XmlNodeList textNodes = p.SelectNodes(".//text()");
+                            foreach (XmlNode textNode in textNodes)
+                            {
+                                textPart = textNode.InnerText;
+                                textPart.Trim();
+                                text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
+                            }
+                            srt += string.Format(srtFormat, line++, begin, end, text);
+                        }
                     }
-                    srt += string.Format(srtFormat, line++, begin, end, text);
+                    return srt;
                 }
             }
-            return srt;
+            return "";
         }
+
+        #region Context menu
+        public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        {
+            List<ContextMenuEntry> entries = new List<ContextMenuEntry>();
+            if (selectedItem != null && EnableAOSearch && selectedItem.Other is SerializableDictionary<string, string>)
+            {
+                var other = selectedItem.Other as SerializableDictionary<string, string>;
+
+                ContextMenuEntry amnesord = new ContextMenuEntry();
+                amnesord.Action = ContextMenuEntry.UIAction.ShowList;
+                amnesord.DisplayText = _amnesord;
+                foreach (var ao in other)
+                {
+                    ContextMenuEntry entry = new ContextMenuEntry();
+                    entry.DisplayText = ao.Key;
+                    entry.Other = ao.Value;
+                    amnesord.SubEntries.Add(entry);
+                }
+                if (amnesord.SubEntries.Count > 0)
+                    entries.Add(amnesord);
+            }
+            if (selectedItem != null && ManuallyRetrieveSubtitles)
+            {
+                string data = GetWebData(selectedItem.VideoUrl);
+                Regex rgx = new Regex(@"^urPlayer.init\((.*)\);", RegexOptions.Multiline);
+                Match m = rgx.Match(data);
+                if (m != null)
+                {
+                    var json = JObject.Parse(m.Groups[1].Value);
+                    var label = (string)json["subtitle_labels"];
+                    string[] labels = label.Split(',');
+                    if (labels.Count() > 0)
+                    {
+                        ContextMenuEntry textningssprak = new ContextMenuEntry();
+                        textningssprak.Action = ContextMenuEntry.UIAction.ShowList;
+                        textningssprak.DisplayText = _textningssprak;
+                        textningssprak.Other = json.ToString();
+                        ContextMenuEntry entry = new ContextMenuEntry();
+                        entry.DisplayText = string.Format(_ingenTextning);
+                        textningssprak.SubEntries.Add(entry);
+                        for (int i = 0; i < labels.Count(); i++)
+                        {
+                            entry = new ContextMenuEntry();
+                            entry.DisplayText = string.Format(labels[i]);
+                            textningssprak.SubEntries.Add(entry);
+                        }
+                        entries.Add(textningssprak);
+                    }
+                }
+            }
+            return entries;
+        }
+
+        public override ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
+        {
+            if (selectedItem != null && ManuallyRetrieveSubtitles && choice.ParentEntry != null && choice.ParentEntry.DisplayText == _textningssprak && choice.ParentEntry.Other is string)
+            {
+                ContextMenuExecutionResult result = new ContextMenuExecutionResult();
+                if (choice.DisplayText == _ingenTextning)
+                    selectedItem.SubtitleText = "";
+                else
+                    selectedItem.SubtitleText = GetSubtitle(JObject.Parse(choice.ParentEntry.Other as string), choice.DisplayText);
+                result.ExecutionResultMessage = selectedItem.Title + " - " + (string.IsNullOrEmpty(selectedItem.SubtitleText) && choice.DisplayText != _ingenTextning ? "Fel vid hämtning av textning!" : _textningssprak + ": " + choice.DisplayText);
+                result.RefreshCurrentItems = false;
+                return result;
+            }
+            else if (selectedItem != null && EnableAOSearch && choice.ParentEntry != null && choice.ParentEntry.DisplayText == _amnesord && choice.Other is string)
+            {
+                ContextMenuExecutionResult result = new ContextMenuExecutionResult();
+                RssLink cat = new RssLink()
+                {
+                    Name = choice.DisplayText,
+                    Url = choice.Other as string
+                };
+                List<ISearchResultItem> results = new List<ISearchResultItem>();
+                foreach (VideoInfo vi in getVideoList(cat))
+                    results.Add(vi);
+                result.ResultItems = results;
+                return result;
+            }
+            else
+                return base.ExecuteContextMenuEntry(selectedCategory, selectedItem, choice);
+        }
+
+        #endregion
         #region search
         public override bool CanSearch
         {
@@ -329,7 +445,7 @@ namespace OnlineVideos.Sites
         {
             RssLink latest = new RssLink() { Name = "Latest videos", Url = senasteUrl };
             List<VideoInfo> videos = getVideoList(latest);
-            return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount): new List<VideoInfo>();
+            return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
         }
 
         #endregion
