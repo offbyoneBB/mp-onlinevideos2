@@ -64,6 +64,17 @@ bool CHttpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
     if (errorCode == CURLE_OK)
     {
+      errorCode = curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+      if (errorCode != CURLE_OK)
+      {
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting ignoring verifying peer", errorCode);
+        result = false;
+      }
+    }
+
+    if (errorCode == CURLE_OK)
+    {
       if (this->httpDownloadRequest->GetReferer() != NULL)
       {
         char *curlReferer = ConvertToMultiByte(this->httpDownloadRequest->GetReferer());
