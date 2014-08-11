@@ -29,60 +29,20 @@ namespace OnlineVideos.Sites
 
         private List<Category> GenerateSubCategories(Category parentCategory)
         {
-            HtmlDocument doc = GetWebData<HtmlDocument>((parentCategory as RssLink).Url);
-            HtmlNode videosDiv = doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'videos')]");
-            HtmlNodeCollection videoNodes = videosDiv.SelectNodes("div");
+            HtmlDocument doc = GetWebData<HtmlDocument>((parentCategory as RssLink).Url, encoding: Encoding.UTF8);
+            IEnumerable<HtmlNode> videoNodes = doc.DocumentNode.Descendants("div").Where(d => d.GetAttributeValue("class", "").Equals("video-poster"));
             List<Category> subCategories = new List<Category>();
             if (videoNodes != null)
             {
                 foreach (HtmlNode videoDiv in videoNodes)
                 {
                     RssLink category = new RssLink();
-                    category.Name = videoDiv.GetAttributeValue("title", "");
-                    category.Url = videoDiv.GetAttributeValue("data-href", "");
-                    Regex rgx = new Regex(@"<hr\s*/>([^""]*)");
-                    Match m = rgx.Match(videoDiv.GetAttributeValue("data-content", ""));
-                    if (m.Success)
-                    {
-                        category.Description = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(m.Groups[1].Value)).Replace("\r", "").Replace("\n", "").Trim();
-                    }
-                    IEnumerable<HtmlNode> languages = videoDiv.Descendants("img").Where(i => i.GetAttributeValue("title", "") == "Subtitle");
-                    if (languages != null && languages.Count() > 0)
-                    {
-                        string subtitles = "";
-                        foreach (HtmlNode language in languages)
-                        {
-                            switch (language.GetAttributeValue("src", ""))
-                            {
-                                case "images/flags/se.png":
-                                    subtitles += Languages.Svenska + " ";
-                                    break;
-                                case "images/flags/en.png":
-                                    subtitles += Languages.English + " ";
-                                    break;
-                                case "images/flags/no.png":
-                                    subtitles += Languages.Norsk + " ";
-                                    break;
-                                case "images/flags/dk.png":
-                                    subtitles += Languages.Dansk + " ";
-                                    break;
-                                case "images/flags/fi.png":
-                                    subtitles += Languages.Soumi + " ";
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-
-                        category.Description += "\nSubtitle(s): " + subtitles;
-                    }
-
-                    HtmlNode image = videoDiv.SelectSingleNode("img");
-                    if (image != null)
-                        category.Thumb = "http://tfplay.org/" + image.GetAttributeValue("src", "");
-                    category.HasSubCategories = false;
+                    HtmlNode a = videoDiv.SelectSingleNode("a");
+                    HtmlNode img = a.SelectSingleNode("img");
+                    category.Name = img.GetAttributeValue("alt", "");
+                    category.Url = a.GetAttributeValue("href", "");
+                    category.Thumb = @"http://tfplay.org/" + img.GetAttributeValue("data-original", "");
                     category.ParentCategory = parentCategory;
-                    category.Other = VideoKind.TvSeries;
                     subCategories.Add(category);
                 }
             }
@@ -94,7 +54,7 @@ namespace OnlineVideos.Sites
             parentCategory.SubCategories = new List<Category>();
             if (parentCategory.Name == "Genres")
             {
-                HtmlDocument doc = GetWebData<HtmlDocument>((parentCategory as RssLink).Url);
+                HtmlDocument doc = GetWebData<HtmlDocument>((parentCategory as RssLink).Url, encoding: Encoding.UTF8);
                 foreach (HtmlNode genre in doc.DocumentNode.Descendants("a").Where(n => n.GetAttributeValue("href", "").StartsWith("http://tfplay.org/media/genre/")))
                 {
                     parentCategory.SubCategories.Add(new RssLink() { Name = genre.InnerText, Url = genre.GetAttributeValue("href", ""), HasSubCategories = true, ParentCategory = parentCategory });
@@ -103,7 +63,6 @@ namespace OnlineVideos.Sites
             else
             {
                 parentCategory.SubCategories = GenerateSubCategories(parentCategory);
-
             }
 
             parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
@@ -148,7 +107,6 @@ namespace OnlineVideos.Sites
                         videos.Add(new VideoInfo()
                         {
                             Title = category.Name + " (Subtitle: " + track.GetAttributeValue("label", "") + ")",
-                            //SubtitleText = GetWebData(track.GetAttributeValue("src", ""), null, null, null, true, false, null, Encoding.UTF8),
                             SubtitleUrl = track.GetAttributeValue("src", ""),
                             Other = ti,
                             Description = category.Description,
