@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
@@ -62,6 +63,14 @@ namespace OnlineVideos.Sites
         protected override CookieContainer GetCookie()
         {
             return cc;
+        }
+
+        public override string getUrl(VideoInfo video)
+        {
+            string res = base.getUrl(video);
+            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
+                return video.PlaybackOptions.Last().Value;
+            return res;
         }
     }
 }
