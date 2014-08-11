@@ -835,9 +835,11 @@
     <Site name="TFPlay" util="TFPlay" agecheck="false" enabled="true" lang="sv">
       <Description>Tankafetast streaming-sida med filmer och TV-serier</Description>
       <Categories>
+        <Category xsi:type="RssLink" name="Home">http://tfplay.org/</Category>
+        <Category xsi:type="RssLink" name="HD-Movies">http://tfplay.org/media/movies/</Category>
+        <Category xsi:type="RssLink" name="TV-Series">http://tfplay.org/media/tv-series/</Category>
+        <Category xsi:type="RssLink" name="Just for Kids">http://tfplay.org/media/kids/</Category>
         <Category xsi:type="RssLink" name="Genres">http://tfplay.org</Category>
-        <Category xsi:type="RssLink" name="TV-Series">http://tfplay.org/media/tv-series</Category>
-        <Category xsi:type="RssLink" name="Just for Kids">http://tfplay.org/media/kids</Category>
       </Categories>
     </Site>
     <Site name="Sweflix" util="Sweflix" agecheck="false" enabled="true" lang="sv">
