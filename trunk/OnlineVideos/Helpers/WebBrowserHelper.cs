@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Globalization;
+using System.IO;
 
 namespace OnlineVideos.Helpers
 {
@@ -13,6 +14,8 @@ namespace OnlineVideos.Helpers
         /// </summary>
         public static class WebBrowserHelper
         {
+            private const string SILVERLIGHT_SUB_PATH = @"Microsoft\Silverlight\is";
+
             #region Definitions/DLL Imports
             [StructLayout(LayoutKind.Sequential)]
             public struct INTERNET_CACHE_ENTRY_INFO
@@ -212,6 +215,74 @@ namespace OnlineVideos.Helpers
                 }
                 Marshal.FreeHGlobal(cacheEntryInfoBuffer);
             }
+
+            /// <summary>
+            /// Is application storage enabled for Silverlight - please note, returns true if it can't determine the setting
+            /// </summary>
+            /// <returns></returns>
+            public static bool IsSilverlightAppStorageEnabled()
+            {
+                var file = GetSilverlightAppStorageFilePath();
+
+                if (string.IsNullOrEmpty(file)) return true;
+
+                // If the Silverlight file exists, the application storage is disabled
+                return !File.Exists(file);
+            }
+
+            /// <summary>
+            /// Toggle application storage for Silverlight
+            /// </summary>
+            /// <param name="enabled"></param>
+            public static void ToogleSilverlightAppStorage(bool enabled)
+            {
+                var file = GetSilverlightAppStorageFilePath();
+
+                if (string.IsNullOrEmpty(file)) return;
+
+                if (enabled && File.Exists(file)) File.Delete(file);
+                if (!enabled && !File.Exists(file)) File.WriteAllText(file, string.Empty);
+            }
+
+            /// <summary>
+            /// This will return a string which contains the full path to the "disabled.dat" file.
+            /// Basically, Silverlight puts an empty file in C:\Users\{User}\AppData\LocalLow\Microsoft\Silverlight\is\{Random Name}\{Random Name}\1
+            /// The file "disabled.dat" is deleted if application storage is subsequently enabled
+            /// </summary>
+            /// <returns></returns>
+            private static string GetSilverlightAppStorageFilePath()
+            {
+                var root = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).ToString() + "Low";
+                var tmpPath = Path.Combine(root, SILVERLIGHT_SUB_PATH);
+
+                if (Directory.Exists(tmpPath))
+                {
+                    var dirs = Directory.GetDirectories(tmpPath);
+                    if (dirs != null && dirs.Count() > 0)
+                    {
+                        tmpPath = Path.Combine(tmpPath, dirs[0]);
+
+                        dirs = Directory.GetDirectories(tmpPath);
+                        if (dirs != null && dirs.Count() > 0)
+                        {
+                            tmpPath = Path.Combine(tmpPath, dirs[0]);
+
+                            // Look for the "1" sub directory
+                            dirs = Directory.GetDirectories(tmpPath, "1");
+                            if (dirs != null && dirs.Count() > 0)
+                            {
+                                tmpPath = Path.Combine(tmpPath, dirs[0]);
+                                tmpPath = Path.Combine(tmpPath, "disabled.dat");
+                                return tmpPath;
+                            }
+                        }
+                    }
+                }
+
+                return string.Empty;
+
+            }
+
             #endregion
         }
 
