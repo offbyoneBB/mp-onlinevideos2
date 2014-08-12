@@ -78,6 +78,23 @@ namespace OnlineVideos.Sites.Base
         }
 
         /// <summary>
+        /// Fired when the browser host is closing
+        /// </summary>
+        public virtual void OnClosing()
+        { 
+        }
+
+        /// <summary>
+        /// Allow implementations to handle actions which aren't handled by the browserhost
+        /// Unfortunately, because of dependencies, we need to pass in the name of the action enumeration rather than the enum itself
+        /// </summary>
+        /// <param name="action"></param>
+        public virtual void OnAction(string actionEnumName)
+        { 
+        
+        }
+
+        /// <summary>
         /// Constructor - attach to the web browser supplied
         /// </summary>
         /// <param name="browser"></param>

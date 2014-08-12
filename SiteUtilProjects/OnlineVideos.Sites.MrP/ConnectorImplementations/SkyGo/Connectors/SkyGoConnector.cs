@@ -6,6 +6,7 @@ using OnlineVideos.Sites.Entities;
 using OnlineVideos.Sites.Base;
 using System.Windows.Forms;
 using OnlineVideos.Helpers;
+using System.Threading;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connectors
 {
@@ -32,6 +33,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         private int _playPausePos = -1;
         private int _playPauseHeight = -1;
         private bool _isLiveTv = false;
+        private bool _isSilverlightAppStorageEnabled = true;
+        private Thread  _disableAppStorageThread;
 
         /// <summary>
         /// Perform a log in to the sky go site
@@ -41,6 +44,9 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <returns></returns>
         protected override EventResult PerformActualLogin(string username, string password)
         {
+            // Enable silverlight application storage initially
+            _isSilverlightAppStorageEnabled = WebBrowserHelper.IsSilverlightAppStorageEnabled();
+            WebBrowserHelper.ToogleSilverlightAppStorage(true);
             _username = username;
             _password = password;
             _currentState = State.LoggingIn;
@@ -48,6 +54,15 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             ProcessComplete.Success = false;
             Url = Properties.Resources.SkyGo_LoginUrl;
             return EventResult.Complete();
+        }
+
+        /// <summary>
+        /// Ensure app storage is set to its previous state
+        /// </summary>
+        public override void OnClosing()
+        {
+            WebBrowserHelper.ToogleSilverlightAppStorage(_isSilverlightAppStorageEnabled);
+            base.OnClosing();
         }
 
         /// <summary>
@@ -109,6 +124,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                         _loadingPicture.Visible = false;
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
+                        // Wait 5 seconds for the video to start before disabling app storage - we'll do this in a separate thread
+                        if (_disableAppStorageThread == null)
+                        {
+                            _disableAppStorageThread = new Thread(new ParameterizedThreadStart(DisableAppStorage));
+                            _disableAppStorageThread.Start();
+                        }
                     }
                     else
                     {
@@ -126,6 +147,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                             Application.DoEvents();
                             System.Threading.Thread.Sleep(200);
                         }
+                        WebBrowserHelper.ToogleSilverlightAppStorage(false);
                         Cursor.Position = new System.Drawing.Point(50, 50);
                         Application.DoEvents();
                         CursorHelper.DoLeftMouseClick();
@@ -215,7 +237,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             if (_isPlayOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
 
             _isPlayOrPausing = true;
-            if (_playPauseHeight == -1) _playPauseHeight = Browser.FindForm().Bottom - 15;
+            if (_playPauseHeight == -1) _playPauseHeight = Browser.FindForm().Bottom - 25;
             var startX = Browser.FindForm().Left;
 
             // We've previously found the play/pause button, so re-use its position
@@ -239,8 +261,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             {
                 _playPausePos = FindPlayPauseButton(_playPauseHeight);
                 var attempts = 0;
-                // Move up the screen in 10 pixel increments trying to find play - only go up 3 times
-                while (attempts <= 2)
+                // Move up the screen in 10 pixel increments trying to find play - only go up 5 times
+                while (attempts <= 4)
                 {
                     if (_playPausePos == -1 && _isPlayOrPausing)
                     {
@@ -269,7 +291,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
 
             // Very primitive, but set the cursor at the correct height and move across till we hit the right colour!
             // We have to move the cursor otherwise the play controls disappear
-            var currentPos = startX + 10;
+            var currentPos = startX + 15;
             while (currentPos < (startX + (Browser.Document.Body.ClientRectangle.Width / 8)))
             {
                 Cursor.Position = new System.Drawing.Point(currentPos + 2, height);
@@ -283,5 +305,14 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             return -1;
         }
 
+        /// <summary>
+        /// We'll disable the app storage a few seconds after starting the video (we'll do this on a separate thread so the browser continues)
+        /// </summary>
+        /// <param name="data"></param>
+        private void DisableAppStorage(object data)
+        {
+            Thread.Sleep(5000);
+            WebBrowserHelper.ToogleSilverlightAppStorage(false);
+        }
     }
 }

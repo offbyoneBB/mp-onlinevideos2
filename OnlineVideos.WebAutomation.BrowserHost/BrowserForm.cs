@@ -241,7 +241,12 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 case Action.ActionType.ACTION_PREVIOUS_MENU:
                     ForceQuit();
                     break;
+                default:
+                    // fire the action on the connector also
+                    _connector.OnAction(action.wID.ToString());
+                    break;
             }
+
         }
 
         /// <summary>
@@ -249,6 +254,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// </summary>
         private void ForceQuit()
         {
+            _connector.OnClosing();
             BeginInvoke((MethodInvoker)delegate
             {
                 this.Close();
