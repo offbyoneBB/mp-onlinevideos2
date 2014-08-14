@@ -43,14 +43,17 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
 
             if (parentCategory == null)
             {
-                result.Add(new Category { HasSubCategories = true, Name = "Movies", SubCategoriesDiscovered = false, Other="M" });
-                result.Add(new Category { HasSubCategories = true, Name = "Tv", SubCategoriesDiscovered = false, Other = "T" });
+                result.Add(new Category { HasSubCategories = true, Name = "Movies", SubCategoriesDiscovered = false, Other="M", Thumb = Properties.Resources.AmazonMovieIcon });
+                result.Add(new Category { HasSubCategories = true, Name = "Tv", SubCategoriesDiscovered = false, Other = "T", Thumb = Properties.Resources.AmazonTvIcon });
             }
             else
             {
                  // Grab next page categories here (we'll deal with videos as the category)
                 if (parentCategory is NextPageCategory)
+                {
                     result = (parentCategory as NextPageCategory).Url.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory.ParentCategory);
+                    parentCategory.ParentCategory.SubCategories.AddRange(result);
+                }
                 else
                 {
                     if (parentCategory.Other.ToString() == "M")
@@ -58,13 +61,14 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                     else
                     {
                         if (parentCategory.Other.ToString().StartsWith("V~"))
-                            result = (Properties.Resources.AmazonRootUrl + parentCategory.Other.ToString().Replace("V~", string.Empty)).LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory);
+                            result = ((parentCategory.Other.ToString().ToLower().Contains(Properties.Resources.AmazonRootUrl.ToLower()) ? string.Empty : Properties.Resources.AmazonRootUrl) + (parentCategory.Other.ToString()).Replace("V~", string.Empty)).LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory);
                         else
 
                             result = Properties.Resources.AmazonTVCategoriesUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory);
                     }
+                    parentCategory.SubCategories.AddRange(result);
                 }
-                parentCategory.SubCategories.AddRange(result);
+              
             }
             return result;
         }

@@ -83,6 +83,7 @@ namespace OnlineVideos.Sites.WebAutomation.Extensions
         /// <returns></returns>
         public static HtmlNode FindFirstChildElement(this HtmlNode node)
         {
+            if (node == null) return null;
             foreach (HtmlNode childNode in node.ChildNodes)
             {
                 if (childNode.NodeType == HtmlNodeType.Element)
@@ -94,7 +95,7 @@ namespace OnlineVideos.Sites.WebAutomation.Extensions
         }
 
         /// <summary>
-        /// Find the first child which is a html element (not text)
+        /// Find the first child which is a html element (not text or script blocks)
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
@@ -103,7 +104,7 @@ namespace OnlineVideos.Sites.WebAutomation.Extensions
             var result = new List<HtmlNode>();
             foreach (HtmlNode childNode in node.ChildNodes)
             {
-                if (childNode.NodeType == HtmlNodeType.Element)
+                if (childNode.NodeType == HtmlNodeType.Element && childNode.Name != "script")
                     result.Add(childNode);
             }
             return result;
