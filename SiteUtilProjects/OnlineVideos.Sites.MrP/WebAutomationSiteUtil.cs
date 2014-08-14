@@ -143,16 +143,15 @@ namespace OnlineVideos.Sites.WebAutomation
         public override int DiscoverNextPageCategories(NextPageCategory nextPagecategory)
         {
             string nextPage = string.Empty;
-            var results = new List<Category>();
 
             nextPagecategory.ParentCategory.SubCategories.Remove(nextPagecategory);
 
-            BuildCategories(nextPagecategory.ParentCategory, results);
-
-            if (results != null)
+            BuildCategories(nextPagecategory, null);
+            
+           /* if (results != null)
                 nextPagecategory.ParentCategory.SubCategories.AddRange(results);
-
-            return results.Count;
+            */
+            return nextPagecategory.ParentCategory.SubCategories.Count;
         }
 
         /// <summary>

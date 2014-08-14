@@ -133,11 +133,20 @@ namespace OnlineVideos.Sites.WebAutomation.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://www.amazon.co.uk/gp/search/other/ref=sr_sa_p_n_theme_browse-bin?rh=n%3A3280626031%2Cn%3A%213010086031%2Cn%3A3046737031&amp;bbn=3280626031&amp;sort=popularity-rank&amp;pickerToList=theme_browse-bin&amp;ie=UTF8&amp;qid={RANDOMNUMBER}.
+        ///   Looks up a localized string similar to http://www.amazon.co.uk/Prime-Movie-Genres/b/ref=atv_sn_piv_cl1_mv_gn?_encoding=UTF8&amp;node=3788183031.
         /// </summary>
         public static string AmazonMovieCategoriesUrl {
             get {
                 return ResourceManager.GetString("AmazonMovieCategoriesUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://ecx.images-amazon.com/images/I/51b8AY8hQBL._SX200_.jpg.
+        /// </summary>
+        public static string AmazonMovieIcon {
+            get {
+                return ResourceManager.GetString("AmazonMovieIcon", resourceCulture);
             }
         }
         
@@ -160,11 +169,20 @@ namespace OnlineVideos.Sites.WebAutomation.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://www.amazon.co.uk/gp/search/other/ref=sr_sa_p_n_theme_browse-bin?rh=n%3A3280626031%2Cn%3A%213010086031%2Cn%3A3046738031&amp;bbn=3280626031&amp;sort=popularity-rank&amp;pickerToList=theme_browse-bin&amp;ie=UTF8&amp;qid={RANDOMNUMBER}.
+        ///   Looks up a localized string similar to http://www.amazon.co.uk/Prime-TV-Genres/b/ref=atv_sn_piv_cl2_tv_gn?_encoding=UTF8&amp;node=3788187031.
         /// </summary>
         public static string AmazonTVCategoriesUrl {
             get {
                 return ResourceManager.GetString("AmazonTVCategoriesUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://ecx.images-amazon.com/images/I/51qB6Z-XI3L._SX200_.jpg.
+        /// </summary>
+        public static string AmazonTvIcon {
+            get {
+                return ResourceManager.GetString("AmazonTvIcon", resourceCulture);
             }
         }
         
