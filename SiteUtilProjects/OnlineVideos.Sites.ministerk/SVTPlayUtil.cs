@@ -50,8 +50,12 @@ namespace OnlineVideos.Sites
             HtmlNode a = article.Descendants("a").First();
             Uri uri = new Uri(new Uri(baseUrl), a.GetAttributeValue("href", ""));
             cat.Url = uri.ToString();
-            uri = new Uri(new Uri(baseUrl), a.Descendants("img").First().GetAttributeValue("src", ""));
-            cat.Thumb = uri.ToString();
+            IEnumerable<HtmlNode> imgs = a.Descendants("img");
+            if (imgs != null && imgs.Count() > 0)
+            {
+                uri = new Uri(new Uri(baseUrl), a.Descendants("img").First().GetAttributeValue("src", ""));
+                cat.Thumb = uri.ToString();
+            }
             HtmlNode h2 = a.SelectSingleNode("span/h2");
             if (h2 != null)
                 cat.Name = HttpUtility.HtmlDecode(h2.InnerText);
@@ -68,7 +72,7 @@ namespace OnlineVideos.Sites
         private List<Category> DiscoverProgramAOCategories(HtmlNode htmlNode, Category parentCategory)
         {
             List<Category> categories = new List<Category>();
-            IEnumerable<HtmlNode> alphabetList = htmlNode.Descendants("li").Where(d => d.GetAttributeValue("class", "").StartsWith("play_alphabetic-letter"));
+            IEnumerable<HtmlNode> alphabetList = htmlNode.Descendants("li").Where(d => d.GetAttributeValue("class", "").StartsWith("play_alphabetic-list"));
             foreach (HtmlNode alphaLi in alphabetList)
             {
                 Category alphaCat = new Category() { Name = HttpUtility.HtmlDecode(alphaLi.SelectSingleNode("h3").InnerText), SubCategories = new List<Category>(), HasSubCategories = true, ParentCategory = parentCategory };
@@ -189,7 +193,7 @@ namespace OnlineVideos.Sites
                     RssLink category = new RssLink() { Name = HttpUtility.HtmlDecode(categoryNode.SelectSingleNode("a").InnerText.Trim()), ParentCategory = parentCategory };
                     if (category.Name == _programA_O)
                     {
-                        IEnumerable<HtmlNode> alphaList = div.Descendants("li").Where(d => d.GetAttributeValue("class", "") == "play_alphabetic-letter");
+                        IEnumerable<HtmlNode> alphaList = div.Descendants("li").Where(d => d.GetAttributeValue("class", "") == "play_alphabetic-list__section-title");
                         bool split = SplitByLetter && alphaList != null && alphaList.Count() > 0;
                         category.HasSubCategories = true;
                         category.SubCategories = new List<Category>();
