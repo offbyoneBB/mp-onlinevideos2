@@ -844,7 +844,7 @@
     </Site>
     <Site name="Sweflix" util="Sweflix" agecheck="false" enabled="true" lang="sv">
       <Configuration>
-        <item key="baseUrl"><![CDATA[https://sweflix.com/]]></item>
+        <item key="baseUrl"><![CDATA[https://sweflix.net/]]></item>
         <item key="filmFooterApiUrl"><![CDATA[film_api.php?target=footer&fid=]]></item>
         <item key="filmBodyApiUrl"><![CDATA[film_api.php?target=body&fid=]]></item>
         <item key="latestUrl"><![CDATA[index.php?genre=&act=genre]]></item>
