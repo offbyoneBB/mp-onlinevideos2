@@ -111,13 +111,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Live Video.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{60e8b630-ad9d-4c06-aea2-aa79401a3270}-Live Video.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Live Video.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Mdr.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{63d6dc32-e40b-4ee6-a9a5-7ee8a04b2b85}-Mdr.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Mdr.png</DestinationFilename>
@@ -216,13 +209,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Pro7.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{507a2c10-e135-4fdc-af71-58625ae6d944}-Pro7.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Pro7.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\RedTube.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c28ecc3e-52bf-45f6-9168-007cc0c3d35d}-RedTube.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RedTube.png</DestinationFilename>
@@ -233,13 +219,6 @@
               <LocalFileName>..\SiteImages\Icons\Revision3.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{be7c1e5d-4ddc-49d3-827c-3aa7ee6425fc}-Revision3.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Revision3.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\RTL Now.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{6766ad31-6e65-4f05-8adf-af4756e5ae95}-RTL Now.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTL Now.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -324,13 +303,6 @@
               <LocalFileName>..\SiteImages\Icons\Vodcasts.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{55c86f71-312c-4fe4-9f57-d93736304d15}-Vodcasts.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Vodcasts.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Vox Now.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{b6034e41-c9bd-42f7-bfe9-dad1aa387d87}-Vox Now.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Vox Now.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -475,13 +447,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Live Video.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{e9f93cc2-4ce1-4cb9-bc3c-39d1db148afd}-Live Video.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Live Video.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\Mdr.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{870ee6b9-fa30-4e0d-b54e-1fcc246ebee0}-Mdr.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Mdr.png</DestinationFilename>
@@ -587,13 +552,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Pro7.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{f91dbe41-7f26-439d-b34c-7dd8c172d65c}-Pro7.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Pro7.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\RedTube.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{7c5994f3-40a7-4678-ab22-960ccd8ad1ac}-RedTube.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RedTube.png</DestinationFilename>
@@ -604,13 +562,6 @@
               <LocalFileName>..\SiteImages\Banners\Revision3.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4ca68d15-a42d-4e39-bbd0-8a2f3c266467}-Revision3.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Revision3.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\RTL Now.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{73b29b1f-24f1-4dc5-91b8-d9b547a1885c}-RTL Now.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL Now.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -695,13 +646,6 @@
               <LocalFileName>..\SiteImages\Banners\Vodcasts.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{569c25e2-304c-4251-89bb-6f8640a4e4a3}-Vodcasts.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Vodcasts.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Vox Now.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{689e42b6-e1ba-4c9a-8989-41b6e83b6e2e}-Vox Now.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Vox Now.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1031,20 +975,6 @@
               <LocalFileName>..\SiteImages\Icons\OnlineVideos.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c564ec32-9cf7-45a5-b616-20cbd81bc6c3}-OnlineVideos.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\OnlineVideos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\SuperRTL Now.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{762c940f-ef66-46fa-a798-6e6d14ebff3f}-SuperRTL Now.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SuperRTL Now.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\SuperRTL Now.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{36ac3ce1-4138-47a9-8e18-8dcd6ee2a3e3}-SuperRTL Now.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SuperRTL Now.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1539,13 +1469,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\global tv.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{b8b16c23-55e7-4db6-ba7e-1954b74ac8b9}-global tv.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\global tv.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\history television.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4af491bb-02a7-4b65-b6e0-228bf6fc1755}-history television.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\history television.png</DestinationFilename>
@@ -1798,13 +1721,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\RTL Nitro.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{69526683-6cbd-47a4-b07e-afe706d8ace4}-RTL Nitro.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTL Nitro.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Slovenská Televízia.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{6ddf3588-dfdf-4182-832c-fa7f644c8737}-Slovensk_ Telev_zia.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Slovenská Televízia.png</DestinationFilename>
@@ -1906,13 +1822,6 @@
               <LocalFileName>..\SiteImages\Banners\Prima.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{d85d657c-7fe0-4cfb-946f-11a6102d3b54}-Prima.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Prima.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\RTL Nitro.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{1a27e270-b2a5-4c21-a5c6-4dd4228c0042}-RTL Nitro.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL Nitro.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -2466,6 +2375,132 @@
               <LocalFileName>..\SiteImages\Icons\Viaplay.se.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c87ca876-2be9-4ca1-aa07-5fa64ce56b4b}-Viaplay.se.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viaplay.se.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Amazon Prime UK.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{77123acd-a979-4d78-b65b-d134bb2bf664}-Amazon Prime UK.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Amazon Prime UK.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\gamekings.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5231fb09-8883-4895-918c-e7d4feb57848}-gamekings.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\gamekings.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\HBO Nordic - Dansk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ae4cb1df-eb27-4ff1-9e9c-86afbf930818}-HBO Nordic - Dansk.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\HBO Nordic - Dansk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\HBO Nordic - Norsk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ed61a384-293c-4ed2-b13f-7bc75bf68ba5}-HBO Nordic - Norsk.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\HBO Nordic - Norsk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\HBO Nordic - Suomi.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{20c1298f-b3f0-4079-b229-d49aa77ed7ff}-HBO Nordic - Suomi.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\HBO Nordic - Suomi.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\HBO Nordic - Svenska.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{7fead0ea-6317-45b8-8fc7-1ce3cb099ee2}-HBO Nordic - Svenska.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\HBO Nordic - Svenska.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Kanal11Play.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{eca1bfe0-b147-4b77-854d-c78095f052b0}-Kanal11Play.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Kanal11Play.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Sweflix.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{52278307-6ea7-40ba-b694-88bbd59b70f0}-Sweflix.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Sweflix.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\TFPlay.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0d9a550c-dd61-4a74-ae3c-b8283b3a81d8}-TFPlay.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TFPlay.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Amazon Prime UK.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{1769b239-3843-4cdc-9549-89ef1ee78883}-Amazon Prime UK.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Amazon Prime UK.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\gamekings.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{45aab5b1-af40-499b-9b91-5131e98e49c0}-gamekings.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\gamekings.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\HBO Nordic - Dansk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5bafd4c8-2c9d-474d-b7b2-f9ab344d4120}-HBO Nordic - Dansk.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\HBO Nordic - Dansk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\HBO Nordic - Norsk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3de6bd77-60ae-48c3-b765-686f746c68e2}-HBO Nordic - Norsk.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\HBO Nordic - Norsk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\HBO Nordic - Suomi.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3609adb7-6805-49dc-8bea-019aa6affd95}-HBO Nordic - Suomi.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\HBO Nordic - Suomi.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\HBO Nordic - Svenska.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0b90d73d-438b-46ff-a414-f9c0bf354c8a}-HBO Nordic - Svenska.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\HBO Nordic - Svenska.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Kanal11Play.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{8f7e9fbe-17fc-40a5-ac61-9d9c716c84d7}-Kanal11Play.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Kanal11Play.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Sweflix.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c52052ac-fd0a-403f-8bc1-b7e2a40aa49d}-Sweflix.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Sweflix.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TFPlay.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{019d13a5-caf9-48de-b76a-bcea3e70538e}-TFPlay.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TFPlay.png</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -3609,15 +3644,16 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>1</Major>
-      <Minor>8</Minor>
-      <Build>1</Build>
+      <Minor>9</Minor>
+      <Build>0</Build>
       <Revision>0</Revision>
     </Version>
-    <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>compatible with MediaPortal 1.7</VersionDescription>
+    <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
+    <VersionDescription>fixed SearchHistory not restored correctly on next MP start (Encoding was wrong)
+improve handling of actions for Browser Host based Site Utils and provide a way of automatically enabling/disabling Silverlight Application storage</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=64</OnlineLocation>
-    <ReleaseDate>2014-04-17T15:00:00</ReleaseDate>
+    <ReleaseDate>2014-08-17T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
@@ -3755,13 +3791,6 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Live Video.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{60e8b630-ad9d-4c06-aea2-aa79401a3270}-Live Video.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Live Video.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\Mdr.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{63d6dc32-e40b-4ee6-a9a5-7ee8a04b2b85}-Mdr.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Mdr.png</DestinationFilename>
@@ -3860,13 +3889,6 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Pro7.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{507a2c10-e135-4fdc-af71-58625ae6d944}-Pro7.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Pro7.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\RedTube.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c28ecc3e-52bf-45f6-9168-007cc0c3d35d}-RedTube.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RedTube.png</DestinationFilename>
@@ -3877,13 +3899,6 @@ public class Script
         <LocalFileName>..\SiteImages\Icons\Revision3.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{be7c1e5d-4ddc-49d3-827c-3aa7ee6425fc}-Revision3.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Revision3.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\RTL Now.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{6766ad31-6e65-4f05-8adf-af4756e5ae95}-RTL Now.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTL Now.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3968,13 +3983,6 @@ public class Script
         <LocalFileName>..\SiteImages\Icons\Vodcasts.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{55c86f71-312c-4fe4-9f57-d93736304d15}-Vodcasts.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Vodcasts.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Vox Now.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{b6034e41-c9bd-42f7-bfe9-dad1aa387d87}-Vox Now.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Vox Now.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4119,13 +4127,6 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Live Video.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e9f93cc2-4ce1-4cb9-bc3c-39d1db148afd}-Live Video.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Live Video.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\Mdr.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{870ee6b9-fa30-4e0d-b54e-1fcc246ebee0}-Mdr.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Mdr.png</DestinationFilename>
@@ -4231,13 +4232,6 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Pro7.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f91dbe41-7f26-439d-b34c-7dd8c172d65c}-Pro7.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Pro7.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\RedTube.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{7c5994f3-40a7-4678-ab22-960ccd8ad1ac}-RedTube.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RedTube.png</DestinationFilename>
@@ -4248,13 +4242,6 @@ public class Script
         <LocalFileName>..\SiteImages\Banners\Revision3.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{4ca68d15-a42d-4e39-bbd0-8a2f3c266467}-Revision3.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Revision3.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\RTL Now.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{73b29b1f-24f1-4dc5-91b8-d9b547a1885c}-RTL Now.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL Now.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4339,13 +4326,6 @@ public class Script
         <LocalFileName>..\SiteImages\Banners\Vodcasts.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{569c25e2-304c-4251-89bb-6f8640a4e4a3}-Vodcasts.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Vodcasts.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Vox Now.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{689e42b6-e1ba-4c9a-8989-41b6e83b6e2e}-Vox Now.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Vox Now.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4675,20 +4655,6 @@ public class Script
         <LocalFileName>..\SiteImages\Icons\OnlineVideos.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c564ec32-9cf7-45a5-b616-20cbd81bc6c3}-OnlineVideos.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\OnlineVideos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\SuperRTL Now.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{762c940f-ef66-46fa-a798-6e6d14ebff3f}-SuperRTL Now.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SuperRTL Now.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\SuperRTL Now.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{36ac3ce1-4138-47a9-8e18-8dcd6ee2a3e3}-SuperRTL Now.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SuperRTL Now.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5183,13 +5149,6 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\global tv.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{b8b16c23-55e7-4db6-ba7e-1954b74ac8b9}-global tv.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\global tv.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\history television.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{4af491bb-02a7-4b65-b6e0-228bf6fc1755}-history television.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\history television.png</DestinationFilename>
@@ -5442,13 +5401,6 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\RTL Nitro.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{69526683-6cbd-47a4-b07e-afe706d8ace4}-RTL Nitro.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTL Nitro.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\Slovenská Televízia.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{6ddf3588-dfdf-4182-832c-fa7f644c8737}-Slovensk_ Telev_zia.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Slovenská Televízia.png</DestinationFilename>
@@ -5550,13 +5502,6 @@ public class Script
         <LocalFileName>..\SiteImages\Banners\Prima.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{d85d657c-7fe0-4cfb-946f-11a6102d3b54}-Prima.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Prima.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\RTL Nitro.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{1a27e270-b2a5-4c21-a5c6-4dd4228c0042}-RTL Nitro.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL Nitro.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -6110,6 +6055,132 @@ public class Script
         <LocalFileName>..\SiteImages\Icons\Viaplay.se.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c87ca876-2be9-4ca1-aa07-5fa64ce56b4b}-Viaplay.se.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viaplay.se.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Amazon Prime UK.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{77123acd-a979-4d78-b65b-d134bb2bf664}-Amazon Prime UK.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Amazon Prime UK.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\gamekings.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5231fb09-8883-4895-918c-e7d4feb57848}-gamekings.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\gamekings.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\HBO Nordic - Dansk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ae4cb1df-eb27-4ff1-9e9c-86afbf930818}-HBO Nordic - Dansk.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\HBO Nordic - Dansk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\HBO Nordic - Norsk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ed61a384-293c-4ed2-b13f-7bc75bf68ba5}-HBO Nordic - Norsk.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\HBO Nordic - Norsk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\HBO Nordic - Suomi.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{20c1298f-b3f0-4079-b229-d49aa77ed7ff}-HBO Nordic - Suomi.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\HBO Nordic - Suomi.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\HBO Nordic - Svenska.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7fead0ea-6317-45b8-8fc7-1ce3cb099ee2}-HBO Nordic - Svenska.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\HBO Nordic - Svenska.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Kanal11Play.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{eca1bfe0-b147-4b77-854d-c78095f052b0}-Kanal11Play.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Kanal11Play.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Sweflix.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{52278307-6ea7-40ba-b694-88bbd59b70f0}-Sweflix.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Sweflix.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\TFPlay.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0d9a550c-dd61-4a74-ae3c-b8283b3a81d8}-TFPlay.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TFPlay.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Amazon Prime UK.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{1769b239-3843-4cdc-9549-89ef1ee78883}-Amazon Prime UK.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Amazon Prime UK.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\gamekings.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{45aab5b1-af40-499b-9b91-5131e98e49c0}-gamekings.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\gamekings.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\HBO Nordic - Dansk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5bafd4c8-2c9d-474d-b7b2-f9ab344d4120}-HBO Nordic - Dansk.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\HBO Nordic - Dansk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\HBO Nordic - Norsk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3de6bd77-60ae-48c3-b765-686f746c68e2}-HBO Nordic - Norsk.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\HBO Nordic - Norsk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\HBO Nordic - Suomi.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3609adb7-6805-49dc-8bea-019aa6affd95}-HBO Nordic - Suomi.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\HBO Nordic - Suomi.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\HBO Nordic - Svenska.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0b90d73d-438b-46ff-a414-f9c0bf354c8a}-HBO Nordic - Svenska.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\HBO Nordic - Svenska.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Kanal11Play.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{8f7e9fbe-17fc-40a5-ac61-9d9c716c84d7}-Kanal11Play.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Kanal11Play.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Sweflix.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c52052ac-fd0a-403f-8bc1-b7e2a40aa49d}-Sweflix.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Sweflix.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TFPlay.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{019d13a5-caf9-48de-b76a-bcea3e70538e}-TFPlay.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TFPlay.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
