@@ -14,6 +14,8 @@
     <PluginFiles Include="$(TargetDir)$(ProjectName).*" />
     <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
     <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+	<SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.dll" />
+	<SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +30,7 @@
   <Target Name="AfterBuild">
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(APIFiles)" DestinationFolder="$(PluginDestination)OnlineVideos\" />
+	<Copy SourceFiles="@(SiteUtilDllFiles)" DestinationFolder="$(PluginDestination)OnlineVideos\" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(DataDestination)language\OnlineVideos\" />
     <Copy SourceFiles="@(SkinFiles)"
           DestinationFiles="@(SkinFiles->'$(DataDestination)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />

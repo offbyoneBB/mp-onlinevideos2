@@ -15,14 +15,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
+    <OutputPath>..\..\Build\SiteUtilDlls\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
+    <OutputPath>..\..\Build\SiteUtilDlls\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
@@ -63,6 +63,7 @@
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
       <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
       <Name>OnlineVideos</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

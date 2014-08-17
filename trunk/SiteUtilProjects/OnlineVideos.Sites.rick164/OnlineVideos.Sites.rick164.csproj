@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
+    <OutputPath>..\..\Build\SiteUtilDlls\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,16 +25,12 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
+    <OutputPath>..\..\Build\SiteUtilDlls\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OnlineVideos, Version=1.7.0.3014, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -46,6 +42,13 @@
   <ItemGroup>
     <Compile Include="GameTrailersUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
+      <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
+      <Name>OnlineVideos</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
