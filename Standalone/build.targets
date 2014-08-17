@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <Target Name="BeforeBuild">
+    <Exec Command='subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"'/>
+  </Target>
+
+  <PropertyGroup>
+    <DataDestination>$(ProgramData)\OnlineVideos\</DataDestination>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.dll" />
+	<SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+  </ItemGroup>
+
+  <Target Name="AfterBuild">
+	<Copy SourceFiles="@(SiteUtilDllFiles)" DestinationFolder="$(DataDestination)SiteUtilDlls\" />
+  </Target>
+</Project>
