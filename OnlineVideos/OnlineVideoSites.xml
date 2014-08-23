@@ -1006,6 +1006,20 @@
         <item key="baseUrl"><![CDATA[http://www.gamekings.tv/videos]]></item>
       </Configuration>
     </Site>
+    <Site name="Gamersnet.nl" util="GamersNet" agecheck="false" enabled="true" lang="nl">
+      <Description>Bekijk hier alle nieuwste gametrailers en andere game video's. Bekijk onze nieuwste gametrailers in HD kwaliteit voor de ultieme beleving. </Description>
+      <Configuration>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!<div\sclass="bottom">.*)(?<=<div\salign="center">.*)<a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
+    <item key="videoListRegEx"><![CDATA[(?#a..z)(<tr>\s*<td\svalign="top">\s*<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>\s*</td>\s*<td\salign="right"\svalign="top">(?<Description>[^<]*)</td>\s*</tr>)
+|(?#frontpage)(<br>\s*&bull;\s<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>(?<Description>[^<]*))]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<meta\sitemprop="contentURL"\scontent="(?<m0>[^"]*)"\s/>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.gamersnet.nl/movies]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Recent">http://www.gamersnet.nl/movies</Category>
+        <Category xsi:type="RssLink" name="A..Z">http://www.gamersnet.nl/movies</Category>
+      </Categories>
+    </Site>
     <Site name="iLive.to" util="iLiveTo" agecheck="false" enabled="true" lang="en" lastUpdated="2014-03-06T14:06:23.440555+01:00">
       <Description>Watch Live TV Online, Watch Live Sports, Watch Movies Online</Description>
       <Configuration>
