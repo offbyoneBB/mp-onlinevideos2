@@ -33,7 +33,8 @@ namespace OnlineVideos.Sites
                 RssLink cat = new RssLink()
                 {
                     Name = days[i].Substring(0, p),
-                    Other = days[i]
+                    Other = days[i],
+                    ParentCategory = parentCat
                 };
                 parentCat.SubCategories.Add(cat);
             }
