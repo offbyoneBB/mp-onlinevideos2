@@ -80,7 +80,7 @@ namespace OnlineVideos.Sites
         #region Regex
         //Shows
         static readonly Regex showsRegex = new Regex(@"<img src='(.*?)'>[\s\n]*</a>[\s\n]*<div.*?>[\s\n]*<a href=""(.*?)"">(.*?)</a>[\s\n]*.*?[\s\n]*<div.*>[\s\n]*<span.*?>(\d+)");
-        static readonly Regex showsVideoRegex = new Regex(@"<a href=""(.*?)""><img.*?src=""(.*?)"".*?title=""(.*?)"".*[\s\n]*<a.*?>[\s\n]*<div.*?>[\s\n]*.*?<span.*?>(.*?)</span>.*?<span.*?>Catch up</span><br />[\s\n]*<div.*?>Series (<div.*?>){3}(.*?)</div>.*[\s\n]*<div.*?>Episode (<div.*?>){3}(.*?)</div>.*[\s\n]*</div>[\s\n]*(<div.*?>){3}(.*?)</div>.*?(<div.*?>){3}(.*?)</div>");
+        static readonly Regex showsVideoRegex = new Regex(@"<a href=""(.*?)""><img.*?src=""(.*?)"".*?title=""(.*?)"".*[\s\n]*<a.*?>[\s\n]*<div.*?>[\s\n]*.*?<span.*?>(.*?)</span>.*?<br />[\s\n]*<div.*?>Series (<div.*?>){3}(.*?)</div>.*[\s\n]*<div.*?>Episode (<div.*?>){3}(.*?)</div>.*[\s\n]*</div>[\s\n]*(<div.*?>){3}(.*?)</div>.*?(<div.*?>){3}(.*?)</div>");
         static readonly Regex singleShowsVideoRegex = new Regex(@"<h1 class=""title episode-title"".*?>[\s\n]*(.*?)<span.*?>Catch up</span>.*[\s\n]*(<div.*?>){3}<span.*?>(.*?)</span>.*?<div.*?>.*?</div>(<div.*?>){2}(.*?)</div>(.|\n)*?name=""poster"" value=""(.*?)""(.|\n)*?<div class=""description"">[\s\n]*(.*?)</div>");
         //AtoZ
         static readonly Regex atozVideoRegex = new Regex(@"<div class=""listItem.*?<a href=""http://.*?&amp;Filter=(\d+).*?<img.*? src=""([^""]*)"".*?<a.*?>([^<]*).*?<p class=""date"">([^<]*).*?<p class=""progDesc"">([^<]*).*?<li>\s*Duration:([^<]*)", RegexOptions.Singleline);

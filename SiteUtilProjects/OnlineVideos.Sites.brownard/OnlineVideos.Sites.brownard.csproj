@@ -36,10 +36,6 @@
       <Name>OnlineVideos</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\OnlineVideos.Sites.georgius\OnlineVideos.Sites.georgius.csproj">
-      <Project>{FF136E46-938B-456F-8A54-F5E0B13BA2DC}</Project>
-      <Name>OnlineVideos.Sites.georgius</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
