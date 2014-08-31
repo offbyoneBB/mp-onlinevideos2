@@ -314,89 +314,48 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
             if (root != null)
             {
-                HtmlNodeCollection nodes = root.SelectNodes("//div[@class='results-item']");
+				var nodes = root.SelectNodes("//div[contains(@class, 'results-item')]");
 
-                string movieTitle = root.SelectSingleNode("//h1/a").InnerText;
+                string movieTitle = root.SelectSingleNode("//h3/a").InnerText;
 
                 if (nodes != null)
                 {
                     foreach (HtmlNode node in nodes)
                     {
-                        HtmlNode v = node.FirstChild.SelectSingleNode("a/img");
+						HtmlNode imgNode = node.SelectSingleNode("a/img");
 
-                        if (v == null)
-                        {
+                        if (imgNode == null)
                             continue;
-                        }
 
-						var attr = v.Attributes["loadlate"];
-                        Match m = Match.Empty;
-
-                        if (attr != null) 
-                        {
-                            // the src is url encode twice so we decode it twice before parsing
-                            string src = HttpUtility.UrlDecode(HttpUtility.UrlDecode(attr.Value));
-                            m = videoTitleExpression.Match(src);
-                        }
-
-                        if (!m.Success)
-                        {
-                            continue;
-                        }
-
-                        VideoReference video = new VideoReference();
-                        video.session = session;
-
-                        string desc = HttpUtility.UrlDecode(v.Attributes["title"].Value);
-                        int i = desc.IndexOf(" -- ");
-                        if (i >= 0)
-                        {
-                            desc = desc.Substring(i + 4);
-                        }
-
-                        string vconst = v.Attributes["viconst"].Value;
-                        string title = node.FirstChild.SelectSingleNode("h2/a").InnerText;
-						
-						string href = node.FirstChild.SelectSingleNode("h2/a").GetAttributeValue("href","");
+						string href = node.SelectSingleNode("h2/a").GetAttributeValue("href", "");
 						if (href.Contains("/imdblink/"))
-						{
 							continue; // link to an external trailer
-						}
 
-                        if (title.ToLower().Trim() == movieTitle.ToLower().Trim())
+                        
+                        string videoTitle = node.SelectSingleNode("h2/a").InnerText;
+
+                        if (videoTitle.ToLower().Trim() == movieTitle.ToLower().Trim())
                         {
                             // if the title is the same as the movie title try the image's title
-							title = v.GetAttributeValue("title", title);
+							var title2 = imgNode.GetAttributeValue("title", "");
+							if (title2 != "")
+								videoTitle = title2;
                         }                        
 
                         // clean up the video title
-                        i = title.IndexOf(" -- ");
+                        int i = videoTitle.IndexOf(" -- ");
                         if (i >= 0)
                         {
-                            title = title.Substring(i + 4);
+                            videoTitle = videoTitle.Substring(i + 4);
                         }
 
-                        title = title.Replace(movieTitle + ":", string.Empty).Trim();
+                        videoTitle = videoTitle.Replace(movieTitle + ":", string.Empty).Trim();
 
-                        video.ID = vconst;
-                        video.Title = HttpUtility.HtmlDecode(title);
-                        video.Description = HttpUtility.HtmlDecode(HttpUtility.UrlDecode(desc));
-                        video.Image = m.Groups["filename"].Value + m.Groups["ext"].Value;
-						
-						// when parsing the length make sure it is set as we expect, otherwise one error makes all clips inaccessible
-                        string length = m.Groups["length"].Value.Trim();
-						if (!string.IsNullOrEmpty(length))
-						{
-							string[] splits = length.Split(':');
-							if (splits.Length > 1)
-							{
-								video.Duration = new TimeSpan(0, int.Parse(length.Split(':')[0]), int.Parse(length.Split(':')[1]));
-							}
-							else
-							{
-								video.Duration = TimeSpan.FromSeconds(int.Parse(splits[0]));
-							}
-						}
+						VideoReference video = new VideoReference();
+						video.session = session;
+						video.Image = imgNode.GetAttributeValue("src", "");
+                        video.ID = imgNode.Attributes["viconst"].Value;
+                        video.Title = HttpUtility.HtmlDecode(videoTitle);
 
                         videos.Add(video);
                     }
