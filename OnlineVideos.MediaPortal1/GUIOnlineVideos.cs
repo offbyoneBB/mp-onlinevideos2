@@ -2815,15 +2815,19 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (!preventMessageDuetoAdult)
                 {
-                    GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    if (loDlgNotify != null)
-                    {
-                        loDlgNotify.Reset();
-                        loDlgNotify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
-                        loDlgNotify.SetHeading(Translation.Instance.Error);
-                        loDlgNotify.SetText(string.Format(Translation.Instance.DownloadFailed, saveItems.CurrentItem.Title));
-                        loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
-                    }
+					GUIWindowManager.SendThreadCallbackAndWait((p1, p2, dataCurrentItemTitle) => 
+					{
+						GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+						if (loDlgNotify != null)
+						{
+							loDlgNotify.Reset();
+							loDlgNotify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
+							loDlgNotify.SetHeading(Translation.Instance.Error);
+							loDlgNotify.SetText(string.Format(Translation.Instance.DownloadFailed, (string)dataCurrentItemTitle));
+							loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+						}
+						return 0; },
+					0, 0, saveItems.CurrentItem.Title);
                 }
             }
             else
@@ -2869,18 +2873,22 @@ namespace OnlineVideos.MediaPortal1
 
                 if (!preventMessageDuetoAdult)
                 {
-                    GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    if (loDlgNotify != null)
-                    {
-                        loDlgNotify.Reset();
-                        loDlgNotify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
-                        if (saveItems.CurrentItem.Downloader.Cancelled)
-                            loDlgNotify.SetHeading(Translation.Instance.DownloadCancelled);
-                        else
-                            loDlgNotify.SetHeading(Translation.Instance.DownloadComplete);
-                        loDlgNotify.SetText(string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""));
-                        loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
-                    }
+					GUIWindowManager.SendThreadCallbackAndWait((p1, dataFileSize, dataCurrentItem) => 
+					{
+						GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+						if (loDlgNotify != null)
+						{
+							loDlgNotify.Reset();
+							loDlgNotify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
+							if (((DownloadInfo)dataCurrentItem).Downloader.Cancelled)
+								loDlgNotify.SetHeading(Translation.Instance.DownloadCancelled);
+							else
+								loDlgNotify.SetHeading(Translation.Instance.DownloadComplete);
+							loDlgNotify.SetText(string.Format("{0}{1}", ((DownloadInfo)dataCurrentItem).Title, dataFileSize > 0 ? " ( " + dataFileSize.ToString("n0") + " KB)" : ""));
+							loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+						}
+						return 0; },
+					0, fileSize, saveItems.CurrentItem);
                 }
 
                 // invoke VideoDownloaded event
