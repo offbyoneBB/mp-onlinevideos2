@@ -34,7 +34,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         static Regex imdbIdExpression = new Regex(@"tt\d{7}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex trailerDataExpression = new Regex(@"<span class=.t-o-d-year.>\((?<year>\d{4})\)</span>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        static Regex imdbTitleExpression = new Regex(@"(?<title>[^\(]+?)\((?<year>\d{4})[\/IVX]*(?<type>[^\)]*)\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		static Regex imdbTitleExpression = new Regex(@"(?<title>[^\(]+)\s*(\((?<type>[^\)]*)\))?\s*\((?<year>\d{4})[\/IVX]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex imdbImageExpression = new Regex(@"^(?<filename>(.+?)_V1)(.+?)(?<ext>\.[^\.]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         #endregion
@@ -160,7 +160,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 node = node.FirstChild;
                 if (node != null)
                 {
-                    title.Plot = HttpUtility.HtmlDecode(node.InnerText);
+                    title.Plot = HttpUtility.HtmlDecode(node.InnerText).Trim();
                 }
             }
 
@@ -203,12 +203,12 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             }
 
             // Cast
-            HtmlNodeCollection nodes = root.SelectNodes("//div[@id='cast-and-crew-']/div");
+            HtmlNodeCollection nodes = root.SelectNodes("//div[@id='cast-and-crew']/div/ul/li");
             if (nodes != null)
             {
                 foreach (HtmlNode n in nodes)
                 {
-                    HtmlNode infoNode = n.SelectSingleNode("div[@class='label']/div[@class='detail']");
+                    HtmlNode infoNode = n.SelectSingleNode("div[@class='text-center']/div[@class='ellipse']");
                     if (infoNode == null) 
                     {
                         continue;
@@ -216,18 +216,19 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
                     // Character info
                     Character character = new Character();
-                    character.Name = HttpUtility.HtmlDecode(infoNode.InnerText);
-                    character.Actor = new NameReference();
-                    character.Actor.session = session; 
+					character.Actor = new NameReference();
+                    character.Actor.session = session;
+					character.Actor.Name = HttpUtility.HtmlDecode(infoNode.InnerText).Trim();
 
-                    infoNode = n.SelectSingleNode("div[@class='label']/div[@class='title']/a");
-                    if (infoNode != null) 
-                    {
-                        character.Actor.ID = infoNode.Attributes["href"].Value.Replace("/name/","").Replace("/","");
-                        character.Actor.Name = HttpUtility.HtmlDecode(infoNode.InnerText);
-                    }
+                    infoNode = n.SelectSingleNode("a");
+                    if (infoNode != null)
+						character.Actor.ID = infoNode.Attributes["href"].Value.Replace("http://m.imdb.com/name/", "").Replace("/", "");
 
-                    infoNode = n.SelectSingleNode("img");
+					infoNode = n.Descendants("small").Last();
+					if (infoNode != null)
+						character.Name = HttpUtility.HtmlDecode(infoNode.InnerText).Trim();
+
+                    infoNode = n.SelectSingleNode("a/img");
                     if (infoNode != null)
                     {
                         Match match = imdbImageExpression.Match(infoNode.Attributes["src"].Value);
@@ -242,32 +243,25 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 }
             }
 
-            nodes = root.SelectNodes("//section[@class='topCrew']/div");
+			nodes = root.SelectNodes("//div[@id='cast-and-crew']");
             if (nodes != null)
             {
-                foreach (HtmlNode n in nodes)
+                foreach (HtmlNode n in nodes.Elements("a"))
                 {
-                    HtmlNode headerNode = n.SelectSingleNode("h1");
-                    if (headerNode == null)
-                    {
-                        continue;
-                    }
-
-                    string header = headerNode.InnerText.Trim();
-
-                    HtmlNodeCollection personNodes = n.SelectNodes("p/a");
-                    foreach (HtmlNode personNode in personNodes)
+					var itemprop = n.GetAttributeValue("itemprop", "");
+					if (itemprop == "director" || itemprop == "creator")
                     {
                         NameReference person = new NameReference();
                         person.session = session;
-                        person.ID = personNode.Attributes["href"].Value.Replace("/name/","").Replace("/","");
-                        person.Name = HttpUtility.HtmlDecode(personNode.InnerText);
-                        
-                        if (header.StartsWith("Director")) 
+						person.ID = n.Attributes["href"].Value.Replace("//m.imdb.com/name/", "").Replace("/", "");
+						person.ID = person.ID.Substring(0, person.ID.IndexOf("?"));
+                        person.Name = HttpUtility.HtmlDecode(n.Descendants("span").First().InnerText).Trim();
+
+						if (itemprop == "director")
                         {
                             title.Directors.Add(person);
-                        } 
-                        else if (header.StartsWith("Writer")) 
+                        }
+						else if (itemprop == "creator") 
                         {
                             title.Writers.Add(person);
                         }
