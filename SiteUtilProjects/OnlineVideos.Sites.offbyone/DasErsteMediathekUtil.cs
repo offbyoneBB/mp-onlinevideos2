@@ -199,7 +199,7 @@ namespace OnlineVideos.Sites
 			}
 			else
 			{
-				var mainDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modMini")).ParentNode;
+				var mainDiv = baseDoc.DocumentNode.Descendants("div").LastOrDefault(div => div.GetAttributeValue("class", "").Contains("modMini")).ParentNode;
 				result = GetVideosFromDiv(mainDiv, myBaseUri);
 			}
 			return result;
