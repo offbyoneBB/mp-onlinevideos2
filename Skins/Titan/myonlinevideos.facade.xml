@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<controls>
+		<!--            :: Count ::            -->
+
+		<control>
+			<description>Moviecount</description>
+			<type>label</type>
+			<label>#itemtype: #itemcount</label>
+			<id>0</id>
+			<posX>96</posX>
+			<posY>998</posY>
+			<align>left</align>
+			<font>TitanLight12</font>
+			<textcolor>000000</textcolor>
+			<visible>control.isvisible(50)</visible>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control>
+
+		<!--            :: Listview Lines ::            -->
+
+		<control>
+			<description>List Lines</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>800</posX>
+			<posY>385</posY>
+			<width>1029</width>
+			<height>506</height>
+			<texture>list_lines_wide.png</texture>
+			<visible>facadeview.list + !string.equals(#OnlineVideos.state, details) + control.isvisible(50)</visible>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control>
+
+		<control>
+			<description>group element</description>
+			<type>group</type>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+			<control>
+				<description>composite control consisting of a list control and a thumbnail panel</description>
+				<type>facadeview</type>
+				<id>50</id>
+				<control>
+					<description>listcontrol</description>
+					<type>listcontrol</type>
+					<id>50</id>
+					<onleft>2</onleft>
+					<onright>50</onright>
+					<scrollOffset>1</scrollOffset>
+					<posX>745</posX>
+				  <posY>331</posY>
+					<width>1113</width>
+					<height>700</height>
+					<textXOff>50</textXOff>
+					<PinIconHeight>50</PinIconHeight>
+					<PinIconWidth>50</PinIconWidth>
+					<PinIconXOff>1030</PinIconXOff>
+					<PinIconYOff>4</PinIconYOff>
+					<dimColor>ffffffff</dimColor>
+					<textureFocus>listcontrol_item_selected_wide.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+	        <spinPosX>1828</spinPosX>
+	        <spinPosY>1000</spinPosY>
+				</control>
+				<control>
+					<description>Thumbnail Panel</description>
+					<type>thumbnailpanel</type>
+					<id>50</id>
+					<posX>108</posX>
+					<posY>328</posY>
+					<width>870</width>
+					<height>700</height>
+					<onleft>2</onleft>
+					<onright>50</onright>       
+					<imageFolder>-</imageFolder>          
+					<imageFolderFocus>-</imageFolderFocus>
+					<showFrame>true</showFrame>
+					<dimColor>90ffffff</dimColor>
+					<enableFocusZoom>no</enableFocusZoom>
+					<hideUnfocusTexture>no</hideUnfocusTexture>
+					<renderFocusText>no</renderFocusText>
+					<renderUnfocusText>no</renderUnfocusText>
+					<thumbZoom>no</thumbZoom>
+					<keepaspectratio>yes</keepaspectratio>
+					<frameNoFocus>OnlineVideos\thumbbg3.png</frameNoFocus>
+					<frameFocus>onlinevideos_thumb_focus.png</frameFocus>
+					<textureMask></textureMask>
+					<imageFolderFocus>OnlineVideos\thumbbg3.png</imageFolderFocus>
+          <!-- Small Icons -->
+          <itemWidth>165</itemWidth>
+          <itemHeight>124</itemHeight>
+          <textureWidth>165</textureWidth>
+          <textureHeight>124</textureHeight>
+          <thumbWidth>159</thumbWidth>
+          <thumbHeight>118</thumbHeight>
+          <thumbPosX>3</thumbPosX>
+          <thumbPosY>3</thumbPosY>
+          <!-- Large Icons -->
+          <itemWidthBig>275</itemWidthBig>
+          <itemHeightBig>206</itemHeightBig>
+          <textureWidthBig>275</textureWidthBig>
+          <textureHeightBig>206</textureHeightBig>
+          <thumbWidthBig>261</thumbWidthBig>
+          <thumbHeightBig>196</thumbHeightBig>
+          <thumbPosXBig>7</thumbPosXBig>
+          <thumbPosYBig>5</thumbPosYBig>
+					<zoomXPixels>0</zoomXPixels>
+					<zoomYPixels>0</zoomYPixels>
+					<spinPosX>1828</spinPosX>
+					<spinPosY>1000</spinPosY>
+					<unfocusedAlpha>100</unfocusedAlpha>
+				</control>
+			</control>
+		</control>
+	</controls>
+</window>
