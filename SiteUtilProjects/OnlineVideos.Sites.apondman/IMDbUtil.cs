@@ -320,11 +320,14 @@ namespace OnlineVideos.Sites.Pondman
             {
                 foreach (VideoReference clip in videos)
                 {
+					if (clip.Description == null)
+						clip.Description = video.Description;
+
                     VideoInfo vid = new VideoInfo();
                     vid.Other = clip;
                     vid.Title = title.Title + " - " + clip.Title;
                     vid.Title2 = clip.Title;
-                    vid.Description = clip.Description;
+					vid.Description = clip.Description;
                     
                     vid.ImageUrl = clip.Image;
                     vid.VideoUrl = clip.ID;
