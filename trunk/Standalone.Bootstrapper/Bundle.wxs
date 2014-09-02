@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-	<Bundle Name="OnlineVideos" Version="1.0.0.0" Manufacturer="offbyone" UpgradeCode="a94a432b-1ce5-4b42-b119-ccb4ff697dae"
+	<Bundle Name="OnlineVideos" Version="1.9.0.0" Manufacturer="offbyone" UpgradeCode="a94a432b-1ce5-4b42-b119-ccb4ff697dae" DisableModify="yes" IconSourceFile="$(var.SolutionDir)Standalone\OnlineVideos.ico"
+      AboutUrl="http://code.google.com/p/mp-onlinevideos2/" HelpUrl="https://code.google.com/p/mp-onlinevideos2/w/list"
 			Condition="((VersionNT >= v5.1) AND (ServicePackLevel >= 3)) OR ((VersionNT >= v5.2) AND (ServicePackLevel >= 2)) OR (VersionNT >= v6.0)"> <!-- XP SP3 or Higher -->
 		
 		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense" />
