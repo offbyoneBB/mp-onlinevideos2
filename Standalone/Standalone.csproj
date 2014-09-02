@@ -94,6 +94,7 @@
     <Compile Include="DetailsView.xaml.cs">
       <DependentUpon>DetailsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FilterFromFile.cs" />
     <Compile Include="GlobalSites.xaml.cs">
       <DependentUpon>GlobalSites.xaml</DependentUpon>
     </Compile>
