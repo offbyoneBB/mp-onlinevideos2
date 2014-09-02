@@ -10,11 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.dll" />
-	<SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+    <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.dll" />
+    <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <MPUrlSourceSplitterFiles Include="$(SolutionDir)MPUrlSourceSplitter\bin_Win32\*.ax" />
+    <MPUrlSourceSplitterFiles Include="$(SolutionDir)MPUrlSourceSplitter\bin_Win32\*.dll" />
   </ItemGroup>
 
   <Target Name="AfterBuild">
-	<Copy SourceFiles="@(SiteUtilDllFiles)" DestinationFolder="$(DataDestination)SiteUtilDlls\" />
+    <Copy SourceFiles="@(SiteUtilDllFiles)" DestinationFolder="$(DataDestination)SiteUtilDlls\" />
+    <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(TargetDir)MPUrlSource\" />
   </Target>
 </Project>

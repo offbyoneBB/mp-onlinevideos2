@@ -161,7 +161,7 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
             {
                 case "http":
                 case "rtmp":
-                    sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid(OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterCLSID))) as IBaseFilter;
+                    sourceFilter = DShowNET.Helper.FilterFromFile.LoadFilterFromDll(@"MPUrlSource\MPUrlSourceSplitter.ax", new Guid(OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterCLSID), true);
                     return filterGraph.AddFilter(sourceFilter, OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName);
                 case "sop":
                     sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{A895A82C-7335-4D6B-A811-82E9E3C4403E}"))) as IBaseFilter;

@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="OnlineVideosWPF" Language="1033" Version="1.6.1.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
+	<Product Id="*" Name="OnlineVideosWPF" Language="1033" Version="1.9.0.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x86" />
 
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
-		
-		<Property Id="MPURLSOURCESPLITTERREGISTERED">
-			<RegistrySearch Id="MpUrlSourceSplitterPath" Root="HKCR" Key="CLSID\{59ED045A-A938-4A09-A8A6-8231F5834259}\InprocServer32" Type="file" Win64="no">
-				<FileSearch Id="MpUrlSourceSplitterFileFound" Name="[MpUrlSourceSplitterPath]"/>
-			</RegistrySearch>
-		</Property>
 		
 		<Property Id="ARPPRODUCTICON">$(var.Standalone.TargetFileName)</Property>
 		<Property Id="ARPURLINFOABOUT">http://code.google.com/p/mp-onlinevideos2/</Property>
@@ -154,6 +148,7 @@
 
 		<Feature Id="ProductFeature" Title="OnlineVideos Standalone" Level="1" ConfigurableDirectory="INSTALLLOCATION" Display="expand" AllowAdvertise="no" Absent="disallow" Description="Required core files of the OnlineVideos Standalone application.">
 			<ComponentRef Id="OnlineVideosStandalone" />
+      <ComponentRef Id="MPUrlSource" />
 			<ComponentRef Id="OnlineVideosStandaloneImages" />
 			<ComponentRef Id="OnlineVideosLanguageFlags" />
 			<ComponentRef Id="OnlineVideosLanguages" />
@@ -162,20 +157,7 @@
 
       <!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
 			<ComponentGroupRef Id="Product.Generated" />
-
-			<Feature Id="SplitterFeature" Title="Source Splitter Filter" AllowAdvertise="no" Level="1" Description="Required DirectShow Filter. Only deselect when OnlineVideos for MediaPortal is installed on this PC.">
-				<ComponentRef Id="MPUrlSource" />
-				<Condition Level="0">MPURLSOURCESPLITTERREGISTERED</Condition>
-			</Feature>
 		</Feature>
-
-		<CustomAction Id="RegisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s "MPUrlSourceSplitter.ax"' Return="check"/>
-		<CustomAction Id="UnregisterAx" Directory="MPUrlSource" ExeCommand='regsvr32.exe /s /u "MPUrlSourceSplitter.ax"'/>
-
-		<InstallExecuteSequence>
-			<Custom Action="RegisterAx" After="InstallFinalize"><![CDATA[&SplitterFeature = 3]]></Custom>
-			<Custom Action="UnregisterAx" Before="InstallInitialize"><![CDATA[&SplitterFeature = 2]]></Custom>
-		</InstallExecuteSequence>
 		
 	</Product>
 </Wix>
