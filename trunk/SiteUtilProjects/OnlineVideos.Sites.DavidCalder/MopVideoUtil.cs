@@ -31,9 +31,20 @@ namespace OnlineVideos.Sites.DavidCalder
       return base.GetTrackingInfo(video);
     }
 
+    public override List<VideoInfo> getVideoList(Category category)
+    {
+      RssLink link = category as RssLink;
+      string page = SiteUtilBase.GetWebData(link.Url);
+      Match n = Regex.Match(page, @"<div\sstyle=""width:\s120px;\sheight:20px;overflow:hidden;""><center><a href=""(?<url>[^""]*)"">");
+      if (n.Success)
+      {
+        link.Url = n.Groups["url"].Value;
+      }
+      return base.getVideoList(link);
+    }
+
     public override VideoInfo CreateVideoInfo()
     {
-
       return new SeriesVideoInfo();
     }
 
@@ -43,11 +54,11 @@ namespace OnlineVideos.Sites.DavidCalder
       {
         CookieContainer cc = new CookieContainer();
         string newUrl = base.PlaybackOptions[url];
-        string stripedurl = newUrl.Substring(newUrl.IndexOf("http://www.mopvideo"));
+        string stripedurl = newUrl.Substring(newUrl.IndexOf("http://mopvideo"));
         string data = SiteUtilBase.GetWebData(stripedurl, cc, newUrl);
 
         //<a href="http://hoster/ekqiej2ito9p"
-        Match n = Regex.Match(data, @"<a\shref=""(?<url>[^""]*)""\starget=""_blank"">");
+        Match n = Regex.Match(data, @"<a\shref=""(?<url>[^""]*)""[^>]*>");
         if (n.Success)
           return GetVideoUrl(n.Groups["url"].Value);
 
@@ -69,6 +80,38 @@ namespace OnlineVideos.Sites.DavidCalder
         }
         return url;
       }
+    }
+
+    public override int DiscoverDynamicCategories()
+    {
+      int res = base.DiscoverDynamicCategories();
+
+      foreach (Category cat in Settings.Categories)
+      {
+        Match m = Regex.Match(cat.Name, @"S\d+E\d+");
+        Match m1 = Regex.Match(cat.Name, @"\d\d\d\d\.\d+\.\d+");
+        if (m.Success)
+          cat.Name = Regex.Replace(cat.Name, m.Value, "").Trim();
+        else if (m1.Success)
+          cat.Name = Regex.Replace(cat.Name, m1.Value, "").Trim();
+      }
+      return res;
+    }
+
+    public override int DiscoverNextPageCategories(NextPageCategory category)
+    {
+      int res = base.DiscoverNextPageCategories(category);
+
+      foreach (RssLink cat in Settings.Categories)
+      {
+        Match m = Regex.Match(cat.Name, @"S\d+E\d+");
+        Match m1 = Regex.Match(cat.Name, @"\d\d\d\d\.\d+\.\d+");
+        if (m.Success)
+          cat.Name = Regex.Replace(cat.Name, @"S\d+E\d+", "");
+        else if (m1.Success)
+          cat.Name = Regex.Replace(cat.Name, m1.Value, "").Trim();
+      }
+      return res;
     }
   }
 }
