@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Xml;
-using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -11,9 +10,9 @@ namespace OnlineVideos.Sites
     {
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
         string proxy = null;
-		[Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a username, set it here.")]
-		string proxyUsername = null;
-		[Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a password, set it here.")]
+        [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a username, set it here.")]
+        string proxyUsername = null;
+        [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a password, set it here.")]
         string proxyPassword = null;
         [Category("OnlineVideosUserConfiguration"), Description("Whether to download subtitles")]
         protected bool RetrieveSubtitles = false;
@@ -24,7 +23,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used on a video thumbnail for matching a string to be replaced for higher quality")]
         protected string thumbReplaceRegExPattern;
         [Category("OnlineVideosConfiguration"), Description("The string used to replace the match if the pattern from the thumbReplaceRegExPattern matched")]
-		protected string thumbReplaceString;
+        protected string thumbReplaceString;
 
         //TV Guide options
         [Category("OnlineVideosUserConfiguration"), Description("Whether to retrieve current program info for live streams.")]
@@ -50,7 +49,7 @@ namespace OnlineVideos.Sites
                 nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/emp/playlist");
                 id = doc.SelectSingleNode("//ns1:item[@kind='programme']/@identifier", nsmRequest).Value;
             }
-            
+
             doc = new XmlDocument();
             doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + id, null, null, proxyObj)); //uk only
             nsmRequest = new XmlNamespaceManager(doc.NameTable);
@@ -71,7 +70,7 @@ namespace OnlineVideos.Sites
             }
 
             SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
-            foreach(XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
+            foreach (XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
             {
                 string info = "";
                 string resultUrl = "";
@@ -95,7 +94,7 @@ namespace OnlineVideos.Sites
                         string identifier = connectionElem.Attributes["identifier"].Value;
                         string auth = connectionElem.Attributes["authString"].Value;
                         string application = connectionElem.GetAttribute("application");
-						if (string.IsNullOrEmpty(application)) application = video.Other == "livestream" ? "live" : "ondemand";
+                        if (string.IsNullOrEmpty(application)) application = video.Other == "livestream" ? "live" : "ondemand";
                         string SWFPlayer = "http://www.bbc.co.uk/emp/releases/iplayer/revisions/617463_618125_4/617463_618125_4_emp.swf"; // "http://www.bbc.co.uk/emp/10player.swf";
 
                         info = string.Format("{0}x{1} | {2} kbps | {3}", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"), connectionElem.Attributes["kind"].Value);
@@ -103,46 +102,46 @@ namespace OnlineVideos.Sites
                         if (connectionElem.Attributes["kind"].Value == "limelight")
                         {
                             resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth), server, 1935)
-							{ 
-								App = application + "?" + auth,
+                            {
+                                App = application + "?" + auth,
                                 PlayPath = identifier,
-								SwfUrl = SWFPlayer,
-								SwfVerify = true,
-								Live = video.Other == "livestream" 
-							}.ToString();
+                                SwfUrl = SWFPlayer,
+                                SwfVerify = true,
+                                Live = video.Other == "livestream"
+                            }.ToString();
                         }
                         else if (connectionElem.Attributes["kind"].Value == "level3")
                         {
-							resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth), server, 1935) 
-							{
-								App = application + "?" + auth,
-								PlayPath = identifier,
-								SwfUrl = SWFPlayer,
-								SwfVerify = true,
-								Token = auth,
-								Live = video.Other == "livestream"
-							}.ToString();
+                            resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth), server, 1935)
+                            {
+                                App = application + "?" + auth,
+                                PlayPath = identifier,
+                                SwfUrl = SWFPlayer,
+                                SwfVerify = true,
+                                Token = auth,
+                                Live = video.Other == "livestream"
+                            }.ToString();
                         }
                         else if (connectionElem.Attributes["kind"].Value == "akamai")
                         {
-							resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}?{2}", server, application, auth)) 
-							{
-								PlayPath = identifier + "?" + auth,
-								SwfUrl = SWFPlayer,
-								SwfVerify = true,
-								Live = video.Other == "livestream"
-							}.ToString();
-                        }                                                
+                            resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}?{2}", server, application, auth))
+                            {
+                                PlayPath = identifier + "?" + auth,
+                                SwfUrl = SWFPlayer,
+                                SwfVerify = true,
+                                Live = video.Other == "livestream"
+                            }.ToString();
+                        }
                     }
                     if (resultUrl != "") sortedPlaybackOptions.Add(info, resultUrl);
                 }
             }
 
-			if (sortedPlaybackOptions.Count == 0)
-			{
-				var errorNodes = doc.SelectNodes("//ns1:error", nsmRequest);
-				if (errorNodes.Count > 0) throw new OnlineVideosException(string.Format("BBC says: {0}", ((XmlElement)errorNodes[0]).GetAttribute("id")));
-			}
+            if (sortedPlaybackOptions.Count == 0)
+            {
+                var errorNodes = doc.SelectNodes("//ns1:error", nsmRequest);
+                if (errorNodes.Count > 0) throw new OnlineVideosException(string.Format("BBC says: {0}", ((XmlElement)errorNodes[0]).GetAttribute("id")));
+            }
 
             string lastUrl = "";
             video.PlaybackOptions = new Dictionary<string, string>();
@@ -164,7 +163,7 @@ namespace OnlineVideos.Sites
             foreach (XmlElement mediaElem in doc.GetElementsByTagName("media"))
             {
                 string url = null;
-                if(mediaElem.Attributes["href"] != null)
+                if (mediaElem.Attributes["href"] != null)
                     url = mediaElem.Attributes["href"].Value + "?live=true";
                 string bitrate = "";
                 if (mediaElem.Attributes["bitrate"] != null)
@@ -195,7 +194,7 @@ namespace OnlineVideos.Sites
                     video.Title = channel.StreamName;
 
                     int argIndex = channel.Url.IndexOf('?');
-                    if(argIndex < 0) video.VideoUrl = channel.Url;
+                    if (argIndex < 0) video.VideoUrl = channel.Url;
                     else video.VideoUrl = channel.Url.Remove(argIndex);
 
                     video.Other = "livestream";
@@ -265,11 +264,11 @@ namespace OnlineVideos.Sites
                 if (colonIndex > 0)
                 {
                     title = video.Title.Substring(0, colonIndex);
-                    video.Title = video.Title.Substring(colonIndex + 1).Trim();                    
+                    video.Title = video.Title.Substring(colonIndex + 1).Trim();
                 }
 
                 List<VideoInfo> catVids;
-                if (!possibleSubCatStrings.TryGetValue(title, out catVids)) 
+                if (!possibleSubCatStrings.TryGetValue(title, out catVids))
                     catVids = new List<VideoInfo>();
                 catVids.Add(video);
                 possibleSubCatStrings[title] = catVids;
@@ -283,30 +282,69 @@ namespace OnlineVideos.Sites
             //    // add all others on top
             //    parentCategory.SubCategories.Add(new RssLink() { Name = "All Others", ParentCategory = parentCategory, Thumb = allOthers[0].ImageUrl, Other = allOthers, EstimatedVideoCount = (uint)allOthers.Count });
             //}
-			// sort the remaining alphabetically
-			string[] keys = new string[possibleSubCatStrings.Count];
-			possibleSubCatStrings.Keys.CopyTo(keys, 0);
-			Array.Sort(keys);
-			foreach (string key in keys)
-			{
-				List<VideoInfo> value = possibleSubCatStrings[key];
-				subCategories.Add(new RssLink() { Name = key, ParentCategory = parentCategory, Thumb = value[0].ImageUrl, Other = value, EstimatedVideoCount = (uint)value.Count });
-			}
+            // sort the remaining alphabetically
+            string[] keys = new string[possibleSubCatStrings.Count];
+            possibleSubCatStrings.Keys.CopyTo(keys, 0);
+            Array.Sort(keys);
+            foreach (string key in keys)
+            {
+                List<VideoInfo> value = possibleSubCatStrings[key];
+                subCategories.Add(new RssLink() { Name = key, ParentCategory = parentCategory, Thumb = value[0].ImageUrl, Other = value, EstimatedVideoCount = (uint)value.Count });
+            }
 
             return subCategories;
         }
 
+        //List<VideoInfo> getVideoListInternal(string url)
+        //{
+        //    List<VideoInfo> loVideoList = new List<VideoInfo>();
+        //    foreach (RssItem rssItem in GetWebData<RssDocument>(url).Channel.Items)
+        //    {
+        //        VideoInfo video = VideoInfo.FromRssItem(rssItem, true, new Predicate<string>(isPossibleVideo));
+        //        video.VideoUrl = "http://www.bbc.co.uk/iplayer/playlist/" + rssItem.Guid.Text.Substring(rssItem.Guid.Text.LastIndexOf(':') + 1);
+        //        if (!string.IsNullOrEmpty(thumbReplaceRegExPattern)) video.ImageUrl = System.Text.RegularExpressions.Regex.Replace(video.ImageUrl, thumbReplaceRegExPattern, thumbReplaceString);
+        //        video.Other = new TrackingDetails() { Title = video.Title, Url = rssItem.Link };
+        //        GetTrackingInfo(video);
+        //        loVideoList.Add(video);
+        //    }
+        //    return loVideoList;
+        //}
+
         List<VideoInfo> getVideoListInternal(string url)
         {
             List<VideoInfo> loVideoList = new List<VideoInfo>();
-            foreach (RssItem rssItem in GetWebData<RssDocument>(url).Channel.Items)
-            {
-                VideoInfo video = VideoInfo.FromRssItem(rssItem, true, new Predicate<string>(isPossibleVideo));
-                video.VideoUrl = "http://www.bbc.co.uk/iplayer/playlist/" + rssItem.Guid.Text.Substring(rssItem.Guid.Text.LastIndexOf(':') + 1);
-                if (!string.IsNullOrEmpty(thumbReplaceRegExPattern)) video.ImageUrl = System.Text.RegularExpressions.Regex.Replace(video.ImageUrl, thumbReplaceRegExPattern, thumbReplaceString);
-                loVideoList.Add(video);
-            }
+            XmlDocument doc = GetWebData<XmlDocument>(url);
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+            nsmgr.AddNamespace("atom", "http://www.w3.org/2005/Atom");
+            nsmgr.AddNamespace("media", "http://search.yahoo.com/mrss/");
+            foreach (XmlNode entry in doc.SelectNodes("//atom:entry", nsmgr))
+                loVideoList.Add(parseVideoInfo(entry, nsmgr));
             return loVideoList;
+        }
+
+        VideoInfo parseVideoInfo(XmlNode entry, XmlNamespaceManager nsmgr)
+        {
+            VideoInfo video = new VideoInfo();
+            video.Title = entry.SelectSingleNode("atom:title", nsmgr).InnerText;
+            video.Description = entry.SelectSingleNode("atom:content", nsmgr).InnerText;
+
+            video.ImageUrl = entry.SelectSingleNode(".//media:thumbnail/@url", nsmgr).InnerText;
+            if (!string.IsNullOrEmpty(thumbReplaceRegExPattern)) video.ImageUrl = System.Text.RegularExpressions.Regex.Replace(video.ImageUrl, thumbReplaceRegExPattern, thumbReplaceString);
+
+            string id = entry.SelectSingleNode("atom:id", nsmgr).InnerText;
+            video.VideoUrl = "http://www.bbc.co.uk/iplayer/playlist/" + id.Substring(id.LastIndexOf(':') + 1);
+
+            string airdate = entry.SelectSingleNode("atom:updated", nsmgr).InnerText;
+            try { video.Airdate = DateTime.Parse(airdate).ToString("g", OnlineVideoSettings.Instance.Locale); }
+            catch { video.Airdate = airdate; }
+
+            video.Other = new TrackingDetails()
+            {
+                Title = video.Title,
+                Title2 = entry.SelectSingleNode("atom:link[@rel='self']/@title", nsmgr).InnerText,
+                VideoKind = entry.SelectSingleNode("atom:category[@term='Films']", nsmgr) != null ? VideoKind.Movie : VideoKind.TvSeries
+            };
+            return video;
         }
 
         #region Search
@@ -339,26 +377,67 @@ namespace OnlineVideos.Sites
             }
             return proxyObj;
         }
+
+        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+            TrackingDetails details = video.Other as TrackingDetails;
+            if (details != null)
+            {
+                TrackingInfo ti = new TrackingInfo() { VideoKind = details.VideoKind };
+                int colonIndex = details.Title.IndexOf(':');
+                ti.Title = colonIndex > 0 ? details.Title.Substring(0, colonIndex) : details.Title;
+
+                if (details.VideoKind == VideoKind.TvSeries)
+                {
+                    Match m = Regex.Match(details.Title, @": Series ((?<num>\d+)|(?<alpha>[A-z])):");
+                    if (m.Success)
+                    {
+                        if (m.Groups["num"].Success)
+                            ti.Season = uint.Parse(m.Groups["num"].Value);
+                        else
+                            ti.Season = (uint)(m.Groups["alpha"].Value[0] % 32); //special case for QI, convert char to position in alphabet
+                    }
+
+                    if ((m = Regex.Match(details.Title, @": Episode (\d+)")).Success || (m = Regex.Match(details.Title2, @"^(\d+)[.]")).Success)
+                    {
+                        ti.Episode = uint.Parse(m.Groups[1].Value);
+                        //if we've got an episode number but no season, presume season 1
+                        if (ti.Season == 0)
+                            ti.Season = 1;
+                    }
+                }
+                Log.Debug("BBCiPlayer: Parsed tracking info: Title '{0}' Season {1} Episode {2}", ti.Title, ti.Season, ti.Episode);
+                return ti;
+            }
+            return base.GetTrackingInfo(video);
+        }
     }
 
-	class QualityComparer : IComparer<string>
-	{
-		#region IComparer<string> Member
+    class QualityComparer : IComparer<string>
+    {
+        #region IComparer<string> Member
 
-		public int Compare(string x, string y)
-		{
-			int x_kbps = 0;
-			if (!int.TryParse(Regex.Match(x, @"(\d+) kbps").Groups[1].Value, out x_kbps)) return 1;
-			int y_kbps = 0;
-			if (!int.TryParse(Regex.Match(y, @"(\d+) kbps").Groups[1].Value, out y_kbps)) return -1;
+        public int Compare(string x, string y)
+        {
+            int x_kbps = 0;
+            if (!int.TryParse(Regex.Match(x, @"(\d+) kbps").Groups[1].Value, out x_kbps)) return 1;
+            int y_kbps = 0;
+            if (!int.TryParse(Regex.Match(y, @"(\d+) kbps").Groups[1].Value, out y_kbps)) return -1;
 
-			int compare = x_kbps.CompareTo(y_kbps);
-			if (compare == 0) //if bitrates same, sort alphabetically
-				compare = x.CompareTo(y);
-			return compare;
-		}
+            int compare = x_kbps.CompareTo(y_kbps);
+            if (compare == 0) //if bitrates same, sort alphabetically
+                compare = x.CompareTo(y);
+            return compare;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
+
+    class TrackingDetails
+    {
+        public string Title { get; set; }
+        public string Title2 { get; set; }
+        public VideoKind VideoKind { get; set; }
+    }
 }
 
