@@ -453,11 +453,11 @@
     <Site name="CollegeHumor" util="CollegeHumor" agecheck="false" enabled="true" lang="en" lastUpdated="2012-10-29T23:34:16.9119564+01:00">
       <Description>Funny videos from CollegeHumor.com.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[(?<!href="/pictures".*)<li>\s*<a\shref="(?<url>[^"]*)"\sclass="">\s*<span>(?<title>[^<]*)</span>\s*</a>\s*</li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!\sclass="to-affix.*)<li><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<img\ssrc="[^"]*"\swidth="[^"]*"\sheight="[^"]*"\sclass="[^"]*"\salt="[^"]*"\sdata-src="(?<ImageUrl>[^"]*)"\sdata-src-retina="(?<ImageUrl1>[^"]*)">\s*<span\sclass="play-btn"><span\sclass="caret"></span></span>\s*</a>\s*<div\sclass="caption">\s*(?:<span[^>]*>[^<]*</span>)?\s*<h3><a\shref="/(video|embed)/(?<VideoUrl>[^/]*)[^"]*">(?<Title>[^<]*)</a></h3>\s*</div>\s*</article]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[(?<!href="/pictures".*)<li>\s*<a\s*href="(?<url>[^"]*)"\sclass=""[^>]*>\s*<span>(?<title>[^<]*)</span>\s*</a>\s*</li>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!\sclass="to-affix.*)<li[^>]*><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<img\ssrc="[^"]*"\swidth="[^"]*"\sheight="[^"]*"\sclass="[^"]*"\salt="[^"]*"\sdata-src="(?<ImageUrl>[^"]*)"\sdata-src-retina="(?<ImageUrl1>[^"]*)">\s*<span\sclass="play-btn"><span\sclass="caret"></span></span>\s*</a>\s*<div\sclass="caption">\s*(?:<span[^>]*>[^<]*</span>)?\s*<h3><a\shref="/(video|embed|post)/(?<VideoUrl>[^/]*)[^"]*"[^>]*>(?<Title>[^<]*)</a></h3>\s*</div>\s*</article]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www.collegehumor.com/moogaloop/video/{0}.json]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\sclass="next"\shref="(?<url>[^"]*)">&raquo;</a>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\sclass="next"\shref="(?<url>[^"]*)"[^>]*>&raquo;</a>]]></item>
         <item key="baseUrl"><![CDATA[http://www.collegehumor.com/videos]]></item>
         <item key="forceUTF8Encoding"><![CDATA[True]]></item>
       </Configuration>
