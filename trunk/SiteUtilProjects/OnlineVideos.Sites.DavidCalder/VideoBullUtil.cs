@@ -93,7 +93,6 @@ namespace OnlineVideos.Sites.DavidCalder
         if (cat.Name.Contains("Season") == true)
         {
           cat.Name = cat.Name.Substring(0, cat.Name.IndexOf("Season")).Trim();
-
         }
       }
       return res;
