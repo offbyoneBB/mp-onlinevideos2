@@ -18,20 +18,11 @@ namespace OnlineVideos.Sites.DavidCalder
 
     public override int DiscoverDynamicCategories()
     {
-      base.DiscoverDynamicCategories();
-      int i = 0;
-      do
-      {
-        RssLink cat = (RssLink)Settings.Categories[i];
+      int res = base.DiscoverDynamicCategories();
+      foreach (Category cat in Settings.Categories)
         if (cat.Name == "Submit Links" || cat.Name == "TV Shows")
           Settings.Categories.Remove(cat);
-        else
-        {
-          i++;
-        }
-      }
-      while (i < Settings.Categories.Count);
-      return Settings.Categories.Count;
+      return res;
     }
 
     public override ITrackingInfo GetTrackingInfo(VideoInfo video)
@@ -96,7 +87,7 @@ namespace OnlineVideos.Sites.DavidCalder
       if (video.Other.GetType() == typeof(TMDbVideoDetails))
       {
         TMDbVideoDetails videoDetail = (TMDbVideoDetails)video.Other;
-        
+
         foreach (TMDB.Trailer trailer in videoDetail.TMDbDetails.videos.TrailerList())
         {
           VideoInfo clip = new VideoInfo();
@@ -114,7 +105,7 @@ namespace OnlineVideos.Sites.DavidCalder
     }
 
     public override List<VideoInfo> Search(string query)
-    {    
+    {
       searchUrl = string.Format("http://www.movie25.so/search.php?key={0}&submit=", query.Replace(" ", "+"));
       List<VideoInfo> videos = base.Search(searchUrl);
       TMDB.BackgroundWorker worker = new TMDB.BackgroundWorker();
