@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
+using System.Net;
+using System.Web;
 
 namespace OnlineVideos.Sites
 {
@@ -14,6 +16,57 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Load movie timeout"), Description("In seconds. Onlinvideos default 20 seconds, MovHunter default 60 seconds.")]
         uint httpReceiveDataTimeoutInSec = 60;
+
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("MovHunter username")]
+        protected string username = null;
+
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("MovHunter password")]
+        protected string password = null;
+
+        private CookieContainer cc = null;
+
+        private bool isLoggedIn()
+        {
+            bool anyCookieExpired = false;
+            bool hasUserCookie = false;
+            if (cc != null)
+            {
+                string cookieDomain = new Uri("http://www.movhunter.net").GetLeftPart(UriPartial.Authority);
+                //Check if cookies are valid/expired and if the cookie container contains an user cookie 
+                foreach (Cookie cookie in cc.GetCookies(new Uri(cookieDomain)))
+                {
+                    //Some cookies do not expire, check with MinValue
+                    anyCookieExpired |= !(cookie.Expires == DateTime.MinValue || cookie.Expires > DateTime.Now);
+                    // When logged in a cookie is set where the cookie value contains the username.
+                    hasUserCookie |= cookie.Value.Contains(username);
+                }
+            }
+            //If no cookie expired and if an "user cookie" exists
+            return !anyCookieExpired && hasUserCookie;
+        }
+
+        protected override CookieContainer GetCookie()
+        {
+            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(username))
+            {
+                cc = null;
+            }
+            else if (!isLoggedIn())
+            {
+                //User not logged in, but would like to be...
+                cc = new CookieContainer();
+                //log in, use this.cc to get the log in response cookies
+                GetWebDataFromPost(@"http://www.movhunter.net/login.php", string.Format(@"username={0}&pass={1}&remember=1&Login=Login", HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), cc);
+                if (!isLoggedIn())
+                {
+                    //Failed to log in, use a new cookie container next time
+                    cc = null;
+                    // Throw; Show message to user
+                    throw new OnlineVideosException("Wrong username or password, unable to log in.");
+                }
+            }
+            return cc;
+        }
 
         public override int DiscoverDynamicCategories()
         {
