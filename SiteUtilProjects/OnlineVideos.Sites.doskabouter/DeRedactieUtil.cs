@@ -58,5 +58,11 @@ namespace OnlineVideos.Sites
 
             return Parse(url, data);
         }
+
+        public override string getUrl(VideoInfo video)
+        {
+            string s = base.getUrl(video);
+            return s.Replace("_definst_/", "_definst_/mp4:") + "/manifest.f4m";
+        }
     }
 }

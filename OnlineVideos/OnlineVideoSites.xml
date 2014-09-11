@@ -957,7 +957,7 @@
 |
 <a\shref="(?<VideoUrl>[^"]*)"\sclass="videolink">\s*<span\sclass="title\stitle_before_media">(?<Title>[^<]*)</span>\s*(?:<span\sclass="abstract\sabstract_before_media">(?<Description>[^<]*)</span>\s*)?<span\sclass="video">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>]]></item>
         <item key="fileUrlRegEx"><![CDATA[data-video-src="(?<m0>[^"]*)"]]></item>
-        <item key="baseUrl"><![CDATA[http://www.deredactie.be/cm/vrtnieuws/videozone]]></item>
+        <item key="baseUrl"><![CDATA[http://deredactie.be/cm/vrtnieuws/videozone]]></item>
       </Configuration>
     </Site>
     <Site name="EscapistMagazine" util="TheEscapist" agecheck="false" enabled="true" lang="en">
