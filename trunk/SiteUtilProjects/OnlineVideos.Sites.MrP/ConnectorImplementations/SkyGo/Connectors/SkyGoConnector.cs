@@ -311,7 +311,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <param name="data"></param>
         private void DisableAppStorage(object data)
         {
-            Thread.Sleep(5000);
+            Thread.Sleep(20000);
             WebBrowserHelper.ToogleSilverlightAppStorage(false);
         }
     }
