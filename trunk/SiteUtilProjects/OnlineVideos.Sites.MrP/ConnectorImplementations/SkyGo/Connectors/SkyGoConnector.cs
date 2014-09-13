@@ -261,12 +261,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             {
                 _playPausePos = FindPlayPauseButton(_playPauseHeight);
                 var attempts = 0;
-                // Move up the screen in 10 pixel increments trying to find play - only go up 5 times
-                while (attempts <= 4)
+                // Move up the screen in 40 pixel increments trying to find play - only go up 7 times
+                while (attempts <= 20)
                 {
                     if (_playPausePos == -1 && _isPlayOrPausing)
                     {
-                        _playPauseHeight -= 10;
+                        _playPauseHeight -= 15;
                         _playPausePos = FindPlayPauseButton(_playPauseHeight);
                     }
                     else
@@ -283,7 +283,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// Move the cursor to try and find to position of the play/pause button
         /// </summary>
         /// <param name="height"></param>
-        /// <returns></returns>
+        /// <returns></returns> 
         private int FindPlayPauseButton(int height)
         {
             var startX = Browser.FindForm().Left;
@@ -291,10 +291,10 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
 
             // Very primitive, but set the cursor at the correct height and move across till we hit the right colour!
             // We have to move the cursor otherwise the play controls disappear
-            var currentPos = startX + 15;
+            var currentPos = startX + 20;
             while (currentPos < (startX + (Browser.Document.Body.ClientRectangle.Width / 8)))
             {
-                Cursor.Position = new System.Drawing.Point(currentPos + 2, height);
+                Cursor.Position = new System.Drawing.Point(currentPos + 10, height);
                 currentPos = Cursor.Position.X;
                 Application.DoEvents();
                 if (coloursToLookFor.Contains(CursorHelper.GetColourUnderCursor().Name.Substring(2).ToUpper()))
