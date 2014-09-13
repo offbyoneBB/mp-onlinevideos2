@@ -147,7 +147,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                             Application.DoEvents();
                             System.Threading.Thread.Sleep(200);
                         }
-                        WebBrowserHelper.ToogleSilverlightAppStorage(false);
+                        
                         Cursor.Position = new System.Drawing.Point(50, 50);
                         Application.DoEvents();
                         CursorHelper.DoLeftMouseClick();
