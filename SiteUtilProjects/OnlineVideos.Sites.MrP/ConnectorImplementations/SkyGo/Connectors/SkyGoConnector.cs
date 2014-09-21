@@ -237,7 +237,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             if (_isPlayOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
 
             _isPlayOrPausing = true;
-            if (_playPauseHeight == -1) _playPauseHeight = Browser.FindForm().Bottom - 25;
+            if (_playPauseHeight == -1) _playPauseHeight = Browser.FindForm().Bottom - 40;
             var startX = Browser.FindForm().Left;
 
             // We've previously found the play/pause button, so re-use its position
@@ -261,12 +261,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             {
                 _playPausePos = FindPlayPauseButton(_playPauseHeight);
                 var attempts = 0;
-                // Move up the screen in 40 pixel increments trying to find play - only go up 7 times
+                // Move up the screen in 10 pixel increments trying to find play - only go up 20 times
                 while (attempts <= 20)
                 {
                     if (_playPausePos == -1 && _isPlayOrPausing)
                     {
-                        _playPauseHeight -= 15;
+                        _playPauseHeight -= 10;
                         _playPausePos = FindPlayPauseButton(_playPauseHeight);
                     }
                     else
@@ -291,10 +291,10 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
 
             // Very primitive, but set the cursor at the correct height and move across till we hit the right colour!
             // We have to move the cursor otherwise the play controls disappear
-            var currentPos = startX + 20;
+            var currentPos = startX + 5;
             while (currentPos < (startX + (Browser.Document.Body.ClientRectangle.Width / 8)))
             {
-                Cursor.Position = new System.Drawing.Point(currentPos + 10, height);
+                Cursor.Position = new System.Drawing.Point(currentPos + 5, height);
                 currentPos = Cursor.Position.X;
                 Application.DoEvents();
                 if (coloursToLookFor.Contains(CursorHelper.GetColourUnderCursor().Name.Substring(2).ToUpper()))
