@@ -56,7 +56,7 @@ namespace OnlineVideos.Sites
                 uri = new Uri(new Uri(baseUrl), a.Descendants("img").First().GetAttributeValue("src", ""));
                 cat.Thumb = uri.ToString();
             }
-            HtmlNode h2 = a.SelectSingleNode("span/h2");
+            HtmlNode h2 = a.SelectSingleNode("div/h2");
             if (h2 != null)
                 cat.Name = HttpUtility.HtmlDecode(h2.InnerText);
             else
@@ -137,7 +137,7 @@ namespace OnlineVideos.Sites
             {
                 HtmlNode div = section.SelectSingleNode("div");
                 RssLink cat = new RssLink();
-                cat.Name = div.SelectSingleNode("div/h1").InnerText;
+                cat.Name = HttpUtility.HtmlDecode(div.SelectSingleNode("div/h1").InnerText).Trim();
                 cat.HasSubCategories = div.GetAttributeValue("id", "") == "categories";
                 if (cat.HasSubCategories)
                 {
@@ -193,7 +193,7 @@ namespace OnlineVideos.Sites
                     RssLink category = new RssLink() { Name = HttpUtility.HtmlDecode(categoryNode.SelectSingleNode("a").InnerText.Trim()), ParentCategory = parentCategory };
                     if (category.Name == _programA_O)
                     {
-                        IEnumerable<HtmlNode> alphaList = div.Descendants("li").Where(d => d.GetAttributeValue("class", "") == "play_alphabetic-list__section-title");
+                        IEnumerable<HtmlNode> alphaList = div.Descendants("li").Where(d => d.GetAttributeValue("class", "").Contains("play_alphabetic-list__section-title"));
                         bool split = SplitByLetter && alphaList != null && alphaList.Count() > 0;
                         category.HasSubCategories = true;
                         category.SubCategories = new List<Category>();
