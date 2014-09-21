@@ -30,7 +30,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Url for streams")]
         protected string streamUrl = "http://viastream.viasat.tv/PlayProduct/";
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Download Subtitles"), Description("Chose if you want to download available subtitles or not")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Download Subtitles"), Description("Choose if you want to download available subtitles or not")]
         protected bool retrieveSubtitles = true;
 
         protected string redirectedSwfUrl;

@@ -28,7 +28,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Filter DRM videos"), Description("Remove videos marked with DRM from video lists")]
         protected bool tryFilterDrm = true;
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Download Subtitles"), Description("Chose if you want to download available subtitles or not")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Download Subtitles"), Description("Choose if you want to download available subtitles or not")]
         protected bool retrieveSubtitles = true;
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Videos per page"), Description("Default 50, maximum 500. Lower if you get timouts")]
