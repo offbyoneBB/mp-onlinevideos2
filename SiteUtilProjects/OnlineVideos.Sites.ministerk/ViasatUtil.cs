@@ -160,7 +160,8 @@ namespace OnlineVideos.Sites
 
             if (playstr.ToLower().StartsWith("rtmp"))
             {
-                int mp4Index = playstr.ToLower().IndexOf("mp4:flash");
+                int mp4IndexFlash = playstr.ToLower().IndexOf("mp4:flash");
+                int mp4Index = mp4IndexFlash >= 0 ? mp4IndexFlash : playstr.ToLower().IndexOf("mp4:pitcher");
                 if (mp4Index > 0)
                 {
                     playstr = new MPUrlSourceFilter.RtmpUrl(playstr.Substring(0, mp4Index)) { PlayPath = playstr.Substring(mp4Index), SwfUrl = redirectedSwfUrl, SwfVerify = true }.ToString();
