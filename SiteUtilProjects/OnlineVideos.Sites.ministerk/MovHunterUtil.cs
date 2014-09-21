@@ -132,7 +132,7 @@ namespace OnlineVideos.Sites
                 IEnumerable<HtmlAgilityPack.HtmlNode> subs = doc.DocumentNode.Descendants("track").Where(t => t.GetAttributeValue("kind", "") == "captions");
                 if (subs != null && subs.Count() > 0)
                 {
-                    ContextMenuEntry subLangs = new ContextMenuEntry() { DisplayText = "Choose a subtitle", Action = ContextMenuEntry.UIAction.ShowList };
+                    ContextMenuEntry subLangs = new ContextMenuEntry() { DisplayText = "Pick a subtitle", Action = ContextMenuEntry.UIAction.ShowList };
                     foreach (HtmlAgilityPack.HtmlNode sub in subs)
                     {
                         string lang = sub.GetAttributeValue("label", "");
