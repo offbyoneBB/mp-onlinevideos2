@@ -879,6 +879,9 @@
     <Site name="HBO Nordic - Suomi" util="HboNordicWeb" agecheck="false" enabled="true" lang="fi" player="Browser">
       <Description>HBO Nordic - The Home of Series</Description>
     </Site>
+    <Site name="Netflix" util="NetfilxWeb" agecheck="false" enabled="true" lang="--" player="Browser">
+      <Description>Watch Netflix in OnlineVideos</Description>
+    </Site>
     <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true" lang="--">
       <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country or genre.</Description>
       <Configuration>
