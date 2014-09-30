@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BrowserUtilConnectors\HboNordicConnector.cs" />
+    <Compile Include="BrowserUtilConnectors\NetflixConnector.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorNo.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorFi.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorDa.cs" />
@@ -69,6 +70,12 @@
     <Compile Include="HboNordicWebUtil.cs" />
     <Compile Include="Hoster\vk.cs" />
     <Compile Include="MovHunterUtil.cs" />
+    <Compile Include="NetfilxWebUtil.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SwefilmerSiteUtil.cs" />
     <Compile Include="SweflixUtil.cs" />
     <Compile Include="TFPlayUtil.cs" />
@@ -93,7 +100,13 @@
   <ItemGroup>
     <None Include="Properties\VersionInfo.cs.tmpl" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="loading.gif" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
