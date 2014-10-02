@@ -10,7 +10,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Videos per Page"), Description("Defines the default number of videos to display per page.")]
         int pageSize = 25;
 
-        private static string contentHost = "https://api.tvnplayer.pl";
+        private static string contentHost = "http://tvnplayer.pl";
         private static string mediaHost = "http://redir.atmcdn.pl";
         private static string authKey = "ba786b315508f0920eca1c34d65534cd";
         private static string startUrl = "/api/?platform=ConnectedTV&terminal=Samsung&format=xml&v=2.0&authKey=" + authKey;
