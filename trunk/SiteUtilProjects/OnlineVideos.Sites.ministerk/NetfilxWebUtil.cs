@@ -29,7 +29,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("Netflix email")]
         protected string username = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Netflix password")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Netflix password"), PasswordPropertyText(true)]
         protected string password = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Sort titles in Browse by..."), Description("Sort titles in Browse by...")]
         protected BrowseSortOrders browseSort = BrowseSortOrders.SuggestionsForYou;
