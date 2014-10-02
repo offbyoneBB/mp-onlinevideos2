@@ -9,12 +9,12 @@ using OnlineVideos.Helpers;
 using OnlineVideos.Sites.Properties;
 using System.Drawing;
 using System.Threading;
+using System.Diagnostics;
 
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
     public class NetflixConnector : BrowserUtilConnector
     {
-        protected PictureBox _loadingPicture = new PictureBox();
 
         private enum State
         {
@@ -31,6 +31,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private State _currentState = State.None;
         private bool _isPlayingOrPausing = false;
+        protected PictureBox _loadingPicture = new PictureBox();
 
         /// <summary>
         /// Show a loading image
@@ -48,13 +49,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override void OnClosing()
         {
-            //Workaround - browserplayer does not always exit properly otherwise
-            ProcessComplete.Finished = true;
-            ProcessComplete.Success = false;
-            Url = "about:blank";
-            base.OnClosing();
+            //Process.GetProcessesByName("OnlineVideos.WebAutomation.BrowserHost").First().Kill();
+            Process.GetCurrentProcess().Kill();
         }
-
         public override void OnAction(string actionEnumName)
         {
             if (_currentState == State.Playing && !_isPlayingOrPausing)
@@ -75,7 +72,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     Application.DoEvents();
                     System.Windows.Forms.SendKeys.Send("{RIGHT}");
                 }
-                base.OnAction(actionEnumName);
             }
         }
 
@@ -117,31 +113,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private EventResult PlayPause()
         {
-            /*
-            if (_currentState != State.Playing || _isPlayingOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
-            _isPlayingOrPausing = true;
-            //1080 230 960
-            //720 160 630
-            //Play pause only supported for 720 and 1080 res. (right now...) + 768 for dev machine (160 680)
-            var h = Browser.FindForm().Bottom;
-            var x = h > 1000 ? 230 : 160;
-            var y = h > 1000 ? 960 : (h > 740 ? 680 : 630);
-            
-            Cursor.Position = new System.Drawing.Point(x - 10, y);
-            // We have to move the cursor to show the play button
-            while (Cursor.Position.X < x)
-            {
-                Cursor.Position = new System.Drawing.Point(Cursor.Position.X + 1, y);
-                Application.DoEvents();
-            }
-            Cursor.Position = new System.Drawing.Point(x, y);
-            Application.DoEvents();
-            CursorHelper.DoLeftMouseClick();
-            Application.DoEvents();
-            Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 10, Browser.FindForm().Bottom - 10);
-            Application.DoEvents();
-            _isPlayingOrPausing = false;
-             */
             if (_currentState != State.Playing || _isPlayingOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
             _isPlayingOrPausing = true;
             Cursor.Position = new System.Drawing.Point(300, 300);
