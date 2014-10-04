@@ -255,12 +255,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private void ForceQuit()
         {
             _connector.OnClosing();
-            BeginInvoke((MethodInvoker)delegate
-            {
-                this.Close();
-                ForceClose = true;
-                Process.GetCurrentProcess().Kill(); // In case we've got some weird browser issues or something hogging the process
-            });
+            ForceClose = true;
+            Process.GetCurrentProcess().Kill(); // In case we've got some weird browser issues or something hogging the process
         }
 
         /// <summary>
