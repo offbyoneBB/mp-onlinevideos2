@@ -8,6 +8,7 @@ using MediaPortal.Player;
 using OnlineVideos.Helpers;
 using OnlineVideos.Sites;
 using MediaPortal.InputDevices;
+using ActionType = MediaPortal.GUI.Library.Action.ActionType;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
@@ -103,24 +104,46 @@ namespace OnlineVideos.MediaPortal1.Player
         }
 
         /// <summary>
-        /// We need to make sure that when the action is complete we set the browser window as the active one
+        /// When a new action is received we'll forward some of them to the browser host using key presses
+        /// In future i'd like to refactor this to forward the action (somehow)
         /// </summary>
         /// <param name="action"></param>
         private void GUIWindowManager_OnNewAction(MediaPortal.GUI.Library.Action action)
         {
-            // Forward the key on to the browser process - I can't seem to get MediaPortal to detach from the remote key presses (using iMon as the control)
-            if (_browserProcess != null && 
-                    (action.wID == MediaPortal.GUI.Library.Action.ActionType.ACTION_KEY_PRESSED/* ||
-                        action.wID == MediaPortal.GUI.Library.Action.ActionType.ACTION_MUSIC_PLAY ||
-                        action.wID == MediaPortal.GUI.Library.Action.ActionType.ACTION_STOP ||
-                        action.wID == MediaPortal.GUI.Library.Action.ActionType.ACTION_PLAY ||
-                        action.wID == MediaPortal.GUI.Library.Action.ActionType.ACTION_PAUSE*/
-                    ))
+            // Forward the key on to the browser process 
+            if (_browserProcess != null)
             {
+                var key = string.Empty;
+                switch (action.wID)
+                {
+                    case ActionType.ACTION_PLAY:
+                    case ActionType.ACTION_MUSIC_PLAY:
+                        key = "P";
+                        break;
+                    case ActionType.ACTION_PAUSE:
+                        key = " ";
+                        break;
+                    case ActionType.ACTION_STOP:
+                        key = "B";
+                        break;
+                    case ActionType.ACTION_PREVIOUS_MENU:
+                        key = "{ESC}";
+                        break;
+                    case ActionType.ACTION_STEP_BACK:
+                    case ActionType.ACTION_MOVE_LEFT:
+                        key = "{LEFT}";
+                        break;
+                    case ActionType.ACTION_STEP_FORWARD:
+                    case ActionType.ACTION_MOVE_RIGHT:
+                        key = "{RIGHT}";
+                        break;
+                }
 
-                ProcessHelper.SetForeground(_browserProcess.MainWindowTitle);
-                System.Windows.Forms.SendKeys.Send(new string((Char)action.m_key.KeyChar, 1).ToUpper());
-                //ProcessHelper.SendKeyToProcess(_browserProcess.MainWindowTitle, GetKeyFromChar(action.m_key.KeyChar));
+                if (!string.IsNullOrEmpty(key))
+                {
+                    ProcessHelper.SetForeground(_browserProcess.MainWindowHandle);
+                    System.Windows.Forms.SendKeys.Send(key);
+                }
             }
         }
 
