@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites
         #region Config
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("Viaplay username")]
         protected string username = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Viaplay password")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Viaplay password"), PasswordPropertyText(true)]
         protected string password = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show help category"), Description("Enable or disable help category (Link to forum - http://tinyurl.com/olv-viaplay)")]
         protected bool showHelpCategory = true;

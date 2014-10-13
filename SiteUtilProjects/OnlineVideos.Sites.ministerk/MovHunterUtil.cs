@@ -20,7 +20,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("MovHunter username")]
         protected string username = null;
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("MovHunter password")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("MovHunter password"), PasswordPropertyText(true)]
         protected string password = null;
 
         private CookieContainer cc = null;

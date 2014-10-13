@@ -30,7 +30,7 @@ namespace OnlineVideos.Sites
         private List<Category> GenerateSubCategories(Category parentCategory)
         {
             HtmlDocument doc = GetWebData<HtmlDocument>((parentCategory as RssLink).Url, encoding: Encoding.UTF8);
-            IEnumerable<HtmlNode> videoNodes = doc.DocumentNode.Descendants("div").Where(d => d.GetAttributeValue("class", "").Equals("video-poster"));
+            IEnumerable<HtmlNode> videoNodes = doc.DocumentNode.Descendants("div").Where(d => d.GetAttributeValue("class", "").Contains("video-item"));
             List<Category> subCategories = new List<Category>();
             if (videoNodes != null)
             {
@@ -38,10 +38,9 @@ namespace OnlineVideos.Sites
                 {
                     RssLink category = new RssLink();
                     HtmlNode a = videoDiv.SelectSingleNode("a");
-                    HtmlNode img = a.SelectSingleNode("img");
-                    category.Name = img.GetAttributeValue("alt", "");
+                    category.Name = a.GetAttributeValue("title", "");
                     category.Url = a.GetAttributeValue("href", "");
-                    category.Thumb = @"http://tfplay.org/" + img.GetAttributeValue("data-original", "");
+                    category.Thumb = @"http://tfplay.org/" + a.SelectSingleNode("img").GetAttributeValue("data-original", "");
                     category.ParentCategory = parentCategory;
                     subCategories.Add(category);
                 }

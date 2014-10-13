@@ -268,13 +268,13 @@ namespace OnlineVideos.Sites
                 htmlDoc.LoadHtml(data);
                 if (!categoryUrl.StartsWith("http://dreamfilm.se/search/"))
                 {
-                    var divs = htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, 'galery info')]");
+                    var divs = htmlDoc.DocumentNode.SelectNodes("//div[contains(@class, ' movie')]");
                     if (divs != null)
                     {
                         foreach (var div in divs)
                         {
                             RssLink cat = new RssLink();
-                            var imageDiv = div.SelectSingleNode("div[@class = 'image-galery']");
+                            var imageDiv = div.SelectSingleNode(".//div[@class = 'panel-body']");
                             cat.Url = imageDiv.SelectSingleNode("a").GetAttributeValue("href", "");
                             var image = imageDiv.SelectSingleNode("a/img").GetAttributeValue("src", "");
                             if (string.IsNullOrEmpty(image))
@@ -283,15 +283,16 @@ namespace OnlineVideos.Sites
                                 cat.Thumb = string.IsNullOrEmpty(image) ? "" : (image.StartsWith("http") ? image : string.Format("http://dreamfilm.se/{0}", image));
                             else
                                 cat.Thumb = (string.IsNullOrEmpty(image) || !image.StartsWith("http")) ? "" : image;
-                            cat.Name = Regex.Replace(div.SelectSingleNode("div/div/h4").InnerText, @"S[0-9]+E[0-9]+", string.Empty);
+                            cat.Name = Regex.Replace(div.GetAttributeValue("title",""), @"S[0-9]+E[0-9]+", string.Empty);
                             cat.Name = Regex.Replace(cat.Name, @"\s+", " ").Trim();
                             cat.HasSubCategories = false;
                             cat.Other = cat.Url.Contains("/movies") ? FILM : TV;
-                            foreach (var textnode in div.SelectSingleNode("div/div").SelectNodes("text()"))
+                            /*foreach (var textnode in div.SelectSingleNode("div/div").SelectNodes("text()"))
                             {
                                 cat.Description += textnode.InnerText;
                             }
                             cat.Description = Regex.Replace(cat.Description, @"\s+", " ").Trim();
+                             */
                             cat.ParentCategory = parentCategory;
                             parentCategory.SubCategories.Add(cat);
                         }

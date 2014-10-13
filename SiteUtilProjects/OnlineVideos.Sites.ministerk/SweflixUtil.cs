@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("Sweflix username")]
         protected string username = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Sweflix password")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Sweflix password"), PasswordPropertyText(true)]
         protected string password = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Prefered subtitle language"), Description("Pick your prefered subtitle language")]
         Languages preferedLanguage = Languages.Svenska;
