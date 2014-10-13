@@ -17,7 +17,7 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("E-mail"), Description("HBO Nordic username e-mail")]
         protected string username = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("HBO Nordic password")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("HBO Nordic password"), PasswordPropertyText(true)]
         protected string password = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("In English please"), Description("Get titles and descriptions in english (does not affect subtitles).")]
         protected bool useEnglish = false;

@@ -25,7 +25,7 @@ namespace OnlineVideos.Sites
         VideoSort videoSort = VideoSort.Date;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("Swefilmer username")]
         protected string username = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Swefilmer password")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Swefilmer password"), PasswordPropertyText(true)]
         protected string password = null;
 
         private string nextPageUrl = "";
