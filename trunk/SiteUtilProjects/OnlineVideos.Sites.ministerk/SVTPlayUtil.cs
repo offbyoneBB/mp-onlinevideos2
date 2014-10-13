@@ -56,9 +56,9 @@ namespace OnlineVideos.Sites
                 uri = new Uri(new Uri(baseUrl), a.Descendants("img").First().GetAttributeValue("src", ""));
                 cat.Thumb = uri.ToString();
             }
-            HtmlNode h2 = a.SelectSingleNode("div/h2");
-            if (h2 != null)
-                cat.Name = HttpUtility.HtmlDecode(h2.InnerText);
+            HtmlNode fcap = a.SelectSingleNode(".//figcaption");
+            if (fcap != null)
+                cat.Name = HttpUtility.HtmlDecode(fcap.InnerText);
             else
                 cat.Name = HttpUtility.HtmlDecode(article.GetAttributeValue("data-title", ""));
             if (cat.Name.ToLower().Contains("oppetarkiv"))
@@ -184,6 +184,8 @@ namespace OnlineVideos.Sites
                 IEnumerable<HtmlNode> categoryNodes = htmlNode.Descendants("li").Where(li => li.GetAttributeValue("class", "").Contains("play_category-tab"));
                 if (categoryNodes == null || categoryNodes.Count() == 0)
                     categoryNodes = htmlNode.Descendants("li").Where(li => li.GetAttributeValue("class", "").Contains("play_list__item"));
+                if (categoryNodes == null || categoryNodes.Count() == 0)
+                    categoryNodes = htmlNode.Descendants("li").Where(li => li.GetAttributeValue("class", "").Contains("play_tab-list__item"));
 
                 foreach (HtmlNode categoryNode in categoryNodes)
                 {
