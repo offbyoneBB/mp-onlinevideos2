@@ -171,6 +171,10 @@ namespace OnlineVideos.Sites
                     playstr = new MPUrlSourceFilter.RtmpUrl(playstr) { SwfUrl = redirectedSwfUrl, SwfVerify = true }.ToString();
                 }
             }
+            else if (playstr.ToLower().EndsWith(".f4m"))
+            {
+                playstr += "?hdcore=3.3.0" + "&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
+            }
             
             if (!string.IsNullOrEmpty(sub) && retrieveSubtitles)
             {
