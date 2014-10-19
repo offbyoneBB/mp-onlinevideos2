@@ -1713,15 +1713,16 @@
     <Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="cat_pic">\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*<img\s+src="(?<thumb>[^"]+)"[^>]*>\s*<span[^>]*>[^<]*</span>\s*</a>\s*<div>\s*<a[^>]*>\s*<strong>(?<title>[^<]*)</strong>\s*</a>\s*</div>]]></item>
-        <item key="videoListRegEx"><![CDATA[<li\s+class="videoBox[^>]*>\s*<div\s+class="wrapping-video-box">\s*
-<a[^>]+>\s*<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>\s*</a>\s*
-<a\s+class="videoTitle"\s+href="(?<VideoUrl>/watch/[^"]+)">(?<Title>[^<]+)</a>\s*</div>\s*
-<div\s+class="information">\s*
-<(div|h2)\s+class="duration[^"]*">(?<Duration>[^<]*)<]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<div>\s*<a\s+href="(?<url>[^"]+)".*?<strong[^>]*>(?<title>[^<]*)</strong>\s*<var>(?<description>[^<]*)</var>]]></item>
+        <item key="videoListRegEx">
+          <![CDATA[<li\s+class="videoBox[^>]*>\s*<div\s+class="wrapping-video-box">\s*
+    <a\s+href="(?<VideoUrl>/watch/[^"]+)"[^>]*>.*?<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>\s*
+    <p\s+class="videoTitle"\s*>(?<Title>[^<]+)\s*</p>\s*
+    <span\s+class="duration[^"]*">(?<Duration>[^<]*)</span>]]>
+        </item>
         <item key="nextPageRegEx"><![CDATA[<li\s+class="prev-next">\s*<a\s+href="(?<url>[^"]+)">[^<]*<span>&raquo;</span>\s*</a>\s*</li>]]></item>
         <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="fileUrlRegEx"><![CDATA[(?<=<ul\s+class="downloadList">.*)<li[^>]*>\s*<span>[^<]*</span>\s*<a\s+href="(?<m0>[^"]+)">(?<n0>[^<]+)</a>(?<n1>[^<]*)</li>\s*]]></item>
+        <item key="fileUrlRegEx"><![CDATA[(?<=<ul\s+class="downloadList">.*)<li[^>]*>\s*<span>[^<]*</span>\s*<a\s+href="(?<m0>[^"]+)">\s*(?<n0>[^<\r\n]+).*?</a>\s*(?<n1>[^<\r\n]*)]]></item>
         <item key="fileUrlNameFormatString"><![CDATA[{0} {1}]]></item>
         <item key="fileUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="searchUrl"><![CDATA[http://www.youporn.com/search/?query={0}]]></item>
@@ -1776,18 +1777,18 @@
         <item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
       </Configuration>
     </Site>
-    <Site name="Tube8" util="Tube8" agecheck="true" enabled="true" lang="en">
+    <Site name="Tube8" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>A Huge selection of hardcore videos is what makes Tube8 the best porn tube site. The site contains 100% user-uploaded free porn.</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[<div\sid="video_i\d+"[^>]*>\s*
+        <item key="videoListRegEx">
+          <![CDATA[<div\sid="video_i\d+"[^>]*>\s*
 <a\shref="(?<VideoUrl>[^"]+)"[^>]*>\s*
 <img\s(?:(?!\ssrc).)*\ssrc="(?<ImageUrl>[^"]+)".*?/></a>\s*
 .*?<a\shref="[^"]*"\stitle="(?<Title>[^"]+)">\s*
-(?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<li\sclass="button-pag[^"]*"><a\shref="(?<url>[^"]+)">NEXT]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[hash\s*=\s*"(?<hash>[^"]+)"\s*;\s*videoId\s*=\s*(?<id>[^;]+);]]></item>
-        <item key="playlistUrlFormatString"><![CDATA[http://www.tube8.com/ajax/getVideoDownloadURL.php?hash={0}&video={1}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[standard_url]]></item>
+(?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>]]>
+        </item>
+        <item key="nextPageRegEx"><![CDATA[<a\s+id="pagination_next"\s+href="(?<url>[^"]+)">Next</a>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[videoUrlJS\s*=\s*'(?<m0>[^']+)']]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
         <item key="searchUrl"><![CDATA[http://www.tube8.com/search.html?q={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.tube8.com]]></item>
@@ -1800,21 +1801,20 @@
         <Category xsi:type="RssLink" name="Most Favorited">http://www.tube8.com/mostfavorited.html</Category>
         <Category xsi:type="RssLink" name="Most Discussed">http://www.tube8.com/mostdiscussed.html</Category>
         <Category xsi:type="RssLink" name="Most Voted">http://www.tube8.com/mostvoted.html</Category>
-        <Category xsi:type="RssLink" name="Amateur">http://www.tube8.com/cat/amateur/6.html</Category>
-        <Category xsi:type="RssLink" name="Anal">http://www.tube8.com/cat/anal/13.html</Category>
-        <Category xsi:type="RssLink" name="Asian">http://www.tube8.com/cat/asian/12.html</Category>
-        <Category xsi:type="RssLink" name="Blowjob">http://www.tube8.com/cat/blowjob/7.html</Category>
-        <Category xsi:type="RssLink" name="Ebony">http://www.tube8.com/cat/ebony/4.html</Category>
-        <Category xsi:type="RssLink" name="Erotic">http://www.tube8.com/cat/erotic/11.html</Category>
-        <Category xsi:type="RssLink" name="Fetish">http://www.tube8.com/cat/fetish/5.html</Category>
-        <Category xsi:type="RssLink" name="Gay">http://www.tube8.com/cat/gay/9.html</Category>
-        <Category xsi:type="RssLink" name="Hardcore">http://www.tube8.com/cat/hardcore/1.html</Category>
-        <Category xsi:type="RssLink" name="Latina">http://www.tube8.com/cat/latina/14.html</Category>
-        <Category xsi:type="RssLink" name="Lesbian">http://www.tube8.com/cat/lesbian/8.html</Category>
-        <Category xsi:type="RssLink" name="Mature">http://www.tube8.com/cat/mature/2.html</Category>
-        <Category xsi:type="RssLink" name="Shemale">http://www.tube8.com/cat/shemale/15.html</Category>
-        <Category xsi:type="RssLink" name="Strip">http://www.tube8.com/cat/strip/10.html</Category>
-        <Category xsi:type="RssLink" name="Teen">http://www.tube8.com/cat/teen/3.html</Category>
+        <Category xsi:type="RssLink" name="Amateur">http://www.tube8.com/cat/amateur/6/</Category>
+        <Category xsi:type="RssLink" name="Anal">http://www.tube8.com/cat/anal/13/</Category>
+        <Category xsi:type="RssLink" name="Asian">http://www.tube8.com/cat/asian/12/</Category>
+        <Category xsi:type="RssLink" name="Blowjob">http://www.tube8.com/cat/blowjob/7/</Category>
+        <Category xsi:type="RssLink" name="Ebony">http://www.tube8.com/cat/ebony/4/</Category>
+        <Category xsi:type="RssLink" name="Erotic">http://www.tube8.com/cat/erotic/11/</Category>
+        <Category xsi:type="RssLink" name="Fetish">http://www.tube8.com/cat/fetish/5/</Category>
+        <Category xsi:type="RssLink" name="Hardcore">http://www.tube8.com/cat/hardcore/1/</Category>
+        <Category xsi:type="RssLink" name="Indian">http://www.tube8.com/cat/indian/21/</Category>
+        <Category xsi:type="RssLink" name="Latina">http://www.tube8.com/cat/latina/14/</Category>
+        <Category xsi:type="RssLink" name="Lesbian">http://www.tube8.com/cat/lesbian/8/</Category>
+        <Category xsi:type="RssLink" name="Mature">http://www.tube8.com/cat/mature/2/</Category>
+        <Category xsi:type="RssLink" name="Strip">http://www.tube8.com/cat/strip/10/</Category>
+        <Category xsi:type="RssLink" name="Teen">http://www.tube8.com/cat/teen/3/</Category>
       </Categories>
     </Site>
     <Site name="Empflix" util="GenericSite" agecheck="true" enabled="true" lang="en">
