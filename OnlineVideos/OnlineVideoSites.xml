@@ -1116,19 +1116,27 @@
     <Site name="Kijk.nl" util="Kijk" agecheck="false" enabled="true" lang="nl">
       <Description>Videos van SBS6, Net5 en Veronica</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<a\sclass=""\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="videoListRegEx"><![CDATA[(?#Normal)
-<div\sclass="block\spreview"\sitemscope\sitemtype="http://schema\.org/TVEpisodes">\s*<a\shref="(?<VideoUrl>[^"]*)"\s[^>]*>\s*<div[^>]*><img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\sitemprop="image"><span></span></div>\s*<div\sclass="content">\s*<h4\sclass="title"\sitemprop="name">(?<Title>[^<]*)</h4>\s*<time[^>]*>(?<Airdate>[^<]*)</time>\s*<meta[^>]*>\s*<meta[^>]*>\s*<meta[^>]*>\s*</div>\s*<div\sclass="tag\sfree">GRATIS</div>\s*</a>
-|
-(?#Gemist/dag)
-<div\sclass="block\spreview">\s*<a\shref="(?<VideoUrl>[^"]*)"\stitle="[^"]*">\s*<div[^>]*><img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/><span></span></div>\s*<div\sclass="content">\s*<h4\sclass="title">(?<Title>[^<]*)</h4>\s*<p>(?<Description>[^<]*)</p>\s*<time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time>\s*</div>\s*</a>\s*</div>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.kijk.nl/]]></item>
+        <item key="videoListRegEx"><![CDATA[(?#gemist)(<div\sclass="item\sar16x9\sjs"\sitemscope\sitemtype="http://schema\.org/TVEpisode"\sdata-js="video-item"\sdata-id="(?<Id>[^"]*)"\sdata-duration="[^"]*"><a\shref="(?<VideoUrl>[^"]*)"\sitemprop="url"><div\sclass="image\sthumb-bg"><img\ssrc="/bundles/sbskijksite/img/x\.gif"\sclass="thumb\sjs"\sdata-js="adaptive-image"\sdata-src="(?<ImageUrl>[^"]*)"[^>]*><noscript><img[^>]*></noscript><div\sclass="overlay"></div><div\sclass="icon\splay"></div><div\sclass="progress"></div><div[^>]*></div></div></a><a[^>]*><div\sclass="info\s"><h3\sclass="title\svimobile"\sitemprop="name">(?<Title>[^<]*)(?:<span>[^<]*</span>)?</h3><div\sclass="desc\smeta">(?<Description2>[^<]*)<span\sitemprop="duration"\scontent="[^"]*">\((?<Duration>[^\)]*)\)</span></div><div[^>]*>(?<Airdate>[^<]*)</div></div></a><div\sclass="popup-meta"><div\sclass="item-popup"><div\sclass="title">(?<Title2>[^<]*)</div><div\sclass="meta"><span>[^<]*</span>\s&ndash;\s<span\sitemprop="timeRequired"\scontent="[^"]*">[^<]*</span>\s*(?:&ndash;\s<span\sitemprop="genre">[^<]*</span>)?</div><p\sclass="meta"\sitemprop="description">(?<Description>[^<]*)<a)|
+(?#series)(<div\sclass="item\sar16x9\sjs"\sitemscope\sitemtype="http://schema\.org/TVEpisode"\sdata-js="video-item"\sdata-id="(?<Id>[^"]*)"\sdata-duration="[^"]*"><a\shref="(?<VideoUrl>[^"]*)"\sitemprop="url"><div\sclass="image\sthumb-bg"><img\ssrc="/bundles/sbskijksite/img/x\.gif"\sclass="thumb\sjs"\sdata-js="adaptive-image"\sdata-src="(?<ImageUrl>[^"]*)"[^>]*><noscript><img[^>]*></noscript><div\sclass="overlay"></div><div\sclass="icon\splay"></div><div\sclass="progress"></div><div[^>]*></div></div></a><a[^>]*><div\sclass="info\s"><div\sclass="desc\smeta">(?<Title>[^<]*)<span\sitemprop="duration"\scontent="[^"]*">(?<Duration>[^<]*)</span></div><div\sclass="airdate\smeta\svimobile"\sitemprop="datePublished"\scontent="[^"]*">(?<Airdate>[^<]*)</div></div></a><div\sclass="popup-meta"><div\sclass="item-popup"><div\sclass="title">[^<]*</div><div\sclass="meta"><span>[^<]*</span>\s&ndash;\s<span\sitemprop="timeRequired"\scontent="[^"]*">[^<]*</span>\s&ndash;\s<span\sitemprop="genre">(?<Gebre>[^<]*)</span></div><p\sclass="meta"\sitemprop="description">(?<Description>[^<]*)<a)]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass="item\sar16x9\sjs"\sitemscope\sitemtype="http://schema\.org/TVSeries"\sdata-js="video-item"\sdata-id="(?<id>[^"]*)"\sdata-duration=""><a\shref="(?<url>[^"]*)"\sitemprop="url"><div\sclass="image\sthumb-bg"><img\ssrc="/bundles/sbskijksite/img/x\.gif"\sclass="thumb\sjs"\sdata-js="adaptive-image"\sdata-src="(?<thumb>[^"]*)"[^>]*><noscript><img[^>]*></noscript><div\sclass="overlay"></div><div[^>]*></div><div[^>]*></div></div></a><a[^>]*><div\sclass="info\s"><h3[^>]*>[^<]*</h3></div></a><div\sclass="popup-meta"><div\sclass="item-popup"><div\sclass="title">(?<title>[^<]*)</div><div\sclass="meta">(?:<span>(?<year>[^<]*)</span>\s&ndash;\s)?<span>(?<duration>[^<]*)</span>\s&ndash;\s<span\sitemprop="genre">(?<genre>[^<]*)</span></div><p\sclass="meta"\sitemprop="description">(?<description>[^<]*)<a]]></item>
         <item key="fileUrlRegEx"><![CDATA[<object\sid=\\"myExperience[^"]*"\sclass=\\"BrightcoveExperience\\">"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param\sname=\\"playerID\\"\svalue=\\"(?<experienceId>[^\\]*)\\"\s/>"\s*\+\s"<param\sname=\\"playerKey\\"\svalue=\\"(?<playerKey>[^\\]*)\\"\s/>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param\sname=\\"@videoPlayer\\"\svalue=\\"(?<contentId>[^\\]*)\\"\s/>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.kijk.nl]]></item>
         <item key="forceUTF8Encoding"><![CDATA[true]]></item>
         <item key="hashValue"><![CDATA[0a2b91ec0fdb48c5dd5239d3e796d6f543974c33]]></item>
         <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAAiDenBUk~,YtnxvBxGO012li9YJqNYbzn7j1MkRsgk]]></item>
       </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Gemist" thumb="" desc="">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Alles" thumb="" desc="">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-all/1/10</Category>
+            <Category xsi:type="RssLink" name="SBS6" thumb="" desc="">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-sbs6/1/10</Category>
+            <Category xsi:type="RssLink" name="NET5" thumb="" desc="">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-net5/1/10</Category>
+            <Category xsi:type="RssLink" name="Veronica TV" thumb="" desc="">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-veronicatv/1/10</Category>
+          </SubCategories>http://www.kijk.nl/gemist</Category>
+        <Category xsi:type="RssLink" name="Series" thumb="" desc="">http://www.kijk.nl/series</Category>
+        <Category xsi:type="RssLink" name="Genres" thumb="" desc="">http://www.kijk.nl/genres</Category>
+        <Category xsi:type="RssLink" name="A - Z" thumb="" desc="">http://www.kijk.nl/programmas</Category>
+      </Categories>
     </Site>
     <Site name="League of Legends Streams" util="LeagueOfLegends" agecheck="false" enabled="true" lang="en">
       <Description>League of Legends Streams</Description>
