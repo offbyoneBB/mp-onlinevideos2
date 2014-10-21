@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 
 namespace OnlineVideos.Helpers
 {
@@ -13,9 +14,9 @@ namespace OnlineVideos.Helpers
     public static class ProcessHelper
     {
         #region "Declarations for Minimizing Windows"
-        
+
         [DllImport("user32.dll")]
-        private static extern bool ShowWindow (IntPtr hWnd, WINDOW_STATE state);
+        private static extern bool ShowWindow(IntPtr hWnd, WINDOW_STATE state);
         [DllImport("User32", ExactSpelling = true)]
         private static extern int SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int y, int cx, int cy, UInt32 uFlags);
         [DllImport("user32.dll")]
@@ -28,7 +29,7 @@ namespace OnlineVideos.Helpers
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool PostMessage(IntPtr hWnd, int Msg, System.Windows.Forms.Keys wParam, int lParam);
 
-        public enum WINDOW_STATE 
+        public enum WINDOW_STATE
         {
             SW_HIDE = 0,
             SW_SHOWNORMAL = 1,
@@ -47,13 +48,33 @@ namespace OnlineVideos.Helpers
             SW_MAX = 11
         }
 
-        private const Int32 WM_KEYDOWN = 0x100; 
+        private const Int32 WM_KEYDOWN = 0x100;
         private const Int32 WM_KEYUP = 0x101;
 
         private const int HWND_TOPMOST = -1;
         private const UInt32 SWP_NOSIZE = 0x0001;
         private const UInt32 SWP_NOMOVE = 0x0002;
-#endregion
+        #endregion
+
+        #region Declarations for sending messages
+
+        public const int WM_COPYDATA = 0x004a;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct COPYDATASTRUCT
+        {
+            [MarshalAs(UnmanagedType.I4)]
+            public int dwData;
+            [MarshalAs(UnmanagedType.I4)]
+            public int cbData;
+            [MarshalAs(UnmanagedType.SysInt)]
+            public IntPtr lpData;
+        }
+
+        [DllImport("User32.dll")]
+        private static extern bool SendMessage(int hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+
+        #endregion
 
         /// <summary>
         /// Send the specified key to the process
@@ -134,5 +155,43 @@ namespace OnlineVideos.Helpers
             return IntPtr.Zero;
         }
 
+        /// <summary>
+        /// Send a string to the specified window
+        /// </summary>
+        /// <param name="windowHandle"></param>
+        /// <param name="stringToSend"></param>
+        public static void SendStringToApplication(int windowHandle, string stringToSend)
+        {
+            IntPtr lpData = Marshal.StringToHGlobalUni(stringToSend);
+
+            COPYDATASTRUCT data = new COPYDATASTRUCT();
+            data.dwData = 0;
+            data.cbData = stringToSend.Length * 2;
+            data.lpData = lpData;
+
+            IntPtr lpStruct = Marshal.AllocHGlobal(
+                Marshal.SizeOf(data));
+
+            Marshal.StructureToPtr(data, lpStruct, false);
+
+            SendMessage(windowHandle, WM_COPYDATA, IntPtr.Zero, lpStruct);
+        }
+
+        /// <summary>
+        /// Get the string from the WndProc message
+        /// </summary>
+        /// <param name="msg"></param>
+        unsafe public static string ReadStringFromMessage(Message message)
+        {
+            if (message.Msg == WM_COPYDATA)
+            {
+                COPYDATASTRUCT data = (COPYDATASTRUCT)message.GetLParam(typeof(COPYDATASTRUCT));
+
+                string str = new string((char*)(data.lpData), 0, data.cbData / 2);
+
+                return str;
+            }
+            return string.Empty;
+        }
     }
 }

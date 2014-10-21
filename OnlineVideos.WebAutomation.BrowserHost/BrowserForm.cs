@@ -37,13 +37,29 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private string _userName;
         private string _password;
         private BrowserUtilConnector _connector;
-
         private bool _debugMode = false; // Allow for the form to be resized/lose focus in debug mode
 
         private int _lastKeyPressed;
         private DateTime _lastKeyPressedTime;
 
         private PlayPauseToggle _lastPlayPauseState = PlayPauseToggle.Play;
+
+        /// <summary>
+        /// Store/retrieve the current screen the web player is showing on - this is stored in the user config
+        /// </summary>
+        private int CurrentScreen
+        {
+            get
+            {
+                return Properties.Settings.Default.CurrentScreenId;
+            }
+            set
+            {
+
+                Properties.Settings.Default.CurrentScreenId = value;
+                Properties.Settings.Default.Save();
+            }
+        }
 
         /// <summary>
         /// This form is used to play a video - we use separate exe as there is no reliable way to dispose of the web browser between sessions
@@ -86,7 +102,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             try
             {
                 SetScreenState();
-                
+                SetCurrentScreen();
+
                 ForceClose = false;
                 this.Activate();
                 this.Focus();
@@ -152,12 +169,27 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             HandleKeyPress(e.KeyValue);
         }
 
-        //Used to pass messages to remotes. Lifted from MediaPortal.cs
+        /// <summary>
+        /// Used to pass messages to remotes. Lifted from MediaPortal.cs
+        /// If message type of WM_COPYDATA we assume this is the OnAction event forwarded from MP
+        /// </summary>
+        /// <param name="msg"></param>
         protected override void WndProc(ref Message msg)
         {
             Action action;
             char key;
             Keys keyCode;
+
+            if (msg.Msg == ProcessHelper.WM_COPYDATA)
+            {
+                var messageString = ProcessHelper.ReadStringFromMessage(msg);
+                Action.ActionType actionType;
+
+                if (System.Enum.TryParse<Action.ActionType>(messageString, out actionType))
+                    OnNewAction(new Action(actionType, 0f,0f));
+                return;
+            }
+
             if (InputDevices.WndProc(ref msg, out action, out key, out keyCode))
             {
                 //If remote doesn't fire event directly we manually fire it
@@ -173,6 +205,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 }
                 return; // abort WndProc()
             }
+           
             base.WndProc(ref msg);
         }
 
@@ -241,6 +274,10 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 case Action.ActionType.ACTION_PREVIOUS_MENU:
                     ForceQuit();
                     break;
+                case Action.ActionType.ACTION_CONTEXT_MENU: // Change the screen we're on using the context menu button
+                    CurrentScreen++;
+                    SetCurrentScreen();
+                    break;
                 default:
                     // fire the action on the connector also
                     _connector.OnAction(action.wID.ToString());
@@ -281,6 +318,22 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             this.WindowState = _debugMode ? FormWindowState.Normal : FormWindowState.Maximized;
             this.FormBorderStyle = _debugMode ? FormBorderStyle.Sizable : FormBorderStyle.FixedDialog;
             this.ControlBox = _debugMode;            
+        }
+
+        /// <summary>
+        /// Set the screen which the form is on based on the CurrentScreen property
+        /// </summary>
+        private void SetCurrentScreen()
+        {
+            if (CurrentScreen >= Screen.AllScreens.Count())
+                CurrentScreen = 0;
+
+            if (Screen.AllScreens.Count() > 1)
+            {
+                if (!_debugMode) this.WindowState = FormWindowState.Normal;
+                this.Location = Screen.AllScreens[CurrentScreen].Bounds.Location;
+                if (!_debugMode) this.WindowState = FormWindowState.Maximized;
+            }
         }
 
     }
