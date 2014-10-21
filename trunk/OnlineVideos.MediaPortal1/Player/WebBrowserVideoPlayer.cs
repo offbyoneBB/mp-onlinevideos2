@@ -63,8 +63,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 return true;
             }
 
-            GUIWindowManager.OnNewAction += GUIWindowManager_OnNewAction;
-
+           
             // Set up the process
             // Process requires path to MediaPortal, Web Automation Type, Video Id, Username, Password
             _browserProcess = new Process();
@@ -112,39 +111,7 @@ namespace OnlineVideos.MediaPortal1.Player
         {
             // Forward the key on to the browser process 
             if (_browserProcess != null)
-            {
-                var key = string.Empty;
-                switch (action.wID)
-                {
-                    case ActionType.ACTION_PLAY:
-                    case ActionType.ACTION_MUSIC_PLAY:
-                        key = "P";
-                        break;
-                    case ActionType.ACTION_PAUSE:
-                        key = " ";
-                        break;
-                    case ActionType.ACTION_STOP:
-                        key = "B";
-                        break;
-                    case ActionType.ACTION_PREVIOUS_MENU:
-                        key = "{ESC}";
-                        break;
-                    case ActionType.ACTION_STEP_BACK:
-                    case ActionType.ACTION_MOVE_LEFT:
-                        key = "{LEFT}";
-                        break;
-                    case ActionType.ACTION_STEP_FORWARD:
-                    case ActionType.ACTION_MOVE_RIGHT:
-                        key = "{RIGHT}";
-                        break;
-                }
-
-                if (!string.IsNullOrEmpty(key))
-                {
-                    ProcessHelper.SetForeground(_browserProcess.MainWindowHandle);
-                    System.Windows.Forms.SendKeys.Send(key);
-                }
-            }
+                ProcessHelper.SendStringToApplication(_browserProcess.MainWindowHandle.ToInt32(), action.wID.ToString());
         }
 
         /// <summary>
@@ -188,7 +155,8 @@ namespace OnlineVideos.MediaPortal1.Player
             if (suspend) //suspend and hide MediaPortal
             {
                 InputDevices.Stop(); //stop input devices so they don't interfere when the browser player starts listening
-                
+                GUIWindowManager.OnNewAction += GUIWindowManager_OnNewAction;
+
                 // hide mediaportal and suspend rendering 
                 GUIGraphicsContext.BlankScreen = true;
                 GUIGraphicsContext.form.Hide();
@@ -200,7 +168,7 @@ namespace OnlineVideos.MediaPortal1.Player
             }
             else //resume Mediaportal
             {
-                
+                GUIWindowManager.OnNewAction -= GUIWindowManager_OnNewAction;
                 // Restore the window
                 ProcessHelper.RestoreWindow(_mpWindowHandle);
                 InputDevices.Init();
