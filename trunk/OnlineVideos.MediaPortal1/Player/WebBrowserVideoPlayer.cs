@@ -88,6 +88,7 @@ namespace OnlineVideos.MediaPortal1.Player
             // Hide MediaPortal
             if (_browserProcess.Start())
             {
+                Thread.Sleep(2000); // Sleep for 2 seconds to allow the browser host to load - should prevent the desktop flashing up
                 ProcessHelper.SetForeground(_browserProcess.MainWindowHandle);
                 SuspendMP(true);
                 if (_browserProcess != null)
