@@ -128,7 +128,7 @@ namespace OnlineVideos.Sites
             List<ContextMenuEntry> entries = new List<ContextMenuEntry>();
             if (selectedItem != null && enableSubtitles)
             {
-                HtmlAgilityPack.HtmlDocument doc = GetWebData<HtmlAgilityPack.HtmlDocument>(selectedItem.VideoUrl);
+                HtmlAgilityPack.HtmlDocument doc = GetWebData<HtmlAgilityPack.HtmlDocument>(selectedItem.VideoUrl,GetCookie());
                 IEnumerable<HtmlAgilityPack.HtmlNode> subs = doc.DocumentNode.Descendants("track").Where(t => t.GetAttributeValue("kind", "") == "captions");
                 if (subs != null && subs.Count() > 0)
                 {
@@ -156,7 +156,7 @@ namespace OnlineVideos.Sites
             if (selectedItem != null && enableSubtitles)
             {
                 ContextMenuExecutionResult result = new ContextMenuExecutionResult();
-                selectedItem.SubtitleText = GetWebData<string>(choice.Other as string);
+                selectedItem.SubtitleText = GetWebData<string>(choice.Other as string, GetCookie());
                 selectedItem.SubtitleText = selectedItem.SubtitleText.Replace("WEBVTT\r\n\r\n", "");
                 result.ExecutionResultMessage = selectedItem.Title + " - Subtitle: " + choice.DisplayText;
                 result.RefreshCurrentItems = false;
