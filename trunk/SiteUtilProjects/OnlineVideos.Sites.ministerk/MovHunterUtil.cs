@@ -111,10 +111,23 @@ namespace OnlineVideos.Sites
             return ti;
         }
 
+        private bool IsUrlEncoded(string text)
+        {
+            return (HttpUtility.UrlDecode(text) != text);
+        }
+
         public override string getUrl(VideoInfo video)
         {
             string url = base.getUrl(video);
-            url = new MPUrlSourceFilter.HttpUrl(url) { ReceiveDataTimeout = (int)httpReceiveDataTimeoutInSec * 1000 }.ToString();
+            if (!IsUrlEncoded(url))
+                url = new MPUrlSourceFilter.HttpUrl(url) { ReceiveDataTimeout = (int)httpReceiveDataTimeoutInSec * 1000 }.ToString();
+
+            //Uri uri = new Uri(url);
+            //string[] segments = uri.Segments;
+            //string lastSegment = segments[segments.Length - 1];
+            //url = url.Replace(lastSegment, HttpUtility.UrlDecode(lastSegment));
+            //url = new MPUrlSourceFilter.HttpUrl(url) { ReceiveDataTimeout = (int)httpReceiveDataTimeoutInSec * 1000 }.ToString();
+            
             return url;
         }
 
