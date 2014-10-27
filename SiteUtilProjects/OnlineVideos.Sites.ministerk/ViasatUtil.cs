@@ -28,7 +28,10 @@ namespace OnlineVideos.Sites
         protected string imageUrl = "http://play.pdl.viaplay.com/imagecache/290x162/{0}";
 
         [Category("OnlineVideosConfiguration"), Description("Url for streams")]
-        protected string streamUrl = "http://viastream.viasat.tv/PlayProduct/";
+        protected string streamUrl = "http://playapi.mtgx.tv/v3/videos/stream/";
+
+        [Category("OnlineVideosConfiguration"), Description("Url for metadata")]
+        protected string metaDataUrl = "http://playapi.mtgx.tv/v3/videos/";
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Download Subtitles"), Description("Choose if you want to download available subtitles or not")]
         protected bool retrieveSubtitles = true;
@@ -106,7 +109,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = new VideoInfo();
                     video.Title = (string)episode["title"];
-                    video.VideoUrl = streamUrl + episode["id"].ToString();
+                    video.VideoUrl = episode["id"].ToString();
                     video.ImageUrl = string.Format(imageUrl, (string)episode["image"]);
                     video.Description = (string)episode["summary"];
                     videos.Add(video);
@@ -115,7 +118,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = new VideoInfo();
                     video.Title = (string)episode["title"];
-                    video.VideoUrl = streamUrl + episode["id"].ToString();
+                    video.VideoUrl = episode["id"].ToString();
                     video.ImageUrl = string.Format(imageUrl, (string)episode["image"]);
                     video.Description = (string)episode["summary"];
                     videos.Add(video);
@@ -126,37 +129,10 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            string doc = GetWebData(video.VideoUrl);
-            doc = System.Text.RegularExpressions.Regex.Replace(doc, "&(?!amp;)", "&amp;");
-            XmlDocument xDoc = new XmlDocument();
-            xDoc.LoadXml(doc);
+            JObject data = GetWebData<JObject>(streamUrl + video.VideoUrl);
 
-            string sub = null;
-            if (retrieveSubtitles)
-            {
-                var subNode = xDoc.SelectSingleNode("Products/Product/SamiFile");
-                if (subNode != null)
-                    sub = subNode.InnerText;
-            }
-            
-            string playstr = xDoc.SelectSingleNode("Products/Product/Videos/Video/Url").InnerText;
+            string playstr = (string)data["streams"]["medium"];
 
-            XmlNode geo;
-            if ((geo = xDoc.SelectSingleNode("Products/Product/Geoblock")) != null)
-            {
-                if (geo.InnerText == "true")
-                {
-                    xDoc.LoadXml(GetWebData(playstr));
-                    if (xDoc.SelectSingleNode("GeoLock/Success").InnerText != "false")
-                    {
-                        playstr = xDoc.SelectSingleNode("GeoLock/Url").InnerText;
-                    }
-                    else
-                    {
-                        throw new OnlineVideosException(xDoc.SelectSingleNode("GeoLock/Msg").InnerText);
-                    }
-                }
-            }
 
             if (playstr.ToLower().StartsWith("rtmp"))
             {
@@ -176,10 +152,17 @@ namespace OnlineVideos.Sites
                 playstr += "?hdcore=3.3.0" + "&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
             }
             
-            if (!string.IsNullOrEmpty(sub) && retrieveSubtitles)
+            if (retrieveSubtitles)
             {
-                sub = GetSubtitle(sub);
-                video.SubtitleText = sub;
+                data = GetWebData<JObject>(metaDataUrl + video.VideoUrl);
+                string sub = (string)data["sami_path"];
+                if (string.IsNullOrEmpty(sub))
+                    sub = (string)data["subtitles_for_hearing_impaired"];
+                if (!string.IsNullOrEmpty(sub))
+                {
+                    sub = GetSubtitle(sub);
+                    video.SubtitleText = sub;
+                }
             }
             return playstr;
         }
