@@ -67,7 +67,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\DirectShowLib-2005.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL" />
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.3.1.0.0\lib\net40\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -216,6 +218,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="build.targets" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -243,7 +246,6 @@
     <Resource Include="Images\Settings.png" />
     <Resource Include="Images\Stop.png" />
     <Resource Include="Images\Warning.png" />
-    <Content Include="NLog.dll" />
     <Resource Include="Images\GlobalSites.png" />
     <Resource Include="Images\Add.png" />
     <Resource Include="Images\Help.png" />
