@@ -98,11 +98,26 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
-            string thisUrl = base.getUrl(video);
+            string thisUrl = null;
+            string data2 = GetSubString(data, @"""text/javascript"" src=""", @"""");
+            if (!String.IsNullOrEmpty(data2))
+            {
+                data2 = GetWebData(data2);
+                Match matchFileUrl2 = Regex.Match(data2, @"'vidurl':\s*(?<m0>[^,]*),", defaultRegexOptions);
+                if (matchFileUrl2.Success)
+                {
+                    thisUrl = matchFileUrl2.Groups["m0"].Value;
+                    try
+                    {
+                        string deJSONified = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(thisUrl);
+                        if (!string.IsNullOrEmpty(deJSONified)) thisUrl = deJSONified;
+                    }
+                    catch { }
+                }
+            }
             if (!String.IsNullOrEmpty(thisUrl))
                 return thisUrl;
-
-            string data2 = GetSubString(data, @"<div id=""video-content""", @"<div\sid=""video-details""");
+            data2 = GetSubString(data, @"<div id=""video-content""", @"<div\sid=""video-details""");
             if (String.IsNullOrEmpty(data2))
                 data2 = data;
             Match matchFileUrl = Regex.Match(data2, @"<iframe\s(?:width=""[^""]*""\sheight=""[^""]*""\s)?src=""(?<m0>[^""]*)""|<param\sname=""(movie|src)""\svalue=""(?<m0>[^""]*)""|embed\s(?:type=""[^""]*""\swidth=""[^""]*""\sheight=""[^""]*""\s)?src=""(?<m0>[^""]*)""|<a\shref=""(?<m0>(?:http://www.youtube.com/watch|http://www.spike.com/video-clips|http://www.gametrailers.com/(?:video|game))[^""]*)""\starget=""_blank"">|<iframe\sid=""[^""]*""\ssrc=""(?<m0>[^""]*)""", defaultRegexOptions);
@@ -129,7 +144,7 @@ namespace OnlineVideos.Sites
 
             if (String.IsNullOrEmpty(thisUrl)) return null;
 
-            if (thisUrl.StartsWith("http://www.youtube.com"))
+            if (thisUrl.Contains("//www.youtube.com"))
                 return GetUrlFromHosters(thisUrl, video);
 
             if (thisUrl.StartsWith("http://blip.tv/play"))
