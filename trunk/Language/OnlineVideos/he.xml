@@ -104,6 +104,7 @@
   <string name="Playlists">רשימות ניגון</string>
   <string name="PlaybackWillBeStopped">ניגון יופסק</string>
   <string name="PleaseEnterDescription">אנא הכנס תאור קצר.</string>
+  <string name="PleaseUpdateLocalSite">נא עדכן ובדוק שוב את האתר המקומי לפני דיווח על תקלה</string>
   <string name="PlotOutline">תקציר העלילה</string>
   <string name="PreviousPage">עמוד קודם</string>
   <string name="PerformAutomaticUpdate">בצע עדכון אוטומטי?</string>
@@ -132,6 +133,7 @@
   <string name="SelectSource">בחר מקור</string>
   <string name="Sites">אתרים</string>
   <string name="Size">גודל</string>
+  <string name="SkipSingleCategory">דלג על קטגוריה בודדת</string>
   <string name="SortOptions">אפשרויות מיון</string>
   <string name="Search">חיפוש</string>
   <string name="SetDownloadFolderInConfig">אנא הגדר ספריית הורדות מתוכנת ההגדרות!</string>
@@ -141,6 +143,7 @@
   <string name="StartingPlayback">מתחיל לנגן</string>
   <string name="Subscriptions">מנויים</string>
   <string name="Success">הצלחה</string>
+  <string name="SearchRelatedKeywords">חפש מילות מפתח קשורות</string>
   <!--T-->
   <string name="Timeframe">מסגרת זמן</string>
   <string name="Timeout">חריגה מהזמן שהוקצה</string>
@@ -180,4 +183,13 @@
   <string name="Settings_CacheTimeout">זמן (בדקות) לשמירה במטמון של מידע מהרשת</string>
   <string name="Settings_CategoryDiscoveryTimeout">זמן (בדקות) לטעינה מחדש של קטגוריות מהרשת</string>
   <string name="Settings_UtilTimeout">זמן המתנה (בשניות) לבקשות מהרשת</string>
+  <string name="Settings_WmpBuffer">מטמון (במילי-שניות) עבור נגן המדיה של Windows</string>
+  <string name="Settings_PlayBuffer">אחוז לטעינה לפני תחילת ניגון</string>
+  <string name="Settings_AllowRefreshrateChange">אפשר התאמת קצב רענון אוטומטית</string>
+  <string name="Settings_FavoritesFirst">הצב מועדפים והורדות ראשונים ברשימה במקום אחרונים</string>
+  <string name="Settings_LatestVideosMaxItems">כמות סרטי וידאו אחרונים להצגה</string>
+  <string name="Settings_LatestVideosRandomize">ערבב את כל סרטי הוידאו האחרונים לפני הצגתם</string>
+  <string name="Settings_LatestVideosOnlineDataRefresh">רענן סרטי וידאו אחרונים מהרשת כל X דקות</string>
+  <string name="Settings_LatestVideosGuiDataRefresh">רענן סרטי וידאו אחרונים שמוצגים כל X שניות</string>
+  <string name="Settings_StoreLayoutPerCategory">שמור סדר תצוגה עבור כל אתר וקטגוריה</string>
 </resources>
