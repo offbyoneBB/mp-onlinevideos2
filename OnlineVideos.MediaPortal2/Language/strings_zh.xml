@@ -10,7 +10,8 @@
   <string name="OnlineVideos.AddToFavourites">添加到收藏夹</string>
   <string name="OnlineVideos.AddingToFavorites">添加到收藏夹中</string>
   <string name="OnlineVideos.AutomaticUpdate">自动更新</string>
-  <string name="OnlineVideos.AutomaticUpdateDisabled">自动更新已禁用。\n</string>
+  <string name="OnlineVideos.AutomaticUpdateDisabled">自动更新已禁用。
+</string>
   <!--B-->
   <string name="OnlineVideos.Broken">中断</string>
   <string name="OnlineVideos.Buffered">已缓冲的</string>
