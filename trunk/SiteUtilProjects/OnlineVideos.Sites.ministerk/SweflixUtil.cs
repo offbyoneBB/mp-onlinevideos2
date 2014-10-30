@@ -286,58 +286,39 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override string getUrl(VideoInfo video)
         {
-            string url = "";
-            video.PlaybackOptions = new Dictionary<string, string>();
-            string data = MyGetWebData<string>(video.VideoUrl);
-            Regex rgx = new Regex(@"sources:\s(\[[^\]]+\])", RegexOptions.Multiline);
-            Match m = rgx.Match(data);
-            if (m.Success)
-            {
-                JArray opts = JArray.Parse(m.Groups[1].Value);
+            HtmlDocument data = MyGetWebData<HtmlDocument>(video.VideoUrl);
+            HtmlNode doc = data.DocumentNode;
 
-                foreach (JToken opt in opts)
-                {
-                    video.PlaybackOptions.Add((string)opt["label"], new MPUrlSourceFilter.HttpUrl(((string)opt["file"]).Replace("https://", "http://")) { ReceiveDataTimeout = (int)httpReceiveDataTimeoutInSec * 1000, Referer = video.VideoUrl }.ToString());
-                }
-                if (video.PlaybackOptions.Count > 0)
-                    url = video.PlaybackOptions.First().Value;
-            }
-
-            rgx = new Regex(@"tracks:\s(\[[^\]]+\])", RegexOptions.Multiline);
-            m = rgx.Match(data);
-            if (m.Success)
+            string url = doc.SelectSingleNode("//source").GetAttributeValue("src", "");
+            if (!string.IsNullOrEmpty(url))
             {
                 Languages secondLang = preferedLanguage == Languages.Svenska ? Languages.Engelska : Languages.Svenska;
-                JArray opts = JArray.Parse(m.Groups[1].Value);
-                Dictionary<string, string> langs = new Dictionary<string, string>();
-                foreach (JToken opt in opts.Where(o => o.HasValues && !string.IsNullOrEmpty((string)o["file"])))
-                {
-                    langs.Add((string)opt["label"], (string)opt["file"]);
-                }
 
-                string subtitle = null;
-                if (langs.ContainsKey(preferedLanguage.ToString()))
+                HtmlNode subNode = doc.SelectSingleNode("//track[@label = '" + preferedLanguage.ToString() + "']");
+                if (subNode == null)
                 {
-                    subtitle = GetWebData(langs[preferedLanguage.ToString()], null, null, null, false, false, null, Encoding.GetEncoding("ISO-8859-1"));
+                    subNode = doc.SelectSingleNode("//track[@label = '" + secondLang.ToString() + "']");
                 }
-                else if (langs.ContainsKey(secondLang.ToString()))
+                if (subNode == null)
                 {
-                    subtitle = GetWebData(langs[secondLang.ToString()], null, null, null, false, false, null, Encoding.GetEncoding("ISO-8859-1"));
+                    subNode = doc.SelectSingleNode("//track");
                 }
-                else if (langs.Count > 0)
+                if (subNode != null)
                 {
-                    subtitle = GetWebData(langs.First().Value, null, null, null, false, false, null, Encoding.GetEncoding("ISO-8859-1"));
+                    string subUrl = subNode.GetAttributeValue("src", "");
+                    if (!string.IsNullOrEmpty(subUrl))
+                    {
+                        video.SubtitleText = GetWebData(subUrl);
+                        if (video.SubtitleText.IndexOf("\r\n") > -1 && !video.SubtitleText.StartsWith("1"))
+                        {
+                            video.SubtitleText = video.SubtitleText.Substring(video.SubtitleText.IndexOf("\r\n") + 2);
+                        }
+                    }
                 }
-
-                if (subtitle != null)
-                    video.SubtitleText = subtitle;
             }
-
-            if (inPlaylist)
-                video.PlaybackOptions.Clear();
-            return new List<string>() { url };
+            return url;
         }
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
