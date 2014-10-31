@@ -311,10 +311,13 @@ namespace OnlineVideos.Sites
                     if (!string.IsNullOrEmpty(subUrl))
                     {
                         video.SubtitleText = GetWebData(subUrl);
-                        if (video.SubtitleText.IndexOf("\r\n") > -1 && !video.SubtitleText.StartsWith("1"))
+                        int newLineIndex = video.SubtitleText.IndexOf("\r\n");
+                        if (newLineIndex > -1 && !video.SubtitleText.StartsWith("1") && video.SubtitleText.Count() - newLineIndex >= 2)
                         {
-                            video.SubtitleText = video.SubtitleText.Substring(video.SubtitleText.IndexOf("\r\n") + 2);
+                            video.SubtitleText = video.SubtitleText.Substring(newLineIndex + 2);
                         }
+                        //Only allow ASCII + Extended ASCII (many subtitles contain crap characters -> fail to load)
+                        video.SubtitleText = Regex.Replace(video.SubtitleText, @"[^\u0000-\u00FF]", "");
                     }
                 }
             }
