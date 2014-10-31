@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BBCiPlayerUtil.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="LivetvruUtil.cs" />
     <Compile Include="NaviXUtil.cs" />
     <Compile Include="Demand5Util.cs" />
