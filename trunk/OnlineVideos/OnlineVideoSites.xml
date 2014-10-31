@@ -499,40 +499,33 @@
     <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en">
       <Description>The BBC iPlayer allows to catch up on the last 7 days of BBC TV (only available in the UK).</Description>
       <Configuration>
-        <item key="thumbReplaceRegExPattern"><![CDATA[_\d{2,3}_\d{2,3}\.jpg]]></item>
-        <item key="thumbReplaceString"><![CDATA[_406_228.jpg]]></item>
+        <item key="thumbReplaceRegExPattern"><![CDATA[/\d{2,3}x\d{2,3}/]]></item>
+        <item key="thumbReplaceString"><![CDATA[/406x228/]]></item>
         <item key="tvGuideFormatString"><![CDATA[Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Highlights" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vt297_406_228.jpg">http://feeds.bbc.co.uk/iplayer/highlights/tv/list</Category>
-        <Category xsi:type="RssLink" name="Most Popular" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vnflk_406_228.jpg">http://feeds.bbc.co.uk/iplayer/popular/tv/list</Category>
-        <Category xsi:type="RssLink" name="Children's" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b009jtkj_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/childrens/list</Category>
-        <Category xsi:type="RssLink" name="Comedy" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vlq06_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/comedy/tv/list</Category>
-        <Category xsi:type="RssLink" name="Drama &amp; Soaps" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vnflk_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/drama/tv/list</Category>
-        <Category xsi:type="RssLink" name="Entertainment" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vvwgb_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/entertainment/tv/list</Category>
-        <Category xsi:type="RssLink" name="Factual" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00qgtjk_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/factual/tv/list</Category>
-        <Category xsi:type="RssLink" name="Films" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b008flgw_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/films/tv/list</Category>
-        <Category xsi:type="RssLink" name="Learning" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00j3hm5_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/learning/tv/list</Category>
-        <Category xsi:type="RssLink" name="Music" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vt2yz_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/music/tv/list</Category>
-        <Category xsi:type="RssLink" name="News" thumb="http://node1.bbcimg.co.uk/iplayer/images/episode/b00qhstc_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/news/tv/list</Category>
-        <Category xsi:type="RssLink" name="Religion &amp; Ethics" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00q9jjw_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/religion_and_ethics/tv/list</Category>
-        <Category xsi:type="RssLink" name="Sport" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vnybn_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/sport/tv/list</Category>
-        <Category xsi:type="RssLink" name="Sign Zone" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vsvg9_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/signed/tv/list</Category>
-        <Category xsi:type="RssLink" name="Audio Described" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00brnr1_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/audiodescribed/tv/list</Category>
-        <Category xsi:type="RssLink" name="Northern Ireland" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vnx5d_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/northern_ireland/tv/list</Category>
-        <Category xsi:type="RssLink" name="Scotland" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vt75w_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/scotland/tv/list</Category>
-        <Category xsi:type="RssLink" name="Wales" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vnwf1_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/wales/tv/list</Category>
-        <Category xsi:type="RssLink" name="Lifestyle &amp; Leisure" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vv3n1_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/lifestyle_and_leisure/tv/list</Category>
-        <Category xsi:type="RssLink" name="BBC One" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/BBC_One_logo.svg/200px-BBC_One_logo.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_one/list</Category>
-        <Category xsi:type="RssLink" name="BBC Two" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/b/b9/Bbctwo-logo2007.svg/200px-Bbctwo-logo2007.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_two/list</Category>
-        <Category xsi:type="RssLink" name="BBC Three" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/f/f2/Logo_BBC_Three.svg/200px-Logo_BBC_Three.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_three/list</Category>
-        <Category xsi:type="RssLink" name="BBC Four" thumb="http://upload.wikimedia.org/wikipedia/fr/d/d3/BBC_Four.png">http://feeds.bbc.co.uk/iplayer/bbc_four/list</Category>
-        <Category xsi:type="RssLink" name="BBC HD" thumb="http://ichef.bbci.co.uk/corporate/images/width/live/p0/0n/sm/p00nsmgm.jpg/144">http://feeds.bbc.co.uk/iplayer/bbc_hd/list</Category>
-        <Category xsi:type="RssLink" name="CBBC" thumb="http://news.bbc.co.uk/media/images/45416000/jpg/_45416982_cbbc_logo.jpg">http://feeds.bbc.co.uk/iplayer/cbbc/list</Category>
-        <Category xsi:type="RssLink" name="CBeebies" thumb="http://www.bbc.co.uk/pressoffice/images/bank/logos/300cbeebies.jpg">http://feeds.bbc.co.uk/iplayer/cbeebies/list</Category>
-        <Category xsi:type="RssLink" name="BBC Parliment" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/7/7c/BBC_Parliament.svg/200px-BBC_Parliament.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_parliament/list</Category>
-        <Category xsi:type="RssLink" name="BBC News" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/BBC_News.svg/200px-BBC_News.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_news24/list</Category>
-        <Category xsi:type="RssLink" name="BBC Alba" thumb="http://upload.wikimedia.org/wikipedia/en/thumb/a/a5/BBC_Alba.svg/200px-BBC_Alba.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_alba/list</Category>
+        <Category xsi:type="RssLink" name="Most Popular">http://www.bbc.co.uk/iplayer/group/most-popular</Category>
+        <Category xsi:type="RssLink" name="A - Z">http://www.bbc.co.uk/iplayer/a-z/</Category>
+        <Category xsi:type="RssLink" name="Arts" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01n4zyb.jpg">http://www.bbc.co.uk/iplayer/categories/arts/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="CBBC" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p02984mp.jpg">http://www.bbc.co.uk/iplayer/categories/cbbc/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="CBeebies" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027dlmb.jpg">http://www.bbc.co.uk/iplayer/categories/cbeebies/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Comedy" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p020dl2m.jpg">http://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Documentaries" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01l8l4c.jpg">http://www.bbc.co.uk/iplayer/categories/documentaries/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Drama &amp; Soaps" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295f60.jpg">http://www.bbc.co.uk/iplayer/categories/drama-and-soaps/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Entertainment" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01tlxfz.jpg">http://www.bbc.co.uk/iplayer/categories/entertainment/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Films" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01h6zpj.jpg">http://www.bbc.co.uk/iplayer/categories/films/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Food" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p023w4qg.jpg">http://www.bbc.co.uk/iplayer/categories/food/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="History" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01jykx1.jpg">http://www.bbc.co.uk/iplayer/categories/history/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Lifestyle" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01zxkgz.jpg">http://www.bbc.co.uk/iplayer/categories/lifestyle/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Music" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01lccbf.jpg">http://www.bbc.co.uk/iplayer/categories/music/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="News" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p029fqtd.jpg">http://www.bbc.co.uk/iplayer/categories/news/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Science &amp; Nature" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027s8wj.jpg">http://www.bbc.co.uk/iplayer/categories/science-and-nature/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Sport" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p024q1kt.jpg">http://www.bbc.co.uk/iplayer/categories/sport/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Audio Described" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0276wg9.jpg">http://www.bbc.co.uk/iplayer/categories/audio-described/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Signed" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01x0kbv.jpg">http://www.bbc.co.uk/iplayer/categories/signed/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Northern Ireland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027lsl4.jpg">http://www.bbc.co.uk/iplayer/categories/northern-ireland/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Scotland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p025h74g.jpg">http://www.bbc.co.uk/iplayer/categories/scotland/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Wales" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295zvd.jpg">http://www.bbc.co.uk/iplayer/categories/wales/all?sort=atoz</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
             <Channel name="BBC One" thumb="http://www.gtsat.be/images/uk/bbc_one.png">bbc1.f4m?guideid=92</Channel>

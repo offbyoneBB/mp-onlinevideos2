@@ -3,11 +3,24 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Xml;
+using OnlineVideos.Sites.Brownard.Extensions;
+using System.Net;
 
 namespace OnlineVideos.Sites
 {
     public class BBCiPlayerUtil : SiteUtilBase
     {
+        #region Constants
+
+        const string MOST_POPULAR_URL = "http://www.bbc.co.uk/iplayer/group/most-popular";
+        const string ATOZ_URL = "http://www.bbc.co.uk/iplayer/a-z/";
+        static readonly string[] atoz = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9" };
+        static readonly List<Category> aToZCategories = new List<Category>();
+
+        #endregion
+
+        #region Settings
+
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
         string proxy = null;
         [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a username, set it here.")]
@@ -17,9 +30,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Whether to download subtitles")]
         protected bool RetrieveSubtitles = false;
         [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
-        string searchUrl = "http://feeds.bbc.co.uk/iplayer/search/tv/?q={0}";
-        [Category("OnlineVideosUserConfiguration"), Description("Group similar items from the rss feeds into subcategories.")]
-        bool autoGrouping = true;
+        string searchUrl = "http://www.bbc.co.uk/iplayer/search?q={0}";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used on a video thumbnail for matching a string to be replaced for higher quality")]
         protected string thumbReplaceRegExPattern;
         [Category("OnlineVideosConfiguration"), Description("The string used to replace the match if the pattern from the thumbReplaceRegExPattern matched")]
@@ -31,28 +42,56 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("The layout to use to display TV Guide info, possible wildcards are <nowtitle>,<nowdescription>,<nowstart>,<nowend>,<nexttitle>,<nextstart>,<nextend>,<newline>")]
         protected string tvGuideFormatString;
 
+        #endregion
+
+        #region Regex
+
+        static readonly Regex seriesRegex = new Regex(@"<li class=""list-item[^""]*"" data-ip-id=""([^""]*)"">.*?<div class=""title top-title"">([^<]*)</div>.*?data-ip-src=""([^""]*)"">");
+        static readonly Regex aToZRegex = new Regex(@"<li>\s*<a href=""/iplayer/brand/([^""]*)"".*?<span class=""title"">([^<]*)");
+        static readonly Regex nextPageRegex = new Regex(@"<span class=""next txt""><a href=""([^""]*)"">Next");
+
+        static readonly Regex episodeInfoRegex = new Regex(@"<li class=""list-item[^>]*>(.*?)</li>", RegexOptions.Singleline);
+        static readonly Regex episodeUrlRegex = new Regex(@"href=""([^""]*)");
+        static readonly Regex episodeImageRegex = new Regex(@"data-ip-src=""([^""]*)");
+        static readonly Regex episodeTitleRegex = new Regex(@"class=""subtitle"">([^<]*)");
+        static readonly Regex episodeParentTitleRegex = new Regex(@"class=""title"">([^<]*)");
+        static readonly Regex episodeDescriptionRegex = new Regex(@"class=""synopsis"">([^<]*)");
+        static readonly Regex episodeAirDateRegex = new Regex(@"class=""release"">([^<]*)");
+        static readonly Regex episodeDurationRegex = new Regex(@"Duration\s*</span>([^<]*)");
+
+        static readonly Regex videoPidRegex = new Regex(@"vpid"":""([^""]*)");
+
+        #endregion
+
+        #region Init
+
+        string defaultThumb;
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+            defaultThumb = string.Format(@"{0}\Icons\{1}.png", OnlineVideoSettings.Instance.ThumbsDir, siteSettings.Name);
+        }
+
+        #endregion
+
+        #region GetUrl
+
         public override string getUrl(VideoInfo video)
         {
-            XmlDocument doc = new XmlDocument();
-            XmlNamespaceManager nsmRequest;
-            string id;
-            System.Net.WebProxy proxyObj = getProxy();
-
             if (video.Other == "livestream")
+                return getLiveUrls(video);
+
+            WebProxy proxyObj = getProxy();
+            Match m = videoPidRegex.Match(GetWebData(video.VideoUrl, null, null, proxyObj));
+            if (!m.Success)
             {
-                return getLiveUrls(video);//id = video.VideoUrl;
-            }
-            else
-            {
-                doc.LoadXml(GetWebData(video.VideoUrl));
-                nsmRequest = new XmlNamespaceManager(doc.NameTable);
-                nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/emp/playlist");
-                id = doc.SelectSingleNode("//ns1:item[@kind='programme']/@identifier", nsmRequest).Value;
+                Log.Warn("BBCiPlayer: Failed to parse vpid from '{0}'", video.VideoUrl);
+                return null;
             }
 
-            doc = new XmlDocument();
-            doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + id, null, null, proxyObj)); //uk only
-            nsmRequest = new XmlNamespaceManager(doc.NameTable);
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + m.Groups[1].Value, null, null, proxyObj)); //uk only
+            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
             if (RetrieveSubtitles)
@@ -76,14 +115,6 @@ namespace OnlineVideos.Sites
                 string resultUrl = "";
                 foreach (XmlElement connectionElem in mediaElem.SelectNodes("ns1:connection", nsmRequest))
                 {
-                    /*
-                    if (Array.BinarySearch<string>(new string[] {"http","sis"}, connectionElem.Attributes["kind"].Value)>=0)
-                    {
-                        // http
-                        info = string.Format("{0}x{1} | {2}kbps| {3}", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"), connectionElem.GetAttribute("kind"));
-                        resultUrl = connectionElem.Attributes["href"].Value;
-                    }
-                    else */
                     if (Array.BinarySearch<string>(new string[] { "akamai", "level3", "limelight" }, connectionElem.Attributes["kind"].Value) >= 0)
                     {
                         // rtmp
@@ -94,7 +125,7 @@ namespace OnlineVideos.Sites
                         string identifier = connectionElem.Attributes["identifier"].Value;
                         string auth = connectionElem.Attributes["authString"].Value;
                         string application = connectionElem.GetAttribute("application");
-                        if (string.IsNullOrEmpty(application)) application = video.Other == "livestream" ? "live" : "ondemand";
+                        if (string.IsNullOrEmpty(application)) application = "ondemand";
                         string SWFPlayer = "http://www.bbc.co.uk/emp/releases/iplayer/revisions/617463_618125_4/617463_618125_4_emp.swf"; // "http://www.bbc.co.uk/emp/10player.swf";
 
                         info = string.Format("{0}x{1} | {2} kbps | {3}", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"), connectionElem.Attributes["kind"].Value);
@@ -107,7 +138,6 @@ namespace OnlineVideos.Sites
                                 PlayPath = identifier,
                                 SwfUrl = SWFPlayer,
                                 SwfVerify = true,
-                                Live = video.Other == "livestream"
                             }.ToString();
                         }
                         else if (connectionElem.Attributes["kind"].Value == "level3")
@@ -119,7 +149,6 @@ namespace OnlineVideos.Sites
                                 SwfUrl = SWFPlayer,
                                 SwfVerify = true,
                                 Token = auth,
-                                Live = video.Other == "livestream"
                             }.ToString();
                         }
                         else if (connectionElem.Attributes["kind"].Value == "akamai")
@@ -129,7 +158,6 @@ namespace OnlineVideos.Sites
                                 PlayPath = identifier + "?" + auth,
                                 SwfUrl = SWFPlayer,
                                 SwfVerify = true,
-                                Live = video.Other == "livestream"
                             }.ToString();
                         }
                     }
@@ -156,7 +184,7 @@ namespace OnlineVideos.Sites
 
         string getLiveUrls(VideoInfo video)
         {
-            System.Net.WebProxy proxyObj = getProxy();
+            WebProxy proxyObj = getProxy();
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/playlists/hds/pc/ak/" + video.VideoUrl, null, null, proxyObj));
             SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
@@ -183,169 +211,215 @@ namespace OnlineVideos.Sites
             return lastUrl; //"http://bbcfmhds.vo.llnwd.net/hds-live/livepkgr/_definst_/bbc1/bbc1_1500.f4m";
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        WebProxy getProxy()
         {
-            if (category is Group)
+            WebProxy proxyObj = null;// new System.Net.WebProxy("127.0.0.1", 8118);
+            if (!string.IsNullOrEmpty(proxy))
             {
-                List<VideoInfo> list = new List<VideoInfo>();
-                foreach (Channel channel in ((Group)category).Channels)
-                {
-                    VideoInfo video = new VideoInfo();
-                    video.Title = channel.StreamName;
-
-                    int argIndex = channel.Url.IndexOf('?');
-                    if (argIndex < 0) video.VideoUrl = channel.Url;
-                    else video.VideoUrl = channel.Url.Remove(argIndex);
-
-                    video.Other = "livestream";
-                    video.ImageUrl = channel.Thumb;
-                    if (retrieveTVGuide && argIndex > -1)
-                    {
-                        Utils.TVGuideGrabber tvGuide = new Utils.TVGuideGrabber();
-                        if (tvGuide.GetNowNextForChannel(channel.Url))
-                            video.Description = tvGuide.FormatTVGuide(tvGuideFormatString);
-                    }
-
-                    list.Add(video);
-                }
-                return list;
+                proxyObj = new WebProxy(proxy);
+                if (!string.IsNullOrEmpty(proxyUsername) && !string.IsNullOrEmpty(proxyPassword))
+                    proxyObj.Credentials = new NetworkCredential(proxyUsername, proxyPassword);
             }
-            else
-            {
-                if (autoGrouping)
-                    return (category as RssLink).Other as List<VideoInfo>;
-                else
-                    return getVideoListInternal((category as RssLink).Url);
-            }
+            return proxyObj;
         }
+
+        #endregion
+
+        #region Categories
 
         DateTime lastRefresh = DateTime.MinValue;
         public override int DiscoverDynamicCategories()
         {
-            if (autoGrouping)
+            if ((DateTime.Now - lastRefresh).TotalMinutes > 15)
             {
-                if ((DateTime.Now - lastRefresh).TotalMinutes > 15)
+                foreach (Category cat in Settings.Categories)
                 {
-                    foreach (Category cat in Settings.Categories)
+                    if (cat is RssLink)
                     {
-                        if (cat is RssLink)
+                        if ((cat as RssLink).Url == ATOZ_URL)
                         {
-                            cat.HasSubCategories = true;
+                            if (!cat.SubCategoriesDiscovered)
+                            {
+                                cat.Thumb = defaultThumb;
+                                cat.HasSubCategories = true;
+                                cat.SubCategoriesDiscovered = true;
+                                cat.SubCategories = getAtoZCategories(cat);
+                            }
+                        }
+                        else
+                        {
+                            cat.HasSubCategories = (cat as RssLink).Url != MOST_POPULAR_URL;
                             cat.SubCategoriesDiscovered = false;
+                            if (string.IsNullOrEmpty(cat.Thumb)) cat.Thumb = defaultThumb;
                         }
                     }
-                    lastRefresh = DateTime.Now;
                 }
-            }
-            else
-            {
-                Settings.DynamicCategoriesDiscovered = true;
+                lastRefresh = DateTime.Now;
             }
             return Settings.Categories.Count;
         }
 
+        List<Category> getAtoZCategories(Category parentCategory)
+        {
+            List<Category> cats = new List<Category>();
+            foreach (string s in atoz)
+            {
+                cats.Add(new RssLink()
+                {
+                    Url = ATOZ_URL + s,
+                    Name = s,
+                    Thumb = defaultThumb,
+                    ParentCategory = parentCategory,
+                    HasSubCategories = true
+                });
+            }
+            return cats;
+        }
+
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            parentCategory.SubCategories = discoverSubCategoriesLocal(parentCategory, (parentCategory as RssLink).Url);
+            string url = (parentCategory as RssLink).Url;
+            if (url.StartsWith(ATOZ_URL))
+            {
+                parentCategory.SubCategories = new List<Category>();
+                string html = GetWebData(url);
+                foreach (Match m in aToZRegex.Matches(html))
+                {
+                    parentCategory.SubCategories.Add(new RssLink()
+                    {
+                        Url = "http://www.bbc.co.uk/iplayer/episodes/" + m.Groups[1].Value,
+                        Name = m.Groups[2].Value.HtmlCleanup(),
+                        Thumb = defaultThumb,
+                        ParentCategory = parentCategory
+                    });
+                }
+            }
+            else
+            {
+                parentCategory.SubCategories = discoverSubCategoriesLocal(parentCategory, url);
+            }
+
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
         }
 
         List<Category> discoverSubCategoriesLocal(Category parentCategory, string url)
         {
-            List<Category> subCategories = new List<Category>();
-            Dictionary<string, List<VideoInfo>> possibleSubCatStrings = new Dictionary<string, List<VideoInfo>>();
-            //List<VideoInfo> allOthers = new List<VideoInfo>();            
-            List<VideoInfo> videos = getVideoListInternal(url);
-            foreach (VideoInfo video in videos)
+            List<Category> cats = new List<Category>();
+            while (true)
             {
-                string title = video.Title;
-                int colonIndex = title.IndexOf(":");
-                if (colonIndex > 0)
+                string html = GetWebData(url);
+                foreach (Match m in seriesRegex.Matches(html))
                 {
-                    title = video.Title.Substring(0, colonIndex);
-                    video.Title = video.Title.Substring(colonIndex + 1).Trim();
+                    cats.Add(new RssLink()
+                    {
+                        Url = "http://www.bbc.co.uk/iplayer/episodes/" + m.Groups[1].Value,
+                        Name = m.Groups[2].Value.HtmlCleanup(),
+                        Thumb = m.Groups[3].Value,
+                        ParentCategory = parentCategory
+                    });
                 }
 
-                List<VideoInfo> catVids;
-                if (!possibleSubCatStrings.TryGetValue(title, out catVids))
-                    catVids = new List<VideoInfo>();
-                catVids.Add(video);
-                possibleSubCatStrings[title] = catVids;
-                //else
-                //{
-                //    allOthers.Add(video);
-                //}
+                Match nextPage = nextPageRegex.Match(html);
+                if (!nextPage.Success)
+                    break;
+                url = "http://www.bbc.co.uk" + nextPage.Groups[1].Value.Replace("&amp;", "&");
             }
-            //if (allOthers.Count > 0)
-            //{
-            //    // add all others on top
-            //    parentCategory.SubCategories.Add(new RssLink() { Name = "All Others", ParentCategory = parentCategory, Thumb = allOthers[0].ImageUrl, Other = allOthers, EstimatedVideoCount = (uint)allOthers.Count });
-            //}
-            // sort the remaining alphabetically
-            string[] keys = new string[possibleSubCatStrings.Count];
-            possibleSubCatStrings.Keys.CopyTo(keys, 0);
-            Array.Sort(keys);
-            foreach (string key in keys)
+            return cats;
+        }
+
+        #endregion
+
+        #region Videos
+
+        public override List<VideoInfo> getVideoList(Category category)
+        {
+            if (category is Group)
+                return getLiveVideoList((Group)category);
+
+            List<VideoInfo> videos = new List<VideoInfo>();
+            string url = (category as RssLink).Url;
+            bool isMostPopular = url == MOST_POPULAR_URL;
+            while (true)
             {
-                List<VideoInfo> value = possibleSubCatStrings[key];
-                subCategories.Add(new RssLink() { Name = key, ParentCategory = parentCategory, Thumb = value[0].ImageUrl, Other = value, EstimatedVideoCount = (uint)value.Count });
+                string html = GetWebData(url);
+                foreach (Match m in episodeInfoRegex.Matches(html))
+                {
+                    VideoInfo video = new VideoInfo();
+                    string episodeHtml = m.Groups[1].Value;
+
+                    string series = episodeParentTitleRegex.Match(episodeHtml).Groups[1].Value.HtmlCleanup();
+                    Match n = episodeTitleRegex.Match(episodeHtml);
+                    string episode = n.Success ? n.Groups[1].Value.HtmlCleanup() : null;
+                    video.Other = new TrackingDetails() { SeriesTitle = series, EpisodeTitle = episode };
+
+                    if (isMostPopular)
+                    {
+                        //Most Popular category jumps straight to videos so need to include series title
+                        video.Title = series;
+                        if (!string.IsNullOrEmpty(episode))
+                            video.Title += " - " + episode;
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(episode))
+                            video.Title = episode;
+                        else
+                            video.Title = series;
+                    }
+
+                    if ((n = episodeUrlRegex.Match(episodeHtml)).Success)
+                        video.VideoUrl = "http://www.bbc.co.uk" + n.Groups[1].Value;
+                    if ((n = episodeDescriptionRegex.Match(episodeHtml)).Success)
+                        video.Description = n.Groups[1].Value.HtmlCleanup();
+                    if ((n = episodeAirDateRegex.Match(episodeHtml)).Success)
+                        video.Airdate = n.Groups[1].Value.Replace("First shown:", "").HtmlCleanup();
+                    if ((n = episodeDurationRegex.Match(episodeHtml)).Success)
+                        video.Length = n.Groups[1].Value.HtmlCleanup();
+
+                    if ((n = episodeImageRegex.Match(episodeHtml)).Success)
+                    {
+                        video.ImageUrl = n.Groups[1].Value;
+                        if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
+                            video.ImageUrl = Regex.Replace(video.ImageUrl, thumbReplaceRegExPattern, thumbReplaceString);
+                    }
+                    videos.Add(video);
+                }
+
+                Match nextPage = nextPageRegex.Match(html);
+                if (!nextPage.Success)
+                    break;
+                url = "http://www.bbc.co.uk" + nextPage.Groups[1].Value;
             }
-
-            return subCategories;
+            return videos;
         }
 
-        //List<VideoInfo> getVideoListInternal(string url)
-        //{
-        //    List<VideoInfo> loVideoList = new List<VideoInfo>();
-        //    foreach (RssItem rssItem in GetWebData<RssDocument>(url).Channel.Items)
-        //    {
-        //        VideoInfo video = VideoInfo.FromRssItem(rssItem, true, new Predicate<string>(isPossibleVideo));
-        //        video.VideoUrl = "http://www.bbc.co.uk/iplayer/playlist/" + rssItem.Guid.Text.Substring(rssItem.Guid.Text.LastIndexOf(':') + 1);
-        //        if (!string.IsNullOrEmpty(thumbReplaceRegExPattern)) video.ImageUrl = System.Text.RegularExpressions.Regex.Replace(video.ImageUrl, thumbReplaceRegExPattern, thumbReplaceString);
-        //        video.Other = new TrackingDetails() { Title = video.Title, Url = rssItem.Link };
-        //        GetTrackingInfo(video);
-        //        loVideoList.Add(video);
-        //    }
-        //    return loVideoList;
-        //}
-
-        List<VideoInfo> getVideoListInternal(string url)
+        List<VideoInfo> getLiveVideoList(Group category)
         {
-            List<VideoInfo> loVideoList = new List<VideoInfo>();
-            XmlDocument doc = GetWebData<XmlDocument>(url);
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
-            nsmgr.AddNamespace("atom", "http://www.w3.org/2005/Atom");
-            nsmgr.AddNamespace("media", "http://search.yahoo.com/mrss/");
-            foreach (XmlNode entry in doc.SelectNodes("//atom:entry", nsmgr))
-                loVideoList.Add(parseVideoInfo(entry, nsmgr));
-            return loVideoList;
-        }
-
-        VideoInfo parseVideoInfo(XmlNode entry, XmlNamespaceManager nsmgr)
-        {
-            VideoInfo video = new VideoInfo();
-            video.Title = entry.SelectSingleNode("atom:title", nsmgr).InnerText;
-            video.Description = entry.SelectSingleNode("atom:content", nsmgr).InnerText;
-
-            video.ImageUrl = entry.SelectSingleNode(".//media:thumbnail/@url", nsmgr).InnerText;
-            if (!string.IsNullOrEmpty(thumbReplaceRegExPattern)) video.ImageUrl = System.Text.RegularExpressions.Regex.Replace(video.ImageUrl, thumbReplaceRegExPattern, thumbReplaceString);
-
-            string id = entry.SelectSingleNode("atom:id", nsmgr).InnerText;
-            video.VideoUrl = "http://www.bbc.co.uk/iplayer/playlist/" + id.Substring(id.LastIndexOf(':') + 1);
-
-            string airdate = entry.SelectSingleNode("atom:updated", nsmgr).InnerText;
-            try { video.Airdate = DateTime.Parse(airdate).ToString("g", OnlineVideoSettings.Instance.Locale); }
-            catch { video.Airdate = airdate; }
-
-            video.Other = new TrackingDetails()
+            List<VideoInfo> videos = new List<VideoInfo>();
+            foreach (Channel channel in category.Channels)
             {
-                Title = video.Title,
-                Title2 = entry.SelectSingleNode("atom:link[@rel='self']/@title", nsmgr).InnerText,
-                VideoKind = entry.SelectSingleNode("atom:category[@term='Films']", nsmgr) != null ? VideoKind.Movie : VideoKind.TvSeries
-            };
-            return video;
+                VideoInfo video = new VideoInfo();
+                video.Title = channel.StreamName;
+
+                int argIndex = channel.Url.IndexOf('?');
+                if (argIndex < 0) video.VideoUrl = channel.Url;
+                else video.VideoUrl = channel.Url.Remove(argIndex);
+
+                video.Other = "livestream";
+                video.ImageUrl = channel.Thumb;
+                if (retrieveTVGuide && argIndex > -1)
+                {
+                    Utils.TVGuideGrabber tvGuide = new Utils.TVGuideGrabber();
+                    if (tvGuide.GetNowNextForChannel(channel.Url))
+                        video.Description = tvGuide.FormatTVGuide(tvGuideFormatString);
+                }
+                videos.Add(video);
+            }
+            return videos;
         }
+
+        #endregion
 
         #region Search
 
@@ -359,64 +433,45 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return !string.IsNullOrEmpty(searchUrl); } }
 
-        //public override List<VideoInfo> Search(string query)
-        //{
-        //    return getVideoListInternal(string.Format(searchUrl, query));
-        //}
-
         #endregion
 
-        System.Net.WebProxy getProxy()
-        {
-            System.Net.WebProxy proxyObj = null;// new System.Net.WebProxy("127.0.0.1", 8118);
-            if (!string.IsNullOrEmpty(proxy))
-            {
-                proxyObj = new System.Net.WebProxy(proxy);
-                if (!string.IsNullOrEmpty(proxyUsername) && !string.IsNullOrEmpty(proxyPassword))
-                    proxyObj.Credentials = new System.Net.NetworkCredential(proxyUsername, proxyPassword);
-            }
-            return proxyObj;
-        }
+        #region TrackingInfo
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
         {
             TrackingDetails details = video.Other as TrackingDetails;
             if (details != null)
             {
-                TrackingInfo ti = new TrackingInfo() { VideoKind = details.VideoKind };
-                int colonIndex = details.Title.IndexOf(':');
-                ti.Title = colonIndex > 0 ? details.Title.Substring(0, colonIndex) : details.Title;
+                TrackingInfo ti = new TrackingInfo() { Title = details.SeriesTitle, VideoKind = VideoKind.TvSeries };
 
-                if (details.VideoKind == VideoKind.TvSeries)
+                Match m = Regex.Match(details.EpisodeTitle, @"Series ((?<num>\d+)|(?<alpha>[A-z]+))");
+                if (m.Success)
                 {
-                    Match m = Regex.Match(details.Title, @": Series ((?<num>\d+)|(?<alpha>[A-z])):");
-                    if (m.Success)
-                    {
-                        if (m.Groups["num"].Success)
-                            ti.Season = uint.Parse(m.Groups["num"].Value);
-                        else
-                            ti.Season = (uint)(m.Groups["alpha"].Value[0] % 32); //special case for QI, convert char to position in alphabet
-                    }
-
-                    if ((m = Regex.Match(details.Title, @": Episode (\d+)")).Success || (m = Regex.Match(details.Title2, @"^(\d+)[.]")).Success)
-                    {
-                        ti.Episode = uint.Parse(m.Groups[1].Value);
-                        //if we've got an episode number but no season, presume season 1
-                        if (ti.Season == 0)
-                            ti.Season = 1;
-                    }
+                    if (m.Groups["num"].Success)
+                        ti.Season = uint.Parse(m.Groups["num"].Value);
+                    else
+                        ti.Season = (uint)(m.Groups["alpha"].Value[0] % 32); //special case for QI, convert char to position in alphabet
                 }
+
+                if ((m = Regex.Match(details.EpisodeTitle, @"Episode (\d+)")).Success || (m = Regex.Match(details.EpisodeTitle, @":\s*(\d+)\.")).Success || (m = Regex.Match(details.EpisodeTitle, @"^(\d+)\.")).Success)
+                {
+                    ti.Episode = uint.Parse(m.Groups[1].Value);
+                    //if we've got an episode number but no season, presume season 1
+                    if (ti.Season == 0)
+                        ti.Season = 1;
+                }
+
                 Log.Debug("BBCiPlayer: Parsed tracking info: Title '{0}' Season {1} Episode {2}", ti.Title, ti.Season, ti.Episode);
                 return ti;
             }
             return base.GetTrackingInfo(video);
         }
+
+        #endregion
     }
 
     class QualityComparer : IComparer<string>
     {
-        #region IComparer<string> Member
-
         public int Compare(string x, string y)
         {
             int x_kbps = 0;
@@ -429,15 +484,12 @@ namespace OnlineVideos.Sites
                 compare = x.CompareTo(y);
             return compare;
         }
-
-        #endregion
     }
 
     class TrackingDetails
     {
-        public string Title { get; set; }
-        public string Title2 { get; set; }
-        public VideoKind VideoKind { get; set; }
+        public string SeriesTitle { get; set; }
+        public string EpisodeTitle { get; set; }
     }
 }
 
