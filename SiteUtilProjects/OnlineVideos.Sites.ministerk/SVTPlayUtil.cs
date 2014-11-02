@@ -61,6 +61,7 @@ namespace OnlineVideos.Sites
                 cat.Name = HttpUtility.HtmlDecode(fcap.InnerText);
             else
                 cat.Name = HttpUtility.HtmlDecode(article.GetAttributeValue("data-title", ""));
+            cat.Name = (cat.Name ?? "").Trim();
             if (cat.Name.ToLower().Contains("oppetarkiv"))
             {
                 cat.Name = _oppetArkiv;
