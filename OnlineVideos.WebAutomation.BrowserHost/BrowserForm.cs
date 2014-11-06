@@ -13,9 +13,10 @@ using System.IO;
 using System.Diagnostics;
 using System.Configuration;
 using OnlineVideos.Sites.Base;
-using MediaPortal.GUI.Library;
-using MediaPortal.InputDevices;
-using Action = MediaPortal.GUI.Library.Action;
+using System.ServiceModel;
+using System.Threading;
+using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
+using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
 
 namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 {
@@ -30,6 +31,23 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             Pause 
         }
 
+        // Some of the WNDProc messages we'll actually respond to - I've taken this list from the remote implementations
+        // I want to filter the messages to reduce the amount of traffic over the service
+        private const int WM_KEYDOWN = 0x0100;
+        private const int WM_SYSKEYDOWN = 0x0104;
+        private const int WM_APPCOMMAND = 0x0319;
+        private const int WM_LBUTTONDOWN = 0x0201;
+        private const int WM_RBUTTONDOWN = 0x0204;
+        
+        // These constants are used in some of the remotes, but we'll ignore them in the browser host (for now)
+        //private const int WM_POWERBROADCAST = 0x0218; 
+        //private const int WM_TIMER = 0x0113;
+        //private const int WM_MOUSEMOVE = 0x0200;
+        //private const int WM_SETCURSOR = 0x0020;
+        //private const int WM_ACTIVATE = 0x0006;
+        //private const int WA_INACTIVE = 0;
+        //private const int WA_ACTIVE = 1;
+
         public bool ForceClose { get; private set; }
 
         private string _connectorType;
@@ -43,6 +61,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private DateTime _lastKeyPressedTime;
 
         private PlayPauseToggle _lastPlayPauseState = PlayPauseToggle.Play;
+        private ServiceHost _service;
+        private ServiceHost _callbackService;
 
         /// <summary>
         /// Store/retrieve the current screen the web player is showing on - this is stored in the user config
@@ -81,15 +101,6 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             var configValue = ConfigurationManager.AppSettings["DebugMode"];
             if (!string.IsNullOrEmpty(configValue) && configValue.ToUpper() == "TRUE")
                 _debugMode = true;
-
-            //Load keyboard mappings
-            ActionTranslator.Load();
-
-            //Load remote mappings
-            InputDevices.Init();
-
-            //Some remotes will fire this event directly
-            GUIGraphicsContext.OnNewAction += OnNewAction;
         }
         
         /// <summary>
@@ -107,14 +118,17 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 ForceClose = false;
                 this.Activate();
                 this.Focus();
+
+                _callbackService = new WebBrowserPlayerCallbackServiceHost();
+                _service = new WebBrowserPlayerServiceHost();
+
+                WebBrowserPlayerService.ServiceImplementation.WebBrowserPlayerService.OnNewActionReceived += OnNewActionFromClient;
                 
                 _connector = BrowserInstanceConnectorFactory.GetConnector(_connectorType, OnlineVideoSettings.Instance.Logger, webBrowser);
                 if (_connector == null)
-                {
-                    Log.Warn(string.Format("Unable to load connector type {0}, not found in any site utils",  _connectorType));
-                    ForceQuit();
-                    return;
-                }
+                    throw new ApplicationException(string.Format("Unable to load connector type {0}, not found in any site utils",  _connectorType));
+
+                _connector.DebugMode = _debugMode;
                 _connector.PerformLogin(_userName, _password);
 
                 var result = _connector.WaitForComplete(ForceQuitting, OnlineVideoSettings.Instance.UtilTimeout);
@@ -135,7 +149,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             {
                 Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
                 Console.Error.Flush();
-                Log.Error(ex);
+                WebBrowserPlayerCallbackService.LogError(ex);
                 ForceQuit();
             }
         }
@@ -157,6 +171,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private void BrowserForm_KeyDown(object sender, KeyEventArgs e)
         {
             HandleKeyPress(e.KeyValue);
+            e.Handled = true;
         }
 
         /// <summary>
@@ -170,71 +185,59 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         }
 
         /// <summary>
-        /// Used to pass messages to remotes. Lifted from MediaPortal.cs
-        /// If message type of WM_COPYDATA we assume this is the OnAction event forwarded from MP
+        /// Handle the event from the service when a client sends us a new action
+        /// </summary>
+        /// <param name="action"></param>
+        protected void OnNewActionFromClient(string action)
+        {
+            OnNewAction(action);
+        }
+
+        /// <summary>
+        /// Used to pass messages to remotes. Pre-filter to only messages we're likely to be interested in
         /// </summary>
         /// <param name="msg"></param>
         protected override void WndProc(ref Message msg)
         {
-            Action action;
-            char key;
-            Keys keyCode;
-
-            if (msg.Msg == ProcessHelper.WM_COPYDATA)
+            try
             {
-                var messageString = ProcessHelper.ReadStringFromMessage(msg);
-                Action.ActionType actionType;
-
-                if (System.Enum.TryParse<Action.ActionType>(messageString, out actionType))
-                    OnNewAction(new Action(actionType, 0f,0f));
-                return;
+                if (msg.Msg == WM_APPCOMMAND || msg.Msg == WM_KEYDOWN || msg.Msg == WM_LBUTTONDOWN ||
+                        msg.Msg == WM_RBUTTONDOWN || msg.Msg == WM_SYSKEYDOWN)
+                {
+                    if (WebBrowserPlayerCallbackService.SendWndProc(msg))
+                        return;
+                }
             }
-
-            if (InputDevices.WndProc(ref msg, out action, out key, out keyCode))
+            catch  (Exception ex)
             {
-                //If remote doesn't fire event directly we manually fire it
-                if (action != null && action.wID != Action.ActionType.ACTION_INVALID)
-                {
-                    OnNewAction(action);
-                }
-
-                if (keyCode != Keys.A)
-                {
-                    var ke = new KeyEventArgs(keyCode);
-                    OnKeyDown(ke);
-                }
-                return; // abort WndProc()
+                Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                Console.Error.Flush();
+                WebBrowserPlayerCallbackService.LogError(ex);
+                
             }
-           
             base.WndProc(ref msg);
         }
-
         /// <summary>
         /// Event sink for key press
         /// </summary>
         /// <param name="keyPressed"></param>
         private void HandleKeyPress(int keyPressed)
         {
-            // Ignore duplicate presses within 1 seconds (happens because sometimes both the browser and form fire the event)
-            if (_lastKeyPressed == keyPressed && _lastKeyPressedTime.AddSeconds(1) > DateTime.Now) return;
+            // Ignore duplicate presses within 300ms (happens because sometimes both the browser and form fire the event)
+            if (_lastKeyPressed == keyPressed && _lastKeyPressedTime.AddMilliseconds(300) > DateTime.Now) return;
             _lastKeyPressed = keyPressed;
             _lastKeyPressedTime = DateTime.Now;
             
-            Action action = new Action();
-            //Try and get corresponding Action from key.
-            //Some actions are mapped to KeyDown others to KeyPressed, try and handle both
-            if (ActionTranslator.GetAction(-1, new Key(0, keyPressed), ref action))
+            // Always force close when escape is pressed
+            if (keyPressed == (int)Keys.Escape)
             {
-                OnNewAction(action);
+                ForceQuit();
+                return;
             }
-            else
-            {
-                //See if it's mapped to KeyPressed instead
-                if (keyPressed >= (int)Keys.A && keyPressed <= (int)Keys.Z)
-                    keyPressed += 32; //convert to char code
-                if (ActionTranslator.GetAction(-1, new Key(keyPressed, 0), ref action))
-                    OnNewAction(action);
-            }
+
+            // Get the client implementation to translate the key press - this means we can truly detach the browser host from MediaPortal
+            // The client handler for this event should fire the OnNewAction when the key has been translated
+            WebBrowserPlayerCallbackService.SendKeyPress(keyPressed);
         }
         
         /// <summary>
@@ -242,48 +245,47 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// We'll make play/pause a toggle, just so we can ensure we support media buttons properly
         /// </summary>
         /// <param name="action"></param>
-        void OnNewAction(Action action)
+        void OnNewAction(string action)
         {
             if (InvokeRequired)
             {
                 Invoke((MethodInvoker)delegate() { OnNewAction(action); });
                 return;
             }
-            switch (action.wID)
+            switch (action)
             {
-                case Action.ActionType.ACTION_PLAY:
-                case Action.ActionType.ACTION_MUSIC_PLAY:
+                case "ACTION_PLAY":
+                case"ACTION_MUSIC_PLAY":
                     if (_lastPlayPauseState == PlayPauseToggle.Play)
-                        OnNewAction(new Action(Action.ActionType.ACTION_PAUSE, 0, 0));
+                        OnNewAction("ACTION_PAUSE");
                     else
                     {
                         _connector.Play();
                         _lastPlayPauseState = PlayPauseToggle.Play;
                     }
                     break;
-                case Action.ActionType.ACTION_PAUSE:
+                case "ACTION_PAUSE":
                     if (_lastPlayPauseState == PlayPauseToggle.Pause)
-                        OnNewAction(new Action(Action.ActionType.ACTION_PLAY, 0, 0));
+                        OnNewAction("ACTION_PLAY");
                     else
                     {
                         _connector.Pause();
                         _lastPlayPauseState = PlayPauseToggle.Pause;
                     }
                     break;
-                case Action.ActionType.ACTION_STOP:
-                case Action.ActionType.ACTION_PREVIOUS_MENU:
+                case "ACTION_STOP":
+                case "ACTION_PREVIOUS_MENU":
                     ForceQuit();
                     break;
-                case Action.ActionType.ACTION_CONTEXT_MENU: // Change the screen we're on using the context menu button
+                case "ACTION_CONTEXT_MENU": // Change the screen we're on using the context menu button
                     CurrentScreen++;
                     SetCurrentScreen();
                     break;
                 default:
                     // fire the action on the connector also
-                    _connector.OnAction(action.wID.ToString());
+                    _connector.OnAction(action);
                     break;
             }
-
         }
 
         /// <summary>
@@ -291,9 +293,17 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// </summary>
         private void ForceQuit()
         {
-            _connector.OnClosing();
-            ForceClose = true;
-            Process.GetCurrentProcess().Kill(); // In case we've got some weird browser issues or something hogging the process
+            try
+            {
+                WebBrowserPlayerCallbackService.OnBrowserClosing(); // Let MePo know we're closing
+                _connector.OnClosing();
+                ForceClose = true;
+            }
+            finally
+            {
+                Thread.Sleep(1000); // Wait 1 second for MePo to show
+                Process.GetCurrentProcess().Kill(); // In case we've got some weird browser issues or something hogging the process
+            }
         }
 
         /// <summary>

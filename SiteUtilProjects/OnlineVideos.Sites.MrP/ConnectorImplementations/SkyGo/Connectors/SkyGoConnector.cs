@@ -152,7 +152,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                         Application.DoEvents();
                         CursorHelper.DoLeftMouseClick();
                         Application.DoEvents();
-                        _loadingPicture.Visible = false;
+                        HideLoading();
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
                     }
@@ -237,13 +237,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             if (_isPlayOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
 
             _isPlayOrPausing = true;
-            if (_playPauseHeight == -1) _playPauseHeight = Browser.FindForm().Bottom - 40;
-            var startX = Browser.FindForm().Left;
-
+            if (_playPauseHeight <= 0) _playPauseHeight = Browser.FindForm().Bottom - 80;
+         
             // We've previously found the play/pause button, so re-use its position
             if (_playPausePos > -1)
             {
-                Cursor.Position = new System.Drawing.Point(startX + 10, _playPauseHeight);
+                Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 10, _playPauseHeight);
 
                 // We have to move the cursor off the play button for this to work
                 while (Cursor.Position.X < _playPausePos)
@@ -291,7 +290,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
 
             // Very primitive, but set the cursor at the correct height and move across till we hit the right colour!
             // We have to move the cursor otherwise the play controls disappear
-            var currentPos = startX + 5;
+            var currentPos = startX + 40;
             while (currentPos < (startX + (Browser.Document.Body.ClientRectangle.Width / 8)))
             {
                 Cursor.Position = new System.Drawing.Point(currentPos + 5, height);
