@@ -6,6 +6,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using OnlineVideos.Helpers;
+using OnlineVideos.Properties;
+using System.Drawing;
 
 namespace OnlineVideos.Sites.Base
 {
@@ -15,6 +17,8 @@ namespace OnlineVideos.Sites.Base
     /// </summary>
     public abstract class BrowserUtilConnector
     {
+        protected PictureBox _loadingPicture = new PictureBox();
+
         /// <summary>
         /// Was the last request complete?
         /// </summary>
@@ -24,6 +28,11 @@ namespace OnlineVideos.Sites.Base
         /// Web browser instance
         /// </summary>
         public WebBrowser Browser { get; set; }
+
+        /// <summary>
+        /// Is this in debug mode or not
+        /// </summary>
+        public bool DebugMode { get; set; }
 
         /// <summary>
         /// Error Handler
@@ -177,6 +186,32 @@ namespace OnlineVideos.Sites.Base
             var ended = DateTime.Now;
 
             return ended < end && ProcessComplete.Success;
+        }
+
+
+        /// <summary>
+        /// Show a loading image
+        /// </summary>
+        public void ShowLoading()
+        {
+            if (!DebugMode)
+            {
+                _loadingPicture.Image = Resources.loading;
+                _loadingPicture.Dock = DockStyle.Fill;
+                _loadingPicture.SizeMode = PictureBoxSizeMode.CenterImage;
+                _loadingPicture.BackColor = Color.Black;
+                if (!Browser.FindForm().Controls.Contains(_loadingPicture))
+                    Browser.FindForm().Controls.Add(_loadingPicture);
+                _loadingPicture.BringToFront();
+            }
+        }
+
+        /// <summary>
+        /// Hide the loading image
+        /// </summary>
+        public void HideLoading()
+        {
+            _loadingPicture.Visible = false;
         }
     }
 }

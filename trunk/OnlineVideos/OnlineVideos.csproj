@@ -80,6 +80,7 @@
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -807,6 +808,11 @@
     <Compile Include="Newtonsoft.Json\WriteState.cs" />
     <Compile Include="OnlineVideosException.cs" />
     <Compile Include="Helpers\ProcessHelper.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="RssToolkit\Rss\Constants.cs" />
     <Compile Include="RssToolkit\Rss\DocumentType.cs" />
@@ -1256,6 +1262,16 @@
     <Compile Include="Sites\Base\SiteUtilFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sites\Updater.cs" />
+    <Compile Include="Sites\WebBrowserPlayerService\Proxy\WebBrowserPlayerServiceProxy.cs" />
+    <Compile Include="Sites\WebBrowserPlayerService\Interfaces\IWebBrowserPlayerCallback.cs" />
+    <Compile Include="Sites\WebBrowserPlayerService\Interfaces\IWebBrowserPlayerCallbackService.cs" />
+    <Compile Include="Sites\WebBrowserPlayerService\Interfaces\IWebBrowserPlayerService.cs" />
+    <Compile Include="Sites\WebBrowserPlayerService\Proxy\WebBrowserPlayerCallbackServiceProxy.cs" />
+    <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerCallbackServiceHost.cs" />
+    <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerService.cs" />
+    <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerCallbackService.cs" />
+    <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerServiceHost.cs" />
+    <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerCallback.cs" />
     <Compile Include="Translation.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="VideoInfo.cs" />
@@ -1269,6 +1285,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\OnlineVideosWebservice\OnlineVideos.wsdl" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="RssToolkit\Resources\Rss20.xsd" />
   </ItemGroup>
   <ItemGroup>
@@ -1338,6 +1358,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="build.targets" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\loading.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="build.targets" />

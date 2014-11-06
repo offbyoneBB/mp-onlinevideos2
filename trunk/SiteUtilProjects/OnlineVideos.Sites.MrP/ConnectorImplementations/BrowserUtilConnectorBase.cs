@@ -16,7 +16,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations
     /// </summary>
     public abstract class BrowserUtilConnectorBase: BrowserUtilConnector
     {
-        protected PictureBox _loadingPicture = new PictureBox();
+       
 
         protected abstract Sites.Entities.EventResult PerformActualLogin(string username, string password);
 
@@ -36,18 +36,5 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations
             return PerformActualLogin(username, password);
         }
 
-        /// <summary>
-        /// Ahow a loading image
-        /// </summary>
-        public void ShowLoading()
-        {
-            _loadingPicture.Image = Resources.loading;
-            _loadingPicture.Dock = DockStyle.Fill;
-            _loadingPicture.SizeMode = PictureBoxSizeMode.CenterImage;
-            _loadingPicture.BackColor = Color.Black;
-            if (!Browser.FindForm().Controls.Contains(_loadingPicture))
-                Browser.FindForm().Controls.Add(_loadingPicture);
-            _loadingPicture.BringToFront();
-        }
     }
 }

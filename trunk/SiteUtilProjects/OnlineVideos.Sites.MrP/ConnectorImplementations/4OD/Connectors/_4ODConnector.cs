@@ -143,7 +143,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
                         }
                         */
 
-                        _loadingPicture.Visible = false;
+                        HideLoading();
                         // Hide the controls of the flash player
                         _blankPanel.Width = Browser.Width;
                         _blankPanel.Height = 50;

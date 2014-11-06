@@ -117,79 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SkyGoLiveTvImageUrl" xml:space="preserve">
-    <value>http://epgstatic.sky.com/epgdata/1.0/newchanlogos/75/35/skychb{CHANNEL_ID}.png</value>
-  </data>
-  <data name="SkyGo_CategoryAToZUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/{CATEGORY}/All/content/default/promoPage.do?aToZ.indexCharacter={CHARACTER}&amp;aToZ.viewIndex={PAGE}&amp;aaxmlrequest=true&amp;aazones=content</value>
-  </data>
-  <data name="SkyGo_LiveTvGetNowNextUrl" xml:space="preserve">
-    <value>http://go.sky.com/tvlistings-proxy/TvListingsApi/xml/v2/nowNextLater.do?channelIds={CHANNEL_IDS}&amp;siteId=4&amp;accessKey=fdgJRTd345S4fKMER92mddSFJWERJ35285FDdm3412jdRTmsdd</value>
-  </data>
-  <data name="SkyGo_LiveTvListingUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/page/tvListing.do</value>
-  </data>
-  <data name="SkyGo_LiveTvPlayUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/Home/content/videoId/{VIDEO_ID}____/l/l/content/detachedLiveTv.do</value>
-  </data>
-  <data name="SkyGo_LoginUrl" xml:space="preserve">
-    <value>https://skyid.sky.com/signin/skygo</value>
-  </data>
-  <data name="SkyGo_RootUrl" xml:space="preserve">
-    <value>http://go.sky.com</value>
-  </data>
-  <data name="SkyGo_SeriesDetailsUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/Browse_by_Genre/A-Z/content/seriesId/{SERIES_ID}/content/default/promoPage.do?aaxmlrequest=true&amp;aazones=content</value>
-  </data>
-  <data name="SkyGo_VideoActionsUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/videoId/{VIDEO_ID}/l/l/content/videoActions.do?aaxmlrequest=true&amp;aazones=vdactions</value>
-  </data>
-  <data name="SkyGo_VideoDetailsUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/videoId/{VIDEO_ID}/content/1984/videoDetailsPage.do?aaxmlrequest=true&amp;aazones=content</value>
-  </data>
-  <data name="SkyGo_VideoPlayUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/assetId/{ASSET_ID}/videoId/{VIDEO_ID}/l/l/content/progressivePlay.do</value>
-  </data>
-  <data name="_4OD_CatchUpUrl" xml:space="preserve">
-    <value>http://www.channel4.com/programmes/4od/catchup</value>
-  </data>
-  <data name="_4OD_CategoryListUrl" xml:space="preserve">
-    <value>http://www.channel4.com/programmes/tags/{CATEGORY}4od/title/brand-list/page-1</value>
-  </data>
-  <data name="_4OD_CollectionListUrl" xml:space="preserve">
-    <value>http://www.channel4.com/programmes/4od/collections/page-1</value>
-  </data>
-  <data name="_4OD_LoginUrl" xml:space="preserve">
-    <value>https://4id.channel4.com/login</value>
-  </data>
-  <data name="_4OD_RootUrl" xml:space="preserve">
-    <value>http://www.channel4.com</value>
-  </data>
-  <data name="_4OD_VideoDetailsUrl" xml:space="preserve">
-    <value>http://www.channel4.com/programmes/asset/{VIDEO_ID}</value>
-  </data>
-  <data name="_4OD_VideoPlayUrl" xml:space="preserve">
-    <value>http://www.channel4.com/programmes/{VIDEO_NAME}/4od/player/{VIDEO_ID}</value>
-  </data>
-  <data name="AmazonLoginUrl" xml:space="preserve">
-    <value>https://www.amazon.co.uk/ap/signin?_encoding=UTF8&amp;openid.assoc_handle=gbflex&amp;openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;openid.mode=checkid_setup&amp;openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&amp;openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&amp;openid.pape.max_auth_age=0&amp;openid.return_to=https%3A%2F%2Fwww.amazon.co.uk%2Fgp%2Fyourstore%2Fhome%3Fie%3DUTF8%26ref_%3Dnav_signin_btn</value>
-  </data>
-  <data name="AmazonMovieUrl" xml:space="preserve">
-    <value>http://www.amazon.co.uk/gp/product/{VIDEO_ID}?ref_=pda_recs_wdgt_nav_dyn_{VIDEO_ID}</value>
-  </data>
-  <data name="AmazonMovieCategoriesUrl" xml:space="preserve">
-    <value>http://www.amazon.co.uk/Prime-Movie-Genres/b/ref=atv_sn_piv_cl1_mv_gn?_encoding=UTF8&amp;node=3788183031</value>
-  </data>
-  <data name="AmazonTVCategoriesUrl" xml:space="preserve">
-    <value>http://www.amazon.co.uk/Prime-TV-Genres/b/ref=atv_sn_piv_cl2_tv_gn?_encoding=UTF8&amp;node=3788187031</value>
-  </data>
-  <data name="AmazonRootUrl" xml:space="preserve">
-    <value>http://www.amazon.co.uk</value>
-  </data>
-  <data name="AmazonMovieIcon" xml:space="preserve">
-    <value>http://ecx.images-amazon.com/images/I/51b8AY8hQBL._SX200_.jpg</value>
-  </data>
-  <data name="AmazonTvIcon" xml:space="preserve">
-    <value>http://ecx.images-amazon.com/images/I/51qB6Z-XI3L._SX200_.jpg</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="loading" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\loading.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
