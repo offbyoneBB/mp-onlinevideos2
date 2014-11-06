@@ -64,6 +64,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private ServiceHost _service;
         private ServiceHost _callbackService;
 
+        private DateTime _lastActionTime;
+
         /// <summary>
         /// Store/retrieve the current screen the web player is showing on - this is stored in the user config
         /// </summary>
@@ -190,6 +192,11 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// <param name="action"></param>
         protected void OnNewActionFromClient(string action)
         {
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate() { OnNewAction(action); });
+                return;
+            } 
             OnNewAction(action);
         }
 
@@ -239,25 +246,25 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             // The client handler for this event should fire the OnNewAction when the key has been translated
             WebBrowserPlayerCallbackService.SendKeyPress(keyPressed);
         }
-        
         /// <summary>
         /// Handle actions
         /// We'll make play/pause a toggle, just so we can ensure we support media buttons properly
         /// </summary>
         /// <param name="action"></param>
-        void OnNewAction(string action)
+        void OnNewAction(string action, bool overrideCheck = false)
         {
-            if (InvokeRequired)
-            {
-                Invoke((MethodInvoker)delegate() { OnNewAction(action); });
+            // Ignore duplicate actions within 150ms (apparently the Netflix connector has duplicate actions, I suspect it's because the Netflix connector is sending space key and this is doing the play/pause and firing an action :-( )
+            if (!overrideCheck && _lastActionTime.AddMilliseconds(150) > DateTime.Now)
                 return;
-            }
+            
+            _lastActionTime = DateTime.Now;
+
             switch (action)
             {
                 case "ACTION_PLAY":
                 case"ACTION_MUSIC_PLAY":
                     if (_lastPlayPauseState == PlayPauseToggle.Play)
-                        OnNewAction("ACTION_PAUSE");
+                        OnNewAction("ACTION_PAUSE", true);
                     else
                     {
                         _connector.Play();
@@ -266,7 +273,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                     break;
                 case "ACTION_PAUSE":
                     if (_lastPlayPauseState == PlayPauseToggle.Pause)
-                        OnNewAction("ACTION_PLAY");
+                        OnNewAction("ACTION_PLAY", true);
                     else
                     {
                         _connector.Pause();
