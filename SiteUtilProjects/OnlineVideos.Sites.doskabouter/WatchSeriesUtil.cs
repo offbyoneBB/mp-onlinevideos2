@@ -304,28 +304,28 @@ namespace OnlineVideos.Sites
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
-			string pre = "";
-			if (category != null && category.ParentCategory != null && !category.Other.Equals(Depth.BareList))
-			{
-				string season = category.Name.Split('(')[0];
-				pre = category.ParentCategory.Name + ' ' + season + ' ' + pre;
-				int l;
-				do
-				{
-					l = pre.Length;
-					pre = pre.Replace("  ", " ");
-				} while (l != pre.Length);
-			}
+            string pre = "";
+            if (category != null && category.ParentCategory != null && !category.Other.Equals(Depth.BareList))
+            {
+                string season = category.Name.Split('(')[0];
+                pre = category.ParentCategory.Name + ' ' + season + ' ' + pre;
+                int l;
+                do
+                {
+                    l = pre.Length;
+                    pre = pre.Replace("  ", " ");
+                } while (l != pre.Length);
+            }
 
             if (string.IsNullOrEmpty(url)) // called for adding to favorites
-                return pre+video.Title;
+                return pre + video.Title;
             else // called for downloading
             {
                 string name = base.GetFileNameForDownload(video, category, url);
                 string extension = Path.GetExtension(name);
                 if (String.IsNullOrEmpty(extension) || !OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension))
                     name += ".flv";
-				name = pre + name;
+                name = pre + name;
                 return Utils.GetSaveFilename(name);
             }
         }
@@ -335,40 +335,10 @@ namespace OnlineVideos.Sites
             return cc;
         }
 
-        public override string getUrl(VideoInfo video)
-        {
-            //GetBaseCookie();
-            //string dummy = GetWebData(video.VideoUrl, cc); //needed for getting results in getplaybackoptions
-            string oldUrl = video.VideoUrl;
-            Match m2 = Regex.Match(video.VideoUrl, @"-(?<id>\d+).html");
-            if (m2.Success)
-            {
-                fileUrlPostString = "q=" + m2.Groups["id"].Value + "&domain=all";
-                video.VideoUrl = baseUrl + "/getlinks.php";
-            }
-            string res = base.getUrl(video);
-            video.VideoUrl = oldUrl;
-            return res;
-        }
-
         public override string ResolveVideoUrl(string url)
         {
-
-            string webData = GetWebData(url, cc, forceUTF8: true, referer: url, proxy: GetProxy());
-            Match m = Regex.Match(webData, @"<a\sclass=""myButton""\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay");
-            if (m.Success)
-            {
-                url = m.Groups["url"].Value;
-                Log.Debug("watcheries result: " + url);
-            }
-            else
-            {
-                Log.Debug("watcheries result: no match");
-                return String.Empty;
-            }
-            if (url.StartsWith(baseUrl))
-                return String.Empty;
-            return GetVideoUrl(url);
+            string hosterUrl = GetRedirectedUrl(url);
+            return GetVideoUrl(hosterUrl);
         }
 
         private static string GetSubString(string s, string start, string until)
