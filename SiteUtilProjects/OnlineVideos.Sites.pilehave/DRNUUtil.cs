@@ -32,7 +32,7 @@ namespace OnlineVideos.Sites
       if (!string.IsNullOrEmpty(bonanzaVideolist_regEx)) regEx_bonanzaVideolist = new Regex(bonanzaVideolist_regEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
     }
 
-    //getUrl is for Bonanza only
+
     public override string getUrl(VideoInfo video)
     {
       if (video.VideoUrl.Contains("+"))
@@ -61,6 +61,10 @@ namespace OnlineVideos.Sites
           video.PlaybackOptions.Add(q_l[0], vUrl);
         }
         return aUrl;
+      }
+      else if(video.Other == "drnu") {
+        string link = loadAsset(video.VideoUrl);
+        return link;
       }
       else
       {
@@ -99,6 +103,8 @@ namespace OnlineVideos.Sites
                 string url = (string)srv["Qualities"][0]["Streams"][0]["Stream"];
 
                 Log.Debug("DR NU link: " + server + "/" + url);
+                video.VideoUrl = server + "/" + url;
+
                 string m3u8 = GetWebData(server + "/" + url);
                 Log.Debug("DR NU m3u8: " + m3u8);
                 int curr_bandwidth = 0;
@@ -148,6 +154,7 @@ namespace OnlineVideos.Sites
       res = res.OrderBy(o => o.Title.Replace(" ", "")).ToList();
       return res;
     }
+
 
     //loadAsset is called from getVideos and fetches m3u8 playlist for HLS media
     public string loadAsset(string url, string target = "HLS")
@@ -217,7 +224,8 @@ namespace OnlineVideos.Sites
 
               if (kind == "VideoResource")
               {
-                link = loadAsset(uri);
+                //link = loadAsset(uri);
+                link = uri;
                 duration = TimeSpan.FromMilliseconds((double)assets["DurationInMilliseconds"]);
                 fduration = String.Format("{0:D2}:{1:D2}:{2:D2}", duration.Hours, duration.Minutes, duration.Seconds);
               }
@@ -232,6 +240,7 @@ namespace OnlineVideos.Sites
               video.VideoUrl = link;
               video.Length = fduration;
               video.ImageUrl = img;
+              video.Other = "drnu";
               res.Add(video);
             }
           }
@@ -255,7 +264,7 @@ namespace OnlineVideos.Sites
 
       if (myString[0] == "search")
       {
-        string url = baseUrlDrNu + "/search/tv/programcards-with-asset/title/" + myString[1] + "?limit=10";
+        string url = baseUrlDrNu + "/search/tv/programcards-with-asset/title/" + myString[1] + "?limit=75";
         Log.Debug("DR NU url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
