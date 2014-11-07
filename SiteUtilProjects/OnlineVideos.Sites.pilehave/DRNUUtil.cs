@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 using System.Linq;
 
 namespace OnlineVideos.Sites
@@ -62,7 +63,13 @@ namespace OnlineVideos.Sites
         }
         return aUrl;
       }
-      else if(video.Other == "drnu") {
+      else if (video.Other == "drlive")
+      {
+        string link = loadLiveAsset(video.VideoUrl);
+        return link;
+      }
+      else if (video.Other == "drnu")
+      {
         string link = loadAsset(video.VideoUrl);
         return link;
       }
@@ -92,6 +99,7 @@ namespace OnlineVideos.Sites
             VideoInfo video = new VideoInfo();
             video.Title = (string)channel["Title"];
             video.ImageUrl = (string)channel["PrimaryImageUri"];
+            video.Other = "drlive";
             Log.Debug("DR NU Title: " + video.Title);
             JArray streamingservers = (JArray)channel["StreamingServers"];
             foreach (JObject srv in streamingservers)
@@ -101,47 +109,8 @@ namespace OnlineVideos.Sites
                 Log.Debug("DR NU HLS Target found");
                 string server = (string)srv["Server"];
                 string url = (string)srv["Qualities"][0]["Streams"][0]["Stream"];
-
                 Log.Debug("DR NU link: " + server + "/" + url);
                 video.VideoUrl = server + "/" + url;
-
-                string m3u8 = GetWebData(server + "/" + url);
-                Log.Debug("DR NU m3u8: " + m3u8);
-                int curr_bandwidth = 0;
-                int new_bandwidth = 0;
-                bool selectnext = false;
-                string[] lines = m3u8.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
-                foreach (string line in lines)
-                {
-                  Log.Debug("DR NU m3u8 line: " + line);
-                  if (line.StartsWith("#EXT-"))
-                  {
-                    parts = line.Split(',');
-                    foreach (string part in parts)
-                    {
-                      if (part.StartsWith("BANDWIDTH="))
-                      {
-                        Int32.TryParse(part.Substring(10), out new_bandwidth);
-                        if (new_bandwidth > curr_bandwidth)
-                        {
-                          curr_bandwidth = new_bandwidth;
-                          selectnext = true;
-                        }
-                        else
-                        {
-                          selectnext = false;
-                        }
-
-                      }
-                    }
-                  }
-
-
-                  if (line.StartsWith("http://") && selectnext == true)
-                  {
-                    video.VideoUrl = line;
-                  }
-                }
                 res.Add(video);
               }
             }
@@ -155,6 +124,48 @@ namespace OnlineVideos.Sites
       return res;
     }
 
+    //loadLiveAsset is called from getVideos and fetches Live TV m3u8 playlist for HLS media
+    public string loadLiveAsset(string url)
+    {
+      string assetLink = null;
+      string m3u8 = GetWebData(url);
+      Log.Debug("DR NU m3u8: " + m3u8);
+      int curr_bandwidth = 0;
+      int new_bandwidth = 0;
+      bool selectnext = false;
+      string[] parts = null;
+      string[] lines = m3u8.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+      foreach (string line in lines)
+      {
+        Log.Debug("DR NU m3u8 line: " + line);
+        if (line.StartsWith("#EXT-"))
+        {
+          parts = line.Split(',');
+          foreach (string part in parts)
+          {
+            if (part.StartsWith("BANDWIDTH="))
+            {
+              Int32.TryParse(part.Substring(10), out new_bandwidth);
+              if (new_bandwidth > curr_bandwidth)
+              {
+                curr_bandwidth = new_bandwidth;
+                selectnext = true;
+              }
+              else
+              {
+                selectnext = false;
+              }
+
+            }
+          }
+        }
+        if (line.StartsWith("http://") && selectnext == true)
+        {
+          assetLink = line;
+        }
+      }
+      return assetLink;
+    }
 
     //loadAsset is called from getVideos and fetches m3u8 playlist for HLS media
     public string loadAsset(string url, string target = "HLS")
@@ -211,6 +222,7 @@ namespace OnlineVideos.Sites
             string strprogramcard = GetWebData(webDataUrl);
             JObject objprogramcard = JObject.Parse(strprogramcard);
             string itemTitle = (string)objprogramcard["Title"];
+            DateTime airDate = (DateTime)objprogramcard["PrimaryBroadcastStartTime"];
             img = (string)objprogramcard["PrimaryImageUri"];
             string itemDescription = (string)objprogramcard["Description"];
             Log.Debug("DR NU Description: " + itemDescription);
@@ -224,7 +236,6 @@ namespace OnlineVideos.Sites
 
               if (kind == "VideoResource")
               {
-                //link = loadAsset(uri);
                 link = uri;
                 duration = TimeSpan.FromMilliseconds((double)assets["DurationInMilliseconds"]);
                 fduration = String.Format("{0:D2}:{1:D2}:{2:D2}", duration.Hours, duration.Minutes, duration.Seconds);
@@ -241,6 +252,7 @@ namespace OnlineVideos.Sites
               video.Length = fduration;
               video.ImageUrl = img;
               video.Other = "drnu";
+              video.Airdate = airDate.ToString("dd. MMM. yyyy kl. HH:mm");
               res.Add(video);
             }
           }
