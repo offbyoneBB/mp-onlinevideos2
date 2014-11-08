@@ -337,8 +337,22 @@ namespace OnlineVideos.Sites
 
         public override string ResolveVideoUrl(string url)
         {
-            string hosterUrl = GetRedirectedUrl(url);
-            return GetVideoUrl(hosterUrl);
+
+            string webData = GetWebData(url, cc, forceUTF8: true, referer: url, proxy: GetProxy());
+            Match m = Regex.Match(webData, @"<a\sclass=""myButton""\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay");
+            if (m.Success)
+            {
+                url = m.Groups["url"].Value;
+                Log.Debug("watcheries result: " + url);
+            }
+            else
+            {
+                Log.Debug("watcheries result: no match");
+                return String.Empty;
+            }
+            if (url.StartsWith(baseUrl))
+                return String.Empty;
+            return GetVideoUrl(url);
         }
 
         private static string GetSubString(string s, string start, string until)
