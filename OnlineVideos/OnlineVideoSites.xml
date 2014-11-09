@@ -1081,7 +1081,7 @@
         <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://getmedia.redefine.pl/action/2.0/vod/list/?login=common_user&passwdmd5=&ver=281&cuid=-8939960&category={0}]]></item>
       </Configuration>
     </Site>
-    <Site name="Katsomo" util="Katsomo" agecheck="false" enabled="true" lang="fi" player="VLC">
+    <Site name="Katsomo" util="Katsomo" agecheck="false" enabled="true" lang="fi" player="Internal">
       <Description>MTV3:n, Subin ja Avan sarjat sekä MTV3 MAX, Max Sport 1 ja Max Sport 2 urheilu Katsomossa - katso TV-ohjelmia silloin kun haluat!</Description>
       <Configuration>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="program-link">\s*<li>(?<title>[^<]*)</li>\s*</a>]]></item>
