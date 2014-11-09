@@ -990,7 +990,7 @@
     <Site name="GameKings" util="GameKings" agecheck="false" enabled="true" lang="nl">
       <Description>Videos van gamekings.tv</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<option\sclass="level-(0|1)"\svalue="(?<url>[^"]*)">(?<title>[^<]*)</option>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<option\s(?:class="level-(0|1)"\s)?value="(?<url>[^"]*)">(?<title>[^<]*)</option>]]></item>
         <item key="dynamicCategoryUrlFormatString"><![CDATA[category/{0}/]]></item>
         <item key="videoListRegEx"><![CDATA[<article><a\shref="(?<VideoUrl>[^"]*)"\stitle="[^"]*"><img\ssrc="(?<zzImageUrl>[^"]*)"\salt="[^"]*"><h2>(?:<span>[^<]*</span>)?(?<Title>[^<]*)</h2><p\sclass="col">(?<Airdate>[^\s]*)\sdoor[^<]*<a\shref='[^']*'></a></p><p>(?<Description>[^<]*)</p>]]></item>
         <item key="nextPageRegEx"><![CDATA[<li><a\shref='(?<url>[^']*)'\sclass='corners-small'>VOLGENDE</a></li>]]></item>
