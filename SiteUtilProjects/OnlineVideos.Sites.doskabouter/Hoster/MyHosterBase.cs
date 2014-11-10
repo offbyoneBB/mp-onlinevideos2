@@ -10,14 +10,14 @@ namespace OnlineVideos.Hoster
 {
     public abstract class MyHosterBase : HosterBase
     {
-        protected string GetFromPost(string url, string page, bool skipsubmit = false)
+        protected string GetFromPost(string url, string page, bool skipsubmit = false, string[] extraValues = null, string[] ignoreValues = null)
         {
             List<string> values = new List<string>();
 
             Match m = Regex.Match(page, @"<input\s*type=""hidden""\s*name=""(?<name>[^\'""]+)""\s*value=""(?<value>[^\'""]+)""[^>]*>");
             while (m != null && m.Success)
             {
-                AddToList(m.Groups, values);
+                AddToList(m.Groups, values, ignoreValues);
                 m = m.NextMatch();
             }
 
@@ -25,23 +25,29 @@ namespace OnlineVideos.Hoster
             {
                 m = Regex.Match(page, @"<input\s*type=""submit""\s*[^>]*name=""(?<name>[^""]*)""[^>]*value=""(?<value>[^""]*)""[^>]*>");
                 if (m.Success)
-                    AddToList(m.Groups, values);
+                    AddToList(m.Groups, values, ignoreValues);
             }
 
+            if (extraValues != null)
+                values.AddRange(extraValues);
             if (values.Count > 0)
-                page = SiteUtilBase.GetWebDataFromPost(url, String.Join("&", values.ToArray()),forceUTF8:true);
+                page = SiteUtilBase.GetWebDataFromPost(url, String.Join("&", values.ToArray()), forceUTF8: true);
             // Sometimes gorillavid returns "utf8" instead of "utf-8" as charset which crashes getwebdatafrompost, so force it to utf8
 
             return page;
         }
 
-        private void AddToList(GroupCollection groups, List<string> values)
+        private void AddToList(GroupCollection groups, List<string> values, string[] ignoreValues)
         {
             string key = groups["name"].Value;
             string value = groups["value"].Value;
 
             if (!String.IsNullOrEmpty(key) && !String.IsNullOrEmpty(value))
-                values.Add(String.Format("{0}={1}", key, HttpUtility.UrlEncode(value)));
+            {
+                string valueToAdd = String.Format("{0}={1}", key, HttpUtility.UrlEncode(value));
+                if (ignoreValues == null || Array.IndexOf(ignoreValues, valueToAdd) == -1)
+                    values.Add(valueToAdd);
+            }
         }
 
         protected string WiseCrack(string webdata)
