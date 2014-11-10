@@ -623,6 +623,30 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class TheFile : MyHosterBase
+    {
+        public override string getHosterUrl()
+        {
+            return "thefile.me";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            string webData = SiteUtilBase.GetWebData(url);
+
+            webData = GetFromPost(url, webData, false, new[] { "method_free=Free+Download" }, new[] { "op=login" });
+            webData = GetSubString(webData, @"id=""player_code""", "</html>");
+            string packed = GetSubString(webData, @"return p}", @"</script>");
+            packed = packed.Replace(@"\'", @"'");
+            string unpacked = UnPack(packed);
+
+            Match m = Regex.Match(unpacked, @"file:\s*""(?<url>[^""]*)""");
+            if (m.Success)
+                return m.Groups["url"].Value;
+            return String.Empty;
+        }
+    }
+
     public class Tudou : HosterBase
     {
         public override string getHosterUrl()
