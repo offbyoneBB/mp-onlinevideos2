@@ -47,7 +47,7 @@ namespace OnlineVideos.Sites
         #region Regex
 
         static readonly Regex seriesRegex = new Regex(@"<li class=""list-item[^""]*"" data-ip-id=""([^""]*)"">.*?<div class=""title top-title"">([^<]*)</div>.*?data-ip-src=""([^""]*)"">");
-        static readonly Regex aToZRegex = new Regex(@"<li>\s*<a href=""/iplayer/brand/([^""]*)"".*?<span class=""title"">([^<]*)");
+        static readonly Regex aToZRegex = new Regex(@"<li>\s*<a href=""/iplayer/brand/([^""]*)"".*?<span class=""title"">([^<]*)", RegexOptions.Singleline);
         static readonly Regex nextPageRegex = new Regex(@"<span class=""next txt""><a href=""([^""]*)"">Next");
 
         static readonly Regex episodeInfoRegex = new Regex(@"<li class=""list-item[^>]*>(.*?)</li>", RegexOptions.Singleline);
@@ -176,7 +176,8 @@ namespace OnlineVideos.Sites
             var enumer = sortedPlaybackOptions.GetEnumerator();
             while (enumer.MoveNext())
             {
-                if (!enumer.Current.Value.Contains("3200")) lastUrl = enumer.Current.Value;
+                if (lastUrl == "" || !enumer.Current.Key.Contains("2800"))
+                    lastUrl = enumer.Current.Value;
                 video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
             }
             return lastUrl;
