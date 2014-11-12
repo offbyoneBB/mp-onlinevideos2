@@ -359,7 +359,7 @@ namespace OnlineVideos.Sites
                         //Most Popular category jumps straight to videos so need to include series title
                         video.Title = series;
                         if (!string.IsNullOrEmpty(episode))
-                            video.Title += " - " + episode;
+                            video.Title += ": " + episode;
                     }
                     else
                     {
