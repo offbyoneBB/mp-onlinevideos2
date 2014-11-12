@@ -37,6 +37,41 @@ namespace OnlineVideos
         public SortedList<string, bool> VideoExtensions { get; protected set; }
         public bool FavoritesFirst = false;
 
+        public String HttpPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
+        public int HttpOpenConnectionTimeout = 20000;           // ms
+        public int HttpOpenConnectionSleepTime = 0;             // ms
+        public int HttpTotalReopenConnectionTimeout = 60000;    // ms
+
+        public String RtmpPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
+        public int RtmpOpenConnectionTimeout = 20000;           // ms
+        public int RtmpOpenConnectionSleepTime = 0;             // ms
+        public int RtmpTotalReopenConnectionTimeout = 60000;    // ms
+
+        public String RtspPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
+        public int RtspOpenConnectionTimeout = 20000;           // ms
+        public int RtspOpenConnectionSleepTime = 0;             // ms
+        public int RtspTotalReopenConnectionTimeout = 60000;    // ms
+
+        public int RtspSameConnectionTcpPreference = 0;
+        public int RtspUdpPreference = 1;
+        public int RtspMulticastPreference = 2;
+
+        public int RtspClientPortMin = 50000;
+        public int RtspClientPortMax = 65535;
+
+        public bool RtspIgnoreRtpPayloadType = false;
+
+        public String UdpRtpPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
+        public int UdpRtpOpenConnectionTimeout = 2000;          // ms
+        public int UdpRtpOpenConnectionSleepTime = 0;           // ms
+        public int UdpRtpTotalReopenConnectionTimeout = 60000;  // ms
+        public int UdpRtpReceiveDataCheckInterval = 500;        // ms
+
+        public static readonly String NetworkInterfaceSystemDefault = "System default";
+        public static readonly String RtspSameConnection = "same connection";
+        public static readonly String RtspUdp = "UDP";
+        public static readonly String RtspUdpMulticast = "UDP multicast";
+
 		private OnlineVideoSettings()
 		{
 			// set some defaults

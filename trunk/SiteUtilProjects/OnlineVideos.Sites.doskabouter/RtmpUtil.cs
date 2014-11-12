@@ -83,9 +83,9 @@ namespace OnlineVideos.Sites
             if ((t = GetValue(token, paramsHash["token"])) != null) theUrl.Token = t;
             if ((t = GetValue(timeout, paramsHash["timeout"])) != null)
             {
-                int to;
-                if (int.TryParse(t, out to))
-                    theUrl.ReceiveDataTimeout = to * 1000;
+                //int to;
+                //if (int.TryParse(t, out to))
+                //    theUrl.ReceiveDataTimeout = to * 1000;
             }
 
             return theUrl.ToString();

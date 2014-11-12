@@ -378,7 +378,8 @@ namespace OnlineVideos.Sites
                             }
                             else
                             {
-                                listUrls.Add(new MPUrlSourceFilter.RtmpUrl(finalURL) { SwfUrl = "http://www.wat.tv/images/v30/PlayerWat.swf", SwfVerify = true, ReceiveDataTimeout = 40000 }.ToString());
+                                //listUrls.Add(new MPUrlSourceFilter.RtmpUrl(finalURL) { SwfUrl = "http://www.wat.tv/images/v30/PlayerWat.swf", SwfVerify = true, ReceiveDataTimeout = 40000 }.ToString());
+                                listUrls.Add(new MPUrlSourceFilter.RtmpUrl(finalURL) { SwfUrl = "http://www.wat.tv/images/v30/PlayerWat.swf", SwfVerify = true }.ToString());
                             }
                         }
                         break;

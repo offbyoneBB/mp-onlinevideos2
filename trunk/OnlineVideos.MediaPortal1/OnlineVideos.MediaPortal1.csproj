@@ -250,6 +250,49 @@
     <Compile Include="LatestVideosManager.cs" />
     <Compile Include="LoadParameterInfo.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\AfhsManifestUrl.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\HttpUrl.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\IDownload.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\IDownloadCallback.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\IFilterState.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\LogVerbosity.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\MPUrlSourceFilterDownloader.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\MPUrlSourceSplitterError.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\Parameter.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\ParameterCollection.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\RtmpArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\RtmpArbitraryDataCollection.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\RtmpArbitraryDataType.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\RtmpBooleanArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\RtmpNullArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\RtmpNumberArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\RtmpObjectArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\RtmpProtocol.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\RtmpStringArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\RtmpUrl.cs" />
+    <Compile Include="MPUrlSourceSplitter\V1\SimpleUrl.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\AfhsManifestUrl.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\FilterError.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\HttpUrl.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\IDownload.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\IDownloadCallback.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\IFilterState.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\IFilterStateEx.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\LogVerbosity.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\Downloader.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\Parameter.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\ParameterCollection.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\RtmpArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\RtmpArbitraryDataCollection.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\RtmpArbitraryDataType.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\RtmpBooleanArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\RtmpNullArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\RtmpNumberArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\RtmpObjectArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\RtmpProtocol.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\RtmpStringArbitraryData.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\RtmpUrl.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\SimpleUrl.cs" />
     <Compile Include="NavigationContextSwitch.cs" />
     <Compile Include="OnlineVideosGuiListItem.cs" />
     <Compile Include="Player\ExternalOSDLibrary\BaseWindow.cs" />
@@ -470,6 +513,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="build.targets" />
 </Project>

@@ -377,9 +377,9 @@ namespace OnlineVideos.Sites
                 url = new MPUrlSourceFilter.AfhsManifestUrl(url)
                 {
                     LiveStream = live,
-                    Referer = video.VideoUrl,
+                    Referer = video.VideoUrl//,
 
-                    ReceiveDataTimeout = live ? MPUrlSourceFilter.AfhsManifestUrl.DefaultReceiveDataTimeout * 2 : MPUrlSourceFilter.AfhsManifestUrl.DefaultReceiveDataTimeout
+                    //ReceiveDataTimeout = live ? MPUrlSourceFilter.AfhsManifestUrl.DefaultReceiveDataTimeout * 2 : MPUrlSourceFilter.AfhsManifestUrl.DefaultReceiveDataTimeout
                 }.ToString();
             }
             return url;

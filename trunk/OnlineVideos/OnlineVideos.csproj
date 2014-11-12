@@ -337,14 +337,9 @@
     <Compile Include="Log.cs" />
     <Compile Include="MPUrlSourceFilter\AfhsManifestUrl.cs" />
     <Compile Include="MPUrlSourceFilter\HttpUrl.cs" />
-    <Compile Include="MPUrlSourceFilter\IDownload.cs" />
-    <Compile Include="MPUrlSourceFilter\IDownloadCallback.cs" />
-    <Compile Include="MPUrlSourceFilter\IFilterState.cs" />
-    <Compile Include="MPUrlSourceFilter\LogVerbosity.cs" />
-    <Compile Include="MPUrlSourceFilter\MPUrlSourceFilterDownloader.cs" />
-    <Compile Include="MPUrlSourceFilter\MPUrlSourceSplitterError.cs" />
-    <Compile Include="MPUrlSourceFilter\Parameter.cs" />
-    <Compile Include="MPUrlSourceFilter\ParameterCollection.cs" />
+    <Compile Include="MPUrlSourceFilter\HttpUrlSettings.cs" />
+    <Compile Include="MPUrlSourceFilter\HttpUrlSettingsConverter.cs" />
+    <Compile Include="MPUrlSourceFilter\NetworkInterfaceConverter.cs" />
     <Compile Include="MPUrlSourceFilter\RtmpArbitraryData.cs" />
     <Compile Include="MPUrlSourceFilter\RtmpArbitraryDataCollection.cs" />
     <Compile Include="MPUrlSourceFilter\RtmpArbitraryDataType.cs" />
@@ -355,7 +350,21 @@
     <Compile Include="MPUrlSourceFilter\RtmpProtocol.cs" />
     <Compile Include="MPUrlSourceFilter\RtmpStringArbitraryData.cs" />
     <Compile Include="MPUrlSourceFilter\RtmpUrl.cs" />
+    <Compile Include="MPUrlSourceFilter\RtmpUrlSettings.cs" />
+    <Compile Include="MPUrlSourceFilter\RtmpUrlSettingsConverter.cs" />
+    <Compile Include="MPUrlSourceFilter\RtspConnectionPreference.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MPUrlSourceFilter\RtspConnectionPreference.Designer.cs">
+      <DependentUpon>RtspConnectionPreference.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MPUrlSourceFilter\RtspConnectionPreferenceEditor.cs" />
+    <Compile Include="MPUrlSourceFilter\RtspUrlSettings.cs" />
+    <Compile Include="MPUrlSourceFilter\RtspUrlSettingsConverter.cs" />
     <Compile Include="MPUrlSourceFilter\SimpleUrl.cs" />
+    <Compile Include="MPUrlSourceFilter\SimpleUrlSettings.cs" />
+    <Compile Include="MPUrlSourceFilter\UdpRtpUrlSettings.cs" />
+    <Compile Include="MPUrlSourceFilter\UdpRtpUrlSettingsConverter.cs" />
     <Compile Include="Newtonsoft.Json\Bson\BsonBinaryType.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1285,6 +1294,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\OnlineVideosWebservice\OnlineVideos.wsdl" />
+    <EmbeddedResource Include="MPUrlSourceFilter\RtspConnectionPreference.resx">
+      <DependentUpon>RtspConnectionPreference.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -1361,6 +1373,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\loading.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Down.png" />
+    <Content Include="Resources\Up.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="build.targets" />

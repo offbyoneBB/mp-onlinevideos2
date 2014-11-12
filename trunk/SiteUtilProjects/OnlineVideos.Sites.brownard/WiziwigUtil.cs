@@ -129,7 +129,8 @@ namespace OnlineVideos.Sites
             }
 
             if (!string.IsNullOrEmpty(url))
-                return new MPUrlSourceFilter.HttpUrl(url) { LiveStream = true, ReceiveDataTimeout = MPUrlSourceFilter.HttpUrl.DefaultReceiveDataTimeout * 2 }.ToString();
+                //return new MPUrlSourceFilter.HttpUrl(url) { LiveStream = true, ReceiveDataTimeout = MPUrlSourceFilter.HttpUrl.DefaultReceiveDataTimeout * 2 }.ToString();
+                return new MPUrlSourceFilter.HttpUrl(url) { LiveStream = true }.ToString();
 
             aceStreamEngine.Close();
             aceStreamEngine = null;

@@ -196,7 +196,7 @@ namespace OnlineVideos.Sites
                 }
             }
             MPUrlSourceFilter.HttpUrl httpUrl = new MPUrlSourceFilter.HttpUrl(url);
-            httpUrl.ReceiveDataTimeout = (int)httpReceiveDataTimeoutInSec * 1000;
+            //httpUrl.ReceiveDataTimeout = (int)httpReceiveDataTimeoutInSec * 1000;
             url = httpUrl.ToString();
             return url;
         }

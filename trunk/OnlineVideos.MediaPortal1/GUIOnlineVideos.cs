@@ -2369,7 +2369,7 @@ namespace OnlineVideos.MediaPortal1
                             {
                                 Log.Instance.Info("Start prebuffering ...");
                                 BufferingPlayerFactory = factory;
-                                if (((OnlineVideosPlayer)factory.PreparedPlayer).BufferFile())
+                                if (((OnlineVideosPlayer)factory.PreparedPlayer).BufferFile(playItem.Util))
                                 {
                                     Log.Instance.Info("Prebuffering finished.");
                                     return true;
@@ -2740,7 +2740,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     IDownloader dlHelper = null;
                     if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloader();
-                    else dlHelper = new MPUrlSourceFilter.MPUrlSourceFilterDownloader();
+                    else dlHelper = new MPUrlSourceSplitter.V2.Downloader();
                     dlList.CurrentItem.Downloader = dlHelper;
                     dlList.CurrentItem.Start = DateTime.Now;
                     Log.Instance.Info("Starting download of '{0}' to '{1}' from Site '{2}'", dlList.CurrentItem.Url, dlList.CurrentItem.LocalFile, dlList.CurrentItem.Util.Settings.Name);
