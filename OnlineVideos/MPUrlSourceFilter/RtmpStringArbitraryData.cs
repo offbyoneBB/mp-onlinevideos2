@@ -8,6 +8,7 @@ namespace OnlineVideos.MPUrlSourceFilter
     /// <summary>
     /// Represents string RTMP arbitrary data.
     /// </summary>
+    [Serializable]
     public class RtmpStringArbitraryData : RtmpArbitraryData
     {
         #region Private fields

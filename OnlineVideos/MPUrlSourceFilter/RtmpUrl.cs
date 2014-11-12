@@ -10,12 +10,11 @@ namespace OnlineVideos.MPUrlSourceFilter
     /// Represent class for RTMP urls for MediaPortal Url Source Splitter.
 	/// All parameter values will be url encoded, so make sure you set them UrlDecoded!
 	/// </summary>
+    [Serializable]
 	public class RtmpUrl : SimpleUrl
 	{
         #region Private fields
 
-        private int receiveDataTimeout = RtmpUrl.DefaultReceiveDataTimeout;
-        private int openConnectionMaximumAttempts = RtmpUrl.DefaultOpenConnectionMaximumAttempts;
         private RtmpArbitraryDataCollection arbitraryData;
 
         #endregion
@@ -308,168 +307,9 @@ namespace OnlineVideos.MPUrlSourceFilter
         [Category("librtmp"), DefaultValue(DefaultSwfAge), Description("Specify how many days to use the cached SWF info before re-checking.")]
         public uint SwfAge { get; set; }
 
-        /// <summary>
-        /// Gets or sets receive data timeout.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <para>The <see cref="ReceiveDataTimeout"/> is less than zero.</para>
-        /// </exception>
-        /// <remarks>
-        /// The value is in milliseconds.
-        /// </remarks>
-        [Category("librtmp"), DefaultValue(RtmpUrl.DefaultReceiveDataTimeout), Description("receive data timeout in milliseconds.")]
-        public int ReceiveDataTimeout
-        {
-            get { return this.receiveDataTimeout; }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("ReceiveDataTimeout", value, "Cannot be less than zero.");
-                }
-
-                this.receiveDataTimeout = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the maximum attempts of opening connection to remote server.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <para>The <see cref="OpenConnectionMaximumAttempts"/> is less than zero.</para>
-        /// </exception>
-        [Category("MPUrlSourceSplitter"), DefaultValue(RtmpUrl.DefaultOpenConnectionMaximumAttempts), Description("The maximum attempts of opening connection to remote server.")]
-        public int OpenConnectionMaximumAttempts
-        {
-            get { return this.openConnectionMaximumAttempts; }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("OpenConnectionMaximumAttempts", value, "Cannot be less than zero.");
-                }
-
-                this.openConnectionMaximumAttempts = value;
-            }
-        }
-
 		#endregion
 
 		#region Methods
-
-        /// <summary>
-        /// Gets canonical string representation for the specified instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> instance that contains the unescaped canonical representation of the this instance.
-        /// </returns>
-		public override string ToString()
-		{
-			ParameterCollection parameters = new ParameterCollection();
-
-            if (this.App != RtmpUrl.DefaultApp)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterApp, this.App));
-            }
-
-            if (this.BufferTime != RtmpUrl.DefaultBufferTime)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterBufferTime, this.BufferTime.ToString()));
-            }
-
-            if (this.FlashVersion != RtmpUrl.DefaultFlashVersion)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterFlashVer, this.FlashVersion));
-            }
-
-            if (this.Auth != RtmpUrl.DefaultAuth)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterAuth, this.Auth));
-            }
-
-            if (this.ArbitraryData.Count != 0)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterArbitraryData, this.ArbitraryData.ToString()));
-            }
-
-            if (this.Jtv != RtmpUrl.DefaultJtv)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterJtv, this.Jtv));
-            }
-
-            if (this.Live != RtmpUrl.DefaultLive)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterLive, this.Live ? "1" : "0"));
-            }
-
-            if (this.OpenConnectionMaximumAttempts != RtmpUrl.DefaultOpenConnectionMaximumAttempts)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterOpenConnectionMaximumAttempts, this.OpenConnectionMaximumAttempts.ToString()));
-            }
-
-            if (this.PageUrl != RtmpUrl.DefaultPageUrl)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterPageUrl, this.PageUrl));
-            }
-
-            if (this.Playlist != RtmpUrl.DefaultPlaylist)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterPlaylist, this.Playlist ? "1" : "0"));
-            }
-
-            if (this.PlayPath != RtmpUrl.DefaultPlayPath)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterPlayPath, this.PlayPath));
-            }
-
-            if (this.ReceiveDataTimeout != RtmpUrl.DefaultReceiveDataTimeout)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterReceiveDataTimeout, this.ReceiveDataTimeout.ToString()));
-            }
-
-            if (this.Start != RtmpUrl.DefaultStart)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterStart, this.Start.ToString()));
-            }
-
-            if (this.Stop != RtmpUrl.DefaultStop)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterStop, this.Stop.ToString()));
-            }
-
-            if (this.Subscribe != RtmpUrl.DefaultSubscribe)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterSubscribe, this.Subscribe));
-            }
-
-            if (this.SwfAge != RtmpUrl.DefaultSwfAge)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterSwfAge, this.SwfAge.ToString()));
-            }
-
-            if (this.SwfUrl != RtmpUrl.DefaultSwfUrl)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterSwfUrl, this.SwfUrl));
-            }
-
-            if (this.SwfVerify != RtmpUrl.DefaultSwfVerify)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterSwfVerify, this.SwfVerify ? "1" : "0"));
-            }
-
-            if (this.TcUrl != RtmpUrl.DefaultTcUrl)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterTcUrl, this.TcUrl));
-            }
-
-            if (this.Token != RtmpUrl.DefaultToken)
-            {
-                parameters.Add(new Parameter(RtmpUrl.ParameterToken, this.Token));
-            }
-
-			// return formatted connection string
-			return base.ToString() + ParameterCollection.ParameterSeparator + parameters.FilterParameters;
-		}
 
         /// <summary>
         /// Parses back a string that was created via <see cref="ToString"/> into a <see cref="RtmpUrl"/> instance with all the parameters.
@@ -478,43 +318,45 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <returns>A <see cref="RtmpUrl"/> instance with the parameters from the url.</returns>
         public static RtmpUrl Parse(string url)
         {
-            if (!url.Contains(SimpleUrl.ParameterSeparator)) return new RtmpUrl(url);
-            else
-            {
-                string[] url_split = url.Split(new string[] {SimpleUrl.ParameterSeparator}, StringSplitOptions.None);
-                RtmpUrl rtmpUrl = new RtmpUrl(url_split[0]);
-                string[] parameters = url_split[1].Split(new string[] { ParameterCollection.ParameterSeparator }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string parameter in parameters)
-                {
-                    string[] param_value = parameter.Split(new string[] { Parameter.ParameterAssign }, StringSplitOptions.None);
-                    string paramName = param_value[0];
-                    string paramValue = System.Web.HttpUtility.UrlDecode(param_value[1]);
-                    if (paramName == RtmpUrl.ParameterApp) rtmpUrl.App = paramValue;
-                    else if (paramName == RtmpUrl.ParameterBufferTime) rtmpUrl.BufferTime = uint.Parse(paramValue);
-                    else if (paramName == RtmpUrl.ParameterFlashVer) rtmpUrl.FlashVersion = paramValue;
-                    else if (paramName == RtmpUrl.ParameterAuth) rtmpUrl.Auth = paramValue;
-                    else if (paramName == RtmpUrl.ParameterJtv) rtmpUrl.Jtv = paramValue;
-                    else if (paramName == RtmpUrl.ParameterLive) rtmpUrl.Live = paramValue == "1";
-                    else if (paramName == RtmpUrl.ParameterOpenConnectionMaximumAttempts) rtmpUrl.OpenConnectionMaximumAttempts = int.Parse(paramValue);
-                    else if (paramName == RtmpUrl.ParameterPageUrl) rtmpUrl.PageUrl = paramValue;
-                    else if (paramName == RtmpUrl.ParameterPlaylist) rtmpUrl.Playlist = paramValue == "1";
-                    else if (paramName == RtmpUrl.ParameterPlayPath) rtmpUrl.PlayPath = paramValue;
-                    else if (paramName == RtmpUrl.ParameterReceiveDataTimeout) rtmpUrl.ReceiveDataTimeout = int.Parse(paramValue);
-                    else if (paramName == RtmpUrl.ParameterStart) rtmpUrl.Start = uint.Parse(paramValue);
-                    else if (paramName == RtmpUrl.ParameterStop) rtmpUrl.Stop = uint.Parse(paramValue);
-                    else if (paramName == RtmpUrl.ParameterSubscribe) rtmpUrl.Subscribe = paramValue;
-                    else if (paramName == RtmpUrl.ParameterSwfAge) rtmpUrl.SwfAge = uint.Parse(paramValue);
-                    else if (paramName == RtmpUrl.ParameterSwfUrl) rtmpUrl.SwfUrl = paramValue;
-                    else if (paramName == RtmpUrl.ParameterSwfVerify) rtmpUrl.SwfVerify = paramValue == "1";
-                    else if (paramName == RtmpUrl.ParameterTcUrl) rtmpUrl.TcUrl = paramValue;
-                    else if (paramName == RtmpUrl.ParameterToken) rtmpUrl.Token = paramValue;
-                    else if (paramName == SimpleUrl.ParameterLogVerbosity) rtmpUrl.Verbosity = (LogVerbosity)Enum.Parse(typeof(LogVerbosity), paramValue);
-                    else if (paramName == SimpleUrl.ParameterMaximumLogSize) rtmpUrl.MaximumLogSize = int.Parse(paramValue);
-                    else if (paramName == SimpleUrl.ParameterMaximumPlugins) rtmpUrl.MaximumPlugins = int.Parse(paramValue);
-                    else if (paramName == SimpleUrl.ParameterNetworkInterface) rtmpUrl.NetworkInterface = paramValue;
-                }
-                return rtmpUrl;
-            }
+            //if (!url.Contains(SimpleUrl.ParameterSeparator)) return new RtmpUrl(url);
+            //else
+            //{
+            //    string[] url_split = url.Split(new string[] {SimpleUrl.ParameterSeparator}, StringSplitOptions.None);
+            //    RtmpUrl rtmpUrl = new RtmpUrl(url_split[0]);
+            //    string[] parameters = url_split[1].Split(new string[] { ParameterCollection.ParameterSeparator }, StringSplitOptions.RemoveEmptyEntries);
+            //    foreach (string parameter in parameters)
+            //    {
+            ////        string[] param_value = parameter.Split(new string[] { Parameter.ParameterAssign }, StringSplitOptions.None);
+            ////        string paramName = param_value[0];
+            ////        string paramValue = System.Web.HttpUtility.UrlDecode(param_value[1]);
+            ////        if (paramName == RtmpUrl.ParameterApp) rtmpUrl.App = paramValue;
+            ////        else if (paramName == RtmpUrl.ParameterBufferTime) rtmpUrl.BufferTime = uint.Parse(paramValue);
+            ////        else if (paramName == RtmpUrl.ParameterFlashVer) rtmpUrl.FlashVersion = paramValue;
+            ////        else if (paramName == RtmpUrl.ParameterAuth) rtmpUrl.Auth = paramValue;
+            ////        else if (paramName == RtmpUrl.ParameterJtv) rtmpUrl.Jtv = paramValue;
+            ////        else if (paramName == RtmpUrl.ParameterLive) rtmpUrl.Live = paramValue == "1";
+            ////        else if (paramName == RtmpUrl.ParameterOpenConnectionMaximumAttempts) rtmpUrl.OpenConnectionMaximumAttempts = int.Parse(paramValue);
+            ////        else if (paramName == RtmpUrl.ParameterPageUrl) rtmpUrl.PageUrl = paramValue;
+            ////        else if (paramName == RtmpUrl.ParameterPlaylist) rtmpUrl.Playlist = paramValue == "1";
+            ////        else if (paramName == RtmpUrl.ParameterPlayPath) rtmpUrl.PlayPath = paramValue;
+            ////        else if (paramName == RtmpUrl.ParameterReceiveDataTimeout) rtmpUrl.ReceiveDataTimeout = int.Parse(paramValue);
+            ////        else if (paramName == RtmpUrl.ParameterStart) rtmpUrl.Start = uint.Parse(paramValue);
+            ////        else if (paramName == RtmpUrl.ParameterStop) rtmpUrl.Stop = uint.Parse(paramValue);
+            ////        else if (paramName == RtmpUrl.ParameterSubscribe) rtmpUrl.Subscribe = paramValue;
+            ////        else if (paramName == RtmpUrl.ParameterSwfAge) rtmpUrl.SwfAge = uint.Parse(paramValue);
+            ////        else if (paramName == RtmpUrl.ParameterSwfUrl) rtmpUrl.SwfUrl = paramValue;
+            ////        else if (paramName == RtmpUrl.ParameterSwfVerify) rtmpUrl.SwfVerify = paramValue == "1";
+            ////        else if (paramName == RtmpUrl.ParameterTcUrl) rtmpUrl.TcUrl = paramValue;
+            ////        else if (paramName == RtmpUrl.ParameterToken) rtmpUrl.Token = paramValue;
+            ////        else if (paramName == SimpleUrl.ParameterLogVerbosity) rtmpUrl.Verbosity = (LogVerbosity)Enum.Parse(typeof(LogVerbosity), paramValue);
+            ////        else if (paramName == SimpleUrl.ParameterMaximumLogSize) rtmpUrl.MaximumLogSize = int.Parse(paramValue);
+            ////        else if (paramName == SimpleUrl.ParameterMaximumPlugins) rtmpUrl.MaximumPlugins = int.Parse(paramValue);
+            ////        else if (paramName == SimpleUrl.ParameterNetworkInterface) rtmpUrl.NetworkInterface = paramValue;
+            //    }
+            //    return rtmpUrl;
+            //}
+
+            return null;
         }
 
 		#endregion
@@ -522,16 +364,6 @@ namespace OnlineVideos.MPUrlSourceFilter
         #region Constants
 
         // common parameters of RTMP protocol for MediaPortal Url Source Splitter
-
-        /// <summary>
-        /// Specifies receive data timeout for RTMP protocol.
-        /// </summary>
-        protected static String ParameterReceiveDataTimeout = "RtmpReceiveDataTimeout";
-
-        /// <summary>
-        /// Specifies how many times should MediaPortal Url Source Splitter try to receive data from remote server.
-        /// </summary>
-        protected static String ParameterOpenConnectionMaximumAttempts = "RtmpOpenConnectionMaximumAttempts";
 
         // connection parameters of RTMP protocol
 
@@ -576,22 +408,6 @@ namespace OnlineVideos.MPUrlSourceFilter
         protected static String ParameterSwfAge = "RtmpSwfAge";
 
         // default values for some parameters
-
-        /// <summary>
-        /// Default receive data timeout of MediaPortal Url Source Splitter.
-        /// </summary>
-        /// <remarks>
-        /// The value is in milliseconds. The default value is 20000.
-        /// </remarks>
-        public const int DefaultReceiveDataTimeout = 20000;
-
-        /// <summary>
-        /// Default maximum of open connection attempts of MediaPortal Url Source Splitter.
-        /// </summary>
-        /// <remarks>
-        /// The default value is 3.
-        /// </remarks>
-        public const int DefaultOpenConnectionMaximumAttempts = 3;
 
         public static String DefaultApp = null;
         public static String DefaultTcUrl = null;

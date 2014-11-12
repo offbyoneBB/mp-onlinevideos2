@@ -8,6 +8,7 @@ namespace OnlineVideos.MPUrlSourceFilter
     /// <summary>
     /// Represents supported RTMP protocols.
     /// </summary>
+    [Serializable]
     internal enum RtmpProtocol
     {
         /// <summary>

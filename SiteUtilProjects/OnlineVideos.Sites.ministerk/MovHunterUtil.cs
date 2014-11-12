@@ -120,7 +120,8 @@ namespace OnlineVideos.Sites
         {
             string url = base.getUrl(video);
             if (!IsUrlEncoded(url))
-                url = new MPUrlSourceFilter.HttpUrl(url) { ReceiveDataTimeout = (int)httpReceiveDataTimeoutInSec * 1000 }.ToString();
+                //url = new MPUrlSourceFilter.HttpUrl(url) { ReceiveDataTimeout = (int)httpReceiveDataTimeoutInSec * 1000 }.ToString();
+                url = new MPUrlSourceFilter.HttpUrl(url) { }.ToString();
 
             //Uri uri = new Uri(url);
             //string[] segments = uri.Segments;

@@ -8,6 +8,7 @@ namespace OnlineVideos.MPUrlSourceFilter
     /// <summary>
     /// Represents base class for Adobe Flash HTTP Streaming protocol described by manifest file.
     /// </summary>
+    [Serializable]
     public class AfhsManifestUrl : HttpUrl
     {
         #region Private fields
@@ -70,26 +71,6 @@ namespace OnlineVideos.MPUrlSourceFilter
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Gets canonical string representation for the specified instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> instance that contains the unescaped canonical representation of the this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            ParameterCollection parameters = new ParameterCollection();
-
-            if (this.SegmentFragmentUrlExtraParameters != AfhsManifestUrl.DefaultSegmentFragmentUrlExtraParameters)
-            {
-                parameters.Add(new Parameter(AfhsManifestUrl.ParameterSegmentFragmentUrlExtraParameters, this.SegmentFragmentUrlExtraParameters));
-            }
-
-            // return formatted connection string
-            return base.ToString() + ParameterCollection.ParameterSeparator + parameters.FilterParameters;
-        }
-
         #endregion
 
         #region Constants

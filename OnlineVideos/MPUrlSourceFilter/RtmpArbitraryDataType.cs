@@ -8,6 +8,7 @@ namespace OnlineVideos.MPUrlSourceFilter
     /// <summary>
     /// Specifies type of arbitrary data for RTMP protocol.
     /// </summary>
+    [Serializable]
     public enum RtmpArbitraryDataType
     {
         /// <summary>

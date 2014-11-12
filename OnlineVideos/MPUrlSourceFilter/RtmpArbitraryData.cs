@@ -8,6 +8,7 @@ namespace OnlineVideos.MPUrlSourceFilter
     /// <summary>
     /// Specifies base type for all arbitrary data for RTMP protocol.
     /// </summary>
+    [Serializable]
     public abstract class RtmpArbitraryData
     {
         #region Private fields

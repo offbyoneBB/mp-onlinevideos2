@@ -10,6 +10,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.Configuration;
+using DirectShowLib;
+using DShowNET.Helper;
 
 namespace OnlineVideos.MediaPortal1
 {
@@ -97,6 +99,182 @@ namespace OnlineVideos.MediaPortal1
             /** fill "Groups" Tab **/
             chkAutoGroupByLang.Checked = PluginConfiguration.Instance.autoGroupByLang;
             chkFavFirst.Checked = OnlineVideoSettings.Instance.FavoritesFirst;
+
+            try
+            {
+                IFilterGraph2 graphBuilder = null;
+                IBaseFilter sourceFilter = null;
+                OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterState filterState = null;
+                OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterStateEx filterStateEx = null;
+
+                try
+                {
+                    graphBuilder = (IFilterGraph2)new FilterGraph();
+
+                    sourceFilter = FilterFromFile.LoadFilterFromDll("MPUrlSourceSplitter\\MPUrlSourceSplitter.ax", new Guid(MPUrlSourceSplitter.V2.Downloader.FilterCLSID), true);
+
+                    if (sourceFilter == null)
+                    {
+                        sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, MPUrlSourceSplitter.V2.Downloader.FilterName);
+
+                        if (sourceFilter != null)
+                        {
+                            // check filter version: V1 or V2
+
+                            filterState = sourceFilter as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterState;
+                            filterStateEx = sourceFilter as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterStateEx;
+                        }
+                    }
+
+                    if (filterStateEx != null)
+                    {
+                        // filter V2
+                        tabProtocols.TabPages.Clear();
+
+                        tabProtocols.TabPages.Add(tabPageHttp);
+                        tabProtocols.TabPages.Add(tabPageRtmp);
+                        tabProtocols.TabPages.Add(tabPageRtsp);
+                        tabProtocols.TabPages.Add(tabPageUdpRtp);
+
+                        System.Net.NetworkInformation.NetworkInterface[] networkInterfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+
+                        comboBoxHttpPreferredNetworkInterface.Items.Add(OnlineVideoSettings.NetworkInterfaceSystemDefault);
+                        comboBoxRtmpPreferredNetworkInterface.Items.Add(OnlineVideoSettings.NetworkInterfaceSystemDefault);
+                        comboBoxRtspPreferredNetworkInterface.Items.Add(OnlineVideoSettings.NetworkInterfaceSystemDefault);
+                        comboBoxUdpRtpPreferredNetworkInterface.Items.Add(OnlineVideoSettings.NetworkInterfaceSystemDefault);
+
+                        foreach (var networkInterface in networkInterfaces)
+                        {
+                            comboBoxHttpPreferredNetworkInterface.Items.Add(networkInterface.Name);
+                            comboBoxRtmpPreferredNetworkInterface.Items.Add(networkInterface.Name);
+                            comboBoxRtspPreferredNetworkInterface.Items.Add(networkInterface.Name);
+                            comboBoxUdpRtpPreferredNetworkInterface.Items.Add(networkInterface.Name);
+                        }
+
+                        comboBoxHttpPreferredNetworkInterface.SelectedIndex = 0;
+                        comboBoxRtmpPreferredNetworkInterface.SelectedIndex = 0;
+                        comboBoxRtspPreferredNetworkInterface.SelectedIndex = 0;
+                        comboBoxRtspPreferredNetworkInterface.SelectedIndex = 0;
+
+                        for (int i = 0; i < comboBoxHttpPreferredNetworkInterface.Items.Count; i++)
+                        {
+                            String nic = (String)comboBoxHttpPreferredNetworkInterface.Items[i];
+
+                            if (nic == OnlineVideoSettings.Instance.HttpPreferredNetworkInterface)
+                            {
+                                comboBoxHttpPreferredNetworkInterface.SelectedIndex = i;
+                                break;
+                            }
+                        }
+
+                        for (int i = 0; i < comboBoxRtmpPreferredNetworkInterface.Items.Count; i++)
+                        {
+                            String nic = (String)comboBoxRtmpPreferredNetworkInterface.Items[i];
+
+                            if (nic == OnlineVideoSettings.Instance.RtmpPreferredNetworkInterface)
+                            {
+                                comboBoxRtmpPreferredNetworkInterface.SelectedIndex = i;
+                                break;
+                            }
+                        }
+
+                        for (int i = 0; i < comboBoxRtspPreferredNetworkInterface.Items.Count; i++)
+                        {
+                            String nic = (String)comboBoxRtspPreferredNetworkInterface.Items[i];
+
+                            if (nic == OnlineVideoSettings.Instance.RtspPreferredNetworkInterface)
+                            {
+                                comboBoxRtspPreferredNetworkInterface.SelectedIndex = i;
+                                break;
+                            }
+                        }
+
+                        for (int i = 0; i < comboBoxUdpRtpPreferredNetworkInterface.Items.Count; i++)
+                        {
+                            String nic = (String)comboBoxUdpRtpPreferredNetworkInterface.Items[i];
+
+                            if (nic == OnlineVideoSettings.Instance.UdpRtpPreferredNetworkInterface)
+                            {
+                                comboBoxUdpRtpPreferredNetworkInterface.SelectedIndex = i;
+                                break;
+                            }
+                        }
+
+                        textBoxHttpOpenConnectionTimeout.Text = OnlineVideoSettings.Instance.HttpOpenConnectionTimeout.ToString();
+                        textBoxHttpOpenConnectionSleepTime.Text = OnlineVideoSettings.Instance.HttpOpenConnectionSleepTime.ToString();
+                        textBoxHttpTotalReopenConnectionTimeout.Text = OnlineVideoSettings.Instance.HttpTotalReopenConnectionTimeout.ToString();
+
+                        textBoxRtmpOpenConnectionTimeout.Text = OnlineVideoSettings.Instance.RtmpOpenConnectionTimeout.ToString();
+                        textBoxRtmpOpenConnectionSleepTime.Text = OnlineVideoSettings.Instance.RtmpOpenConnectionSleepTime.ToString();
+                        textBoxRtmpTotalReopenConnectionTimeout.Text = OnlineVideoSettings.Instance.RtmpTotalReopenConnectionTimeout.ToString();
+
+                        textBoxRtspOpenConnectionTimeout.Text = OnlineVideoSettings.Instance.RtspOpenConnectionTimeout.ToString();
+                        textBoxRtspOpenConnectionSleepTime.Text = OnlineVideoSettings.Instance.RtspOpenConnectionSleepTime.ToString();
+                        textBoxRtspTotalReopenConnectionTimeout.Text = OnlineVideoSettings.Instance.RtspTotalReopenConnectionTimeout.ToString();
+
+                        for (int i = 0; i < 3; i++)
+                        {
+                            if (i == OnlineVideoSettings.Instance.RtspMulticastPreference)
+                            {
+                                rtspConnectionPreference.listBoxRtspConnectionPreference.Items.Add(OnlineVideoSettings.RtspUdpMulticast);
+                                continue;
+                            }
+
+                            if (i == OnlineVideoSettings.Instance.RtspUdpPreference)
+                            {
+                                rtspConnectionPreference.listBoxRtspConnectionPreference.Items.Add(OnlineVideoSettings.RtspUdp);
+                                continue;
+                            }
+
+                            if (i == OnlineVideoSettings.Instance.RtspSameConnectionTcpPreference)
+                            {
+                                rtspConnectionPreference.listBoxRtspConnectionPreference.Items.Add(OnlineVideoSettings.RtspSameConnection);
+                                continue;
+                            }
+                        }
+
+                        textBoxRtspClientPortMin.Text = OnlineVideoSettings.Instance.RtspClientPortMin.ToString();
+                        textBoxRtspClientPortMax.Text = OnlineVideoSettings.Instance.RtspClientPortMax.ToString();
+                        checkBoxRtspIgnoreRtpPayloadType.Checked = OnlineVideoSettings.Instance.RtspIgnoreRtpPayloadType;
+
+                        textBoxUdpRtpOpenConnectionTimeout.Text = OnlineVideoSettings.Instance.UdpRtpOpenConnectionTimeout.ToString();
+                        textBoxUdpRtpOpenConnectionSleepTime.Text = OnlineVideoSettings.Instance.UdpRtpOpenConnectionSleepTime.ToString();
+                        textBoxUdpRtpTotalReopenConnectionTimeout.Text = OnlineVideoSettings.Instance.UdpRtpTotalReopenConnectionTimeout.ToString();
+                        textBoxUdpRtpReceiveDataCheckInterval.Text = OnlineVideoSettings.Instance.UdpRtpReceiveDataCheckInterval.ToString();
+                    }
+                    else
+                    {
+                        // filter V1 or unknown filter
+                        tabProtocols.TabPages.Clear();
+
+                        tabProtocols.TabPages.Add(tabPageNotDetectedFilter);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Instance.Warn("Error Quering Progress: {0}", ex.Message);
+                }
+                finally
+                {
+                    if (sourceFilter != null)
+                    {
+                        DirectShowUtil.ReleaseComObject(sourceFilter, 2000);
+                        sourceFilter = null;
+                    }
+
+                    if (graphBuilder != null)
+                    {
+                        DirectShowUtil.ReleaseComObject(graphBuilder, 2000);
+                        graphBuilder = null;
+                    }
+                }
+            }
+            catch
+            {
+                tabProtocols.TabPages.Clear();
+
+                tabProtocols.TabPages.Add(tabPageNotDetectedFilter);
+            }
         }
 
         void ConfigurationFormClosing(object sender, FormClosingEventArgs e)
@@ -152,6 +330,69 @@ namespace OnlineVideos.MediaPortal1
                 catch { }
                 try { PluginConfiguration.Instance.LatestVideosGuiDataRefresh = uint.Parse(tbxLatestVideosGuiRefresh.Text); }
                 catch { }
+
+                OnlineVideoSettings.Instance.HttpPreferredNetworkInterface = (String)comboBoxHttpPreferredNetworkInterface.SelectedItem;
+                try { OnlineVideoSettings.Instance.HttpOpenConnectionTimeout = int.Parse(textBoxHttpOpenConnectionTimeout.Text); }
+                catch { }
+                try { OnlineVideoSettings.Instance.HttpOpenConnectionSleepTime = int.Parse(textBoxHttpOpenConnectionSleepTime.Text); }
+                catch { }
+                try { OnlineVideoSettings.Instance.HttpTotalReopenConnectionTimeout = int.Parse(textBoxHttpTotalReopenConnectionTimeout.Text); }
+                catch { }
+
+                OnlineVideoSettings.Instance.RtmpPreferredNetworkInterface = (String)comboBoxRtmpPreferredNetworkInterface.SelectedItem;
+                try { OnlineVideoSettings.Instance.RtmpOpenConnectionTimeout = int.Parse(textBoxRtmpOpenConnectionTimeout.Text); }
+                catch { }
+                try { OnlineVideoSettings.Instance.RtmpOpenConnectionSleepTime = int.Parse(textBoxRtmpOpenConnectionSleepTime.Text); }
+                catch { }
+                try { OnlineVideoSettings.Instance.RtmpTotalReopenConnectionTimeout = int.Parse(textBoxRtmpTotalReopenConnectionTimeout.Text); }
+                catch { }
+
+                OnlineVideoSettings.Instance.RtspPreferredNetworkInterface = (String)comboBoxRtspPreferredNetworkInterface.SelectedItem;
+                try { OnlineVideoSettings.Instance.RtspOpenConnectionTimeout = int.Parse(textBoxRtspOpenConnectionTimeout.Text); }
+                catch { }
+                try { OnlineVideoSettings.Instance.RtspOpenConnectionSleepTime = int.Parse(textBoxRtspOpenConnectionSleepTime.Text); }
+                catch { }
+                try { OnlineVideoSettings.Instance.RtspTotalReopenConnectionTimeout = int.Parse(textBoxRtspTotalReopenConnectionTimeout.Text); }
+                catch { }
+
+                try
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        String item = (String)rtspConnectionPreference.listBoxRtspConnectionPreference.Items[i];
+
+                        if (item == OnlineVideoSettings.RtspSameConnection)
+                        {
+                            OnlineVideoSettings.Instance.RtspSameConnectionTcpPreference = i;
+                        }
+                        if (item == OnlineVideoSettings.RtspUdp)
+                        {
+                            OnlineVideoSettings.Instance.RtspUdpPreference = i;
+                        }
+                        if (item == OnlineVideoSettings.RtspUdpMulticast)
+                        {
+                            OnlineVideoSettings.Instance.RtspMulticastPreference = i;
+                        }
+                    }
+                }
+                catch { }
+
+                try { OnlineVideoSettings.Instance.RtspClientPortMin = int.Parse(textBoxRtspClientPortMin.Text); }
+                catch { }
+                try { OnlineVideoSettings.Instance.RtspClientPortMax = int.Parse(textBoxRtspClientPortMax.Text); }
+                catch { }
+                OnlineVideoSettings.Instance.RtspIgnoreRtpPayloadType = checkBoxRtspIgnoreRtpPayloadType.Checked;
+
+                OnlineVideoSettings.Instance.UdpRtpPreferredNetworkInterface = (String)comboBoxUdpRtpPreferredNetworkInterface.SelectedItem;
+                try { OnlineVideoSettings.Instance.UdpRtpOpenConnectionTimeout = int.Parse(textBoxUdpRtpOpenConnectionTimeout.Text); }
+                catch { }
+                try { OnlineVideoSettings.Instance.UdpRtpOpenConnectionSleepTime = int.Parse(textBoxUdpRtpOpenConnectionSleepTime.Text); }
+                catch { }
+                try { OnlineVideoSettings.Instance.UdpRtpTotalReopenConnectionTimeout = int.Parse(textBoxUdpRtpTotalReopenConnectionTimeout.Text); }
+                catch { }
+                try { OnlineVideoSettings.Instance.UdpRtpReceiveDataCheckInterval = int.Parse(textBoxUdpRtpReceiveDataCheckInterval.Text); }
+                catch { }
+
                 PluginConfiguration.Instance.Save(false);
             }
         }
@@ -814,5 +1055,17 @@ namespace OnlineVideos.MediaPortal1
         }
 
         #endregion
+
+        private void linkLabelFilterDownload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(linkLabelFilterDownload.Text);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(linkLabelFilterDownload.Text, "Error downloading filter.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

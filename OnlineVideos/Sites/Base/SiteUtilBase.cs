@@ -28,6 +28,26 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Skip single Category", TranslationFieldName = "SkipSingleCategory"), Description("Enables skipping over category lists that only contain a single category.")]
         protected bool allowDiveDownOrUpIfSingle = true;
 
+        [Category("OnlineVideosUserConfiguration"), Description("Settings for HTTP protocol used by site."), LocalizableDisplayName("HTTP settings")]
+        protected OnlineVideos.MPUrlSourceFilter.HttpUrlSettings httpSettings = new MPUrlSourceFilter.HttpUrlSettings();
+
+        [Category("OnlineVideosUserConfiguration"), Description("Settings for RTMP protocol used by site."), LocalizableDisplayName("RTMP settings")]
+        protected OnlineVideos.MPUrlSourceFilter.RtmpUrlSettings rtmpSettings = new MPUrlSourceFilter.RtmpUrlSettings();
+
+        [Category("OnlineVideosUserConfiguration"), Description("Settings for RTSP protocol used by site."), LocalizableDisplayName("RTSP settings")]
+        protected OnlineVideos.MPUrlSourceFilter.RtspUrlSettings rtspSettings = new MPUrlSourceFilter.RtspUrlSettings();
+
+        [Category("OnlineVideosUserConfiguration"), Description("Settings for UDP or RTP protocol used by site."), LocalizableDisplayName("UDP/RTP settings")]
+        protected OnlineVideos.MPUrlSourceFilter.UdpRtpUrlSettings udpRtpSettings = new MPUrlSourceFilter.UdpRtpUrlSettings();
+
+        public virtual OnlineVideos.MPUrlSourceFilter.HttpUrlSettings HttpSettings { get { return this.httpSettings; } }
+
+        public virtual OnlineVideos.MPUrlSourceFilter.RtmpUrlSettings RtmpSettings { get { return this.rtmpSettings; } }
+
+        public virtual OnlineVideos.MPUrlSourceFilter.RtspUrlSettings RtspSettings { get { return this.rtspSettings; } }
+
+        public virtual OnlineVideos.MPUrlSourceFilter.UdpRtpUrlSettings UdpRtpSettings { get { return this.udpRtpSettings; } }
+
         /// <summary>
         /// The <see cref="SiteSettings"/> as configured in the xml will be set after an instance of this class was created 
         /// by the default implementation of the <see cref="Initialize"/> method.
@@ -84,12 +104,19 @@ namespace OnlineVideos.Sites
                                 }
                                 else
                                 {
-                                    field.SetValue(this, Convert.ChangeType(value, field.FieldType));
+                                    try
+                                    {
+                                        field.SetValue(this, Convert.ChangeType(value, field.FieldType));
+                                    }
+                                    catch
+                                    {
+                                        field.SetValue(this, Activator.CreateInstance(field.FieldType, value));
+                                    }
                                 }
                             }
                             catch (Exception ex)
                             {
-                                Log.Warn("{0} - ould not set User Configuration Value: {1}. Error: {2}", siteSettings.Name, field.Name, ex.Message);
+                                Log.Warn("{0} - could not set User Configuration Value: {1}. Error: {2}", siteSettings.Name, field.Name, ex.Message);
                             }
                         }
                     }

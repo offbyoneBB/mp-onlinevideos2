@@ -10,6 +10,7 @@ namespace OnlineVideos.MPUrlSourceFilter
     /// Represent base class for HTTP urls for MediaPortal Url Source Splitter.
 	/// All parameter values will be UrlEncoded, so make sure you set them UrlDecoded!
     /// </summary>
+    [Serializable]
     public class HttpUrl : SimpleUrl
     {
         #region Private fields
@@ -19,8 +20,6 @@ namespace OnlineVideos.MPUrlSourceFilter
         Version version;
         private CookieCollection cookies;
         private bool ignoreContentLength;
-        private int receiveDataTimeout = HttpUrl.DefaultReceiveDataTimeout;
-        private int openConnectionMaximumAttempts = HttpUrl.DefaultOpenConnectionMaximumAttempts;
 
         #endregion
 
@@ -143,122 +142,14 @@ namespace OnlineVideos.MPUrlSourceFilter
             get { return this.cookies; }
         }
 
-        /// <summary>
-        /// Gets or sets received data timeout.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <para>The <see cref="ReceiveDataTimeout"/> is less than zero.</para>
-        /// </exception>
-        /// <remarks>
-        /// The value is in milliseconds.
-        /// </remarks>
-        public int ReceiveDataTimeout
-        {
-            get { return this.receiveDataTimeout; }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("ReceiveDataTimeout", value, "Cannot be less than zero.");
-                }
-
-                this.receiveDataTimeout = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the maximum attempts of opening connection to remote server.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <para>The <see cref="OpenConnectionMaximumAttempts"/> is less than zero.</para>
-        /// </exception>
-        public int OpenConnectionMaximumAttempts
-        {
-            get { return this.openConnectionMaximumAttempts; }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("OpenConnectionMaximumAttempts", value, "Cannot be less than zero.");
-                }
-
-                this.openConnectionMaximumAttempts = value;
-            }
-        }
-
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Gets canonical string representation for the specified instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> instance that contains the unescaped canonical representation of the this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            ParameterCollection parameters = new ParameterCollection();
-
-			if (this.IgnoreContentLength != DefaultIgnoreContentLength)
-			{
-				parameters.Add(new Parameter(HttpUrl.ParameterIgnoreContentLength, this.IgnoreContentLength ? "1" : "0"));
-			}
-			if (this.OpenConnectionMaximumAttempts != DefaultOpenConnectionMaximumAttempts)
-			{
-				parameters.Add(new Parameter(HttpUrl.ParameterOpenConnectionMaximumAttempts, this.OpenConnectionMaximumAttempts.ToString()));
-			}
-			if (this.ReceiveDataTimeout != DefaultReceiveDataTimeout)
-			{
-				parameters.Add(new Parameter(HttpUrl.ParameterReceiveDataTimeout, this.ReceiveDataTimeout.ToString()));
-			}
-            if (!String.IsNullOrEmpty(this.Referer))
-            {
-                parameters.Add(new Parameter(HttpUrl.ParameterReferer, this.Referer.ToString()));
-            }
-            if (!String.IsNullOrEmpty(this.UserAgent))
-            {
-                parameters.Add(new Parameter(HttpUrl.ParameterUserAgent, this.UserAgent.ToString()));
-            }
-
-            if (this.Version == HttpVersion.Version10)
-            {
-                parameters.Add(new Parameter(HttpUrl.ParameterVersion, HttpUrl.HttpVersionForce10.ToString()));
-            }
-            else if (this.Version == HttpVersion.Version11)
-            {
-                parameters.Add(new Parameter(HttpUrl.ParameterVersion, HttpUrl.HttpVersionForce11.ToString()));
-            }
-
-            if (this.Cookies.Count > 0)
-            {
-                CookieContainer container = new CookieContainer(this.Cookies.Count);
-                foreach (Cookie cookie in this.Cookies)
-                {
-                    container.Add(this.Uri, cookie);
-                }
-                parameters.Add(new Parameter(HttpUrl.ParameterCookie, container.GetCookieHeader(this.Uri)));
-            }
-
-            // return formatted connection string
-            return base.ToString() + ParameterCollection.ParameterSeparator + parameters.FilterParameters;
-        }
-
         #endregion
 
         #region Constants
 
         // common parameters of HTTP protocol for MediaPortal Url Source Splitter
-
-        /// <summary>
-        /// Specifies receive data timeout for HTTP protocol.
-        /// </summary>
-        protected static String ParameterReceiveDataTimeout = "HttpReceiveDataTimeout";
-
-        /// <summary>
-        /// Specifies how many times should MediaPortal Url Source Splitter try to receive data from remote server.
-        /// </summary>
-        protected static String ParameterOpenConnectionMaximumAttempts = "HttpOpenConnectionMaximumAttempts";
 
         /// <summary>
         /// Specifies referer HTTP header sent to remote server.
@@ -301,22 +192,6 @@ namespace OnlineVideos.MPUrlSourceFilter
         protected const int HttpVersionForce11 = 2;
 
         // default values for some parameters
-
-        /// <summary>
-        /// Default receive data timeout of MediaPortal Url Source Splitter.
-        /// </summary>
-        /// <remarks>
-        /// The value is in milliseconds. The default value is 20000.
-        /// </remarks>
-        public const int DefaultReceiveDataTimeout = 20000;
-
-        /// <summary>
-        /// Default maximum of open connection attempts of MediaPortal Url Source Splitter.
-        /// </summary>
-        /// <remarks>
-        /// The default value is 3.
-        /// </remarks>
-        public const int DefaultOpenConnectionMaximumAttempts = 3;
 
         /// <summary>
         /// Default referer for MediaPortal Url Source Splitter.
