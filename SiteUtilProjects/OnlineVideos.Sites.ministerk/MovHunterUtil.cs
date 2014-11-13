@@ -14,9 +14,6 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable download subtitles from context menu"), Description("Enable the possibility to download subtitles from context menu(F9 or info button on remote) of videos. Slows down opening of context menu. Far from all movies have subtitles")]
         protected bool enableSubtitles = true;
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Load movie timeout"), Description("In seconds. Onlinvideos default 20 seconds, MovHunter default 60 seconds.")]
-        uint httpReceiveDataTimeoutInSec = 60;
-
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("MovHunter username")]
         protected string username = null;
 
@@ -109,27 +106,6 @@ namespace OnlineVideos.Sites
                 }
             }
             return ti;
-        }
-
-        private bool IsUrlEncoded(string text)
-        {
-            return (HttpUtility.UrlDecode(text) != text);
-        }
-
-        public override string getUrl(VideoInfo video)
-        {
-            string url = base.getUrl(video);
-            if (!IsUrlEncoded(url))
-                //url = new MPUrlSourceFilter.HttpUrl(url) { ReceiveDataTimeout = (int)httpReceiveDataTimeoutInSec * 1000 }.ToString();
-                url = new MPUrlSourceFilter.HttpUrl(url) { }.ToString();
-
-            //Uri uri = new Uri(url);
-            //string[] segments = uri.Segments;
-            //string lastSegment = segments[segments.Length - 1];
-            //url = url.Replace(lastSegment, HttpUtility.UrlDecode(lastSegment));
-            //url = new MPUrlSourceFilter.HttpUrl(url) { ReceiveDataTimeout = (int)httpReceiveDataTimeoutInSec * 1000 }.ToString();
-            
-            return url;
         }
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
