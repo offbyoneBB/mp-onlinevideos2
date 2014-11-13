@@ -5,6 +5,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Threading;
+using DirectShowLib;
 
 namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
 {
@@ -64,7 +65,8 @@ namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
 
         public Exception Download(DownloadInfo downloadInfo)
         {
-            IDownload downloadFilter = null;
+            IBaseFilter sourceFilter = null;
+
             try
             {
                 downloadThread = System.Threading.Thread.CurrentThread;
@@ -72,8 +74,11 @@ namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
                 this.downloadFinished = false;
                 this.cancelled = false;
 
-                downloadFilter = (IDownload)new MPUrlSourceSplitter();
-                int result = downloadFilter.DownloadAsync(downloadInfo.Url, downloadInfo.LocalFile, this);
+                sourceFilter = (IBaseFilter)new MPUrlSourceSplitter();
+                String url = OnlineVideos.MediaPortal1.Player.OnlineVideosPlayer.GetFilterUrl(sourceFilter, downloadInfo.Util, downloadInfo.Url);
+
+                IDownload downloadFilter = (IDownload)sourceFilter;
+                int result = downloadFilter.DownloadAsync(url, downloadInfo.LocalFile, this);
                 // throw exception if error occured while initializing download
                 Marshal.ThrowExceptionForHR(result);
 
@@ -109,9 +114,9 @@ namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
             }
             finally
             {
-                if (downloadFilter != null)
+                if (sourceFilter != null)
                 {
-                    Marshal.ReleaseComObject(downloadFilter);
+                    Marshal.ReleaseComObject(sourceFilter);
                 }
             }
         }
