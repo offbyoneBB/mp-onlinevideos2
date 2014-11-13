@@ -225,13 +225,10 @@
             this.comboBoxRtmpPreferredNetworkInterface = new System.Windows.Forms.ComboBox();
             this.tabPageRtsp = new System.Windows.Forms.TabPage();
             this.groupBoxCommonParametersRtsp = new System.Windows.Forms.GroupBox();
-            this.labelRtspIgnoreRtpPayloadType = new System.Windows.Forms.Label();
-            this.checkBoxRtspIgnoreRtpPayloadType = new System.Windows.Forms.CheckBox();
             this.label59 = new System.Windows.Forms.Label();
             this.textBoxRtspClientPortMax = new System.Windows.Forms.TextBox();
             this.labelRtspConnectionRange = new System.Windows.Forms.Label();
             this.textBoxRtspClientPortMin = new System.Windows.Forms.TextBox();
-            this.labelRtspConnectionPreference = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.label27 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
@@ -263,7 +260,6 @@
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.onlineVideosService1 = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
-            this.rtspConnectionPreference = new OnlineVideos.MPUrlSourceFilter.RtspConnectionPreference();
             siteNameIconPanel = new System.Windows.Forms.Panel();
             siteColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             siteColumnDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -2589,14 +2585,10 @@
             // 
             // groupBoxCommonParametersRtsp
             // 
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.rtspConnectionPreference);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.labelRtspIgnoreRtpPayloadType);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.checkBoxRtspIgnoreRtpPayloadType);
             this.groupBoxCommonParametersRtsp.Controls.Add(this.label59);
             this.groupBoxCommonParametersRtsp.Controls.Add(this.textBoxRtspClientPortMax);
             this.groupBoxCommonParametersRtsp.Controls.Add(this.labelRtspConnectionRange);
             this.groupBoxCommonParametersRtsp.Controls.Add(this.textBoxRtspClientPortMin);
-            this.groupBoxCommonParametersRtsp.Controls.Add(this.labelRtspConnectionPreference);
             this.groupBoxCommonParametersRtsp.Controls.Add(this.label26);
             this.groupBoxCommonParametersRtsp.Controls.Add(this.label27);
             this.groupBoxCommonParametersRtsp.Controls.Add(this.label28);
@@ -2610,33 +2602,15 @@
             this.groupBoxCommonParametersRtsp.Controls.Add(this.comboBoxRtspPreferredNetworkInterface);
             this.groupBoxCommonParametersRtsp.Location = new System.Drawing.Point(6, 10);
             this.groupBoxCommonParametersRtsp.Name = "groupBoxCommonParametersRtsp";
-            this.groupBoxCommonParametersRtsp.Size = new System.Drawing.Size(678, 234);
+            this.groupBoxCommonParametersRtsp.Size = new System.Drawing.Size(678, 151);
             this.groupBoxCommonParametersRtsp.TabIndex = 3;
             this.groupBoxCommonParametersRtsp.TabStop = false;
             this.groupBoxCommonParametersRtsp.Text = "Common configuration parameters for RTSP protocol";
             // 
-            // labelRtspIgnoreRtpPayloadType
-            // 
-            this.labelRtspIgnoreRtpPayloadType.AutoSize = true;
-            this.labelRtspIgnoreRtpPayloadType.Location = new System.Drawing.Point(6, 213);
-            this.labelRtspIgnoreRtpPayloadType.Name = "labelRtspIgnoreRtpPayloadType";
-            this.labelRtspIgnoreRtpPayloadType.Size = new System.Drawing.Size(125, 13);
-            this.labelRtspIgnoreRtpPayloadType.TabIndex = 20;
-            this.labelRtspIgnoreRtpPayloadType.Text = "Ignore RTP payload type";
-            // 
-            // checkBoxRtspIgnoreRtpPayloadType
-            // 
-            this.checkBoxRtspIgnoreRtpPayloadType.AutoSize = true;
-            this.checkBoxRtspIgnoreRtpPayloadType.Location = new System.Drawing.Point(172, 213);
-            this.checkBoxRtspIgnoreRtpPayloadType.Name = "checkBoxRtspIgnoreRtpPayloadType";
-            this.checkBoxRtspIgnoreRtpPayloadType.Size = new System.Drawing.Size(15, 14);
-            this.checkBoxRtspIgnoreRtpPayloadType.TabIndex = 19;
-            this.checkBoxRtspIgnoreRtpPayloadType.UseVisualStyleBackColor = true;
-            // 
             // label59
             // 
             this.label59.AutoSize = true;
-            this.label59.Location = new System.Drawing.Point(278, 189);
+            this.label59.Location = new System.Drawing.Point(278, 127);
             this.label59.Name = "label59";
             this.label59.Size = new System.Drawing.Size(10, 13);
             this.label59.TabIndex = 16;
@@ -2644,7 +2618,7 @@
             // 
             // textBoxRtspClientPortMax
             // 
-            this.textBoxRtspClientPortMax.Location = new System.Drawing.Point(294, 186);
+            this.textBoxRtspClientPortMax.Location = new System.Drawing.Point(294, 124);
             this.textBoxRtspClientPortMax.Name = "textBoxRtspClientPortMax";
             this.textBoxRtspClientPortMax.Size = new System.Drawing.Size(100, 20);
             this.textBoxRtspClientPortMax.TabIndex = 15;
@@ -2652,7 +2626,7 @@
             // labelRtspConnectionRange
             // 
             this.labelRtspConnectionRange.AutoSize = true;
-            this.labelRtspConnectionRange.Location = new System.Drawing.Point(6, 189);
+            this.labelRtspConnectionRange.Location = new System.Drawing.Point(6, 127);
             this.labelRtspConnectionRange.Name = "labelRtspConnectionRange";
             this.labelRtspConnectionRange.Size = new System.Drawing.Size(84, 13);
             this.labelRtspConnectionRange.TabIndex = 14;
@@ -2660,19 +2634,10 @@
             // 
             // textBoxRtspClientPortMin
             // 
-            this.textBoxRtspClientPortMin.Location = new System.Drawing.Point(172, 186);
+            this.textBoxRtspClientPortMin.Location = new System.Drawing.Point(172, 124);
             this.textBoxRtspClientPortMin.Name = "textBoxRtspClientPortMin";
             this.textBoxRtspClientPortMin.Size = new System.Drawing.Size(100, 20);
             this.textBoxRtspClientPortMin.TabIndex = 13;
-            // 
-            // labelRtspConnectionPreference
-            // 
-            this.labelRtspConnectionPreference.AutoSize = true;
-            this.labelRtspConnectionPreference.Location = new System.Drawing.Point(6, 127);
-            this.labelRtspConnectionPreference.Name = "labelRtspConnectionPreference";
-            this.labelRtspConnectionPreference.Size = new System.Drawing.Size(115, 13);
-            this.labelRtspConnectionPreference.TabIndex = 12;
-            this.labelRtspConnectionPreference.Text = "Connection preference";
             // 
             // label26
             // 
@@ -2930,13 +2895,6 @@
             this.onlineVideosService1.Credentials = null;
             this.onlineVideosService1.Url = "http://onlinevideos.nocrosshair.de/OnlineVideos.asmx";
             this.onlineVideosService1.UseDefaultCredentials = false;
-            // 
-            // rtspConnectionPreference
-            // 
-            this.rtspConnectionPreference.Location = new System.Drawing.Point(172, 124);
-            this.rtspConnectionPreference.Name = "rtspConnectionPreference";
-            this.rtspConnectionPreference.Size = new System.Drawing.Size(132, 56);
-            this.rtspConnectionPreference.TabIndex = 21;
             // 
             // Configuration
             // 
@@ -3261,9 +3219,5 @@
         private System.Windows.Forms.TextBox textBoxRtspClientPortMax;
         private System.Windows.Forms.Label labelRtspConnectionRange;
         private System.Windows.Forms.TextBox textBoxRtspClientPortMin;
-        private System.Windows.Forms.Label labelRtspConnectionPreference;
-        private System.Windows.Forms.Label labelRtspIgnoreRtpPayloadType;
-        private System.Windows.Forms.CheckBox checkBoxRtspIgnoreRtpPayloadType;
-        private MPUrlSourceFilter.RtspConnectionPreference rtspConnectionPreference;
 	}
 }

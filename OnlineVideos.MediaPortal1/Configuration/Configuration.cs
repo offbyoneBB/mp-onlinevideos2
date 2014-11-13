@@ -212,30 +212,8 @@ namespace OnlineVideos.MediaPortal1
                         textBoxRtspOpenConnectionSleepTime.Text = OnlineVideoSettings.Instance.RtspOpenConnectionSleepTime.ToString();
                         textBoxRtspTotalReopenConnectionTimeout.Text = OnlineVideoSettings.Instance.RtspTotalReopenConnectionTimeout.ToString();
 
-                        for (int i = 0; i < 3; i++)
-                        {
-                            if (i == OnlineVideoSettings.Instance.RtspMulticastPreference)
-                            {
-                                rtspConnectionPreference.listBoxRtspConnectionPreference.Items.Add(OnlineVideoSettings.RtspUdpMulticast);
-                                continue;
-                            }
-
-                            if (i == OnlineVideoSettings.Instance.RtspUdpPreference)
-                            {
-                                rtspConnectionPreference.listBoxRtspConnectionPreference.Items.Add(OnlineVideoSettings.RtspUdp);
-                                continue;
-                            }
-
-                            if (i == OnlineVideoSettings.Instance.RtspSameConnectionTcpPreference)
-                            {
-                                rtspConnectionPreference.listBoxRtspConnectionPreference.Items.Add(OnlineVideoSettings.RtspSameConnection);
-                                continue;
-                            }
-                        }
-
                         textBoxRtspClientPortMin.Text = OnlineVideoSettings.Instance.RtspClientPortMin.ToString();
                         textBoxRtspClientPortMax.Text = OnlineVideoSettings.Instance.RtspClientPortMax.ToString();
-                        checkBoxRtspIgnoreRtpPayloadType.Checked = OnlineVideoSettings.Instance.RtspIgnoreRtpPayloadType;
 
                         textBoxUdpRtpOpenConnectionTimeout.Text = OnlineVideoSettings.Instance.UdpRtpOpenConnectionTimeout.ToString();
                         textBoxUdpRtpOpenConnectionSleepTime.Text = OnlineVideoSettings.Instance.UdpRtpOpenConnectionSleepTime.ToString();
@@ -355,33 +333,10 @@ namespace OnlineVideos.MediaPortal1
                 try { OnlineVideoSettings.Instance.RtspTotalReopenConnectionTimeout = int.Parse(textBoxRtspTotalReopenConnectionTimeout.Text); }
                 catch { }
 
-                try
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        String item = (String)rtspConnectionPreference.listBoxRtspConnectionPreference.Items[i];
-
-                        if (item == OnlineVideoSettings.RtspSameConnection)
-                        {
-                            OnlineVideoSettings.Instance.RtspSameConnectionTcpPreference = i;
-                        }
-                        if (item == OnlineVideoSettings.RtspUdp)
-                        {
-                            OnlineVideoSettings.Instance.RtspUdpPreference = i;
-                        }
-                        if (item == OnlineVideoSettings.RtspUdpMulticast)
-                        {
-                            OnlineVideoSettings.Instance.RtspMulticastPreference = i;
-                        }
-                    }
-                }
-                catch { }
-
                 try { OnlineVideoSettings.Instance.RtspClientPortMin = int.Parse(textBoxRtspClientPortMin.Text); }
                 catch { }
                 try { OnlineVideoSettings.Instance.RtspClientPortMax = int.Parse(textBoxRtspClientPortMax.Text); }
                 catch { }
-                OnlineVideoSettings.Instance.RtspIgnoreRtpPayloadType = checkBoxRtspIgnoreRtpPayloadType.Checked;
 
                 OnlineVideoSettings.Instance.UdpRtpPreferredNetworkInterface = (String)comboBoxUdpRtpPreferredNetworkInterface.SelectedItem;
                 try { OnlineVideoSettings.Instance.UdpRtpOpenConnectionTimeout = int.Parse(textBoxUdpRtpOpenConnectionTimeout.Text); }
