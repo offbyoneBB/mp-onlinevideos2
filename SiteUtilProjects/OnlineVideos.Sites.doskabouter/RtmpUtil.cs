@@ -32,8 +32,6 @@ namespace OnlineVideos.Sites
         protected string auth;
         [Category("OnlineVideosConfiguration"), Description("token")]
         protected string token;
-        [Category("OnlineVideosConfiguration"), Description("timeout")]
-        protected string timeout;
 
         public override string getUrl(VideoInfo video)
         {
@@ -81,12 +79,6 @@ namespace OnlineVideos.Sites
             if ((t = GetValue(swfVfy, paramsHash["swfVfy"])) != null) theUrl.SwfVerify = Boolean.Parse(t);
             if ((t = GetValue(live, paramsHash["live"])) != null) theUrl.Live = Boolean.Parse(t);
             if ((t = GetValue(token, paramsHash["token"])) != null) theUrl.Token = t;
-            if ((t = GetValue(timeout, paramsHash["timeout"])) != null)
-            {
-                //int to;
-                //if (int.TryParse(t, out to))
-                //    theUrl.ReceiveDataTimeout = to * 1000;
-            }
 
             return theUrl.ToString();
         }
