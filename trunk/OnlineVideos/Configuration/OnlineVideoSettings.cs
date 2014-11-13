@@ -52,14 +52,8 @@ namespace OnlineVideos
         public int RtspOpenConnectionSleepTime = 0;             // ms
         public int RtspTotalReopenConnectionTimeout = 60000;    // ms
 
-        public int RtspSameConnectionTcpPreference = 0;
-        public int RtspUdpPreference = 1;
-        public int RtspMulticastPreference = 2;
-
         public int RtspClientPortMin = 50000;
         public int RtspClientPortMax = 65535;
-
-        public bool RtspIgnoreRtpPayloadType = false;
 
         public String UdpRtpPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
         public int UdpRtpOpenConnectionTimeout = 2000;          // ms
@@ -68,9 +62,6 @@ namespace OnlineVideos
         public int UdpRtpReceiveDataCheckInterval = 500;        // ms
 
         public static readonly String NetworkInterfaceSystemDefault = "System default";
-        public static readonly String RtspSameConnection = "same connection";
-        public static readonly String RtspUdp = "UDP";
-        public static readonly String RtspUdpMulticast = "UDP multicast";
 
 		private OnlineVideoSettings()
 		{

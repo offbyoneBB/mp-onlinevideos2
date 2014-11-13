@@ -352,17 +352,12 @@
     <Compile Include="MPUrlSourceFilter\RtmpUrl.cs" />
     <Compile Include="MPUrlSourceFilter\RtmpUrlSettings.cs" />
     <Compile Include="MPUrlSourceFilter\RtmpUrlSettingsConverter.cs" />
-    <Compile Include="MPUrlSourceFilter\RtspConnectionPreference.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MPUrlSourceFilter\RtspConnectionPreference.Designer.cs">
-      <DependentUpon>RtspConnectionPreference.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MPUrlSourceFilter\RtspConnectionPreferenceEditor.cs" />
+    <Compile Include="MPUrlSourceFilter\RtspUrl.cs" />
     <Compile Include="MPUrlSourceFilter\RtspUrlSettings.cs" />
     <Compile Include="MPUrlSourceFilter\RtspUrlSettingsConverter.cs" />
     <Compile Include="MPUrlSourceFilter\SimpleUrl.cs" />
     <Compile Include="MPUrlSourceFilter\SimpleUrlSettings.cs" />
+    <Compile Include="MPUrlSourceFilter\UdpRtpUrl.cs" />
     <Compile Include="MPUrlSourceFilter\UdpRtpUrlSettings.cs" />
     <Compile Include="MPUrlSourceFilter\UdpRtpUrlSettingsConverter.cs" />
     <Compile Include="Newtonsoft.Json\Bson\BsonBinaryType.cs">
@@ -1294,9 +1289,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\OnlineVideosWebservice\OnlineVideos.wsdl" />
-    <EmbeddedResource Include="MPUrlSourceFilter\RtspConnectionPreference.resx">
-      <DependentUpon>RtspConnectionPreference.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

@@ -112,14 +112,8 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_FILTER_V2_RTSP_OPEN_CONNECTION_SLEEP_TIME = "filterv2rtspopenconnectionsleeptime";
         const string CFG_FILTER_V2_RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT = "filterv2rtsptotalreopenconnectiontimeout";
 
-        const string CFG_FILTER_V2_RTSP_SAME_CONNECTION_PREFERENCE = "filterv2rtspsameconnectionpreference";
-        const string CFG_FILTER_V2_RTSP_UDP_PREFERENCE = "filterv2rtspudppreference";
-        const string CFG_FILTER_V2_RTSP_UDP_MULTICAST_PREFERENCE = "filterv2rtspudpmulticastpreference";
-
         const string CFG_FILTER_V2_RTSP_CLIENT_PORT_MIN = "filterv2rtspclientportmin";
         const string CFG_FILTER_V2_RTSP_CLIENT_PORT_MAX = "filterv2rtspclientportmax";
-
-        const string CFG_FILTER_V2_RTSP_IGNORE_RTP_PAYLOAD_TYPE = "filterv2rtspignorertppayloadtype";
 
         const string CFG_FILTER_V2_UDPRTP_PREFERRED_NETWORK_INTERFACE = "filterv2udprtpinterface";
         const string CFG_FILTER_V2_UDPRTP_OPEN_CONNECTION_TIMEOUT = "filterv2udprtpopenconnectiontimeout";
@@ -317,14 +311,8 @@ namespace OnlineVideos.MediaPortal1
                     ovsconf.RtspOpenConnectionSleepTime = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_RTSP_OPEN_CONNECTION_SLEEP_TIME, ovsconf.RtspOpenConnectionSleepTime);
                     ovsconf.RtspTotalReopenConnectionTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT, ovsconf.RtspTotalReopenConnectionTimeout);
 
-                    ovsconf.RtspSameConnectionTcpPreference = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_RTSP_SAME_CONNECTION_PREFERENCE, ovsconf.RtspSameConnectionTcpPreference);
-                    ovsconf.RtspUdpPreference = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_RTSP_UDP_PREFERENCE, ovsconf.RtspUdpPreference);
-                    ovsconf.RtspMulticastPreference = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_RTSP_UDP_MULTICAST_PREFERENCE, ovsconf.RtspMulticastPreference);
-
                     ovsconf.RtspClientPortMin = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_RTSP_CLIENT_PORT_MIN, ovsconf.RtspClientPortMin);
                     ovsconf.RtspClientPortMax = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_RTSP_CLIENT_PORT_MAX, ovsconf.RtspClientPortMax);
-
-                    ovsconf.RtspIgnoreRtpPayloadType = settings.GetValueAsBool(CFG_SECTION, CFG_FILTER_V2_RTSP_IGNORE_RTP_PAYLOAD_TYPE, ovsconf.RtspIgnoreRtpPayloadType);
 
                     ovsconf.UdpRtpPreferredNetworkInterface = settings.GetValueAsString(CFG_SECTION, CFG_FILTER_V2_UDPRTP_PREFERRED_NETWORK_INTERFACE, OnlineVideoSettings.NetworkInterfaceSystemDefault);
                     ovsconf.UdpRtpOpenConnectionTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_UDPRTP_OPEN_CONNECTION_TIMEOUT, ovsconf.UdpRtpOpenConnectionTimeout);
@@ -419,14 +407,8 @@ namespace OnlineVideos.MediaPortal1
                         settings.SetValue(CFG_SECTION, CFG_FILTER_V2_RTSP_OPEN_CONNECTION_SLEEP_TIME, ovsconf.RtspOpenConnectionSleepTime);
                         settings.SetValue(CFG_SECTION, CFG_FILTER_V2_RTSP_TOTAL_REOPEN_CONNECTION_TIMEOUT, ovsconf.RtspTotalReopenConnectionTimeout);
 
-                        settings.SetValue(CFG_SECTION, CFG_FILTER_V2_RTSP_SAME_CONNECTION_PREFERENCE, ovsconf.RtspSameConnectionTcpPreference);
-                        settings.SetValue(CFG_SECTION, CFG_FILTER_V2_RTSP_UDP_PREFERENCE, ovsconf.RtspUdpPreference);
-                        settings.SetValue(CFG_SECTION, CFG_FILTER_V2_RTSP_UDP_MULTICAST_PREFERENCE, ovsconf.RtspMulticastPreference);
-
                         settings.SetValue(CFG_SECTION, CFG_FILTER_V2_RTSP_CLIENT_PORT_MIN, ovsconf.RtspClientPortMin);
                         settings.SetValue(CFG_SECTION, CFG_FILTER_V2_RTSP_CLIENT_PORT_MAX, ovsconf.RtspClientPortMax);
-
-                        settings.SetValueAsBool(CFG_SECTION, CFG_FILTER_V2_RTSP_IGNORE_RTP_PAYLOAD_TYPE, ovsconf.RtspIgnoreRtpPayloadType);
 
                         settings.SetValue(CFG_SECTION, CFG_FILTER_V2_UDPRTP_PREFERRED_NETWORK_INTERFACE, ovsconf.UdpRtpPreferredNetworkInterface);
                         settings.SetValue(CFG_SECTION, CFG_FILTER_V2_UDPRTP_OPEN_CONNECTION_TIMEOUT, ovsconf.UdpRtpOpenConnectionTimeout);

@@ -148,27 +148,6 @@ namespace OnlineVideos.MPUrlSourceFilter
             }
         }
 
-        /// <summary>
-        /// Gets or sets the ignore RTP payload type.
-        /// </summary>
-        [Category("OnlineVideosUserConfiguration"), Description("The ignore RTP payload type flag.")]
-        public Boolean IgnoreRtpPayloadType { get; set; }
-
-        [Category("OnlineVideosUserConfiguration"), Description("")]
-        [EditorAttribute(typeof(RtspConnectionPreferenceEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        public int MulticastPreference { get; set; }
-
-        [Category("OnlineVideosUserConfiguration"), Description("")]
-        [EditorAttribute(typeof(RtspConnectionPreferenceEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        public int UdpPreference { get; set; }
-
-        [Category("OnlineVideosUserConfiguration"), Description("")]
-        [EditorAttribute(typeof(RtspConnectionPreferenceEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        public int SameConnectionTcpPreference { get; set; }
-
         #endregion
 
         #region Constructors
@@ -198,10 +177,6 @@ namespace OnlineVideos.MPUrlSourceFilter
             this.TotalReopenConnectionTimeout = int.Parse(SimpleUrlSettings.GetValue(parameters, "TotalReopenConnectionTimeout", OnlineVideoSettings.Instance.RtspTotalReopenConnectionTimeout.ToString()));
             this.ClientPortMin = int.Parse(SimpleUrlSettings.GetValue(parameters, "ClientPortMin", OnlineVideoSettings.Instance.RtspClientPortMin.ToString()));
             this.ClientPortMax = int.Parse(SimpleUrlSettings.GetValue(parameters, "ClientPortMax", OnlineVideoSettings.Instance.RtspClientPortMax.ToString()));
-            this.IgnoreRtpPayloadType = bool.Parse(SimpleUrlSettings.GetValue(parameters, "IgnoreRtpPayloadType", OnlineVideoSettings.Instance.RtspIgnoreRtpPayloadType.ToString()));
-            this.MulticastPreference = int.Parse(SimpleUrlSettings.GetValue(parameters, "MulticastPreference", OnlineVideoSettings.Instance.RtspMulticastPreference.ToString()));
-            this.UdpPreference = int.Parse(SimpleUrlSettings.GetValue(parameters, "UdpPreference", OnlineVideoSettings.Instance.RtspUdpPreference.ToString()));
-            this.SameConnectionTcpPreference = int.Parse(SimpleUrlSettings.GetValue(parameters, "SameConnectionTcpPreference", OnlineVideoSettings.Instance.RtspSameConnectionTcpPreference.ToString()));
         }
 
         #endregion
@@ -224,11 +199,6 @@ namespace OnlineVideos.MPUrlSourceFilter
             builder.Append((this.TotalReopenConnectionTimeout != OnlineVideoSettings.Instance.RtspTotalReopenConnectionTimeout) ? String.Format("TotalReopenConnectionTimeout={0};", this.TotalReopenConnectionTimeout) : String.Empty);
             builder.Append((this.ClientPortMin != OnlineVideoSettings.Instance.RtspClientPortMin) ? String.Format("ClientPortMin={0};", this.ClientPortMin) : String.Empty);
             builder.Append((this.ClientPortMax != OnlineVideoSettings.Instance.RtspClientPortMax) ? String.Format("ClientPortMax={0};", this.ClientPortMax) : String.Empty);
-            builder.Append((this.IgnoreRtpPayloadType != OnlineVideoSettings.Instance.RtspIgnoreRtpPayloadType) ? String.Format("IgnoreRtpPayloadType={0};", this.IgnoreRtpPayloadType) : String.Empty);
-
-            builder.Append((this.MulticastPreference != OnlineVideoSettings.Instance.RtspMulticastPreference) ? String.Format("MulticastPreference={0};", this.MulticastPreference) : String.Empty);
-            builder.Append((this.UdpPreference != OnlineVideoSettings.Instance.RtspUdpPreference) ? String.Format("UdpPreference={0};", this.UdpPreference) : String.Empty);
-            builder.Append((this.SameConnectionTcpPreference != OnlineVideoSettings.Instance.RtspSameConnectionTcpPreference) ? String.Format("SameConnectionTcpPreference={0};", this.SameConnectionTcpPreference) : String.Empty);
 
             return builder.ToString();
         }

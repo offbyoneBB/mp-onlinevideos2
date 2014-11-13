@@ -434,6 +434,8 @@ namespace OnlineVideos.MediaPortal1.Player
                     filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.AfhsManifestUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.AfhsManifestUrl(simpleUrl.Uri) : filterUrl;
                     filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtmpUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpUrl(simpleUrl.Uri) : filterUrl;
                     filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.HttpUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.HttpUrl(simpleUrl.Uri) : filterUrl;
+                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtspUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl(simpleUrl.Uri) : filterUrl;
+                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.UdpRtpUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl(simpleUrl.Uri) : filterUrl;
 
                     if (filterUrl == null)
                     {
@@ -493,6 +495,36 @@ namespace OnlineVideos.MediaPortal1.Player
                         rtmpFilterUrl.OpenConnectionTimeout = siteUtil.RtmpSettings.OpenConnectionTimeout;
                         rtmpFilterUrl.TotalReopenConnectionTimeout = siteUtil.RtmpSettings.TotalReopenConnectionTimeout;
                         rtmpFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.RtmpSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.RtmpSettings.NetworkInterface : String.Empty;
+                    }
+
+                    if (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtspUrl)
+                    {
+                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl rtspFilterUrl = filterUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl;
+                        OnlineVideos.MPUrlSourceFilter.RtspUrl rtspSimpleUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.RtspUrl;
+
+                        rtspFilterUrl.IgnorePayloadType = rtspSimpleUrl.IgnorePayloadType;
+                        rtspFilterUrl.MulticastPreference = rtspSimpleUrl.MulticastPreference;
+                        rtspFilterUrl.SameConnectionPreference = rtspSimpleUrl.SameConnectionPreference;
+                        rtspFilterUrl.UdpPreference = rtspSimpleUrl.UdpPreference;
+
+                        rtspFilterUrl.OpenConnectionSleepTime = siteUtil.RtspSettings.OpenConnectionSleepTime;
+                        rtspFilterUrl.OpenConnectionTimeout = siteUtil.RtspSettings.OpenConnectionTimeout;
+                        rtspFilterUrl.TotalReopenConnectionTimeout = siteUtil.RtspSettings.TotalReopenConnectionTimeout;
+                        rtspFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.RtspSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.RtspSettings.NetworkInterface : String.Empty;
+                        rtspFilterUrl.ClientPortMax = siteUtil.RtspSettings.ClientPortMin;
+                        rtspFilterUrl.ClientPortMin = siteUtil.RtspSettings.ClientPortMax;
+                    }
+
+                    if (simpleUrl is OnlineVideos.MPUrlSourceFilter.UdpRtpUrl)
+                    {
+                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl udpFilterUrl = filterUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl;
+                        OnlineVideos.MPUrlSourceFilter.UdpRtpUrl udpSimpleUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.UdpRtpUrl;
+
+                        udpFilterUrl.OpenConnectionSleepTime = siteUtil.UdpRtpSettings.OpenConnectionSleepTime;
+                        udpFilterUrl.OpenConnectionTimeout = siteUtil.UdpRtpSettings.OpenConnectionTimeout;
+                        udpFilterUrl.TotalReopenConnectionTimeout = siteUtil.UdpRtpSettings.TotalReopenConnectionTimeout;
+                        udpFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.UdpRtpSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.UdpRtpSettings.NetworkInterface : String.Empty;
+                        udpFilterUrl.ReceiveDataCheckInterval = siteUtil.UdpRtpSettings.ReceiveDataCheckInterval;
                     }
 
                     filterUrl.LiveStream = simpleUrl.LiveStream;
