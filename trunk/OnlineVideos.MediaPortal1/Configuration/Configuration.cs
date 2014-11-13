@@ -154,7 +154,7 @@ namespace OnlineVideos.MediaPortal1
                         comboBoxHttpPreferredNetworkInterface.SelectedIndex = 0;
                         comboBoxRtmpPreferredNetworkInterface.SelectedIndex = 0;
                         comboBoxRtspPreferredNetworkInterface.SelectedIndex = 0;
-                        comboBoxRtspPreferredNetworkInterface.SelectedIndex = 0;
+                        comboBoxUdpRtpPreferredNetworkInterface.SelectedIndex = 0;
 
                         for (int i = 0; i < comboBoxHttpPreferredNetworkInterface.Items.Count; i++)
                         {
