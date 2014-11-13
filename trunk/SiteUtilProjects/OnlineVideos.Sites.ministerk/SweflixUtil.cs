@@ -45,9 +45,6 @@ namespace OnlineVideos.Sites
                 }
             }
         }
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Load movie timeout"), Description("In seconds. Onlinvideos default 20 seconds, Sweflix default 40 seconds.")]
-        uint httpReceiveDataTimeoutInSec = 40;
-
         #endregion
   
         #region OnlineVideosConfiguration
