@@ -2443,6 +2443,7 @@
             // 
             // comboBoxHttpPreferredNetworkInterface
             // 
+            this.comboBoxHttpPreferredNetworkInterface.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxHttpPreferredNetworkInterface.FormattingEnabled = true;
             this.comboBoxHttpPreferredNetworkInterface.Location = new System.Drawing.Point(172, 19);
             this.comboBoxHttpPreferredNetworkInterface.Name = "comboBoxHttpPreferredNetworkInterface";
@@ -2566,6 +2567,7 @@
             // 
             // comboBoxRtmpPreferredNetworkInterface
             // 
+            this.comboBoxRtmpPreferredNetworkInterface.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxRtmpPreferredNetworkInterface.FormattingEnabled = true;
             this.comboBoxRtmpPreferredNetworkInterface.Location = new System.Drawing.Point(172, 19);
             this.comboBoxRtmpPreferredNetworkInterface.Name = "comboBoxRtmpPreferredNetworkInterface";
@@ -2725,6 +2727,7 @@
             // 
             // comboBoxRtspPreferredNetworkInterface
             // 
+            this.comboBoxRtspPreferredNetworkInterface.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxRtspPreferredNetworkInterface.FormattingEnabled = true;
             this.comboBoxRtspPreferredNetworkInterface.Location = new System.Drawing.Point(172, 19);
             this.comboBoxRtspPreferredNetworkInterface.Name = "comboBoxRtspPreferredNetworkInterface";
@@ -2876,6 +2879,7 @@
             // 
             // comboBoxUdpRtpPreferredNetworkInterface
             // 
+            this.comboBoxUdpRtpPreferredNetworkInterface.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxUdpRtpPreferredNetworkInterface.FormattingEnabled = true;
             this.comboBoxUdpRtpPreferredNetworkInterface.Location = new System.Drawing.Point(172, 19);
             this.comboBoxUdpRtpPreferredNetworkInterface.Name = "comboBoxUdpRtpPreferredNetworkInterface";
