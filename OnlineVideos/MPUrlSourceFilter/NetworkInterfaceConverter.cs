@@ -13,6 +13,11 @@ namespace OnlineVideos.MPUrlSourceFilter
     {
         #region Methods
 
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return false;
+        }
+
         public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
         {
             return true;
