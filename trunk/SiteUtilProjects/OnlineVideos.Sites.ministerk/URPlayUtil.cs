@@ -256,7 +256,7 @@ namespace OnlineVideos.Sites
             if (m != null)
             {
                 var json = JObject.Parse(m.Groups[1].Value);
-                var format = "http://{0}/urplay/_definst_/{1}/{2}";
+                var format = "http://{0}/ondemand/_definst_/mp4:{1}/{2}";
                 var fileHD = (string)json["file_hd"];
                 var fileSD = (string)json["file_flash"];
                 var domain = (string)json["streaming_config"]["streamer"]["redirect"];
