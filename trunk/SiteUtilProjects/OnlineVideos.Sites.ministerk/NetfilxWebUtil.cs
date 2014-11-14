@@ -9,6 +9,7 @@ using System.Web;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Collections.Specialized;
 
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
@@ -37,7 +38,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #region Lots of urls
         private string loginUrl = @"https://www2.netflix.com/Login";
-        private string homeUrl = @"https://www2.netflix.com/Login"; //loginurl redirects to main page if logged on, makes it easy to check login
+        private string homeUrl = @"https://www2.netflix.com/WiHome";
         private string loginPostData = @"authURL={0}&email={1}&password={2}&RememberMe=on";
         private string myListUrl = @"http://www2.netflix.com/MyList";
         private string movieUrl = @"http://www.netflix.com/WiMovie/";
@@ -136,24 +137,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return doc.DocumentNode.SelectSingleNode("//form[@id = 'login-form']") == null;
         }
 
-        private void Login()
+        private void LoadProfiles()
         {
-            cc = new CookieContainer();
-            string url = GetRedirectedUrl(loginUrl).Replace("entrytrap", "Login");
-            HtmlNode docNode = GetWebData<HtmlDocument>(url, cc, proxy: proxy).DocumentNode;
-            HtmlNode form = docNode.SelectSingleNode("//form[@id = 'login-form']");
-            HtmlNode authInput = form.SelectSingleNode("//input[@name = 'authURL']");
-            string authUrl = authInput != null ? authInput.GetAttributeValue("value", "") : "";
-            string data = GetWebDataFromPost(url, string.Format(loginPostData, HttpUtility.UrlEncode(authUrl), HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), cc, proxy: proxy);
-            if (!IsLoggedIn(data))
-            {
-                cc = null;
-                Settings.DynamicCategoriesDiscovered = false;
-                Settings.Categories.Clear();
-                throw new OnlineVideosException("Email and password does not match, or error in login process. Please try again.");
-            }
             if (profiles == null || profiles.Count == 0)
             {
+                string data = MyGetWebData(homeUrl, true);
                 Regex rgx = new Regex(@"nf\.constants\.page\.contextData =(.*); }\(netflix\)\);");
                 Match m = rgx.Match(data);
                 if (m.Success)
@@ -169,22 +157,49 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     {
                         currentProfile = (JObject)profiles.FirstOrDefault(p => p["profileName"].Value<string>() == ProfileName);
                     }
-                    MyGetWebData(string.Format(switchProfileUrl, ApiRoot, ProfileToken));
+                    MyGetWebData(string.Format(switchProfileUrl, ApiRoot, ProfileToken), true);
                 }
                 else
                 {
                     cc = null;
                     Settings.DynamicCategoriesDiscovered = false;
                     Settings.Categories.Clear();
+                    profiles = null;
                     throw new OnlineVideosException("Error loading profiles. Please try again");
                 }
+            }
+        }
+
+        private void Login()
+        {
+            cc = new CookieContainer();
+            string url = GetRedirectedUrl(loginUrl).Replace("entrytrap", "Login");
+           // HtmlNode docNode = GetWebData<HtmlDocument>(url, cc, proxy: proxy).DocumentNode;
+            NameValueCollection headers = new NameValueCollection();
+            headers.Add("Accept", "*/*"); // accept any content type
+            headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
+            headers.Add("Referer", url);
+            // No caching in this case.
+            string data = GetWebData(url, null, headers, cc, proxy, false, false, null, false);
+            var htmlDoc = new HtmlAgilityPack.HtmlDocument();
+            htmlDoc.LoadHtml(data);
+            HtmlNode form = htmlDoc.DocumentNode.SelectSingleNode("//form[@id = 'login-form']");
+            HtmlNode authInput = form.SelectSingleNode("//input[@name = 'authURL']");
+            string authUrl = authInput != null ? authInput.GetAttributeValue("value", "") : "";
+            data = GetWebDataFromPost(url, string.Format(loginPostData, HttpUtility.UrlEncode(authUrl), HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), cc, proxy: proxy);
+            if (!IsLoggedIn(data))
+            {
+                cc = null;
+                Settings.DynamicCategoriesDiscovered = false;
+                Settings.Categories.Clear();
+                throw new OnlineVideosException("Email and password does not match, or error in login process. Please try again.");
             }
         }
 
         #endregion
 
         #region GetWebData
-        private string MyGetWebData(string url)
+        private string MyGetWebData(string url, bool isLoadingProfile = false)
         {
             if (!HaveCredentials)
             {
@@ -195,12 +210,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 Login();
             }
+            if (!isLoadingProfile)
+                LoadProfiles();
             string data = GetWebData(url, cc, proxy: proxy);
-            if (!IsLoggedIn(data))
-            {
-                Login();
-                data = GetWebData(url, cc, proxy: proxy);
-            }
+
             return data;
         }
         #endregion
