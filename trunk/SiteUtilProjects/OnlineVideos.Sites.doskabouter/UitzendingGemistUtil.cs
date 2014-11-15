@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites
         private int pageNr = 0;
         private string baseVideoListUrl = null;
 
-        string matchaz = @"<td><a\shref=""(?<url>[^""]*)""\s(?:class=""active""\s)?data-softclick=""\[&quot;a-z-blok&quot;,&quot;tekstlink&quot;,&quot;clickin&quot;]"">(?<title>[^<]*)</a></td>";
+        string matchaz = @"<td><a\shref=""(?<url>[^""]*)""(?:\sclass=""active"")?>(?<title>[^<]*)</a></td>";
 
         public override int DiscoverDynamicCategories()
         {
