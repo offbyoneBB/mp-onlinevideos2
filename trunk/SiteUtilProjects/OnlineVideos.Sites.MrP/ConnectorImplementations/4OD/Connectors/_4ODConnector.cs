@@ -159,7 +159,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
                             InvokeScript("function cookieObject() {this.allowedToWatch = 18};");
                             InvokeScript("C4.Util.setCookieValue('C4AccessControlCookie_" + _nextVideoToPlayName + "', new cookieObject())");
                         }
-                        DoResize();
+                      //  DoResize();
                         _currentState = State.Playing;
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
