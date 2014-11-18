@@ -31,7 +31,7 @@ namespace OnlineVideos.Sites.DavidCalder
       {
         TrackingInfo tInfo = new TrackingInfo()
         {
-          Regex = Regex.Match(video.Title, "(?<Title>[^(]*)((?<Airdate>.*))"),
+          Regex = Regex.Match(video.Title, @"(?<Title>[^(]*)\((?<Year>[^)]*)\)"),
           VideoKind = VideoKind.Movie
         };
 
