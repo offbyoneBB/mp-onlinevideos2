@@ -41,34 +41,38 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
 
                 var subCategs = new List<Category>();
 
-                subCategs.Add(new Category { Name = "Animals", HasSubCategories = true, Other = "G~animals" });
+                /*subCategs.Add(new Category { Name = "Animals", HasSubCategories = true, Other = "G~animals" });
                 subCategs.Add(new Category { Name = "Animation", HasSubCategories = true, Other = "G~animation" });
                 subCategs.Add(new Category { Name = "Art, Design and Literature", HasSubCategories = true, Other = "G~art-design-and-literature" });
                 subCategs.Add(new Category { Name = "Business and Money", HasSubCategories = true, Other = "G~business-and-money" });
                 subCategs.Add(new Category { Name = "Chat Shows", HasSubCategories = true, Other = "G~chat-shows" });
                 subCategs.Add(new Category { Name = "Children's Shows", HasSubCategories = true, Other = "G~childrens-shows" });
+                */
                 subCategs.Add(new Category { Name = "Comedy", HasSubCategories = true, Other = "G~comedy" });
-                subCategs.Add(new Category { Name = "Documentaries", HasSubCategories = true, Other = "G~documentaries" });
+                //subCategs.Add(new Category { Name = "Documentaries", HasSubCategories = true, Other = "G~documentaries" });
                 subCategs.Add(new Category { Name = "Drama", HasSubCategories = true, Other = "G~drama" });
-                subCategs.Add(new Category { Name = "Education and Learning", HasSubCategories = true, Other = "G~education-and-learning" });
+                //subCategs.Add(new Category { Name = "Education and Learning", HasSubCategories = true, Other = "G~education-and-learning" });
                 subCategs.Add(new Category { Name = "Entertainment", HasSubCategories = true, Other = "G~entertainment" });
-                subCategs.Add(new Category { Name = "Family and Parenting", HasSubCategories = true, Other = "G~family-and-parenting" });
+                subCategs.Add(new Category { Name = "Factual", HasSubCategories = true, Other = "G~factual" });
+                /*subCategs.Add(new Category { Name = "Family and Parenting", HasSubCategories = true, Other = "G~family-and-parenting" });
                 subCategs.Add(new Category { Name = "Fashion and Beauty", HasSubCategories = true, Other = "G~fashion-and-beauty" });
                 subCategs.Add(new Category { Name = "Film", HasSubCategories = true, Other = "G~film" });
                 subCategs.Add(new Category { Name = "Food", HasSubCategories = true, Other = "G~food" });
                 subCategs.Add(new Category { Name = "Health and Wellbeing", HasSubCategories = true, Other = "G~health-and-wellbeing" });
                 subCategs.Add(new Category { Name = "History", HasSubCategories = true, Other = "G~history" });
                 subCategs.Add(new Category { Name = "Homes and Gardens", HasSubCategories = true, Other = "G~homes-and-gardens" });
+                 */
                 subCategs.Add(new Category { Name = "Lifestyle", HasSubCategories = true, Other = "G~lifestyle" });
-                subCategs.Add(new Category { Name = "News, Current Affairs and Politics", HasSubCategories = true, Other = "G~news-current-affairs-and-politics" });
+                /*subCategs.Add(new Category { Name = "News, Current Affairs and Politics", HasSubCategories = true, Other = "G~news-current-affairs-and-politics" });
                 subCategs.Add(new Category { Name = "Quizzes and Gameshows", HasSubCategories = true, Other = "G~quizzes-and-gameshows" });
                 subCategs.Add(new Category { Name = "Reality Shows", HasSubCategories = true, Other = "G~reality-shows" });
                 subCategs.Add(new Category { Name = "Religion and Belief", HasSubCategories = true, Other = "G~religion-and-belief" });
                 subCategs.Add(new Category { Name = "Science, Nature and the Environment", HasSubCategories = true, Other = "G~science-nature-and-the-environment" });
                 subCategs.Add(new Category { Name = "Sex and Relationships", HasSubCategories = true, Other = "G~sex-and-relationships" });
                 subCategs.Add(new Category { Name = "Society and Culture", HasSubCategories = true, Other = "G~society-and-culture" });
-                subCategs.Add(new Category { Name = "Sports and Games", HasSubCategories = true, Other = "G~sports-and-games" });
-                subCategs.Add(new Category { Name = "US Shows", HasSubCategories = true, Other = "G~us-shows" });
+                */
+                subCategs.Add(new Category { Name = "Sport", HasSubCategories = true, Other = "G~sport" });
+                //subCategs.Add(new Category { Name = "US Shows", HasSubCategories = true, Other = "G~us-shows" });
 
                 var allChannels = new Category { Name = "All Channels", HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = subCategs, Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-c4.png" };
                 allChannels.SubCategories.ForEach(x => x.ParentCategory = allChannels);
@@ -89,12 +93,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
                 categories.Add(catchUp);
                 catchUp.SubCategories.ForEach(x => x.ParentCategory = catchUp);
 
-                categories.Add(new Category { Name = "4Music", HasSubCategories = true, Other = "G~music", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-4music.png" });
+                categories.Add(new Category { Name = "4Music", HasSubCategories = true, Other = "G~4m", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-4music.png" });
                 //categories.Add(new Category { Name = "4Seven", HasSubCategories = true, Other = "G~seven", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-47.png" });
                 categories.Add(new Category { Name = "Channel 4", HasSubCategories = true, Other = "G~c4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-c4.png" });
                 categories.Add(new Category { Name = "E4", HasSubCategories = true, Other = "G~e4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-e4.png" });
                 //categories.Add(new Category { Name = "Film4", HasSubCategories = true, Other = "G~film4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-film4.png" });
-                categories.Add(new Category { Name = "More4", HasSubCategories = true, Other = "G~more4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-more4.png" });
+                categories.Add(new Category { Name = "More4", HasSubCategories = true, Other = "G~m4", Thumb = "http://d8si6upl43lp1.cloudfront.net/static/4nav/2.0.1/images/header-more4.png" });
             
                 return categories;
             }
