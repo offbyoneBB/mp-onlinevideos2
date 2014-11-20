@@ -80,7 +80,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string playerUrl = @"http://www2.netflix.com/WiPlayer?movieid={0}";/*&trkid={1}*/
         private string searchUrl = @"{0}/desktop/search/instantsearch?esn=www&term={1}&ngv={2}"; //500 results maximum
         private string switchProfileUrl = @"{0}/desktop/account/profiles/switch?switchProfileGuid={1}";
-        private string bobUrl = @"http://www.netflix.com/JSON/BOB?authURL={0}&movieid={1}&ibob=true&trkid={2}&lnkce=bob";
+        private string bobUrl = @"{0}/{1}/bob?&titleid={2}&trackid={3}&authURL={4}";
         private string netflixOrgEpisodes = @"{0}/desktop/odp/episodes?video={1}&authURL={2}";
         private string apiRoot = @"https://www.netflix.com/api";
 
@@ -92,6 +92,31 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private WebProxy proxy = null; //new WebProxy("127.0.0.1", 8888); //Debug proxy
         private JObject currentProfile = null;
         private JArray profiles = null;
+        private string _shaktiApi = "";
+        private string ShaktiApi
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_shaktiApi))
+                {
+                    SetShaktiApiAndBuildId();
+                }
+                return _shaktiApi;
+            }
+        }
+        private string _buildId = "";
+
+        private string BuildId
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_shaktiApi))
+                {
+                    SetShaktiApiAndBuildId();
+                }
+                return _buildId;
+            }
+        }
         private string ProfileName
         {
             get
@@ -270,29 +295,92 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #region Helpers
 
+        private void SetShaktiApiAndBuildId(string data = "")
+        {
+            if (string.IsNullOrEmpty(data))
+            {
+                data = MyGetWebData(@"http://www.netflix.com/WiGenre?agid=");
+            }
+            Regex rgx = new Regex(@"\""SHAKTI_API_ROOT\"":""([^\""]*)");
+            Match m = rgx.Match(data);
+            if (m.Success)
+            {
+                _shaktiApi = m.Groups[1].Value;
+            }
+            rgx = new Regex(@"\""BUILD_IDENTIFIER\"":""([^\""]*)");
+            m = rgx.Match(data);
+            if (m.Success)
+            {
+                _buildId = m.Groups[1].Value;
+            }
+        }
+
         private string GetTitleDescription(string movieId, string trkid)
         {
             string desc = "";
             if (enableDesc && !string.IsNullOrEmpty(movieId) && !string.IsNullOrEmpty(trkid))
             {
-                string data = MyGetWebData(string.Format(bobUrl, latestAuthUrl, movieId, trkid));
-                JObject json = (JObject)JsonConvert.DeserializeObject(data);
-                data = (string)json["html"];
-                HtmlDocument doc = new HtmlDocument();
-                doc.LoadHtml(data);
-                HtmlNode docNode = doc.DocumentNode;
-                HtmlNode content = docNode.SelectSingleNode("//div[starts-with(@class, 'bobMovieContent')]");
-                HtmlNode midBob = content.SelectSingleNode("div[starts-with(@class, 'midBob')]");
-                midBob.Remove();
-                desc = content.InnerText;
-                string regex = @"\s+";
-                desc = Regex.Replace(desc, regex, " ");
-                regex = "\\{.*\\}";
-                desc = Regex.Replace(desc, regex, "");
-                regex = "\n+";
-                desc = Regex.Replace(desc, regex, "");
-                desc.Trim();
-                desc = HttpUtility.HtmlDecode(desc);
+                try
+                {
+                    string data = MyGetWebData(string.Format(bobUrl, ShaktiApi, BuildId, movieId, trkid, latestAuthUrl));
+                    JObject json = (JObject)JsonConvert.DeserializeObject(data);
+                    JValue value = (JValue)json["synopsis"];
+                    if (value != null && value.ToString() != "")
+                    {
+                        desc += value.Value<string>() + "\r\n";
+                    }
+                    value = (JValue)json["yourRating"];
+                    if (value != null && value.ToString() != "")
+                    {
+                        desc += "Your Rating: " + value.Value<float>() + "\r\n";
+                    }
+                    else
+                    {
+                        value = (JValue)json["predictedRating"];
+                        if (value != null && value.ToString() != "")
+                        {
+                            desc += "Predicted Rating: " + value.Value<float>() + "\r\n";
+                        }
+                    }
+
+                    value = (JValue)json["year"];
+                    if (value != null && value.ToString() != "")
+                    {
+                        desc += "Year: " + value.Value<int>() + "\r\n";
+                    }
+
+                    JToken token = json["actors"];
+                    if (token != null && token.Count() > 0)
+                    {
+                        desc += "Actors: ";
+                        foreach (JObject o in token)
+                        {
+                            desc += o["name"].Value<string>() + ", ";
+                        }
+                        desc += "\r\n";
+                    }
+
+                    token = json["directors"];
+                    if (token != null && token.Count() > 0)
+                    {
+                        desc += "Directors: ";
+                        foreach (JObject o in token)
+                        {
+                            desc += o["name"].Value<string>() + ", ";
+                        }
+                        desc += "\r\n";
+                    }
+                    token = json["creators"];
+                    if (token != null && token.Count() > 0)
+                    {
+                        desc += "Creators: ";
+                        foreach (JObject o in token)
+                        {
+                            desc += o["name"].Value<string>() + ", ";
+                        }
+                        desc += "\r\n";
+                    }
+                } catch {}
             }
             return desc;
         }
@@ -538,25 +626,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 string url = (parentCategory as RssLink).Url;
                 string data = MyGetWebData(url);
-                string shaktiApi = "";
-                Regex rgx = new Regex(@"\""SHAKTI_API_ROOT\"":""([^\""]*)");
-                Match m = rgx.Match(data);
-                if (m.Success)
-                {
-                    shaktiApi = m.Groups[1].Value;
-                }
-                string buildId = "";
-                rgx = new Regex(@"\""BUILD_IDENTIFIER\"":""([^\""]*)");
-                m = rgx.Match(data);
-                if (m.Success)
-                {
-                    buildId = m.Groups[1].Value;
-                }
+                SetShaktiApiAndBuildId(data);
                 Uri uri = new Uri(url);
                 string agid = HttpUtility.ParseQueryString(uri.Query).Get("agid");
-                if (!string.IsNullOrEmpty(shaktiApi) && !string.IsNullOrEmpty(buildId) && !string.IsNullOrEmpty(agid))
+                if (!string.IsNullOrEmpty(ShaktiApi) && !string.IsNullOrEmpty(BuildId) && !string.IsNullOrEmpty(agid))
                 {
-                    data = MyGetWebData(string.Format(genreUrl, shaktiApi, buildId, agid, 0, 50, BrowseSort));
+                    data = MyGetWebData(string.Format(genreUrl, ShaktiApi, BuildId, agid, 0, 50, BrowseSort));
                     JObject json = (JObject)JsonConvert.DeserializeObject(data);
                     foreach (JObject item in json["catalogItems"])
                     {
@@ -576,7 +651,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     }
                     if (parentCategory.SubCategories.Count >= 50)
                     {
-                        NextPageCategory next = new NextPageCategory() { Url = string.Format(genreUrl, shaktiApi, buildId, agid, "START_INDEX", "STOP_INDEX", BrowseSort), ParentCategory = parentCategory };
+                        NextPageCategory next = new NextPageCategory() { Url = string.Format(genreUrl, ShaktiApi, BuildId, agid, "START_INDEX", "STOP_INDEX", BrowseSort), ParentCategory = parentCategory };
                         next.SetState(NetflixUtils.TitleState);
                         next.SetStartIndex("51");
                         parentCategory.SubCategories.Add(next);
