@@ -125,7 +125,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 _service = new WebBrowserPlayerServiceHost();
 
                 WebBrowserPlayerService.ServiceImplementation.WebBrowserPlayerService.OnNewActionReceived += OnNewActionFromClient;
-                
+                WebBrowserPlayerCallbackService.LogInfo(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
+
                 _connector = BrowserInstanceConnectorFactory.GetConnector(_connectorType, OnlineVideoSettings.Instance.Logger, webBrowser);
                 if (_connector == null)
                     throw new ApplicationException(string.Format("Unable to load connector type {0}, not found in any site utils",  _connectorType));
@@ -303,7 +304,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             try
             {
                 WebBrowserPlayerCallbackService.OnBrowserClosing(); // Let MePo know we're closing
-                _connector.OnClosing();
+                if (_connector != null) _connector.OnClosing();
                 ForceClose = true;
             }
             finally
