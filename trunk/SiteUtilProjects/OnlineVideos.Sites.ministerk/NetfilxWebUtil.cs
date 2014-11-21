@@ -49,21 +49,21 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected bool enableDesc = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Also enable descriptions in listings"), Description("Enable descriptions for titles in listings, slower browsing")]
         protected bool enableDescInListing = false;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Max search results"), Description("Maximum number of titles in search result, default and max is 500")]
-        protected uint maxSearchResultsx = 500;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Add to and Remove from My List"), Description("Enable Add to and Remove from My List in titles listings")]
+        protected bool enableAddRemoveMylist = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Watch Now in My List"), Description("Enable Watch Now in MyList Category")]
         protected bool enableMylListPlayNow = false;
-
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Sort titles in Browse by..."), Description("Sort titles in Browse by...")]
+        protected BrowseSortOrders browseSort = BrowseSortOrders.SuggestionsForYou;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Max search results"), Description("Maximum number of titles in search result, default and max is 500")]
+        protected uint maxSearchResultsx = 500;
         // TODO
         //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable watch now in Netflix Home"), Description("Enable watch now in Netflix Home category")]
         //protected bool enableHomePlayNow = false;
-
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Sort titles in Browse by..."), Description("Sort titles in Browse by...")]
-        protected BrowseSortOrders browseSort = BrowseSortOrders.SuggestionsForYou;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show help Category"), Description("Show link to forum or not, http://tinyurl.com/ov-netflix")]
         protected bool enableHelp = true;
 
-        protected bool GetAuthUrl { get { return enableDesc; } }
+        protected bool GetAuthUrl { get { return enableDesc || enableAddRemoveMylist; } }
         protected uint MaxSearchResults { get { return (maxSearchResultsx > 500 ? 500 : maxSearchResultsx); } }
 
         #endregion
@@ -84,6 +84,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string netflixOrgEpisodes = @"{0}/desktop/odp/episodes?video={1}&authURL={2}";
         private string apiRoot = @"https://www.netflix.com/api";
 
+        private string addRemoveMyListUrl = @"{0}/{1}/playlistop";
+        private string addRemoveMyListPostData = "{{\"operation\":\"{0}\",\"videoId\":{1},\"trackId\":{2},\"authURL\":\"{3}\"}}";
+        private string addMyListOperation = "add";
+        private string removeMyListOperation = "remove";
         #endregion
 
         #region Private parts
@@ -380,7 +384,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         }
                         desc += "\r\n";
                     }
-                } catch {}
+                }
+                catch { }
             }
             return desc;
         }
@@ -399,7 +404,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             foreach (Match m in rgx.Matches(content))
             {
                 NetflixData datum = new NetflixData();
-                datum.TrackId = enableDesc ? m.Groups["trkid"].Value : "";
+                datum.TrackId = enableDesc || forceGetTrkid ? m.Groups["trkid"].Value : "";
                 datum.Title = HttpUtility.HtmlDecode(m.Groups["name"].Value);
                 datum.Id = HttpUtility.HtmlDecode(m.Groups["id"].Value);
                 datum.Cover = m.Groups["thumb"].Value;
@@ -458,32 +463,36 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             home.SetRememberDiscoveredItems(false);
             Settings.Categories.Add(home);
              */
+            RssLink myList = new RssLink() { Name = "My List", HasSubCategories = !enableMylListPlayNow, Url = myListUrl };
+            myList.SetState(NetflixUtils.SinglePageCategoriesState);
+            myList.SetPlayNow(enableMylListPlayNow);
+            myList.SetRememberDiscoveredItems(false);
+            Settings.Categories.Add(myList);
             if (!IsKidsProfile)
             {
-                Category genres = new Category() { Name = "Browse", HasSubCategories = true, SubCategories = new List<Category>() };
-                HtmlNodeCollection genreNodes = doc.DocumentNode.SelectNodes("//a[contains(@href, 'netflix.com/WiGenre')]");
-                if (genreNodes != null)
+                try
                 {
-                    foreach (HtmlNode a in genreNodes)
+                    Category genres = new Category() { Name = "Browse", HasSubCategories = true, SubCategories = new List<Category>() };
+                    HtmlNodeCollection genreNodes = doc.DocumentNode.SelectNodes("//a[contains(@href, 'netflix.com/WiGenre')]");
+                    if (genreNodes != null)
                     {
-                        RssLink rl = new RssLink()
+                        foreach (HtmlNode a in genreNodes)
                         {
-                            Name = a.InnerText.Trim(),
-                            Url = a.GetAttributeValue("href", ""),
-                            HasSubCategories = true,
-                            ParentCategory = genres
-                        };
-                        rl.SetState(NetflixUtils.MultiplePageCategoriesState);
-                        genres.SubCategories.Add(rl);
+                            RssLink rl = new RssLink()
+                            {
+                                Name = a.InnerText.Trim(),
+                                Url = a.GetAttributeValue("href", ""),
+                                HasSubCategories = true,
+                                ParentCategory = genres
+                            };
+                            rl.SetState(NetflixUtils.MultiplePageCategoriesState);
+                            genres.SubCategories.Add(rl);
+                        }
                     }
+                    genres.SubCategoriesDiscovered = genres.SubCategories.Count > 0;
+                    Settings.Categories.Add(genres);
                 }
-                genres.SubCategoriesDiscovered = genres.SubCategories.Count > 0;
-                Settings.Categories.Add(genres);
-                RssLink myList = new RssLink() { Name = "My List", HasSubCategories = !enableMylListPlayNow, Url = myListUrl };
-                myList.SetState(NetflixUtils.SinglePageCategoriesState);
-                myList.SetPlayNow(enableMylListPlayNow);
-                myList.SetRememberDiscoveredItems(false);
-                Settings.Categories.Add(myList);
+                catch { }
             }
 
             RssLink kids = new RssLink() { Name = "Kids", HasSubCategories = true, Url = kidsUrl };
@@ -602,7 +611,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             #region SinglePageCategories
             else if (parentCategory.IsSinglePageCategoriesState())
             {
-                foreach (NetflixData d in GetSinglePageNetflixData(parentCategory))
+                foreach (NetflixData d in GetSinglePageNetflixData(parentCategory, enableAddRemoveMylist))
                 {
                     RssLink cat = new RssLink()
                     {
@@ -645,7 +654,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                             Description = enableDesc && enableDescInListing ? GetTitleDescription(((int)item["titleId"]).ToString(), ((int)item["trackId"]).ToString()) : ""
                         };
                         category.SetState(NetflixUtils.TitleState);
-                        if (enableDesc)
+                        if (enableDesc || enableAddRemoveMylist)
                             category.SetTrackId(((int)item["trackId"]).ToString());
                         parentCategory.SubCategories.Add(category);
                     }
@@ -849,7 +858,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     Description = enableDesc && enableDescInListing ? GetTitleDescription(((int)item["titleId"]).ToString(), ((int)item["trackId"]).ToString()) : ""
                 };
                 cat.SetState(NetflixUtils.TitleState);
-                if (enableDesc)
+                if (enableDesc || enableAddRemoveMylist)
                     cat.SetTrackId(((int)item["trackId"]).ToString());
                 i++;
                 nextPagecategory.ParentCategory.SubCategories.Add(cat);
@@ -883,6 +892,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                             VideoUrl = string.Format(playerUrl, d.Id) + "&trkid=" + d.TrackId,
                             ImageUrl = d.Cover,
                             Description = d.Description,
+                            Other = new SerializableDictionary<string, string>() { { "TrackId", d.TrackId }, { "VideoId", d.Id } }
                         });
                     }
                 }
@@ -918,7 +928,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     {
                         RssLink cat = new RssLink() { Name = (string)item["title"], Url = ((int)item["id"]).ToString(), Thumb = (string)item["boxart"], HasSubCategories = true };
                         cat.SetState(NetflixUtils.TitleState);
-                        if (enableDesc)
+                        if (enableDesc || enableAddRemoveMylist)
                             cat.SetTrackId(((int)item["trackId"]).ToString());
                         results.Add(cat);
 
@@ -934,11 +944,104 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
-            return base.GetContextMenuEntries(selectedCategory, selectedItem);
+            List<ContextMenuEntry> result = new List<ContextMenuEntry>();
+            if (enableAddRemoveMylist && selectedItem == null && selectedCategory.IsTitleState())
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(selectedCategory.GetTrackId()))
+                    {
+                        string data = MyGetWebData(string.Format(bobUrl, ShaktiApi, BuildId, (selectedCategory as RssLink).Url, selectedCategory.GetTrackId(), latestAuthUrl));
+                        JObject json = (JObject)JsonConvert.DeserializeObject(data);
+                        if (json["isMovie"].Value<bool>() || json["isShow"].Value<bool>())
+                        {
+                            bool inPlayList = json["inPlayList"].Value<bool>();
+                            ContextMenuEntry entry = new ContextMenuEntry() { DisplayText = (inPlayList ? "Remove from " : "Add to ") + "My List" };
+                            result.Add(entry);
+                        }
+                    }
+                }
+                catch { }
+            }
+            if (enableAddRemoveMylist && selectedItem != null && selectedItem.Other is SerializableDictionary<string,string>)
+            {
+                try
+                {
+                    SerializableDictionary<string, string> other = selectedItem.Other as SerializableDictionary<string, string>;
+                    if (other.ContainsKey("TrackId") && other.ContainsKey("VideoId"))
+                    {
+                        string data = MyGetWebData(string.Format(bobUrl, ShaktiApi, BuildId, other["VideoId"], other["TrackId"], latestAuthUrl));
+                        JObject json = (JObject)JsonConvert.DeserializeObject(data);
+                        if (json["isMovie"].Value<bool>() || json["isShow"].Value<bool>())
+                        {
+                            bool inPlayList = json["inPlayList"].Value<bool>();
+                            ContextMenuEntry entry = new ContextMenuEntry() { DisplayText = (inPlayList ? "Remove from " : "Add to ") + "My List" };
+                            result.Add(entry);
+                        }
+                    }
+                }
+                catch { }
+            }
+            return result;
         }
 
         public override ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
         {
+            if (choice.DisplayText == "Add to My List")
+            {
+                ContextMenuExecutionResult result = new ContextMenuExecutionResult();
+                //private string addRemoveMyListUrl = @"{0}/{1}/playlistop";
+                //private string addRemoveMyListPostData = @"{""operation"":""{0}"",""videoId"":{1},""trackId"":{2},""authURL"":""{3}""}";
+
+                string videoId;
+                string trackId;
+                string title;
+                if (selectedItem == null)
+                {
+                    videoId = (selectedCategory as RssLink).Url;
+                    trackId = selectedCategory.GetTrackId();
+                    title = selectedCategory.Name;
+                }
+                else
+                {
+                    SerializableDictionary<string, string> other = selectedItem.Other as SerializableDictionary<string, string>;
+                    videoId = other["VideoId"];
+                    trackId = other["TrackId"];
+                    title = selectedItem.Title;
+                }
+                GetWebDataFromPost(string.Format(addRemoveMyListUrl, ShaktiApi, BuildId),
+                    string.Format(addRemoveMyListPostData, addMyListOperation, videoId, trackId, latestAuthUrl),
+                    cc);
+                result.RefreshCurrentItems = true;
+                result.ExecutionResultMessage = title + " added to My List";
+                return result;
+            }
+            if (choice.DisplayText == "Remove from My List")
+            {
+                string videoId;
+                string trackId;
+                string title;
+                if (selectedItem == null)
+                {
+                    videoId = (selectedCategory as RssLink).Url;
+                    trackId = selectedCategory.GetTrackId();
+                    title = selectedCategory.Name;
+                }
+                else
+                {
+                    SerializableDictionary<string, string> other = selectedItem.Other as SerializableDictionary<string, string>;
+                    videoId = other["VideoId"];
+                    trackId = other["TrackId"];
+                    title = selectedItem.Title;
+                }
+                ContextMenuExecutionResult result = new ContextMenuExecutionResult();
+                GetWebDataFromPost(string.Format(addRemoveMyListUrl, ShaktiApi, BuildId),
+                    string.Format(addRemoveMyListPostData, removeMyListOperation, videoId, trackId, latestAuthUrl),
+                    cc);
+                result.RefreshCurrentItems = true;
+                result.ExecutionResultMessage = title + " removed from My List";
+                return result;
+            }
             return base.ExecuteContextMenuEntry(selectedCategory, selectedItem, choice);
         }
 
