@@ -18,11 +18,17 @@ namespace OnlineVideos.Sites.DavidCalder
 
     public override int DiscoverDynamicCategories()
     {
-      int res = base.DiscoverDynamicCategories();
-      foreach (Category cat in Settings.Categories)
+      base.DiscoverDynamicCategories();
+      int i = 0;
+      do 
+      {
+        RssLink cat = (RssLink)Settings.Categories[i];
         if (cat.Name == "Submit Links" || cat.Name == "TV Shows")
           Settings.Categories.Remove(cat);
-      return res;
+        i++;
+      }
+      while (i < Settings.Categories.Count) ;
+      return Settings.Categories.Count;
     }
 
     public override ITrackingInfo GetTrackingInfo(VideoInfo video)
