@@ -119,7 +119,7 @@ namespace OnlineVideos.Sites
                         video.VideoUrl = video.PlaybackOptions.First(po => po.Key == maxBitrate.ToString() + " kbps").Value;
                         if ((bool)episode["hasSubtitle"])
                         {
-                            video.SubtitleUrl = string.Format("{0}/subtitles/{1}", apiBaseUrl, (int)episode["id"]);
+                            video.SubtitleUrl = string.Format("{0}/subtitles/{1}", apiBaseUrl, episode["id"].ToString());
                         }
                         videos.Add(video);
                     }
