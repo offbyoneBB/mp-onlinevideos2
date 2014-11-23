@@ -33,6 +33,7 @@ namespace OnlineVideos.Sites
         protected bool getRedirectedFileUrlForHoster = false;
 
         private SubtitleHandler sh = null;
+        protected string lastPlaybackOptionUrl = null;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -123,6 +124,7 @@ namespace OnlineVideos.Sites
             }
 
             video.PlaybackOptions = new Dictionary<string, string>();
+            bool lastPlaybackOptionUrlPresent = false;
 
             foreach (PlaybackElement el in lst)
             {
@@ -132,6 +134,7 @@ namespace OnlineVideos.Sites
                 if ((limit == 0 || el.dupcnt <= limit) && (showUnknown || el.status == null || !el.status.Equals("ns")))
                 {
                     video.PlaybackOptions.Add(el.GetName(), el.url);
+                    lastPlaybackOptionUrlPresent |= (el.url == lastPlaybackOptionUrl);
                 }
             }
 
@@ -141,6 +144,9 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions = null;
                 return video.VideoUrl;
             }
+
+            if (lastPlaybackOptionUrlPresent)
+                return lastPlaybackOptionUrl;
 
             if (lst.Count > 0)
                 tmp = lst[0].url;
@@ -205,6 +211,7 @@ namespace OnlineVideos.Sites
 
             public override string GetPlaybackOptionUrl(string url)
             {
+                parent.lastPlaybackOptionUrl = PlaybackOptions[url];
                 string result = parent.ResolveVideoUrl(PlaybackOptions[url]);
                 parent.sh.WaitForSubtitleCompleted();
                 return result;
