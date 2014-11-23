@@ -2516,6 +2516,20 @@
               <ZipFileName>Installer{CopyFile}\{f0d738c1-fc64-43b7-9a76-6dabc4201284}-Gamersnet.nl.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Gamersnet.nl.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Netflix.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d7b715e9-e7b4-4610-b82f-0f6e2ed4df62}-Netflix.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Netflix.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Netflix.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9ce3ad19-b791-468e-9436-cace2b390090}-Netflix.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Netflix.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -3809,7 +3823,7 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>1</Major>
-      <Minor>9</Minor>
+      <Minor>10</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
@@ -3821,7 +3835,7 @@ included Titan skin files
 </VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=65</OnlineLocation>
-    <ReleaseDate>2014-09-07T15:00:00</ReleaseDate>
+    <ReleaseDate>2014-11-23T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
@@ -6363,6 +6377,20 @@ included Titan skin files
         <LocalFileName>..\SiteImages\Icons\Gamersnet.nl.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{f0d738c1-fc64-43b7-9a76-6dabc4201284}-Gamersnet.nl.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Gamersnet.nl.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Netflix.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d7b715e9-e7b4-4610-b82f-0f6e2ed4df62}-Netflix.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Netflix.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Netflix.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9ce3ad19-b791-468e-9436-cace2b390090}-Netflix.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Netflix.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
