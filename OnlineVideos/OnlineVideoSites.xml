@@ -807,7 +807,7 @@
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass=""><a\shref="(?<url>[^"]*)"\sclass="">(?<title>[^<]*)</a></li>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<li\sclass=""><a\shref="(?<url>[^"]*)"\sclass="">(?<title>[^<]*)</a>\s</li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<li>\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<span(?:(?!"title">).)*"title">(?<Title>[^<]*)</span>.*?<img\ssrc="(?<ImageUrl>[^"]*)]]></item>
+        <item key="videoListRegEx"><![CDATA[='popover-description'>(?<Description>[^<]*)(?:(?!href=").)*href="(?<VideoUrl>[^"]*)(?:(?!"title">).)*"title">(?<Title>[^<]*)(?:(?!src=").)*src="(?<ImageUrl>[^"]*)(?:(?!<time).)*(?:(?!title=").)*title="(?<Airdate>[^"]*)]]></item>
         <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\sclass="">\s*<a\shref="(?<url>[^"]*)">&raquo;]]></item>
         <item key="nextPageRegExUrlFormatString"><![CDATA[http://www.movhunter.net/{0}]]></item>
