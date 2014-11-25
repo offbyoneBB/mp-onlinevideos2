@@ -163,7 +163,8 @@ namespace OnlineVideos.Sites
             if (nodeCollection != null)
                 foreach (HtmlNode node in nodeCollection)
                 {
-                    if (node.SelectSingleNode(".//div[@class='info premium']") == null)
+                    HtmlNode kijkBtn = node.SelectSingleNode(".//div[@class='button cta']");
+                    if (kijkBtn == null || !kijkBtn.InnerText.Contains("vanaf"))
                     {
                         VideoInfo video = new VideoInfo()
                         {
