@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
 using OnlineVideos.AMF;
 using HtmlAgilityPack;
 using System.Web;
@@ -90,15 +89,8 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string[] parts = video.VideoUrl.Split('/');
-            string url = @"http://www.kijk.nl/ajax/entitlement/" + parts[parts.Length - 2];
+            string url = @"http://embed.kijk.nl/?width=868&height=491&video=" + parts[parts.Length - 2];
             string webdata = GetWebData(url, referer: video.VideoUrl);
-            JToken jt = JObject.Parse(webdata) as JToken;
-            string contentId = jt["entitlement"]["playerInfo"]["hostingkey"].Value<string>();
-
-            url = @"http://embed.kijk.nl/?width=868&height=491&video=" + parts[parts.Length - 1];
-            webdata = GetWebData(url, referer: video.VideoUrl);
-            webdata = webdata.Replace(@"<param name=\""@videoPlayer\"" value=\""\"" />", @"<param name=\""@videoPlayer\"" value=\""" + contentId + @"\"" />");
-
             Match m = regEx_FileUrl.Match(webdata);
 
             if (!m.Success)
@@ -160,6 +152,7 @@ namespace OnlineVideos.Sites
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
             HtmlNodeCollection nodeCollection = listNode.SelectNodes(".//div[@class = 'item ar16x9 js']");
+            List<string> vidUrls = new List<string>();
             if (nodeCollection != null)
                 foreach (HtmlNode node in nodeCollection)
                 {
@@ -178,7 +171,11 @@ namespace OnlineVideos.Sites
                         string descr2 = getInnertext(node.SelectSingleNode(".//div[@class='desc meta']/text()"));
                         if (!String.IsNullOrEmpty(descr2))
                             video.Title += " " + descr2;
-                        videoList.Add(video);
+                        if (!vidUrls.Contains(video.VideoUrl))
+                        {
+                            videoList.Add(video);
+                            vidUrls.Add(video.VideoUrl);
+                        }
                     };
                 };
 
