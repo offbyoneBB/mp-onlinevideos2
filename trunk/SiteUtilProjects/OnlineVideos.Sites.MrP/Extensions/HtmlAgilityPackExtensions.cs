@@ -41,7 +41,7 @@ namespace OnlineVideos.Sites.WebAutomation.Extensions
         /// <returns></returns>
         public static string GetAttribute(this HtmlNode node, string attributeName)
         {
-            if (node.Attributes.Count > 0 && node.Attributes.Contains(attributeName)) return node.Attributes[attributeName].Value;
+            if (node != null && node.Attributes.Count > 0 && node.Attributes.Contains(attributeName)) return node.Attributes[attributeName].Value;
             return string.Empty;
         }
 

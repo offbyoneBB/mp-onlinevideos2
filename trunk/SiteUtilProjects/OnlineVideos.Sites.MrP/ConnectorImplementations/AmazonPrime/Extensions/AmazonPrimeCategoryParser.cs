@@ -72,7 +72,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
             for (int i = 0; i <= 10; i++)
             {
                 doc = tmpWeb.Load(url);
-                listItems = doc.DocumentNode.GetNodesByClass("ilo2");
+                listItems = doc.DocumentNode.GetNodesByClass("result-item");//ilo2");
 
                 if (listItems == null)
                 {
@@ -101,11 +101,13 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                         var tmpCateg = new Category();
                         tmpCateg.ParentCategory = parent;
                         tmpCateg.HasSubCategories = false;
-                        tmpCateg.Name = item.FindAllChildElements()[2].InnerText + " (" + item.GetNodeByClass("bdge").GetInnerText() + ")";
-                        tmpCateg.Other = item.FindFirstChildElement().FindFirstChildElement().Attributes["href"].Value;
-                        tmpCateg.Thumb = item.FindFirstChildElement().FindFirstChildElement().FindFirstChildElement().FindFirstChildElement().Attributes["src"].Value;
-                        var released = (item.GetNodeByClass("reg subt") == null ? string.Empty : item.GetNodeByClass("reg subt").FirstChild.GetInnerText());
-                        var score = (item.GetNodeByClass("asinReviewsSummaryNoPopover") == null ? string.Empty : (item.GetNodeByClass("asinReviewsSummaryNoPopover").FindFirstChildElement() == null ? string.Empty : item.GetNodeByClass("asinReviewsSummaryNoPopover").FindFirstChildElement().Attributes["alt"].Value));
+                        tmpCateg.Name = HtmlAgilityPackExtensions.GetInnerText(item.NavigatePath(new int[] { 0, 1, 0, 0, 0 })) + " (" + HtmlAgilityPackExtensions.GetInnerText(item.NavigatePath(new int[] { 0, 1, 0, 4, 0, 1 })) + ")";//item.FindAllChildElements()[2].InnerText + " (" + item.GetNodeByClass("bdge").GetInnerText() + ")";
+                        tmpCateg.Other = item.NavigatePath(new int[] { 0, 0, 0, 0  }).GetAttribute("href");
+                        tmpCateg.Thumb = item.NavigatePath(new int[] { 0, 0, 0, 0, 0 }).GetAttribute("src");
+                        var released = HtmlAgilityPackExtensions.GetInnerText(item.NavigatePath(new int[] { 0, 1, 0, 2 }));
+                        var score = HtmlAgilityPackExtensions.GetInnerText(item.NavigatePath(new int[] { 0,1,4,0,0,0,0}));
+                        //var released = (item.GetNodeByClass("reg subt") == null ? string.Empty : item.GetNodeByClass("reg subt").FirstChild.GetInnerText());
+                        //var score = (item.GetNodeByClass("asinReviewsSummaryNoPopover") == null ? string.Empty : (item.GetNodeByClass("asinReviewsSummaryNoPopover").FindFirstChildElement() == null ? string.Empty : item.GetNodeByClass("asinReviewsSummaryNoPopover").FindFirstChildElement().Attributes["alt"].Value));
                         tmpCateg.Description = "Released: " + released + "\r\nReview Score: " + score;
                         results.Add(tmpCateg);
                     }
