@@ -18,6 +18,7 @@ namespace OnlineVideos.Sites
         protected string subtitleLanguages = "";
 
         private SubtitleHandler sh = null;
+        private DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -55,6 +56,11 @@ namespace OnlineVideos.Sites
             }
             else
                 video.Other = new VideoInfoOtherHelper();
+            int time;
+            if (Int32.TryParse(video.Airdate, out time))
+            {
+                video.Airdate = epoch.AddSeconds(time).ToString();
+            }
         }
 
         private enum SouthParkCountry { Unknown, World, Nl, De };
@@ -69,44 +75,45 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(data))
             {
                 Match m = episodePlayerRegEx.Match(data);
+                string playerUrl;
                 if (m.Success)
+                    playerUrl = m.Groups["url"].Value;
+                else
+                    playerUrl = video.VideoUrl;
+                playerUrl = GetRedirectedUrl(playerUrl);
+                playerUrl = System.Web.HttpUtility.ParseQueryString(new Uri(playerUrl).Query)["uri"];
+                SouthParkCountry spc = SouthParkCountry.Unknown;
+                if (video.VideoUrl.Contains("southparkstudios.com"))
+                    spc = SouthParkCountry.World;
+                else if (video.VideoUrl.ToLower().Contains(".de") || video.VideoUrl.ToLower().Contains("de."))
+                    spc = SouthParkCountry.De;
+                else if (video.VideoUrl.Contains("southpark.nl"))
+                    spc = SouthParkCountry.Nl;
+                if (spc == SouthParkCountry.World || spc == SouthParkCountry.Nl || spc == SouthParkCountry.De)
                 {
-                    string playerUrl = m.Groups["url"].Value;
-                    playerUrl = GetRedirectedUrl(playerUrl);
-                    playerUrl = System.Web.HttpUtility.ParseQueryString(new Uri(playerUrl).Query)["uri"];
-                    SouthParkCountry spc = SouthParkCountry.Unknown;
-                    if (video.VideoUrl.Contains("southparkstudios.com"))
-                        spc = SouthParkCountry.World;
-                    else if (video.VideoUrl.ToLower().Contains(".de") || video.VideoUrl.ToLower().Contains("de."))
-                        spc = SouthParkCountry.De;
-                    else if (video.VideoUrl.Contains("southpark.nl"))
-                        spc = SouthParkCountry.Nl;
-                    if (spc == SouthParkCountry.World || spc == SouthParkCountry.Nl || spc == SouthParkCountry.De)
-                    {
-                        playerUrl = System.Web.HttpUtility.UrlEncode(playerUrl);
-                        playerUrl = new Uri(new Uri(baseUrl), @"/feeds/video-player/mrss/" + playerUrl).AbsoluteUri;
-                    }
-                    else
-                    {
-                        playerUrl = System.Web.HttpUtility.UrlDecode(playerUrl);
-                        playerUrl = new Uri(new Uri(baseUrl), @"/feeds/as3player/mrss.php?uri=" + playerUrl).AbsoluteUri;
-                    }
-                    //http://www.southparkstudios.com/feeds/as3player/mrss.php?uri=mgid:cms:content:southparkstudios.com:164823
-                    //http://www.southparkstudios.com/feeds/video-player/mrss/mgid%3Acms%3Acontent%3Asouthparkstudios.com%3A164823
+                    playerUrl = System.Web.HttpUtility.UrlEncode(playerUrl);
+                    playerUrl = new Uri(new Uri(baseUrl), @"/feeds/video-player/mrss/" + playerUrl).AbsoluteUri;
+                }
+                else
+                {
+                    playerUrl = System.Web.HttpUtility.UrlDecode(playerUrl);
+                    playerUrl = new Uri(new Uri(baseUrl), @"/feeds/as3player/mrss.php?uri=" + playerUrl).AbsoluteUri;
+                }
+                //http://www.southparkstudios.com/feeds/as3player/mrss.php?uri=mgid:cms:content:southparkstudios.com:164823
+                //http://www.southparkstudios.com/feeds/video-player/mrss/mgid%3Acms%3Acontent%3Asouthparkstudios.com%3A164823
 
-                    data = GetWebData(playerUrl);
-                    if (!string.IsNullOrEmpty(data))
+                data = GetWebData(playerUrl);
+                if (!string.IsNullOrEmpty(data))
+                {
+                    data = data.Replace("&amp;", "&");
+                    data = data.Replace("&", "&amp;");
+                    (video.Other as VideoInfoOtherHelper).SPCountry = spc;
+                    foreach (RssItem item in RssToolkit.Rss.RssDocument.Load(data).Channel.Items)
                     {
-                        data = data.Replace("&amp;", "&");
-                        data = data.Replace("&", "&amp;");
-                        (video.Other as VideoInfoOtherHelper).SPCountry = spc;
-                        foreach (RssItem item in RssToolkit.Rss.RssDocument.Load(data).Channel.Items)
-                        {
-                            if (item.Title.ToLowerInvariant().Contains("intro") || item.Title.ToLowerInvariant().Contains("vorspann")) continue;
-                            if (video.PlaybackOptions == null)
-                                video.PlaybackOptions = getPlaybackOptions(item.MediaGroups[0].MediaContents[0].Url, spc);
-                            result.Add(item.MediaGroups[0].MediaContents[0].Url);
-                        }
+                        if (item.Title.ToLowerInvariant().Contains("intro") || item.Title.ToLowerInvariant().Contains("vorspann")) continue;
+                        if (video.PlaybackOptions == null)
+                            video.PlaybackOptions = getPlaybackOptions(item.MediaGroups[0].MediaContents[0].Url, spc);
+                        result.Add(item.MediaGroups[0].MediaContents[0].Url);
                     }
                 }
             }
