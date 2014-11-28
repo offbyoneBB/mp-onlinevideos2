@@ -148,7 +148,20 @@ namespace OnlineVideos.Sites
                 }*/
                 string br = bitrate + "K " + videoType;
                 if (!res.ContainsKey(br))
-                    res.Add(br, new MPUrlSourceFilter.RtmpUrl(url) { SwfVerify = swfUrl != null, SwfUrl = swfUrl }.ToString());
+                {
+                    MPUrlSourceFilter.RtmpUrl rtmpUrl;
+                    if (spc == SouthParkCountry.World)
+                    {
+                        rtmpUrl = new MPUrlSourceFilter.RtmpUrl(@"rtmpe://viacommtvstrmfs.fplive.net:1935/viacommtvstrm");
+                        int p = url.IndexOf("gsp.comedystor");
+                        if (p >= 0)
+                            rtmpUrl.PlayPath = "mp4:" + url.Substring(p);
+                    }
+                    else
+                        rtmpUrl = new MPUrlSourceFilter.RtmpUrl(url) { SwfVerify = swfUrl != null, SwfUrl = swfUrl };
+
+                    res.Add(br, rtmpUrl.ToString());
+                }
 
             }
             return res;
