@@ -137,7 +137,6 @@
     <Compile Include="ZieNlUtil.cs" />
     <Compile Include="CinemassacreUtil.cs" />
     <Compile Include="MyHosters.cs" />
-    <Compile Include="NOSUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RTLXLUtil.cs" />
     <Compile Include="SesameStreetUtil.cs" />

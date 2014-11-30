@@ -1195,19 +1195,49 @@
         <item key="searchUrl"><![CDATA[http://www.nicovideo.jp/search/{0}]]></item>
       </Configuration>
     </Site>
-    <Site name="Nos" util="NOS" agecheck="false" enabled="true" lang="nl">
+    <Site name="Nos" util="GenericSite" agecheck="false" enabled="true" lang="nl">
       <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
       <Configuration>
+        <item key="dddynamicCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"\sclass="subnav__link\slink-hover"\stitle="">(?<title>[^<]*)</a></li>]]></item>
+        <item key="dddynamicCategoryUrlFormatString"><![CDATA[{0}videos/]]></item>
+        <item key="videoListRegEx"><![CDATA[(<li\sclass="list-featured__item\s"><a\shref="(?<VideoUrl>[^"]*)"\s*class="link-block"><figure\sclass="list-featured__img"><img\s*src="(?<ImageUrl>[^"]*)"\s*alt=""\s*class="media-full"\s*/><span\sclass="img-icon-play\spos-bl\sshow-from--tablet-small"></span></figure><div\sclass="list-featured__wrap"><span\sclass="list-featured__title\slink-hover">(?<Title>[^<]*)</span><div\sclass="list-featured__meta\smeta"><span\sclass="icon-time\sico-space-right"></span><time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time></div></div></a></li>)(?#videos nieuws_sport)|(<li\sclass="broadcast-player__playlist__item"><a\shref="(?<VideoUrl>[^"]*)"\sclass="link-hover\sbroadcast-link\s*"><span\sclass="broadcast-link__play\simg-icon-play"></span><span\sclass="broadcast-link__name\s">(?<Title>[^<]*)</span><time\sclass="broadcast-link__date"\sdatetime="(?<Airdate>[^"]*)"><span\sclass="broadcast-link__icon\sicon-time\sico-space-right"></span>(?<Time>[^<]*)</time></a></li>)(?#videos uitzendingen)]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<source\ssrc="(?<m0>[^"]*)"\stype="[^"]*"\sdata-label="(?<n0>[^"]*)"\s*/>]]></item>
         <item key="baseUrl"><![CDATA[http://nos.nl]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[href="(?<url>[^"]+)"[^>]*>(?<title>[^<]+)<]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[{0}video-en-audio/]]></item>
-        <item key="videoListRegEx"><![CDATA[(?#regular)(<li>\s*<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>\s*<span\sclass="img-video"><img\ssrc="(?<ImageUrl>[^"]*)"\salt=""\s/><em>&raquo;</em></span>\s*<span\sclass="cat">Video</span>(?<Description>[^<]*)<em>(?<Airdate>[^,]*),[^<]*</em>\s*</li>)|(?#searchres)(<li\sclass="search-video-[^"]*">\s*<strong>(?<Title>[^<]*)</strong>\s*<p><span\sclass="img-video"><img\ssrc="(?<ImageUrl>[^"]*)"\swidth="115"\sheight="65"\salt=""\s/><em>&raquo;</em></span>\s*<span\sclass="date">(?<Airdate>[^<]*)</span>\s<span\sclass="cat">Video</span>(?<Description>[^<]*)</p>\s*<a\shref="(?<VideoUrl>[^"]*)">[^<]*</a>\s*</li>)|(?#laatstejournaal)(<li>\s*<span\sclass="img-video">\s*<img\ssrc="(?<ImageUrl>[^"]*)"\salt=""\swidth="115"\sheight="65"\s/>\s*<em>&raquo;</em>\s*</span>\s*<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>(?<Airdate>[^<]*)<br\s/>\s*<em>(?<Duration>[^<]*)</em>\s*</li>)]]></item>
-        <item key="videoUrlRegEx"><![CDATA[http://nos\.nl/(?:[^/]*/)?video/(?<m0>\d+)-]]></item>
-        <item key="videoUrlFormatString"><![CDATA[http://content.nos.nl/content/playlist/counters/?playlist=video/fragment/{0}.xml]]></item>
-        <item key="fileUrlRegEx"><![CDATA["file":"(?<m0>[^"]*)"]]></item>
-        <item key="searchUrl"><![CDATA[http://nos.nl/zoeken/?s={0}&sort=2&type%5B%5D=video&datumvan=&datumtot=]]></item>
-        <item key="nextPageRegEx"><![CDATA[<li\sclass="last"><a\shref="(?<url>[^"]*)">Volgende\s&raquo;</a></li>]]></item>
       </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Nieuws" thumb="" desc="">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Binnenland" thumb="" desc="">http://nos.nl/nieuws/binnenland/videos/</Category>
+            <Category xsi:type="RssLink" name="Buitenland" thumb="" desc="">http://nos.nl/nieuws/buitenland/videos/</Category>
+            <Category xsi:type="RssLink" name="Politiek" thumb="" desc="">http://nos.nl/nieuws/politiek/videos/</Category>
+            <Category xsi:type="RssLink" name="Economie" thumb="" desc="">http://nos.nl/nieuws/economie/videos/</Category>
+            <Category xsi:type="RssLink" name="Koningshuis" thumb="" desc="">http://nos.nl/nieuws/koningshuis/videos/</Category>
+            <Category xsi:type="RssLink" name="Tech" thumb="" desc="">http://nos.nl/nieuws/tech/videos/</Category>
+            <Category xsi:type="RssLink" name="Cultuur &amp; Media" thumb="" desc="">http://nos.nl/nieuws/cultuur-en-media/videos/</Category>
+            <Category xsi:type="RssLink" name="Opmerkelijk" thumb="" desc="">http://nos.nl/nieuws/opmerkelijk/videos/</Category>
+          </SubCategories>
+        </Category>
+        <Category xsi:type="RssLink" name="Sport" thumb="" desc="">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Voetbal" thumb="" desc="">http://nos.nl/sport/voetbal/videos/</Category>
+            <Category xsi:type="RssLink" name="Wielrennen" thumb="" desc="">http://nos.nl/sport/wielrennen/videos/</Category>
+            <Category xsi:type="RssLink" name="Schaatsen" thumb="" desc="">http://nos.nl/sport/schaatsen/videos/</Category>
+            <Category xsi:type="RssLink" name="Tennis" thumb="" desc="">http://nos.nl/sport/tennis/videos/</Category>
+          </SubCategories>
+        </Category>
+        <Category xsi:type="RssLink" name="Uitzendingen" thumb="" desc="">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="NOS Journaal" thumb="" desc="">http://nos.nl/uitzending/nos-journaal</Category>
+            <Category xsi:type="RssLink" name="Nieuwsuur" thumb="" desc="">http://nos.nl/uitzending/nieuwsuur</Category>
+            <Category xsi:type="RssLink" name="NOS op 3" thumb="" desc="">http://nos.nl/uitzending/nos-op-3</Category>
+            <Category xsi:type="RssLink" name="NOS Jeugdjournaal" thumb="" desc="">http://nos.nl/uitzending/nos-jeugdjournaal</Category>
+            <Category xsi:type="RssLink" name="NOS Sportjournaal" thumb="" desc="">http://nos.nl/uitzending/nos-sportjournaal</Category>
+            <Category xsi:type="RssLink" name="NOS Studio Sport" thumb="" desc="">http://nos.nl/uitzending/nos-studio-sport</Category>
+            <Category xsi:type="RssLink" name="NOS Studio Sport Eredivisie" thumb="" desc="">http://nos.nl/uitzending/nos-studio-sport-eredivisie</Category>
+            <Category xsi:type="RssLink" name="NOS Studio Voetbal" thumb="" desc="">http://nos.nl/uitzending/nos-studio-voetbal</Category>
+          </SubCategories>
+        </Category>
+      </Categories>
     </Site>
     <Site name="Power Unlimited" util="PowerUnlimited" agecheck="false" enabled="true" lang="nl">
       <Description>Power Unlimited | PU TV, nieuws, reviews en previews van games voor de PC, Xbox360, PlayStation 3, PlayStation Vita, 3DS en Wii U.</Description>
