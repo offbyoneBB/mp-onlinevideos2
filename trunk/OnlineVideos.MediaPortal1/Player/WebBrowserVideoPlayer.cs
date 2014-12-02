@@ -116,10 +116,10 @@ namespace OnlineVideos.MediaPortal1.Player
             if (_browserProcess.Start())
             {
                 Thread.Sleep(2000); // Sleep for 2 seconds to allow the browser host to load - should prevent the desktop flashing up
-                ReinitialiseService();
-                SuspendMP(true);
                 if (_browserProcess != null)
                 {
+                    ReinitialiseService();
+                    SuspendMP(true);
                     ProcessHelper.SetForeground(_browserProcess.MainWindowHandle);
                     Redirect(_browserProcess.StandardError);
                 }
