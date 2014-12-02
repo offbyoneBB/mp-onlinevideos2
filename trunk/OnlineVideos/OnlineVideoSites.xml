@@ -775,7 +775,74 @@
       </Configuration>
     </Site>
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
-      <Description>Videos from the Swedish Viasat channels TV3 TV6 TV8 and TV10.</Description>
+      <Description>Det fria play-utbudet från Viasat/MTG Sverige. Innehåll från TV3, TV6, TV8, TV10, MTV, Comedy Central, Zeeland och Play Extra.</Description>
+      <Configuration>
+        <item key="apiConfig"><![CDATA[http://playapi.mtgx.tv/v3/config/1209?device=web&premium=open]]></item>
+        <item key="tAll"><![CDATA[Alla kanaler]]></item>
+        <item key="tEpisodes"><![CDATA[Avsnitt]]></item>
+        <item key="tClips"><![CDATA[Klipp]]></item>
+        <item key="cc"><![CDATA[se]]></item>
+      </Configuration>
+    </Site>
+    <Site name="Nova Play" util="Viasat" agecheck="false" enabled="true" lang="bg">
+      <Description>Nova Play</Description>
+      <Configuration>
+        <item key="apiConfig"><![CDATA[http://playapi.mtgx.tv/v3/config/1933?device=web&premium=open]]></item>
+        <item key="tAll"><![CDATA[Всички канали]]></item>
+        <item key="tEpisodes"><![CDATA[Епизоди]]></item>
+        <item key="tClips"><![CDATA[Клипове]]></item>
+        <item key="cc"><![CDATA[bg]]></item>
+      </Configuration>
+    </Site>
+    <Site name="TV3 Play Lietuva" util="Viasat" agecheck="false" enabled="true" lang="lt">
+      <Description>TV3 Play Lietuva</Description>
+      <Configuration>
+        <item key="apiConfig"><![CDATA[http://playapi.mtgx.tv/v3/config/3000?device=web&premium=open]]></item>
+        <item key="tAll"><![CDATA[Visi kanalai]]></item>
+        <item key="tEpisodes"><![CDATA[Serijos]]></item>
+        <item key="tClips"><![CDATA[Klipai]]></item>
+        <item key="cc"><![CDATA[lt]]></item>
+      </Configuration>
+    </Site>
+    <Site name="TV3 Play Eesti" util="Viasat" agecheck="false" enabled="true" lang="et">
+      <Description>TV3 Play Eesti</Description>
+      <Configuration>
+        <item key="apiConfig"><![CDATA[http://playapi.mtgx.tv/v3/config/1375?device=web&premium=open]]></item>
+        <item key="tAll"><![CDATA[Kõik kanalid]]></item>
+        <item key="tEpisodes"><![CDATA[Osad]]></item>
+        <item key="tClips"><![CDATA[Klipid]]></item>
+        <item key="cc"><![CDATA[ee]]></item>
+      </Configuration>
+    </Site>
+    <Site name="TV Play" util="Viasat" agecheck="false" enabled="true" lang="lv">
+      <Description>TV Play</Description>
+      <Configuration>
+        <item key="apiConfig"><![CDATA[http://playapi.mtgx.tv/v3/config/1482?device=web&premium=open]]></item>
+        <item key="tAll"><![CDATA[Visi kanāli]]></item>
+        <item key="tEpisodes"><![CDATA[Epizodes]]></item>
+        <item key="tClips"><![CDATA[Klipi]]></item>
+        <item key="cc"><![CDATA[lv]]></item>
+      </Configuration>
+    </Site>
+    <Site name="TV3 Play Danmark" util="Viasat" agecheck="false" enabled="true" lang="da">
+      <Description>TV3 Play Danmark</Description>
+      <Configuration>
+        <item key="apiConfig"><![CDATA[http://playapi.mtgx.tv/v3/config/3687?device=web&premium=open]]></item>
+        <item key="tAll"><![CDATA[Alle kanaler]]></item>
+        <item key="tEpisodes"><![CDATA[Episoder]]></item>
+        <item key="tClips"><![CDATA[Klip]]></item>
+        <item key="cc"><![CDATA[dk]]></item>
+      </Configuration>
+    </Site>
+    <Site name="Viasat Norge" util="Viasat" agecheck="false" enabled="true" lang="no">
+      <Description>Viasat Norge</Description>
+      <Configuration>
+        <item key="apiConfig"><![CDATA[http://playapi.mtgx.tv/v3/config/1550?device=web&premium=open]]></item>
+        <item key="tAll"><![CDATA[Alle kanaler]]></item>
+        <item key="tEpisodes"><![CDATA[Episoder]]></item>
+        <item key="tClips"><![CDATA[Klipp]]></item>
+        <item key="cc"><![CDATA[no]]></item>
+      </Configuration>
     </Site>
     <Site name="URPlay" util="URPlay" agecheck="false" enabled="true" lang="sv">
       <Description>UR Play är Sveriges mest kunskapsspäckade Playtjänst med program om allt från historia till matematik och språk.</Description>

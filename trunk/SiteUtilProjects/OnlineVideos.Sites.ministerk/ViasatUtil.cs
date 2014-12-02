@@ -9,135 +9,256 @@ using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
-    public class ViasatUtil : SiteUtilBase
+    public class ViasatUtil : LatestVideosSiteUtilBase
     {
-        string[] channels = { "TV3", "TV6", "TV8", "TV10" };
         [Category("OnlineVideosConfiguration"), Description("Url of the swf file that used for playing the videos and rtmp verification")]
         protected string swfUrl = "http://flvplayer.viastream.viasat.tv/flvplayer/play/swf/player.swf";
 
-        [Category("OnlineVideosConfiguration"), Description("Url for channel logos")]
-        protected string logoUrl = "http://www.tv3.se/sites/all/themes/free_tv/css/{0}.se/images/{1}-logo.png";
+        [Category("OnlineVideosConfiguration"), Description("Api config")]
+        protected string apiConfig;
 
-        [Category("OnlineVideosConfiguration"), Description("Url for program listing")]
-        protected string programsListUrl = "http://www.{0}play.se//mobileapi/format";
+        [Category("OnlineVideosConfiguration"), Description("Translation All")]
+        protected string tAll;
 
-        [Category("OnlineVideosConfiguration"), Description("Url for program listing")]
-        protected string videosListUrl = "http://www.{0}play.se//mobileapi/detailed?formatid={1}";
+        [Category("OnlineVideosConfiguration"), Description("Translation Episodes")]
+        protected string tEpisodes;
 
-        [Category("OnlineVideosConfiguration"), Description("Url for images")]
-        protected string imageUrl = "http://play.pdl.viaplay.com/imagecache/290x162/{0}";
+        [Category("OnlineVideosConfiguration"), Description("Translation Clips")]
+        protected string tClips;
 
-        [Category("OnlineVideosConfiguration"), Description("Url for streams")]
-        protected string streamUrl = "http://playapi.mtgx.tv/v3/videos/stream/";
-
-        [Category("OnlineVideosConfiguration"), Description("Url for metadata")]
-        protected string metaDataUrl = "http://playapi.mtgx.tv/v3/videos/";
-
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Download Subtitles"), Description("Choose if you want to download available subtitles or not")]
-        protected bool retrieveSubtitles = true;
+        [Category("OnlineVideosConfiguration"), Description("Country code for search")]
+        protected string cc;
 
         protected string redirectedSwfUrl;
+
+        protected string _searchUrl = "";
+        protected string SearchUrl 
+        { 
+            get 
+            { 
+                if(string.IsNullOrEmpty(_searchUrl))
+                {
+                    JObject config = GetWebData<JObject>(apiConfig);
+                    JToken search = config["views"].First(v => v["name"].Value<string>() == "search");
+                    _searchUrl = search["_links"]["url"]["href"].Value<string>() + "&limit=500";
+                    _searchUrl = _searchUrl.Replace("{country}", cc);
+                }
+                return _searchUrl; 
+            } 
+        }
+
+        public override List<VideoInfo> GetLatestVideos()
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            try
+            {
+                JObject json = GetWebData<JObject>(apiConfig);
+                JToken view = json["views"].First(v => v["name"].Value<string>() == "startpage");
+                string url = view["_links"]["url"]["href"].Value<string>();
+                JToken scope = view["channel_scopes"].First(v => v["default"] != null && v["default"].Value<bool>());
+                string channel = scope["channel"].Value<string>();
+                string mixed = scope["mixed"].Value<uint>().ToString();
+                url = url.Replace("{channel}", channel).Replace("{mixed}", mixed);
+                videos = getVideoList(new RssLink() { Url = url });
+            }
+            catch { }
+            return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
+        }
 
         public override int DiscoverDynamicCategories()
         {
             redirectedSwfUrl = GetRedirectedUrl(swfUrl); // rtmplib does not work with redirected urls to swf files - we find the actual url here
+            JObject config = GetWebData<JObject>(apiConfig);
+            JToken formats = config["views"].First(v => v["name"].Value<string>() == "formats");
+            string url = formats["_links"]["url"]["href"].Value<string>();
+            JToken categories = formats["filters"]["categories"];
+            JToken channels = formats["filters"]["channels"];
 
-            Settings.Categories.Clear();
-            foreach (string channel in channels)
+            foreach (JToken channel in channels)
             {
-                string channelLow = channel.ToLower();
-                RssLink cat = new RssLink() { Name = channel, HasSubCategories = true, SubCategoriesDiscovered = false };
-                cat.Thumb = string.Format(logoUrl, channelLow, channelLow);
-                Settings.Categories.Add(cat);
+                RssLink channelCat = new RssLink()
+                {
+                    Name = channel["default"] != null && channel["default"].Value<bool>() ? tAll : channel["name"].Value<string>(),
+                    HasSubCategories = true,
+                    Url = url,
+                    Other = "titles"
+                };
+                channelCat.Url = channelCat.Url.Replace("{channels}", channel["value"].Value<string>());
+                channelCat.Url = channelCat.Url.Replace("{categories}", categories.First(c => c["default"].Value<bool>())["value"].Value<string>());
+                channelCat.Url += "&order=title";
+                Settings.Categories.Add(channelCat);
             }
-            Settings.DynamicCategoriesDiscovered = true;
+            Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
             return Settings.Categories.Count;
         }
 
-		public override int DiscoverSubCategories(Category parentCategory)
-		{
-			parentCategory.SubCategories = new List<Category>();
-            string url = (parentCategory as RssLink).Url;
-            if (string.IsNullOrEmpty(url))
-                url = string.Format(programsListUrl, parentCategory.Name.ToLower());
-            JObject data = GetWebData<JObject>(url);
-            
-            if (data["sections"] != null)
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            parentCategory.SubCategories = new List<Category>();
+            if (parentCategory.Other.ToString() == "titles")
             {
-                foreach (JToken section in data["sections"])
+                JObject json = GetWebData<JObject>((parentCategory as RssLink).Url);
+                foreach (JToken title in json["_embedded"]["formats"])
                 {
-                    foreach (JToken format in section["formats"])
+                    Category c = new RssLink()
                     {
-                        RssLink subCat = new RssLink()
+                        Name = title["title"].Value<string>(),
+                        Thumb = title["image"].Value<string>(),
+                        Url = title["_links"]["seasons"]["href"].Value<string>(),
+                        ParentCategory = parentCategory,
+                        HasSubCategories = true,
+                        Other = "seasons"
+                    };
+                    parentCategory.SubCategories.Add(c);
+                }
+            }
+            else if (parentCategory.Other.ToString() == "title")
+            {
+                JObject json = GetWebData<JObject>((parentCategory as RssLink).Url);
+                if (json["_links"] != null && json["title"] != null)
+                {
+                    Category c = new RssLink()
+                    {
+                        Name = json["title"].Value<string>(),
+                        Thumb = json["image"].Value<string>(),
+                        Url = json["_links"]["seasons"]["href"].Value<string>(),
+                        ParentCategory = parentCategory,
+                        HasSubCategories = true,
+                        Other = "seasons"
+                    };
+                    parentCategory.SubCategories.Add(c);
+                }
+            }
+            else if (parentCategory.Other.ToString() == "seasons")
+            {
+                JObject json = GetWebData<JObject>((parentCategory as RssLink).Url);
+                foreach (JToken season in json["_embedded"]["seasons"])
+                {
+                    string url = season["_links"]["videos"]["href"].Value<string>() + "&order=airdate";
+                    uint count = GetWebData<JObject>(url + "&limit=1")["count"]["total_items"].Value<uint>();
+                    if (count > 0)
+                    {
+                        Category c = new RssLink()
                         {
-                            Name = (string)format["title"],
-                            Url = string.Format(videosListUrl, parentCategory.Name.ToLower(), (string)format["id"]),
+                            Name = season["title"].Value<string>(),
+                            Thumb = parentCategory.Thumb,
+                            Url = url,
                             ParentCategory = parentCategory,
-                            Thumb = string.Format(imageUrl, (string)format["image"]),
-                            HasSubCategories = true
+                            HasSubCategories = true,
+                            EstimatedVideoCount = count,
+                            Other = ""
                         };
-                        parentCategory.SubCategories.Add(subCat);
+                        parentCategory.SubCategories.Add(c);
                     }
                 }
             }
-            else if (data["formatcategories"] != null)
+            else
             {
-                foreach (JToken formatCategory in data["formatcategories"])
+                uint count = GetWebData<JObject>((parentCategory as RssLink).Url + "&limit=1&type=program")["count"]["total_items"].Value<uint>();
+                if (count > 0)
                 {
-                    RssLink subCat = new RssLink()
+                    parentCategory.SubCategories.Add(new RssLink()
                     {
-                        Name = (string)formatCategory["name"],
-                        Url = (string)formatCategory["videos_call"],
-                        ParentCategory = parentCategory,
-                        Thumb = string.Format(imageUrl, (string)formatCategory["image"]),
-                        HasSubCategories = false
-                    };
-                    parentCategory.SubCategories.Add(subCat);
+                        Name = tEpisodes,
+                        Thumb = parentCategory.Thumb,
+                        Url = (parentCategory as RssLink).Url + "&limit=500&type=program",
+                        EstimatedVideoCount = count,
+                        ParentCategory = parentCategory
+                    });
+                }
+                count = GetWebData<JObject>((parentCategory as RssLink).Url + "&limit=1&type=clip")["count"]["total_items"].Value<uint>();
+                if (count > 0)
+                {
+                    parentCategory.SubCategories.Add(new RssLink()
+                    {
+                        Name = tClips,
+                        Thumb = parentCategory.Thumb,
+                        Url = (parentCategory as RssLink).Url + "&limit=500&type=clip",
+                        EstimatedVideoCount = count,
+                        ParentCategory = parentCategory
+                    });
                 }
             }
-			parentCategory.SubCategoriesDiscovered = true;
-			return parentCategory.SubCategories.Count;
-		}
+            parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
+            return parentCategory.SubCategories.Count;
+        }
 
 
         public override List<VideoInfo> getVideoList(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
+            JObject json = GetWebData<JObject>((category as RssLink).Url);
+            if (json["_embedded"]["sections"] != null)
             {
-                JObject data = GetWebData<JObject>((category as RssLink).Url);
-                foreach (JToken episode in data["video_program"])
+                json = (JObject)json["_embedded"]["sections"].First(s => s["_meta"]["section_name"].Value<string>() == "videos.latest");
+            }
+            foreach (JToken v in json["_embedded"]["videos"].Where(v => !v["publishing_status"]["login_required"].Value<bool>()))
+            {
+                VideoInfo video = new VideoInfo();
+                video.Title = v["title"].Value<string>();
+                video.SubtitleUrl = "";
+                if (v["sami_path"] != null)
+                    video.SubtitleUrl = v["sami_path"].Value<string>();
+                if (string.IsNullOrEmpty(video.SubtitleUrl) && v["subtitles_for_hearing_impaired"] != null)
+                    video.SubtitleUrl = v["subtitles_for_hearing_impaired"].Value<string>();
+                video.VideoUrl = v["_links"]["stream"]["href"].Value<string>();
+                string desc = "";
+                if (v["summary"] != null)
+                    desc = v["summary"].Value<string>();
+                if (v["description"] != null)
+                    desc += "\r\n" + v["description"].Value<string>();
+                video.Description = desc;
+                video.ImageUrl = v["_links"]["image"]["href"].Value<string>().Replace("{size}", "230x150");
+                if (v["duration"] != null && !string.IsNullOrEmpty(v["duration"].ToString()) && v["duration"].Value<int>() > 0)
                 {
-                    VideoInfo video = new VideoInfo();
-                    video.Title = (string)episode["title"];
-                    video.VideoUrl = episode["id"].ToString();
-                    video.ImageUrl = string.Format(imageUrl, (string)episode["image"]);
-                    video.Description = (string)episode["summary"];
-                    videos.Add(video);
+                    TimeSpan t = TimeSpan.FromSeconds(v["duration"].Value<int>());
+                    video.Length = string.Format("{0:D2}:{1:D2}:{2:D2}", t.Hours, t.Minutes, t.Seconds);
                 }
-                foreach (JToken episode in data["video_clip"])
+                else
                 {
-                    VideoInfo video = new VideoInfo();
-                    video.Title = (string)episode["title"];
-                    video.VideoUrl = episode["id"].ToString();
-                    video.ImageUrl = string.Format(imageUrl, (string)episode["image"]);
-                    video.Description = (string)episode["summary"];
-                    videos.Add(video);
+                    video.Length = "--:--:--";
                 }
+                if (v["broadcasts"] != null && v["broadcasts"].Count() > 0 && !string.IsNullOrEmpty(v["broadcasts"].First()["air_at"].ToString()))
+                {
+                    try
+                    {
+                        DateTime dt = Convert.ToDateTime(v["broadcasts"].First()["air_at"].Value<string>());
+                        video.Airdate = dt.ToString();
+                    }
+                    catch { }
+                }
+                //Extra carefull...
+                JToken fp = v["format_position"];
+                if (fp != null 
+                    && !string.IsNullOrEmpty(fp["is_episodic"].ToString())
+                    && fp["is_episodic"].Value<bool>() 
+                    && !string.IsNullOrEmpty(fp["season"].ToString()) 
+                    && !string.IsNullOrEmpty(fp["episode"].ToString())
+                    )
+                {
+                    uint s = fp["season"].Value<uint>();
+                    uint e = fp["episode"].Value<uint>();
+                    if (s > 0 && e > 0)
+                    {
+                        ITrackingInfo ti = new TrackingInfo() { VideoKind = VideoKind.TvSeries, Episode = e, Season = s, Title = v["format_title"].Value<string>() };
+                        video.Other = ti;
+                    }
+                }
+                videos.Add(video);
             }
             return videos;
         }
 
         public override string getUrl(VideoInfo video)
         {
-            JObject data = GetWebData<JObject>(streamUrl + video.VideoUrl);
 
-            string playstr = (string)data["streams"]["medium"];
+            JObject data = GetWebData<JObject>(video.VideoUrl);
 
-
+            string playstr = data["streams"]["medium"].Value<string>();
             if (playstr.ToLower().StartsWith("rtmp"))
             {
-                int mp4IndexFlash = playstr.ToLower().IndexOf("mp4:flash");
-                int mp4Index = mp4IndexFlash >= 0 ? mp4IndexFlash : playstr.ToLower().IndexOf("mp4:pitcher");
+                int mp4IndexFlash = playstr.ToLower().IndexOf("mp4:");
+                int mp4Index = mp4IndexFlash >= 0 ? mp4IndexFlash : playstr.ToLower().IndexOf("flv:"); 
                 if (mp4Index > 0)
                 {
                     playstr = new MPUrlSourceFilter.RtmpUrl(playstr.Substring(0, mp4Index)) { PlayPath = playstr.Substring(mp4Index), SwfUrl = redirectedSwfUrl, SwfVerify = true }.ToString();
@@ -151,25 +272,57 @@ namespace OnlineVideos.Sites
             {
                 playstr += "?hdcore=3.3.0" + "&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
             }
-            
-            if (retrieveSubtitles)
+
+            if (!string.IsNullOrEmpty(video.SubtitleUrl))
             {
-                data = GetWebData<JObject>(metaDataUrl + video.VideoUrl);
-                string sub = (string)data["sami_path"];
-                if (string.IsNullOrEmpty(sub))
-                    sub = (string)data["subtitles_for_hearing_impaired"];
-                if (!string.IsNullOrEmpty(sub))
-                {
-                    sub = GetSubtitle(sub);
-                    video.SubtitleText = sub;
-                }
+                video.SubtitleText = GetSubtitle(video.SubtitleUrl);
+                video.SubtitleUrl = "";
             }
             return playstr;
         }
 
+        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+            if (video.Other is ITrackingInfo)
+            {
+                return video.Other as ITrackingInfo;
+            }
+            return base.GetTrackingInfo(video);
+        }
+
+        public override bool CanSearch
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(cc);
+            }
+        }
+
+        public override List<ISearchResultItem> DoSearch(string query)
+        {
+            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            string searchUrl = SearchUrl.Replace("{term}", HttpUtility.UrlEncode(query));
+            JObject json = GetWebData<JObject>(searchUrl);
+            if (json["_embedded"] != null && json["_embedded"]["formats"] != null && json["_embedded"]["formats"].Count() > 0)
+            {
+                foreach (JToken format in json["_embedded"]["formats"])
+                {
+                    results.Add(new RssLink()
+                    {
+                        Name = format["title"].Value<string>(),
+                        Url = format["_links"]["self"]["href"].Value<string>(),
+                        Thumb = format["_links"]["image"]["href"].Value<string>().Replace("{size}", "230x150"),
+                        HasSubCategories = true,
+                        Other = "title"
+                    });
+                }
+            }
+            return results;
+        }
+
         private string GetSubtitle(string url)
         {
-            XmlDocument xDoc = GetWebData<XmlDocument>(url);
+            XmlDocument xDoc = GetWebData<XmlDocument>(url, encoding: System.Text.Encoding.UTF8);
             string srt = string.Empty;
             string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n";
             string begin;
@@ -201,5 +354,6 @@ namespace OnlineVideos.Sites
             string result = Source.Remove(Place, Find.Length).Insert(Place, Replace);
             return result;
         }
+
     }
 }
