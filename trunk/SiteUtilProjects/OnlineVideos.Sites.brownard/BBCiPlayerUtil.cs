@@ -46,7 +46,7 @@ namespace OnlineVideos.Sites
 
         #region Regex
 
-        static readonly Regex seriesRegex = new Regex(@"<li class=""list-item[^""]*"" data-ip-id=""([^""]*)"">.*?<div class=""title top-title"">([^<]*)</div>.*?data-ip-src=""([^""]*)"">");
+        static readonly Regex seriesRegex = new Regex(@"<li class=""list-item[^""]*"" data-ip-id=""([^""]*)"">.*?<div class=""title top-title"">([^<]*)</div>.*?data-ip-src=""([^""]*)"">", RegexOptions.Singleline);
         static readonly Regex aToZRegex = new Regex(@"<li>\s*<a href=""/iplayer/brand/([^""]*)"".*?<span class=""title"">([^<]*)", RegexOptions.Singleline);
         static readonly Regex nextPageRegex = new Regex(@"<span class=""next txt""><a href=""([^""]*)"">Next");
 
