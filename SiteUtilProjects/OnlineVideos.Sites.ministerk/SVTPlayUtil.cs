@@ -273,7 +273,16 @@ namespace OnlineVideos.Sites
             Uri uri = new Uri(new Uri(baseUrl), a.GetAttributeValue("href", ""));
             video.VideoUrl = uri.ToString();
             HtmlNode img = a.Descendants("img").FirstOrDefault(i => !string.IsNullOrEmpty(i.GetAttributeValue("data-imagename", "")));
-            video.ImageUrl = img != null ? img.GetAttributeValue("data-imagename", "") : "";
+            if (img == null)
+            {
+                img = a.Descendants("img").FirstOrDefault(i => !string.IsNullOrEmpty(i.GetAttributeValue("src", "")));
+                if (img != null)
+                    video.ImageUrl = img.GetAttributeValue("src", "");
+            }
+            else
+            {
+                video.ImageUrl = img.GetAttributeValue("data-imagename", "");
+            }
             video.CleanDescriptionAndTitle();
             return video;
         }
@@ -404,7 +413,7 @@ namespace OnlineVideos.Sites
             {
                 HtmlNode div = section.SelectSingleNode("div");
                 RssLink cat = new RssLink();
-                cat.Name = div.SelectSingleNode("div/h1").InnerText;
+                cat.Name = div.SelectSingleNode("div/h1").InnerText.Trim();
                 if (cat.Name.ToLower().Contains("oppetarkiv"))
                     cat.Name = _oppetArkiv;
                 cat.HasSubCategories = subcats.Any(c => c == div.GetAttributeValue("id", ""));
