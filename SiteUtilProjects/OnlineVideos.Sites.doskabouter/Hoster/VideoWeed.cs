@@ -18,9 +18,7 @@ namespace OnlineVideos.Hoster
             string page = SiteUtilBase.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
-                string step1 = WiseCrack(page);
-
-                string link = FlashProvider(step1);
+                string link = FlashProvider(page);
                 if (!String.IsNullOrEmpty(link))
                     videoType = VideoType.flv;
                 return link;
