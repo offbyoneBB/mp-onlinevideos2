@@ -121,7 +121,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                     {
                         Browser.Refresh(WebBrowserRefreshOption.Completely);// Need to do this for some reason
                         _currentState = State.None;
-                        _loadingPicture.Visible = false;
+                        HideLoading();
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
                         // Wait 5 seconds for the video to start before disabling app storage - we'll do this in a separate thread
