@@ -136,7 +136,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                     Browser.FindForm().Controls.Add(_blankPanel);
                     _blankPanel.BringToFront();
 
-                    _loadingPicture.Visible = false;
+                    HideLoading();
 
                     ProcessComplete.Finished = true;
                     ProcessComplete.Success = true;
