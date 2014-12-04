@@ -56,6 +56,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private string _password;
         private BrowserUtilConnector _connector;
         private bool _debugMode = false; // Allow for the form to be resized/lose focus in debug mode
+        private string _debugLogPath;
+        private bool _debugEntryWritten = false;
 
         private int _lastKeyPressed;
         private DateTime _lastKeyPressedTime;
@@ -65,7 +67,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private ServiceHost _callbackService;
 
         private DateTime _lastActionTime;
-
+        
         /// <summary>
         /// Store/retrieve the current screen the web player is showing on - this is stored in the user config
         /// </summary>
@@ -103,6 +105,10 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             var configValue = ConfigurationManager.AppSettings["DebugMode"];
             if (!string.IsNullOrEmpty(configValue) && configValue.ToUpper() == "TRUE")
                 _debugMode = true;
+
+            configValue = ConfigurationManager.AppSettings["DebugLogPath"];
+            if (!string.IsNullOrEmpty(configValue)) _debugLogPath = configValue;
+
         }
         
         /// <summary>
@@ -114,42 +120,55 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         {
             try
             {
+
+                WriteDebugLog("Setting current screen");
                 SetScreenState();
                 SetCurrentScreen();
 
                 ForceClose = false;
                 this.Activate();
                 this.Focus();
-
+                WriteDebugLog("Initialising services");
                 _callbackService = new WebBrowserPlayerCallbackServiceHost();
                 _service = new WebBrowserPlayerServiceHost();
 
                 WebBrowserPlayerService.ServiceImplementation.WebBrowserPlayerService.OnNewActionReceived += OnNewActionFromClient;
+                WriteDebugLog(string.Format("Browser Host started with connector type: {0}, video info: {1}, Username: {2}", _connectorType, _videoInfo, _userName));
                 WebBrowserPlayerCallbackService.LogInfo(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
 
+                WriteDebugLog("Loading Connector");
                 _connector = BrowserInstanceConnectorFactory.GetConnector(_connectorType, OnlineVideoSettings.Instance.Logger, webBrowser);
+
                 if (_connector == null)
-                    throw new ApplicationException(string.Format("Unable to load connector type {0}, not found in any site utils",  _connectorType));
+                {
+                    WriteDebugLog(string.Format("Unable to load connector type {0}, not found in any site utils", _connectorType));
+                    throw new ApplicationException(string.Format("Unable to load connector type {0}, not found in any site utils", _connectorType));
+                }
 
                 _connector.DebugMode = _debugMode;
+                WriteDebugLog("Performing Log in");
                 _connector.PerformLogin(_userName, _password);
 
                 var result = _connector.WaitForComplete(ForceQuitting, OnlineVideoSettings.Instance.UtilTimeout);
 
                 if (result)
                 {
+                    WriteDebugLog("Playing Video");
                     _connector.PlayVideo(_videoInfo);
                     result = _connector.WaitForComplete(ForceQuitting, OnlineVideoSettings.Instance.UtilTimeout);
+                    WriteDebugLog("Playing WaitforComplete " + result.ToString());
                     if (!result)
                         ForceQuit();
                 }
                 else
                 {
+                    WriteDebugLog("Log in failed");
                     ForceQuit();
                 }                
             }
             catch (Exception ex)
             {
+                WriteDebugLog(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
                 Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
                 Console.Error.Flush();
                 WebBrowserPlayerCallbackService.LogError(ex);
@@ -351,6 +370,27 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 if (!_debugMode) this.WindowState = FormWindowState.Normal;
                 this.Location = Screen.AllScreens[CurrentScreen].Bounds.Location;
                 if (!_debugMode) this.WindowState = FormWindowState.Maximized;
+            }
+        }
+
+        /// <summary>
+        /// Write a debug message if enabled in the app config
+        /// </summary>
+        /// <param name="message"></param>
+        private void WriteDebugLog(string message)
+        {
+            if (_debugMode)
+            {
+                if (!string.IsNullOrEmpty(_debugLogPath) && Directory.Exists(Path.GetDirectoryName(_debugLogPath)))
+                {
+                    var msg = DateTime.Now.ToString("dd MMM yyyy HH:mm:ss") + " " + message + "\r\n";
+                    // Create a new file for first line to be written
+                    if (!_debugEntryWritten)
+                        File.WriteAllText(_debugLogPath, msg);
+                    else
+                        File.AppendAllText(_debugLogPath, msg);
+                }
+                _debugEntryWritten = true;
             }
         }
 
