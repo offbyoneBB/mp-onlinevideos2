@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using OnlineVideos.Hoster.Base;
@@ -798,7 +801,37 @@ namespace OnlineVideos.Hoster
             packed = packed.Replace(@"\'", @"'");
             string unpacked = UnPack(packed);
             string res = GetSubString(unpacked, @"{file:""", @"""");
-            return res;
+            if (res.StartsWith(@"http://"))
+                return res;
+
+            RijndaelManaged rijndael = new RijndaelManaged();
+            rijndael.Key = HexToBytes("a949376e37b369f17bc7d3c7a04c5721");
+            rijndael.Mode = CipherMode.ECB;
+            rijndael.Padding = PaddingMode.Zeros;
+            ICryptoTransform decryptor = rijndael.CreateDecryptor(rijndael.Key, rijndael.IV);
+            using (MemoryStream msDecrypt = new MemoryStream(HexToBytes(res)))
+            {
+                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                {
+                    using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                    {
+                        res = srDecrypt.ReadToEnd();
+                        int p = res.IndexOf('\0');
+                        return res.Substring(0, p - 1);
+                    }
+                }
+            }
+        }
+
+        private byte[] HexToBytes(string hexString)
+        {
+            byte[] HexAsBytes = new byte[hexString.Length / 2];
+            for (int index = 0; index < HexAsBytes.Length; index++)
+            {
+                string byteValue = hexString.Substring(index * 2, 2);
+                HexAsBytes[index] = byte.Parse(byteValue, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+            }
+            return HexAsBytes;
         }
 
     }
