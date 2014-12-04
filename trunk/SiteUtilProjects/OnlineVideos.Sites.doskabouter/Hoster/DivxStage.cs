@@ -58,4 +58,12 @@ namespace OnlineVideos.Hoster
             return "DivxStage.net";
         }
     }
+
+    public class DivxStageTo : DivxStage
+    {
+        public override string getHosterUrl()
+        {
+            return "DivxStage.to";
+        }
+    }
 }

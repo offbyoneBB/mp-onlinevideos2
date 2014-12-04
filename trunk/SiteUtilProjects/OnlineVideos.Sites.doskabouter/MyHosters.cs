@@ -211,6 +211,29 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class FileNuke : MyHosterBase
+    {
+        public override string getHosterUrl()
+        {
+            return "filenuke.com";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            string webData = SiteUtilBase.GetWebData(url);
+            webData = GetFromPost(url, webData);
+            Match m = Regex.Match(webData, @"var\slnk1\s=\s'(?<url>[^']*)'");
+            if (m.Success)
+            {
+                HttpUrl httpUrl = new HttpUrl(m.Groups["url"].Value);
+                httpUrl.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+                return httpUrl.ToString();
+            }
+            return String.Empty;
+        }
+    }
+
+
     public class FrogMovz : HosterBase
     {
         public override string getHosterUrl()
@@ -759,13 +782,15 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
-            string[] parts = url.Split('.');
-            string id = parts[parts.Length - 2];
-            if (!id.Contains("-"))
-                //probably http://www.vidbull.com/t9i14x2l8s0v.html, so work to http://vidbull.com/embed-t9i14x2l8s0v-650x328.html
-                //that way, there's no need for a delay+post
-                parts[parts.Length - 2] = id.Replace("com/", "com/embed-") + "-650x328";
-            url = String.Join(".", parts);
+            Match m = Regex.Match(url, @"vidbull.com/(?<id>[^\.]*)");
+            if (m.Success)
+            {
+                string id = m.Groups["id"].Value;
+
+                if (!id.Contains("-"))
+                    id = "embed-" + id + "-640x318.html";
+                url = @"http://www.vidbull.com/" + id;
+            };
 
             string webData = SiteUtilBase.GetWebData(url);
             string sub = GetSubString(webData, "id='flvplayer'", null);
