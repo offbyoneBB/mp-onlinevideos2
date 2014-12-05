@@ -1,4 +1,5 @@
 ﻿using OnlineVideos.Sites.WebAutomation.BrowserHost.Factories;
+using OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,6 +45,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             }
             catch (Exception ex)
             {
+                DebugLogger.WriteDebugLog(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
                 Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
                 Console.Error.Flush();
             }

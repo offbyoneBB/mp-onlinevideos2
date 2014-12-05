@@ -78,6 +78,7 @@
     </Compile>
     <Compile Include="BrowserHost.cs" />
     <Compile Include="Factories\ConnectorFactory.cs" />
+    <Compile Include="Helpers\DebugLogger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\IERegistryVersion.cs" />
