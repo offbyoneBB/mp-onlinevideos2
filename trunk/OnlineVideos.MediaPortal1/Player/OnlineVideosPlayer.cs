@@ -414,6 +414,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 // MediaPortal IPTV filter and url source splitter
 
                 int index = url.IndexOf(MPUrlSourceSplitter.V2.SimpleUrl.ParameterSeparator);
+
                 if (index != (-1))
                 {
                     OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.SimpleUrl filterUrl = null;
@@ -465,6 +466,12 @@ namespace OnlineVideos.MediaPortal1.Player
                         httpFilterUrl.OpenConnectionTimeout = siteUtil.HttpSettings.OpenConnectionTimeout;
                         httpFilterUrl.TotalReopenConnectionTimeout = siteUtil.HttpSettings.TotalReopenConnectionTimeout;
                         httpFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.HttpSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.HttpSettings.NetworkInterface : String.Empty;
+
+                        httpFilterUrl.DumpProtocolInputData = siteUtil.HttpSettings.DumpProtocolInputData;
+                        httpFilterUrl.DumpProtocolOutputData = siteUtil.HttpSettings.DumpProtocolOutputData;
+                        httpFilterUrl.DumpParserInputData = siteUtil.HttpSettings.DumpParserInputData;
+                        httpFilterUrl.DumpParserOutputData = siteUtil.HttpSettings.DumpParserOutputData;
+                        httpFilterUrl.DumpOutputPinData = siteUtil.HttpSettings.DumpOutputPinData;
                     }
 
                     if (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtmpUrl)
@@ -495,6 +502,12 @@ namespace OnlineVideos.MediaPortal1.Player
                         rtmpFilterUrl.OpenConnectionTimeout = siteUtil.RtmpSettings.OpenConnectionTimeout;
                         rtmpFilterUrl.TotalReopenConnectionTimeout = siteUtil.RtmpSettings.TotalReopenConnectionTimeout;
                         rtmpFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.RtmpSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.RtmpSettings.NetworkInterface : String.Empty;
+
+                        rtmpFilterUrl.DumpProtocolInputData = siteUtil.RtmpSettings.DumpProtocolInputData;
+                        rtmpFilterUrl.DumpProtocolOutputData = siteUtil.RtmpSettings.DumpProtocolOutputData;
+                        rtmpFilterUrl.DumpParserInputData = siteUtil.RtmpSettings.DumpParserInputData;
+                        rtmpFilterUrl.DumpParserOutputData = siteUtil.RtmpSettings.DumpParserOutputData;
+                        rtmpFilterUrl.DumpOutputPinData = siteUtil.RtmpSettings.DumpOutputPinData;
                     }
 
                     if (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtspUrl)
@@ -513,6 +526,12 @@ namespace OnlineVideos.MediaPortal1.Player
                         rtspFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.RtspSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.RtspSettings.NetworkInterface : String.Empty;
                         rtspFilterUrl.ClientPortMax = siteUtil.RtspSettings.ClientPortMin;
                         rtspFilterUrl.ClientPortMin = siteUtil.RtspSettings.ClientPortMax;
+
+                        rtspFilterUrl.DumpProtocolInputData = siteUtil.RtspSettings.DumpProtocolInputData;
+                        rtspFilterUrl.DumpProtocolOutputData = siteUtil.RtspSettings.DumpProtocolOutputData;
+                        rtspFilterUrl.DumpParserInputData = siteUtil.RtspSettings.DumpParserInputData;
+                        rtspFilterUrl.DumpParserOutputData = siteUtil.RtspSettings.DumpParserOutputData;
+                        rtspFilterUrl.DumpOutputPinData = siteUtil.RtspSettings.DumpOutputPinData;
                     }
 
                     if (simpleUrl is OnlineVideos.MPUrlSourceFilter.UdpRtpUrl)
@@ -525,6 +544,12 @@ namespace OnlineVideos.MediaPortal1.Player
                         udpFilterUrl.TotalReopenConnectionTimeout = siteUtil.UdpRtpSettings.TotalReopenConnectionTimeout;
                         udpFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.UdpRtpSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.UdpRtpSettings.NetworkInterface : String.Empty;
                         udpFilterUrl.ReceiveDataCheckInterval = siteUtil.UdpRtpSettings.ReceiveDataCheckInterval;
+
+                        udpFilterUrl.DumpProtocolInputData = siteUtil.UdpRtpSettings.DumpProtocolInputData;
+                        udpFilterUrl.DumpProtocolOutputData = siteUtil.UdpRtpSettings.DumpProtocolOutputData;
+                        udpFilterUrl.DumpParserInputData = siteUtil.UdpRtpSettings.DumpParserInputData;
+                        udpFilterUrl.DumpParserOutputData = siteUtil.UdpRtpSettings.DumpParserOutputData;
+                        udpFilterUrl.DumpOutputPinData = siteUtil.UdpRtpSettings.DumpOutputPinData;
                     }
 
                     filterUrl.LiveStream = simpleUrl.LiveStream;
@@ -538,7 +563,83 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
-                    return url;
+                    // create filter url with url factory
+
+                    OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.SimpleUrl simpleUrl = OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UrlFactory.CreateUrl(url);
+
+                    //if (simpleUrl is OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.AfhsManifestUrl)
+                    //{
+                    //    OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.AfhsManifestUrl afhsFilterUrl = simpleUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.AfhsManifestUrl;
+                    //}
+
+                    if (simpleUrl is OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.HttpUrl)
+                    {
+                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.HttpUrl httpFilterUrl = simpleUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.HttpUrl;
+
+                        httpFilterUrl.OpenConnectionSleepTime = siteUtil.HttpSettings.OpenConnectionSleepTime;
+                        httpFilterUrl.OpenConnectionTimeout = siteUtil.HttpSettings.OpenConnectionTimeout;
+                        httpFilterUrl.TotalReopenConnectionTimeout = siteUtil.HttpSettings.TotalReopenConnectionTimeout;
+                        httpFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.HttpSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.HttpSettings.NetworkInterface : String.Empty;
+
+                        httpFilterUrl.DumpProtocolInputData = siteUtil.HttpSettings.DumpProtocolInputData;
+                        httpFilterUrl.DumpProtocolOutputData = siteUtil.HttpSettings.DumpProtocolOutputData;
+                        httpFilterUrl.DumpParserInputData = siteUtil.HttpSettings.DumpParserInputData;
+                        httpFilterUrl.DumpParserOutputData = siteUtil.HttpSettings.DumpParserOutputData;
+                        httpFilterUrl.DumpOutputPinData = siteUtil.HttpSettings.DumpOutputPinData;
+                    }
+
+                    if (simpleUrl is OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpUrl)
+                    {
+                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpUrl rtmpFilterUrl = simpleUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpUrl;
+
+                        rtmpFilterUrl.OpenConnectionSleepTime = siteUtil.RtmpSettings.OpenConnectionSleepTime;
+                        rtmpFilterUrl.OpenConnectionTimeout = siteUtil.RtmpSettings.OpenConnectionTimeout;
+                        rtmpFilterUrl.TotalReopenConnectionTimeout = siteUtil.RtmpSettings.TotalReopenConnectionTimeout;
+                        rtmpFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.RtmpSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.RtmpSettings.NetworkInterface : String.Empty;
+
+                        rtmpFilterUrl.DumpProtocolInputData = siteUtil.RtmpSettings.DumpProtocolInputData;
+                        rtmpFilterUrl.DumpProtocolOutputData = siteUtil.RtmpSettings.DumpProtocolOutputData;
+                        rtmpFilterUrl.DumpParserInputData = siteUtil.RtmpSettings.DumpParserInputData;
+                        rtmpFilterUrl.DumpParserOutputData = siteUtil.RtmpSettings.DumpParserOutputData;
+                        rtmpFilterUrl.DumpOutputPinData = siteUtil.RtmpSettings.DumpOutputPinData;
+                    }
+
+                    if (simpleUrl is OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl)
+                    {
+                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl rtspFilterUrl = simpleUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl;
+
+                        rtspFilterUrl.OpenConnectionSleepTime = siteUtil.RtspSettings.OpenConnectionSleepTime;
+                        rtspFilterUrl.OpenConnectionTimeout = siteUtil.RtspSettings.OpenConnectionTimeout;
+                        rtspFilterUrl.TotalReopenConnectionTimeout = siteUtil.RtspSettings.TotalReopenConnectionTimeout;
+                        rtspFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.RtspSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.RtspSettings.NetworkInterface : String.Empty;
+                        rtspFilterUrl.ClientPortMax = siteUtil.RtspSettings.ClientPortMin;
+                        rtspFilterUrl.ClientPortMin = siteUtil.RtspSettings.ClientPortMax;
+
+                        rtspFilterUrl.DumpProtocolInputData = siteUtil.RtspSettings.DumpProtocolInputData;
+                        rtspFilterUrl.DumpProtocolOutputData = siteUtil.RtspSettings.DumpProtocolOutputData;
+                        rtspFilterUrl.DumpParserInputData = siteUtil.RtspSettings.DumpParserInputData;
+                        rtspFilterUrl.DumpParserOutputData = siteUtil.RtspSettings.DumpParserOutputData;
+                        rtspFilterUrl.DumpOutputPinData = siteUtil.RtspSettings.DumpOutputPinData;
+                    }
+
+                    if (simpleUrl is OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl)
+                    {
+                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl udpFilterUrl = simpleUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl;
+                        
+                        udpFilterUrl.OpenConnectionSleepTime = siteUtil.UdpRtpSettings.OpenConnectionSleepTime;
+                        udpFilterUrl.OpenConnectionTimeout = siteUtil.UdpRtpSettings.OpenConnectionTimeout;
+                        udpFilterUrl.TotalReopenConnectionTimeout = siteUtil.UdpRtpSettings.TotalReopenConnectionTimeout;
+                        udpFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.UdpRtpSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.UdpRtpSettings.NetworkInterface : String.Empty;
+                        udpFilterUrl.ReceiveDataCheckInterval = siteUtil.UdpRtpSettings.ReceiveDataCheckInterval;
+
+                        udpFilterUrl.DumpProtocolInputData = siteUtil.UdpRtpSettings.DumpProtocolInputData;
+                        udpFilterUrl.DumpProtocolOutputData = siteUtil.UdpRtpSettings.DumpProtocolOutputData;
+                        udpFilterUrl.DumpParserInputData = siteUtil.UdpRtpSettings.DumpParserInputData;
+                        udpFilterUrl.DumpParserOutputData = siteUtil.UdpRtpSettings.DumpParserOutputData;
+                        udpFilterUrl.DumpOutputPinData = siteUtil.UdpRtpSettings.DumpOutputPinData;
+                    }
+
+                    return (simpleUrl != null) ? simpleUrl.ToString() : url;
                 }
             }
             else

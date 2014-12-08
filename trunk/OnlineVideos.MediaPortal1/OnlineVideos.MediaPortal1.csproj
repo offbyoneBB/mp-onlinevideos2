@@ -295,6 +295,7 @@
     <Compile Include="MPUrlSourceSplitter\V2\RtspUrl.cs" />
     <Compile Include="MPUrlSourceSplitter\V2\SimpleUrl.cs" />
     <Compile Include="MPUrlSourceSplitter\V2\UdpRtpUrl.cs" />
+    <Compile Include="MPUrlSourceSplitter\V2\UrlFactory.cs" />
     <Compile Include="NavigationContextSwitch.cs" />
     <Compile Include="OnlineVideosGuiListItem.cs" />
     <Compile Include="Player\ExternalOSDLibrary\BaseWindow.cs" />
