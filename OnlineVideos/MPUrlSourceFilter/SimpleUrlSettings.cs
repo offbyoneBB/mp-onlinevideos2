@@ -45,6 +45,36 @@ namespace OnlineVideos.MPUrlSourceFilter
             }
         }
 
+        /// <summary>
+        /// Specifies if protocol have to dump input data.
+        /// </summary>
+        [Category("OnlineVideosUserConfiguration"), Description("Specifies if protocol have to dump input data.")]
+        public Boolean DumpProtocolInputData { get; set; }
+
+        /// <summary>
+        /// Specifies if protocol have to dump output data.
+        /// </summary>
+        [Category("OnlineVideosUserConfiguration"), Description("Specifies if protocol have to dump output data.")]
+        public Boolean DumpProtocolOutputData { get; set; }
+
+        /// <summary>
+        /// Specifies if parser have to dump input data.
+        /// </summary>
+        [Category("OnlineVideosUserConfiguration"), Description("Specifies if parser have to dump input data.")]
+        public Boolean DumpParserInputData { get; set; }
+
+        /// <summary>
+        /// Specifies if parser have to dump output data.
+        /// </summary>
+        [Category("OnlineVideosUserConfiguration"), Description("Specifies if parser have to dump output data.")]
+        public Boolean DumpParserOutputData { get; set; }
+
+        /// <summary>
+        /// Specifies if output pin(s) have to dump data.
+        /// </summary>
+        [Category("OnlineVideosUserConfiguration"), Description("Specifies if output pin(s) have to dump data.")]
+        public Boolean DumpOutputPinData { get; set; }
+
         #endregion
 
         #region Constructors
@@ -69,6 +99,12 @@ namespace OnlineVideos.MPUrlSourceFilter
             Hashtable parameters = SimpleUrlSettings.GetParameters(value);
 
             this.NetworkInterface = SimpleUrlSettings.GetValue(parameters, "NetworkInterface", OnlineVideoSettings.NetworkInterfaceSystemDefault);
+
+            this.DumpProtocolInputData = (String.Compare(SimpleUrlSettings.GetValue(parameters, "DumpProtocolInputData", "0"), "1") == 0);
+            this.DumpProtocolOutputData = (String.Compare(SimpleUrlSettings.GetValue(parameters, "DumpProtocolOutputData", "0"), "1") == 0);
+            this.DumpParserInputData = (String.Compare(SimpleUrlSettings.GetValue(parameters, "DumpParserInputData", "0"), "1") == 0);
+            this.DumpParserOutputData = (String.Compare(SimpleUrlSettings.GetValue(parameters, "DumpParserOutputData", "0"), "1") == 0);
+            this.DumpOutputPinData = (String.Compare(SimpleUrlSettings.GetValue(parameters, "DumpOutputPinData", "0"), "1") == 0);
         }
 
         #endregion
@@ -87,6 +123,12 @@ namespace OnlineVideos.MPUrlSourceFilter
 
             builder.Append((String.CompareOrdinal(this.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? String.Format("NetworkInterface={0};", this.NetworkInterface) : String.Empty);
 
+            builder.Append(this.DumpProtocolInputData ? "DumpProtocolInputData=1;" : String.Empty);
+            builder.Append(this.DumpProtocolOutputData ? "DumpProtocolOutputData=1;" : String.Empty);
+            builder.Append(this.DumpParserInputData ? "DumpParserInputData=1;" : String.Empty);
+            builder.Append(this.DumpParserOutputData ? "DumpParserOutputData=1;" : String.Empty);
+            builder.Append(this.DumpOutputPinData ? "DumpOutputPinData=1;" : String.Empty);
+            
             return builder.ToString();
         }
 
