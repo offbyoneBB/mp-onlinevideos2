@@ -182,7 +182,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                IEnumerable<HtmlNode> categoryNodes = htmlNode.Descendants("li").Where(li => li.GetAttributeValue("class", "").Contains("play_category-tab"));
+                IEnumerable<HtmlNode> categoryNodes = htmlNode.Descendants("li").Where(li => li.GetAttributeValue("class", "").Contains("play_category__tab-list-item"));
                 if (categoryNodes == null || categoryNodes.Count() == 0)
                     categoryNodes = htmlNode.Descendants("li").Where(li => li.GetAttributeValue("class", "").Contains("play_list__item"));
                 if (categoryNodes == null || categoryNodes.Count() == 0)
@@ -196,7 +196,7 @@ namespace OnlineVideos.Sites
                     RssLink category = new RssLink() { Name = HttpUtility.HtmlDecode(categoryNode.SelectSingleNode("a").InnerText.Trim()), ParentCategory = parentCategory };
                     if (category.Name == _programA_O)
                     {
-                        IEnumerable<HtmlNode> alphaList = div.Descendants("li").Where(d => d.GetAttributeValue("class", "").Contains("play_alphabetic-list__section-title"));
+                        IEnumerable<HtmlNode> alphaList = div.Descendants("li").Where(d => d.GetAttributeValue("class", "").Contains("alphabetic-list-item") && !d.GetAttributeValue("class", "").Contains("play_is-hidden"));
                         bool split = SplitByLetter && alphaList != null && alphaList.Count() > 0;
                         category.HasSubCategories = true;
                         category.SubCategories = new List<Category>();
