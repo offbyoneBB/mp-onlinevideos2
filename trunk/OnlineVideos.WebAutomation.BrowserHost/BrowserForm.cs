@@ -234,6 +234,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 if (msg.Msg == WM_APPCOMMAND || msg.Msg == WM_KEYDOWN || msg.Msg == WM_LBUTTONDOWN ||
                         msg.Msg == WM_RBUTTONDOWN || msg.Msg == WM_SYSKEYDOWN)
                 {
+
+                    DebugLogger.WriteDebugLog(string.Format("WndProc message to be processed {0}", msg.Msg));
                     if (WebBrowserPlayerCallbackService.SendWndProc(msg))
                         return;
                 }
@@ -257,7 +259,9 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             if (_lastKeyPressed == keyPressed && _lastKeyPressedTime.AddMilliseconds(300) > DateTime.Now) return;
             _lastKeyPressed = keyPressed;
             _lastKeyPressedTime = DateTime.Now;
-            
+
+            DebugLogger.WriteDebugLog(string.Format("HandleKeyPress to be processed {0}", keyPressed));
+
             // Always force close when escape is pressed
             if (keyPressed == (int)Keys.Escape)
             {
@@ -281,7 +285,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 return;
             
             _lastActionTime = DateTime.Now;
-
+            DebugLogger.WriteDebugLog(string.Format("OnNewAction received {0}", action));
             switch (action)
             {
                 case "ACTION_PLAY":
