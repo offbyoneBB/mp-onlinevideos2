@@ -22,6 +22,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             Login,
             Profile,
             ReadyToPlay,
+            StartPlay,
             Playing
         }
 
@@ -97,7 +98,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
             Url = videoToPlay;
-            _currentState = State.Playing;
+            currentState = State.StartPlay;
             return EventResult.Complete();
         }
 
@@ -136,6 +137,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     {
                         jsCode = "document.getElementById('email').value = '" + _username + "'; ";
                         jsCode += "document.getElementById('password').value = '" + _password + "'; ";
+                        jsCode += "document.getElementById('RememberMe').checked = false; ";
                         jsCode += "document.getElementById('login-form-contBtn').click();";
                         InvokeScript(jsCode);
                         _currentState = State.Profile;
@@ -147,22 +149,27 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     }
                     break;
                 case State.Profile:
-                    ShowLoading();
                     if (Url.Contains("/Login"))
                         return EventResult.Error("Unable to login");
                     Url = "https://www.netflix.com/SwitchProfile?tkn=" + _profile;
                     _currentState = State.ReadyToPlay;
                     break;
                 case State.ReadyToPlay:
-                    ShowLoading();
-                    _currentState = State.None;
-                    ProcessComplete.Finished = true;
-                    ProcessComplete.Success = true;
+                    if (Url.Contains("/WiHome"))
+                    {
+                        ProcessComplete.Finished = true;
+                        ProcessComplete.Success = true;
+                    }
                     break;
+                case State.StartPlay:
                 case State.Playing:
-                    _loadingPicture.Visible = false;
-                    ProcessComplete.Finished = true;
-                    ProcessComplete.Success = true;
+                    if (Url.Contains("movieid"))
+                    {
+                        _loadingPicture.Hide();
+                        _currentState = State.Playing;
+                        ProcessComplete.Finished = true;
+                        ProcessComplete.Success = true;
+                    }
                     break;
             }
             return EventResult.Complete();
