@@ -98,7 +98,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
             Url = videoToPlay;
-            currentState = State.StartPlay;
+            _currentState = State.StartPlay;
             return EventResult.Complete();
         }
 
