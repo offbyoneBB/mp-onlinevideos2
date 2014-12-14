@@ -155,7 +155,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     _currentState = State.ReadyToPlay;
                     break;
                 case State.ReadyToPlay:
-                    if (Url.Contains("/WiHome"))
+                    if (Url.Contains("/WiHome") || Url.Contains("/Kids"))
                     {
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
