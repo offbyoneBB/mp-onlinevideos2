@@ -5,12 +5,19 @@ using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 using RssToolkit.Rss;
 using System.Xml;
+using OnlineVideos.Sites;
 
 namespace OnlineVideos.Sites
 {
     public class CCUtil : GenericSiteUtil
     {
+        [Category("OnlineVideosUserConfiguration"), DefaultValue(false), Description("Whether to download subtitles"), LocalizableDisplayName("Retrieve Subtitles")]
+        protected bool retrieveSubtitles;
+
         private const string showsURL = @"http://www.cc.com/feeds/ent_m069_cc/1.0/5ab40787-7d35-4449-84eb-efadc941cd34";
+
+        private int vidListPage = 1;
+        private int vidListCount = 0;
 
         public override int DiscoverDynamicCategories()
         {
@@ -22,13 +29,8 @@ namespace OnlineVideos.Sites
             {
                 JToken shows = jsonData["result"]["shows"];
 
-
-                //Log.Debug("Number of shows" + shows);
-
                 foreach (JToken show in shows)
                 {
-                    Log.Debug(show.Value<string>("title") + ": " + show.Value<string>("canonicalURL"));
-
                     RssLink cat = new RssLink();
                     cat.Url = show.Value<string>("canonicalURL");
                     cat.Name = show.Value<string>("title");
@@ -52,17 +54,23 @@ namespace OnlineVideos.Sites
         {
             string url = (category as RssLink).Url;
             string manUrl = getManifestFromUrl(url);
-            Log.Debug("manUrl: " + manUrl);
 
             var jsonData = GetWebData<JObject>(manUrl);
             string showId = (string)category.Other;
             string reportingId = jsonData["manifest"]["reporting"].Value<string>("itemId");
             Log.Debug("ShowID: " + showId + ", reportingID: " + reportingId);
 
-            string epsUrl = String.Format("http://www.cc.com/feeds/f1010/1.0/5a123a71-d8b9-45d9-85d5-e85508b1b37c/{0}/{1}/1", showId, reportingId);
-            Log.Debug("epsUrl: " + epsUrl);
+            string epsUrl = String.Format("http://www.cc.com/feeds/f1010/1.0/5a123a71-d8b9-45d9-85d5-e85508b1b37c/{0}/{1}/", showId, reportingId);
 
-            JObject jsonEpsData = GetWebData<JObject>(epsUrl);
+            vidListPage = 1; //reset vidListPage
+            vidListCount = 0;
+
+            return Parse(epsUrl, null);
+        }
+
+        protected override List<VideoInfo> Parse(string url, string data)
+        {
+            JObject jsonEpsData = GetWebData<JObject>(url);
 
             List<VideoInfo> videoList = new List<VideoInfo>();
 
@@ -71,19 +79,37 @@ namespace OnlineVideos.Sites
                 JToken episodes = jsonEpsData["result"]["episodes"];
                 foreach (var ep in episodes)
                 {
+                    string preTitle = "";
+                    if (ep.Value<bool>("showEpisodeNumber") == true)
+                        preTitle = String.Format("S{0:00}E{1:00} - ", ep["season"].Value<int>("seasonNumber"), ep.Value<int>("pureNumber"));
+
                     DateTime airdate = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(Convert.ToDouble(ep.Value<string>("airDate")));
                     VideoInfo videoInfo = CreateVideoInfo();
-                    videoInfo.Title = String.Format("{0} - {1}", ep.Value<string>("pureNumber"), ep.Value<string>("title"));
+                    videoInfo.Title = preTitle + ep.Value<string>("title");
+                    videoInfo.Title2 = ep.Value<string>("number");
                     videoInfo.VideoUrl = String.Format("http://www.cc.com/feeds/mrss?uri=mgid:arc:episode:comedycentral.com:{0}", ep.Value<string>("id"));
                     videoInfo.ImageUrl = String.Format("{0}?quality=0.85&width=560&height=315&crop=true", ep["images"][0].Value<string>("url"));
                     videoInfo.Length = ep.Value<string>("duration");
-                    videoInfo.Airdate = airdate.ToString("dddd, ") + airdate.ToShortDateString();
+                    videoInfo.Airdate = String.Format("{0}, {1} {2}", airdate.ToString("dddd"), airdate.ToShortDateString(), airdate.ToShortTimeString());
                     videoInfo.Description = "Views: " + ep.Value<string>("views") + "\n" + ep.Value<string>("description");
                     videoList.Add(videoInfo);
                 }
+                vidListCount += videoList.Count;
+
+                if (vidListCount < jsonEpsData["result"].Value<int>("totalCount"))
+                    nextPageAvailable = true;
+                else
+                    nextPageAvailable = false;
             }
+            vidListPage++;
+            nextPageUrl = url + vidListPage.ToString();
 
             return videoList;
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            return Parse(nextPageUrl, null);
         }
         
 
@@ -128,9 +154,14 @@ namespace OnlineVideos.Sites
                 data = data.Replace("&", "&amp;");
                 foreach (RssItem item in RssToolkit.Rss.RssDocument.Load(data).Channel.Items)
                 {
+                    PlaybackOptions vidopts = getPlaybackOptions(item.MediaGroups[0].MediaContents[0].Url);
                     Log.Debug("Load: " + item.Title);
                     if (video.PlaybackOptions == null)
-                        video.PlaybackOptions = getPlaybackOptions(item.MediaGroups[0].MediaContents[0].Url);
+                    {
+                        video.PlaybackOptions = vidopts.videoSrc;
+                        if (retrieveSubtitles)
+                            video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(GetWebData(vidopts.subtitleSrc["ttml"]));
+                    }
                     result.Add(item.MediaGroups[0].MediaContents[0].Url);
                 }
             }
@@ -138,15 +169,24 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        Dictionary<string, string> getPlaybackOptions(string videoUrl)
+        PlaybackOptions getPlaybackOptions(string videoUrl)
         {
-            Dictionary<string, string> res = new Dictionary<string, string>();
-
             string data = GetWebData(videoUrl);
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(data);
 
+            PlaybackOptions vidopts = new PlaybackOptions();
+
             XmlNodeList list = doc.SelectNodes("//src");
+            XmlNodeList sublist = doc.SelectNodes("//typographic");
+            
+            foreach (XmlNode subtitle in sublist)
+            {
+                string subFormat = subtitle.Attributes["format"].Value;
+                string subSrc = subtitle.Attributes["src"].Value;
+                Log.Info("Subtitle url: " + subFormat + " : " + subSrc);
+                vidopts.subtitleSrc.Add(subFormat, subSrc);
+            }
 
             for (int i = list.Count-1; i >=0 ; i--)
             {
@@ -161,10 +201,11 @@ namespace OnlineVideos.Sites
 
                 url = url.Replace(@"viacomccstrmfs.fplive.net/viacomccstrm", @"viacommtvstrmfs.fplive.net/viacommtvstrm");
                 string br = bitrate + "K " + resolution + " " + videoType;
-                if (!res.ContainsKey(br))
-                    res.Add(br, new MPUrlSourceFilter.RtmpUrl(url) { SwfVerify = false, SwfUrl = null }.ToString());
+                if (!vidopts.videoSrc.ContainsKey(br))
+                    vidopts.videoSrc.Add(br, new MPUrlSourceFilter.RtmpUrl(url) { SwfVerify = false, SwfUrl = null }.ToString());
             }
-            return res;
+
+            return vidopts;
         }
 
         public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
@@ -172,14 +213,28 @@ namespace OnlineVideos.Sites
             if (String.IsNullOrEmpty(chosenPlaybackOption))
                 return clonedVideoInfo.VideoUrl;
 
-            Dictionary<string, string> options = getPlaybackOptions(clonedVideoInfo.VideoUrl);
-            if (options.ContainsKey(chosenPlaybackOption))
+            PlaybackOptions options = getPlaybackOptions(clonedVideoInfo.VideoUrl);
+            if (options.videoSrc.ContainsKey(chosenPlaybackOption))
             {
-                return options[chosenPlaybackOption];
+                return options.videoSrc[chosenPlaybackOption];
             }
-            var enumerator = options.GetEnumerator();
+            var enumerator = options.videoSrc.GetEnumerator();
             enumerator.MoveNext();
             return enumerator.Current.Value;
+        }
+    }
+
+
+
+    public class PlaybackOptions
+    {
+        public Dictionary<string, string> subtitleSrc { get; set;}
+        public Dictionary<string, string> videoSrc { get; set; }
+
+        public PlaybackOptions()
+        {
+            subtitleSrc = new Dictionary<string,string>();
+            videoSrc = new Dictionary<string,string>();
         }
     }
 }
