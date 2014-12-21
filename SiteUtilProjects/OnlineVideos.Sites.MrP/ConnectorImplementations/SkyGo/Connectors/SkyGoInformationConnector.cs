@@ -111,7 +111,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                 var tmpParams = new LoadSubCategParams { CurrentChar = tmpchar, ParentCategory = parentCategory, Index = currThreadHandle };
                 resetEvents[currThreadHandle] = new ManualResetEvent(false);
                 ThreadPool.QueueUserWorkItem(new WaitCallback(LoadCharacterSubCateg), (object)tmpParams);
-
+                
                 currentAToZPos++;
 
                 // Move to the next character
@@ -121,7 +121,9 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                 // Wait for all threads to complete if the array is fully loaded
                 if (currThreadHandle >= NumThreads)
                 {
-                    WaitHandle.WaitAll(resetEvents, 10000);
+                    //WaitHandle.WaitAll(resetEvents, 10000);
+                    foreach (var e in resetEvents)
+                        e.WaitOne(10000); 
                     currThreadHandle = 0;
                 }
             }
