@@ -211,6 +211,8 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 GUIWindowManager.OnNewAction -= GUIWindowManager_OnNewAction;
                 
+                InputDevices.Init();
+
                 // Resume Mediaportal rendering
                 GUIGraphicsContext.BlankScreen = false;
                 GUIGraphicsContext.form.Show();
