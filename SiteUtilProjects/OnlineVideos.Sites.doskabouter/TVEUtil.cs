@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using OnlineVideos.MPUrlSourceFilter;
@@ -41,6 +42,19 @@ namespace OnlineVideos.Sites
                     cat.HasSubCategories = true;
 
             return res;
+        }
+
+        public override List<VideoInfo> getVideoList(Category category)
+        {
+            string url = ((RssLink)category).Url;
+            if (url.StartsWith(@"http://www.rtve.es/infantil", StringComparison.InvariantCultureIgnoreCase))
+            {
+                string webData = GetWebData(url);
+                Match m = Regex.Match(webData, @"data-attribute=""(?<url>[^""]*)""\stitle=""Episodios""");
+                if (m.Success)
+                    url = FormatDecodeAbsolutifyUrl(url, m.Groups["url"].Value, null, UrlDecoding.None) + @"&de=S&ll=N&stt=S&fakeImg=S";
+            }
+            return Parse(url, null);
         }
 
         public override string getUrl(VideoInfo video)
