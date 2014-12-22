@@ -5,28 +5,28 @@ using System.Text;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace OnlineVideos.MPUrlSourceFilter
+namespace OnlineVideos.MPUrlSourceFilter.V2
 {
     public static class UrlBuilder
     {
 
         public static String GetFilterUrl(object sourceFilter, Sites.SiteUtilBase siteUtil, String url)
         {
-            OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.IFilterState filterState = sourceFilter as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.IFilterState;
-            OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterStateEx filterStateEx = sourceFilter as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterStateEx;
+            OnlineVideos.MPUrlSourceFilter.V2.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.V2.IFilterState;
+            OnlineVideos.MPUrlSourceFilter.V2.IFilterStateEx filterStateEx = sourceFilter as OnlineVideos.MPUrlSourceFilter.V2.IFilterStateEx;
 
             if (filterStateEx != null)
             {
                 // MediaPortal IPTV filter and url source splitter
 
-                int index = url.IndexOf(OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.SimpleUrl.ParameterSeparator);
+                int index = url.IndexOf(OnlineVideos.MPUrlSourceFilter.V2.SimpleUrl.ParameterSeparator);
 
                 if (index != (-1))
                 {
-                    OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.SimpleUrl filterUrl = null;
+                    OnlineVideos.MPUrlSourceFilter.V2.SimpleUrl filterUrl = null;
                     OnlineVideos.MPUrlSourceFilter.SimpleUrl simpleUrl = null;
 
-                    String encodedContent = url.Substring(index + OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.SimpleUrl.ParameterSeparator.Length);
+                    String encodedContent = url.Substring(index + OnlineVideos.MPUrlSourceFilter.V2.SimpleUrl.ParameterSeparator.Length);
                     Byte[] rawContent = Convert.FromBase64String(encodedContent);
 
                     using (MemoryStream stream = new MemoryStream(rawContent.Length))
@@ -38,11 +38,11 @@ namespace OnlineVideos.MPUrlSourceFilter
                         simpleUrl = serializer.Deserialize(stream) as OnlineVideos.MPUrlSourceFilter.SimpleUrl;
                     }
 
-                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.AfhsManifestUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.AfhsManifestUrl(simpleUrl.Uri) : filterUrl;
-                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtmpUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpUrl(simpleUrl.Uri) : filterUrl;
-                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.HttpUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.HttpUrl(simpleUrl.Uri) : filterUrl;
-                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtspUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl(simpleUrl.Uri) : filterUrl;
-                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.UdpRtpUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl(simpleUrl.Uri) : filterUrl;
+                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.AfhsManifestUrl)) ? new OnlineVideos.MPUrlSourceFilter.V2.AfhsManifestUrl(simpleUrl.Uri) : filterUrl;
+                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtmpUrl)) ? new OnlineVideos.MPUrlSourceFilter.V2.RtmpUrl(simpleUrl.Uri) : filterUrl;
+                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.HttpUrl)) ? new OnlineVideos.MPUrlSourceFilter.V2.HttpUrl(simpleUrl.Uri) : filterUrl;
+                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtspUrl)) ? new OnlineVideos.MPUrlSourceFilter.V2.RtspUrl(simpleUrl.Uri) : filterUrl;
+                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.UdpRtpUrl)) ? new OnlineVideos.MPUrlSourceFilter.V2.UdpRtpUrl(simpleUrl.Uri) : filterUrl;
 
                     if (filterUrl == null)
                     {
@@ -51,7 +51,7 @@ namespace OnlineVideos.MPUrlSourceFilter
 
                     if (simpleUrl is OnlineVideos.MPUrlSourceFilter.AfhsManifestUrl)
                     {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.AfhsManifestUrl afhsFilterUrl = filterUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.AfhsManifestUrl;
+                        OnlineVideos.MPUrlSourceFilter.V2.AfhsManifestUrl afhsFilterUrl = filterUrl as OnlineVideos.MPUrlSourceFilter.V2.AfhsManifestUrl;
                         OnlineVideos.MPUrlSourceFilter.AfhsManifestUrl afhsSimpleUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.AfhsManifestUrl;
 
                         afhsFilterUrl.SegmentFragmentUrlExtraParameters = afhsSimpleUrl.SegmentFragmentUrlExtraParameters;
@@ -59,7 +59,7 @@ namespace OnlineVideos.MPUrlSourceFilter
 
                     if (simpleUrl is OnlineVideos.MPUrlSourceFilter.HttpUrl)
                     {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.HttpUrl httpFilterUrl = filterUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.HttpUrl;
+                        OnlineVideos.MPUrlSourceFilter.V2.HttpUrl httpFilterUrl = filterUrl as OnlineVideos.MPUrlSourceFilter.V2.HttpUrl;
                         OnlineVideos.MPUrlSourceFilter.HttpUrl httpSimpleUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.HttpUrl;
 
                         httpFilterUrl.Cookies.Add(httpSimpleUrl.Cookies);
@@ -82,7 +82,7 @@ namespace OnlineVideos.MPUrlSourceFilter
 
                     if (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtmpUrl)
                     {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpUrl rtmpFilterUrl = filterUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpUrl;
+                        OnlineVideos.MPUrlSourceFilter.V2.RtmpUrl rtmpFilterUrl = filterUrl as OnlineVideos.MPUrlSourceFilter.V2.RtmpUrl;
                         OnlineVideos.MPUrlSourceFilter.RtmpUrl rtmpSimpleUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.RtmpUrl;
 
                         rtmpFilterUrl.App = rtmpSimpleUrl.App;
@@ -118,7 +118,7 @@ namespace OnlineVideos.MPUrlSourceFilter
 
                     if (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtspUrl)
                     {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl rtspFilterUrl = filterUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl;
+                        OnlineVideos.MPUrlSourceFilter.V2.RtspUrl rtspFilterUrl = filterUrl as OnlineVideos.MPUrlSourceFilter.V2.RtspUrl;
                         OnlineVideos.MPUrlSourceFilter.RtspUrl rtspSimpleUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.RtspUrl;
 
                         rtspFilterUrl.IgnorePayloadType = rtspSimpleUrl.IgnorePayloadType;
@@ -142,7 +142,7 @@ namespace OnlineVideos.MPUrlSourceFilter
 
                     if (simpleUrl is OnlineVideos.MPUrlSourceFilter.UdpRtpUrl)
                     {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl udpFilterUrl = filterUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl;
+                        OnlineVideos.MPUrlSourceFilter.V2.UdpRtpUrl udpFilterUrl = filterUrl as OnlineVideos.MPUrlSourceFilter.V2.UdpRtpUrl;
                         OnlineVideos.MPUrlSourceFilter.UdpRtpUrl udpSimpleUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.UdpRtpUrl;
 
                         udpFilterUrl.OpenConnectionSleepTime = siteUtil.UdpRtpSettings.OpenConnectionSleepTime;
@@ -171,16 +171,16 @@ namespace OnlineVideos.MPUrlSourceFilter
                 {
                     // create filter url with url factory
 
-                    OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.SimpleUrl simpleUrl = OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UrlFactory.CreateUrl(url);
+                    OnlineVideos.MPUrlSourceFilter.V2.SimpleUrl simpleUrl = OnlineVideos.MPUrlSourceFilter.V2.UrlFactory.CreateUrl(url);
 
                     //if (simpleUrl is OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.AfhsManifestUrl)
                     //{
                     //    OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.AfhsManifestUrl afhsFilterUrl = simpleUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.AfhsManifestUrl;
                     //}
 
-                    if (simpleUrl is OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.HttpUrl)
+                    if (simpleUrl is OnlineVideos.MPUrlSourceFilter.V2.HttpUrl)
                     {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.HttpUrl httpFilterUrl = simpleUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.HttpUrl;
+                        OnlineVideos.MPUrlSourceFilter.V2.HttpUrl httpFilterUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.V2.HttpUrl;
 
                         httpFilterUrl.OpenConnectionSleepTime = siteUtil.HttpSettings.OpenConnectionSleepTime;
                         httpFilterUrl.OpenConnectionTimeout = siteUtil.HttpSettings.OpenConnectionTimeout;
@@ -194,9 +194,9 @@ namespace OnlineVideos.MPUrlSourceFilter
                         httpFilterUrl.DumpOutputPinData = siteUtil.HttpSettings.DumpOutputPinData;
                     }
 
-                    if (simpleUrl is OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpUrl)
+                    if (simpleUrl is OnlineVideos.MPUrlSourceFilter.V2.RtmpUrl)
                     {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpUrl rtmpFilterUrl = simpleUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpUrl;
+                        OnlineVideos.MPUrlSourceFilter.V2.RtmpUrl rtmpFilterUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.V2.RtmpUrl;
 
                         rtmpFilterUrl.OpenConnectionSleepTime = siteUtil.RtmpSettings.OpenConnectionSleepTime;
                         rtmpFilterUrl.OpenConnectionTimeout = siteUtil.RtmpSettings.OpenConnectionTimeout;
@@ -210,9 +210,9 @@ namespace OnlineVideos.MPUrlSourceFilter
                         rtmpFilterUrl.DumpOutputPinData = siteUtil.RtmpSettings.DumpOutputPinData;
                     }
 
-                    if (simpleUrl is OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl)
+                    if (simpleUrl is OnlineVideos.MPUrlSourceFilter.V2.RtspUrl)
                     {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl rtspFilterUrl = simpleUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtspUrl;
+                        OnlineVideos.MPUrlSourceFilter.V2.RtspUrl rtspFilterUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.V2.RtspUrl;
 
                         rtspFilterUrl.OpenConnectionSleepTime = siteUtil.RtspSettings.OpenConnectionSleepTime;
                         rtspFilterUrl.OpenConnectionTimeout = siteUtil.RtspSettings.OpenConnectionTimeout;
@@ -228,9 +228,9 @@ namespace OnlineVideos.MPUrlSourceFilter
                         rtspFilterUrl.DumpOutputPinData = siteUtil.RtspSettings.DumpOutputPinData;
                     }
 
-                    if (simpleUrl is OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl)
+                    if (simpleUrl is OnlineVideos.MPUrlSourceFilter.V2.UdpRtpUrl)
                     {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl udpFilterUrl = simpleUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.UdpRtpUrl;
+                        OnlineVideos.MPUrlSourceFilter.V2.UdpRtpUrl udpFilterUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.V2.UdpRtpUrl;
 
                         udpFilterUrl.OpenConnectionSleepTime = siteUtil.UdpRtpSettings.OpenConnectionSleepTime;
                         udpFilterUrl.OpenConnectionTimeout = siteUtil.UdpRtpSettings.OpenConnectionTimeout;
@@ -250,110 +250,16 @@ namespace OnlineVideos.MPUrlSourceFilter
             }
             else
             {
-                // MediaPortal Url Source Splitter
-
-                int index = url.IndexOf(OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.SimpleUrl.ParameterSeparator);
-                if (index != (-1))
-                {
-                    OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.SimpleUrl filterUrl = null;
-                    OnlineVideos.MPUrlSourceFilter.SimpleUrl simpleUrl = null;
-
-                    String encodedContent = url.Substring(index + OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.SimpleUrl.ParameterSeparator.Length);
-                    Byte[] rawContent = Convert.FromBase64String(encodedContent);
-
-                    using (MemoryStream stream = new MemoryStream(rawContent.Length))
-                    {
-                        stream.Write(rawContent, 0, rawContent.Length);
-                        stream.Seek(0, SeekOrigin.Begin);
-
-                        BinaryFormatter serializer = new BinaryFormatter();
-                        simpleUrl = serializer.Deserialize(stream) as OnlineVideos.MPUrlSourceFilter.SimpleUrl;
-                    }
-
-                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.AfhsManifestUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.AfhsManifestUrl(simpleUrl.Uri) : filterUrl;
-                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtmpUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.RtmpUrl(simpleUrl.Uri) : filterUrl;
-                    filterUrl = ((filterUrl == null) && (simpleUrl is OnlineVideos.MPUrlSourceFilter.HttpUrl)) ? new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.HttpUrl(simpleUrl.Uri) : filterUrl;
-
-                    if (filterUrl == null)
-                    {
-                        throw new OnlineVideosException(Translation.Instance.UnableToPlayVideo);
-                    }
-
-                    if (simpleUrl is OnlineVideos.MPUrlSourceFilter.AfhsManifestUrl)
-                    {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.AfhsManifestUrl afhsFilterUrl = filterUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.AfhsManifestUrl;
-                        OnlineVideos.MPUrlSourceFilter.AfhsManifestUrl afhsSimpleUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.AfhsManifestUrl;
-
-                        afhsFilterUrl.SegmentFragmentUrlExtraParameters = afhsSimpleUrl.SegmentFragmentUrlExtraParameters;
-                    }
-
-                    if (simpleUrl is OnlineVideos.MPUrlSourceFilter.HttpUrl)
-                    {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.HttpUrl httpFilterUrl = filterUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.HttpUrl;
-                        OnlineVideos.MPUrlSourceFilter.HttpUrl httpSimpleUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.HttpUrl;
-
-                        httpFilterUrl.Cookies.Add(httpSimpleUrl.Cookies);
-                        httpFilterUrl.IgnoreContentLength = httpSimpleUrl.IgnoreContentLength;
-                        httpFilterUrl.Referer = httpSimpleUrl.Referer;
-                        httpFilterUrl.UserAgent = httpSimpleUrl.UserAgent;
-                        httpFilterUrl.Version = httpSimpleUrl.Version;
-
-                        httpFilterUrl.OpenConnectionMaximumAttempts = siteUtil.HttpSettings.TotalReopenConnectionTimeout / siteUtil.HttpSettings.OpenConnectionTimeout;
-                        httpFilterUrl.ReceiveDataTimeout = siteUtil.HttpSettings.OpenConnectionTimeout;
-                        httpFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.HttpSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.HttpSettings.NetworkInterface : String.Empty;
-                    }
-
-                    if (simpleUrl is OnlineVideos.MPUrlSourceFilter.RtmpUrl)
-                    {
-                        OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.RtmpUrl rtmpFilterUrl = filterUrl as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.RtmpUrl;
-                        OnlineVideos.MPUrlSourceFilter.RtmpUrl rtmpSimpleUrl = simpleUrl as OnlineVideos.MPUrlSourceFilter.RtmpUrl;
-
-                        rtmpFilterUrl.App = rtmpSimpleUrl.App;
-                        CopyRtmpArbitraryDataV1(rtmpFilterUrl.ArbitraryData, rtmpSimpleUrl.ArbitraryData);
-                        rtmpFilterUrl.Auth = rtmpSimpleUrl.Auth;
-                        rtmpFilterUrl.BufferTime = rtmpSimpleUrl.BufferTime;
-                        rtmpFilterUrl.FlashVersion = rtmpSimpleUrl.FlashVersion;
-                        rtmpFilterUrl.Jtv = rtmpSimpleUrl.Jtv;
-                        rtmpFilterUrl.Live = rtmpSimpleUrl.Live;
-                        rtmpFilterUrl.PageUrl = rtmpSimpleUrl.PageUrl;
-                        rtmpFilterUrl.Playlist = rtmpSimpleUrl.Playlist;
-                        rtmpFilterUrl.PlayPath = rtmpSimpleUrl.PlayPath;
-                        rtmpFilterUrl.Start = rtmpSimpleUrl.Start;
-                        rtmpFilterUrl.Stop = rtmpSimpleUrl.Stop;
-                        rtmpFilterUrl.Subscribe = rtmpSimpleUrl.Subscribe;
-                        rtmpFilterUrl.SwfAge = rtmpSimpleUrl.SwfAge;
-                        rtmpFilterUrl.SwfUrl = rtmpSimpleUrl.SwfUrl;
-                        rtmpFilterUrl.SwfVerify = rtmpSimpleUrl.SwfVerify;
-                        rtmpFilterUrl.TcUrl = rtmpSimpleUrl.TcUrl;
-                        rtmpFilterUrl.Token = rtmpSimpleUrl.Token;
-
-                        rtmpFilterUrl.OpenConnectionMaximumAttempts = siteUtil.RtmpSettings.TotalReopenConnectionTimeout / siteUtil.RtmpSettings.OpenConnectionTimeout;
-                        rtmpFilterUrl.ReceiveDataTimeout = siteUtil.RtmpSettings.OpenConnectionTimeout;
-                        rtmpFilterUrl.NetworkInterface = (String.CompareOrdinal(siteUtil.RtmpSettings.NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? siteUtil.RtmpSettings.NetworkInterface : String.Empty;
-                    }
-
-                    filterUrl.LiveStream = simpleUrl.LiveStream;
-
-                    //filterUrl.CacheFolder
-                    //filterUrl.MaximumLogSize
-                    //filterUrl.MaximumPlugins
-                    //filterUrl.Verbosity
-
-                    return filterUrl.ToString();
-                }
-                else
-                {
-                    return url;
-                }
+                return url;
             }
         }
 
 
-        private static void CopyRtmpArbitraryDataV1(OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.RtmpArbitraryDataCollection destination, OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataCollection source)
+        private static void CopyRtmpArbitraryDataV2(OnlineVideos.MPUrlSourceFilter.V2.RtmpArbitraryDataCollection destination, OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataCollection source)
         {
             foreach (var arbitraryData in source)
             {
-                OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.RtmpArbitraryData data = null;
+                OnlineVideos.MPUrlSourceFilter.V2.RtmpArbitraryData data = null;
 
                 switch (arbitraryData.DataType)
                 {
@@ -361,37 +267,37 @@ namespace OnlineVideos.MPUrlSourceFilter
                         {
                             OnlineVideos.MPUrlSourceFilter.RtmpBooleanArbitraryData arbitraryDataBool = arbitraryData as OnlineVideos.MPUrlSourceFilter.RtmpBooleanArbitraryData;
 
-                            data = new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.RtmpBooleanArbitraryData(arbitraryDataBool.Name, arbitraryDataBool.Value);
+                            data = new OnlineVideos.MPUrlSourceFilter.V2.RtmpBooleanArbitraryData(arbitraryDataBool.Name, arbitraryDataBool.Value);
                         }
                         break;
                     case OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataType.Number:
                         {
                             OnlineVideos.MPUrlSourceFilter.RtmpNumberArbitraryData arbitraryDataNumber = arbitraryData as OnlineVideos.MPUrlSourceFilter.RtmpNumberArbitraryData;
 
-                            data = new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.RtmpNumberArbitraryData(arbitraryDataNumber.Name, arbitraryDataNumber.Value);
+                            data = new OnlineVideos.MPUrlSourceFilter.V2.RtmpNumberArbitraryData(arbitraryDataNumber.Name, arbitraryDataNumber.Value);
                         }
                         break;
                     case OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataType.String:
                         {
                             OnlineVideos.MPUrlSourceFilter.RtmpStringArbitraryData arbitraryDataString = arbitraryData as OnlineVideos.MPUrlSourceFilter.RtmpStringArbitraryData;
 
-                            data = new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.RtmpStringArbitraryData(arbitraryDataString.Name, arbitraryDataString.Value);
+                            data = new OnlineVideos.MPUrlSourceFilter.V2.RtmpStringArbitraryData(arbitraryDataString.Name, arbitraryDataString.Value);
                         }
                         break;
                     case OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataType.Object:
                         {
                             OnlineVideos.MPUrlSourceFilter.RtmpObjectArbitraryData arbitraryDataObject = arbitraryData as OnlineVideos.MPUrlSourceFilter.RtmpObjectArbitraryData;
 
-                            data = new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.RtmpObjectArbitraryData(arbitraryDataObject.Name);
+                            data = new OnlineVideos.MPUrlSourceFilter.V2.RtmpObjectArbitraryData(arbitraryDataObject.Name);
 
-                            CopyRtmpArbitraryDataV1((data as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.RtmpObjectArbitraryData).Objects, arbitraryDataObject.Objects);
+                            CopyRtmpArbitraryDataV2((data as OnlineVideos.MPUrlSourceFilter.V2.RtmpObjectArbitraryData).Objects, arbitraryDataObject.Objects);
                         }
                         break;
                     case OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataType.Null:
                         {
                             OnlineVideos.MPUrlSourceFilter.RtmpNullArbitraryData arbitraryDataNull = arbitraryData as OnlineVideos.MPUrlSourceFilter.RtmpNullArbitraryData;
 
-                            data = new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.RtmpNullArbitraryData(arbitraryDataNull.Name);
+                            data = new OnlineVideos.MPUrlSourceFilter.V2.RtmpNullArbitraryData(arbitraryDataNull.Name);
                         }
                         break;
                     default:
@@ -401,59 +307,5 @@ namespace OnlineVideos.MPUrlSourceFilter
                 destination.Add(data);
             }
         }
-
-        private static void CopyRtmpArbitraryDataV2(OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpArbitraryDataCollection destination, OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataCollection source)
-        {
-            foreach (var arbitraryData in source)
-            {
-                OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpArbitraryData data = null;
-
-                switch (arbitraryData.DataType)
-                {
-                    case OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataType.Boolean:
-                        {
-                            OnlineVideos.MPUrlSourceFilter.RtmpBooleanArbitraryData arbitraryDataBool = arbitraryData as OnlineVideos.MPUrlSourceFilter.RtmpBooleanArbitraryData;
-
-                            data = new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpBooleanArbitraryData(arbitraryDataBool.Name, arbitraryDataBool.Value);
-                        }
-                        break;
-                    case OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataType.Number:
-                        {
-                            OnlineVideos.MPUrlSourceFilter.RtmpNumberArbitraryData arbitraryDataNumber = arbitraryData as OnlineVideos.MPUrlSourceFilter.RtmpNumberArbitraryData;
-
-                            data = new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpNumberArbitraryData(arbitraryDataNumber.Name, arbitraryDataNumber.Value);
-                        }
-                        break;
-                    case OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataType.String:
-                        {
-                            OnlineVideos.MPUrlSourceFilter.RtmpStringArbitraryData arbitraryDataString = arbitraryData as OnlineVideos.MPUrlSourceFilter.RtmpStringArbitraryData;
-
-                            data = new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpStringArbitraryData(arbitraryDataString.Name, arbitraryDataString.Value);
-                        }
-                        break;
-                    case OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataType.Object:
-                        {
-                            OnlineVideos.MPUrlSourceFilter.RtmpObjectArbitraryData arbitraryDataObject = arbitraryData as OnlineVideos.MPUrlSourceFilter.RtmpObjectArbitraryData;
-
-                            data = new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpObjectArbitraryData(arbitraryDataObject.Name);
-
-                            CopyRtmpArbitraryDataV2((data as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpObjectArbitraryData).Objects, arbitraryDataObject.Objects);
-                        }
-                        break;
-                    case OnlineVideos.MPUrlSourceFilter.RtmpArbitraryDataType.Null:
-                        {
-                            OnlineVideos.MPUrlSourceFilter.RtmpNullArbitraryData arbitraryDataNull = arbitraryData as OnlineVideos.MPUrlSourceFilter.RtmpNullArbitraryData;
-
-                            data = new OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.RtmpNullArbitraryData(arbitraryDataNull.Name);
-                        }
-                        break;
-                    default:
-                        throw new NotImplementedException();
-                }
-
-                destination.Add(data);
-            }
-        }
-
     }
 }

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Threading;
 
-namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
+namespace OnlineVideos.MPUrlSourceFilter.V2
 {
     /// <summary>
     /// Represents class for downloading single stream with MediaPortal Url Source Splitter.
@@ -74,7 +74,7 @@ namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
                 this.cancelled = false;
 
                 sourceFilter = (IDownload)new MPUrlSourceSplitter();
-                String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(sourceFilter, downloadInfo.Util, downloadInfo.Url);
+                String url = OnlineVideos.MPUrlSourceFilter.V2.UrlBuilder.GetFilterUrl(sourceFilter, downloadInfo.Util, downloadInfo.Url);
 
                 IDownload downloadFilter = (IDownload)sourceFilter;
                 int result = downloadFilter.DownloadAsync(url, downloadInfo.LocalFile, this);

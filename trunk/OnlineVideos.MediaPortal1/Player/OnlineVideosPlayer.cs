@@ -171,12 +171,12 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
-					if (graphBuilder != null && GetSourceFilterName(m_strCurrentFile) == MPUrlSourceSplitter.V2.Downloader.FilterName) // only when progress reporting is possible
+					if (graphBuilder != null && GetSourceFilterName(m_strCurrentFile) == OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterName) // only when progress reporting is possible
                     {
                         IBaseFilter sourceFilter = null;
                         try
                         {
-                            int result = graphBuilder.FindFilterByName(MPUrlSourceSplitter.V2.Downloader.FilterName, out sourceFilter);
+                            int result = graphBuilder.FindFilterByName(OnlineVideos.MPUrlSourceFilter.V2.Downloader .FilterName, out sourceFilter);
                             if (result == 0)
                             {
                                 long total = 0, current = 0;
@@ -218,7 +218,7 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 case "http":
                 case "rtmp":
-                    sourceFilterName = MPUrlSourceSplitter.V2.Downloader.FilterName;
+                    sourceFilterName = OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterName;
                     break;
                 case "sop":
                     sourceFilterName = "SopCast ASF Splitter";
@@ -270,11 +270,11 @@ namespace OnlineVideos.MediaPortal1.Player
                 IBaseFilter sourceFilter = null;
                 try
                 {
-					if (sourceFilterName == MPUrlSourceSplitter.V2.Downloader.FilterName)
+					if (sourceFilterName == OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterName)
 					{
-						sourceFilter = FilterFromFile.LoadFilterFromDll("MPUrlSourceSplitter\\MPUrlSourceSplitter.ax", new Guid(MPUrlSourceSplitter.V2.Downloader.FilterCLSID), true);
+						sourceFilter = FilterFromFile.LoadFilterFromDll("MPUrlSourceSplitter\\MPUrlSourceSplitter.ax", new Guid(OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterCLSID), true);
 						if (sourceFilter != null)
-							Marshal.ThrowExceptionForHR(graphBuilder.AddFilter(sourceFilter, MPUrlSourceSplitter.V2.Downloader.FilterName));
+							Marshal.ThrowExceptionForHR(graphBuilder.AddFilter(sourceFilter, OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterName));
 					}
 					if (sourceFilter == null)
 					{
@@ -324,15 +324,15 @@ namespace OnlineVideos.MediaPortal1.Player
                     return false;
                 }
 
-                OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.IFilterState filterState = sourceFilter as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.IFilterState;
-                OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterStateEx filterStateEx = sourceFilter as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterStateEx;
+                OnlineVideos.MPUrlSourceFilter.V2.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.V2.IFilterState;
+                OnlineVideos.MPUrlSourceFilter.V2.IFilterStateEx filterStateEx = sourceFilter as OnlineVideos.MPUrlSourceFilter.V2.IFilterStateEx;
 
                 if (filterStateEx != null)
                 {
                     // MediaPortal IPTV filter and url source splitter
                     Log.Instance.Info("BufferFile : using 'MediaPortal IPTV filter and url source splitter' as source filter");
 
-                    String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(sourceFilter, siteUtil, m_strCurrentFile);
+                    String url = OnlineVideos.MPUrlSourceFilter.V2.UrlBuilder.GetFilterUrl(sourceFilter, siteUtil, m_strCurrentFile);
 
                     Log.Instance.Info("BufferFile : loading url: '{0}'", url);
                     result = filterStateEx.LoadAsync(url);
@@ -442,12 +442,11 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
-                    String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(sourceFilter, siteUtil, m_strCurrentFile);
+                    String url = OnlineVideos.MPUrlSourceFilter.V2.UrlBuilder.GetFilterUrl(sourceFilter, siteUtil, m_strCurrentFile);
 
                     Marshal.ThrowExceptionForHR(((IFileSourceFilter)sourceFilter).Load(url, null));
 
-                    // MediaPortal Url Source Splitter or another filter
-                    Log.Instance.Info("BufferFile : using '{0}' as source filter", (filterState != null) ? "MediaPortal Url Source Splitter" : "unknown filter");
+                    Log.Instance.Info("BufferFile : using unknown filter as source filter");
 
                     if (sourceFilter is IAMOpenProgress && !url.Contains("live=true") && !url.Contains("RtmpLive=1"))
                     {
@@ -464,37 +463,33 @@ namespace OnlineVideos.MediaPortal1.Player
                             // after configured percentage has been buffered, connect the graph
                             if (!filterConnected && (percentageBuffered >= PluginConfiguration.Instance.playbuffer || skipBuffering))
                             {
-                                if (((filterState != null) && (filterState.IsFilterReadyToConnectPins())) ||
-                                    (filterState == null))
+                                //cacheFile = filterState.GetCacheFileName();
+                                if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
+                                filterConnected = true;
+                                renderPinsThread = new Thread(delegate()
                                 {
-                                    cacheFile = filterState.GetCacheFileName();
-                                    if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
-                                    filterConnected = true;
-                                    renderPinsThread = new Thread(delegate()
+                                    try
                                     {
-                                        try
-                                        {
-                                            Log.Instance.Debug("BufferFile : Rendering unconnected output pins of source filter ...");
-                                            // add audio and video filter from MP Movie Codec setting section
-                                            AddPreferredFilters(graphBuilder, sourceFilter);
-                                            // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
-                                            DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                                            Log.Instance.Debug("BufferFile : Playback Ready.");
-                                            PlaybackReady = true;
-                                        }
-                                        catch (ThreadAbortException)
-                                        {
-                                            Thread.ResetAbort();
-                                            Log.Instance.Info("RenderUnconnectedOutputPins foribly aborted.");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Log.Instance.Warn(ex.Message);
-                                            StopBuffering();
-                                        }
-                                    }) { IsBackground = true, Name = "OVGraph" };
-                                    renderPinsThread.Start();
-                                }
+                                        Log.Instance.Debug("BufferFile : Rendering unconnected output pins of source filter ...");
+                                        // add audio and video filter from MP Movie Codec setting section
+                                        AddPreferredFilters(graphBuilder, sourceFilter);
+                                        // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
+                                        DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
+                                        Log.Instance.Debug("BufferFile : Playback Ready.");
+                                        PlaybackReady = true;
+                                    }
+                                    catch (ThreadAbortException)
+                                    {
+                                        Thread.ResetAbort();
+                                        Log.Instance.Info("RenderUnconnectedOutputPins foribly aborted.");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Log.Instance.Warn(ex.Message);
+                                        StopBuffering();
+                                    }
+                                }) { IsBackground = true, Name = "OVGraph" };
+                                renderPinsThread.Start();
                             }
                             // log every percent
                             if (current > last && current - last >= (double)total * 0.01)
@@ -515,14 +510,6 @@ namespace OnlineVideos.MediaPortal1.Player
                     }
                     else
                     {
-                        if (filterState != null)
-                        {
-                            while (!filterState.IsFilterReadyToConnectPins())
-                            {
-                                Thread.Sleep(50);
-                            }
-                            cacheFile = filterState.GetCacheFileName();
-                        }
                         // add audio and video filter from MP Movie Codec setting section
                         AddPreferredFilters(graphBuilder, sourceFilter);
                         // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
@@ -544,12 +531,6 @@ namespace OnlineVideos.MediaPortal1.Player
             catch (COMException comEx)
             {
                 Log.Instance.Warn(comEx.ToString());
-
-                if (sourceFilterName == MPUrlSourceSplitter.V2.Downloader.FilterName &&
-                    Enum.IsDefined(typeof(MPUrlSourceSplitter.V1.MPUrlSourceSplitterError), comEx.ErrorCode))
-                {
-                    throw new OnlineVideosException(((MPUrlSourceSplitter.V1.MPUrlSourceSplitterError)comEx.ErrorCode).ToString());
-                }
 
                 string errorText = DirectShowLib.DsError.GetErrorText(comEx.ErrorCode);
                 if (errorText != null) errorText = errorText.Trim();

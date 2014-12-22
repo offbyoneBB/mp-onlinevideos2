@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
+namespace OnlineVideos.MPUrlSourceFilter.V2
 {
     /// <summary>
     /// Specifies interface for splitter state.

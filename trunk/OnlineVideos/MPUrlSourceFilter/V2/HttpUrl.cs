@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 
-namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
+namespace OnlineVideos.MPUrlSourceFilter.V2
 {
     /// <summary>
     /// Represent base class for HTTP urls for MediaPortal Url Source Splitter.
