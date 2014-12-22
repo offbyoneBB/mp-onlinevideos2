@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
+namespace OnlineVideos.MPUrlSourceFilter.V2
 {
     /// <summary>
     /// Represent class for RTMP urls for MediaPortal Url Source Splitter.

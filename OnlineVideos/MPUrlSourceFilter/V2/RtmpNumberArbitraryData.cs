@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Globalization;
 
-namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
+namespace OnlineVideos.MPUrlSourceFilter.V2
 {
     /// <summary>
     /// Represents number RTMP arbitrary data.

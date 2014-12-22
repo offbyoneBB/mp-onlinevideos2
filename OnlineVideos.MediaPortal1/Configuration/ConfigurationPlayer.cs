@@ -59,9 +59,26 @@ namespace OnlineVideos.MediaPortal1
             }
 
             // wait for our filter to buffer before rendering the pins
-            OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.IFilterState filterState = sourceFilter as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V1.IFilterState;
-            while (filterState != null && !filterState.IsFilterReadyToConnectPins()) 
-                System.Threading.Thread.Sleep(25);
+            OnlineVideos.MPUrlSourceFilter.V2.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.V2.IFilterState;
+
+            if (filterState != null)
+            {
+                bool ready = false;
+
+                while ((!ready) && (hr == 0))
+                {
+                    hr = filterState.IsFilterReadyToConnectPins(out ready);
+
+                    System.Threading.Thread.Sleep(25);
+                }
+            }
+
+            if (hr != 0)
+            {
+                ErrorOrSplitter = DirectShowLib.DsError.GetErrorText(hr);
+                DirectShowUtil.ReleaseComObject(sourceFilter, 2000);
+                return false;
+            }
 
             OnlineVideos.MediaPortal1.Player.OnlineVideosPlayer.AddPreferredFilters(_graphBuilder, sourceFilter);
 

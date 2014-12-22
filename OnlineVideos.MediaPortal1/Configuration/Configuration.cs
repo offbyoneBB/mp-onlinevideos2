@@ -104,25 +104,25 @@ namespace OnlineVideos.MediaPortal1
             {
                 IFilterGraph2 graphBuilder = null;
                 IBaseFilter sourceFilter = null;
-                OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterState filterState = null;
-                OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterStateEx filterStateEx = null;
+                OnlineVideos.MPUrlSourceFilter.V2.IFilterState filterState = null;
+                OnlineVideos.MPUrlSourceFilter.V2.IFilterStateEx filterStateEx = null;
 
                 try
                 {
                     graphBuilder = (IFilterGraph2)new FilterGraph();
 
-                    sourceFilter = FilterFromFile.LoadFilterFromDll("MPUrlSourceSplitter\\MPUrlSourceSplitter.ax", new Guid(MPUrlSourceSplitter.V2.Downloader.FilterCLSID), true);
+                    sourceFilter = FilterFromFile.LoadFilterFromDll("MPUrlSourceSplitter\\MPUrlSourceSplitter.ax", new Guid(OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterCLSID), true);
 
                     if (sourceFilter == null)
                     {
-                        sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, MPUrlSourceSplitter.V2.Downloader.FilterName);
+                        sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterName);
 
                         if (sourceFilter != null)
                         {
-                            // check filter version: V1 or V2
+                            // check is filter is V2 version
 
-                            filterState = sourceFilter as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterState;
-                            filterStateEx = sourceFilter as OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2.IFilterStateEx;
+                            filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.V2.IFilterState;
+                            filterStateEx = sourceFilter as OnlineVideos.MPUrlSourceFilter.V2.IFilterStateEx;
                         }
                     }
 
