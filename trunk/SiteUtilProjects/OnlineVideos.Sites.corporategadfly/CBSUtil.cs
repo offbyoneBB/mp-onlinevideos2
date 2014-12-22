@@ -223,6 +223,10 @@ namespace OnlineVideos.Sites
                 {
                     foreach (JToken item in json["result"]["data"] as JArray)
                     {
+                    	string status = (string) item["status"];
+                    	// skip premium content
+                    	if (@"PREMIUM".Equals(status)) continue;
+                    	
                         string description = string.Empty;
                         if (!string.IsNullOrEmpty((string) item["season_number"]))
                         {
