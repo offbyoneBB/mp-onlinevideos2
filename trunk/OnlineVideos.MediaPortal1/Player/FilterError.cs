@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2;
 
-namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
+namespace OnlineVideos.MediaPortal1.Player
 {
     /// <summary>
     /// Rrepresents class for MediaPortal IPTV filter and url source splitter errors.
     /// </summary>
-    internal static class FilterError
+    public static class FilterError
     {
         /// <summary>
         /// Gets error description for specified error code.
@@ -18,7 +16,7 @@ namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
         /// <returns>Error description or <see cref="String.Empty"/> is unknown.</returns>
         public static String ErrorDescription(IFilterStateEx filterState, int errorCode)
         {
-            return FilterError.ErrorDescription(filterState, errorCode, true);
+            return ErrorDescription(filterState, errorCode, true);
         }
 
         /// <summary>
@@ -46,7 +44,7 @@ namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
                         return String.IsNullOrEmpty(description) ? String.Empty : description.Trim();
                     }
                 }
-
+                
                 if ((result == 0) && (!isFilterError) && translateOtherErrors)
                 {
                     String description = DirectShowLib.DsError.GetErrorText(errorCode);

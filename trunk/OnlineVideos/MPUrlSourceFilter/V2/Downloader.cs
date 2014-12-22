@@ -5,14 +5,13 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Threading;
-using DirectShowLib;
 
 namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
 {
     /// <summary>
     /// Represents class for downloading single stream with MediaPortal Url Source Splitter.
     /// </summary>
-    internal class Downloader : MarshalByRefObject, IDownloader, IDownloadCallback
+    public class Downloader : MarshalByRefObject, IDownloader, IDownloadCallback
     {
         #region Private fields
 
@@ -65,7 +64,7 @@ namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
 
         public Exception Download(DownloadInfo downloadInfo)
         {
-            IBaseFilter sourceFilter = null;
+            IDownload sourceFilter = null;
 
             try
             {
@@ -74,8 +73,8 @@ namespace OnlineVideos.MediaPortal1.MPUrlSourceSplitter.V2
                 this.downloadFinished = false;
                 this.cancelled = false;
 
-                sourceFilter = (IBaseFilter)new MPUrlSourceSplitter();
-                String url = OnlineVideos.MediaPortal1.Player.OnlineVideosPlayer.GetFilterUrl(sourceFilter, downloadInfo.Util, downloadInfo.Url);
+                sourceFilter = (IDownload)new MPUrlSourceSplitter();
+                String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(sourceFilter, downloadInfo.Util, downloadInfo.Url);
 
                 IDownload downloadFilter = (IDownload)sourceFilter;
                 int result = downloadFilter.DownloadAsync(url, downloadInfo.LocalFile, this);
