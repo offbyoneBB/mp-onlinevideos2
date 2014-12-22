@@ -34,7 +34,7 @@ namespace OnlineVideos.Sites
 
         private static string mainCategoriesUrlFormat = @"http://www.cbs.com/carousels/showsByCategory/{0}/offset/0/limit/100";
         private static string videoSectionUrlFormat = @"http://www.cbs.com/carousels/videosBySection/{0}/offset/0/limit/1/xs/0/";
-        private static string videoListUrlFormat = @"http://www.cbs.com/carousels/videosByWindow/{0}/offset/0/limit/40/xs/0/{1}/";
+        private static string videoListUrlFormat = @"http://www.cbs.com/carousels/videosBySection/{0}/offset/0/limit/40/xs/0/";
         private static string thePlatformUrlFormat = @"http://link.theplatform.com/s/dJ5BDC/{0}?format=SMIL&Tracking=true&mbr=true";
         
         private Category currentCategory = null;
@@ -121,11 +121,9 @@ namespace OnlineVideos.Sites
                 string webData = GetWebData(parentRssLink.Url);
                 if (!string.IsNullOrEmpty(webData))
                 {
-                    Match showIdMatch = showIdRegex.Match(webData);
                     Match videoSectionsMatch = videoSectionsRegex.Match(webData);
-                    if (showIdMatch.Success && videoSectionsMatch.Success)
+                    if (videoSectionsMatch.Success)
                     {
-                        string showId = showIdMatch.Groups["showId"].Value;
                         // retrieve info for each section
                         foreach (string sectionId in videoSectionsMatch.Groups["videoSections"].Value.Split(',').ToList())
                         {
@@ -136,7 +134,7 @@ namespace OnlineVideos.Sites
                                     new RssLink() {
                                         ParentCategory = parentCategory,
                                         Name = (string) json["result"]["title"],
-                                        Url = string.Format(videoListUrlFormat, sectionId, showId),
+                                        Url = string.Format(videoListUrlFormat, sectionId),
                                         HasSubCategories = false
                                     });
                             }
