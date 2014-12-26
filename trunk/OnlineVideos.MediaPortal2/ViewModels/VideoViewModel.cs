@@ -504,7 +504,7 @@ namespace OnlineVideos.MediaPortal2
 				{
 					IDownloader dlHelper = null;
 					if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloader();
-					else dlHelper = new MPUrlSourceFilter.MPUrlSourceFilterDownloader();
+					else dlHelper = new MPUrlSourceFilter.Downloader();
 					dlList.CurrentItem.Downloader = dlHelper;
 					dlList.CurrentItem.Start = DateTime.Now;
 					Log.Info("Starting download of '{0}' to '{1}' from Site '{2}'", dlList.CurrentItem.Url, dlList.CurrentItem.LocalFile, dlList.CurrentItem.Util.Settings.Name);

@@ -36,7 +36,7 @@ namespace OnlineVideos.MediaPortal2
 			OnlineVideoSettings.Instance.AddSupportedVideoExtensions(new List<string>() { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mkv", ".mp4", ".wmv" });
 
 			// clear cache files that might be left over from an application crash
-			MPUrlSourceFilter.MPUrlSourceFilterDownloader.ClearDownloadCache();
+			MPUrlSourceFilter.Downloader.ClearDownloadCache();
 			// load translation strings in other AppDomain, so SiteUtils can use localized language strings
 			TranslationLoader.LoadTranslations(ServiceRegistration.Get<ILocalization>().CurrentCulture.TwoLetterISOLanguageName, System.IO.Path.Combine(System.IO.Path.GetDirectoryName(GetType().Assembly.Location), "Language"), "en", "strings_{0}.xml");
 			// The default connection limit is 2 in .Net on most platforms! This means downloading two files will block all other WebRequests.
