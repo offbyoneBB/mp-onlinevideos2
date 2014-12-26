@@ -16,28 +16,56 @@ namespace OnlineVideos.MediaPortal2
             if (!string.IsNullOrEmpty(sourceFilterName))
             {
 				IBaseFilter sourceFilter = null;
-				if (sourceFilterName == MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName)
+				if (sourceFilterName == MPUrlSourceFilter.Downloader.FilterName)
 				{
 					sourceFilter = FilterLoader.LoadFilterFromDll(
-						Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), @"MPUrlSourceSplitter\MPUrlSourceSplitter.ax"), 
-						new Guid(MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterCLSID), false);
+						Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), @"MPUrlSourceSplitter\MPUrlSourceSplitter.ax"),
+                        new Guid(MPUrlSourceFilter.Downloader.FilterCLSID), false);
 					if (sourceFilter != null)
 					{
-						_graphBuilder.AddFilter(sourceFilter, MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName);
+                        _graphBuilder.AddFilter(sourceFilter, MPUrlSourceFilter.Downloader.FilterName);
 					}
 				}
 				else
 				{
 					sourceFilter = FilterGraphTools.AddFilterByName(_graphBuilder, FilterCategory.LegacyAmFilterCategory, sourceFilterName);
 				}
-                int result = ((IFileSourceFilter)sourceFilter).Load(_resourceAccessor.ResourcePathName, null);
 
 				if (sourceFilter != null)
 				{
-					OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
-					if (filterState != null)
-						while (!filterState.IsFilterReadyToConnectPins())
-							System.Threading.Thread.Sleep(50); // no need to do this more often than 20 times per second
+                    var filterStateEx = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterStateEx;
+
+                    int result = 0;
+
+                    if (filterStateEx != null)
+                    {
+                        String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(null/*siteUtil*/, _resourceAccessor.ResourcePathName);
+                        result = filterStateEx.LoadAsync(url);
+                        if (result < 0)
+                        {
+                            throw new OnlineVideosException("Loading URL async error: " + result);
+                        }
+
+                        bool opened = false;
+                        while (!opened)
+                        {
+                            result = filterStateEx.IsStreamOpened(out opened);
+
+                            if (result < 0)
+                            {
+                                throw new OnlineVideosException("Check stream open error: " + result);
+                            }
+
+                            if (opened)
+                            {
+                                break;
+                            }
+
+                            System.Threading.Thread.Sleep(1);
+                        }
+                    }
+                    else
+                        result = ((IFileSourceFilter)sourceFilter).Load(_resourceAccessor.ResourcePathName, null);
 
 					FilterGraphTools.RenderOutputPins(_graphBuilder, sourceFilter);
 					FilterGraphTools.TryRelease(ref sourceFilter);
@@ -58,10 +86,10 @@ namespace OnlineVideos.MediaPortal2
             {
                 case "http":
                     sourceFilterName = _resourceAccessor.ResourcePathName.ToLower().Contains(".asf") ? 
-                        "WM ASF Reader" : MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName;
+                        "WM ASF Reader" : MPUrlSourceFilter.Downloader.FilterName;
                     break;
                 case "rtmp":
-                    sourceFilterName = MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName;
+                    sourceFilterName = MPUrlSourceFilter.Downloader.FilterName;
                     break;
                 case "sop":
                     sourceFilterName = "SopCast ASF Splitter";

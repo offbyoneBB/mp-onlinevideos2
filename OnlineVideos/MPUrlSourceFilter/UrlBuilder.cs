@@ -30,7 +30,10 @@ namespace OnlineVideos.MPUrlSourceFilter
             }
 
             //simpleUrl.CacheFolder =; simpleUrl.MaximumLogSize =; simpleUrl.MaximumPlugins =; simpleUrl.Verbosity =;
-            simpleUrl.ApplySettings(siteUtil);
+
+            if (siteUtil != null)
+                simpleUrl.ApplySettings(siteUtil);
+
             return simpleUrl.ToFilterString();
         }
     }
