@@ -1,5 +1,0 @@
-LIBRARY     mpurlsourcesplitter_protocol_afhs.dll
-
-EXPORTS
-			CreatePluginInstance		PRIVATE
-			DestroyPluginInstance		PRIVATE
