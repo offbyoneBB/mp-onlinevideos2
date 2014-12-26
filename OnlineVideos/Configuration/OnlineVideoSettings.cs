@@ -155,23 +155,6 @@ namespace OnlineVideos
 			Log.Info("Loaded {0} sites from {1}", SiteSettingsList.Count, SitesFileName);
         }
 
-        void LoadScriptSites()
-        {
-            Log.Debug("Loading script files");
-            if (!string.IsNullOrEmpty(ConfigDir) && Directory.Exists(Path.Combine(ConfigDir, "scripts\\OnlineVideos")))
-            {
-                FileInfo[] fileInfos = new DirectoryInfo(Path.Combine(ConfigDir, "scripts\\OnlineVideos")).GetFiles("*.xml");
-                foreach (var fileInfo in fileInfos)
-                {
-					Log.Debug("Script loaded for {0}", fileInfo.FullName);
-                    ScriptUtil scriptUtil = new ScriptUtil();
-                    scriptUtil.ScriptFile = fileInfo.FullName;
-                    scriptUtil.Initialize(new SiteSettings());
-                    SiteUtilsList.Add(scriptUtil.Settings.Name, scriptUtil);
-                }
-            }
-        }
-
         public void BuildSiteUtilsList()
         {
             SiteUtilsList.Clear();
@@ -193,8 +176,6 @@ namespace OnlineVideos
 					if (siteutil is LatestVideosSiteUtilBase) LatestVideosSiteUtilsList.Add(siteutil as LatestVideosSiteUtilBase);
                 }
             }
-
-            LoadScriptSites();
 
             if (!FavoritesFirst)
             {
