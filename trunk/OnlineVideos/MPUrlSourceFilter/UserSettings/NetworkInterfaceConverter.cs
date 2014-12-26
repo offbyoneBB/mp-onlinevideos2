@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
 
-namespace OnlineVideos.MPUrlSourceFilter
+namespace OnlineVideos.MPUrlSourceFilter.UserSettings
 {
     /// <summary>
     /// Represents class for network interface converter.

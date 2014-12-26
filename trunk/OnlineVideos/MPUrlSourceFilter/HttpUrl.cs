@@ -8,18 +8,23 @@ namespace OnlineVideos.MPUrlSourceFilter
 {
     /// <summary>
     /// Represent base class for HTTP urls for MediaPortal Url Source Splitter.
-	/// All parameter values will be UrlEncoded, so make sure you set them UrlDecoded!
+    /// All parameter values will be UrlEncoded, so make sure you set them UrlDecoded!
     /// </summary>
     [Serializable]
     public class HttpUrl : SimpleUrl
     {
         #region Private fields
 
-        private String referer;
-        private String userAgent;
-        Version version;
-        private CookieCollection cookies;
-        private bool ignoreContentLength;
+        private String referer = HttpUrl.DefaultHttpReferer;
+        private String userAgent = HttpUrl.DefaultHttpUserAgent;
+        Version version = HttpUrl.DefaultHttpVersion;
+        private CookieCollection cookies = new CookieCollection();
+        private bool ignoreContentLength = HttpUrl.DefaultHttpIgnoreContentLength;
+        private int openConnectionTimeout = HttpUrl.DefaultHttpOpenConnectionTimeout;
+        private int openConnectionSleepTime = HttpUrl.DefaultHttpOpenConnectionSleepTime;
+        private int totalReopenConnectionTimeout = HttpUrl.DefaultHttpTotalReopenConnectionTimeout;
+        private bool seekingSupported = HttpUrl.DefaultHttpSeekingSupported;
+        private bool seekingSupportDetection = HttpUrl.DefaultHttpSeekingSupportDetection;
 
         #endregion
 
@@ -51,7 +56,6 @@ namespace OnlineVideos.MPUrlSourceFilter
             {
                 throw new ArgumentException("The protocol is not supported.", "uri");
             }
-
             this.cookies = new CookieCollection();
 
             this.Referer = String.Empty;
@@ -142,88 +146,251 @@ namespace OnlineVideos.MPUrlSourceFilter
             get { return this.cookies; }
         }
 
+        /// <summary>
+        /// Gets or sets the timeout to open HTTP url in milliseconds.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="OpenConnectionTimeout"/> is lower than zero.</para>
+        /// </exception>
+        public int OpenConnectionTimeout
+        {
+            get { return this.openConnectionTimeout; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("OpenConnectionTimeout", value, "Cannot be less than zero.");
+                }
+
+                this.openConnectionTimeout = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the time in milliseconds to sleep before opening connection.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="OpenConnectionSleepTime"/> is lower than zero.</para>
+        /// </exception>
+        public int OpenConnectionSleepTime
+        {
+            get { return this.openConnectionSleepTime; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("OpenConnectionSleepTime", value, "Cannot be less than zero.");
+                }
+
+                this.openConnectionSleepTime = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the total timeout to open HTTP url in milliseconds.
+        /// </summary>
+        /// <remarks>
+        /// <para>It is applied when lost connection and trying to open new one. Filter will be trying to open connection until this timeout occurs. This parameter is ignored in case of live stream.</para>
+        /// </remarks>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="TotalReopenConnectionTimeout"/> is lower than zero.</para>
+        /// </exception>
+        public int TotalReopenConnectionTimeout
+        {
+            get { return this.totalReopenConnectionTimeout; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("TotalReopenConnectionTimeout", value, "Cannot be less than zero.");
+                }
+
+                this.totalReopenConnectionTimeout = value;
+            }
+        }
+
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Gets a string that can be given to the MediaPortal Url Source Splitter holding the url and all parameters.
+        /// </summary>
+        internal override string ToFilterString()
+        {
+            ParameterCollection parameters = new ParameterCollection();
+
+            if (this.IgnoreContentLength != HttpUrl.DefaultHttpIgnoreContentLength)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpIgnoreContentLength, this.IgnoreContentLength ? "1" : "0"));
+            }
+            if (this.OpenConnectionTimeout != HttpUrl.DefaultHttpOpenConnectionTimeout)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpOpenConnectionTimeout, this.OpenConnectionTimeout.ToString()));
+            }
+            if (this.OpenConnectionSleepTime != HttpUrl.DefaultHttpOpenConnectionSleepTime)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpOpenConnectionSleepTime, this.OpenConnectionSleepTime.ToString()));
+            }
+            if (this.TotalReopenConnectionTimeout != HttpUrl.DefaultHttpTotalReopenConnectionTimeout)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpTotalReopenConnectionTimeout, this.TotalReopenConnectionTimeout.ToString()));
+            }
+            if (String.CompareOrdinal(this.Referer, HttpUrl.DefaultHttpReferer) != 0)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpReferer, this.Referer.ToString()));
+            }
+            if (String.CompareOrdinal(this.UserAgent, HttpUrl.DefaultHttpUserAgent) != 0)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpUserAgent, this.UserAgent.ToString()));
+            }
+
+            if (this.Version == HttpVersion.Version10)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpVersion, HttpUrl.HttpVersionForce10.ToString()));
+            }
+            else if (this.Version == HttpVersion.Version11)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpVersion, HttpUrl.HttpVersionForce11.ToString()));
+            }
+
+            if (this.Cookies.Count > 0)
+            {
+                CookieContainer container = new CookieContainer(this.Cookies.Count);
+                foreach (Cookie cookie in this.Cookies)
+                {
+                    container.Add(this.Uri, cookie);
+                }
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpCookie, container.GetCookieHeader(this.Uri)));
+            }
+
+            // return formatted connection string
+            return base.ToFilterString() + ParameterCollection.ParameterSeparator + parameters.FilterParameters;
+        }
+
+        internal override void ApplySettings(Sites.SiteUtilBase siteUtil)
+        {
+            siteUtil.HttpSettings.Apply(this);
+        }
+
         #endregion
 
         #region Constants
 
-        // common parameters of HTTP protocol for MediaPortal Url Source Splitter
+        /// <summary>
+        /// Specifies open connection timeout in milliseconds.
+        /// </summary>
+        protected static readonly String ParameterHttpOpenConnectionTimeout = "HttpOpenConnectionTimeout";
 
         /// <summary>
-        /// Specifies referer HTTP header sent to remote server.
+        /// Specifies the time in milliseconds to sleep before opening connection.
         /// </summary>
-        protected static String ParameterReferer = "HttpReferer";
+        protected static readonly String ParameterHttpOpenConnectionSleepTime = "HttpOpenConnectionSleepTime";
 
         /// <summary>
-        /// Specifies user agent HTTP header sent to remote server.
+        /// Specifies the total timeout to open HTTP url in milliseconds. It is applied when lost connection and trying to open new one. Filter will be trying to open connection until this timeout occurs. This parameter is ignored in case of live stream.
         /// </summary>
-        protected static String ParameterUserAgent = "HttpUserAgent";
+        protected static readonly String ParameterHttpTotalReopenConnectionTimeout = "HttpTotalReopenConnectionTimeout";
 
         /// <summary>
-        /// Specifies cookies sent to remote server.
+        /// Specifies the value of referer HTTP header to send to remote server.
         /// </summary>
-        protected static String ParameterCookie = "HttpCookie";
+        protected static readonly String ParameterHttpReferer = "HttpReferer";
 
         /// <summary>
-        /// Specifies version of HTTP protocol to use.
+        /// Specifies the value of user agent HTTP header to send to remote server.
         /// </summary>
-        protected static String ParameterVersion = "HttpVersion";
+        protected static readonly String ParameterHttpUserAgent = "HttpUserAgent";
 
         /// <summary>
-        /// Specifies if content length should be ignored.
+        /// Specifies the value of cookie HTTP header to send to remote server.
         /// </summary>
-        protected static String ParameterIgnoreContentLength = "HttpIgnoreContentLength";
+        protected static readonly String ParameterHttpCookie = "HttpCookie";
+
+        /// <summary>
+        /// Forces to use specific HTTP protocol version
+        /// </summary>
+        protected static readonly String ParameterHttpVersion = "HttpVersion";
 
         /// <summary>
         /// Specifies that version of HTTP protocol is not specified.
         /// </summary>
-        protected const int HttpVersionNone = 0;
+        protected static readonly int HttpVersionNone = 0;
 
         /// <summary>
         /// Forces to use HTTP version 1.0.
         /// </summary>
-        protected const int HttpVersionForce10 = 1;
+        protected static readonly int HttpVersionForce10 = 1;
 
         /// <summary>
         /// Forces to use HTTP version 1.1.
         /// </summary>
-        protected const int HttpVersionForce11 = 2;
-
-        // default values for some parameters
+        protected static readonly int HttpVersionForce11 = 2;
 
         /// <summary>
-        /// Default referer for MediaPortal Url Source Splitter.
+        /// Specifies if content length HTTP header have to be ignored (e.g. because server reports bad content length).
         /// </summary>
-        /// <remarks>
-        /// This values is <see cref="System.String.Empty"/>.
-        /// </remarks>
-        public static String DefaultReferer = String.Empty;
+        protected static readonly String ParameterHttpIgnoreContentLength = "HttpIgnoreContentLength";
 
         /// <summary>
-        /// Default user agent for MediaPortal Url Source Splitter.
+        /// Specifies if seeking is supported by specifying range HTTP header in request.
         /// </summary>
-        /// <remarks>
-        /// This values is <see cref="System.String.Empty"/>.
-        /// </remarks>
-        public static String DefaultUserAgent = String.Empty;
+        protected static readonly String ParameterHttpSeekingSupported = "HttpSeekingSupported";
 
         /// <summary>
-        /// Default HTTP version for MediaPortal Url Source Splitter.
+        /// Enables or disables automatic detection of seeking support.
         /// </summary>
-        /// <remarks>
-        /// This value is <see langword="null"/>.
-        /// </remarks>
-        public static HttpVersion DefaultVersion = null;
+        protected static readonly String ParameterHttpSeekingSupportDetection = "HttpSeekingSupportDetection";
 
         /// <summary>
-        /// Default ignore content length flag for MediaPortal Url Source Splitter.
+        /// Default value for <see cref="ParameterHttpOpenConnectionTimeout"/>.
         /// </summary>
-        /// <remarks>
-        /// This values if <see langword="false"/>.
-        /// </remarks>
-        public static Boolean DefaultIgnoreContentLength = false;
+        public static readonly int DefaultHttpOpenConnectionTimeout = 20000;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpOpenConnectionSleepTime"/>.
+        /// </summary>
+        public static readonly int DefaultHttpOpenConnectionSleepTime = 0;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpTotalReopenConnectionTimeout"/>.
+        /// </summary>
+        public static readonly int DefaultHttpTotalReopenConnectionTimeout = 60000;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpReferer"/>.
+        /// </summary>
+        public static readonly String DefaultHttpReferer = String.Empty;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpUserAgent"/>.
+        /// </summary>
+        public static readonly String DefaultHttpUserAgent = String.Empty;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpCookie"/>.
+        /// </summary>
+        public static readonly String DefaultHttpCookie = String.Empty;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpVersion"/>.
+        /// </summary>
+        public static readonly Version DefaultHttpVersion = null;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpIgnoreContentLength"/>.
+        /// </summary>
+        public static readonly Boolean DefaultHttpIgnoreContentLength = false;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpSeekingSupported"/>.
+        /// </summary>
+        public static readonly Boolean DefaultHttpSeekingSupported = false;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpSeekingSupportDetection"/>.
+        /// </summary>
+        public static readonly Boolean DefaultHttpSeekingSupportDetection = true;
 
         #endregion
     }

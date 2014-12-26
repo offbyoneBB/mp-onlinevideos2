@@ -171,12 +171,12 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
-					if (graphBuilder != null && GetSourceFilterName(m_strCurrentFile) == OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterName) // only when progress reporting is possible
+					if (graphBuilder != null && GetSourceFilterName(m_strCurrentFile) == OnlineVideos.MPUrlSourceFilter.Downloader.FilterName) // only when progress reporting is possible
                     {
                         IBaseFilter sourceFilter = null;
                         try
                         {
-                            int result = graphBuilder.FindFilterByName(OnlineVideos.MPUrlSourceFilter.V2.Downloader .FilterName, out sourceFilter);
+                            int result = graphBuilder.FindFilterByName(OnlineVideos.MPUrlSourceFilter.Downloader .FilterName, out sourceFilter);
                             if (result == 0)
                             {
                                 long total = 0, current = 0;
@@ -218,7 +218,7 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 case "http":
                 case "rtmp":
-                    sourceFilterName = OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterName;
+                    sourceFilterName = OnlineVideos.MPUrlSourceFilter.Downloader.FilterName;
                     break;
                 case "sop":
                     sourceFilterName = "SopCast ASF Splitter";
@@ -270,11 +270,11 @@ namespace OnlineVideos.MediaPortal1.Player
                 IBaseFilter sourceFilter = null;
                 try
                 {
-					if (sourceFilterName == OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterName)
+					if (sourceFilterName == OnlineVideos.MPUrlSourceFilter.Downloader.FilterName)
 					{
-						sourceFilter = FilterFromFile.LoadFilterFromDll("MPUrlSourceSplitter\\MPUrlSourceSplitter.ax", new Guid(OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterCLSID), true);
+						sourceFilter = FilterFromFile.LoadFilterFromDll("MPUrlSourceSplitter\\MPUrlSourceSplitter.ax", new Guid(OnlineVideos.MPUrlSourceFilter.Downloader.FilterCLSID), true);
 						if (sourceFilter != null)
-							Marshal.ThrowExceptionForHR(graphBuilder.AddFilter(sourceFilter, OnlineVideos.MPUrlSourceFilter.V2.Downloader.FilterName));
+							Marshal.ThrowExceptionForHR(graphBuilder.AddFilter(sourceFilter, OnlineVideos.MPUrlSourceFilter.Downloader.FilterName));
 					}
 					if (sourceFilter == null)
 					{
@@ -324,15 +324,14 @@ namespace OnlineVideos.MediaPortal1.Player
                     return false;
                 }
 
-                OnlineVideos.MPUrlSourceFilter.V2.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.V2.IFilterState;
-                OnlineVideos.MPUrlSourceFilter.V2.IFilterStateEx filterStateEx = sourceFilter as OnlineVideos.MPUrlSourceFilter.V2.IFilterStateEx;
+                OnlineVideos.MPUrlSourceFilter.IFilterStateEx filterStateEx = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterStateEx;
 
                 if (filterStateEx != null)
                 {
                     // MediaPortal IPTV filter and url source splitter
                     Log.Instance.Info("BufferFile : using 'MediaPortal IPTV filter and url source splitter' as source filter");
 
-                    String url = OnlineVideos.MPUrlSourceFilter.V2.UrlBuilder.GetFilterUrl(sourceFilter, siteUtil, m_strCurrentFile);
+                    String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, m_strCurrentFile);
 
                     Log.Instance.Info("BufferFile : loading url: '{0}'", url);
                     result = filterStateEx.LoadAsync(url);
@@ -442,13 +441,11 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
-                    String url = OnlineVideos.MPUrlSourceFilter.V2.UrlBuilder.GetFilterUrl(sourceFilter, siteUtil, m_strCurrentFile);
-
-                    Marshal.ThrowExceptionForHR(((IFileSourceFilter)sourceFilter).Load(url, null));
+                    Marshal.ThrowExceptionForHR(((IFileSourceFilter)sourceFilter).Load(m_strCurrentFile, null));
 
                     Log.Instance.Info("BufferFile : using unknown filter as source filter");
 
-                    if (sourceFilter is IAMOpenProgress && !url.Contains("live=true") && !url.Contains("RtmpLive=1"))
+                    if (sourceFilter is IAMOpenProgress && !m_strCurrentFile.Contains("live=true") && !m_strCurrentFile.Contains("RtmpLive=1"))
                     {
                         // buffer before starting playback
                         bool filterConnected = false;

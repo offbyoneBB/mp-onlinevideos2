@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace OnlineVideos.MPUrlSourceFilter
@@ -9,9 +6,8 @@ namespace OnlineVideos.MPUrlSourceFilter
     /// <summary>
     /// Specifies interface for reporting of the progress of a operation and enables the application to cancel the operation.
     /// </summary>
-    //[ComImport, System.Security.SuppressUnmanagedCodeSecurity, Guid("8E1C39A1-DE53-11cf-AA63-0080C744528D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComImport, Guid("8E1C39A1-DE53-11cf-AA63-0080C744528D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IAMOpenProgress
+    public interface IAMOpenProgress
     {
         /// <summary>
         /// Retrieves the progress of the operation.
@@ -33,9 +29,8 @@ namespace OnlineVideos.MPUrlSourceFilter
     /// <summary>
     /// Specifies interface for downloading single stream with MediaPortal Url Source Filter.
     /// </summary>
-    //[ComImport, System.Security.SuppressUnmanagedCodeSecurity, Guid("B7FDAB2F-9870-4DFC-8CC7-8BBC68B1A3BF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [ComImport, Guid("B7FDAB2F-9870-4DFC-8CC7-8BBC68B1A3BF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IDownload : IAMOpenProgress
+    public interface IDownload : IAMOpenProgress
     {
         #region IAMOpenProgress interface
 

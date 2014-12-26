@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
 using System.Collections;
+using System.ComponentModel;
+using System.Text;
 
-namespace OnlineVideos.MPUrlSourceFilter
+namespace OnlineVideos.MPUrlSourceFilter.UserSettings
 {
     /// <summary>
     /// Represents class for UDP or RTP url settings.
     /// </summary>
-    [TypeConverter(typeof(UdpRtpUrlSettingsConverter))]
+    [TypeConverter(typeof(ExpandableUserSettingObjectConverter<UdpRtpUrlSettings>))]
+    [Serializable]
     public class UdpRtpUrlSettings : SimpleUrlSettings
     {
         #region Private fields
@@ -31,6 +30,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>The <see cref="OpenConnectionTimeout"/> is lower than zero.</para>
         /// </exception>
         [Category("OnlineVideosUserConfiguration"), Description("The timeout to open UDP or RTP url in milliseconds. It is applied to first opening of url.")]
+        [NotifyParentProperty(true)]
         public int OpenConnectionTimeout
         {
             get { return this.openConnectionTimeout; }
@@ -52,6 +52,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>The <see cref="OpenConnectionSleepTime"/> is lower than zero.</para>
         /// </exception>
         [Category("OnlineVideosUserConfiguration"), Description("The time in milliseconds to sleep before opening connection.")]
+        [NotifyParentProperty(true)]
         public int OpenConnectionSleepTime
         {
             get { return this.openConnectionSleepTime; }
@@ -76,6 +77,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>The <see cref="TotalReopenConnectionTimeout"/> is lower than zero.</para>
         /// </exception>
         [Category("OnlineVideosUserConfiguration"), Description("The total timeout to open UDP or RTP url in milliseconds. It is applied when lost connection and trying to open new one. Filter will be trying to open connection until this timeout occurs. This parameter is ignored in case of live stream.")]
+        [NotifyParentProperty(true)]
         public int TotalReopenConnectionTimeout
         {
             get { return this.totalReopenConnectionTimeout; }
@@ -98,6 +100,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>The <see cref="ReceiveDataCheckInterval"/> is lower than zero.</para>
         /// </exception>
         [Category("OnlineVideosUserConfiguration"), Description("If not data are received in specified amount of time in milliseconds, then connection is assumed to be lost.")]
+        [NotifyParentProperty(true)]
         public int ReceiveDataCheckInterval
         {
             get { return this.receiveDataCheckInterval; }
@@ -163,6 +166,16 @@ namespace OnlineVideos.MPUrlSourceFilter
             builder.Append((this.ReceiveDataCheckInterval != OnlineVideoSettings.Instance.UdpRtpReceiveDataCheckInterval) ? String.Format("ReceiveDataCheckInterval={0};", this.ReceiveDataCheckInterval) : String.Empty);
 
             return builder.ToString();
+        }
+
+        internal void Apply(UdpRtpUrl udpUrl)
+        {
+            base.Apply(udpUrl);
+
+            udpUrl.OpenConnectionSleepTime = OpenConnectionSleepTime;
+            udpUrl.OpenConnectionTimeout = OpenConnectionTimeout;
+            udpUrl.TotalReopenConnectionTimeout = TotalReopenConnectionTimeout;
+            udpUrl.ReceiveDataCheckInterval = ReceiveDataCheckInterval;
         }
 
         #endregion

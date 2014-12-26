@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
 
-namespace OnlineVideos.MPUrlSourceFilter.V2
+namespace OnlineVideos.MPUrlSourceFilter
 {
     /// <summary>
     /// Specifies interface for splitter state.
@@ -20,7 +17,6 @@ namespace OnlineVideos.MPUrlSourceFilter.V2
         [PreserveSig]
         [return: MarshalAs(UnmanagedType.I4)]
         int IsFilterReadyToConnectPins([Out, MarshalAs(UnmanagedType.Bool)] out Boolean ready);
-        
 
         /// <summary>
         /// Gets filter cache file name.

@@ -14,9 +14,16 @@ namespace OnlineVideos.MPUrlSourceFilter
     {
         #region Private fields
 
-        private int multicastPreference;
-        private int udpPreference;
-        private int sameConnectionPreference;
+        private int multicastPreference = RtspUrl.DefaultRtspMulticastPreference;
+        private int udpPreference = RtspUrl.DefaultRtspUdpPreference;
+        private int sameConnectionPreference = RtspUrl.DefaultRtspSameConnectionTcpPreference;
+
+        private int openConnectionTimeout = RtspUrl.DefaultRtspOpenConnectionTimeout;
+        private int openConnectionSleepTime = RtspUrl.DefaultRtspOpenConnectionSleepTime;
+        private int totalReopenConnectionTimeout = RtspUrl.DefaultRtspTotalReopenConnectionTimeout;
+
+        private int clientPortMin = RtspUrl.DefaultRtspClientPortMin;
+        private int clientPortMax = RtspUrl.DefaultRtspClientPortMax;
 
         #endregion
 
@@ -49,15 +56,135 @@ namespace OnlineVideos.MPUrlSourceFilter
                 throw new ArgumentException("The protocol is not supported.", "uri");
             }
 
-            this.MulticastPreference = RtspUrl.DefaultMulticastPreference;
-            this.UdpPreference = RtspUrl.DefaultUdpPreference;
-            this.SameConnectionPreference = RtspUrl.DefaultSameConnectionTcpPreference;
-            this.IgnorePayloadType = RtspUrl.DefaultIgnoreRtpPayloadType;
+            this.IgnorePayloadType = RtspUrl.DefaultRtspIgnoreRtpPayloadType;
         }
 
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the timeout to open RTSP url in milliseconds.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="OpenConnectionTimeout"/> is lower than zero.</para>
+        /// </exception>
+        public int OpenConnectionTimeout
+        {
+            get { return this.openConnectionTimeout; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("OpenConnectionTimeout", value, "Cannot be less than zero.");
+                }
+
+                this.openConnectionTimeout = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the time in milliseconds to sleep before opening connection.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="OpenConnectionSleepTime"/> is lower than zero.</para>
+        /// </exception>
+        public int OpenConnectionSleepTime
+        {
+            get { return this.openConnectionSleepTime; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("OpenConnectionSleepTime", value, "Cannot be less than zero.");
+                }
+
+                this.openConnectionSleepTime = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the total timeout to open RTSP url in milliseconds.
+        /// </summary>
+        /// <remarks>
+        /// <para>It is applied when lost connection and trying to open new one. Filter will be trying to open connection until this timeout occurs. This parameter is ignored in case of live stream.</para>
+        /// </remarks>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="TotalReopenConnectionTimeout"/> is lower than zero.</para>
+        /// </exception>
+        public int TotalReopenConnectionTimeout
+        {
+            get { return this.totalReopenConnectionTimeout; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("TotalReopenConnectionTimeout", value, "Cannot be less than zero.");
+                }
+
+                this.totalReopenConnectionTimeout = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the minimum client port for UDP connection.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="ClientPortMin"/> is lower than zero.</para>
+        /// <para>The <see cref="ClientPortMin"/> is greater than 65535.</para>
+        /// <para>The <see cref="ClientPortMin"/> is greater than <see cref="ClientPortMax"/>.</para>
+        /// </exception>
+        public int ClientPortMin
+        {
+            get { return this.clientPortMin; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("ClientPortMin", value, "Cannot be less than zero.");
+                }
+                if (value > 65535)
+                {
+                    throw new ArgumentOutOfRangeException("ClientPortMin", value, "Cannot be greater than 65535.");
+                }
+                if (value >= this.ClientPortMax)
+                {
+                    throw new ArgumentOutOfRangeException("ClientPortMin", value, "Cannot be greater than maximum client port.");
+                }
+
+                this.clientPortMin = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the maximum client port for UDP connection.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="ClientPortMax"/> is lower than zero.</para>
+        /// <para>The <see cref="ClientPortMax"/> is greater than 65535.</para>
+        /// <para>The <see cref="ClientPortMax"/> is lower than <see cref="ClientPortMin"/>.</para>
+        /// </exception>
+        public int ClientPortMax
+        {
+            get { return this.clientPortMax; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("ClientPortMin", value, "Cannot be less than zero.");
+                }
+                if (value > 65535)
+                {
+                    throw new ArgumentOutOfRangeException("ClientPortMin", value, "Cannot be greater than 65535.");
+                }
+                if (value <= this.ClientPortMin)
+                {
+                    throw new ArgumentOutOfRangeException("ClientPortMin", value, "Cannot be lower than minimum client port.");
+                }
+
+                this.clientPortMax = value;
+            }
+        }
 
         /// <summary>
         /// Specifies UDP multicast connection preference.
@@ -127,51 +254,153 @@ namespace OnlineVideos.MPUrlSourceFilter
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Gets a string that can be given to the MediaPortal Url Source Splitter holding the url and all parameters.
+        /// </summary>
+        internal override string ToFilterString()
+        {
+            ParameterCollection parameters = new ParameterCollection();
+
+            if (this.ClientPortMax != RtspUrl.DefaultRtspClientPortMax)
+            {
+                parameters.Add(new Parameter(RtspUrl.ParameterRtspClientPortMax, this.ClientPortMax.ToString()));
+            }
+            if (this.ClientPortMin != RtspUrl.DefaultRtspClientPortMin)
+            {
+                parameters.Add(new Parameter(RtspUrl.ParameterRtspClientPortMin, this.ClientPortMin.ToString()));
+            }
+            if (this.OpenConnectionTimeout != RtspUrl.DefaultRtspOpenConnectionTimeout)
+            {
+                parameters.Add(new Parameter(RtspUrl.ParameterRtspOpenConnectionTimeout, this.OpenConnectionTimeout.ToString()));
+            }
+            if (this.OpenConnectionSleepTime != RtspUrl.DefaultRtspOpenConnectionSleepTime)
+            {
+                parameters.Add(new Parameter(RtspUrl.ParameterRtspOpenConnectionSleepTime, this.OpenConnectionSleepTime.ToString()));
+            }
+            if (this.TotalReopenConnectionTimeout != RtspUrl.DefaultRtspTotalReopenConnectionTimeout)
+            {
+                parameters.Add(new Parameter(RtspUrl.ParameterRtspTotalReopenConnectionTimeout, this.TotalReopenConnectionTimeout.ToString()));
+            }
+            if (this.IgnorePayloadType != RtspUrl.DefaultRtspIgnoreRtpPayloadType)
+            {
+                parameters.Add(new Parameter(RtspUrl.ParameterRtspIgnoreRtpPayloadType, this.IgnorePayloadType.ToString()));
+            }
+            if (this.MulticastPreference != RtspUrl.DefaultRtspMulticastPreference)
+            {
+                parameters.Add(new Parameter(RtspUrl.ParameterRtspMulticastPreference, this.MulticastPreference.ToString()));
+            }
+            if (this.SameConnectionPreference != RtspUrl.DefaultRtspSameConnectionTcpPreference)
+            {
+                parameters.Add(new Parameter(RtspUrl.ParameterRtspSameConnectionTcpPreference, this.SameConnectionPreference.ToString()));
+            }
+            if (this.UdpPreference != RtspUrl.DefaultRtspUdpPreference)
+            {
+                parameters.Add(new Parameter(RtspUrl.ParameterRtspUdpPreference, this.UdpPreference.ToString()));
+            }
+
+            // return formatted connection string
+            return base.ToFilterString() + ParameterCollection.ParameterSeparator + parameters.FilterParameters;
+        }
+
+        internal override void ApplySettings(Sites.SiteUtilBase siteUtil)
+        {
+            siteUtil.RtspSettings.Apply(this);
+        }
+
         #endregion
 
         #region Constants
 
-        // common parameters of RTSP protocol for MediaPortal Url Source Splitter
+        /// <summary>
+        /// Specifies open connection timeout in milliseconds.
+        /// </summary>
+        protected static readonly String ParameterRtspOpenConnectionTimeout = "RtspOpenConnectionTimeout";
+
+        /// <summary>
+        /// Specifies the time in milliseconds to sleep before opening connection.
+        /// </summary>
+        protected static readonly String ParameterRtspOpenConnectionSleepTime = "RtspOpenConnectionSleepTime";
+
+        /// <summary>
+        /// Specifies the total timeout to open RTSP url in milliseconds. It is applied when lost connection and trying to open new one. Filter will be trying to open connection until this timeout occurs. This parameter is ignored in case of live stream.
+        /// </summary>
+        protected static readonly String ParameterRtspTotalReopenConnectionTimeout = "RtspTotalReopenConnectionTimeout";
 
         /// <summary>
         /// Specifies UDP multicast connection preference of RTSP protocol.
         /// </summary>
-        protected static readonly String ParameterMulticastPreference = "RtspMulticastPreference";
+        protected static readonly String ParameterRtspMulticastPreference = "RtspMulticastPreference";
 
         /// <summary>
         /// Specifies UDP connection preference of RTSP protocol.
         /// </summary>
-        protected static readonly String ParameterUdpPreference = "RtspUdpPreference";
+        protected static readonly String ParameterRtspUdpPreference = "RtspUdpPreference";
 
         /// <summary>
         /// Specifies same connection preference of RTSP protocol.
         /// </summary>
-        protected static readonly String ParameterSameConnectionTcpPreference = "RtspSameConnectionTcpPreference";
+        protected static readonly String ParameterRtspSameConnectionTcpPreference = "RtspSameConnectionTcpPreference";
 
         /// <summary>
         /// Specifies ignore RTP payload type flag of RTSP protocol.
         /// </summary>
-        protected static readonly String ParameterIgnoreRtpPayloadType = "RtspIgnoreRtpPayloadType";
+        protected static readonly String ParameterRtspIgnoreRtpPayloadType = "RtspIgnoreRtpPayloadType";
+
+        /// <summary>
+        /// Specifies minimum client port for UDP connection.
+        /// </summary>
+        protected static readonly String ParameterRtspClientPortMin = "RtspClientPortMin";
+
+        /// <summary>
+        /// Specifies maximum client port for UDP connection.
+        /// </summary>
+        protected static readonly String ParameterRtspClientPortMax = "RtspClientPortMax";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterRtspOpenConnectionTimeout"/>.
+        /// </summary>
+        public static readonly int DefaultRtspOpenConnectionTimeout = 20000;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterRtspOpenConnectionSleepTime"/>.
+        /// </summary>
+        public static readonly int DefaultRtspOpenConnectionSleepTime = 0;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterRtspTotalReopenConnectionTimeout"/>.
+        /// </summary>
+        public static readonly int DefaultRtspTotalReopenConnectionTimeout = 60000;
 
         /// <summary>
         /// Default UDP multicast connection preference.
         /// </summary>
-        public const int  DefaultMulticastPreference = 2;
+        public static readonly int DefaultRtspMulticastPreference = 2;
 
         /// <summary>
         /// Default UDP connection preference.
         /// </summary>
-        public const int  DefaultUdpPreference = 1;
+        public static readonly int DefaultRtspUdpPreference = 1;
 
         /// <summary>
         /// Default same connection preference.
         /// </summary>
-        public const int  DefaultSameConnectionTcpPreference = 0;
+        public static readonly int DefaultRtspSameConnectionTcpPreference = 0;
 
         /// <summary>
         /// Default ignore payload type flag.
         /// </summary>
-        public const Boolean DefaultIgnoreRtpPayloadType = false;
+        public static readonly Boolean DefaultRtspIgnoreRtpPayloadType = false;
+
+        /// <summary>
+        /// Default minimum client port for UDP connection.
+        /// </summary>
+        public static readonly int DefaultRtspClientPortMin = 50000;
+
+        /// <summary>
+        /// Default maximum client port for UDP connection.
+        /// </summary>
+        public static readonly int DefaultRtspClientPortMax = 65535;
 
         #endregion
     }

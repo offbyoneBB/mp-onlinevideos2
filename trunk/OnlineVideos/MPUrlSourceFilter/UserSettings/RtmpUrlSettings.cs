@@ -1,36 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
 using System.Collections;
+using System.ComponentModel;
+using System.Text;
 
-namespace OnlineVideos.MPUrlSourceFilter
+namespace OnlineVideos.MPUrlSourceFilter.UserSettings
 {
     /// <summary>
-    /// Represents class for HTTP url settings.
+    /// Represents class for RTMP url settings.
     /// </summary>
-    [TypeConverter(typeof(HttpUrlSettingsConverter))]
+    [TypeConverter(typeof(ExpandableUserSettingObjectConverter<RtmpUrlSettings>))]
     [Serializable]
-    public class HttpUrlSettings : SimpleUrlSettings
+    public class RtmpUrlSettings : SimpleUrlSettings
     {
         #region Private fields
 
-        private int openConnectionTimeout = OnlineVideoSettings.Instance.HttpOpenConnectionTimeout;
-        private int openConnectionSleepTime = OnlineVideoSettings.Instance.HttpOpenConnectionSleepTime;
-        private int totalReopenConnectionTimeout = OnlineVideoSettings.Instance.HttpTotalReopenConnectionTimeout;
+        private int openConnectionTimeout = OnlineVideoSettings.Instance.RtmpOpenConnectionTimeout;
+        private int openConnectionSleepTime = OnlineVideoSettings.Instance.RtmpOpenConnectionSleepTime;
+        private int totalReopenConnectionTimeout = OnlineVideoSettings.Instance.RtmpTotalReopenConnectionTimeout;
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Gets or sets the timeout to open HTTP url in milliseconds.
+        /// Gets or sets the timeout to open RTMP url in milliseconds.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <para>The <see cref="OpenConnectionTimeout"/> is lower than zero.</para>
         /// </exception>
-        [Category("OnlineVideosUserConfiguration"), Description("The timeout to open HTTP url in milliseconds. It is applied to first opening of url.")]
+        [Category("OnlineVideosUserConfiguration"), Description("The timeout to open RTMP url in milliseconds. It is applied to first opening of url.")]
+        [NotifyParentProperty(true)]
         public int OpenConnectionTimeout
         {
             get { return this.openConnectionTimeout; }
@@ -52,6 +51,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>The <see cref="OpenConnectionSleepTime"/> is lower than zero.</para>
         /// </exception>
         [Category("OnlineVideosUserConfiguration"), Description("The time in milliseconds to sleep before opening connection.")]
+        [NotifyParentProperty(true)]
         public int OpenConnectionSleepTime
         {
             get { return this.openConnectionSleepTime; }
@@ -67,7 +67,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         }
 
         /// <summary>
-        /// Gets or sets the total timeout to open HTTP url in milliseconds.
+        /// Gets or sets the total timeout to open RTMP url in milliseconds.
         /// </summary>
         /// <remarks>
         /// <para>It is applied when lost connection and trying to open new one. Filter will be trying to open connection until this timeout occurs. This parameter is ignored in case of live stream.</para>
@@ -75,7 +75,8 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <exception cref="ArgumentOutOfRangeException">
         /// <para>The <see cref="TotalReopenConnectionTimeout"/> is lower than zero.</para>
         /// </exception>
-        [Category("OnlineVideosUserConfiguration"), Description("The total timeout to open HTTP url in milliseconds. It is applied when lost connection and trying to open new one. Filter will be trying to open connection until this timeout occurs. This parameter is ignored in case of live stream.")]
+        [Category("OnlineVideosUserConfiguration"), Description("The total timeout to open RTMP url in milliseconds. It is applied when lost connection and trying to open new one. Filter will be trying to open connection until this timeout occurs. This parameter is ignored in case of live stream.")]
+        [NotifyParentProperty(true)]
         public int TotalReopenConnectionTimeout
         {
             get { return this.totalReopenConnectionTimeout; }
@@ -95,28 +96,28 @@ namespace OnlineVideos.MPUrlSourceFilter
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of <see cref="HttpUrlSettings" /> class.
+        /// Initializes a new instance of <see cref="RtmpUrlSettings" /> class.
         /// </summary>
-        public HttpUrlSettings()
+        public RtmpUrlSettings()
             : this(String.Empty)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="HttpUrlSettings" /> class with specified HTTP url parameters.
+        /// Initializes a new instance of <see cref="RtmpUrlSettings" /> class with specified RTMP url parameters.
         /// </summary>
-        /// <param name="value">HTTP url parameters.</param>
+        /// <param name="value">RTMP url parameters.</param>
         /// <exception cref="ArgumentNullException">
         /// <para>The <paramref name="value"/> is <see langword="null"/>.</para>
         /// </exception>
-        public HttpUrlSettings(String value)
+        public RtmpUrlSettings(String value)
             : base(value)
         {
             Hashtable parameters = SimpleUrlSettings.GetParameters(value);
 
-            this.OpenConnectionTimeout = int.Parse(SimpleUrlSettings.GetValue(parameters, "OpenConnectionTimeout", OnlineVideoSettings.Instance.HttpOpenConnectionTimeout.ToString()));
-            this.OpenConnectionSleepTime = int.Parse(SimpleUrlSettings.GetValue(parameters, "OpenConnectionSleepTime", OnlineVideoSettings.Instance.HttpOpenConnectionSleepTime.ToString()));
-            this.TotalReopenConnectionTimeout = int.Parse(SimpleUrlSettings.GetValue(parameters, "TotalReopenConnectionTimeout", OnlineVideoSettings.Instance.HttpTotalReopenConnectionTimeout.ToString()));
+            this.OpenConnectionTimeout = int.Parse(SimpleUrlSettings.GetValue(parameters, "OpenConnectionTimeout", OnlineVideoSettings.Instance.RtmpOpenConnectionTimeout.ToString()));
+            this.OpenConnectionSleepTime = int.Parse(SimpleUrlSettings.GetValue(parameters, "OpenConnectionSleepTime", OnlineVideoSettings.Instance.RtmpOpenConnectionSleepTime.ToString()));
+            this.TotalReopenConnectionTimeout = int.Parse(SimpleUrlSettings.GetValue(parameters, "TotalReopenConnectionTimeout", OnlineVideoSettings.Instance.RtmpTotalReopenConnectionTimeout.ToString()));
         }
 
         #endregion
@@ -134,11 +135,20 @@ namespace OnlineVideos.MPUrlSourceFilter
             StringBuilder builder = new StringBuilder();
 
             builder.Append(base.ToString());
-            builder.Append((this.OpenConnectionTimeout != OnlineVideoSettings.Instance.HttpOpenConnectionTimeout) ? String.Format("OpenConnectionTimeout={0};", this.OpenConnectionTimeout) : String.Empty);
-            builder.Append((this.OpenConnectionSleepTime != OnlineVideoSettings.Instance.HttpOpenConnectionSleepTime) ? String.Format("OpenConnectionSleepTime={0};", this.OpenConnectionSleepTime) : String.Empty);
-            builder.Append((this.TotalReopenConnectionTimeout != OnlineVideoSettings.Instance.HttpTotalReopenConnectionTimeout) ? String.Format("TotalReopenConnectionTimeout={0};", this.TotalReopenConnectionTimeout) : String.Empty);
+            builder.Append((this.OpenConnectionTimeout != OnlineVideoSettings.Instance.RtmpOpenConnectionTimeout) ? String.Format("OpenConnectionTimeout={0};", this.OpenConnectionTimeout) : String.Empty);
+            builder.Append((this.OpenConnectionSleepTime != OnlineVideoSettings.Instance.RtmpOpenConnectionSleepTime) ? String.Format("OpenConnectionSleepTime={0};", this.OpenConnectionSleepTime) : String.Empty);
+            builder.Append((this.TotalReopenConnectionTimeout != OnlineVideoSettings.Instance.RtmpTotalReopenConnectionTimeout) ? String.Format("TotalReopenConnectionTimeout={0};", this.TotalReopenConnectionTimeout) : String.Empty);
 
             return builder.ToString();
+        }
+
+        internal void Apply(RtmpUrl rtmpUrl)
+        {
+            base.Apply(rtmpUrl);
+
+            rtmpUrl.OpenConnectionSleepTime = OpenConnectionSleepTime;
+            rtmpUrl.OpenConnectionTimeout = OpenConnectionTimeout;
+            rtmpUrl.TotalReopenConnectionTimeout = TotalReopenConnectionTimeout;
         }
 
         #endregion

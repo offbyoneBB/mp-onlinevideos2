@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
 
-namespace OnlineVideos.MPUrlSourceFilter.V2
+namespace OnlineVideos.MPUrlSourceFilter
 {
     /// <summary>
     /// Specifies interface for download callback.
     /// </summary>
     [ComImport, Guid("51D2A240-A172-4FA8-AFD7-CC576EC5CA66"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IDownloadCallback
+    public interface IDownloadCallback
     {
         /// <summary>
         /// This method is called when download finished.
