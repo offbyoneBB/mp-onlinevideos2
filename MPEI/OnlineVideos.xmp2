@@ -2530,6 +2530,55 @@
               <ZipFileName>Installer{CopyFile}\{9ce3ad19-b791-468e-9436-cace2b390090}-Netflix.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Netflix.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Viasat Norge.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6509ec45-49f0-409e-8652-6fe7eaa6941b}-Viasat Norge.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viasat Norge.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Nova Play.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{1d70d9f4-8d35-4836-80f2-7730669a64fc}-Nova Play.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Nova Play.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TV Play.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d307a59e-0ff5-4cea-bd46-734d49e920a0}-TV Play.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV Play.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TV3 Play Danmark.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{7d5c0dc0-bacd-40c8-9cd8-ecae7cf88de6}-TV3 Play Danmark.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV3 Play Danmark.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TV3 Play Eesti.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b53d26cd-7aad-45e1-a01b-dcd545fb5ad6}-TV3 Play Eesti.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV3 Play Eesti.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TV3 Play Lietuva.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5eb53969-9756-40fc-a852-5943cd43e7d4}-TV3 Play Lietuva.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV3 Play Lietuva.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Viasat Norge.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b9e9976d-e565-44e8-a0b3-3c2942c2342d}-Viasat Norge.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viasat Norge.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2581,7 +2630,7 @@
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.9.0.0\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.10.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -3197,7 +3246,7 @@
         <ParentGroup>Plugin</ParentGroup>
         <DisplayName>Source Filter</DisplayName>
         <DefaulChecked>true</DefaulChecked>
-        <Description>The MediaPortal Url Source Splitter directshow filter enables seeking on HTTP servers with ranges support and playback with seeking of RTMP streams.</Description>
+        <Description>The MediaPortal IPTV - Url Source Splitter directshow filter enables seeking on HTTP servers with ranges support and playback with seeking of RTMP streams.</Description>
         <Files>
           <Items />
         </Files>
@@ -3633,12 +3682,12 @@ public class Script
                     <Description>Location of the extension package</Description>
                   </SectionParam>
                   <SectionParam Name="Extension Id">
-                    <Value>b3e6e01a-4fa3-4cf0-8d2a-b0b8c1eba78b</Value>
+                    <Value>46346a1d-b99f-4e4a-a018-6abd93f42497</Value>
                     <ValueType>String</ValueType>
                     <Description>Global Id of the extension package - it will be downloaded when no file is set.</Description>
                   </SectionParam>
                   <SectionParam Name="Extension Version">
-                    <Value>1.0.0.2761</Value>
+                    <Value>2.1.4.5454</Value>
                     <ValueType>String</ValueType>
                     <Description>Minimum Version of the extension package - older versions will be updated (only used when downloading via Id).</Description>
                   </SectionParam>
@@ -6392,6 +6441,55 @@ included Titan skin files
         <ZipFileName>Installer{CopyFile}\{9ce3ad19-b791-468e-9436-cace2b390090}-Netflix.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Netflix.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Viasat Norge.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6509ec45-49f0-409e-8652-6fe7eaa6941b}-Viasat Norge.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viasat Norge.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Nova Play.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{1d70d9f4-8d35-4836-80f2-7730669a64fc}-Nova Play.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Nova Play.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TV Play.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d307a59e-0ff5-4cea-bd46-734d49e920a0}-TV Play.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV Play.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TV3 Play Danmark.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7d5c0dc0-bacd-40c8-9cd8-ecae7cf88de6}-TV3 Play Danmark.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV3 Play Danmark.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TV3 Play Eesti.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b53d26cd-7aad-45e1-a01b-dcd545fb5ad6}-TV3 Play Eesti.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV3 Play Eesti.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TV3 Play Lietuva.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5eb53969-9756-40fc-a852-5943cd43e7d4}-TV3 Play Lietuva.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV3 Play Lietuva.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Viasat Norge.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b9e9976d-e565-44e8-a0b3-3c2942c2342d}-Viasat Norge.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viasat Norge.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -6425,7 +6523,7 @@ included Titan skin files
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.9.0.0\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.10.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
