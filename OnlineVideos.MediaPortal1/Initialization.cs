@@ -35,7 +35,7 @@ namespace OnlineVideos.MediaPortal1
 				BackgroundWorker worker = sender as BackgroundWorker;
 
 				// clear cache files that might be left over from an application crash
-                OnlineVideos.MPUrlSourceFilter.V2.Downloader.ClearDownloadCache();
+                OnlineVideos.MPUrlSourceFilter.Downloader.ClearDownloadCache();
 
 				// Load localized strings and set them to Translation class and GuiProperties
 				Translator.TranslateSkin();

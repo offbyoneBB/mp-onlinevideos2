@@ -59,7 +59,7 @@ namespace OnlineVideos.MediaPortal1
             }
 
             // wait for our filter to buffer before rendering the pins
-            OnlineVideos.MPUrlSourceFilter.V2.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.V2.IFilterState;
+            OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
 
             if (filterState != null)
             {

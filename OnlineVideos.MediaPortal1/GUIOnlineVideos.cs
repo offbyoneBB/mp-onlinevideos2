@@ -2740,7 +2740,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     IDownloader dlHelper = null;
                     if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloader();
-                    else dlHelper = new OnlineVideos.MPUrlSourceFilter.V2.Downloader();
+                    else dlHelper = new OnlineVideos.MPUrlSourceFilter.Downloader();
                     dlList.CurrentItem.Downloader = dlHelper;
                     dlList.CurrentItem.Start = DateTime.Now;
                     Log.Instance.Info("Starting download of '{0}' to '{1}' from Site '{2}'", dlList.CurrentItem.Url, dlList.CurrentItem.LocalFile, dlList.CurrentItem.Util.Settings.Name);

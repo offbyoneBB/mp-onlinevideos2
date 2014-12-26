@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
 using System.Collections;
+using System.ComponentModel;
+using System.Text;
 
-namespace OnlineVideos.MPUrlSourceFilter
+namespace OnlineVideos.MPUrlSourceFilter.UserSettings
 {
     /// <summary>
     /// Represents class for RTSP url settings.
     /// </summary>
-    [TypeConverter(typeof(RtspUrlSettingsConverter))]
+    [TypeConverter(typeof(ExpandableUserSettingObjectConverter<RtspUrlSettings>))]
     [Serializable]
     public class RtspUrlSettings : SimpleUrlSettings
     {
@@ -33,6 +31,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>The <see cref="OpenConnectionTimeout"/> is lower than zero.</para>
         /// </exception>
         [Category("OnlineVideosUserConfiguration"), Description("The timeout to open RTSP url in milliseconds. It is applied to first opening of url.")]
+        [NotifyParentProperty(true)]
         public int OpenConnectionTimeout
         {
             get { return this.openConnectionTimeout; }
@@ -54,6 +53,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>The <see cref="OpenConnectionSleepTime"/> is lower than zero.</para>
         /// </exception>
         [Category("OnlineVideosUserConfiguration"), Description("The time in milliseconds to sleep before opening connection.")]
+        [NotifyParentProperty(true)]
         public int OpenConnectionSleepTime
         {
             get { return this.openConnectionSleepTime; }
@@ -78,6 +78,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>The <see cref="TotalReopenConnectionTimeout"/> is lower than zero.</para>
         /// </exception>
         [Category("OnlineVideosUserConfiguration"), Description("The total timeout to open RTSP url in milliseconds. It is applied when lost connection and trying to open new one. Filter will be trying to open connection until this timeout occurs. This parameter is ignored in case of live stream.")]
+        [NotifyParentProperty(true)]
         public int TotalReopenConnectionTimeout
         {
             get { return this.totalReopenConnectionTimeout; }
@@ -101,6 +102,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>The <see cref="ClientPortMin"/> is greater than 65535.</para>
         /// </exception>
         [Category("OnlineVideosUserConfiguration"), Description("The minimum client port for UDP transport.")]
+        [NotifyParentProperty(true)]
         public int ClientPortMin
         {
             get { return this.clientPortMin; }
@@ -129,6 +131,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <para>The <see cref="ClientPortMax"/> is greater than 65535.</para>
         /// </exception>
         [Category("OnlineVideosUserConfiguration"), Description("The maximum client port for UDP transport.")]
+        [NotifyParentProperty(true)]
         public int ClientPortMax
         {
             get { return this.clientPortMax; }
@@ -201,6 +204,17 @@ namespace OnlineVideos.MPUrlSourceFilter
             builder.Append((this.ClientPortMax != OnlineVideoSettings.Instance.RtspClientPortMax) ? String.Format("ClientPortMax={0};", this.ClientPortMax) : String.Empty);
 
             return builder.ToString();
+        }
+
+        internal void Apply(RtspUrl rtspUrl)
+        {
+            base.Apply(rtspUrl);
+
+            rtspUrl.OpenConnectionSleepTime = OpenConnectionSleepTime;
+            rtspUrl.OpenConnectionTimeout = OpenConnectionTimeout;
+            rtspUrl.TotalReopenConnectionTimeout = TotalReopenConnectionTimeout;
+            rtspUrl.ClientPortMax = ClientPortMin;
+            rtspUrl.ClientPortMin = ClientPortMax;
         }
 
         #endregion

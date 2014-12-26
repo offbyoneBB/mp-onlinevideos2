@@ -34,15 +34,6 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// MediaPortal Url Source Filter logs more verbose output.
         /// </summary>
         /// <remarks>This value is default.</remarks>
-        Verbose,
-
-        /// <summary>
-        /// MediaPortal Url Source Filter logs everything including data.
-        /// </summary>
-        /// <remarks>
-        /// This verbosity level is only for logging of data and checking workflow of source filter.
-        /// It can cause heavy load, stuttering or other issue and is not recommended to use.
-        /// </remarks>
-        Data
+        Verbose
     }
 }

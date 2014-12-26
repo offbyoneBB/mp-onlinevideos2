@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
 
-namespace OnlineVideos.MPUrlSourceFilter.V2
+namespace OnlineVideos.MPUrlSourceFilter
 {
     /// <summary>
     /// Specifies interface for distinguishing MediaPortal IPTV filter and url source splitter from previous MediaPortal Url Source Splitter.
@@ -63,7 +60,6 @@ namespace OnlineVideos.MPUrlSourceFilter.V2
         [PreserveSig]
         [return: MarshalAs(UnmanagedType.I4)]
         int GetErrorDescription([In, MarshalAs(UnmanagedType.I4)] int error, [Out, MarshalAs(UnmanagedType.LPWStr)] out String description);
-
 
         /// <summary>
         /// Loads stream into file.

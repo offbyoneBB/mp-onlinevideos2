@@ -1,5 +1,5 @@
 ﻿using System;
-using OnlineVideos.MPUrlSourceFilter.V2;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.MediaPortal1.Player
 {

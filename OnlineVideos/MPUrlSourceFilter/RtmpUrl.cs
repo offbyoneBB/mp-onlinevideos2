@@ -15,6 +15,9 @@ namespace OnlineVideos.MPUrlSourceFilter
 	{
         #region Private fields
 
+        private int openConnectionTimeout = RtmpUrl.DefaultRtmpOpenConnectionTimeout;
+        private int openConnectionSleepTime = RtmpUrl.DefaultRtmpOpenConnectionSleepTime;
+        private int totalReopenConnectionTimeout = RtmpUrl.DefaultRtmpTotalReopenConnectionTimeout;
         private RtmpArbitraryDataCollection arbitraryData;
 
         #endregion
@@ -307,9 +310,193 @@ namespace OnlineVideos.MPUrlSourceFilter
         [Category("librtmp"), DefaultValue(DefaultSwfAge), Description("Specify how many days to use the cached SWF info before re-checking.")]
         public uint SwfAge { get; set; }
 
+        /// <summary>
+        /// Gets or sets the timeout to open RTMP url in milliseconds.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="OpenConnectionTimeout"/> is lower than zero.</para>
+        /// </exception>
+        public int OpenConnectionTimeout
+        {
+            get { return this.openConnectionTimeout; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("OpenConnectionTimeout", value, "Cannot be less than zero.");
+                }
+
+                this.openConnectionTimeout = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the time in milliseconds to sleep before opening connection.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="OpenConnectionSleepTime"/> is lower than zero.</para>
+        /// </exception>
+        public int OpenConnectionSleepTime
+        {
+            get { return this.openConnectionSleepTime; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("OpenConnectionSleepTime", value, "Cannot be less than zero.");
+                }
+
+                this.openConnectionSleepTime = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the total timeout to open RTMP url in milliseconds.
+        /// </summary>
+        /// <remarks>
+        /// <para>It is applied when lost connection and trying to open new one. Filter will be trying to open connection until this timeout occurs. This parameter is ignored in case of live stream.</para>
+        /// </remarks>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>The <see cref="TotalReopenConnectionTimeout"/> is lower than zero.</para>
+        /// </exception>
+        public int TotalReopenConnectionTimeout
+        {
+            get { return this.totalReopenConnectionTimeout; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("TotalReopenConnectionTimeout", value, "Cannot be less than zero.");
+                }
+
+                this.totalReopenConnectionTimeout = value;
+            }
+        }
+
 		#endregion
 
 		#region Methods
+
+        /// <summary>
+        /// Gets a string that can be given to the MediaPortal Url Source Splitter holding the url and all parameters.
+        /// </summary>
+        internal override string ToFilterString()
+        {
+            ParameterCollection parameters = new ParameterCollection();
+
+            if (this.App != RtmpUrl.DefaultApp)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterApp, this.App));
+            }
+
+            if (this.BufferTime != RtmpUrl.DefaultBufferTime)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterBufferTime, this.BufferTime.ToString()));
+            }
+
+            if (this.FlashVersion != RtmpUrl.DefaultFlashVersion)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterFlashVer, this.FlashVersion));
+            }
+
+            if (this.Auth != RtmpUrl.DefaultAuth)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterAuth, this.Auth));
+            }
+
+            if (this.ArbitraryData.Count != 0)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterArbitraryData, this.ArbitraryData.ToString()));
+            }
+
+            if (this.Jtv != RtmpUrl.DefaultJtv)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterJtv, this.Jtv));
+            }
+
+            if (this.Live != RtmpUrl.DefaultLive)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterLive, this.Live ? "1" : "0"));
+            }
+
+            if (this.OpenConnectionTimeout != RtmpUrl.DefaultRtmpOpenConnectionTimeout)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterRtmpOpenConnectionTimeout, this.OpenConnectionTimeout.ToString()));
+            }
+
+            if (this.OpenConnectionSleepTime != RtmpUrl.DefaultRtmpOpenConnectionSleepTime)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterRtmpOpenConnectionSleepTime, this.OpenConnectionSleepTime.ToString()));
+            }
+
+            if (this.TotalReopenConnectionTimeout != RtmpUrl.DefaultRtmpTotalReopenConnectionTimeout)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterRtmpTotalReopenConnectionTimeout, this.TotalReopenConnectionTimeout.ToString()));
+            }
+
+            if (this.PageUrl != RtmpUrl.DefaultPageUrl)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterPageUrl, this.PageUrl));
+            }
+
+            if (this.Playlist != RtmpUrl.DefaultPlaylist)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterPlaylist, this.Playlist ? "1" : "0"));
+            }
+
+            if (this.PlayPath != RtmpUrl.DefaultPlayPath)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterPlayPath, this.PlayPath));
+            }
+
+            if (this.Start != RtmpUrl.DefaultStart)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterStart, this.Start.ToString()));
+            }
+
+            if (this.Stop != RtmpUrl.DefaultStop)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterStop, this.Stop.ToString()));
+            }
+
+            if (this.Subscribe != RtmpUrl.DefaultSubscribe)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterSubscribe, this.Subscribe));
+            }
+
+            if (this.SwfAge != RtmpUrl.DefaultSwfAge)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterSwfAge, this.SwfAge.ToString()));
+            }
+
+            if (this.SwfUrl != RtmpUrl.DefaultSwfUrl)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterSwfUrl, this.SwfUrl));
+            }
+
+            if (this.SwfVerify != RtmpUrl.DefaultSwfVerify)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterSwfVerify, this.SwfVerify ? "1" : "0"));
+            }
+
+            if (this.TcUrl != RtmpUrl.DefaultTcUrl)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterTcUrl, this.TcUrl));
+            }
+
+            if (this.Token != RtmpUrl.DefaultToken)
+            {
+                parameters.Add(new Parameter(RtmpUrl.ParameterToken, this.Token));
+            }
+
+            // return formatted connection string
+            return base.ToFilterString() + ParameterCollection.ParameterSeparator + parameters.FilterParameters;
+        }
+
+        internal override void ApplySettings(Sites.SiteUtilBase siteUtil)
+        {
+            siteUtil.RtmpSettings.Apply(this);
+        }
 
         /// <summary>
         /// Parses back a string that was created via <see cref="ToString"/> into a <see cref="RtmpUrl"/> instance with all the parameters.
@@ -365,6 +552,21 @@ namespace OnlineVideos.MPUrlSourceFilter
 
         // common parameters of RTMP protocol for MediaPortal Url Source Splitter
 
+        /// <summary>
+        /// Specifies open connection timeout in milliseconds.
+        /// </summary>
+        protected static readonly String ParameterRtmpOpenConnectionTimeout = "RtmpOpenConnectionTimeout";
+
+        /// <summary>
+        /// Specifies the time in milliseconds to sleep before opening connection.
+        /// </summary>
+        protected static readonly String ParameterRtmpOpenConnectionSleepTime = "RtmpOpenConnectionSleepTime";
+
+        /// <summary>
+        /// Specifies the total timeout to open RTMP url in milliseconds. It is applied when lost connection and trying to open new one. Filter will be trying to open connection until this timeout occurs. This parameter is ignored in case of live stream.
+        /// </summary>
+        protected static readonly String ParameterRtmpTotalReopenConnectionTimeout = "RtmpTotalReopenConnectionTimeout";
+
         // connection parameters of RTMP protocol
 
         protected static String ParameterApp = "RtmpApp";
@@ -408,6 +610,21 @@ namespace OnlineVideos.MPUrlSourceFilter
         protected static String ParameterSwfAge = "RtmpSwfAge";
 
         // default values for some parameters
+
+        /// <summary>
+        /// Default value for <see cref="ParameterRtmpOpenConnectionTimeout"/>.
+        /// </summary>
+        public static readonly int DefaultRtmpOpenConnectionTimeout = 20000;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterRtmpOpenConnectionSleepTime"/>.
+        /// </summary>
+        public static readonly int DefaultRtmpOpenConnectionSleepTime = 0;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpTotalReopenConnectionTimeout"/>.
+        /// </summary>
+        public static readonly int DefaultRtmpTotalReopenConnectionTimeout = 60000;
 
         public static String DefaultApp = null;
         public static String DefaultTcUrl = null;

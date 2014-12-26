@@ -1,42 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace OnlineVideos.MPUrlSourceFilter
 {
     /// <summary>
-    /// Represents class for downloading single stream with MediaPortal Url Source Filter.
+    /// Represents class for downloading single stream with MediaPortal Url Source Splitter.
     /// </summary>
-    public class MPUrlSourceFilterDownloader : MarshalByRefObject, IDownloader, IDownloadCallback
+    public class Downloader : MarshalByRefObject, IDownloader, IDownloadCallback
     {
         #region Private fields
 
         System.Threading.Thread downloadThread;
-        private Boolean downloadFinished;
+        private volatile Boolean downloadFinished;
         private int downloadResult;
+        private volatile Boolean cancelled;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of <see cref="MPUrlSourceFilterDownloader"/> class.
+        /// Initializes a new instance of <see cref="Downloader"/> class.
         /// </summary>
-        public MPUrlSourceFilterDownloader()
+        public Downloader()
         {
             this.downloadFinished = false;
             this.downloadResult = 0;
-            this.Cancelled = false;
+            this.cancelled = false;
         }
 
         #endregion
 
         #region Properties
 
-        public bool Cancelled { get; private set; }
+        public Boolean Cancelled { get { return this.cancelled; } }
 
         #endregion
 
@@ -46,27 +45,36 @@ namespace OnlineVideos.MPUrlSourceFilter
         {
             if (downloadThread != null)
             {
-                downloadThread.Abort();
+                this.cancelled = true;
+
+                while (!this.downloadFinished)
+                {
+                    Thread.Sleep(100);
+                }
             }
         }
 
         public void CancelAsync()
         {
-            this.Cancelled = true;
+            this.cancelled = true;
         }
 
         public Exception Download(DownloadInfo downloadInfo)
         {
-			IDownload downloadFilter = null;
+            IDownload sourceFilter = null;
+
             try
             {
                 downloadThread = System.Threading.Thread.CurrentThread;
                 this.downloadResult = 0;
                 this.downloadFinished = false;
-                this.Cancelled = false;
+                this.cancelled = false;
 
-                downloadFilter = (IDownload)new MPUrlSourceFilter();
-                int result = downloadFilter.DownloadAsync(downloadInfo.Url, downloadInfo.LocalFile, this);
+                sourceFilter = (IDownload)new MPUrlSourceSplitter();
+                String url = UrlBuilder.GetFilterUrl(downloadInfo.Util, downloadInfo.Url);
+
+                IDownload downloadFilter = (IDownload)sourceFilter;
+                int result = downloadFilter.DownloadAsync(url, downloadInfo.LocalFile, this);
                 // throw exception if error occured while initializing download
                 Marshal.ThrowExceptionForHR(result);
 
@@ -83,7 +91,7 @@ namespace OnlineVideos.MPUrlSourceFilter
                     // sleep some time
                     System.Threading.Thread.Sleep(100);
 
-                    if (this.Cancelled)
+                    if (this.cancelled)
                     {
                         downloadFilter.AbortOperation();
                         this.downloadFinished = true;
@@ -96,15 +104,15 @@ namespace OnlineVideos.MPUrlSourceFilter
 
                 return null;
             }
-			catch (Exception ex)
-			{
-				return ex;
-			}
+            catch (Exception ex)
+            {
+                return ex;
+            }
             finally
             {
-                if (downloadFilter != null)
+                if (sourceFilter != null)
                 {
-                    Marshal.ReleaseComObject(downloadFilter);
+                    Marshal.ReleaseComObject(sourceFilter);
                 }
             }
         }
@@ -115,13 +123,18 @@ namespace OnlineVideos.MPUrlSourceFilter
             this.downloadFinished = true;
         }
 
-		public static void ClearDownloadCache()
-		{
-			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MPUrlSource");
-			if (Directory.Exists(path)) foreach (var file in Directory.GetFiles(path)) try { File.Delete(file); } catch {}
-			path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MPUrlSourceSplitter");
-			if (Directory.Exists(path))foreach (var file in Directory.GetFiles(path)) try { File.Delete(file); } catch {}
-		}
+        public static void ClearDownloadCache()
+        {
+            String path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Team MediaPortal\\MPUrlSourceSplitter");
+            if (Directory.Exists(path))
+            {
+                foreach (var file in Directory.GetFiles(path))
+                {
+                    try { File.Delete(file); }
+                    catch { }
+                }
+            }
+        }
 
         #endregion
 
@@ -135,10 +148,10 @@ namespace OnlineVideos.MPUrlSourceFilter
         #region Internals
 
         /// <summary>
-        /// Defines MediaPortal Url Source Filter.
+        /// Defines MediaPortal Url Source Splitter.
         /// </summary>
         [ComImport, Guid(FilterCLSID)]
-        private class MPUrlSourceFilter { } ;
+        private class MPUrlSourceSplitter { } ;
 
         #endregion
 

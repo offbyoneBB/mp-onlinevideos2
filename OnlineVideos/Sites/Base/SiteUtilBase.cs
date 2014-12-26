@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using OnlineVideos.MPUrlSourceFilter.UserSettings;
 
 namespace OnlineVideos.Sites
 {
@@ -25,28 +26,33 @@ namespace OnlineVideos.Sites
             return null;
         }
         #endregion
+
+        #region User Configurable Settings
+
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Skip single Category", TranslationFieldName = "SkipSingleCategory"), Description("Enables skipping over category lists that only contain a single category.")]
         protected bool allowDiveDownOrUpIfSingle = true;
 
-        [Category("OnlineVideosUserConfiguration"), Description("Settings for HTTP protocol used by site."), LocalizableDisplayName("HTTP settings")]
-        protected OnlineVideos.MPUrlSourceFilter.HttpUrlSettings httpSettings = new MPUrlSourceFilter.HttpUrlSettings();
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("HTTP settings"), Description("Settings for HTTP protocol used by site.")]
+        protected HttpUrlSettings httpSettings = new HttpUrlSettings();
 
-        [Category("OnlineVideosUserConfiguration"), Description("Settings for RTMP protocol used by site."), LocalizableDisplayName("RTMP settings")]
-        protected OnlineVideos.MPUrlSourceFilter.RtmpUrlSettings rtmpSettings = new MPUrlSourceFilter.RtmpUrlSettings();
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("RTMP settings"), Description("Settings for RTMP protocol used by site.")]
+        protected RtmpUrlSettings rtmpSettings = new RtmpUrlSettings();
 
-        [Category("OnlineVideosUserConfiguration"), Description("Settings for RTSP protocol used by site."), LocalizableDisplayName("RTSP settings")]
-        protected OnlineVideos.MPUrlSourceFilter.RtspUrlSettings rtspSettings = new MPUrlSourceFilter.RtspUrlSettings();
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("RTSP settings"), Description("Settings for RTSP protocol used by site.")]
+        protected RtspUrlSettings rtspSettings = new RtspUrlSettings();
 
-        [Category("OnlineVideosUserConfiguration"), Description("Settings for UDP or RTP protocol used by site."), LocalizableDisplayName("UDP/RTP settings")]
-        protected OnlineVideos.MPUrlSourceFilter.UdpRtpUrlSettings udpRtpSettings = new MPUrlSourceFilter.UdpRtpUrlSettings();
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("UDP/RTP settings"), Description("Settings for UDP or RTP protocol used by site.")]
+        protected UdpRtpUrlSettings udpRtpSettings = new UdpRtpUrlSettings();
 
-        public virtual OnlineVideos.MPUrlSourceFilter.HttpUrlSettings HttpSettings { get { return this.httpSettings; } }
+        public virtual HttpUrlSettings HttpSettings { get { return this.httpSettings; } }
 
-        public virtual OnlineVideos.MPUrlSourceFilter.RtmpUrlSettings RtmpSettings { get { return this.rtmpSettings; } }
+        public virtual RtmpUrlSettings RtmpSettings { get { return this.rtmpSettings; } }
 
-        public virtual OnlineVideos.MPUrlSourceFilter.RtspUrlSettings RtspSettings { get { return this.rtspSettings; } }
+        public virtual RtspUrlSettings RtspSettings { get { return this.rtspSettings; } }
 
-        public virtual OnlineVideos.MPUrlSourceFilter.UdpRtpUrlSettings UdpRtpSettings { get { return this.udpRtpSettings; } }
+        public virtual UdpRtpUrlSettings UdpRtpSettings { get { return this.udpRtpSettings; } }
+
+        #endregion
 
         /// <summary>
         /// The <see cref="SiteSettings"/> as configured in the xml will be set after an instance of this class was created 
@@ -933,19 +939,15 @@ namespace OnlineVideos.Sites
 
             public override void SetValue(object component, object value)
             {
-                // only set if changed
-                if (_field.GetValue(component) != value)
-                {
-                    _field.SetValue(component, value);
-                    OnValueChanged(component, EventArgs.Empty);
+                _field.SetValue(component, value);
+                OnValueChanged(component, EventArgs.Empty);
 
-                    // if this field is a user config, set value also in MediaPortal config file
-                    object[] attrs = _field.GetCustomAttributes(typeof(CategoryAttribute), false);
-                    if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
-                    {
-                        string siteName = (component as Sites.SiteUtilBase).Settings.Name;
-                        OnlineVideoSettings.Instance.UserStore.SetValue(string.Format("{0}.{1}", Utils.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());
-                    }
+                // if this field is a user config, set value also in MediaPortal config file
+                object[] attrs = _field.GetCustomAttributes(typeof(CategoryAttribute), false);
+                if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
+                {
+                    string siteName = (component as Sites.SiteUtilBase).Settings.Name;
+                    OnlineVideoSettings.Instance.UserStore.SetValue(string.Format("{0}.{1}", Utils.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());
                 }
             }
         }

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections;
 
-namespace OnlineVideos.MPUrlSourceFilter.V2
+namespace OnlineVideos.MPUrlSourceFilter
 {
     /// <summary>
     /// Represents class for creating URL objects from specified string.

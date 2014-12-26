@@ -71,6 +71,23 @@ namespace OnlineVideos.MPUrlSourceFilter
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Gets a string that can be given to the MediaPortal Url Source Splitter holding the url and all parameters.
+        /// </summary>
+        internal override string ToFilterString()
+        {
+            ParameterCollection parameters = new ParameterCollection();
+
+            if (this.SegmentFragmentUrlExtraParameters != AfhsManifestUrl.DefaultSegmentFragmentUrlExtraParameters)
+            {
+                parameters.Add(new Parameter(AfhsManifestUrl.ParameterSegmentFragmentUrlExtraParameters, this.SegmentFragmentUrlExtraParameters));
+            }
+
+            // return formatted connection string
+            return base.ToFilterString() + ParameterCollection.ParameterSeparator + parameters.FilterParameters;
+        }
+
         #endregion
 
         #region Constants

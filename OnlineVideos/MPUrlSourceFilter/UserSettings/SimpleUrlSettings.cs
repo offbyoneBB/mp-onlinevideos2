@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 using System.Collections;
+using System.ComponentModel;
+using System.Text;
 
-namespace OnlineVideos.MPUrlSourceFilter
+namespace OnlineVideos.MPUrlSourceFilter.UserSettings
 {
     /// <summary>
     /// Represents base abstract class for simple url settings.
@@ -31,6 +27,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// </exception>
         [Category("OnlineVideosUserConfiguration"), Description("Preferred network interface.")]
         [TypeConverter(typeof(NetworkInterfaceConverter))]
+        [NotifyParentProperty(true)]
         public String NetworkInterface
         {
             get { return this.networkInterface; }
@@ -49,30 +46,35 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// Specifies if protocol have to dump input data.
         /// </summary>
         [Category("OnlineVideosUserConfiguration"), Description("Specifies if protocol have to dump input data.")]
+        [NotifyParentProperty(true)]
         public Boolean DumpProtocolInputData { get; set; }
 
         /// <summary>
         /// Specifies if protocol have to dump output data.
         /// </summary>
         [Category("OnlineVideosUserConfiguration"), Description("Specifies if protocol have to dump output data.")]
+        [NotifyParentProperty(true)]
         public Boolean DumpProtocolOutputData { get; set; }
 
         /// <summary>
         /// Specifies if parser have to dump input data.
         /// </summary>
         [Category("OnlineVideosUserConfiguration"), Description("Specifies if parser have to dump input data.")]
+        [NotifyParentProperty(true)]
         public Boolean DumpParserInputData { get; set; }
 
         /// <summary>
         /// Specifies if parser have to dump output data.
         /// </summary>
         [Category("OnlineVideosUserConfiguration"), Description("Specifies if parser have to dump output data.")]
+        [NotifyParentProperty(true)]
         public Boolean DumpParserOutputData { get; set; }
 
         /// <summary>
         /// Specifies if output pin(s) have to dump data.
         /// </summary>
         [Category("OnlineVideosUserConfiguration"), Description("Specifies if output pin(s) have to dump data.")]
+        [NotifyParentProperty(true)]
         public Boolean DumpOutputPinData { get; set; }
 
         #endregion
@@ -130,6 +132,16 @@ namespace OnlineVideos.MPUrlSourceFilter
             builder.Append(this.DumpOutputPinData ? "DumpOutputPinData=1;" : String.Empty);
             
             return builder.ToString();
+        }
+
+        internal void Apply(SimpleUrl simpleUrl)
+        {
+            simpleUrl.NetworkInterface = (String.CompareOrdinal(NetworkInterface, OnlineVideoSettings.NetworkInterfaceSystemDefault) != 0) ? NetworkInterface : String.Empty;
+            simpleUrl.DumpProtocolInputData = DumpProtocolInputData;
+            simpleUrl.DumpProtocolOutputData = DumpProtocolOutputData;
+            simpleUrl.DumpParserInputData = DumpParserInputData;
+            simpleUrl.DumpParserOutputData = DumpParserOutputData;
+            simpleUrl.DumpOutputPinData = DumpOutputPinData;
         }
 
         protected static Hashtable GetParameters(String value)
