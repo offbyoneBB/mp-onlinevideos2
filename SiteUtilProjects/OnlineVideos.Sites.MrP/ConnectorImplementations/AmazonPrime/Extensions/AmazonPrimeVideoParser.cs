@@ -72,12 +72,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                         usesAltLayout = true;
                         episodeList = episodeContainer.GetNodesByClass("episode-list-item-inner");
                     }
-
+                    
                     foreach (var item in episodeList)
                     {
                         var video = new VideoInfo();
                         var titleNode = usesAltLayout ? item.GetNodeByClass("dv-extender").NavigatePath(new[]{0,0}) : item.GetNodeByClass("episode-title");
-
+                         
                         video.Title = titleNode.GetInnerText().Trim();
 
                         video.Description = titleNode.NextSibling.GetInnerText().Replace("\n", string.Empty).Trim() + "\r\n" +

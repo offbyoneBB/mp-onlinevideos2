@@ -64,7 +64,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
             _currentState = State.PlayPage;
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
-            Url = Properties.Resources.AmazonMovieUrl.Replace("{VIDEO_ID}", videoToPlay);
+            Url = Properties.Resources.AmazonMovieUrl(videoToPlay);
             return EventResult.Complete();
         }
 

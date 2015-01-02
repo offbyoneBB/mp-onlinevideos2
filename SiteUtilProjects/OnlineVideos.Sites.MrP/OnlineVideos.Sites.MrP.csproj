@@ -68,12 +68,13 @@
     <Compile Include="Factories\ConnectorType.cs" />
     <Compile Include="Interfaces\IInformationConnector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\VersionInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Include="Properties\ResourceGenerator.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
+      <DependentUpon>ResourceGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="Properties\VersionInfo.cs" />
+    <Compile Include="SingleAssemblyComponentResourceManager.cs" />
     <Compile Include="WebAutomationSiteUtil.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -85,15 +86,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\VersionInfo.cs.tmpl" />
+    <None Include="Properties\ResourceGenerator.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ResourceGenerator.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="Properties\Resources.resx" />
+    <EmbeddedResource Include="Localisation\Resources.de.resx">
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="loading.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

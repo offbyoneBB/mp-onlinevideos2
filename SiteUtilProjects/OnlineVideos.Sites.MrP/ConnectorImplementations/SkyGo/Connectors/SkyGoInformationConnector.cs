@@ -167,7 +167,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
 
             if (parentCategory.Type() != SkyGoCategoryData.CategoryType.LiveTv)
             {
-                var doc = Properties.Resources.SkyGo_VideoDetailsUrl.Replace("{VIDEO_ID}", parentCategory.CategoryId()).LoadSkyGoContentFromUrl();
+                var doc = Properties.Resources.SkyGo_VideoDetailsUrl(parentCategory.CategoryId()).LoadSkyGoContentFromUrl();
                 var result = doc.LoadVideoFromDocument(parentCategory.CategoryId());
 
                 results.Add(result);
@@ -176,7 +176,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             {
 
                 var channels = Properties.Resources.SkyGo_LiveTvListingUrl.LoadSkyGoLiveTvChannelsFromUrl();
-                results = Properties.Resources.SkyGo_LiveTvGetNowNextUrl.Replace("{CHANNEL_IDS}", String.Join(",", channels.Select(x => x.ChannelId).ToArray())).LoadSkyGoLiveTvNowNextVideosFromUrl(channels);
+                results = Properties.Resources.SkyGo_LiveTvGetNowNextUrl(String.Join(",", channels.Select(x => x.ChannelId).ToArray())).LoadSkyGoLiveTvNowNextVideosFromUrl(channels);
             }
             return results;
         }
@@ -198,7 +198,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <param name="pages"></param>
         private void LoadThisCategoryPage(Category parentCategory, string currentChar, int pageNo, out int pages)
         {
-            var doc = Properties.Resources.SkyGo_CategoryAToZUrl.Replace("{CATEGORY}", parentCategory.CategoryId()).Replace("{CHARACTER}", currentChar).Replace("{PAGE}", pageNo.ToString()).LoadSkyGoContentFromUrl();
+            var doc = Properties.Resources.SkyGo_CategoryAToZUrl(parentCategory.CategoryId(), currentChar, pageNo.ToString()).LoadSkyGoContentFromUrl();
 
             lock (parentCategory)
             {
@@ -213,7 +213,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <param name="parentCategory"></param>
         private void LoadSeriesInformation(Category parentCategory)
         {
-            var doc = Properties.Resources.SkyGo_SeriesDetailsUrl.Replace("{SERIES_ID}", parentCategory.CategoryId()).LoadSkyGoContentFromUrl();
+            var doc = Properties.Resources.SkyGo_SeriesDetailsUrl(parentCategory.CategoryId()).LoadSkyGoContentFromUrl();
             var result = doc.LoadSeriesItemsFromDocument(parentCategory);
             parentCategory.SubCategories.AddRange(result);
             parentCategory.SubCategoriesDiscovered = true;

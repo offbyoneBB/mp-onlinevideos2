@@ -99,7 +99,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
                             break;
                     }
                 }
-                newItem.ChannelImageUrl = Properties.Resources.SkyGoLiveTvImageUrl.Replace("{CHANNEL_ID}", newItem.ChannelId);
+                newItem.ChannelImageUrl = Properties.Resources.SkyGoLiveTvImageUrl(newItem.ChannelId);
                 if (!string.IsNullOrEmpty(newItem.ChannelId)) results.Add(newItem);
             }
 
