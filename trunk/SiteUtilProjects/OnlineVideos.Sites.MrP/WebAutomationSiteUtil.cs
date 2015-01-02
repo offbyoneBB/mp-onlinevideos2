@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.IO;
 using OnlineVideos.Sites.WebAutomation.Interfaces;
 using OnlineVideos.Sites.WebAutomation.Entities;
+using System.Globalization;
+using OnlineVideos.Sites.WebAutomation.Properties;
 
 namespace OnlineVideos.Sites.WebAutomation
 {
@@ -66,6 +68,7 @@ namespace OnlineVideos.Sites.WebAutomation
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
+            Properties.Resources.ResourceManager = new SingleAssemblyComponentResourceManager(typeof(Resources));
             _connector = ConnectorFactory.GetInformationConnector(webAutomationType, this);
         }
         

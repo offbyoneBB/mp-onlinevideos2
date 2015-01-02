@@ -72,7 +72,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
             ProcessComplete.Success = true;
             _nextVideoToPlayId = videoToPlay.Split('~')[1];
             _nextVideoToPlayName = videoToPlay.Split('~')[0];
-            Url = Properties.Resources._4OD_VideoPlayUrl.Replace("{VIDEO_NAME}", _nextVideoToPlayName).Replace("{VIDEO_ID}", _nextVideoToPlayId);
+            Url = Properties.Resources._4OD_VideoPlayUrl(_nextVideoToPlayName, _nextVideoToPlayId);
             
             return EventResult.Complete();
         }
@@ -258,7 +258,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
             var document = new XmlDocument();
             try
             {
-                document.Load(Properties.Resources._4OD_VideoDetailsUrl.Replace("{VIDEO_ID}", _nextVideoToPlayId));
+                document.Load(Properties.Resources._4OD_VideoDetailsUrl(_nextVideoToPlayId));
                 var node = document.GetElementsByTagName("rating");
                 if (node != null && node.Count > 0)
                 {

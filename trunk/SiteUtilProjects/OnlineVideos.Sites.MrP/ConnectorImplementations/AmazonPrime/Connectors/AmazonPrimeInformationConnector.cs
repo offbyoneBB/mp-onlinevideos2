@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.Extensions;
+using System.Globalization;
+using OnlineVideos.Sites.WebAutomation.Properties;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.Connectors
 {
@@ -39,9 +41,11 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
         /// <returns></returns>
         public List<Category> LoadCategories(Category parentCategory = null)
         {
+            Properties.Resources.Culture = new CultureInfo(_siteUtil.Settings == null ? string.Empty : _siteUtil.Settings.Language);
+
             var result = new List<Category>();
 
-            if (parentCategory == null)
+            if (parentCategory == null) 
             {
                 result.Add(new Category { HasSubCategories = true, Name = "Movies", SubCategoriesDiscovered = false, Other="M", Thumb = Properties.Resources.AmazonMovieIcon });
                 result.Add(new Category { HasSubCategories = true, Name = "Tv", SubCategoriesDiscovered = false, Other = "T", Thumb = Properties.Resources.AmazonTvIcon });

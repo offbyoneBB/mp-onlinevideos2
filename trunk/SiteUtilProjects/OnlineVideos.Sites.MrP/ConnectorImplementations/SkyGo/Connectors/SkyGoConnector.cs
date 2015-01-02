@@ -112,7 +112,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                         {
                             Browser.Stop();
                             _currentState = State.PlayPage;
-                            Url = Properties.Resources.SkyGo_VideoPlayUrl.Replace("{ASSET_ID}", assetId).Replace("{VIDEO_ID}", _nextVideoToPlayId);
+                            Url = Properties.Resources.SkyGo_VideoPlayUrl(assetId,_nextVideoToPlayId);
                         }
                     }
                     break;
@@ -170,6 +170,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <returns></returns>
         public override EventResult PlayVideo(string videoToPlay)
         {
+            // Clean up the xap file to see if it helps playback
+            RemoveFileFromTempInternetFiles("SkyPlayer", ".xap");
             _currentState = State.VideoInfo;
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
@@ -177,11 +179,11 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             _nextVideoToPlayId = videoToPlay.Replace("LTV~", string.Empty);
 
             if (!_isLiveTv)
-                Url = Properties.Resources.SkyGo_VideoActionsUrl.Replace("{VIDEO_ID}", _nextVideoToPlayId);
+                Url = Properties.Resources.SkyGo_VideoActionsUrl(_nextVideoToPlayId);
             else
             {
                 _currentState = State.PlayPageLiveTv;
-                Url = Properties.Resources.SkyGo_LiveTvPlayUrl.Replace("{VIDEO_ID}", _nextVideoToPlayId);
+                Url = Properties.Resources.SkyGo_LiveTvPlayUrl(_nextVideoToPlayId);
             }
 
             return EventResult.Complete();

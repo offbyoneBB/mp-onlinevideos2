@@ -134,8 +134,7 @@ namespace OnlineVideos.MediaPortal1.Player
         }
 
         /// <summary>
-        /// When a new action is received we'll forward some of them to the browser host using key presses
-        /// In future i'd like to refactor this to forward the action (somehow)
+        /// When a new action is received we'll forward them to the browser host using a WCF service
         /// </summary>
         /// <param name="action"></param>
         private void GUIWindowManager_OnNewAction(MediaPortal.GUI.Library.Action action)

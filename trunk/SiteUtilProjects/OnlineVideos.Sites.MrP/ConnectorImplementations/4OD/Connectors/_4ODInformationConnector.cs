@@ -164,7 +164,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
         /// <returns></returns>
         private List<Category> LoadGeneralCategory(Category parentCategory)
         {
-            var url = Properties.Resources._4OD_CategoryListUrl.Replace("{CATEGORY}", (string.IsNullOrEmpty(parentCategory.CategoryId()) ? string.Empty : parentCategory.CategoryId() + "/"));
+            var url = Properties.Resources._4OD_CategoryListUrl(string.IsNullOrEmpty(parentCategory.CategoryId()) ? string.Empty : parentCategory.CategoryId() + "/");
             if (parentCategory.Type() == _4ODCategoryData.CategoryType.Collection)
                 url = Properties.Resources._4OD_CollectionListUrl;
             var result = LoadGeneralCategory(url, parentCategory);

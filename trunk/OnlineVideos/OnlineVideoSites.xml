@@ -1942,5 +1942,10 @@
 			  <item key="webAutomationType"><![CDATA[AmazonPrime]]></item>
 		  </Configuration>
 	  </Site>
-  </Sites>
+	  <Site name="Amazon Prime De" util="WebAutomationSite" agecheck="false" enabled="true" player="Browser" lang="de">
+		  <Description>Amazon Prime allows unlimited streaming of 15,000 titles!  Requires a user name/password.</Description>
+		  <Configuration>
+			  <item key="webAutomationType"><![CDATA[AmazonPrime]]></item>
+		  </Configuration>
+	  </Site>  </Sites>
 </OnlineVideoSites>
