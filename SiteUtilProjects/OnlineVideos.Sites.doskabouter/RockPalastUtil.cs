@@ -1,28 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
     public class RockpalastUtil : GenericSiteUtil
     {
-        public override int DiscoverDynamicCategories()
-        {
-            int res = base.DiscoverDynamicCategories();
-            RssLink extra = new RssLink() { Url = baseUrl, Name = "Zuletzt hinzugekommen:", Other = 1 };
-            Settings.Categories.Insert(0, extra);
-            return res + 1;
-        }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override int DiscoverSubCategories(Category parentCategory)
         {
-            string url = ((RssLink)category).Url;
-            string data = GetWebData(url);
-            string[] parts = data.Split(new[] { "wsArticleUnit" }, StringSplitOptions.RemoveEmptyEntries);
-            int? n = category.Other as int?;
-            if (n.HasValue)
-                return Parse(url, parts[n.Value]);
-            else
-                return Parse(url, parts[2]);
+            Regex sav = regEx_dynamicSubCategories;
+            if (true.Equals(parentCategory.Other))
+            {
+                regEx_dynamicSubCategories = new Regex(@"<li\sclass=""teaserCont\s""\s>\s*<img\ssrc=""(?<thumb>[^""]*)""[^>]*>\s*<a\shref=""(?<url>[^""]*)""\sclass=""textPageLink"">(?<title>[^<]*)</a>\s*</li>", defaultRegexOptions);
+            }
+
+            int res = base.DiscoverSubCategories(parentCategory);
+            if (parentCategory.Name == "Bands A - Z")
+            {
+                foreach (Category cat in parentCategory.SubCategories)
+                {
+                    cat.Other = true;
+                    cat.HasSubCategories = true;
+                }
+            }
+            if (true.Equals(parentCategory.Other))
+            {
+                regEx_dynamicSubCategories = sav;
+            }
+            return res;
         }
     }
 }
