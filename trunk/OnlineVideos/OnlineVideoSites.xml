@@ -1352,10 +1352,13 @@
     <Site name="Rockpalast" util="Rockpalast" agecheck="false" enabled="true" lang="de">
       <Description>Rockpalast, das Kult-Programm mit festem wöchentlichen Sendeplatz und regelmäßigen zusätzlichen Rocknächten</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"\s*title="(?<description>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<li><a\s*href="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>(?:&nbsp;\s<font\scolor="red">(?<Description>[^<]*)</font>)?</li>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<param\sname="flashvars"\svalue="startPicture=[^;]*;dslSrc=(?<m0>[^&]*)&amp|<span\sclass="videoLink">\s*<a\shref="\?startMedium=[^;]*;[^;]*;dslSrc=(?<m0>[^&]*)&]]></item>
-        <item key="baseUrl"><![CDATA[http://www.wdr.de/tv/rockpalast/videos/uebersicht.jsp]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass="image">\s*<img\ssrc="(?<thumb>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="teaser">\s*<div\sclass="teaserText">\s*<h2><span>(?<title>[^<]*)</span>\s*<span\sclass="hidden">:\s</span>(?<description>[^<]*)</h2>\s*</div>\s*</div>\s*<div\sclass="flapOverlay">\s*<p>\s*<span>(?<description2>[^<]*)</span>\s*<a\shref="(?<url>[^"]*)"\s>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?#Festivals_Backstage)(<div\sid="teaserSix[^"]*"\sclass="stripTeaserSix"\s>\s*<h2\s><a\shref="(?<url>[^"]*)"\sclass="colored">(?<title>[^<]*)</a></h2>\s*<ul\sclass="teaserContOuter">)|(?#B_Z)(<li\s>\s*<a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</li>\s*)|(?#A)(<div\sclass="printLocation"\stitle="URL:\s(?<url>[^"]*)">&nbsp;</div>(?:(?!Bands).)*Bands\smit\s(?<title>[^\s]*)\s<span\sclass="hover">:\sHier\sfindest\sDu\sDeine\sLieblingsband</span></li>\s*)]]></item>
+        <item key="videoListRegEx"><![CDATA[(?#Backstage)(<div\sclass="image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="teaser">\s*<div\sclass="teaserText">\s*<h2><span>(?<Title>[^<]*)</span>\s*<span\sclass="hidden">:\s</span>(?<Year>[^<]*)</h2>\s*</div>\s*<ul\sclass="broadcastInfo">\s*<l[^>]*>\s*<span[^>]*>(?<Airdate>[^<]*)</span><span\sclass="hidden">,\s</span>\s*<span[^>]*>[^<]*</span><span\sclass="hidden">\s\|\s</span>\s*</li>\s*</ul>\s*</div>\s*<div\sclass="flapOverlay">\s*<p>\s*<span>(?<Description>[^<]*)</span>\s*<a\shref="(?<VideoUrl>[^"]*)"\s>)|(?#Festivals_Einzelkonzerte)(<div\sclass="image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="teaser">\s*<div\sclass="teaserText">\s*<h2><span>(?<Title>[^<]*)</span>\s*<span\sclass="hidden">:\s</span>(?<Airdate>[^<]*)</h2>\s*</div>\s*</div>\s*<div\sclass="flapOverlay">\s*<p>\s*<span>(?<Description>[^<]*)</span>\s*<a\shref="(?<VideoUrl>[^"]*)"\s>)|(?#A_Z)(<li\sclass="mediathekvideo"\s>\s*<a\shref="(?<VideoUrl>[^"]*)"\s>\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*<span>(?<Title>[^<]*)</span>\s*</a>\s*</li>)]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[(<a\shref="(?<url>[^"]*)"\srel="nofollow"\sclass="videoButton\splay">)|(<a\shref="(?<url>[^"]*)"\srel="nofollow">)]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<param\sname="flashvars"\svalue="dslSrc=(?<m0>[^&]*)&]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}?hdcore=3.3.0&plugin=aasp-3.3.0.99.43]]></item>
+        <item key="baseUrl"><![CDATA[http://www1.wdr.de/fernsehen/kultur/rockpalast/videos/index.html]]></item>
       </Configuration>
     </Site>
     <Site name="RTE.ie" util="RTEPlayer" agecheck="false" enabled="true" lang="en">
