@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using OnlineVideos.MPUrlSourceFilter;
@@ -118,7 +119,9 @@ namespace OnlineVideos.Sites
                     if (ti > 0 && ti <= int_cypher.Length)
                         plaintext += int_cypher[ti - 1];
                 }
-                return plaintext.Replace("www.rtve.es", "media5.rtve.es");
+                HttpUrl res = new HttpUrl(plaintext.Replace("www.rtve.es", "media5.rtve.es"));
+                res.Cookies.Add(new Cookie("odin", "odin=banebdyede"));
+                return res.ToString();
             }
 
             return null;
