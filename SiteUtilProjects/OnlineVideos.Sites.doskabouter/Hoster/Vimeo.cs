@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using OnlineVideos.Hoster.Base;
@@ -11,6 +12,11 @@ namespace OnlineVideos.Hoster
 {
     public class Vimeo : HosterBase
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 3166-2?), for example: en;de")]
+        protected string subtitleLanguages = "";
+
+        public string subtitleText = null;
+
         public override string getHosterUrl()
         {
             return "Vimeo";
@@ -25,12 +31,14 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> getPlaybackOptions(string url)
         {
+            subtitleText = null;
             Dictionary<string, string> result = new Dictionary<string, string>();
             Match u = Regex.Match(url, @"http://(?:www\.)?vimeo.com/moogaloop.swf\?clip_id=(?<url>[^&]*)&");
             if (!u.Success)
                 u = Regex.Match(url, @"http://player.vimeo.com/video/(?<url>\d+)");
             if (u.Success)
                 url = @"http://www.vimeo.com/" + u.Groups["url"].Value;
+
             string page = SiteUtilBase.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
@@ -53,10 +61,55 @@ namespace OnlineVideos.Hoster
                         string vidUrl = item.Value.Value<string>("url");
                         result.Add(quality, vidUrl);
                     }
+
+                    if (!String.IsNullOrEmpty(subtitleLanguages))
+                    {
+                        string data = SiteUtilBase.GetWebData(getSubUrl(request["text_tracks"] as JArray, subtitleLanguages));
+                        subtitleText = CleanupSubs(ConvertWebvttToSrt(data));
+                    }
                 }
             }
             return result;
         }
 
+        private String ConvertWebvttToSrt(String webvttContent)
+        {
+            String srtResult = webvttContent;
+            Int32 srtPartLineNumber = 0;
+            srtResult = Regex.Replace(srtResult, @"(WEBVTT\s+)(\d{2}:)", "$2"); // Removes 'WEBVTT' word
+            srtResult = Regex.Replace(srtResult, @"(\d{2}:\d{2}:\d{2})\.(\d{3}\s+)-->(\s+\d{2}:\d{2}:\d{2})\.(\d{3}\s*)", match =>
+            {
+                srtPartLineNumber++;
+                return srtPartLineNumber.ToString() + Environment.NewLine +
+                Regex.Replace(match.Value, @"(\d{2}:\d{2}:\d{2})\.(\d{3}\s+)-->(\s+\d{2}:\d{2}:\d{2})\.(\d{3}\s*)", "$1,$2-->$3,$4");
+                // Writes '00:00:19.620' instead of '00:00:19,620'
+            }); // Writes Srt section numbers for each section
+            return srtResult;
+        }
+
+        private string CleanupSubs(string input)
+        {
+            string result = input;
+            if (!string.IsNullOrEmpty(result))
+            {
+                result = Regex.Replace(result, @"< *br */*>", "\r\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
+                result = Regex.Replace(result, @"<[^>]*>", "", RegexOptions.Multiline);
+            }
+            return result;
+        }
+
+
+        private string getSubUrl(JArray textTracks, string languages)
+        {
+            if (textTracks != null)
+            {
+                string[] langs = languages.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string lang in langs)
+                    foreach (JToken textTrack in textTracks)
+                        if (lang == textTrack.Value<string>("lang"))
+                            return @"http:" + textTrack.Value<string>("direct_url");
+            }
+            return null;
+        }
     }
 }
