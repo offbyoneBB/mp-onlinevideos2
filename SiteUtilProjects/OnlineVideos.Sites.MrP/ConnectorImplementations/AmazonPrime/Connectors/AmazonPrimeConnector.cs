@@ -157,7 +157,9 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
             if (_isPlayOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
 
             _isPlayOrPausing = true;
-            if (_playPauseHeight == -1) _playPauseHeight = Browser.FindForm().Bottom - 20;
+           
+            /*
+             * if (_playPauseHeight == -1) _playPauseHeight = Browser.FindForm().Bottom - 20;
             var startX = Browser.FindForm().Left;
 
             // We've previously found the play/pause button, so re-use its position
@@ -198,7 +200,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                 _isPlayOrPausing = false;
                 if (_playPausePos > -1) DoPlayOrPause();
             }
-
+            */
+            Cursor.Position = new System.Drawing.Point(300, 300);
+            Application.DoEvents();
+            CursorHelper.DoLeftMouseClick();
+            Application.DoEvents();
+            System.Windows.Forms.SendKeys.Send(" ");
             _isPlayOrPausing = false;
             return EventResult.Complete();
         }
@@ -228,6 +235,29 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                 if (!_isPlayOrPausing) break;
             }
             return -1;
+        }
+
+        public override void OnAction(string actionEnumName)
+        {
+            if (_currentState == State.PlayPage1 && !_isPlayOrPausing)
+            {
+                if (actionEnumName == "ACTION_MOVE_LEFT")
+                {
+                    Cursor.Position = new System.Drawing.Point(300, 300);
+                    Application.DoEvents();
+                    CursorHelper.DoLeftMouseClick();
+                    Application.DoEvents();
+                    System.Windows.Forms.SendKeys.Send("{LEFT}");
+                }
+                if (actionEnumName == "ACTION_MOVE_RIGHT")
+                {
+                    Cursor.Position = new System.Drawing.Point(300, 300);
+                    Application.DoEvents();
+                    CursorHelper.DoLeftMouseClick();
+                    Application.DoEvents();
+                    System.Windows.Forms.SendKeys.Send("{RIGHT}");
+                }
+            }
         }
     }
 }
