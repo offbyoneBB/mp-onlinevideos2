@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <MPUrlSourceSplitterFiles Include="$(SolutionDir)MPUrlSourceSplitter\bin_Win32\*.*" />
+    <MPUrlSourceSplitterFiles Include="$(TargetDir)MPUrlSourceSplitter\*.*" />
   </ItemGroup>
 
   <Target Name="AfterBuild">
