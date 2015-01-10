@@ -21,6 +21,8 @@ namespace OnlineVideos.MediaPortal2
 				{ VideoAspect.ASPECT_ID, new MediaItemAspect(VideoAspect.Metadata) }
 			})
 		{
+            SiteName = videoInfo.SiteName;
+
 			Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(ProviderResourceAspect.ATTR_SYSTEM_ID, ServiceRegistration.Get<ISystemResolver>().LocalSystemId);
 			if (videoInfo.SiteUtilName == "DownloadedVideo")
 			{
@@ -42,5 +44,7 @@ namespace OnlineVideos.MediaPortal2
 				Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_RECORDINGTIME, parsedAirDate);
 
 		}
+
+        public string SiteName { get; private set; }
 	}
 }
