@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>OnlineVideos.MediaPortal2</id>
-        <version>1.6.1</version>
+        <version>1.10.0</version>
         <title>OnlineVideos.MediaPortal2</title>
         <authors>offbyone</authors>
         <owners>offbyone</owners>

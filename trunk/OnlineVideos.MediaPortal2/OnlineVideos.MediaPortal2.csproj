@@ -132,7 +132,9 @@
     <Content Include="Language\strings_sv.xml" />
     <Content Include="Language\strings_tr.xml" />
     <Content Include="Language\strings_zh.xml" />
-    <Content Include="plugin.xml" />
+    <Content Include="plugin.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Skin\default\images\C33E39CC-910E-41C8-BFFD-9ECCD340B569.jpg" />
     <Content Include="Skin\default\images\DownloadedVideo.png" />
     <Content Include="Skin\default\images\LanguageFlags\--.png" />

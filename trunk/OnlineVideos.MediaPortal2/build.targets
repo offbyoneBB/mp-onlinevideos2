@@ -11,8 +11,12 @@
 
   <ItemGroup>
     <PluginFiles Include="$(TargetDir)$(ProjectName).*" />
-    <PluginFiles Include="$(TargetDir)OnlineVideos.*" />
-    <PluginFiles Include="$(ProjectDir)plugin.xml" />
+    <PluginFiles Include="$(TargetDir)plugin.xml" />
+    <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
+    <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+    <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.exe" />
+    <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.exe.config" />
+    <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +33,8 @@
 
   <Target Name="AfterBuild">
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
+    <Copy SourceFiles="@(APIFiles)" DestinationFolder="$(PluginDestination)" />
+    <Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PluginDestination)Language\" />
     <Copy SourceFiles="@(SkinFiles)"
           DestinationFiles="@(SkinFiles->'$(PluginDestination)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
@@ -39,6 +45,8 @@
       <PackageContent>$(ProjectDir)NuGetPackage\PluginContent\</PackageContent>
     </PropertyGroup>
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PackageContent)" />
+    <Copy SourceFiles="@(APIFiles)" DestinationFolder="$(PackageContent)" />
+    <Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PackageContent)" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PackageContent)Language\" />
     <Copy SourceFiles="@(SkinFiles)"
           DestinationFiles="@(SkinFiles->'$(PackageContent)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
