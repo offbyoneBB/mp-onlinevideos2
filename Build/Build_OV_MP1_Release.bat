@@ -17,7 +17,7 @@ if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 
 
 REM set logfile where the infos are written to, and clear that file
-set LOG=build_%BUILD_TYPE%.log
+set LOG=build_%BUILD_TYPE%_MP1.log
 echo. > %LOG%
 
 
@@ -27,7 +27,7 @@ echo -= build mode: %BUILD_TYPE% =-
 echo.
 
 echo.
-echo Building OnlineVideos...
+echo Building OnlineVideos for MediaPortal1 ...
 "%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE% "..\OnlineVideos.MediaPortal1.sln" >> %LOG%
 
 echo Building MPEI
