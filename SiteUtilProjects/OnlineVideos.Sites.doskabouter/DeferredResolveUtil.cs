@@ -25,6 +25,7 @@ namespace OnlineVideos.Sites
         protected bool showUnknownHosters = false;
 
         [Category("OnlineVideosUserConfiguration"), Description("Select subtitle source, for example: TvSubtitles")]
+        [TypeConverter(typeof(SubtitleSourceConverter))]
         protected string subtitleSource = "";
         [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
         protected string subtitleLanguages = "";
