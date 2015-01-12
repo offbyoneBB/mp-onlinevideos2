@@ -488,6 +488,9 @@ namespace OnlineVideos.Sites
                         if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
                         {
                             Dictionary<string, string> options = hosterUtil.getPlaybackOptions(resultUrl);
+                            if (hosterUtil is ISubtitle)
+                                video.SubtitleText = ((ISubtitle)hosterUtil).SubtitleText;
+
                             if (options != null && options.Count > 0)
                             {
                                 if (options.Count > 1) video.PlaybackOptions = options;
@@ -513,6 +516,8 @@ namespace OnlineVideos.Sites
                             if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
                             {
                                 Dictionary<string, string> options = hosterUtil.getPlaybackOptions(value);
+                                if (hosterUtil is ISubtitle)
+                                    video.SubtitleText = ((ISubtitle)hosterUtil).SubtitleText;
                                 if (options != null && options.Count > 0)
                                     foreach (var option in options)
                                         video.PlaybackOptions.Add(string.Format("{0} - {1}", video.PlaybackOptions.Count + 1, option.Key), option.Value);
