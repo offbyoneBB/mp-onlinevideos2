@@ -4,6 +4,7 @@ using MySubtitleDownloader.SubtitleDownloader.Core;
 #endif
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Linq;
 using System.IO;
@@ -208,4 +209,39 @@ namespace OnlineVideos.Subtitles
         }
 #endif
     }
+
+    /// <summary>
+    /// Represents class for subtitle source converter.
+    /// </summary>
+    public class SubtitleSourceConverter : StringConverter
+    {
+        #region Methods
+
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return false;
+        }
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+        {
+            return true;
+        }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+        {
+            List<String> sources = new List<String>();
+
+#if SUBTITLE
+            Assembly subAssembly = Assembly.GetAssembly(typeof(ISubtitleDownloader));
+            Type ISubType = typeof(ISubtitleDownloader);
+            foreach (Type t in subAssembly.GetTypes())
+                if (t != ISubType && ISubType.IsAssignableFrom(t) && t.Name.EndsWith("Downloader"))
+                    sources.Add(t.Name.Substring(0, t.Name.Length - 10));
+#endif
+            return new StandardValuesCollection(sources);
+        }
+
+        #endregion
+    }
+
 }
