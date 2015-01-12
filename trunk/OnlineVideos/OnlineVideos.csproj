@@ -285,6 +285,7 @@
     <Compile Include="Downloading\MMSDownloader.cs" />
     <Compile Include="Hoster\Base\HosterBase.cs" />
     <Compile Include="Hoster\Base\HosterFactory.cs" />
+    <Compile Include="Hoster\Base\ISubtitle.cs" />
     <Compile Include="HtmlAgilityPack\crc32.cs" />
     <Compile Include="HtmlAgilityPack\EncodingFoundException.cs" />
     <Compile Include="HtmlAgilityPack\HtmlAttribute.cs" />
@@ -1013,6 +1014,7 @@
     <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerCallbackService.cs" />
     <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerServiceHost.cs" />
     <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerCallback.cs" />
+    <Compile Include="SubtitleUtils.cs" />
     <Compile Include="Translation.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="VideoInfo.cs" />
