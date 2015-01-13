@@ -6,6 +6,7 @@ using System.ComponentModel;
 using RssToolkit.Rss;
 using System.Xml;
 using OnlineVideos.Sites;
+using System.Globalization;
 
 namespace OnlineVideos.Sites
 {
@@ -56,12 +57,26 @@ namespace OnlineVideos.Sites
             string manUrl = getManifestFromUrl(url);
 
             var jsonData = GetWebData<JObject>(manUrl);
+            
+            string manId = jsonData["manifest"].Value<string>("id");
             string showId = (string)category.Other;
+            Log.Debug("ShowId: " + showId);
+            Log.Debug("ManID: " + manId);
             string reportingId = jsonData["manifest"]["reporting"].Value<string>("itemId");
-            Log.Debug("ShowID: " + showId + ", reportingID: " + reportingId);
-
-            string epsUrl = String.Format("http://www.cc.com/feeds/f1010/1.0/5a123a71-d8b9-45d9-85d5-e85508b1b37c/{0}/{1}/", showId, reportingId);
-
+            Log.Debug("reportingID: " + reportingId);
+            /* OLD
+            string epsUrl = String.Format("http://www.cc.com/feeds/f1010/1.0/a77b2fb1-bb8e-498d-bca1-6fca29d44e62/{0}/{1}/", showId, reportingId);
+            */
+            
+            JEnumerable<JProperty> zones = jsonData["manifest"]["zones"].Children<JProperty>();
+            string feed = "";
+            foreach (JProperty zone in zones)
+            {
+                feed = (string)zone.Value["feed"];
+                if (feed.Contains(showId))
+                    break;
+            }
+            string epsUrl = feed;
             vidListPage = 1; //reset vidListPage
             vidListCount = 0;
 
@@ -160,7 +175,8 @@ namespace OnlineVideos.Sites
                     {
                         video.PlaybackOptions = vidopts.videoSrc;
                         if (retrieveSubtitles)
-                            video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(GetWebData(vidopts.subtitleSrc["ttml"]));
+                            video.SubtitleText = ConvertToProperCase(Utils.SubtitleReader.TimedText2SRT(GetWebData(vidopts.subtitleSrc["ttml"])));
+                            
                     }
                     result.Add(item.MediaGroups[0].MediaContents[0].Url);
                 }
@@ -184,7 +200,7 @@ namespace OnlineVideos.Sites
             {
                 string subFormat = subtitle.Attributes["format"].Value;
                 string subSrc = subtitle.Attributes["src"].Value;
-                Log.Info("Subtitle url: " + subFormat + " : " + subSrc);
+                Log.Debug("Subtitle url: " + subFormat + " : " + subSrc);
                 vidopts.subtitleSrc.Add(subFormat, subSrc);
             }
 
@@ -194,7 +210,7 @@ namespace OnlineVideos.Sites
                 string videoType = list[i].ParentNode.Attributes["type"].Value.Replace(@"video/", String.Empty);
                 string url = list[i].InnerText;
                 string resolution = "";
-                Regex resRegex = new Regex(@"_([\d]+x[\d]+)_" + bitrate + "_");
+                Regex resRegex = new Regex(@"_([\d]+x[\d]+)_");
                 Match m = resRegex.Match(url);
                 if (m.Success)
                     resolution = m.Groups[1].Captures[0].Value;
@@ -214,6 +230,11 @@ namespace OnlineVideos.Sites
                 return clonedVideoInfo.VideoUrl;
 
             PlaybackOptions options = getPlaybackOptions(clonedVideoInfo.VideoUrl);
+
+            //set subtitle for part
+            if (retrieveSubtitles)
+                clonedVideoInfo.SubtitleText = ConvertToProperCase(Utils.SubtitleReader.TimedText2SRT(GetWebData(options.subtitleSrc["ttml"])));
+
             if (options.videoSrc.ContainsKey(chosenPlaybackOption))
             {
                 return options.videoSrc[chosenPlaybackOption];
@@ -222,9 +243,12 @@ namespace OnlineVideos.Sites
             enumerator.MoveNext();
             return enumerator.Current.Value;
         }
+
+        public static string ConvertToProperCase(string text)
+        {
+            return text.ToLower();
+        } 
     }
-
-
 
     public class PlaybackOptions
     {
