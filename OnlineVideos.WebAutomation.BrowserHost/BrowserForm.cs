@@ -280,8 +280,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// <param name="action"></param>
         void OnNewAction(string action, bool overrideCheck = false)
         {
-            // Ignore duplicate actions within 150ms (apparently the Netflix connector has duplicate actions, I suspect it's because the Netflix connector is sending space key and this is doing the play/pause and firing an action :-( )
-            if (!overrideCheck && _lastActionTime.AddMilliseconds(150) > DateTime.Now)
+            // Ignore duplicate actions within 300ms (apparently the Netflix connector has duplicate actions, I suspect it's because the Netflix connector is sending space key and this is doing the play/pause and firing an action :-( )
+            if (!overrideCheck && _lastActionTime.AddMilliseconds(300) > DateTime.Now)
                 return;
             
             _lastActionTime = DateTime.Now;

@@ -93,9 +93,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx" />
-    <EmbeddedResource Include="Localisation\Resources.de.resx">
+    <None Include="Localisation\Resources.de.resx">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="loading.gif" />
