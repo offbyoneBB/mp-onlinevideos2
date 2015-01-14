@@ -29,6 +29,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string _username;
         private string _password;
         private string _profile;
+        private bool _showLoading = true;
+        private bool _rememberLogin = false;
 
         private State _currentState = State.None;
         private bool _isPlayingOrPausing = false;
@@ -46,6 +48,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             if (!Browser.FindForm().Controls.Contains(_loadingPicture))
                 Browser.FindForm().Controls.Add(_loadingPicture);
             _loadingPicture.BringToFront();
+            if (!_showLoading)
+            {
+                _loadingPicture.Hide();
+            }
         }
 
         public override void OnClosing()
@@ -79,6 +85,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         public override Entities.EventResult PerformLogin(string username, string password)
         {
 
+            _rememberLogin = username.Contains("REMEMBERLOGIN");
+            username = username.Replace("REMEMBERLOGIN", string.Empty);
+            _showLoading = username.Contains("SHOWLOADING");
+            username = username.Replace("SHOWLOADING", string.Empty);
             ShowLoading();
             string[] userProfile = username.Split('¥');
             _username = userProfile[0];
@@ -133,11 +143,18 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 case State.Login:
 
-                    if (Url.Contains("/Login"))
+                    if (Url.Contains("/Login?"))
                     {
                         jsCode = "document.getElementById('email').value = '" + _username + "'; ";
                         jsCode += "document.getElementById('password').value = '" + _password + "'; ";
-                        jsCode += "document.getElementById('RememberMe').checked = false; ";
+                        if (_rememberLogin)
+                        {
+                            jsCode += "document.getElementById('RememberMe').checked = true; ";
+                        }
+                        else
+                        {
+                            jsCode += "document.getElementById('RememberMe').checked = false; ";
+                        }
                         jsCode += "document.getElementById('login-form-contBtn').click();";
                         InvokeScript(jsCode);
                         _currentState = State.Profile;
@@ -149,10 +166,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     }
                     break;
                 case State.Profile:
-                    if (Url.Contains("/Login"))
-                        return EventResult.Error("Unable to login");
-                    Url = "https://www.netflix.com/SwitchProfile?tkn=" + _profile;
-                    _currentState = State.ReadyToPlay;
+                    if (Url.Contains("/WiHome") || Url.Contains("/Kids") || Url.Contains("/ProfilesGate"))
+                    {
+                        Url = "https://www.netflix.com/SwitchProfile?tkn=" + _profile;
+                        _currentState = State.ReadyToPlay;
+                    }
                     break;
                 case State.ReadyToPlay:
                     if (Url.Contains("/WiHome") || Url.Contains("/Kids"))

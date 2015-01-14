@@ -17,7 +17,6 @@ namespace OnlineVideos.Sites.Utils
         public static readonly string EpisodesState = "EpisodesState";
         public static readonly string HelpState = "HelpState";
         public static readonly string HomeCategoriesState = "HomeCategoriesState";
-        public static readonly string HomeCategoryState = "HomeCategoryState";
 
         #endregion
 
