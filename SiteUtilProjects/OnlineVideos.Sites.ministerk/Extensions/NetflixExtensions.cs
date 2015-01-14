@@ -183,9 +183,5 @@ namespace OnlineVideos.Sites.Ministerk.Extensions
             return c.GetState() == NetflixUtils.HomeCategoriesState;
         }
 
-        public static bool IsHomeCategoryState(this Category c)
-        {
-            return c.GetState() == NetflixUtils.HomeCategoryState;
-        }
     }
 }

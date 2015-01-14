@@ -53,13 +53,16 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected bool enableAddRemoveMylist = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Watch Now in My List"), Description("Enable Watch Now in MyList Category")]
         protected bool enableMylListPlayNow = false;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Watch now in Netflix Home"), Description("Enable watch now in Netflix Home category")]
+        protected bool enableHomePlayNow = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Sort titles in Browse by..."), Description("Sort titles in Browse by...")]
         protected BrowseSortOrders browseSort = BrowseSortOrders.SuggestionsForYou;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Max search results"), Description("Maximum number of titles in search result, default and max is 500")]
         protected uint maxSearchResultsx = 500;
-        // TODO
-        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable watch now in Netflix Home"), Description("Enable watch now in Netflix Home category")]
-        //protected bool enableHomePlayNow = false;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Remember log-in in browser"), Description("Remember the log-in in the Browser Player")]
+        protected bool rememberLogin = false;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
+        protected bool showLoadingSpinner = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show help Category"), Description("Show link to forum or not, http://tinyurl.com/ov-netflix")]
         protected bool enableHelp = true;
 
@@ -287,7 +290,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         string IBrowserSiteUtil.UserName
         {
-            get { return username + "¥" + ProfileToken; }
+            get { return username + "¥" + ProfileToken + (showLoadingSpinner ? "SHOWLOADING" : "") + (rememberLogin ? "REMEMBERLOGIN" : ""); }
         }
 
         string IBrowserSiteUtil.Password
@@ -390,17 +393,17 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return desc;
         }
 
-        private List<NetflixData> GetSinglePageNetflixData(Category parentCategory, bool forceGetTrkid = false)
+        private List<NetflixData> GetSinglePageNetflixData(Category parentCategory, bool forceGetTrkid = false )
         {
+            string content = parentCategory.GetData();
             List<NetflixData> dicts = new List<NetflixData>();
-            string content = MyGetWebData((parentCategory as RssLink).Url);
-            //Well use regex in this case...
-
+            if (string.IsNullOrEmpty(content))
+                content = MyGetWebData((parentCategory as RssLink).Url);
             Regex rgx;
             if (forceGetTrkid || enableDesc)
-                rgx = new Regex(@"alt=""(?<name>[^""]*)"".src=""(?<thumb>[^""]*)""(?:[^\?]*)\?movieid=(?<id>\d*).*?trkid=(?<trkid>\d*)");
+                rgx = new Regex(@"alt=""(?<name>[^""]*)"".h{0,1}src=""(?<thumb>[^""]*)""(?:[^\?]*)\?movieid=(?<id>\d*).*?trkid=(?<trkid>\d*)");
             else
-                rgx = new Regex(@"alt=\""(?<name>[^\""]*)\"".src=\""(?<thumb>[^\""]*)\""(?:[^\?]*)\?movieid=(?<id>\d*)");
+                rgx = new Regex(@"alt=\""(?<name>[^\""]*)\"".h{0,1}src=\""(?<thumb>[^\""]*)\""(?:[^\?]*)\?movieid=(?<id>\d*)");
             foreach (Match m in rgx.Matches(content))
             {
                 NetflixData datum = new NetflixData();
@@ -418,51 +421,81 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #region Categories
 
-        /*
+
         private List<Category> GetHomeCategories(string data, Category parentCategory)
         {
             List<Category> cats = new List<Category>();
+            Regex rgx = new Regex(@"nf\.constants\.page\.contextData =(.*); }\(netflix\)\);");
+            Match m = rgx.Match(data);
+            JObject json = null;
+            if (m.Success)
+            {
+                string jsonData = m.Groups[1].Value;
+                json = (JObject)JsonConvert.DeserializeObject(jsonData);
+            }
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(data);
             try
             {
                 HtmlNodeCollection mrows = doc.DocumentNode.SelectSingleNode("//div[@class = 'mrows']").SelectNodes("div[contains(@class, 'mrow')]");
-                foreach (HtmlNode mrow in mrows)
+                foreach (HtmlNode mrow in mrows.Where(mr => mr.GetAttributeValue("class", "") == "mrow" || mr.GetAttributeValue("class", "").Contains("evidence")))
                 {
                     HtmlNode name = mrow.SelectSingleNode(".//h3");
-                    string lName = name.ToString().ToLower();
-                    if (!(lName.Contains("/mylist") || lName.Contains("/ratemovies")))
+                    HtmlNode imageNode = mrow.SelectSingleNode(".//img");
+                    string img = "";
+                    if (imageNode != null)
                     {
-                        RssLink cat = new RssLink()
-                        {
-                            Name = name.InnerText.Trim(),
-                            HasSubCategories = true,
-
-                            ParentCategory = parentCategory
-                        };
-                        cat.SetRememberDiscoveredItems(false);
-                        cat.SetState(NetflixUtils.HomeCategoryState);
-                        cats.Add(cat);
+                        img = imageNode.GetAttributeValue("src", "");
+                        if (string.IsNullOrEmpty(img))
+                            img = imageNode.GetAttributeValue("hsrc", "");
                     }
+
+                    RssLink cat = new RssLink()
+                    {
+                        Name = name.InnerText.Trim(),
+                        HasSubCategories = !enableHomePlayNow,
+                        Thumb = img,
+                        ParentCategory = parentCategory,
+                        
+                    };
+                    string html = mrow.OuterHtml;
+                    if (json != null)
+                    {
+                        HtmlNode slider = mrow.SelectSingleNode(".//div[starts-with(@id, 'slider_')]");
+                        if (slider != null)
+                        {
+                            string sliderId = slider.GetAttributeValue("id", "");
+                            JToken initData = json["sliders"]["data"]["initData"].FirstOrDefault(n => n["domId"].Value<string>() == sliderId);
+                            if (initData != null)
+                            {
+                                string remainderHTML = initData["remainderHTML"].Value<string>();
+                                if (!string.IsNullOrEmpty(remainderHTML))
+                                    html += remainderHTML;
+                            }
+                        }
+                    }
+                    cat.SetData(html);
+                    cat.SetState(NetflixUtils.SinglePageCategoriesState);
+                    cat.SetPlayNow(enableHomePlayNow);
+                    cats.Add(cat);
                 }
             }
             catch { }
 
             return cats;
         }
-         */
+         
 
         public override int DiscoverDynamicCategories()
         {
             string data = MyGetWebData(homeUrl);
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(data);
-            /*
+            
             RssLink home = new RssLink() { Name = "Netflix Home", HasSubCategories = true, Url = homeUrl};
             home.SetState(NetflixUtils.HomeCategoriesState);
-            home.SetRememberDiscoveredItems(false);
             Settings.Categories.Add(home);
-             */
+            
             RssLink myList = new RssLink() { Name = "My List", HasSubCategories = !enableMylListPlayNow, Url = myListUrl };
             myList.SetState(NetflixUtils.SinglePageCategoriesState);
             myList.SetPlayNow(enableMylListPlayNow);
@@ -545,22 +578,15 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             #endregion
 
             #region Home Categories
-            /*
+            
 
             else if (parentCategory.IsHomeCategoriesState())
             {
                 string data = MyGetWebData((parentCategory as RssLink).Url);
                 List<Category> cats = GetHomeCategories(data, parentCategory);
-                parentCategory.SetData(data);
-                parentCategory.SetRememberDiscoveredItems(false);
                 parentCategory.SubCategories = cats;
             }
 
-            else if (parentCategory.IsHomeCategoryState())
-            {
-                
-            }
-            */
             #endregion
 
             #region Kids
