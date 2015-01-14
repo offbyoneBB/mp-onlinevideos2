@@ -444,24 +444,25 @@ namespace OnlineVideos.Sites
             if (details != null)
             {
                 TrackingInfo ti = new TrackingInfo() { Title = details.SeriesTitle, VideoKind = VideoKind.TvSeries };
-
-                Match m = Regex.Match(details.EpisodeTitle, @"Series ((?<num>\d+)|(?<alpha>[A-z]+))");
-                if (m.Success)
+                if (!string.IsNullOrEmpty(details.EpisodeTitle))
                 {
-                    if (m.Groups["num"].Success)
-                        ti.Season = uint.Parse(m.Groups["num"].Value);
-                    else
-                        ti.Season = (uint)(m.Groups["alpha"].Value[0] % 32); //special case for QI, convert char to position in alphabet
-                }
+                    Match m = Regex.Match(details.EpisodeTitle, @"Series ((?<num>\d+)|(?<alpha>[A-z]+))");
+                    if (m.Success)
+                    {
+                        if (m.Groups["num"].Success)
+                            ti.Season = uint.Parse(m.Groups["num"].Value);
+                        else
+                            ti.Season = (uint)(m.Groups["alpha"].Value[0] % 32); //special case for QI, convert char to position in alphabet
+                    }
 
-                if ((m = Regex.Match(details.EpisodeTitle, @"Episode (\d+)")).Success || (m = Regex.Match(details.EpisodeTitle, @":\s*(\d+)\.")).Success || (m = Regex.Match(details.EpisodeTitle, @"^(\d+)\.")).Success)
-                {
-                    ti.Episode = uint.Parse(m.Groups[1].Value);
-                    //if we've got an episode number but no season, presume season 1
-                    if (ti.Season == 0)
-                        ti.Season = 1;
+                    if ((m = Regex.Match(details.EpisodeTitle, @"Episode (\d+)")).Success || (m = Regex.Match(details.EpisodeTitle, @":\s*(\d+)\.")).Success || (m = Regex.Match(details.EpisodeTitle, @"^(\d+)\.")).Success)
+                    {
+                        ti.Episode = uint.Parse(m.Groups[1].Value);
+                        //if we've got an episode number but no season, presume season 1
+                        if (ti.Season == 0)
+                            ti.Season = 1;
+                    }
                 }
-
                 Log.Debug("BBCiPlayer: Parsed tracking info: Title '{0}' Season {1} Episode {2}", ti.Title, ti.Season, ti.Episode);
                 return ti;
             }
