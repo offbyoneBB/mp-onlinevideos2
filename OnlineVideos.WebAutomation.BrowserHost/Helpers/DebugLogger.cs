@@ -10,7 +10,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
     /// <summary>
     /// Log to file if the debug flags are set
     /// </summary>
-    public static class DebugLogger
+    public class DebugLogger : ILog
     {
         private static bool _debugMode = false; // Allow for the form to be resized/lose focus in debug mode
         private static string _debugLogPath;
@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
         /// <summary>
         /// Ctor - load values from the config file
         /// </summary>
-        static DebugLogger()
+        public DebugLogger()
         {
             var configValue = ConfigurationManager.AppSettings["DebugMode"];
             if (!string.IsNullOrEmpty(configValue) && configValue.ToUpper() == "TRUE")
@@ -48,6 +48,26 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
                 }
                 _debugEntryWritten = true;
             }
+        }
+
+        public void Debug(string format, params object[] arg)
+        {
+            WriteDebugLog("Debug: " + string.Format(format, arg));
+        }
+        public void Error(Exception ex)
+        {
+            WriteDebugLog("Error: " + ex.Message + " " + ex.StackTrace);
+        }
+        public void Error(string format, params object[] arg)
+        {
+            WriteDebugLog("Error: " + string.Format(format, arg));
+        }
+        public void Info(string format, params object[] arg)
+        {
+            WriteDebugLog("Info: " + string.Format(format, arg));
+        }
+        public void Warn(string format, params object[] arg)
+        {
         }
     }
 }

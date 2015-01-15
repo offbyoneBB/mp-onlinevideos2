@@ -140,7 +140,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 WebBrowserPlayerCallbackService.LogInfo(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
 
                 DebugLogger.WriteDebugLog("Loading Connector");
-                _connector = BrowserInstanceConnectorFactory.GetConnector(_connectorType, OnlineVideoSettings.Instance.Logger, webBrowser);
+                _connector = BrowserInstanceConnectorFactory.GetConnector(_connectorType, new DebugLogger(), webBrowser);
 
                 if (_connector == null)
                 {

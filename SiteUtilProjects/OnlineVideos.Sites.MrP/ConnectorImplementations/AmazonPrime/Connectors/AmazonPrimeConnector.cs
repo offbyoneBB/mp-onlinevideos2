@@ -137,7 +137,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                     _blankPanel.BringToFront();
 
                     HideLoading();
-
+                    Browser.FindForm().Activate();
+                    Browser.FindForm().Focus();
                     ProcessComplete.Finished = true;
                     ProcessComplete.Success = true;
                     
@@ -206,6 +207,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
             CursorHelper.DoLeftMouseClick();
             Application.DoEvents();
             System.Windows.Forms.SendKeys.Send(" ");
+            Browser.FindForm().Activate();
+            Browser.FindForm().Focus();
             _isPlayOrPausing = false;
             return EventResult.Complete();
         }
@@ -248,6 +251,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                     CursorHelper.DoLeftMouseClick();
                     Application.DoEvents();
                     System.Windows.Forms.SendKeys.Send("{LEFT}");
+                    Browser.FindForm().Activate();
+                    Browser.FindForm().Focus();
                 }
                 if (actionEnumName == "ACTION_MOVE_RIGHT")
                 {
@@ -256,6 +261,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                     CursorHelper.DoLeftMouseClick();
                     Application.DoEvents();
                     System.Windows.Forms.SendKeys.Send("{RIGHT}");
+                    Browser.FindForm().Activate();
+                    Browser.FindForm().Focus();
                 }
             }
         }
