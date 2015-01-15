@@ -201,8 +201,9 @@ namespace OnlineVideos.Sites
             RssLink parentCategory = category as RssLink;
             List<VideoInfo> videoList = new List<VideoInfo>();
             String data = GetWebData(parentCategory.Url);
-            JObject jsonCapitulos = JObject.Parse("{\"a\":" + data + "}");
-            JArray capitulos = (JArray)jsonCapitulos["a"];
+            //JObject jsonCapitulos = JObject.Parse("{\"a\":" + data + "}");
+            JObject jsonCapitulos = JObject.Parse(data);
+            JArray capitulos = (JArray)jsonCapitulos["1"];
             for (int k = 0; k < capitulos.Count; k++)
             {
                 JToken capitulo = capitulos[k];
