@@ -5,11 +5,13 @@ using System.Text;
 using OnlineVideos.Hoster.Base;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using System.Web;
 
 namespace OnlineVideos.Hoster
 {
     public class vk : HosterBase
     {
+    
         public override string getHosterUrl()
         {
             return "vk.com";
@@ -17,12 +19,38 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> getPlaybackOptions(string url)
         {
-            string data = Sites.SiteUtilBase.GetWebData(url) ?? "";
+            Regex rgx;
+            Match m;
+            if (url.Contains("vk.php?v="))
+            {
+                rgx = new Regex(@"v=(?<url>.*)");
+                m = rgx.Match(url);
+                if (m.Success)
+                {
+                    url = m.Groups["url"].Value;
+                    url = HttpUtility.UrlDecode(url);
+                }
+            }
+            string data = Sites.SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(url)) ?? "";
+            //location.href
+            rgx = new Regex(@"location.href(?:[^""]*)""(?<url>[^""]*)");
+            m = rgx.Match(data);
+            if (m.Success)
+            {
+                string url2 = m.Groups["url"].Value.Replace("'", string.Empty).Replace("+", string.Empty);
+                data = Sites.SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(url2), referer: url) ?? "";
+                m = rgx.Match(data);
+                if (m.Success)
+                {
+                    string url3 = m.Groups["url"].Value.Replace("'", string.Empty).Replace("+", string.Empty);
+                    data = Sites.SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(url3), referer: url2) ?? "";
+                }
+            }
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             List<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
 
-            Regex rgx = new Regex(@"var vars = (.*)");
-            Match m = rgx.Match(data);
+            rgx = new Regex(@"var vars = (.*)");
+            m = rgx.Match(data);
             if (m.Success)
             {
                 var json = JObject.Parse(m.Groups[1].Value);

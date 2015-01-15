@@ -232,13 +232,9 @@ namespace OnlineVideos.Sites
 
             if (!string.IsNullOrEmpty(videoUrl))
             {
-                if (videoUrl.StartsWith("http://vidor.me/vk/vk.php?v="))
-                {
-                    videoUrl = videoUrl.Replace("http://vidor.me/vk/vk.php?v=", "");
-                    videoUrl = HttpUtility.UrlDecode(videoUrl);
-                }
-                videoUrl = videoUrl.Replace("vidor.me", "vk.com");
+
                 video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("vk").getPlaybackOptions(videoUrl);
+
                 if (video.PlaybackOptions.Count > 0)
                     bestUrl = video.PlaybackOptions.First().Value;
             }
