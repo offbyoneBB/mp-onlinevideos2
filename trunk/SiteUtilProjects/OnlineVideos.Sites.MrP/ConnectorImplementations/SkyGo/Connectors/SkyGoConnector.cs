@@ -130,6 +130,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                             _disableAppStorageThread = new Thread(new ParameterizedThreadStart(DisableAppStorage));
                             _disableAppStorageThread.Start();
                         }
+                        Browser.FindForm().Activate();
+                        Browser.FindForm().Focus();
                     }
                     else
                     {
@@ -153,6 +155,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                         CursorHelper.DoLeftMouseClick();
                         Application.DoEvents();
                         HideLoading();
+                        Browser.FindForm().Activate();
+                        Browser.FindForm().Focus();
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
                     }
@@ -171,7 +175,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         public override EventResult PlayVideo(string videoToPlay)
         {
             // Clean up the xap file to see if it helps playback
-            RemoveFileFromTempInternetFiles("SkyPlayer", ".xap");
+            //RemoveFileFromTempInternetFiles("SkyPlayer", ".xap");
             _currentState = State.VideoInfo;
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
@@ -237,13 +241,17 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         private EventResult DoPlayOrPause()
         {
             if (_isPlayOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
-
+            
             _isPlayOrPausing = true;
+
             if (_playPauseHeight <= 0) _playPauseHeight = Browser.FindForm().Bottom - 80;
-         
+            
+            Cursor.Position = new System.Drawing.Point(10,10);
+
             // We've previously found the play/pause button, so re-use its position
             if (_playPausePos > -1)
             {
+                
                 Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 10, _playPauseHeight);
 
                 // We have to move the cursor off the play button for this to work
