@@ -21,8 +21,8 @@ namespace OnlineVideos.Helpers
         [DllImport("user32.dll")]
         static extern Int32 ReleaseDC(IntPtr hwnd, IntPtr hdc);
 
-        [DllImport("user32.dll",CharSet=CharSet.Auto, CallingConvention=CallingConvention.StdCall, EntryPoint="mouse_event")]   
-        public static extern void Mouse_Event(long dwFlags, long dx, long dy, long cButtons, long dwExtraInfo);   
+        [DllImport("user32.dll",CharSet=CharSet.Auto, CallingConvention=CallingConvention.StdCall, EntryPoint="mouse_event")]
+        public static extern void Mouse_Event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);   
 
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;   
         private const int MOUSEEVENTF_LEFTUP = 0x04;   
