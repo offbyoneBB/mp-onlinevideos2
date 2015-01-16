@@ -119,11 +119,11 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                         return EventResult.Error("AmazonPrimeConnector/BrowserDocumentComplete/Expected home page after log in, was actually " + Url);
                     break;
                 case State.PlayPage:
-                   
+
                     _currentState = State.PlayPage1;
                     break;
                 case State.PlayPage1:
-                    
+
                     InvokeScript("AMZNDetails.dvPlayer.play();");
                     InvokeScript("amzn.webGlobalVideoPlayer._mainPlayer._enableFullWindowPlaybackMode();");
 
@@ -133,15 +133,14 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                     _blankPanel.BackColor = Color.Black;
                     _blankPanel.Left = Browser.FindForm().Right - 35;
 
-                    Browser.FindForm().Controls.Add(_blankPanel);
+                    // Browser.FindForm().Controls.Add(_blankPanel);
                     _blankPanel.BringToFront();
 
                     HideLoading();
-                    Browser.FindForm().Activate();
-                    Browser.FindForm().Focus();
+
                     ProcessComplete.Finished = true;
                     ProcessComplete.Success = true;
-                    
+
                     break;
             }
 
@@ -158,86 +157,11 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
             if (_isPlayOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
 
             _isPlayOrPausing = true;
-           
-            /*
-             * if (_playPauseHeight == -1) _playPauseHeight = Browser.FindForm().Bottom - 20;
-            var startX = Browser.FindForm().Left;
 
-            // We've previously found the play/pause button, so re-use its position
-            if (_playPausePos > -1)
-            {
-                Cursor.Position = new System.Drawing.Point(startX + 10, _playPauseHeight);
+            SendKeyToControl(" ");
 
-                // We have to move the cursor off the play button for this to work
-                while (Cursor.Position.X < _playPausePos)
-                {
-                    Cursor.Position = new System.Drawing.Point(Cursor.Position.X + 2, _playPauseHeight);
-                    Application.DoEvents();
-                }
-
-                Cursor.Position = new System.Drawing.Point(_playPausePos, _playPauseHeight);
-                Application.DoEvents();
-                CursorHelper.DoLeftMouseClick();
-                Application.DoEvents();
-                // Move the cursor off the controls so they disappear
-                Cursor.Position = new System.Drawing.Point(10, 10);
-            }
-            else
-            {
-                _playPausePos = FindPlayPauseButton(_playPauseHeight);
-                var attempts = 0;
-                // Move up the screen in 10 pixel increments trying to find play - only go up 5 times
-                while (attempts <= 4)
-                {
-                    if (_playPausePos == -1 && _isPlayOrPausing)
-                    {
-                        _playPauseHeight -= 10;
-                        _playPausePos = FindPlayPauseButton(_playPauseHeight);
-                    }
-                    else
-                        break;
-                    attempts++;
-                }
-                _isPlayOrPausing = false;
-                if (_playPausePos > -1) DoPlayOrPause();
-            }
-            */
-            Cursor.Position = new System.Drawing.Point(300, 300);
-            Application.DoEvents();
-            CursorHelper.DoLeftMouseClick();
-            Application.DoEvents();
-            System.Windows.Forms.SendKeys.Send(" ");
-            Browser.FindForm().Activate();
-            Browser.FindForm().Focus();
             _isPlayOrPausing = false;
             return EventResult.Complete();
-        }
-
-        /// <summary>
-        /// Move the cursor to try and find to position of the play/pause button
-        /// </summary>
-        /// <param name="height"></param>
-        /// <returns></returns>
-        private int FindPlayPauseButton(int height)
-        {
-            var startX = Browser.FindForm().Left;
-            var coloursToLookFor = new[] { "FAFAFA", "F8F8F8", "747576", "6D6E6F", "787879", "5E5E5F", "68696A","505051","59595A", "575859" };
-
-            // Very primitive, but set the cursor at the correct height and move across till we hit the right colour!
-            // We have to move the cursor otherwise the play controls disappear
-            var currentPos = startX + 10;
-            while (currentPos < (startX + (Browser.Document.Body.ClientRectangle.Width / 10)))
-            {
-                Cursor.Position = new System.Drawing.Point(currentPos + 2, height);
-                currentPos = Cursor.Position.X;
-                Application.DoEvents();
-                var x = CursorHelper.GetColourUnderCursor().Name.Substring(2).ToUpper();
-                if (coloursToLookFor.Contains(x))
-                    return Cursor.Position.X;
-                Application.DoEvents();
-                if (!_isPlayOrPausing) break;
-            }
-            return -1;
         }
 
         public override void OnAction(string actionEnumName)
@@ -245,26 +169,35 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
             if (_currentState == State.PlayPage1 && !_isPlayOrPausing)
             {
                 if (actionEnumName == "ACTION_MOVE_LEFT")
-                {
-                    Cursor.Position = new System.Drawing.Point(300, 300);
-                    Application.DoEvents();
-                    CursorHelper.DoLeftMouseClick();
-                    Application.DoEvents();
-                    System.Windows.Forms.SendKeys.Send("{LEFT}");
-                    Browser.FindForm().Activate();
-                    Browser.FindForm().Focus();
-                }
+                    SendKeyToControl("{LEFT}");
                 if (actionEnumName == "ACTION_MOVE_RIGHT")
-                {
-                    Cursor.Position = new System.Drawing.Point(300, 300);
-                    Application.DoEvents();
-                    CursorHelper.DoLeftMouseClick();
-                    Application.DoEvents();
-                    System.Windows.Forms.SendKeys.Send("{RIGHT}");
-                    Browser.FindForm().Activate();
-                    Browser.FindForm().Focus();
-                }
+                    SendKeyToControl("{RIGHT}");
             }
+        }
+
+        /// <summary>
+        /// With the Amazon player it seems that setting it to full screen (_enableFullWindowPlaybackMode) it makes the Silverlight control always take focus
+        /// This means that when space bar is pressed to pause it fires in the Silverlight control before the browser host causing a double press
+        /// To get around this I've added a dummy control to the page which will take focus after every action to prevent Silverlight getting the event
+        /// </summary>
+        /// <param name="keyStrokeToSend"></param>
+        private void SendKeyToControl(string keyStrokeToSend)
+        {
+            if (Browser.Document.GetElementById("dummyFocusControl") == null)
+            {
+                //InvokeScript("$('#player_object').attr('height','99%');");
+                var newCtl = "$('<input  type=\"text\" id=\"dummyFocusControl\" style=\"width: 1px; height: 1%;opacity:0;color: transparent;\"/>')";
+                InvokeScript("$('#player_container').append(" + newCtl + ");");
+            }
+
+            Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 50, Browser.FindForm().Top + 50);
+            Application.DoEvents();
+            CursorHelper.DoLeftMouseClick();
+            Application.DoEvents();
+            System.Windows.Forms.SendKeys.Send(keyStrokeToSend);
+            Application.DoEvents();
+
+            InvokeScript("$('#dummyFocusControl').focus()");
         }
     }
 }
