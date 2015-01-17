@@ -151,6 +151,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             get { return "Switch profile (" + ProfileName + ")"; }
         }
 
+        private string CangedToProfile
+        {
+            get { return "Switched to profile " + ProfileName + "."; }
+        }
+
         private string BrowseSort
         {
             get
@@ -574,6 +579,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 currentProfile = parentCategory.GetProfile();
                 parentCategory.ParentCategory.Name = ProfileCategoryName;
                 MyGetWebData(string.Format(switchProfileUrl, apiRoot, ProfileToken));
+                throw new OnlineVideosException(CangedToProfile);
+
             }
             #endregion
 
