@@ -64,12 +64,19 @@ namespace OnlineVideos.Sites
             }
             return cc;
         }
-
         public override int DiscoverDynamicCategories()
         {
             int count = base.DiscoverDynamicCategories();
-            foreach (Category cat in Settings.Categories) { cat.HasSubCategories = cat.Name == "TV Series"; }
+            foreach (Category cat in Settings.Categories) { cat.HasSubCategories = cat.Name == "TV Series";  }
             return count;
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            base.DiscoverSubCategories(parentCategory);
+            if (parentCategory.SubCategoriesDiscovered && parentCategory.Name == "TV Series")
+                parentCategory.SubCategories.Sort((x, y) => string.Compare(x.Name, y.Name));
+            return parentCategory.SubCategories.Count;
         }
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
