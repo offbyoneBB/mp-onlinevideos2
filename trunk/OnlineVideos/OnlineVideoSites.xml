@@ -870,7 +870,7 @@
       <Description>Titta på filmer på nätet med svenska undertexter.</Description>
     </Site>
     <Site name="MovHunter" util="MovHunter" agecheck="false" enabled="true" lang="--">
-      <Description>Full HD and HD movies and series online. Most content in English, but there's some country/language specific categories and movies: Swedish, Russian, Bollywood, Turkish, Italian, French and Mandarin.</Description>
+      <Description>Full HD and HD movies and series online. Pick subtitles from the context menu of the selected video. Most content in English, but there's some country/language specific categories and movies: Swedish, Russian, Bollywood, Turkish, Italian, French and Mandarin.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass=""><a\shref="(?<url>[^"]*)"\sclass="">(?<title>[^<]*)</a></li>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<li\sclass=""><a\shref="(?<url>[^"]*)"\sclass="">(?<title>[^<]*)</a>\s</li>]]></item>
@@ -878,14 +878,16 @@
         <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\sclass="">\s*<a\shref="(?<url>[^"]*)">&raquo;]]></item>
         <item key="nextPageRegExUrlFormatString"><![CDATA[http://www.movhunter.net/{0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<video[^>]*>\s<source\stype="(?<n0>[^"]*)"\ssrc="(?<m0>[^"]*)]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<source\stype="(?<n0>[^"]*)"\ssrc="(?<m0>[^"]*)]]></item>
         <item key="fileUrlDecoding"><![CDATA[None]]></item>
         <item key="searchUrl"><![CDATA[http://www.movhunter.net/search.php?keywords={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.movhunter.net/]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="New Videos" desc="Recently added videos">http://www.movhunter.net/newvideos.php</Category>
-        <Category xsi:type="RssLink" name="Top Videos" desc="Top videos">http://www.movhunter.net/topvideos.php</Category>
+        <Category xsi:type="RssLink" name="New Movies" desc="Recently added Movies">http://www.movhunter.net/newvideos.php</Category>
+        <Category xsi:type="RssLink" name="New Episodes" desc="Recently added TV Series Episodes">http://www.movhunter.net/newseries.php</Category>
+        <Category xsi:type="RssLink" name="Top Movies" desc="Top Movies">http://www.movhunter.net/topvideos.php</Category>
+        <Category xsi:type="RssLink" name="Top Episodes" desc="Top TV Series Episodes">http://www.movhunter.net/topseries.php?c=tv</Category>
         <Category xsi:type="RssLink" name="TV Series" desc="TV Series">http://www.movhunter.net/</Category>
       </Categories>
     </Site>
