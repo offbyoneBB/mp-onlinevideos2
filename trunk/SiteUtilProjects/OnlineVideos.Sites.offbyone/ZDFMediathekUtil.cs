@@ -135,7 +135,6 @@ namespace OnlineVideos.Sites
             currentStart = 0;
             currentCategory = null;
             nextPageAvailable = false;
-            previousPageAvailable = false;
 
             teaserlist teaserlist = null;
             switch (category.Name)
@@ -251,12 +250,6 @@ namespace OnlineVideos.Sites
             get { return nextPageAvailable; }
         }
         
-        protected bool previousPageAvailable = false;
-        public override bool HasPreviousPage
-        {
-            get { return previousPageAvailable; }
-        }
-
         public override List<VideoInfo> getNextPageVideos()
         {
             var teaserlist = Agent.Aktuellste(ConfigurationHelper.GetAktuellsteServiceUrl(RestAgent.Configuration), currentCategory.Url, pageSize, currentStart + pageSize, false);
@@ -264,7 +257,6 @@ namespace OnlineVideos.Sites
             {
                 currentStart += pageSize;
                 nextPageAvailable = currentCategory.EstimatedVideoCount > currentStart + pageSize;
-                previousPageAvailable = true;
                 return GetVideos(Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.CurrentBroadcasts));
             }
             else
@@ -272,16 +264,7 @@ namespace OnlineVideos.Sites
                 nextPageAvailable = false;
                 return new List<VideoInfo>();
             }
-        }
-
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            currentStart -= pageSize;
-            if (currentStart < 0) currentStart = 0;
-            previousPageAvailable = currentStart > 0;
-            var teaserlist = Agent.Aktuellste(ConfigurationHelper.GetAktuellsteServiceUrl(RestAgent.Configuration), currentCategory.Url, pageSize, currentStart, false);
-            return GetVideos(Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.CurrentBroadcasts));
-        }
+        }        
 
         #endregion
 

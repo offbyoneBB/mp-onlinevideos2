@@ -706,23 +706,7 @@ namespace OnlineVideos.Sites
                             videoList.Add(video);
                         }
                     }
-                }
-
-                if (regEx_PrevPage != null)
-                {
-                    // check for previous page link
-                    Match mPrev = regEx_PrevPage.Match(data);
-                    if (mPrev.Success)
-                    {
-                        previousPageUrl = FormatDecodeAbsolutifyUrl(url, mPrev.Groups["url"].Value, prevPageRegExUrlFormatString, prevPageRegExUrlDecoding);
-                        previousPageAvailable = !string.IsNullOrEmpty(previousPageUrl);
-                    }
-                    else
-                    {
-                        previousPageAvailable = false;
-                        previousPageUrl = "";
-                    }
-                }
+                }                
 
                 if (regEx_NextPage != null)
                 {
@@ -800,7 +784,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        #region Next/Previous Page
+        #region Next Page
 
         protected string nextPageUrl = "";
         protected bool nextPageAvailable = false;
@@ -808,22 +792,10 @@ namespace OnlineVideos.Sites
         {
             get { return nextPageAvailable; }
         }
-
-        protected string previousPageUrl = "";
-        protected bool previousPageAvailable = false;
-        public override bool HasPreviousPage
-        {
-            get { return previousPageAvailable; }
-        }
-
+        
         public override List<VideoInfo> getNextPageVideos()
         {
             return Parse(nextPageUrl, null);
-        }
-
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            return Parse(previousPageUrl, null);
         }
 
         #endregion

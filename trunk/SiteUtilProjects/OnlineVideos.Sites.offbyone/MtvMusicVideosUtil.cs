@@ -78,7 +78,7 @@ namespace OnlineVideos.Sites
             return "";
         }
 
-        #region Next/Previous Page
+        #region Next Page
 
         RssLink currentCategory;
         int currentStart = 1;
@@ -93,19 +93,7 @@ namespace OnlineVideos.Sites
             currentStart += pageSize;
             return GetVideoForCurrentCategory();
         }
-
-        public override bool HasPreviousPage
-        {
-            get { return currentCategory != null && currentStart > 1; }
-        }
-
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            currentStart -= pageSize;
-            if (currentStart < 1) currentStart = 1;
-            return GetVideoForCurrentCategory();
-        }
-
+        
         #endregion        
 
         #region Search

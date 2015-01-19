@@ -281,27 +281,7 @@ namespace OnlineVideos.Sites
             cat.Url = listPages[indexPage -1];
             return getVideoList(cat);
         }
-
-        public override bool HasPreviousPage
-        {
-            get
-            {
-                return listPages != null && listPages.Count > 1 && indexPage > 1;
-            }
-            protected set
-            {
-                base.HasPreviousPage = value;
-            }
-        }
-
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            indexPage--;
-            RssLink cat = new RssLink();
-            cat.Url = listPages[indexPage -1];
-            return getVideoList(cat);
-        }
-
+        
         public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {            
             return _getVideosUrl(video);

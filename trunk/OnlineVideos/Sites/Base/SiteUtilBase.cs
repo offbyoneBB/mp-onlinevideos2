@@ -207,30 +207,6 @@ namespace OnlineVideos.Sites
         }
 
         /// <summary>
-        /// This will be called to find out if there is a previous page for the videos that have just been returned 
-        /// by a call to <see cref="getVideoList"/>. If returns true, the menu entry for "previous page" will be enabled, otherwise disabled.<br/>
-        /// Example: <see cref="MtvMusicVideosUtil"/><br/>
-        /// default: always false
-        /// </summary>
-        [Obsolete]
-        public virtual bool HasPreviousPage { get; protected set; }
-
-        /// <summary>
-        /// This function should return the videos of the previous page. No state is given, 
-        /// so the class implementation has to remember and set the current category and page itself.
-        /// It will only be called if <see cref="HasPreviousPage"/> returned true on the last call 
-        /// and after the user selected the menu entry for "previous page".<br/>
-        /// Example: <see cref="MtvMusicVideosUtil"/><br/>
-        /// default: empty list
-        /// </summary>
-        /// <returns>a list of <see cref="VideoInfo"/> objects for the previous page of the last queried category.</returns>
-        [Obsolete]
-        public virtual List<VideoInfo> getPreviousPageVideos()
-        {
-            return new List<VideoInfo>();
-        }
-
-        /// <summary>
         /// This function will be called to get the urls for playback of a video.<br/>
         /// By default: returns a list with the result from <see cref="getUrl"/>.
         /// </summary>
