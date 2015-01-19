@@ -444,7 +444,6 @@ namespace OnlineVideos.Sites
                 else throw queryEx;
             }
             
-            hasPreviousPage = !string.IsNullOrEmpty(feed.PrevChunk);
             hasNextPage = !string.IsNullOrEmpty(feed.NextChunk);
             foreach (YouTubeEntry entry in feed.Entries)
             {
@@ -509,8 +508,7 @@ namespace OnlineVideos.Sites
 
         #region Paging
 
-        bool hasNextPage;
-        bool hasPreviousPage;
+        bool hasNextPage;        
 
         public override bool HasNextPage
         {
@@ -521,17 +519,6 @@ namespace OnlineVideos.Sites
         {
             if (lastPerformedQuery.StartIndex == 0) lastPerformedQuery.StartIndex = 1;
             lastPerformedQuery.StartIndex += lastPerformedQuery.NumberToRetrieve;
-            return parseGData(lastPerformedQuery);
-        }
-
-        public override bool HasPreviousPage
-        {
-            get { return hasPreviousPage; }
-        }
-
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            lastPerformedQuery.StartIndex -= lastPerformedQuery.NumberToRetrieve;
             return parseGData(lastPerformedQuery);
         }
 

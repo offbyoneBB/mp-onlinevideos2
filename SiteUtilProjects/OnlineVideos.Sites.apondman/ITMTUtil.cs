@@ -93,12 +93,6 @@ namespace OnlineVideos.Sites.Pondman {
 			}
 		}
 
-		public override bool HasPreviousPage {
-			get {
-				return (_sectionPages != null && _sectionPages.Count > 1);
-			}
-		}        
-
 		public override bool CanSearch { 
 			get { return true; } 
 		}
@@ -201,14 +195,7 @@ namespace OnlineVideos.Sites.Pondman {
 			Section nextSection = _sectionPages.Peek().Sections[0];
 			return getVideoList(nextSection);
 		}
-
-		public override List<VideoInfo> getPreviousPageVideos() {
-			Section currentSection = _sectionPages.Pop();
-			Section prevSection = _sectionPages.Pop();
-
-			return getVideoList(prevSection);
-		}       
-
+		
 		public override string getUrl(VideoInfo video) {
 			string videoUrl = string.Empty;
 

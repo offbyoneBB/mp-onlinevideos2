@@ -320,19 +320,12 @@ namespace OnlineVideos.Sites
             currentSearchResultsPage++;
             return Search();
         }
-
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            currentSearchResultsPage--;
-            return Search();
-        }
-
+        
         List<VideoInfo> Search()
         {
             IList<Item> matchingItems = nrkParser.GetSearchHits(currentSearchString, currentSearchResultsPage);
             List<VideoInfo> result = VideosFromItems(matchingItems);
             HasNextPage = matchingItems.Count >= 25;
-            HasPreviousPage = currentSearchResultsPage > 0;
             return result;
         }
 
@@ -340,8 +333,7 @@ namespace OnlineVideos.Sites
 
         List<VideoInfo> VideosFromItems(IList<Item> items)
         {
-            HasNextPage = false;
-            HasPreviousPage = false;
+            HasNextPage = false;            
             List<VideoInfo> result = new List<VideoInfo>();
             if (items != null)
             {
