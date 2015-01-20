@@ -157,6 +157,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                         HideLoading();
                         Browser.FindForm().Activate();
                         Browser.FindForm().Focus();
+                        SetFocusToDummy();
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
                     }
@@ -285,6 +286,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             }
 
             _isPlayOrPausing = false;
+            SetFocusToDummy();
             return EventResult.Complete();
         }
 
@@ -322,6 +324,18 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         {
             Thread.Sleep(20000);
             WebBrowserHelper.ToogleSilverlightAppStorage(false);
+        }
+
+        private void SetFocusToDummy()
+        {
+            if (Browser.Document.GetElementById("dummyFocusControl") == null)
+            {
+                //InvokeScript("$('#player_object').attr('height','99%');");
+                var newCtl = "$('<input  type=\"text\" id=\"dummyFocusControl\" style=\"width: 1px; height: 1%;opacity:0;color: transparent;\"/>')";
+                InvokeScript("$('#silverlightControlHost').append(" + newCtl + ");");
+            }
+
+            InvokeScript("$('#dummyFocusControl').focus()");
         }
     }
 }
