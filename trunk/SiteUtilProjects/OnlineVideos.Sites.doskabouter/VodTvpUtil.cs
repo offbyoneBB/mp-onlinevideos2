@@ -83,8 +83,11 @@ namespace OnlineVideos.Sites
                     SortedList<int, string> options = new SortedList<int, string>();
                     foreach (JToken format in formats)
                     {
-                        int bitrate = format.Value<int>("totalBitrate");
-                        options.Add(bitrate, format.Value<string>("url"));
+                        if (!"application/x-mpegurl".Equals(format.Value<string>("mimeType")))
+                        {
+                            int bitrate = format.Value<int>("totalBitrate");
+                            options.Add(bitrate, format.Value<string>("url"));
+                        }
                     }
                     Dictionary<string, string> result = new Dictionary<string, string>();
                     foreach (KeyValuePair<int, string> option in options)

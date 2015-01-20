@@ -108,13 +108,14 @@ namespace OnlineVideos.Sites
             List<Category> result = new List<Category>();
             foreach (XmlNode catNode in catNodes.Values)
             {
+                string id = catNode.Attributes["id"].Value;
                 RssLink cat = new RssLink()
                 {
                     ParentCategory = parentCat,
                     Name = catNode.Attributes["title"].Value,
                     Description = catNode.Attributes["descr"].Value,
-                    Other = catNode.Attributes["id"].Value,
-                    HasSubCategories = catNode.Attributes["contentupdatets"] == null
+                    Other = id,
+                    HasSubCategories = doc.SelectSingleNode("//resp/cat[@pid=\"" + id + "\"]") != null
                 };
                 cat.Thumb = getThumb(catNode);
 
