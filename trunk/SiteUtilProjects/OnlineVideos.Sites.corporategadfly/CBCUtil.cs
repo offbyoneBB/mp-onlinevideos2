@@ -46,17 +46,17 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategories = new List<Category>();
+            List<Category> list = new List<Category>();
             foreach (Category cat in getChildren((string)parentCategory.Other))
             {
                 cat.ParentCategory = parentCategory;
-                parentCategory.SubCategories.Add(cat);
+                list.Add(cat);
             }
 
-            Category vidCat = new Category();
-            vidCat.Name = "videos";
-            vidCat.Other = parentCategory.Other;
-            vidCat.ParentCategory = parentCategory;
-            parentCategory.SubCategories.Add(vidCat);
+            list.Sort();
+            foreach (Category cat in list) {
+            	parentCategory.SubCategories.Add(cat);
+            }
 
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
