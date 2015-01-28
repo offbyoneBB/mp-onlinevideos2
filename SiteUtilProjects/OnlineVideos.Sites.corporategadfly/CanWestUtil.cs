@@ -285,13 +285,16 @@ namespace OnlineVideos.Sites
             // base URL may be stored in the base attribute of <meta> tag
             string baseRtmp = metaBaseValue.StartsWith("rtmp") ? metaBaseValue : String.Empty;
 
-            foreach (XmlNode node in xml.SelectNodes("//a:body/a:switch/a:video", nsmRequest))
+            foreach (XmlNode node in xml.SelectNodes("//a:switch/a:video", nsmRequest))
             {
                 int bitrate = int.Parse(node.Attributes["system-bitrate"].Value);
-                // do not bother unless bitrate is non-zero
+                // skip bitrate is zero
                 if (bitrate == 0) continue;
 
                 string url = node.Attributes["src"].Value;
+                // skip if advertisement
+                if (url.StartsWith("pfadx")) continue;
+                    
                 if (!string.IsNullOrEmpty(baseRtmp))
                 {
                     // prefix url with base (from <meta> tag) and artifical <break>
