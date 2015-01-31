@@ -142,7 +142,7 @@ namespace OnlineVideos
 
 		public static DownloadList Create(DownloadInfo currentItem)
 		{
-			DownloadList di = (DownloadList)OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(DownloadList).Assembly.FullName, typeof(DownloadList).FullName, false, System.Reflection.BindingFlags.CreateInstance | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, null, null, null, null);
+			DownloadList di = (DownloadList)OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(DownloadList).Assembly.FullName, typeof(DownloadList).FullName, false, System.Reflection.BindingFlags.CreateInstance | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, null, null, null);
 			di.CurrentItem = currentItem;
 			return di;
 		}
@@ -166,7 +166,7 @@ namespace OnlineVideos
 
 		public static DownloadInfo Create(VideoInfo video, Category category, Sites.SiteUtilBase site)
 		{
-			DownloadInfo di = (DownloadInfo)OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(DownloadInfo).Assembly.FullName, typeof(DownloadInfo).FullName, false, System.Reflection.BindingFlags.CreateInstance | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, null, null, null, null);
+			DownloadInfo di = (DownloadInfo)OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(DownloadInfo).Assembly.FullName, typeof(DownloadInfo).FullName, false, System.Reflection.BindingFlags.CreateInstance | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, null, null, null);
 			di.VideoInfo = video;
 			di.Category = category;
 			di.Util = site;
