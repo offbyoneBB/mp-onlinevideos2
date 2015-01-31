@@ -1396,32 +1396,67 @@
       <Description>Ruutu - Nelonen, Liv, Jim ja Nelonen Pro. Viihdettä, draamaa, uutisia, urheilua ja lastenohjelmia - katso missä haluat ja milloin haluat.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.ruutu.fi/]]></item>
-        <item key="videoListRegEx"><![CDATA[(?:<div\sclass="field\sfield-name-field-image\sfield-type-image\sfield-label-above">\s*<div\sclass="field\sfield-name-field-image\sfield-type-image\sfield-label-above">\s*<img\ssrc="(?<ImageUrl>[^"]*)"\swidth="[^"]*"\sheight="[^"]*"\s/>\s</div>\s*</div>)?
-\s*<div\sclass="field\sfield-name-field-channel\sfield-type-number-integer\sfield-label-above">\s*<div[^>]*></div>\s*</div>\s*<div\sclass="[^>]*>\s*<div\sclass="[^>]*></div>\s*</div>\s*<h2\sclass="node-title">\s*<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>\s*</h2>\s*<div\sclass="details\sdetails-inline\sdetails-main">\s*
-(?:<div\sclass="field\sfield-name-field-season\sfield-type-text\sfield-label-above">\s*<span\sclass="prefix">Kausi</span>\s*(?<Kausi>[^\s]*)\s*</div>\s*)?
-(?:<div\sclass="field\sfield-name-field-episode\sfield-type-number-integer\sfield-label-above">\s*<span\sclass="prefix">Jakso</span>\s*(?<Jakso>[^\s]*)\s*</div>\s*)?
-(?:<div\sclass="field\sfield-name-field-series-reference\sfield-type-entityreference\sfield-label-above">\s*<div\sclass="field\sfield-name-field-series-reference\sfield-type-entityreference\sfield-label-above">(?<Series2>[^<]*)</div>\s*</div>)?
-\s*<div\sclass="field\sfield-name-field-starttime\sfield-type-datestamp\sfield-label-above">\s*<div\sclass="field\sfield-name-field-starttime\sfield-type-datestamp\sfield-label-above">\s*<span\sclass="date-display-single">(?<Airdate>[^<]*)</span>\s</div>\s*</div>\s*</div>\s*<div\sclass="details\sshow-on-hover">\s*
-(?:<div\sclass="field\sfield-name-field-xb-name\sfield-type-text\sfield-label-above">\s*<div\sclass="field\sfield-name-field-xb-name\sfield-type-text\sfield-label-above">(?<Series>[^<]*)</div>\s*</div>)?
-\s*</div>\s*</header>\s*<section\sclass="content\sshow-on-hover\sslide">\s*<div\sclass="field\sfield-name-field-webdescription\sfield-type-text-long\sfield-label-above">
-(?:\s*<p>(?<Description>[^<]*)<)?]]></item>
-        <item key="nextPageRegEx"><![CDATA[pager-browse-next\slast"><a\shref="(?<url>[^"]*)">]]></item>
         <item key="playlistUrlRegEx"><![CDATA[<div\s*id="mediaplayer"\sdata-media-id="(?<url>[^"]*)"\sdata]]></item>
         <item key="playlistUrlFormatString"><![CDATA[http://gatling.ruutu.fi/media-xml-cache?id={0}]]></item>
         <item key="fileUrlRegEx"><![CDATA[<SourceFile>(?<m0>[^<]*)</SourceFile>]]></item>
-        <item key="searchUrl"><![CDATA[http://www.ruutu.fi/hakutulokset/{0}Z]]></item>
+        <item key="searchUrl"><![CDATA[http://www.ruutu.fi/hakutulokset/{0}]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/</Category>
+        <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/ajax/series-navi</Category>
         <Category xsi:type="RssLink" name="Urheilu" thumb="" desc="">
           <SubCategories>
-            <Category xsi:type="RssLink" name="Golf" thumb="" desc="">http://www.ruutu.fi/urheilu/golf</Category>
-            <Category xsi:type="RssLink" name="Superpesis" thumb="" desc="">http://www.ruutu.fi/urheilu/superpesis</Category>
-            <Category xsi:type="RssLink" name="Muut" thumb="" desc="">http://www.ruutu.fi/urheilu/muut-lajit</Category>
+            <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="quicktabs-tabpage-urheilu_uusimmat_qt-0">http://www.ruutu.fi/urheilu</Category>
+            <Category xsi:type="RssLink" name="Jaksot" thumb="" desc="quicktabs-tabpage-urheilu_uusimmat_qt-1">http://www.ruutu.fi/urheilu</Category>
           </SubCategories>
         </Category>
-        <Category xsi:type="RssLink" name="Uutiset" thumb="" desc="">http://www.ruutu.fi/uutiset</Category>
-        <Category xsi:type="RssLink" name="Lapset" thumb="" desc="">http://www.ruutu.fi/lapset</Category>
+        <Category xsi:type="RssLink" name="Lapset" thumb="" desc="">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="">
+              <SubCategories>
+                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_lapset_series-0">http://www.ruutu.fi/lapset</Category>
+                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_lapset_series-1">http://www.ruutu.fi/lapset</Category>
+              </SubCategories>
+            </Category>
+            <Category xsi:type="RssLink" name="Jaksot" thumb="" desc="">
+              <SubCategories>
+                <Category xsi:type="RssLink" name="Suosituimmat" thumb="" desc="quicktabs-tabpage-qt_lapset_episodit-0">http://www.ruutu.fi/lapset</Category>
+                <Category xsi:type="RssLink" name="Uussimmat" thumb="" desc="quicktabs-tabpage-qt_lapset_episodit-1">http://www.ruutu.fi/lapset</Category>
+              </SubCategories>
+            </Category>
+          </SubCategories>
+        </Category>
+        <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="">
+              <SubCategories>
+                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_sarjat_series-0">http://www.ruutu.fi/sarjat</Category>
+                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_sarjat_series-1">http://www.ruutu.fi/sarjat</Category>
+              </SubCategories>
+            </Category>
+            <Category xsi:type="RssLink" name="Jaksot" thumb="" desc="">
+              <SubCategories>
+                <Category xsi:type="RssLink" name="Suosituimmat" thumb="" desc="quicktabs-tabpage-qt_sarjat_episodit-0">http://www.ruutu.fi/sarjat</Category>
+                <Category xsi:type="RssLink" name="Uussimmat" thumb="" desc="quicktabs-tabpage-qt_sarjat_episodit-1">http://www.ruutu.fi/sarjat</Category>
+              </SubCategories>
+            </Category>
+          </SubCategories>
+        </Category>
+        <Category xsi:type="RssLink" name="Leffat" thumb="" desc="">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Suosituimmat" thumb="" desc="">
+              <SubCategories>
+                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulk-0">http://www.ruutu.fi/leffat</Category>
+                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulk-1">http://www.ruutu.fi/leffat</Category>
+              </SubCategories>
+            </Category>
+            <Category xsi:type="RssLink" name="Uussimmat" thumb="" desc="">
+              <SubCategories>
+                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulko-0">http://www.ruutu.fi/leffat</Category>
+                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulko-1">http://www.ruutu.fi/leffat</Category>
+              </SubCategories>
+            </Category>
+          </SubCategories>
+        </Category>
       </Categories>
     </Site>
     <Site name="SBS.au" util="SBSau" agecheck="false" enabled="true" lang="en">
