@@ -113,11 +113,13 @@ namespace OnlineVideos.MPUrlSourceFilter.UserSettings
         public RtmpUrlSettings(String value)
             : base(value)
         {
-            Hashtable parameters = SimpleUrlSettings.GetParameters(value);
+            var parameters = GetParameters(value);
 
-            this.OpenConnectionTimeout = int.Parse(SimpleUrlSettings.GetValue(parameters, "OpenConnectionTimeout", OnlineVideoSettings.Instance.RtmpOpenConnectionTimeout.ToString()));
-            this.OpenConnectionSleepTime = int.Parse(SimpleUrlSettings.GetValue(parameters, "OpenConnectionSleepTime", OnlineVideoSettings.Instance.RtmpOpenConnectionSleepTime.ToString()));
-            this.TotalReopenConnectionTimeout = int.Parse(SimpleUrlSettings.GetValue(parameters, "TotalReopenConnectionTimeout", OnlineVideoSettings.Instance.RtmpTotalReopenConnectionTimeout.ToString()));
+            var ovSettings = OnlineVideoSettings.Instance;
+
+            this.OpenConnectionTimeout = GetValue(parameters, "OpenConnectionTimeout", ovSettings.RtmpOpenConnectionTimeout);
+            this.OpenConnectionSleepTime = GetValue(parameters, "OpenConnectionSleepTime", ovSettings.RtmpOpenConnectionSleepTime);
+            this.TotalReopenConnectionTimeout = GetValue(parameters, "TotalReopenConnectionTimeout", ovSettings.RtmpTotalReopenConnectionTimeout);
         }
 
         #endregion

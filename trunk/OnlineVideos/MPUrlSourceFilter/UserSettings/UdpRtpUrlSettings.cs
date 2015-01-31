@@ -137,12 +137,14 @@ namespace OnlineVideos.MPUrlSourceFilter.UserSettings
         public UdpRtpUrlSettings(String value)
             : base(value)
         {
-            Hashtable parameters = SimpleUrlSettings.GetParameters(value);
+            var parameters = GetParameters(value);
 
-            this.OpenConnectionTimeout = int.Parse(SimpleUrlSettings.GetValue(parameters, "OpenConnectionTimeout", OnlineVideoSettings.Instance.UdpRtpOpenConnectionTimeout.ToString()));
-            this.OpenConnectionSleepTime = int.Parse(SimpleUrlSettings.GetValue(parameters, "OpenConnectionSleepTime", OnlineVideoSettings.Instance.UdpRtpOpenConnectionSleepTime.ToString()));
-            this.TotalReopenConnectionTimeout = int.Parse(SimpleUrlSettings.GetValue(parameters, "TotalReopenConnectionTimeout", OnlineVideoSettings.Instance.UdpRtpTotalReopenConnectionTimeout.ToString()));
-            this.ReceiveDataCheckInterval = int.Parse(SimpleUrlSettings.GetValue(parameters, "ReceiveDataCheckInterval", OnlineVideoSettings.Instance.UdpRtpReceiveDataCheckInterval.ToString()));
+            var ovSettings = OnlineVideoSettings.Instance;
+
+            this.OpenConnectionTimeout = GetValue(parameters, "OpenConnectionTimeout", ovSettings.UdpRtpOpenConnectionTimeout);
+            this.OpenConnectionSleepTime = GetValue(parameters, "OpenConnectionSleepTime", ovSettings.UdpRtpOpenConnectionSleepTime);
+            this.TotalReopenConnectionTimeout = GetValue(parameters, "TotalReopenConnectionTimeout", ovSettings.UdpRtpTotalReopenConnectionTimeout);
+            this.ReceiveDataCheckInterval = GetValue(parameters, "ReceiveDataCheckInterval", ovSettings.UdpRtpReceiveDataCheckInterval);
         }
 
         #endregion
