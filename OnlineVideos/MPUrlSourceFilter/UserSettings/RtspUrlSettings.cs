@@ -173,13 +173,15 @@ namespace OnlineVideos.MPUrlSourceFilter.UserSettings
         public RtspUrlSettings(String value)
             : base(value)
         {
-            Hashtable parameters = SimpleUrlSettings.GetParameters(value);
+            var parameters = GetParameters(value);
 
-            this.OpenConnectionTimeout = int.Parse(SimpleUrlSettings.GetValue(parameters, "OpenConnectionTimeout", OnlineVideoSettings.Instance.RtspOpenConnectionTimeout.ToString()));
-            this.OpenConnectionSleepTime = int.Parse(SimpleUrlSettings.GetValue(parameters, "OpenConnectionSleepTime", OnlineVideoSettings.Instance.RtspOpenConnectionSleepTime.ToString()));
-            this.TotalReopenConnectionTimeout = int.Parse(SimpleUrlSettings.GetValue(parameters, "TotalReopenConnectionTimeout", OnlineVideoSettings.Instance.RtspTotalReopenConnectionTimeout.ToString()));
-            this.ClientPortMin = int.Parse(SimpleUrlSettings.GetValue(parameters, "ClientPortMin", OnlineVideoSettings.Instance.RtspClientPortMin.ToString()));
-            this.ClientPortMax = int.Parse(SimpleUrlSettings.GetValue(parameters, "ClientPortMax", OnlineVideoSettings.Instance.RtspClientPortMax.ToString()));
+            var ovSettings = OnlineVideoSettings.Instance;
+
+            this.OpenConnectionTimeout = GetValue(parameters, "OpenConnectionTimeout", ovSettings.RtspOpenConnectionTimeout);
+            this.OpenConnectionSleepTime = GetValue(parameters, "OpenConnectionSleepTime", ovSettings.RtspOpenConnectionSleepTime);
+            this.TotalReopenConnectionTimeout = GetValue(parameters, "TotalReopenConnectionTimeout", ovSettings.RtspTotalReopenConnectionTimeout);
+            this.ClientPortMin = GetValue(parameters, "ClientPortMin", ovSettings.RtspClientPortMin);
+            this.ClientPortMax = GetValue(parameters, "ClientPortMax", ovSettings.RtspClientPortMax);
         }
 
         #endregion

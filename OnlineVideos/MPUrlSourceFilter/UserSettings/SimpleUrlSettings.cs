@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
@@ -98,15 +99,15 @@ namespace OnlineVideos.MPUrlSourceFilter.UserSettings
         /// </exception>
         protected SimpleUrlSettings(String value)
         {
-            Hashtable parameters = SimpleUrlSettings.GetParameters(value);
+            var parameters = GetParameters(value);
 
-            this.NetworkInterface = SimpleUrlSettings.GetValue(parameters, "NetworkInterface", OnlineVideoSettings.NetworkInterfaceSystemDefault);
+            this.NetworkInterface = GetValue(parameters, "NetworkInterface", OnlineVideoSettings.NetworkInterfaceSystemDefault);
 
-            this.DumpProtocolInputData = (String.Compare(SimpleUrlSettings.GetValue(parameters, "DumpProtocolInputData", "0"), "1") == 0);
-            this.DumpProtocolOutputData = (String.Compare(SimpleUrlSettings.GetValue(parameters, "DumpProtocolOutputData", "0"), "1") == 0);
-            this.DumpParserInputData = (String.Compare(SimpleUrlSettings.GetValue(parameters, "DumpParserInputData", "0"), "1") == 0);
-            this.DumpParserOutputData = (String.Compare(SimpleUrlSettings.GetValue(parameters, "DumpParserOutputData", "0"), "1") == 0);
-            this.DumpOutputPinData = (String.Compare(SimpleUrlSettings.GetValue(parameters, "DumpOutputPinData", "0"), "1") == 0);
+            this.DumpProtocolInputData = (String.Compare(GetValue(parameters, "DumpProtocolInputData", "0"), "1") == 0);
+            this.DumpProtocolOutputData = (String.Compare(GetValue(parameters, "DumpProtocolOutputData", "0"), "1") == 0);
+            this.DumpParserInputData = (String.Compare(GetValue(parameters, "DumpParserInputData", "0"), "1") == 0);
+            this.DumpParserOutputData = (String.Compare(GetValue(parameters, "DumpParserOutputData", "0"), "1") == 0);
+            this.DumpOutputPinData = (String.Compare(GetValue(parameters, "DumpOutputPinData", "0"), "1") == 0);
         }
 
         #endregion
@@ -144,14 +145,14 @@ namespace OnlineVideos.MPUrlSourceFilter.UserSettings
             simpleUrl.DumpOutputPinData = DumpOutputPinData;
         }
 
-        protected static Hashtable GetParameters(String value)
+        protected static Dictionary<string,string> GetParameters(String value)
         {
             if (value == null)
             {
                 throw new ArgumentNullException("value");
             }
 
-            Hashtable parameters = new Hashtable();
+            var parameters = new Dictionary<string, string>();
 
             foreach (var parameter in value.Split(new String[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
             {
@@ -169,11 +170,16 @@ namespace OnlineVideos.MPUrlSourceFilter.UserSettings
             return parameters;
         }
 
-        protected static String GetValue(Hashtable parameters, String name, String defaultValue)
+        protected static T GetValue<T>(Dictionary<string, string> parameters, String name, T defaultValue)
         {
-            if (parameters.Contains(name))
+            if (parameters.ContainsKey(name))
             {
-                return (String)parameters[name];
+                if (typeof(T) == typeof(string))
+                    return (T)(object)parameters[name];
+                else if (typeof(T) == typeof(int))
+                    return (T)(object)int.Parse(parameters[name]);
+                else
+                    throw new Exception(string.Format("Unsupported type <{0}> for conversion!", typeof(T).FullName));
             }
             else
             {
