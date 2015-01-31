@@ -80,7 +80,7 @@ namespace OnlineVideos
 			if (instance == null) // no instance in the OV domain yet
 			{
 				// create an instance in the OV domain
-				instance = domain.CreateInstanceAndUnwrap(type.Assembly.FullName, type.FullName, false, BindingFlags.CreateInstance | BindingFlags.Instance | BindingFlags.NonPublic, null, null, null, null, null);
+				instance = domain.CreateInstanceAndUnwrap(type.Assembly.FullName, type.FullName, false, BindingFlags.CreateInstance | BindingFlags.Instance | BindingFlags.NonPublic, null, null, null, null);
 				// register the instance in the OV domain
 				domain.SetData(type.FullName, instance);
 			}
