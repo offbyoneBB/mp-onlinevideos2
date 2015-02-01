@@ -869,28 +869,6 @@
     <Site name="Swefilmer" util="SwefilmerSite" agecheck="false" enabled="true" lang="sv">
       <Description>Titta på filmer på nätet med svenska undertexter.</Description>
     </Site>
-    <Site name="MovHunter" util="MovHunter" agecheck="false" enabled="true" lang="--">
-      <Description>Full HD and HD movies and series online. Pick subtitles from the context menu of the selected video. Most content in English, but there's some country/language specific categories and movies: Swedish, Russian, Bollywood, Turkish, Italian, French and Mandarin.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass=""><a\shref="(?<url>[^"]*)"\sclass="">(?<title>[^<]*)</a></li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li\sclass=""><a\shref="(?<url>[^"]*)"\sclass="">(?<title>[^<]*)</a>\s</li>]]></item>
-        <item key="videoListRegEx"><![CDATA[='popover-description'>(?<Description>[^<]*)(?:(?!href=").)*href="(?<VideoUrl>[^"]*)(?:(?!"title">).)*"title">(?<Title>[^<]*)(?:(?!src=").)*src="(?<ImageUrl>[^"]*)]]></item>
-        <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="nextPageRegEx"><![CDATA[<li\sclass="">\s*<a\shref="(?<url>[^"]*)">&raquo;]]></item>
-        <item key="nextPageRegExUrlFormatString"><![CDATA[http://www.movhunter.net/{0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<source\stype="(?<n0>[^"]*)"\ssrc="(?<m0>[^"]*)]]></item>
-        <item key="fileUrlDecoding"><![CDATA[None]]></item>
-        <item key="searchUrl"><![CDATA[http://www.movhunter.net/search.php?keywords={0}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.movhunter.net/]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="New Movies" desc="Recently added Movies">http://www.movhunter.net/newvideos.php</Category>
-        <Category xsi:type="RssLink" name="New Episodes" desc="Recently added TV Series Episodes">http://www.movhunter.net/newseries.php</Category>
-        <Category xsi:type="RssLink" name="Top Movies" desc="Top Movies">http://www.movhunter.net/topvideos.php</Category>
-        <Category xsi:type="RssLink" name="Top Episodes" desc="Top TV Series Episodes">http://www.movhunter.net/topseries.php?c=tv</Category>
-        <Category xsi:type="RssLink" name="TV Series" desc="TV Series">http://www.movhunter.net/</Category>
-      </Categories>
-    </Site>
     <Site name="TFPlay" util="TFPlay" agecheck="false" enabled="true" lang="sv">
       <Description>Tankafetast streaming-sida med filmer och TV-serier</Description>
       <Categories>
@@ -1081,18 +1059,6 @@
         <Category xsi:type="RssLink" name="Recent">http://www.gamersnet.nl/movies</Category>
         <Category xsi:type="RssLink" name="A..Z">http://www.gamersnet.nl/movies</Category>
       </Categories>
-    </Site>
-    <Site name="iLive.to" util="iLiveTo" agecheck="false" enabled="true" lang="en" lastUpdated="2014-03-06T14:06:23.440555+01:00">
-      <Description>Watch Live TV Online, Watch Live Sports, Watch Movies Online</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[(?<!<select\sname="language.*)<option\svalue="(?<url>[^"]*)">(?<title>[^<]*)</option>]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.ilive.to/channels/{0}]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\stitle="[^"]*"\sclass="clist-thumb">\s*<img\swidth="200"\sheight="128"\sdata-lazy-src="(?<ImageUrl>[^"]*)"[^>]*>\s*<noscript><img[^>]*></noscript>\s*</a>\s*<a[^>]*><strong>(?<Title>[^<]*)</strong></a><br/>\s*<span\sclass="viewers">[^<]*</span>\s*<span\sclass="totalviews">[^<]*</span><br/>\s*<a[^>]*>(?<Genre>[^<]*)</a>&nbsp;&nbsp;&nbsp;&nbsp;\s*<a[^>]*>(?<Description>[^<]*)</a>\s*</li>]]></item>
-        <item key="nextPageRegEx"><![CDATA[>\s\d*\s<a\shref="(?<url>[^"]*)">]]></item>
-        <item key="fileUrlRegEx"><![CDATA[flashplayer:\s"(?<swfurl>[^"]*)",\s*provider:\s"rtmp",\s*'rtmp\.tunneling':[^,]*,\s*bufferLength:\s"[^"]*",\s*token:\stoken,\s*streamer:\s"(?<rtmpurl>[^\?]*\?(?<app>[^"]*)[^"]*)",\s*file:\s"(?<playpath>[^\.]*)\.flv"]]></item>
-        <item key="baseUrl"><![CDATA[http://www.ilive.to/channels]]></item>
-        <item key="token"><![CDATA[motngaynew1]]></item>
-      </Configuration>
     </Site>
     <Site name="NrkBrowser" util="NrkBrowser" agecheck="false" enabled="true" lang="no">
       <Description>NRK er Norges største tilbud på nett; nyheter, radio- og tv-programmer live, nett-tv og podcast.</Description>
@@ -1569,14 +1535,6 @@
         <Category xsi:type="RssLink" name="TV Shows" thumb="" desc="">http://www.tubeplus.me/browse/tv-shows/Last/ALL/</Category>
         <Category xsi:type="RssLink" name="Movies" thumb="" desc="">http://www.tubeplus.me/browse/movies/Last/ALL/</Category>
       </Categories>
-    </Site>
-    <Site name="TVLinks.cc" util="TVLinkscc" agecheck="false" enabled="true" lang="en" player="Internal">
-      <Description>TV Links: Free Movies links, Watch TV Shows links online, Anime, Documentaries</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.tvlinks.cc/]]></item>
-        <item key="searchUrl"><![CDATA[http://www.tvlinks.cc/search.php]]></item>
-        <item key="searchPostString"><![CDATA[keyword={0}]]></item>
-      </Configuration>
     </Site>
     <Site name="Vimeo" util="Vimeo" agecheck="false" enabled="true" lang="en">
       <Description>Video sharing for you</Description>
