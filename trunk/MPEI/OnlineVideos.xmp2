@@ -2593,6 +2593,34 @@
               <ZipFileName>Installer{CopyFile}\{5aa4b2d7-5a02-467b-9883-226b0356c12b}-Amazon Prime DE.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Amazon Prime DE.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\bg.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{bd6bc1a9-a647-4146-8c48-18bde320670a}-bg.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\bg.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\et.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{deca52e1-c193-4500-a6fb-031c48c1710d}-et.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\et.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\lv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{32436ecb-05cc-4231-8fd6-af2d10b64e8d}-lv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\lv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\ro.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{85fb9fa8-fb7d-43cb-bb26-b50312ab9bc0}-ro.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\ro.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -6517,6 +6545,34 @@ included Titan skin files
         <LocalFileName>..\SiteImages\Icons\Amazon Prime DE.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{5aa4b2d7-5a02-467b-9883-226b0356c12b}-Amazon Prime DE.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Amazon Prime DE.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\bg.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bd6bc1a9-a647-4146-8c48-18bde320670a}-bg.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\bg.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\et.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{deca52e1-c193-4500-a6fb-031c48c1710d}-et.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\et.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\lv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{32436ecb-05cc-4231-8fd6-af2d10b64e8d}-lv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\lv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\ro.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{85fb9fa8-fb7d-43cb-bb26-b50312ab9bc0}-ro.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\ro.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
